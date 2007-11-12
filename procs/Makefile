@@ -1,6 +1,13 @@
 # File Makefile: architecture-independent elements of procs Makefile
 include ../Makefile
 
+# Useful targets:
+#
+# install:  builds library, puts it into ../lib and includes in ../include
+# tests:    builds various test programs
+#
+
+
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
 LIDIACFLAGS = -DNTL_INTS -I$(NTLINCDIR)
@@ -19,7 +26,7 @@ LIDIALFLAGS =
 OBJ_SUF = ._
 endif
 endif
- 
+
 CFLAGS = -c $(OPTFLAG) $(LIDIACFLAGS) -I$(PARIINCDIR)
 #LFLAGS = -lefence $(LIDIALFLAGS) -lm $(IOLIB) 
 LFLAGS = -lpari -L$(PARILIBDIR) $(LIDIALFLAGS) -lm $(IOLIB) 
@@ -63,12 +70,10 @@ install: sources
 	chmod a+r *
 	(cd $(INCDIR); rm -f $(HEADERS))
 	$(CP) $(HEADERS) $(INCDIR)
-#	chgrp curves $(INCDIR)/*.h
 	chmod a+r $(INCDIR)/*.h
 	rm -f $(LIBDIR)/$(LIBNAME)
 	ar r $(LIBDIR)/$(LIBNAME) $(OBJS)
 	$(RANLIB) $(LIBDIR)/$(LIBNAME)
-#	chgrp curves $(LIBDIR)/$(LIBNAME)
 	chmod a+rx $(LIBDIR)/$(LIBNAME)
 
 DISTFILES = arith.h xmod.h arith.cc marith.h marith.cc compproc.h compproc.cc conic.cc conic.h tconic.cc legendre.h legendre.cc tleg.cc interface.h templates.h timer.h timer.cc matrix.h mvector.h mat.h vec.h vector.h vector.cc vec.cc matrix.cc mat.cc mvector.cc quadratic.h quadratic.cc illl.h illl.cc mmatrix.h mmatrix.cc unimod.h hilbert.h hilbert.cc unimod.cc interface.cc gpslave.h gpslave.cc cubic.h cubic.cc sub.h sub.cc subspace.h subspace.cc parifact.h parifact.cc gf.h polys.h polys.cc realroots.h realroots.cc

@@ -1,6 +1,13 @@
 # File Makefile: architecture-independent elements of qcurves Makefile
 include ../Makefile
 
+# Useful targets:
+#
+# install:  builds library, puts it into ../lib and includes in ../include
+# tests:    builds various test programs
+# progs:    builds various useful programs
+#
+
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
 LIDIACFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
@@ -53,7 +60,7 @@ PROGCCS =  tcurve.cc tpoints.cc theight.cc tate.cc torsion.cc conductor.cc twist
 
 sources: $(HEADERS) $(DOTCCS) $(PROGCCS)
 
-TESTS = tcurve tpoints theight thtconst thtbound tegr telog tdivpol tperiods tsat tsat2 tsat3
+TESTS = tcurve tpoints theight thtconst tegr telog tdivpol tperiods tsat tsat2 tsat3 # thtbound
 tests: $(TESTS)
 
 PROGS = tate torsion conductor twist allisog findinf indep 
@@ -88,8 +95,7 @@ install_progs: progs #static_progs
 	   chmod 755 $(FTP_SUBDIR)/$${f}${EXE_SUFFIX}.gz; \
 	done
 
-
-install: install_progs install_lib
+install: install_lib
 
 DISTFILES = curve.h points.h reader.h curve.cc curvedata.cc curvered.cc \
             heights.cc points.cc mwprocs.h mwprocs.cc  \
@@ -135,14 +141,14 @@ qperiods: qperiods$(OBJ_SUF).o
 qpemu: qpemu$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o points$(OBJ_SUF).o
 	$(CXX)  -o $(BINDIR)/qpemu qpemu$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o points$(OBJ_SUF).o $(LFLAGS)
 
-tpoints: tpoints$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o heights$(OBJ_SUF).o cperiods$(OBJ_SUF).o
-	$(CXX)  -o $(BINDIR)/tpoints tpoints$(OBJ_SUF).o points$(OBJ_SUF).o heights$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o  cperiods$(OBJ_SUF).o $(LFLAGS)
+tpoints: tpoints$(OBJ_SUF).o  $(CURVELIBNAME)
+	$(CXX)  -o $(BINDIR)/tpoints tpoints$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
 
 telog: telog$(OBJ_SUF).o elog$(OBJ_SUF).o $(CURVELIBNAME)
 	$(CXX)  -o $(BINDIR)/telog telog$(OBJ_SUF).o elog$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
 
-theight: theight$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o heights$(OBJ_SUF).o cperiods$(OBJ_SUF).o
-	$(CXX)  -o $(BINDIR)/theight theight$(OBJ_SUF).o points$(OBJ_SUF).o heights$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o  cperiods$(OBJ_SUF).o $(LFLAGS)
+theight: theight$(OBJ_SUF).o  $(CURVELIBNAME)
+	$(CXX)  -o $(BINDIR)/theight theight$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
 
 tlambda: tlambda$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o heights$(OBJ_SUF).o lambda$(OBJ_SUF).o cperiods$(OBJ_SUF).o
 	$(CXX)  -o $(BINDIR)/tlambda tlambda$(OBJ_SUF).o points$(OBJ_SUF).o heights$(OBJ_SUF).o lambda$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o $(LFLAGS)
@@ -314,7 +320,7 @@ divpol$(OBJ_SUF).o: divpol.cc divpol.h points.h
 saturate$(OBJ_SUF).o: saturate.cc saturate.h divpol.h points.h pointsmod.h ffmod.h tlss.h
 tsat$(OBJ_SUF).o: tsat.cc saturate.h points.h pointsmod.h ffmod.h curvemod.h tlss.h
 tsat: tsat$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o pointsmod$(OBJ_SUF).o curvemod$(OBJ_SUF).o ffmod$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tsat tsat$(OBJ_SUF).o saturate$(OBJ_SUF).o\
+	$(CXX)  -o $(BINDIR)/tsat tsat$(OBJ_SUF).o saturate$(OBJ_SUF).o \
 	divpol$(OBJ_SUF).o pointsmod$(OBJ_SUF).o  curvemod$(OBJ_SUF).o ffmod$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
 tsat2$(OBJ_SUF).o: tsat2.cc saturate.h divpol.h points.h pointsmod.h ffmod.h curvemod.h
 tsat3$(OBJ_SUF).o: tsat3.cc saturate.h divpol.h points.h pointsmod.h ffmod.h curvemod.h htconst.h egr.h

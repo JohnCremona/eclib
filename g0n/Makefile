@@ -2,15 +2,22 @@
 
 include ../Makefile
 
+# Useful targets:
+#
+# tests: builds various test programs
+#
+#
+
 DOT_H = periods.h cusp.h homspace.h newforms.h nflist.h moddata.h oldforms.h symb.h fixc6.h pcprocs.h
 
 DOT_CC = h1bsd.cc newforms.cc symb.cc checkap.cc h1bsdc.cc homspace.cc nfcount.cc checkdegphi.cc h1clist.cc homtest.cc nflist.cc th1nf.cc cnf.cc h1curisog.cc hpcurve.cc nftest.cc tmanin.cc curvesort.cc h1curve.cc hpmcurve.cc oftest.cc tmaninx.cc cusp.cc h1degphi.cc lf1per.cc oldforms.cc tmaninxauto.cc fixc6.cc h1degphitex.cc pcurve.cc tnf2.cc fixforms.cc h1first.cc periods.cc vlift.cc g2.cc mhcount.cc pertest.cc getai.cc h1test.cc moddata.cc getoldeigs.cc hecketest.cc modtest.cc putoldeigs.cc h1.cc heegner.cc nfhpcurve.cc   
 
+HEADERS = $(DOT_H)
 sources: $(DOT_H) $(DOT_CC)
 
 TESTS = modtest homtest hecketest nftest tmanin # oftest h1test
 
-PROGS = tmanin tmaninx h1first h1bsd h1curve pcurve nfhpcurve h1degphi h1clist checkap h1bsd h1bsdc h1bsdcurisog #th1nf h1
+PROGS = tmanin h1bsd h1curve pcurve nfhpcurve h1clist checkap h1bsd h1bsdcurisog # h1degphi  h1bsdc
 
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
@@ -53,7 +60,7 @@ RANKLIBNAME = librank.a
 RANKLIBFLAG = -lrank
 endif
 endif
- 
+
 OBJS = cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o periods$(OBJ_SUF).o fixc6$(OBJ_SUF).o
 
 objs: $(OBJS)
@@ -69,7 +76,20 @@ $(G0NLIBNAME): $(OBJS)
 	ar r $(G0NLIBNAME) $(OBJS)
 	$(RANLIB) $(G0NLIBNAME)
 
-CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(LIDIACFLAGS) -I$(PARIINCDIR) -DMETHOD=$(METHOD) -DUSE_XSPLIT
+lib: $(G0NLIBNAME)
+
+install_lib: $(HEADERS) $(G0NLIBNAME)
+	(cd $(INCDIR); rm -f $(HEADERS))
+	for f in $(HEADERS); \
+	 do cp $${f} $(INCDIR); \
+	done
+	rm -f $(LIBDIR)/$(G0NLIBNAME)
+	cp $(G0NLIBNAME) $(LIBDIR)
+	chmod a+rx $(LIBDIR)/$(G0NLIBNAME)
+
+install: lib install_lib
+
+CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(LIDIACFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT
 LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(LIDIALFLAGS) $(IOLIB) -lm
 
 LIBFLAGS = $(LFLAGS)
@@ -292,38 +312,6 @@ h1isogbsd: h1isogbsd$(OBJ_SUF).o $(G0NLIBNAME)
 nfconvert: nfconvert$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o nfconvert nfconvert$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
 
-
-
-# NB the following must be made with the same arithmetic option (NTL,
-# LiDIA etc) set in ../qrank as in .
-
-QRANK_OBJS = ../qrank/mrank2$(OBJ_SUF).o    ../qrank/mquartic$(OBJ_SUF).o ../qrank/mlocsol$(OBJ_SUF).o\
-             ../qrank/mglobsol$(OBJ_SUF).o  ../qrank/sqfdiv$(OBJ_SUF).o   ../qrank/desc2$(OBJ_SUF).o\
-             ../qrank/transform$(OBJ_SUF).o ../qrank/minim$(OBJ_SUF).o    ../qrank/reduce$(OBJ_SUF).o\
-             ../qrank/bitspace$(OBJ_SUF).o
-
-qrank_objs: $(QRANK_OBJS)
-
-../qrank/mrank2$(OBJ_SUF).o:
-	cd ../qrank; make mrank2$(OBJ_SUF).o
-../qrank/mquartic$(OBJ_SUF).o:
-	cd ../qrank; make mquartic$(OBJ_SUF).o
-../qrank/mlocsol$(OBJ_SUF).o:
-	cd ../qrank; make mlocsol$(OBJ_SUF).o
-../qrank/mglobsol$(OBJ_SUF).o:
-	cd ../qrank; make mglobsol$(OBJ_SUF).o
-../qrank/sqfdiv$(OBJ_SUF).o:
-	cd ../qrank; make sqfdiv$(OBJ_SUF).o
-../qrank/desc2$(OBJ_SUF).o:
-	cd ../qrank; make desc2$(OBJ_SUF).o
-../qrank/transform$(OBJ_SUF).o:
-	cd ../qrank; make transform$(OBJ_SUF).o
-../qrank/minim$(OBJ_SUF).o:
-	cd ../qrank; make minim$(OBJ_SUF).o
-../qrank/reduce$(OBJ_SUF).o:
-	cd ../qrank; make reduce$(OBJ_SUF).o
-../qrank/bitspace$(OBJ_SUF).o:
-	cd ../qrank; make bitspace$(OBJ_SUF).o
 
 h1bsdcurisog: h1bsdcurisog$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o h1bsdcurisog h1bsdcurisog$(OBJ_SUF).o $(G0NLIBFLAG) $(RANKLIBFLAG) $(LFLAGS)

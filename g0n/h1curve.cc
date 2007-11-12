@@ -28,6 +28,7 @@
 #include "cusp.h"
 #include "homspace.h"
 #include "oldforms.h"
+#include "curve.h"     //from qcurves
 #include "cperiods.h"     //from qcurves, for computing conductors
 #include "newforms.h"
 #include "periods.h"
@@ -117,7 +118,7 @@ int main(void)
      bigfloat rperiod;
      Curve C = nf.getcurve(i, -1, rperiod, verb);
      Curvedata CD(C,1);  // The 1 causes minimalization
-     if(getdiscr(C)!=getdiscr(CD))
+     if(getdiscr(Curvedata(CD,0))!=getdiscr(CD))
        {
 	 cout << "Non-minimal curve = \t" << C << ", minimal curve = \t";
        }
