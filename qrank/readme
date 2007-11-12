@@ -1,0 +1,69 @@
+README file for programs mwrank, findinf, ratpoint
+
+There are three programs in this distribution, called mwrank, findinf
+and ratpoint.  The first two work on elliptic curves over Q given by
+Weierstrass equations with standard coefficients [a1,a2,a3,a4,a6].  If
+the input curve is non-minimal or non-standard (where standard means
+a1,a3 in {0,1} and a2 in {-1,0,1}) the input curve is replaced by a
+standard minimal model, and points found are transferred back to the
+original input model.  The programs tell you when the model is
+changed.
+
+In all cases there are 2 possible input formats for curves:
+
+[a1,a2,a3,a4,a6]
+a1 a2 a3 a4 a6
+
+So if the first character read is '[' it expects a single non-space
+delimiter between coefficients and one at the end; otherwise it
+expects 5 integers separated by space.  If the input is invalid the
+programs stop, so you can use 0 0 0 0 0 to end the input stream.
+
+
+findinf searches for points on the curves up to a given bound on the
+logarithmic height, using sieving.  One can opt for either seeing all
+points as they are found (verbose=1) or nothing until a final report
+(verbose=0); also, if verbose=1 then one can opt for a simple list of
+the points found, with no post-processing, or a full processing of the
+points to find linear dependencies between them using the height
+pairing.   The "regulator" output is just the regulator of the
+subgroup of points found.
+
+mwrank is described more fully in the file mwrank.doc.  Briefly,
+mwrank does a 2-descent to determine the rank and gives points
+covering the cosets of 2E(Q) in E(Q); depending on command-line
+options, it may go further and attempt to complete to a Mordell-Weil
+basis by doing further points searching as in findinf.
+
+ratpoint works with quartics g(x) with integer coefficients,
+g(x)=a*x^4+b*x^3+c*x^2+d*x+e.  It finds the Jacobian E of the curve
+C:y^2=g(x), searches C for rational points and maps any point found to
+E using the 2-covering map.  Current version quits as soon as one
+point on C is found.
+
+Systems supported:
+
+*Versions for Sun (SunOS 4) are in sun/mwrank.gz etc.
+*Versions for SGI (IRIX  5) are in sgi/mwrank.gz etc.
+*(1) Versions for DOS (386+ with coprocessor) are in dos/mwrank.exe etc.
+*Versions for Linux (ELF) are in linux/mwrank.gz etc.
+
+
+(1) Only has very OLD versions as I have not at present got access to
+a suitable DOS machine with GCC installed, sorry.
+
+Executables for systems other than alpha and intel-linux are out date.
+Sources: for gcc-2.7 and earlier use mwrank2.7.tar.gz, which does not
+require LiDIA (though is faster of you have it).  For gcc-2.8 use
+mwrank2.8.tar.gz which DOES require LiDIA for the multiprecision
+integers.  No source which works with gcc-2.9 is available yet.
+
+
+							John Cremona
+
+							 6/2/95
+						updated	 7/8/95
+						updated	12/1/98
+						updated	20/4/00
+
+						john.cremona@nottingham.ac.uk

@@ -1,0 +1,118 @@
+	COMMAND LINE OPTIONS FOR MWRANK
+
+Since December 1997, mwrank supports command-line options instead of
+prompting the user.  All options have reasonable defaults.
+
+List of command line options, their meaning and default values
+
+[q, l, t take no parameters; the others take an integer parameter "n"]
+
+-h	help		Displays a summary of this info and quits
+
+-q	quiet mode flag	
+			Suppresses the header information (including
+			the date of compilation) which is otherwise output
+			and should be included in any problem/bug reports).
+			Default is off (i.e. not quiet).  Also
+			suppresses prompting for curves.
+
+-v n	verbosity level	
+			Controls amount of output.  Range 0..3.
+			Default=1.  Level 0 only outputs the rank.
+			Use "-q -v 0" for minimal output, but note
+			that if you also have "-c n" with nonzero n
+			then you will cause a point search to be
+			carried out, but you will not see its results!
+			(Unless -o is used).
+			Details of point search only shown if
+			verbosity is > 1.
+
+-o	output pari	Outputs a very terse summary of the results
+			for use by PARI/GP with suitable interface.
+			Format: 
+			Either  [[r],[P1,P2,...,Pr]]
+			where r is the rank and P1,...,Pr are r
+			independent points;
+			or      [[r,r'],[P1,P2,...,Pr]]
+			where r and r' are lower and upper bounds
+			on the rank and P1,...,Pr are r
+			independent points;
+			Can be used in addition to other output
+			options (controlled by -v); for minimal useful
+			output use "-q -v 0 -o"
+
+-p n	precision (#dp)	
+			Only relevant for the LiDIA multiprecision
+			floating point versions.  Range 1..large,
+			default 15.
+
+-b n	height bound for quartic point search.  
+			Range 1..15, default 10.   5 is large enough
+			for many curves.
+
+-x n	number of auxiliary primes used for syzygy sieving.  
+			Range 0..,default 6.  Only relevant for curves
+			with no 2-torsion.  Only worth increasing
+			either for curves with large discriminant, or
+			for curves with suspected large rank r, for
+			which r+1 is a good value.
+
+-l	points output flag.  
+			Controls whether generating points are output.
+			Defaults to value of "verbosity", so the only
+			function is to turn this part of the output on
+			when verbosity is 0 (i.e. -v 0 -l).
+
+-t	quartic equivalence test flag.   
+			For debugging only.  Default off.
+
+-s      selmer_only     If set, does local tests on homogeneous spaces
+			only, which can be much quicker for curves
+			with 2-torsion.   NB for curves with no
+			2-torsion this computes the 2-Selmer rank
+			exactly;  for curves with 2-torsion it
+			computes an upper bound for the rank based on
+			various Selmer groups, possibly less than that
+			from the 2-Selmer group itself.
+			If unset (the default) then rational points
+			are sought, to give a lower bound for the rank
+			also. 
+
+-d     skip_2nd_descent Only relevant for curves with 2-torsion;
+			unset by default.  If set,  does no second
+			descent either locally or globally, which in
+			general gives a larger upper bound for the
+			rank and a smaller lower bound.
+			I recommend setting this if using mwrank with
+			no multiprecision floating point arithmetic.
+
+-S     saturation_bound (non-negative integer or -1) controls saturation
+			0: do no saturation at all
+			n: use n as upper bound for saturation primes
+			-1: allow progam to determine upper bound
+			autimatically (but that will be reduced to a
+			default maximum of 100 if it is greater)
+
+OBSOLETE option(s) which no longer have any effect:
+
+-c n	height bound for curve point search.  
+			This controls the point search after 2-descent.
+			Range: -1,0,1..15 (default=0)
+			(larger values take a very long time, and
+			probably cause overflow owing to a technical
+			problem which I have not yet fixed, so the
+			program currently uses 15 if you give it any
+			value > 15).
+			If -1, then the program attempts to compute a
+			suitable value which would guarantee that the
+			full MW group was found, but this feature is
+			not at all efficient, can easily lead to
+			bounds >15 and hence problems, so the
+			truncation at 15 is applied if necessary.
+			If 0 (default) then no point search is done.
+
+NB If this value is nonzero then you should have a nonzero value for
+-v and/or the option -o switched on, otherwise the program carries out
+a point search but you do not see its results, only the rank!
+
+

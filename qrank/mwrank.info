@@ -1,0 +1,315 @@
+Program mwrank: uses 2-descent (via 2-isogeny if possible) to
+determine the rank of an elliptic curve E over Q, obtain a set of
+points which generate E(Q) modulo 2E(Q), and finally "saturate" to a
+full Z-basis for E(Q).  For details of (some) algorithms see the
+author's book.  Please acknowledge use of this program in published
+work, and send problems (and preprints!) to
+John.Cremona@nottingham.ac.uk.
+
+For changes since first distribution the file mwrank.changes.
+For command line options, see the file mwrank.options.
+
+	MWRANK vs. MRANK
+
+There used to be two separate programs called mwrank and mrank; they
+both did the same 2-descent, but mwrank also went on to enlarge the
+subgroup of rank r found to give the full Mordell-Weil group by
+searching for rational points on E up to a certain naive height.  This
+latter procedure was not very efficient, and to avoid reports of known
+problems at this stage I put a ceiling on this search at 15
+(=logarithmic naive height).  This means that in many cases the points
+finally output were NOT guaranteed to be a basis for E(Q) (but the
+output should say this).
+
+As of Jan 2005, the saturation stage is done much more efficiently
+using the "saturation sieve" method.
+
+Now there is only one program mwrank.  Saturation is done unless the
+generating points are not going to be output (e.g. with command-line
+flags -v 0 and neither -l nor -o).
+
+
+A	HOW TO USE MWRANK
+
+1. Options
+
+All options and parameter adjustments are now made via command line
+options: see the file mwrank.options for details, or run 
+	mwrank -h
+which displays the options briefly and exit.
+
+2. Curve input
+
+The input consists of one or more curves, in the format
+	a1 a2 a3 a4 a6
+(separated by whitespace), or
+	[a1,a2,a3,a4,a6]
+These can of course be from a file, as in
+	mwrank < curves.in
+To end the input either use a "null curve" [0,0,0,0,0] or EOF
+(e.g. Control-d at the terminal).
+
+The input coefficients MUST be integers:  attempting to input
+non-integral rationals including the '/' symbol will cause an error
+message to be output and the program will abort.
+
+The curves are prompted for, unless verbosity is set to 0.
+
+For example, given the input file r5.in containing
+
+0 0 1 -79 342
+0 0 1 -169 930
+0 1 1 -30 390
+0 0 1 -301 2052
+0 0 1 -457 3786
+
+the command
+	mwrank -q -v 0 < r5.in
+produces the output (the first line and time format may be different)
+===
+
+Curve [0,0,1,-79,342] :  Rank = 5
+Curve [0,0,1,-169,930] :  Rank = 5
+Curve [0,1,1,-30,390] :  Rank = 5
+Curve [0,0,1,-301,2052] :  Rank = 5
+Curve [0,0,1,-457,3786] :  Rank = 5
+===
+adding "-l" to the parameters will cause the generators and regulator
+to be output; 
+adding "-o" results in an abbreviated form of output to be output also
+for post-processing by Pari; for the first curve above it gives
+[[5],[[3,11],[43,276],[45,296],[62,483],[92,878]]]
+
+3. There are two types of point search carried out by mwrank.
+
+(a) On the homogeneous spaces which represent elements of the
+appropriate Selmer group, called "quartics" in the program (they have
+equations y^2=g(x) where g is quartic).  Here existence of rational
+points is necessary for the homogeneous space to come from a point on
+the curve rather than an element of the Tate-Shafarevitch group.  The
+bound used is a bound on the logarithmic height.  If
+(x,y)=(u/w,v/w^2) it is a bound on max(log|u|,log|w|).  
+
+The default value is 10; to change the default to (say) 12 use
+command-line option "-b 12".  Warning: increasing this bound even by 1
+can increase the running time considerably when there really are
+homogeneous spaces with no rational point (but with points everywhere
+locally, of course).  I would not recommend setting this to more than
+15: even if you are "sure" that the quartic has a rational point,
+other methods such as higher descents are probably better to find such
+large points.
+
+For entirely logical reasons it can also happen that reducing the
+value of this parameter can increase the running time -- and vice
+versa.  So while 10 is the default it is sometimes worth running with
+a smaller value.  (In the above examples, -b 1 works just as well, in
+the same time).
+
+If the curve has rational 2-torsion, then the search on the first
+descent curves has a bound of at most 6 (less if you set it using -b),
+and then a second descent is used if necessary, where the full bound
+is used.
+
+NB During the second descent, part of the quartic reduction process
+works much better using multi-precision floating point arithmetic, but
+the distributed (executable) version of the program does not have
+this.  The reason: my programs currently either use multi-fp for ALL
+fp arithmetic, or for NONE; and turning it on (which is a simple
+compiler switch) slows down other parts of the program a lot, so for
+most curves it is better to have it off.  Ask me for a multi-fp
+version if you want one, or build your own from the sources, using
+LiDIA.
+
+(b) [OBSOLETE since Jan 2005: the -c flag has no effect as saturation
+is now done differently.] if the parameter -c is set to a nonzero
+value, then after the 2-descent when we (should) have points covering
+the cosets of 2E(Q) in E(Q) a further search is done, on the curve
+itself, up to a certain bound on the logarithmic height.  The program
+computes a suitable bound such that if it searches that far you are
+guaranteed to have the full Mordell-Weil group.  You can use this
+value by entering "-c -1", BUT for many curves it will not be
+practical to search that far.  So I have put a ceiling on this of 20
+(this can be changed: see the source file mwrank.cc, macro
+MAX_HEIGHT).  You can put your chosen bound on it with the
+command-line option -c, for example "mwrank -c 5 ...".
+
+OLD WARNING USED TO SAY: this is currently one of the weakest parts of
+the program.  There are more intelligent ways of expanding the
+subgroup of full rank to the full M-W basis, but I have not
+implemented them.  So you are recommended to give a small value for a
+first run (or even 0, i.e. leave it as the default in which this step
+is omitted entirely)
+
+BUT a "more intelligent way" _has_ now been implemented!
+
+
+B. WHAT IT DOES
+
+There are two main sub-cases depending on whether the curve has a
+point of order 2 or not.  If so, it uses the 2-isogeny in the
+well-known way, and can list the quartics to be considered with little
+trouble.  Then the only difficulty is finding rational points on them.
+I have successfully run curves of rank 13, such as Fermigier's
+	[0,36861504658225,0,1807580157674409809510400,0]   
+and also his rank 14 curve
+	[0,2429469980725060,0,275130703388172136833647756388,0]
+and most recently (2001) Dujella's rank 15 curve
+        [1,0,1,34318214642441646362435632562579908747,3184376895814127197244886284686214848599453811643486936756]
+all of which take less than 30 seconds with default parameters on 
+an 800MHz Athlon.
+
+If there is no 2-torsion it goes back to the original
+Birch-Swinnerton-Dyer method, which involves searching for the
+quartics, and eliminating equivalent ones.  The search region can be
+very large if the curve coefficients are large.  Also the search is
+divided into between 1 and 4 sub-searches.   Recent developments make
+this rather more efficient, (a) by improving the bounds, (b) by using
+a quadratic sieve in the search for quartics, and (c) by using maps to
+E(Qp)/2E(Qp) for certain auxiliary primes p.  
+
+NB One effect of the last-named feature is that the program usually
+finds generators for E(Q)/2E(Q) rather than a complete set of coset
+representatives.   In general, it will express E(Q)/2E(Q) as a direct
+sum A+B, and will give all nonzero elements of A and generators for B
+(the output will explain this when it occurs).   The points in A are
+those which lie in 2E(Qp) for all the auxiliary primes used.   For
+curves of higher rank one can increase the number of primes used from
+the default of 6 to something a little higher than the suspected rank,
+using the option "-x 8" say.  This does carry a little overhead.
+
+Example: The curve [0,0,0,-9217,300985] has rank 7 and runs very
+quickly.  With the default ("-x 6") we find three nonzero points in A,
+so rank(A)=2, and 5 generators of B, so rank(B)=5 and the total rank
+is 2+5=7.  With "-x 9" this becomes 1+6=7, and with "-x 10" we have
+A=0.  (These runs all took approx 3.8 seconds on my P90).
+
+After this stage we know the rank (either certainly, if all the
+everywhere-locally-soluble homogeneous spaces have rational points, or
+conditionally, if we have decided that some of them do not but have
+not proved that).  Next, from each homogeneous space with a point we
+compute a point on the original curve.  This gives a set of between r
+and 2^r-1 points (depending on how the rank is divided between the
+groups A and B defined above) covering the non-trivial cosets of 2E in
+E (when there is no 2-torsion), and a more complicated set of points
+when there is 2-torsion, also covering these cosets.
+
+[If nothing else, this gives one way of finding points on curves.  For
+example the curve [0,0,0,0,-618] has rank 2, generated (up to finite
+odd index) by 
+	[19 : -79 : 1] of height 3.21143 and 
+	[550688955674 : 2182722347909 : 31136956136] of height 19.2662.
+A simple point search would take a very long time to find that second
+generator!] 
+
+The third stage is to "saturate", i.e. enlarge the group of points
+found to a basis for the full Mordell-Weil group (so far we have a
+subgroup of finite ODD index).  This stage (the "infinite descent") is
+now much more efficient than it used to be, but might still take a
+little time especially for curves of larger rank.  It is possible that
+saturation might fail at some primes (i.e. at some prime p which could
+divide the index) in which case a warning will be output.  The
+command-line flag -S may be used to change the default saturation
+behaviour:  see file mwrank.options.
+
+Note that if the 2-descent has not been entirely conclusive
+(e.g. non-trivial III[2]) then the subgroup of points found will be
+saturated within the MW group, but saturation will never increase the
+rank.
+
+There are two ingredients in the saturation process: (1) determine an
+upper bound for the "saturation index", i.e. the index of (subgroup
+generated by) the known points in its saturation, and (2) for each
+prime p up to this bound, either prove that the points are already
+p-saturated, or enlarge by index p (repeatedly if necessary) until
+p-saturated.  For some curves (notably those of high rank, such as the
+rank 15 curve in the test data) the index bound computed by the
+program is much too large for stage (2) to be practical (in that
+example the bound is nearly 10^50, for example).  In this case the
+program will by default issue a warning (containing the index bound
+computed) and only saturate at primes up to 100.  That bound can be
+increased using the command-line option -S.  Alternatively, saturation
+can be turned off entirely using "-S 0".  Also, if no points are to be
+output (i.e. with option -v 0 and neither -l nor -o) then no
+saturation is done as there is obviously no point.  For stage (2)
+there is usually no problem, but if the program determines that the
+points are not p-saturated then it constructs a rational point P which
+is (probably) p times another rational point Q, and tries to divide P
+by p using the elliptic logarithm and exponential functions.  This may
+fail if the precision is not high enough (for example with the rank 15
+curve, the points found are not 3-saturated and require 2 steps of
+3-saturation to gain index 9; but this only works with the LiDIA
+multi-precision version and at least 100 decimals (-p 100)).
+
+Saturation was implemented during 2004 and added to mwrank in January
+2005;  bug reports are of course welcome.
+
+ARITHMETIC
+
+mwrank and friends need to use a multi-precision integer package.  The
+only ones recognised are libg++ (which has disappeared from gcc since
+2.8), LiDIA and NTL.  If you compile the source code, the
+configuration program will need to know where you have one of these
+installed.  The binaries will tell you when they start up which
+arithmetic they are using (unless you use the quiet flag "-q").  [This
+feature will not appear in binaries compiled before August 2000.]
+
+There are several versions of the linux binaries for mwrank:
+mwrank_ntl (uses NTL arithmetic but no multi-precision floating
+point), mwrank_n (uses NTL arithmetic and multi-precision floating
+point), mwrank_li (uses LiDIA arithmetic but no multi-precision
+floating point), mwrank_l (uses LiDIA arithmetic and multi-precision
+floating point).  All have been compiled as static so you do not have
+to have any libraries installed to run them.
+
+It is recommended that you use the multi-precision versions for curves
+with large coefficients; otherwise results may be wrong.
+
+You can aid the factorization of large integers in several ways:
+
+(a) If you have the PARI/GP installed (it checks for the existence of
+$PATH_TO_GPgp, or /usr/local/bin/gp if the environment variable
+PATH_TO_GP is not set; i.e. the default value is /usr/local/bin/ (with
+the trailing /)) then factorization will be done by GP using its
+factor() function.  This will cause (small) temporary files to be
+created in /tmp which will be deleted after use (though not if the
+program is aborted by the user).
+
+(b) By default the programs initialise an array of primes < 10^6, so
+will fail to factor some numbers > 10^12 by trial division.  This
+default can be increased as follows: create a file called MAXPRIME
+containing a single integer, such as 2000000 or 10000000.  Then this
+will be used instead of the default.
+
+(c) If a file called PRIMES exists in the current directory,
+containing zero or more prime numbers (separated by whitespace,
+e.g. one per line), then the programs read this in at the start and
+use these for trial division as well as the main prime array.  No
+check is made that these numbers are prime.  This is an advantage if
+you make several runs with the same curve which has a discriminant
+which is hard to factor, since you can avoid doing the hard work more
+than once.  Any other primes found during the run are added to the
+list, and the updated list is output to PRIMES at the end.
+NB This will cause problems if you do not have write permission in the
+current directory!
+
+DISCLAIMER
+
+You are welcome to use the program as is.  There have been bugs and
+certainly there still are some.  The program can and will be improved.
+Please report strange behaviour to me in a reasonable way (you must
+say when you got your copy of the program and include an input file
+which gives the problem); I do not guarantee to do anything about it
+-- I am busy and this is not a commercial package! -- but I will do my
+best.  I particularly reserve the right NOT to deal with problems
+which are machine-dependent!
+
+
+							John Cremona
+							3 February 1995
+						updated	12 January 1998
+						updated	25 September 2000 
+						updated	 5 July 2001 
+						updated	12 November 2003
+						updated	 5 January 2005
+						updated	10 May 2005
+

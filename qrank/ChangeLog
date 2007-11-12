@@ -1,0 +1,1562 @@
+2006-09-04  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* targets, mwrank.changes: Updated August 2006
+
+2006-02-01  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* desc2.cc: cosmetic output/debugging  differences
+
+2006-02-01  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* desc2.cc: cosmetic output/debugging  differences
+
+2006-01-03  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* mwrank.changes, mwrank.doc, mwrank.info: Updated Sept 2005
+
+2005-09-25  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* mrank1.cc:
+	Improved ROUNDUP and ROUNDDOWN functions (now inline, not macros) so
+	they abort when argument does not fir in long, for better debugging
+	and error-catching in SAGE
+
+	* mrank1.cc, mrank2.cc, qc.cc, testtwo.cc, options.h:
+	replaced exit with abort
+
+2005-07-21  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* targets: added -lpari and tidied make dist
+
+	* mrank1.h, mrank1.cc: removed nrootscubic, now in procs
+
+2005-06-03  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* minim.cc: minor bug fix (typo)
+
+2005-05-13  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* descent.h: Added 2 includes at William Stein's request for SAGE
+
+2005-05-10  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* Makefile: Added support for NTL_ALL
+
+	* bitspace.cc, bitspace.h, d2.cc, desc2.cc, desc2.h, descent.cc, descent.h, getcurve.cc, getcurve.h, mequiv.cc, mequiv.h, mglobsol.cc, mglobsol.h, minim.cc, minim.h, mlocsol.cc, mlocsol.h, mquartic.cc, mquartic.h, mrank1.cc, mrank1.h, mrank2.cc, mrank2.h, msoluble.h, mwrank.cc, mwrank.changes, mwrank.info, mwrank.readme, options.h, qc.cc, qc.h, ratpoint.cc, reduce.cc, reduce.h, sqfdiv.cc, sqfdiv.h, targets, tmrank.cc, transform.cc, transform.h, twoadic.cc, twoadic.h, version.cc, version.h:
+	Standardised header and added copyright and GPL text
+
+2005-05-09  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* reduce.cc: Added support for NTL_ALL using NTL's RR class
+	Changed RR() to R_invariant() and HH() to H_invariant() to avoid name
+	conflict
+
+	* targets, Makefile, mwrank.cc:
+	Added support for NTL_ALL using NTL's RR class
+
+	* mrank1.cc: Added support for NTL_ALL using NTL's RR class
+	Changed solution of resolvent cubic in case Disc<0 so that the real
+	root is computed as such
+
+	* mquartic.cc, mquartic.h:
+	Added support for NTL_ALL using NTL's RR class
+	Changed RR() to R_invariant() and HH() to H_invariant() to avoid name
+	conflict
+
+	* mlocsol.cc, mglobsol.cc:
+	Added support for NTL_ALL using NTL's RR class
+
+2005-04-25  Prof. J. E. Cremona  <jec@fermat.maths.nottingham.ac.uk>
+
+	* descent.cc: slight change in output
+
+	* descent.cc:
+	Added a preliminary search for points after the 2-descent and before
+	saturation.  Current height bound set to 10.  Also the saturation
+	itself now knows not to bother with a 2-saturation.
+
+2005-04-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* descent.cc:
+	Added a preliminary search for points after the 2-descent and before
+	saturation.  Current height bound set to 10.  Also the saturation
+	itself now knows not to bother with a 2-saturation.
+
+2005-04-24  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* descent.cc: slight change in verbose output
+
+2005-03-28  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: added descent.o to lib objs
+
+	* version.cc: corrected message output when LiDIA_INTS is in force
+
+	* mwrank.cc: cosmetic (added a newline to pari output)
+
+	* mrank1.cc: cosmetic
+
+2005-03-20  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mrank1.cc:
+	put in a safety check before applying sqrt() to const3 in case
+	rounding makes it negative
+
+2005-03-05  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: aded descent.h/cc
+
+	* tmrank.cc, mwrank.cc:
+	Simplified now that all the work is done within the class
+	two_descent in descent.h/cc
+
+	* descent.cc: Implementation of classes rank12 and two_descent
+
+	* descent.h:
+	New classes: rank12, a common base for rank1 and rank2;  two_descent,
+	a class to do 2-descent and saturation and other output functions
+	previously done in mwrank.cc
+
+	* mrank2.h, mrank2.cc, mrank1.cc, mrank1.h:
+	Now uses base class rank12 from descent.h
+
+2005-02-23  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tequiv.cc: replace some obsolete longlist & bigintArray things
+
+2005-01-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mwrank.readme: minor
+
+	* mwrank.options: added -S option
+
+	* mwrank.info: Added better explanation of saturation procedure
+
+	* tmrank.in: added a rank 15 test curve
+
+	* targets:
+	added targets test1, test2 for (1) running tmrank on tmrank.in and (2)
+	running mwrank on tmrank.in with last field stripped, outputting the
+	generators in pari format (so doing saturation)
+
+	* mwrank.cc:
+	implemented saturation bound, controlled by command-line option -S, to
+	set an upper bound for saturation primes other than the default which
+	is min(100,index_bound)
+
+	* options.h:
+	added saturation_bound field and corresponding command-line option -S
+
+2005-01-08  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* options.h: Removed option -c which is no longer used.
+
+	* mwrank.readme: 1. Update to cover new saturation action
+	2. Update of systems supprted (binaries only for linux)
+
+	* mwrank.options:
+	General update, and removal of -c option which is no longer used now
+	that better saturation is done.
+
+	* mwrank.cc:
+	Better output of saturation info including index gain and regulator
+	before & after (only if verbose>0)
+
+	* mwrank.cc: Quits after 2-descent if fail flag set
+
+	* mrank1.cc:
+	Added code to abort if a-range is over 1000 -- currently commented out.
+
+2005-01-07  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mwrank.info, mwrank.changes: Jan 05:  added saturation
+
+	* targets:
+	Added OBJ_SUF to .o filenames to avoid recompilation for different
+	values of ARITH
+
+	* mwrank.cc:
+	Instead of saturating at p<20, now saturates completely and
+	automatically using the functionality of the saturator class.
+	Warnings are issued if saturation at some primes failed.
+
+2004-09-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mquartic.cc:
+	Removed code for safe_sqrt() as that is now in reaqlroots.h/cc
+
+	* mquartic.h: Added #include realroots.h (for safe_sqrt)
+
+2004-09-05  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mwrank.cc: Only outputs message about arithmetic used when verbose >0
+
+2004-06-19  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mglobsol.cc: Commented out debuggin code
+
+2004-05-29  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mglobsol.cc: debuggind code
+
+	* mglobsol.h: corrected point process return value
+
+2004-05-28  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* ratpoint.cc: force initprimes to run with verbose=0
+
+2004-05-15  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: added -pg flags (now commented out)
+
+	* mwrank.cc: Added output (if verbose) about saturation
+
+2004-05-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: put -lcurvesntl before -ljcntl as it should be!
+
+	* mwrank.cc: Added comment that output points are p-saturated for p<20
+
+	* mrank1.cc: Changed pow(-,1/3) to exp(log(-)/3) to avoid gcc-3.3 bug
+
+2004-04-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mglobsol.cc, mglobsol.h:
+	adapted for change in sieve_search class: now has maxnpoints parameter
+
+2004-04-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mglobsol.cc, mglobsol.h:
+	adapted for change in sieve_search class: now has maxnpoints parameter
+
+2004-03-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mwrank.info:
+	Small amendment to instruction for using pari/gp factorization
+
+	* targets: removed some redundancies
+
+2003-11-11  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* desc2.cc:
+	Some diagnostics commented out and some better error message;
+	nothing of importance.
+
+2003-09-26  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* version.cc: NTL opening message no longer mentions factorization
+
+	* mwrank.info:
+	Updated info concerning (1) the various binary versions (including
+	static ones) and (2) factorization strategies.
+
+	* targets: Make sure installed programs are executable by all
+
+2003-06-11  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets:
+	"make install" now makes both dynamic and static binaries, the latter having suffix _sta
+
+2003-06-06  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* getcurve.h: Adding getcurve.h which got lost
+
+2003-06-05  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* qc.h: Adding qc.h which seems to have got lost...no changes
+
+2003-04-12  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* Makefile: resolved superficial conflict
+
+2003-04-11  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* equiv.h, getcurve.h, log2.h, qc.h, quartic.h, rank1.h, rank2.cc, rank2.h, soluble.cc, soluble.h, sqftest.cc, trank.cc, equiv.cc, log2test.cc, m1rank.cc, mrank1.6i7j.cc, mrank1.new.cc, oldmrank1.h, process.cc, quartic.cc, rank.cc, rank1.cc, oldmrank1.cc:
+	moved obsolete files to ../qrank_obs
+
+	* targets: tidy up and correct typo
+
+	* Makefile: defines PROGSDIR
+
+	* Makefile, targets: trivial
+
+2003-04-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: no longer use BINDIR
+
+	* targets, Makefile: use CC and CXX properly
+
+	* ChangeLog, targets, Makefile: New file.
+
+	* options.h: updated usage response
+
+2003-04-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* targets, Makefile: New file.
+
+	* options.h: updated usage response
+
+2002-12-06  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* desc2.cc:
+	Improved criterion for reduction of second descent quartics, to avoid
+	repeating when reduction leads to no change.
+
+2002-10-31  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank2.cc: changed bound on first descent search to (max) 8 from 6
+
+	* mrank2.cc:
+	deleted misleading comment about parity in the "uncertain" case
+
+	* mwrank.cc:
+	deleted erroneous comment about parity in the 2-torsion case.
+
+2002-10-21  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* fpptest.cc: Added "using namespace std;" for gcc 3
+
+	* ratpoint.cc: verb=1 now gives verbose local solubility too.
+
+	* tred.cc: Changed bigintArray to vector<bigint>
+
+2002-10-19  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank2.cc: Some cosmetics, proper output of some debgging info
+	Avoid use of erase() vector function
+
+	* reduce.cc: cosmetic
+
+	* mlocsol.cc:
+	clarified local_sol verboseoutput, improved debugging code.
+
+	* desc2.cc: Improved test for "better" reduction
+
+2002-09-24  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* reduce.cc:
+	Changed if(disc>0) to if(is_positive(disc)) as before the results were
+	_random_!
+
+2002-09-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank2.cc: updated handling of bad primes lists
+
+	* mrank1.cc:
+	Avoid calling function concat() -- once only -- as we have deleted it!
+
+	* desc2.cc: Changed merge_to_first() calls into the new vector_union()
+
+2002-09-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* desc2.cc: eliminated use of locate()
+
+	* mrank1.cc:
+	eliminated use of locate(), now use set_union to ensure 2,3 are in
+	plist
+
+2002-09-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* congno.cc: 1. stl-ised
+	2. changed input file from silver.h to htconst.h
+
+	* mwrank.cc: changed input file from silver.h to htconst.h
+
+	* blank.cc: 1. stl-ised
+	2. changed input file from silver.h to htconst.h
+
+	* tsilver.cc:
+	rewrite to handle large-scale test of silverman v. siksek bounds
+	Moved to ../qcurves/thtconst.cc
+
+	* silver.cc: New implementation of siksek constant
+
+	* silver.h: moved to ../qcurves/htconst.h
+
+2002-09-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* congno.cc: 1. stl-ised
+	2. changed input file from silver.h to htconst.h
+
+	* mwrank.cc: changed input file from silver.h to htconst.h
+
+	* blank.cc: 1. stl-ised
+	2. changed input file from silver.h to htconst.h
+
+	* tsilver.cc:
+	rewrite to handle large-scale test of silverman v. siksek bounds
+	Moved to ../qcurves/thtconst.cc
+
+	* silver.cc: New implementation of siksek constant
+
+	* silver.h: moved to ../qcurves/htconst.h
+
+2002-08-30  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* ratpoint.cc:
+	Changed g.geta()>0 to g.geta()>BIGINT(0) since the former started
+	evaluating to 0 even when the (bigint) g.geta() was positive!
+
+2002-08-23  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* silver.cc: temporarily commented out new Siksek bound code
+
+	* d2.cc: *** empty log message ***
+
+	* ahsieve.cc, blank.cc, testtwo.cc, thilbert.cc, timer.cc, tlog2.cc, tred2.cc:
+	New file.
+
+	* desc2.cc, mequiv.cc, mglobsol.cc, minim.cc, mlocsol.cc, mquartic.cc, mrank1.cc, mrank2.cc, mwrank.cc, ratpoint.cc, reduce.cc, silver.cc, sqfdiv.cc, transform.cc, tsilver.cc:
+	adapted for stl/libg++-3
+
+	* timer.h: New file.
+
+	* desc2.h, mequiv.h, minim.h, mlocsol.h, mquartic.h, mrank1.h, mrank2.h, silver.h, sqfdiv.h:
+	adapted for stl/libg++-3
+
+2002-07-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* d2.cc: updated precision setting
+
+	* reduce.cc: added an abs() to a sqrt() for safety
+
+2002-07-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* d2.cc: updated precision setting
+
+	* reduce.cc: added an abs() to a sqrt() for safety
+
+2002-07-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* desc2.cc: added some debugging output
+
+	* mrank1.cc: adapted for gcc-3.1
+
+	* mrank2.cc:
+	1. encapsulated local descent so that all 3 isogenies can be used where
+	present, with only the one giving the best rank bound continuing to
+	global descent
+
+	2. finds and uses all torsion
+
+	* mrank2.h:
+	encapsulated local descent so that all 3 isogenies can be used where
+	present, with only the one giving the best rank bound continuing to
+	global descent
+
+	* version.cc, twoadic.cc, transform.cc: adapted for gcc-3.1
+
+	* tmrank.cc: cosmetic output changes
+
+	* reduce.cc, mquartic.cc, minim.cc, d2.cc, bitspace.cc:
+	adapted for gcc-3.1
+
+2002-06-24  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tred.cc: trivial
+
+2001-10-26  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank1.cc:
+	Added code to split the search for quartics with a>0 into first square
+	a, then non-square a.  Controlled by compiler flag SQUARE_A_FIRST.
+
+	* fpptest.cc: added  a line make_monic()
+
+	* mlocsol.cc: some debuging lines inserted, commented out.
+
+	* congno.cc: minor
+
+	* mrank2.cc:
+	removed calls to testbit() and setbit(), replacing with inline code
+
+2001-09-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tequiv.cc: New file.
+
+2001-08-14  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* fpptest.cc: *** empty log message ***
+
+	* fpptest.cc: New file.
+
+	* tred.cc, tmrank.cc, sqfdiv.cc, reduce.cc, qc.cc, options.h, mwrank.cc, mrank2.cc, mrank1.cc, mquartic.cc, minim.cc, mglobsol.cc, desc2.cc:
+	Cosmetic changes to satisfy -Wall
+
+2001-08-08  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* congno.cc: New file.
+
+2001-07-30  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* version.cc: Changed flag from LiDIA to LiDIA_ALL
+
+	* tred.cc, tmrank.cc: Uses new set_precision() interface
+
+	* mwrank.cc: Changed flag from LiDIA to LiDIA_ALL
+
+	* mrank1.cc:
+	Cospetic, + commented out redundant definitions of lfloor etc
+
+	* mlocsol.cc:
+	Must include LiDIA polynomial stuff if either LiDIA_INTS or LIDIA_ALL
+	are defined
+
+2001-07-27  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mlocsol.cc: 1. changed flag from LiDIA to LiDIA_ALL
+	2. reinstituted polynomial-based local solubility test under LiDIA
+	3. cosmetic
+
+	* mglobsol.cc: changed flag from LiDIA to LiDIA_ALL
+
+2001-07-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mwrank.readme: Update 5/7/01
+
+	* mwrank.options: Update 5/7/01: added -s and -d
+
+	* mwrank.info: Update 5/7/01
+
+	* mrank2.cc:
+	Does not minimise the model for the 2-isogenous curve, since this is
+	not needed in the program (and was only being done with verbose
+	output) and just occasionally causes a long hold-up....
+
+2001-07-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mwrank.readme: Update 5/7/01
+
+	* mwrank.options: Update 5/7/01: added -s and -d
+
+	* mwrank.info: Update 5/7/01
+
+	* mrank2.cc:
+	Does not minimise the model for the 2-isogenous curve, since this is
+	not needed in the program (and was only being done with verbose
+	output) and just occasionally causes a long hold-up....
+
+2001-06-13  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank2.cc:
+	When there are 3 2-torsion points, they are ordered and the one with
+	the smallest root is used.  Otherwise the order was not consistent
+	between machines.
+
+2001-06-13  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank2.cc:
+	When there are 3 2-torsion points, they are ordered and the one with
+	the smallest root is used.  Otherwise the order was not consistent
+	between machines.
+
+2001-06-12  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mlocsol.cc: Changed CROSS_OVER_P to 100 (was 3 for testing!)
+
+	* mlocsol.cc:
+	Added implementation of Siksek's local solvability under NTL_INTS
+
+	* mlocsol.cc: commented out debug output line
+
+	* mlocsol.cc: 1. Added Hilbert symbol tests for efficiency when b=d=0
+	2. Small efficiency gain for large primes -- urgently needs improving!
+
+	* mlocsol.h, mrank2.cc: cosmetic only
+
+	* desc2.cc: Added Hilbert symbol tests for efficiency
+
+2001-06-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* desc2.cc: bugfix: with selmer_only, was returning 0 prematurely
+
+	* mrank2.cc: minor change to keep NTL happy
+
+	* tmrank.cc: Added SELMER_ONLY facility, as a compiler switch
+
+	* mwrank.cc:
+	added selmer_only and do_second_descent flags (independent of each
+	other), using command line options -s (to turn on selmer_only flag)
+	and -d (to turn off do_second_descent flag, only relevant for curves
+	with 2-torsion).
+
+	* mrank2.cc:
+	added selmer_only and do_second_descent flags (independent of each
+	other).  Changed strategy so we do (1) first local descent; (2) second
+	local descent; (3) first and second global descents.  Stage (3)
+	omitted if selmer_only;  stages (2) and (3b) omitted if not
+	do_second_descent.
+
+	* mrank2.h: added selmer_only and do_second_descent flags in class and
+	constructor;  added arrays els2gens0/1.
+
+	* mrank1.cc:
+	added selmer_only facility, mainly in ::addquartic() and in output functions
+
+	* mrank1.h: added selmer_only flag in class and in constrcutor
+
+	* desc2.cc: added selmer_only flag;  some other cosmetic changes
+
+	* desc2.h: desc2() now has a selmer_only flag parameter, default 0
+
+	* mquartic.cc:
+	added safe_sqrt function to avoid rounding error embarrassments
+
+	* tsilver.cc: removed redundant include of builtin.h
+
+	* options.h: Added selmer_only option, default 0, flag -s switches to 1
+	Added do_second_descent option, default 1, flag -d switches to 0
+
+	* d2.cc: allows selmer_only option, just to test if a quartic has ELS
+	descendants
+
+	* bitspace.cc:
+	added bitmask field and mask() member function, updated by augment()
+
+	* bitspace.h: added bitmask field and mask() member function
+
+2001-05-30  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* options.h: cosmetic only
+
+2001-04-24  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* d2.cc:
+	Added optional switch (prompted for at run time) as to whether all
+	points or just the first are wanted
+
+	* desc2.cc:
+	Added use of factorbase to pass to conic-solver, thus avoiding
+	repeated unnecessary factorizations
+
+	* mrank1.cc: minor output  change
+
+	* twoadic.cc: Corrected reduction-mod-8 bug
+
+2000-10-16  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank1.cc:
+	Corrected bug whereby pivot flags were updated when there was no
+	pivoting prime after finding a large quartic.
+
+2000-10-14  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* twoadic.cc:
+	use posmod(,) when reducing a bigint mod 2,4,8 to keep compiler
+	happy.
+
+2000-10-13  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* twoadic.cc, twoadic.h: New file.
+
+2000-09-25  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mwrank.info: Minor.
+
+	* mwrank.changes: 20. Large quartic handling
+
+	* mrank1.cc, options.h: Changing DEFAULT_NAUX from 6 to 8
+
+	* tmrank.cc:
+	Error output goes to cerr not cout so it can be picked up when output
+	is redirected to /dev/null
+
+	* mrank1.cc: Remembered to comment out some debugging ouput
+
+	* mrank1.cc:
+	Major upgrade to optimise handling of large quartics according to the
+	theory of Cremona & Stoll.   Compiler macro LARGE_Q can control the
+	extent to which this is turned on: 1 for original BSD, 4 for best.
+
+	Changed parameters of addquartic()
+
+	* mrank1.h:
+	Added a couple of data fields to handle optimised handling of large
+	quartics.
+	Changed parameters of addquartic()
+
+2000-09-25  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mwrank.info: Minor.
+
+	* mwrank.changes: 20. Large quartic handling
+
+	* mrank1.cc, options.h: Changing DEFAULT_NAUX from 6 to 8
+
+	* tmrank.cc:
+	Error output goes to cerr not cout so it can be picked up when output
+	is redirected to /dev/null
+
+	* mrank1.cc: Remembered to comment out some debugging ouput
+
+	* mrank1.cc:
+	Major upgrade to optimise handling of large quartics according to the
+	theory of Cremona & Stoll.   Compiler macro LARGE_Q can control the
+	extent to which this is turned on: 1 for original BSD, 4 for best.
+
+	Changed parameters of addquartic()
+
+	* mrank1.h:
+	Added a couple of data fields to handle optimised handling of large
+	quartics.
+	Changed parameters of addquartic()
+
+2000-09-12  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* qc.cc:
+	aborts if it finds a point not on its curve, instead of continuing regardless
+
+2000-08-18  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sansone.cc: updated and tidied up, as not used for ages.
+
+2000-08-16  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mlocsol.cc:
+	Does not use Samir's better local test for large primes when using
+	LiDIA, since we installed the cut-down LiDIA version which does not
+	have the finite field fatorization routines...prpbably temporary.
+
+	* version.cc:
+	Now outputs the arithmetic option (LiDIA, NTL etc) as well as date of
+	compilation.
+
+	* mwrank.options, mwrank.changes, mwrank.readme, mwrank.info:
+	updated 16/8/2000
+
+	* mwrank.doc: *** empty log message ***
+
+2000-08-16  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mlocsol.cc:
+	Does not use Samir's better local test for large primes when using
+	LiDIA, since we installed the cut-down LiDIA version which does not
+	have the finite field fatorization routines...prpbably temporary.
+
+	* version.cc:
+	Now outputs the arithmetic option (LiDIA, NTL etc) as well as date of
+	compilation.
+
+	* mwrank.options, mwrank.changes, mwrank.readme, mwrank.info:
+	updated 16/8/2000
+
+	* mwrank.doc: *** empty log message ***
+
+2000-08-14  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* d2.cc: Made NTL-compatible.
+
+2000-06-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mglobsol.cc:
+	plugged small memory leak: coef[] was not deleted in quartic_sieve::stoll_search
+
+	* mrank1.cc: removed *** showing JC+MS difference over BSD
+
+2000-06-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank1.cc: commented out warnings on "Empty H range"
+
+2000-05-26  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank1.cc: 1. made NTL-compatible
+	2. corrected bug in syzygy sieve -- new flag scheme introduced
+	3. Uses stronger JC/MS criterion for "no large quartics"
+	4. Corrects a bounds for Type 3 quartics to agree with reduction
+	   paper.
+	5. tidier output especially when not verbose.
+
+	* GetOpt.cc, GetOpt.h: New file.
+
+2000-05-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mwrank.cc: Added NTL compatibility
+	Altered verbosity levels to make very concise when -v 0 flag
+
+	* transform.cc, sqfdiv.cc, reduce.cc, ratpoint.cc, qc.cc:
+	Added NTL compatibility
+
+	* options.h: *** empty log message ***
+
+	* msoluble.cc: Added NTL compatibility
+
+	* mrank1.h: Changes listpoints(), and added aux_types[] array
+
+	* mrank2.cc, mquartic.h, mlocsol.cc, minim.cc, mglobsol.cc:
+	Added NTL compatibility
+
+	* getcurve.cc: Made less verbose
+
+	* desc2.cc: implemented NTL compatibility
+
+	* d2.cc: fixed includes; but still needs attention
+
+2000-05-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mglobsol.cc: Added earlier checks for easy cases (a or e square)
+	NB Stoll sieve incorrectly returns (0:1:0) when a is
+	square.
+
+2000-05-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mrank2.cc, mrank1.cc:
+	no longer inclides log2.h as intlog2() has moved to arith
+
+	* mrank1.cc: minor: uses sqr() a few times for efficiency.
+
+2000-04-28  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mwrank.changes: *** empty log message ***
+
+	* mrank1.cc: Added functions qeps() and show_eps_vec()
+	Corrected bug: was forgetting to scale large quartics when sieving
+	backwards after finding a new GLS B quartic
+	Corrected bug: && instead of & in updating flags
+	Corrected bug: in computing n3, it is not 1+#{ELS B quartics} but
+	1+#{ELS B quartics}/n2.
+	Improved naming of rank/selmer_rank/sha_rank from A and B for clarity
+	Corrected definition of "strange" detecting parity difference between
+	rank and selmer_rank
+
+	* mrank1.h: Added functions qeps() and show_eps_vec()
+
+	* options.h: forces naux to be at least 1 since program crashes with 0
+
+	* log2.cc: total rewrite
+
+2000-04-20  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mwrank.readme: New file.
+
+	* readme: Updated 20/4/00
+
+2000-03-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* desc2.cc:
+	re-fixed previous bug fix, transforms were still not right.  OK now --
+	and with verbose level high, it checks all the transforms.
+
+	* desc2.cc:
+	Corrected bug in quartic reduction transformations (only appeared if
+	more than one step in final reduction)
+
+2000-01-04  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mlocsol.cc:
+	Increased crossover from 10 to 1000  as there is a bug, e.g.
+	(-3,4,6,0,-11) p=11 NOT soluble
+	(-3,4,10,0,17) p=17 NOT soluble
+
+	* mrank2.cc:
+	removed builtin.h include (added by mistake in previous update)
+
+	* mrank1.cc:
+	Added QSIEVE_OPT to switch sieveing methods in quartic search:
+	default=0 for Stoll sieve.
+
+	* mwrank.cc:
+	1. Added (default) option to use Stoll sieve in search for extr points
+	on curve.
+	2. Raised to 20 the max height in search.
+
+	* mlocsol.cc: No longer inclused   mquartic.h, done in .h file
+
+	* mlocsol.h: Now includes mquartic.h here, not in .cc
+
+	* mglobsol.cc, mglobsol.h: Added interface to Stoll sieve
+
+	* ratpoint.cc:
+	Added "modopt" to switch sieveing options; default=0 for Stoll sieve.
+
+	* mrank2.cc, desc2.cc:
+	Added macro QSIEVE_OPT, default 0 for Stoll sieve.
+
+	* mequiv.cc: no longer includes mquartic.h (done in mequiv.h)
+
+	* mequiv.h: Now includes mquartic.h here instead of in the .cc
+
+	* mquartic.h: Defines _MQUARTIC_H to prevent multiple inclusion.
+
+	* reduce.cc:
+	Added bigfloat* quadratic_covariant(a,b,c,d,e) to compute the
+	covariant, and unimod reduce_quad(b,c) to reduce any pos def
+	quadratic.
+
+	Various different reduction strategies implemented.
+
+	* reduce.h:
+	Added bigfloat* quadratic_covariant(a,b,c,d,e) to compute the
+	covariant, and unimod reduce_quad(b,c) to reduce any pos def
+	quadratic.
+
+	* silver.cc: changed abs to fabs for gcc-2.8 compliance
+
+1999-10-20  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* options.h, mwrank.info: Changed email address to Nottingham
+
+	* mwrank.info: New file.
+
+1999-08-18  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* ratpoint.cc: cosmetic only
+
+	* mlocsol.cc: 1. Removed calls of val(p,0) by recoding
+	2. Changed CROSS_OVER_P down to 10 (was 5000)
+
+1999-06-15  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* options.h: GetOpt.h now local
+
+	* tred.cc: no longer includes builtin.h
+
+	* sqfdiv.cc: includes bitspace.h for testbit() and setbit()
+
+	* reduce.cc: no longer includes builtin.h
+
+	* ratpoint.cc: no longer includes builtin.h
+	+ some cosmetic changes
+
+	* mrank2.cc, minim.cc, bitspace.cc: no longer includes builtin.h
+
+	* bitspace.h: added testbit() and setbit(), to be self-contained
+
+1998-11-17  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.cc:
+	r2.makepoints() is NOT called when do_infinite_descent flag is not
+	set, as it is not needed and wasted time.  Similarly with
+	r1.getpoints().
+
+	* mrank2.cc: find_glsgens() now uses bitspace class for tidiness.
+	Now keeps propoer track of both the gls subgroup and the larger "d2"
+	subgroup of those d1 for which 2nd descent curves exist.  This fixes a
+	counting bug in previous version.
+
+	* bitspace.cc, bitspace.h: New file.
+
+1998-11-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tred.cc:
+	Corrected incorrect transform checking (minor bug in previous change)
+
+	* reduce.cc:
+	Slight adjustment in reduce(): the covariant quadratic has its root
+	shifted so that its real part lies in [-1/2,1/2] before its
+	discriminant and its imaginary part are computed.  This gives better
+	(or less bad) precision loss when not using multiprecision floating
+	point.
+
+	* desc2.cc: removed spurious output when non verbose
+
+	* tred.cc, desc2.cc, minim.cc, minim.h, reduce.cc, reduce.h, transform.cc, transform.h:
+	Changed to use unimod and scaled_unimod classes to keep track of
+	transforms
+
+1998-11-06  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* desc2.cc:
+	class quadratic now handles integer quadratics, instead of raw bigint*
+
+	* d2.cc: removed inclusion of samir.h as now handled differently
+
+	* desc2.cc, mwrank.cc: added TIME_CONICS option (off by default)
+
+1998-08-12  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* desc2.cc:
+	Lots of changes to use the new automatic conic solving and minimal
+	parametrization functions now in libjc.a
+
+	* desc2.h:
+	removed process_d3() as it is local to the .cc file and should not be
+	called from elsewhere.
+
+1998-08-05  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc:
+	Bug fix: qlistbflag was being deleted just before it was used, causing
+	random value of n3 -- just occasionally
+
+1998-07-28  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tsilver.cc:
+	changed Integer to bigint and removed redundant initprimes() call.
+
+1998-07-02  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: In gettype(), deferred use of bigints as much as possible.
+
+1998-07-01  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: 1. Fixed bug in cphi calculation i pure cubic case.
+	2. Tidied up auxiliary variable declarations, moving many from mrank1.h as
+	they are only needed in rank1::gettype() so need no be class members.
+	More consistent type-dependent names, with prefix x for
+	bigfloat/doubles and prefix big for bigints.  This also fixes overflow
+	problems when a^2 or b^2 were longs, but slows the program down a
+	little.
+
+	* mrank1.h:
+	Tidied up auxiliary variable declarations, moving many to mrank1.cc as
+	they are only needed in rank1::gettype() so need no be class members.
+
+1998-06-29  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc:
+	Added custom cubic solving code to find the phi[i] given that the
+	cubic has distinct roots and no x^2 term.  Else was causing bad
+	instability when two roots were close, as with
+	[0,1,0,-171710260,-866106274669] (rank 1 but no quartics were found).
+
+1998-06-11  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.cc, getcurve.cc: minor, to improve output layout
+
+1998-06-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: Corrected bug in using eps values in flag_init()
+
+1998-05-11  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.changes: update
+
+	* mrank1.cc: Fixed 2 memory leaks: qlistbflag and phimod.
+	Moved rank1 destructor here from .h (though it does nothing in fact)
+
+	* mrank1.h: Removed rank1 destructor body, moved to .cc
+
+	* mrank2.cc: Added initialising of d_is_sq, ddash_is_sq, to fix bug
+
+	* mquartic.cc:
+	closed memory leak (croots not deleted in set_roots_and_type)
+
+1998-04-17  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.cc:
+	Some minor cosmetic things, and rewording of output from rank2 to talk
+	about "rank bounds" rather than Selmer ranks.
+
+	* mrank2.cc:
+	Many minor cosmetic things + big rewrite of book-keeping so that
+	summary information is correct and as complete as possible whether or
+	not a second descent was carried out.
+
+	* mrank2.h:
+	Changed "selmer rank" to "rank bound" as more accurate after 2nd
+	descent
+
+1998-04-02  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.changes: *** empty log message ***
+
+	* mrank1.cc: Correctly computes Selmer rank when rank>0
+
+1998-03-28  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: Added {...} to correct wrong if then else blocks
+
+1998-03-06  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc:
+	Two checks to make sure that the Type 1 - Type 2 boundary is never
+	crossed even in hard cases where the roots phi are close (e.g.916B1).
+	First, if (a,b,c) pases the sieve we check that h is between hmin and
+	hmax and discard if not (message output if verbose>3).
+	Second, each quartic found with disc>0 has its Q and H recomputed and
+	the signs checked, with a serious error output if the type is bad.
+
+	* mglobsol.cc:
+	Relax bounds on search_range a little, as rounding problems caused a
+	point to be missed e.g. (146,159,-807,-463,1238), failed to find the
+	root at -2.
+
+1998-03-05  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.changes: Added changes 15 and 16
+
+1998-03-04  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc:
+	1. p-adic filtering can be turned off with the compiler switch
+	NO_PADIC_FILTERING
+
+	2. Minor tidying of abc bounds
+
+	3. BUG FIX on flag_init(): was not correctly handling the case when
+	one z value is 0 mod p for "case 2" primes.
+
+	* mequiv.cc:
+	Old equiv testing code is NOT now omitted when compiler switch
+	NEW_EQUIV is on, since the tequiv program needs to use it.  The point
+	is that the old equiv testing gives an explicit matrix for any
+	equivalences found, which can be useful, while the new one only gives
+	yes/no.
+
+	* mwrank.cc: 2 debugging lines, now commented out so no change
+
+1998-01-16  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.cc:
+	Better, fuller, report if either the rank is not determined
+	unconditionally (i.e. lower and upper bounds are output) and/or
+	extra point search does not justify saying we have the full MW group.
+
+	* mrank2.cc: 1. Make sure d1 is computed if it is output
+	2. Truncate pointlist earlier to avoid output of untruncated list.
+
+1998-01-12  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.doc: Minor
+
+	* readme: update on machine versions
+
+	* mwrank.changes: minor
+
+	* mwrank.doc: Update to take account of mrank/mwrank merge.
+
+1997-12-12  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mlocsol.cc:
+	Now includes LiDIA factorization stuff for both LiDIA and LiDIA_INTS
+	options (else it did not work with LiDIA option since these rae
+	included BEFORE LiDIA sets LiDIA_INTS)
+
+	* mrank1.cc:
+	1. Corrected bug caused by bad casting of bb3 to bigint (only in libg++)
+	2. Corrected scaling of (a,h) for large I,J
+
+1997-12-11  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mlocsol.h: typo
+
+	* mlocsol.h:
+	new_qpsoluble is now always declared, not just when LiDIA_INTS is
+	defined.
+
+	* mlocsol.cc:
+	Added versions of new_qpsoluble for when LiDIA_INTS not defined, which
+	just call the old ones.
+
+	* ratpoint.cc: Removed redundant #include "samir.h"
+
+	* mwrank.cc: Corrected banner number (1 for mwrank)
+
+	* options.h: Added output_pari option
+	Changed default of -c to 0 (no point search at all as in mrank)
+	Changed some cout to cerr
+
+	* readme: Removed mention of mrank, and added ratpoint
+
+1997-12-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.options:
+	Added Pari output option, and documented the making of mrank redundant
+	by suitable choice of parameters in mwrank.
+
+	* mwrank.cc: 1. Added Pari Output option
+	2. Now only does point search if command line param -c is non-default
+	(positive) to make mrank redundant.  Many minor rearrangements for
+	this.
+
+	* mwrank.changes: Added change no. 14.
+
+	* mrank.cc: Added pari output options + some minor things;
+	NB this source is now obsolete as mwrank.cc can have
+	the point search switched off
+
+	* getcurve.cc:
+	Only outputs warning about singular inputs if verbose is >0
+
+	* mlocsol.cc:
+	Added Samir Siksek's code previously in samir.cc, only used if
+	LiDIA_INTS is defined
+
+	* mlocsol.h:
+	Declarations from old samir.h now included here, but only used when
+	LiDIA_INTS is defined
+
+1997-12-05  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* version.cc: Changed cout to cerr for version output
+
+1997-12-03  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mglobsol.cc:
+	Changes if(npoints==0) to if(npoints<maxnpoints) in a few places, to
+	correctly handle things when maxnpoints>1
+
+1997-11-14  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* readme: New file.
+
+	* mwrank.changes, mwrank.doc: Updated 14/11/97
+
+	* options.h: corrected spelling of acknowledge
+
+	* mwrank.options, mwrank.changes, mwrank.doc, options.h: New file.
+
+	* mwrank.cc, mrank.cc:
+	Adapted to use options.h for command-line options
+
+1997-10-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* d2.cc: Use support() not pdivs() to include -1 in support of d'
+	Correct point output on (c',d') curve (scaling by 2 was wrong)
+
+	* desc2.cc: corrected handling od case where d' is square
+
+	* mrank2.cc:
+	Major changes: first descent completely reorganised, and second
+	descent now used if USE_SECOND_DESCENT falg is set.  Also possible to
+	set SELMER_ONLY to do just that.
+
+	* mrank2.h:
+	Added a few extra variables in rank2 class for use in second descent
+	and reorganised first descent
+
+	* sqfdiv.cc, sqfdiv.h:
+	Added makeindex() and support(), used in new second descent stuff
+
+1997-10-03  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc, minim.cc: Changed divide() to divides()
+
+1997-08-13  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* sqfdiv.cc: Removed unnecessary const from a param   .
+
+	* sqfdiv.h: Removed unnecessary const from a param
+
+1997-08-06  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.cc: Corrected typo (r2 for r1 in r1.getcertain())
+
+1997-07-21  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* d2.cc: All 2nd descnt stuff now in desc2.cc
+
+1997-07-17  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* reduce.cc: improvements to aid precision
+
+	* desc2.cc, desc2.h: New file.
+
+	* tred.cc: corrected spelling in comments
+
+	* transform.cc: No longer includes inim.h
+
+	* tmrank.cc: Now uses timer stuff from timer.h
+
+	* sqfdiv.cc, sqfdiv.h:
+	added getsupp() and makenum(), and converted factor to a log_2
+
+	* samir.cc, samir.h:
+	Now has versions which take a,b,c,d,e as well as qhole quartics
+
+	* ratpoint.cc: Now checks solubility over R (before was assumed)
+
+	* mwrank.cc: timing stuff now in timer.h
+
+	* mrank2.cc:
+	Major reorganization of els/gls counting, and second descent
+
+	* mrank2.h: changse for els/gls and second descent
+
+	* mrank1.cc: p-adic filtering implementation
+
+	* mrank1.h: p-adic filtering changes
+
+	* mrank.cc: timer stuff now in timer.h
+
+	* mquartic.cc: minor
+	/..
+
+	* mquartic.h: Added getH() function to class quartic
+
+	* mlocsol.cc:
+	reorganisation to handle different verions: quartic or just a,b,c,d,e
+
+	* mlocsol.h:
+	Now has versions which take a,b,c,d,e as well as versions which take a
+	whole quartic class, to avoid unnecessary quartic construction
+
+	* minim.cc: 1. Uses new divide() and divide_exact() functions
+	2. 3-minimization bug corrected
+
+	* minim.h: removed declaration of divide_exact (now in marith)
+
+	* mequiv.cc:
+	Improved algorithm by computing roots of u-poly explicitly (more accurate)
+
+	* log2.cc: minor
+
+1997-05-21  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: 1. Major additions: p-adic (and R) filtration
+	2. Minor: avoid any recomputation for larger I,J, and any unnecessary
+	factorization
+
+	* mrank1.h: New stuff addeed for p-adic filtration
+
+	* tmrank.cc, mwrank.cc, mrank.cc: Uses new version stamping
+
+	* mlocsol.cc: turned off samir's test until we install new Lidia
+
+	* ratpoint.cc:
+	turned off samir's test until we install new version of Lidia
+
+	* tsol.cc, tred.cc, d2.cc, transform.cc, transform.h, reduce.cc, reduce.h, minim.cc, minim.h, version.cc, version.h:
+	New file.
+
+	* ratpoint.cc: Turned off samir's test until new LiDIA installed here
+
+1997-05-14  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: Countless improvements and clean-up:
+	1. Removed all obsolete code
+	2. New bounds for quartic search
+	3. Roots for found quartics now computed more simply
+
+	* mrank1.h:
+	Cleaned up and removed obsolete stuff (for which see oldmrank1.h)
+
+	* ratpoint.cc:
+	Better input (quartics compute their own real roots), and uses new
+	local solubility
+
+	* tmrank.cc: Now uses LiDIA timer, and cleaned up rank1 class
+
+	* qc.cc: removed include msoluble.cc as redundant (and obsolete)
+
+	* mwrank.cc: Now uses LiDIA timer, and cleaned up rank1 class
+
+	* mequiv.cc:
+	Made OLD equiv-testing Lidia-compatible; it IS still useful to keep since
+	it gives explicit transformations which the new one does not at present.
+
+	* msoluble.cc:
+	Deleted old stuff commented out BUT this file is now redundant as it has
+	been replaced by mlocsol.cc and mglobsol.cc
+
+	* msoluble.h:
+	Just includes mlocsol.h, mglobsol.h for backward compatibility
+
+	* mglobsol.cc, mlocsol.cc, mglobsol.h, mlocsol.h, samir.cc, samir.h:
+	New file.
+
+	* mrank.cc: Now uses LiDIA's timer, and cleaned up rank1 class
+
+	* mquartic.cc:
+	New function set_roots_and_type() finds roots sensibly using the
+	invariants; other constructors can call it.
+	Functions II() and JJ() are here now and not inline.
+
+	* mquartic.h:
+	added H and R covariant functions, member functions set_roots_and_type() and assign()
+
+	* oldmrank1.cc, oldmrank1.h: New file.
+
+1997-02-28  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* msoluble.cc:
+	1. partial fixing of lemma6/7 to allow for gdx==0 properly
+	2. fix bug in quartic sieve whereby flag arrays were being
+	incremented by 1 even when ustep==2.
+
+1997-02-21  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc:
+	Added condition that c=J (mod 3) in all cases,  Thanks to Ian Connell.
+
+1997-01-15  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tmrank.cc, ratpoint.cc, mwrank.cc, mrank.cc:
+	now uses new initprimes("PRIMES") function
+
+1997-01-14  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwrank.cc, mrank.cc: added prompt for number of primes needed
+
+	* mrank2.cc: better handling of group info after D. Rusin's curves
+
+1996-12-17  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: Reorder a-loop to do small a first
+
+	* msoluble.cc, msoluble.h: Better sieving
+
+1996-10-24  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc:
+	Avoid calling sqdivs(disc) when using new equivalence test as it does
+	not use the result.
+
+1996-10-21  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* msoluble.cc:
+	temp filing from qrank.sgi to transfer editing to mordell...
+
+1996-09-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: Better output reporting in ambiguous cases
+
+1996-09-06  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank.cc: Minor output change
+
+1996-09-05  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank2.cc: Improved output in ambiguous cases.
+
+1996-06-18  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* ratpoint.cc:
+	Better output: mainly, checks for local solubility at all primes,
+	instead of stopping at the first fail.
+
+	* mrank1.cc: Increased default number of sieving primes from 10 to 12
+	Minor improvement to sieve statistic stuff
+	new proc sortpoints() lets user decide whether to do this or not
+
+	* mrank1.h:
+	added ah_pass to sieve statistic stuff (only used when COUNT_ABC is
+	turned on), and added sortpoints()
+
+	* msoluble.cc, msoluble.h:
+	Quartic sieve handles "easy" cases where a or e are squares with no
+	fuss; in particular, no sieving primes are used then (they cannot be
+	when a is square!)
+
+1996-05-03  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* ratpoint.cc, mrank1.cc:
+	Uses functions II(a,b,c,d,e), JJ(a,b,c,d,e) for computing invariants
+	using bigints to avoid overflow problems
+
+	* mquartic.cc, mquartic.h:
+	Added functions II(a,b,c,d,e), JJ(a,b,c,d,e) for computing invariants
+	using bigints to avoid overflow problems
+
+1996-04-22  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tmrank.cc: naux=-1 for default.
+
+	* mwrank.cc: naux=-1 for default, + a typo
+
+	* mrank.cc: naux=-1 for correct default per method
+	firstlim reduced to 2 from 20
+	better output
+
+	* mrank1.cc:
+	various debugs (avoiding overflow in subexpressions), correct roots
+	now computed via invariants, better handling of aux primes.
+
+	* mrank1.h:
+	changed default naux to -1 which is translated into 5 or 10 depending
+	on method
+
+	* mrank2.cc: MAX_R = 5
+	added posxonly option
+	various cosmetic things
+	prints rank >= not = if not certain
+	added makegens and listgens functions
+
+	* mrank2.h:
+	added makegens and listgens functions, and made makepoints public.
+
+	* ratpoint.cc: complex -> Complex
+
+	* msoluble.cc, msoluble.h:
+	Added "posxonly" option which only searches x>=0. useful for quartics
+	which are quadratics in x^2.
+
+	* sqfdiv.h: typo in comment
+
+1996-04-03  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc: More verbosity turned off when SHOW_METHOD is off
+
+	* mrank1.cc: messages about flag_init only given if SHOW_METHOD is on
+
+	* mrank1.cc:
+	Turned off SHOW_METHOD; more output is only given now when SHOW_METHOD
+	is on;
+	equiv-codes are not output
+
+	* mrank.cc: Removed prompt for number of sieving primes; uses naux=5
+
+	* mwrank.cc:
+	rank1  constructor uses value of naux set at start (=5, but not
+	prompted for)
+
+1996-03-06  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* qc.cc: added const for some ref declarations
+
+	* msoluble.cc: complex -> bigcomplex
+	corrected for scoping
+
+	* mequiv.cc: added const to some ref declarations
+
+	* mrank1.cc, mrank1.h, mrank2.cc, mquartic.cc, mquartic.h:
+	complex -> bigcomplex
+
+1996-02-20  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc:
+	Major changes now allow a number of different quartic search
+	strategies.
+
+	* mrank1.h:
+	A few extra data items added to allow for different quartic search
+	strategies.
+
+	* mwrank.cc: Uses height_constant() instead of silver()
+
+	* mrank.cc: Added option to vary number of sieving primes.
+	Does not list points when rank is large.
+
+	* tmrank.cc: Can now vary number of sieving primes; currently set to 4.
+
+	* silver.cc:
+	Added height_constant function, at present just calls silver() but
+	eventually will include Samir's better bound.
+
+	* silver.h: added height_constant function ready for new SS bound
+
+	* mrank2.cc: Reduced post-processing of points for large ranks.
+
+1996-01-05  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mrank1.cc, mrank2.cc, msoluble.cc:
+	removed the global const bigint declarations as on SGI they were not
+	getting initialized.
+
+	* mrank1.cc: 1. Searches for type 2 before type 1
+	2. Uses syzygy for abc-sieving -- simpler code
+	3. Offers option of using Gebel-type composite moduli in abc-sieving
+	bu #define-ing GEBEL_MODS.  Probably useful for very large search
+	regions, but involves extra overheads of memory and time to set up
+	flag arrays.
+
+	* qc.cc: Outputs heights of points as found.
+
+	* mrank2.cc:
+	Some cosmetic changes for large ranks, also now defines MAX_R
+	(currently 6) such that if the rank is greater than this it does not
+	attempt to find all coset reps from the generators -- essential for
+	high rank curves such as Fermigier's.
+
+	* msoluble.cc, msoluble.h:
+	Added denominator sieving in quartic point search
+
+1995-08-15  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* ratpoint.cc: Output now echoes quartic coeffs and hlim.
+
+1995-08-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* process.cc, equiv.cc, getcurve.cc, log2.cc, log2test.cc, m1rank.cc, mequiv.cc, mquartic.cc, mrank.cc, mrank1.6i7j.cc, mrank1.cc, mrank1.new.cc, mrank2.cc, msoluble.cc, mwrank.cc, qc.cc, quartic.cc, rank.cc, rank1.cc, rank2.cc, ratpoint.cc, sansone.cc, silver.cc, soluble.cc, sqfdiv.cc, sqftest.cc, tmrank.cc, trank.cc, tsilver.cc, equiv.h, getcurve.h, log2.h, mequiv.h, mquartic.h, mrank1.h, mrank2.h, msoluble.h, qc.h, quartic.h, rank1.h, rank2.h, silver.h, soluble.h, sqfdiv.h:
+	New file.
+

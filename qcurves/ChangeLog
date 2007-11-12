@@ -1,0 +1,1103 @@
+2004-06-28  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* Makefile: update
+
+	* tht2.cc: A simple program to compute the height bound on input curves
+
+	* targets: added findinf2 and tht2
+
+	* findinf2.cc:
+	Just like findinf except that it does the searching on the
+	optimal_x_shift'ed curve to get a better height bound.
+
+	* tsat3.cc: (1) reduced precision to more sensible 30
+	(2) added in automatic x-shifting to get a better height bound before
+	(searching
+	(3) put all code which uses the EGR subgroup into #ifdef USE_EGR,
+	(currently turned OFF until further testing)
+
+	* thtconst.cc:
+	(1) removed function opt_x_shift() from here, as it is now in
+	    curve.h/curvedatdata.cc
+	(2) added set_precision(30) as the default of 15 was giving bad
+	    results.
+
+	* findinf.cc: Just made the comment description more accurate
+
+	* curvedata.cc, curve.h: Added function opt_x_shift()
+
+2004-06-19  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat2.cc: Changed PMAX from 11 to 20
+
+	* tlss.cc:
+	added code to test use of evaluate_weil_pol(T,m,S) to evaluate f_T(S) without
+	computing f_T.   Only runs when debug_TL is set at present.
+
+	* targets: Added iso3 and iso4 test progs
+
+	* saturate.cc: cosmetic only
+
+	* pointsmod.cc: commented out some debugging code
+
+	* ffmod.cc:
+	added function evaluate_weil_pol(T,m,S) to evaluate f_T(S) without
+	computing f_T -- better for large m=order(T).
+	NB requires m*S!=0
+
+	* ffmod.h:
+	added function evaluate_weil_pol(T,m,S) to evaluate f_T(S) without
+	computing f_T -- better for large m=order(T).
+
+2004-06-06  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat2.cc: Exits if reads a point not on curve
+
+	* pointsmod.cc:
+	Added debugging output for wen isomorphism_type misbehaves
+
+	* points.cc: Removed decimal input forcing i point input
+
+	* curve.cc:
+	removed forced decimal input flag fix in point input (while debugging
+	what turned out to be a bug in bigint input in LiDIA 2.1.1)
+
+2004-05-31  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: update got thtconst target
+
+	* pointsmod.cc:
+	due to (very occasional) bug in lidia's isomorphism_type(), added a
+	check so we don't use curves wherethe bug happens.
+
+2004-05-29  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* sieve_search.cc: halt_flag was not properly being initialised
+
+	* thtconst.cc: 1. added more statistics
+	2. added test of x-shift (with #include cubic.h)
+
+	* htbound.cc:
+	updated #includes and deleted some implementations now in library
+	files
+
+	* htconst.cc, htconst.h: changed "siksek" to "cps" in function names
+
+	* egr.cc:
+	added debugging code;  fixed bug whereby only the first point in the
+	list was ever changed.  Needs more testing.
+
+2004-05-28  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* saturate.cc: Fixed wrong handling when saturation failed
+
+2004-05-15  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets:
+	added -pg to CFLAGS and LFLAGS for profileing (now commented out)
+
+	* tlss.h: corrected typo
+
+	* saturate.cc:
+	Bug fix in enlarge(): only replace an old generator with a coefficient
+	of 1 in the kernel vector.
+
+	* mwprocs.cc: minor output addition
+
+	* mwprocs.h: fixed includes
+
+2004-05-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat3.cc: Adjusted includes.  Increased precision to 200 from 20.
+
+	* tsat2.cc: Adjusted includes
+
+	* tsat.cc:
+	Adjusted includes.  Commented out the artificial index 15 test.
+
+	* findinf.cc:
+	Correction:  when model is changed the final short list of points were
+	on the wrong model. Fixed.
+
+2004-05-09  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* saturate.cc:
+	1. Added do_saturation_upto() to saturate at all p up to a given
+	   maximum, and a similar function to saturate at a given set of
+	   primes.
+	2. Changes in verbosity levels
+
+	* saturate.h:
+	1. Added do_saturation_upto() to saturate at all p up to a given
+	   maximum, and a similar function to saturate at a given set of
+	   primes.
+	2. Changed getgens() function to give the non-torsion gens, with
+	   getxgens() for the torsion ones too (i.e. the p-cotorsion
+	   generators for the current p)
+
+	* tlss.cc: Small change to verbose output
+
+	* tsat3.cc: *** empty log message ***
+
+	* tsat2.cc:
+	Uses new function do_saturation_upto() input pmax, passing the loop
+	and book-keeping to the saturator class
+	Also keeps count of # of input curves and how many were saturated
+	already, and the gained index of those which were not, for a report at
+	the end.
+
+	* tsat.cc:
+	Uses new function do_saturation_upto() input pmax, passing the loop
+	and book-keeping to the saturator class
+
+	* htconst.cc: Adjusted #includes
+
+	* findinf.cc:
+	Lots of extra #includes now neede before including mwprocs.h for
+	saturation functions
+
+	* mwprocs.cc:
+	Every time rank increases, the points are (re-)saturated at all p up
+	to MAXSATPRIME -- currently 20
+
+	* mwprocs.h:
+	Added saturator to mw class (and added necessary extra #includes)
+
+	* babygiant.cc:
+	New test babystep giantstep for elliptic curves mod q under NTL
+
+	* targets: added targets for babygiant.cc
+
+	* tlss.cc: Corrected the discrete log computation in rank 1 case, using
+	precomputed group order.
+	Plus some cosmetic changes.
+
+	* pointsmod.cc: 1. corrected negation of 0 point (under NTL)
+	2. corrected setting of group order
+	3. Under NTL now computes group order (using legendre symbols) which
+	we previously thought unnecessary.... and does not compute p-division
+	poly unless group order divisible by p
+
+	* pointsmod.h: deleted some dud lines which were commented out
+
+	* saturate.h:
+	Removed switch causing division polys over Z to be used under NTL,
+	since these were very slow for all but very small p
+
+	* elog.cc: Improved test for convergence in elliptic log
+
+2004-05-09  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* saturate.cc:
+	1. Added do_saturation_upto() to saturate at all p up to a given
+	   maximum, and a similar function to saturate at a given set of
+	   primes.
+	2. Changes in verbosity levels
+
+	* saturate.h:
+	1. Added do_saturation_upto() to saturate at all p up to a given
+	   maximum, and a similar function to saturate at a given set of
+	   primes.
+	2. Changed getgens() function to give the non-torsion gens, with
+	   getxgens() for the torsion ones too (i.e. the p-cotorsion
+	   generators for the current p)
+
+	* tlss.cc: Small change to verbose output
+
+	* tsat3.cc: *** empty log message ***
+
+	* tsat2.cc:
+	Uses new function do_saturation_upto() input pmax, passing the loop
+	and book-keeping to the saturator class
+	Also keeps count of # of input curves and how many were saturated
+	already, and the gained index of those which were not, for a report at
+	the end.
+
+	* tsat.cc:
+	Uses new function do_saturation_upto() input pmax, passing the loop
+	and book-keeping to the saturator class
+
+	* htconst.cc: Adjusted #includes
+
+	* findinf.cc:
+	Lots of extra #includes now neede before including mwprocs.h for
+	saturation functions
+
+	* mwprocs.cc:
+	Every time rank increases, the points are (re-)saturated at all p up
+	to MAXSATPRIME -- currently 20
+
+	* mwprocs.h:
+	Added saturator to mw class (and added necessary extra #includes)
+
+	* babygiant.cc:
+	New test babystep giantstep for elliptic curves mod q under NTL
+
+	* targets: added targets for babygiant.cc
+
+	* tlss.cc: Corrected the discrete log computation in rank 1 case, using
+	precomputed group order.
+	Plus some cosmetic changes.
+
+	* pointsmod.cc: 1. corrected negation of 0 point (under NTL)
+	2. corrected setting of group order
+	3. Under NTL now computes group order (using legendre symbols) which
+	we previously thought unnecessary.... and does not compute p-division
+	poly unless group order divisible by p
+
+	* pointsmod.h: deleted some dud lines which were commented out
+
+	* saturate.h:
+	Removed switch causing division polys over Z to be used under NTL,
+	since these were very slow for all but very small p
+
+	* elog.cc: Improved test for convergence in elliptic log
+
+2004-05-07  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets:
+	added saturation-related files to distribution and library file lists
+
+	* saturate.cc:
+	do_saturate() now gives no output when verbose==0 unless maxntries
+	attempts at enlargement fail.
+
+	Correction:  after successful enlargement, TL matrix is now reset.
+
+	* saturate.h:
+	Added maxntries parameter to do_saturate() as bound on number of
+	failed enlargement attempts allowed (default 10)
+
+2004-05-06  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat3.cc: minor
+
+	* targets: minor change in make clean
+
+	* saturate.cc: NTL compatibility
+
+	* isogs.cc: insignificant
+
+	* tsat2.cc, tsat.cc, tegr.cc: NTL compatibility update
+
+	* saturate.h: update for NTL compatibility
+
+	* gf.h: NTL/LiDIA compatibility for Z/pZ
+
+	* polys.cc: stuff too much for polys.h
+
+	* polys.h, tdivpol.cc: update for NTL compatibility
+
+	* tlss.cc, tlss.h, pointsmod.cc, pointsmod.h, ffmod.cc, ffmod.h, divpol.cc, divpol.h:
+	made NTL compatible
+
+	* curvemod.cc, curvemod.h: Made NTL compatible
+
+2004-05-05  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: added *_sta to list of things to be deleted by "make clean"
+
+	* saturate.cc:
+	increased number of "stuck" steps tolerated before trying a division
+
+	* isogs.cc: switched some integer constants from double to bigfloat
+
+	* cperiods.cc:
+	Mainly debugging info;  also ensuring that for lattice type 1 the real
+	part of wRI is half wR (and not -1/2 which caused som eisogenies to be
+	missed).
+
+2004-04-28  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: update
+
+	* tsat3.cc, tsat2.cc, tsat.cc:
+	Separated out saturator constructor from sending it the list of
+	points.
+
+	* saturate.cc, saturate.h:
+	1. Constructor only sets the curve, not the points;  use separate
+	   set_points function for that.
+	2. COnstructor computes and stores AllTorsion list for later use
+
+2004-04-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat3.cc: saturation test program 3
+
+	* tsat2.cc: saturation test program 2
+
+	* tsat.cc: saturation test program 1
+
+	* tlss.h, tlss.cc: class for tate-lichtenbaum & Siksek maps
+
+	* saturate.h: saturation class declarations
+
+	* saturate.cc: saturation class definitions
+
+	* polys.h:
+	definitions to handle differences in interface to various polynomial
+	classes in LiDIA and NTL
+
+	* ffmod.h, ffmod.cc: class for function field of curve mod q
+
+	* pointsmod.h, pointsmod.cc:
+	class for dealing with points on curves mod q
+
+	* curvemod.cc, curvemod.h: classes for dealing with curves mod q
+
+	* divpol.cc, divpol.h: definitions of division polynomial functions
+
+	* tdivpol.cc:
+	test program for division polynomial functions in divpol.h/cc
+
+	* tortest2.cc: test for analytic torsion-finding function
+
+	* thtconst.cc: now includes sieve-search.h for min height point finding
+
+	* sieve_search_appl.cc:
+	removed reference to "only-one-point" flag now eliminated
+
+	* ratpoints-1.4.c, htconst.cc: *** empty log message ***
+
+	* htconst.h: added egr functions and min-height point finder
+
+	* isogs.cc: added twoisog function (algebraic finding of 2-isogenies)
+
+	* isogs.h: added twoisog function
+
+	* sieve_search.h:
+	process() no returns int which sets halt_flag;  old flag one_point
+	removed
+
+	* mwprocs.h:
+	Added maxrank facility, and revsed interface with point-processor so
+	process return int
+
+	* mwprocs.cc: resolved merge
+
+	* mwprocs.cc:
+	bug fix for bnd parameter and some tidying in order_real_roots() and set_the_bounds()
+
+	* sieve_search.cc: *** empty log message ***
+
+	* findinf.cc: added facility to specify rank bound
+
+	* telog.cc: elliptic log test program
+
+	* elog.cc: elliptic log definitions
+
+	* elog.h: elliptic log declarations
+
+2004-04-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat3.cc: saturation test program 3
+
+	* tsat2.cc: saturation test program 2
+
+	* tsat.cc: saturation test program 1
+
+	* tlss.h, tlss.cc: class for tate-lichtenbaum & Siksek maps
+
+	* saturate.h: saturation class declarations
+
+	* saturate.cc: saturation class definitions
+
+	* polys.h:
+	definitions to handle differences in interface to various polynomial
+	classes in LiDIA and NTL
+
+	* ffmod.h, ffmod.cc: class for function field of curve mod q
+
+	* pointsmod.h, pointsmod.cc:
+	class for dealing with points on curves mod q
+
+	* curvemod.cc, curvemod.h: classes for dealing with curves mod q
+
+	* divpol.cc, divpol.h: definitions of division polynomial functions
+
+	* tdivpol.cc:
+	test program for division polynomial functions in divpol.h/cc
+
+	* tortest2.cc: test for analytic torsion-finding function
+
+	* thtconst.cc: now includes sieve-search.h for min height point finding
+
+	* sieve_search_appl.cc:
+	removed reference to "only-one-point" flag now eliminated
+
+	* ratpoints-1.4.c, htconst.cc: *** empty log message ***
+
+	* htconst.h: added egr functions and min-height point finder
+
+	* isogs.cc: added twoisog function (algebraic finding of 2-isogenies)
+
+	* isogs.h: added twoisog function
+
+	* sieve_search.h:
+	process() no returns int which sets halt_flag;  old flag one_point
+	removed
+
+	* mwprocs.h:
+	Added maxrank facility, and revsed interface with point-processor so
+	process return int
+
+	* mwprocs.cc: resolved merge
+
+	* mwprocs.cc:
+	bug fix for bnd parameter and some tidying in order_real_roots() and set_the_bounds()
+
+	* sieve_search.cc: *** empty log message ***
+
+	* findinf.cc: added facility to specify rank bound
+
+	* telog.cc: elliptic log test program
+
+	* elog.cc: elliptic log definitions
+
+	* elog.h: elliptic log declarations
+
+2004-04-17  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tegr.cc: Test program for finding e.g.r. subgroups
+
+	* egr.h: Functions for finding e.g.r. subgroups
+
+	* egr.cc: FUnctions for find e.g.r. subgroups
+
+2004-04-06  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tperiods.cc: adapted for revised Cperiods class
+
+	* cperiods.cc, cperiods.h:
+	Complete rewrite so that both lattice normalizations are stored.
+
+	* torsion.cc: Turned off verbosity in initprimes()
+
+	* mwprocs.cc: changed ratapprox
+
+	* findinf.cc: Turned off verbosity in primes initialization
+
+	* points.cc:
+	Added new two_torsion() function and use it in general torsion
+	function. Also changed interface with revised Cperiods class
+
+	* points.h: Added new two_torsion() function
+
+	* isogs.cc: Adapted interface with revised Cperiods class
+
+2003-06-11  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets:
+	"make install" now makes both dynamic and static binaries, the latter having
+	a _sta suffix
+
+2003-04-11  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tperiods.cc: updated
+
+	* tlambda.cc: STL-ified
+
+	* targets: corrected dependency for tlambda
+
+	* crlists.h, ellisog.cc, getjay.cc, iotest.cc, isogsort.cc, ntorsion.cc, ptlists.cc, ptlists.h, qpemu.cc, qperiods.cc, bdw2311.cc, bdw2357.cc, crlists.cc:
+	moving obsolete files to ../qcurves_obs
+
+	* targets: removed some redundant lines
+
+2003-04-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets, Makefile: use CC and CXX properly
+
+	* Makefile: BINDIR and LIBDIR and INCLUDEDIR now host-dependent
+
+	* thtconst.cc: *** empty log message ***
+
+	* search.cc: New file.
+
+	* tesign.cc: *** empty log message ***
+
+	* esign.cc, esign.h, ChangeLog, targets, Makefile, ratpoints-1.4.c, htbound.cc:
+	New file.
+
+2002-11-22  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* allisog.cc: undefined TEST
+
+	* isogs.cc: Changed display() to output() to preserve const
+
+	* curvered.cc: CurveRed::display() is not const, while output() is
+	+
+	fixed cosmetic output bug
+
+	* curve.h: CurveRed::display() is not const, while output() is
+
+	* tesign.cc:
+	No longer needs to include esign.h (which is obsolete) as requisite
+	functions are now declared in curve.h
+
+	* curvered.cc, curve.h:
+	Added local root number field to Reduction_type class, and associated
+	functions for computing and accessing these to CurveRed type.
+
+2002-11-22  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* allisog.cc: undefined TEST
+
+	* isogs.cc: Changed display() to output() to preserve const
+
+	* curvered.cc: CurveRed::display() is not const, while output() is
+	+
+	fixed cosmetic output bug
+
+	* curve.h: CurveRed::display() is not const, while output() is
+
+	* tesign.cc:
+	No longer needs to include esign.h (which is obsolete) as requisite
+	functions are now declared in curve.h
+
+	* curvered.cc, curve.h:
+	Added local root number field to Reduction_type class, and associated
+	functions for computing and accessing these to CurveRed type.
+
+2002-11-12  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* findinf.cc:
+	Avoid outputting heights of ponts on non-minimal models, as they were
+	wrong!
+
+	* tesign.cc: New file.
+
+2002-10-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* curve.cc: replaced peek() with >> and unget() -- bug fix.
+
+	* curve.cc: Now curve input uses peek() to test first char input
+
+	* points.cc: just some extra debugging output
+
+2002-09-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* thtconst.cc:
+	Removed comma from output line to make post-processing easier
+
+	* htconst.cc:
+	Corrected contribution from a finite prime p in Siksek bound to be 0
+	when c_p=1, whatever the K-code.
+
+	* heights.cc: debug code corrected
+
+2002-09-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* curvered.cc: Corrected infinite loop bug in prodcp()
+
+	* points.cc: removed references to locate(), using find() instead
+
+	* isogs.cc: changes to Reduction_type datat access
+
+	* curvered.cc: Changed type of reduct_array from Reduction_type* to
+	map<bigint,Reduction_type> so it can be indexed by primes.
+
+	Consequent changes to utility functions
+
+	* curve.h: Changed type of reduct_array from Reduction_type* to
+	map<bigint,Reduction_type> so it can be indexed by primes.
+
+2002-09-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* thtconst.cc, htconst.h, htconst.cc: New file.
+
+2002-09-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* thtconst.cc, htconst.h, htconst.cc: New file.
+
+2002-08-23  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* allisog.cc, cperiods.cc, curve.cc, curvedata.cc, curvered.cc, findinf.cc, heights.cc, indep.cc, isogs.cc, lambda.cc, mwprocs.cc, points.cc, sieve_search.cc, sieve_search_appl.cc, sifter.cc, theight.cc, torsion.cc, tortest.cc, tpoints.cc, curve.h, isogs.h, lambda.h, mwprocs.h, points.h, sieve_search.h, sifter.h:
+	adapted for stl/libg++-3
+
+2002-07-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sieve_search.cc: adapted for gcc-3.1
+
+	* points.cc, points.h: adapted for gcc-3.1
+	increased inlining
+
+	* mwprocs.cc, lambda.cc, cperiods.cc, isogs.cc: adapted for gcc-3.1
+
+	* curvedata.cc, curve.cc, curve.h: adapted for gcc-3.1
+	increased inlining
+
+	* reader.h: adapted for gcc-3.1
+	avoid opening "/dev/tty" for input
+
+2002-07-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sieve_search.cc: adapted for gcc-3.1
+
+	* points.cc, points.h: adapted for gcc-3.1
+	increased inlining
+
+	* mwprocs.cc, lambda.cc, cperiods.cc, isogs.cc: adapted for gcc-3.1
+
+	* curvedata.cc, curve.cc, curve.h: adapted for gcc-3.1
+	increased inlining
+
+	* reader.h: adapted for gcc-3.1
+	avoid opening "/dev/tty" for input
+
+2001-08-14  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tcurve.cc: Commented out CurvedataExtra class, as never used
+
+	* sifter.cc, sieve_search.cc, points.h, mwprocs.cc, isogs.cc, curvered.cc:
+	Cosmetic changes to satisfy -Wall
+
+	* curvedata.cc, curve.h:
+	Commented out CurvedataExtra class, as never used
+
+	* curve.cc: explicit coercions in c4c6_to_ai for NTL
+
+	* cperiods.cc: Cosmetic changes to satisfy -Wall
+
+2001-08-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* curve.cc:
+	some explicit coercions to bigint to avoid runtime bugs with LiDIA on linux
+	+cosmetic: debugging output added, commented out.
+
+	* curvedata.cc: cosmetic: debugging output added, commented out.
+
+2001-07-27  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sieve_search.cc: explicitly include <stdlib.h> for qsort
+
+	* tpoints.cc, torsion.cc, theight.cc, tcurve.cc:
+	Uses new set_precision interface
+
+	* sieve_search.cc, isogs.cc: LiDIA flag renamed LiDIA_ALL
+
+	* indep.cc, findinf.cc: Uses new set_precision interface
+
+	* cperiods.cc: LiDIA flag renamed LiDIA_ALL
+
+	* allisog.cc: Uses new set_precision interface
+
+2001-07-18  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* curvered.cc:
+	added a return statement to operator<< for Kodaira_codes.
+
+	* mwprocs.cc:
+	Points array is now automatically enlarged if full;  important since
+	the no-process option causes all points found to be stored, so 30 is
+	not long enough!
+
+2001-07-18  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* curvered.cc:
+	added a return statement to operator<< for Kodaira_codes.
+
+	* mwprocs.cc:
+	Points array is now automatically enlarged if full;  important since
+	the no-process option causes all points found to be stored, so 30 is
+	not long enough!
+
+2001-07-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mwprocs.cc:
+	Tidied up actions when process-points is off:  it keeps the
+	non-torsion points found, and outputs them iff verbose is on.
+
+2001-06-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* isogs.cc: fixed bug when denom(j)<0
+
+2001-04-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sifter.h: removed MAXRANK as not used and clashes with mwprocs.h
+
+2001-01-11  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* theight.cc:
+	commented out later tests, as we mainly use this to compute
+	heights and their local components.
+
+2000-08-16  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* findinf.cc:
+	added a one-line list of the generating points found in Pari format.
+
+2000-08-16  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* findinf.cc:
+	added a one-line list of the generating points found in Pari format.
+
+2000-06-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sieve_search.cc:
+	Plugged memory leak: survivors array was no being delete[]d.
+
+2000-05-31  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sieve_search_appl.cc: New file.
+
+2000-05-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tpoints.cc, theight.cc, tate.cc, sieve_search.cc, points.h, points.cc, mwprocs.cc, lambda.cc, isogs.cc, indep.cc, heights.cc, curvered.cc, curvedata.cc, curve.cc:
+	Added NTL compatibility
+
+2000-05-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tpoints.cc, theight.cc, tate.cc, sieve_search.cc, points.h, points.cc, mwprocs.cc, lambda.cc, isogs.cc, indep.cc, heights.cc, curvered.cc, curvedata.cc, curve.cc:
+	Added NTL compatibility
+
+2000-05-08  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* torsion.cc: Added precision setting for LiDIA version
+
+2000-05-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* isogs.cc, curvered.cc:
+	trivial: changed bad_primes to the_bad_primes after changing curvedata class
+
+	* curvedata.cc, curve.h:
+	Changed Curvedata class so discriminant is not factored unless needed
+
+2000-05-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* findinf.cc: Now handles non-minimal input curves correctly:
+
+	1. The input curve is minimalised and the corresponding transformation
+	   stored;
+
+	2. If you know points on the input curve in advance, then you may
+	   input them as such, and the program transfers them to the minimal
+	   model for you before looking for any dependencies between them;
+
+	3. The search is then carried out on the minimal equation;
+
+	4. The basis of the points found is listed (with heights and
+	   regulator) on the minimal model, togther with the corresponding
+	   points on the input curve if different.
+
+	* sieve_search.cc, sieve_search.h, mwprocs.cc:
+	removed a couple of lidia-specifics for compatibility
+
+2000-04-13  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* findinf.cc, indep.cc: Just tidying up
+
+2000-01-04  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sieve_search.cc, sieve_search.h: New file.
+
+	* mwprocs.cc:
+	Added interface to qsieve class (Stoll sieve as adapted for C++ by S
+	Labour)
+	Added proper check that linear relations do hold exactly mod torsion.
+
+	* mwprocs.h: Added interface to qsieve class (Stoll's sieve)
+
+	* findinf.cc: Option 0 (Stoll sieve) is now the default, no prompt.
+
+1999-08-18  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tortest.cc:
+	Added TORSION_ONLY flag to make it only compute and check torsion
+	(else it does conductors too).
+
+1999-05-25  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* points.cc, heights.cc: removed include minmax.h
+
+	* curve.cc: removed include builtin.h
+
+1998-11-09  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* indep.cc, sifter.cc, sifter.h: New file.
+
+1998-08-12  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwprocs.cc: 1. minor change to debugging output
+	2. Now checks sieving primes in reverse order
+
+1998-07-30  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* points.cc:
+	added some extra debugging info controlled by DEBUG_TORSION flag
+
+	* cperiods.cc:
+	Major change in how the roots ei are computed.  Integer arithmetic
+	used as far as possible to avoid nasty situation when discriminant is
+	the small difference of two nearly equal large numbers.  Instead of
+	library function solvecubic(),  we have our own
+	solve_nonsingular_cubic() which takes integer coefficients.  Other
+	advantages: we know precisely when all roots are real by looking at
+	the sign of the discriminant.
+
+	* cperiods.h:
+	Cperiods now constructed from Curvedata not Curve, so it knows: sign
+	of disc and b2,b4,b6
+
+1998-07-28  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* findinf.cc:
+	Changed default moduli option for sieving from 2 (Gebel's composites)
+	to 3 (prime powers).
+
+	* heights.cc: Some debugging lines only, no material changes.
+
+	* points.cc:
+	Some debugging lines, and avoid use of bigint /= to avoid bug in libI
+
+1998-06-09  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* theight.cc: minor
+
+	* findinf.cc: Changed decimal precision under LiDIA to 30
+
+	* points.cc:
+	Added new implementation of point input to handle 3 formats:
+	[x:y:z] or [x,y] or [x/z,y/z]
+
+	* points.h: moved points input implementation to points.cc
+
+1998-05-12  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* points.cc:
+	new/delete always called for PointArray con/destructors, stops memory leak
+
+1998-05-07  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* points.cc: make_ntorsion removed, replaced by new get_ntorsion
+
+	* curve.h:
+	get_ntorsion simplified and make_torsion removed, to fix memory leak
+
+1998-03-04  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tortest.cc:
+	Revised to be LiDIA-compatible, in order to use it after completely
+	rewriting the torsion points function (after Doud)
+
+	* mwprocs.cc:
+	Several delete changed to delete[] which was causing Segmentation
+	Fault bugs!
+
+	* mwprocs.h:
+	Both process() functions now take const arguments, working with a copy
+	of points.  Only disadvantage is that if the height and/or order are
+	computed here, the results do not get passed back.
+
+	* heights.cc: Some minor cosmetic things while debugging mwprocs
+
+	* points.cc: Point destructor moved here from points.h
+	Some minor tidying up while debugging mwprocs
+	Points constructed using Curvedata pointer where possible
+
+	* points.h:
+	Point destructor (which does nothing) moved to points.cc during
+	debugging
+
+	* findinf.cc: Minor
+
+	* points.cc: More work on new torsion points function
+
+	* points.h: PointArray.getlength() is now const as it should be
+
+	* isogs.cc: (1) EPS for LiDIA is 0.0001, not 0.1
+	(2) technical changes
+
+1997-07-17  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* twist.cc, tpoints.cc: New initprimes()
+
+	* torsion.cc: Corrected transfer of opoints from input curve
+
+	* theight.cc: New initprimes()
+
+	* tcurve.cc, tate.cc: New initprimes()
+
+	* points.cc: New torsion points algorithm implemented
+
+	* curvedata.cc:
+	added missing assignment of conncomp in one Curvedata constructor
+
+	* conductor.cc, allisog.cc: New initprimes()
+
+1997-04-02  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* findinf.cc: Uses new initprimes()
+
+	* cperiods.cc: 1. Only use swap() #ifndef LiDIA
+	2. avoid ++ for bigfloats
+
+1997-02-19  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwprocs.cc:
+	added DEBUG_SIEVE stuff and corrected bug whereby amod array
+	was not getting updated when gcd(a,c)>1.
+
+1997-01-14  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* lambda.cc: added lidia/gnu compatibility conversions
+
+	* curvered.cc:
+	changed x++ to ++x for bigints to avoid warning  messages
+
+	* curvedata.cc: comment added
+
+1997-01-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tlambda.cc, lambda.cc, lambda.h: New file.
+
+	* mwprocs.cc: improved quartic sieving.
+
+	* mwprocs.h: improved quartic sieving
+
+	* theight.cc: Uses new interface for realheight()
+
+	* heights.cc, points.h: changed interface for realheight
+
+1996-08-22  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* theight.cc: reinstated second auto test
+
+	* heights.cc:
+	Now uses the log(d) formula for global height which avoids
+	factorization of the denominator.
+
+1996-08-21  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* curve.cc:
+	Simplified minimise_c4c6 to match algorithm in 2nd edition of book.
+
+	* tcurve.cc:
+	Outputs a minimal equation when it says it does, and not otherwise!
+
+	* curve.cc:
+	1. In c4c6_to_ai() no longer square a1, a3 since we know they are 0 or 1.
+	2. In minimise_c4c6() p_list=pdivs(g), not 6*g, as any non-minimal
+	primes must divide g and we no onger calcculate t.  (Thanks to Geoff
+	Bailey at Magma).
+
+	* curvered.cc, curve.h:
+	Simplified Kodaira code class.  Only the integer "code" is stored,
+	using Pinch's coding as before.  The string form of the code is only
+	created on output.
+
+1996-06-12  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* conductor.cc, tate.cc: Now uses primes up to 10^6 (was only 10^5)
+
+1996-05-08  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* theight.cc:
+	Minor things.  Now makes a reasonable stand-along local & global
+	heights program.
+
+1996-04-22  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* points.cc:
+	Added check in shift function to give warning if the point is not on
+	the curve either before or after the shift
+
+	* points.h: Added member function to return a point's curve
+
+1996-03-05  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mwprocs.cc: minor for scoping fix
+
+	* mwprocs.h: added search_range
+
+	* mwprocs.cc: added search_range()
+
+	* heights.cc, mwprocs.cc: for scoping fixed, and complex -> bigcomplex
+
+	* points.cc: for scoping fixed
+
+	* curve.cc:
+	Shifted quad() and pointsmod() to end and commented them out as they
+	are not used; also renamed quad to quadroots, as if it is ever used it
+	cannot be called quad which is "reserved"
+
+	* cperiods.cc, cperiods.h, isogs.cc: complex -> bigcomplex
+
+1996-02-20  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* cperiods.cc: Changed power to pow
+
+	* curvedata.cc: Changed power to pow in cuberoot()
+
+1996-01-05  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* findinf.cc: Cosmetic changes to im prove output.
+
+	* mwprocs.cc: Changed Gebel's moduli to his latest.
+
+1995-09-28  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tperiods.cc: New file.
+
+1995-09-22  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* isogs.cc:
+	Changed EPS1 from 0.001 to 0.1 as 0.001 caaused a few isogenies to be
+	missed (in ordinary double precision version).
+
+	* cperiods.cc: Added agm values to output ifdef DEBUG
+	Removed warnings about rounding as done better by Iround itself
+
+1995-09-19  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* cperiods.cc:
+	Changed test from real(tau)<0 to real(tau)<-0.1 to avoid rounding
+	errors.
+
+	* points.cc:
+	renamed array points from torsion_points in function torsion_points()!
+
+	* curvedata.cc: set ntorsion=0 in Curvedata::input()
+
+1995-09-12  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* cperiods.cc: 1. removed 0.0 precision-loss bug in LiDIA
+	2. #ifdef DEBUG now separated into DEBUG and DEBUGXY
+	3. removed bug caused by Re(tau)=-0.5 not +0.5
+
+	* allisog.cc:
+	Much simplified, now uses IsogenyClass and its methods; testing stuff
+	turned on with #define TEST
+
+	* isogs.cc:
+	Implementation of IsogenyClass class for handling isognies; still uses
+	a stand-alone function lisog to do the work.
+
+	* isogs.h: 1. getelllist now returns a longlist, not bigintarray
+	2. Declaration of IsogenyClass class
+
+	* torsion.cc: minor changes to use new torsion functions
+
+	* points.cc: added member function Curvedata::make_torsion()
+
+	* points.h:
+	adapted torsion functions now ntorsion is stored in curvedata class
+	(but not the points themselves)
+
+	* curvered.cc: added ntorsion copy in operator=
+
+	* curvedata.cc: added ntorsion management
+
+	* curve.h:
+	made IsogenyClass a friend; added ntorsion to curvedata class
+
+1995-08-25  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* curvered.cc: Output of a CurveRedArray now only outputs the (Curve)
+	i.e. [a1,a2,a3,a4,a6] in a list.
+
+1995-08-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* allisog.cc, bdw2311.cc, bdw2357.cc, conductor.cc, cperiods.cc, crlists.cc, curve.cc, curvedata.cc, curvered.cc, ellisog.cc, findinf.cc, getjay.cc, heights.cc, iotest.cc, isogs.cc, isogsort.cc, mwprocs.cc, ntorsion.cc, points.cc, ptlists.cc, qpemu.cc, qperiods.cc, tate.cc, tcurve.cc, theight.cc, torsion.cc, tortest.cc, tpoints.cc, twist.cc, cperiods.h, crlists.h, curve.h, isogs.h, mwprocs.h, points.h, ptlists.h, reader.h:
+	New file.
+

@@ -1,0 +1,1828 @@
+2005-12-22  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: *** empty log message ***
+
+	* xsplit.cc: minor output changes
+
+	* smattest.cc: changed to test new smat and smat_elim classes
+
+	* smatrix_elim.cc: added svec to macros defined
+
+	* smatrix_elim.h, smat_elim.cc, smat_elim.h:
+	complete rewrite of smat_elim
+
+	* templates.h: added set output
+
+	* vec.cc: fix minor bug caused when lifting non-reduced mod-p vectors
+
+	* xmod.h: cosmetic
+
+	* vector.h: more forward declarations of classes
+
+	* subspace.h: added svec to macros defined
+
+	* svector.h: added smat_elim to macros defined
+
+	* svectest.cc: *** empty log message ***
+
+	* svec.cc: Changed index type from long to int
+	Added much functionality needed by new smat class
+	Efficiency improvements
+
+	* svec.h: Changed index type from long to int
+	Added much functionality needed by new smat class
+
+	* smatrix.cc, smatrix.h: *** empty log message ***
+
+	* smat.cc, smat.h: Complete rewrite of smat class
+
+	* matrix.h: added svec to macros defined
+
+	* mat.cc: More informative error message
+
+2005-11-23  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* xsplit.h, xsplit.cc:
+	discard Hecke matrices on subspaces & recompute later, to save memory
+
+2005-09-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* arith.cc, smat.cc, smat_elim.cc, space.cc, tconic.cc, tleg.cc, tlegcert.cc, vec.cc, xsplit.cc, comptest.cc, interface.cc, makecert.cc, marith.cc, mat.cc, mmatrix.cc, mptest.cc, mspace.cc, mvector.cc, leggen.cc, leggen2.cc, leggencert.cc:
+	replaced exit with abort
+
+2005-08-01  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* polys.cc:
+	debug nrootscubic:  coeffs were in reverse order so when d=0 we were
+	miscounting by 1
+
+2005-07-29  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* arith.cc, arith.h:
+	In primeclass: changed names of data to avoid possible conflict with pari
+	library names;  moved implementations to .cc file
+
+2005-07-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc: Changed include from parislave.h to gpslave.h
+
+	* targets: Added PARIINCDIR and PARILIBDIR to CFLAGS and LFLAGS
+
+	* marith.cc: Changed factor to ::factor to avoinf ambiguity under LiDIA
+
+	* targets: updated pari-related targets
+
+	* parifact.cc: 1. Changed include from pari.h to pari/pari.h
+	2. Changed strtoGEN to strtoI (requires pari 2.2.11 changes >= 1.1286)
+
+2005-07-21  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* Makefile, gf.h, gpslave.cc, gpslave.h, parifact.cc, parifact.h, parislave.cc, parislave.h, polys.cc, polys.h, realroots.cc, realroots.h, slavetest.cc, targets:
+	Added files moved from ../qcurves ../qrank and renamed some files
+
+	* marith.cc: added nrootscubic(), moved from ../qrank
+	added and turned on USE_PARI_FACTORING
+
+	* marith.h: added nrootscubic(), moved from ../qrank
+
+2005-07-11  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* cubic.h: Added a class pre-declaration to keep gcc4.0.1 happy (WAS's
+	suggestion)
+
+	* vec.h: Added 2 class pre-declarations to keep gcc4.0.1 happy (WAS's
+	suggestion)
+
+2005-07-08  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* smat_elim.cc: cosmetic to keep -Wall happy
+
+2005-06-21  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* vector.cc: changed include from svector.h to vector.h
+
+2005-06-15  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* vector.h:
+	Changed macro name from _VECTOR_H to _JC_VECTOR_H after conflict with
+	system include in gcc 3.4
+
+2005-06-03  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* smattest.cc: Tidied up include scheme
+
+	* smat.cc: Tidied up include scheme
+	Added transpose
+	Added row extraction to svec
+	Added sidmat
+
+	* smat.h: Tidied up include scheme
+	Added transpose
+
+	* xsplit.cc, xsplit.h: Major switch to using smats throughout
+
+	* unimod.h, subspace.cc, subspace.h, sub.cc, sub.h, space.cc:
+	Tidied up include scheme
+
+	* smatrix_elim.cc, smatrix.h: Tidied up include scheme
+	Added svec and ssubspace classes
+
+	* smatrix.cc: Tidied up include scheme
+
+	* smat_elim.cc: Added ssubspace class
+
+	* smatrix_elim.h, smat_elim.h: Tidied up include scheme
+
+	Added ssubspace class
+
+	* mvector.cc, mvector.h, msubspace.cc, msubspace.h, mmatrix.cc, mmatrix.h:
+	Tidied up include scheme
+
+	* svectest.cc: test program for svec class
+
+	* svector.cc: template for svec.cc
+
+	* svector.h: Include file for svec class
+
+	* svec.cc:
+	New svec class definitions (to be included only via svector.cc)
+
+	* svec.h:
+	New svec class declarations (to be included only via svector.h)
+
+	* vectest.cc, vector.cc, vector.h: Tidied up include scheme
+
+	* vec.h: Tidied up include scheme
+	Added dot product of vec and svec
+	Made class svec friend
+
+	* mattest.cc, matrix.cc: Tidied up include scheme
+
+	* mat.cc: minor
+
+	* matrix.h, mat.h: Tidied up include scheme
+
+	* targets:
+	Added targets for svecs and also only now builds xplit2 (not all 6)
+
+	* splitbase.h:
+	1. Added s_opmat() and s_opmat_restricted() which return smats
+	2. Added extra int parameter "dual" to these and mat version, meaning
+	we need the transposed matrix
+
+	* rat.h, quadratic.h, parislave.cc, parislave.h:
+	Tidied up include scheme
+
+	* method.h: Added smatrix_elim.h
+
+	* marith.cc, marith.h, legendre.cc, legendre.h:
+	Tidied up include scheme
+
+	* interface.h: Added #include <map> as we now use it a lot
+
+	* illl.cc, illl.h, conic.cc, conic.h: Tidied up include scheme
+
+2005-06-02  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* smattest.cc: added test of transpose() for smats
+
+	* smat.cc, smat.h: added transpose() for smats
+
+2005-05-19  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* mat.cc, mat.h, vec.h:
+	Added functions add/sub_row_to_vec for efficiency saving in g0n/homspace
+
+2005-05-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* Makefile: Added support for NTL_ALL
+
+	* compproc.cc, compproc.h, comptest.cc, conic.cc, conic.h, cubic.cc, cubic.h, echtest.cc, f.cc, fact.cc, factor.cc, hilbert.cc, hilbert.h, holzer.cc, illl.cc, illl.h, interface.cc, interface.h, kbessel.cc, kbessel.h, lcubic.cc, legendre.cc, legendre.h, leggen.cc, leggen2.cc, leggencert.cc, makecert.cc, marith.cc, marith.h, mat.cc, mat.h, matrix.cc, matrix.h, mattest.cc, method.h, mmatrix.cc, mmatrix.h, mmattest.cc, modmul.cc, modtest.cc, mptest.cc, mspace.cc, msubspace.cc, msubspace.h, mvectest.cc, mvector.cc, mvector.h, parislave.cc, parislave.h, periods.cc, poltest.cc, ptest.cc, quadratic.cc, quadratic.h, random.cc, rat.h, rattest.cc, rcubic.cc, slavetest.cc, smat.cc, smat.h, smat_elim.cc, smat_elim.h, smatrix.cc, smatrix.h, smatrix_elim.cc, smatrix_elim.h, smattest.cc, space.cc, splitbase.h, sub.cc, sub.h, subspace.cc, subspace.h, tbessel.cc, tc.cc, tcon2.cc, tconic.cc, templates.h, test.cc, testgmp.cc, testl.cc, thilbert.cc, tilll.cc, tilll_lidia.cc, timer.cc, timer.h, tleg.cc, tlegcert.cc, tround.cc, tsqrt.cc, unimod.cc, unimod.h, vec.cc, vec.h, vectest.cc, vector.cc, vector.h, xmod.h, xsplit.cc, xsplit.h, arith.h, arith.cc:
+	Standardised header and added copyright and GPL text
+
+2005-05-09  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* Makefile, targets, compproc.cc, lcubic.cc, cubic.cc, comptest.cc, marith.cc, interface.cc, interface.h:
+	Added support for NTL_ALL using NTL's RR class
+
+	* arith.h: added is_zero() function for type long
+
+2005-04-14  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* arith.h: *** empty log message ***
+
+	* arith.cc:
+	deleted function log2() which is never used and caused some conflicts
+	with other packages
+
+2005-04-14  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* arith.h: *** empty log message ***
+
+	* arith.cc:
+	deleted function log2() which is never used and caused some conflicts
+	with other packages
+
+2005-03-23  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* xsplit.cc: cosmetic (indentation)
+
+	* smat.cc: added newlines to error messages
+
+2005-03-12  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* xsplit.cc:
+	Added new strategy using restricted matrices, controlled by bigmats
+	flag
+
+	* xsplit.h:
+	Added bigmats flag -- set to 0 tu use restricted matrix method
+
+	* splitbase.h: Added opmat_restricted()
+
+	* marith.cc: minor to satisfy -Wall
+
+2005-03-08  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* xsplit.cc, thilbert.cc, space.cc: Minor to satisfy -Wall
+
+	* smat.h: operator -= forgot to return *this.
+
+	* rcubic.cc, mmattest.cc, cubic.cc, conic.cc, arith.cc:
+	Minor to satisfy -Wall
+
+2005-03-08  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* xsplit.cc, thilbert.cc, space.cc: Minor to satisfy -Wall
+
+	* smat.h: operator -= forgot to return *this.
+
+	* rcubic.cc, mmattest.cc, cubic.cc, conic.cc, arith.cc:
+	Minor to satisfy -Wall
+
+2005-03-08  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* lcubic.cc (Module): 
+
+2004-04-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* parislave.cc: use unlink instead of rm to delete temp gp_in file
+
+2004-04-17  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: Added parislave.o to all things which use marith.o
+
+	* slavetest.cc: test factorization program using parislave
+
+	* parislave.cc: parislave class
+
+	* parislave.h: New parislave class
+
+2004-04-16  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc:
+	Lots up changes to pdivs() functions:  explicit pdivs_pari(), using
+	the parislave class;  pdivs_lidia();  pdivs_trial_div() for trial
+	division up to a given bound
+
+	* marith.h: Added pdivs_lidia()
+
+	* targets: General update
+
+	* fact.cc: Now a general purpose test program for factorizing
+
+2004-04-16  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc:
+	Lots up changes to pdivs() functions:  explicit pdivs_pari(), using
+	the parislave class;  pdivs_lidia();  pdivs_trial_div() for trial
+	division up to a given bound
+
+	* marith.h: Added pdivs_lidia()
+
+	* targets: General update
+
+	* fact.cc: Now a general purpose test program for factorizing
+
+2004-04-06  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* fact.cc: Deleted the silly "press any key" stuff
+
+	* compproc.cc:
+	All complex cube roots now done using cube_root() function;  which
+	uses exp(log(z)/3) and not pow(z,1/3) to avoid gcc bug (in gcc 3.3,
+	not 3.2)
+
+2004-03-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc:
+	Improved interface and strategy for integer fractorization using gp if
+	available
+
+	* interface.h: removed #include <limit>
+	added   #include <sstream>
+
+2004-02-19  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: *** empty log message ***
+
+2003-11-12  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc:
+	Instead of looking for gp just in /usr/local/bin/gp it checks to see
+	if the environment variable PATH_TO_GP is set;  and uses it in place
+	of /usr/local/bin/ if so.  This allows for gp to be used even if it is
+	not installed in the default place.
+
+2003-11-11  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc:
+	Make sure that the prime arrays returned by pdivs are sorted, since
+	this is required when we take unions of them.
+
+	* templates.h:
+	Just added a warning comment
+
+2003-09-26  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc:
+	merged two sets of changes for better handling of PRIMES file
+
+	* fact.cc: Added verbosity to initprimes() call
+
+	* marith.h:
+	Class extra_prime_class: added member functions read_from_file and
+	write_to_file
+
+2003-09-24  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc: Two changes to marith.cc:
+	(1) temp files for gp-factorization are now in /tmp in case current
+	directory is not readable
+	(2) existence of an empty PRIMES file no longer causes a crash
+
+2003-06-13  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* fact.cc, marith.cc, marith.h, targets:
+	marith.h/cc: added pdivs_pari() function which uses external
+	/usr/local/bin/gp for factorization if not using LiDIA (and if it is
+	there)
+
+	fact.cc: minor change to test the above
+
+2003-06-09  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* marith.cc, marith.h:
+	marithh, cc: (1) more efficient insertion of extra primes (using proper
+	facility for the set type);
+	(2) input of extra primes eats white space so no need to end file with
+	a 0
+	(3) destructor of extra_primes class outputs (sorted) list, so any
+	extra primes found are automatically available in future
+
+2003-06-06  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* fact.cc, marith.cc, marith.h:
+	marith.h:  new member function contains(p) in extra_prime_class to
+	test whether a candidate new prime is there already
+	           extra_prime_class::add(p) only adds if new
+	marith.cc: in LiDIA factorization front-end:
+	           (1) Any new primes found are added to extra prime list
+		   (2) Final factorization step identifies powers
+
+2003-04-11  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tmodmul2.cc, lidint.cc, lintest.cc, ltest.cc, matxtest.cc, nagtest.cc, nigel.cc, sort.cc, special.cc, svec.cc, svectest.cc, tech.cc, tmodmul.cc, Subspace.cc, Vectest.cc, Vector.cc, commute.cc, ctest.cc, dadd.cc, dmul.cc, dummyInst.cc, ech.cc, inst.cc, Matest.cc, Matrix.cc, Spacetest.cc, SparseElim.cc, SparseMatrix.cc, Sparsetest.cc, svec.h, SparseMatrix.h, Subspace.h, Vector.h, dmod.h, ech.h, Matrix.h, Operations.h, SparseElim.h:
+	moving obsolete files to ../procs_obs
+
+	* simon.arith.cc, simon.arith.h, simon.ptest.cc:
+	deleting obsolete files
+
+	* list.cc, list.h, lists_template.cc, lists_template.h, linear.cc, linear.h, linsyst.cc, linsyst.h:
+	obsolete files moved to ~/curves/procs_obs
+
+	* targets: removed some redundant stuff
+
+2003-04-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* Makefile: typo
+
+	* targets, Makefile: use CC and CXX properly
+
+	* Makefile: only assign CC when not in environment
+
+	* targets: changed ARITH interface
+
+	* Makefile:
+	Changed interface to setting ARITH type (NTL_INTS, LIDIA, LIDIA_INTS)
+
+	* Makefile:
+	OPTFLAG now depends on HOSTNAME to add alpha-specific flags on selmer
+
+	* ChangeLog, targets, Makefile, factor.cc, ressol.c, poltest.cc:
+	New file.
+
+2003-04-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* targets, Makefile, factor.cc, ressol.c, poltest.cc: New file.
+
+2003-02-20  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* fact.cc: *** empty log message ***
+
+2002-12-17  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* arith.cc:
+	hid the if(longis64bit) code inside #ifdef __alpha so that no compiler
+	warning is given on a 32-bit machine
+
+2002-11-12  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc:
+	replaced kronecker function with one taken from Pari source.  orginals
+	still there called "oldkronecker"
+
+	* arith.cc:
+	replaced kronecker function with one taken stratight from Pari source.
+
+2002-10-14  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tconic.cc: non-parametric solutions are tested for correctness.
+
+	* conic.cc:
+	Added support of coeff(x^2) to factorbase for semi-diagonal equations,
+	which were omitted (probably when converting to STL vectors)
+
+2002-10-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* fact.cc: Adapted for gcc-3
+
+	* marith.cc:
+	Fixed bug in Introotscubic() etc whereby some roots got included more
+	than once.
+
+2002-09-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* smat_elim.cc: kernel(smat) no longer tries to lift to char 0
+	If required, use the lift() function for class subspace
+
+	* vec.cc:
+	Added preliminary step in liftok()  for a modular vector, to first
+	divide through (mod pr) by first non-zero entry.
+
+	* xsplit.cc: turned USE_SPARSE ON
+
+2002-09-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* templates.h: deleted all but 3 functions
+
+	* thilbert.cc: replaced merge_to_first() by vector_union()
+
+	* rcubic.cc: adjusted is_zero() tests
+
+	* legendre.cc: replaced merge_to_first() by vector_union()
+
+	* hilbert.cc: replaced vector_merge() by vector_union()
+
+	* conic.cc: replaced merge_to_first() function by vector_union()
+
+	* compproc.cc: eliminated merge1_to_first() function
+
+	* marith.cc: removed merge1_to_first() calls
+
+	* ptest.cc, mptest.cc:
+	removed references to locate(), using find() instead
+
+	* rcubic.cc, lcubic.cc: minor fix to keep complier happy
+
+	* kbessel.cc: Added #include <cmath>, needed under linux
+
+2002-09-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc: One extra output line added to pdivs() when verbosity>0
+
+	* lcubic.cc, rcubic.cc, cubic.cc: Minor edits to keep gcc-3.1 happy
+
+2002-09-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc: One extra output line added to pdivs() when verbosity>0
+
+	* lcubic.cc, rcubic.cc, cubic.cc: Minor edits to keep gcc-3.1 happy
+
+2002-08-23  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* compproc.cc, comptest.cc, conic.cc, hilbert.cc, illl.cc, interface.cc, legendre.cc, marith.cc, mat.cc, matrix.cc, mattest.cc, mmatrix.cc, mmattest.cc, mptest.cc, mspace.cc, msubspace.cc, mvectest.cc, mvector.cc, ptest.cc, smat.cc, smat_elim.cc, smatrix.cc, smatrix_elim.cc, smattest.cc, space.cc, sub.cc, subspace.cc, thilbert.cc, vec.cc, vectest.cc, vector.cc, xsplit.cc:
+	Adapted for stl/libg++-3
+
+	* echtest.cc, eco.cc, eco_appl.cc, env.cc, f.cc, leggen.cc, leggen2.cc, leggencert.cc, makecert.cc, modmul.cc, tc.cc, tcon2.cc, test.cc, testl.cc, tilll_lidia.cc, toto.cc, tsqrt.cc, xmod.cc:
+	New file.
+
+	* arith.cc: y
+	Adapted for stl/libg++-3
+
+	* arith.h, compproc.h, conic.h, hilbert.h, illl.h, interface.h, legendre.h, marith.h, mat.h, matrix.h, method.h, mmatrix.h, msubspace.h, mvector.h, rat.h, smat.h, smat_elim.h, smatrix.h, smatrix_elim.h, splitbase.h, sub.h, subspace.h, templates.h, vec.h, vector.h, xsplit.h:
+	Adapted for stl/libg++-3
+
+2002-08-16  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* templates.h: New file.
+
+2002-08-15  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* xsplit.cc:
+	Added option USE_SPARSE (currently =1, set to 0 to switch off) which
+	gives a slightly crude way of doing the linear algebra with sparse
+	matrices ONLY IF METHOD==2 i.e. using int arithmetic modulo BIGPRIME
+	anyway.
+
+	The intention is to later do this properly with a sparse subspace class.
+
+	New functions sparse_combine(), sparse_restrict() are implemented here
+	for now.
+
+	* smat.cc, smat.h: Added 2 functions:
+	1. mult_by_scalar_mod_p (with p defaulted to BIGPRIME)
+	2. eqmodp (ditto)
+	mainly for debugging use so far
+
+	* mat.cc, mat.h:
+	Added sparsity() function which returns the density (!) of a matrix
+
+	* smat.cc:
+	In operator* which uses arithmetic modulo BIGPRIME, ensure that
+	result's entries are least residues now that xmod functions do not
+	give this
+
+	* space.cc: additional debugging output
+
+	* sub.cc, mat.cc:
+	Fixed use of xmod, calling mod so that results have least-residue
+	entries where necessary
+
+	* vec.cc: Fixed use of xmod
+
+	* xmod.h: 1. Under USE_DMOD, xmod0 uses floor instead of round
+	2. Added functions mod0() to give least residues, now that xmod0()
+	does not.
+
+	* xmod.h: undefined USE_DMOD
+
+	* xmod.h:
+	Simplified non-doubles method;  residues can be between 1-p and p-1,
+	default p=precprime(2^30) so addition is simple
+
+2002-08-15  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* xsplit.cc:
+	Added option USE_SPARSE (currently =1, set to 0 to switch off) which
+	gives a slightly crude way of doing the linear algebra with sparse
+	matrices ONLY IF METHOD==2 i.e. using int arithmetic modulo BIGPRIME
+	anyway.
+
+	The intention is to later do this properly with a sparse subspace class.
+
+	New functions sparse_combine(), sparse_restrict() are implemented here
+	for now.
+
+	* smat.cc, smat.h: Added 2 functions:
+	1. mult_by_scalar_mod_p (with p defaulted to BIGPRIME)
+	2. eqmodp (ditto)
+	mainly for debugging use so far
+
+	* mat.cc, mat.h:
+	Added sparsity() function which returns the density (!) of a matrix
+
+	* smat.cc:
+	In operator* which uses arithmetic modulo BIGPRIME, ensure that
+	result's entries are least residues now that xmod functions do not
+	give this
+
+	* space.cc: additional debugging output
+
+	* sub.cc, mat.cc:
+	Fixed use of xmod, calling mod so that results have least-residue
+	entries where necessary
+
+	* vec.cc: Fixed use of xmod
+
+	* xmod.h: 1. Under USE_DMOD, xmod0 uses floor instead of round
+	2. Added functions mod0() to give least residues, now that xmod0()
+	does not.
+
+	* xmod.h: undefined USE_DMOD
+
+	* xmod.h:
+	Simplified non-doubles method;  residues can be between 1-p and p-1,
+	default p=precprime(2^30) so addition is simple
+
+2002-08-14  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* smatrix_elim.cc, smatrix_elim.h: New file.
+
+	* xmod.h:
+	Added some brackets to correct xmodmul0(long,long) when long is 32 bit
+
+	* xmod.h: New file.
+
+	* smattest.cc: *** empty log message ***
+
+	* smat_elim.cc: 1. removed function display_population()
+	2. changed modular operations to use new functions in xmod.h
+	3. cosmetic
+
+	* smat_elim.h: Added rank, nullity, kernel, eigenspace functions
+
+	* smatrix.h: sorted out inclusion tree
+
+	* smat.cc:
+	1. added functions get_population(), nrows(), ncols(), select_rows()
+	2. changed modular operations to use new functions in xmod.h
+	3. debug correction in operator+=(scalar)
+
+	* smat.h: 1. sorted out inclusion tree
+	2. added functions get_population(), nrows(), ncols(), select_rows()
+
+	* subspace.h: 1. sorted out inclusion tree
+	2. defined smat and smat_elim
+
+	* mmatrix.h: sorted out inclusion tree
+
+	* mattest.cc: now includes interface.h
+
+	* matrix.h: 1. sorted out inclusion tree
+	2. defined smat and smat_elim
+
+	* vec.cc: modified debugging output slightly
+
+	* vector.h: 1. sorted out inclusion tree
+	2. defined smat and smat_elim
+
+	* arith.cc, arith.h: xmod functions now in a file of their own, xmod.h
+
+2002-08-12  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* smattest.cc: Added test for addition/subtraction of scalars
+	Added test for kernel and eigenspace functions
+
+	* smat_elim.cc: added list::clear() function
+	moved in some long inline functions from .h
+	added kernel and eigenspace functions
+
+	* smat_elim.h: added list::clear() function
+	moved out some long inline functions to .cc
+
+	* smat.cc: Correct index bug in operator+=(scalar) (out by one!)
+
+	* smat.h: Now includes sub.h instead of mat.h, for kernel function
+
+2002-08-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* smatrix.cc, smatrix.h: New file.
+
+	* smat.cc:
+	1. Adapted for pseudo-template version to be implemented with both int
+	   and long types
+
+	2. Added operators +=(scalar) and -=(scalar) for adding scalar
+	   multiples of the identity
+
+	3. Lots of debugging
+
+	* smat.h:
+	1. Adapted for pseudo-template version to be implemented with both int
+	   and long types
+
+	2. Added operators +=(scalar) and -=(scalar) for adding scalar
+	   multiples of the identity
+
+	* mmatrix.cc: trivial change for NTL compilation
+
+2002-08-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc: Changed order of #includes, was confusing cmopiler
+	Fixes to merge() and merg1()
+	Fixed IntRootsCubic() and IntRootsQuartic() to use NTL/LiDIA functions
+	more.
+
+	* mmatrix.cc:
+	Fixed 2 shorten() functions, failing because of (1) apparent bug in
+	gmp's test functions, and (2) apparent wrong code produced by compiler
+	(gcc-3.1)
+
+	* interface.cc:
+	Moved definitions of I2long() and I2int() from the .h file
+
+	* interface.h:
+	Moved definitions of I2long() and I2int() to the .cc file
+	Fixed definitions of is_int() and is_long()
+
+2002-07-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* mattest.cc: minor timing output change
+
+	* timer.cc: Added interface to NTL's time function
+
+	* timer.h: Added inerface to NTL's time function
+
+2002-07-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* timer.cc:
+	defines CLK_TCK to be CLOCKS_PER_SEC if necessary (for linux)
+
+	* mattest.cc: updated timer functions
+
+	* space.cc: removed timer functions
+
+	* msubspace.cc, msubspace.h, marith.cc, marith.h, arith.cc, arith.h, quadratic.cc, quadratic.h, unimod.cc, unimod.h:
+	tidied up inlining
+
+	* interface.cc:
+	Moved lots of little function back to interface.h and inlined them
+
+	* interface.h:
+	Moved lots of little function back from interface.cc and inlined them
+
+	* unimod.cc: New file.
+
+	* unimod.h:
+	removed "inline" from declarations of non-member functions which are
+	defined in unimod.cc
+
+	* interface.cc: New file.
+
+	* interface.h:
+	Adapted for gcc-3.1:  changed headers, forced some namespace choices,
+	reduced inlining in .h files
+
+	Also moved all the definitions to a new file interface.cc
+
+	* xsplit.cc, vectest.cc, unimod.h, timer.cc, timer.h, tbessel.cc, subspace.cc, sub.h, sub.cc, space.cc, rattest.cc, quadratic.cc, quadratic.h, mvector.cc, mvector.h, msubspace.h, msubspace.cc, mmatrix.cc, mattest.cc, matrix.cc, mat.cc, marith.cc, marith.h, legendre.h, legendre.cc, kbessel.cc, kbessel.h, illl.h, hilbert.h, conic.cc, conic.h, compproc.cc, compproc.h, arith.cc, arith.h:
+	Adapted for gcc-3.1:  changed headers, forced some namespace choices,
+	reduced inlining in .h files
+
+2002-07-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* interface.cc: New file.
+
+	* interface.h:
+	Adapted for gcc-3.1:  changed headers, forced some namespace choices,
+	reduced inlining in .h files
+
+	Also moved all the definitions to a new file interface.cc
+
+	* xsplit.cc, vectest.cc, unimod.h, timer.cc, timer.h, tbessel.cc, subspace.cc, sub.h, sub.cc, space.cc, rattest.cc, quadratic.cc, quadratic.h, mvector.cc, mvector.h, msubspace.h, msubspace.cc, mmatrix.cc, mattest.cc, matrix.cc, mat.cc, marith.cc, marith.h, legendre.h, legendre.cc, kbessel.cc, kbessel.h, illl.h, hilbert.h, conic.cc, conic.h, compproc.cc, compproc.h, arith.cc, arith.h:
+	Adapted for gcc-3.1:  changed headers, forced some namespace choices,
+	reduced inlining in .h files
+
+2002-06-11  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* xsplit.cc:
+	Added new opfilename() function, which puts the temporary matrix files
+	into /tmp UNLESS the environment variable TMPMATDIR is set, in which
+	case it uses that instead.
+
+2001-12-06  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc: Ifloor warning suppressed except in DEBUG mode
+
+2001-10-08  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* xsplit.cc:
+	Added char**opfilenames (to hold unique opmat filenames in /tmp)
+	and associated calls to mkstemp()
+
+	* xsplit.h:
+	Added char**opfilenames (to hold unique opmat filenames in /tmp)
+
+2001-08-14  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* rat.h: Cosmetic changes to satisfy -Wall
+
+2001-08-13  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* xsplit.cc: Cosmetic changes to satisfy -Wall
+	(it still warns over the explicit \0 in output string)
+
+	* xsplit.h: Cosmetic changes to satisfy -Wall
+
+	* unimod.h: Cosmetic changes to satisfy -Wall
+	+ changed inverse() to deliver the inverse
+
+	* sub.cc, sub.h, msubspace.h, msubspace.cc, mmatrix.cc, mat.cc, marith.h, legendre.cc:
+	Cosmetic changes to satisfy -Wall
+
+	* interface.h: added return value for jacobi() (NTL only)
+
+	* illl.cc, conic.cc, arith.cc, marith.cc:
+	Cosmetic changes to satisfy -Wall
+
+2001-08-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* compproc.h: deleted declaration of bigcomplex eye(0,1), never used.
+
+2001-07-27  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* arith.h: includes stdlib.h (else caused problems with abs())
+
+	* comptest.cc: Uses new set_precision function
+
+	* interface.h:
+	added set_precision functions with dummy action ifndef LiDIA_ALL
+
+	* arith.h: added inline abs(int) ONLY when not using NTL...
+
+	* arith.h: added abs(int)
+
+	* testgmp.cc: New file.
+
+	* tleg.cc, thilbert.cc: Minor explicit coercion for NTL
+
+2001-07-26  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* lcubic.cc:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+
+	* ptest.cc: added gcd test
+
+	* marith.cc:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+	2. Changed or() to bitwise_or() under LiDIA
+
+	* marith.h:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+
+	* comptest.cc:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+	2. Changes bigfloat::precision() to bigfloat::set_precision()
+
+	* compproc.cc:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+
+	* compproc.h: cosmetic only
+
+	* interface.h:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+	2. Added
+	using namespace LiDIA;
+	when using LiDIA
+
+	* arith.cc, arith.h: gcd(long,long) only defined if not using LiDIA
+
+2001-07-26  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* lcubic.cc:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+
+	* ptest.cc: added gcd test
+
+	* marith.cc:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+	2. Changed or() to bitwise_or() under LiDIA
+
+	* marith.h:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+
+	* comptest.cc:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+	2. Changes bigfloat::precision() to bigfloat::set_precision()
+
+	* compproc.cc:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+
+	* compproc.h: cosmetic only
+
+	* interface.h:
+	1. Changed name of flag from LiDIA to LiDIA_ALL to avoid conflict with
+	namespace name LiDIA
+	2. Added
+	using namespace LiDIA;
+	when using LiDIA
+
+	* arith.cc, arith.h: gcd(long,long) only defined if not using LiDIA
+
+2001-07-18  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* arith.cc: includes stdlib.h to keep gcc-2.96 happy
+
+	* arith.h: added sign(double)
+
+	* interface.h: in I2double(), i is now an int
+
+	* mmatrix.cc, mvector.h, mvector.cc, vec.cc, vec.h:
+	eliminated named return objects to keep gcc-2.96 happy
+
+	* smat_elim.cc: replaced exit by exit(1) to keep gcc-2.96 happy
+
+2001-06-29  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* sub.cc:
+	In (p)restrict, do nothing and return m if s is the full space
+
+2001-06-12  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc: commented out debug outout...
+
+	* marith.cc:
+	Under NTL, Introotscubic now forms and factors the poly instead of
+	using (low precision!) floating point
+
+	* thilbert.cc, hilbert.cc, hilbert.h:
+	Added return parameter badp to global_hilbert() functions
+
+	* thilbert.cc, hilbert.cc, hilbert.h: New file.
+
+	* tleg.cc, tconic.cc: switched on TEST_PARAM
+
+	* marith.cc:
+	renames hilbert() as hilbert2() to avoid conflict with general Hilbert
+	Symbol functions
+	+
+	In pdivs() under LiDIA, does an explicit call to ecm() to avoid MPQS
+	where possible.  (This should not be necessary according to LiDIA
+	documentation, but does seem to help.)
+
+	* marith.h, arith.cc, arith.h:
+	renames hilbert() as hilbert2() to avoid conflict with general Hilbert
+	Symbol functions
+
+2001-06-04  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc, marith.h:
+	Added a version of concat1 which puts one integer at the beginning
+
+2001-04-24  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tlegcert.cc: New file.
+
+2001-04-23  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* legendre.cc: removed trace from calls to pdivs(), left in by mistake
+
+	* tconic.cc: Updated to use quadratic class properly.
+
+	* marith.cc, marith.h:
+	added concat1 to add one bigint to a list, and also merge and merge1
+	which are like concat but only add items which are not there already.
+
+	* legendre.cc, legendre.h:
+	Adds version of legendre_solve which use a known factorbase
+
+	* lcubic.cc, cubic.cc: minor changes to keep NTL happy
+
+	* cubic.h: minor change to keep NTL happy
+
+	* conic.cc, conic.h:
+	Adds version of solve_conic which use a known factorbase
+
+2001-01-31  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* xsplit.cc:
+	Added to destructor calls to unlink() so that temp matrix files are
+	deleted on exit.
+
+	On alpha, this required adding #include <unistd.h> but this was not
+	needed on linux.
+
+2001-01-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* smat_elim.cc: changed mod to xmod in a couple of places
+
+	* smat.cc: changed mod to xmod in one place
+
+2000-12-22  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* tconic.cc: VERBOSITY set to 0 by default
+
+	* smat_elim.cc: Turned off trace of sparse elimination
+
+2000-10-16  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc:
+	minor fix in Ifloor(double), since sign(x) was not being correctly
+	determined when x did not fit in a 32-bit integer.
+
+2000-10-13  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* smattest.cc, smat_elim.cc, smat_elim.h, smat.cc, smat.h:
+	updated so it works with variable SCALAR_OPTION
+
+	* random.cc:
+	added an int version as well as a long one to keep compiler happy
+
+2000-05-31  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* timer.cc, timer.h: New file.
+
+2000-05-31  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* timer.cc, timer.h: New file.
+
+2000-05-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* interface.h: fixed setbit problem
+
+2000-05-10  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* interface.h: fixed setbit problem
+
+2000-05-09  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* xsplit.cc, mvector.h, unimod.h, quadratic.cc, quadratic.h, mvector.cc, mvectest.cc, msubspace.h, msubspace.cc, mptest.cc, modtest.cc, mmattest.cc, mmatrix.cc, legendre.cc, interface.h, illl.cc, conic.cc, comptest.cc:
+	Added NTL compatibility
+
+	* marith.h, marith.cc: dded NTL functionality
+
+	* arith.h: Added NTL functionality
+
+2000-05-08  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* fact.cc: *** empty log message ***
+
+2000-05-05  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc:
+	removed bug in isqrt caused by "root=1<<l" failing when l>31
+
+2000-05-03  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* arith.cc, arith.h: added intlog2()
+
+	* marith.cc:
+	another small change in sqrt to avoid too many bigint % long steps.
+
+	* marith.cc:
+	improved isqrt by adding congruence conditions mod 64, 63, 65, 11 as
+	in Pari.
+
+2000-05-02  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* marith.cc: removed remainder() call
+
+	* interface.h: added nearest() and roundover() in libg++ version
+
+2000-04-20  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* vectest.cc, mattest.cc, mmattest.cc, space.cc:
+	Time variables now int not long int to keep gcc-2.95 happy.
+
+	* rattest.cc: removed obsolete #include builtin.h
+
+	* legendre.cc:
+	minor change to holzer_measure to make compatible with LiDIA and
+	LiDIA_INTS
+
+	* legendre.cc:
+	New backtracking versions of lem4 so lem2 is not used and we preserve
+	the lattice in all cases.
+
+	Debugging code added.
+
+	Uses nearest() where it can.
+
+	lem2() etc moved to end as no longer used.  Same with old versions of
+	lem4().
+
+	* legendre.h:
+	New backtracking versions of lem4 so lem2 is not used and we preserve
+	the lattice in all cases.
+
+	* tleg.cc: calls legendre_solve directly instead of solve_conic()
+
+	* marith.cc, marith.h: Removed roundover(), now handled in interface.h
+
+	* illl.cc:
+	Replaced call to divide_exact by simple division now fully debugged (!)
+	and uses nearest() instead of roundover() as it's a LiDIA built-in.
+
+	* interface.h: Added roundover(): uses LiDIA's nearest() if available
+	      and nearest() when not LiDIA
+
+2000-03-30  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* modtest.cc: minor
+
+	* legendre.cc, legendre.h: rearranged recursion structure considerably
+
+	* conic.cc: minor
+
+	* conic.h: Added some output utility functions
+
+	* comptest.cc: trivial
+
+	* compproc.cc:
+	solve_cubic more robust when "approximately" a pure cubic
+
+1999-08-24  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* conic.cc: cosmetic output format tidying
+
+	* tleg.cc: corrects calling of legendre_param()
+
+	* legendre.h:
+	added version of check_leg wich also checks that the solution is in
+	the lattice defined by the solubility certificate.
+
+	* marith.cc:
+	sqrt_mod_m now deals simply with trivial cases (m=1, a=0,1).
+
+1999-08-18  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* conic.cc, conic.h:
+	Added method parameter to solve_conic() etc, with default to 4,
+	instead of setting via compiler flags.  Because of the default, this
+	is backward-compatible.
+
+	* tleg.cc, tconic.cc:
+	CONIC_METHOD can now be set externally (or at run time)
+
+	* legendre.cc, legendre.h:
+	added flag use_lll to legendre_solve and related procedures, so method
+	is chosen at run-time not by compiler flags.
+
+	* tilll.cc:
+	commented out second method using LiDIA's LLL (does not compile)
+
+	* illl.cc:
+	changed lambda from an mmatrix to lower-level bigint** for (possible)
+	efficiency gain.
+
+	* illl.cc: Minor changes for efficiency
+
+	* illl.h: commented out list_short_vecs() as not implemented correctly
+
+	* marith.cc, marith.h:
+	Added function concat() to concatenate two bigintArrays
+	Added function pdivs_trial() = non-LiDIA pdivs function
+
+1999-06-15  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* comptest.cc: quartic roots test included
+
+1999-05-25  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* interface.h: 1. uses fabs for doubles
+	2. uses new gcc double_complex instead of Complex for gcc-2.8
+
+	* arith.h: added inline  abs(long) since it used to be in builtin.h
+
+	* marith.cc: legendre(bigint,long) rewritten
+
+	* mattest.cc: No longer includes builtin.h
+
+	* xsplit.cc: char* opmatfile no longer global
+
+	* kbessel.cc: Now includes math.h instead of builtin.h
+	Uses fabs instead of abs
+
+1999-04-29  Prof. J. E. Cremona  <jec@selmer.maths.nott.ac.uk>
+
+	* arith.cc:
+	Added long versions of gcd, lcm, which used to be in builtin.h
+
+	* arith.h:
+	Now includes math.h instead of builtin.h as that has disappeared from
+	gcc-2.8
+	Added long versions of gcd, lcm, sign which used to be in builtin.h
+
+	* interface.h:
+	Now includes math.h instead of builtin.h as that has disappeared from
+	gcc-2.8
+
+1998-11-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* lcubic.cc, rcubic.cc: adapted to use unimod and cubic classes
+
+	* cubic.cc, cubic.h: Converted into a proper cubic class
+
+	* quadratic.h: cosmetic changes only
+
+	* unimod.h: Continued creation, addition of scled_unimod class
+
+1998-11-06  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tilll.cc, illl.cc, illl.h: New file.
+
+	* tconic.cc: correct inclusion of quadratic.h
+
+	* tleg.cc, legendre.cc:
+	class quadratic now handles integer quadratics, instead of raw bigint*
+	--also uses unimod class from unimod.h
+
+	* legendre.h, conic.cc, conic.h:
+	class quadratic now handles integer quadratics, instead of raw bigint*
+
+	* quadratic.cc:
+	class quadratic now handles integer quadratics, instead of raw bigint*
+	--also uses unimod class from unimod.h
+
+	* quadratic.h:
+	class quadratic now handles integer quadratics, instead of raw bigint*
+
+	* unimod.h: New file.
+
+	* tleg.cc: added test of parametric solution
+
+	* legendre.cc: 1. Some rearranging
+	2. General purpose stuff moved out
+	3. Solution via LLL now supported (compiler option)
+	4. New reduction of solutions via reducing quadratics, faster than
+	Mordell
+
+	* legendre.h: General purpose routines moved from here to marith
+
+	* conic.cc:
+	1. includes quadratic.h where the quadratic functions now are
+	2. Mordell'e Holzer reduction adapted to work even when c is not
+	square-free
+
+	* conic.h: inline quadratic functions moved to ? marith.h
+
+1998-10-29  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* quadratic.cc:
+	Corrected quad_transform() and added positivity to quad_reduce()
+
+	* quadratic.h:
+	Corrected wrong templates (extra const included) and added inline
+	quad_output() function
+
+1998-10-26  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* quadratic.cc, quadratic.h: New file.
+
+	* marith.cc, marith.h:
+	Added modular square root functions, and "Rusin's Lemma 3"
+
+1998-10-20  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* compproc.cc: cosmetic changes to cagm
+
+	* tconic.cc: Turned off TEST_PARAM
+
+	* tleg.cc, legendre.cc, legendre.h: New file.
+
+	* tconic.cc: initprimes now checks for PRIMES file
+
+	* conic.cc: 1. Moved show_xyz() and cancel() lower down
+	2. Added CONIC_METHOD 4 which uses Rusin's reduction (faster)
+
+	* marith.cc:
+	Cosmetic changes to Introotsquartic, then commented it out entirely to
+	avoid compiler error under LiDIA
+
+	* marith.h:
+	added declaration of jacobi as synonym for legendre when !LiDIA_INTS
+
+	* comptest.cc: Commented out Introotsquartic test
+
+	* compproc.cc: cosmetic changes to cagm()
+
+1998-09-11  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tconic.cc:
+	new switch TEST_PARAM allows testing of parametric solution to be
+	turned off
+
+	* conic.cc: Some extra debugging lines
+	Corrected bug in conic_diag_reduce, which was not always passing a
+	primitive solution to conic_mordell_reduce
+
+1998-08-12  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* marith.cc: added trace option to nonlidia pdivs()
+
+1998-07-29  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* conic.cc: Removed some redundant old code
+
+	* conic.h:
+	1. Added inline eversions of solve_conic() and solve_conic_param()
+	which have a bigint* parameter holding the first 3 coeffs
+	2. Added new inline functions quad_eval(), quad_resultant(), quad_disc()
+
+	* tconic.cc: 1. Tests both non-parametric and parametric functions
+	2. Tests functions with array parameters
+	3. Corrects predicted discriminants and resultants
+	4. Uses new library functions quad_disc() and quad_resultant()
+
+1998-07-28  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tconic.cc: Test functions moved to conic.h/cc
+	Now tests parametric solution too
+
+	* conic.cc:
+	1. Improved parametrization code: very much simpler, and produces the
+	minimal discriminants.
+	2. Bug in conic_diag_reduce() fixed.  Some debugging code added
+	3. macro METHOD changed to CONIC_METHOD for safety
+	4. Some tidying up
+
+1998-07-27  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* conic.cc, conic.h:
+	Major additions: Mordell reduction of solutions to achieve Holzer
+	bounds, and parametric solutions now provided, with separate handling
+	for the case of square discriminant.
+
+	* holzer.cc: New file.
+
+	* marith.cc:
+	sqfdecomp() now has a parameter trace_fact (default 0) which when 1
+	causes info on all factorizations to be displayed.
+
+	Bug in roundover() corrected: was using posmod() not mod() so was
+	giving floor not nearest integer.
+
+	* marith.h:
+	sqfdecomp() now has a parameter trace_fact (default 0) which when 1
+	causes info on all factorizations to be displayed.
+
+	* tround.cc: Added test of roundover()
+
+	* marith.h:
+	Added extra parameter trace to pdivs so factorizations can be traced.
+	Default=0.
+
+	* marith.cc:
+	Added extra parameter trace to pdivs so factorizations can be traced.
+
+1998-06-29  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* compproc.cc: Added some extra debugging output in solvecubic()
+
+1998-06-26  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* compproc.cc: Added some more debugging info in solvecubic()
+
+1998-06-19  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* interface.h: Make sure MININT is defined
+
+	* xsplit.cc:
+	Major changes to matrix handling: big opmats are saved on disk, while
+	current restrictions are saved in memory (they were being repeatedly
+	recomputed).  Also the top level (depth 0) subspace is not defined so
+	no redundant restrictions are computed at this level.
+
+	* xsplit.h: Changed opmat handling
+
+	* mvector.cc: corrected conversion to int
+
+	* mattest.cc: Added test for file output/input
+
+	* matrix.cc: includes fstream, for the file IO functions
+
+	* mat.cc, mat.h: added dump_to_file() and read_from_file()
+
+	* interface.h: added conversion to int as well as to long (from bigint)
+
+1998-06-11  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* cubic.cc, cubic.h, lcubic.cc, rcubic.cc: New file.
+
+1998-05-29  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* sub.cc, mat.cc, vec.cc: New file.
+
+	* xsplit.cc:
+	added parameter to shorten() call so it knows what type (vector_int,
+	vector_long) to shorten to.
+
+	* method.h: Added mthods 5, 6.
+	Now methods 0,2 use ints for vector/matrix classes while methods 5,6
+	use longs.
+
+	* mspace.cc, mmattest.cc, mvectest.cc: minor changes for compatibility
+
+	* msubspace.cc, msubspace.h: pivots is always of type vector_int
+
+	* mmatrix.cc:
+	Now has constructors from both matrix_int and matrix_long explicitly,
+	and also 2 version of shorten()
+	Also changed variable name scalar to scal
+	Also added extra wrapper for echelon so that it does not mind whether
+	pcols & npcols are vector_long or vector_int
+
+	* mmatrix.h:
+	Now has constructors from both matrix_int and matrix_long explicitly,
+	and also 2 version of shorten()
+	Also changed variable name scalar to scal
+
+	* mvector.cc:
+	Now has constructors from both vector_int and vector_long explicitly,
+	and also 2 version of shorten()
+	Also changed variable name scalar to scal
+
+	* mvector.h:
+	Now has constructors from both vector_int and vector_long explicitly,
+	and also 2 version of shorten()
+
+	* smat.cc: variables renamed from scalar to scal for compatibility
+	SCALAR_TYPE changed to scalar
+
+	* smat.h: variables renamed from scalar to scal for compatibility
+
+	* space.cc: minor changes to work with revised subspace implementation
+
+	* mattest.cc: minor changes to work with revised matrix implementation
+
+	* vectest.cc: minor changes to work with revised vector implementation
+
+	* subspace.cc: This is now just a wrapper to include sub.cc twice
+
+	* matrix.cc: This is now just a wrapper to include mat.cc twice
+
+	* vector.cc: This is now just a wrapper to include vec.cc twice
+
+	* subspace.h: This is now just a wrapper to inclide sub.h twice
+
+	* matrix.h: This is now just a wrapper to inclide mat.h twice
+
+	* vector.h: This is now just a wrapper to inclide vec.h twice
+
+	* interface.h: SCALAR_TYPE no longer defined here
+
+	* sub.h, mat.h, vec.h: New file.
+
+1998-05-26  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* matrix.cc: Now includes limits.h as wellas values.h, for Suns
+
+	* ptest.cc: Changed to use new primeclass.
+
+	* marith.cc: Small changes concerning use of new primeclass
+
+	* arith.cc, arith.h:
+	New implementation of class primeclass to handle prime initialization
+	without global variables.
+
+1998-05-22  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* space.cc, mattest.cc, vectest.cc: minor change of long to SCALAR_TYPE
+
+	* marith.cc: added inclusion od LiDIA/factorization.h.
+	IT DOES NOT WORK to include this in interface.h
+
+	* xsplit.h: Made denom1 item SCALAR_TYPE instead of long
+
+	* smat.cc:
+	Changed long to SCALAR_TYPE where appropriate when converting to/from
+	matrix class
+
+	* msubspace.cc, mmatrix.cc, mmatrix.h:
+	Changed long to SCALAR_TYPE where appropriate
+
+	* mvector.cc:
+	Changed long to SCALAR_TYPE when converting to/from vector class
+
+	* method.h: Changed SCALAR type from long to SCALAR_TYPE
+
+	* subspace.cc, subspace.h, matrix.cc:
+	Changed data type of entries to SCALAR_TYPE, which is long by default,
+	but can be set to int for reduction of memory use on a 64bit machine.
+
+	* matrix.h:
+	Changed data type of entries to SCALAR_TYPE, which is long by default,
+	but can be set to int for reduction of memory use on a 64bit machine.
+
+	Also changed MINLONG, MAXLONG to LONG_MIN, LONG_MAX
+
+	* vector.cc, vector.h:
+	Changed data type of entries to SCALAR_TYPE, which is long by default,
+	but can be set to int for reduction of memory use on a 64bit machine.
+
+	* arith.cc, arith.h:
+	added an int version of modrat as well as the long version
+
+	* interface.h:
+	Defines SCALAR_TYPE to be long if not previously defined (say in
+	Makefile)
+
+1998-05-11  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* marith.cc: added some memory leak debugging lines, now commented out
+
+1998-05-07  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* xsplit.cc: Added 2 deletes to fix a memory leak
+
+	* marith.cc:
+	puts back setbit (not setbit_jc) now we undefine system setbit in
+	interface.h
+
+	* interface.h:
+	1. Always includes LiDIA's rational_factorization class after its
+	bigints
+	2. Undefines setbit to avoid compiler confusion on alpha
+
+1998-04-30  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* marith.cc:
+	renamed setbit() to setbit_jc()  (function only used in this file) as
+	setbit() was being macro-expanded by something
+
+1998-03-19  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* marith.cc: Even under LiDIA we now use any extra primes known to help
+	factorization
+
+1998-01-23  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* interface.h:
+	Added Thomas P's test for LiDIA 1.3.0 and above where certain extra
+	functions are now declared.
+
+1997-12-09  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tconic.cc: Added initprimes(), neede for non-LiDIA version
+
+1997-12-08  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mptest.cc:
+	Added a test of the ressol function, mainly to test our non-LiDIA
+	version.
+
+	* marith.cc:
+	Added implementations of power_mod and ressol for non-LiDIA_INT option.
+	The implementation of ressol follows the LiDIA code closely.
+
+	* marith.h:
+	Added declaration of power_mod and ressol for non-LiDIA_INT option as
+	these are now implemented in marith.cc
+
+1997-10-03  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* interface.h:
+	Added swap(a,b) for libg++ bigints for LiDIA compatibility
+
+	* marith.cc:
+	Changed divide() to divides() to avoid clash with libg++  function
+	modsqrt() is only compiled unde LiDIA as it uses function ressol() for
+	which there is no libg++ equivalent.  Hence conic solving only
+	possiblt under LiDIA.
+
+	* marith.h:
+	Changed divide() to divides() to avoid clash with libg++  function
+
+1997-09-04  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* fact.cc, tconic.cc: New file.
+
+1997-07-18  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* conic.cc, conic.h: New file.
+
+1997-07-16  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* compproc.cc: Better division of types in cubic solving
+
+	* marith.cc: added divide_out()
+
+	* marith.h: addedd divide_out nand divide_exact
+
+1997-04-02  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* compproc.cc: removed two pow() which caused problems
+
+	* compproc.cc: 1. eliminated need for swap()
+	2. No ++ for bigfloats, uses +=1
+	3. Added solverealquartic()
+
+	* marith.cc:
+	1. corrected fatal precision error, changed I2double() to I2bigfloat()!
+	2. now uses solverealquartic()
+
+	* comptest.cc: minor
+
+	* compproc.h: deleted redundant swap() functions
+	added solverealquartic()
+
+	* interface.h: minor
+
+	* arith.h: removed duplicate declaration of prime_number()
+
+1997-01-21  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mptest.cc:
+	mionr: primdiv() function no longer supported (never used anyway).
+
+	* marith.cc:
+	pdivs() now uses LiDIA's rational_factorization class when LiDIAINTS defined
+	for better factorization.
+	Commented out 3 obsolete primes functions.
+
+	* marith.h: Commented out 3 obsolete primes functions
+
+	* ptest.cc, arith.cc, arith.h:
+	renamed prime() to prime_number() to avoid name conflict with LiDIA
+
+1997-01-15  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mptest.cc: now uses new initprimes("PRIMES") function
+
+	* marith.cc, marith.h:
+	added functions show_extra_primes() and void initprimes(char* pfilename, int verb=0).
+
+1997-01-14  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mptest.cc: better output info concerning number of primes initialised
+
+	* marith.cc: 1. added extraprimes list and function add_extraprime()
+
+	2. always outputs a warning if a factorization is unsuccessful
+
+	* marith.h: 1. added extraprimes list and function add_extraprime()
+	2. always outputs a warning if a factorization is unsuccessful
+
+	* arith.cc, arith.h: added BIGGESTPRIME global variable
+
+1996-09-02  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* compproc.cc: fixed a memery leak (ssroots) found by NPS
+
+1996-06-21  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* interface.h:
+	added compatibility for lg(bigint) (= floor of log_2) and in-place
+	add, sub, mul (div was there already).
+
+	* marith.cc:
+	Reworking of isqrt: now three possibilities exist for finding the sqrt
+	of the odd part: (a) builtin sqrt; (b) 2-adic method; (c) newton
+	method from Henri's book -- same as builtin except for better starting
+	value.  Currently (c) is used.
+
+1996-04-23  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* compproc.cc: Added refinement of quartic roots via 2 Newton steps
+
+	* comptest.cc: Added test for integer roots of a bigint quartic
+
+1996-04-22  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* marith.cc:
+	Made isqrt more efficient by removing the power of 2 first (and
+	checking that it is even!)
+
+1996-04-03  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* comptest.cc: Added cube root test
+
+	* compproc.cc:
+	Changes is_zero(p3) to is_approx_zero(p3) in solvecubic (in the pure
+	cubic branch) as it was badly behaved.
+
+1996-04-02  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* comptest.cc: Added test to quartic solver
+
+	* compproc.cc:
+	Tiny change to solvequartics: defined constants as (e.g.) three(3).
+
+	* interface.h: Added several pow functions
+
+1996-03-05  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* subspace.cc:
+	Added a couple of "const" to ref matrices to keep gcc-2.7.2 happy.
+
+	* smat_elim.cc:
+	minor changes to keep gcc-2.7 happy regarding scoping rules
+	Also, removed some temp constructions which caused warnings.
+
+	* smat.cc: minor changes to keep gcc-2.7 happy regarding scoping rules
+
+	* vector.h:
+	vector operator* declared inline earlier, to keep gcc-2.7.2 happy.
+
+	* compproc.cc:
+	changed "complex" to "bigcomplex" in one place for consistency.
+
+	* interface.h:
+	No longer #define complex Complex, since libg++-2.7 uses "complex"
+	internally in template definition of Complex (=complex<double>).
+	Programs should use either Complex or bigcomplex consistently (which
+	will mean the same thing anyway)
+
+	* marith.cc:
+	Minor changes to keep gcc 2.7.2 happy; mainly regarding new scoping
+	rules for for statements
+
+	* marith.h:
+	Minor changes to keep gcc 2.7.2 happy; made post- and prefix versions
+	of operator++ for bigintvar
+
+	* arith.h:
+	Minor changes to keep gcc 2.7.2 happy; made post- and prefix versions
+	of operator++ for longvar and primevar
+
+1996-02-27  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* marith.cc: Increased max number of primes in pdivs from 20 to 30
+
+1996-02-15  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* marith.cc: uses sqr function in isqrt.
+
+1996-01-31  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* tround.cc:
+	minor changes + Integer -> bigint to test Ifloor version double ->
+	LiDIA bigint.
+
+	* compproc.cc:
+	Changed power to pow in a couple of places to fit with new interface
+
+	* marith.cc: Added interface for 3rd option LiDIA_INTS
+	Added setbit() function for LiDIA bigints (used in Ifloor)
+
+	* interface.h, marith.h: Added interface for 3rd option LiDIA_INTS
+
+1996-01-26  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* subspace.h, matrix.h, vector.h:
+	Changed edclaration of (p) restrict: now has optional parameter cr
+	("check-restrict"), default 0.
+
+1996-01-25  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* matrix.h:
+	Changed declaration of restrict(...) to agree with subspace.h
+
+1996-01-16  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* subspace.h, subspace.cc:
+	"Check restrict": no longer a compiler switch, but an optional last
+	parameter to functions restrict() and prestrict(), default=0.
+
+1995-10-27  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* mattest.cc: added test of all output options for matrices
+
+	* matrix.cc: added new output options .output_pari() and .output_pretty
+
+	* matrix.h: added new output options for matrix class
+
+1995-10-24  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* matrix.cc: Corrected echelon0; now less liable to overflow
+
+1995-09-28  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* method.h:
+	MODULUS now set to BIGPRIME (when not MULTI) so that it picks up the
+	value  134217689 when USE_DMOD is defined (as is usual).
+
+	* arith.h: corrected spelling mistake in comment!
+
+	* tround.cc: new stuff added and commented out
+
+	* marith.cc:
+	Complete rewrite of Ifloor (non-LiDIA) using bits and warning if precision lost
+
+	* marith.h: Corrected Iround for negative x (non-LiDIA)
+
+1995-09-11  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* compproc.cc:
+	In getc4c6() if using LiDIA only require term to be is_approx_zero(),
+	else never termiantes.
+
+	* periods.cc: complex -> bigcomplex, double -> bigfloat.  Not tested.
+
+	* interface.h: fiddling with is_approx_zero
+
+1995-08-25  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* interface.h:
+	Changed non-Lidia is_approx_zero to 1e-15 from 1e-10 which caused some
+	c4, c6 calculations to fail (e.g. N=1015)
+
+	* compproc.cc: correct misprint in previous
+
+	* compproc.cc:
+	In solvecubic(), avoid division by 0 when a root is repeated in Newton
+	step
+
+1995-08-14  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* interface.h:
+	Don't need to define lcm under LiDIA as it is now included in LiDIA
+	1.1
+
+1995-08-10  cremona  <cremona@selmer.maths.nottingham.ac.uk>
+
+	* Matest.cc, Matrix.cc, Spacetest.cc, SparseElim.cc, SparseMatrix.cc, Sparsetest.cc, Subspace.cc, Vectest.cc, Vector.cc, arith.cc, commute.cc, compproc.cc, comptest.cc, ctest.cc, dadd.cc, dmul.cc, dummyInst.cc, ech.cc, inst.cc, kbessel.cc, lidint.cc, linear.cc, linsyst.cc, lintest.cc, list.cc, lists_template.cc, ltest.cc, marith.cc, matrix.cc, mattest.cc, matxtest.cc, mmatrix.cc, mmattest.cc, modtest.cc, mptest.cc, mspace.cc, msubspace.cc, mvectest.cc, mvector.cc, nagtest.cc, nigel.cc, periods.cc, ptest.cc, random.cc, rattest.cc, simon.arith.cc, simon.ptest.cc, smat.cc, smat_elim.cc, smattest.cc, sort.cc, space.cc, special.cc, subspace.cc, svec.cc, svectest.cc, tbessel.cc, tech.cc, tmodmul.cc, tmodmul2.cc, tround.cc, vectest.cc, vector.cc, xsplit.cc, Matrix.h, Operations.h, SparseElim.h, SparseMatrix.h, Subspace.h, Vector.h, arith.h, compproc.h, dmod.h, ech.h, interface.h, kbessel.h, linear.h, linsyst.h, list.h, lists_template.h, marith.h, matrix.h, method.h, mmatrix.h, msubspace.h, mvector.h, rat.h, simon.arith.h, smat.h, smat_elim.h, splitbase.h, subspace.h, svec.h, vector.h, xsplit.h:
+	New file.
+

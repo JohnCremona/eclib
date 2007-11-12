@@ -1,0 +1,118 @@
+README file for programs mwrank, findinf, ratpoint
+
+There are three main programs in this distribution, called mwrank,
+findinf and ratpoint.  The first two work on elliptic curves over Q
+given by Weierstrass equations with standard coefficients
+[a1,a2,a3,a4,a6].  If the input curve is non-minimal or non-standard
+(where standard means a1,a3 in {0,1} and a2 in {-1,0,1}) the input
+curve is replaced by a standard minimal model, and points found are
+transferred back to the original input model.  The programs tell you
+when the model is changed.
+
+In all cases there are 2 possible input formats for curves:
+
+[a1,a2,a3,a4,a6]
+a1 a2 a3 a4 a6
+
+So if the first character read is '[' it expects a single non-space
+delimiter between coefficients and one at the end; otherwise it
+expects 5 integers separated by space.  If the input is invalid the
+programs stop, so you can use 0 0 0 0 0 to end the input stream.
+
+
+findinf searches for points on the curves up to a given bound on the
+logarithmic height, using sieving.  One can opt for either seeing all
+points as they are found (verbose=1) or nothing until a final report
+(verbose=0); also, if verbose=1 then one can opt for a simple list of
+the points found, with no post-processing, or a full processing of the
+points to find linear dependencies between them using the height
+pairing.  The "regulator" output is just the regulator of the subgroup
+of points found.  Currently the sieve is based on Michael Stoll's
+programme (which originated with a program of Elkies, with
+developments by Stoll and Colin Stahlke).  Added in Jan 2005: the
+subgroup of points found is (by default) automatically saturated at
+the end.
+
+mwrank is described more fully in the file mwrank.info.  Briefly,
+mwrank does a 2-descent to determine the rank and gives points
+covering the cosets of 2E(Q) in E(Q); it then goes on to complete to a
+Mordell-Weil basis via a sieve-based saturation process after
+determining an upper bound for the index.
+
+ratpoint works with quartics g(x) with integer coefficients,
+g(x)=a*x^4+b*x^3+c*x^2+d*x+e.  It finds the Jacobian E of the curve
+C:y^2=g(x), searches C for rational points and maps any point found to
+E using the 2-covering map.  Current version quits as soon as one
+point on C is found.
+
+Other programs: tmrank is a version of mwrank designed for testing
+with the input file tmrank.in.  Each line of tmrank.in contains a
+curve and its correct rank, and tmrank uses mwrank to compute the rank
+and checks the result.
+
+	        tate: Runs Tate's algorithm, outputs detail of
+             	        reduction types etc.
+		conductor: just output conductor
+		torsion: outputs number (and optionally structure) of
+             	        torsion points
+		allisog: find the complete isogeny class of the input
+             	        curve by computing a succession of isogenies
+             	        of prime degree.  WARNING: this is unreliable
+             	        and causes lots of warning messages if run in
+             	        standard precision.  With higher precision
+             	        (under LiDIA) it is reliable, though a lot
+             	        slower.   I also have a Pari/GP program to do
+             	        the same thing, available on request.
+
+These four can be run interactively (by entering "tty" for the input
+filename at the prompt) or in batch mode by entering the filename.
+The file should contain a list of curves in the standard format, with
+[0,0,0,0,0] to terminate cleanly.
+
+	       twist: computes quadratic twists of a given curve,
+	       giving their minimal models etc.  Interactive.
+	       
+	       indep: tests whether given points on a curve are
+	       independent, using 2-descent NOT heights.  Test with 
+	       "indep < e23".
+
+Systems supported: only linux binaries are now provided.
+
+*(0) Old versions for Sun (Solaris 7) are in sun/.
+*(1) Old versions for SGI (IRIX  5.3) are in sgi/.
+*(2) Versions for DOS/Wondiws are in dos/.
+*Versions for Linux-Intel are in linux-intel/.
+*(3) Versions for Linux-alpha are in linux-alpha/.
+*(4) Versions for DEC alpha (OSF) are in alpha/.
+
+(1) I don't have access to a newer SGI, and this one only has
+    gcc-2.3.3, so this version is OLD.
+
+(2) Has some very OLD versions, which really should not be used
+(suffix .exe.old).  Also zip files containing recent versions for
+DOS/WOndows, kindly provided by Tom Womack.  I no longer do any
+programming on DOS or Windows machines, so please contact Tom at
+tom@womack.net for any queries regarding these, which are built from
+the latest source files as of May 2000.
+
+(3,4) I no longer have access to any alpha machines, so these are OLD.
+
+Sources: mwrank.tar.gz is a gzipper tar file of the distribution.  It
+requires pre-installation of either LiDIA or NTL.  The NTL version is
+generally faster.  Both NTL and LiDIA version may be used with or
+without multiprecision floating point (see mwrank.info for more
+details).
+
+
+							John Cremona
+
+							 6/2/95
+						updated	 7/8/95
+						updated	12/1/98
+						updated	20/4/00
+						updated	16/8/00
+						updated	 5/7/01
+						updated	 7/1/05
+						updated	10/5/05
+
+						john.cremona@nottingham.ac.uk

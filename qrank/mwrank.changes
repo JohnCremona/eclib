@@ -1,0 +1,213 @@
+	MWRANK MAJOR CHANGES MADE (other than minor bug fixes)
+
+NB This file is incomplete, as I sometimes forget to update it, but
+should log the major changes.
+
+
+Oct 2006
+========
+
+28. [mwrank-2006-10-03] Minor: the lower bound code (#27 below) now
+    works ok in normal precision.
+
+Aug 2006
+========
+
+27. [mwrank-2006-08-23] Saturation more efficient using new lower
+    height bounds (cf ANTS7 paper by JEC & SS).
+
+Sept 2005
+=========
+
+24. Changed all exit() calls to abort() to enable better error
+    catching in SAGE.
+
+25. Better error message and abort() if attempting to round a floating
+    point which does not fit into a long (on calculation of a and c
+    n=bounds in mrank1.cc).
+
+26. Curve input now catches syntax errors (and then aborts).
+
+May 2005
+========
+
+22. Fourth arithmetic option NTL_ALL uses NTL library with
+    multiprecision floating point arithmetic.
+
+23. Released under GPL for the first time!
+
+January 2005
+==============
+
+21. Points are now saturated after the 2-descent, using the method
+    described in Siksek's and Prickett's theses.
+
+September 2000
+==============
+
+20. Major improvement in handling of "large" quartics, after joint
+    work with Stoll.
+
+April 2000
+==========
+
+19. Bug fixes in mrank1.cc, caused wrong computation of selmer rank
+    (when > rank).
+
+May 1998
+=========
+
+18. Fixed various memory leaks.
+
+April 1998
+==========
+
+17. Bug fixes to mrank1.cc: (a) added braces {...} to correct compiler
+parsing resulting in "wrong type" messages, (b) correct computation of
+Selmer rank when rank>0.  (Latter caused wrong Selmer rank of 2 for
+curve 0,0,1,0,929]; thanks again to Fermigier.
+
+Feb/March 1998
+==============
+
+15. Added autoconfigure to source distribution, thanks to Thomas
+Papanikolaiou.  [Redesigned in 2005 mainly by WIlliam Stein]
+
+16. Bug fix in flag initialization in mrank1.cc, to correctly handle
+C2xC2 primes when one value of z is negative (failed on
+[0,0,0,0,-50800]).  Thanks to Fermigier.
+
+Nov 1997
+========
+
+8. Descent via 2-isogeny made much more efficient by better
+book-keeping.
+
+File(s) affected: mrank2.h/cc
+
+9. Added second descent on to descent via 2-isogeny.  For hard cases
+the multiprecision version is better here, but is also slower in
+general so the released version is NOT multi.
+
+File(s) affected: mrank2.h/cc
+
+10. Improved bounds in quartic search.  This speeds things up well
+when disc<0 (only relevant when no 2-torsion)
+
+File(s) affected: mrank1.h/cc
+
+11. Added version.h/cc so that program always displays its date of
+compilation. 
+
+File(s) affected: version.h/cc
+
+12. Added options.h to give command-line option support.  See file
+mwrank.options for details, or try "mwrank -h" for a summary.
+
+File(s) affected: options.h, mwrank.options
+
+13. Added so-called p-adic filtration to descent without isogeny,
+making fuller use of sieving primes to use the explicit image of a
+quartic in E(Qp)/2E(Qp) when this is C2 or C2xC2.
+
+File(s) affected: mrank1.h/cc
+
+14. Added PARI/GP output option "-o".  Also made mrank redundant as
+"-c 0" (= default) turns off the infinte descent step, while "-c -1"
+as before gives automatic computation of bound.
+
+File(s) affected: options.h, mwrank.cc, mrank.cc
+
+13 May 1996
+===========
+
+Important changes to mwrank since summer 1995 
+
+See preprint "Classical Invariant Theory and 2-descent on elliptic
+curves" [Journal of Symbolic Computation (Proceedings of the Second
+Magma Conference, Milwaukee, May 1996), Jan/Feb 2001, pages 71-87] for
+details of the theory behind these changes.
+
+1. Transferring points from quartics to the curve:  Now uses one fixed
+model for the curve E: y^2=x^3-27Ix-27J, and any rational point on a
+quartic (yz)^2=g(x,z) with invariants I,J maps directly to a point on
+E.  One can compute once and for all the isomorphism between E and the
+original/minimal model to transfer these points back.  Result: simpler
+code and no wasting time minimising many different models for E
+
+File(s) affected: qc.h/cc
+
+2. Sieving for quartics: now uses a 2-D sieve on (a,h) where h=8ac-b^2
+instead of a 3-D sieve on (a,b,c), based on the seminvariant syzygy.
+Given an (a,b,c) triple which passes the sieve, now compute the
+seminvariant r and hence solve for d,e algebraically.  Result: simpler
+code, less dependent on precision as no floating point arithmetic used
+to solve for d,e.
+
+File(s) affected: mrank1.h/cc
+
+3. Testing equivalence of quartics:
+(a) store with each quartic a hash value coding the number of roots
+mod p for several primes p; equivalent quartics must have same hash
+value, giving a quick necessary condition for equivalence.
+(b) quartic equivalence testing now done algebraically, testing
+whether  a third quartic has a root.  Vastly simpler code and much
+more robust, not dependent on floating point precision.
+
+File(s) affected: mequiv.h/cc
+
+4. Using group structure to avoid/curtail searching for type 1
+quartics.   When \Delta>0 the number of type 1 quartics is either 0 or
+equal to the number of type 2s, according as there are no / are
+rational points on the "egg" component of the real locus.   So one can
+avoid searching for type 1s altogether if one knows in advance the
+existence of such points, and in any case once a single type 1 quartic
+is found one does not need to complete the search as one then knows
+exactly how many tere are (assuming one has searched for type 2
+quartics first).
+
+File(s) affected: mrank1.h/cc
+
+5. Searching for point on quartics: (a)add infinity to mod-p sieve, so
+do not try denominators divisible by a prime p such that a is a
+non-square mod p.  This eliminates many denominators very quickly.
+(Suggested by J.  Gebel, Saarbruecken).  (b) For quartics of type
+ax^4+cx^2+e, only search for x>0.  This saves half the time when there
+are no points found, but does not necessarily save anything if a point
+is found.
+
+File(s) affected: msoluble.h/cc
+
+7. (Theory still under construction! [See #20 above]) Avoid / curtail
+search for quartics with "large" invariants (16I,64J), by careful
+study of E(Q_2)/2E(Q_2).
+
+7/8/95
+======
+
+1. Testing of equivalence of quartics 
+
+(a) Uses a sieving idea of Samir Siksek's: each quartic is given a
+code based on how many roots it has modulo 5 small (good) primes;
+since equivalent quartics must have the same code this eliminates a
+lot of equivalence tests.  For example, the 7 non-trivial quartics for
+the famous curve [0,0,1,-7,6] all have different codes as can be seen
+by running this curve with verbose=1.
+
+(b) Uses an entirely algebraic equivalence test instead of using
+floating point approximations to the roots, which regularly caused
+problems with precision.  Now each pair of quartics determines a third
+quartic with integer coefficients, which has an integer root iff the
+original pair was equivalent.  This third quartic is NOT the "product"
+of the first two in the Selmer group (it does not have the same
+invariants), but is related to it.
+
+2. From quartics to curves
+
+This now uses a much simpler formula arising from the work used in
+1(a) to give a point on the "IJ-curve" y^2=x^3-27Ix-J from a quartic
+with invariants I,J and a rational point.   Previously each quartic
+gave a new (isomorphic) curve with a point on it, and time was spent
+reducing this to the standard model.
+
+--------------------------------------------------------------------

@@ -1,0 +1,235 @@
+THIS FILE IS OBSOLETE -- SEE MWRANK.INFO INSTEAD
+
+Program mwrank: uses 2-descent (via 2-isogeny if possible) to
+determine the rank of an elliptic curve E over Q, list a
+set of points which generate E(Q) modulo 2E(Q),
+and finally search for further points on the curve.
+For details of algorithms see the author's book.
+Please acknowledge use of this program in published work,
+and send problems to cremona@maths.exeter.ac.uk.
+
+For changes since first distribution the file mwrank.changes.
+For command line options, see the file mwrank.options.
+
+	MWRANK vs. MRANK
+
+There used to be two separate programs called mwrank and mrank; they
+both did the same 2-descent, but mwrank also went on to enlarge the
+subgroup of rank r found to give the full Mordell-Weil group by
+searching for rational points on E up to a certain naive height.  This
+latter procedure is not very efficient, and to avoid reports of known
+problems at this stage I have put a ceiling on this search at 15
+(=logarithmic naive height).  This means that in many cases the points
+finally output are NOT guaranteed to be a basis for E(Q) (but the
+output should say this).  
+
+Now the same functionality is provided by adjusting options for the
+one program mwrank.
+
+
+A	HOW TO USE MWRANK
+
+1. Options
+
+All options and parameter adjustments are now made via command line
+options: see the file mwrank.options for details, or run 
+	mwrank -h
+which displays the options briefly and exit.
+
+2. Curve input
+
+The input consists of one or more curves, in the format
+	a1 a2 a3 a4 a6
+(separated by whitespace), or
+	[a1,a2,a3,a4,a6]
+These can of course be from a file, as in
+	mrank < curves.in
+To end the input either use a "null curve" [0,0,0,0,0] or EOF
+(e.g. Control-d at the terminal).
+
+The input coefficients MUST be integers:  attempting to input
+non-integral rationals including the '/' symbol will cause an error
+message to be output and the program will abort.
+
+The curves are prompted for, unless verbosity is set to 0.
+
+For example, given the input file r5.in containing
+
+0 0 1 -79 342
+0 0 1 -169 930
+0 1 1 -30 390
+0 0 1 -301 2052
+0 0 1 -457 3786
+
+the command
+	mrank -q -v 0 < r5.in
+produces the output
+
+Curve [0,0,1,-79,342] :  Rank = 5
+Curve [0,0,1,-169,930] :  Rank = 5
+Curve [0,1,1,-30,390] :  Rank = 5
+Curve [0,0,1,-301,2052] :  Rank = 5
+Curve [0,0,1,-457,3786] :  Rank = 5
+
+adding "-l" to the parameters will cause the generators and regulators
+to be output;
+
+adding "-o" results in an abbreviated form of output to be output also
+for post-processing by Pari; for the first curve above it gives
+[[5],[[3,11],[43,276],[45,296],[62,483],[92,878]]]
+
+3. There are two types of point search carried out by mwrank.
+
+(a) On the homogeneous spaces which represent elements of the
+appropriate Selmer group, called "quartics" in the program (they have
+equations y^2=g(x) where g is quartic).  Here existence of rational
+points is necessary for the homogeneous space to come from a point on
+the curve rather than an element of the Tate-Shafarevitch group.  The
+bound used is a bound on the logarithmic height.  If
+(x,y)=(u/w,v/w^2) it is a bound on max(log|u|,log|w|).  
+
+The default value is 10; to change the default to (say) 12 use
+command-line option "-b 12".  Warning: increasing this bound even by 1
+can increase the running time considerably when there really are
+homogeneous spaces with no rational point (but with points everywhere
+locally, of course).  I would not recommend setting this to more than
+15: even if you are "sure" that the quartic has a rational point,
+other methods such as higher descents are probably better to find such
+large points.
+
+For entirely logical reasons it can also happen that reducing the
+value of this parameter can increase the running time -- and vice
+versa.  So while 10 is the default it is sometimes worth running with
+a smaller value.  (In the above examples, -b 1 works just as well, i
+the same time).
+
+If the curve has rational 2-torsion, then the search on the first
+descent curves has a bound of at most 6 (less if you set it using -b),
+and then a second descent is used if necessary, where the full bound
+is used.
+
+NB This second descent works pretty well, but is the newest part of
+the program so is the most likely to cause problems.  One problem is
+this: part of the quartic reduction process works much better using
+multiprecision floating point arithmetic, but the distributed version
+of the program does not have this.  The reason: my programs currently
+either use multi-fp for ALL fp arithmetic, or for NONE; and turning it
+on (which is a simple compiler switch) slows down other parts of the
+program a lot, so for most curves it is better to have it off.  Ask me
+for a multi-fp version if you want one.
+
+(b) if the parameter -c is set to a nonzero value, then after the
+2-descent when we (should) have points covering the cosets of 2E(Q) in
+E(Q) a further search is done, on the curve itself, up to a certain
+bound on the logarithmic height.  The program computes a suitable
+bound such that if it searches that far you are guaranteed to have the
+full Mordell-Weil group.  You can use this value by entering "-c -1",
+BUT for many curves it will not be practical to search that far.  So I
+have put a ceiling on this of 15.  You can put your chosen bound on it
+with the command-line option -c, for example "mwrank -c 5 ...".
+
+Here is an idea of how long this point search takes on a curve of rank
+3 on my 90MHz Pentium (NB times not updated for recent version):
+
+ Bound	Time		
+ 
+ 10	8.5 secs	
+ 11	34		
+ 12	147		
+ 13	652		
+ 14	2895 secs	
+ 	=48 mins
+ estimates (by simple-minded extrapolation):
+ 
+ 15	3.5 hours
+ 16	15.4 h
+ 17	67.8 h = 2.8 days
+ 18	12.4 days
+ 19	55 days
+ 20	241 days
+
+So you are recommended to give a small value for a first run (or even
+0, i.e. leave it as the default in which this step is omitted
+entirely)
+
+B. WHAT IT DOES
+
+There are two main sub-cases depending on whether the curve has a
+point of order 2 or not.  If so, it uses the 2-isogeny in the
+well-known way, and can list the quartics to be considered with little
+trouble.  Then the only difficulty is finding rational points on them.
+I have successfully run curves of rank 13, such as Fermigier's
+	0 36861504658225 0 1807580157674409809510400 0   
+and also his rank 14 curve
+	0 2429469980725060 0 275130703388172136833647756388 0  
+(approx 5 minutes with default parameters, no 2nd descent required)
+but am having difficulty with his rank 15 curve with 2-torsion.
+
+If there is no 2-torsion it goes back to the original
+Birch-Swinnerton-Dyer method, which involves searching for the
+quartics, and eliminating equivalent ones.  The search region can be
+very large if the curve coefficients are large.  Also the search is
+divided into between 1 and 4 sub-searches.   Recent developments make
+this rather more efficient, (a) by improving the bounds, (b) by using
+a quadratic sieve in the search for quartics, and (c) by using maps to
+E(Qp)/2E(Qp) for certain auxiliary primes p.  
+
+NB One effect of the last-named feature is that the program usually
+finds generators for E(Q)/2E(Q) rather than a complete set of coset
+representatives.   In general, it will express E(Q)/2E(Q) as a direct
+sum A+B, and will give all nonzero elements of A and generators for B
+(the output will explain this when it occurs).   The points in A are
+those which lie in 2E(Qp) for all the auxiliary primes used.   For
+curves of higher rank one can increase the number of primes used from
+the default of 6 to something a little higher than the suspected rank,
+using the option "-x 8" say.  This does carry a little overhead.
+
+Example: The curve [0,0,0,-9217,300985] has rank 7 and runs very
+quickly.  With the default ("-x 6") we find three nonzero points in A,
+so rank(A)=2, and 5 generators of B, so rank(B)=5 and the total rank
+is 2+5=7.  With "-x 9" this becomes 1+6=7, and with "-x 10" we have
+A=0.  (These runs all took approx 3.8 seconds on my P90).
+
+After this stage we know the rank (either certainly, if all the
+everywhere-locally-soluble homogeneous spaces have rational points, or
+conditionally, if we have decided that some of them do not but have
+not proved that).  Next, from each homogeneous space with a point we
+compute a point on the original curve.  This gives a set of between r
+and 2^r-1 points (depending on how the rank is divided between the
+groups A and B defined above) covering the non-trivial cosets of 2E in
+E (when there is no 2-torsion), and a more complicated set of points
+when there is 2-torsion, also covering these cosets.
+
+[If nothing else, this gives one way of finding points on curves.  For
+example the curve [0,0,0,0,-618] has rank 2, generated (up to finite
+odd index) by 
+	[19 : -79 : 1] of height 3.21143 and 
+	[550688955674 : 2182722347909 : 31136956136] of height 19.2662.
+A simple point search would take a very long time to find that second
+generator!] 
+
+The third stage is to try to enlarge the group of points found to a
+basis for the full Mordell-Weil group (so far we have a subgroup of
+finite ODD index).  This stage (the "infinite descent") is not at all
+efficient at present (see 2b above); we hope to implement new ideas of
+Siksek to improve this one day.  So unless you have set the third
+parameter to -1 and waited for the program to stop, and have NOT seen
+a warning that the bound computed is too large to reach, then you can
+NOT say for sure that you have the whole group.
+
+DISCLAIMER
+
+You are welcome to use the program as is.  There have been bugs and
+certainly there still are some.   The program can and will be
+improved.   Please report strange behaviour to me in a reasonable way
+(you must say when you got your copy of the program and include an
+input file which gives the problem); I do not guarantee to do anything
+about it -- I am busy and this is not a commercial package! -- but I
+will do my best.   I particularly do NOT want to hear problems which
+are machine-dependent!
+
+
+							John Cremona
+							3 February 1995
+						updated	12 January 1998
+
