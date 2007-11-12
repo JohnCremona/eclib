@@ -47,6 +47,18 @@ all:
 	cd qrank && make install
 	cd g0n && make install
 
+dylib:
+	cd procs && make install_dylib
+	cd qcurves && make install_dylib
+	cd qrank && make install_dylib
+	cd g0n && make install_dylib
+
+so:
+	cd procs && make install_so
+	cd qcurves && make install_so
+	cd qrank && make install_so
+	cd q0n && make install_so
+
 clean:
 	cd procs && make clean
 	cd qcurves && make clean

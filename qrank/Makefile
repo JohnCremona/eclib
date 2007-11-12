@@ -307,3 +307,8 @@ fpptest$(OBJ_SUF).o: fpptest.cc
 fpptest: fpptest$(OBJ_SUF).o
 	 $(CXX) -o fpptest fpptest$(OBJ_SUF).o $(LFLAGS)
 
+install_dylib: librank.a
+	$(CXX) -dynamiclib  $(LIB_OBJS) -o librank.dylib
+
+install_so: librank.a
+	$(CXX) -fPIC --shared  $(LIB_OBJS) -o librank.so
