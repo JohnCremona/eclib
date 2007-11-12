@@ -37,7 +37,7 @@ int main(void)
 {
   if(verbose) cout << ">>> Level " << n << " <<< ";
   int num=0, nap=0, naq=0;
-  sprintf(name,"newforms/x%d\0",n);
+  sprintf(name,"%s/x%d\0",NF_DIR,n);
   ifstream in(name);
   int eig_file_exists = in.is_open();
   if(!eig_file_exists)

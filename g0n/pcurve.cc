@@ -171,7 +171,7 @@ int main(void)
        }
      else cout<<"No curve found\n";
 
-// dump complete data file into newforms/e$N.
+// dump complete data file into NF_DIR/e$N.
 
      cout<<"Store newform data? "; cin>>dump;
      if(dump)
