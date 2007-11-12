@@ -1,6 +1,8 @@
+# Top level Makefile (included by those in subdirectories)
+
 CC ?= g++ -g
 CXX ?= g++ -g
-OPTFLAG = -O2 -DNEW_OP_ORDER -DLONG_IS_64_BIT
+OPTFLAG = -O2 -DNEW_OP_ORDER -DLONG_IS_64_BIT -DUSE_PARI_FACTORING
 OPTFLAG2 = -g -O2
 
 # default settings
@@ -34,11 +36,22 @@ ifndef ARITH
 	ARITH=NTL
 endif
 
+# targets:
+#
+# all:  builds libraries, puts them into ./lib and includes in ./include
+#
+
 all:
 	cd procs && make install
 	cd qcurves && make install
-	cd qrank && make
-	cd g0n && make
+	cd qrank && make install
+	cd g0n && make install
+
+clean:
+	cd procs && make clean
+	cd qcurves && make clean
+	cd qrank && make clean
+	cd g0n && make clean
 
 show:
 	echo $(OPTFLAG)

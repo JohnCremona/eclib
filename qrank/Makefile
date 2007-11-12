@@ -2,6 +2,12 @@
 
 include ../Makefile
 
+# Useful targets:
+# 
+# progs (makes mwrank, tmrank, ratpoint)
+# install (makes lib & copies lib & includes to ../lib, ../include)
+#
+
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
 LIDIACFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
@@ -91,6 +97,8 @@ install_lib: $(HEADERS) $(RANKLIBNAME)
 	cp $(RANKLIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(RANKLIBNAME)
 
+install: lib install_lib
+
 install_docs: $(DOCS) 
 	for f in $(DOCS); \
 	do cp $${f} $(FTP_DIR)/$${f}; chmod 644 $(FTP_DIR)/$${f}; done
@@ -106,7 +114,7 @@ test1: tmrank
 test2: mwrank
 	time awk 'NF==6{print $$1,$$2,$$3,$$4,$$5;}' tmrank.in | ./mwrank -v 0 -q -o -S10
 
-install: progs install_docs
+install_progs: progs install_docs
 	for f in $(PROGS); \
 	do strip $${f}; \
 	   cp $${f} $(FTP_SUBDIR)/$${f}$(EXE_SUFFIX); \
