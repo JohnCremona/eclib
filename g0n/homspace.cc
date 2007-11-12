@@ -562,7 +562,12 @@ smat homspace::s_calcop(char* opname, long p, const matop& mlist,
     }
   return m;
 }
- 
+
+/* NOTE: heckeop actually only returns the Hecke operator for p not dividing
+   the level.  For p that divide the level it actually computes the Atkin-Lehner
+   operator. 
+*/
+
 mat homspace::heckeop(long p, int dual, int display) const
 {
  matop matlist(p,modulus);
@@ -1368,6 +1373,7 @@ matop::matop(long p)
   }
 }
 
+/* NOTE: This should probably be moved to ../procs */
 
 svec operator*(smat& m, const svec& v)
 {
