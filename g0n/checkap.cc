@@ -18,7 +18,7 @@ int main(void)
   for(n=firstn; n<=lastn; n++)
     {
       ok=1;
-      sprintf(name,"newforms/x%ld",n);
+      sprintf(name,"%s/x%ld",NF_DIR,n);
       ifstream datafile(name);
       if(!datafile.is_open())
 	{

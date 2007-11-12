@@ -5,8 +5,10 @@ include ../Makefile
 # Useful targets:
 #
 # tests: builds various test programs
+# progs: builds various useful programs
 #
-#
+
+NF_DIR ?= ./newforms
 
 DOT_H = periods.h cusp.h homspace.h newforms.h nflist.h moddata.h oldforms.h symb.h fixc6.h pcprocs.h
 
@@ -89,7 +91,7 @@ install_lib: $(HEADERS) $(G0NLIBNAME)
 
 install: lib install_lib
 
-CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(LIDIACFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT
+CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(LIDIACFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT -DNF_DIR=\"$(NF_DIR)\"
 LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(LIDIALFLAGS) $(IOLIB) -lm
 
 LIBFLAGS = $(LFLAGS)

@@ -46,7 +46,7 @@ nflist::nflist(long nm, long np) :n_max(nm), nap(np)
       if(n%1000==0)cout<<"["<<n<<"]"<<endl;
       //#endif
       nforms=0;
-      sprintf(name,"newforms/x%d\0",n);
+      sprintf(name,"%s/x%d\0",NF_DIR,n);
       ifstream datafile(name);
       if(!datafile.is_open())
         {

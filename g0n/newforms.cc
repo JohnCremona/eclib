@@ -694,9 +694,9 @@ void newforms::output_to_file(int binflag) const
 
   char* name = new char[20];
   if(binflag) 
-    sprintf(name,"newforms/x%ld",modulus);
+    sprintf(name,"%s/x%ld",NF_DIR,modulus);
   else 
-    sprintf(name,"newforms/e%ld",modulus);
+    sprintf(name,"%s/e%ld",NF_DIR,modulus);
   ofstream out(name);
   if(!out)
     {
@@ -790,7 +790,7 @@ void newforms::output_to_file(int binflag) const
   out.close();
 }
 
-// Read in newform data from file newforms/xN 
+// Read in newform data from file NF_DIR/xN 
 
 void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
 {
@@ -798,7 +798,7 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
   if(verbose) cout << "Retrieving newform data for N = " << n << endl;
 
   char* name = new char[20];
-  sprintf(name,"newforms/x%ld",modulus);
+  sprintf(name,"%s/x%ld",NF_DIR,modulus);
   ifstream datafile(name);
   if(!datafile.is_open())
     {
@@ -1298,9 +1298,9 @@ void output_to_file_no_newforms(long n, int binflag)
 {
   char* name = new char[20];
   if(binflag) 
-    sprintf(name,"newforms/x%ld",n);
+    sprintf(name,"%s/x%ld",NF_DIR,n);
   else 
-    sprintf(name,"newforms/e%ld",n);
+    sprintf(name,"%s/e%ld",NF_DIR,n);
   ofstream out(name);
   delete name;
   if(binflag)

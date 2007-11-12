@@ -43,7 +43,8 @@
 
 //#define AUTOLOOP
 //#define COMPARE_OLD
-#define CHECK_COMMUTE
+//#define CHECK_COMMUTE
+//#define TEST_EIGS
 
 double sparsity(const mat_m& m);
 double sparsity(const mat& m);
@@ -94,12 +95,8 @@ int main(void)
    cout << "Computing -1 eigenspace...  " << flush;
    ssubspace h1minus = eigenspace(conjmat,-den);
    cout<<" done, dimension = "<<dim(h1minus)<<endl;
-   }
-}
-     }
-     }
 
-#if(0)
+#if(1)
    for (int i=0; i<nq; i++)
      {long q=badprimes[i]; if(i<firstq) continue;
       cout << "Computing W("<<q<<")...  " << flush;
@@ -141,6 +138,7 @@ int main(void)
       cout<<endl;
 #endif
     }
+
    int np=5,ip=0; 
    cout<<"How many T_p? "; cin>>np;
    mat_m* tplist = new mat_m[np];
@@ -173,6 +171,7 @@ int main(void)
 #else
       cout << "done, sparsity = "<<sparsity(tplist[ip])<<". " << endl;
 #endif
+#ifdef TEST_EIGS
       vector<long> eigs=hplus.eigrange(nq+ip);
       cout<<"\nChecking for eigenvalues from "<<eigs<<endl;
       long i,j,k,n=genus,r;
@@ -375,6 +374,7 @@ int main(void)
 #endif
 #endif
       cout<<"Total multiplicity of rational eigenvalues = "<<totalmult<<endl;
+#endif // TEST_EIGS
 #ifdef CHECK_COMMUTE
       for (int kp=firstq; kp<nq; kp++)
 	{if (matmulmodp(wqlist[kp],tplist[ip],P)!=matmulmodp(tplist[ip],wqlist[kp],P))

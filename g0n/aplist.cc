@@ -24,7 +24,7 @@
 #include <fstream>
 #include <iomanip>
 #include "arith.h"
-#define BOOKORDER       // if defined, sorts newforms/curves into order
+#define BOOKORDER       // if defined, sorts newforms & curves into order
                         // in the Book (relevant up to 500 only)
 #include "curvesort.cc"
 
@@ -40,7 +40,7 @@ int main()
   cin>>n1>>n2;
   for (int n=n1; n<=n2; n++)
     { 
-      sprintf(filename,"newforms/x%d",n);
+      sprintf(filename,"%s/x%d",NF_DIR,n);
       ifstream datafile(filename);
       if (!datafile) cout<<"No file "<<filename<<" exists!"<<endl;
       else
