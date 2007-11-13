@@ -22,20 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-// Use xmod() or xmodmul(), depending on whether we
-// are on a 64-bit machine (i.e. ifdef __alpha__) or not
-
 // All are inline functions, there's no .cc file
 
 #ifndef _XMOD_H
 #define _XMOD_H      1
-
-#ifdef LONG_IS_64_BIT
-typedef long long64;
-#else
-typedef long long long64;
-#endif
-
 
 // undefine this to use int/long/longlong arithmetic only
 
