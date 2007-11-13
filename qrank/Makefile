@@ -215,8 +215,6 @@ mrank1$(OBJ_SUF).o: mrank1.cc mrank1.h descent.h mquartic.h mequiv.h msoluble.h 
 mrank2$(OBJ_SUF).o: mrank2.cc mrank2.h descent.h mquartic.h msoluble.h sqfdiv.h desc2.h bitspace.h
 mequiv$(OBJ_SUF).o: mequiv.cc mquartic.h mequiv.h
 mquartic$(OBJ_SUF).o: mquartic.cc mquartic.h
-#mlocsol$(OBJ_SUF).o: mlocsol.cc mlocsol.h mquartic.h
-#	$(CXX) -c $(OPTFLAG2) -I$(INCDIR) $(NTLCFLAGS) mlocsol.cc
 
 mglobsol$(OBJ_SUF).o: mglobsol.cc mglobsol.h mquartic.h
 getcurve$(OBJ_SUF).o: getcurve.cc getcurve.h

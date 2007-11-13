@@ -846,7 +846,7 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
   for(j=0; j<16; j++) 
     for(i=0; i<n1ds; i++) 
       data[i][j]=*batch_i_ptr++;
-  delete batch_i;
+  delete[] batch_i;
   //  cout<<"Raw  data:\n";  for(i=0; i<n1ds; i++) cout<<data[i]<<endl;
 
   // read aq for each newform
@@ -863,7 +863,7 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
   // read ap for each newform
   for(i=0; i<n1ds; i++) ap[i].resize(nap);
   ntotal = nap*n1ds;
-  delete batch;
+  delete[] batch;
   batch = new short[ntotal];
   datafile.read((char*)batch,ntotal*sizeof(short));
   batchptr = batch;
@@ -871,7 +871,7 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
     for(i=0; i<n1ds; i++) 
       ap[i][j]=*batchptr++;
   //  cout<<"Raw  ap:\n";  for(i=0; i<n1ds; i++) cout<<ap[i]<<endl;
-  delete batch;
+  delete[] batch;
   datafile.close();
 
   // construct the newforms from this data

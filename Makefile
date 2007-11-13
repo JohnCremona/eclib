@@ -1,11 +1,11 @@
 # Top level Makefile (included by those in subdirectories)
 
+# These seem to have no effect -- perhaps make sets them (to cc and g++) itself?
 CC       ?= g++ -g
 CXX      ?= g++ -g
 # PICFLAG -- set to -fPIC to also have the option to build shared libraries (position independent code)
 # This is only needed on linux.
-OPTFLAG  ?=  $(PICFLAG) -O2 -DNEW_OP_ORDER -DUSE_PARI_FACTORING
-OPTFLAG2 ?= -g -O2
+OPTFLAG  ?=  $(PICFLAG) -g -O2 -DNEW_OP_ORDER -DUSE_PARI_FACTORING
 
 # default settings
 PARI_PREFIX ?= /usr/local

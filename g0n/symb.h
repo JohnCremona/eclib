@@ -65,7 +65,7 @@ class symblist {
     long num,maxnum;
  public:
     symblist(long n=0) {maxnum=n; num=0; list=new symb[n];}
-    ~symblist() {delete list;}
+    ~symblist() {delete[] list;}
     void add(const symb& s, long start=0);
     long index(const symb& s, long start=0) const;
     symb operator[](long n) const {return list[n];}

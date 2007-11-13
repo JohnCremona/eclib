@@ -293,7 +293,7 @@ if (verbose>1)
       cout << "\n";
     }
    }
-  delete check; delete gens; delete rel; 
+  delete[] check; delete[] gens; delete[] rel; 
   pivs.init();  npivs.init();
    }
 

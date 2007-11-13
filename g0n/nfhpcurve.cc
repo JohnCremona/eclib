@@ -200,6 +200,7 @@ int main(void)
 	}
 #endif
     }
+  delete[]success;
   }   // ends while(nsucc<nnf)
   
 }       // end of if(n>0)
