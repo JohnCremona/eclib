@@ -8,18 +8,16 @@ include ../Makefile
 # progs: builds various useful programs
 #
 
-NF_DIR ?= ./newforms
-
 DOT_H = periods.h cusp.h homspace.h newforms.h nflist.h moddata.h oldforms.h symb.h fixc6.h pcprocs.h
 
-DOT_CC = h1bsd.cc newforms.cc symb.cc checkap.cc h1bsdc.cc homspace.cc nfcount.cc checkdegphi.cc h1clist.cc homtest.cc nflist.cc th1nf.cc cnf.cc h1curisog.cc hpcurve.cc nftest.cc tmanin.cc curvesort.cc h1curve.cc hpmcurve.cc oftest.cc tmaninx.cc cusp.cc h1degphi.cc lf1per.cc oldforms.cc tmaninxauto.cc fixc6.cc h1degphitex.cc pcurve.cc tnf2.cc fixforms.cc h1first.cc periods.cc vlift.cc g2.cc mhcount.cc pertest.cc getai.cc h1test.cc moddata.cc getoldeigs.cc hecketest.cc modtest.cc putoldeigs.cc h1.cc heegner.cc nfhpcurve.cc   
+DOT_CC = h1bsd.cc newforms.cc symb.cc checkap.cc h1bsdc.cc homspace.cc nfcount.cc h1clist.cc homtest.cc nflist.cc th1nf.cc cnf.cc h1curisog.cc hpcurve.cc nftest.cc tmanin.cc curvesort.cc h1curve.cc oftest.cc cusp.cc h1degphi.cc lf1per.cc oldforms.cc fixc6.cc pcurve.cc tnf2.cc h1first.cc periods.cc vlift.cc mhcount.cc h1test.cc moddata.cc hecketest.cc modtest.cc putoldeigs.cc h1.cc nfhpcurve.cc   
 
 HEADERS = $(DOT_H)
 sources: $(DOT_H) $(DOT_CC)
 
-TESTS = modtest homtest hecketest nftest tmanin # oftest h1test
+TESTS = modtest homtest hecketest nftest mhcount oftest
 
-PROGS = tmanin h1bsd h1curve pcurve nfhpcurve h1clist checkap h1bsd h1bsdcurisog # h1degphi  h1bsdc
+PROGS = tmanin h1bsd h1curve pcurve nfhpcurve h1clist checkap h1bsd h1bsdcurisog h1degphi hpcurve nfcount
 
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
@@ -93,7 +91,9 @@ install_lib: $(HEADERS) $(G0NLIBNAME)
 
 install: lib install_lib
 
-CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT -DNF_DIR=\"$(NF_DIR)\"
+
+#NF_DIR ?= ./newforms
+CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT #-DNF_DIR=\"$(NF_DIR)\"
 LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lm
 
 LIBFLAGS = $(LFLAGS)
@@ -135,21 +135,11 @@ homtest: homtest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o cusp$(OBJ_SUF)
 oftest: oftest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o homspace$(OBJ_SUF).o newforms$(OBJ_SUF).o  cusp$(OBJ_SUF).o
 	$(CC) -o oftest oftest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o homspace$(OBJ_SUF).o newforms$(OBJ_SUF).o  cusp$(OBJ_SUF).o $(LFLAGS)
 
-fixforms: fixforms$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o
-	$(CC) -o fixforms fixforms$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
-		 $(LFLAGS)
-
 hecketest: hecketest$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o
 	$(CC) -o hecketest hecketest$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
 		 $(LFLAGS)
 
-wsplit: wsplit$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o
-	$(CC) -o wsplit wsplit$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
-		 $(LFLAGS)
 
-g2: g2$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o
-	$(CC) -o g2 g2$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
-		 $(LFLAGS)
 
 gd: gd$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o
 	$(CC) -o gd gd$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
@@ -189,9 +179,6 @@ checkap: checkap$(OBJ_SUF).o
 tmanin: tmanin$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o tmanin tmanin$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
 
-checkmanin: checkmanin$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o checkmanin checkmanin$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
 mtmanin: tmanin$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o mtmanin $(G0NLIBFLAG) $(LFLAGS)
 
@@ -214,14 +201,8 @@ pmanin: pmanin$(OBJ_SUF).o pcprocs$(OBJ_SUF).o $(G0NLIBNAME)
 xmanin: xmanin$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o xmanin xmanin$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
 
-tmaninx: tmaninx$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o tmaninx tmaninx$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
 cnf: cnf$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o cnf cnf$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
-tmaninxauto: tmaninxauto$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o tmaninxauto tmaninxauto$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
 
 h1test: h1test$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o h1test h1test$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
@@ -262,9 +243,6 @@ homspace.h symb.h hpcurve.cc
 
 hpcurve1: hpcurve1$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o hpcurve1 hpcurve1$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
-hpmcurve: hpmcurve$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o hpmcurve hpmcurve$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
 
 hppcurve: hppcurve$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o hppcurve hppcurve$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
@@ -320,17 +298,8 @@ nfconvert: nfconvert$(OBJ_SUF).o $(G0NLIBNAME)
 h1bsdcurisog: h1bsdcurisog$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o h1bsdcurisog h1bsdcurisog$(OBJ_SUF).o $(G0NLIBFLAG) $(RANKLIBFLAG) $(LFLAGS)
 
-heegner: heegner$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o heegner heegner$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
-pertest: pertest$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o pertest pertest$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
 th1nf: th1nf$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o th1nf th1nf$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
-checkdegphi: checkdegphi$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o checkdegphi checkdegphi$(OBJ_SUF).o  $(G0NLIBFLAG)  $(LFLAGS)
 
 mazurcheck$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h newforms.h \
 	    periods.h mazurcheck.cc curvesort.cc
@@ -366,9 +335,6 @@ degphitex: degphitex$(OBJ_SUF).o
 test: test$(OBJ_SUF).o
 	$(CC) -o test test$(OBJ_SUF).o $(LFLAGS)
 
-testg1: testg1$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o testg1 testg1$(OBJ_SUF).o $(G0NLIBFLAG)  $(LFLAGS)
-
 checkgens$(OBJ_SUF).o: checkgens.cc curvesort.cc
 checkgens: checkgens$(OBJ_SUF).o
 	   $(CC) -o checkgens checkgens$(OBJ_SUF).o  $(LFLAGS)
@@ -381,40 +347,23 @@ moddata$(OBJ_SUF).o: moddata.h moddata.cc
 oldforms$(OBJ_SUF).o: moddata.h oldforms.h oldforms.cc
 newforms$(OBJ_SUF).o: newforms.cc newforms.h moddata.h homspace.h oldforms.h 
 manin$(OBJ_SUF).o: manin.cc manin.h moddata.h symb.h homspace.h oldforms.h newforms.h
-splitter$(OBJ_SUF).o: splitter.h splitter.cc moddata.h symb.h cusp.h homspace.h
-msplitter$(OBJ_SUF).o: msplitter.h splitter.h msplitter.cc moddata.h symb.h cusp.h homspace.h
-getai$(OBJ_SUF).o: getai.cc getai.h
 
 modtest$(OBJ_SUF).o: modtest.cc moddata.h symb.h
 homtest$(OBJ_SUF).o: homtest.cc moddata.h symb.h cusp.h homspace.h
 hecketest$(OBJ_SUF).o: hecketest.cc moddata.h symb.h cusp.h homspace.h
 wsplit$(OBJ_SUF).o: wsplit.cc moddata.h symb.h cusp.h homspace.h
-g2$(OBJ_SUF).o: g2.cc moddata.h symb.h cusp.h homspace.h
 gd2$(OBJ_SUF).o: gd2.cc moddata.h symb.h cusp.h homspace.h
 oftest$(OBJ_SUF).o: oftest.cc moddata.h symb.h cusp.h oldforms.h
 nftest$(OBJ_SUF).o: nftest.cc moddata.h symb.h cusp.h homspace.h oldforms.h newforms.h \
-	
+
 tmanin$(OBJ_SUF).o: tmanin.cc manin.h moddata.h symb.h cusp.h homspace.h oldforms.h \
 	newforms.h 
 fix1290$(OBJ_SUF).o: fix1290.cc manin.h moddata.h symb.h cusp.h homspace.h oldforms.h \
 	newforms.h 
 pmanin$(OBJ_SUF).o: pmanin.cc manin.h moddata.h symb.h cusp.h homspace.h oldforms.h \
 	newforms.h 
-tmaninx$(OBJ_SUF).o: tmaninx.cc manin.h moddata.h symb.h cusp.h homspace.h oldforms.h \
-	newforms.h 
-xmanin$(OBJ_SUF).o: xmanin.cc manin.h moddata.h symb.h cusp.h homspace.h oldforms.h \
-	newforms.h 
-tmaninxauto$(OBJ_SUF).o: tmaninxauto.cc manin.h moddata.h symb.h cusp.h homspace.h \
-	oldforms.h newforms.h 
-h1test$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
-	 periods.h h1test.cc
-h1first$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
-	 periods.h h1first.cc newforms.h
-h1$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
-	periods.h h1.cc getai.h newforms.h fixc6.h
 
 th1nf$(OBJ_SUF).o: th1nf.cc moddata.h symb.h cusp.h homspace.h  oldforms.h 
-checkdegphi$(OBJ_SUF).o: checkdegphi.cc moddata.h symb.h cusp.h homspace.h  oldforms.h 
 tnf2$(OBJ_SUF).o: tnf2.cc moddata.h symb.h cusp.h homspace.h  oldforms.h \
          newforms.h
 h1curve$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
@@ -425,16 +374,14 @@ h1isogbsd$(OBJ_SUF).o: h1isogbsd.cc moddata.h symb.h cusp.h homspace.h oldforms.
 	periods.h h1curve.cc curvesort.cc newforms.h
 h1clist$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
 	periods.h h1clist.cc curvesort.cc
-pertest$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
-	periods.h pertest.cc
 h1degphi$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
-	periods.h h1degphi.cc getai.h curvesort.cc
+	periods.h h1degphi.cc curvesort.cc
 h1degphi_mw$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
-	periods.h h1degphi.cc getai.h curvesort.cc
+	periods.h h1degphi.cc curvesort.cc
 mazurdeg$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
-	periods.h mazurdeg.cc getai.h curvesort.cc
+	periods.h mazurdeg.cc curvesort.cc
 degphitab$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h oldforms.h \
-	periods.h degphitab.cc getai.h curvesort.cc
+	periods.h degphitab.cc curvesort.cc
 degphitex$(OBJ_SUF).o: degphitab.cc curvesort.cc
 h1bsd$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h h1bsd.cc
 h1bsdc$(OBJ_SUF).o: h1bsdc.cc moddata.h oldforms.h newforms.h symb.h cusp.h  periods.h
@@ -444,17 +391,10 @@ nfhpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h sym
 hpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h hpcurve.cc
 pcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h pcurve.cc
 allpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h allpcurve.cc
-hpmcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h hpmcurve.cc
-heegner$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h heegner.cc
 
 periods$(OBJ_SUF).o: periods.cc moddata.h symb.h cusp.h homspace.h oldforms.h \
 	newforms.h periods.h fixc6.h
-heegnerp$(OBJ_SUF).o: heegnerp.cc moddata.h symb.h cusp.h homspace.h oldforms.h \
-	newforms.h  periods.h heegnerp.h
-bsdprocs$(OBJ_SUF).o: bsdprocs.cc moddata.h symb.h cusp.h homspace.h oldforms.h \
-	bsdprocs.h
 fixc6$(OBJ_SUF).o: fixc6.h fixc6.cc
-getai$(OBJ_SUF).o: getai.h getai.cc
 symb$(OBJ_SUF).o: symb.h moddata.h symb.cc
 getoldeigs$(OBJ_SUF).o: getoldeigs.cc
 putoldeigs$(OBJ_SUF).o: putoldeigs.cc
@@ -492,9 +432,6 @@ pair2: pair2$(OBJ_SUF).o
 pair1$(OBJ_SUF).o: pair1.cc
 pair1: pair1$(OBJ_SUF).o
 	$(CC) -static -o pair1 pair1$(OBJ_SUF).o $(LFLAGS)
-checknf: checknf$(OBJ_SUF).o $(G0NLIBNAME)
-	 $(CC) -o checknf checknf$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-checknf$(OBJ_SUF).o: checknf.cc moddata.h symb.h cusp.h homspace.h oldforms.h newforms.h 
 
 aphomspace$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h aphomspace.cc
 aphomtest$(OBJ_SUF).o: aphomtest.cc moddata.h symb.h cusp.h homspace.h

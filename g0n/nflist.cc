@@ -26,6 +26,19 @@
 #include "arith.h"
 #include "nflist.h"
 
+char* nf_filename(long n, char c)
+{
+  char* nf_dir = getenv("NF_DIR"); 
+  string nf_file;
+  if (nf_dir==NULL) 
+    nf_file = string("./newforms");
+  else
+    nf_file = string(nf_dir);
+  char* filename=new char[20];
+  sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
+  return filename;
+}
+
 #define VERBOSE 0
 //#define STRICT      // If defined, uses a stricter congruence criterion 
                     // (see below) 
@@ -46,7 +59,7 @@ nflist::nflist(long nm, long np) :n_max(nm), nap(np)
       if(n%1000==0)cout<<"["<<n<<"]"<<endl;
       //#endif
       nforms=0;
-      sprintf(name,"%s/x%d\0",NF_DIR,n);
+      name = nf_filename(n,'x');
       ifstream datafile(name);
       if(!datafile.is_open())
         {

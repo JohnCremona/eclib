@@ -1,10 +1,44 @@
 // FILE CHECKAP.CC: program for checking ap are in valid range
+//////////////////////////////////////////////////////////////////////////
+//
+// Copyright 1990-2007 John Cremona
+// 
+// This file is part of the mwrank/g0n package.
+// 
+// mwrank is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 2 of the License, or (at your
+// option) any later version.
+// 
+// mwrank is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with mwrank; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+// 
+//////////////////////////////////////////////////////////////////////////
 
 // (Now essentially redundant as we do the check as they are computed)
 
 #include <fstream>
 using namespace std;
 #include "arith.h"
+
+char* nf_filename(long n, char c)
+{
+  char* nf_dir = getenv("NF_DIR"); 
+  string nf_file;
+  if (nf_dir==NULL) 
+    nf_file = string("./newforms");
+  else
+    nf_file = string(nf_dir);
+  char* filename=new char[20];
+  sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
+  return filename;
+}
 
 const long MAXNAP = 100000;
 
@@ -18,7 +52,7 @@ int main(void)
   for(n=firstn; n<=lastn; n++)
     {
       ok=1;
-      sprintf(name,"%s/x%ld",NF_DIR,n);
+      name = nf_filename(n,'x');
       ifstream datafile(name);
       if(!datafile.is_open())
 	{

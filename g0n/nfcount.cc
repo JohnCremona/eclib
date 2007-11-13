@@ -24,6 +24,19 @@
 #include <fstream>
 #include "arith.h"
 
+char* nf_filename(long n, char c)
+{
+  char* nf_dir = getenv("NF_DIR"); 
+  string nf_file;
+  if (nf_dir==NULL) 
+    nf_file = string("./newforms");
+  else
+    nf_file = string(nf_dir);
+  char* filename=new char[20];
+  sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
+  return filename;
+}
+
 int main(void)
 {
   int limit,n=1,count=0,firstn, verbose; 
@@ -37,7 +50,7 @@ int main(void)
 {
   if(verbose) cout << ">>> Level " << n << " <<< ";
   int num=0, nap=0, naq=0;
-  sprintf(name,"%s/x%d\0",NF_DIR,n);
+  name = nf_filename(n,'x');
   ifstream in(name);
   int eig_file_exists = in.is_open();
   if(!eig_file_exists)

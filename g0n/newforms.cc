@@ -691,20 +691,19 @@ void nl(ofstream& of, int binflag)
 void newforms::output_to_file(int binflag) const
 {
   long i,j;
-
-  char* name = new char[20];
+  char* name;
   if(binflag) 
-    sprintf(name,"%s/x%ld",NF_DIR,modulus);
+    name = nf_filename(modulus,'x');
   else 
-    sprintf(name,"%s/e%ld",NF_DIR,modulus);
+    name = nf_filename(modulus,'e');
   ofstream out(name);
   if(!out)
     {
       cout<<"Unable to open file "<<name<<" for newform output"<<endl;
-      delete name;
+      delete[] name;
       abort();
     }
-  delete name;
+  delete[] name;
   
   if(n1ds==0) 
     {  
@@ -797,13 +796,12 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
   long i, j, n = modulus;
   if(verbose) cout << "Retrieving newform data for N = " << n << endl;
 
-  char* name = new char[20];
-  sprintf(name,"%s/x%ld",NF_DIR,modulus);
+  char* name = nf_filename(modulus,'x');
   ifstream datafile(name);
   if(!datafile.is_open())
     {
       cout<<"Unable to open file "<<name<<" for newform input"<<endl;
-      delete name;
+      delete[] name;
       if(create_from_scratch_if_absent)
 	{
 	  cout<<"Creating from scratch instead"<<endl;
@@ -819,7 +817,7 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
 	  abort();
 	}
     }
-  delete name;
+  delete[] name;
 
   short temp_short;
   int temp_int;
@@ -905,11 +903,11 @@ void newforms::createfromolddata()
   if(!eigsfile.is_open())
     {
       cout<<"Unable to open file "<<eigsname<<" for eigs input"<<endl;
-      delete eigsname;
+      delete[] eigsname;
       abort();
       return;
     }
-  delete eigsname;
+  delete[] eigsname;
 
   easy=0;
   short temp;
@@ -971,12 +969,12 @@ void newforms::createfromolddata()
      if(!intdatafile.is_open())
        {
 	 cout<<"Unable to open data file "<<intdataname<<" for data input"<<endl;
-	 delete intdataname;
+	 delete[] intdataname;
 	 abort();
 	 return;
        }
     }
-  delete intdataname;
+  delete[] intdataname;
   
   long nloverp, dloverp, dp0, np0;
   for(i=0; i<n1ds; i++)
@@ -1296,13 +1294,13 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
 
 void output_to_file_no_newforms(long n, int binflag)
 {
-  char* name = new char[20];
-  if(binflag) 
-    sprintf(name,"%s/x%ld",NF_DIR,n);
+  char* name;
+  if(binflag)
+    name = nf_filename(n,'x');
   else 
-    sprintf(name,"%s/e%ld",NF_DIR,n);
+    name = nf_filename(n,'e');
   ofstream out(name);
-  delete name;
+  delete[] name;
   if(binflag)
     {
       int a=0;
@@ -1317,3 +1315,16 @@ void output_to_file_no_newforms(long n, int binflag)
   out.close();
    
 }
+char* nf_filename(long n, char c)
+{
+  char* nf_dir = getenv("NF_DIR"); 
+  string nf_file;
+  if (nf_dir==NULL) 
+    nf_file = string("./newforms");
+  else
+    nf_file = string(nf_dir);
+  char* filename=new char[20];
+  sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
+  return filename;
+}
+

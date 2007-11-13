@@ -28,10 +28,24 @@
                         // in the Book (relevant up to 500 only)
 #include "curvesort.cc"
 
+char* nf_filename(long n, char c)
+{
+  char* nf_dir = getenv("NF_DIR"); 
+  string nf_file;
+  if (nf_dir==NULL) 
+    nf_file = string("./newforms");
+  else
+    nf_file = string(nf_dir);
+  char* filename=new char[20];
+  sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
+  return filename;
+}
+
 int main()
 {
   char* code = new char[20];
   char filename[20];
+  char* f;
   cout<<"Enter output filename: ";
   cin>>filename;
   ofstream output(filename);
@@ -40,9 +54,9 @@ int main()
   cin>>n1>>n2;
   for (int n=n1; n<=n2; n++)
     { 
-      sprintf(filename,"%s/x%d",NF_DIR,n);
-      ifstream datafile(filename);
-      if (!datafile) cout<<"No file "<<filename<<" exists!"<<endl;
+      f = nf_filename(n,'x');
+      ifstream datafile(f);
+      if (!datafile) cout<<"No file "<<f<<" exists!"<<endl;
       else
         {
 //        cout<<"reading eigs from file "<<filename<<"; ";
