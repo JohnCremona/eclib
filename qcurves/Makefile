@@ -149,8 +149,6 @@ telog: telog$(OBJ_SUF).o elog$(OBJ_SUF).o $(CURVELIBNAME)
 theight: theight$(OBJ_SUF).o  $(CURVELIBNAME)
 	$(CXX)  -o $(BINDIR)/theight theight$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
 
-tlambda: tlambda$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o heights$(OBJ_SUF).o lambda$(OBJ_SUF).o cperiods$(OBJ_SUF).o
-	$(CXX)  -o $(BINDIR)/tlambda tlambda$(OBJ_SUF).o points$(OBJ_SUF).o heights$(OBJ_SUF).o lambda$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o $(LFLAGS)
 
 twist: twist$(OBJ_SUF).o $(CURVELIBNAME)
 	$(CXX)  -o $(BINDIR)/twist twist$(OBJ_SUF).o $(CURVELIBFLAG)  $(LFLAGS)
@@ -158,20 +156,12 @@ twist: twist$(OBJ_SUF).o $(CURVELIBNAME)
 twist_sta: twist$(OBJ_SUF).o $(CURVELIBNAME)
 	$(CXX) -static -o $(BINDIR)/twist_sta twist$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
 
-tortest: tortest$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tortest tortest$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
-
-tortest2: tortest2$(OBJ_SUF).o elog$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tortest2 tortest2$(OBJ_SUF).o elog$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
 
 torsion: torsion$(OBJ_SUF).o $(CURVELIBNAME)
 	$(CXX)  -o $(BINDIR)/torsion torsion$(OBJ_SUF).o $(CURVELIBFLAG)  $(LFLAGS)
 
 torsion_sta: torsion$(OBJ_SUF).o $(CURVELIBNAME)
 	$(CXX) -static -o $(BINDIR)/torsion_sta torsion$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
-
-ntorsion: ntorsion$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/ntorsion ntorsion$(OBJ_SUF).o $(CURVELIBFLAG)  $(LFLAGS)
 
 tate: tate$(OBJ_SUF).o  $(CURVELIBNAME)
 	$(CXX)  -o $(BINDIR)/tate tate$(OBJ_SUF).o  $(CURVELIBFLAG)  $(LFLAGS)
@@ -209,12 +199,6 @@ search: search$(OBJ_SUF).o sieve_search$(OBJ_SUF).o $(CURVELIBNAME)
 findinf: findinf$(OBJ_SUF).o sieve_search$(OBJ_SUF).o $(CURVELIBNAME)
 	$(CXX)  -o $(BINDIR)/findinf findinf$(OBJ_SUF).o sieve_search$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
 
-findinf2: findinf2$(OBJ_SUF).o sieve_search$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/findinf2 findinf2$(OBJ_SUF).o sieve_search$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
-
-findinf_sta: findinf$(OBJ_SUF).o sieve_search$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX) -static -o $(BINDIR)/findinf_sta findinf$(OBJ_SUF).o sieve_search$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
-
 indep: indep$(OBJ_SUF).o sifter$(OBJ_SUF).o  $(CURVELIBNAME)
 	$(CXX)  -o $(BINDIR)/indep indep$(OBJ_SUF).o sifter$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
 
@@ -237,12 +221,6 @@ t2isog: t2isog$(OBJ_SUF).o $(CURVELIBNAME)
 thtconst: thtconst$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o cperiods$(OBJ_SUF).o curvedata$(OBJ_SUF).o	curvered$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o
 	$(CXX) -o thtconst  thtconst$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o cperiods$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o $(LFLAGS)
 
-thtbound: thtbound$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o cperiods$(OBJ_SUF).o curvedata$(OBJ_SUF).o	curvered$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o
-	$(CXX) -o thtbound  thtbound$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o cperiods$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o $(LFLAGS)
-
-tht2$(OBJ_SUF).o: tht2.cc points.h htconst.h
-tht2: tht2$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o cperiods$(OBJ_SUF).o curvedata$(OBJ_SUF).o	curvered$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o 
-	$(CXX) -o tht2  tht2$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o cperiods$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o $(LFLAGS)
 
 tshift: tshift$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o cperiods$(OBJ_SUF).o curvedata$(OBJ_SUF).o	curvered$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o 
 	$(CXX) -o tshift  tshift$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o cperiods$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o $(LFLAGS)
@@ -274,11 +252,8 @@ heights$(OBJ_SUF).o: heights.cc points.h curve.h
 tpoints$(OBJ_SUF).o: tpoints.cc points.h curve.h
 theight$(OBJ_SUF).o: theight.cc points.h curve.h
 lambda$(OBJ_SUF).o:   lambda.cc points.h curve.h lambda.h
-tlambda$(OBJ_SUF).o: tlambda.cc points.h curve.h lambda.h
 torsion$(OBJ_SUF).o: torsion.cc points.h curve.h reader.h
-tortest$(OBJ_SUF).o: tortest.cc points.h curve.h
 findinf$(OBJ_SUF).o: findinf.cc mwprocs.h points.h curve.h
-findinf2$(OBJ_SUF).o: findinf2.cc mwprocs.h points.h curve.h
 mwprocs$(OBJ_SUF).o: mwprocs.cc mwprocs.h points.h curve.h sieve_search.h
 cperiods$(OBJ_SUF).o: cperiods.h cperiods.cc curve.h
 elog$(OBJ_SUF).o: elog.h elog.cc cperiods.h curve.h
@@ -308,12 +283,8 @@ sifter$(OBJ_SUF).o: sifter.h sifter.cc points.h curve.h
 htconst$(OBJ_SUF).o: htconst.h htconst.cc points.h curve.h cperiods.h elog.h egr.h
 thtconst$(OBJ_SUF).o: thtconst.cc htconst.h points.h curve.h cperiods.h
 thtbound$(OBJ_SUF).o: thtbound.cc htconst.h points.h curve.h cperiods.h
-htbound$(OBJ_SUF).o: htbound.cc cperiods.h points.h curve.h
 
 sieve_search$(OBJ_SUF).o: sieve_search.cc sieve_search.h
-sieve_search_appl$(OBJ_SUF).o: sieve_search_appl.cc sieve_search.h
-sieve_search_appl: sieve_search_appl$(OBJ_SUF).o sieve_search$(OBJ_SUF).o
-	$(CXX)  -o $(BINDIR)/sieve_search_appl sieve_search_appl$(OBJ_SUF).o sieve_search$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
 
 divpol$(OBJ_SUF).o: divpol.cc divpol.h points.h
 saturate$(OBJ_SUF).o: saturate.cc saturate.h divpol.h points.h pointsmod.h ffmod.h tlss.h
@@ -324,9 +295,7 @@ tsat: tsat$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o pointsmod$(OBJ_SU
 tsat2$(OBJ_SUF).o: tsat2.cc saturate.h divpol.h points.h pointsmod.h ffmod.h curvemod.h
 tsat3$(OBJ_SUF).o: tsat3.cc saturate.h divpol.h points.h pointsmod.h ffmod.h curvemod.h htconst.h egr.h
 tegr$(OBJ_SUF).o: tegr.cc egr.h saturate.h divpol.h points.h pointsmod.h ffmod.h curvemod.h htconst.h
-paricurves$(OBJ_SUF).o: paricurves.cc points.h
 
-BUILD_DIR=/local/jec/LiDIA-2.1.1
 tsat2: tsat2$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o pointsmod$(OBJ_SUF).o tlss$(OBJ_SUF).o curvemod$(OBJ_SUF).o ffmod$(OBJ_SUF).o htconst$(OBJ_SUF).o elog$(OBJ_SUF).o $(CURVELIBNAME)
 	$(CXX)  -o $(BINDIR)/tsat2 tsat2$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o tlss$(OBJ_SUF).o curvemod$(OBJ_SUF).o \
 	                           pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o elog$(OBJ_SUF).o	$(CURVELIBFLAG) $(LFLAGS)
@@ -335,12 +304,6 @@ tsat3: tsat3$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o pointsmod$(OBJ_
 	$(CXX)  -o $(BINDIR)/tsat3 tsat3$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o tlss$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o\
 	                           ffmod$(OBJ_SUF).o htconst$(OBJ_SUF).o egr$(OBJ_SUF).o elog$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
 
-paricurves: paricurves$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/paricurves paricurves$(OBJ_SUF).o $(CURVELIBFLAG) $(LFLAGS)
-
-babygiant$(OBJ_SUF).o: babygiant.cc curvemod.h pointsmod.h
-babygiant: babygiant$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o $(CURVELIBNAME)
-	   $(CXX) -o babygiant babygiant$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
 
 test_iso$(OBJ_SUF).o: test_iso.cc curvemod.h pointsmod.h
 test_iso: test_iso$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o $(CURVELIBNAME)
