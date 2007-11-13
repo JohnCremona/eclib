@@ -90,7 +90,7 @@ g0ndist: sources
 	 chmod 644 $(HOME)/curves/g0ndist/*
 
 clean:
-	/bin/rm -f *$(OBJ_SUF).o *~ *.so *.dylib
+	/bin/rm -f *$(OBJ_SUF).o *~ *.a *.so *.dylib
 
 veryclean: clean
 	$(CLEAN) *.cc *.h

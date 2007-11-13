@@ -75,7 +75,7 @@ DISTFILES = $(HEADERS) mequiv.cc mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mr
 distfiles: $(DISTFILES)
 
 clean:
-	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.so *.dylib
+	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.a *.so *.dylib
 
 veryclean: clean
 	$(CLEAN) *.cc *.h
