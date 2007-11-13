@@ -10,43 +10,45 @@ include ../Makefile
 
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
-LIDIACFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
-LIDIALFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
+NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
 LIBFLAG = -lcurvesntlint -ljcntlint -L$(LIBDIR)
 CURVELIBNAME = libcurvesntlint.a
 CURVELIBFLAG = -lcurvesntlint -L.
-RANKLIBNAME = librankntlint.a
+RANKLIBBASE = librankntlint
 RANKLIBFLAG = -lrankntlint -L.
 OBJ_SUF = _ntl
 EXE_SUFFIX = _ntl
 else
 ifeq ($(ARITH),NTL)
 LIBNAME = libjcntl.a
-LIDIACFLAGS = -DNTL_ALL -I$(NTLINCDIR)
-LIDIALFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
+NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
 LIBFLAG = -lcurvesntl -ljcntl -L$(LIBDIR)
 CURVELIBNAME = libcurvesntl.a
 CURVELIBFLAG = -lcurvesntl -L.
-RANKLIBNAME = librankntl.a
+RANKLIBBASE = librankntl
 RANKLIBFLAG = -lrankntl -L.
 OBJ_SUF = _n
 EXE_SUFFIX = _n
 else
-LIDIACFLAGS = 
-LIDIALFLAGS = 
+NTLCFLAGS = 
+NTLLFLAGS = 
 LIBNAME = libjc.a
 LIBFLAG = -lcurves -ljc -L$(LIBDIR)
 CURVELIBNAME = libcurves.a
 CURVELIBFLAG = -lcurves
-RANKLIBNAME = librank.a
+RANKLIBBASE = librank
 RANKLIBFLAG = -lrank -L.
 OBJ_SUF = _
 EXE_SUFFIX = _
 endif
 endif
 
-CFLAGS = -c $(OPTFLAG) -I$(INCDIR) $(LIDIACFLAGS) -I$(PARIINCDIR) #-pg
-LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(LIDIALFLAGS) $(IOLIB) -lpari -lm #-pg
+RANKLIBNAME=$(RANKLIBBASE).a
+
+CFLAGS = -c $(OPTFLAG) -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) #-pg
+LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lpari -lm #-pg
 
 LIBFLAGS = $(LFLAGS)
 
@@ -73,7 +75,7 @@ DISTFILES = $(HEADERS) mequiv.cc mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mr
 distfiles: $(DISTFILES)
 
 clean:
-	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME)
+	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.so *.dylib
 
 veryclean: clean
 	$(CLEAN) *.cc *.h
@@ -263,7 +265,7 @@ mrank2$(OBJ_SUF).o: mrank2.cc mrank2.h descent.h mquartic.h msoluble.h sqfdiv.h 
 mequiv$(OBJ_SUF).o: mequiv.cc mquartic.h mequiv.h
 mquartic$(OBJ_SUF).o: mquartic.cc mquartic.h
 #mlocsol$(OBJ_SUF).o: mlocsol.cc mlocsol.h mquartic.h
-#	$(CXX) -c $(OPTFLAG2) -I$(INCDIR) $(LIDIACFLAGS) mlocsol.cc
+#	$(CXX) -c $(OPTFLAG2) -I$(INCDIR) $(NTLCFLAGS) mlocsol.cc
 
 mglobsol$(OBJ_SUF).o: mglobsol.cc mglobsol.h mquartic.h
 getcurve$(OBJ_SUF).o: getcurve.cc getcurve.h
@@ -307,8 +309,7 @@ fpptest$(OBJ_SUF).o: fpptest.cc
 fpptest: fpptest$(OBJ_SUF).o
 	 $(CXX) -o fpptest fpptest$(OBJ_SUF).o $(LFLAGS)
 
-install_dylib: librank.a
-	$(CXX) -dynamiclib  $(LIB_OBJS) -o librank.dylib
+LIBBASE=$(RANKLIBBASE)
+include ../Makefile.dynamic
 
-install_so: librank.a
-	$(CXX) -fPIC --shared  $(LIB_OBJS) -o librank.so
+

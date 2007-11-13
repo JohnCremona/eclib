@@ -9,39 +9,37 @@ include ../Makefile
 #
 
 ifeq ($(ARITH),NTL_INTS)
-LIBNAME = libjcntlint.a
-LIDIACFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
-LIDIALFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
+NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
 LIBFLAG = -ljcntlint -L$(LIBDIR)
-CURVELIBNAME = libcurvesntlint.a
+LIBBASE = libcurvesntlint
 CURVELIBFLAG = -lcurvesntlint -L.
 OBJ_SUF = _ntl
 EXE_SUFFIX = _ntl
 else
 ifeq ($(ARITH),NTL)
-LIBNAME = libjcntl.a
-LIDIACFLAGS = -DNTL_ALL -I$(NTLINCDIR)
-LIDIALFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
+NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
 LIBFLAG = -ljcntl -L$(LIBDIR)
-CURVELIBNAME = libcurvesntl.a
+LIBBASE = libcurvesntl
 CURVELIBFLAG = -lcurvesntl -L.
 OBJ_SUF = _n
 EXE_SUFFIX = _n
 else
-LIBNAME = libjc.a
-LIDIACFLAGS = 
-LIDIALFLAGS = 
+NTLCFLAGS = 
+NTLLFLAGS = 
 LIBFLAG = -ljc -L$(LIBDIR)
-CURVELIBNAME = libcurves.a
+LIBBASE = libcurves
 CURVELIBFLAG = -lcurves -L.
 OBJ_SUF = _
 EXE_SUFFIX = _
 endif
 endif
 
- 
-CFLAGS = -c $(OPTFLAG) -I$(INCDIR) $(LIDIACFLAGS) -I$(PARIINCDIR) #-pg
-LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(LIDIALFLAGS) $(IOLIB) -lm #-pg
+CURVELIBNAME=$(LIBBASE).a
+
+CFLAGS = -c $(OPTFLAG) -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) #-pg
+LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lm #-pg
 
 LIBFLAGS = $(LFLAGS)
 
@@ -118,7 +116,7 @@ g0ndist: distfiles
 	chmod 644 $(HOME)/curves/g0ndist/*
 
 clean:
-	/bin/rm -f *~ *$(OBJ_SUF).o  $(TESTS) $(CURVELIBNAME) *_sta
+	/bin/rm -f *~ *$(OBJ_SUF).o  $(TESTS) $(CURVELIBNAME) *_sta *.so *.dylib
 
 veryclean: clean
 	$(CLEAN)
@@ -378,3 +376,5 @@ iso4: iso4.cc
 pcount: pcount.cc
 	g++ -g -static -o pcount pcount.cc -I/usr/local/LiDIA/include \
 	-L/local/jec/LiDIA/library/.libs -lLiDIA -lgmp
+
+include ../Makefile.dynamic

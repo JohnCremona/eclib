@@ -1,9 +1,11 @@
 # Top level Makefile (included by those in subdirectories)
 
-CC ?= g++ -g
-CXX ?= g++ -g
-OPTFLAG = -O2 -DNEW_OP_ORDER -DLONG_IS_64_BIT -DUSE_PARI_FACTORING
-OPTFLAG2 = -g -O2
+CC       ?= g++ -g
+CXX      ?= g++ -g
+# PICFLAG -- set to -fPIC to also have the option to build shared libraries (position independent code)
+# This is only needed on linux.
+OPTFLAG  ?=  $(PICFLAG) -O2 -DNEW_OP_ORDER -DLONG_IS_64_BIT -DUSE_PARI_FACTORING
+OPTFLAG2 ?= -g -O2
 
 # default settings
 PARI_PREFIX ?= /usr/local
@@ -22,7 +24,8 @@ INCDIR = ../include
 LIBDIR = ../lib
 BINDIR = .
 
-#
+
+
 # possible values for ARITH are
 #  
 #  NTL
@@ -33,8 +36,9 @@ BINDIR = .
 #
 #
 ifndef ARITH
-	ARITH=NTL
+   ARITH = NTL
 endif
+
 
 # targets:
 #
@@ -57,14 +61,35 @@ so:
 	cd procs && make install_so
 	cd qcurves && make install_so
 	cd qrank && make install_so
-	cd q0n && make install_so
+	cd g0n && make install_so
 
 clean:
 	cd procs && make clean
 	cd qcurves && make clean
 	cd qrank && make clean
 	cd g0n && make clean
+	cd lib && /bin/rm -f *.a *.so *.dylib 
+	cd include && /bin/rm -f *.h
 
 show:
 	echo $(OPTFLAG)
+
+#################################################################
+# Shared object libraries
+# Used for creating a shared library on OS X.
+DYN_OPTS = -dynamiclib
+# Used for creating a shared library on Linux/Unix
+SO_OPTS = -fPIC --shared
+
+shared_dylib: all
+	cd procs && make install_dylib
+	cd qcurves && make install_dylib
+	cd qrank && make install_dylib
+	cd g0n && make install_dylib
+
+shared_so: all
+	cd procs && make install_so
+	cd qcurves && make install_so
+	cd qrank && make install_so
+	cd g0n && make install_so
 

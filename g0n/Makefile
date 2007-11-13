@@ -23,8 +23,8 @@ PROGS = tmanin h1bsd h1curve pcurve nfhpcurve h1clist checkap h1bsd h1bsdcurisog
 
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
-LIDIACFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
-LIDIALFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
+NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
 LIBFLAG = -lcurvesntlint -ljcntlint -L$(LIBDIR)
 CURVELIBNAME = libcurvesntlint.a
 CURVELIBFLAG = -lcurvesntlint -L.
@@ -32,13 +32,13 @@ RANKLIBNAME = librankntlint.a
 RANKLIBFLAG = -lrankntlint
 OBJ_SUF = _ntl
 EXE_SUFFIX = _ntl
-G0NLIBNAME = libg0nntlint.a
+G0NLIBBASE = libg0nntlint
 G0NLIBFLAG = -lg0nntlint -L.
 else
 ifeq ($(ARITH),NTL)
 LIBNAME = libjcntl.a
-LIDIACFLAGS = -DNTL_ALL  -I$(NTLINCDIR)
-LIDIALFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
+NTLCFLAGS = -DNTL_ALL  -I$(NTLINCDIR)
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
 LIBFLAG = -lcurvesntl -ljcntl -L$(LIBDIR)
 CURVELIBNAME = libcurvesntl.a
 CURVELIBFLAG = -lcurvesntl -L.
@@ -46,22 +46,24 @@ RANKLIBNAME = librankntl.a
 RANKLIBFLAG = -lrankntl
 OBJ_SUF = _n
 EXE_SUFFIX = _n
-G0NLIBNAME = libg0nntl.a
+G0NLIBBASE = libg0nntl
 G0NLIBFLAG = -lg0nntl -L.
 else
 LIBNAME = libjc.a
-LIDIACFLAGS = 
-LIDIALFLAGS = 
+NTLCFLAGS = 
+NTLLFLAGS = 
 LIBFLAG = -lcurves -ljc -L$(LIBDIR)
 CURVELIBNAME = libcurves.a
 OBJ_SUF = _
 EXE_SUFFIX = _
-G0NLIBNAME = libg0n.a
+G0NLIBBASE = libg0n
 G0NLIBFLAG = -lg0n -L.
 RANKLIBNAME = librank.a
 RANKLIBFLAG = -lrank
 endif
 endif
+
+G0NLIBNAME = $(G0NLIBBASE).a
 
 OBJS = cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o periods$(OBJ_SUF).o fixc6$(OBJ_SUF).o
 
@@ -91,8 +93,8 @@ install_lib: $(HEADERS) $(G0NLIBNAME)
 
 install: lib install_lib
 
-CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(LIDIACFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT -DNF_DIR=\"$(NF_DIR)\"
-LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(LIDIALFLAGS) $(IOLIB) -lm
+CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT -DNF_DIR=\"$(NF_DIR)\"
+LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lm
 
 LIBFLAGS = $(LFLAGS)
 
@@ -108,7 +110,7 @@ progs: $(PROGS)
 tests: $(TESTS)
 
 clean:
-	/bin/rm -f *~ *$(OBJ_SUF).o
+	/bin/rm -f *~ *$(OBJ_SUF).o *.so *.dylib
 
 veryclean:
 	$(CLEAN)
@@ -501,3 +503,7 @@ aphomtest: homtest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o cusp$(OBJ_SU
 aphecketest: hecketest$(OBJ_SUF).o cusp$(OBJ_SUF).o aphomspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o
 	$(CC) -o aphecketest hecketest$(OBJ_SUF).o cusp$(OBJ_SUF).o aphomspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
 		 $(LFLAGS)
+
+
+LIBBASE=$(G0NLIBBASE)
+include ../Makefile.dynamic

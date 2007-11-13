@@ -9,27 +9,28 @@ include ../Makefile
 
 
 ifeq ($(ARITH),NTL_INTS)
-LIBNAME = libjcntlint.a
-LIDIACFLAGS = -DNTL_INTS -I$(NTLINCDIR)
-LIDIALFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
+LIBBASE = libjcntlint
+NTLCFLAGS = -DNTL_INTS -I$(NTLINCDIR)
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
 OBJ_SUF = _ntl
 else
 ifeq ($(ARITH),NTL)
-LIBNAME = libjcntl.a
-LIDIACFLAGS = -DNTL_ALL -I$(NTLINCDIR)
-LIDIALFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
+LIBBASE = libjcntl
+NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
 OBJ_SUF = _n
 else
-LIBNAME = libjc.a
-LIDIACFLAGS =
-LIDIALFLAGS =
+LIBBASE = libjc.a
+NTLCFLAGS =
+NTLLFLAGS =
 OBJ_SUF = ._
 endif
 endif
 
-CFLAGS = -c $(OPTFLAG) $(LIDIACFLAGS) -I$(PARIINCDIR)
-#LFLAGS = -lefence $(LIDIALFLAGS) -lm $(IOLIB) 
-LFLAGS = -lpari -L$(PARILIBDIR) $(LIDIALFLAGS) -lm $(IOLIB) 
+LIBNAME=$(LIBBASE).a
+
+CFLAGS = -c $(OPTFLAG) $(NTLCFLAGS) -I$(PARIINCDIR)
+LFLAGS = -lpari -L$(PARILIBDIR) $(NTLLFLAGS) -lm $(IOLIB) 
 
 
 LIBFLAGS = $(LFLAGS)
@@ -89,7 +90,7 @@ g0ndist: sources
 	 chmod 644 $(HOME)/curves/g0ndist/*
 
 clean:
-	/bin/rm -f *$(OBJ_SUF).o *~
+	/bin/rm -f *$(OBJ_SUF).o *~ *.so *.dylib
 
 veryclean: clean
 	$(CLEAN) *.cc *.h
@@ -243,9 +244,9 @@ CCt: CCt.o CC.o RRextra.o
 
 RRextra.o: RRextra.h RRextra.cc
 RRt.o: RRt.cc RRextra.h
-	$(CC) -c -g $(OPTFLAG) -I$(NTLINCDIR) -I$(LIDIAINCDIR) RRt.cc 
+	$(CC) -c -g $(OPTFLAG) -I$(NTLINCDIR) -I$(NTLINCDIR) RRt.cc 
 RRt: RRt.o RRextra.o
-	$(CC) -o RRt RRt.o RRextra.o -L$(LIDIALIBDIR) -lLiDIA $(LFLAGS)
+	$(CC) -o RRt RRt.o RRextra.o -L$(NTLLIBDIR) -lLiDIA $(LFLAGS)
 
 
 gpslave$(OBJ_SUF).o: gpslave.cc interface.h templates.h marith.h arith.h xmod.h \
@@ -438,7 +439,7 @@ testlat: testlat$(OBJ_SUF).o
 illl$(OBJ_SUF).o: illl.cc mvector.h vector.h vec.h interface.h templates.h arith.h \
   xmod.h marith.h illl.h
 #ifdef NTL_INTS
-#	$(CXX) -c -g $(LIDIACFLAGS) illl.cc
+#	$(CXX) -c -g $(NTLCFLAGS) illl.cc
 #endif
 # since with -O gcc-2.95 gives an internal compiler error!
 # -- doesn't any more
@@ -449,7 +450,7 @@ tilll: tilll$(OBJ_SUF).o illl$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o
 	$(CXX) -o tilll tilll$(OBJ_SUF).o illl$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o mvector$(OBJ_SUF).o mmatrix$(OBJ_SUF).o \
                        matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o $(LFLAGS)
 tilll_lidia$(OBJ_SUF).o: tilll_lidia.cc
-	$(CXX) -c -g  $(LIDIACFLAGS) tilll_lidia.cc
+	$(CXX) -c -g  $(NTLCFLAGS) tilll_lidia.cc
 tilll_lidia: tilll_lidia$(OBJ_SUF).o
 	$(CXX) -o tilll_lidia tilll_lidia$(OBJ_SUF).o $(LFLAGS)
 
@@ -490,3 +491,7 @@ new.o: new.C new.H
 
 poltest: poltest.cc
 	 $(CXX) -g poltest.cc -o poltest -lLiDIA -lgmp
+
+
+include ../Makefile.dynamic
+

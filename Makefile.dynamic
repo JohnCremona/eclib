@@ -1,0 +1,17 @@
+##############################################################
+# Dynamic libraries
+##############################################################
+
+DY_LIBNAME=$(LIBBASE).dylib
+SO_LIBNAME=$(LIBBASE).so
+A_LIBNAME=$(LIBBASE).a
+
+$(DY_LIBNAME): $(A_LIBNAME)
+	$(CXX) $(DYN_OPTS) $(A_LIBNAME) -o $(DY_LIBNAME)
+install_$(DY_LIBNAME), install_dylib: $(DY_LIBNAME)
+	cp $(DY_LIBNAME) $(LIBDIR)/
+
+$(SO_LIBNAME): $(A_LIBNAME)
+	$(CXX) $(SO_OPTS)  $(A_LIBNAME) -o $(SO_LIBNAME)
+install_$(SO_LIBNAME), install_so: $(SO_LIBNAME)
+	cp $(SO_LIBNAME) $(LIBDIR)/
