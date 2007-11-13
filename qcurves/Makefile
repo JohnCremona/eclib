@@ -121,6 +121,7 @@ clean:
 
 veryclean: clean
 	$(CLEAN)
+	/bin/rm -f $(PROGS)
 
 shar: sources
 	rm -f qcurves.shar qcurves.shar.Z
