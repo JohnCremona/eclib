@@ -39,7 +39,14 @@ public:
   long dimension, denom3, ncusps;
   int cuspidal;  // if 1 then compute cuspidal homology
 public:
-  homspace(long n, int hp, int hcusp, int verbose);
+  // Constructor (does all the work):
+  homspace(long n, // the level
+	   int hp, // plus-space flag (0 or 1)
+	   int hcusp, // cuspidal flag (0 or 1)
+	   int verbose // verbosity (0 : no output
+	               //	     1 : basic short output
+	               //            2 : lots of detail)
+	   );
   ~homspace() 
   { delete coordindex; delete needed; delete freegens; delete freemods;
   }
@@ -49,11 +56,11 @@ public:
   long h1ncusps() const {return ncusps;}
   vector<long> eigrange(long i);
   long op_prime(int i);  // the i'th operator prime for Tp or Wq
-  mat opmat(int,int,int=0);
-  mat opmat_restricted(int,const subspace& s, int,int=0);
+  mat opmat(int i, int dual, int verb=0);
+  mat opmat_restricted(int i,const subspace& s, int dual, int verb=0);
   // versions returning an smat:
-  smat s_opmat(int,int,int=0);
-  smat s_opmat_restricted(int,const ssubspace& s, int,int=0);
+  smat s_opmat(int i,int dual,int verb=0);
+  smat s_opmat_restricted(int i,const ssubspace& s, int dual,int verb=0);
 public:
   svec schain(const symb& s) const;
   void add_chain(svec& v, const symb& s) const;
