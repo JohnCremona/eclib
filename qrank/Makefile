@@ -5,6 +5,7 @@ include ../Makefile
 # Useful targets:
 # 
 # progs (makes mwrank, tmrank, ratpoint)
+# tests (makes various tests)
 # install (makes lib & copies lib & includes to ../lib, ../include)
 #
 

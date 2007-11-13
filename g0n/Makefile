@@ -6,7 +6,7 @@ include ../Makefile
 #
 # tests: builds various test programs
 # progs: builds various useful programs
-#
+# install: builds library, copies it and includes to ../lib, ../include
 
 DOT_H = periods.h cusp.h homspace.h newforms.h nflist.h moddata.h oldforms.h symb.h fixc6.h pcprocs.h
 

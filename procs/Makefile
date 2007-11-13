@@ -50,9 +50,10 @@ SVEC_OBJS = svector$(OBJ_SUF).o
 
 OBJS = interface$(OBJ_SUF).o $(ARITH_OBJS) $(TRANS_OBJS) $(LINALG_OBJS) $(MLINALG_OBJS) $(XSPLIT_OBJS) timer$(OBJ_SUF).o $(SVEC_OBJS) $(SMAT_OBJS) polys$(OBJ_SUF).o realroots$(OBJ_SUF).o 
 
-TESTS = vectest mattest space smattest comptest rattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectest # lintest
+TESTS = vectests mattests spacetests smattest comptest rattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectests
 
 tests: $(TESTS)
+progs: $(TESTS)
 
 all: $(OBJS)
 
@@ -106,7 +107,7 @@ tar: sources
 	tar -cvf procs.tar -I files
 	gzip procs.tar
 
-vectest: vectest1 vectest2
+vectests: vectest1 vectest2
 
 vectest1: vectest.cc vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 vectest.cc -o vectest1$(OBJ_SUF).o
@@ -116,7 +117,7 @@ vectest2: vectest.cc vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=2 vectest.cc -o vectest2$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/vectest2 vectest2$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS)
 
-mattest: mattest1 mattest2
+mattests: mattest1 mattest2
 
 mattest1: mattest.cc matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o timer$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 mattest.cc -o mattest1$(OBJ_SUF).o
@@ -126,7 +127,7 @@ mattest2: mattest.cc matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o int
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=2 mattest.cc -o mattest2$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/mattest2 mattest2$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o timer$(OBJ_SUF).o $(LFLAGS)
 
-space: space1 space2
+spacetests: space1 space2
 
 space1: space.cc subspace$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 space.cc -o space1$(OBJ_SUF).o
@@ -142,7 +143,7 @@ mvectest: mvectest$(OBJ_SUF).o mvector$(OBJ_SUF).o vector$(OBJ_SUF).o marith$(OB
 	$(CXX) -o $(BINDIR)/mvectest mvectest$(OBJ_SUF).o mvector$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o parifact$(OBJ_SUF).o  \
 	compproc$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS)
 
-svectest: svectest1 svectest2
+svectests: svectest1 svectest2
 
 svectest1: svectest.cc svector$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 svectest.cc -o svectest1$(OBJ_SUF).o

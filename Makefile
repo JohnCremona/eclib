@@ -46,10 +46,10 @@ endif
 #
 
 all:
-	cd procs && make install
-	cd qcurves && make install
-	cd qrank && make install
-	cd g0n && make install
+	cd procs && make tests progs install
+	cd qcurves && make tests progs install
+	cd qrank && make tests progs install
+	cd g0n && make tests progs install
 
 dylib:
 	cd procs && make install_dylib
