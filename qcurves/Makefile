@@ -10,7 +10,7 @@ include ../Makefile
 
 ifeq ($(ARITH),NTL_INTS)
 NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
-NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
 LIBFLAG = -ljcntlint -L$(LIBDIR)
 LIBBASE = libcurvesntlint
 CURVELIBFLAG = -lcurvesntlint -L.
@@ -19,7 +19,7 @@ EXE_SUFFIX = _ntl
 else
 ifeq ($(ARITH),NTL)
 NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
-NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
 LIBFLAG = -ljcntl -L$(LIBDIR)
 LIBBASE = libcurvesntl
 CURVELIBFLAG = -lcurvesntl -L.
@@ -47,6 +47,7 @@ LIBFLAGS = $(LFLAGS)
 	$(CXX) $(CFLAGS) $< -o $@
 
 OBJS = curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o points$(OBJ_SUF).o heights$(OBJ_SUF).o cperiods$(OBJ_SUF).o isogs$(OBJ_SUF).o mwprocs$(OBJ_SUF).o lambda$(OBJ_SUF).o sifter$(OBJ_SUF).o sieve_search$(OBJ_SUF).o htconst$(OBJ_SUF).o egr$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o pointsmod$(OBJ_SUF).o curvemod$(OBJ_SUF).o ffmod$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o
+
 objs: $(OBJS)
 
 HEADERS = curve.h points.h cperiods.h isogs.h reader.h mwprocs.h lambda.h sifter.h sieve_search.h htconst.h egr.h saturate.h divpol.h pointsmod.h curvemod.h ffmod.h tlss.h elog.h

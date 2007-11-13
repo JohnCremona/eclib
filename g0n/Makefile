@@ -24,7 +24,7 @@ PROGS = tmanin h1bsd h1curve pcurve nfhpcurve h1clist checkap h1bsd h1bsdcurisog
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
 NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
-NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp -lpari
 LIBFLAG = -lcurvesntlint -ljcntlint -L$(LIBDIR)
 CURVELIBNAME = libcurvesntlint.a
 CURVELIBFLAG = -lcurvesntlint -L.
@@ -38,7 +38,7 @@ else
 ifeq ($(ARITH),NTL)
 LIBNAME = libjcntl.a
 NTLCFLAGS = -DNTL_ALL  -I$(NTLINCDIR)
-NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp -lpari
 LIBFLAG = -lcurvesntl -ljcntl -L$(LIBDIR)
 CURVELIBNAME = libcurvesntl.a
 CURVELIBFLAG = -lcurvesntl -L.

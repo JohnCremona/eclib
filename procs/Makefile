@@ -11,13 +11,13 @@ include ../Makefile
 ifeq ($(ARITH),NTL_INTS)
 LIBBASE = libjcntlint
 NTLCFLAGS = -DNTL_INTS -I$(NTLINCDIR)
-NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp -lpari
 OBJ_SUF = _ntl
 else
 ifeq ($(ARITH),NTL)
 LIBBASE = libjcntl
 NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
-NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp -lpari
 OBJ_SUF = _n
 else
 LIBBASE = libjc.a

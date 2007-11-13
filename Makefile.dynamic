@@ -7,11 +7,11 @@ SO_LIBNAME=$(LIBBASE).so
 A_LIBNAME=$(LIBBASE).a
 
 $(DY_LIBNAME): $(A_LIBNAME)
-	$(CXX) $(DYN_OPTS) $(A_LIBNAME) -o $(DY_LIBNAME)
+	$(CXX) $(DYN_OPTS) $(A_LIBNAME) $(OBJS) -o $(DY_LIBNAME) $(NTLLFLAGS)
 install_$(DY_LIBNAME), install_dylib: $(DY_LIBNAME)
 	cp $(DY_LIBNAME) $(LIBDIR)/
 
 $(SO_LIBNAME): $(A_LIBNAME)
-	$(CXX) $(SO_OPTS)  $(A_LIBNAME) -o $(SO_LIBNAME)
+	$(CXX) $(SO_OPTS)  $(A_LIBNAME) $(OBJS) -o $(SO_LIBNAME) $(NTLLFLAGS)
 install_$(SO_LIBNAME), install_so: $(SO_LIBNAME)
 	cp $(SO_LIBNAME) $(LIBDIR)/

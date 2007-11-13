@@ -11,7 +11,7 @@ include ../Makefile
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
 NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
-NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
 LIBFLAG = -lcurvesntlint -ljcntlint -L$(LIBDIR)
 CURVELIBNAME = libcurvesntlint.a
 CURVELIBFLAG = -lcurvesntlint -L.
@@ -23,7 +23,7 @@ else
 ifeq ($(ARITH),NTL)
 LIBNAME = libjcntl.a
 NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
-NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp
+NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
 LIBFLAG = -lcurvesntl -ljcntl -L$(LIBDIR)
 CURVELIBNAME = libcurvesntl.a
 CURVELIBFLAG = -lcurvesntl -L.
@@ -81,13 +81,13 @@ veryclean: clean
 	$(CLEAN) *.cc *.h
 	(cd $(BINDIR); /bin/rm -f $(TESTS) $(PROGS))
 
-LIB_OBJS = mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o twoadic$(OBJ_SUF).o descent$(OBJ_SUF).o
+OBJS = mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o twoadic$(OBJ_SUF).o descent$(OBJ_SUF).o
 
-objs: $(LIB_OBJS)
+objs: $(OBJS)
 
-lib: $(LIB_OBJS)
+lib: $(OBJS)
 	rm -f $(RANKLIBNAME)
-	ar r $(RANKLIBNAME) $(LIB_OBJS)
+	ar r $(RANKLIBNAME) $(OBJS)
 	$(RANLIB) $(RANKLIBNAME)
 
 install_lib: $(HEADERS) $(RANKLIBNAME)
