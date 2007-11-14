@@ -83,4 +83,5 @@ int main()
       }
     else cout<<"--DISAGREES with solve_conic()\n";
   }
+  cout<<endl;
 }

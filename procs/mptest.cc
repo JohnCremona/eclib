@@ -143,6 +143,6 @@ int main()
           << " positive square-free divisors: " << dlist << endl;
  }
 
- //  abort();
+ cout<<endl;
 
 }  // end of main    

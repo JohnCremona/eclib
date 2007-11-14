@@ -50,17 +50,15 @@ SVEC_OBJS = svector$(OBJ_SUF).o
 
 OBJS = interface$(OBJ_SUF).o $(ARITH_OBJS) $(TRANS_OBJS) $(LINALG_OBJS) $(MLINALG_OBJS) $(XSPLIT_OBJS) timer$(OBJ_SUF).o $(SVEC_OBJS) $(SMAT_OBJS) polys$(OBJ_SUF).o realroots$(OBJ_SUF).o 
 
-TESTS = vectests mattests spacetests smattest comptest rattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectests
+TESTS = vectest1 vectest2 mattest1 mattest2 space1 space2 smattest comptest rattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectest1 svectest2
+
+all: $(OBJS)
 
 tests: $(TESTS)
 progs: $(TESTS)
 
-all: $(OBJS)
-
 headers: $(HEADERS)
-
 objs: $(OBJS)
-
 sources: $(HEADERS) $(DOTCCS)
 
 lib: headers objs
@@ -107,7 +105,28 @@ tar: sources
 	tar -cvf procs.tar -I files
 	gzip procs.tar
 
-vectests: vectest1 vectest2
+check: $(TESTS)
+	rm -f PRIMES
+	./vectest1 < vectest.in >  t && diff t vectest.out
+	./vectest2 < vectest.in >  t && diff t vectest.out
+	./mattest1 < mattest.in >  t && diff t mattest.out
+	./mattest2 < mattest.in >  t && diff t mattest.out
+	./space1 < space.in > t && diff t space.out
+	./space2 < space.in > t && diff t space.out
+	./svectest1 < svectest.in > t && diff t svectest.out
+	./svectest2 < svectest.in > t && diff t svectest.out
+	./smattest < smattest.in > t && diff t smattest.out
+	./mvectest < mvectest.in > t && diff t mvectest.out
+	./mmattest < mmattest.in > t && diff t mmattest.out
+	./mspace < mspace.in > t && diff t mspace.out
+	./rattest < rattest.in > t && diff t rattest.out
+	./ptest < ptest.in > t && diff t ptest.out
+	./mptest < mptest.in > t && diff t mptest.out
+	./tconic < tconic.in > t && diff t tconic.out
+	./tleg < tleg.in > t && diff t tleg.out
+	./thilbert < thilbert.in > t && diff t thilbert.out
+	./rcubic < rcubic.in > t && diff t rcubic.out
+	./lcubic < lcubic.in > t && diff t lcubic.out
 
 vectest1: vectest.cc vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 vectest.cc -o vectest1$(OBJ_SUF).o
@@ -117,8 +136,6 @@ vectest2: vectest.cc vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=2 vectest.cc -o vectest2$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/vectest2 vectest2$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS)
 
-mattests: mattest1 mattest2
-
 mattest1: mattest.cc matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o timer$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 mattest.cc -o mattest1$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/mattest1 mattest1$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o timer$(OBJ_SUF).o $(LFLAGS)
@@ -126,8 +143,6 @@ mattest1: mattest.cc matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o int
 mattest2: mattest.cc matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o timer$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=2 mattest.cc -o mattest2$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/mattest2 mattest2$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o timer$(OBJ_SUF).o $(LFLAGS)
-
-spacetests: space1 space2
 
 space1: space.cc subspace$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 space.cc -o space1$(OBJ_SUF).o
@@ -142,8 +157,6 @@ space2: space.cc subspace$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arit
 mvectest: mvectest$(OBJ_SUF).o mvector$(OBJ_SUF).o vector$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o parifact$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/mvectest mvectest$(OBJ_SUF).o mvector$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o parifact$(OBJ_SUF).o  \
 	compproc$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS)
-
-svectests: svectest1 svectest2
 
 svectest1: svectest.cc svector$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 svectest.cc -o svectest1$(OBJ_SUF).o

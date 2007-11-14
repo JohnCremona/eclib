@@ -105,4 +105,5 @@ int main()
 	 cout<<"lcm = "<<l<<endl;
        }
    }
+ cout << endl;
 }  /* main() */

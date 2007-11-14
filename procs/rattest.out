@@ -1,0 +1,8 @@
+Test run of rational number procs.
+
+gcd(4,6) = 2
+q = 2/3 has denominator 3 and numerator 2
+Enter numerator and denominator
+q = 41/152 has denominator 152 and numerator 41
+Enter numerator and denominator
+q = 0/0 has denominator 0 and numerator 0

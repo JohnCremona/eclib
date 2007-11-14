@@ -1,0 +1,153 @@
+
+Multiprecision matrix package test program.
+
+Enter size of a square matrix A: Enter entries of A: A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Creating an array of 3 matrices
+ A=
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+2A=
+[[2,4,6],
+[8,10,12],
+[14,16,18]]
+3A=
+[[3,6,9],
+[12,15,18],
+[21,24,27]]
+row(A,1) = [1,2,3]
+row(A,2) = [4,5,6]
+row(A,3) = [7,8,9]
+A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+col(A,1) = [1,4,7]
+col(A,2) = [2,5,8]
+col(A,3) = [3,6,9]
+A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+directsum(A,A) = 
+[[1,2,3,0,0,0],
+[4,5,6,0,0,0],
+[7,8,9,0,0,0],
+[0,0,0,1,2,3],
+[0,0,0,4,5,6],
+[0,0,0,7,8,9]]
+Enter any number After shortening to a matrix of longs, A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+B = A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Enter any number B==A?1
+B!=A?0
+after B+:=A, A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+and B = 
+[[2,4,6],
+[8,10,12],
+[14,16,18]]
+Enter any number after B-:=A, A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+and B = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Enter any number after B*:=2, A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+and B = 
+[[2,4,6],
+[8,10,12],
+[14,16,18]]
+Enter any number after B/:=2, A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+and B = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Enter any number A+B=
+[[2,4,6],
+[8,10,12],
+[14,16,18]]
+Now A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+and B = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Enter any number A-B=
+[[0,0,0],
+[0,0,0],
+[0,0,0]]
+Now A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+and B = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Enter any number A*B=
+[[30,36,42],
+[66,81,96],
+[102,126,150]]
+Now A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+and B = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Enter any number -A=
+[[-1,-2,-3],
+[-4,-5,-6],
+[-7,-8,-9]]
+Now A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+-A=
+[[-1,-2,-3],
+[-4,-5,-6],
+[-7,-8,-9]]
+Now A = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Enter any number char. poly. of A has coefficients [ 0 -18 -15 1 ]
+det(A) = 0
+Augmented matrix = 
+[[1,2,3,1,0,0],
+[4,5,6,0,1,0],
+[7,8,9,0,0,1]]
+
+Which echelon method? (0=standard,1=longlong,2=modular) Echelon matrix = 
+[[3,0,-3,0,-8,5],
+[0,3,6,0,7,-4],
+[0,0,0,3,-6,3]]
+pivotal columns: [1,2,4]
+nonpivotal columns: [3,5,6]
+Denom = 3
+Rank = 2
+Nullity = 1
+A is not invertible; rk = 2
+cpu time = 0 seconds

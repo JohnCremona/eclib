@@ -44,9 +44,14 @@ oldforms::oldforms(long intp, const level* iN, int verbose, int plus)
    nap = ntp;
    noldclasses = totalolddim = 0;
    plusflag=plus;
-   vector<long>::const_iterator d=(N->dlist).begin();
-   while(*d<11) d++;
-   while(*d<N->modulus) getoldclasses(*d++,verbose);
+   vector<long>::const_iterator d;
+   for(d=(N->dlist).begin();d!=(N->dlist).end();d++)
+     {
+       long M=*d;
+       if(M<11) continue;
+       if(M==(N->modulus)) continue;
+       getoldclasses(M,verbose);
+     }
    if(verbose) cout<<"Finished getting oldclasses "<<endl;
    for (long i=0; i<noldclasses; i++) totalolddim+=oldclassdims[i];
 }

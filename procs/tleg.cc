@@ -45,7 +45,7 @@ int main()
       cout << "Enter coefficients a b c: ";
       cin >> a >> b >> c;
       cout<<a<<" "<<b<<" "<<c<<endl; 
-      if(a==0) abort();
+      if(a==0) exit(0);
       int use_lll = (CONIC_METHOD==5);
       if(!legendre_solve(a,b,c,x,y,z,use_lll))
 //    if(!solve_conic(a,zero,c,-b,x,y,z,CONIC_METHOD))
@@ -77,7 +77,6 @@ int main()
 	cout<<" -- wrong!\n";
     }      
     }
-  abort();
 }
 
 

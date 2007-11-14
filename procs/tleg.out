@@ -1,0 +1,616 @@
+Solving ax^2 + by^2 + cz^2 = 0
+Using method 4
+
+Enter coefficients a b c: -113922743 310146482690273725409 -1
+Solution: (x:y:z) = (11931641701:7244:7523107023591) --OK
+x = [11931641701,-4873846170,-25495895384] * [u^2,uv,v^2]
+y = [7244,-1698,15826] * [u^2,uv,v^2]
+z = [7523107023591,373522427721722,-60212759924226] * [u^2,uv,v^2]
+Disc(qx) = 1240585930761094901636
+Disc(qy) = -455690972
+Disc(qz) = 141330952159512008877688307548
+Parametric solution is OK
+Enter coefficients a b c: 7 -4 1
+Solution: (x:y:z) = (0:1:2) --OK
+x = [0,4,0] * [u^2,uv,v^2]
+y = [1,0,7] * [u^2,uv,v^2]
+z = [-2,0,14] * [u^2,uv,v^2]
+Disc(qx) = 16
+Disc(qy) = -28
+Disc(qz) = 112
+Parametric solution is OK
+Enter coefficients a b c: -5 4 1
+Solution: (x:y:z) = (1:1:1) --OK
+x = [1,0,4] * [u^2,uv,v^2]
+y = [-1,-2,4] * [u^2,uv,v^2]
+z = [-1,8,4] * [u^2,uv,v^2]
+Disc(qx) = -16
+Disc(qy) = 20
+Disc(qz) = 80
+Parametric solution is OK
+Enter coefficients a b c: 61 -4 3
+Solution: (x:y:z) = (1:4:1) --OK
+x = [-3,0,4] * [u^2,uv,v^2]
+y = [12,6,16] * [u^2,uv,v^2]
+z = [-3,-32,-4] * [u^2,uv,v^2]
+Disc(qx) = 48
+Disc(qy) = -732
+Disc(qz) = 976
+Parametric solution is OK
+Enter coefficients a b c: 8 1 -1
+Solution: (x:y:z) = (0:1:1) --OK
+x = [0,-2,0] * [u^2,uv,v^2]
+y = [1,0,-8] * [u^2,uv,v^2]
+z = [1,0,8] * [u^2,uv,v^2]
+Disc(qx) = 4
+Disc(qy) = 32
+Disc(qz) = -32
+Parametric solution is OK
+Enter coefficients a b c: -5 1 1
+Solution: (x:y:z) = (1:2:1) --OK
+x = [1,0,1] * [u^2,uv,v^2]
+y = [2,2,-2] * [u^2,uv,v^2]
+z = [1,-4,-1] * [u^2,uv,v^2]
+Disc(qx) = -4
+Disc(qy) = 20
+Disc(qz) = 20
+Parametric solution is OK
+Enter coefficients a b c: 525973 1 -1
+Solution: (x:y:z) = (0:1:1) --OK
+x = [0,-2,0] * [u^2,uv,v^2]
+y = [1,0,-525973] * [u^2,uv,v^2]
+z = [1,0,525973] * [u^2,uv,v^2]
+Disc(qx) = 4
+Disc(qy) = 2103892
+Disc(qz) = -2103892
+Parametric solution is OK
+Enter coefficients a b c: 22729 32 -1
+Solution: (x:y:z) = (1:15:173) --OK
+x = [1,-6,-23] * [u^2,uv,v^2]
+y = [15,256,-423] * [u^2,uv,v^2]
+z = [173,-78,4213] * [u^2,uv,v^2]
+Disc(qx) = 128
+Disc(qy) = 90916
+Disc(qz) = -2909312
+Parametric solution is OK
+Enter coefficients a b c: -4097 27 5
+Solution: (x:y:z) = (3:22:69) --OK
+x = [9,0,15] * [u^2,uv,v^2]
+y = [66,230,-110] * [u^2,uv,v^2]
+z = [207,-396,-345] * [u^2,uv,v^2]
+Disc(qx) = -540
+Disc(qy) = 81940
+Disc(qz) = 442476
+Parametric solution is OK
+Enter coefficients a b c: 21127 48 -7
+Solution: (x:y:z) = (1:1:55) --OK
+x = [7,0,-48] * [u^2,uv,v^2]
+y = [7,770,48] * [u^2,uv,v^2]
+z = [385,96,2640] * [u^2,uv,v^2]
+Disc(qx) = 1344
+Disc(qy) = 591556
+Disc(qz) = -4056384
+Parametric solution is OK
+Enter coefficients a b c: 8779 17 -12
+Solution: (x:y:z) = (5:67:157) --OK
+x = [-1,28,8] * [u^2,uv,v^2]
+y = [-73,-140,1376] * [u^2,uv,v^2]
+z = [91,-66,1652] * [u^2,uv,v^2]
+Disc(qx) = 816
+Disc(qy) = 421392
+Disc(qz) = -596972
+Parametric solution is OK
+Enter coefficients a b c: 15182006953 -40426 9
+Solution: (x:y:z) = (9:41007:2723347) --OK
+x = [-9,1194,825] * [u^2,uv,v^2]
+y = [41007,6432,3332319] * [u^2,uv,v^2]
+z = [-2723347,-7091294,220749027] * [u^2,uv,v^2]
+Disc(qx) = 1455336
+Disc(qy) = -546552250308
+Disc(qz) = 2454991252327912
+Parametric solution is OK
+Enter coefficients a b c: -4103 23 8
+Solution: (x:y:z) = (5:57:59) --OK
+x = [11,10,19] * [u^2,uv,v^2]
+y = [55,-286,-225] * [u^2,uv,v^2]
+z = [-231,-440,199] * [u^2,uv,v^2]
+Disc(qx) = -736
+Disc(qy) = 131296
+Disc(qz) = 377476
+Parametric solution is OK
+Enter coefficients a b c: -3140477 43 25
+Solution: (x:y:z) = (10:1685:2771) --OK
+x = [10,-10,110] * [u^2,uv,v^2]
+y = [-1685,-12170,24620] * [u^2,uv,v^2]
+z = [-2771,17262,21850] * [u^2,uv,v^2]
+Disc(qx) = -4300
+Disc(qy) = 314047700
+Disc(qz) = 540162044
+Parametric solution is OK
+Enter coefficients a b c: -239743087 78 25
+Solution: (x:y:z) = (1:1623:1171) --OK
+x = [25,0,78] * [u^2,uv,v^2]
+y = [-40575,-58550,126594] * [u^2,uv,v^2]
+z = [-29275,253188,91338] * [u^2,uv,v^2]
+Disc(qx) = -7800
+Disc(qy) = 23974308700
+Disc(qz) = 74799843144
+Parametric solution is OK
+Enter coefficients a b c: -134593 56 1
+Solution: (x:y:z) = (3:136:419) --OK
+x = [3,2,19] * [u^2,uv,v^2]
+y = [-136,-370,738] * [u^2,uv,v^2]
+z = [-419,4798,4253] * [u^2,uv,v^2]
+Disc(qx) = -224
+Disc(qy) = 538372
+Disc(qz) = 30148832
+Parametric solution is OK
+Enter coefficients a b c: -47287 8 7
+Solution: (x:y:z) = (3:26:245) --OK
+x = [5,4,12] * [u^2,uv,v^2]
+y = [384,254,-820] * [u^2,uv,v^2]
+z = [-19,-1244,-452] * [u^2,uv,v^2]
+Disc(qx) = -224
+Disc(qy) = 1324036
+Disc(qz) = 1513184
+Parametric solution is OK
+Enter coefficients a b c: -4431282451 4719 7
+Solution: (x:y:z) = (11:10286:72611) --OK
+x = [77,0,429] * [u^2,uv,v^2]
+y = [-72002,-92414,401154] * [u^2,uv,v^2]
+z = [-508277,8825388,2831829] * [u^2,uv,v^2]
+Disc(qx) = -132132
+Disc(qy) = 124075908628
+Disc(qz) = 83644887545076
+Parametric solution is OK
+Enter coefficients a b c: -336649 300 1
+Solution: (x:y:z) = (5:62:2695) --OK
+x = [5,0,60] * [u^2,uv,v^2]
+y = [-62,-1078,744] * [u^2,uv,v^2]
+z = [-2695,7440,32340] * [u^2,uv,v^2]
+Disc(qx) = -1200
+Disc(qy) = 1346596
+Disc(qz) = 403978800
+Parametric solution is OK
+Enter coefficients a b c: 51018545 -412 83
+Solution: (x:y:z) = (17:8827:14461) --OK
+x = [140,-128,-215] * [u^2,uv,v^2]
+y = [54140,9810,78659] * [u^2,uv,v^2]
+z = [50020,272920,-47947] * [u^2,uv,v^2]
+Disc(qx) = 136784
+Disc(qy) = -16938156940
+Disc(qz) = 84078562160
+Parametric solution is OK
+Enter coefficients a b c: 134873197 1791 -13
+Solution: (x:y:z) = (9:964:31119) --OK
+x = [117,-156,-147] * [u^2,uv,v^2]
+y = [12532,73190,-33048] * [u^2,uv,v^2]
+z = [404547,-155724,612093] * [u^2,uv,v^2]
+Disc(qx) = 93132
+Disc(qy) = 7013406244
+Disc(qz) = -966231583308
+Parametric solution is OK
+Enter coefficients a b c: 9400805511 2437 -4
+Solution: (x:y:z) = (4:6998:259691) --OK
+x = [4,-132,-1348] * [u^2,uv,v^2]
+y = [6998,288448,-2401066] * [u^2,uv,v^2]
+z = [259691,-42740,88221077] * [u^2,uv,v^2]
+Disc(qx) = 38992
+Disc(qy) = 150412888176
+Disc(qz) = -91639052121228
+Parametric solution is OK
+Enter coefficients a b c: 2607882701 -17205 4
+Solution: (x:y:z) = (4:1774:55721) --OK
+x = [-4,252,13236] * [u^2,uv,v^2]
+y = [1774,-320,5880246] * [u^2,uv,v^2]
+z = [-55721,-11750412,185757189] * [u^2,uv,v^2]
+Disc(qx) = 275280
+Disc(qy) = -41726123216
+Disc(qz) = 179474487482820
+Parametric solution is OK
+Enter coefficients a b c: 153 -13 1
+Solution: (x:y:z) = (1:9:30) --OK
+x = [-1,6,4] * [u^2,uv,v^2]
+y = [9,6,18] * [u^2,uv,v^2]
+z = [-30,-54,42] * [u^2,uv,v^2]
+Disc(qx) = 52
+Disc(qy) = -612
+Disc(qz) = 7956
+Parametric solution is OK
+Enter coefficients a b c: -15152 5 3
+Solution: (x:y:z) = (1:16:68) --OK
+x = [3,0,5] * [u^2,uv,v^2]
+y = [-48,-408,80] * [u^2,uv,v^2]
+z = [-204,160,340] * [u^2,uv,v^2]
+Disc(qx) = -60
+Disc(qy) = 181824
+Disc(qz) = 303040
+Parametric solution is OK
+Enter coefficients a b c: 4293 13 -10
+Solution: (x:y:z) = (1:3:21) --OK
+x = [10,0,-13] * [u^2,uv,v^2]
+y = [30,420,39] * [u^2,uv,v^2]
+z = [210,78,273] * [u^2,uv,v^2]
+Disc(qx) = 520
+Disc(qy) = 171720
+Disc(qz) = -223236
+Parametric solution is OK
+Enter coefficients a b c: 32432 -15 7
+Solution: (x:y:z) = (2:93:1) --OK
+x = [4,-22,4] * [u^2,uv,v^2]
+y = [508,-372,515] * [u^2,uv,v^2]
+z = [692,4,-703] * [u^2,uv,v^2]
+Disc(qx) = 420
+Disc(qy) = -908096
+Disc(qz) = 1945920
+Parametric solution is OK
+Enter coefficients a b c: 7185786 -1465 1
+Solution: (x:y:z) = (28:1961:179) --OK
+x = [-28,22,48] * [u^2,uv,v^2]
+y = [1961,-1528,3962] * [u^2,uv,v^2]
+z = [-179,-205064,80254] * [u^2,uv,v^2]
+Disc(qx) = 5860
+Disc(qy) = -28743144
+Disc(qz) = 42108705960
+Parametric solution is OK
+Enter coefficients a b c: 21328386 4537 -1
+Solution: (x:y:z) = (2:1645:111187) --OK
+x = [2,-134,-24] * [u^2,uv,v^2]
+y = [1645,972,-12822] * [u^2,uv,v^2]
+z = [111187,13836,870738] * [u^2,uv,v^2]
+Disc(qx) = 18148
+Disc(qy) = 85313544
+Disc(qz) = -387067549128
+Parametric solution is OK
+Enter coefficients a b c: -30940374 1871 1
+Solution: (x:y:z) = (10:293:54161) --OK
+x = [10,6,188] * [u^2,uv,v^2]
+y = [-293,-11008,2206] * [u^2,uv,v^2]
+z = [-54161,77144,1041370] * [u^2,uv,v^2]
+Disc(qx) = -7484
+Disc(qy) = 123761496
+Disc(qz) = 231557759016
+Parametric solution is OK
+Enter coefficients a b c: 29239123130 -165321 1
+Solution: (x:y:z) = (4:3683:1332167) --OK
+x = [-4,722,8750] * [u^2,uv,v^2]
+y = [3683,1302,7939057] * [u^2,uv,v^2]
+z = [-1332167,-63982478,2860303327] * [u^2,uv,v^2]
+Disc(qx) = 661284
+Disc(qy) = -116956492520
+Disc(qz) = 19335364299898920
+Parametric solution is OK
+Enter coefficients a b c: 86807326430 57649 -1
+Solution: (x:y:z) = (36:60113:17911481) --OK
+x = [36,-410,-434] * [u^2,uv,v^2]
+y = [60113,310462,-1043213] * [u^2,uv,v^2]
+z = [17911481,-11466626,281228919] * [u^2,uv,v^2]
+Disc(qx) = 230596
+Disc(qy) = 347229305720
+Disc(qz) = -20017422245452280
+Parametric solution is OK
+Enter coefficients a b c: -17194283526 62471 1
+Solution: (x:y:z) = (142:25285:17514733) --OK
+x = [142,-6,440] * [u^2,uv,v^2]
+y = [-25285,-245618,83537] * [u^2,uv,v^2]
+z = [-17514733,22987654,53785349] * [u^2,uv,v^2]
+Disc(qx) = -249884
+Disc(qy) = 68777134104
+Disc(qz) = 4296576344610984
+Parametric solution is OK
+Enter coefficients a b c: 130017558910 31761 -1
+Solution: (x:y:z) = (8:15409:3982759) --OK
+x = [8,-238,-2200] * [u^2,uv,v^2]
+y = [15409,537272,-3754446] * [u^2,uv,v^2]
+z = [3982759,3864232,1037778274] * [u^2,uv,v^2]
+Disc(qx) = 127044
+Disc(qy) = 520070235640
+Disc(qz) = -16517950754162040
+Parametric solution is OK
+Enter coefficients a b c: 188060224470 -31489 1
+Solution: (x:y:z) = (6:145223:25638331) --OK
+x = [-6,358,-92] * [u^2,uv,v^2]
+y = [145223,-118862,1319297] * [u^2,uv,v^2]
+z = [-25638331,5444734,230686511] * [u^2,uv,v^2]
+Disc(qx) = 125956
+Disc(qy) = -752240897880
+Disc(qz) = 23687313633343320
+Parametric solution is OK
+Enter coefficients a b c: -2568561397757146 1015687 9
+Solution: (x:y:z) = (2568:128318463:4885038233) --OK
+x = [2568,594,3594] * [u^2,uv,v^2]
+y = [-128318463,-63922062,172193031] * [u^2,uv,v^2]
+z = [-4885038233,100374251070,18445475069] * [u^2,uv,v^2]
+Disc(qx) = -36564732
+Disc(qy) = 92468210319257256
+Disc(qz) = 10435417681615049397208
+Parametric solution is OK
+Enter coefficients a b c: 6819 29 -5
+Solution: (x:y:z) = (3:61:184) --OK
+x = [-8,-6,17] * [u^2,uv,v^2]
+y = [26,-358,-79] * [u^2,uv,v^2]
+z = [302,38,656] * [u^2,uv,v^2]
+Disc(qx) = 580
+Disc(qy) = 136380
+Disc(qz) = -791004
+Parametric solution is OK
+Enter coefficients a b c: 9987 -91 1
+Solution: (x:y:z) = (1:26:227) --OK
+x = [-1,18,10] * [u^2,uv,v^2]
+y = [26,-14,386] * [u^2,uv,v^2]
+z = [-227,-646,3544] * [u^2,uv,v^2]
+Disc(qx) = 364
+Disc(qy) = -39948
+Disc(qz) = 3635268
+Parametric solution is OK
+Enter coefficients a b c: -9476 319 1
+Solution: (x:y:z) = (2:5:173) --OK
+x = [2,-2,160] * [u^2,uv,v^2]
+y = [-5,-168,484] * [u^2,uv,v^2]
+z = [-173,1768,12956] * [u^2,uv,v^2]
+Disc(qx) = -1276
+Disc(qy) = 37904
+Disc(qz) = 12091376
+Parametric solution is OK
+Enter coefficients a b c: -242324 61 43
+Solution: (x:y:z) = (13:514:760) --OK
+x = [8,-6,329] * [u^2,uv,v^2]
+y = [-332,5108,11738] * [u^2,uv,v^2]
+z = [452,4724,-20360] * [u^2,uv,v^2]
+Disc(qx) = -10492
+Disc(qy) = 41679728
+Disc(qz) = 59127056
+Parametric solution is OK
+Enter coefficients a b c: 132963927 -1145 2
+Solution: (x:y:z) = (1:383:4183) --OK
+x = [-2,44,903] * [u^2,uv,v^2]
+y = [766,-120,347169] * [u^2,uv,v^2]
+z = [-8366,-693018,3845949] * [u^2,uv,v^2]
+Disc(qx) = 9160
+Disc(qy) = -1063711416
+Disc(qz) = 608974785660
+Parametric solution is OK
+Enter coefficients a b c: 7 2 -1
+Solution: (x:y:z) = (1:1:3) --OK
+x = [1,-2,-1] * [u^2,uv,v^2]
+y = [1,4,-3] * [u^2,uv,v^2]
+z = [3,-2,5] * [u^2,uv,v^2]
+Disc(qx) = 8
+Disc(qy) = 28
+Disc(qz) = -56
+Parametric solution is OK
+Enter coefficients a b c: 5 -83 -2
+Solution: (x:y:z) = (7:1:9) --OK
+x = [13,8,14] * [u^2,uv,v^2]
+y = [-3,-4,2] * [u^2,uv,v^2]
+z = [-7,34,18] * [u^2,uv,v^2]
+Disc(qx) = -664
+Disc(qy) = 40
+Disc(qz) = 1660
+Parametric solution is OK
+Enter coefficients a b c: 257 -116044 -1
+Solution: (x:y:z) = (85:4:11) --OK
+x = [85,-48,1372] * [u^2,uv,v^2]
+y = [4,-2,-64] * [u^2,uv,v^2]
+z = [11,-10928,2908] * [u^2,uv,v^2]
+Disc(qx) = -464176
+Disc(qy) = 1028
+Disc(qz) = 119293232
+Parametric solution is OK
+Enter coefficients a b c: 1027986085027861747937 722974121783 -604305613931
+Solution: (x:y:z) = (96169054998:8355012676083151:9962270515504999) --OK
+x = [-171311893342,-398643135954,2318392642282] * [u^2,uv,v^2]
+y = [2018398374852981,-47528310472702492,-27983914786891851] * [u^2,uv,v^2]
+z = [7402533838782499,189535693811400,100400259446190829] * [u^2,uv,v^2]
+Disc(qx) = 1747589282081205501435892
+Disc(qy) = 2484871048901148643309038230841388
+Disc(qz) = -2972829348112650849204367548046684
+Parametric solution is OK
+Enter coefficients a b c: 21458238196506826611317 155590763477 -429392673713
+Solution: (x:y:z) = (133174840374:12323039517012895:30681131636462597) --OK
+x = [-120839066706,-69074898358,543008981510] * [u^2,uv,v^2]
+y = [-3653109691455587,-194702538229996066,-72064445956284564] * [u^2,uv,v^2]
+z = [27102622202551825,24899986468074458,128906567389794722] * [u^2,uv,v^2]
+Disc(qx) = 267238135737744073520404
+Disc(qy) = 36856041089473957501961224216840084
+Disc(qz) = -13354814655463282827589091033876836
+Parametric solution is OK
+Enter coefficients a b c: 293911884200387681576093 106205605559 -687223946819
+Solution: (x:y:z) = (23840892990:133700736855785209:54824084629796371) --OK
+x = [-120543758034,-289421995022,431758255050] * [u^2,uv,v^2]
+y = [201353504898388438,-790335940111425618,-227587597953023497] * [u^2,uv,v^2]
+z = [111714818825405396,-86582800060098558,296193784378457843] * [u^2,uv,v^2]
+Disc(qx) = 291948141706231627067284
+Disc(qy) = 807933140308797241690526567735192668
+Disc(qz) = -124860358569955432897412098409203948
+Parametric solution is OK
+Enter coefficients a b c: 206207486824798778186641 769034410087 -80703111317
+Solution: (x:y:z) = (165865026463:38107219971077702:290056531374297691) --OK
+x = [25472865203,323082507022,-1412008140086] * [u^2,uv,v^2]
+y = [-12377002765101082,196820171004354090,562094148891299246] * [u^2,uv,v^2]
+z = [55836550914326161,-39134552764402442,2846943958532790128] * [u^2,uv,v^2]
+Disc(qx) = 248253878415418354618316
+Disc(qy) = 66566343054482186688488320101264788
+Disc(qz) = -634322611943327812420967300076191068
+Parametric solution is OK
+Enter coefficients a b c: 79 -8 1
+Solution: (x:y:z) = (1:4:7) --OK
+x = [-1,4,4] * [u^2,uv,v^2]
+y = [4,-2,20] * [u^2,uv,v^2]
+z = [-7,-36,44] * [u^2,uv,v^2]
+Disc(qx) = 32
+Disc(qy) = -316
+Disc(qz) = 2528
+Parametric solution is OK
+Enter coefficients a b c: 125965 -134 1
+Solution: (x:y:z) = (1:31:53) --OK
+x = [-1,4,130] * [u^2,uv,v^2]
+y = [31,-18,4066] * [u^2,uv,v^2]
+z = [-53,-8096,9302] * [u^2,uv,v^2]
+Disc(qx) = 536
+Disc(qy) = -503860
+Disc(qz) = 67517240
+Parametric solution is OK
+Enter coefficients a b c: -163184 223 1
+Solution: (x:y:z) = (1:5:397) --OK
+x = [1,0,223] * [u^2,uv,v^2]
+y = [-5,-794,1115] * [u^2,uv,v^2]
+z = [-397,2230,88531] * [u^2,uv,v^2]
+Disc(qx) = -892
+Disc(qy) = 652736
+Disc(qz) = 145560128
+Parametric solution is OK
+Enter coefficients a b c: -1115479181 2065 61
+Solution: (x:y:z) = (271:196736:180889) --OK
+x = [386,370,415] * [u^2,uv,v^2]
+y = [-256838,-467778,51940] * [u^2,uv,v^2]
+z = [-701084,2076010,1748735] * [u^2,uv,v^2]
+Disc(qx) = -503860
+Disc(qy) = 272176920164
+Disc(qz) = 9213858035060
+Parametric solution is OK
+Enter coefficients a b c: 88727009405 -50601 1
+Solution: (x:y:z) = (67:107183:13528438) --OK
+x = [-67,276,471] * [u^2,uv,v^2]
+y = [107183,-37696,831123] * [u^2,uv,v^2]
+z = [-13528438,-106168434,123572382] * [u^2,uv,v^2]
+Disc(qx) = 202404
+Disc(qy) = -354908037620
+Disc(qz) = 17958701611609620
+Parametric solution is OK
+Enter coefficients a b c: 263422353799 -497480 1
+Solution: (x:y:z) = (7:17590:11875043) --OK
+x = [-7,1348,6172] * [u^2,uv,v^2]
+y = [17590,5538,14976124] * [u^2,uv,v^2]
+z = [-11875043,-213398348,10076817308] * [u^2,uv,v^2]
+Disc(qx) = 1989920
+Disc(qy) = -1053689415196
+Disc(qz) = 524189410271706080
+Parametric solution is OK
+Enter coefficients a b c: 62063469603854588654579 68044230041 -1
+Solution: (x:y:z) = (30740:32088063161:11344956855892619) --OK
+x = [30740,-409478,-849908] * [u^2,uv,v^2]
+y = [32088063161,310688281872,-1182111469003] * [u^2,uv,v^2]
+z = [11344956855892619,-9066204972113032,374052548186839105] * [u^2,uv,v^2]
+Disc(qx) = 272176920164
+Disc(qy) = 248253878415418354618316
+Disc(qz) = -16892244011469171082902408656030956
+Parametric solution is OK
+Enter coefficients a b c: 1 7535987 -52
+Solution: (x:y:z) = (4735:1:759) --OK
+x = [4735,22116,-56936] * [u^2,uv,v^2]
+y = [-1,12,16] * [u^2,uv,v^2]
+z = [759,362,9972] * [u^2,uv,v^2]
+Disc(qx) = 1567485296
+Disc(qy) = 208
+Disc(qz) = -30143948
+Parametric solution is OK
+Enter coefficients a b c: 19 4776762553 -6836
+Solution: (x:y:z) = (1267471:13:67699) --OK
+x = [1903532,10105320,-3742819] * [u^2,uv,v^2]
+y = [-316,352,313] * [u^2,uv,v^2]
+z = [282572,-85858,327709] * [u^2,uv,v^2]
+Disc(qx) = 130615795249232
+Disc(qy) = 519536
+Disc(qz) = -363033954028
+Parametric solution is OK
+Enter coefficients a b c: 1 52753834808 -208881
+Solution: (x:y:z) = (17547333:27:40721) --OK
+x = [17547333,52950174,-588029163] * [u^2,uv,v^2]
+y = [-27,888,435] * [u^2,uv,v^2]
+z = [40721,-39466,1305057] * [u^2,uv,v^2]
+Disc(qx) = 44077095074119392
+Disc(qy) = 835524
+Disc(qz) = -211015339232
+Parametric solution is OK
+Enter coefficients a b c: 221916530122928255 1 -370095536
+Solution: (x:y:z) = (7508:1539105595944:200502439) --OK
+x = [-7508,-10400,45692] * [u^2,uv,v^2]
+y = [1539105595944,-17634978298376,-2847239512744] * [u^2,uv,v^2]
+z = [200502439,-132257036,1128612261] * [u^2,uv,v^2]
+Disc(qx) = 1480382144
+Disc(qy) = 328521268652421113695078720
+Disc(qz) = -887666120491713020
+Parametric solution is OK
+Enter coefficients a b c: 555143 1 -1737
+Solution: (x:y:z) = (9:2973:176) --OK
+x = [-9,-30,168] * [u^2,uv,v^2]
+y = [2973,-58026,-41214] * [u^2,uv,v^2]
+z = [176,-74,3162] * [u^2,uv,v^2]
+Disc(qx) = 6948
+Disc(qy) = 3857133564
+Disc(qz) = -2220572
+Parametric solution is OK
+Enter coefficients a b c: 1 23121989 -2313
+Solution: (x:y:z) = (8707:4:439) --OK
+x = [8707,416280,-1166751] * [u^2,uv,v^2]
+y = [-4,42,468] * [u^2,uv,v^2]
+z = [439,-256,52707] * [u^2,uv,v^2]
+Disc(qx) = 213924642228
+Disc(qy) = 9252
+Disc(qz) = -92487956
+Parametric solution is OK
+Enter coefficients a b c: 14299777 2 -5276187762844563
+Solution: (x:y:z) = (19356219:36672694683:1235) --OK
+x = [-38712438,-118025652,182625075] * [u^2,uv,v^2]
+y = [73345389366,-449667627426,-339463255227] * [u^2,uv,v^2]
+z = [2470,-48,11579] * [u^2,uv,v^2]
+Disc(qx) = 42209502102756504
+Disc(qy) = 301793233675224546249804
+Disc(qz) = -114398216
+Parametric solution is OK
+Enter coefficients a b c: 1 316 -5
+Solution: (x:y:z) = (2:1:8) --OK
+x = [2,80,10] * [u^2,uv,v^2]
+y = [-1,0,5] * [u^2,uv,v^2]
+z = [8,4,40] * [u^2,uv,v^2]
+Disc(qx) = 6320
+Disc(qy) = 20
+Disc(qz) = -1264
+Parametric solution is OK
+Enter coefficients a b c: 388 152441 -1
+Solution: (x:y:z) = (56:9:3683) --OK
+x = [56,-694,-572] * [u^2,uv,v^2]
+y = [9,20,-32] * [u^2,uv,v^2]
+z = [3683,3356,16824] * [u^2,uv,v^2]
+Disc(qx) = 609764
+Disc(qy) = 1552
+Disc(qz) = -236588432
+Parametric solution is OK
+Enter coefficients a b c: 831 1 -92742160
+Solution: (x:y:z) = (309:17077:2) --OK
+x = [-309,-16768,72656] * [u^2,uv,v^2]
+y = [17077,-273856,-3415088] * [u^2,uv,v^2]
+z = [2,-2,416] * [u^2,uv,v^2]
+Disc(qx) = 370968640
+Disc(qy) = 308274939840
+Disc(qz) = -3324
+Parametric solution is OK
+Enter coefficients a b c: 1 29526647 -1956
+Solution: (x:y:z) = (17194:8:1057) --OK
+x = [17194,439500,-550428] * [u^2,uv,v^2]
+y = [-8,36,204] * [u^2,uv,v^2]
+z = [1057,-458,27984] * [u^2,uv,v^2]
+Disc(qx) = 231016486128
+Disc(qy) = 7824
+Disc(qz) = -118106588
+Parametric solution is OK
+Enter coefficients a b c: 7 4715959977 -21016
+Solution: (x:y:z) = (227529:11:6663) --OK
+x = [1592703,15324546,-25365801] * [u^2,uv,v^2]
+y = [-77,490,1131] * [u^2,uv,v^2]
+z = [46641,-7224,708063] * [u^2,uv,v^2]
+Disc(qx) = 396442459506528
+Disc(qy) = 588448
+Disc(qz) = -132046879356
+Parametric solution is OK
+Enter coefficients a b c: 6404148857786219 1 -3120332
+Solution: (x:y:z) = (394:19843986872:21090393) --OK
+x = [-394,-1984,5422] * [u^2,uv,v^2]
+y = [19843986872,-234130929916,-316405547352] * [u^2,uv,v^2]
+z = [21090393,5470472,304007155] * [u^2,uv,v^2]
+Disc(qx) = 12481328
+Disc(qy) = 79932282454855153218832
+Disc(qz) = -25616595431144876
+Parametric solution is OK
+Enter coefficients a b c: 0 0 0

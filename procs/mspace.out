@@ -1,0 +1,98 @@
+
+M-Subspace package test program
+
+Enter size of square matrix M: Enter entries of M:  M = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Trace(M) = 15
+m^2 = 
+[[30,36,42],
+[66,81,96],
+[102,126,150]]
+Trace(m^2) = 261
+m^3 = 
+[[468,576,684],
+[1062,1305,1548],
+[1656,2034,2412]]
+Trace(m^3) = 4185
+char. poly. of m has coefficients [ 0 -18 -15 1 ]
+det(M) = 0
+rank(M) = 2
+nullity(M) = 1
+kernel(m) has basis
+
+[[1],
+[-2],
+[1]]
+pivots: [3]
+denom:  1
+image(m) has basis
+
+[[1,0],
+[0,1],
+[-1,2]]
+pivots: [1,2]
+denom:  1
+Enter lambda: eigenspace for lambda = 1 has basis
+
+[[],
+[],
+[]]
+with dimension 0
+
+Now repeating eigenspace calculation modulo 6074000003
+eigenspace for lambda has basis
+
+[[],
+[],
+[]]
+with dimension 0
+Enter size of square matrix M: Enter entries of M:  M = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Trace(M) = 15
+m^2 = 
+[[30,36,42],
+[66,81,96],
+[102,126,150]]
+Trace(m^2) = 261
+m^3 = 
+[[468,576,684],
+[1062,1305,1548],
+[1656,2034,2412]]
+Trace(m^3) = 4185
+char. poly. of m has coefficients [ 0 -18 -15 1 ]
+det(M) = 0
+rank(M) = 2
+nullity(M) = 1
+kernel(m) has basis
+
+[[1],
+[-2],
+[1]]
+pivots: [3]
+denom:  1
+image(m) has basis
+
+[[1,0],
+[0,1],
+[-1,2]]
+pivots: [1,2]
+denom:  1
+Enter lambda: eigenspace for lambda = 0 has basis
+
+[[1],
+[-2],
+[1]]
+with dimension 1
+
+Now repeating eigenspace calculation modulo 6074000003
+eigenspace for lambda has basis
+
+[[1],
+[-2],
+[1]]
+with dimension 1
+Enter size of square matrix M: 

@@ -86,7 +86,6 @@ int main()
     }
   else cout << "No solution.\n";
   }
-  abort();
 }
 
 

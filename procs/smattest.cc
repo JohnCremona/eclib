@@ -45,8 +45,8 @@ int main(void)
 { 
   cout<<"BIGPRIME = "<<BIGPRIME<<endl;
   starttime = clock();
-  cout<<"raw start time = "<<starttime<<endl;
-  cout<<"CLOCKS_PER_SEC = "<<CLOCKS_PER_SEC<<endl;
+  //  cout<<"raw start time = "<<starttime<<endl;
+  //  cout<<"CLOCKS_PER_SEC = "<<CLOCKS_PER_SEC<<endl;
 
   cout << "enter 0 to exit\n";
   cout << "enter 1 to do all tests \n";

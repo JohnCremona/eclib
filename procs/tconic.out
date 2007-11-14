@@ -1,0 +1,772 @@
+Solving ax^2 + bxz + cz^2 = dy^2
+Using method 4
+
+Enter coefficients a b c d: -113922743 0 310146482690273725409 1
+Solution: (x:y:z) = (6632499416:70647575606369:5679)
+Solution is correct!
+Solution: (x:y:z) = (6632499416:70647575606369:5679)
+Parametric solution:
+x = [6632499416,837303821112076122246270,26425848118343941811659972709016629276]*[u^2,uv,v^2]
+y = [70647575606369,8918732034082630564118638188,281480929858691034492171567319911251675821]*[u^2,uv,v^2]
+z = [5679,716931597253432612,22626823170468308838277461581301]*[u^2,uv,v^2]
+disc(qx) = 1240585930761094901636 = 4cd
+disc(qz) = -455690972 = 4ad
+resultant(qx,qz)   = 141330952159512008877688307548 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 7 0 -4 -1
+Solution: (x:y:z) = (0:2:1)
+Solution is correct!
+Solution: (x:y:z) = (0:2:1)
+Parametric solution:
+x = [0,-4,0]*[u^2,uv,v^2]
+y = [2,0,-14]*[u^2,uv,v^2]
+z = [1,0,7]*[u^2,uv,v^2]
+disc(qx) = 16 = 4cd
+disc(qz) = -28 = 4ad
+resultant(qx,qz)   = 112 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -5 0 4 -1
+Solution: (x:y:z) = (2:4:1)
+Solution is correct!
+Solution: (x:y:z) = (2:4:1)
+Parametric solution:
+x = [2,8,10]*[u^2,uv,v^2]
+y = [4,12,4]*[u^2,uv,v^2]
+z = [1,8,11]*[u^2,uv,v^2]
+disc(qx) = -16 = 4cd
+disc(qz) = 20 = 4ad
+resultant(qx,qz)   = 80 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 61 0 -4 -3
+Solution: (x:y:z) = (1:1:4)
+Solution is correct!
+Solution: (x:y:z) = (1:1:4)
+Parametric solution:
+x = [1,-32,244]*[u^2,uv,v^2]
+y = [1,0,-244]*[u^2,uv,v^2]
+z = [4,-122,976]*[u^2,uv,v^2]
+disc(qx) = 48 = 4cd
+disc(qz) = -732 = 4ad
+resultant(qx,qz)   = 8784 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 8 0 1 1
+Solution: (x:y:z) = (0:1:1)
+Solution is correct!
+Solution: (x:y:z) = (0:1:1)
+Parametric solution:
+x = [0,2,0]*[u^2,uv,v^2]
+y = [1,0,8]*[u^2,uv,v^2]
+z = [1,0,-8]*[u^2,uv,v^2]
+disc(qx) = 4 = 4cd
+disc(qz) = 32 = 4ad
+resultant(qx,qz)   = -32 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -5 0 1 -1
+Solution: (x:y:z) = (1:2:1)
+Solution is correct!
+Solution: (x:y:z) = (1:2:1)
+Parametric solution:
+x = [1,4,5]*[u^2,uv,v^2]
+y = [2,6,2]*[u^2,uv,v^2]
+z = [1,8,11]*[u^2,uv,v^2]
+disc(qx) = -4 = 4cd
+disc(qz) = 20 = 4ad
+resultant(qx,qz)   = 20 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 525973 0 1 1
+Solution: (x:y:z) = (0:1:1)
+Solution is correct!
+Solution: (x:y:z) = (0:1:1)
+Parametric solution:
+x = [0,2,0]*[u^2,uv,v^2]
+y = [1,0,525973]*[u^2,uv,v^2]
+z = [1,0,-525973]*[u^2,uv,v^2]
+disc(qx) = 4 = 4cd
+disc(qz) = 2103892 = 4ad
+resultant(qx,qz)   = -2103892 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 22729 0 32 1
+Solution: (x:y:z) = (1:173:15)
+Solution is correct!
+Solution: (x:y:z) = (1:173:15)
+Parametric solution:
+x = [1,346,29897]*[u^2,uv,v^2]
+y = [173,58898,5017173]*[u^2,uv,v^2]
+z = [15,4844,389557]*[u^2,uv,v^2]
+disc(qx) = 128 = 4cd
+disc(qz) = 90916 = 4ad
+resultant(qx,qz)   = -2909312 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -4097 0 27 -5
+Solution: (x:y:z) = (3:69:22)
+Solution is correct!
+Solution: (x:y:z) = (3:69:22)
+Parametric solution:
+x = [3,138,1632]*[u^2,uv,v^2]
+y = [69,2778,26358]*[u^2,uv,v^2]
+z = [22,1242,16598]*[u^2,uv,v^2]
+disc(qx) = -540 = 4cd
+disc(qz) = 81940 = 4ad
+resultant(qx,qz)   = 11061900 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 21127 0 48 7
+Solution: (x:y:z) = (1:55:1)
+Solution is correct!
+Solution: (x:y:z) = (1:55:1)
+Parametric solution:
+x = [1,110,2689]*[u^2,uv,v^2]
+y = [55,5954,179575]*[u^2,uv,v^2]
+z = [1,-660,-38989]*[u^2,uv,v^2]
+disc(qx) = 1344 = 4cd
+disc(qz) = 591556 = 4ad
+resultant(qx,qz)   = -198762816 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 8779 0 17 3
+Solution: (x:y:z) = (1:182:73)
+Solution is correct!
+Solution: (x:y:z) = (1:182:73)
+Parametric solution:
+x = [1,364,33073]*[u^2,uv,v^2]
+y = [182,63766,5586126]*[u^2,uv,v^2]
+z = [73,25480,2223031]*[u^2,uv,v^2]
+disc(qx) = 204 = 4cd
+disc(qz) = 105348 = 4ad
+resultant(qx,qz)   = -5372748 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 15182006953 0 -40426 -1
+Solution: (x:y:z) = (3:2723347:13669)
+Solution is correct!
+Solution: (x:y:z) = (3:2723347:13669)
+Parametric solution:
+x = [3,10893388,9888825163070]*[u^2,uv,v^2]
+y = [2723347,9889193565208,8977569638361942354]*[u^2,uv,v^2]
+z = [13669,49635722422,45060080115856346]*[u^2,uv,v^2]
+disc(qx) = 161704 = 4cd
+disc(qz) = -60728027812 = 4ad
+resultant(qx,qz)   = 2454991252327912 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -4103 0 23 -2
+Solution: (x:y:z) = (5:118:57)
+Solution is correct!
+Solution: (x:y:z) = (5:118:57)
+Parametric solution:
+x = [5,944,44566]*[u^2,uv,v^2]
+y = [118,21754,1001820]*[u^2,uv,v^2]
+z = [57,10856,516754]*[u^2,uv,v^2]
+disc(qx) = -184 = 4cd
+disc(qz) = 32824 = 4ad
+resultant(qx,qz)   = 1509904 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -3140477 0 43 -1
+Solution: (x:y:z) = (2:2771:337)
+Solution is correct!
+Solution: (x:y:z) = (2:2771:337)
+Parametric solution:
+x = [2,5542,3839242]*[u^2,uv,v^2]
+y = [2771,7663950,5299132934]*[u^2,uv,v^2]
+z = [337,936598,650744252]*[u^2,uv,v^2]
+disc(qx) = -172 = 4cd
+disc(qz) = 12561908 = 4ad
+resultant(qx,qz)   = 540162044 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -239743087 0 78 -1
+Solution: (x:y:z) = (1:4087:1691)
+Solution is correct!
+Solution: (x:y:z) = (1:4087:1691)
+Parametric solution:
+x = [1,8174,16703647]*[u^2,uv,v^2]
+y = [4087,33143342,67189033465]*[u^2,uv,v^2]
+z = [1691,13830408,28279010419]*[u^2,uv,v^2]
+disc(qx) = -312 = 4cd
+disc(qz) = 958972348 = 4ad
+resultant(qx,qz)   = 74799843144 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -134593 0 56 -1
+Solution: (x:y:z) = (3:1079:29)
+Solution is correct!
+Solution: (x:y:z) = (3:1079:29)
+Parametric solution:
+x = [3,2158,388099]*[u^2,uv,v^2]
+y = [1079,775078,139183447]*[u^2,uv,v^2]
+z = [29,21580,4009983]*[u^2,uv,v^2]
+disc(qx) = -224 = 4cd
+disc(qz) = 538372 = 4ad
+resultant(qx,qz)   = 30148832 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -47287 0 8 -7
+Solution: (x:y:z) = (3:245:26)
+Solution is correct!
+Solution: (x:y:z) = (3:245:26)
+Parametric solution:
+x = [3,490,20027]*[u^2,uv,v^2]
+y = [245,39878,1621165]*[u^2,uv,v^2]
+z = [26,5390,266616]*[u^2,uv,v^2]
+disc(qx) = -224 = 4cd
+disc(qz) = 1324036 = 4ad
+resultant(qx,qz)   = 74146016 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -4431282451 0 4719 -7
+Solution: (x:y:z) = (11:72611:10286)
+Solution is correct!
+Solution: (x:y:z) = (11:72611:10286)
+Parametric solution:
+x = [11,580888,7668886379]*[u^2,uv,v^2]
+y = [72611,3825616300,50389253797421]*[u^2,uv,v^2]
+z = [10286,543275502,7173540418954]*[u^2,uv,v^2]
+disc(qx) = -132132 = 4cd
+disc(qz) = 124075908628 = 4ad
+resultant(qx,qz)   = 4098599489708724 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -336649 0 300 -1
+Solution: (x:y:z) = (5:2695:62)
+Solution is correct!
+Solution: (x:y:z) = (5:2695:62)
+Parametric solution:
+x = [5,10780,5810480]*[u^2,uv,v^2]
+y = [2695,5802980,3123763720]*[u^2,uv,v^2]
+z = [62,134750,73210548]*[u^2,uv,v^2]
+disc(qx) = -1200 = 4cd
+disc(qz) = 1346596 = 4ad
+resultant(qx,qz)   = 403978800 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 51018545 0 -412 -83
+Solution: (x:y:z) = (17:14461:8827)
+Solution is correct!
+Solution: (x:y:z) = (17:14461:8827)
+Parametric solution:
+x = [17,260298,996395765]*[u^2,uv,v^2]
+y = [14461,221849578,850860092321]*[u^2,uv,v^2]
+z = [8827,135297116,518446996037]*[u^2,uv,v^2]
+disc(qx) = 136784 = 4cd
+disc(qz) = -16938156940 = 4ad
+resultant(qx,qz)   = 579217214720240 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 134873197 0 1791 13
+Solution: (x:y:z) = (31:143486:8779)
+Solution is correct!
+Solution: (x:y:z) = (31:143486:8779)
+Parametric solution:
+x = [31,8035216,520683032851]*[u^2,uv,v^2]
+y = [143486,37190630858,2409891948660938]*[u^2,uv,v^2]
+z = [8779,2275400988,147438479587025]*[u^2,uv,v^2]
+disc(qx) = 93132 = 4cd
+disc(qz) = 7013406244 = 4ad
+resultant(qx,qz)   = -163293137579052 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 9400805511 0 2437 1
+Solution: (x:y:z) = (2:259691:3499)
+Solution is correct!
+Solution: (x:y:z) = (2:259691:3499)
+Parametric solution:
+x = [2,519382,33719706522]*[u^2,uv,v^2]
+y = [259691,67430888418,4377245268877068]*[u^2,uv,v^2]
+z = [3499,908399118,58958911116030]*[u^2,uv,v^2]
+disc(qx) = 9748 = 4cd
+disc(qz) = 37603222044 = 4ad
+resultant(qx,qz)   = -91639052121228 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 2607882701 0 -17205 -1
+Solution: (x:y:z) = (2:55721:887)
+Solution is correct!
+Solution: (x:y:z) = (2:55721:887)
+Parametric solution:
+x = [2,111442,1552406318]*[u^2,uv,v^2]
+y = [55721,3120090676,43676470056059]*[u^2,uv,v^2]
+z = [887,49480248,690052247371]*[u^2,uv,v^2]
+disc(qx) = 68820 = 4cd
+disc(qz) = -10431530804 = 4ad
+resultant(qx,qz)   = 179474487482820 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 153 0 -13 -1
+Solution: (x:y:z) = (1:30:9)
+Solution is correct!
+Solution: (x:y:z) = (1:30:9)
+Parametric solution:
+x = [1,0,-13]*[u^2,uv,v^2]
+y = [30,234,390]*[u^2,uv,v^2]
+z = [9,60,117]*[u^2,uv,v^2]
+disc(qx) = 52 = 4cd
+disc(qz) = -612 = 4ad
+resultant(qx,qz)   = 7956 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -15152 0 5 -3
+Solution: (x:y:z) = (1:68:16)
+Solution is correct!
+Solution: (x:y:z) = (1:68:16)
+Parametric solution:
+x = [1,136,4639]*[u^2,uv,v^2]
+y = [68,9088,302532]*[u^2,uv,v^2]
+z = [16,2584,101488]*[u^2,uv,v^2]
+disc(qx) = -60 = 4cd
+disc(qz) = 181824 = 4ad
+resultant(qx,qz)   = 2727360 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 4293 0 13 10
+Solution: (x:y:z) = (1:135:117)
+Solution is correct!
+Solution: (x:y:z) = (1:135:117)
+Parametric solution:
+x = [1,270,18095]*[u^2,uv,v^2]
+y = [135,33408,2067255]*[u^2,uv,v^2]
+z = [117,28890,1783035]*[u^2,uv,v^2]
+disc(qx) = 520 = 4cd
+disc(qz) = 171720 = 4ad
+resultant(qx,qz)   = -22323600 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 32432 0 -15 -7
+Solution: (x:y:z) = (1:88:76)
+Solution is correct!
+Solution: (x:y:z) = (1:88:76)
+Parametric solution:
+x = [1,0,-105]*[u^2,uv,v^2]
+y = [88,2280,9240]*[u^2,uv,v^2]
+z = [76,1232,7980]*[u^2,uv,v^2]
+disc(qx) = 420 = 4cd
+disc(qz) = -908096 = 4ad
+resultant(qx,qz)   = 95350080 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 7185786 0 -1465 -1
+Solution: (x:y:z) = (28:179:1961)
+Solution is correct!
+Solution: (x:y:z) = (28:179:1961)
+Parametric solution:
+x = [28,-30430,8267670]*[u^2,uv,v^2]
+y = [179,10670,-58652035]*[u^2,uv,v^2]
+z = [1961,-2131174,579032555]*[u^2,uv,v^2]
+disc(qx) = 5860 = 4cd
+disc(qz) = -28743144 = 4ad
+resultant(qx,qz)   = 42108705960 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 21328386 0 4537 1
+Solution: (x:y:z) = (2:111187:1645)
+Solution is correct!
+Solution: (x:y:z) = (2:111187:1645)
+Parametric solution:
+x = [2,222374,6181272216]*[u^2,uv,v^2]
+y = [111187,12355085604,343223894585778]*[u^2,uv,v^2]
+z = [1645,182791428,5077918854858]*[u^2,uv,v^2]
+disc(qx) = 18148 = 4cd
+disc(qz) = 85313544 = 4ad
+resultant(qx,qz)   = -387067549128 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -30940374 0 1871 -1
+Solution: (x:y:z) = (10:54161:293)
+Solution is correct!
+Solution: (x:y:z) = (10:54161:293)
+Parametric solution:
+x = [10,324966,2640072716]*[u^2,uv,v^2]
+y = [54161,1759938712,14297114337062]*[u^2,uv,v^2]
+z = [293,9532336,77530124450]*[u^2,uv,v^2]
+disc(qx) = -7484 = 4cd
+disc(qz) = 123761496 = 4ad
+resultant(qx,qz)   = 231557759016 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 29239123130 0 -165321 -1
+Solution: (x:y:z) = (4:1332167:3683)
+Solution is correct!
+Solution: (x:y:z) = (4:1332167:3683)
+Parametric solution:
+x = [4,2664334,443667187642]*[u^2,uv,v^2]
+y = [1332167,887638896566,147861114890539577]*[u^2,uv,v^2]
+z = [3683,2453851614,408728472745513]*[u^2,uv,v^2]
+disc(qx) = 661284 = 4cd
+disc(qz) = -116956492520 = 4ad
+resultant(qx,qz)   = 19335364299898920 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 86807326430 0 57649 1
+Solution: (x:y:z) = (36:17911481:60113)
+Solution is correct!
+Solution: (x:y:z) = (36:17911481:60113)
+Parametric solution:
+x = [36,179114810,222792466396566]*[u^2,uv,v^2]
+y = [17911481,89116794034026,110847938522267219119]*[u^2,uv,v^2]
+z = [60113,299085909738,372017622658409387]*[u^2,uv,v^2]
+disc(qx) = 230596 = 4cd
+disc(qz) = 347229305720 = 4ad
+resultant(qx,qz)   = -20017422245452280 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -17194283526 0 62471 -1
+Solution: (x:y:z) = (142:17514733:25285)
+Solution is correct!
+Solution: (x:y:z) = (142:17514733:25285)
+Parametric solution:
+x = [142,2206856358,8574322156417736]*[u^2,uv,v^2]
+y = [17514733,272200681130732,1057584075190157670370]*[u^2,uv,v^2]
+z = [25285,392960549588,1526774703702137926]*[u^2,uv,v^2]
+disc(qx) = -249884 = 4cd
+disc(qz) = 68777134104 = 4ad
+resultant(qx,qz)   = 4296576344610984 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 130017558910 0 31761 1
+Solution: (x:y:z) = (8:3982759:15409)
+Solution is correct!
+Solution: (x:y:z) = (8:3982759:15409)
+Parametric solution:
+x = [8,7965518,1982796152540]*[u^2,uv,v^2]
+y = [3982759,3965469961708,987063994691016814]*[u^2,uv,v^2]
+z = [15409,15341587668,3818617555565894]*[u^2,uv,v^2]
+disc(qx) = 127044 = 4cd
+disc(qz) = 520070235640 = 4ad
+resultant(qx,qz)   = -16517950754162040 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 188060224470 0 -31489 -1
+Solution: (x:y:z) = (40:9268177:110831)
+Solution is correct!
+Solution: (x:y:z) = (40:9268177:110831)
+Parametric solution:
+x = [40,166827186,173945687428454]*[u^2,uv,v^2]
+y = [9268177,38654771704366,40304349374557883467]*[u^2,uv,v^2]
+z = [110831,462241059698,481965328453867241]*[u^2,uv,v^2]
+disc(qx) = 125956 = 4cd
+disc(qz) = -752240897880 = 4ad
+resultant(qx,qz)   = 23687313633343320 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -2568561397757146 0 1015687 -1
+Solution: (x:y:z) = (928:43406907117:17966105)
+Solution is correct!
+Solution: (x:y:z) = (928:43406907117:17966105)
+Parametric solution:
+x = [928,54779516781654,808403949038661694481422]*[u^2,uv,v^2]
+y = [43406907117,2562294608641058264066,37812839577435366501816592631511]*[u^2,uv,v^2]
+z = [17966105,1060532920727663418,15650722234273210852556256967]*[u^2,uv,v^2]
+disc(qx) = -4062748 = 4cd
+disc(qz) = 10274245591028584 = 4ad
+resultant(qx,qz)   = 10435417681615049397208 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 6819 0 29 5
+Solution: (x:y:z) = (1:332:137)
+Solution is correct!
+Solution: (x:y:z) = (1:332:137)
+Parametric solution:
+x = [1,664,110079]*[u^2,uv,v^2]
+y = [332,212502,34004436]*[u^2,uv,v^2]
+z = [137,87648,14018313]*[u^2,uv,v^2]
+disc(qx) = 580 = 4cd
+disc(qz) = 136380 = 4ad
+resultant(qx,qz)   = -19775100 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 9987 0 -91 -1
+Solution: (x:y:z) = (1:227:26)
+Solution is correct!
+Solution: (x:y:z) = (1:227:26)
+Parametric solution:
+x = [1,0,-91]*[u^2,uv,v^2]
+y = [227,4732,20657]*[u^2,uv,v^2]
+z = [26,454,2366]*[u^2,uv,v^2]
+disc(qx) = 364 = 4cd
+disc(qz) = -39948 = 4ad
+resultant(qx,qz)   = 3635268 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -9476 0 319 -1
+Solution: (x:y:z) = (2:173:5)
+Solution is correct!
+Solution: (x:y:z) = (2:173:5)
+Parametric solution:
+x = [2,346,15124]*[u^2,uv,v^2]
+y = [173,28334,1142665]*[u^2,uv,v^2]
+z = [5,1038,51977]*[u^2,uv,v^2]
+disc(qx) = -1276 = 4cd
+disc(qz) = 37904 = 4ad
+resultant(qx,qz)   = 12091376 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -242324 0 61 -43
+Solution: (x:y:z) = (2:113:83)
+Solution is correct!
+Solution: (x:y:z) = (2:113:83)
+Parametric solution:
+x = [2,226,7696]*[u^2,uv,v^2]
+y = [113,7706,565]*[u^2,uv,v^2]
+z = [83,14238,485063]*[u^2,uv,v^2]
+disc(qx) = -10492 = 4cd
+disc(qz) = 41679728 = 4ad
+resultant(qx,qz)   = 109325926544 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 132963927 0 -1145 -2
+Solution: (x:y:z) = (1:4183:383)
+Solution is correct!
+Solution: (x:y:z) = (1:4183:383)
+Parametric solution:
+x = [1,0,-2290]*[u^2,uv,v^2]
+y = [4183,877070,9579070]*[u^2,uv,v^2]
+z = [383,16732,877070]*[u^2,uv,v^2]
+disc(qx) = 9160 = 4cd
+disc(qz) = -1063711416 = 4ad
+resultant(qx,qz)   = 2435899142640 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 7 0 2 1
+Solution: (x:y:z) = (1:3:1)
+Solution is correct!
+Solution: (x:y:z) = (1:3:1)
+Parametric solution:
+x = [1,6,7]*[u^2,uv,v^2]
+y = [3,14,21]*[u^2,uv,v^2]
+z = [1,0,-7]*[u^2,uv,v^2]
+disc(qx) = 8 = 4cd
+disc(qz) = 28 = 4ad
+resultant(qx,qz)   = -56 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 5 0 -83 2
+Solution: (x:y:z) = (7:9:1)
+Solution is correct!
+Solution: (x:y:z) = (7:9:1)
+Parametric solution:
+x = [7,36,70]*[u^2,uv,v^2]
+y = [9,70,90]*[u^2,uv,v^2]
+z = [1,0,-10]*[u^2,uv,v^2]
+disc(qx) = -664 = 4cd
+disc(qz) = 40 = 4ad
+resultant(qx,qz)   = 6640 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 257 0 -116044 1
+Solution: (x:y:z) = (85:11:4)
+Solution is correct!
+Solution: (x:y:z) = (85:11:4)
+Parametric solution:
+x = [85,-82742,20137361]*[u^2,uv,v^2]
+y = [11,214,-2710169]*[u^2,uv,v^2]
+z = [4,-3894,947638]*[u^2,uv,v^2]
+disc(qx) = -464176 = 4cd
+disc(qz) = 1028 = 4ad
+resultant(qx,qz)   = 119293232 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 1027986085027861747937 0 722974121783 604305613931
+Solution: (x:y:z) = (171311893342:7402533838782499:2018398374852981)
+Solution is correct!
+Solution: (x:y:z) = (171311893342:7402533838782499:2018398374852981)
+Parametric solution:
+x = [171311893342,2010117937494774948517315634,5896517229209259273774341786566912927034598]*[u^2,uv,v^2]
+y = [7402533838782499,86858920078263347398188000098360,254793566685099590042491875352393376532792008429]*[u^2,uv,v^2]
+z = [2018398374852981,23683228870762677156565927669748,69472822701041623149476476182622950258251362709]*[u^2,uv,v^2]
+disc(qx) = 1747589282081205501435892 = 4cd
+disc(qz) = 2484871048901148643309038230841388 = 4ad
+resultant(qx,qz)   = -1085633503103382611516316228062412935649076964148325574524 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 21458238196506826611317 0 155590763477 429392673713
+Solution: (x:y:z) = (195924828285:57363880008362257:61540493626424234)
+Solution is correct!
+Solution: (x:y:z) = (195924828285:57363880008362257:61540493626424234)
+Parametric solution:
+x = [195924828285,2145280581885379595193169688,5872442016792135409459129921769285835917671]*[u^2,uv,v^2]
+y = [57363880008362257,628106294443357445996190963797188,1719363809865435325426625130926352481483793500685]*[u^2,uv,v^2]
+z = [61540493626424234,673838160952041003544277567799686,1844549175667748953847496454031950661610608575242]*[u^2,uv,v^2]
+disc(qx) = 267238135737744073520404 = 4cd
+disc(qz) = 36856041089473957501961224216840084 = 4ad
+resultant(qx,qz)   = -2462334927856178605269320611019391015762951921790644768484 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 293911884200387681576093 0 106205605559 687223946819
+Solution: (x:y:z) = (23840892990:54824084629796371:133700736855785209)
+Solution is correct!
+Solution: (x:y:z) = (23840892990:54824084629796371:133700736855785209)
+Parametric solution:
+x = [23840892990,257854110770079285408328222,697213213331782985887885426456233671379650]*[u^2,uv,v^2]
+y = [54824084629796371,592956631151746394411322223236130,1603298845758285007862010568052580920857024251572]*[u^2,uv,v^2]
+z = [133700736855785209,1446056765814659443319843363200930,3910001207049952259367656820325232372843306383962]*[u^2,uv,v^2]
+disc(qx) = 291948141706231627067284 = 4cd
+disc(qz) = 807933140308797241690526567735192668 = 4ad
+resultant(qx,qz)   = -58968644734008364224834765146537500431921600165901384868428 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 206207486824798778186641 0 769034410087 80703111317
+Solution: (x:y:z) = (25472865203:55836550914326161:12377002765101082)
+Solution is correct!
+Solution: (x:y:z) = (25472865203:55836550914326161:12377002765101082)
+Parametric solution:
+x = [25472865203,2076178487649254090497454584,42304988840339445343515873913409503516614895]*[u^2,uv,v^2]
+y = [55836550914326161,4550985721826192070758237216624452,92732586008244371371661349355055269020223310542763]*[u^2,uv,v^2]
+z = [12377002765101082,1008793737088194157229386470804738,20555558225652004372148847014220148014677041760902]*[u^2,uv,v^2]
+disc(qx) = 248253878415418354618316 = 4cd
+disc(qz) = 66566343054482186688488320101264788 = 4ad
+resultant(qx,qz)   = -4131338208801612207997140177843018188754934920213147664252 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 79 0 -8 -1
+Solution: (x:y:z) = (1:7:4)
+Solution is correct!
+Solution: (x:y:z) = (1:7:4)
+Parametric solution:
+x = [1,0,-8]*[u^2,uv,v^2]
+y = [7,64,56]*[u^2,uv,v^2]
+z = [4,14,32]*[u^2,uv,v^2]
+disc(qx) = 32 = 4cd
+disc(qz) = -316 = 4ad
+resultant(qx,qz)   = 2528 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 125965 0 -134 -1
+Solution: (x:y:z) = (1:53:31)
+Solution is correct!
+Solution: (x:y:z) = (1:53:31)
+Parametric solution:
+x = [1,-106,2675]*[u^2,uv,v^2]
+y = [53,2690,-284345]*[u^2,uv,v^2]
+z = [31,-3180,85615]*[u^2,uv,v^2]
+disc(qx) = 536 = 4cd
+disc(qz) = -503860 = 4ad
+resultant(qx,qz)   = 67517240 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -163184 0 223 -1
+Solution: (x:y:z) = (2:767:17)
+Solution is correct!
+Solution: (x:y:z) = (2:767:17)
+Parametric solution:
+x = [2,1534,294256]*[u^2,uv,v^2]
+y = [767,584498,111307807]*[u^2,uv,v^2]
+z = [17,13806,2793425]*[u^2,uv,v^2]
+disc(qx) = -892 = 4cd
+disc(qz) = 652736 = 4ad
+resultant(qx,qz)   = 145560128 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: -1115479181 0 2065 -61
+Solution: (x:y:z) = (193:350542:128419)
+Solution is correct!
+Solution: (x:y:z) = (193:350542:128419)
+Parametric solution:
+x = [193,4907588,31197435857]*[u^2,uv,v^2]
+y = [350542,8910804882,56628331577398]*[u^2,uv,v^2]
+z = [128419,3265649272,20761072924445]*[u^2,uv,v^2]
+disc(qx) = -503860 = 4cd
+disc(qz) = 272176920164 = 4ad
+resultant(qx,qz)   = 34284765748458260 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 88727009405 0 -50601 -1
+Solution: (x:y:z) = (67:13528438:107183)
+Solution is correct!
+Solution: (x:y:z) = (67:13528438:107183)
+Parametric solution:
+x = [67,108227504,43705942618909]*[u^2,uv,v^2]
+y = [13528438,21853133207354,8825102923197774598]*[u^2,uv,v^2]
+z = [107183,173136949524,69918744788891503]*[u^2,uv,v^2]
+disc(qx) = 202404 = 4cd
+disc(qz) = -354908037620 = 4ad
+resultant(qx,qz)   = 17958701611609620 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 263422353799 0 -497480 -1
+Solution: (x:y:z) = (7:11875043:17590)
+Solution is correct!
+Solution: (x:y:z) = (7:11875043:17590)
+Parametric solution:
+x = [7,23750086,20145235107767]*[u^2,uv,v^2]
+y = [11875043,40292970550014,34179317818472448803]*[u^2,uv,v^2]
+z = [17590,59683966118,50627854073738792]*[u^2,uv,v^2]
+disc(qx) = 1989920 = 4cd
+disc(qz) = -1053689415196 = 4ad
+resultant(qx,qz)   = 524189410271706080 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 62063469603854588654579 0 68044230041 1
+Solution: (x:y:z) = (30740:11344956855892619:32088063161)
+Solution is correct!
+Solution: (x:y:z) = (30740:11344956855892619:32088063161)
+Parametric solution:
+x = [30740,185172385801879327318,278861519710149973050991236497202376]*[u^2,uv,v^2]
+y = [11344956855892619,68340036689167845457583539158036,102917108324017159669476036949895222133813471677]*[u^2,uv,v^2]
+z = [32088063161,193292882605196512607887604,291090632974354925439361272040802233485625]*[u^2,uv,v^2]
+disc(qx) = 272176920164 = 4cd
+disc(qz) = 248253878415418354618316 = 4ad
+resultant(qx,qz)   = -16892244011469171082902408656030956 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 1 0 7535987 13
+Solution: (x:y:z) = (4735:1518:1)
+Solution is correct!
+Solution: (x:y:z) = (4735:1518:1)
+Parametric solution:
+x = [4735,39468,61555]*[u^2,uv,v^2]
+y = [1518,9470,19734]*[u^2,uv,v^2]
+z = [1,0,-13]*[u^2,uv,v^2]
+disc(qx) = 391871324 = 4cd
+disc(qz) = 52 = 4ad
+resultant(qx,qz)   = -5094327212 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 19 0 4776762553 6836
+Solution: (x:y:z) = (1267471:67699:13)
+Solution is correct!
+Solution: (x:y:z) = (1267471:67699:13)
+Parametric solution:
+x = [1267471,105679222184,2202831045207236]*[u^2,uv,v^2]
+y = [67699,5644510578,117654987622372]*[u^2,uv,v^2]
+z = [13,1083184,22563212660]*[u^2,uv,v^2]
+disc(qx) = 130615795249232 = 4cd
+disc(qz) = 519536 = 4ad
+resultant(qx,qz)   = -16964901950151249088 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 1 0 52753834808 23209
+Solution: (x:y:z) = (5849111:40721:9)
+Solution is correct!
+Solution: (x:y:z) = (5849111:40721:9)
+Parametric solution:
+x = [5849111,53139276160,120692604968248]*[u^2,uv,v^2]
+y = [40721,369788656,839516840952]*[u^2,uv,v^2]
+z = [9,81442,184241848]*[u^2,uv,v^2]
+disc(qx) = 4897455008235488 = 4cd
+disc(qz) = 92836 = 4ad
+resultant(qx,qz)   = -113665033286137440992 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 555143 0 1 193
+Solution: (x:y:z) = (3:176:991)
+Solution is correct!
+Solution: (x:y:z) = (3:176:991)
+Parametric solution:
+x = [3,352,10261]*[u^2,uv,v^2]
+y = [176,19990,570768]*[u^2,uv,v^2]
+z = [991,93632,2103527]*[u^2,uv,v^2]
+disc(qx) = 772 = 4cd
+disc(qz) = 428570396 = 4ad
+resultant(qx,qz)   = -82714086428 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 1 0 316 5
+Solution: (x:y:z) = (2:8:1)
+Solution is correct!
+Solution: (x:y:z) = (2:8:1)
+Parametric solution:
+x = [2,80,10]*[u^2,uv,v^2]
+y = [8,4,40]*[u^2,uv,v^2]
+z = [1,0,-5]*[u^2,uv,v^2]
+disc(qx) = 6320 = 4cd
+disc(qz) = 20 = 4ad
+resultant(qx,qz)   = -31600 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 388 0 152441 1
+Solution: (x:y:z) = (143:4206:8)
+Solution is correct!
+Solution: (x:y:z) = (143:4206:8)
+Parametric solution:
+x = [143,151416,40080761]*[u^2,uv,v^2]
+y = [4206,4436480,1169911518]*[u^2,uv,v^2]
+z = [8,8412,2211256]*[u^2,uv,v^2]
+disc(qx) = 609764 = 4cd
+disc(qz) = 1552 = 4ad
+resultant(qx,qz)   = -236588432 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 831 0 1 92742160
+Solution: (x:y:z) = (309:2:17077)
+Solution is correct!
+Solution: (x:y:z) = (309:2:17077)
+Parametric solution:
+x = [309,18004,-37884]*[u^2,uv,v^2]
+y = [2,6,420]*[u^2,uv,v^2]
+z = [17077,-205548,-3894492]*[u^2,uv,v^2]
+disc(qx) = 370968640 = 4cd
+disc(qz) = 308274939840 = 4ad
+resultant(qx,qz)   = -28590083794631654400 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 1 0 29526647 489
+Solution: (x:y:z) = (8597:1057:4)
+Solution is correct!
+Solution: (x:y:z) = (8597:1057:4)
+Parametric solution:
+x = [8597,13888980,5607944961]*[u^2,uv,v^2]
+y = [1057,1680172,667714299]*[u^2,uv,v^2]
+z = [4,6342,2513688]*[u^2,uv,v^2]
+disc(qx) = 57754121532 = 4cd
+disc(qz) = 1956 = 4ad
+resultant(qx,qz)   = -28241765429148 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 7 0 4715959977 21016
+Solution: (x:y:z) = (227529:6663:11)
+Solution is correct!
+Solution: (x:y:z) = (227529:6663:11)
+Parametric solution:
+x = [227529,301100970,99180051417]*[u^2,uv,v^2]
+y = [6663,8361504,2628200361]*[u^2,uv,v^2]
+z = [11,13326,4022587]*[u^2,uv,v^2]
+disc(qx) = 396442459506528 = 4cd
+disc(qz) = 588448 = 4ad
+resultant(qx,qz)   = -58321443102924347136 = d^2(b^2-4ac)
+Parametric solution is correct!
+Enter coefficients a b c d: 0 0 0 0

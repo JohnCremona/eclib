@@ -55,6 +55,7 @@ static char* opmatfilename()
       sprintf(filename,"%s%s",tmpmatdir,"/opmatXXXXXX");
     }
   mkstemp(filename);
+  delete tmpmatdir;
   //  cout << "opmatfilename() returns "<<filename<<endl;
   return filename;
 }

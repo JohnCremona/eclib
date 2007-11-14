@@ -1,0 +1,159 @@
+Computed 78519 primes, largest is 1000253
+Extra primes in list: 
+long prime factors of 420:
+[ 2 3 5 7 ]
+ with posdivs (long version)
+[ 1 2 4 3 6 12 5 10 20 15 30 60 7 14 28 21 42 84 35 70 140 105 210 420 ]
+Elements of a are: 10	20	30
+Elements of b are: 10	20	30
+a = [ 10 20 30 ]
+end of output of a
+b = [ 10 20 30 ]
+end of output of b
+After b=a, b = 
+[ 10 20 30 ]
+bigint versions of divisor functions:
+
+bigint prime factors of 420:
+[ 2 3 5 7 ]
+ with posdivs (bigint version) 
+[ 1 2 4 3 6 12 5 10 20 15 30 60 7 14 28 21 42 84 35 70 140 105 210 420 ]
+and alldivs (bigint version) 
+[ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
+making a copy of iqlist
+ reuse iqlist for sqdivs
+iqlist (should be sqdivs) [ 1 2 ]
+iplist (should be alldivs) [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
+making an vector<bigint> of iplist (alldivs)
+stream output: [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
+irary(7) is -3	irary[3] is -2
+testing find function
+35 is there:  35 is item number 36
+13 is not there
+
+
+Test of sqrt and isqrt
+
+Enter a positive bigint a (999 to stop): a = 123, sign(a) = 1
+a = 123, sqrt(a) = 11 (rounded down)
+a is not a square
+
+Enter a positive bigint a (999 to stop): a = 121, sign(a) = 1
+a = 121, sqrt(a) = 11 (rounded down)
+a is a square with exact square root 11
+
+Enter a positive bigint a (999 to stop): 
+
+Test of ressol (sqrt mod p)
+Enter a prime p: 23
+sqrt(1 mod p) = 1	---OK
+sqrt(2 mod p) = 5	---OK
+sqrt(3 mod p) = 7	---OK
+sqrt(4 mod p) = 2	---OK
+5 is not a quadratic residue mod p!
+sqrt(6 mod p) = 11	---OK
+7 is not a quadratic residue mod p!
+sqrt(8 mod p) = 10	---OK
+sqrt(9 mod p) = 3	---OK
+10 is not a quadratic residue mod p!
+11 is not a quadratic residue mod p!
+sqrt(12 mod p) = 9	---OK
+sqrt(13 mod p) = 6	---OK
+14 is not a quadratic residue mod p!
+15 is not a quadratic residue mod p!
+sqrt(16 mod p) = 4	---OK
+17 is not a quadratic residue mod p!
+sqrt(18 mod p) = 8	---OK
+19 is not a quadratic residue mod p!
+20 is not a quadratic residue mod p!
+21 is not a quadratic residue mod p!
+22 is not a quadratic residue mod p!
+23 is not a quadratic residue mod p!
+sqrt(24 mod p) = 1	---OK
+sqrt(25 mod p) = 5	---OK
+sqrt(26 mod p) = 7	---OK
+sqrt(27 mod p) = 2	---OK
+28 is not a quadratic residue mod p!
+sqrt(29 mod p) = 11	---OK
+30 is not a quadratic residue mod p!
+sqrt(31 mod p) = 10	---OK
+sqrt(32 mod p) = 3	---OK
+33 is not a quadratic residue mod p!
+34 is not a quadratic residue mod p!
+sqrt(35 mod p) = 9	---OK
+sqrt(36 mod p) = 6	---OK
+37 is not a quadratic residue mod p!
+38 is not a quadratic residue mod p!
+sqrt(39 mod p) = 4	---OK
+40 is not a quadratic residue mod p!
+sqrt(41 mod p) = 8	---OK
+42 is not a quadratic residue mod p!
+43 is not a quadratic residue mod p!
+44 is not a quadratic residue mod p!
+45 is not a quadratic residue mod p!
+46 is not a quadratic residue mod p!
+sqrt(47 mod p) = 1	---OK
+sqrt(48 mod p) = 5	---OK
+sqrt(49 mod p) = 7	---OK
+sqrt(50 mod p) = 2	---OK
+51 is not a quadratic residue mod p!
+sqrt(52 mod p) = 11	---OK
+53 is not a quadratic residue mod p!
+sqrt(54 mod p) = 10	---OK
+sqrt(55 mod p) = 3	---OK
+56 is not a quadratic residue mod p!
+57 is not a quadratic residue mod p!
+sqrt(58 mod p) = 9	---OK
+sqrt(59 mod p) = 6	---OK
+60 is not a quadratic residue mod p!
+61 is not a quadratic residue mod p!
+sqrt(62 mod p) = 4	---OK
+63 is not a quadratic residue mod p!
+sqrt(64 mod p) = 8	---OK
+65 is not a quadratic residue mod p!
+66 is not a quadratic residue mod p!
+67 is not a quadratic residue mod p!
+68 is not a quadratic residue mod p!
+69 is not a quadratic residue mod p!
+sqrt(70 mod p) = 1	---OK
+sqrt(71 mod p) = 5	---OK
+sqrt(72 mod p) = 7	---OK
+sqrt(73 mod p) = 2	---OK
+74 is not a quadratic residue mod p!
+sqrt(75 mod p) = 11	---OK
+76 is not a quadratic residue mod p!
+sqrt(77 mod p) = 10	---OK
+sqrt(78 mod p) = 3	---OK
+79 is not a quadratic residue mod p!
+80 is not a quadratic residue mod p!
+sqrt(81 mod p) = 9	---OK
+sqrt(82 mod p) = 6	---OK
+83 is not a quadratic residue mod p!
+84 is not a quadratic residue mod p!
+sqrt(85 mod p) = 4	---OK
+86 is not a quadratic residue mod p!
+sqrt(87 mod p) = 8	---OK
+88 is not a quadratic residue mod p!
+89 is not a quadratic residue mod p!
+90 is not a quadratic residue mod p!
+91 is not a quadratic residue mod p!
+92 is not a quadratic residue mod p!
+sqrt(93 mod p) = 1	---OK
+sqrt(94 mod p) = 5	---OK
+sqrt(95 mod p) = 7	---OK
+sqrt(96 mod p) = 2	---OK
+97 is not a quadratic residue mod p!
+sqrt(98 mod p) = 11	---OK
+99 is not a quadratic residue mod p!
+First 100 OK
+Enter a prime p: 0
+
+Enter a bigint m (0 to stop): m = 420
+m has 4 prime divisors: [ 2 3 5 7 ]
+with exponents: 2:2	3:1	5:1	7:1	
+m has 48 divisors: [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
+m has 24 positive divisors: [ 1 2 4 3 6 12 5 10 20 15 30 60 7 14 28 21 42 84 35 70 140 105 210 420 ]
+m has 2 positive divisors whose square divides m: [ 1 2 ]
+m has 16 positive square-free divisors: [ 1 2 3 6 5 10 15 30 7 14 21 42 35 70 105 210 ]
+
+Enter a bigint m (0 to stop): 

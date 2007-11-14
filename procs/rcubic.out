@@ -1,0 +1,11 @@
+Enter cubic coeffs a, b, c, d: Input cubic = [123,234,345,456]
+Discriminant = -40491312264
+Real root alpha = -1.598578656
+g(alpha) = -0.1076197221e-41
+Using Mathews reduction ...
+Mathews reduced cubic = [123,234,345,456]
+after transform by [1,0;0,1]
+Using JC/Julia reduction ...
+JC/Julia reduced cubic = [123,-135,246,222]
+after transform by [1,-1;0,1]
+Enter cubic coeffs a, b, c, d: 

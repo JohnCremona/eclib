@@ -51,6 +51,7 @@ cout << "Using A.output_pretty(cout): \n";  a.output_pretty(cout);
  mat ax;
  ax.read_from_file(filename);
  cout<< "Matrix reread from file " << filename << endl;
+ delete[] filename;
  cout << "B = " << ax;
  if(a==ax) cout<<"agree"; else cout << "WRONG!";
  cout<<endl;
@@ -170,5 +171,5 @@ else
  a.init(); 
 }
 stop_time();
-cerr << "cpu time = "; show_time(); cerr << endl;
+//cerr << "cpu time = "; show_time(); cerr << endl;
 }

@@ -100,6 +100,4 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
 */
 }
  cout<<endl;
-abort();
-
 }
