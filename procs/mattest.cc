@@ -134,7 +134,7 @@ cout << "Augmented matrix = " << aug << endl;
 long rk, ny;
 scalar denom;
 {
-int method;
+int method=0;
 cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
 cin>>method;
 cout << "\nUsing method " << method;

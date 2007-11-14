@@ -5,7 +5,7 @@ CC       ?= g++ -g
 CXX      ?= g++ -g
 # PICFLAG -- set to -fPIC to also have the option to build shared libraries (position independent code)
 # This is only needed on linux.
-OPTFLAG  ?=  $(PICFLAG) -g -O2 -DNEW_OP_ORDER -DUSE_PARI_FACTORING
+OPTFLAG  ?=  $(PICFLAG) -g -O0 -DNEW_OP_ORDER -DUSE_PARI_FACTORING
 
 # default settings
 PARI_PREFIX ?= /usr/local

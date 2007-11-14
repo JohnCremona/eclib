@@ -128,6 +128,13 @@ shar: sources
 	shar -i files -o qcurves.shar
 	compress qcurves.shar
 
+check:  $(TESTS)
+	rm -f PRIMES
+	./tcurve < tcurve.in > t && diff t tcurve.out 
+	./tpoints > t && diff t tpoints.out 
+	./theight < theight.in > t && diff t theight.out
+	./thtconst < tcurve.in > t && diff t thtconst.out
+
 tcurve: tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o 
 	$(CXX)  -o $(BINDIR)/tcurve tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o  $(LFLAGS)
 

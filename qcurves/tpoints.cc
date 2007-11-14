@@ -25,7 +25,8 @@
 #include "points.h"
 
 int main(){
-  set_precision("Enter number of decimal places");
+  //  set_precision("Enter number of decimal places");
+  set_precision(30);
   initprimes("PRIMES",1);
 
   Curve c(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
@@ -77,9 +78,8 @@ int main(){
   cout << "2P0 +2 P1 + P2 = " << sum << endl ;
 
   cout << "Now we try a systematic exploration" << endl ;
-  int loop;
-  cout << "input 0 to skip: ";
-  cin >> loop;
+  int loop=1;
+  //  cout << "input 0 to skip: ";  cin >> loop;
   if (loop)
     {
       Point Q0,Q1,Q2; int i0,i1,i2;
@@ -115,7 +115,7 @@ int main(){
 
   cout << "The regulator of P0, P1, P2 is " << reg << endl ;      
   */
-  return 1;
+  return 0;
 } //ends main
 
 //ends file tpoints.cc

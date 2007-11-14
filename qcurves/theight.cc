@@ -90,7 +90,7 @@ int main(){
 //
         } // end point loop
   }       // end curve loop
-  abort();
+  //  exit(0);
 // Some tests borrowed from OM's test program:
   E = Curve(BIGINT(0), BIGINT(0), BIGINT(1), BIGINT(-7), BIGINT(6));  
   Curvedata C(E);
@@ -168,7 +168,6 @@ int main(){
   bigfloat reg = regulator(pointlist);
 //cout << "Back from calling regulator" << endl;
   cout << "The regulator of P0, P1, P2 is " << reg << endl;      
-
-  
-}         // end main()
+  return 0;
+  }         // end main()
 
