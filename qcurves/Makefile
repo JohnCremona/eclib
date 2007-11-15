@@ -134,6 +134,13 @@ check:  $(TESTS)
 	./tpoints > t && diff t tpoints.out 
 	./theight < theight.in > t && diff t theight.out
 	./thtconst < tcurve.in > t && diff t thtconst.out
+	./tegr < tegr.in > t && diff t tegr.out
+	./telog > t && diff t telog.out
+	./tdivpol > t && diff t tdivpol.out
+	./tperiods < tperiods.in >& t && diff t tperiods.out
+	./tsat < tsat.in >& t && diff t tsat.out
+	./tsat2 < tsat2.in >& t && diff t tsat2.out
+	./tsat3 < tsat2.in >& t && diff t tsat3.out
 
 tcurve: tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o 
 	$(CXX)  -o $(BINDIR)/tcurve tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o  $(LFLAGS)

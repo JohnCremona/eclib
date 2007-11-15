@@ -44,7 +44,7 @@ int main()
   Curve E;
 
   while(1) {
-    cin >> N; if(N==0) abort();
+    cin >> N; if(N==0) exit(0);
   cin >> nclass >> ncurve;
   cin >> E;
   Curvedata C(E);
@@ -89,4 +89,4 @@ void codeletter(int i, char* code, int width)
   while (n) code[--n]=c;
 }
 
-//end of file tsatsieve.cc
+//end of file tegr.cc

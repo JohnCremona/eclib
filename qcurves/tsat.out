@@ -1,0 +1,12 @@
+verbose (0/1)? 
+Input a curve: Curve [0,0,1,-7,36]
+enter number of points: 
+  enter point 1 : 
+  enter point 2 : 
+  enter point 3 : 
+  enter point 4 : 4 points entered.
+prime p to saturate at? 
+Saturating at prime 11
+Original generators:
+[ [1:-6:1] [-30:21:8] [-3:5:1] [-2:6:1] ]
+Finished p-saturation for p =  11, points were saturated

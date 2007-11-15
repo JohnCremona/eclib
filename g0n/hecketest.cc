@@ -38,8 +38,8 @@
 #include "cusp.h"
 #include "homspace.h"
 #include "smatrix_elim.h"
-//#include "mmatrix.h"
-//#include "msubspace.h"
+#include "mmatrix.h"
+#include "msubspace.h"
 
 //#define AUTOLOOP
 //#define COMPARE_OLD

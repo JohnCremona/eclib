@@ -67,7 +67,8 @@ void test3(Curvedata& CD, Cperiods& per, int m)
 }
 
 int main(){
-  set_precision("Enter number of decimal places");
+  //  set_precision("Enter number of decimal places");
+  set_precision(50);
   initprimes("PRIMES",0);
 
   // a curve with rank 3 and D>0:
@@ -173,7 +174,7 @@ int main(){
   test3(cd,cp,3);cout<<endl;
   test3(cd,cp,5);cout<<endl;
   */
-  return 1;
+  return 0;
 } //ends main
 
 //ends file telog.cc

@@ -1,0 +1,62 @@
+
+===============================================================
+
+24129R1 = [0,0,1,-68799,-1969790]
+2 points entered:[ [-1870:9257:8] [-197:1984:1] ]
+Checking 2-saturation 
+Points have successfully been 2-saturated (max q used = 17)
+Checking 3-saturation 
+Points have successfully been 3-saturated (max q used = 37)
+Checking 5-saturation 
+Points have successfully been 5-saturated (max q used = 73)
+Checking 7-saturation 
+Points have successfully been 7-saturated (max q used = 37)
+Checking 11-saturation 
+Points have successfully been 11-saturated (max q used = 311)
+Checking 13-saturation 
+Points have successfully been 13-saturated (max q used = 23)
+Checking 17-saturation 
+Points have successfully been 17-saturated (max q used = 29)
+Checking 19-saturation 
+Points have successfully been 19-saturated (max q used = 163)
+Checking 23-saturation 
+Points have successfully been 23-saturated (max q used = 461)
+Checking 29-saturation 
+Points have successfully been 29-saturated (max q used = 883)
+Checking 31-saturation 
+Points have successfully been 31-saturated (max q used = 137)
+Checking 37-saturation 
+Points have successfully been 37-saturated (max q used = 211)
+Checking 41-saturation 
+Points have successfully been 41-saturated (max q used = 263)
+Checking 43-saturation 
+Points have successfully been 43-saturated (max q used = 727)
+Checking 47-saturation 
+Points have successfully been 47-saturated (max q used = 109)
+Checking 53-saturation 
+Points have successfully been 53-saturated (max q used = 307)
+Checking 59-saturation 
+Points have successfully been 59-saturated (max q used = 601)
+Checking 61-saturation 
+Points have successfully been 61-saturated (max q used = 127)
+Checking 67-saturation 
+Points have successfully been 67-saturated (max q used = 443)
+Checking 71-saturation 
+Points have successfully been 71-saturated (max q used = 151)
+Checking 73-saturation 
+Points have successfully been 73-saturated (max q used = 1181)
+Checking 79-saturation 
+Points have successfully been 79-saturated (max q used = 809)
+Checking 83-saturation 
+Points have successfully been 83-saturated (max q used = 1249)
+Checking 89-saturation 
+Points have successfully been 89-saturated (max q used = 2017)
+Checking 97-saturation 
+Points have successfully been 97-saturated (max q used = 2351)
+Finished p-saturation for p up to 100, points were saturated
+
+===============================================================
+
+Number of curves entered:    1
+Number saturated already:    1
+Number which were saturated: 0
