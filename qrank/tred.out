@@ -1,0 +1,35 @@
+Enter number of decimal places: Computed 78519 primes, largest is 1000253
+Extra primes in list: 
+Enter quartic coefficients a,b,c,d,e ?
+Quartic is (-33,-2159,-52689,-568174,-2282844)
+I = 73947
+J = 0
+Bad primes: [ 2 3 157 ]
+Attempting to minimize the quartic.
+First partial minimization without assuming local solvability:
+p=2: minimal already
+p=3: minimal already
+p=157: minimal already
+Result has coefficients: (-33,-2159,-52689,-568174,-2282844)
+I = 73947
+J = 0
+Bad primes: [ 2 3 157 ]
+Now check local solvability:
+Everywhere locally soluble
+Final minimization of I, J:
+p=2: minimal already
+p=3: minimal already
+p=157: minimal already
+Result has coefficients: (-33,-2159,-52689,-568174,-2282844)
+I = 73947
+J = 0
+Bad primes: [ 2 3 157 ]
+transform = [1,0;0,1] / 1
+Attempting to reduce the quartic.
+Finished reducing g, new coefficients: (-33,-47,255,434,132)
+I = 73947
+J = 0
+extra reducing transform = [-17,-18;1,1]
+total transform = [-17,-18;1,1] / 1
+OK
+Enter quartic coefficients a,b,c,d,e ?

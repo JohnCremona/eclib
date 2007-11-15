@@ -143,6 +143,12 @@ dist: distfiles
 	chmod 755 $(HOME)/curves/rankdist/configure
 	chmod 755 $(HOME)/curves/rankdist/configure.ac
 
+check: $(PROGS) $(TESTS)
+	rm -f PRIMES
+	./tequiv < tequiv.in > t && diff t tequiv.out
+	./tred < tred.in >& t && diff t tred.out
+	./ratpoint < ratpoint.in > t 2>/dev/null && diff t ratpoint.out
+	./mwrank < mwrank.in > t 2>/dev/null && diff t mwrank.out
 
 newmrank: version$(OBJ_SUF).o mwrank$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mglobsol$(OBJ_SUF).o mlocsol$(OBJ_SUF).o qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o
 	chmod og+r *

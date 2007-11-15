@@ -1,0 +1,47 @@
+Enter curve: 
+Curve [0,1,1,-2,0] :	Basic pair: I=112, J=-1712
+disc=2688768
+2-adic index bound = 2
+By Lemma 5.1(a), 2-adic index = 1
+2-adic index = 1
+One (I,J) pair
+Looking for quartics with I = 112, J = -1712
+Looking for Type 2 quartics:
+Trying positive a from 1 up to 2 (square a first...)
+(1,0,-8,4,4)	--nontrivial...(x:y:z) = (1 : 1 : 0)
+Point = [1:0:1]
+	height = 0.476711659343739
+Rank of B=im(eps) increases to 1
+Trying positive a from 1 up to 2 (...then non-square a)
+Trying negative a from -1 down to -1
+Finished looking for Type 2 quartics.
+Looking for Type 1 quartics:
+Trying positive a from 1 up to 3 (square a first...)
+(1,0,4,12,8)	--nontrivial...(x:y:z) = (1 : 1 : 0)
+Point = [-1:1:1]
+	height = 0.686667083305586
+Rank of B=im(eps) increases to 2 (The previous point is on the egg)
+Exiting search for Type 1 quartics after finding one which is globally soluble.
+Mordell rank contribution from B=im(eps) = 2
+Selmer  rank contribution from B=im(eps) = 2
+Sha     rank contribution from B=im(eps) = 0
+Mordell rank contribution from A=ker(eps) = 0
+Selmer  rank contribution from A=ker(eps) = 0
+Sha     rank contribution from A=ker(eps) = 0
+Rank = 2
+Searching for points (bound = 8)...done:
+  found points of rank 2
+  and regulator 0.152460177943144
+Processing points found during 2-descent...done:
+  now regulator = 0.152460177943144
+Saturating (bound = 100)...done:
+  points were already saturated.
+
+Generator 1 is [0:-1:1]; height 0.327000773651605
+Generator 2 is [-1:1:1]; height 0.686667083305586
+
+Regulator = 0.152460177943144
+
+The rank and full Mordell-Weil basis have been determined unconditionally.
+
+Enter curve: 

@@ -1,0 +1,35 @@
+Verbose? How many quartics to check? 
+
+Enter quartic coefficients a,b,c,d,e ?
+1: (1,0,-80,324,-244)
+ new
+Enter quartic coefficients a,b,c,d,e ?
+2: (1,0,-68,236,-96)
+Checking equivalence of (1,0,-68,236,-96) and (1,0,-80,324,-244)
+u-poly = [1,0, -306176, -39149568, 8727953408]
+No integral roots
+ new
+Enter quartic coefficients a,b,c,d,e ?
+3: (1,1,-35,11,190)
+Checking equivalence of (1,1,-35,11,190) and (1,0,-80,324,-244)
+u-poly = [1,0, -194816, -4748544, 7849278464]
+No integral roots
+Checking equivalence of (1,1,-35,11,190) and (1,0,-68,236,-96)
+u-poly = [1,0, -176704, -3458816, 6658838528]
+Root u = -272
+ equivalent to #2
+Enter quartic coefficients a,b,c,d,e ?
+4: (1,0,-26,12,233)
+Checking equivalence of (1,0,-26,12,233) and (1,0,-80,324,-244)
+equiv failed on first test!
+First  has I=3472, J=-404912, disc=3463112448, type=1
+Second has I=3472, J=-404912, disc=3463112448, type=2
+Checking equivalence of (1,0,-26,12,233) and (1,0,-68,236,-96)
+equiv failed on first test!
+First  has I=3472, J=-404912, disc=3463112448, type=1
+Second has I=3472, J=-404912, disc=3463112448, type=2
+Checking equivalence of (1,0,-26,12,233) and (1,1,-35,11,190)
+equiv failed on first test!
+First  has I=3472, J=-404912, disc=3463112448, type=1
+Second has I=3472, J=-404912, disc=3463112448, type=2
+ new
