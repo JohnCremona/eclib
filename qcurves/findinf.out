@@ -1,0 +1,13 @@
+
+enter search limit: verbose (0/1)? process points found (1) or just list them (0): 
+Input a curve: Curve [0,0,1,-7,6]
+enter number of known points: enter max rank to stop when this is reached (-ve for none): Rank of points found is 3
+	Generator 1 is [1:-1:1]; height 0.66820516565192793502
+	Generator 2 is [-2:3:1]; height 1.368572505353930112
+	Generator 3 is [-14:25:8]; height 2.7173593928122930896
+		regulator is 0.41714355875838397005
+Points have been successfully saturated
+
+[[1,-1],[-2,3],[-7/4,25/8]]
+
+Input a curve: 

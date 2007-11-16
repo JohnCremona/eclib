@@ -1,0 +1,144 @@
+verbose (0/1)? 
+Input a curve: Curve [1,0,1,-19252966408674012828065964616418441723,32685500727716376257923347071452044295907443056345614006]
+enter number of points: 
+  enter point 1 : 
+  enter point 2 : 
+  enter point 3 : 
+  enter point 4 : 
+  enter point 5 : 
+  enter point 6 : 
+  enter point 7 : 
+  enter point 8 : 
+  enter point 9 : 
+  enter point 10 : 
+  enter point 11 : 
+  enter point 12 : 
+  enter point 13 : 
+  enter point 14 : 
+  enter point 15 : 
+  enter point 16 : 
+  enter point 17 : 
+  enter point 18 : 
+  enter point 19 : 
+  enter point 20 : 
+  enter point 21 : 
+  enter point 22 : 
+  enter point 23 : 23 points entered.
+Enter number of primes to use: Processing point [5836121652711390553392352147587734955:-69455519784971993679807552308609739430858248812:41166906143372569]
+Image =           	00 1 1 0 01 0 0 1 0 0 1 0 1 1 00 1 1 01 1 1 
+After elimination:	00 1 1 0 01 0 0 1 0 0 1 0 1 1 00 1 1 01 1 1 
+P independent of previous points (using prime 31)
+rank increases to 1
+Processing point [1168425140326369941586705900133272389:-17137023844710987140049387309945953892946213544:5429411004770479]
+Image =           	11 1 1 1 01 0 0 0 1 1 0 0 0 1 00 1 0 11 0 1 
+After elimination:	11 0 0 1 00 0 0 1 1 1 1 0 1 0 00 0 1 10 1 0 
+P independent of previous points (using prime 7)
+rank increases to 2
+Processing point [69505543020048021386994294068829048:1443380843339272397458721030742392016696304046:161157926442059]
+Image =           	11 1 0 0 11 1 1 1 0 1 1 1 1 1 11 1 1 01 0 0 
+After elimination:	00 0 1 1 10 1 1 1 1 0 1 1 1 0 11 0 1 10 0 1 
+P independent of previous points (using prime 43)
+rank increases to 3
+Processing point [33726169481462771119596650221569:49412130720987886904443301152758710388796:7098921280459]
+Image =           	11 0 1 0 11 0 0 1 0 0 1 0 0 1 00 0 0 11 0 1 
+After elimination:	00 0 0 0 01 1 1 1 0 1 1 1 0 1 11 0 0 11 1 0 
+P independent of previous points (using prime 53)
+rank increases to 4
+Processing point [15827793579244286948730141533934:6538434104009303265024749952830709029353:5389750958437]
+Image =           	01 1 0 1 01 1 1 0 1 0 0 1 1 1 11 1 1 01 1 0 
+After elimination:	01 0 0 0 10 0 0 0 0 0 0 0 1 0 00 0 1 10 0 0 
+P independent of previous points (using prime 7)
+rank increases to 5
+Processing point [695536410556937814932194749585:230697883363551870088729854504374414548:302787575875]
+Image =           	11 1 1 0 11 0 1 1 0 1 1 1 0 0 01 0 1 00 1 1 
+After elimination:	00 0 0 1 10 0 1 1 1 0 1 1 0 1 01 1 1 11 1 0 
+P independent of previous points (using prime 47)
+rank increases to 6
+Processing point [3765485669836998883000769028606015:1411381089291349753164768808558921002947204:1666240341498377]
+Image =           	01 1 1 0 11 1 0 1 0 1 0 0 0 1 10 0 1 10 0 0 
+After elimination:	00 0 0 0 00 1 0 0 0 1 1 0 0 0 10 1 1 01 1 1 
+P independent of previous points (using prime 59)
+rank increases to 7
+Processing point [3944555884631464928934930:5657335012046240705357319452802233:2406104]
+Image =           	01 0 0 1 01 1 0 0 0 0 1 1 1 0 00 1 0 10 1 1 
+After elimination:	00 0 0 0 00 0 0 0 1 1 1 1 0 0 10 0 0 00 1 1 
+P independent of previous points (using prime 83)
+rank increases to 8
+Processing point [1127027270330215920:3523978127407100674110377602:1]
+Image =           	10 1 1 0 00 1 0 1 1 0 1 0 1 1 01 1 1 01 1 0 
+After elimination:	00 0 0 0 00 0 0 1 0 1 0 1 0 0 01 1 1 00 0 0 
+P independent of previous points (using prime 71)
+rank increases to 9
+Processing point [256051163199552568592395095:-394563651945882403580468873435105816:51895117]
+Image =           	00 1 0 1 00 0 0 1 1 1 0 1 0 1 10 0 1 01 1 0 
+After elimination:	00 0 0 0 10 0 0 0 0 0 1 1 0 1 10 1 1 01 1 0 
+P independent of previous points (using prime 53)
+rank increases to 10
+Processing point [442619010291205562786415:-1167962768316319592876571517317044:50653]
+Image =           	01 0 1 1 00 1 1 0 0 1 1 0 1 0 11 0 0 01 1 0 
+After elimination:	00 0 0 0 00 0 0 0 0 1 1 1 1 0 11 1 1 01 0 0 
+P independent of previous points (using prime 89)
+rank increases to 11
+Processing point [55822325193081529476460202295:-151915114589061403100759698106532333112:6118445789]
+Image =           	11 0 1 0 10 0 1 0 1 1 0 1 1 1 00 1 1 00 0 1 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 1 1 1 11 0 0 01 1 0 
+P independent of previous points (using prime 109)
+rank increases to 12
+Processing point [356145268111068765982119246504180:-1150775031908416918955115365651634494501651:30094741482625]
+Image =           	10 1 1 1 11 1 1 1 1 1 1 0 0 1 01 0 0 10 1 0 
+After elimination:	00 0 0 0 00 0 1 0 0 0 0 0 0 1 01 1 1 11 1 0 
+P independent of previous points (using prime 67)
+rank increases to 13
+Processing point [178158613465020969197033760546270:184569435055535326363669745422918052707327:46079082400051]
+Image =           	11 1 0 0 01 0 0 1 1 0 0 0 1 1 11 1 1 10 1 1 
+After elimination:	00 0 0 0 00 0 0 0 0 0 1 0 1 0 00 0 0 01 1 1 
+P independent of previous points (using prime 97)
+rank increases to 14
+Processing point [192666510528582744766151703315:-10531550647702714814852169224678207441368:64481201]
+Image =           	10 1 1 0 01 1 0 1 1 1 0 0 1 1 11 0 1 01 1 1 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 1 0 11 0 1 00 0 1 
+P independent of previous points (using prime 113)
+rank increases to 15
+Processing point [743072319779988539974981500704194760635:964874722537391293613786748114488474882993683572:437169613520472565481]
+Image =           	00 1 1 0 10 0 1 0 0 0 0 0 1 0 01 1 1 10 1 0 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 0 1 10 0 0 00 1 0 
+P independent of previous points (using prime 127)
+rank increases to 16
+Processing point [524227677070779268411695177915:3941156276776007263792745630379334937996:9221366673]
+Image =           	01 0 1 1 01 1 0 1 1 1 1 1 1 0 00 0 0 00 0 0 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 0 0 10 0 1 10 1 1 
+P independent of previous points (using prime 131)
+rank increases to 17
+Processing point [109625308172049929108967881865:387496978790653709721061294119215460988:7988005999]
+Image =           	01 0 0 0 01 1 0 1 1 1 0 0 0 1 10 0 0 11 0 0 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 0 0 01 1 1 11 1 0 
+P independent of previous points (using prime 131)
+rank increases to 18
+Processing point [90690032605118118988993244301780:-953144078079942906360903670036536669593542:819763055279]
+Image =           	00 0 0 1 10 0 1 0 1 1 0 1 1 1 01 0 1 01 0 1 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 0 0 00 1 0 11 0 0 
+P independent of previous points (using prime 139)
+rank increases to 19
+Processing point [244353456546628958634824760:-775394556680837651292166377698874734:21253933]
+Image =           	01 0 0 0 10 0 0 0 1 1 1 1 0 0 00 1 1 00 0 0 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 0 0 00 0 0 01 0 0 
+P independent of previous points (using prime 151)
+rank increases to 20
+Processing point [435887272311260175170207520:4712624271973109965160039085789391367:3723875]
+Image =           	11 0 0 0 11 0 1 1 0 1 0 1 0 0 11 0 1 11 0 1 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 0 0 00 0 0 00 1 0 
+P independent of previous points (using prime 157)
+rank increases to 21
+Processing point [386870511037825543981230636169542701637111:83015454575998684006900205726968222686505350799684:159996363164349841378621]
+Image =           	11 1 1 0 11 0 1 0 1 1 1 1 1 0 01 0 0 00 1 1 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 0 0 00 0 0 00 0 1 
+P independent of previous points (using prime 163)
+rank increases to 22
+Processing point [62160011888235162136050:10099849221189668277354753748208:24389]
+Image =           	00 1 0 1 10 0 1 1 0 0 1 0 1 1 01 1 1 01 0 0 
+After elimination:	00 0 0 0 00 0 0 0 0 0 0 0 0 0 00 0 1 00 0 0 
+P independent of previous points (using prime 149)
+rank increases to 23
+Points are all independent, their rank is 23
+
+Input a curve: 

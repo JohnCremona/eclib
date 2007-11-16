@@ -128,7 +128,7 @@ shar: sources
 	shar -i files -o qcurves.shar
 	compress qcurves.shar
 
-check:  $(TESTS)
+check:  $(TESTS) $(PROGS)
 	rm -f PRIMES
 	./tcurve < tcurve.in > t && diff t tcurve.out 
 	./tpoints > t && diff t tpoints.out 
@@ -141,6 +141,14 @@ check:  $(TESTS)
 	./tsat < tsat.in >& t && diff t tsat.out
 	./tsat2 < tsat2.in >& t && diff t tsat2.out
 	./tsat3 < tsat2.in >& t && diff t tsat3.out
+	./conductor < conductor.in > t 2>/dev/null && diff t conductor.out
+	./tate < tate.in > t 2>/dev/null && diff t tate.out
+	./tate < tate.in > t 2>/dev/null && diff t tate.out
+	./twist < twist.in > t 2>/dev/null && diff t twist.out
+	./allisog < allisog.in > t 2>/dev/null && diff t allisog.out
+	./findinf < findinf.in > t 2>/dev/null && diff t findinf.out
+	./indep < indep.in > t 2>/dev/null && diff t indep.out
+
 
 tcurve: tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o 
 	$(CXX)  -o $(BINDIR)/tcurve tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o  $(LFLAGS)
