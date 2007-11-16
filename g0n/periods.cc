@@ -324,7 +324,7 @@ void summer::sumit()
   cout<<"Using primes with indices "<<ip<<" to "<<primelist.size()
       <<" and less than "<<rootlimit<<endl;
 #endif
-  while( (ip<primelist.size()) && (p<rootlimit)  )
+  while( (ip+1<primelist.size()) && (p<rootlimit)  )
   { 
     ap=aplist[ip];
 #ifdef TRACE_USE 
@@ -340,7 +340,7 @@ void summer::sumit()
   cout<<"Using primes with indices "<<ip<<" to "<<primelist.size()
       <<" and less than "<<limit<<endl;
 #endif
-  while( (ip<primelist.size()) && (p<=limit)  )
+  while( (ip+1<primelist.size()) && (p<=limit)  )
   { 
     ap=aplist[ip];
 #ifdef TRACE_USE 

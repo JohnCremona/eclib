@@ -87,5 +87,6 @@ int main()
 	}
       if(!eq) cout<<" new"<<endl;
     }
-
+  delete[] glist;
+  return(0);
 }

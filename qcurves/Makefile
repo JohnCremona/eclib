@@ -143,7 +143,7 @@ check:  $(TESTS) $(PROGS)
 	./tsat3 < tsat2.in > t 2>/dev/null && diff t tsat3.out
 	./conductor < conductor.in > t 2>/dev/null && diff t conductor.out
 	./tate < tate.in > t 2>/dev/null && diff t tate.out
-	./tate < tate.in > t 2>/dev/null && diff t tate.out
+	./torsion < torsion.in > t 2>/dev/null && diff t torsion.out
 	./twist < twist.in > t 2>/dev/null && diff t twist.out
 	./allisog < allisog.in > t 2>/dev/null && diff t allisog.out
 	./findinf < findinf.in > t 2>/dev/null && diff t findinf.out

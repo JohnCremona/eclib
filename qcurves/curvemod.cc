@@ -49,6 +49,52 @@ curvemodq reduce_curve(const Curve& E, const bigint& q)
 
 #else // NTL
 
+// constructors 
+curvemodq::curvemodq(void) 
+{
+  Fq=0;
+  //  cout<<"In curvemodq default constructor, Fq = "<<Fq<<endl;
+}
+
+curvemodq::curvemodq(const Curve& E, const bigint& qq)
+{
+  q=qq; Fq=new galois_field(q);
+  //  cout<<"In curvemodq constructor, Fq = "<<Fq<<endl;
+  bigint A1,A2,A3,A4,A6;
+  E.getai(A1,A2,A3,A4,A6);
+  GFSetZ(a1,A1);
+  GFSetZ(a2,A2);
+  GFSetZ(a3,A3);
+  GFSetZ(a4,A4);
+  GFSetZ(a6,A6);
+  order=BIGINT(0);
+}
+
+curvemodq::~curvemodq() 
+{
+  //  cout<<"In curvemodq destructor, Fq = "<<Fq<<endl;
+  if(Fq) delete Fq;
+}
+
+curvemodq::curvemodq(const curvemodq& C) // copy constructor
+{
+  q=C.q; 
+  Fq = new galois_field(q); // Not enough to copy the pointer
+  //  cout<<"In curvemodq copy constructor, Fq = "<<Fq<<endl;
+  a1=C.a1; a2=C.a2; a3=C.a3; a4=C.a4; a6=C.a6; 
+  order=C.order;
+}
+
+curvemodq& curvemodq::operator=(const curvemodq& C) // assignment
+{
+  q=C.q; 
+  delete Fq;
+  Fq = new galois_field(q); // Not enough to copy the pointer
+  //  cout<<"In curvemodq operator=, Fq = "<<Fq<<endl;
+  a1=C.a1; a2=C.a2; a3=C.a3; a4=C.a4; a6=C.a6; 
+  order=C.order;
+}
+
 void curvemodq::set_group_order_via_legendre()  
 {
   // Do NOT make these static as the modulus might change!

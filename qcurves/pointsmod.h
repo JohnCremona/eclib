@@ -200,7 +200,7 @@ class curvemodqbasis : public curvemodq {
     set_basis();
   }
 
-  ~curvemodqbasis(void) {;}
+  //  ~curvemodqbasis(void) {;}
 
   bigint get_order() {return n;}
   pointmodq get_gen(int i);

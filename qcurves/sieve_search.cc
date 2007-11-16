@@ -815,7 +815,7 @@ long qsieve::sift(long b)
 	      {//initialise the bits 
 		register bit_array *surv;
 		register long i;
-		surv = &survivors[0];
+		surv = survivors; // &survivors[0];
 		if(!use_odd_nums && !b&1)
 		  for(i = range; i; i--) *surv++ = QS_HALF_MASK;
 		else
@@ -896,8 +896,8 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
     }
   //Check the points that have survived the sieve if they really are points 
   { 
-    bit_array *surv0 = &survivors[0];
-    bit_array nums;
+    bit_array *surv0 = survivors; // &survivors[0];
+    bit_array nums=0;
     for(i = w_low; i < w_high; i++)
       {
 	if((nums = *surv0++))

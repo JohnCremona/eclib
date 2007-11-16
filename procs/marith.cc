@@ -800,7 +800,8 @@ factor(const bigint& n, int proof=1)
 {
   ostringstream oss;
   oss<<n;
-  vector<bigint> plist =  read_vec_from_string(factor(oss.str().c_str()));
+  char *t = factor(oss.str().c_str());  // malloc'd by pari library
+  vector<bigint> plist =  read_vec_from_string(t); // freed there
   if(proof)
     for(vector<bigint>::const_iterator pi=plist.begin(); pi!=plist.end(); pi++)
       {

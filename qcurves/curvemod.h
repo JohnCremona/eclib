@@ -75,19 +75,11 @@ protected:
 
 public:
   // constructors 
-  curvemodq(void) {;}
-  curvemodq(const Curve& E, const bigint& qq)
-    {
-      q=qq; Fq=new galois_field(q);
-      bigint A1,A2,A3,A4,A6;
-      E.getai(A1,A2,A3,A4,A6);
-      GFSetZ(a1,A1);
-      GFSetZ(a2,A2);
-      GFSetZ(a3,A3);
-      GFSetZ(a4,A4);
-      GFSetZ(a6,A6);
-      order=BIGINT(0);
-    }
+  curvemodq(void);
+  curvemodq(const Curve& E, const bigint& qq);
+  ~curvemodq();
+  curvemodq(const curvemodq& C); // copy constructor
+  curvemodq& operator=(const curvemodq& C); // assignment
   
   // access
   void get_ai(gf_element& aa1, gf_element& aa2, gf_element& aa3, gf_element& aa4, gf_element& aa6) const

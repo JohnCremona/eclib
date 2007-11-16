@@ -53,10 +53,11 @@ public:
 	if(!in) 
 	  {
 	    cerr<<"Failed to open input file "<<filename<<endl;
+	    delete[] filename;
 	    abort();
 	  }
-	delete[] filename;
       }
+    delete[] filename;
   }
   ~CurveReader() {if(!tty_input) in.close();}
   int operator>>(Curve& c)
