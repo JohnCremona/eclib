@@ -116,6 +116,22 @@ veryclean:
 	$(CLEAN)
 	/bin/rm -f *~ *$(OBJ_SUF).o $(PROGS) $(TESTS)
 
+check:  $(TESTS) $(PROGS)
+	rm -f PRIMES
+	./modtest < modtest.in > t 2>/dev/null && diff t modtest.out 
+	./homtest < homtest.in > t && diff t homtest.out
+	./hecketest < hecketest.in > t 2>/dev/null && diff t hecketest.out 
+	./mhcount < mhcount.in > t && diff t  mhcount.out
+	rm -rf tmp_nf_dir
+	mkdir tmp_nf_dir
+	NF_DIR=tmp_nf_dir && ./tmanin < tmanin.in > t 2>/dev/null && diff t tmanin.out
+	NF_DIR=tmp_nf_dir && ./nftest < nftest.in > t && diff t nftest.out
+	NF_DIR=tmp_nf_dir && ./oftest < oftest.in > t && diff t oftest.out
+	NF_DIR=tmp_nf_dir && ./nfhpcurve < nfhpcurve.in > t 2>/dev/null && diff t nfhpcurve.out
+	NF_DIR=tmp_nf_dir && ./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
+	NF_DIR=tmp_nf_dir && ./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog.out
+	rm -rf tmp_nf_dir
+
 input: input.cc
 	$(CC) input.cc -o inp
 

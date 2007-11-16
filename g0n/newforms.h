@@ -116,7 +116,7 @@ public:
   vector<newform> nflist;
   newforms(long n, int plus, int cuspidalflag, int disp) 
   :level(n), verbose(disp), cuspidal(cuspidalflag), plusflag(plus), 
-   of(0), h1(0) {;}
+   of(0), h1(0), easy(-1) {;}
   ~newforms(void);
   void display(void) const;
   void output_to_file(int binflag=1) const;

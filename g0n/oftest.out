@@ -1,0 +1,14 @@
+Verbose details of oldform constructor? Enter first and last N: >>>Level 90	
+Old classes
+~~~~~~~~~~~
+Level   Dimension [ 2 3 5 7 11 13 17 19 23 29 ]
+15       1       [ -1 -1 -1 0 -4 -2 2 4 0 -2 ]
+15       1       [ 1 -1 -1 0 -4 -2 2 4 0 -2 ]
+15       1       [ -1 1 -1 0 -4 -2 2 4 0 -2 ]
+15       1       [ 1 1 -1 0 -4 -2 2 4 0 -2 ]
+30       1       [ 1 -1 1 -4 0 2 6 -4 0 -6 ]
+30       1       [ 1 1 1 -4 0 2 6 -4 0 -6 ]
+45       1       [ -1 -1 1 0 4 -2 -2 4 0 2 ]
+45       1       [ 1 -1 1 0 4 -2 -2 4 0 2 ]
+Total number of oldclasses = 8
+Total dimension of oldclasses = 8

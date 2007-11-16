@@ -46,7 +46,7 @@
 
 #include "../qrank/descent.h"
 
-#define AUTOLOOP
+//#define AUTOLOOP
 //#define POS_RANK_ONLY  1  // for testing
 //#define RANK_ZERO_ONLY 1
 //#define RANK_TWO_ONLY 1

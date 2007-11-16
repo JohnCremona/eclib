@@ -1,0 +1,28 @@
+Enter level: >>> Level 90 <<<	
+After constructor, about to createfromdata() 
+Retrieving newform data for N = 90
+Finished reading newform data for N = 90
+
+3 newform(s) at level 90:
+p0=7
+#ap=	25
+1:	aplist = [ -1 0 1 2 6 -4 -6 -4 0 -6 -4 8 0 8 0 -6 6 2 -4 -12 ...]
+aq = [ 1 1 -1 ]
+ap0 = 2, dp0 = 4, np0 = 6
+SFE = 1,	L/P = 2/3
+lplus = 1, mplus = 1
+[(1,0;0,1),1,1;0]
+2:	aplist = [ 1 0 -1 2 -6 -4 6 -4 0 6 -4 8 0 8 0 6 -6 2 -4 12 ...]
+aq = [ -1 1 1 ]
+ap0 = 2, dp0 = 4, np0 = 6
+SFE = 1,	L/P = 2/3
+lplus = 1, mplus = 1
+[(1,0;0,1),1,1;0]
+3:	aplist = [ 1 0 1 -4 0 2 -6 -4 0 6 8 2 6 -4 0 6 0 -10 -4 0 ...]
+aq = [ -1 -1 -1 ]
+ap0 = -4, dp0 = 24, np0 = 12
+SFE = 1,	L/P = 2
+lplus = 1, mplus = 1
+[(1,0;0,1),1,1;0]
+3 newform(s), 25 eigs on file.
+Enter level: 

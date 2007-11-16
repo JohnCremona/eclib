@@ -1,0 +1,18 @@
+Program tmanin.  Using METHOD = 2 to find newforms
+MODULUS for linear algebra = 1073741789
+Verbose output? How many primes for Hecke eigenvalues? 
+Output Hecke eigenvalues to file? (0/1) Enter first and last N: 
+>>>Level 90:	Unable to open file tmp_nf_dir/x18 for newform input
+Creating from scratch instead
+Finished creating newform data for N = 18
+Unable to open file tmp_nf_dir/x15 for newform input
+Creating from scratch instead
+Finished creating newform data for N = 15
+Unable to open file tmp_nf_dir/x30 for newform input
+Creating from scratch instead
+Finished creating newform data for N = 30
+Unable to open file tmp_nf_dir/x45 for newform input
+Creating from scratch instead
+Finished creating newform data for N = 45
+3 newform(s) found.
+

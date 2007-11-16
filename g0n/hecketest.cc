@@ -398,7 +398,7 @@ int main(void)
      //stop_time();
      //show_time();
  cout<<endl;
-abort();
+exit(0);
 }       // end of main()
 #endif
 
