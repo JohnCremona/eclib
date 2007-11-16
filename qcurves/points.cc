@@ -516,23 +516,13 @@ vector<Point> two_torsion(Curvedata& E)
   int n, n2tors = xlist.size();
 
   // If there are 3 points of order 2, we order them for consistency:
+  if(n2tors==3)  sort(xlist.begin(),xlist.end());
 
-  bigint ei;
-  if(n2tors==3)
-    {
-      if(abs(xlist[0])>abs(xlist[1])) 
-	{ei=xlist[0];xlist[0]=xlist[1];xlist[1]=ei;}
-      if(abs(xlist[0])>abs(xlist[2])) 
-	{ei=xlist[0];xlist[0]=xlist[2];xlist[2]=ei;}
-      if(abs(xlist[1])>abs(xlist[2])) 
-	{ei=xlist[1];xlist[1]=xlist[2];xlist[2]=ei;}
-    }
-  //  sort(xlist.begin(),xlist.end()); would be unambiguous!
   vector<Point> two_tors;
   two_tors.push_back(Point(E)) ;     // zero point
   for(n=0; n<n2tors; n++)
     {
-      ei = xlist[n];
+      bigint ei = xlist[n];
       if(scaled) 
 	two_tors.push_back(Point(E,2*ei,-a1*ei-4*a3,BIGINT(8)));
       else 

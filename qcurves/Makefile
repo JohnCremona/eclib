@@ -137,10 +137,10 @@ check:  $(TESTS) $(PROGS)
 	./tegr < tegr.in > t && diff t tegr.out
 	./telog > t && diff t telog.out
 	./tdivpol > t && diff t tdivpol.out
-	./tperiods < tperiods.in >& t && diff t tperiods.out
-	./tsat < tsat.in >& t && diff t tsat.out
-	./tsat2 < tsat2.in >& t && diff t tsat2.out
-	./tsat3 < tsat2.in >& t && diff t tsat3.out
+	./tperiods < tperiods.in > t 2>/dev/null && diff t tperiods.out
+	./tsat < tsat.in > t 2>/dev/null && diff t tsat.out
+	./tsat2 < tsat2.in > t 2>/dev/null && diff t tsat2.out
+	./tsat3 < tsat2.in > t 2>/dev/null && diff t tsat3.out
 	./conductor < conductor.in > t 2>/dev/null && diff t conductor.out
 	./tate < tate.in > t 2>/dev/null && diff t tate.out
 	./tate < tate.in > t 2>/dev/null && diff t tate.out

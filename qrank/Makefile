@@ -146,7 +146,7 @@ dist: distfiles
 check: $(PROGS) $(TESTS)
 	rm -f PRIMES
 	./tequiv < tequiv.in > t && diff t tequiv.out
-	./tred < tred.in >& t && diff t tred.out
+	./tred < tred.in > t 2>/dev/null && diff t tred.out
 	./ratpoint < ratpoint.in > t 2>/dev/null && diff t ratpoint.out
 	./mwrank < mwrank.in > t 2>/dev/null && diff t mwrank.out
 

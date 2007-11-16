@@ -823,22 +823,12 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
 
   // If there are 3 points of order 2, we order them (for consistency:
   // otherwise the order can be machine dependent)
-
-  bigint ei;
-  if(ntwo_torsion==3)
-    {
-      if(abs(xlist[0])>abs(xlist[1])) 
-	{ei=xlist[0];xlist[0]=xlist[1];xlist[1]=ei;}
-      if(abs(xlist[0])>abs(xlist[2])) 
-	{ei=xlist[0];xlist[0]=xlist[2];xlist[2]=ei;}
-      if(abs(xlist[1])>abs(xlist[2])) 
-	{ei=xlist[1];xlist[1]=xlist[2];xlist[2]=ei;}
-    }
+  if(ntwo_torsion==3) sort(xlist.begin(),xlist.end());
 
   two_torsion.resize(ntwo_torsion);
   for(n=0; n<ntwo_torsion; n++)
     {
-      ei = xlist[n];
+      bigint ei = xlist[n];
       if(scaled) two_torsion[n].init(the_curve,2*ei,-a1*ei-4*a3,BIGINT(8));
       else two_torsion[n].init(the_curve,ei,BIGINT(0),BIGINT(1));
       if(verbose)

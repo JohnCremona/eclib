@@ -375,8 +375,8 @@ periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
   if(f->lplus==1) mplus=f->np0; // L/P = dp0/np0 so now P=L*mplus/dp0
   initaplist(iN,f->aplist);
   rootmod =  sqrt(to_bigfloat(N));  
-  factor1 =  exp(-TWOPI/ (to_bigfloat(chi1.modulus()) * rootmod));
-  factor2 =  exp(-TWOPI/ (to_bigfloat(chi2.modulus()) * rootmod));
+  factor1 =  exp(-(TWOPI)/ (to_bigfloat(chi1.modulus()) * rootmod));
+  factor2 =  exp(-(TWOPI)/ (to_bigfloat(chi2.modulus()) * rootmod));
   long dp = decimal_precision();
  // MUST keep brackets around TWOPI!:
   bigfloat rootlimit1=(dp*LOG10-log(1-factor1))*rootmod/(TWOPI) ;
@@ -427,7 +427,7 @@ periods_direct::periods_direct(const level* iN, const newform*f)
 {
   eps_N = -(f->sfe);
   initaplist(iN, f->aplist);
-  factor1 = -TWOPI  / sqrt(to_bigfloat(N));
+  factor1 = -(TWOPI)  / sqrt(to_bigfloat(N));
   type=f->type;
   dotplus=f->dotplus, dotminus=f->dotminus;
   a=f->a,b=f->b,c=f->c,d=f->d;
@@ -503,7 +503,7 @@ void periods_direct::use(long n, long an)
   bigfloat dan = to_bigfloat(an);
   bigfloat coeff = -dan/dn;
   bigfloat ef2 = coeff * exp(dn*factor2);
-  bigfloat dn2pi = dn*TWOPI;
+  bigfloat dn2pi = dn*(TWOPI);
   bigfloat c1 = ef2*cos(dn2pi*theta1),
            s1 = ef2*sin(dn2pi*theta1),
            c2 = ef2*cos(dn2pi*theta2),
@@ -542,8 +542,8 @@ part_period::part_period(const level* iN, const newform*f)
 
 void part_period::compute(const bigcomplex& z0)
 {
-  x0=TWOPI*real(z0);
-  y0=TWOPI*imag(z0);
+  x0=(TWOPI)*real(z0);
+  y0=(TWOPI)*imag(z0);
   compute();
 }
 
@@ -587,7 +587,7 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
   initaplist(iN, f_aplist);
 
   rootmod=sqrt(to_bigfloat(N));
-  factor1 = TWOPI/rootmod;
+  factor1 = (TWOPI)/rootmod;
   long maxp = prime_number(nap);
   limit  =  I2long(Ifloor((15+decimal_precision())*log(10)/factor1));
   if(limit>maxp) limit=maxp;
@@ -644,7 +644,7 @@ void lfchi::compute(long ell)
 {
   chi.reset(ell);
   limit = limit1 = ell*limit0;
-  factor1 =  exp(-TWOPI/ (to_bigfloat(ell) * rootmod));
+  factor1 =  exp(-(TWOPI)/ (to_bigfloat(ell) * rootmod));
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
 #ifdef TRACE_USE 
@@ -1004,6 +1004,8 @@ bigfloat myg2(bigfloat x)
 {
   static bigfloat zero=to_bigfloat(0);
   static bigfloat one=to_bigfloat(1);
+  static bigfloat two=to_bigfloat(2);
+  static bigfloat twelve=to_bigfloat(12);
   static bigfloat gamma=Euler();
   if (x>20) return zero;
 //#define TRACEG2
@@ -1011,7 +1013,7 @@ bigfloat myg2(bigfloat x)
 #ifdef TRACEG2
   cout<<"Computing myg2 for x = "<<x<<endl;
 #endif
-  ans=ans*ans/2 + PI*PI/12;
+  ans=ans*ans/two + PI*PI/twelve;
   bigfloat p = one;
   int ok=0;
   bigfloat term;
@@ -1035,6 +1037,8 @@ bigfloat myg3(bigfloat x)
 {
   static bigfloat zero=to_bigfloat(0);
   static bigfloat one=to_bigfloat(1);
+  static bigfloat three=to_bigfloat(3);
+  static bigfloat twelve=to_bigfloat(12);
 #ifdef MPFP // Multi-Precision Floating Point
   static const bigint nz3=atoI("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
   bigfloat zeta3; MakeRR(zeta3,nz3,-350);
@@ -1044,7 +1048,7 @@ bigfloat myg3(bigfloat x)
   if (x>20) return zero;
   bigfloat ans = -log(x) - Euler();
 //cout<<"Computing myg3 for x = "<<x<<endl;
-  ans = (PI*PI + 2*ans*ans) * ans/12 - zeta3/3;
+  ans = (PI*PI + 2*ans*ans) * ans/twelve - zeta3/three;
   bigfloat p = -one;
   bigfloat term;
   int ok = 0;
