@@ -106,7 +106,7 @@ int main(int argc, char **argv)
 	}
 
       stop_time();
-      if(verbose) {show_time(); cout<<endl;}
+      if(verbose) {show_time(cerr); cerr<<endl;}
     }
   cout<<endl;
   if(TIME_CONICS) {show_conic_timer(); cout<<endl;}

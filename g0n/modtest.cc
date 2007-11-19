@@ -21,6 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#include "interface.h"
 #include "timer.h"
 #include "moddata.h"
 #include "symb.h"
@@ -52,6 +53,5 @@ int main(void)
 }       // end of if(n)
 }       // end of while()
 stop_time();
-show_time();
- cout<<endl; 
+show_time(cerr); cerr<<endl; 
 }       // end of main()

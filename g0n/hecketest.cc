@@ -118,15 +118,15 @@ int main(void)
 	  start_time();
 	  mult=dim(peigenspace(wq,e*den,MODULUS));
 	  stop_time();
-	  show_time(); 
-	  cout<<"\nDimension of "<<e<<"-eigenspace="<<mult<<endl;
+	  show_time(cerr); cerr<<endl;
+	  cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;
 	  */
-	  cout<<"Using sparse matrix code..."<<flush;
+	  cout<<"Using sparse matrix code..."<<endl;
 	  start_time();
 	  mult=dim(eigenspace(swq,e*den));
 	  stop_time();
-	  show_time(); 
-	  cout<<"\nDimension of "<<e<<"-eigenspace="<<mult<<endl;
+	  show_time(cerr); cerr<<endl;
+	  cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;
 	}
       wqlist[i]=wq;
 #ifdef CHECK_COMMUTE
@@ -151,7 +151,7 @@ int main(void)
       start_time();
       mat_m temp = hplus.heckeop(p,verbose);
       stop_time();
-      cout<<"Time for old method: "; show_time();
+      cout<<"Time for old method: "; show_time(cerr); cerr<<endl;
 #endif
       start_time();
       mat tp = hplus.newheckeop(p,verbose);
@@ -166,7 +166,7 @@ int main(void)
       //      cout<<"Copied  mat_m = "<<tplist[ip]<<endl;
       stop_time();
 #ifdef COMPARE_OLD
-      cout<<"Time for new method: "; show_time();
+      cout<<"Time for new method: "; show_time(cerr); cerr<<endl;
       if(temp!=tplist[ip]) cout<<"Matrices differ!\n";
 #else
       cout << "done, sparsity = "<<sparsity(tplist[ip])<<". " << endl;
@@ -201,12 +201,12 @@ int main(void)
 	  stop_time();
 	  cout<<"det(M-e) = "<<detM<<endl;
 	  if(nulty) cout<<" IS "; else cout<<" is NOT ";
-	  cout<<"an eigenvalue "; show_time();
+	  cout<<"an eigenvalue "; show_time(cerr); cerr << endl;
 */
 	  start_time();
 	  long rankM = rank(M);
 	  stop_time();
-	  cout << "Nullity(M-e) = "<<n-rankM; show_time();
+	  cout << "Nullity(M-e) = "<<n-rankM; show_time(cerr); cerr<<endl;
 	  totalmult+=(rankM<n);
 	}
 #else
@@ -222,15 +222,15 @@ int main(void)
 	  start_time();
 	  nulty=dim(peigenspace(m,e,MODULUS));
 	  stop_time();
-	  show_time(); 
-	  cout<<"\n nullity="<<nulty<<endl;
+	  show_time(cerr); cerr<<endl;
+	  cout<<" nullity="<<nulty<<endl;
 
 	  cout<<"Computing nullity, using my sparse matrix code..."<<flush;
 	  start_time();
 	  nulty=dim(eigenspace(sm,e));
 	  stop_time();
-	  show_time(); 
-	  cout<<"\n nullity="<<nulty<<endl;
+	  show_time(cerr); cerr<<endl;
+	  cout<<" nullity="<<nulty<<endl;
 
 	  cout<<"\n"<<e<<" (scaled) ";
 	  if(nulty>0) cout<<" IS "; else cout<<" is NOT ";
@@ -259,14 +259,14 @@ int main(void)
 	    MT = MT * addscalar(m2,(-e*e));
 	}
       stop_time();
-      cout<<"...done, sparsity =  "<<sparsity(MT); show_time(); cout<<endl;
+      cout<<"...done, sparsity =  "<<sparsity(MT); show_time(cerr); cerr<<endl;
       cout<<"Computing kernel, using my (modular) matrix code..."<<flush;
       start_time();
       subspace  ker=pkernel(MT,MODULUS);
       nulty=dim(ker);
       int denker=denom(ker); // =1 for modular method, but set below
       stop_time();
-      cout<<"done, nulty = "<<nulty; show_time();
+      cout<<"done, nulty = "<<nulty; show_time(cerr); cerr<<endl;
       cout<<endl;
       vector<long> eigs1;
       long n1f = 0;
@@ -277,7 +277,7 @@ int main(void)
 	  start_time();
 	  mat MTR = liftmat(prestrict(m,ker,MODULUS),MODULUS,denker);
 	  stop_time();
-	  cout<<"done, denom(ker)="<<denker; show_time(); cout<<endl;
+	  cout<<"done, denom(ker)="<<denker; show_time(cerr); cout<<endl;
 	  if(nulty<21) 
 	    cout<<"Restriction of Tp to relevant subspace = \n" << MTR << endl;
 	  
@@ -292,13 +292,13 @@ int main(void)
 	  start_time();
 	  CharPoly(cptp, Msub);
 	  stop_time();
-	  cout<<"done ";  show_time(); cout<<endl;
+	  cout<<"done ";  show_time(cerr); cerr<<endl;
 	  vec_pair_ZZX_long factors;
 	  cout<<"\nfactorizing char poly..."<<flush;
 	  start_time();
 	  factor(cont,factors,cptp);
 	  stop_time();
-	  cout<<"done ";  show_time(); cout<<endl;
+	  cout<<"done ";  show_time(cerr); cerr<<endl;
 	  cout<<"\nFactors are:"<<endl;
 	  long nf = factors.length();
 	  for(i=0; i<nf; i++)
@@ -333,16 +333,16 @@ int main(void)
 	  cout<<"Computing determinant, using randomized strategy..."<<flush;
 	  detM = determinant(Msub);
 	  stop_time();
-	  show_time(); 
-	  cout<<"\ndet="<<detM<<endl;
+	  show_time(cerr); cerr<<endl;
+	  cout<<"det="<<detM<<endl;
 	  */
 
 	  cout<<"Computing determinant, using deterministic strategy..."<<flush;
 	  start_time();
 	  detM = determinant(Msub,1);
 	  stop_time();
-	  show_time(); 
-	  cout<<"\ndet="<<detM<<endl;
+	  show_time(cerr); cerr<<endl;
+	  cout<<"det="<<detM<<endl;
 
 	  /*
 	  cout<<"Computing rank, using NTL's LLL..."<<flush;
@@ -350,17 +350,17 @@ int main(void)
 	  mat_ZZ M2; M2=Msub;
 	  r=image(detM,M2); // NB image() changes its 2nd arg!
 	  stop_time();
-	  show_time(); 
+	  show_time(cerr); cerr<<endl;
 	  nulty1 = nulty-r;
-	  cout<<"\n nullity="<<nulty1<<endl;
+	  cout<<" nullity="<<nulty1<<endl;
 	  */
 
 	  cout<<"Computing nullity, using my (modular) matrix code..."<<flush;
 	  start_time();
 	  nulty1=dim(peigenspace(MTR,e,MODULUS));
 	  stop_time();
-	  show_time(); 
-	  cout<<"\n nullity="<<nulty1<<endl;
+	  show_time(cerr); cerr<<endl;
+	  cout<<" nullity="<<nulty1<<endl;
 
 	  cout<<"\n"<<e<<" (scaled) ";
 	  if(nulty>0) cout<<" IS "; else cout<<" is NOT ";
@@ -395,8 +395,6 @@ int main(void)
 
 }       // end of if(n)
 }       // end of while()
-     //stop_time();
-     //show_time();
  cout<<endl;
 exit(0);
 }       // end of main()
