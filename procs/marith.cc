@@ -264,8 +264,8 @@ void ressol(bigint & x, const bigint & a, const bigint & p)
     }
     else
       {
-	cerr<<"In ressol: a = " << a << " is not a quadratic residue";
-	cerr<< " mod p = "<<p<<endl;
+	cout<<"In ressol: a = " << a << " is not a quadratic residue";
+	cout<< " mod p = "<<p<<endl;
 	abort();
       }
   }
@@ -320,8 +320,8 @@ void ressol(bigint & x, const bigint & a, const bigint & p)
       t -= s; 
       if (t == 0)
 	{
-	  cerr<<"In ressol: a = " << a << " is not a quadratic residue";
-	  cerr<< " mod p = "<<p<<endl;
+	  cout<<"In ressol: a = " << a << " is not a quadratic residue";
+	  cout<< " mod p = "<<p<<endl;
 	  abort();
 	}
        
@@ -686,9 +686,9 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
 
   if (n>1) // failed to factor it 
     {
-      cerr<<"\n***No prime factor found for composite "<<n<<" using trial division\n";
-      cerr<<n<<"fails primality test"<<endl;
-      cerr << "***Fatal situation, aborting!"<<endl;
+      cout<<"\n***No prime factor found for composite "<<n<<" using trial division\n";
+      cout<<n<<"fails primality test"<<endl;
+      cout << "***Fatal situation, aborting!"<<endl;
       abort(); 
     }
   if(trace) cout<< "pdivs_trial() returns " << plist << endl;
@@ -808,7 +808,8 @@ factor(const bigint& n, int proof=1)
 	bigint p =*pi;
 	if(!is_prime(p))
 	  {
-	    cerr<<"WARNING:  pari's factor() returned p="<<p<<" for which pari's isprime(p) FAILS!! Please report.";
+	    cout<<"WARNING:  pari's factor() returned p="<<p
+		<<" for which pari's isprime(p) FAILS!! Please report.";
 	  }
       }    
   return plist;
@@ -1123,7 +1124,7 @@ bigint chrem(const bigint& a1, const bigint& a2,
 #endif
       return ans;
     }
-  cerr<<"No solution in chrem to "<<a1<<" mod "<<m1
+  cout<<"No solution in chrem to "<<a1<<" mod "<<m1
       <<", "<<a2<<" mod "<<m2<<endl; 
   ans = 0;
   return ans;
@@ -1193,7 +1194,7 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
    {
      bigint err; err=1; lshift(err,e-53,err); err-=1;
 #ifdef DEBUG_IFLOOR
-     cerr<<"Warning in Ifloor("<<s*x<<"): possible precision loss in "
+     cout<<"Warning in Ifloor("<<s*x<<"): possible precision loss in "
          <<"converting to bigint; maximium rounding error "
 	 << "2^"<<(e-53)<<"-1 = "<<err<<endl;
 #endif
@@ -1362,8 +1363,9 @@ bigint invmod(const bigint& a, const bigint& p)
  if (!is_one(g))
    {
      x=0;
-     cerr << "invmod called with " << a << " and " 
+     cout << "invmod called with " << a << " and " 
 	  << p << " -- not coprime!\n";
+     abort();
    }
  return x;
 }
@@ -1374,8 +1376,9 @@ long invmod(const bigint& a, long p)
  if (!is_one(g)) 
    {
      x=0;
-     cerr << "invmod called with " << a << " and " 
+     cout << "invmod called with " << a << " and " 
 	  << p << " -- not coprime!\n";
+     abort();
    }
  return I2long(x);
 }
@@ -1533,12 +1536,15 @@ int modrat(const bigint& n, const bigint& m, const bigint& lim,
    if (r<lim)
      {
        if (abs(rr)<lim) {a=r; b=rr; return 1;}
-       else cerr << "modrat error: no reconstruction for " << n << " mod " << m << "\n";
+       else cout << "modrat error: no reconstruction for " << 
+	      n << " mod " << m << "\n";
 //     cout<<" = "<<a<<"/"<<b<<"\n";
+       abort();
        return 0;
      }
  }
- cerr << "modrat error: common factor with " << n << " mod " << m << "\n";
+ cout << "modrat error: common factor with " << n << " mod " << m << "\n";
+ abort();
  return 0;
 }
 

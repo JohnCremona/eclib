@@ -171,7 +171,8 @@ inline long invmod0(long aa)
   }
  if (a==1)  {return oldx;}
  if (a==-1) {return -oldx;}
- cerr << "invmod0 called with " << a << " -- not invertible!\n";
+ cout << "invmod0 called with " << a << " -- not invertible!\n";
+ abort();
  return 0;
 }
 
@@ -184,7 +185,8 @@ inline int invmod0(int aa)
   }
  if (a==1)  {return oldx;}
  if (a==-1) {return -oldx;}
- cerr << "invmod0 called with " << a << " -- not invertible!\n";
+ cout << "invmod0 called with " << a << " -- not invertible!\n";
+ abort();
  return 0;
 }
 

@@ -247,8 +247,8 @@ int saturator::do_saturation(int pp, int maxntries)
 	  n++;
 	  if(n==maxntries) // give up
 	    {
-	      cerr<<"After "<<n<<" attempts at enlargement, giving up!\n";
-	      cerr<<"--points not proved "<<p<<"-saturated,"<<endl;
+	      cout<<"After "<<n<<" attempts at enlargement, giving up!\n";
+	      cout<<"--points not proved "<<p<<"-saturated,"<<endl;
 	      return -1;
 	    }
 	}
@@ -319,7 +319,7 @@ int saturator::do_saturation(vector<int> plist,
       pi = do_saturation(p,maxntries); // = log_index if >=0, -1 if failed
       if(pi<0) 
 	{
-	  cerr<<p<<"-saturation failed!"<<endl;
+	  cout<<p<<"-saturation failed!"<<endl;
 	  unsat.push_back(p);
 	  success=0;
 	}
@@ -364,8 +364,8 @@ int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
     cout<<"Saturation index bound = "<<ib<<endl;
   if(bound_too_big)
     {
-      if(!verbose) cerr<<"Saturation index bound = "<<ib<<endl;
-      cerr<<"WARNING: saturation at primes p > "<<sat_bd
+      if(!verbose) cout<<"Saturation index bound = "<<ib<<endl;
+      cout<<"WARNING: saturation at primes p > "<<sat_bd
 	  <<" will not be done;  \n"
 	  <<"points may be unsaturated at primes between "<<sat_bd
 	  <<" and index bound"<<endl;
@@ -573,7 +573,7 @@ vector<long> tamagawa_primes(const Curvedata& C)
     }
   if(hc1>max_search_bound) 
     {
-      cerr<<"\n***Warning: search bound of "<<hc1
+      cout<<"\n***Warning: search bound of "<<hc1
 	  <<" reduced to "<<max_search_bound
 	  <<" -- points may not be saturated***"<<endl;     
       hc1=max_search_bound;

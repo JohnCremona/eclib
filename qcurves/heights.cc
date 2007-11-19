@@ -336,8 +336,9 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
     }
   // else
   //  n> 50 not yet (could fold into last case)
-  cerr << "## If you really want the regulator of more than 50 points,\n";
-  cerr << "then edit heights.cc youself!" << endl;
+  cout << "## If you really want the regulator of more than 50 points,\n";
+  cout << "then edit heights.cc youself!" << endl;
+  abort();
   return to_bigfloat(1) ;
 }
 

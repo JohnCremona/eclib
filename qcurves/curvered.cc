@@ -318,7 +318,7 @@ CurveRed::CurveRed(const Curvedata& E)
          break; } // Type II*
 
       else
-        cerr<<" ## Tate's algorithm reached end of loop !!!"<<endl;
+        cout<<" ## Tate's algorithm reached end of loop !!!"<<endl;
 
       // at this point (only if the input curve were not minimal)
       // one would divide each ai by p^i and start again
@@ -1030,7 +1030,7 @@ int CurveRed::neron(long p, int kod)
 	    }
 	}
     }
-  cerr<<"neron() returns 0 -- should not happen!"<<endl;
+  cout<<"neron() returns 0 -- should not happen!"<<endl;
   return 0; /* should not occur */
 }
 

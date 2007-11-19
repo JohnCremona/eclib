@@ -89,7 +89,10 @@ void symblist::add(const symb& s, long start)
       //      cout<<"Adding symbol "<<s<<" as special number "<<num<<endl;
     }
   else 
-    cerr << "Error in symblist::add: attempt to add too many symbols to list!\n";
+    {
+      cout << "Error in symblist::add: attempt to add too many symbols to list!\n"; 
+      abort();
+    }
  }
 }
 
@@ -119,9 +122,11 @@ long symblist::index(const symb& s, long start) const
 symb symblist::item(long n) const
 {
  if ((n>num)||(n<0)) 
- {cerr<<"Error in symblist::item: index out of range!\n";
-  return symb();
- }
+   {
+     cout<<"Error in symblist::item: index out of range!\n";
+     abort();
+     return symb();
+   }
  else return list[n];
 }
 
@@ -145,9 +150,11 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
      }     // end of d loop
     }      // end of c loop
    if (specials.count()<nsymb2)
-   { cerr << "Problem: makesymbols found only " << specials.count() << " symbols ";
-     cerr << "out of " << nsymb2 << "\n";
-   }
+     { 
+       cout << "Problem: makesymbols found only " << specials.count() << " symbols ";
+       cout << "out of " << nsymb2 << "\n";
+       ::abort();
+     }
    //   cout << "Special symbols: "; specials.display();
  }
 }
@@ -191,9 +198,11 @@ void symbdata::check(void) const
 {long i,j; int ok=1; symb s;
  for (i=0; i<nsymb; i++)
  {j = index(s=symbol(i));
-  if (i!=j) {cerr << i << "-->" << s << "-->" << j << "\n";
-             ok=0;
-            }
+  if (i!=j) 
+    {
+      cout << i << "-->" << s << "-->" << j << "\n";
+      ok=0;
+    }
  }
  if (ok) cout << "symbols check OK!\n";
  else cout << "symbols check found errors!\n";

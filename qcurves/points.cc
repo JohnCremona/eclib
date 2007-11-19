@@ -47,7 +47,7 @@ void Point::reduce(void)
   }
   bigint d = gcd(X, Y) ; d = gcd(d, Z) ; // now d = gcd(X, Y, Z)
   if(sign(d)==0){
-    cerr << "##Point::reduce:  Bad point: gcd == 0 \n" ;
+    cout << "##Point::reduce:  Bad point: gcd == 0 \n" ;
     X = 0 ; Y = 1 ; Z = 0;
     abort() ;
     return ;
@@ -187,7 +187,8 @@ Point Point::operator+(const Point& Q) const // P + Q
   Point ans(E);
   // make sure that both points are on the same curve
   if(E != Q.E){
-    cerr << "## Can't add points on different curves!" << "\n" ;
+    cout << "## Can't add points on different curves!" << "\n" ;
+    abort();
     return ans;
   }
   // NOTE: we don't do any reductions here, but rely on assignment to do it
@@ -346,7 +347,8 @@ int order(Point& p, vector<Point>& multiples)
 int Point::isvalid() const // P on its curve ?
 {
   if(E == 0){
-    cerr << "## Bad point: null curve pointer!\n" ;
+    cout << "## Bad point: null curve pointer!\n" ;
+    abort();
     return 0 ;
   }
   if((sign(X)==0)&&(sign(Y)==0)&&(sign(Z)==0)) return 0;   // Null point, useful for terminating input

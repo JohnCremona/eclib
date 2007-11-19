@@ -270,7 +270,7 @@ int main(void)
 	       int sat_ok = mwbasis.saturate(index,unsat);
 	       if(!sat_ok) 
 		 {
-		   cerr << "saturation possibly incomplete at primes " << unsat << "\n";
+		   cout << "saturation possibly incomplete at primes " << unsat << "\n";
 		 }
 	       bigfloat reg = mwbasis.regulator();
 	       vector<Point> gens = mwbasis.getbasis();

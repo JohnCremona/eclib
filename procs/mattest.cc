@@ -21,6 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <iostream>
+#include "interface.h"
 #include "timer.h"
 #include "arith.h"
 #include "matrix.h"
@@ -171,5 +173,5 @@ else
  a.init(); 
 }
 stop_time();
-//cerr << "cpu time = "; show_time(); cerr << endl;
+//cout << "cpu time = "; show_time(); cout << endl;
 }

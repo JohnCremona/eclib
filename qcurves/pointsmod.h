@@ -99,12 +99,12 @@ public:
   int is_zero() const { return is0flag;}
   gf_element get_x() const 
     {
-      if (is0flag){cerr<<"error in get_x();"<<endl; return to_ZZ_p(0);} 
+      if (is0flag){return to_ZZ_p(0);} 
       return X;
     }
   gf_element get_y() const 
     {
-      if (is0flag){cerr<<"error in get_x();"<<endl; return to_ZZ_p(0);} 
+      if (is0flag){return to_ZZ_p(1);} 
       return Y;
     }
   curvemodq get_curve() const {return E;}

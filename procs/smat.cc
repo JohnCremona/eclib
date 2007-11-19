@@ -64,8 +64,8 @@ smat& smat::operator+=(const smat& mat2)
 {
   if ((nro!=mat2.nro)||(nco!=mat2.nco))
     {
-      cerr << "Incompatible smatrices in operator +=\n";
-      cerr << "Dimensions "<<dim(*this)<<" and "<<dim(mat2)<<endl;
+      cout << "Incompatible smatrices in operator +=\n";
+      cout << "Dimensions "<<dim(*this)<<" and "<<dim(mat2)<<endl;
       abort();
     }
   else
@@ -77,8 +77,8 @@ smat& smat::operator-=(const smat& mat2)
 {
   if ((nro!=mat2.nro)||(nco!=mat2.nco))
     {
-      cerr << "Incompatible smatrices in operator +=\n";
-      cerr << "Dimensions "<<dim(*this)<<" and "<<dim(mat2)<<endl;
+      cout << "Incompatible smatrices in operator +=\n";
+      cout << "Dimensions "<<dim(*this)<<" and "<<dim(mat2)<<endl;
       abort();
     }
   else
@@ -107,7 +107,7 @@ void smat::sub_mod_p(const scalar& lambda) // subtracts
 
 smat& smat::operator*=(scalar scal)
 {
-  if(scal==0) cerr<<"Attempt to multiply smat by 0\n"<<endl;
+  //  if(scal==0) cout<<"Attempt to multiply smat by 0\n"<<endl;
   for(int i = 1; i <= nro; i++)  rows[i]*=scal;
   return *this;
 }
@@ -119,7 +119,7 @@ void smat::reduce_mod_p(const scalar& p)
 
 smat& smat::mult_by_scalar_mod_p (scalar scal, const scalar& p)
 {
-  if(xmod(scal,p)==0) cerr<<"Attempt to multiply smat by 0\n"<<endl;
+  //  if(xmod(scal,p)==0) cout<<"Attempt to multiply smat by 0\n"<<endl;
   for(int i = 1; i <- nro; i++)
     rows[i].mult_by_scalar_mod_p(scal);
   return *this;
@@ -127,7 +127,7 @@ smat& smat::mult_by_scalar_mod_p (scalar scal, const scalar& p)
 
 smat& smat::operator/=(scalar scal)
 {
-  if(scal==0) cerr<<"Attempt to divide smat by 0\n"<<endl;
+  if(scal==0) {cout<<"Attempt to divide smat by 0\n"<<endl;abort();}
   for(int i = 1; i <= nro; i++)  rows[i]/=scal;
   return *this;
 }
@@ -149,8 +149,8 @@ mat smat::operator*( const mat& m )
 {
   if( nco != nrows(m) )
     {
-      cerr << "incompatible smat & mat in operator*\n";
-      cerr << "Dimensions "<<dim(*this)<<" and ["<<nrows(m)<<" "<<ncols(m)<<"]"<<endl;
+      cout << "incompatible smat & mat in operator*\n";
+      cout << "Dimensions "<<dim(*this)<<" and ["<<nrows(m)<<" "<<ncols(m)<<"]"<<endl;
       abort();
     }
   int nco = m.nco;
@@ -167,8 +167,8 @@ svec operator* ( const smat& A, const svec& v )
 {
   if( A.nco != dim(v) ) 
     { 
-      cerr << "incompatible smat*svec\n"; 
-      cerr << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
+      cout << "incompatible smat*svec\n"; 
+      cout << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
       abort();
     }
   int n = A.nro, j; scalar s;
@@ -186,8 +186,8 @@ smat operator* ( const smat& A, const smat& B )
 {
   if( A.nco != B.nro ) 
     { 
-      cerr << "incompatible smats in operator *\n"; 
-      cerr << "Dimensions "<<dim(A)<<" and "<<dim(B)<<endl;
+      cout << "incompatible smats in operator *\n"; 
+      cout << "Dimensions "<<dim(A)<<" and "<<dim(B)<<endl;
       abort();
     }
   int nro = A.nro, nco = B.nco, j;
@@ -215,8 +215,8 @@ smat mult_mod_p ( const smat& A, const smat& B, const scalar& p )
   //  cout<<"Multiplying mod-p smats of size "<<A.nro<<"x"<<A.nco<<" and "<<B.nro<<"x"<<B.nco<<"..."<<flush;
   if( A.nco != B.nro ) 
     { 
-      cerr << "incompatible smats in mult_mod_p(smat,smat,p)\n"; 
-      cerr << "Dimensions "<<dim(A)<<" and "<<dim(B)<<endl;
+      cout << "incompatible smats in mult_mod_p(smat,smat,p)\n"; 
+      cout << "Dimensions "<<dim(A)<<" and "<<dim(B)<<endl;
       abort();
     }
   int nro = A.nro, nco = B.nco, j;
@@ -262,8 +262,8 @@ smat mult_mod_p ( const smat& A, const smat& B, const scalar& p )
   //  cout<<"B = "<<B<<endl;
   if( A.nco != B.nro ) 
     { 
-      cerr << "incompatible smats in mult_mod_p(smat,smat,p)\n"; 
-      cerr << "Dimensions "<<dim(A)<<" and "<<dim(B)<<endl;
+      cout << "incompatible smats in mult_mod_p(smat,smat,p)\n"; 
+      cout << "Dimensions "<<dim(A)<<" and "<<dim(B)<<endl;
       abort();
     }
   int nro = A.nro, nco = B.nco, j;

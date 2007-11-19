@@ -528,7 +528,7 @@ mat homspace::calcop(char* opname, long p, const matop& mlist,
        m.setcol(j+1,colj.as_vec());
      }
   if(cuspidal) m = restrict(smat(m),kern).as_mat();
-  if(dual) {  cout<<"transposing... "; m=transpose(m);}
+  if(dual) {  m=transpose(m);}
   if (display) 
     {
       cout << "Matrix of " << opname << "(" << p << ") = ";
@@ -729,7 +729,8 @@ mat homspace::opmat(int i, int dual, int v)
   if(i==-1) return conj(dual,v);
   if((i<0)||(i>=nap)) 
     {
-      cerr<<"Error in homspace::opmat(): called with i = " << i << endl;
+      cout<<"Error in homspace::opmat(): called with i = " << i << endl;
+      ::abort();
       return mat(dimension);  // shouldn't happen
     }
   long p = op_prime(i);
@@ -748,7 +749,8 @@ smat homspace::s_opmat(int i, int dual, int v)
   if(i==-1) return s_conj(dual,v);
   if((i<0)||(i>=nap)) 
     {
-      cerr<<"Error in homspace::s_opmat(): called with i = " << i << endl;
+      cout<<"Error in homspace::s_opmat(): called with i = " << i << endl;
+      ::abort();
       return smat(dimension);  // shouldn't happen
     }
   long p = op_prime(i);
@@ -767,8 +769,9 @@ mat homspace::opmat_restricted(int i, const subspace& s, int dual, int v)
   if(i==-1) return conj_restricted(s,dual,v);
   if((i<0)||(i>=nap)) 
     {
-      cerr<<"Error in homspace::opmat_restricted(): called with i = " 
+      cout<<"Error in homspace::opmat_restricted(): called with i = " 
 	  << i << endl;
+      ::abort();
       return mat(dim(s));  // shouldn't happen
     }
   long p = op_prime(i);
@@ -788,8 +791,9 @@ smat homspace::s_opmat_restricted(int i, const ssubspace& s, int dual, int v)
   if(i==-1) return s_conj_restricted(s,dual,v);
   if((i<0)||(i>=nap)) 
     {
-      cerr<<"Error in homspace::s_opmat_restricted(): called with i = " 
+      cout<<"Error in homspace::s_opmat_restricted(): called with i = " 
 	  << i << endl;
+      ::abort();
       return smat(dim(s));  // shouldn't happen
     }
   long p = op_prime(i);
@@ -1380,7 +1384,7 @@ svec operator*(smat& m, const svec& v)
   int r = nrows(m), c=ncols(m);
   if(c!=dim(v))
     {
-      cerr<<"Error in smat*svec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
+      cout<<"Error in smat*svec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
       abort();
     }
   svec w(r);
@@ -1394,7 +1398,7 @@ vec operator*(smat& m, const vec& v)
   int r = nrows(m), c=ncols(m);
   if(c!=dim(v))
     {
-      cerr<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
+      cout<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
       abort();
     }
   vec w(r);

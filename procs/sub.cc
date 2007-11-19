@@ -106,7 +106,11 @@ mat restrict(const mat& m, const subspace& s, int cr)
 //  for (j=1; (j<=d) && check; j++)
 //   check = (dd*m.row(i)*b.col(j) == b.row(i)*ans.col(j));
     int check = (dd*matmulmodp(m,sb,BIGPRIME) == matmulmodp(sb,ans,BIGPRIME));
-    if (!check) cerr<<"Warning from restrict: subspace not invariant!\n";
+    if (!check) 
+      {
+	cout<<"Error in restrict: subspace not invariant!\n";
+	abort();
+      }
   }
   return ans;
 }
@@ -195,7 +199,10 @@ mat prestrict(const mat& m, const subspace& s, scalar pr, int cr)
     const mat& left = dd*matmulmodp(m,sb,pr);
     const mat& right = matmulmodp(sb,ans,pr);
     int check = (left==right);
-    if (!check) cerr<<"Warning from prestrict: subspace not invariant!\n";
+    if (!check) 
+      {
+	cout<<"Error in prestrict: subspace not invariant!\n";
+      }
   }
   return ans;
 }

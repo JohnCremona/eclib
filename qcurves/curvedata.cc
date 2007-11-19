@@ -104,7 +104,7 @@ Curvedata::Curvedata(const bigint& cc4, const bigint& cc6, int min_on_init)
     }
   else 
     {
-      cerr << " ## attempt to call Curve constructor\n"
+      cout << " ## attempt to call Curve constructor\n"
 	   << "    with invalid invariants c4 = "<<cc4<<", cc6 = "<<c6
 	   << ": reading as null curve\n";
       a1=0; a2=0; a3=0; a4=0; a6=0;

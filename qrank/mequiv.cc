@@ -209,8 +209,8 @@ int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>
    if (abs(scale)<abs(cdelta)) scale=cdelta;
    if(is_small(scale)) 
      {
-       cerr << "Warning from rootsequiv(): scale = " << scale << endl;
-       cerr << "alpha, beta, gamma, delta = " << calpha << cbeta << cgamma << cdelta << endl;
+       cout << "Warning from rootsequiv(): scale = " << scale << endl;
+       cout << "alpha, beta, gamma, delta = " << calpha << cbeta << cgamma << cdelta << endl;
      }
    calpha /= scale;
    cbeta  /= scale;

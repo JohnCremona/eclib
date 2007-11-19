@@ -40,7 +40,7 @@ int I2int(const ZZ& x)
   if(IsZero(x)) return 0;
   if(!is_int(x)) 
     {
-      cerr<<"Attempt to convert "<<x<<" to int fails!"<<endl; 
+      cout<<"Attempt to convert "<<x<<" to int fails!"<<endl; 
       abort();
       return 0;
     }
@@ -60,7 +60,7 @@ long I2long(const bigint& x)
   if(IsZero(x)) return 0;
   if(!is_long(x)) 
     {
-      cerr<<"Attempt to convert "<<x<<" to long fails!"<<endl; 
+      cout<<"Attempt to convert "<<x<<" to long fails!"<<endl; 
       abort();
       return 0;
     }
@@ -279,7 +279,11 @@ RR asin (const RR & x)
   if (sign(x+1) == 0) return -Pi()/2;
 
   RR t = 1-x*x;
-  if (sign(t)<0) cerr<<"asin called with arguments "<<x<<" > 1"<<endl;
+  if (sign(t)<0) 
+    {
+      cout<<"asin called with arguments "<<x<<" > 1"<<endl;
+      abort();
+    }
   return atan(x/sqrt(t));
 }
 

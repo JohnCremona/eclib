@@ -88,10 +88,10 @@ int pointmodq::set_x_coordinate(const gf_element& x)
       Y=(sqrt(galois_field(q),d)-(a1*x+a3))/two;
       if(!(on_curve()))
 	{
-	  cerr<<"Error in pointmodq::set_x_coordinate("<<x<<"): result "
+	  cout<<"Error in pointmodq::set_x_coordinate("<<x<<"): result "
 	      <<(*this)<<" is not a valid point on "<<E<<endl;
-	  cerr<<"b2,b4,b6 = "<<b2<<","<<b4<<","<<b6<<" mod "<<q<<endl;
-	  cerr<<"d = "<<d<<" mod "<<q<<endl;
+	  cout<<"b2,b4,b6 = "<<b2<<","<<b4<<","<<b6<<" mod "<<q<<endl;
+	  cout<<"d = "<<d<<" mod "<<q<<endl;
 	  abort();
 	}
     }
@@ -143,7 +143,11 @@ pointmodq pointmodq::operator+(const pointmodq& Q) const // add Q to this
   ans.Y = lambda*(ans.X)+mu;
   ans.is0flag=0;
   ans.order=0;
-  if(!(ans.on_curve())) cerr<<"error in pointmodq::operator+() adding "<<(*this)<<" to "<<Q<<endl;
+  if(!(ans.on_curve())) 
+    {
+      cout<<"error in pointmodq::operator+() adding "<<(*this)<<" to "<<Q<<endl;
+      abort();
+    }
   return ans.negate();
 }
 
@@ -180,7 +184,10 @@ pointmodq pointmodq::twice(void) const // doubles P
   ans.is0flag=0;
   ans.order=0;
   if(!(ans.on_curve())) 
-    cerr<<"\nerror in pointmodq::twice() with P = "<<(*this)<<": "<<(ans)<<" not on "<<E<<endl;
+    {
+      cout<<"\nerror in pointmodq::twice() with P = "<<(*this)<<": "<<(ans)<<" not on "<<E<<endl;
+      abort();
+    }
   return ans.negate();
 }
 
@@ -319,14 +326,14 @@ void curvemodqbasis::set_basis()
 #endif //  DEBUG_ISO_TYPE
   if(n1!=order_point(P1)) 
     {
-      cerr<<"Error in isomorphism_type("<<(*this)<<") mod "<<::get_modulus((curvemodq)*this)
+      cout<<"Error in isomorphism_type("<<(*this)<<") mod "<<::get_modulus((curvemodq)*this)
 	  <<": n1 = "<<n1
 	  <<" but point P1 = "<<P1<<" has order "<<order_point(P1)<<endl;
       n=n1=1; //  to prevent this reduction being used
     }
   if(n2!=order_point(P2)) 
     {
-      cerr<<"Error in isomorphism_type("<<(*this)<<") mod "<<::get_modulus((curvemodq)*this)
+      cout<<"Error in isomorphism_type("<<(*this)<<") mod "<<::get_modulus((curvemodq)*this)
 	  <<": n2 = "<<n2
 	  <<" but point P2 = "<<P2<<" has order "<<order_point(P2)<<endl;
       n=n2=1; //  to prevent this reduction being used
@@ -476,13 +483,15 @@ bigint my_bg_algorithm(const pointmodq& PP,
 
   if (PP.get_curve() != QQ.get_curve())
     {
-      cerr<<"bg_algorithm: Points P and Q on different curves"<<endl;
+      cout<<"bg_algorithm: Points P and Q on different curves"<<endl;
+      abort();
       return minus_one;
     }
 
   if ((is_negative(lower)) || (upper<lower))
     {
-      cerr<<"bg_algorithm: lower bound > upper bound"<<endl;
+      cout<<"bg_algorithm: lower bound > upper bound"<<endl;
+      abort();
       return minus_one;
     }
 
@@ -656,7 +665,12 @@ bigint linear_relation( pointmodq& P,  pointmodq& Q, bigint& a)
   a=a*n1;
   m=h*m1;
   // debugging:
-  if(m*Q!=a*P) {cerr<<"Error in linear relation with P="<<P<<", n="<<n<<", Q="<<Q<<": returns a="<<a<<" and m="<<m<<endl;}
+  if(m*Q!=a*P) 
+    {
+      cout<<"Error in linear relation with P="<<P<<", n="<<n<<", Q="<<
+	Q<<": returns a="<<a<<" and m="<<m<<endl;
+      abort();
+    }
   return m;
 }
 
@@ -829,12 +843,13 @@ void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2,
   if(debug_iso_type)  cout<<"zeta = "<< zeta <<endl;
   if(IsZero(zeta))
   {
-      cerr<<"Error: weil_pairing returns 0!"<<endl;
-      cerr<<"n1 = "<<n1<<endl;
-      cerr<<"n2 = "<<n2<<endl;
-      cerr<<"n2target = "<<n2target<<endl;
-      cerr<<"order((n1/n2target)*P1) = "<<Q1<<" is "<<order_point(Q1)<<endl;
-      cerr<<"order(Q) =                "<<Q<<" is "<<order_point(Q2)<<endl;
+      cout<<"Error: weil_pairing returns 0!"<<endl;
+      cout<<"n1 = "<<n1<<endl;
+      cout<<"n2 = "<<n2<<endl;
+      cout<<"n2target = "<<n2target<<endl;
+      cout<<"order((n1/n2target)*P1) = "<<Q1<<" is "<<order_point(Q1)<<endl;
+      cout<<"order(Q) =                "<<Q<<" is "<<order_point(Q2)<<endl;
+      abort();
   }
   bigint m = order(zeta);
   if(debug_iso_type)  cout<<"order = "<< m <<endl;
@@ -1162,13 +1177,22 @@ void my_isomorphism_type_new(curvemodq& Cq,
       if(debug_iso_type)
 	{
 	  if(order_point(P1)!=n1)
-	    cerr<<"Generator P1 = "<<P1<<" has order "<<order_point(P1)
-		<<" and not "<<n1<<endl;
+	    {
+	      cout<<"Generator P1 = "<<P1<<" has order "<<order_point(P1)
+		  <<" and not "<<n1<<endl;
+	      abort();
+	    }
 	  if(order_point(P2)!=n2)
-	    cerr<<"Generator P2 = "<<P2<<" has order "<<order_point(P2)
-		<<" and not "<<n2<<endl;
+	    {
+	      cout<<"Generator P2 = "<<P2<<" has order "<<order_point(P2)
+		  <<" and not "<<n2<<endl;
+	      abort();
+	    }
 	  if(linear_relation(P1,P2,a)!=n2)
-	    cerr<<"Generators not independent!"<<endl;
+	    {
+	      cout<<"Generators not independent!"<<endl;
+	      abort();
+	    }
 	  cout<<"Generators: P1 = "<<P1<<" of order "
 	      <<n1<<", P2 = "<<P2<<" of order "<<n2<<endl;
 	  cout<<"Group order now "<<n1*n2<<"="<<n1<<"*"<<n2<<endl;

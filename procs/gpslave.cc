@@ -170,7 +170,7 @@ vector<bigint> parislave::factor(const bigint& n, int proof)
 	p =*pi;
 	if(!is_prime(p))
 	  {
-	    cerr<<"WARNING:  pari's factor() returned p="<<p<<" for which isprim(p) FAILS!! Please report.";
+	    cout<<"WARNING:  pari's factor() returned p="<<p<<" for which isprim(p) FAILS!! Please report.";
 	  }
       }
   return plist;

@@ -34,7 +34,7 @@ vec::vec(long n)
 {
  d=n;
  entries=new scalar[n]; 
- if (!entries) {cerr<<"Out of memory!\n"; abort();}
+ if (!entries) {cout<<"Out of memory!\n"; abort();}
  scalar *v=entries; while(n--) *v++=0;
 }
 
@@ -42,7 +42,7 @@ vec::vec(long n, scalar* arr)   //entries must have at least n elements!
 {
  d=n;
  entries=new scalar[n];  
- if (!entries) {cerr<<"Out of memory!\n"; abort();} 
+ if (!entries) {cout<<"Out of memory!\n"; abort();} 
  scalar *v=entries; while(n--) *v++=*arr++;
 }
 
@@ -50,7 +50,7 @@ vec::vec(const vec& v)                       // copy constructor
 {
   d=v.d;
   entries=new scalar[d];  
-  if (!entries) {cerr<<"Out of memory!\n"; abort();}
+  if (!entries) {cout<<"Out of memory!\n"; abort();}
   scalar *v1=entries, *v2=v.entries; long n=d;
   while(n--) *v1++=*v2++;
 }
@@ -62,7 +62,7 @@ void vec::init(long n)                 // (re)-initializes
      delete[] entries;
      d = n;
      entries=new scalar[d];  
-     if (!entries) {cerr<<"Out of memory!\n"; abort();}
+     if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
  scalar *v=entries; while(n--) *v++=0;
 }
@@ -75,7 +75,7 @@ vec& vec::operator=(const vec& v)                    // assignment
      delete[] entries;
      d = v.d;
      entries=new scalar[d];  
-     if (!entries) {cerr<<"Out of memory!\n"; abort();}
+     if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
  scalar *v1=entries, *v2=v.entries; long n=d; 
  while(n--) *v1++=*v2++;
@@ -85,14 +85,14 @@ vec& vec::operator=(const vec& v)                    // assignment
 scalar& vec::operator[](long i) const
 {
  if ((i>0) && (i<=d)) return entries[i-1];
- else {cerr << "bad subscript in vec::operator[]\n"; return entries[0];}
+ else {cout << "bad subscript in vec::operator[]\n"; abort(); return entries[0];}
 }
 
 vec& vec::operator+=(const vec& q2)
 {
   scalar* vi=entries, *wi=q2.entries; long i=d;
   if (d==q2.d) {while(i--)(*vi++)+=(*wi++);}
-  else cerr << "Incompatible vecs in vec::operator+=\n";
+  else {cout << "Incompatible vecs in vec::operator+=\n"; abort();}
   return *this;
 }
 
@@ -100,14 +100,14 @@ void vec::addmodp(const vec& w, scalar pr)
 {
   scalar* vi=entries, *wi=w.entries; long i=d;
   if (d==w.d) {while(i--) {*vi = xmod((*wi++)+(*vi),pr);vi++;}}
-  else cerr << "Incompatible vecs in vec::addmodp\n";
+  else {cout << "Incompatible vecs in vec::addmodp\n"; abort(); }
 }
 
 vec& vec::operator-=(const vec& q2)
 {
   scalar* vi=entries; scalar* wi=q2.entries; long i=d;
   if (d==q2.d) {while(i--)(*vi++)-=(*wi++);}
-  else cerr << "Incompatible vecs in vec::operator-=\n";
+  else {cout << "Incompatible vecs in vec::operator-=\n"; abort();}
   return *this;
 }
 
@@ -145,19 +145,19 @@ vec vec::operator[](const vec& index) const  // returns v[index[j]]
 scalar vec::sub(long i) const
 {
  if ((i>0) && (i<=d)) return entries[i-1];
- else {cerr << "bad subscript in vec::sub\n"; return 0;}
+ else {cout << "bad subscript in vec::sub\n"; abort(); return 0;}
 }
 
 void vec::set(long i, scalar x)
 {
  if ((i>0) && (i<=d)) entries[i-1]=x;
- else cerr << "bad subscript in vec::set\n";
+ else {cout << "bad subscript in vec::set\n"; abort(); }
 }
 
 void vec::add(long i, scalar x)
 {
  if ((i>0) && (i<=d)) entries[i-1]+=x;
- else cerr << "bad subscript in vec::add\n";
+ else {cout << "bad subscript in vec::add\n"; abort(); }
 }
 
 // Definitions of non-member, friend operators and functions
@@ -169,7 +169,10 @@ scalar operator*(const vec& v, const vec& w)
  if (dim==w.d) 
    while (dim--) dot+= (*vi++)*(*wi++);
  else 
-   cerr << "Unequal dimensions in dot product\n";
+   {
+     cout << "Unequal dimensions in dot product\n";
+     abort();
+   }
  return dot;
 }
 
@@ -224,7 +227,7 @@ scalar vecgcd(const vec& v)
 void swapvec(vec& v, vec& w)
 {scalar *temp; 
  if (v.d==w.d) {temp=v.entries; v.entries=w.entries; w.entries=temp;}
- else cerr << "Attempt to swap vecs of different lengths!\n";
+ else {cout << "Attempt to swap vecs of different lengths!\n"; abort();}
 }
 
 int member(scalar a, const vec& v)
@@ -256,7 +259,10 @@ vec express(const vec& v, const vec& v1, const vec& v2)
    scalar g = vecgcd(ans);
    if (g>1) ans/=g;
    if (ans[3]*v!=ans[1]*v1+ans[2]*v2)
-       cerr << "Warning from express: v is not in <v1,v2>\n";
+     {
+       cout << "Error in express: v is not in <v1,v2>\n";
+       abort();
+     }
    return ans;
 }
 
@@ -286,7 +292,10 @@ vec lift(const vec& v, scalar pr)
      for (i=1; i<=d; i++) ans[i] = mod(xmodmul(g,ans[i],pr),pr);
    }
  if(!success) 
-   cerr << "vec failed to lift from mod " << pr << " after two rounds.\n";
+   {
+     cout << "vec failed to lift from mod " << pr << " after two rounds.\n";
+     abort();
+   }
  return ans;
 }
 

@@ -77,13 +77,13 @@ inline int FITS_IN_LONG(const bigfloat& x) {return (x<=MAXLONG)&&(x>=MINLONG);}
 inline void ROUNDUP(long& a,const bigfloat& x) 
 {
   if(FITS_IN_LONG(x)) return Iasb(a,ceil((x)-ROUNDADJUST));
-  cerr<<"Attempt to round "<<x<<" to a long int fails, aborting!\n";
+  cout<<"Attempt to round "<<x<<" to a long int fails, aborting!\n";
   abort();
 }
 inline void ROUNDDOWN(long& a,const bigfloat& x) 
 {
   if(FITS_IN_LONG(x)) return Iasb(a,floor((x)+ROUNDADJUST));
-  cerr<<"Attempt to round "<<x<<" to a long int fails, aborting!\n";
+  cout<<"Attempt to round "<<x<<" to a long int fails, aborting!\n";
   abort();
 }
 

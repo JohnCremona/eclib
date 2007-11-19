@@ -38,8 +38,8 @@ int local_hilbert(const bigint& a, const bigint& b, const bigint& p)
   bigint u,v;
   int ans;
 
-  if(is_zero(a)) {cerr<<"Error in local_hilbert(): a==0\n"; return -1;}
-  if(is_zero(b)) {cerr<<"Error in local_hilbert(): b==0\n"; return -1;}
+  if(is_zero(a)) {cout<<"Error in local_hilbert(): a==0\n"; return -1;}
+  if(is_zero(b)) {cout<<"Error in local_hilbert(): b==0\n"; return -1;}
 
   if(is_zero(p)||is_negative(p)) // p=0 or p=-1 mean the infinite prime
     {

@@ -33,7 +33,8 @@ mat::mat(long nr, long nc)
  nro=nr;
  nco=nc;
  long n=nr*nc;
- entries=new scalar[n];  if (!entries) {cerr<<"Out of memory!\n"; abort();}
+ entries=new scalar[n];  
+ if (!entries) {cout<<"Out of memory in mat constructor!\n"; abort();}
  scalar* m1=entries;
  while(n--) *m1++ = 0;
 }
@@ -43,7 +44,8 @@ mat::mat(const mat& m)
  nro=m.nro;
  nco=m.nco;
  long n = nro*nco;
- entries=new scalar[n]; if (!entries) {cerr<<"Out of memory!\n"; abort();}
+ entries=new scalar[n]; 
+ if (!entries) {cout<<"Out of memory in mat constructor!\n"; abort();}
  scalar *m1=entries, *m2=m.entries;
  while(n--) *m1++ = *m2++;
 }
@@ -60,7 +62,7 @@ void mat::init(long nr, long nc) // assigns to zero mat of given size;
    {            // replace with new.
      delete[] entries;
      entries = new scalar[n]; 
-     if (!entries) {cerr<<"Out of memory!\n"; abort();}
+     if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
  nro = nr;
  nco = nc;
@@ -74,7 +76,9 @@ scalar& mat::operator()(long i, long j)  const   // returns ref to (i,j) entry
    return entries[(i-1)*nco+(j-1)];
  else 
    {
-     cerr << "Bad indices in mat::sub\n"; 
+     cout << "Bad indices ("<<i<<","<<j<<") in mat::sub (nro="<<nro
+	  <<", nco="<<nco<<"\n"; 
+     abort();
      return entries[0];
    }
 }
@@ -110,7 +114,7 @@ mat& mat::operator=(const mat& m)
    {            // replace with new.
      delete[] entries;
      entries = new scalar[n]; 
-     if (!entries) {cerr<<"Out of memory!\n"; abort();}
+     if (!entries) {cout<<"Out of memory in mat assignment!\n"; abort();}
    }
  nro = m.nro;
  nco = m.nco;
@@ -122,19 +126,35 @@ mat& mat::operator=(const mat& m)
 scalar mat::sub(long i, long j) const
 {
  if ((0<i) && (i<=nro) && (0<j) && (j<=nco)) return entries[(i-1)*nco+(j-1)];
-  else {cerr << "Bad indices in mat::sub\n"; return 0;}
+  else 
+    {
+      cout << "Bad indices ("<<i<<","<<j<<") in mat::sub (nro="<<nro
+	   <<", nco="<<nco<<"\n"; 
+      abort();
+      return 0;
+    }
 }
 
 void mat::set(long i, long j, scalar x)
 {
  if ((0<i) && (i<=nro) && (0<j) && (j<=nco)) entries[(i-1)*nco+(j-1)] = x;
-  else cerr << "Bad indices in mat::set\n";
+ else 
+   {
+     cout << "Bad indices ("<<i<<","<<j<<") in mat::set (nro="<<nro
+	  <<", nco="<<nco<<"\n";
+     abort();
+   }
 }
 
 void mat::add(long i, long j, scalar x)
 {
  if ((0<i) && (i<=nro) && (0<j) && (j<=nco)) entries[(i-1)*nco+(j-1)] += x;
-  else cerr << "Bad indices in mat::add\n";
+ else 
+   {
+     cout << "Bad indices ("<<i<<","<<j<<") in mat::add (nro="<<nro
+	  <<", nco="<<nco<<"\n";
+     abort();
+   }
 }
 
 void mat::setrow(long i, const vec& v)
@@ -146,7 +166,12 @@ void mat::setrow(long i, const vec& v)
     long c=nco; 
     while(c--) *rowi++ = *vec++;
   }
- else cerr << "Bad indices in mat::setrow (i="<<i<<", nro="<<nro<<", dim(v)="<<dim(v)<<", nco="<<nco<<")\n";
+ else 
+   {
+     cout << "Bad indices in mat::setrow (i="<<i<<", nro="<<nro
+	  <<", dim(v)="<<dim(v)<<", nco="<<nco<<")\n";
+     abort();
+   }
 }
 
 void mat::setcol(long j, const vec& v)
@@ -158,7 +183,12 @@ void mat::setcol(long j, const vec& v)
    long n=nro;
    while(n--) {*colj = *vec++; colj+=nco;}
  }
- else cerr << "Bad indices in mat::setcol\n";
+ else
+   {
+     cout << "Bad indices in mat::setcol (j="<<j<<", nco="<<nco
+	  <<", dim(v)="<<dim(v)<<", nco="<<nco<<")\n";
+     abort();
+   }
 }
 
 vec mat::row(long i) const
@@ -168,7 +198,10 @@ vec mat::row(long i) const
  if ((0<i) && (i<=nro)) 
    while(j--) *v++ = *entriesij++;
  else 
-   cerr << "Bad row number in function mat::row\n";
+   {
+     cout << "Bad row number "<<i<<" in function mat::row (nro="<<nro<<")\n";
+     abort();
+   }
  return mi;
 }
 
@@ -179,7 +212,10 @@ vec mat::col(long j) const
  if ((0<j) && (j<=nco))
    while(i--) {*v++ = *entriesij; entriesij+=nco;}
  else 
-   cerr << "Bad column number in function mat::col\n";
+   {
+     cout << "Bad column number "<<j<<" in function mat::col (nco="<<nco<<")\n";
+     abort();
+   }
  return mj;
 }
 
@@ -192,7 +228,11 @@ void mat::swaprows(long r1, long r2)
       long nc=nco, a;
       while(nc--) {a = *mr1; *mr1++ = *mr2; *mr2++ = a; }
     }
-  else cerr << "Bad row numbers " << r1 << "," << r2 << " in swaprow\n";
+  else 
+    {
+      cout << "Bad row numbers " << r1 << "," << r2 << " in swaprow (nro="<<nro<<")\n";
+      abort();
+    }
 }
 
 void mat::multrow(long r, scalar scal)
@@ -202,7 +242,11 @@ void mat::multrow(long r, scalar scal)
       long nc=nco; scalar *mij = entries+(r-1)*nco;
       while(nc--) (*mij++) *= scal;
     }
-  else cerr << "Bad row number " << r << " in multrow\n";
+  else 
+    {
+      cout << "Bad row number " << r << " in multrow (nro="<<nro<<")\n";
+      abort();
+    }
 }
 
 void mat::divrow(long r, scalar scal)
@@ -212,7 +256,11 @@ void mat::divrow(long r, scalar scal)
       long nc=nco; scalar *mij = entries+(r-1)*nco;
       while(nc--) (*mij++) /= scal;
     }
-  else cerr << "Bad row number " << r << " in divrow\n";
+  else 
+    {
+      cout << "Bad row number " << r << " in divrow (nro="<<nro<<")\n";
+      abort();
+    }
 }
 
 void mat::clearrow(long r)
@@ -227,7 +275,11 @@ void mat::clearrow(long r)
 	  while(nc--) (*mij++) /= g;
 	}
     }
-  else cerr << "Bad row number " << r << " in clearrow\n";
+  else 
+    {
+      cout << "Bad row number " << r << " in clearrow (nro="<<nro<<")\n";
+      abort();
+    }
 }
 
 mat& mat::operator+=(const mat& entries2)
@@ -237,7 +289,11 @@ mat& mat::operator+=(const mat& entries2)
       long n=nro*nco; scalar *m1=entries, *m2=entries2.entries;
       while(n--) (*m1++) += (*m2++);
     }
-  else cerr << "Incompatible matrices in operator +=\n";
+  else 
+    {
+      cout << "Incompatible matrices in operator +=\n";
+      abort();
+    }
   return *this;
 }
 
@@ -248,7 +304,11 @@ mat& mat::operator-=(const mat& entries2)
       long n=nro*nco; scalar *m1=entries, *m2=entries2.entries;
       while(n--) (*m1++) -= (*m2++);
     }
-  else cerr << "Incompatible matrices in operator -=\n";
+  else 
+    {
+      cout << "Incompatible matrices in operator -=\n";
+      abort();
+    }
   return *this;
 }
 
@@ -307,7 +367,11 @@ mat operator*(const mat& m1, const mat& m2)
 	 c += p;
        }
    }
- else cerr << "Incompatible sizes in mat product\n";
+ else 
+   {
+     cout << "Incompatible sizes in mat product\n";
+     abort();
+   }
  return m3;
 }
 
@@ -468,7 +532,11 @@ mat colcat(const mat& a, const mat& b)
        nc=nca; while(nc--) *ansij++ = *aij++;
        nc=ncb; while(nc--) *ansij++ = *bij++;
      }
- else cerr << "colcat: matrices have different number of rows!" << "\n";
+ else 
+   {
+     cout << "colcat: matrices have different number of rows!" << "\n";
+     abort();
+   }
  return ans;
 }
 
@@ -482,7 +550,11 @@ mat rowcat(const mat& a, const mat& b)
    n = nra*nc; while(n--) *ansij++ = *aij++;
    n = nrb*nc; while(n--) *ansij++ = *bij++;
  }
- else cerr << "rowcat: matrices have different number of columns!" << "\n";
+ else 
+   {
+     cout << "rowcat: matrices have different number of columns!" << "\n";
+     abort();
+   }
  return ans;
 }
 
@@ -582,7 +654,11 @@ vec operator*(const mat& m, const vec& v)
 	 wp++;
        }
    }
- else cerr << "Incompatible sizes in *(mat,vec)\n";
+ else 
+   {
+     cout << "Incompatible sizes in *(mat,vec)\n";
+     abort();
+   }
  return w;
 }
 
@@ -1010,7 +1086,10 @@ vector<long> charpoly(const mat& a)
         t=trace(b)/i;
         clist[n-i] = -t;
       }
-  if (!(b==t*id)) cerr << "Error in charpoly: final b = " << (b-t*id);
+  if (!(b==t*id)) 
+    {
+      cout << "Error in charpoly: final b = " << (b-t*id); abort();
+    }
   return clist;
 }
 
@@ -1035,7 +1114,11 @@ vec apply(const mat& m, const vec& v)    // same as *(mat, vec)
  if (nc==dim(v))
    for (long i=1; i<=nr; i++) 
      ans[i] = m.row(i)*v;
- else cerr << "Incompatible sizes in *(mat,vec)\n";
+ else 
+   {
+     cout << "Incompatible sizes in *(mat,vec)\n";
+     abort();
+   }
  return ans;
 }
 
@@ -1160,8 +1243,8 @@ mat echelonl(const mat& entries, vec& pc, vec& npc,
 	}
       else 
 	{
-	  cerr << "Problem in echelonl: entry " << temp << " too big!\n";
-	  *ansij++=0;
+	  cout << "Problem in echelonl: entry " << temp << " too big!\n";
+	  abort();
 	}
     }
   
@@ -1478,7 +1561,11 @@ mat matmulmodp(const mat& m1, const mat& m2, scalar pr)
 	 c += p;
        }
    }
- else cerr << "Incompatible sizes in mat product\n";
+ else 
+   {
+     cout << "Incompatible sizes in mat product\n";
+     abort();
+   }
  return m3;
 }
 

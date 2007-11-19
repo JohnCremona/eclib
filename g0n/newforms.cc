@@ -800,14 +800,14 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
   ifstream datafile(name);
   if(!datafile.is_open())
     {
-      cout<<"Unable to open file "<<name<<" for newform input"<<endl;
+      if(verbose) cout<<"Unable to open file "<<name<<" for newform input"<<endl;
       delete[] name;
       if(create_from_scratch_if_absent)
 	{
-	  cout<<"Creating from scratch instead"<<endl;
+	  if(verbose) cout<<"Creating from scratch instead"<<endl;
 	  createfromscratch(ntp);
 	  output_to_file();
-	  cout << "Finished creating newform data for N = " << n << endl;
+	  if(verbose) cout << "Finished creating newform data for N = " << n << endl;
 	  if(verbose) display();
 	  return;
 	}

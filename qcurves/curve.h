@@ -74,7 +74,7 @@ public:
     {a1=0;a2=0;a3=0;a4=0;a6=0;}
   Curve(const bigint& c4, const bigint& c6); //init by invariants
                                  //check valid for elliptic curve
-                                 //if not create null curve and cerr
+                                 //if not create null curve
   Curve(const bigint& aa1, const bigint& aa2, const bigint& aa3,
         const bigint& aa4, const bigint& aa6) 
     :a1(aa1),a2(aa2),a3(aa3),a4(aa4),a6(aa6) {}
@@ -177,7 +177,7 @@ public:
   CurvedataExtra(const Curvedata&) ; 
   virtual void output(ostream& os) const;
   void input(istream& is)
-    {cerr<<"*** You cannot input a CurvedataExtra -- must be just Curve\n";
+    {cout<<"*** You cannot input a CurvedataExtra -- must be just Curve\n";
      abort(); }
   void getroots(bigfloat& r1, bigfloat& r2, bigfloat& r3) const
     {r1=roots[0]; r2=roots[1]; r3=roots[2]; }

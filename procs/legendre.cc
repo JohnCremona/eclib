@@ -45,11 +45,11 @@
 //#define REDUCE_INTERMEDIATES // reduces intermediate solutions
 //#define HOLZER_MEASURES // shows Holzer measure of solutions before/after reduction
 
-//#define TL2(nnn) cerr<<"Calling lem2() at point "<<nnn<<endl;
+//#define TL2(nnn) cout<<"Calling lem2() at point "<<nnn<<endl;
 #define TL2(nnn) 
 #ifdef DEBUG_LEGENDRE
 //#if(1)
-#define BACK(nnn,uuu,code) cerr<<"Backtracking at point "<<nnn<<" with u = "<<uuu<<" and code "<<code<<endl;
+#define BACK(nnn,uuu,code) cout<<"Backtracking at point "<<nnn<<" with u = "<<uuu<<" and code "<<code<<endl;
 #else
 #define BACK(nnn,uuu,code) 
 #endif
@@ -189,7 +189,7 @@ void lem1minus(const bigint& a, const bigint& b, const bigint& c,
   z = d/absc;  // = 1 or 2
   if(d==absc)        {x=(cminus-cplus)/2;}
   else if(d==2*absc) {x=cminus/2-cplus;}
-  else cerr<<"Error in lem1minus: c="<<c<<", cplus="<<cplus<<
+  else cout<<"Error in lem1minus: c="<<c<<", cplus="<<cplus<<
              ", cminus="<<cminus<<endl;
   y=cminus-x;
   if(b*c>0) 
@@ -199,7 +199,7 @@ void lem1minus(const bigint& a, const bigint& b, const bigint& c,
 #ifdef DEBUG_LEM1
   if((a*sqr(x)+b*sqr(y)+c*sqr(z)==0)&&div(c,a*x-q*y)) {;}  else
     {
-      cerr<<"Bad solution in lem1minus\n";
+      cout<<"Bad solution in lem1minus\n";
       show_all(a,b,c,n,p,q,x,y,z);
     }
 #endif // DEBUG_LEM1
@@ -1442,9 +1442,9 @@ void lem2a(const bigint& a, const bigint& b, const bigint& c,
   bigint u2=sqr(u), a1, r;
   if((!::divides(a,u2,a1,r))||((u2<=1)))
     {
-      cerr<<"lem2a wrongly called with (a,b,c)=("
+      cout<<"lem2a wrongly called with (a,b,c)=("
 	  <<a<<","<<b<<","<<c<<")"<<endl;
-      cerr<<" and u = "<<u<<endl;
+      cout<<" and u = "<<u<<endl;
       return;
     }
   bigint n1 = n%a1;

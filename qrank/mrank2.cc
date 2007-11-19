@@ -215,7 +215,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
     {
       cout<<"Support (length "<<ns<<"): "<<supp<<endl;
     }
-  if(ns>31) {cerr<<"Too many primes dividing d!\n"; abort();}
+  if(ns>31) {cout<<"Too many primes dividing d!\n"; abort();}
 
   long mask=0, maxn=1<<ns, index, j, nelsgens=0;
   vector<bigint> elsgens;

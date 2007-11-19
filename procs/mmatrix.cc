@@ -35,7 +35,7 @@ mat_m::mat_m(long nr, long nc)
  nro=nr;
  nco=nc;
  long n=nr*nc;
- entries=new bigint[n];  if (!entries) {cerr<<"Out of memory!\n"; abort();}
+ entries=new bigint[n];  if (!entries) {cout<<"Out of memory!\n"; abort();}
  bigint* m1=entries;
  while(n--) *m1++ = 0;
 }
@@ -45,7 +45,7 @@ mat_m::mat_m(const mat_m& m)
  nro=m.nro;
  nco=m.nco;
  long n = nro*nco;
- entries=new bigint[n]; if (!entries) {cerr<<"Out of memory!\n"; abort();}
+ entries=new bigint[n]; if (!entries) {cout<<"Out of memory!\n"; abort();}
  bigint *m1=entries, *m2=m.entries;
  while(n--) *m1++ = *m2++;
 }
@@ -55,7 +55,7 @@ mat_m::mat_m(const mat_i& m)
  nro=m.nro;
  nco=m.nco;
  long n = nro*nco;
- entries=new bigint[n]; if (!entries) {cerr<<"Out of memory!\n"; abort();}
+ entries=new bigint[n]; if (!entries) {cout<<"Out of memory!\n"; abort();}
  bigint *m1=entries; int *m2=m.entries;
  while(n--) *m1++ = *m2++;
 }
@@ -65,7 +65,7 @@ mat_m::mat_m(const mat_l& m)
  nro=m.nro;
  nco=m.nco;
  long n = nro*nco;
- entries=new bigint[n]; if (!entries) {cerr<<"Out of memory!\n"; abort();}
+ entries=new bigint[n]; if (!entries) {cout<<"Out of memory!\n"; abort();}
  bigint *m1=entries; long *m2=m.entries;
  while(n--) *m1++ = *m2++;
 }
@@ -82,7 +82,7 @@ void mat_m::init(long nr, long nc) // assigns to zero matrix of given size;
    {            // replace with new.
      delete[] entries;
      entries = new bigint[n]; 
-     if (!entries) {cerr<<"Out of memory!\n"; abort();}
+     if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
  nro = nr;
  nco = nc;
@@ -96,7 +96,8 @@ bigint& mat_m::operator()(long i, long j)  const   // returns ref to (i,j) entry
    return entries[(i-1)*nco+(j-1)];
  else 
    {
-     cerr << "Bad indices in mat_m::sub\n"; 
+     cout << "Bad indices in mat_m::sub\n"; 
+     abort();
      return entries[0];
    }
 }
@@ -132,7 +133,7 @@ mat_m& mat_m::operator=(const mat_m& m)
    {            // replace with new.
      delete[] entries;
      entries = new bigint[n]; 
-     if (!entries) {cerr<<"Out of memory!\n"; abort();}
+     if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
  nro = m.nro;
  nco = m.nco;
@@ -144,19 +145,19 @@ mat_m& mat_m::operator=(const mat_m& m)
 bigint mat_m::sub(long i, long j) const
 {
  if ((0<i) && (i<=nro) && (0<j) && (j<=nco)) return entries[(i-1)*nco+(j-1)];
-  else {cerr << "Bad indices in mat_m::sub\n"; bigint ans; return ans;}
+ else {cout << "Bad indices in mat_m::sub\n"; abort(); bigint ans; return ans;}
 }
 
 void mat_m::set(long i, long j, const bigint& x)
 {
  if ((0<i) && (i<=nro) && (0<j) && (j<=nco)) entries[(i-1)*nco+(j-1)] = x;
-  else cerr << "Bad indices in mat_m::set\n";
+ else {cout << "Bad indices in mat_m::set\n"; abort();}
 }
 
 void mat_m::add(long i, long j, const bigint& x)
 {
  if ((0<i) && (i<=nro) && (0<j) && (j<=nco)) entries[(i-1)*nco+(j-1)] += x;
-  else cerr << "Bad indices in mat_m::add\n";
+ else {cout << "Bad indices in mat_m::add\n"; abort();}
 }
 
 void mat_m::setrow(long i, const vec_m& v)
@@ -168,7 +169,7 @@ void mat_m::setrow(long i, const vec_m& v)
     long c=nco; 
     while(c--) *rowi++ = *vec++;
   }
- else cerr << "Bad indices in mat_m::setrow\n";
+ else {cout << "Bad indices in mat_m::setrow\n"; abort();}
 }
 
 void mat_m::setcol(long j, const vec_m& v)
@@ -180,7 +181,7 @@ void mat_m::setcol(long j, const vec_m& v)
    long n=nro;
    while(n--) {*colj = *vec++; colj+=nco;}
  }
- else cerr << "Bad indices in mat_m::setcol\n";
+ else {cout << "Bad indices in mat_m::setcol\n"; abort();}
 }
 
 vec_m mat_m::row(long i) const
@@ -190,7 +191,10 @@ vec_m mat_m::row(long i) const
  if ((0<i) && (i<=nro)) 
    while(j--) *v++ = *matij++;
  else 
-   cerr << "Bad row number in function mat_m::row\n";
+   {
+     cout << "Bad row number in function mat_m::row\n";
+     abort();
+   }
  return mi;
 }
 
@@ -201,7 +205,10 @@ vec_m mat_m::col(long j) const
  if ((0<j) && (j<=nco))
    while(i--) {*v++ = *matij; matij+=nco;}
  else 
-   cerr << "Bad column number in function mat_m::col\n";
+   {
+     cout << "Bad column number in function mat_m::col\n";
+     abort();
+   }
  return mj;
 }
 
@@ -214,7 +221,11 @@ void mat_m::swaprows(long r1, long r2)
       long nc=nco; bigint a;
       while(nc--) {a = *mr1; *mr1++ = *mr2; *mr2++ = a; }
     }
-  else cerr << "Bad row numbers " << r1 << "," << r2 << " in swaprow\n";
+  else 
+    {
+      cout << "Bad row numbers " << r1 << "," << r2 << " in swaprow\n";
+      abort();
+    }
 }
 
 void mat_m::multrow(long r, const bigint& scal)
@@ -224,7 +235,11 @@ void mat_m::multrow(long r, const bigint& scal)
       long nc=nco; bigint *mij = entries+(r-1)*nco;
       while(nc--) (*mij++) *= scal;
     }
-  else cerr << "Bad row number " << r << " in multrow\n";
+  else 
+    {
+      cout << "Bad row number " << r << " in multrow\n";
+      abort();
+    }
 }
 
 void mat_m::divrow(long r, const bigint& scal)
@@ -234,7 +249,11 @@ void mat_m::divrow(long r, const bigint& scal)
       long nc=nco; bigint *mij = entries+(r-1)*nco;
       while(nc--) (*mij++) /= scal;
     }
-  else cerr << "Bad row number " << r << " in divrow\n";
+  else 
+    {
+      cout << "Bad row number " << r << " in divrow\n";
+      abort();
+    }
 }
 
 void mat_m::clearrow(long r)
@@ -247,7 +266,11 @@ void mat_m::clearrow(long r)
       nc=nco; mij = entries+(r-1)*nco;
       while(nc--) (*mij++) /= g;
     }
-  else cerr << "Bad row number " << r << " in clearrow\n";
+  else 
+    {
+      cout << "Bad row number " << r << " in clearrow\n";
+      abort();
+    }
 }
 
 mat_m& mat_m::operator+=(const mat_m& mat2)
@@ -257,7 +280,11 @@ mat_m& mat_m::operator+=(const mat_m& mat2)
       long n=nro*nco; bigint *m1=entries, *m2=mat2.entries;
       while(n--) (*m1++) += (*m2++);
     }
-  else cerr << "Incompatible matrices in operator +=\n";
+  else 
+    {
+      cout << "Incompatible matrices in operator +=\n";
+      abort();
+    }
   return *this;
 }
 
@@ -268,7 +295,11 @@ mat_m& mat_m::operator-=(const mat_m& mat2)
       long n=nro*nco; bigint *m1=entries, *m2=mat2.entries;
       while(n--) (*m1++) -= (*m2++);
     }
-  else cerr << "Incompatible matrices in operator -=\n";
+  else 
+    {
+      cout << "Incompatible matrices in operator -=\n";
+      abort();
+    }
   return *this;
 }
 
@@ -304,13 +335,19 @@ mat_i mat_m::shorten(int x) const
 	      int aij = I2int(mij);
 	      *ansij =aij;
 	      if(BIGINT(*ansij)!=mij)
-		cout<<"Problem: I2int("<<mij<<") returns "<<(*ansij)<<endl;
+		{
+		  cout<<"Problem: I2int("<<mij<<") returns "<<(*ansij)<<endl;
+		  abort();
+		}
 	    }
 	}
       else 
-	cerr << "Problem shortening bigint " << mij << " to an int!" << endl;
+	{
+	  cout << "Problem shortening bigint " << mij << " to an int!" << endl;
+	  abort();
+	}
       ansij++;
-      }
+    }
   return ans;
 }
 
@@ -332,11 +369,17 @@ mat_l mat_m::shorten(long x) const
 	      long aij = I2long(mij);
 	      *ansij = aij;
 	      if(BIGINT(*ansij)!=mij)
-		cout<<"Problem: I2int("<<mij<<") returns "<<(*ansij)<<endl;
+		{
+		  cout<<"Problem: I2int("<<mij<<") returns "<<(*ansij)<<endl;
+		  abort();
+		}
 	    }
 	}
       else 
-	cerr << "Problem shortening bigint " << mij << " to a long!" << endl;
+	{
+	  cout << "Problem shortening bigint " << mij << " to a long!" << endl;
+	  abort();
+	}
       ansij++;
       }
   return ans;
@@ -369,7 +412,11 @@ mat_m operator*(const mat_m& m1, const mat_m& m2)
          c += p;
        }
    }
- else cerr << "Incompatible sizes in mat_m product\n";
+ else 
+   {
+     cout << "Incompatible sizes in mat_m product\n";
+     abort();
+   }
  return m3;
 }
 
@@ -418,7 +465,11 @@ mat_m colcat(const mat_m& a, const mat_m& b)
        nc=nca; while(nc--) *ansij++ = *aij++;
        nc=ncb; while(nc--) *ansij++ = *bij++;
      }
- else cerr << "colcat: matrices have different number of rows!" << "\n";
+ else 
+   {
+     cout << "colcat: matrices have different number of rows!" << "\n";
+     abort();
+   }
  return ans;
 }
 
@@ -432,7 +483,11 @@ mat_m rowcat(const mat_m& a, const mat_m& b)
    n = nra*nc; while(n--) *ansij++ = *aij++;
    n = nrb*nc; while(n--) *ansij++ = *bij++;
  }
- else cerr << "rowcat: matrices have different number of columns!" << "\n";
+ else 
+   {
+     cout << "rowcat: matrices have different number of columns!" << "\n";
+     abort();
+   }
  return ans;
 }
 
@@ -524,7 +579,11 @@ vec_m operator*(const mat_m& m, const vec_m& v)
          wp++;
        }
    }
- else cerr << "Incompatible sizes in *(mat_m,vec_m)\n";
+ else 
+   {
+     cout << "Incompatible sizes in *(mat_m,vec_m)\n";
+     abort();
+   }
  return w;
 }
 
@@ -748,7 +807,11 @@ vector<bigint> charpoly(const mat_m& a)
         clist[n-i] = -t;
       }
   tid=t*id;
-  if (b!=tid) cerr << "Error in charpoly: final b = " << (b-t*id);
+  if (b!=tid) 
+    {
+      cout << "Error in charpoly: final b = " << (b-t*id);
+      abort();
+    }
   return clist;
 }
 
@@ -776,7 +839,11 @@ vec_m apply(const mat_m& m, const vec_m& v)    // same as *(mat_m, vec_m)
  if (nc==dim(v))
    for (long i=1; i<=nr; i++) 
      ans[i] = m.row(i)*v;
- else cerr << "Incompatible sizes in *(mat_m,vec_m)\n";
+ else 
+   {
+     cout << "Incompatible sizes in *(mat_m,vec_m)\n";
+     abort();
+   }
  return ans;
 }
 
@@ -990,7 +1057,11 @@ mat_m matmulmodp(const mat_m& m1, const mat_m& m2, const bigint& pr)
          c += p;
        }
    }
- else cerr << "Incompatible sizes in mat_m product\n";
+ else 
+   {
+     cout << "Incompatible sizes in mat_m product\n";
+     abort();
+   }
  return m3;
 }
 

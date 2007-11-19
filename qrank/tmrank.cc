@@ -82,8 +82,8 @@ int main()
 	  rank=two_d.getrank();
           cout << "Rank = " << rank << "\t" << flush;
 #endif
-	  show_time();cerr<<endl;
-          if (rank!=filerank) cerr << "Wrong! rank of "<<C
+	  show_time();cout<<endl;
+          if (rank!=filerank) cout << "Wrong! rank of "<<C
 				   <<" should be " << filerank 
 				   << " not "<<rank<<endl;
         }

@@ -55,7 +55,11 @@ public:
  moddata(long n);                                //constructor
  ~moddata();                                    //destructor
  void display() const;
- void abort(char* mess) const {cerr<<"Out of memory ("<<mess<<")\n";  ::abort();}
+ void abort(char* mess) const 
+  {
+    cout<<"Out of memory ("<<mess<<")\n";  
+    ::abort();
+  }
  long gcd(long res) const {return gcdtable[reduce(res)];}
  long unitdiv(long res) const {return unitdivlist[reduce(res)];}
 };

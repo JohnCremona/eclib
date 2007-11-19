@@ -607,7 +607,7 @@ smat_elim::clear_col( int row, int col, int fr, int fc, int M, int frl, int fcl)
   s = xmod0(s);
   if(s==0) 
     {
-      cerr<<"Error in smat_elim::clear_col()!\nEntry #"<<col
+      cout<<"Error in smat_elim::clear_col()!\nEntry #"<<col
 	  <<" in row "<<row<<" = "<<rows[row]<<" is zero"<<endl;
       abort();
     }

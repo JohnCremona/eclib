@@ -35,7 +35,7 @@ vec_m::vec_m(long n)
 {
  d=n;
  entries=new bigint[n]; 
- if (!entries) {cerr<<"Out of memory!\n"; abort();}
+ if (!entries) {cout<<"Out of memory!\n"; abort();}
  bigint *v=entries; while(n--) *v++=0;
 }
 
@@ -43,7 +43,7 @@ vec_m::vec_m(long n, bigint* array)   //array must have at least n elements!
 {
  d=n;
  entries=new bigint[n];  
- if (!entries) {cerr<<"Out of memory!\n"; abort();} 
+ if (!entries) {cout<<"Out of memory!\n"; abort();} 
  bigint *v=entries; while(n--) *v++=*array++;
 }
 
@@ -51,7 +51,7 @@ vec_m::vec_m(const vec_m& v)                       // copy constructor
 {
   d=v.d;
   entries=new bigint[d];  
-  if (!entries) {cerr<<"Out of memory!\n"; abort();}
+  if (!entries) {cout<<"Out of memory!\n"; abort();}
   bigint *v1=entries, *v2=v.entries; long n=d;
   while(n--) *v1++=*v2++;
 }
@@ -60,7 +60,7 @@ vec_m::vec_m(const vec_i& v)
 {
   d=v.d;
   entries=new bigint[d];  
-  if (!entries) {cerr<<"Out of memory!\n"; abort();}
+  if (!entries) {cout<<"Out of memory!\n"; abort();}
   bigint *v1=entries; int *v2=v.entries; long n=d;
   while(n--) *v1++=*v2++;
 }
@@ -69,7 +69,7 @@ vec_m::vec_m(const vec_l& v)
 {
   d=v.d;
   entries=new bigint[d];  
-  if (!entries) {cerr<<"Out of memory!\n"; abort();}
+  if (!entries) {cout<<"Out of memory!\n"; abort();}
   bigint *v1=entries; long *v2=v.entries; long n=d;
   while(n--) *v1++=*v2++;
 }
@@ -81,7 +81,7 @@ void vec_m::init(long n)                 // (re)-initializes
      delete[] entries;
      d = n;
      entries=new bigint[d];  
-     if (!entries) {cerr<<"Out of memory!\n"; abort();}
+     if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
  bigint *v=entries; while(n--) *v++=0;
 }
@@ -94,7 +94,7 @@ vec_m& vec_m::operator=(const vec_m& v)                    // assignment
      delete[] entries;
      d = v.d;
      entries=new bigint[d];  
-     if (!entries) {cerr<<"Out of memory!\n"; abort();}
+     if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
  bigint *v1=entries, *v2=v.entries; long n=d; 
  while(n--) *v1++=*v2++;
@@ -104,14 +104,14 @@ vec_m& vec_m::operator=(const vec_m& v)                    // assignment
 bigint& vec_m::operator[](long i) const
 {
  if ((i>0) && (i<=d)) return entries[i-1];
- else {cerr << "bad subscript in vec_m::operator[]\n"; return entries[0];}
+ else {cout << "bad subscript in vec_m::operator[]\n"; abort(); return entries[0];}
 }
 
 vec_m& vec_m::operator+=(const vec_m& q2)
 {
   bigint* vi=entries, *wi=q2.entries; long i=d;
   if (d==q2.d) {while(i--)(*vi++)+=(*wi++);}
-  else cerr << "Incompatible vec_ms in vec_m::operator+=\n";
+  else {cout << "Incompatible vec_ms in vec_m::operator+=\n"; abort();}
   return *this;
 }
 
@@ -119,14 +119,14 @@ void vec_m::addmodp(const vec_m& w, const bigint& pr)
 {
   bigint* vi=entries, *wi=w.entries; long i=d;
   if (d==w.d) {while(i--) {*vi = mod((*wi++)+(*vi),pr);vi++;}}
-  else cerr << "Incompatible vec_ms in vec_m::addmodp\n";
+  else {cout << "Incompatible vec_ms in vec_m::addmodp\n";abort();}
 }
 
 vec_m& vec_m::operator-=(const vec_m& q2)
 {
   bigint* vi=entries; bigint* wi=q2.entries; long i=d;
   if (d==q2.d) {while(i--)(*vi++)-=(*wi++);}
-  else cerr << "Incompatible vec_ms in vec_m::operator-=\n";
+  else {cout << "Incompatible vec_ms in vec_m::operator-=\n";abort();}
   return *this;
 }
 
@@ -169,19 +169,19 @@ vec_m vec_m::operator[](const vec_l& index) const
 bigint vec_m::sub(long i) const
 {
  if ((i>0) && (i<=d)) return entries[i-1];
- else {bigint zero; cerr << "bad subscript in vec_m::sub\n"; return zero;}
+ else {bigint zero; cout << "bad subscript in vec_m::sub\n"; abort(); return zero;}
 }
 
 void vec_m::set(long i, const bigint& x)
 {
  if ((i>0) && (i<=d)) entries[i-1]=x;
- else cerr << "bad subscript in vec_m::set\n";
+ else {cout << "bad subscript in vec_m::set\n";abort();}
 }
 
 void vec_m::add(long i, const bigint& x)
 {
  if ((i>0) && (i<=d)) entries[i-1]+=x;
- else cerr << "bad subscript in vec_m::add\n";
+ else {cout << "bad subscript in vec_m::add\n";abort();}
 }
 
 vec_l vec_m::shorten(long x) const  //converts to a vector of longs
@@ -194,7 +194,10 @@ vec_l vec_m::shorten(long x) const  //converts to a vector of longs
       if(is_long(veci)) 
         *v2 = I2long(veci);
       else 
-        cerr << "Problem shortening bigint " << veci << " to a long!" << endl;
+	{
+	  cout << "Problem shortening bigint " << veci << " to a long!" << endl;
+	  abort();
+	}
       v2++;
     }
   return ans;
@@ -210,7 +213,10 @@ vec_i vec_m::shorten(int x) const  //converts to a vector of ints
       if(is_int(veci)) 
         *v2 = I2int(veci);
       else 
-        cerr << "Problem shortening bigint " << veci << " to an int!" << endl;
+	{
+	  cout << "Problem shortening bigint " << veci << " to an int!" << endl;
+	  abort();
+	}
       v2++;
     }
   return ans;
@@ -225,7 +231,10 @@ bigint operator*(const vec_m& v, const vec_m& w)
  if (dim==w.d) 
    while (dim--) dot+= (*vi++)*(*wi++);
  else 
-   cerr << "Unequal dimensions in dot product\n";
+   {
+     cout << "Unequal dimensions in dot product\n";
+     abort();
+   }
  return dot;
 }
 
@@ -272,7 +281,7 @@ bigint mvecgcd(const vec_m& v)
 void swapvec(vec_m& v, vec_m& w)
 {bigint *temp; 
  if (v.d==w.d) {temp=v.entries; v.entries=w.entries; w.entries=temp;}
- else cerr << "Attempt to swap vec_ms of different lengths!\n";
+ else {cout << "Attempt to swap vec_ms of different lengths!\n";abort();}
 }
 
 int member(const bigint& a, const vec_m& v)
@@ -298,7 +307,10 @@ vec_m express(const vec_m& v, const vec_m& v1, const vec_m& v2)
    bigint g = mvecgcd(ans);
    if (g>one) ans/=g;
    if (ans[3]*v!=ans[1]*v1+ans[2]*v2)
-       cerr << "Warning from express: v is not in <v1,v2>\n";
+     {
+       cout << "Error in express: v is not in <v1,v2>\n";
+       abort();
+     }
    return ans;
 }
 

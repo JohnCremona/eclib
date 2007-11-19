@@ -75,7 +75,7 @@ void svec::erase(int i)
   map<int,scalar>::iterator vi = entries.find(i);   
   if(vi==entries.end()) 
     {
-      cerr<<"Error in svec::erase(): cannot delete missing entry #"<<i
+      cout<<"Error in svec::erase(): cannot delete missing entry #"<<i
 	  <<" from v = "<<(*this)<<endl; 
       abort();
     } 
@@ -152,7 +152,8 @@ svec& svec::operator+=(const svec& w)
 {
   if (d!=w.d)
     {
-      cerr << "Incompatible svecs in svec::operator+=()\n";
+      cout << "Incompatible svecs in svec::operator+=()\n";
+      abort();
       return *this;
     }
   map<int,scalar>::const_iterator  wi=w.entries.begin();
@@ -192,7 +193,8 @@ svec& svec::operator-=(const svec& w)
 {
   if (d!=w.d)
     {
-      cerr << "Incompatible svecs in svec::operator-=()\n";
+      cout << "Incompatible svecs in svec::operator-=()\n";
+      abort();
       return *this;
     }
   map<int,scalar>::const_iterator  wi=w.entries.begin();
@@ -232,7 +234,8 @@ svec& svec::add_scalar_times(const svec& w, scalar a)
 {
   if (d!=w.d)
     {
-      cerr << "Incompatible svecs in svec::add_scalar_times()\n";
+      cout << "Incompatible svecs in svec::add_scalar_times()\n";
+      abort();
       return *this;
     }
   if(a==0) return *this;
@@ -271,7 +274,7 @@ svec& svec::add_scalar_times(const svec& w, scalar a)
 
 svec& svec::operator*=(scalar scal)
 {
-  if(scal==0) cerr<<"Attempt to multiply svec by 0\n"<<endl;
+  //  if(scal==0) cout<<"Attempt to multiply svec by 0\n"<<endl;
   for( map<int,scalar>::iterator vi=entries.begin(); 
        vi != entries.end(); vi++)
     (vi->second)*=scal;
@@ -292,7 +295,7 @@ void svec::reduce_mod_p(const scalar& p)
 
 svec& svec::mult_by_scalar_mod_p(scalar scal, const scalar& p)
 {
-  if(xmod(scal,p)==0) cerr<<"Attempt to multiply svec by 0\n"<<endl;
+  //  if(xmod(scal,p)==0) cout<<"Attempt to multiply svec by 0\n"<<endl;
   if(scal!=1)
     for( map<int,scalar>::iterator vi=entries.begin(); 
 	 vi != entries.end(); vi++)
@@ -304,7 +307,8 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, const scalar& p)
 {
   if (d!=w.d)
     {
-      cerr << "Incompatible svecs in svec::add_scalar_times()\n";
+      cout << "Incompatible svecs in svec::add_scalar_times()\n";
+      abort();
       return *this;
     }
   if(a==0) return *this;
@@ -349,7 +353,8 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, std::set<int>& ons, 
   offs.clear();
   if (d!=w.d)
     {
-      cerr << "Incompatible svecs in svec::add_scalar_times()\n";
+      cout << "Incompatible svecs in svec::add_scalar_times()\n";
+      abort();
       return *this;
     }
   if(a==0) return *this;
@@ -391,7 +396,11 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, std::set<int>& ons, 
 
 svec& svec::operator/=(scalar scal)
 {
-  if(scal==0) cerr<<"Attempt to divide svec by 0\n"<<endl;
+  if(scal==0) 
+    {
+      cout<<"Attempt to divide svec by 0\n"<<endl;
+      abort();
+    }
   for( map<int,scalar>::iterator vi=entries.begin(); 
        vi != entries.end(); vi++)
     (vi->second)/=scal;

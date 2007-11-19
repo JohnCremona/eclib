@@ -443,8 +443,9 @@ void periods_direct::compute(void)
 {
   if(d==0) 
    {
-    cerr<<"Problem: cannot compute periods for matrix with d=0!"<<endl;
+    cout<<"Problem: cannot compute periods for matrix with d=0!"<<endl;
     rp=ip=0;
+    abort();
     return;
    }
 

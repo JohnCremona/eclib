@@ -58,7 +58,7 @@ void primeclass::init(long maxnum)  /* initializes variable pdiffptr */
   register long k,size=(maxnum+257)>>1;
   delete [] pdiffptr;
   byteptr p= new unsigned char[size+1];
-  if (!p) {cerr<<"Out of memory in primeclass::init!"<<endl;abort();}
+  if (!p) {cout<<"Out of memory in primeclass::init!"<<endl;abort();}
   memset(p, 0, size + 1); 
   register byteptr q,r,s,fin=p+size;
   for(r=q=p,k=1;r<fin;)
@@ -119,7 +119,7 @@ long primeclass::number(long n)
     }
   if(!ok)
     {
-	cerr<<"Not enough primes in primeclass.number("<<n<<") !"<<endl;
+	cout<<"Not enough primes in primeclass.number("<<n<<") !"<<endl;
 	abort();
     }
   return p_val;
@@ -138,7 +138,7 @@ vector<long> primeclass::getfirst (long n)  /* returns list of first n primes */
     }
   if(!ok)
     {
-	cerr<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
+	cout<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
 	abort();
     }
   return ans;
@@ -156,7 +156,7 @@ long primdiv(long aa)
     else if (q*q>a) p=a;   // N.B. this causes a=1 to return 1.  Beware!
    }
  if (p==0) {p=a; 
-            cerr<<"No prime divisor found for "<<aa<<" so assuming prime!\n";
+            cout<<"No prime divisor found for "<<aa<<" so assuming prime!\n";
            }
  return p;
 }
@@ -310,9 +310,12 @@ long invmod(long a, long p)
 {long g,x,y;
  g=bezout(a,p,x,y);
  if (g==1) return x;
- else {cerr << "invmod called with " << a << " and " << p << " -- not coprime!\n";
-       return 0;
-      }
+ else 
+   {
+     cout << "invmod called with " << a << " and " << p << " -- not coprime!\n"; 
+     abort();
+     return 0;
+   }
 }
 
 int modrat(int n, int m, float lim, int& a, int& b)
@@ -341,12 +344,14 @@ int modrat(long n, long m, float lim, long& a, long& b)
    if (r<lim)
      {
        if (abs(rr)<lim) {a=r; b=rr; return 1;}
-       else cerr << "modrat error: no reconstruction for " << n << " mod " << m << "\n";
+       else cout << "modrat error: no reconstruction for " << n << " mod " << m << "\n";
 //     cout<<" = "<<a<<"/"<<b<<"\n";
+       abort();
        return 0;
      }
  }
- cerr << "modrat error: common factor with " << n << " mod " << m << "\n";
+ cout << "modrat error: common factor with " << n << " mod " << m << "\n";
+ abort();
  return 0;
 }
 

@@ -225,10 +225,10 @@ void form_finder::make_basis()
 {
   if(subdim!=targetdim)
     {
-      cerr<<"error in form_finder::make_basis with eiglist = ";
-      for(int i=0; i<depth; i++) cerr<<eiglist[i]<<",";
-      cerr<<"\nfinal subspace has dimension "<<subdim<<endl;
-      cerr<<"aborting this branch!"<<endl;
+      cout<<"error in form_finder::make_basis with eiglist = ";
+      for(int i=0; i<depth; i++) cout<<eiglist[i]<<",";
+      cout<<"\nfinal subspace has dimension "<<subdim<<endl;
+      cout<<"aborting this branch!"<<endl;
       return;
     }
 
@@ -281,11 +281,11 @@ void form_finder::make_basis()
       spm = new ssubspace(eigenspace(subconjmat,seig));
     if(dim(*spm)!=1)
       {
-        cerr<<"error in form_finder::makebasis; ";
-        cerr<<"\nfinal (";
-        if(signeig>0)cerr<<"+"; else cerr<<"-";
-        cerr<<") subspace has dimension "<<dim(*spm)<<endl;
-        cerr<<"aborting this branch!"<<endl;
+        cout<<"error in form_finder::makebasis; ";
+        cout<<"\nfinal (";
+        if(signeig>0)cout<<"+"; else cout<<"-";
+        cout<<") subspace has dimension "<<dim(*spm)<<endl;
+        cout<<"aborting this branch!"<<endl;
 	delete spm;
         return;
       }
@@ -443,7 +443,7 @@ mat sparse_restrict(const mat& m, const subspace& s)
     int ok = (ans.as_mat()==RESTRICT(m,s));
     if (!ok) 
       {
-	cerr<<"Warning from sparse_restrict: sparse result differs fromnormal!\n";
+	cout<<"Error in sparse_restrict: sparse result differs fromnormal!\n";
 	abort();
       }
   }

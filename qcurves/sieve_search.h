@@ -220,7 +220,7 @@ class qsieve {
   //of sieving primes for the first stage automatically.
   void set_ratio1(double r1)
     { if (r1<0.0) 
-      cerr<<"qsieve::set_ratio1():ratio must be >0"<<endl; 
+      cout<<"qsieve::set_ratio1():ratio must be >0"<<endl; 
     else ratio1=r1; };
   //`ratio2' is the ratio of running time needed for checking if x-coordinates
   //give rise to points versus one step of the second sieving stage. 
@@ -228,7 +228,7 @@ class qsieve {
   //stage automatically
   void set_ratio2(double r2)
     { if (r2<0.0) 
-      cerr<<"qsieve::set_ratiow():ratio must be >0"<<endl; 
+      cout<<"qsieve::set_ratiow():ratio must be >0"<<endl; 
     else ratio2=r2; };
   //`size' is the size (in kilobytes) used for the array of bits in which 
   //the sieving is done. This affects the amount of memory used by the 
@@ -238,7 +238,7 @@ class qsieve {
   //Default is DEFAULT_SIZE = 10. 
   void set_array_size(long as)
     { if (as<0) 
-      cerr<<"qsieve::set_array_size(): size must be >0"<<endl; 
+      cout<<"qsieve::set_array_size(): size must be >0"<<endl; 
     else array_size=as;};//size of survivors array in kbytes
   void be_quiet() {verbose=0;};
   //to switch off the check if a survivng candidate is really a point. 

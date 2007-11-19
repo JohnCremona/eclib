@@ -254,7 +254,7 @@ void qsieve::set_intervals(vector<double> interv,int nb_bnd,int start_low,int po
       if (uplow&1) //upper bound
 	{
 	  if (interv[j]<domain[num_inter].low)
-	    cerr<<"qsieve::set_intervals:interv[i]>interv[i+1]"<<endl;
+	    cout<<"qsieve::set_intervals:interv[i]>interv[i+1]"<<endl;
 	  if (interv[j]>=height)
 	    j=nb_bnd; //done
 	  else
@@ -266,7 +266,7 @@ void qsieve::set_intervals(vector<double> interv,int nb_bnd,int start_low,int po
       else  //lower bound
 	{
 	  if ((num_inter>0) && (interv[j]<domain[num_inter-1].up))
-	    cerr<<"qsieve::set_intervals:interv[i]>interv[i+1]"<<endl;
+	    cout<<"qsieve::set_intervals:interv[i]>interv[i+1]"<<endl;
 	  else
 	    {
 	      if (interv[j]>=height)

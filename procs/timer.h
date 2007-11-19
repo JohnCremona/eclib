@@ -39,7 +39,7 @@
 void init_time();
 void start_time();
 void stop_time();
-void show_time();
+void show_time(ostream& s = cout);
 
 #ifndef TIME_CONICS
 #define TIME_CONICS 0
@@ -48,6 +48,6 @@ void show_time();
 void init_conic_timer();
 void start_conic_timer();
 void stop_conic_timer();
-void show_conic_timer();
+void show_conic_timer(ostream& s = cout);
 
 #endif

@@ -118,7 +118,7 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
 // Checks for solublility in Zp with x=x0 (mod p^nu)
 // Fully recursive (depth-first) version
 {
-  // cerr << "In zpsol with (p,nu) = (" << p << "," << nu << "), x0="<<x0<<"\n";
+  // cout << "In zpsol with (p,nu) = (" << p << "," << nu << "), x0="<<x0<<"\n";
 
  long result =  (p==2) ? lemma7(a,b,c,d,e,p,nu, x0)
                       : lemma6(a,b,c,d,e,p,nu, x0);

@@ -645,7 +645,7 @@ int mw::saturate(bigint& index, vector<long>& unsat, long sat_bd, int odd_primes
   if(rank>0) ok=satsieve.saturate(unsat,index,sat_bd,1,10,odd_primes_only);
   if(verbose) cout<<"done"<<endl;
   if(!ok)
-    cerr<<"Failed to saturate MW basis at primes "<<unsat<<endl;
+    cout<<"Failed to saturate MW basis at primes "<<unsat<<endl;
   if(index>1)
     {
       basis = satsieve.getgens();
@@ -1316,7 +1316,7 @@ int order_real_roots(vector<double>& bnd, vector<bigcomplex> roots)
       orderreal(real_roots[2],real_roots[1],real_roots[0]); 
       return set_the_bounds(bnd,real_roots[0],real_roots[1],real_roots[2]);
     default:
-      cerr<<"mw_info::set_the_bounds: two real roots for the elliptic curve...\n";
+      cout<<"mw_info::set_the_bounds: two real roots for the elliptic curve...\n";
     }
   return 0; //we should not get here...
 }

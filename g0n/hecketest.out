@@ -5,7 +5,7 @@ denominator = 1
 Computing conjmat...   done.
 Computing +1 eigenspace...   done, dimension = 22
 Computing -1 eigenspace...   done, dimension = 0
-Computing W(2)...  transposing... done, sparsity = 0.0785124. 
+Computing W(2)...  done, sparsity = 0.0785124. 
 Computed matrix  = 
 [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0],
 [0,0,0,0,0,-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -35,7 +35,7 @@ Dimension of 1-eigenspace=11
 Using sparse matrix code...
 Dimension of -1-eigenspace=11
 
-Computing W(3)...  transposing... done, sparsity = 0.179752. 
+Computing W(3)...  done, sparsity = 0.179752. 
 Computed matrix  = 
 [[0,0,-1,1,-1,0,0,0,0,0,0,0,0,0,0,1,-1,1,0,0,0,0],
 [0,0,-1,1,-1,0,0,0,0,0,0,0,1,0,0,0,-1,1,0,0,0,0],
@@ -65,7 +65,7 @@ Dimension of 1-eigenspace=12
 Using sparse matrix code...
 Dimension of -1-eigenspace=10
 
-Computing W(5)...  transposing... done, sparsity = 0.181818. 
+Computing W(5)...  done, sparsity = 0.181818. 
 Computed matrix  = 
 [[0,0,0,0,0,0,0,0,0,0,0,-1,1,0,0,0,0,0,0,1,0,0],
 [0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,1,0,0,0,1,0,0],

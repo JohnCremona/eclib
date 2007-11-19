@@ -95,7 +95,7 @@ public:
 	  case 'c': hlimc = atoi (getopt.optarg);
 	    if(hlimc>15)
 	      {
-		cerr << "NB: reducing hlimc to 15\n";
+		cout << "NB: reducing hlimc to 15\n";
 	      }
 	    break;
 	  case 'S': saturation_bound = atoi (getopt.optarg); break;

@@ -75,7 +75,11 @@ mat_m restrict(const mat_m& m, const msubspace& s)
     check = (dd*m.row(i)*sb.col(j) == sb.row(i)*ans.col(j));
 //#define BIGPRIME 92681
 //int check = (dd*matmulmodp(m,sb,BIGPRIME) == matmulmodp(sb,ans,BIGPRIME));
-  if (!check) cerr<<"Warning from restrict: msubspace not invariant!\n";
+  if (!check) 
+    {
+      cout<<"Error in restrict: msubspace not invariant!\n";
+      abort();
+    }
 #endif
   return ans;
 }
@@ -158,7 +162,11 @@ mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr)
   mat_m& left = matmulmodp(m,sb,pr), right = matmulmodp(sb,ans,pr);
   if(dd!=1) left*=dd;
   int check = (left==right);
-  if (!check) cerr<<"Warning from prestrict: msubspace not invariant!\n";
+  if (!check) 
+    {
+      cout<<"Error in prestrict: msubspace not invariant!\n";
+      abort();
+    }
 #endif
   return ans;
 }
