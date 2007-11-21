@@ -38,12 +38,12 @@ int main(void)
   int limit,firstn,n=1,count=0; 
   int verbose=0;
 #ifdef AUTOLOOP
-  cout<<"Enter first and last N: ";cin>>firstn>>limit; 
+  cerr<<"Enter first and last N: ";cin>>firstn>>limit; 
   n=firstn-1; cout<<endl;
   while (n<limit) { n++;
 #else
   verbose=1;
-  while (n>0) { cout<<"Enter level: "; cin>>n;
+  while (n>0) { cerr<<"Enter level: "; cin>>n;
 #endif
  if (n>0)
 {
@@ -53,6 +53,7 @@ int main(void)
  nf.createfromdata(25);
  int num = nf.n1ds; count+=num;
  cout << num << " newform(s), "<<nf.nap<<" eigs on file." << endl;
+ // nf.makebases();
  /*
  nf.sort();
  cout<<"After sort():"<<endl;

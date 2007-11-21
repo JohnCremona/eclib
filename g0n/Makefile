@@ -94,7 +94,9 @@ install: lib install_lib
 
 #NF_DIR ?= ./newforms
 CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT #-DNF_DIR=\"$(NF_DIR)\"
-LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lm
+# in the following line I don't know why I get missing symbol errors if 
+# I do not put int timer.o explicitly, since it is in libjc.a
+LFLAGS = ../procs/timer$(OBJ_SUF).o -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lm
 
 LIBFLAGS = $(LFLAGS)
 
@@ -125,7 +127,7 @@ check:  $(TESTS) $(PROGS)
 	rm -rf tmp_nf_dir
 	mkdir tmp_nf_dir
 	NF_DIR=tmp_nf_dir && ./tmanin < tmanin.in > t 2>/dev/null && diff t tmanin.out
-	NF_DIR=tmp_nf_dir && ./nftest < nftest.in > t && diff t nftest.out
+	NF_DIR=tmp_nf_dir && ./nftest < nftest.in 2>/dev/null > t && diff t nftest.out
 	NF_DIR=tmp_nf_dir && ./oftest < oftest.in > t && diff t oftest.out
 	NF_DIR=tmp_nf_dir && ./nfhpcurve < nfhpcurve.in > t 2>/dev/null && diff t nfhpcurve.out
 	NF_DIR=tmp_nf_dir && ./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
@@ -195,12 +197,6 @@ checkap: checkap$(OBJ_SUF).o
 tmanin: tmanin$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o tmanin tmanin$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
 
-mtmanin: tmanin$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o mtmanin $(G0NLIBFLAG) $(LFLAGS)
-
-correct: correct$(OBJ_SUF).o
-	 $(CC) -o correct correct$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
 getoldeigs: getoldeigs$(OBJ_SUF).o
 	$(CC) -o getoldeigs getoldeigs$(OBJ_SUF).o $(LFLAGS)
 
@@ -210,15 +206,6 @@ putoldeigs: putoldeigs$(OBJ_SUF).o
 
 fix1290: fix1290$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o fix1290 fix1290$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
-pmanin: pmanin$(OBJ_SUF).o pcprocs$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o pmanin pmanin$(OBJ_SUF).o pcprocs$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
-xmanin: xmanin$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o xmanin xmanin$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
-
-cnf: cnf$(OBJ_SUF).o $(G0NLIBNAME)
-	$(CC) -o cnf cnf$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
 
 h1test: h1test$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CC) -o h1test h1test$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
@@ -362,7 +349,6 @@ homspace$(OBJ_SUF).o: moddata.h symb.h cusp.h homspace.h homspace.cc
 moddata$(OBJ_SUF).o: moddata.h moddata.cc
 oldforms$(OBJ_SUF).o: moddata.h oldforms.h oldforms.cc
 newforms$(OBJ_SUF).o: newforms.cc newforms.h moddata.h homspace.h oldforms.h 
-manin$(OBJ_SUF).o: manin.cc manin.h moddata.h symb.h homspace.h oldforms.h newforms.h
 
 modtest$(OBJ_SUF).o: modtest.cc moddata.h symb.h
 homtest$(OBJ_SUF).o: homtest.cc moddata.h symb.h cusp.h homspace.h
@@ -372,11 +358,7 @@ gd2$(OBJ_SUF).o: gd2.cc moddata.h symb.h cusp.h homspace.h
 oftest$(OBJ_SUF).o: oftest.cc moddata.h symb.h cusp.h oldforms.h
 nftest$(OBJ_SUF).o: nftest.cc moddata.h symb.h cusp.h homspace.h oldforms.h newforms.h \
 
-tmanin$(OBJ_SUF).o: tmanin.cc manin.h moddata.h symb.h cusp.h homspace.h oldforms.h \
-	newforms.h 
-fix1290$(OBJ_SUF).o: fix1290.cc manin.h moddata.h symb.h cusp.h homspace.h oldforms.h \
-	newforms.h 
-pmanin$(OBJ_SUF).o: pmanin.cc manin.h moddata.h symb.h cusp.h homspace.h oldforms.h \
+tmanin$(OBJ_SUF).o: tmanin.cc moddata.h symb.h cusp.h homspace.h oldforms.h \
 	newforms.h 
 
 th1nf$(OBJ_SUF).o: th1nf.cc moddata.h symb.h cusp.h homspace.h  oldforms.h 
@@ -403,7 +385,7 @@ h1bsd$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h 
 h1bsdc$(OBJ_SUF).o: h1bsdc.cc moddata.h oldforms.h newforms.h symb.h cusp.h  periods.h
 h1bsdc$(OBJ_SUF).o: h1bsdc.cc moddata.h oldforms.h newforms.h symb.h cusp.h periods.h curvesort.cc
 lf1per$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h lf1per.cc
-nfhpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h manin.h cusp.h pcprocs.h nfhpcurve.cc
+nfhpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h cusp.h pcprocs.h nfhpcurve.cc
 hpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h hpcurve.cc
 pcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h pcurve.cc
 allpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h allpcurve.cc

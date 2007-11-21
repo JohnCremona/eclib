@@ -28,7 +28,6 @@
 #include "cperiods.h"
 #include "oldforms.h"
 #include "newforms.h"
-#include "manin.h"
 
 inline int testbit(long a, long i) {return (a& (1<<i));}
 

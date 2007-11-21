@@ -31,7 +31,6 @@
 #include "oldforms.h"
 #include "cperiods.h"
 #include "newforms.h"
-#include "manin.h"
 
 #define AUTOLOOP
 

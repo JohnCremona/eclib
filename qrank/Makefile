@@ -49,7 +49,9 @@ endif
 RANKLIBNAME=$(RANKLIBBASE).a
 
 CFLAGS = -c $(OPTFLAG) -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) #-pg
-LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lpari -lm #-pg
+# in the following line I don't know why I get missing symbol errors if 
+# I do not put int timer.o explicitly, since it is in libjc.a
+LFLAGS = ../procs/timer$(OBJ_SUF).o -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lpari -lm #-pg
 
 LIBFLAGS = $(LFLAGS)
 
@@ -150,17 +152,6 @@ check: $(PROGS) $(TESTS)
 	./ratpoint < ratpoint.in > t 2>/dev/null && diff t ratpoint.out
 	./mwrank < mwrank.in > t 2>/dev/null && diff t mwrank.out
 
-newmrank: version$(OBJ_SUF).o mwrank$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mglobsol$(OBJ_SUF).o mlocsol$(OBJ_SUF).o qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o
-	chmod og+r *
-	$(CXX) -o newmrank version$(OBJ_SUF).o mwrank$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o \
-	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o \
-	transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o $(LFLAGS)
-
-mrank: version$(OBJ_SUF).o mrank$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mglobsol$(OBJ_SUF).o mlocsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o
-	chmod og+r *
-	$(CXX) -o mrank version$(OBJ_SUF).o mrank$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o \
-	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o \
-	transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o $(LFLAGS)
 
 mwrank: version$(OBJ_SUF).o mwrank$(OBJ_SUF).o descent$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o \
 	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o \
@@ -196,20 +187,9 @@ tred: version$(OBJ_SUF).o tred$(OBJ_SUF).o reduce$(OBJ_SUF).o minim$(OBJ_SUF).o 
 	$(CXX) -o tred version$(OBJ_SUF).o tred$(OBJ_SUF).o reduce$(OBJ_SUF).o minim$(OBJ_SUF).o transform$(OBJ_SUF).o mquartic$(OBJ_SUF).o \
 	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o $(LFLAGS)
 
-sqftest: sqftest$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o
-	$(CXX) -o sqftest sqftest$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o -ljc -lg++ -lm -L../lib
-
 tequiv: version$(OBJ_SUF).o tequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mequiv$(OBJ_SUF).o
 	$(CXX) -o tequiv version$(OBJ_SUF).o tequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mequiv$(OBJ_SUF).o $(LFLAGS)
 
-testarg: testarg$(OBJ_SUF).o
-	$(CXX) -o testarg testarg$(OBJ_SUF).o $(LFLAGS)
-
-rcubic: rcubic$(OBJ_SUF).o cubic$(OBJ_SUF).o
-	$(CXX) -o rcubic rcubic$(OBJ_SUF).o cubic$(OBJ_SUF).o $(LFLAGS)
-
-lcubic: lcubic$(OBJ_SUF).o cubic$(OBJ_SUF).o
-	$(CXX) -o lcubic lcubic$(OBJ_SUF).o cubic$(OBJ_SUF).o $(LFLAGS)
 
 # DEPENDENCIES
 

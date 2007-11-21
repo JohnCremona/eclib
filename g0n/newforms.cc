@@ -1032,7 +1032,7 @@ void newforms::makebases()
   makeh1();
   if(verbose) cout << "done." << endl;
   mvp=h1->maninvector(p0); 
-  if(verbose) cout << "Making form_finder..."<<flush;
+  if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
   form_finder splitspace(this, plusflag, nap, 0, 1, cuspidal, verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
   basisflag=1; j1ds=0;

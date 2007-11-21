@@ -1,4 +1,4 @@
-Enter level: >>> Level 90 <<<	
+>>> Level 90 <<<	
 After constructor, about to createfromdata() 
 Retrieving newform data for N = 90
 Finished reading newform data for N = 90
@@ -25,4 +25,3 @@ SFE = 1,	L/P = 2
 lplus = 1, mplus = 1
 [(1,0;0,1),1,1;0]
 3 newform(s), 25 eigs on file.
-Enter level: 
