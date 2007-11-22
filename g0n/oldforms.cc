@@ -174,13 +174,3 @@ if (noldclasses>0)
  cout<<"Total number of oldclasses = "<<noldclasses<<"\n";
  cout<<"Total dimension of oldclasses = "<<totalolddim<<"\n";
 }
-
-char* eigfile(long d)    //returns filename for eigs at level d
-{
-  int debug=0;
-  if(debug)cout<<"In eigfile() with d = " << d << flush;
-  char* ans = new char[20];
-  sprintf(ans,"%s%ld",EIG_FILE_PREFIX,d);
-  if(debug)cout<<"\t...eigfile returns "<<ans<<"\n";
-  return ans;
-}

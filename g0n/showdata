@@ -1,0 +1,84 @@
+#!/bin/bash
+
+NNF=`./nnf $1`
+NAP=`./nap $1`
+N=`expr $NNF '*' 64`
+N=`expr $N + 12`
+NQ=`factor $1 | cut -d " " -f 2- | fmt -1 | uniq | wc -l`
+
+echo "N   = "$1":"
+echo ${NNF}" newforms, "${NQ}" bad primes, "${NAP}" ap"
+echo
+
+od -N ${N} -v -t dI newforms/x$1 | gawk \
+'BEGIN{getline;n1=$2;naq=$3;nap=$4;npl=NF;\
+#printf("#newforms=\t%d\n",n1);\
+#printf("#aq=    \t%d\n",naq,nap);\
+#printf("#ap=    \t%d\n\n",nap);\
+k=5;\
+if(k>npl) {getline; k=2;}; \
+printf("sfe:     \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("ap0:     \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("np0:    \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("dp0:    \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("lplus:  \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("mplus:  \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("lminus: \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("mminus: \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("a:       \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("b:       \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("c:       \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("d:       \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("dotplus: \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("dotminus: \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("type:      \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+printf("degphi: \t");
+for(j=0; j<n1; j++) \
+{if(k>npl) {getline; k=2;}; printf("%d\t",$k);k++;};\
+printf("\n");\
+}'

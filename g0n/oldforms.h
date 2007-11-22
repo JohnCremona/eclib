@@ -21,13 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#define BINARY
-#ifdef BINARY
-#define EIG_FILE_PREFIX "eigs/x"
-#else
-#define EIG_FILE_PREFIX "eigs/e"
-#endif
-
 class oldforms {
  public:
   long noldclasses, nap, ntp;
@@ -45,5 +38,3 @@ class oldforms {
   long dimoldpart(vector<long> aplist) const;
   void display(void) const;
 };
-
-char* eigfile(long d);    //returns filename for eigs at level d

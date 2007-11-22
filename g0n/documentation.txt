@@ -1,0 +1,663 @@
+Documentation for the g0n library
+
+%  created 20070125
+%  Time-stamp: <22-Nov-2007 18:28:59 jec>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Level 0:  functionality provided from other libraries
+
+Basic arithmetic, including polynomials and pari/NTL interfacing, are
+done in ../procs.
+
+Linear Algebra, including Sparse LA, are also currently done in
+../procs, but will be refactored out to be separate by Ralf-Philipp
+Weinmann. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Level 1:  low-level classes probably not useful for users to use
+directly.
+
+NB The efficiency of the implementations here is of crucial
+importance! 
+
+----------------------------------------------------------------------
+
+file: moddata
+class: level
+
+Holds the current level N ("modulus"), its prime factors and divisors,
+some "global" flags and a reduce() function for reduction modulo N.
+
+----------------------------------------------------------------------
+
+file: moddata
+class: moddata (derived from level)
+
+Holds precomputed arithmetic data for the level, including lookup
+tables of gcds with N and inverse modulo N
+
+Test program: modtest (also tests symb class)
+
+----------------------------------------------------------------------
+
+file: symb
+class: symb
+
+Class for (c:d) or M-symbols.  Also holds a pointer to a moddata.
+Functions for equality testing, normalization.
+
+----------------------------------------------------------------------
+
+file: symb
+class: modsym
+
+Class for {a,b} or modular symbols, where a,b are rational.
+Includes constructor from a symb.
+
+----------------------------------------------------------------------
+
+file: symb
+class: symblist
+
+Class for an array of symbs with hash function for fast index lookup.
+
+----------------------------------------------------------------------
+
+file: symb
+class: symbdata (derived from moddata)
+
+Class for full M-symbol data.  Includes a symblist of "specials"
+(M-symbols not of the form (c:1) or (1:d)),  bijections from the set
+of M-symbols to/from indices in the range 0..nsymb-1, and
+implementation of matrix operations (rof, rsof, sof, tof) applied to
+symb indices.
+
+----------------------------------------------------------------------
+
+file: oldforms
+class: oldforms
+
+Class for retrieving oldforms from stored data files for all levels
+properly dividing the current level.  Computes multiplicities of
+these. Used for one purpose: in searching for newforms recursively, at
+any point we will have restricted to some subspace cut out by
+eigenvalues [a2, a3, a5, ...]  and the oldforms member function
+dimoldpart() will tell us how much of the current dimension is
+accounted for by oldforms.  This enables us to abandon the current
+recursive branch if it is all old, and for the same reason results in
+oldforms being discarded and only newforms kept.  [NB for this to work
+it is crucial that before running the newforms search, date for the
+dividing levels is available.  This is handled automatically by the
+newforms class functions.]
+
+----------------------------------------------------------------------
+
+file: cusp
+class: cusplist
+
+Class to hold an array of inequivalent cusps (=rationals), insert and
+locate cusps in the list, and test for cusp equivalence (using a
+moddata pointer to know the level and also whether or not plusflag is
+set, in which case the equivalence test is affected).
+
+----------------------------------------------------------------------
+
+file: homspace
+class: mat22
+
+Class to hold a 2x2 matrix, with functions to allow them to act on
+rationals and symbs
+
+----------------------------------------------------------------------
+
+file: homspace
+class: matop
+
+Class to hold a formal sum of mat22s.  Constructors include:  Hecke
+operators T_p, W_q, Heilbronn matrices
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Level 3: high-level classes useful for users to use directly.  I would
+expect these to be wrapped for Sage (eventually)
+
+----------------------------------------------------------------------
+
+file: homspace
+class: homspace (derived from symbdata)
+
+The main class for holding a "modular symbols space".
+The constructor does a lot of work:
+  homspace(long n, // the level
+	   int hp, // plus-space flag (0 or 1)
+	   int hcusp, // cuspidal flag (0 or 1)
+	   int verbose // verbosity (0 : no output
+	               //	     1 : basic short output
+	               //            2 : lots of detail)
+	   );
+
+The plus-space flag switches between working on H_1^+ (by quotienting
+out extra relations (c:d)=(-c:d)) or the full H_1.  Working in the -1
+eigenspace is _not_ implemented.
+
+If the cupsidal flag is 1 then the space computed is the kernel of
+the boundary map to the cusps, and all operators are restricted to
+that subspace.  However the "restricted" operators which compute
+directly the action of Tp etc on a subspace only work properly (1) for
+subspaces of the dual and (2) for the full (including non-cuspidal)
+homology.  
+
+Functionality (most useful class functions only):
+
+  long h1cuspdim() // returns dim of cuspidal subspace
+  long h1dim()     // returns dim of whole space
+  long h1ncusps()  // returns number of cusp classes
+
+  svec schain(const symb& s) // returns coordinates of symb s
+  svec schaincd(long c, long d) // returns coords of symb (c:d)
+  svec schain(long nn, long dd) // returns coords of modsym {0,nn/dd}
+  svec schain(const rational& r) // returns coords of modsym {0,r}
+
+  vec cycle(long n, long d) // as schain(n,d) but cuspidal only,
+  result is a coordinate vector w.r.t. the basis for cuspidal homology
+
+  vec cycle(const rational& r) // as schain(r) but cuspidal
+  vec cycle(const modsym& m) // as schain(b)-schain(a) but cuspidal, m={a,b}
+
+  mat heckeop(long p, int dual, int display=0) // p'th Hecke operator
+  (Tp or W_p according as p does not / does divide level)
+  NB (1) if cuspidal==1, restricts to cuspidal subspace
+     (2) if dual==1, transposes
+
+  mat heckeop_restricted(long p, const subspace& s, int dual, int
+  display=0) 
+  // as previous but restricted to *dual* subspace s, so dual==1 is
+  // mandatory else results are not guaranteed to be meaningful
+
+  smat s_heckeop(long p, int dual, int display=0)
+  smat s_heckeop_restricted(long p, const ssubspace& s, int dual, int
+  display=0)
+  // Exactly as previous two but returns a sparse matrix
+
+  mat newheckeop(long p, int dual, int display=0) // Tp computation
+  using Heilbronn matrices.  Faster than heckeop(), but not currently
+  implemented in a "restricted" version, hence not used in the main
+  newform-finding programs. *But* for a one-off calculation of a Hecke
+  op on the whole space you should use this one!
+
+  mat wop(long q, int dual, int display=0) // returns W_q matrix
+  smat s_wop(long q, int dual, int display=0) // returns W_q sparse matrix
+  mat fricke(int dual, int display=0) // returns Fricke involution matrix
+  mat conj(int dual,int display=0) // returns conjugation matrix
+  (=identity if plusflag==1!)
+  mat conj_restricted(const subspace& s, int dual,int display=0) // ditto, restricted to subspace s
+  smat s_conj(int dual, int display=0) // as above, returning sparse mat
+  smat s_conj_restricted(const ssubspace& s, int dual, int display=0)  // as above, returning sparse mat
+
+  vec maninvector(long p) // for good p, returns sum_{a mod p}{0,a/p} 
+  vec manintwist(long p) // for good p, returns sum_{a mod p}chi(a){0,a/p} 
+
+----------------------------------------------------------------------
+
+file: newforms
+classes: newform and newforms
+
+Overview:  newform holds an individual newform, with a pointer to the
+parent newforms for "global" data;  newforms (which is derived from
+level) contains a vast anout of stuff, explained below, including an
+array of individual newform-s.
+
+----------------------------------------------------------------------
+
+class: newform
+
+For more details see newforms.h
+
+Main data fields:
+
+  newforms *nf;  // the "parent"
+  int plusflag;   // 1 for old-style newform, 0 for old-style h1newform
+  vec bplus,bminus; // DUAL eigenvectors (bminus only used if plusfalg==0)
+  scalar type;            // 2 for rectangular, 1 for triangular
+			  //  period lattice
+  vector<long> aplist, aqlist; 
+// aplist is a vector of Fourier coefficients, indexed by all primes
+// aqlist is a vector of the Wq eigenvalues
+// Bother are needed since (a) the q'th Fourier coefficient is 0 when
+// q^2|N so does not determine the eigenvalue; (b) the range of the
+// aplist may not go ar enough to include all bad primes, but we really
+// want to have all aq (to get the sign of the functional equation,
+// analytic rank parity etc.)
+
+  long ap0;     // Eigenvalue of first "good" p
+  long sfe;     // sign of functional equation
+  rational loverp;  // L(f,1)/x where x = least real part of a period
+                    // =np0/dp0 
+
+// The bext few are technical, needed for computing periods.
+  long cuspidalfactor;  // pdot =cuspidalfactor*np0
+  long pdot,np0,dp0,qdot;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus, 
+                           //                    = cuspidalfactor*dp0
+                           // qdot={q,infinity}.bplus 
+  long lplus, lminus;  // primes = +1, -1 mod 4
+  long mplus, mminus;  // mplus*x=sqrt(lplus)*L(fxlplus,1)
+                       // mminus*yi=sqrt(-lminus)*L(fxlminus,1)
+  long a,b,c,d,dotplus,dotminus; // matrix for period integration
+  // Either type=1, lattice=[2x,x+yi]
+  // Or     type=2, lattice=[x,yi]
+  // & integral over [a,b;Nc,d] is dotplus*x+dotminus*yi
+
+  long degphi;             // degree of Weil parametrization
+  // Not currently being set or used, since our algorithm was too slow
+  // for large levels and we just use MW's programs instead (externally).
+
+  vec coords;              // vector components of each freegen (will
+			   // become one column of homspace::projcoord)
+  // Used in mass-production of ap after newforms have been found
+
+Member function for newform class:
+
+Constructors:
+  newform(const vector<int>& data, const vector<long>& aq, const vector<long>& ap, newforms* nfs);
+// To be used when constructing from stored data, so no basis vector
+//  -- since we do not compute the H1 space unless we have to
+  newform(const vec& vplus, const vec& vminus, const vector<long>& ap, newforms* nfs,long ind=-1);
+// To be used when constructing from the recursive search, including
+  basis vector(s) (vminus only relevant when plusflag==0);  all the
+  technical data fields will be computed in this constructor, using
+  the parent newforms's homspace.
+// New constructor(s) needed, from an elliptic curve and/or the data
+  [level, aplist, aqlist] which will need to find the basis vector(s)
+  from splitting off a 1D eigenspace from the appropriate homspace and
+  then use the first constructor above.
+
+  void add_more_ap(int nap); // Extends the aplist (if necessary)
+  until it contains atleast nap terms.  Only used in the second
+  constructor after all the newforms for a given level have been
+  found, so that they all have apslists of the same length.
+
+Format of stored data:  newforms are stored in files in a directory
+whose name is set via the environment variable NF_DIR which defaults
+to "newforms".  Filenames within that dir are the level (in decimal)
+preceded by 'x', e.g. newforms/x11 holds the data for level 11.  
+
+The filename is constructed by the function
+char* nf_filename(long n, char c)  // use c='x'
+where it is the callers responsibility to delete[] the result after
+use.
+
+The data files are written by newforms::output_to_file().
+
+The file format is binary (for speed of input/output and compact size
+-- my definitive newforms dirsctory is 8GB for levels to 130000).  The
+following description is taken from newforms.h:
+
+/* Data stored in a newform (and in data files newforms/x$N):
+   (Numbers refer to lines of data file)
+Items 1-18 are "int" while the ap and aq are "short"
+3.  sfe : sign of functional equation (=-product of aq)
+4.  ap0 : p0'th Hecke eigenvalue, p0=smallest good prime
+5.  np0 : np0=1+p0-ap0
+6.  dp0 : dp0/np0=L/P=L(f,1)/2x
+7.  lplus : prime =1 (mod 4) with L(f,lplus,1) nonzero
+8.  mplus : L(f,lplus,1)*sqrt(l)=mplus*x
+9.  lminus : prime =3 (mod 4) with L(f,lminus,1) nonzero
+10. mminus : L(f,lminus,1)*sqrt(-l)=mminus*yi
+11-14. a, b, c, d : entries of a matrix M=[a,b;N*c,d] in Gamma_0(N) s.t.
+15. dotplus       : the integral of f over {0,M(0)} is 
+16. dotminus      : dotplus*x+dotminus*yi
+17. type : type 1 if period lattice = [2x,x+yi], type 2 if [x,yi] 
+18. degphi : degree of modular parametrization
+aq : list of Wq-eigenvalues at bad primes
+ap : list of Tp- & Wq-eigenvalues at all primes
+*/
+
+There are some shell scripts for viewing the stored data:
+
+nnf N : returns number of newforms at level N (on file -- no computation!) 
+nap N : returns number of ap stored at level N (on file -- no computation!) 
+showdata N : shows just the technical data, not all the ap
+showeigs N : shows all the aq and ap
+shownf N : shows all data for level N (pipe through more or less!)
+
+NB At present these scripts assume NF_DIR="newforms"
+
+----------------------------------------------------------------------
+
+class: newforms (derived from level and splitter_base)
+
+For more details see newforms.h
+
+Parent classes: level provides... the level, bad primes.
+       		splitter_base provides facilities for (a) recursive
+       		searching for Hecke eigenspaces from scratch using
+       		only the ability to compute a sequence of operators
+       		(optionally, restricted to the current space), with a
+       		known finite set of possible eigenvalues for each; and
+       		(b) splitting of the eigenspace for any given (valid)
+       		sequence of eigenvalues.
+
+		The reason this is done in a virtual base class way
+		over in ../procs is that I use the *exact* same
+		functionality of the code for modular symbols over
+		imaginary quadratic fields.
+
+Constructor:   newforms(long n, int plus, int cuspidalflag, int disp) 
+// just sets the flags, and the of and h1 pointers to 0
+// the real work is done by calling either createfromscratch() or
+// createfromdata(), see below.
+
+Main data fields:
+
+  int verbose; // controls output verbosity level (*none* if 0)
+  long maxdepth, // bound on recursion depth in search
+       cuspidal, // flags whether or not to use cuspidal homology
+       plusflag; // flags whether or not to work in + space
+  int basisflag;  // flag to determine how much work ::use() does.
+  // use() is what the base class does with eigenspaces when found.
+
+  // flag==0 for a recursive search, where use() will call the newform
+  // constructor; 
+
+  // flag==1 for recovering newforms in a plusspace from existing data,
+  // where all use() has to do is set the newforms's basis vector, as the
+  // newform will already have been constructed with all the other data
+  // needed. 
+
+  vec mvp; // the "manin vector" sum_{a mod p} {0,a/p} for p=p0, the
+      	   //  smallest good prime
+  map<long,vec> mvlplusvecs, mvlminusvecs;
+  	   // arrays of quadratic-twisted manin vectors, indexed by
+      	   // good primes l where l=1(4) for plusvecs and l=3(4) for
+      	   // minusvecs.  Each newform has one of each (determined by
+      	   // its own lplus and lminus primes);  but we store these
+      	   // vectors in the newforms class for efficiency when more than
+      	   // one newform shares the same lplus or lminus!
+
+  oldforms* of; // pointer to oldforms whcih provde the dimoldpart()
+  	    	// facility to enable old spaces to be discarded
+		// during the recursive search
+
+  homspace* h1; // pointer to homspace for the level.  We make this a
+  	    	// member rather than deriving the newforms class from
+  	    	// homspace, which would be more natural, as for some
+  	    	// functionality (e.g. reading the newforms data from
+  	    	// files and recomputing the elliptic curves) we do 
+  	    	// not need the homology information, so don't want to
+  	    	// compute it.  Basically, createfromscratch() make
+  	    	// the homspace (by calling ::makeh1()) and
+  	    	// createfromdata() does not.
+
+  int j0; 
+  long nq, dq; // data used for ap computation
+  std::set<long> jlist; 
+  long n1ds, // the number of newforms
+       j1ds; // index used when recreating newforms
+  vector<newform> nflist; // the actual newform-s.
+
+
+  // These just call the similar function in the associated homspace 
+  // Here i is the index of the prime to use
+  mat opmat(int i, int d, int v=0) 
+  mat opmat_restricted(int i, const subspace& s, int d, int v=0) 
+  smat s_opmat(int i, int d, int v=0) 
+  smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0) 
+
+  // The next 3 functions are to provide functionality needed by the
+  // base splitter class
+
+  // the dimension of the underlying homspace
+  long matdim(void)  {return h1->dimension;} 
+  // The list of possible eigenvalues for the i'th operator
+  vector<long> eigrange(int i)
+  // Given an initial sequence of eigenvalues [a2,a3,...], uses the
+  // oldforms member to return the corresponding dimension of oldforms
+  long dimoldpart(const vector<long> l);
+
+  void display(void)  // Output to stdout
+  void output_to_file(int binflag=1) // output to data file in NF_DIR
+
+  // add newform with basis b1, eiglist l to current list (b2 not used):
+  void use(const vec& b1, const vec& b2, const vector<long> l); 
+
+  // find newforms using homology; ntp is number of eigenvalues to use
+  // for oldforms, *not* the number computed via homology (use addap()
+  // for that):
+  void createfromscratch(long ntp);
+
+  // read newforms from file, if it exists, otherwise (perhaps) revert
+  // to createfromscratch:
+  void createfromdata(long ntp, int create_from_scratch_if_absent=1);
+
+  // Construct bases (homology eigenvectors) from eigenvalue lists:
+  void makebases();
+
+  // computes vector of ap, one for for each newform	
+  vector<long> apvec(long p);  
+
+  // compute ap for all primes up to the last'th, insert them into each
+  // newforms own aplist:
+  void addap(long last); // adds ap for primes up to the last'th prime
+
+  // Sort newforms 
+  void sort(int oldorder=0);
+  
+  // next three functions() implemented in periods.cc
+
+  // Given newform with no intdata, compute least real (part of)
+  // period -- unless sfe=-1 and n=square, in which case return 0
+  int get_real_period(long i, bigfloat& x, int verbose=0) const;
+
+  // Given all data, compute the periods as a Cperiods
+  Cperiods getperiods(long i, int method=-1, int verbose=0);
+
+  // Given all data & Cperiods, compute the curve
+  Curve getcurve(long i, int method, bigfloat& rperiod, int verbose=0);
+
+  // next two implemented in pcprocs.cc
+
+  // Computes x0, y0 (real & imag parts of periods) & a matrix which
+  // gives these scaled by dotplus & dotminus.  rp_known is set if we
+  // know x0 to be the least real part of a period (usually true)
+  int find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat&y0);
+
+  // Given an imaginary period y1, finds a prime lminus =3(mod 4) and
+  // <=lmax for which L(f,lminus,1) is nonzero and hence a multiple
+  // mminus of y1.
+  // if lmax==0 it carries on until a suitable lminus is found
+  int find_lminus(long i, long lmax, const bigfloat& y1);
+
+----------------------------------------------------------------------
+
+file: periods
+class: character
+
+Precomputes values of a quadratic character modulo a prime (or trivial)
+
+----------------------------------------------------------------------
+
+file: periods
+class summer 
+
+Base class for several others all of which compute sums of the form
+sum_{n=1}^{\infty} a_n f(n) 
+for various real or complex-values f(n), where the a_n are the
+coefficients of a newform.  Using the usual Buhler-Gross-Zagier
+recursion.
+
+Data fields: see periods.h
+
+----------------------------------------------------------------------
+
+file: periods
+class periods_via_lfchi (derinved from summer)
+
+Class to compute the periods of a newform using the values of
+L(f,chi,1) for suitable quadratic characters chi.
+
+Constructor:
+  periods_via_lfchi (const level* iN, const newform* f); 
+
+Member functions:
+  void compute(void); // does the work
+  bigfloat rper(void) // return the real period
+  bigfloat iper(void) // return the imaginary period
+  Cperiods getperiods() // return the period lattice
+
+----------------------------------------------------------------------
+
+file: periods
+class: periods_direct (derived from summer)
+
+Class to compute the periods of a newform by integrating over {0,g(0)}
+for a matrix g in Gamma_0(N);  from the real and imaginary parts of
+the result and the integer scaling factors stored in the newform class
+(and the lattice type) we can recover the full period lattice.
+
+Constructor:
+  periods_direct (const level* iN, const newform* f); 
+
+Member functions:
+  void compute(void); // Computes integral over {0,g(0)} where g is
+       		      // the matrix in Gamma_0(N) stored in the newform
+  void compute(long a, long b, long c, long d);  
+// Computes integral over {0,g(0)} where g is [a,b;N*c,d]
+  bigfloat rper(void) // return the real period
+  bigfloat iper(void) // return the imaginary period
+  Cperiods getperiods() // return the period lattice
+
+----------------------------------------------------------------------
+
+file: periods
+class: part_period  (derived from summer)
+
+Class to compute the integral of a newform over {z,\infty} for any z
+in the upper half plane -- for example, to compute Heegner points.
+
+Constructor:
+  part_period (const level* iN, const newform* f); 
+
+Member functions:
+  void compute(const bigcomplex& z0); // do the work
+  bigcomplex getperiod() 	      // get the answer
+
+----------------------------------------------------------------------
+
+file: periods
+class: ldash1   (derived from summer)
+
+Class to compute the analytic rank r and value L^(r)(f,1) for a
+newform f.  The parity of r comes from the newform's s.f.e., and
+whether or not r=0 is also determined from the newform's data.  This
+gives an initial guess of r\in{0,1,2}.  If the value is very small
+then r is increased by 2 and the value recomputed.  (Tested ok for
+lots of rank 3 curves and the rank 4 curve at N=234446.)
+
+Constructors:
+  ldash1 (const level* iN, const newform* f); 
+  ldash1 (const newforms* nf, long i);  // the i'th newform
+
+Member functions:
+  void compute(void); // does the work
+  long rank() 	      // returns the rank
+  bigfloat value()    // returns the value
+
+----------------------------------------------------------------------
+
+file: periods
+class: lfchi (derived from summer)
+
+Class to compute L(f,chi,1) for a newform f and quadratic character
+chi (modulo an odd prime l not dividing the level)
+
+Constructor:
+  lfchi (const level* iN, const newform* f);
+
+(Does nothing specific to the prime l)
+
+Member functions:
+  void compute(long ell); // does the work for the prime l
+  bigfloat value(void) 	  // gives the value
+  bigfloat scaled_value(void) // gives the value * sqrt(l)
+
+
+----------------------------------------------------------------------
+
+file: pcprocs
+
+Contains two new functions plus implementations of newforms class functions
+newforms::find_matrix() and newforms::find_lminus() described above
+
+// returns a rational approximation a/b to real x
+void ratapprox(bigfloat x, long& a, long& b);
+
+int get_curve(long n, long fac, long maxnx, long maxny,
+	      const bigfloat& x0, const bigfloat& y0, 
+	      long& nx, long& ny, int& type, int detail=0);
+
+Input 
+
+n: target conductor of E
+fac: known factor of c6(E)
+x0, y0: reals known to be multiples of least real/imag periods of E
+maxnx, maxny: bounds on these multiples
+detail: verbose flag
+
+Output: nx, ny, type
+
+If type==1 then [2*x,x+y*i] or if type==2 then [x,y*i], where x=x0/nx,
+y=y0/ny, is the period lattice of an elliptic curve of conductor n
+(whose c6 is divisible by fac).
+
+
+----------------------------------------------------------------------
+
+files: nfd.h, nfd.cc, tnfd.cc
+class: nfd
+
+Class which implements d-dimensional newforms (i.e. with Hecke
+eigenvalues of degree d over Q).
+
+Program tnfd is a test program for this.  Experimental, not currently
+working.
+
+
+----------------------------------------------------------------------
+
+files: fixc6.h, fixc6.cc, fixc4.data, fixc6.data
+class: fixc6
+
+// Background: for curves with large c6 (or c4), the value cannot be computed
+// with sufficient precision without using multiprecision floating
+// point arithmetic, which slows down all the other cases
+// unnecessarily.  To avoid this, after first computing the "correct"
+// c6 value once in multiprecision, we add that value to a table
+// indexed by (level, form#), and look up in the table when we need
+// the value.
+
+// The fixc6 class has two static data members, of type map<
+// pair<long,int>, bigint> such that an entry ((N,i),c6) or ((N,i),c4)
+// says that the c6 or c4 value for form i at level N is c6 or c4.  Of
+// course, for most (N,i) pairs this is blank -- and we must avoid
+// inserting wrong dummy entries of the form ((N,i),0).
+
+// April 2005: added facility for fixing c4 as well as c6, but the
+// class name is unchanged
+
+NB For levels up to 130000 these files are quite big:
+   443   1329  10319 fixc4.data
+ 25808  77424 679655 fixc6.data
+ 26251  78753 689974 total
+
+That is, out of 570226 (optimal) curves, 25808 require this "fixing"
+of c6 and 443 also for c4.
+
+NB This is *not used* when the proograms are comiled with
+multiprecision floating point (i.e. NTL not NTL_INTS) so can be
+ignored for Sage.  But the programs which produce tables of curves
+from stored data *do* recompute the periods of the newforms and hence
+get the curves from their periods, and this is *much* faster using
+standard C doubles!
+

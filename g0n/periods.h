@@ -131,12 +131,10 @@ private:
   long r;
   int computed;
   bigfloat ld1;
-  bigfloat (*g)(bigfloat x);
   bigfloat G(bigfloat x);  // G_r(x)
   void init(const level* N, const vector<long>& f_aplist, long f_sfe, const rational& f_loverp);
   void use(long n, long an) {use1(n,an);}
-  //bigfloat func1(long n) { return -g(factor1*to_bigfloat(n)); }
-    bigfloat func1(long n) { return -G(factor1*to_bigfloat(n)); }
+  bigfloat func1(long n) { return -G(factor1*to_bigfloat(n)); }
 public:
   ldash1 (const level* iN, const newform* f); 
   ldash1 (const newforms* nf, long i);  // the i'th newform
@@ -163,8 +161,6 @@ public:
   bigfloat scaled_value(void) {return sqrt(to_bigfloat(chi.modulus()))*val;}
 };
 
-long* getai(long,long);
- 
 vector<long> resort_aplist(const level* iN, 
 			   const vector<long>& primelist, 
 			   const vector<long>& apl);

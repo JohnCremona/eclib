@@ -474,9 +474,8 @@ void newforms::createfromscratch(long ntp)
   if(verbose>1) of->display();
   maxdepth = of->nap;
   long mindepth = npdivs;
-  dimsplit = n1ds = 0;
-  upperbound = h1->dimension-(of->totalolddim);
-//N.B. For later reference, upperbound=n1ds+n2ds;
+  n1ds = 0;
+  int upperbound = h1->dimension-(of->totalolddim);
   if(upperbound>0)  // Else no newforms certainly so do no work!
     {  
        mvp=h1->maninvector(p0); 
@@ -491,16 +490,12 @@ void newforms::createfromscratch(long ntp)
 	   ff.find();
 	 }
     }
-  n2ds=0;
   if(verbose)
     {
-      cout << "Total dimension " << h1->dimension 
-	   << " made up as follows:\n";
-      cout << "dim(newforms) = " << n1ds+n2ds 
-	   << " of which " << n1ds << " is rational; \n";
+      cout << "Total dimension = " << h1->dimension << endl;
+      cout << "Number of rational newforms = " << n1ds <<endl;
       if(h1->dimension==of->totalolddim+n1ds)
-	cout<<"The whole space splits over Q.\n";
-      cout<<endl;
+	cout<<"The whole space splits over Q" << endl;
     }
 
   if(n1ds==0) return;
@@ -544,10 +539,6 @@ void newforms::createfromscratch(long ntp)
   h1->projcoord.init(h1->coord_vecs.size()-1,n1ds);
   for (j=1; j<=n1ds; j++)
     h1->projcoord.setcol(j, nflist[j-1].coords);
-
-  easy = 1;
-  for (i=0; i<n1ds; i++)
-    if (nflist[i].pdot==0) easy=0;
 
   // Look for a j0 such that nflist[i].bplus[j0]!=0 for all i
   int ok=0; j0=0;
@@ -633,7 +624,6 @@ void newforms::display(void) const
  cout << "\n"<<n1ds<<" newform(s) at level " << modulus << ":" << endl;
  cout<<"p0="<<p0<<endl;
  // if(dim(mvp)!=0) cout<<"mvp="<<mvp<<endl;
- if(easy!=-1) cout<<"easy="<<easy<<endl;
  cout<<"#ap=\t"<<nflist[0].aplist.size()<<endl;
  for(long i=0; i<n1ds; i++)
    {cout<<i+1<<":\t";
@@ -909,7 +899,6 @@ void newforms::createfromolddata()
     }
   delete[] eigsname;
 
-  easy=0;
   short temp;
   eigsfile.read((char*)&temp,sizeof(short));   // # newforms
   n1ds=temp;
@@ -1047,23 +1036,11 @@ void newforms::makebases()
       cout<<"sorting..."<<endl;
     }
   ::sort(eigs.begin(),eigs.end(),less_apvec_function());
-  /*
-  vector<long> temp;
-  for(i=n1ds-1; i>0; i--)
-    for(j=0;j<i;j++)
-      {
-	if(1==less_apvec(eigs[j+1],eigs[j]))
-	  {
-	    temp=eigs[j+1]; eigs[j+1]=eigs[j]; eigs[j]=temp;
-	  }
-      }
-  */
   if(verbose>1) 
     {
       cout<<"After sorting, eig lists are:"<<endl;
       for(i=0; i<n1ds; i++) {vec_out(cout,eigs[i],10);    cout<<endl;}
     }
-  //  exit(0);
   if(!plusflag) {n1ds=0; nflist.resize(0);}
   splitspace.recover(eigs);
   if(verbose) cout << "...done."<<endl;
@@ -1081,8 +1058,6 @@ void newforms::makebases()
 	}
     }
 }
-
-//#define OLD_AP_METHOD
 
 vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 {
@@ -1105,65 +1080,15 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 
   long maxap=(long)(2*sqrt((double)p)); // for validity check
 
-#ifdef OLD_AP_METHOD
-
-  if ( easy)  //   Symbol {0,infinity} non-trivial in all cases
-    { 
-      v = h1->projmaninvector(p);   //starts at 1
-//      cout<<"projmaninvector("<<p0<<") = "<<h1->projmaninvector(p0)<<endl;
-//      cout<<"projmaninvector("<<p<<") = "<<v<<endl;
-      for (i=0; i<n1ds; i++)
-	{ 
-	  apv[i] = ap =  1+p-((v[i+1]*nflist[i].np0)/nflist[i].pdot);
-	  if((ap>maxap)||(-ap>maxap))
-	    {
-	      cout<<"Error:  eigenvalue "<<ap<<" for p="<<p
-		  <<" for form # "<<(i+1)<<" is outside valid range "
-		  <<-maxap<<"..."<<maxap<<endl;
-	      abort();
-	    }
-	}
-      return apv;
-    }
-
-  // Now easy=0, so we use symbol {q,infinity}
-
-  v = h1->newhecke(p,nq,dq) - (p+1)*initvec;  //starts at 1
-  for (i=0; i<n1ds; i++)
-    { 
-      apv[i] = ap = 1+p- ( (v[i+1]*nflist[i].np0) / nflist[i].qdot );
-      if((ap>maxap)||(-ap>maxap))
-	{
-	  cout<<"Error:  eigenvalue "<<ap<<" for p="<<p
-	      <<" for form # "<<(i+1)<<" is outside valid range "
-	      <<-maxap<<"..."<<maxap<<endl;
-	  abort();
-	}
-    }
-#else // new ap method
-
   map<long,vec> images; // [j,v] stores image of j'th M-symbol in v
   vec bas, imagej;
   long fac;
-  long p2=(p-1)>>1;
+  long p2=(p-1)>>1; // (p-1)/2
   long sl, sg, x1, x2, x3, y1, y2, y3, a, b, c, q, r;
   long u1,u2,u3;
   long ind;
   
   // Compute the image of the necessary M-symbols (hopefully only one)
-#if(0)
-  matop mlist(p,modulus);
-  for(std::set<long>::const_iterator jj=jlist.begin(); jj!=jlist.end(); jj++)
-    {
-      imagej=vec(n1ds); // initialised to 0
-      j=*jj;
-      v=(h1->applyop(mlist,h1->freemods[j-1])).as_vec();
-      for(i=1; i<=n1ds; i++)
-	imagej[i]=v*nflist[i-1].bplus;
-      images[j]=imagej;
-      cout<<" image is "<<imagej<<endl;
-    }
-#else
   for(std::set<long>::const_iterator jj=jlist.begin(); jj!=jlist.end(); jj++)
     {
       imagej=vec(n1ds); // initialised to 0
@@ -1203,7 +1128,6 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
       images[j]=imagej/(h1->h1denom());
 //      cout<<" image is "<<imagej<<endl;
     }
-#endif
 
   for (i=0; i<n1ds; i++)
     {
@@ -1226,7 +1150,6 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 	  abort();
 	}
     }  
-#endif
 
   return apv;
 }
@@ -1236,34 +1159,6 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
   if(n1ds==0) return;
   long i, j, p;
 
-#ifdef OLD_AP_METHOD
-  if(!easy)
-    {
-      //  Look for a rational q for which {q,infinity} is nontrivial
-      int stillok,foundq=0;
-      for (dq = 2; !foundq; dq++)
-	{ 
-	  if (gcd(dq,modulus)==1)
-	    { 
-	      for (nq = 1; (nq<=dq/2) && !foundq; nq++)
-	    { 
-	      if (gcd(nq,dq)==1)
-		{ // test candidate q=nq/dq
-		  initvec=h1->projcycle(nq,dq);  //starts at 1
-		  for (i=0, stillok=1; (i<n1ds) && stillok; i++)
-		    { 
-		      nflist[i].qdot=nflist[i].pdot-nflist[i].np0*initvec[i+1];
-		      stillok = (nflist[i].qdot!=0);
-		    }
-		  foundq = stillok;
-		}
-	    }
-	    }
-	}
-      nq--;dq--;
-    } // if(easy) ...
-#endif
-  
   j=0;
   if(verbose>1)  // output the ap already known...
     for(primevar pr(nflist[0].aplist.size()); pr.ok(); pr++, j++) 

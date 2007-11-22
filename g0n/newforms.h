@@ -24,7 +24,6 @@
 #include "xsplit.h"   // which includes method.h
 
 class newforms;
-class h1newforms;
 class jumps;
 
 /* Data stored in a newform (and in data files newforms/x$N):
@@ -54,6 +53,7 @@ public:
   int plusflag;   // 1 for old-style newform, 0 for old-style h1newform
   vec bplus,bminus; // DUAL eigenvectors
   scalar type;            // 2 for rectangular, 1 for triangular 
+			  //  period lattice
   long index;  // splitting index, -1 if not known
   vector<long> aplist, aqlist; 
   long ap0;     // Eigenvalue of first "good" p
@@ -88,7 +88,7 @@ public:
 class newforms :public level, splitter_base   {
   friend class newform;
 private:
-  int verbose; long dimsplit, maxdepth, upperbound, cuspidal, plusflag;
+  int verbose; long maxdepth, cuspidal, plusflag;
   int basisflag;  // is set, then use() only sets bases for newforms
 		  // already defined.
   mat opmat(int i, int d, int v=0) 
@@ -108,15 +108,14 @@ protected:
   map<long,vec> mvlplusvecs, mvlminusvecs;
   oldforms* of;
   homspace* h1;
-  int easy, j0; long nq, dq; // data used for ap computation
+  int j0; long nq, dq; // data used for ap computation
   std::set<long> jlist;
-  vec initvec;           //
 public:
-  long n1ds,n2ds, j1ds;
+  long n1ds, j1ds;
   vector<newform> nflist;
   newforms(long n, int plus, int cuspidalflag, int disp) 
   :level(n), verbose(disp), cuspidal(cuspidalflag), plusflag(plus), 
-   of(0), h1(0), easy(-1) {;}
+   of(0), h1(0) {;}
   ~newforms(void);
   void display(void) const;
   void output_to_file(int binflag=1) const;
@@ -138,8 +137,6 @@ public:
 
   // Construct bases (homology eigenvectors) from eigenvalue lists:
   void makebases();
-  // Compute intdata from H1 homology (when plusflag=0)
-  void makeh1data();
 
   vector<long> apvec(long p);  // computes a[p] for each newform
   void addap(long last); // adds ap for primes up to the last'th prime

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./showdata $1
+echo
+./showeigs $1

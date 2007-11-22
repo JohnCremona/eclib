@@ -600,34 +600,28 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
 #endif
 //decide on r (first estimate)
   computed=0;
-  r=0;  g = &myg0;
+  r=0;
 
-  if(f_sfe==-1) 
-    {
-	{r=1; g = &myg1;}
-    }
-  else if(f_loverp==0) {r=2; g = &myg2;}
+  if(f_sfe==-1) { r=1;}
+  else if(f_loverp==0) {r=2; }
 }
 
 void ldash1::compute(void) 
 {
+  const bigfloat two=to_bigfloat(2);
   if(computed) return;
-  sumit(); ld1=to_bigfloat(2)*sum1; computed=1;
+  sumit(); ld1=two*sum1; computed=1;
   if(r==0) return;
-  if(abs(ld1)>0.0001) return;
-  if(r==1) // suspect rank is in fact 3
+
+  while(abs(ld1)<0.0001) // ?? What's a sensible value??
     {
-//    cout<<"\nSwitching rank from 1 to 3 since L'(1) = "<<ld1<<endl;
-      r=3;  g=&myg3;  sumit(); ld1=2*sum1;
-//    cout<<"Now L^(3)(1) = "<<ld1<<endl;
-      return;
+      //      cout<<"L^(r)(1) small for r="<<r<<", increasing to ";
+      r+=2;  
+      //      cout<<r<<endl;
+      sumit(); ld1=two*sum1;
     }
-  cout<<"\n!!! L^("<<r<<")(1) = "<<ld1<<" !!!"<<endl;
-  r+=2;
-  cout<<"Do we have a rank "<<r<<" curve?"<<endl;
-  cout<<"If so we need to implement G_"<<r
-      <<"(x) to compute L^("<<r<<")(1)"<<endl;
 }
+
 
 /////////////////////////////////
 //  functions for lfchi class  //
@@ -1001,6 +995,8 @@ bigfloat ldash1::G(bigfloat x)  // G_r(x)
   }
 }
  
+#if(0) // myg2 and myg3 were inaccurate and now replaced by general
+       // G(r,x) -- whcih also works for r>3!
 bigfloat myg2(bigfloat x)
 {
   static bigfloat zero=to_bigfloat(0);
@@ -1063,29 +1059,5 @@ bigfloat myg3(bigfloat x)
     }
    return ans;
 }
+#endif
 
-long* getai(long c4, long c6)
-{
-//cout << "In getai with c4 = " << c4 << " and c6 = " << c6 << endl;
-  long b2,b4,b6;
-  b2 = (
-             (c4%3 == 0 ? (odd(c4) ?   3 :   0)
-              : (odd(c4) ?  -1 :  -4))
-             *c6)
-    % 12;
-  if ( b2 < -5 ) { b2 += 12; }
-  if ( b2 > 6 ) { b2 -= 12; }
-//cout << "b2 = " << b2 << endl;
-  b4 = (b2*b2-c4) / 24;
-//cout << "b4 = " << b4 << endl;
-  b6 = (-b2*b2*b2 + 36 * b2*b4 - c6) / 216;
-//cout << "b6 = " << b6 << endl;
-  long* ans = new long[5];
-  ans[0] = (odd(b2) ? 1 : 0);
-  ans[2] = (odd(b6) ? 1 : 0);
-  ans[1] = (b2-ans[0]) / 4;
-  ans[3] = (b4-ans[0]*ans[2]) / 2;
-  ans[4] = (b6-ans[2]) / 4;
-//cout << "a1,a2,a3,a4,a6 = " << ans[0] <<","<< ans[1] <<","<< ans[2] <<","<< ans[3] <<","<< ans[4] << endl;
-  return ans;
-}

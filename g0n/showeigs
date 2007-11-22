@@ -1,0 +1,23 @@
+#!/bin/bash
+
+NNF=`./nnf $1`
+NAP=`./nap $1`
+N=`expr $NNF '*' 64`
+N=`expr $N + 12`
+NQ=`factor $1 | cut -d " " -f 2- | fmt -1 | uniq | wc -l`
+
+#echo "N   = "$1":"
+#echo ${NNF}" newforms, "${NQ}" bad primes, "${NAP}" ap"
+#echo
+od -j ${N} -v -t dS newforms/x$1 | awk 'NF>1' | cut -d " " -f 2- | \
+awk -v RS="" -v OFS=" " -v ORS=" " -vnf=$NNF -vnq=$NQ -vnp=$NAP \
+'{i=1;\
+print "aq:\n";
+for(iq=0;iq<nq;iq++) \
+{for(j=0;j<nf;j++) {printf("%d\t",$i);i++;}\
+ printf("\n");}\
+print "\nap:\n";
+for(ip=0;ip<np;ip++) \
+{for(j=0;j<nf;j++) {printf("%d\t",$i);i++;}\
+ printf("\n");}\
+}'

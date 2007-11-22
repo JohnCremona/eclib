@@ -914,6 +914,7 @@ vec homspace::projmaninvector(long p, const mat& m) const
   return tvec;
 }
 
+// no longer used
 vec homspace::newhecke(long p, long n, long d) const
                                      // Will only work after "proj"
 { vec tvec = projcycle(p*n,d);
