@@ -55,7 +55,7 @@ public:
  moddata(long n);                                //constructor
  ~moddata();                                    //destructor
  void display() const;
- void abort(char* mess) const 
+ void abort(const char* mess) const 
   {
     cout<<"Out of memory ("<<mess<<")\n";  
     ::abort();

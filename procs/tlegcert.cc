@@ -34,7 +34,7 @@
 
 int main()
 {
-  initprimes("PRIMES");
+  initprimes(string("PRIMES").c_str());
   cout<<"Solving ax^2 + by^2 + cz^2 = 0\n";
   cout<<"Using method "<<CONIC_METHOD<<endl<<endl;
 

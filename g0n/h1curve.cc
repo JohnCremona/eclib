@@ -52,7 +52,7 @@ int checkap(const level* iN, const newform& nf, CurveRed& CR, long pmax=100);
 
 int main(void)
 {
-  set_precision("Enter number of decimal places");
+  set_precision(string("Enter number of decimal places").c_str());
  int verb=0; 
 #ifdef SINGLE
  verb=0;

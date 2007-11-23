@@ -32,7 +32,7 @@ primeclass the_primes;    // The one and only instance
 
 primeclass::primeclass() 
 {
-  pdiffptr=new unsigned char[0]; // since init() starts by delete[]ing it
+  pdiffptr=0; // will be allocated in init()
   ifstream pfile("MAXPRIME");
   if(!pfile)
     {
@@ -48,7 +48,7 @@ primeclass::primeclass()
 
 primeclass::primeclass(long maxnum) 
 {
-  pdiffptr=new unsigned char[0]; // since init() starts by delete[]ing it
+  pdiffptr=0; // will be allocated in init()
   init(maxnum);
 }
 
@@ -56,7 +56,7 @@ void primeclass::init(long maxnum)  /* initializes variable pdiffptr */
                                     /* to give primes up to maxnum  */
 {
   register long k,size=(maxnum+257)>>1;
-  delete [] pdiffptr;
+  if(pdiffptr) delete [] pdiffptr;
   byteptr p= new unsigned char[size+1];
   if (!p) {cout<<"Out of memory in primeclass::init!"<<endl;abort();}
   memset(p, 0, size + 1); 

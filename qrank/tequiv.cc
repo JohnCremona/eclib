@@ -50,7 +50,7 @@ int getquartic(quartic& g, int verbose)
 
 int main()
 {
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
 #ifdef LiDIA
   long lidia_precision=40;
   cout<<"Enter number of decimal places: "; cin>>lidia_precision;

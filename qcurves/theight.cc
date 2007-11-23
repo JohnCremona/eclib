@@ -26,7 +26,7 @@
 
 int main(){
   set_precision(100);
-  initprimes("PRIMES",1);
+  initprimes(string("PRIMES").c_str(),1);
   Curve E;
 
   while (cout<<"Input a curve: ", cin>>E, !E.isnull())

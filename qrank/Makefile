@@ -51,7 +51,7 @@ RANKLIBNAME=$(RANKLIBBASE).a
 CFLAGS = -c $(OPTFLAG) -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) #-pg
 # in the following line I don't know why I get missing symbol errors if 
 # I do not put int timer.o explicitly, since it is in libjc.a
-LFLAGS = ../procs/timer$(OBJ_SUF).o -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lpari -lm #-pg
+LFLAGS = $(LIBFLAG) -lpari -L$(PARILIBDIR) $(NTLLFLAGS) $(IOLIB) -lpari -lm #-pg
 
 LIBFLAGS = $(LFLAGS)
 
@@ -98,6 +98,7 @@ install_lib: $(HEADERS) $(RANKLIBNAME)
 	for f in $(HEADERS); \
 	 do cp $${f} $(INCDIR); \
 	done
+	chmod a+r $(INCDIR)/*
 	rm -f $(LIBDIR)/$(RANKLIBNAME)
 	cp $(RANKLIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(RANKLIBNAME)

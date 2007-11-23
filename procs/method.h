@@ -68,7 +68,9 @@
 #include "mvector.h"
 #include "mmatrix.h"
 #include "msubspace.h"
-#define MODULUS atoI("6074000003")  // will convert this string to an Integer
+#define MODULUS atoI(string("6074000003").c_str())  // will convert
+						    // this string to
+						    // a bigint
 #else
 #define MODULUS BIGPRIME  // used for modular linear algebra
 #define SCALAR scalar

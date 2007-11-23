@@ -27,7 +27,7 @@
 int main(void)
 {
   set_precision(30);
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
         
   Curve E;
   

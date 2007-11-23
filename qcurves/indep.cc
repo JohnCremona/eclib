@@ -31,7 +31,7 @@
 int main()
 {
   set_precision(30);
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
 
   int verbose = 1;
   long rank, npts, j;

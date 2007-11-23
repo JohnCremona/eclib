@@ -52,7 +52,7 @@ int getcurve(void)
 int main()
 {
   set_precision(30);
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
 
   long nsilverbetter=0, ncpsbetter=0, n=0;

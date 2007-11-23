@@ -33,7 +33,7 @@
 
 int main()
 {
-  initprimes("PRIMES",VERBOSITY);
+  initprimes(string("PRIMES").c_str(),VERBOSITY);
 
   bigint a,b,c,d,x0,y0,z0,disc;
   bigint q[3];

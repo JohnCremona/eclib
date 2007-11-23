@@ -28,7 +28,7 @@ void line(int w) {int wid=w; while(wid--)cout << "-";cout<<endl;}
 
 int main(void)
 {
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
   line(80);
         
   CurveReader in;

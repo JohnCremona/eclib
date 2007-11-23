@@ -485,7 +485,7 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x)
 
 extra_prime_class the_extra_primes;  // The one and only instance
 
-void initprimes(char* pfilename, int verb)
+void initprimes(const char* pfilename, int verb)
 {
   if(verb) 
     {
@@ -498,10 +498,10 @@ void initprimes(char* pfilename, int verb)
 
 extra_prime_class::~extra_prime_class()
 {
-  write_to_file("PRIMES");
+  write_to_file(string("PRIMES").c_str());
 }
 
-void extra_prime_class::write_to_file(char* pfilename, int verb)
+void extra_prime_class::write_to_file(const char* pfilename, int verb)
 {
   if(the_primes.size()==0) return;
   if(verb) cout << "writing primes to file " << pfilename << endl;
@@ -510,7 +510,7 @@ void extra_prime_class::write_to_file(char* pfilename, int verb)
   if(verb) cout << "finished writing primes to file " << pfilename << endl;
 }
 
-void extra_prime_class::read_from_file(char* pfilename, int verb)
+void extra_prime_class::read_from_file(const char* pfilename, int verb)
 {
   ifstream pfile(pfilename);
   if(!pfile)  // default: no primes file exists

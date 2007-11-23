@@ -25,7 +25,7 @@
 
 int main(){
 
-initprimes("PRIMES",0);
+initprimes(string("PRIMES").c_str(),0);
 
 Curve F;
 Curvedata D, E;

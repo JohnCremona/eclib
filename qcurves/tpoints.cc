@@ -25,9 +25,9 @@
 #include "points.h"
 
 int main(){
-  //  set_precision("Enter number of decimal places");
+  //  set_precision(string("Enter number of decimal places").c_str());
   set_precision(30);
-  initprimes("PRIMES",1);
+  initprimes(string("PRIMES").c_str(),1);
 
   Curve c(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
   Curvedata cd(c,1);

@@ -35,7 +35,7 @@
 
 int main(void)
 {
-  set_precision("Enter number of decimal places");
+  set_precision(string("Enter number of decimal places").c_str());
  int limit,n=1; 
  char* code = new char[20];
 #ifdef AUTOLOOP

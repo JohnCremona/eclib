@@ -24,7 +24,7 @@
 #include "marith.h"
 #include "mmatrix.h"
 
-const bigint MBIGPRIME=atoI("6074000003");
+const bigint MBIGPRIME=atoI(string("6074000003").c_str());
 // will convert this string to an bigint
 //This is nearly the largest p such that (p/2)^2 < 2^63.
 

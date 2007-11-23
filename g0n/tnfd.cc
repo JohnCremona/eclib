@@ -23,7 +23,9 @@
 //
 //
 #include <iostream>
+#include "interface.h"
 #include "timer.h"
+#include "marith.h"
 #include "msubspace.h"
 #include "moddata.h"
 #include "symb.h"
@@ -52,7 +54,7 @@ int main()
  while (cout<<"Enter level: ", cin>>n, n>0)
    {
      cout << ">>>Level " << n << "\t";
-     homspace hplus(n,plus,0);
+     homspace hplus(n,plus,0,0);
      int dimh = hplus.h1dim();
      cout << "dimension = " << dimh << endl;
 
@@ -111,6 +113,6 @@ int main()
      show_time();
      cout<<endl;
    }
- abort();
+ exit(0);
 }       // end of main()
 

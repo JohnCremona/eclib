@@ -85,6 +85,7 @@ install_lib: $(HEADERS) $(G0NLIBNAME)
 	for f in $(HEADERS); \
 	 do cp $${f} $(INCDIR); \
 	done
+	chmod a+r $(INCDIR)/*
 	rm -f $(LIBDIR)/$(G0NLIBNAME)
 	cp $(G0NLIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(G0NLIBNAME)
@@ -96,7 +97,7 @@ install: lib install_lib
 CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT #-DNF_DIR=\"$(NF_DIR)\"
 # in the following line I don't know why I get missing symbol errors if 
 # I do not put int timer.o explicitly, since it is in libjc.a
-LFLAGS = ../procs/timer$(OBJ_SUF).o -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lm
+LFLAGS = $(LIBFLAG) -lpari -L$(PARILIBDIR) $(NTLLFLAGS) $(IOLIB) -lm
 
 LIBFLAGS = $(LFLAGS)
 

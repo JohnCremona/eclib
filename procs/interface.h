@@ -91,7 +91,7 @@ inline double I2double(const bigint& x) { return dbl(x);}
 inline void negate(bigint& a) {a.negate();}
 inline bigint sqrt(const bigint& a) {bigint b; sqrt(b,a); return b;}
 inline bigint sqr(const bigint& a) {bigint b; square(b,a); return b;}
-inline bigint atoI(char* s) {bigint a; string_to_bigint(s,a); return a;}
+inline bigint atoI(const char* s) {bigint a; string_to_bigint(s,a); return a;}
 
 // In LiDIA, add, subtract, multiply, divide are defined with result 
 // in first place
@@ -127,7 +127,7 @@ using namespace NTL;
 #define bigrational QQ  // not defined in NTL
 
 #define BIGINT(val) to_ZZ(val)
-inline bigint atoI(char* s) {return to_ZZ(s);}
+inline bigint atoI(const char* s) {return to_ZZ(s);}
 
 inline int odd(const int& a) {return a&1;}
 inline int even(const int& a) {return !(a&1);}
@@ -254,7 +254,7 @@ inline void Iasb(long& a, bigfloat x) {x.longify(a);}
 inline long longify(bigfloat x) {long a; x.longify(a); return a;}
 inline bigfloat I2bigfloat(const bigint& x) { bigfloat y(x); return y;}
 inline void set_precision(long n) {bigfloat::set_precision(n);}
-inline void set_precision(char* prompt) 
+inline void set_precision(const char* prompt) 
  { long n; cerr<<prompt<<": "; cin>>n; bigfloat::set_precision(n);}
 inline bigfloat to_bigfloat(const int& n) {return bigfloat(n);}
 inline bigfloat to_bigfloat(const long& n) {return bigfloat(n);}
@@ -301,7 +301,7 @@ typedef complex<RR> CC;
 
 inline void set_precision(long n) 
   {RR::SetPrecision(long(n*3.33));RR::SetOutputPrecision(n);}
-inline void set_precision(char* prompt) 
+inline void set_precision(const char* prompt) 
   {long n; cerr<<prompt<<": "; cin>>n; set_precision(n);}
 inline long decimal_precision() {return long(RR::precision()*0.3);}
 inline int is_approx_zero(const bigcomplex& z) 
@@ -334,7 +334,7 @@ inline long decimal_precision() {return 15;}
 inline int is_zero(double x) {return fabs(x)<1e-15;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
 inline void set_precision(long n) {cout.precision(15);}
-inline void set_precision(char* prompt)  {cout.precision(15);}
+inline void set_precision(const char* prompt)  {cout.precision(15);}
 // Must use #define here and not inline functions, to override the
 // LiDIA definitions which return LiDIA bigfloats!
 #define Pi()    (3.1415926535897932384626433832795028841)

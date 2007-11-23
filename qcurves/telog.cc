@@ -67,9 +67,9 @@ void test3(Curvedata& CD, Cperiods& per, int m)
 }
 
 int main(){
-  //  set_precision("Enter number of decimal places");
+  //  set_precision(string("Enter number of decimal places").c_str());
   set_precision(50);
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
 
   // a curve with rank 3 and D>0:
 

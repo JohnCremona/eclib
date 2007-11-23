@@ -62,7 +62,7 @@ int main()
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   
   int verb; cout << "Verbose? "; cin >> verb;
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
   int modopt=0;
   //  cout<<"moduli option (0 (Stoll)/ 1/2/3)?";      cin >> modopt;
 

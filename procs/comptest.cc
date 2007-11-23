@@ -26,7 +26,7 @@
 
 int main(void)
 { 
-  set_precision("Enter number of decimal places");
+  set_precision(string("Enter number of decimal places").c_str());
   bigfloat x=to_bigfloat(3.125), y=to_bigfloat(4.25);
 
    bigcomplex z = bigcomplex(x,y);

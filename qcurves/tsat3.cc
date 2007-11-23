@@ -51,9 +51,9 @@ const int use_egr=0;
 
 int main()
 {
-  //  set_precision("Enter number of decimal places");
+  //  set_precision(string("Enter number of decimal places").c_str());
   set_precision(100);
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
   int verbose = 0;
   //  cout<<"verbose (0/1)? ";             cin >>verbose;
   int j, npts;

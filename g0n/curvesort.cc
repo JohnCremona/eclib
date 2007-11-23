@@ -23,235 +23,234 @@
 
 #define USE_NEW_CODE_LETTERS
 
-#define ORDER(level,reorder) case level: return reorder(form); break;
+int BA[] = {1,0};
+int ACB[] = {0,2,1};
+int BAC[] = {1,0,2};
+int BCA[] = {1,2,0};
+int CAB[] = {2,0,1};
+int CBA[] = {2,1,0};
+int ABDC[] = {0,1,3,2};
+int ACBD[] = {0,2,1,3};
+int ACDB[] = {0,2,3,1};
+int ADBC[] = {0,3,1,2};
+int ADCB[] = {0,3,2,1};
+int BACD[] = {1,0,2,3};
+int BADC[] = {1,0,3,2};
+int BCAD[] = {1,2,0,3};
+int BCDA[] = {1,2,3,0};
+int BDAC[] = {1,3,0,2};
+int CABD[] = {2,0,1,3};
+int CBAD[] = {2,1,0,3};
+int CDAB[] = {2,3,0,1};
+int CDBA[] = {2,3,1,0};
+int DABC[] = {3,0,1,2};
+int DACB[] = {3,0,2,1};
+int DBAC[] = {3,1,0,2};
+int DCAB[] = {3,2,0,1};
+int AEBDC[] = {0,4,1,3,2};
+int AECBD[] = {0,4,2,1,3};
+int AEDCB[] = {0,4,3,2,1};
+int BCADE[] = {1,2,0,3,4};
+int BCAED[] = {1,2,0,4,3};
+int BEACD[] = {1,4,0,2,3};
+int BECAD[] = {1,4,2,0,3};
+int CEADB[] = {2,4,0,3,1};
+int CABDE[] = {2,0,1,3,4};
+int CEDAB[] = {2,4,3,0,1};
+int CEDBA[] = {2,4,3,1,0};
+int DAECB[] = {3,0,4,2,1};
+int DCAEB[] = {3,2,0,4,1};
+int DBCAE[] = {3,1,2,0,4};
+int EABDC[] = {4,0,1,3,2};
+int EACBD[] = {4,0,2,1,3};
+int EBCAD[] = {4,1,2,0,3};
+int EDACB[] = {4,3,0,2,1};
+int ADECFB[] = {0,3,4,2,5,1};
+int AECDBF[] = {0,4,2,3,1,5};
+int BADECF[] = {1,0,3,4,2,5};
+int BDAECF[] = {1,3,0,4,2,5};
+int BFADCE[] = {1,5,0,3,2,4};
+int CABEDF[] = {2,0,1,4,3,5};
+int CAFBDE[] = {2,0,5,1,3,4};
+int CEABDF[] = {2,4,0,1,3,5};
+int DABFEC[] = {3,0,1,5,4,2};
+int DCABEF[] = {3,2,0,1,4,5};
+int EABCDF[] = {4,0,1,2,3,5};
+int EBACDF[] = {4,1,0,2,3,5};
+int ECABDF[] = {4,2,0,1,3,5};
+int AEDBGFC[] = {0,4,3,1,6,5,2};
+int AFGDEBC[] = {0,5,6,3,4,1,2};
+int ECFBDGA[] = {4,2,5,1,3,6,0};
+int EFCAGDB[] = {4,5,2,0,6,3,1};
+int EFGCABD[] = {4,5,6,2,0,1,3};
+int FGACBED[] = {5,6,0,2,1,4,3};
+int FGBDACE[] = {5,6,1,3,0,2,4};
+int FGDBAEC[] = {5,6,3,1,0,4,2};
+int FGDBEAC[] = {5,6,3,1,4,0,2};
+int FGDEABC[] = {5,6,3,4,0,1,2};
+int AGBDEFHC[] = {0,6,1,3,4,5,7,2};
+int AFHCGDEB[] = {0,5,7,2,6,3,4,1};
+int BECADFGH[] = {1,4,2,0,3,5,6,7};
+int EGBAFHCD[] = {4,6,1,0,5,7,2,3};
+int GBEAHDFC[] = {6,1,4,0,7,3,5,2};
 
-#define BA(x) (1-x)  // interchange 0 and 1
-#define ACB(x) ((int[]){0,2,1})[x]
-#define BAC(x) ((int[]){1,0,2})[x]
-#define BCA(x) ((int[]){1,2,0})[x]
-#define CAB(x) ((int[]){2,0,1})[x]
-#define CBA(x) ((int[]){2,1,0})[x]
-#define ABDC(x) ((int[]){0,1,3,2})[x]
-#define ACBD(x) ((int[]){0,2,1,3})[x]
-#define ACDB(x) ((int[]){0,2,3,1})[x]
-#define ADBC(x) ((int[]){0,3,1,2})[x]
-#define ADCB(x) ((int[]){0,3,2,1})[x]
-#define BACD(x) ((int[]){1,0,2,3})[x]
-#define BADC(x) ((int[]){1,0,3,2})[x]
-#define BCAD(x) ((int[]){1,2,0,3})[x]
-#define BCDA(x) ((int[]){1,2,3,0})[x]
-#define BDAC(x) ((int[]){1,3,0,2})[x]
-#define CABD(x) ((int[]){2,0,1,3})[x]
-#define CBAD(x) ((int[]){2,1,0,3})[x]
-#define CDAB(x) ((int[]){2,3,0,1})[x]
-#define CDBA(x) ((int[]){2,3,1,0})[x]
-#define DABC(x) ((int[]){3,0,1,2})[x]
-#define DACB(x) ((int[]){3,0,2,1})[x]
-#define DBAC(x) ((int[]){3,1,0,2})[x]
-#define DCAB(x) ((int[]){3,2,0,1})[x]
-#define AEBDC(x) ((int[]){0,4,1,3,2})[x]
-#define AECBD(x) ((int[]){0,4,2,1,3})[x]
-#define AEDCB(x) ((int[]){0,4,3,2,1})[x]
-#define BCADE(x) ((int[]){1,2,0,3,4})[x]
-#define BCAED(x) ((int[]){1,2,0,4,3})[x]
-#define BEACD(x) ((int[]){1,4,0,2,3})[x]
-#define BECAD(x) ((int[]){1,4,2,0,3})[x]
-#define CEADB(x) ((int[]){2,4,0,3,1})[x]
-#define CABDE(x) ((int[]){2,0,1,3,4})[x]
-#define CEDAB(x) ((int[]){2,4,3,0,1})[x]
-#define CEDBA(x) ((int[]){2,4,3,1,0})[x]
-#define DAECB(x) ((int[]){3,0,4,2,1})[x]
-#define DCAEB(x) ((int[]){3,2,0,4,1})[x]
-#define DBCAE(x) ((int[]){3,1,2,0,4})[x]
-#define EABDC(x) ((int[]){4,0,1,3,2})[x]
-#define EACBD(x) ((int[]){4,0,2,1,3})[x]
-#define EBCAD(x) ((int[]){4,1,2,0,3})[x]
-#define EDACB(x) ((int[]){4,3,0,2,1})[x]
-#define ADECFB(x) ((int[]){0,3,4,2,5,1})[x]
-#define AECDBF(x) ((int[]){0,4,2,3,1,5})[x]
-#define BADECF(x) ((int[]){1,0,3,4,2,5})[x]
-#define BDAECF(x) ((int[]){1,3,0,4,2,5})[x]
-#define BFADCE(x) ((int[]){1,5,0,3,2,4})[x]
-#define CABEDF(x) ((int[]){2,0,1,4,3,5})[x]
-#define CAFBDE(x) ((int[]){2,0,5,1,3,4})[x]
-#define CEABDF(x) ((int[]){2,4,0,1,3,5})[x]
-#define DABFEC(x) ((int[]){3,0,1,5,4,2})[x]
-#define DCABEF(x) ((int[]){3,2,0,1,4,5})[x]
-#define EABCDF(x) ((int[]){4,0,1,2,3,5})[x]
-#define EBACDF(x) ((int[]){4,1,0,2,3,5})[x]
-#define ECABDF(x) ((int[]){4,2,0,1,3,5})[x]
-#define AEDBGFC(x) ((int[]){0,4,3,1,6,5,2})[x]
-#define AFGDEBC(x) ((int[]){0,5,6,3,4,1,2})[x]
-#define ECFBDGA(x) ((int[]){4,2,5,1,3,6,0})[x]
-#define EFCAGDB(x) ((int[]){4,5,2,0,6,3,1})[x]
-#define EFGCABD(x) ((int[]){4,5,6,2,0,1,3})[x]
-#define FGACBED(x) ((int[]){5,6,0,2,1,4,3})[x]
-#define FGBDACE(x) ((int[]){5,6,1,3,0,2,4})[x]
-#define FGDBAEC(x) ((int[]){5,6,3,1,0,4,2})[x]
-#define FGDBEAC(x) ((int[]){5,6,3,1,4,0,2})[x]
-#define FGDEABC(x) ((int[]){5,6,3,4,0,1,2})[x]
-#define AGBDEFHC(x) ((int[]){0,6,1,3,4,5,7,2})[x]
-#define AFHCGDEB(x) ((int[]){0,5,7,2,6,3,4,1})[x]
-#define BECADFGH(x) ((int[]){1,4,2,0,3,5,6,7})[x]
-#define EGBAFHCD(x) ((int[]){4,6,1,0,5,7,2,3})[x]
-#define GBEAHDFC(x) ((int[]){6,1,4,0,7,3,5,2})[x]
-
-int booknumber0(int level, int form)  // permutes number starting from 0
+int booknumber0(int level, int form)  // utes number starting from 0
 {
   if(level<56) return form;
   if(level>450) return form;
 switch (level) {
-ORDER(56,BA)
-ORDER(77,ACB)
-ORDER(84,BA)
-ORDER(99,ACBD)
-ORDER(102,ACB)
-ORDER(106,DACB)
-ORDER(110,CBA)
-ORDER(114,CAB)
-ORDER(116,CAB)
-ORDER(118,ACDB)
-ORDER(120,BA)
-ORDER(121,CABD)
-ORDER(123,BA)
-ORDER(124,BA)
-ORDER(126,BA)
-ORDER(128,ADCB)
-ORDER(130,ACB)
-ORDER(132,BA)
-ORDER(136,BA)
-ORDER(140,BA)
-ORDER(141,EBCAD)
-ORDER(142,EABDC)
-ORDER(144,BA)
-ORDER(147,ACB)
-ORDER(150,CAB)
-ORDER(153,ADCB)
-ORDER(154,ACB)
-ORDER(155,CBA)
-ORDER(158,EACBD)
-ORDER(162,ACBD)
-ORDER(168,BA)
-ORDER(170,DAECB) 
-ORDER(171,ADBC)
-ORDER(174,CEDBA)
-ORDER(175,CAB)
-ORDER(178,BA)
-ORDER(182,CEADB)
-ORDER(184,DABC)
-ORDER(185,BCA)
-ORDER(186,ACB)
-ORDER(187,BA)
-ORDER(189,ADBC)
-ORDER(190,BAC)
-ORDER(192,ACBD)
-ORDER(195,CDBA)
-ORDER(196,BA)
-ORDER(198,CEDAB)
-ORDER(200,BECAD)
-ORDER(201,BCA)
-ORDER(203,BCA)
-ORDER(205,CAB)
-ORDER(208,DABC)
-ORDER(210,DBCAE)
-ORDER(212,BA)
-ORDER(214,DBAC)
-ORDER(219,BCA)
-ORDER(221,BA)
-ORDER(222,EDACB)
-ORDER(234,BCADE)
-ORDER(235,CAB)
-ORDER(236,BA)
-ORDER(238,DAECB)
-ORDER(240,BCAD)
-ORDER(242,BA)
-ORDER(245,CAB)
-ORDER(246,EFCAGDB)
-ORDER(249,BA)
-ORDER(252,BA)
-ORDER(254,DCAB)
-ORDER(256,BACD)
-ORDER(262,BA)
-ORDER(264,DABC)
-ORDER(267,BA)
-ORDER(270,BCDA)
-ORDER(272,ADBC)
-ORDER(274,CBA)
-ORDER(278,BA)
-ORDER(285,CAB)
-ORDER(286,BDAECF)
-ORDER(288,AECBD)
-ORDER(291,DBAC)
-ORDER(294,EFGCABD)
-ORDER(297,DACB)
-ORDER(298,BA)
-ORDER(300,ACDB)
-ORDER(302,BAC)
-ORDER(304,ECABDF)
-ORDER(306,CBAD)
-ORDER(312,CAFBDE)
-ORDER(315,BA)
-ORDER(318,DCAEB)
-ORDER(320,EABCDF)
-ORDER(322,BADC)
-ORDER(324,ABDC)
-ORDER(325,EABDC)
-ORDER(326,ACB)
-ORDER(330,AEDCB)
-ORDER(333,DABC)
-ORDER(336,CABEDF)
-ORDER(338,ADECFB)
-ORDER(339,BAC)
-ORDER(342,FGDEABC)
-ORDER(345,AECDBF)
-ORDER(348,BDAC)
-ORDER(350,BFADCE)
-ORDER(352,CEABDF)
-ORDER(354,DCABEF)
-ORDER(360,BCAED)
-ORDER(364,BA)
-ORDER(366,FGBDACE)
-ORDER(368,AEDBGFC)
-ORDER(369,BA)
-ORDER(370,ACBD)
-ORDER(372,ACDB)
-ORDER(378,GBEAHDFC)
-ORDER(380,BA)
-ORDER(381,BA)
-ORDER(384,BECADFGH)
-ORDER(387,CABDE)
-ORDER(390,AFGDEBC)
-ORDER(392,EBACDF)
-ORDER(396,BAC)
-ORDER(400,AFHCGDEB)
-ORDER(402,ABDC)
-ORDER(404,BA)
-ORDER(405,DABFEC)
-ORDER(406,ACDB)
-ORDER(408,ADCB)
-ORDER(410,BDAC)
-ORDER(414,CDAB)
-ORDER(418,BAC)
-ORDER(423,ECFBDGA)
-ORDER(425,ADBC)
-ORDER(426,CAB)
-ORDER(427,BCA)
-ORDER(432,EGBAFHCD)
-ORDER(434,AEBDC)
-ORDER(435,BACD)
-ORDER(437,BA)
-ORDER(438,FGACBED)
-ORDER(440,ADBC)
-ORDER(441,BADECF)
-ORDER(442,BEACD)
-ORDER(446,ADCB)
-ORDER(448,AGBDEFHC)
-ORDER(450,FGDBEAC)
+case 56: return BA[form]; break;
+case 77: return ACB[form]; break;
+case 84: return BA[form]; break;
+case 99: return ACBD[form]; break;
+case 102: return ACB[form]; break;
+case 106: return DACB[form]; break;
+case 110: return CBA[form]; break;
+case 114: return CAB[form]; break;
+case 116: return CAB[form]; break;
+case 118: return ACDB[form]; break;
+case 120: return BA[form]; break;
+case 121: return CABD[form]; break;
+case 123: return BA[form]; break;
+case 124: return BA[form]; break;
+case 126: return BA[form]; break;
+case 128: return ADCB[form]; break;
+case 130: return ACB[form]; break;
+case 132: return BA[form]; break;
+case 136: return BA[form]; break;
+case 140: return BA[form]; break;
+case 141: return EBCAD[form]; break;
+case 142: return EABDC[form]; break;
+case 144: return BA[form]; break;
+case 147: return ACB[form]; break;
+case 150: return CAB[form]; break;
+case 153: return ADCB[form]; break;
+case 154: return ACB[form]; break;
+case 155: return CBA[form]; break;
+case 158: return EACBD[form]; break;
+case 162: return ACBD[form]; break;
+case 168: return BA[form]; break;
+case 170: return DAECB[form]; break;
+case 171: return ADBC[form]; break;
+case 174: return CEDBA[form]; break;
+case 175: return CAB[form]; break;
+case 178: return BA[form]; break;
+case 182: return CEADB[form]; break;
+case 184: return DABC[form]; break;
+case 185: return BCA[form]; break;
+case 186: return ACB[form]; break;
+case 187: return BA[form]; break;
+case 189: return ADBC[form]; break;
+case 190: return BAC[form]; break;
+case 192: return ACBD[form]; break;
+case 195: return CDBA[form]; break;
+case 196: return BA[form]; break;
+case 198: return CEDAB[form]; break;
+case 200: return BECAD[form]; break;
+case 201: return BCA[form]; break;
+case 203: return BCA[form]; break;
+case 205: return CAB[form]; break;
+case 208: return DABC[form]; break;
+case 210: return DBCAE[form]; break;
+case 212: return BA[form]; break;
+case 214: return DBAC[form]; break;
+case 219: return BCA[form]; break;
+case 221: return BA[form]; break;
+case 222: return EDACB[form]; break;
+case 234: return BCADE[form]; break;
+case 235: return CAB[form]; break;
+case 236: return BA[form]; break;
+case 238: return DAECB[form]; break;
+case 240: return BCAD[form]; break;
+case 242: return BA[form]; break;
+case 245: return CAB[form]; break;
+case 246: return EFCAGDB[form]; break;
+case 249: return BA[form]; break;
+case 252: return BA[form]; break;
+case 254: return DCAB[form]; break;
+case 256: return BACD[form]; break;
+case 262: return BA[form]; break;
+case 264: return DABC[form]; break;
+case 267: return BA[form]; break;
+case 270: return BCDA[form]; break;
+case 272: return ADBC[form]; break;
+case 274: return CBA[form]; break;
+case 278: return BA[form]; break;
+case 285: return CAB[form]; break;
+case 286: return BDAECF[form]; break;
+case 288: return AECBD[form]; break;
+case 291: return DBAC[form]; break;
+case 294: return EFGCABD[form]; break;
+case 297: return DACB[form]; break;
+case 298: return BA[form]; break;
+case 300: return ACDB[form]; break;
+case 302: return BAC[form]; break;
+case 304: return ECABDF[form]; break;
+case 306: return CBAD[form]; break;
+case 312: return CAFBDE[form]; break;
+case 315: return BA[form]; break;
+case 318: return DCAEB[form]; break;
+case 320: return EABCDF[form]; break;
+case 322: return BADC[form]; break;
+case 324: return ABDC[form]; break;
+case 325: return EABDC[form]; break;
+case 326: return ACB[form]; break;
+case 330: return AEDCB[form]; break;
+case 333: return DABC[form]; break;
+case 336: return CABEDF[form]; break;
+case 338: return ADECFB[form]; break;
+case 339: return BAC[form]; break;
+case 342: return FGDEABC[form]; break;
+case 345: return AECDBF[form]; break;
+case 348: return BDAC[form]; break;
+case 350: return BFADCE[form]; break;
+case 352: return CEABDF[form]; break;
+case 354: return DCABEF[form]; break;
+case 360: return BCAED[form]; break;
+case 364: return BA[form]; break;
+case 366: return FGBDACE[form]; break;
+case 368: return AEDBGFC[form]; break;
+case 369: return BA[form]; break;
+case 370: return ACBD[form]; break;
+case 372: return ACDB[form]; break;
+case 378: return GBEAHDFC[form]; break;
+case 380: return BA[form]; break;
+case 381: return BA[form]; break;
+case 384: return BECADFGH[form]; break;
+case 387: return CABDE[form]; break;
+case 390: return AFGDEBC[form]; break;
+case 392: return EBACDF[form]; break;
+case 396: return BAC[form]; break;
+case 400: return AFHCGDEB[form]; break;
+case 402: return ABDC[form]; break;
+case 404: return BA[form]; break;
+case 405: return DABFEC[form]; break;
+case 406: return ACDB[form]; break;
+case 408: return ADCB[form]; break;
+case 410: return BDAC[form]; break;
+case 414: return CDAB[form]; break;
+case 418: return BAC[form]; break;
+case 423: return ECFBDGA[form]; break;
+case 425: return ADBC[form]; break;
+case 426: return CAB[form]; break;
+case 427: return BCA[form]; break;
+case 432: return EGBAFHCD[form]; break;
+case 434: return AEBDC[form]; break;
+case 435: return BACD[form]; break;
+case 437: return BA[form]; break;
+case 438: return FGACBED[form]; break;
+case 440: return ADBC[form]; break;
+case 441: return BADECF[form]; break;
+case 442: return BEACD[form]; break;
+case 446: return ADCB[form]; break;
+case 448: return AGBDEFHC[form]; break;
+case 450: return FGDBEAC[form]; break;
 
  default: return form;
 }
   return form;  //default case for levels not yet sorted manually
 }
+
 
 const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
 
@@ -350,198 +349,4 @@ inline void codeletter(int i, char* code) {return new_codeletter(i,code);}
 #else
 inline void codeletter(int i, char* code) {return old_codeletter(i,code);}
 #endif
-
-char* antwerpletters[201][17]=
-
-{{},{},{},{},{},{},{},{},{},{},{},
-/*11:*/{"BCA"},
-/*12:*/{},
-/*13:*/{},
-/*14:*/{"CDEAFB"},
-/*15:*/{"CEBFHGDA"},
-/*16:*/{},
-/*17:*/{"CBDA"},
-/*18:*/{},
-/*19:*/{"BCA"},
-/*20:*/{"BADC"},
-/*21:*/{"BDCAFE"},
-/*22:*/{},
-/*23:*/{},
-/*24:*/{"BCDAFE"},
-/*25:*/{},
-/*26:*/{"BCA","DE"},
-/*27:*/{"BDAC"},
-/*28:*/{},
-/*29:*/{},
-/*30:*/{"ABCDEFGH"},
-/*31:*/{},
-/*32:*/{"BACD"},
-/*33:*/{"BADC"},
-/*34:*/{"ABCD"},
-/*35:*/{"BCA"},
-/*36:*/{"ABCD"},
-/*37:*/{"A","CDB"},
-/*38:*/{"DEC","AB"},
-/*39:*/{"BCDA"},
-/*40:*/{"BDAC"},
-/*41:*/{},
-/*42:*/{"ABCDFE"},
-/*43:*/{"A"},
-/*44:*/{"AB"},
-/*45:*/{"ABDCEFHG"},
-/*46:*/{"AB"},
-/*47:*/{},
-/*48:*/{"BDCAFE"},
-/*49:*/{"ABCD"},
-/*50:*/{"EFGH","ABCD"},
-/*51:*/{"AB"},
-/*52:*/{"BA"},
-/*53:*/{"A"},
-/*54:*/{"EFD","ACB"},
-/*55:*/{"BDCA"},
-/*56:*/{"CDEF","AB"},
-/*57:*/{"E","BACD","FG"},
-/*58:*/{"A","BC"},
-/*59:*/{},
-/*60:*/{},
-/*61:*/{"A"},
-/*62:*/{"ABCD"},
-/*63:*/{"ABCDFE"},
-/*64:*/{"BCDA"},
-/*65:*/{"AB"},
-/*66:*/{"ABCD","EFHG","IJLK"},
-/*67:*/{"A"},
-/*68:*/{},
-/*69:*/{"AB"},
-/*70:*/{"ABDC"},
-/*71:*/{},
-/*72:*/{"ABDCFE"},
-/*73:*/{"BA"},
-/*74:*/{},
-/*75:*/{"AB","EFGHIJLK","CD"},
-/*76:*/{"A"},
-/*77:*/{"F","DEC","AB"},
-/*78:*/{"ABCD"},
-/*79:*/{"A"},
-/*80:*/{"FEHG","BADC"},
-/*81:*/{},
-/*82:*/{"AB"},
-/*83:*/{"A"},
-/*84:*/{"CDEF","AB"},
-/*85:*/{"AB"},
-/*86:*/{},
-/*87:*/{},
-/*88:*/{"A"},
-/*89:*/{"C","AB"},
-/*90:*/{"MNOP","ABCD","EFGIHJLK"},
-/*91:*/{"A","BCD"},
-/*92:*/{"AB","C"},
-/*93:*/{},
-/*94:*/{"AB"},
-/*95:*/{},
-/*96:*/{"EFHG","ADBC"},
-/*97:*/{},
-/*98:*/{"BADCFE"},
-/*99:*/{"AB","HIKJ","FG","CDE"},
-/*100:*/{"ABCD"},
-/*101:*/{"A"},
-/*102:*/{"EF","GHJILK","ABCD"},
-/*103:*/{},
-/*104:*/{"A"},
-/*105:*/{"ABDC"},
-/*106:*/{"BC","A","EF","D"},
-/*107:*/{},
-/*108:*/{"AB"},
-/*109:*/{"A"},
-/*110:*/{"CD","AB","EF"},
-/*111:*/{},
-/*112:*/{"KL","ABDC","EFGHIJ"},
-/*113:*/{"BA"},
-/*114:*/{"ABCD","EF","GHJI"},
-/*115:*/{"A"},
-/*116:*/{"E","AB","DC"},
-/*117:*/{"ABDC"},
-/*118:*/{"A","BC","D","E"},
-/*119:*/{},
-/*120:*/{"EFHGJI","ABCD"},
-/*121:*/{"HI","DE","FG","ABC"},
-/*122:*/{"A"},
-/*123:*/{"AB","C"},
-/*124:*/{"BC","A"},
-/*125:*/{},
-/*126:*/{"ABCDEF","GHJILK"},
-/*127:*/{},
-/*128:*/{"CD","FE","AB","GH"},
-/*129:*/{"E","BACD"},
-/*130:*/{"EFGH","ABDC","JI"},
-/*131:*/{"A"},
-/*132:*/{"AB","CD"},
-/*133:*/{},
-/*134:*/{},
-/*135:*/{"A","B"},
-/*136:*/{"AB","CD"},
-/*137:*/{},
-/*138:*/{"EF","GHIJ","ABDC"},
-/*139:*/{"A"},
-/*140:*/{"AB","C"},
-/*141:*/{"E","GF","ABCD","I","H"},
-/*142:*/{"F","E","AB","CD","G"},
-/*143:*/{"A"},
-/*144:*/{"ABCD","EFGHJI"},
-/*145:*/{"AB"},
-/*146:*/{},
-/*147:*/{"CDEFHG","IJ","AB"},
-/*148:*/{"A"},
-/*149:*/{},
-/*150:*/{"ABCD","GHEF","IJKLMNOP"},
-/*151:*/{},
-/*152:*/{"A","B"},
-/*153:*/{"C","AB","EFHG","D"},
-/*154:*/{"CD","EFGH","AB"},
-/*155:*/{"DE","AB","C"},
-/*156:*/{"EF","ABCD"},
-/*157:*/{},
-/*158:*/{"E","D","HI","BCA","FG"},
-/*159:*/{},
-/*160:*/{"DC","AB"},
-/*161:*/{"BACD"},
-/*162:*/{"KL","GHIJ","ABDC","EF"},
-/*163:*/{"A"},
-/*164:*/{},
-/*165:*/{},
-/*166:*/{"A"},
-/*167:*/{},
-/*168:*/{"BACD","EFGH"},
-/*169:*/{},
-/*170:*/{"AB","HIJK","FG","DE","C"},
-/*171:*/{"DEFG","ABC","IJ","H"},
-/*172:*/{"AB"},
-/*173:*/{},
-/*174:*/{"IJ","GH","F","ABCD","E"},
-/*175:*/{"BA","CDE","FG"},
-/*176:*/{"C","DEF","AB"},
-/*177:*/{},
-/*178:*/{"AB","CD"},
-/*179:*/{"A"},
-/*180:*/{"ABCD"},
-/*181:*/{},
-/*182:*/{"EFGH","ABC","J","D","I"},
-/*183:*/{},
-/*184:*/{"C","B","DE","A"},
-/*185:*/{"D","A","BC"},
-/*186:*/{"D","BC","A"},
-/*187:*/{"AB","C"},
-/*188:*/{},
-/*189:*/{"A","CDE","FGH","B"},
-/*190:*/{"D","C","AB"},
-/*191:*/{},
-/*192:*/{"QRTS","ABDC","KLMNPO","EFHGJI"},
-/*193:*/{},
-/*194:*/{"AB"},
-/*195:*/{"ABDCEFHG","I","K","J"},
-/*196:*/{"AB","CD"},
-/*197:*/{"A"},
-/*198:*/{"IJLK","EFGH","MNOP","ABCD","QRST"},
-/*199:*/{},
-/*200:*/{"B","CD","GHJI","EF","A"}};
 

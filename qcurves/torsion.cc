@@ -27,12 +27,12 @@
 
 int main(){
   cerr<<"Program to find and/or count torsion on a curve.\n\n";
-  set_precision("Enter number of decimal places");
+  set_precision(string("Enter number of decimal places").c_str());
 
   cerr<<"Enter 0 for short output (#torsion only)\n";
   cerr<<"   or 1 for long  output (list of the torsion points): ";
   int showpoints; cin >> showpoints;
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
   CurveReader input;
   Curve F;
   vector<Point> tor; int ntor, n2;

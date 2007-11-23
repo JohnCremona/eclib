@@ -54,8 +54,8 @@ public:
   std::set<bigint> the_primes;
   extra_prime_class() {;}
   ~extra_prime_class();
-  void read_from_file(char* pfilename, int verb=0);
-  void write_to_file(char* pfilename, int verb=0);
+  void read_from_file(const char* pfilename, int verb=0);
+  void write_to_file(const char* pfilename, int verb=0);
   int contains(const bigint& p)
   {
     return the_primes.find(p)!=the_primes.end();
@@ -74,7 +74,7 @@ public:
 
 extern extra_prime_class the_extra_primes;  // The one and only instance
 
-void initprimes(char* pfilename, int verb=0);
+void initprimes(const char* pfilename, int verb=0);
 
 //
 // divisors

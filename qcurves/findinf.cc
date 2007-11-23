@@ -43,8 +43,8 @@
 
 int main()
 {
-  set_precision("Enter number of decimal places");
-  initprimes("PRIMES",0);
+  set_precision(string("Enter number of decimal places").c_str());
+  initprimes(string("PRIMES").c_str(),0);
 
   bigfloat ht_limit;
   bigint u,r,s,t;

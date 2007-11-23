@@ -27,7 +27,7 @@
 
 int main()
 {
-  initprimes("PRIMES",1);
+  initprimes(string("PRIMES").c_str(),1);
 
   cout<<"long prime factors of 420:\n";
   vector<long> lplist = pdivs(420);

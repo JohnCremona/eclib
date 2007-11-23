@@ -39,7 +39,7 @@ endif
 CURVELIBNAME=$(LIBBASE).a
 
 CFLAGS = -c $(OPTFLAG) -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) #-pg
-LFLAGS = -lpari -L$(PARILIBDIR) $(LIBFLAG) $(NTLLFLAGS) $(IOLIB) -lm #-pg
+LFLAGS = $(LIBFLAG) -lpari -L$(PARILIBDIR) $(NTLLFLAGS) $(IOLIB) -lm #-pg
 
 LIBFLAGS = $(LFLAGS)
 
@@ -79,6 +79,7 @@ install_lib: $(HEADERS) lib
 	for f in $(HEADERS); \
 	 do cp $${f} $(INCDIR); \
 	done
+	chmod a+r $(INCDIR)/*
 	rm -f $(LIBDIR)/$(CURVELIBNAME)
 	cp $(CURVELIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(CURVELIBNAME)

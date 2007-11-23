@@ -32,6 +32,9 @@
 #include "smatrix_elim.h"
 #endif
 
+const string W_opname("W");
+const string T_opname("T");
+
 matop::matop(long a, long b, long c, long d)
 {
   mats.push_back(mat22(a,b,c,d));
@@ -66,12 +69,14 @@ homspace::homspace(long n, int hp, int hcusp, int verbose) :symbdata(n)
    plusflag=hp;
    cuspidal=hcusp;
    long i,j,k;
-   coordindex = new int[nsymb];  if (!coordindex) abort("coordindex");
-   int* check = new int[nsymb];  if (!check) abort("check");
+   coordindex = new int[nsymb];  
+   if (!coordindex) abort(string("coordindex").c_str());
+   int* check = new int[nsymb];  
+   if (!check) abort(string("check").c_str());
    i=nsymb; while (i--) check[i]=0;
    long ngens=0;
    int* gens = new int[nsymb+1];    // N.B. Start of gens array is at 1 not 0
-   if (!gens) abort("gens");
+   if (!gens) abort(string("gens").c_str());
    long* rel = new long[4]; if (!rel) abort("rel");
 
 // 2-term relations:
@@ -285,7 +290,8 @@ if (verbose>1)
      }
    if (rk>0)
    {
-   freegens = new int[rk]; if (!freegens) abort("freegens");
+     freegens = new int[rk]; 
+     if (!freegens) abort(string("freegens").c_str());
    for (i=0; i<rk; i++) freegens[i] = gens[pivs[i+1]];
    if (verbose>1)
     { cout << "freegens: ";
@@ -340,8 +346,10 @@ if (verbose>1)
    denom2 = 1;
    denom3 = denom1;
 
-   freemods = new modsym[rk]; if (!freemods) abort("freemods");
-   needed   = new int[rk];    if (!needed) abort("needed");
+   freemods = new modsym[rk]; 
+   if (!freemods) abort(string("freemods").c_str());
+   needed   = new int[rk];    
+   if (!needed) abort(string("needed").c_str());
 
    if (dimension>0)
    {
@@ -473,7 +481,7 @@ svec homspace::applyop(const matop& mlist, const rational& q) const
 mat sparse_restrict(const mat& m, const subspace& s);
 smat restrict(const smat& m, const subspace& s);
 
-mat homspace::calcop_restricted(char* opname, long p, const matop& mlist, 
+mat homspace::calcop_restricted(string opname, long p, const matop& mlist, 
 				const subspace& s, int dual, int display) const
 {
   long d=dim(s);
@@ -495,7 +503,7 @@ mat homspace::calcop_restricted(char* opname, long p, const matop& mlist,
   return m;
 }
 
-smat homspace::s_calcop_restricted(char* opname, long p, const matop& mlist, 
+smat homspace::s_calcop_restricted(string opname, long p, const matop& mlist, 
 				   const ssubspace& s, int dual, int display) const
 {
   long d=dim(s);
@@ -519,7 +527,7 @@ smat homspace::s_calcop_restricted(char* opname, long p, const matop& mlist,
   return m;
 }
 
-mat homspace::calcop(char* opname, long p, const matop& mlist, 
+mat homspace::calcop(string opname, long p, const matop& mlist, 
 		     int dual, int display) const
 {
   mat m(rk,rk);
@@ -538,7 +546,7 @@ mat homspace::calcop(char* opname, long p, const matop& mlist,
   return m;
 }
  
-smat homspace::s_calcop(char* opname, long p, const matop& mlist, 
+smat homspace::s_calcop(string opname, long p, const matop& mlist, 
 			int dual, int display) const
 {
   smat m(rk,rk);
@@ -571,14 +579,14 @@ smat homspace::s_calcop(char* opname, long p, const matop& mlist,
 mat homspace::heckeop(long p, int dual, int display) const
 {
  matop matlist(p,modulus);
- char* name = (char *)((modulus%p) ? "T" : "W");
+ string name = ((modulus%p) ? T_opname : W_opname);
  return calcop(name,p,matlist,dual,display);
 }
  
 smat homspace::s_heckeop(long p, int dual, int display) const
 {
  matop matlist(p,modulus);
- char* name = (char *)((modulus%p) ? "T" : "W");
+ string name = ((modulus%p) ? T_opname : W_opname);
  return s_calcop(name,p,matlist,dual,display);
 }
  
@@ -586,7 +594,7 @@ mat homspace::heckeop_restricted(long p,const subspace& s,
 				 int dual, int display) const
 {
  matop matlist(p,modulus);
- char* name = (char *)((modulus%p) ? "T" : "W");
+ string name = ((modulus%p) ? T_opname : W_opname);
  return calcop_restricted(name,p,matlist,s,dual,display);
 }
  
@@ -594,7 +602,7 @@ smat homspace::s_heckeop_restricted(long p,const ssubspace& s,
 				    int dual, int display) const
 {
  matop matlist(p,modulus);
- char* name = (char *)((modulus%p) ? "T" : "W");
+ string name = ((modulus%p) ? T_opname : W_opname);
  return s_calcop_restricted(name,p,matlist,s,dual,display);
 }
  
@@ -625,13 +633,13 @@ mat homspace::newheckeop(long p, int dual, int display) const
 mat homspace::wop(long q, int dual, int display) const
 {
  matop matlist(q,modulus);
- return calcop("W",q,matlist,dual,display);
+ return calcop(W_opname,q,matlist,dual,display);
 }
  
 smat homspace::s_wop(long q, int dual, int display) const
 {
  matop matlist(q,modulus);
- return s_calcop("W",q,matlist,dual,display);
+ return s_calcop(W_opname,q,matlist,dual,display);
 }
  
 mat homspace::conj(int dual, int display) const
@@ -710,7 +718,7 @@ smat homspace::s_conj_restricted(const ssubspace& s,
 mat homspace::fricke(int dual, int display) const
 {
  matop frickelist(modulus,modulus);
- return calcop("W",modulus,frickelist,dual,display);
+ return calcop(W_opname,modulus,frickelist,dual,display);
 }
 
 long homspace::op_prime(int i)  // the i'th operator prime for Tp or Wq
@@ -736,7 +744,7 @@ mat homspace::opmat(int i, int dual, int v)
   long p = op_prime(i);
   if(v) 
     {
-      cout<<"Computing " << ((::div(p,modulus)) ? "W" : "T") <<"("<<p<<")..."<<flush;
+      cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p<<")..."<<flush;
       mat ans = heckeop(p,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -756,7 +764,7 @@ smat homspace::s_opmat(int i, int dual, int v)
   long p = op_prime(i);
   if(v) 
     {
-      cout<<"Computing " << ((::div(p,modulus)) ? "W" : "T") <<"("<<p<<")..."<<flush;
+      cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p<<")..."<<flush;
       smat ans = s_heckeop(p,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -777,7 +785,7 @@ mat homspace::opmat_restricted(int i, const subspace& s, int dual, int v)
   long p = op_prime(i);
   if(v) 
     {
-      cout<<"Computing " << ((::div(p,modulus)) ? "W" : "T") <<"("<<p
+      cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p
 	  <<") restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
       mat ans = heckeop_restricted(p,s,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
@@ -799,7 +807,7 @@ smat homspace::s_opmat_restricted(int i, const ssubspace& s, int dual, int v)
   long p = op_prime(i);
   if(v) 
     {
-      cout<<"Computing " << ((::div(p,modulus)) ? "W" : "T") <<"("<<p
+      cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p
 	  <<") restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
       smat ans = s_heckeop_restricted(p,s,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;

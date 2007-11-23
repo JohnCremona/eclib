@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
+#include "marith.h"
 #include "msubspace.h"
 #include "moddata.h"
 #include "symb.h"
@@ -286,14 +287,14 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
 // compute projcoord, precomputed projections of the modular symbol basis
 
-  long ncoord = nrows(h1->coord);
+  long ncoord = h1->coord_vecs.size()-1;
   projcoord.init(ncoord,dims);
   coord_fac=0;
   vec_m mrowi(dims);
   vec rowi(dims), coordi(dimh);
   for (i=1; i<=ncoord; i++)
     { 
-      coordi = h1->coord.row(i);
+      coordi = (h1->coord_vecs[i]).as_vec();
       if(h1->cuspidal) coordi = h1->cuspidalpart(coordi);
       mrowi = V*coordi;
       rowi=mrowi.shorten((int)i);
@@ -336,6 +337,7 @@ vec_m nfd::ap(long p)
   long k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
   vec_m apvec(dims);
   int bad = ::div(p,n);
+  if(bad) return apvec; // temporary fix!
   if(bad) matlist=new matop(p,n);
   else    matlist=new matop(p);
 
@@ -347,12 +349,15 @@ vec_m nfd::ap(long p)
 	  bigint mKkj; mKkj = Kkj;
 	  if(bad)
 	    {
-	      apvec += mKkj*h1->applyop(*matlist,h1->freemods[k],projcoord);
+	      modsym s = h1->freemods[k];
+	      //	      for(l=0; l<matlist->size(); l++)
+	      //		apvec += mKkj*(*matlist)[l](s,h1,projcoord);
+	      //  apvec += mKkj*h1->applyop(*matlist,s,projcoord);
 	    }
 	  else
 	    {
 	      symb s = h1->symbol(h1->freegens[k]);
-	      for(l=0; l<matlist->length; l++)
+	      for(l=0; l<matlist->size(); l++)
 		apvec += mKkj*(*matlist)[l](s,h1,projcoord);
 	    }
 	}
@@ -396,16 +401,16 @@ mat_m nfd::heckeop(long p)
 	      bigint mKkj; mKkj = Kkj;
 	      if(bad)
 		{
-		  vec_m vt = h1->applyop(*matlist,h1->freemods[k]);
+		  vec vt = (h1->applyop(*matlist,h1->freemods[k])).as_vec();
 		  if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		  colj += mKkj*vt);
+		  colj += (mKkj*vt);
 		}
 	      else
 		{
 		  symb s = h1->symbol(h1->freegens[k]);
-		  for(l=0; l<matlist->length; l++)
+		  for(l=0; l<matlist->size(); l++)
 		    {
-		      vec_m vt = (*matlist)[l](s,h1);
+		      vec vt = ((*matlist)[l](s,h1)).as_vec();
 		      if(h1->cuspidal) vt=h1->cuspidalpart(vt);
 		      colj += mKkj*vt;
 		    }

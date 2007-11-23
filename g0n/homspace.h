@@ -103,10 +103,10 @@ public:
   svec applyop(const matop& mlist, const rational& q) const;
   svec applyop(const matop& mlist, const modsym& m) const 
   {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());} 
-  mat calcop(char* opname, long p, const matop& mlist, int dual, int display=0) const;
-  mat calcop_restricted(char* opname, long p, const matop& mlist, const subspace& s, int dual, int display=0) const;
-  smat s_calcop(char* opname, long p, const matop& mlist, int dual, int display=0) const;
-  smat s_calcop_restricted(char* opname, long p, const matop& mlist, const ssubspace& s, int dual, int display=0) const;
+  mat calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
+  mat calcop_restricted(string opname, long p, const matop& mlist, const subspace& s, int dual, int display=0) const;
+  smat s_calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
+  smat s_calcop_restricted(string opname, long p, const matop& mlist, const ssubspace& s, int dual, int display=0) const;
 public:
   mat heckeop(long p, int dual, int display=0) const;
   mat heckeop_restricted(long p, const subspace& s, int dual, int display=0) const;

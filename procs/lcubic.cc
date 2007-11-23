@@ -27,7 +27,7 @@
 
 int main()
 {
-  initprimes("PRIMES");
+  initprimes(string("PRIMES").c_str());
   bigint a, b, c, d, disc;
   bigint absdisc, maxdisc;
   bigint a0,b0,c0,d0;

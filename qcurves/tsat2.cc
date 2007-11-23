@@ -44,7 +44,7 @@ void codeletter(int i, char* code, int width=0);
 int main()
 {
   set_precision(100);
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
   int verbose = 1;
   //  cout<<"verbose (0/1)? ";             cin >>verbose;
   int i, j, npts;

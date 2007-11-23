@@ -29,11 +29,11 @@
 #include "reader.h"
 
 int main(){
-  set_precision("Enter number of decimal places");
+  set_precision(string("Enter number of decimal places").c_str());
   int verbose=0;
   cout << "Verbose? (0/1) " << flush;  cin >> verbose;
 
-  initprimes("PRIMES",0);
+  initprimes(string("PRIMES").c_str(),0);
 	
   CurveReader input;
   Curve E;

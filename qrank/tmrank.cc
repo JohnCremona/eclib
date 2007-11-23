@@ -55,7 +55,7 @@ int main()
   selmer_only=1;
 #endif  
   cout << "Verbose mode? (0/1)\n"; cin >> verbose;
-  initprimes("PRIMES",verbose);
+  initprimes(string("PRIMES").c_str(),verbose);
 //  cout << "Number of sieving primes?\n"; cin >> naux;
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   while (getcurve())

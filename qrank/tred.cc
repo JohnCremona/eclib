@@ -34,12 +34,12 @@ int getquartic(quartic& g);
 
 int main()
 {
-  set_precision("Enter number of decimal places");
+  set_precision(string("Enter number of decimal places").c_str());
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   
   int verb=1; //0; 
   //   cout << "Verbose? "; cin >> verb;
-  initprimes("PRIMES",verb);
+  initprimes(string("PRIMES").c_str(),verb);
 
   quartic g;
 
