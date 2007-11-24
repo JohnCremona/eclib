@@ -127,6 +127,7 @@ else
 if (verbose)
 {cout << "After 2-term relations, ngens = "<<ngens<<"\n";
 // Compare with predicted value:
+/*
  int nu2=(::div((long)4,modulus)?0:1);
  static int nu2table[4] = {0,2,1,0};
  for(i=0; nu2&&(i<npdivs); i++)  nu2 *= nu2table[plist[i]%4];
@@ -134,6 +135,7 @@ if (verbose)
  cout<<"predicted value of ngens = "<<ngens0;
  if(!plusflag) if(ngens!=ngens0) cout<<" --WRONG!";
  cout<<endl;
+*/
 if (verbose>1)
   {
  cout << "gens = ";
@@ -149,12 +151,11 @@ if (verbose>1)
 //   long maxnumrel = 20+(2*ngens)/3;
    long maxnumrel = ngens;
 
-   long t = maxnumrel*ngens;
    if (verbose)
      {
        cout << "ngens     = "<<ngens<<endl;
        cout << "maxnumrel = "<<maxnumrel<<endl;
-       cout << "relation matrix has = "<<t<<" entries..."<<endl;
+       cout << "relation matrix has = "<<(maxnumrel*ngens)<<" entries..."<<endl;
      }
    {
 #ifdef USE_SMATS
@@ -168,7 +169,7 @@ if (verbose>1)
    vec newrel(ngens);
    if (verbose) cout << "successfully allocated "<<endl;
 #endif
-   int numrel = 1;
+   int numrel = 0;
    long ij; int fix;
 
    for (i=0; i<nsymb; i++) check[i]=0;
@@ -201,6 +202,7 @@ if (verbose>1)
      if(newrel.size()!=0) 
        {
 	 numrel++;
+	 make_primitive(newrel);
 	 if(numrel<=maxnumrel)
 	   relmat.setrow(numrel,newrel);
 	 else 
@@ -210,8 +212,8 @@ if (verbose>1)
 #if(0)
      if(npos) 
        {
-	 if(numrel<maxnumrel)
-	   relmat.set_row(numrel++,npos,pos,val);  // rows start at 0 not 1
+	 if(numrel<=maxnumrel)
+	   relmat.set_row(numrel,npos,pos,val);  // rows start at 0 not 1
 	 else 
 	   cout<<"Too many 3-term relations (numrel="<<numrel
 	       <<", maxnumrel="<<maxnumrel<<")"<<endl;
@@ -233,6 +235,7 @@ if (verbose>1)
      {
        cout << "Finished 3-term relations: numrel = "<<numrel<<" ( maxnumrel = "<<maxnumrel<<")"<<endl;
        // Compute with predicted value (got full H_1 only):
+       /*
        if(!plusflag)
 	 {
 	   int nu3=(::div((long)9,modulus)?0:1);
@@ -243,6 +246,7 @@ if (verbose>1)
 	   if(ntriangles!=numrel) cout<<" --WRONG!";
 	   cout<<endl;
 	 }
+       */
      }
 
 
@@ -250,7 +254,7 @@ if (verbose>1)
 
    if(verbose) 
      {
-       if(verbose>1) cout << "relmat = " << relmat << endl;
+       if(verbose>1) cout << "relmat = " << relmat.as_mat() << endl;
        cout << "Computing kernel..."<<endl;
      }
    vec pivs, npivs;
@@ -260,6 +264,12 @@ if (verbose>1)
    int d1;
    smat sp = liftmat(sme.kernel(npivs,pivs),MODULUS,d1);
    denom1=d1;
+   if(verbose>1) 
+     {
+       cout << "kernel of relmat = " << sp.as_mat() << endl;
+       cout << "pivots = "<<pivs << endl;
+       cout << "denom = "<<d1 << endl;
+     }
    rk = ncols(sp);
    coord_vecs.resize(ngens+1); // 0'th is unused
    for(i=1; i<=ngens; i++) 

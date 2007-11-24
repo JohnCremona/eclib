@@ -93,8 +93,7 @@ clean:
 	/bin/rm -f *$(OBJ_SUF).o *~ *.a *.so *.dylib
 
 veryclean: clean
-	$(CLEAN) *.cc *.h
-	(cd $(BINDIR); /bin/rm -f $(TESTS))
+	(cd $(BINDIR); /bin/rm -f $(TESTS) $(PROGS))
 
 shar: sources
 	rm -f procs.shar procs.shar.Z procs.shar.gz

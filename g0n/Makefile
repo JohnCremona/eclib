@@ -117,9 +117,8 @@ tests: $(TESTS)
 clean:
 	/bin/rm -f *~ *$(OBJ_SUF).o *.a *.so *.dylib
 
-veryclean:
-	$(CLEAN)
-	/bin/rm -f *~ *$(OBJ_SUF).o $(PROGS) $(TESTS)
+veryclean: clean
+	/bin/rm -f $(PROGS) $(TESTS)
 
 check:  $(TESTS) $(PROGS)
 	rm -f PRIMES

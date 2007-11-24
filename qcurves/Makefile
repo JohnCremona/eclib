@@ -123,8 +123,7 @@ clean:
 	/bin/rm -f *~ *$(OBJ_SUF).o  $(TESTS) $(CURVELIBNAME) *_sta *.a *.so *.dylib
 
 veryclean: clean
-	$(CLEAN)
-	/bin/rm -f $(PROGS)
+	/bin/rm -f $(PROGS) $(TESTS)
 
 shar: sources
 	rm -f qcurves.shar qcurves.shar.Z

@@ -15,7 +15,6 @@ PARILIBDIR ?= ${PARI_PREFIX}/lib
 NTLINCDIR ?= ${NTL_PREFIX}/include
 NTLLIBDIR ?= ${NTL_PREFIX}/lib
 
-CLEAN = rcsclean
 RANLIB = ranlib
 CP = cp -p
 

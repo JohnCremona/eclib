@@ -81,7 +81,6 @@ clean:
 	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.a *.so *.dylib
 
 veryclean: clean
-	$(CLEAN) *.cc *.h
 	(cd $(BINDIR); /bin/rm -f $(TESTS) $(PROGS))
 
 OBJS = mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o twoadic$(OBJ_SUF).o descent$(OBJ_SUF).o
@@ -114,7 +113,7 @@ progs: $(PROGS)
 STATIC_PROGS = mwrank_sta ratpoint_sta
 static_progs: $(STATIC_PROGS)
 
-TESTS = $(PROGS) tequiv tred
+TESTS = $(PROGS) tmrank tequiv tred
 tests: $(TESTS) 
 
 test1: tmrank
