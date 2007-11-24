@@ -7,6 +7,7 @@ include ../Makefile
 # tests:    builds various test programs
 #
 
+.PHONY = clean
 
 ifeq ($(ARITH),NTL_INTS)
 LIBBASE = libjcntlint

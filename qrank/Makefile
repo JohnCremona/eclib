@@ -9,6 +9,8 @@ include ../Makefile
 # install (makes lib & copies lib & includes to ../lib, ../include)
 #
 
+.PHONY = clean
+
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
 NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
@@ -49,8 +51,6 @@ endif
 RANKLIBNAME=$(RANKLIBBASE).a
 
 CFLAGS = -c $(OPTFLAG) -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) #-pg
-# in the following line I don't know why I get missing symbol errors if 
-# I do not put int timer.o explicitly, since it is in libjc.a
 LFLAGS = $(LIBFLAG) -lpari -L$(PARILIBDIR) $(NTLLFLAGS) $(IOLIB) -lpari -lm #-pg
 
 LIBFLAGS = $(LFLAGS)

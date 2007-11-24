@@ -8,6 +8,8 @@ include ../Makefile
 # progs:    builds various useful programs
 #
 
+.PHONY = clean
+
 ifeq ($(ARITH),NTL_INTS)
 NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari

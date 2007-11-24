@@ -71,6 +71,14 @@ clean:
 	cd lib && /bin/rm -f *.a *.so *.dylib 
 	cd include && /bin/rm -f *.h
 
+veryclean:
+	cd procs && make veryclean
+	cd qcurves && make veryclean
+	cd qrank && make veryclean
+	cd g0n && make veryclean
+	cd lib && /bin/rm -f *.a *.so *.dylib 
+	cd include && /bin/rm -f *.h
+
 show:
 	echo $(OPTFLAG)
 
