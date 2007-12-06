@@ -33,10 +33,13 @@ CurveRed CR;
 bigint c4,c6,twist2;
 
 
-while (cout << "\nEnter a  curve: ",
-       cin >> F,
-       !F.isnull() )
+ while(1)
 {
+  cout << "\nEnter a  curve: ";
+  cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
+  cin >> F;
+  if(F.isnull()) exit(0);
+
   D = Curvedata(F,1); // construct as minimal
   E = D;
   CR = CurveRed(E);
@@ -44,12 +47,14 @@ while (cout << "\nEnter a  curve: ",
   
   long twist=1;
   
-  while(  cout << "\nEnter a twist value: ",
-	cout << "\n(0 to set a new `original' curve, 1 to twist original,\n",
-	cout << "or any other integer to twist immediately preceding output) ",
-	cin >> twist,
-	(twist|=0))
+  while(1)
     {
+      cout << "\nEnter a twist value: ";
+      cout << "\n(0 to set a new `original' curve, 1 to twist original,\n";
+      cout << "or any other integer to twist immediately preceding output) ";
+      cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
+      cin >> twist;
+      if(twist==0) break;
       if(twist==1) { E=D;}
       else
 	{

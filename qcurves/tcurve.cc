@@ -32,6 +32,7 @@ int main(void)
   Curve E;
   
   cout << "\nEnter a curve: " << endl ;
+  cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
   cin >> E ;
   cout << "The curve is " << E << endl ; 
   /*

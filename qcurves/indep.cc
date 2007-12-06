@@ -35,22 +35,29 @@ int main()
 
   int verbose = 1;
   long rank, npts, j;
-  cout<<"verbose (0/1)? ";             cin >>verbose;
+  cout<<"verbose (0/1)? ";  
+  cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
+  cin >>verbose;
   Curve E;
 
     while (1)
     {
-      cout<<"\nInput a curve: ";      cin >> E;
-      if ( E.isnull() ) break;
+      cout<<"\nInput a curve: ";      
+      cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
+      cin >> E;
+      if ( E.isnull() ) exit(0);
       Curvedata C(E);
       cout << "Curve " << (Curve)C << endl;
       Point P(C);
-      cout<<"enter number of points: ";      cin >> npts;
+      cout<<"enter number of points: ";      
+      cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
+      cin >> npts;
       vector<Point> points; points.reserve(npts);
       j=0; 
       while(j<npts)
 	{ 
 	  cout<<"\n  enter point "<<(j+1)<<" : ";
+	  cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
 	  cin >> P;
 	  if ( P.isvalid() ) {points.push_back(P); j++;}
 	  else {cout<<"point "<<P<<" not on curve.\n\n"; }
@@ -58,7 +65,9 @@ int main()
       if(verbose) cout<<npts<<" points entered.\n";
 
       long naux=npts+10;
-      cout << "Enter number of primes to use: "; cin>>naux;
+      cout << "Enter number of primes to use: "; 
+      cin>>ws;  if(cin.eof()) {cerr<<endl; exit(0);}
+      cin>>naux;
       
       sifter box(&C, naux, verbose);
       box.process(points);

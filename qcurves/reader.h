@@ -65,9 +65,14 @@ public:
     if(tty_input)
       {
 	cerr<<"Enter a curve (null to exit): "<<flush;
+	cin>>ws;  if(cin.eof()) {cerr<<endl; return 0;}
 	cin>>c;
       }
-    else in >> c;
+    else 
+      {
+	in>>ws;  if(in.eof()) return 0;
+	in >> c;
+      }
     return !c.isnull();
   }
 };

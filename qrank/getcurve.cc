@@ -29,20 +29,17 @@ int getcurve(Curvedata& CD, Curvedata& CD_orig,
 	     int& change, int verb)
 {
   Curve C0;
-  int sing=1;
-  while(sing)
+  if(verb) cout  << "Enter curve: ";
+  cin>>ws;  if(cin.eof()) return 0;
+  cin >> C0;
+  if(C0.isnull()) return 0;  // quitting condition
+  CD_orig = Curvedata(C0,0); // DON'T change coords
+  CD = CD_orig.minimalize(u,r,s,t);
+  if (verb) cout << endl;
+  if(CD.isnull()) // input curve was singular, non-null
     {
-      if(verb) cout  << "Enter curve: ";
-      cin >> C0;
-      if(C0.isnull()) return 0;  // quitting condition
-      CD_orig = Curvedata(C0,0); // DON'T change coords
-      CD = CD_orig.minimalize(u,r,s,t);
-      if (verb) cout << endl;
-      sing=CD.isnull();
-      if(sing) // input curve was singular, non-null
-	{
-	  if(verb) cout<<"Curve "<<C0<<" is singular\n";
-	}
+      if(verb) cout<<"Curve "<<C0<<" is singular\n";
+      return 0;
     }
   cout << "Curve "<< (Curve)C0<<" :\t";
   change=(Curve)CD!=C0;
