@@ -29,21 +29,14 @@ private:
   int tty_input;
   ifstream in;
 public:
-  CurveReader(char* name = "")
+  CurveReader()
   {  
     tty_input=0;
     char * filename = new char[32];
-    if(!strcmp(name,""))
-      {
-	cerr << "Enter a filename for curve input (or tty): ";
-	cin >> filename;
-	cerr<<"filename entered is "<<filename<<endl;
-	tty_input = !strcmp(filename,"tty");
-      }
-    else
-      {
-	strcpy(filename,name);
-      }
+    cerr << "Enter a filename for curve input (or tty): ";
+    cin >> filename;
+    cerr<<"filename entered is "<<filename<<endl;
+    tty_input = !strcmp(filename,"tty");
     if(tty_input)
       cerr<<"Taking input from terminal"<<endl;
     else
