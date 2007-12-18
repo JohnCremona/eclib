@@ -28,7 +28,7 @@
 
 void minv(const bigint& a1, const bigint& a2, 
 	  const bigint& b1, const bigint& b2, 
-	  const bigint& c1, const bigint& c1, 
+	  const bigint& c1, const bigint& c2, 
 	  bigint& xmin, const bigint& ymin);
 
 // (e+f*i) is (a+b*i) mod (c+d*i) in Z[i]
