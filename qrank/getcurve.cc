@@ -24,29 +24,20 @@
 #include "curve.h"
 #include "getcurve.h"
 
-int getcurve(Curvedata& CD, Curvedata& CD_orig, 
-	     bigint& u, bigint& r, bigint& s, bigint& t, 
-	     int& change, int verb)
+int getcurve(Curvedata& CD, int verb)
 {
   Curve C0;
   if(verb) cout  << "Enter curve: ";
-  cin>>ws;  if(cin.eof()) return 0;
+  cin>>ws;  if(cin.eof()) return 0; // quit if EOF reached
   cin >> C0;
-  if(C0.isnull()) return 0;  // quitting condition
-  CD_orig = Curvedata(C0,0); // DON'T change coords
-  CD = CD_orig.minimalize(u,r,s,t);
   if (verb) cout << endl;
+  if(C0.isnull()) return 0;  // quit if null curve entered
+  cout << "Curve "<< C0<<" :\t";
+  CD = Curvedata(C0,0);      // DON'T change coords
   if(CD.isnull()) // input curve was singular, non-null
     {
-      if(verb) cout<<"Curve "<<C0<<" is singular\n";
+      cout<<" singular"<<endl;
       return 0;
-    }
-  cout << "Curve "<< (Curve)C0<<" :\t";
-  change=(Curve)CD!=C0;
-  if(change&&verb)
-    {
-      cout<<"Working with minimal curve "<<(Curve)CD<<"\n";
-      cout<<"\t[u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
     }
   return 1;
 }

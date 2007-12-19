@@ -25,6 +25,7 @@
 #define _MATRIX_H      1       //flags that this file has been included
 
 #include "vector.h"
+#include "limits.h" // MAX_INT gcc >= 4.3
 
 #undef scalar
 #undef vec

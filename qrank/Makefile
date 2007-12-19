@@ -15,11 +15,11 @@ ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
 NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
-LIBFLAG = -lcurvesntlint -ljcntlint -L$(LIBDIR)
+LIBFLAG = -L$(LIBDIR) -lcurvesntlint -ljcntlint
 CURVELIBNAME = libcurvesntlint.a
-CURVELIBFLAG = -lcurvesntlint -L.
+CURVELIBFLAG = -L../libs -lcurvesntlint
 RANKLIBBASE = librankntlint
-RANKLIBFLAG = -lrankntlint -L.
+RANKLIBFLAG = -L../libs -lrankntlint
 OBJ_SUF = _ntl
 EXE_SUFFIX = _ntl
 else
@@ -27,22 +27,22 @@ ifeq ($(ARITH),NTL)
 LIBNAME = libjcntl.a
 NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
-LIBFLAG = -lcurvesntl -ljcntl -L$(LIBDIR)
+LIBFLAG = -L$(LIBDIR) -lcurvesntl -ljcntl
 CURVELIBNAME = libcurvesntl.a
-CURVELIBFLAG = -lcurvesntl -L.
+CURVELIBFLAG = -L../libs -lcurvesntl
 RANKLIBBASE = librankntl
-RANKLIBFLAG = -lrankntl -L.
+RANKLIBFLAG = -L../libs -lrankntl
 OBJ_SUF = _n
 EXE_SUFFIX = _n
 else
 NTLCFLAGS = 
 NTLLFLAGS = 
 LIBNAME = libjc.a
-LIBFLAG = -lcurves -ljc -L$(LIBDIR)
+LIBFLAG = -L$(LIBDIR) -lcurves -ljc
 CURVELIBNAME = libcurves.a
 CURVELIBFLAG = -lcurves
 RANKLIBBASE = librank
-RANKLIBFLAG = -lrank -L.
+RANKLIBFLAG = -L../libs -lrank
 OBJ_SUF = _
 EXE_SUFFIX = _
 endif
