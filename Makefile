@@ -45,10 +45,10 @@ endif
 #
 
 all: dirs
-	cd procs && make tests progs install
-	cd qcurves && make tests progs install
-	cd qrank && make tests progs install
-	cd g0n && make tests progs install
+	cd procs && make lib install
+	cd qcurves && make lib install
+	cd qrank && make lib install
+	cd g0n && make lib install
 
 dirs: 
 	mkdir -p include

@@ -95,10 +95,7 @@ install_lib: $(HEADERS) $(G0NLIBNAME)
 install: lib install_lib
 
 
-#NF_DIR ?= ./newforms
 CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT #-DNF_DIR=\"$(NF_DIR)\"
-# in the following line I don't know why I get missing symbol errors if 
-# I do not put int timer.o explicitly, since it is in libjc.a
 LFLAGS = $(LIBFLAG) -lpari -L$(PARILIBDIR) $(NTLLFLAGS) $(IOLIB) -lm
 
 LIBFLAGS = $(LFLAGS)
@@ -128,12 +125,12 @@ check:  $(TESTS) $(PROGS)
 	./mhcount < mhcount.in > t && diff t  mhcount.out
 	rm -rf tmp_nf_dir
 	mkdir tmp_nf_dir
-	NF_DIR=tmp_nf_dir && ./tmanin < tmanin.in > t 2>/dev/null && diff t tmanin.out
-	NF_DIR=tmp_nf_dir && ./nftest < nftest.in 2>/dev/null > t && diff t nftest.out
-	NF_DIR=tmp_nf_dir && ./oftest < oftest.in > t && diff t oftest.out
-	NF_DIR=tmp_nf_dir && ./nfhpcurve < nfhpcurve.in > t 2>/dev/null && diff t nfhpcurve.out
-	NF_DIR=tmp_nf_dir && ./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
-	NF_DIR=tmp_nf_dir && ./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog.out
+	export NF_DIR=tmp_nf_dir && ./tmanin < tmanin.in > t 2>/dev/null && diff t tmanin.out
+	export NF_DIR=tmp_nf_dir && ./nftest < nftest.in 2>/dev/null > t && diff t nftest.out
+	export NF_DIR=tmp_nf_dir && ./oftest < oftest.in > t && diff t oftest.out
+	export NF_DIR=tmp_nf_dir && ./nfhpcurve < nfhpcurve.in > t 2>/dev/null && diff t nfhpcurve.out
+	export NF_DIR=tmp_nf_dir && ./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
+	export NF_DIR=tmp_nf_dir && ./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog.out
 	rm -rf tmp_nf_dir
 
 input: input.cc
