@@ -44,11 +44,15 @@ endif
 # all:  builds libraries, puts them into ./lib and includes in ./include
 #
 
-all:
-	cd procs && make lib install
-	cd qcurves && make lib install
-	cd qrank && make lib install
-	cd g0n && make lib install
+all: dirs
+	cd procs && make tests progs install
+	cd qcurves && make tests progs install
+	cd qrank && make tests progs install
+	cd g0n && make tests progs install
+
+dirs: 
+	mkdir -p include
+	mkdir -p lib
 
 dylib:
 	cd procs && make install_dylib tests progs

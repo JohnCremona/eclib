@@ -29,6 +29,11 @@
 // computing rank via general 2-descent and descent via 2-isogeny
 // repectively); class two_descent is a user interface to these
 
+// rank12 must be given a minimal (integral) model.  two_descent can
+// be given a non-minimal (integral) model, and will work with the
+// minimal model; any points returned will be transferred back to the
+// original model
+
 class rank1;
 class rank2;
 
@@ -79,7 +84,10 @@ private: rank12 * r12;  // does all the work
   int verbose, two_torsion_exists, selmer_only;
   int success, certain, fullmw;
   long rank, selmer_rank, sat_bound;
-  mw mwbasis;
+  mw* mwbasis;
+  Curvedata e_orig, e_min;
+  int change; // flags if e_orig!=e_min
+  bigint u,r,s,t; // the transform between e_orig and e_min
 public:
 // Constructor:
 //
@@ -101,21 +109,12 @@ public:
   int ok()      const {return success;}
   int get2t() const {return two_torsion_exists;}
   int getfullmw() const {return fullmw;}
-  bigfloat regulator() {return mwbasis.regulator();}
-  vector<Point> getbasis() {return mwbasis.getbasis();}
-  vector<Point> getbasis(Curvedata* CD_orig, 
-			  const bigint& u, const bigint& r, 
-			  const bigint& s, const bigint& t);
+  bigfloat regulator() {return mwbasis->regulator();}
+  vector<Point> getbasis(); // returns points on original model
   void report_rank() const;
   void saturate(long sat_bd); // =0 for none
-  void show_gens(int change,
-		 Curvedata* CD_orig, 
-		 const bigint& u, const bigint& r, 
-		 const bigint& s, const bigint& t);
+  void show_gens(); // display points on original model
   void show_result_status();
-  void pari_output(int change,
-		   Curvedata* CD_orig, 
-		   const bigint& u, const bigint& r, 
-		   const bigint& s, const bigint& t);
+  void pari_output();
 };
 

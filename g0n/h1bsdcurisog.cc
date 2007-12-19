@@ -58,7 +58,7 @@
 
 int main(void)
 {
-  set_precision(string("Enter number of decimal places").c_str());
+  set_precision(10);
  
  long limit, n=1, hlim1=10, hlim2=15; 
  bigint nn;

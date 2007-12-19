@@ -333,7 +333,7 @@ inline CC pow(const CC& a, const RR& e)  {return exp(e*log(a));}
 inline long decimal_precision() {return 15;}
 inline int is_zero(double x) {return fabs(x)<1e-15;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
-inline void set_precision(long n) {cout.precision(15);}
+inline void set_precision(long n) {cout.precision(n);}
 inline void set_precision(const char* prompt)  {cout.precision(15);}
 // Must use #define here and not inline functions, to override the
 // LiDIA definitions which return LiDIA bigfloats!

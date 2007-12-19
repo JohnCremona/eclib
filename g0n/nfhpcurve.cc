@@ -49,7 +49,7 @@ int main(void)
 
  cout << "Program nfhpcurve.  Using METHOD = " << METHOD 
       << " to find newforms" << endl;
- set_precision(string("Enter number of decimal places").c_str());
+ set_precision(20);
 #ifdef MODULAR
  cout << "MODULUS for linear algebra = " << MODULUS << endl;
 #endif

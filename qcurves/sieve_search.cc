@@ -599,7 +599,7 @@ void qsieve::init_f()
 	  {
 	    //initialize help[][]
 	    for(b = 0; b < bb; b++)
-	      for(a = 0; a < aa; a++) 
+	      for(a = 0; a <= aa; a++) 
 		help[b][a] = bit_zero;
 	    if(p < (long)QS_LONG_LENGTH) //small p
 	      for(a = 0; a < p; a++)

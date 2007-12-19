@@ -44,6 +44,7 @@ int main()
 
   while(1) {
   cout << "Enter coefficients a b c d: ";
+  cin>>ws;  if(cin.eof()) {cerr<<endl; break;}
   cin >> a >> b >> c >> d;
   cout<<a<<" "<<b<<" "<<c<<" "<<d<<endl; 
   if(d==0) {break;}

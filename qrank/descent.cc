@@ -49,13 +49,23 @@ two_descent::two_descent(Curvedata* ec,
 	      int verb, int sel, 
 	      long firstlim, long secondlim, 
 	      long n_aux, int second_descent)
-  :verbose(verb), selmer_only(sel), mwbasis(ec,verb>2)
+  :verbose(verb), selmer_only(sel) 
   {
-    two_torsion_exists = (two_torsion(*ec).size()>1) ;
+    e_orig=*ec;
+    e_min=e_orig.minimalize(u,r,s,t);
+    change=((Curve)e_orig!=(Curve)e_min);
+    if(change&&verb)
+      {
+	cout<<"Working with minimal curve "<<(Curve)e_min<<"\n";
+	cout<<"\t[u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
+      }
+    mwbasis = new mw(&e_min,verb>2);
+    two_torsion_exists = (two_torsion(e_min).size()>1) ;
     if(two_torsion_exists) 
-      r12=new rank2(ec,verb,sel,firstlim,secondlim,second_descent);
+      r12=new rank2(&e_min,verb,sel,firstlim,secondlim,second_descent);
     else
-      r12=new rank1(ec,verb,sel,firstlim,secondlim,n_aux);
+      r12=new rank1(&e_min,verb,sel,firstlim,secondlim,n_aux);
+
     success=r12->ok();
     rank = r12->getrank();
     selmer_rank = r12->getselmer();
@@ -88,24 +98,24 @@ void two_descent::saturate(long sat_bd)
 
 // Do a quick search for points on the curve before processing points
   bigfloat hlim=to_bigfloat(PRE_SATURATION_SEARCH_LIMIT);
-  bigfloat oldreg=mwbasis.regulator();
+  bigfloat oldreg=mwbasis->regulator();
   if(verbose) cout <<"Searching for points (bound = "<<hlim<<")..." << flush;
-  mwbasis.search(hlim);
+  mwbasis->search(hlim);
   if(verbose) cout<<"done:"<<endl;
-  long search_rank=mwbasis.getrank();
-  bigfloat newreg=mwbasis.regulator();
+  long search_rank=mwbasis->getrank();
+  bigfloat newreg=mwbasis->regulator();
   if(verbose) cout<<"  found points of rank "<<search_rank
-		  <<"\n  and regulator "<<mwbasis.regulator()<<endl;
+		  <<"\n  and regulator "<<newreg<<endl;
   
   if(verbose) cout <<"Processing points found during 2-descent..." << flush;
-  mwbasis.process(r12->getgens(),0); // no saturation yet
+  mwbasis->process(r12->getgens(),0); // no saturation yet
   if(verbose) cout <<"done:"<<endl;
-  rank = mwbasis.getrank();
+  rank = mwbasis->getrank();
   if(verbose) 
     {
       if(rank>search_rank) cout << "2-descent increases rank to "<<rank<<", ";
       if(rank<search_rank) cout << "2-descent only finds rank lower bound of "<<rank<<", ";
-      cout <<"  now regulator = "<<mwbasis.regulator()<<endl;
+      cout <<"  now regulator = "<<mwbasis->regulator()<<endl;
     }
   sat_bound=sat_bd; // store for reporting later
   if(sat_bd==0) 
@@ -115,26 +125,10 @@ void two_descent::saturate(long sat_bd)
     }
   else
     {
-      /*
-// Do a quick search for points on the curve before trying to saturate
-      bigfloat hlim=to_bigfloat(PRE_SATURATION_SEARCH_LIMIT);
-      bigfloat oldreg=mwbasis.regulator();
-      if(verbose) cout <<"Searching for points (bound = "<<hlim<<")..." << flush;
-      mwbasis.search(hlim);
-      if(verbose) cout<<"done"<<flush;
-      bigfloat newreg=mwbasis.regulator();
-      bigint ind = Iround(sqrt(oldreg/newreg));
-      if(verbose)
-	{
-	  if(ind>1) cout<<" -- gained index "<<ind;
-	  cout<<endl;
-	  cout <<"Regulator (after searching) = "<<mwbasis.regulator()<<"\n";
-	}
-      */
-// Now saturate
+//  Saturate
       if(verbose) cout <<"Saturating (bound = "<<sat_bd<<")..." << flush;
       bigint index; vector<long> unsat;
-      int sat_ok = mwbasis.saturate(index,unsat,sat_bd,1);
+      int sat_ok = mwbasis->saturate(index,unsat,sat_bd,1);
       // The last parameter 1 says not to bother with 2-saturation!
       if(verbose) cout <<"done:"<<endl;
 
@@ -144,7 +138,7 @@ void two_descent::saturate(long sat_bd)
 	  if(index>1) 
 	    {
 	      cout <<"  *** saturation increased group by index "<<index<<endl;
-	      cout <<"  *** regulator is now "<<mwbasis.regulator()<<endl;
+	      cout <<"  *** regulator is now "<<mwbasis->regulator()<<endl;
 	    }
 	  else cout << "  points were already saturated."<<endl;
 	}
@@ -152,46 +146,37 @@ void two_descent::saturate(long sat_bd)
 	{
 	  cout << "*** saturation possibly incomplete at primes " << unsat << "\n";
 	}
-      rank = mwbasis.getrank();
+      rank = mwbasis->getrank();
       fullmw=sat_ok; // (rank==0);
     }
 }
 
-vector<Point> two_descent::getbasis(Curvedata* CD_orig, 
-				    const bigint& u, const bigint& r, 
-				    const bigint& s, const bigint& t)
+vector<Point> two_descent::getbasis() // returns points on original model
 {
-  vector<Point>plist=mwbasis.getbasis();
+  vector<Point>plist=mwbasis->getbasis();
   for (int i=0; i<rank; i++)
-    { 
-      plist[i] = shift(plist[i],CD_orig,u,r,s,t,1);
-    }
+    plist[i] = shift(plist[i],&e_orig,u,r,s,t,1);
   return plist;
 }
 
-void two_descent::show_gens(int change,
-			    Curvedata* CD_orig, 
-			    const bigint& u, const bigint& r, 
-			    const bigint& s, const bigint& t)
+void two_descent::show_gens()  // display points on original model
 {
   if(change&&verbose&&(rank>0)) 
-    cout<<"Transferring points back to original curve "
-	<<(Curve)(*CD_orig)<<"\n";
-  vector<Point>plist=mwbasis.getbasis();
-  if(change)
-    plist = getbasis(CD_orig,u,r,s,t);
-      
+    cout<<"Transferring points from minimal curve "<<(Curve)e_min 
+	<<" back to original curve " <<(Curve)(e_orig)<<endl;
   cout<<endl;
+  vector<Point>plist=mwbasis->getbasis();
   for (int i=0; i<rank; i++)
     { 
       Point P = plist[i];
-      cout << "Generator "<<(i+1)<<" is "<<P<<"; ";
-      cout << "height "<<height(P);
+      bigfloat h=height(P); // must compute height on minimal model!
+      if(change) P = shift(P,&e_orig,u,r,s,t,1);
+      cout << "Generator "<<(i+1)<<" is "<<P<<"; " << "height "<<h;
       if(!P.isvalid()) cout<<" --warning: NOT on curve!";
       cout<<endl;
     }
   cout<<endl;
-  cout << "Regulator = "<<mwbasis.regulator()<<endl<<endl;
+  cout << "Regulator = "<<mwbasis->regulator()<<endl<<endl;
 }
 
 void two_descent::show_result_status()
@@ -243,14 +228,9 @@ void two_descent::show_result_status()
     }
 }
 
-void two_descent::pari_output(int change,
-			      Curvedata* CD_orig, 
-			      const bigint& u, const bigint& r, 
-			      const bigint& s, const bigint& t)
+void two_descent::pari_output()
 {
-  vector<Point>plist=mwbasis.getbasis();
-  if(change)
-    plist = getbasis(CD_orig,u,r,s,t);
+  vector<Point>plist=getbasis();
   cout<<"[["<<rank;
   if(rank<selmer_rank)  cout<<","<<selmer_rank;
   cout<<"],[";
@@ -262,55 +242,3 @@ void two_descent::pari_output(int change,
   cout<<"]]\n";
 }
 
-//////////////////////////////////////////////////////////////////
-//Some old obsolete code for crude saturation
-//////////////////////////////////////////////////////////////////
-
-#if(0) // code now obsolete since we have done a proper saturation...
-      if(do_infinite_descent&&(srank>0))
-	{
-	  fullmw=1;  // but may be reset to 0 below...
-// Compute the height up to which to search
-	  ht_c = height_constant(CD);
-	  if(verbose) 
-	    cout << "Height Constant = " << ht_c << "\n";
-	  maxht=0;
-	  for (i=0; i<plist.size(); i++)
-	    { 
-	      ht  = height(plist[i]);
-	      if(ht>maxht) maxht=ht;
-	    }
-	  if(verbose)
-	    cout<<"\nMax height = "<<maxht<<endl;
-	  if(rank==1) maxht/=9;  // in this case the index is at least 3
-	  hlim = maxht+ht_c;
-	  if(verbose)
-	    cout<<"Bound on naive height of extra generators = "<<hlim<<endl;
-	  long hlimc = opt.get_hlimc();
-	  if((hlimc>=0) && (hlimc<hlim))
-	    {
-	      fullmw=0;
-	      hlim = hlimc;
-	      if(verbose)
-		cout << "Only searching up to height " << hlim << endl;
-	    }
-	  else
-	    if((hlimc<0) && (MAX_HEIGHT<hlim))
-	      {
-		fullmw=0;
-		hlim = MAX_HEIGHT;
-		if(verbose)
-		  cout << "Only searching up to height "<<MAX_HEIGHT<<"\n";
-	      }
-// Do the extra search
-	  mwbasis.search(hlim, SEARCH_METHOD,0);
-	  rank = mwbasis.getrank();
-	  if(verbose)
-	    cout<<"After point search, rank of points found is "<<rank<<endl;
-	}
-      else
-	if(verbose)
-	  cout<<"After descent, rank of points found is "<<rank<<endl;
-
-// End  of extra search for points
-#endif // obsolete code

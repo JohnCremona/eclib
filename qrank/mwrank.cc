@@ -59,7 +59,6 @@ int main(int argc, char **argv)
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
 
   init_time();
-  if(TIME_CONICS) init_conic_timer();
 
   long sat_bd = opt.get_saturation_bound();
   int selmer_only = (opt.get_selmer_only());
@@ -67,11 +66,9 @@ int main(int argc, char **argv)
   long hlimq = (opt.get_hlimq());
   long hlimq0 = hlimq; if(hlimq0!=0) hlimq0=10;
   
-  Curvedata CD, CD_orig;
-  bigint u,r,s,t;             // transform CD_orig -> CD
-  int change;
+  Curvedata CD;
 
-  while ( getcurve(CD,CD_orig,u,r,s,t,change,!opt.get_quiet())	 )
+  while ( getcurve(CD,!opt.get_quiet())	 )
     {
       start_time();
 
@@ -93,7 +90,7 @@ int main(int argc, char **argv)
 //  Step 3: output
 
       if(verbose||opt.get_ptl())
-	two_d.show_gens(change,&CD_orig,u,r,s,t);
+	two_d.show_gens();
       if(verbose) 
 	two_d.show_result_status();
 
@@ -101,7 +98,7 @@ int main(int argc, char **argv)
 
       if(opt.get_output_pari())
 	{
-	  two_d.pari_output(change,&CD_orig,u,r,s,t);
+	  two_d.pari_output();
 	  cout<<endl;
 	}
 
@@ -109,7 +106,6 @@ int main(int argc, char **argv)
       if(verbose) {show_time(cerr); cerr<<endl;}
     }
   cout<<endl;
-  if(TIME_CONICS) {show_conic_timer(); cout<<endl;}
 }
 
 

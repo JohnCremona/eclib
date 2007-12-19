@@ -33,8 +33,9 @@ int main(void)
  rational q = rational(n,d);
  cout << "q = " << q << " has denominator " << den(q) << \
          " and numerator " <<  num(q) << "\n";
- while (d!=0) {
+ while (1) {
  cout << "Enter numerator and denominator\n";
+ cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
  cin >> n;
  cin >> d;
  q=rational(n,d);

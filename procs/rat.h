@@ -214,9 +214,24 @@ inline rational operator*(long num_val1, const rational& q2)
         return rational(q2.n*num_val1, q2.d);
 }
 
+inline rational operator*(const rational& q1, const rational& q2)
+{
+        return rational(q1.n*q2.n, q1.d*q2.d);
+}
+
 inline rational operator/(const rational& q1, long num_val2)
 {
         return rational(q1.n, q1.d*num_val2);
+}
+
+inline rational operator/(const rational& q1, const rational& q2)
+{
+        return rational(q1.n*q2.d, q1.d*q2.n);
+}
+
+inline rational operator/(long num_val1, const rational& q2)
+{
+  return rational(q2.d*num_val1, q2.n);
 }
 
 inline int operator==(const rational& q1, const rational& q2)
@@ -231,8 +246,12 @@ inline int operator!=(const rational& q1, const rational& q2)
 
 inline ostream& operator<<(ostream& s, const rational& q)
 {
-   s << q.n;
-   if (q.d!=1) {s << "/" << q.d;}
+  if(q.d==0) s<<"oo";
+  else
+    {
+      s << q.n;
+      if (q.d!=1) {s << "/" << q.d;}
+    }
    return s;
 }
 
