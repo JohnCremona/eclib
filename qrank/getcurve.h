@@ -21,6 +21,4 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-int getcurve(Curvedata& CD, Curvedata& CD_orig, 
-	     bigint& u, bigint& r, bigint& s, bigint& t, 
-	     int& change, int verb);
+int getcurve(Curvedata& CD, int verb);
