@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <fstream>
+#include <cstring> // for gcc >= 4.3
 #define TTY "/dev/tty"
 
 class CurveReader {
