@@ -27,7 +27,7 @@
 #include "arith.h"
 
 class rational {
-
+  friend class bigrational;
 public:
         // constructors
         rational(long num_val=0, long den_val=1);

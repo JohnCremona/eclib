@@ -36,9 +36,9 @@ LFLAGS = -lpari -L$(PARILIBDIR) $(NTLLFLAGS) -lm $(IOLIB)
 
 LIBFLAGS = $(LFLAGS)
 
-HEADERS = interface.h templates.h arith.h xmod.h marith.h gpslave.h compproc.h vec.h vector.h mat.h matrix.h sub.h subspace.h rat.h kbessel.h svec.h svector.h smat.h smatrix.h smat_elim.h smatrix_elim.h mvector.h mmatrix.h msubspace.h method.h splitbase.h xsplit.h conic.h legendre.h quadratic.h unimod.h illl.h hilbert.h timer.h cubic.h gf.h polys.h realroots.h parifact.h
+HEADERS = interface.h templates.h arith.h xmod.h marith.h gpslave.h compproc.h vec.h vector.h mat.h matrix.h sub.h subspace.h rat.h bigrat.h kbessel.h svec.h svector.h smat.h smatrix.h smat_elim.h smatrix_elim.h mvector.h mmatrix.h msubspace.h method.h splitbase.h xsplit.h conic.h legendre.h quadratic.h unimod.h illl.h hilbert.h timer.h cubic.h gf.h polys.h realroots.h parifact.h
 
-DOTCCS = interface.cc unimod.cc arith.cc marith.cc gpslave.cc compproc.cc vec.cc vector.cc mat.cc matrix.cc sub.cc subspace.cc kbessel.cc mvector.cc mmatrix.cc msubspace.cc vectest.cc mvectest.cc mattest.cc mmattest.cc space.cc mspace.cc comptest.cc rattest.cc ptest.cc mptest.cc tbessel.cc svec.cc svector.cc svectest.cc smat.cc smatrix.cc smattest.cc random.cc smat_elim.cc smatrix_elim.cc xsplit.cc conic.cc tconic.cc legendre.cc quadratic.cc illl.cc hilbert.cc thilbert.cc tleg.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc rcubic.cc lcubic.cc
+DOTCCS = interface.cc unimod.cc arith.cc marith.cc gpslave.cc compproc.cc vec.cc vector.cc mat.cc matrix.cc sub.cc subspace.cc kbessel.cc mvector.cc mmatrix.cc msubspace.cc vectest.cc mvectest.cc mattest.cc mmattest.cc space.cc mspace.cc comptest.cc rattest.cc bigrattest.cc ptest.cc mptest.cc tbessel.cc svec.cc svector.cc svectest.cc smat.cc smatrix.cc smattest.cc random.cc smat_elim.cc smatrix_elim.cc xsplit.cc conic.cc tconic.cc legendre.cc quadratic.cc illl.cc hilbert.cc thilbert.cc tleg.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc rcubic.cc lcubic.cc
 
 ARITH_OBJS  = arith$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o conic$(OBJ_SUF).o legendre$(OBJ_SUF).o unimod$(OBJ_SUF).o quadratic$(OBJ_SUF).o cubic$(OBJ_SUF).o illl$(OBJ_SUF).o hilbert$(OBJ_SUF).o parifact$(OBJ_SUF).o
 TRANS_OBJS =  compproc$(OBJ_SUF).o kbessel$(OBJ_SUF).o
@@ -51,7 +51,7 @@ SVEC_OBJS = svector$(OBJ_SUF).o
 
 OBJS = interface$(OBJ_SUF).o $(ARITH_OBJS) $(TRANS_OBJS) $(LINALG_OBJS) $(MLINALG_OBJS) $(XSPLIT_OBJS) timer$(OBJ_SUF).o $(SVEC_OBJS) $(SMAT_OBJS) polys$(OBJ_SUF).o realroots$(OBJ_SUF).o 
 
-TESTS = vectest1 vectest2 mattest1 mattest2 space1 space2 smattest comptest rattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectest1 svectest2
+TESTS = vectest1 vectest2 mattest1 mattest2 space1 space2 smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectest1 svectest2
 
 all: $(OBJS)
 
@@ -120,6 +120,7 @@ check: $(TESTS)
 	./mmattest < mmattest.in > t && diff t mmattest.out
 	./mspace < mspace.in > t && diff t mspace.out
 	./rattest < rattest.in > t && diff t rattest.out
+	./bigrattest < bigrattest.in > t && diff t bigrattest.out
 	./ptest < ptest.in > t && diff t ptest.out
 	./mptest < mptest.in > t && diff t mptest.out
 	./tconic < tconic.in > t && diff t tconic.out
@@ -197,6 +198,9 @@ comptest: comptest$(OBJ_SUF).o compproc$(OBJ_SUF).o arith$(OBJ_SUF).o marith$(OB
 
 rattest: rattest$(OBJ_SUF).o arith$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/rattest rattest$(OBJ_SUF).o  arith$(OBJ_SUF).o $(LFLAGS)
+
+bigrattest: bigrattest$(OBJ_SUF).o marith$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o parifact$(OBJ_SUF).o
+	$(CXX) -o $(BINDIR)/bigrattest bigrattest$(OBJ_SUF).o  marith$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o parifact$(OBJ_SUF).o $(LFLAGS)
 
 ptest: ptest$(OBJ_SUF).o arith$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/ptest ptest$(OBJ_SUF).o arith$(OBJ_SUF).o $(LFLAGS) 
@@ -286,6 +290,7 @@ tbessel$(OBJ_SUF).o: tbessel.cc kbessel.h
 kbessel$(OBJ_SUF).o: kbessel.cc kbessel.h
 nagtest$(OBJ_SUF).o: nagtest.cc
 rattest$(OBJ_SUF).o: rattest.cc rat.h
+bigrattest$(OBJ_SUF).o: bigrattest.cc bigrat.h rat.h
 
 interface$(OBJ_SUF).o: interface.cc interface.h templates.h
 unimod$(OBJ_SUF).o: unimod.cc interface.h templates.h marith.h arith.h xmod.h \

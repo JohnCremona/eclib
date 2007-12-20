@@ -1,0 +1,8 @@
+Test run of bigrational number procs.
+
+gcd(4,6) = 2
+q = 2/3 has denominator 3 and numerator 2
+Enter numerator and denominator
+q = 123456789/234567890 has denominator 234567890 and numerator 123456789
+Enter numerator and denominator
+
