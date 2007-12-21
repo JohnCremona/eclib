@@ -33,13 +33,21 @@ int main(void)
  bigrational q = bigrational(n,d);
  cout << "q = " << q << " has denominator " << den(q) << \
          " and numerator " <<  num(q) << "\n";
- while (1) {
- cout << "Enter numerator and denominator\n";
- cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
- cin >> n;
- cin >> d;
- q=bigrational(n,d);
- cout << "q = " << q << " has denominator " << den(q) << \
-         " and numerator " <<  num(q) << "\n";
- }
+ cout << "Enter a rational (either n or n/d): ";
+ cin>>q;
+ cout << "q = " << q << " has denominator " << den(q) <<	\
+   " and numerator " <<  num(q) << "\n";
+ bigrational q1,q2,q3;
+ cout << "Enter three rationals separated by whitespace: ";
+ cin>>q1>>q2>>q3;
+ cout << "q1 = " << q1 << "\t";
+ cout << "q2 = " << q2 << "\t";
+ cout << "q3 = " << q3 << "\n";
+
+ cout << "Enter three rationals in the format [q1:q2:q3]: ";
+ char c;
+ cin>>c>>q1>>c>>q2>>c>>q3>>c;
+ cout << "[q1:q2:q3] = [" << q1 << ":";
+ cout << q2 << ":";
+ cout << q3 << "]\n";
 }

@@ -2,7 +2,6 @@ Test run of bigrational number procs.
 
 gcd(4,6) = 2
 q = 2/3 has denominator 3 and numerator 2
-Enter numerator and denominator
-q = 123456789/234567890 has denominator 234567890 and numerator 123456789
-Enter numerator and denominator
-
+Enter a rational (either n or n/d): q = 123456789/234567890 has denominator 234567890 and numerator 123456789
+Enter three rationals separated by whitespace: q1 = 111111111111/2222222222222	q2 = 33333333333/4444444444444	q3 = 185185185185185/22222222222
+Enter three rationals in the format [q1:q2:q3]: [q1:q2:q3] = [1/2:3/4:5/6]

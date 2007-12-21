@@ -60,6 +60,7 @@ public:
         friend int operator==(const bigrational&, const bigrational&);
         friend int operator!=(const bigrational&, const bigrational&);
         friend ostream& operator<< (ostream&s, const bigrational&);
+        friend istream& operator>> (istream& is, bigrational& r);
         bigrational& operator+=(const bigrational&);
         bigrational& operator+=(bigint);
         bigrational& operator-=(const bigrational&);
@@ -260,5 +261,29 @@ inline ostream& operator<<(ostream& s, const bigrational& q)
    return s;
 }
 
+
+inline istream& operator>> (istream& is, bigrational& r)
+{
+  char c;
+  bigint n,d=BIGINT(1);
+  is>>n>>ws;
+  if(!is.eof()) 
+    {
+      is>>c;
+      if(c=='/')
+	{
+	  is>>d;
+	}
+      else
+	{
+	  if(c!='\n')
+	    {
+	      is.putback(c);
+	    }
+	}
+    }
+  r=bigrational(n,d);
+  return is;
+}
 
 #endif

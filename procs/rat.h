@@ -57,6 +57,7 @@ public:
         friend int operator==(const rational&, const rational&);
         friend int operator!=(const rational&, const rational&);
         friend ostream& operator<< (ostream&s, const rational&);
+        friend istream& operator>> (istream& is, rational& r);
         rational& operator+=(const rational&);
         rational& operator+=(long);
         rational& operator-=(const rational&);
@@ -253,6 +254,30 @@ inline ostream& operator<<(ostream& s, const rational& q)
       if (q.d!=1) {s << "/" << q.d;}
     }
    return s;
+}
+
+inline istream& operator>> (istream& is, rational& r)
+{
+  char c;
+  long n,d=1;
+  is>>n>>ws;
+  if(!is.eof()) 
+    {
+      is>>c;
+      if(c=='/')
+	{
+	  is>>d;
+	}
+      else
+	{
+	  if(c!='\n')
+	    {
+	      is.putback(c);
+	    }
+	}
+    }
+  r=rational(n,d);
+  return is;
 }
 
 
