@@ -30,13 +30,13 @@ bitspace::bitspace(long d)
 {
   if(d<0)
     {
-      cout<<"Error in bitspace sonstructor with negative dimension "<<d
+      cout<<"Error in bitspace constructor with negative dimension "<<d
 	  <<"! replacing with 0\n";
       d=0;
     }
   if(d>32)
     {
-      cout<<"Error in bitspace sonstructor with dimension "<<d
+      cout<<"Error in bitspace constructor with dimension "<<d
 	  <<">32! replacing with 32\n";
       d=32;
     }

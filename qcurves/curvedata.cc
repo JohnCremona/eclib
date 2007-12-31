@@ -49,6 +49,72 @@ Curvedata::Curvedata(const bigint& aa1, const bigint& aa2,
     }
 }
 
+//#define DEBUG_Q_INPUT
+Curvedata::Curvedata(const vector<bigrational>& qai, bigint& scale)
+: minimal_flag(0), ntorsion(0)
+{
+  bigrational qa1(qai[0]), qa2(qai[1]), qa3(qai[2]), qa4(qai[3]), qa6(qai[4]);
+  scale=BIGINT(1);
+  a1=num(qa1);  a2=num(qa2);  a3=num(qa3);  a4=num(qa4);  a6=num(qa6);
+#ifdef DEBUG_Q_INPUT
+  cout<<"In Curvedata constructor with ["<<qa1<<","<<qa2<<","<<qa3<<","<<qa4<<","<<qa6<<"]"<<endl;
+#endif
+  vector<bigint> plist=pdivs(den(qa1));
+  plist=vector_union(plist,pdivs(den(qa2)));
+  plist=vector_union(plist,pdivs(den(qa3)));
+  plist=vector_union(plist,pdivs(den(qa4)));
+  plist=vector_union(plist,pdivs(den(qa6)));
+#ifdef DEBUG_Q_INPUT
+  cout<<"Denominator primes: "<<plist<<endl;
+#endif
+  for(vector<bigint>::const_iterator pp=plist.begin(); pp!=plist.end(); pp++)
+    {
+      bigint p=*pp;
+#ifdef DEBUG_Q_INPUT
+      cout<<"p =  "<<p<<endl;
+#endif
+      long e=val(p,den(qa1));
+      e=max(e,ceil(rational(val(p,den(qa2)),2)));
+      e=max(e,ceil(rational(val(p,den(qa3)),3)));
+      e=max(e,ceil(rational(val(p,den(qa4)),4)));
+      e=max(e,ceil(rational(val(p,den(qa6)),6)));
+#ifdef DEBUG_Q_INPUT
+      cout<<"e =  "<<e<<endl;
+#endif
+      if(e>0)
+	{
+	  bigint pe=pow(p,e);
+	  scale *= pe;
+	  bigint pei=pe;
+	  a1*=pei; pei*=pe;
+	  a2*=pei; pei*=pe;
+	  a3*=pei; pei*=pe;
+	  a4*=pei; pei*=pe; pei*=pe;
+	  a6*=pei;
+	}
+    }
+  a1/=den(qa1);  a2/=den(qa2);  a3/=den(qa3);  a4/=den(qa4);  a6/=den(qa6);
+#ifdef DEBUG_Q_INPUT
+  cout<<"After scaling, coeffs are ["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]"<<endl;
+#endif
+  b2 = a1*a1 + 4*a2; b4 = 2*a4 + a1*a3;
+  b6 = a3*a3 + 4*a6; b8 =  (b2*b6 - b4*b4) / 4;
+  c4 = b2*b2 - 24*b4; c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
+  discr = (c4*c4*c4 - c6*c6) / 1728;
+  discr_factored=0;
+  if(sign(discr)==0)  // singular curve, replace by null
+    {
+      a1=0;a2=0;a3=0;a4=0;a6=0;
+      b2=0;b4=0;b6=0;b8=0;
+      c4=0;c6=0;
+      conncomp=0;
+    }
+  else
+    {
+      conncomp = sign(discr)>0 ? 2 : 1;
+    }
+}
+
 Curvedata::Curvedata(const Curve& c, int min_on_init)
 : Curve(c), minimal_flag(0), ntorsion(0)
 {
@@ -223,7 +289,7 @@ void Curvedata::output(ostream& os) const
 {
   Curve::output(os);
   if (isnull()) {os << " --singular\n"; return; }
-  if (minimal_flag) os << " (minimal reduced form)";
+  if (minimal_flag) os << " (reduced minimal model)";
   os << endl;
   os << "b2 = " << b2 << "\t " 
      << "b4 = " << b4 << "\t " 

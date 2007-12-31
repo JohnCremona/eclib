@@ -49,28 +49,58 @@ two_descent::two_descent(Curvedata* ec,
 	      int verb, int sel, 
 	      long firstlim, long secondlim, 
 	      long n_aux, int second_descent)
-  :verbose(verb), selmer_only(sel) 
+  :verbose(verb), selmer_only(sel), e_orig(*ec) 
   {
-    e_orig=*ec;
+    qai.resize(5);
+    bigint a1,a2,a3,a4,a6;
+    ec->getai(a1,a2,a3,a4,a6);
+    qai[0]=a1; qai[1]=a2; qai[2]=a3; qai[3]=a4; qai[4]=a6;
+    do_the_descent(firstlim,secondlim,n_aux,second_descent);
+  }
+
+//#define DEBUG_Q_INPUT
+
+two_descent::two_descent(vector<bigrational> ai, 
+	      int verb, int sel, 
+	      long firstlim, long secondlim, 
+	      long n_aux, int second_descent)
+  :verbose(verb), selmer_only(sel)
+  {
+    // Construct Curvedata from rational coeffs & get the scaling
+    // factor v used 
+#ifdef DEBUG_Q_INPUT
+    cout<<"two_descent constructor called with "<<ai<<endl;
+#endif
+    qai=ai;
+    e_orig = Curvedata(ai, v);
+    if(e_orig.isnull()) exit(1);
+    if(verbose&&(v!=1)) 
+      cout<<"integral model = "<<(Curve)e_orig<<" with scale factor "<<v<<endl;
+    // Do the work as in the previous constructor
+    do_the_descent(firstlim,secondlim,n_aux,second_descent);
+  }
+
+void two_descent::do_the_descent(long firstlim, long secondlim, 
+				 long n_aux, int second_descent)
+{
     e_min=e_orig.minimalize(u,r,s,t);
-    change=((Curve)e_orig!=(Curve)e_min);
-    if(change&&verb)
+    if(verbose&&(e_min!=e_orig))
       {
-	cout<<"Working with minimal curve "<<(Curve)e_min<<"\n";
-	cout<<"\t[u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
+	cout<<"Working with minimal curve "<<(Curve)e_min
+	    <<" via [u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
       }
-    mwbasis = new mw(&e_min,verb>2);
+    mwbasis = new mw(&e_min,verbose>2);
     two_torsion_exists = (two_torsion(e_min).size()>1) ;
     if(two_torsion_exists) 
-      r12=new rank2(&e_min,verb,sel,firstlim,secondlim,second_descent);
+      r12=new rank2(&e_min,verbose,selmer_only,firstlim,secondlim,second_descent);
     else
-      r12=new rank1(&e_min,verb,sel,firstlim,secondlim,n_aux);
+      r12=new rank1(&e_min,verbose,selmer_only,firstlim,secondlim,n_aux);
 
     success=r12->ok();
     rank = r12->getrank();
     selmer_rank = r12->getselmer();
     certain=r12->getcertain();
-  }
+}
 
 void two_descent::report_rank() const
 {
@@ -151,27 +181,39 @@ void two_descent::saturate(long sat_bd)
     }
 }
 
-vector<Point> two_descent::getbasis() // returns points on original model
+vector<P2Point> two_descent::getbasis() // returns points on original model
+{
+  vector<Point>plist=mwbasis->getbasis();
+  vector<P2Point>qlist(rank);
+  for (int i=0; i<rank; i++)
+    qlist[i] = scale(transform(plist[i],&e_orig,u,r,s,t,1),v,0);
+  return qlist;
+}
+
+vector<Point> two_descent::getpbasis() // returns points on integral model
 {
   vector<Point>plist=mwbasis->getbasis();
   for (int i=0; i<rank; i++)
-    plist[i] = shift(plist[i],&e_orig,u,r,s,t,1);
+    plist[i] = transform(plist[i],&e_orig,u,r,s,t,1);
   return plist;
 }
 
 void two_descent::show_gens()  // display points on original model
 {
-  if(change&&verbose&&(rank>0)) 
+  if(verbose&&(rank>0)) 
     cout<<"Transferring points from minimal curve "<<(Curve)e_min 
-	<<" back to original curve " <<(Curve)(e_orig)<<endl;
+	<<" back to original curve " 
+	<<"["<<qai[0]<<","<<qai[1]<<","<<qai[2]<<","<<qai[3]<<","<<qai[4]<<"]"
+	<<endl;
   cout<<endl;
   vector<Point>plist=mwbasis->getbasis();
   for (int i=0; i<rank; i++)
     { 
       Point P = plist[i];
       bigfloat h=height(P); // must compute height on minimal model!
-      if(change) P = shift(P,&e_orig,u,r,s,t,1);
-      cout << "Generator "<<(i+1)<<" is "<<P<<"; " << "height "<<h;
+      P = transform(P,&e_orig,u,r,s,t,1);
+      cout << "Generator "<<(i+1)<<" is "<<scale(P,v,0)<<"; " 
+	   << "height "<<h;
       if(!P.isvalid()) cout<<" --warning: NOT on curve!";
       cout<<endl;
     }
@@ -230,7 +272,7 @@ void two_descent::show_result_status()
 
 void two_descent::pari_output()
 {
-  vector<Point>plist=getbasis();
+  vector<P2Point>plist=getbasis();
   cout<<"[["<<rank;
   if(rank<selmer_rank)  cout<<","<<selmer_rank;
   cout<<"],[";

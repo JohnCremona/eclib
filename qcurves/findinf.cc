@@ -36,9 +36,8 @@
 #include "tlss.h"
 #include "elog.h"
 #include "saturate.h"
-
+#include "getcurve.h"
 #include "sieve_search.h"
-
 #include "mwprocs.h"
 
 int main()
@@ -50,49 +49,50 @@ int main()
   bigint u,r,s,t;
   int verbose = 1, modopt=0, pp=1, change_flag; 
   long blength, rank, maxrank;
-  cout<<"\nenter search limit: ";      cin>>ht_limit;
-  cout<<"verbose (0/1)? ";             cin >>verbose;
-  cout<<"process points found (1) or just list them (0): "; cin>>pp;
+  cerr<<"\nenter search limit: ";      cin>>ht_limit;
+  cerr<<"verbose (0/1)? ";             cin >>verbose;
+  cerr<<"process points found (1) or just list them (0): "; cin>>pp;
   //  cout<<"moduli option (0 (Stoll)/ 1/2/3)?";      cin >> modopt;
-  Curve E;
+  int verb=1;
+  bigint v;
+  vector<bigrational> ai(5);
 
-  while (1)
+  while (getcurve(ai,verb))
     {
-      cout<<"\nInput a curve: ";      cin >> E;
-      if ( E.isnull() ) break;
-      Curvedata C(E);
-      cout << "Curve " << E << endl;
+      Curvedata C(ai,v);
+      cout << "Input curve ";
+      cout <<"["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"]" << endl;
       Curvedata C_min = C.minimalize(u,r,s,t);
-      change_flag = ((Curve)C_min) != E;
+      change_flag = (v!=1) || (((Curve)C_min) != (Curve)C);
       if(change_flag)
 	{
-	  cout<<"Searching on standard minimal curve "<<(Curve)C_min<<endl;
+	  cout<<"Searching on standard minimal model "<<(Curve)C_min<<endl;
 	  cout<<"(points found will be transferred back at end)"<<endl;
-	  cout<<"Transformation: \t[u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
+	  cout<<"Transformation: \t[u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]";
+	  if(v!=1) cout<<" with scale factor "<<v;
+	  cout<<endl;
 	}
       
-      Point P(C);
-      Point Q(C_min);
-      cout<<"enter number of known points: ";      cin >>blength;
-      cout<<"enter max rank to stop when this is reached (-ve for none): ";
+      P2Point P0;
+      cerr<<"enter number of known points: ";      cin >>blength;
+      cerr<<"enter max rank to stop when this is reached (-ve for none): ";
       cin >>maxrank; if(maxrank<0) maxrank=999;
       vector<Point> known_points(blength);
       if (blength)
 	{ 
 	  for (long j=0; j<blength; j++)
-	    { cout<<"\n  enter point "<<(j+1); 
-	    if(change_flag) cout<<" on original curve";
-	      cout<<": ";
-	      cin >> P;
+	    { cerr<<"\n  enter point "<<(j+1); 
+	      if(change_flag) cerr<<" on original curve";
+	      cerr<<": ";
+	      cin >> P0;
+	      Point P(C,scale(P0,v,1));
 	      if ( P.isvalid() ) 
 		{
-		  cout<<"Height on original curve = "<<height(P)<<endl;
-		  Q = shift(P,&C_min,u,r,s,t,0);
+		  Point Q = transform(P,&C_min,u,r,s,t,0);
 		  known_points[j] = Q;
 		  if(change_flag) 
 		    {
-		      cout<<P<<" on "<<E<<"\nmaps to "<<
-			Q<<" on "<<(Curve)C_min<<", with height "<<height(Q)<<endl;
+		      cout<<P0<<" maps to "<<Q<<" on "<<(Curve)C_min<<", with height "<<height(Q)<<endl;
 		    }
 		}
 	      else 
@@ -108,8 +108,8 @@ int main()
 	{
 	  mwbasis.process(known_points);
 	  rank = mwbasis.getrank();
-	  cout<<"Rank of known points is "<<rank<<endl;
-	  cout<<"\nregulator is "<<mwbasis.regulator()<<endl<<endl;
+	  cout<<"Rank of known points is "<<rank
+	      <<" with regulator "<<mwbasis.regulator()<<endl<<endl;
 	}
 
       mwbasis.search(ht_limit, modopt, verbose);
@@ -136,20 +136,19 @@ int main()
 	  rank = mwbasis.getrank();
 	  cout<<"Rank of points found is "<<rank<<endl;
 	  vector<Point> b = mwbasis.getbasis();
+	  vector<P2Point> bb(rank);
 	  for (long i=0; i<rank; i++)
 	    { 
-	      Q = b[i];
+	      Point Q = b[i];
 	      bigfloat hQ = height(Q);
-	      cout << "\tGenerator "<<(i+1)<<" is "<<Q<<"; ";
+	      cout << "Generator "<<(i+1)<<" is "<<Q<<"; ";
 	      cout << "height "<<hQ<<endl;
+	      P0 = scale(transform(Q,&C,u,r,s,t,1),v,0);
+	      bb[i] = P0;
 	      if(change_flag)
-		{
-		  P = shift(Q,&C,u,r,s,t,1);
-		  cout<<"\t--maps back to "<<P<<" on curve "<<E<<endl;
-		  b[i]=P;
-		}
+		cout<<"\t--maps back to "<<P0<<" on input curve"<<endl;
 	    }
-	  if(rank>1) cout<<"\t\tregulator is "<<mwbasis.regulator()<<endl;
+	  if(rank>1) cout<<"Regulator =  "<<mwbasis.regulator()<<endl;
 	  if(sat_ok)
 	    {
 	      cout<<"Points have been successfully saturated"<<endl;
@@ -164,9 +163,9 @@ int main()
 	  for(long i=0; i<rank; i++)
 	    {
 	      if(i) cout<<",";
-	      output_pari(cout,b[i]);
+	      output_pari(cout,bb[i]);
 	    }
-	  cout<<"]\n";
+	  cout<<"]\n"<<endl;
 	}
     }
   cout<<endl;

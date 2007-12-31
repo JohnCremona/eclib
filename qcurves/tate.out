@@ -1,7 +1,6 @@
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,1,-10,-20]
-
-Curve [0,-1,1,-10,-20] (minimal reduced form)
+Integral model: [0,-1,1,-10,-20]
+Curve [0,-1,1,-10,-20] (reduced minimal model)
 b2 = -4	 b4 = -20	 b6 = -79	 b8 = -21
 c4 = 496		c6 = 20008
 disc = -161051	(bad primes: [ 11 ];	# real components = 1)
@@ -12,9 +11,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 11	5	1	5	I5	5	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,4,-6]
-
-Curve [1,0,1,4,-6] (minimal reduced form)
+Integral model: [1,0,1,4,-6]
+Curve [1,0,1,4,-6] (reduced minimal model)
 b2 = 1	 b4 = 9	 b6 = -23	 b8 = -26
 c4 = -215		c6 = 5291
 disc = -21952	(bad primes: [ 2 7 ];	# real components = 1)
@@ -26,9 +24,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	6	1	6	I6	2	1
 7	3	1	3	I3	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,-10,-10]
-
-Curve [1,1,1,-10,-10] (minimal reduced form)
+Integral model: [1,1,1,-10,-10]
+Curve [1,1,1,-10,-10] (reduced minimal model)
 b2 = 5	 b4 = -19	 b6 = -39	 b8 = -139
 c4 = 481		c6 = 4879
 disc = 50625	(bad primes: [ 3 5 ];	# real components = 2)
@@ -40,9 +37,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	4	1	4	I4	2	1
 5	4	1	4	I4	4	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,-1,-14]
-
-Curve [1,-1,1,-1,-14] (minimal reduced form)
+Integral model: [1,-1,1,-1,-14]
+Curve [1,-1,1,-1,-14] (reduced minimal model)
 b2 = -3	 b4 = -1	 b6 = -55	 b8 = 41
 c4 = 33		c6 = 12015
 disc = -83521	(bad primes: [ 17 ];	# real components = 1)
@@ -53,9 +49,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 17	4	1	4	I4	4	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,-9,-15]
-
-Curve [0,1,1,-9,-15] (minimal reduced form)
+Integral model: [0,1,1,-9,-15]
+Curve [0,1,1,-9,-15] (reduced minimal model)
 b2 = 4	 b4 = -18	 b6 = -59	 b8 = -140
 c4 = 448		c6 = 10088
 disc = -6859	(bad primes: [ 19 ];	# real components = 1)
@@ -66,9 +61,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 19	3	1	3	I3	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,0,4,4]
-
-Curve [0,1,0,4,4] (minimal reduced form)
+Integral model: [0,1,0,4,4]
+Curve [0,1,0,4,4] (reduced minimal model)
 b2 = 4	 b4 = 8	 b6 = 16	 b8 = 0
 c4 = -176		c6 = -2368
 disc = -6400	(bad primes: [ 2 5 ];	# real components = 1)
@@ -80,9 +74,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	2	0	IV*  	3	-1
 5	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,0,-4,-1]
-
-Curve [1,0,0,-4,-1] (minimal reduced form)
+Integral model: [1,0,0,-4,-1]
+Curve [1,0,0,-4,-1] (reduced minimal model)
 b2 = 1	 b4 = -8	 b6 = -4	 b8 = -17
 c4 = 193		c6 = 575
 disc = 3969	(bad primes: [ 3 7 ];	# real components = 2)
@@ -94,9 +87,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	4	1	4	I4	4	-1
 7	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,0,-4,4]
-
-Curve [0,-1,0,-4,4] (minimal reduced form)
+Integral model: [0,-1,0,-4,4]
+Curve [0,-1,0,-4,4] (reduced minimal model)
 b2 = -4	 b4 = -8	 b6 = 16	 b8 = -32
 c4 = 208		c6 = -2240
 disc = 2304	(bad primes: [ 2 3 ];	# real components = 2)
@@ -108,9 +100,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	3	0	I*1	4	-1
 3	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,-5,-8]
-
-Curve [1,0,1,-5,-8] (minimal reduced form)
+Integral model: [1,0,1,-5,-8]
+Curve [1,0,1,-5,-8] (reduced minimal model)
 b2 = 1	 b4 = -9	 b6 = -31	 b8 = -28
 c4 = 217		c6 = 6371
 disc = -17576	(bad primes: [ 2 13 ];	# real components = 1)
@@ -122,9 +113,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	3	1	3	I3	1	1
 13	3	1	3	I3	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,-3,3]
-
-Curve [1,-1,1,-3,3] (minimal reduced form)
+Integral model: [1,-1,1,-3,3]
+Curve [1,-1,1,-3,3] (reduced minimal model)
 b2 = -3	 b4 = -5	 b6 = 13	 b8 = -16
 c4 = 129		c6 = -2241
 disc = -1664	(bad primes: [ 2 13 ];	# real components = 1)
@@ -136,9 +126,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	7	1	7	I7	7	-1
 13	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,1,0,-7]
-
-Curve [0,0,1,0,-7] (minimal reduced form)
+Integral model: [0,0,1,0,-7]
+Curve [0,0,1,0,-7] (reduced minimal model)
 b2 = 0	 b4 = 0	 b6 = -27	 b8 = 0
 c4 = 0		c6 = 5832
 disc = -19683	(bad primes: [ 3 ];	# real components = 1)
@@ -149,9 +138,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	9	3	0	IV*  	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,1,2]
-
-Curve [1,0,1,1,2] (minimal reduced form)
+Integral model: [1,0,1,1,2]
+Curve [1,0,1,1,2] (reduced minimal model)
 b2 = 1	 b4 = 3	 b6 = 9	 b8 = 0
 c4 = -71		c6 = -1837
 disc = -2160	(bad primes: [ 2 3 5 ];	# real components = 1)
@@ -164,9 +152,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	3	1	3	I3	3	-1
 5	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,4,0]
-
-Curve [0,0,0,4,0] (minimal reduced form)
+Integral model: [0,0,0,4,0]
+Curve [0,0,0,4,0] (reduced minimal model)
 b2 = 0	 b4 = 8	 b6 = 0	 b8 = -16
 c4 = -192		c6 = 0
 disc = -4096	(bad primes: [ 2 ];	# real components = 1)
@@ -177,9 +164,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	12	5	0	I*3	4	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,0,-11,0]
-
-Curve [1,1,0,-11,0] (minimal reduced form)
+Integral model: [1,1,0,-11,0]
+Curve [1,1,0,-11,0] (reduced minimal model)
 b2 = 5	 b4 = -22	 b6 = 0	 b8 = -121
 c4 = 553		c6 = -4085
 disc = 88209	(bad primes: [ 3 11 ];	# real components = 2)
@@ -191,9 +177,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	6	1	6	I6	2	1
 11	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,0,-3,1]
-
-Curve [1,0,0,-3,1] (minimal reduced form)
+Integral model: [1,0,0,-3,1]
+Curve [1,0,0,-3,1] (reduced minimal model)
 b2 = 1	 b4 = -6	 b6 = 4	 b8 = -8
 c4 = 145		c6 = -1081
 disc = 1088	(bad primes: [ 2 17 ];	# real components = 2)
@@ -205,9 +190,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	6	1	6	I6	6	-1
 17	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,9,1]
-
-Curve [0,1,1,9,1] (minimal reduced form)
+Integral model: [0,1,1,9,1]
+Curve [0,1,1,9,1] (reduced minimal model)
 b2 = 4	 b4 = 18	 b6 = 5	 b8 = -76
 c4 = -416		c6 = 1448
 disc = -42875	(bad primes: [ 5 7 ];	# real components = 1)
@@ -219,9 +203,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 5	3	1	3	I3	1	1
 7	3	1	3	I3	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,0,1]
-
-Curve [0,0,0,0,1] (minimal reduced form)
+Integral model: [0,0,0,0,1]
+Curve [0,0,0,0,1] (reduced minimal model)
 b2 = 0	 b4 = 0	 b6 = 4	 b8 = 0
 c4 = 0		c6 = -864
 disc = -432	(bad primes: [ 2 3 ];	# real components = 1)
@@ -233,9 +216,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	4	2	0	IV   	3	-1
 3	3	2	0	III  	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,1,-1,0]
-
-Curve [0,0,1,-1,0] (minimal reduced form)
+Integral model: [0,0,1,-1,0]
+Curve [0,0,1,-1,0] (reduced minimal model)
 b2 = 0	 b4 = -2	 b6 = 1	 b8 = -1
 c4 = 48		c6 = -216
 disc = 37	(bad primes: [ 37 ];	# real components = 2)
@@ -246,9 +228,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 37	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,-23,-50]
-
-Curve [0,1,1,-23,-50] (minimal reduced form)
+Integral model: [0,1,1,-23,-50]
+Curve [0,1,1,-23,-50] (reduced minimal model)
 b2 = 4	 b4 = -46	 b6 = -199	 b8 = -728
 c4 = 1120		c6 = 36296
 disc = 50653	(bad primes: [ 37 ];	# real components = 2)
@@ -259,9 +240,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 37	3	1	3	I3	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,9,90]
-
-Curve [1,0,1,9,90] (minimal reduced form)
+Integral model: [1,0,1,9,90]
+Curve [1,0,1,9,90] (reduced minimal model)
 b2 = 1	 b4 = 19	 b6 = 361	 b8 = 0
 c4 = -455		c6 = -77293
 disc = -3511808	(bad primes: [ 2 19 ];	# real components = 1)
@@ -273,9 +253,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	9	1	9	I9	1	1
 19	3	1	3	I3	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,0,1]
-
-Curve [1,1,1,0,1] (minimal reduced form)
+Integral model: [1,1,1,0,1]
+Curve [1,1,1,0,1] (reduced minimal model)
 b2 = 5	 b4 = 1	 b6 = 5	 b8 = 6
 c4 = 1		c6 = -1025
 disc = -608	(bad primes: [ 2 19 ];	# real components = 1)
@@ -287,9 +266,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	5	1	5	I5	5	-1
 19	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,0,-4,-5]
-
-Curve [1,1,0,-4,-5] (minimal reduced form)
+Integral model: [1,1,0,-4,-5]
+Curve [1,1,0,-4,-5] (reduced minimal model)
 b2 = 5	 b4 = -8	 b6 = -20	 b8 = -41
 c4 = 217		c6 = 2755
 disc = 1521	(bad primes: [ 3 13 ];	# real components = 2)
@@ -301,9 +279,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	2	1	2	I2	2	1
 13	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,-7,-6]
-
-Curve [0,0,0,-7,-6] (minimal reduced form)
+Integral model: [0,0,0,-7,-6]
+Curve [0,0,0,-7,-6] (reduced minimal model)
 b2 = 0	 b4 = -14	 b6 = -24	 b8 = -49
 c4 = 336		c6 = 5184
 disc = 6400	(bad primes: [ 2 5 ];	# real components = 2)
@@ -315,9 +292,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	3	0	I*1	2	1
 5	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,-4,5]
-
-Curve [1,1,1,-4,5] (minimal reduced form)
+Integral model: [1,1,1,-4,5]
+Curve [1,1,1,-4,5] (reduced minimal model)
 b2 = 5	 b4 = -7	 b6 = 21	 b8 = 14
 c4 = 193		c6 = -5921
 disc = -16128	(bad primes: [ 2 3 7 ];	# real components = 1)
@@ -330,9 +306,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	2	1	2	I2	2	1
 7	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,0,0]
-
-Curve [0,1,1,0,0] (minimal reduced form)
+Integral model: [0,1,1,0,0]
+Curve [0,1,1,0,0] (reduced minimal model)
 b2 = 4	 b4 = 0	 b6 = 1	 b8 = 1
 c4 = 16		c6 = -280
 disc = -43	(bad primes: [ 43 ];	# real components = 1)
@@ -343,9 +318,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 43	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,0,3,-1]
-
-Curve [0,1,0,3,-1] (minimal reduced form)
+Integral model: [0,1,0,3,-1]
+Curve [0,1,0,3,-1] (reduced minimal model)
 b2 = 4	 b4 = 6	 b6 = -4	 b8 = -13
 c4 = -128		c6 = 1664
 disc = -2816	(bad primes: [ 2 11 ];	# real components = 1)
@@ -357,9 +331,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	2	0	IV*  	3	-1
 11	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,0,-5]
-
-Curve [1,-1,0,0,-5] (minimal reduced form)
+Integral model: [1,-1,0,0,-5]
+Curve [1,-1,0,0,-5] (reduced minimal model)
 b2 = -3	 b4 = 0	 b6 = -20	 b8 = 15
 c4 = 9		c6 = 4347
 disc = -10935	(bad primes: [ 3 5 ];	# real components = 1)
@@ -371,9 +344,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	7	2	1	I*1	2	-1
 5	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,-10,-12]
-
-Curve [1,-1,0,-10,-12] (minimal reduced form)
+Integral model: [1,-1,0,-10,-12]
+Curve [1,-1,0,-10,-12] (reduced minimal model)
 b2 = -3	 b4 = -20	 b6 = -48	 b8 = -64
 c4 = 489		c6 = 12555
 disc = -23552	(bad primes: [ 2 23 ];	# real components = 1)
@@ -385,9 +357,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	10	1	10	I10	2	1
 23	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,0,-4,-4]
-
-Curve [0,1,0,-4,-4] (minimal reduced form)
+Integral model: [0,1,0,-4,-4]
+Curve [0,1,0,-4,-4] (reduced minimal model)
 b2 = 4	 b4 = -8	 b6 = -16	 b8 = -32
 c4 = 208		c6 = 2240
 disc = 2304	(bad primes: [ 2 3 ];	# real components = 2)
@@ -399,9 +370,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	4	0	I*0	2	1
 3	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,-2,-1]
-
-Curve [1,-1,0,-2,-1] (minimal reduced form)
+Integral model: [1,-1,0,-2,-1]
+Curve [1,-1,0,-2,-1] (reduced minimal model)
 b2 = -3	 b4 = -4	 b6 = -4	 b8 = -1
 c4 = 105		c6 = 1323
 disc = -343	(bad primes: [ 7 ];	# real components = 1)
@@ -412,9 +382,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 7	3	2	0	III  	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,-1,-2]
-
-Curve [1,0,1,-1,-2] (minimal reduced form)
+Integral model: [1,0,1,-1,-2]
+Curve [1,0,1,-1,-2] (reduced minimal model)
 b2 = 1	 b4 = -1	 b6 = -7	 b8 = -2
 c4 = 25		c6 = 1475
 disc = -1250	(bad primes: [ 2 5 ];	# real components = 1)
@@ -426,9 +395,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	1	1	1	I1	1	1
 5	4	2	0	IV   	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,-3,1]
-
-Curve [1,1,1,-3,1] (minimal reduced form)
+Integral model: [1,1,1,-3,1]
+Curve [1,1,1,-3,1] (reduced minimal model)
 b2 = 5	 b4 = -5	 b6 = 5	 b8 = 0
 c4 = 145		c6 = -2105
 disc = -800	(bad primes: [ 2 5 ];	# real components = 1)
@@ -440,9 +408,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	5	1	5	I5	5	-1
 5	2	2	0	II   	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,1,-1]
-
-Curve [0,1,1,1,-1] (minimal reduced form)
+Integral model: [0,1,1,1,-1]
+Curve [0,1,1,1,-1] (reduced minimal model)
 b2 = 4	 b4 = 2	 b6 = -3	 b8 = -4
 c4 = -32		c6 = 872
 disc = -459	(bad primes: [ 3 17 ];	# real components = 1)
@@ -454,9 +421,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	3	1	3	I3	3	-1
 17	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,1,-10]
-
-Curve [0,0,0,1,-10] (minimal reduced form)
+Integral model: [0,0,0,1,-10]
+Curve [0,0,0,1,-10] (reduced minimal model)
 b2 = 0	 b4 = 2	 b6 = -40	 b8 = -1
 c4 = -48		c6 = 8640
 disc = -43264	(bad primes: [ 2 13 ];	# real components = 1)
@@ -468,9 +434,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	2	0	IV*  	1	-1
 13	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,0,0]
-
-Curve [1,-1,1,0,0] (minimal reduced form)
+Integral model: [1,-1,1,0,0]
+Curve [1,-1,1,0,0] (reduced minimal model)
 b2 = -3	 b4 = 1	 b6 = 1	 b8 = -1
 c4 = -15		c6 = -297
 disc = -53	(bad primes: [ 53 ];	# real components = 1)
@@ -481,9 +446,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 53	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,12,8]
-
-Curve [1,-1,0,12,8] (minimal reduced form)
+Integral model: [1,-1,0,12,8]
+Curve [1,-1,0,12,8] (reduced minimal model)
 b2 = -3	 b4 = 24	 b6 = 32	 b8 = -168
 c4 = -567		c6 = -9477
 disc = -157464	(bad primes: [ 2 3 ];	# real components = 1)
@@ -495,9 +459,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	3	1	3	I3	1	1
 3	9	3	0	IV*  	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,1,-1]
-
-Curve [1,-1,1,1,-1] (minimal reduced form)
+Integral model: [1,-1,1,1,-1]
+Curve [1,-1,1,1,-1] (reduced minimal model)
 b2 = -3	 b4 = 3	 b6 = -3	 b8 = 0
 c4 = -63		c6 = 351
 disc = -216	(bad primes: [ 2 3 ];	# real components = 1)
@@ -509,9 +472,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	3	1	3	I3	3	-1
 3	3	3	0	II   	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,-4,3]
-
-Curve [1,-1,0,-4,3] (minimal reduced form)
+Integral model: [1,-1,0,-4,3]
+Curve [1,-1,0,-4,3] (reduced minimal model)
 b2 = -3	 b4 = -8	 b6 = 12	 b8 = -25
 c4 = 201		c6 = -1701
 disc = 3025	(bad primes: [ 5 11 ];	# real components = 2)
@@ -523,9 +485,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 5	2	1	2	I2	2	-1
 11	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,0,0,-4]
-
-Curve [0,-1,0,0,-4] (minimal reduced form)
+Integral model: [0,-1,0,0,-4]
+Curve [0,-1,0,0,-4] (reduced minimal model)
 b2 = -4	 b4 = 0	 b6 = -16	 b8 = 16
 c4 = 16		c6 = 3520
 disc = -7168	(bad primes: [ 2 7 ];	# real components = 1)
@@ -537,9 +498,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	10	3	0	III* 	2	1
 7	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,1,2]
-
-Curve [0,0,0,1,2] (minimal reduced form)
+Integral model: [0,0,0,1,2]
+Curve [0,0,0,1,2] (reduced minimal model)
 b2 = 0	 b4 = 2	 b6 = 8	 b8 = -1
 c4 = -48		c6 = -1728
 disc = -1792	(bad primes: [ 2 7 ];	# real components = 1)
@@ -551,9 +511,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	3	0	I*1	4	-1
 7	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,1,-2,2]
-
-Curve [0,-1,1,-2,2] (minimal reduced form)
+Integral model: [0,-1,1,-2,2]
+Curve [0,-1,1,-2,2] (reduced minimal model)
 b2 = -4	 b4 = -4	 b6 = 9	 b8 = -13
 c4 = 112		c6 = -1304
 disc = -171	(bad primes: [ 3 19 ];	# real components = 1)
@@ -565,9 +524,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	2	1	2	I2	2	1
 19	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,-7,5]
-
-Curve [1,0,1,-7,5] (minimal reduced form)
+Integral model: [1,0,1,-7,5]
+Curve [1,0,1,-7,5] (reduced minimal model)
 b2 = 1	 b4 = -13	 b6 = 21	 b8 = -37
 c4 = 313		c6 = -5005
 disc = 3249	(bad primes: [ 3 19 ];	# real components = 2)
@@ -579,9 +537,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	2	1	2	I2	2	-1
 19	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,20,-32]
-
-Curve [0,1,1,20,-32] (minimal reduced form)
+Integral model: [0,1,1,20,-32]
+Curve [0,1,1,20,-32] (reduced minimal model)
 b2 = 4	 b4 = 40	 b6 = -127	 b8 = -527
 c4 = -944		c6 = 33128
 disc = -1121931	(bad primes: [ 3 19 ];	# real components = 1)
@@ -593,9 +550,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	10	1	10	I10	10	-1
 19	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,-1,1]
-
-Curve [1,-1,0,-1,1] (minimal reduced form)
+Integral model: [1,-1,0,-1,1]
+Curve [1,-1,0,-1,1] (reduced minimal model)
 b2 = -3	 b4 = -2	 b6 = 4	 b8 = -4
 c4 = 57		c6 = -621
 disc = -116	(bad primes: [ 2 29 ];	# real components = 1)
@@ -607,9 +563,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	2	1	2	I2	2	1
 29	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,5,9]
-
-Curve [1,1,1,5,9] (minimal reduced form)
+Integral model: [1,1,1,5,9]
+Curve [1,1,1,5,9] (reduced minimal model)
 b2 = 5	 b4 = 11	 b6 = 37	 b8 = 16
 c4 = -239		c6 = -6137
 disc = -29696	(bad primes: [ 2 29 ];	# real components = 1)
@@ -621,9 +576,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	10	1	10	I10	10	-1
 29	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,0,-2,1]
-
-Curve [1,0,0,-2,1] (minimal reduced form)
+Integral model: [1,0,0,-2,1]
+Curve [1,0,0,-2,1] (reduced minimal model)
 b2 = 1	 b4 = -4	 b6 = 4	 b8 = -3
 c4 = 97		c6 = -1009
 disc = -61	(bad primes: [ 61 ];	# real components = 1)
@@ -634,9 +588,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 61	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,-1,1]
-
-Curve [1,-1,1,-1,1] (minimal reduced form)
+Integral model: [1,-1,1,-1,1]
+Curve [1,-1,1,-1,1] (reduced minimal model)
 b2 = -3	 b4 = -1	 b6 = 5	 b8 = -4
 c4 = 33		c6 = -945
 disc = -496	(bad primes: [ 2 31 ];	# real components = 1)
@@ -648,9 +601,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	4	1	4	I4	4	-1
 31	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,9,0]
-
-Curve [1,-1,0,9,0] (minimal reduced form)
+Integral model: [1,-1,0,9,0]
+Curve [1,-1,0,9,0] (reduced minimal model)
 b2 = -3	 b4 = 18	 b6 = 0	 b8 = -81
 c4 = -423		c6 = -1917
 disc = -45927	(bad primes: [ 3 7 ];	# real components = 1)
@@ -662,9 +614,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	8	2	2	I*2	2	-1
 7	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,-4,0]
-
-Curve [0,0,0,-4,0] (minimal reduced form)
+Integral model: [0,0,0,-4,0]
+Curve [0,0,0,-4,0] (reduced minimal model)
 b2 = 0	 b4 = -8	 b6 = 0	 b8 = -16
 c4 = 192		c6 = 0
 disc = 4096	(bad primes: [ 2 ];	# real components = 2)
@@ -675,9 +626,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	12	6	0	I*2	4	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,0,-1,0]
-
-Curve [1,0,0,-1,0] (minimal reduced form)
+Integral model: [1,0,0,-1,0]
+Curve [1,0,0,-1,0] (reduced minimal model)
 b2 = 1	 b4 = -2	 b6 = 0	 b8 = -1
 c4 = 49		c6 = -73
 disc = 65	(bad primes: [ 5 13 ];	# real components = 2)
@@ -689,9 +639,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 5	1	1	1	I1	1	1
 13	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,-6,4]
-
-Curve [1,0,1,-6,4] (minimal reduced form)
+Integral model: [1,0,1,-6,4]
+Curve [1,0,1,-6,4] (reduced minimal model)
 b2 = 1	 b4 = -11	 b6 = 17	 b8 = -26
 c4 = 265		c6 = -4069
 disc = 1188	(bad primes: [ 2 3 11 ];	# real components = 2)
@@ -704,9 +653,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	3	1	3	I3	3	-1
 11	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,-2,-1]
-
-Curve [1,1,1,-2,-1] (minimal reduced form)
+Integral model: [1,1,1,-2,-1]
+Curve [1,1,1,-2,-1] (reduced minimal model)
 b2 = 5	 b4 = -3	 b6 = -3	 b8 = -6
 c4 = 97		c6 = -17
 disc = 528	(bad primes: [ 2 3 11 ];	# real components = 2)
@@ -719,9 +667,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	1	1	1	I1	1	1
 11	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,0,-45,81]
-
-Curve [1,0,0,-45,81] (minimal reduced form)
+Integral model: [1,0,0,-45,81]
+Curve [1,0,0,-45,81] (reduced minimal model)
 b2 = 1	 b4 = -90	 b6 = 324	 b8 = -1944
 c4 = 2161		c6 = -73225
 disc = 2737152	(bad primes: [ 2 3 11 ];	# real components = 2)
@@ -734,9 +681,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	5	1	5	I5	5	-1
 11	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,-12,-21]
-
-Curve [0,1,1,-12,-21] (minimal reduced form)
+Integral model: [0,1,1,-12,-21]
+Curve [0,1,1,-12,-21] (reduced minimal model)
 b2 = 4	 b4 = -24	 b6 = -83	 b8 = -227
 c4 = 592		c6 = 14408
 disc = -67	(bad primes: [ 67 ];	# real components = 1)
@@ -747,9 +693,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 67	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,-1,-1]
-
-Curve [1,0,1,-1,-1] (minimal reduced form)
+Integral model: [1,0,1,-1,-1]
+Curve [1,0,1,-1,-1] (reduced minimal model)
 b2 = 1	 b4 = -1	 b6 = -3	 b8 = -1
 c4 = 25		c6 = 611
 disc = -207	(bad primes: [ 3 23 ];	# real components = 1)
@@ -761,9 +706,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	2	1	2	I2	2	-1
 23	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,2,-3]
-
-Curve [1,-1,1,2,-3] (minimal reduced form)
+Integral model: [1,-1,1,2,-3]
+Curve [1,-1,1,2,-3] (reduced minimal model)
 b2 = -3	 b4 = 5	 b6 = -11	 b8 = 2
 c4 = -111		c6 = 1863
 disc = -2800	(bad primes: [ 2 5 7 ];	# real components = 1)
@@ -776,9 +720,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 5	2	1	2	I2	2	1
 7	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,6,-7]
-
-Curve [0,0,0,6,-7] (minimal reduced form)
+Integral model: [0,0,0,6,-7]
+Curve [0,0,0,6,-7] (reduced minimal model)
 b2 = 0	 b4 = 12	 b6 = -28	 b8 = -36
 c4 = -288		c6 = 6048
 disc = -34992	(bad primes: [ 2 3 ];	# real components = 1)
@@ -790,9 +733,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	4	3	0	III  	2	1
 3	7	2	1	I*1	4	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,4,-3]
-
-Curve [1,-1,0,4,-3] (minimal reduced form)
+Integral model: [1,-1,0,4,-3]
+Curve [1,-1,0,4,-3] (reduced minimal model)
 b2 = -3	 b4 = 8	 b6 = -12	 b8 = -7
 c4 = -183		c6 = 1755
 disc = -5329	(bad primes: [ 73 ];	# real components = 1)
@@ -803,9 +745,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 73	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,1,-8,-7]
-
-Curve [0,-1,1,-8,-7] (minimal reduced form)
+Integral model: [0,-1,1,-8,-7]
+Curve [0,-1,1,-8,-7] (reduced minimal model)
 b2 = -4	 b4 = -16	 b6 = -27	 b8 = -37
 c4 = 400		c6 = 8200
 disc = -1875	(bad primes: [ 3 5 ];	# real components = 1)
@@ -817,9 +758,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	1	1	1	I1	1	1
 5	4	2	0	IV   	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,-1,23]
-
-Curve [1,0,1,-1,23] (minimal reduced form)
+Integral model: [1,0,1,-1,23]
+Curve [1,0,1,-1,23] (reduced minimal model)
 b2 = 1	 b4 = -1	 b6 = 93	 b8 = 23
 c4 = 25		c6 = -20125
 disc = -234375	(bad primes: [ 3 5 ];	# real components = 1)
@@ -831,9 +771,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	1	1	1	I1	1	-1
 5	7	2	1	I*1	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,2,4]
-
-Curve [0,1,1,2,4] (minimal reduced form)
+Integral model: [0,1,1,2,4]
+Curve [0,1,1,2,4] (reduced minimal model)
 b2 = 4	 b4 = 4	 b6 = 17	 b8 = 13
 c4 = -80		c6 = -3160
 disc = -6075	(bad primes: [ 3 5 ];	# real components = 1)
@@ -845,9 +784,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	5	1	5	I5	5	-1
 5	2	2	0	II   	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,0,-21,-31]
-
-Curve [0,-1,0,-21,-31] (minimal reduced form)
+Integral model: [0,-1,0,-21,-31]
+Curve [0,-1,0,-21,-31] (reduced minimal model)
 b2 = -4	 b4 = -42	 b6 = -124	 b8 = -317
 c4 = 1024		c6 = 32896
 disc = -4864	(bad primes: [ 2 19 ];	# real components = 1)
@@ -859,9 +797,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	2	0	IV*  	1	-1
 19	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,1,2,0]
-
-Curve [0,0,1,2,0] (minimal reduced form)
+Integral model: [0,0,1,2,0]
+Curve [0,0,1,2,0] (reduced minimal model)
 b2 = 0	 b4 = 4	 b6 = 1	 b8 = -4
 c4 = -96		c6 = -216
 disc = -539	(bad primes: [ 7 11 ];	# real components = 1)
@@ -873,9 +810,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 7	2	1	2	I2	2	1
 11	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,0,4,11]
-
-Curve [1,1,0,4,11] (minimal reduced form)
+Integral model: [1,1,0,4,11]
+Curve [1,1,0,4,11] (reduced minimal model)
 b2 = 5	 b4 = 8	 b6 = 44	 b8 = 39
 c4 = -167		c6 = -8189
 disc = -41503	(bad primes: [ 7 11 ];	# real components = 1)
@@ -887,9 +823,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 7	3	1	3	I3	1	1
 11	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,-49,600]
-
-Curve [0,1,1,-49,600] (minimal reduced form)
+Integral model: [0,1,1,-49,600]
+Curve [0,1,1,-49,600] (reduced minimal model)
 b2 = 4	 b4 = -98	 b6 = 2401	 b8 = 0
 c4 = 2368		c6 = -532792
 disc = -156590819	(bad primes: [ 7 11 ];	# real components = 1)
@@ -901,9 +836,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 7	6	1	6	I6	6	-1
 11	3	1	3	I3	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,0,-19,685]
-
-Curve [1,1,0,-19,685] (minimal reduced form)
+Integral model: [1,1,0,-19,685]
+Curve [1,1,0,-19,685] (reduced minimal model)
 b2 = 5	 b4 = -38	 b6 = 2740	 b8 = 3064
 c4 = 937		c6 = -598805
 disc = -207028224	(bad primes: [ 2 3 13 ];	# real components = 1)
@@ -916,9 +850,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	5	1	5	I5	1	1
 13	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,-2,0]
-
-Curve [1,1,1,-2,0] (minimal reduced form)
+Integral model: [1,1,1,-2,0]
+Curve [1,1,1,-2,0] (reduced minimal model)
 b2 = 5	 b4 = -3	 b6 = 1	 b8 = -1
 c4 = 97		c6 = -881
 disc = 79	(bad primes: [ 79 ];	# real components = 2)
@@ -929,9 +862,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 79	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,-7,6]
-
-Curve [0,0,0,-7,6] (minimal reduced form)
+Integral model: [0,0,0,-7,6]
+Curve [0,0,0,-7,6] (reduced minimal model)
 b2 = 0	 b4 = -14	 b6 = 24	 b8 = -49
 c4 = 336		c6 = -5184
 disc = 6400	(bad primes: [ 2 5 ];	# real components = 2)
@@ -943,9 +875,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	4	0	I*0	2	1
 5	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,0,4,-4]
-
-Curve [0,-1,0,4,-4] (minimal reduced form)
+Integral model: [0,-1,0,4,-4]
+Curve [0,-1,0,4,-4] (reduced minimal model)
 b2 = -4	 b4 = 8	 b6 = -16	 b8 = 0
 c4 = -176		c6 = 2368
 disc = -6400	(bad primes: [ 2 5 ];	# real components = 1)
@@ -957,9 +888,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	4	0	I*0	1	-1
 5	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,0,1,-2,0]
-
-Curve [1,0,1,-2,0] (minimal reduced form)
+Integral model: [1,0,1,-2,0]
+Curve [1,0,1,-2,0] (reduced minimal model)
 b2 = 1	 b4 = -3	 b6 = 1	 b8 = -2
 c4 = 73		c6 = -325
 disc = 164	(bad primes: [ 2 41 ];	# real components = 2)
@@ -971,9 +901,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	2	1	2	I2	2	1
 41	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,1,0]
-
-Curve [1,1,1,1,0] (minimal reduced form)
+Integral model: [1,1,1,1,0]
+Curve [1,1,1,1,0] (reduced minimal model)
 b2 = 5	 b4 = 3	 b6 = 1	 b8 = -1
 c4 = -47		c6 = 199
 disc = -83	(bad primes: [ 83 ];	# real components = 1)
@@ -984,9 +913,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 83	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,0,-1,-2]
-
-Curve [0,-1,0,-1,-2] (minimal reduced form)
+Integral model: [0,-1,0,-1,-2]
+Curve [0,-1,0,-1,-2] (reduced minimal model)
 b2 = -4	 b4 = -2	 b6 = -8	 b8 = 7
 c4 = 64		c6 = 2080
 disc = -2352	(bad primes: [ 2 3 7 ];	# real components = 1)
@@ -999,9 +927,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	1	1	1	I1	1	1
 7	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,0,7,0]
-
-Curve [0,1,0,7,0] (minimal reduced form)
+Integral model: [0,1,0,7,0]
+Curve [0,1,0,7,0] (reduced minimal model)
 b2 = 4	 b4 = 14	 b6 = 0	 b8 = -49
 c4 = -320		c6 = 1952
 disc = -21168	(bad primes: [ 2 3 7 ];	# real components = 1)
@@ -1014,9 +941,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	3	1	3	I3	3	-1
 7	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,0,-8,-13]
-
-Curve [1,1,0,-8,-13] (minimal reduced form)
+Integral model: [1,1,0,-8,-13]
+Curve [1,1,0,-8,-13] (reduced minimal model)
 b2 = 5	 b4 = -16	 b6 = -52	 b8 = -129
 c4 = 409		c6 = 8227
 disc = 425	(bad primes: [ 5 17 ];	# real components = 2)
@@ -1028,9 +954,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 5	2	1	2	I2	2	1
 17	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,-4,4]
-
-Curve [0,0,0,-4,4] (minimal reduced form)
+Integral model: [0,0,0,-4,4]
+Curve [0,0,0,-4,4] (reduced minimal model)
 b2 = 0	 b4 = -8	 b6 = 16	 b8 = -16
 c4 = 192		c6 = -3456
 disc = -2816	(bad primes: [ 2 11 ];	# real components = 1)
@@ -1042,9 +967,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	8	3	0	I*1	4	1
 11	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,1,-1,0]
-
-Curve [1,1,1,-1,0] (minimal reduced form)
+Integral model: [1,1,1,-1,0]
+Curve [1,1,1,-1,0] (reduced minimal model)
 b2 = 5	 b4 = -1	 b6 = 1	 b8 = 1
 c4 = 49		c6 = -521
 disc = -89	(bad primes: [ 89 ];	# real components = 1)
@@ -1055,9 +979,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 89	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,0,4,5]
-
-Curve [1,1,0,4,5] (minimal reduced form)
+Integral model: [1,1,0,4,5]
+Curve [1,1,0,4,5] (reduced minimal model)
 b2 = 5	 b4 = 8	 b6 = 20	 b8 = 9
 c4 = -167		c6 = -3005
 disc = -7921	(bad primes: [ 89 ];	# real components = 1)
@@ -1068,9 +991,8 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 89	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,6,0]
-
-Curve [1,-1,0,6,0] (minimal reduced form)
+Integral model: [1,-1,0,6,0]
+Curve [1,-1,0,6,0] (reduced minimal model)
 b2 = -3	 b4 = 12	 b6 = 0	 b8 = -36
 c4 = -279		c6 = -1269
 disc = -13500	(bad primes: [ 2 3 5 ];	# real components = 1)
@@ -1083,9 +1005,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	3	2	0	III  	2	1
 5	3	1	3	I3	3	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,-8,11]
-
-Curve [1,-1,1,-8,11] (minimal reduced form)
+Integral model: [1,-1,1,-8,11]
+Curve [1,-1,1,-8,11] (reduced minimal model)
 b2 = -3	 b4 = -15	 b6 = 45	 b8 = -90
 c4 = 369		c6 = -8073
 disc = -8640	(bad primes: [ 2 3 5 ];	# real components = 1)
@@ -1098,9 +1019,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	3	2	0	III  	2	1
 5	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,13,-61]
-
-Curve [1,-1,1,13,-61] (minimal reduced form)
+Integral model: [1,-1,1,13,-61]
+Curve [1,-1,1,13,-61] (reduced minimal model)
 b2 = -3	 b4 = 27	 b6 = -243	 b8 = 0
 c4 = -639		c6 = 49599
 disc = -1574640	(bad primes: [ 2 3 5 ];	# real components = 1)
@@ -1113,9 +1033,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	9	2	3	I*3	4	-1
 5	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,1,1,0]
-
-Curve [0,0,1,1,0] (minimal reduced form)
+Integral model: [0,0,1,1,0]
+Curve [0,0,1,1,0] (reduced minimal model)
 b2 = 0	 b4 = 2	 b6 = 1	 b8 = -1
 c4 = -48		c6 = -216
 disc = -91	(bad primes: [ 7 13 ];	# real components = 1)
@@ -1127,9 +1046,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 7	1	1	1	I1	1	1
 13	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,1,-7,5]
-
-Curve [0,1,1,-7,5] (minimal reduced form)
+Integral model: [0,1,1,-7,5]
+Curve [0,1,1,-7,5] (reduced minimal model)
 b2 = 4	 b4 = -14	 b6 = 21	 b8 = -28
 c4 = 352		c6 = -6616
 disc = -91	(bad primes: [ 7 13 ];	# real components = 1)
@@ -1141,9 +1059,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 7	1	1	1	I1	1	-1
 13	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,0,2,1]
-
-Curve [0,1,0,2,1] (minimal reduced form)
+Integral model: [0,1,0,2,1]
+Curve [0,1,0,2,1] (reduced minimal model)
 b2 = 4	 b4 = 4	 b6 = 4	 b8 = 0
 c4 = -80		c6 = -352
 disc = -368	(bad primes: [ 2 23 ];	# real components = 1)
@@ -1155,9 +1072,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	4	2	0	IV   	3	-1
 23	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,0,-1,1]
-
-Curve [0,0,0,-1,1] (minimal reduced form)
+Integral model: [0,0,0,-1,1]
+Curve [0,0,0,-1,1] (reduced minimal model)
 b2 = 0	 b4 = -2	 b6 = 4	 b8 = -1
 c4 = 48		c6 = -864
 disc = -368	(bad primes: [ 2 23 ];	# real components = 1)
@@ -1169,9 +1085,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	4	2	0	IV   	3	-1
 23	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,0,-1]
-
-Curve [1,-1,1,0,-1] (minimal reduced form)
+Integral model: [1,-1,1,0,-1]
+Curve [1,-1,1,0,-1] (reduced minimal model)
 b2 = -3	 b4 = 1	 b6 = -3	 b8 = 2
 c4 = -15		c6 = 567
 disc = -188	(bad primes: [ 2 47 ];	# real components = 1)
@@ -1183,9 +1098,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	2	1	2	I2	2	-1
 47	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,1,0,-2,0]
-
-Curve [0,1,0,-2,0] (minimal reduced form)
+Integral model: [0,1,0,-2,0]
+Curve [0,1,0,-2,0] (reduced minimal model)
 b2 = 4	 b4 = -4	 b6 = 0	 b8 = -4
 c4 = 112		c6 = -640
 disc = 576	(bad primes: [ 2 3 ];	# real components = 2)
@@ -1197,9 +1111,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	6	5	0	III  	2	1
 3	2	1	2	I2	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,0,-2,0]
-
-Curve [0,-1,0,-2,0] (minimal reduced form)
+Integral model: [0,-1,0,-2,0]
+Curve [0,-1,0,-2,0] (reduced minimal model)
 b2 = -4	 b4 = -4	 b6 = 0	 b8 = -4
 c4 = 112		c6 = 640
 disc = 576	(bad primes: [ 2 3 ];	# real components = 2)
@@ -1211,9 +1124,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	6	5	0	III  	2	-1
 3	2	1	2	I2	2	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,1,0,-25,-111]
-
-Curve [1,1,0,-25,-111] (minimal reduced form)
+Integral model: [1,1,0,-25,-111]
+Curve [1,1,0,-25,-111] (reduced minimal model)
 b2 = 5	 b4 = -50	 b6 = -444	 b8 = -1180
 c4 = 1225		c6 = 86779
 disc = -3294172	(bad primes: [ 2 7 ];	# real components = 1)
@@ -1225,9 +1137,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	2	1	2	I2	2	1
 7	7	2	1	I*1	2	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,-2,0]
-
-Curve [1,-1,1,-2,0] (minimal reduced form)
+Integral model: [1,-1,1,-2,0]
+Curve [1,-1,1,-2,0] (reduced minimal model)
 b2 = -3	 b4 = -3	 b6 = 1	 b8 = -3
 c4 = 81		c6 = 135
 disc = 297	(bad primes: [ 3 11 ];	# real components = 2)
@@ -1239,9 +1150,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	3	2	0	III  	2	1
 11	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,0,-15,8]
-
-Curve [1,-1,0,-15,8] (minimal reduced form)
+Integral model: [1,-1,0,-15,8]
+Curve [1,-1,0,-15,8] (reduced minimal model)
 b2 = -3	 b4 = -30	 b6 = 32	 b8 = -249
 c4 = 729		c6 = -3645
 disc = 216513	(bad primes: [ 3 11 ];	# real components = 2)
@@ -1253,9 +1163,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	9	2	0	III* 	2	1
 11	1	1	1	I1	1	-1
 --------------------------------------------------------------------------------
-Standard minimal model: [1,-1,1,-59,186]
-
-Curve [1,-1,1,-59,186] (minimal reduced form)
+Integral model: [1,-1,1,-59,186]
+Curve [1,-1,1,-59,186] (reduced minimal model)
 b2 = -3	 b4 = -117	 b6 = 745	 b8 = -3981
 c4 = 2817		c6 = -148257
 disc = 216513	(bad primes: [ 3 11 ];	# real components = 2)
@@ -1267,9 +1176,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	9	2	3	I*3	4	-1
 11	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,0,1,-3,-5]
-
-Curve [0,0,1,-3,-5] (minimal reduced form)
+Integral model: [0,0,1,-3,-5]
+Curve [0,0,1,-3,-5] (reduced minimal model)
 b2 = 0	 b4 = -6	 b6 = -19	 b8 = -9
 c4 = 144		c6 = 4104
 disc = -8019	(bad primes: [ 3 11 ];	# real components = 1)
@@ -1281,9 +1189,8 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 3	6	2	0	I*0	1	-1
 11	1	1	1	I1	1	1
 --------------------------------------------------------------------------------
-Standard minimal model: [0,-1,0,-33,62]
-
-Curve [0,-1,0,-33,62] (minimal reduced form)
+Integral model: [0,-1,0,-33,62]
+Curve [0,-1,0,-33,62] (reduced minimal model)
 b2 = -4	 b4 = -66	 b6 = 248	 b8 = -1337
 c4 = 1600		c6 = -44000
 disc = 1250000	(bad primes: [ 2 5 ];	# real components = 2)
@@ -1294,4 +1201,17 @@ Reduction type at bad primes:
 p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 2	4	2	0	IV   	1	-1
 5	7	2	1	I*1	2	1
+--------------------------------------------------------------------------------
+Integral model: [0,0,0,-36,0]
+Curve [0,0,0,-36,0] (reduced minimal model)
+b2 = 0	 b4 = -72	 b6 = 0	 b8 = -1296
+c4 = 1728		c6 = 0
+disc = 2985984	(bad primes: [ 2 3 ];	# real components = 2)
+#torsion not yet computed
+Conductor = 576
+Global Root Number = -1
+Reduction type at bad primes:
+p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
+2	12	6	0	I*2	4	-1
+3	6	2	0	I*0	4	-1
 --------------------------------------------------------------------------------

@@ -250,7 +250,7 @@ int main(void)
 		   long lim2 = 10; // quartic search bound 2 (sieve, log)
 		   two_descent two_d(&CDi, 0, 0, lim1, lim2);
 		   two_d.saturate(0); // processes 2-desc points only
-		   vector<Point> shortlist = two_d.getbasis();
+		   vector<Point> shortlist = two_d.getpbasis();
 		   mwbasis.process(shortlist);
 		   mwr = mwbasis.getrank();
 		   if(verbose)

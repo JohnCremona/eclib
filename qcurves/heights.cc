@@ -39,7 +39,7 @@ bigfloat height(Point& P)
 //   and so the contribution is log(denom(x(P))) = 2*log(zroot).
 //   This avoids factorizing the denominator.
 
-  const bigint& zroot = gcd(P.X,P.Z);   // = cube root of Z
+  const bigint& zroot = gcd(getX(P),getZ(P));   // = cube root of Z
   bigfloat ans = realheight(P);
   ans += 2*log(I2bigfloat(zroot));
 
@@ -72,7 +72,8 @@ cout<<"(as a bigfloat, pr = "<<I2bigfloat(pr)<<")"<<endl;
 #ifdef DEBUG_HEIGHT
 cout<<"n = val(pr, discr) = " << n << endl;
 #endif
-  const bigint& x=P.X; const bigint& y=P.Y; const bigint& z=P.Z;
+  bigint x,y,z;
+  P.getcoordinates(x,y,z);
   const bigint& zroot = gcd(x,z); // = cube root of z
   long vpz = 3*val(pr,zroot);
 #ifdef DEBUG_HEIGHT
@@ -126,7 +127,7 @@ cout<<"...returning lambda = " << lambda << ", pheight = "<<ans<<endl;
 bigfloat realheight(const Point& P)
 {
   bigfloat x,y;
-  realify_point(P,x,y);
+  P.getrealcoordinates(x,y);
 #ifdef DEBUG_HEIGHT
   cout<<"Computing real height of P = " << P <<", x(P) = "<<x<<endl;
 #endif

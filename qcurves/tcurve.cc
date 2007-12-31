@@ -81,5 +81,27 @@ int main(void)
       if(div(p,getdiscr(cdr))) cout<<" (bad reduction)";
       cout<<endl;
     }
+
+  cout <<"Testing construction from a non-integral model:\n";
+  bigint a1,a2,a3,a4,a6;
+  E.getai(a1,a2,a3,a4,a6);
+  bigrational qa1(a1),qa2(a2),qa3(a3),qa4(a4),qa6(a6);
+  bigint s=BIGINT(60), scale;
+  bigint si=s;
+  qa1/=si; si*=s;
+  qa2/=si; si*=s;
+  qa3/=si; si*=s;
+  qa4/=si; si*=s; si*=s;
+  qa6/=si;
+  cout<<"After scaling down by "<<s<<", coeffs are ";
+  cout<<"["<<qa1<<","<<qa2<<","<<qa3<<","<<qa4<<","<<qa6<<"]"<<endl;
+  vector<bigrational> qai;
+  qai.push_back(qa1);
+  qai.push_back(qa2);
+  qai.push_back(qa3);
+  qai.push_back(qa4);
+  qai.push_back(qa6);
+  Curvedata Es(qai,scale);
+  cout<<"Constructed curve is "<<(Curve)Es<<" with scale = "<<scale<<endl;
   return 0;
 }

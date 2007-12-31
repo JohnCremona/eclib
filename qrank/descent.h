@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-
+#include "bigrat.h"
 #include "curve.h"
 #include "mwprocs.h"
 
@@ -85,9 +85,12 @@ private: rank12 * r12;  // does all the work
   int success, certain, fullmw;
   long rank, selmer_rank, sat_bound;
   mw* mwbasis;
+  vector<bigrational> qai;  // Coefficients of initial curve
   Curvedata e_orig, e_min;
-  int change; // flags if e_orig!=e_min
-  bigint u,r,s,t; // the transform between e_orig and e_min
+  bigint u,r,s,t; // transform between e_orig and e_min
+  bigint v;       // scaling factor needed to make input curve integral
+  void do_the_descent(long firstlim, long secondlim, long n_aux, 
+		      int second_descent); //  (called by constructors)  
 public:
 // Constructor:
 //
@@ -102,6 +105,11 @@ public:
 	      int verb=0, int sel=0, 
 	      long firstlim=20, long secondlim=5, 
 	      long n_aux=-1, int second_descent=1);
+  // Version which takes a vector [a1,a2,a3,a4,a6] of *rationals*
+  two_descent(vector<bigrational> ai, 
+	      int verb=0, int sel=0, 
+	      long firstlim=20, long secondlim=5, 
+	      long n_aux=-1, int second_descent=1);
   ~two_descent() {delete r12;}
   long getrank() const {return rank;}
   long getselmer() const {return selmer_rank;}
@@ -110,7 +118,8 @@ public:
   int get2t() const {return two_torsion_exists;}
   int getfullmw() const {return fullmw;}
   bigfloat regulator() {return mwbasis->regulator();}
-  vector<Point> getbasis(); // returns points on original model
+  vector<P2Point> getbasis(); // returns points on original model
+  vector<Point> getpbasis();  // returns points on integral model
   void report_rank() const;
   void saturate(long sat_bd); // =0 for none
   void show_gens(); // display points on original model

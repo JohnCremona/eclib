@@ -25,22 +25,24 @@
 
 #include "compproc.h"
 #include "cperiods.h"
-#include "reader.h"
+#include "getcurve.h"
 
 int main(){
   set_precision(string("Enter number of decimal places").c_str());
   initprimes(string("PRIMES").c_str(),0);
 	
-  CurveReader input;
-  Curve E;
-  Curvedata D;
-  CurveRed C;
+  int verb=1;
+  bigint v;
+  vector<bigrational> ai(5);
 
-  while (input>>E)
+  while (getcurve(ai,verb))
     {
-      cout << "Curve input:        " << E << endl;
-      Cperiods cp(E);
-      cout << "periods: " << cp << endl; 
+      cout << "Input curve = ";
+      cout <<"["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"]:" << endl;
+      Curvedata CD(Curvedata(ai,v),1);
+      cout << "Minimal model = "<<(Curve)CD<<endl;
+      Cperiods cp(CD);
+      cout << "Periods: " << cp << endl; 
 
       Curve EE = cp.trans_to_curve();
       cout << "Curve from periods: " << EE << endl;

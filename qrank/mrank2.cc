@@ -1079,7 +1079,7 @@ void rank2::makegens()
   for(i=0; i<npoints; i++)
     {
       if(verbose&&(i==npoints1)) {cout<<"\nII. Points on phi(E') mod 2E\n";}
-      Point q = shift(pointlist[i],the_curve,u,r,s,t);
+      Point q = transform(pointlist[i],the_curve,u,r,s,t);
       bigfloat h = height(q);
       int valid = q.isvalid();
       if(verbose||!valid) cout << "Point " << q << ", height = " << h;
@@ -1120,7 +1120,7 @@ void rank2::listgens(Curvedata* CD_orig, const bigint& u, const bigint& r,
        << (Curve)(*CD_orig) << ": \n";
   for(i=0; i<npoints; i++)
     {
-      Point p = shift(pointlist[i],CD_orig,u,r,s,t,1);
+      Point p = transform(pointlist[i],CD_orig,u,r,s,t,1);
       cout << "Point " << (i+1) <<
 	//	    "on " <<  (Curve)(*CD_orig) << 
 	": " << p;
@@ -1213,7 +1213,7 @@ void rank2::listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r,
 //	  cout << "Point on " <<  (Curve)(*the_curve) << ": " << p0;
 //	  if(!p0.isvalid()) cout << " --warning: NOT on curve!";
 //	  cout << "\n";
-	  Point p = shift(p0,CD_orig,u,r,s,t,1);
+	  Point p = transform(p0,CD_orig,u,r,s,t,1);
 	  cout << "Point " <<
 	    //	    "on " <<  (Curve)(*CD_orig) << ": " << 
 	    p;

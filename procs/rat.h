@@ -68,6 +68,8 @@ public:
         rational& operator/=(long);
         rational operator+();
         rational operator-();
+        friend long floor(const rational& r);
+        friend long ceil(const rational& r);
         operator double();  // conversion operator
 
 // Implementation
@@ -260,25 +262,34 @@ inline istream& operator>> (istream& is, rational& r)
 {
   char c;
   long n,d=1;
-  is>>n>>ws;
+  is>>n;
   if(!is.eof()) 
     {
-      is>>c;
+      is.get(c);
       if(c=='/')
 	{
 	  is>>d;
 	}
       else
 	{
-	  if(c!='\n')
-	    {
-	      is.putback(c);
-	    }
+	  is.putback(c);
 	}
     }
   r=rational(n,d);
   return is;
 }
 
+// NB gcd(n,d)=1 and d>0:
+
+inline long floor(const rational& r)
+{
+  return (r.n-(r.n%r.d))/r.d;
+}
+
+inline long ceil(const rational& r)
+{
+  if(r.d==1) return r.n;
+  return 1 + (r.n-(r.n%r.d))/r.d;
+}
 
 #endif

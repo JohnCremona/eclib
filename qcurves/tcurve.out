@@ -8,14 +8,14 @@ c4 = 336		c6 = -5400
 disc = 5077	(# real components = 2)
 #torsion not yet computed
 
-The minimal curve is [0,0,1,-7,6] (minimal reduced form)
+The minimal curve is [0,0,1,-7,6] (reduced minimal model)
 b2 = 0	 b4 = -14	 b6 = 25	 b8 = -49
 c4 = 336		c6 = -5400
 disc = 5077	(# real components = 2)
 #torsion not yet computed
 
 A test of Tate's algorithm:
-[0,0,1,-7,6] (minimal reduced form)
+[0,0,1,-7,6] (reduced minimal model)
 b2 = 0	 b4 = -14	 b6 = 25	 b8 = -49
 c4 = 336		c6 = -5400
 disc = 5077	(bad primes: [ 5077 ];	# real components = 2)
@@ -23,7 +23,7 @@ disc = 5077	(bad primes: [ 5077 ];	# real components = 2)
 Conductor = 5077
 
 Full display:
-[0,0,1,-7,6] (minimal reduced form)
+[0,0,1,-7,6] (reduced minimal model)
 b2 = 0	 b4 = -14	 b6 = 25	 b8 = -49
 c4 = 336		c6 = -5400
 disc = 5077	(bad primes: [ 5077 ];	# real components = 2)
@@ -59,3 +59,6 @@ p=79: ap=9
 p=83: ap=-2
 p=89: ap=11
 p=97: ap=6
+Testing construction from a non-integral model:
+After scaling down by 60, coeffs are [0,0,1/216000,-7/12960000,1/7776000000]
+Constructed curve is [0,0,1,-7,6] with scale = 60

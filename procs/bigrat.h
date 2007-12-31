@@ -71,6 +71,8 @@ public:
         bigrational& operator/=(bigint);
         bigrational operator+();
         bigrational operator-();
+        friend bigint floor(const bigrational& r);
+        friend bigint ceil(const bigrational& r);
         operator bigfloat();  // conversion operator
 
 // Implementation
@@ -266,24 +268,33 @@ inline istream& operator>> (istream& is, bigrational& r)
 {
   char c;
   bigint n,d=BIGINT(1);
-  is>>n>>ws;
+  is>>n;
   if(!is.eof()) 
     {
-      is>>c;
+      is.get(c);
       if(c=='/')
 	{
 	  is>>d;
 	}
       else
 	{
-	  if(c!='\n')
-	    {
-	      is.putback(c);
-	    }
+	  is.putback(c);
 	}
     }
   r=bigrational(n,d);
   return is;
+}
+// NB gcd(n,d)=1 and d>0:
+
+inline bigint floor(const bigrational& r)
+{
+  return (r.n-(r.n%r.d))/r.d;
+}
+
+inline bigint ceil(const bigrational& r)
+{
+  if(r.d==BIGINT(1)) return r.n;
+  return BIGINT(1) + (r.n-(r.n%r.d))/r.d;
 }
 
 #endif

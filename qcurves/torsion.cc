@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include "points.h"
-#include "reader.h"
+#include "getcurve.h"
 
 
 int main(){
@@ -33,16 +33,16 @@ int main(){
   cerr<<"   or 1 for long  output (list of the torsion points): ";
   int showpoints; cin >> showpoints;
   initprimes(string("PRIMES").c_str(),0);
-  CurveReader input;
-  Curve F;
+  vector<bigrational> ai(5);
   vector<Point> tor; int ntor, n2;
-  bigint u, r, s, t;
+  bigint u, r, s, t, v;
+  int verb=1;
 
-  while (input>>F) 
+  while (getcurve(ai,verb))
     {
-      Curvedata E0 = Curvedata(F,0);
+      Curvedata E0(ai,v);
       Curvedata E1 = E0.minimalize(u,r,s,t);
-      cout<<"Curve "<<F<<flush;
+      cout<<"Curve ["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"]"<<flush;
       tor = torsion_points(E1); 
       ntor = tor.size();
       n2=0;
@@ -51,8 +51,8 @@ int main(){
 	{
 	  for(int i=0; i<ntor; i++)
 	    {
-	      Point P = shift(tor[i],&E0,u,r,s,t,1);
-	      cout << P << "\t";
+	      Point P = transform(tor[i],&E0,u,r,s,t,1);
+	      cout << scale(P,v,0) << "\t";
 	      if(!P.isvalid()) cout << " --warning: NOT on curve!\n";
 	      else
 		{

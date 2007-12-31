@@ -48,14 +48,14 @@ LIBFLAGS = $(LFLAGS)
 %$(OBJ_SUF).o:   %.cc
 	$(CXX) $(CFLAGS) $< -o $@
 
-OBJS = curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o points$(OBJ_SUF).o heights$(OBJ_SUF).o cperiods$(OBJ_SUF).o isogs$(OBJ_SUF).o mwprocs$(OBJ_SUF).o lambda$(OBJ_SUF).o sifter$(OBJ_SUF).o sieve_search$(OBJ_SUF).o htconst$(OBJ_SUF).o egr$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o pointsmod$(OBJ_SUF).o curvemod$(OBJ_SUF).o ffmod$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o
+OBJS = curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o points$(OBJ_SUF).o heights$(OBJ_SUF).o cperiods$(OBJ_SUF).o isogs$(OBJ_SUF).o mwprocs$(OBJ_SUF).o lambda$(OBJ_SUF).o sifter$(OBJ_SUF).o sieve_search$(OBJ_SUF).o htconst$(OBJ_SUF).o egr$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o pointsmod$(OBJ_SUF).o curvemod$(OBJ_SUF).o ffmod$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o getcurve$(OBJ_SUF).o 
 
 objs: $(OBJS)
 
-HEADERS = curve.h points.h cperiods.h isogs.h reader.h mwprocs.h lambda.h sifter.h sieve_search.h htconst.h egr.h saturate.h divpol.h pointsmod.h curvemod.h ffmod.h tlss.h elog.h
+HEADERS = curve.h points.h cperiods.h isogs.h reader.h mwprocs.h lambda.h sifter.h sieve_search.h htconst.h egr.h saturate.h divpol.h pointsmod.h curvemod.h ffmod.h tlss.h elog.h getcurve.h 
 headers: $(HEADERS)
 
-DOTCCS = curve.cc curvedata.cc curvered.cc points.cc cperiods.cc isogs.cc heights.cc mwprocs.cc lambda.cc sifter.cc indep.cc sieve_search.cc htconst.cc egr.cc saturate.cc divpol.cc pointsmod.cc curvemod.cc ffmod.cc tlss.cc elog.cc
+DOTCCS = curve.cc curvedata.cc curvered.cc points.cc cperiods.cc isogs.cc heights.cc mwprocs.cc lambda.cc sifter.cc indep.cc sieve_search.cc htconst.cc egr.cc saturate.cc divpol.cc pointsmod.cc curvemod.cc ffmod.cc tlss.cc elog.cc getcurve.cc 
 
 PROGCCS =  tcurve.cc tpoints.cc theight.cc tate.cc torsion.cc conductor.cc twist.cc allisog.cc findinf.cc indep.cc tsat.cc tperiods.cc thtconst.cc thtbound.cc tegr.cc telog.cc tdivpol.cc
 
@@ -108,7 +108,7 @@ DISTFILES = curve.h points.h reader.h curve.cc curvedata.cc curvered.cc \
 	    saturate.h saturate.cc divpol.h divpol.cc tlss.h tlss.cc \
 	    pointsmod.h pointsmod.cc elog.h elog.cc \
 	    curvemod.h curvemod.cc ffmod.h ffmod.cc egr.h egr.cc \
-            lambda.h lambda.cc
+            lambda.h lambda.cc getcurve.h getcurve.cc
 distfiles: $(DISTFILES)
 
 dist: distfiles
@@ -155,9 +155,9 @@ check:  $(TESTS) $(PROGS)
 tcurve: tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o 
 	$(CXX)  -o $(BINDIR)/tcurve tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o  $(LFLAGS)
 
-tperiods: tperiods$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o
+tperiods: tperiods$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o getcurve$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/tperiods tperiods$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o \
-		curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o $(LFLAGS)
+		curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o getcurve$(OBJ_SUF).o $(LFLAGS)
 
 qperiods: qperiods$(OBJ_SUF).o
 	$(CXX)  -o $(BINDIR)/qperiods qperiods$(OBJ_SUF).o  $(LFLAGS)
@@ -295,6 +295,7 @@ tesign: tesign$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ
 telog$(OBJ_SUF).o: telog.cc elog.h points.h curve.h
 elog$(OBJ_SUF).o: elog.h elog.cc cperiods.h curve.h
 egr$(OBJ_SUF).o: egr.cc egr.h points.h curve.h
+getcurve$(OBJ_SUF).o: getcurve.cc getcurve.h
 
 bdw2357$(OBJ_SUF).o: bdw2357.cc curve.h
 bdw2357a$(OBJ_SUF).o: bdw2357a.cc curve.h

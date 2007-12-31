@@ -585,7 +585,7 @@ vector<long> tamagawa_primes(const Curvedata& C)
   //  cout<<"Before shifting, newpoints = "<<newpoints<<endl;
   if(shift_flag) 
     for(unsigned int i=0; i<newpoints.size(); i++)
-      newpoints[i] = shift(newpoints[i],C,BIGINT(1),
+      newpoints[i] = transform(newpoints[i],C,BIGINT(1),
 			   x_shift,BIGINT(0),BIGINT(0),1);
   //  cout<<"After shifting, newpoints = "<<newpoints<<endl;
   Point Pmin = pmh.get_min_ht_point();

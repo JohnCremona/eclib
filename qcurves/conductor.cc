@@ -22,19 +22,20 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include "curve.h"
-#include "reader.h"
+#include "getcurve.h"
 
 int main(void)
 {
   initprimes(string("PRIMES").c_str(),0);
         
-  CurveReader in;
-  Curve C;
+  int verb=1;
+  bigint v;
+  vector<bigrational> ai(5);
 
-  while (in>>C)
+  while (getcurve(ai,verb))
     {
-      cout << C << ":\t\t" << flush;
-      Curvedata CD(C);
+      cout <<"["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"]:\t\t" << flush;
+      Curvedata CD(Curvedata(ai,v),1);
       CurveRed CR(CD);
       cout << "N = " << getconductor(CR) << endl;
     }

@@ -1,7 +1,6 @@
 
-Enter a  curve: 
 Curve is:  
-[1,-1,0,4,3] (minimal reduced form)
+[1,-1,0,4,3] (reduced minimal model)
 b2 = -3	 b4 = 8	 b6 = 12	 b8 = -25
 c4 = -183		c6 = -3429
 disc = -10351	(bad primes: [ 11 941 ];	# real components = 1)
@@ -15,10 +14,11 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 
 Enter a twist value: 
 (0 to set a new `original' curve, 1 to twist original,
-or any other integer to twist immediately preceding output) 
+or any other integer to twist immediately preceding output)
+ 
 
 E * 10 is:  
-[0,0,0,6100,254000] (minimal reduced form)
+[0,0,0,6100,254000] (reduced minimal model)
 b2 = 0	 b4 = 12200	 b6 = 1016000	 b8 = -37210000
 c4 = -292800		c6 = -219456000
 disc = -42397696000000	(bad primes: [ 2 5 11 941 ];	# real components = 1)
@@ -35,10 +35,11 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 
 Enter a twist value: 
 (0 to set a new `original' curve, 1 to twist original,
-or any other integer to twist immediately preceding output) 
+or any other integer to twist immediately preceding output)
+ 
 
 E * 10 is:  
-[1,-1,0,4,3] (minimal reduced form)
+[1,-1,0,4,3] (reduced minimal model)
 b2 = -3	 b4 = 8	 b6 = 12	 b8 = -25
 c4 = -183		c6 = -3429
 disc = -10351	(bad primes: [ 11 941 ];	# real components = 1)
@@ -53,5 +54,5 @@ p	ord(d)	ord(N)	ord(j)	Kodaira	c_p	root_number
 
 Enter a twist value: 
 (0 to set a new `original' curve, 1 to twist original,
-or any other integer to twist immediately preceding output) 
-Enter a  curve: 
+or any other integer to twist immediately preceding output)
+ 

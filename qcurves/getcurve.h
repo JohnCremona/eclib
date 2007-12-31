@@ -1,4 +1,4 @@
-// getcurve.cc: implementation of function getcurve() for curve input
+// getcurve.h: declaration of function getcurve() for curve input
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2005 John Cremona
@@ -21,23 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "curve.h"
-#include "getcurve.h"
+// Read in a curve as [a1,a2,a3,a4,a6] with ai integers:
+int getcurve(Curvedata& CD, int verb);
 
-int getcurve(Curvedata& CD, int verb)
-{
-  Curve C0;
-  if(verb) cout  << "Enter curve: ";
-  cin>>ws;  if(cin.eof()) return 0; // quit if EOF reached
-  cin >> C0;
-  if (verb) cout << endl;
-  if(C0.isnull()) return 0;  // quit if null curve entered
-  cout << "Curve "<< C0<<" :\t";
-  CD = Curvedata(C0,0);      // DON'T change coords
-  if(CD.isnull()) // input curve was singular, non-null
-    {
-      cout<<" singular"<<endl;
-      return 0;
-    }
-  return 1;
-}
+// Read in a curve as [a1,a2,a3,a4,a6] with ai rational:
+int getcurve(vector<bigrational>& ai, int verb);

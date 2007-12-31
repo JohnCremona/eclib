@@ -60,30 +60,24 @@ LIBFLAGS = $(LFLAGS)
 
 # TARGETS
 
-HEADERS = mrank2.h mequiv.h mlocsol.h mglobsol.h msoluble.h mquartic.h mrank1.h qc.h sqfdiv.h getcurve.h version.h minim.h reduce.h transform.h desc2.h bitspace.h options.h GetOpt.h twoadic.h descent.h
+HEADERS = mrank2.h mequiv.h mlocsol.h mglobsol.h msoluble.h mquartic.h mrank1.h qc.h sqfdiv.h version.h minim.h reduce.h transform.h desc2.h bitspace.h options.h GetOpt.h twoadic.h descent.h
 headers: $(HEADERS)
 
-DOTCCS = mequiv.cc  mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc tmrank.cc ratpoint.cc qc.cc mwrank.cc sqfdiv.cc getcurve.cc version.cc minim.cc reduce.cc transform.cc desc2.cc tred.cc bitspace.cc GetOpt.cc twoadic.cc descent.cc # d2.cc tequiv.cc tred.cc
+DOTCCS = mequiv.cc  mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc tmrank.cc ratpoint.cc qc.cc mwrank.cc sqfdiv.cc version.cc minim.cc reduce.cc transform.cc desc2.cc tred.cc bitspace.cc GetOpt.cc twoadic.cc descent.cc # d2.cc tequiv.cc tred.cc
 
 sources: $(HEADERS) $(DOTCCS)
-
-PROGS = tmrank ratpoint mwrank #d2 tred
-progs: $(PROGS)
 
 DOCS = mwrank.info mwrank.options mwrank.changes mwrank.readme
 docs: $(DOCS)
 
-DISTFILES = $(HEADERS) mequiv.cc mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc tmrank.cc ratpoint.cc d2.cc qc.cc mwrank.cc sqfdiv.cc getcurve.cc version.cc minim.cc reduce.cc transform.cc desc2.cc bitspace.cc twoadic.h twoadic.cc descent.cc $(DOCS) tmrank.in
+DISTFILES = $(HEADERS) mequiv.cc mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc tmrank.cc ratpoint.cc d2.cc qc.cc mwrank.cc sqfdiv.cc version.cc minim.cc reduce.cc transform.cc desc2.cc bitspace.cc twoadic.h twoadic.cc descent.cc $(DOCS) tmrank.in
 
 distfiles: $(DISTFILES)
 
 clean:
 	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.a *.so *.dylib
 
-veryclean: clean
-	(cd $(BINDIR); /bin/rm -f $(TESTS) $(PROGS))
-
-OBJS = mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o twoadic$(OBJ_SUF).o descent$(OBJ_SUF).o
+OBJS = mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o twoadic$(OBJ_SUF).o descent$(OBJ_SUF).o
 
 objs: $(OBJS)
 
@@ -124,6 +118,9 @@ test2: mwrank
 
 alltests: tests test1 test2
 
+veryclean: clean
+	(cd $(BINDIR); /bin/rm -f $(TESTS) $(PROGS))
+
 install_progs: progs install_docs
 	for f in $(PROGS); \
 	do strip $${f}; \
@@ -154,12 +151,12 @@ check: $(PROGS) $(TESTS)
 
 
 mwrank: version$(OBJ_SUF).o mwrank$(OBJ_SUF).o descent$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o \
-	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o \
+	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o \
 	desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o \
 	twoadic$(OBJ_SUF).o
 	chmod og+r *
 	$(CXX) -o mwrank version$(OBJ_SUF).o mwrank$(OBJ_SUF).o descent$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o \
-	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o getcurve$(OBJ_SUF).o desc2$(OBJ_SUF).o \
+	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o desc2$(OBJ_SUF).o \
 	transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o twoadic$(OBJ_SUF).o \
 	$(LFLAGS)
 
@@ -194,7 +191,7 @@ tequiv: version$(OBJ_SUF).o tequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mequiv$(OBJ_
 # DEPENDENCIES
 
 version$(OBJ_SUF).o:  $(HEADERS) $(DOTCCS)
-mwrank$(OBJ_SUF).o:  mwrank.cc descent.h mrank1.h mrank2.h mquartic.h getcurve.h version.h options.h
+mwrank$(OBJ_SUF).o:  mwrank.cc descent.h mrank1.h mrank2.h mquartic.h version.h options.h
 tmrank$(OBJ_SUF).o:  tmrank.cc descent.h mrank1.h mrank2.h mquartic.h version.h
 descent$(OBJ_SUF).o: descent.cc descent.h mrank1.h mrank2.h mquartic.h
 mrank1$(OBJ_SUF).o: mrank1.cc mrank1.h descent.h mquartic.h mequiv.h msoluble.h qc.h
@@ -203,7 +200,6 @@ mequiv$(OBJ_SUF).o: mequiv.cc mquartic.h mequiv.h
 mquartic$(OBJ_SUF).o: mquartic.cc mquartic.h
 
 mglobsol$(OBJ_SUF).o: mglobsol.cc mglobsol.h mquartic.h
-getcurve$(OBJ_SUF).o: getcurve.cc getcurve.h
 ratpoint$(OBJ_SUF).o: ratpoint.cc qc.h mlocsol.h mglobsol.h mquartic.h qc.h version.h
 desc2$(OBJ_SUF).o: desc2.cc desc2.h transform.h reduce.h mlocsol.h mglobsol.h mquartic.h
 d2$(OBJ_SUF).o: d2.cc desc2.h reduce.h qc.h mlocsol.h mglobsol.h mquartic.h qc.h

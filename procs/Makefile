@@ -36,11 +36,11 @@ LFLAGS = -lpari -L$(PARILIBDIR) $(NTLLFLAGS) -lm $(IOLIB)
 
 LIBFLAGS = $(LFLAGS)
 
-HEADERS = interface.h templates.h arith.h xmod.h marith.h gpslave.h compproc.h vec.h vector.h mat.h matrix.h sub.h subspace.h rat.h bigrat.h kbessel.h svec.h svector.h smat.h smatrix.h smat_elim.h smatrix_elim.h mvector.h mmatrix.h msubspace.h method.h splitbase.h xsplit.h conic.h legendre.h quadratic.h unimod.h illl.h hilbert.h timer.h cubic.h gf.h polys.h realroots.h parifact.h
+HEADERS = interface.h templates.h arith.h xmod.h marith.h gpslave.h compproc.h vec.h vector.h mat.h matrix.h sub.h subspace.h rat.h bigrat.h kbessel.h svec.h svector.h smat.h smatrix.h smat_elim.h smatrix_elim.h mvector.h mmatrix.h msubspace.h method.h splitbase.h xsplit.h conic.h legendre.h quadratic.h unimod.h illl.h hilbert.h timer.h cubic.h gf.h polys.h realroots.h parifact.h p2points.h
 
-DOTCCS = interface.cc unimod.cc arith.cc marith.cc gpslave.cc compproc.cc vec.cc vector.cc mat.cc matrix.cc sub.cc subspace.cc kbessel.cc mvector.cc mmatrix.cc msubspace.cc vectest.cc mvectest.cc mattest.cc mmattest.cc space.cc mspace.cc comptest.cc rattest.cc bigrattest.cc ptest.cc mptest.cc tbessel.cc svec.cc svector.cc svectest.cc smat.cc smatrix.cc smattest.cc random.cc smat_elim.cc smatrix_elim.cc xsplit.cc conic.cc tconic.cc legendre.cc quadratic.cc illl.cc hilbert.cc thilbert.cc tleg.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc rcubic.cc lcubic.cc
+DOTCCS = interface.cc unimod.cc arith.cc marith.cc gpslave.cc compproc.cc vec.cc vector.cc mat.cc matrix.cc sub.cc subspace.cc kbessel.cc mvector.cc mmatrix.cc msubspace.cc vectest.cc mvectest.cc mattest.cc mmattest.cc space.cc mspace.cc comptest.cc rattest.cc bigrattest.cc ptest.cc mptest.cc tbessel.cc svec.cc svector.cc svectest.cc smat.cc smatrix.cc smattest.cc random.cc smat_elim.cc smatrix_elim.cc xsplit.cc conic.cc tconic.cc legendre.cc quadratic.cc illl.cc hilbert.cc thilbert.cc tleg.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc rcubic.cc lcubic.cc p2points.cc tp2points.cc
 
-ARITH_OBJS  = arith$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o conic$(OBJ_SUF).o legendre$(OBJ_SUF).o unimod$(OBJ_SUF).o quadratic$(OBJ_SUF).o cubic$(OBJ_SUF).o illl$(OBJ_SUF).o hilbert$(OBJ_SUF).o parifact$(OBJ_SUF).o
+ARITH_OBJS  = arith$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o conic$(OBJ_SUF).o legendre$(OBJ_SUF).o unimod$(OBJ_SUF).o quadratic$(OBJ_SUF).o cubic$(OBJ_SUF).o illl$(OBJ_SUF).o hilbert$(OBJ_SUF).o parifact$(OBJ_SUF).o p2points$(OBJ_SUF).o
 TRANS_OBJS =  compproc$(OBJ_SUF).o kbessel$(OBJ_SUF).o
 #XSPLIT_OBJS = xsplit0$(OBJ_SUF).o xsplit1$(OBJ_SUF).o xsplit2$(OBJ_SUF).o xsplit5$(OBJ_SUF).o xsplit6$(OBJ_SUF).o
 XSPLIT_OBJS = xsplit2$(OBJ_SUF).o # temporary
@@ -51,7 +51,7 @@ SVEC_OBJS = svector$(OBJ_SUF).o
 
 OBJS = interface$(OBJ_SUF).o $(ARITH_OBJS) $(TRANS_OBJS) $(LINALG_OBJS) $(MLINALG_OBJS) $(XSPLIT_OBJS) timer$(OBJ_SUF).o $(SVEC_OBJS) $(SMAT_OBJS) polys$(OBJ_SUF).o realroots$(OBJ_SUF).o 
 
-TESTS = vectest1 vectest2 mattest1 mattest2 space1 space2 smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectest1 svectest2
+TESTS = vectest1 vectest2 mattest1 mattest2 space1 space2 smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectest1 svectest2 tp2points
 
 all: $(OBJS)
 
@@ -106,7 +106,7 @@ tar: sources
 	gzip procs.tar
 
 check: $(TESTS)
-	rm -f PRIMES
+	rm -f PRIMES t
 	./vectest1 < vectest.in >  t && diff t vectest.out
 	./vectest2 < vectest.in >  t && diff t vectest.out
 	./mattest1 < mattest.in >  t && diff t mattest.out
@@ -128,6 +128,8 @@ check: $(TESTS)
 	./thilbert < thilbert.in > t && diff t thilbert.out
 	./rcubic < rcubic.in > t && diff t rcubic.out
 	./lcubic < lcubic.in > t && diff t lcubic.out
+	./tp2points < tp2points.in > t && diff t tp2points.out
+	rm -f PRIMES t
 
 vectest1: vectest.cc vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 vectest.cc -o vectest1$(OBJ_SUF).o
@@ -393,6 +395,11 @@ subspace$(OBJ_SUF).o: subspace.cc sub.h mat.h vec.h interface.h templates.h arit
 
 %$(OBJ_SUF).o:   %.cc
 	$(CXX) $(CFLAGS) $< -o $@
+
+p2points$(OBJ_SUF).o: p2points.cc p2points.h bigrat.h marith.h interface.h arith.h
+tp2points$(OBJ_SUF).o: tp2points.cc p2points.h bigrat.h marith.h interface.h arith.h
+tp2points: tp2points$(OBJ_SUF).o p2points$(OBJ_SUF).o marith$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o gpslave$(OBJ_SUF).o parifact$(OBJ_SUF).o 
+	$(CXX) -o tp2points tp2points$(OBJ_SUF).o p2points$(OBJ_SUF).o marith$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o gpslave$(OBJ_SUF).o parifact$(OBJ_SUF).o $(LFLAGS)
 
 rcubic: rcubic$(OBJ_SUF).o cubic$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o parifact$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o realroots$(OBJ_SUF).o
 	$(CXX) -o rcubic rcubic$(OBJ_SUF).o cubic$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o parifact$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o realroots$(OBJ_SUF).o $(LFLAGS)

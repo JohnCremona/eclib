@@ -137,7 +137,7 @@ public:
   Curve trans_to_curve(void) const
   {
     bigcomplex cc4, cc6;
-    cout<<"Calling getc4c6 with first w2="<<w2<<", second w1="<<w1<<endl;
+    //    cout<<"Calling getc4c6 with first w2="<<w2<<", second w1="<<w1<<endl;
     getc4c6(w2,w1, cc4, cc6);  // from compproc.h: note the order!
     return Curve(Iround( real(cc4) ), Iround( real(cc6) ));
   }

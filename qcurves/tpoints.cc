@@ -83,9 +83,9 @@ int main(){
   if (loop)
     {
       Point Q0,Q1,Q2; int i0,i1,i2;
-      for(i0 = -3, Q0=-3*(P0+P1+P2) ; i0 < 4 ; i0++, Q0=Q0+P0){
-	for(i1 = -3, Q1=Q0 ; i1 < 4 ; i1++, Q1=Q1+P1){
-	  for(i2 = -3, Q2=Q1 ; i2 < 4 ; i2++, Q2=Q2+P2){
+      for(i0 = -3, Q0=-3*(P0+P1+P2) ; i0 < 4 ; i0++, Q0+=P0){
+	for(i1 = -3, Q1=Q0 ; i1 < 4 ; i1++, Q1+=P1){
+	  for(i2 = -3, Q2=Q1 ; i2 < 4 ; i2++, Q2+=P2){
 	    cout << i0 << ", " << i1 <<", " << i2<< ": " << Q2 << endl ;
 	  }
 	}

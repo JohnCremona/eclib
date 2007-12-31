@@ -22,25 +22,23 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include "curve.h"
+#include "getcurve.h"
 
 int main(){
 
-initprimes(string("PRIMES").c_str(),0);
+  initprimes(string("PRIMES").c_str(),0);
 
-Curve F;
-Curvedata D, E;
-CurveRed CR;
-bigint c4,c6,twist2;
+  Curvedata D, E;
+  CurveRed CR;
+  bigint c4,c6,twist2;
+  bigint v;
+  int verbose=0;
+  vector<bigrational> ai(5);
 
 
- while(1)
+while (getcurve(ai,verbose))
 {
-  cout << "\nEnter a  curve: ";
-  cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
-  cin >> F;
-  if(F.isnull()) exit(0);
-
-  D = Curvedata(F,1); // construct as minimal
+  Curvedata D(Curvedata(ai,v),1);
   E = D;
   CR = CurveRed(E);
   cout << "\nCurve is:  " << endl;  CR.display(cout);
@@ -51,7 +49,7 @@ bigint c4,c6,twist2;
     {
       cout << "\nEnter a twist value: ";
       cout << "\n(0 to set a new `original' curve, 1 to twist original,\n";
-      cout << "or any other integer to twist immediately preceding output) ";
+      cout << "or any other integer to twist immediately preceding output)\n ";
       cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
       cin >> twist;
       if(twist==0) break;

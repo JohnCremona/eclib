@@ -37,6 +37,9 @@ int main(void)
  cin>>q;
  cout << "q = " << q << " has denominator " << den(q) <<	\
    " and numerator " <<  num(q) << "\n";
+ cout<<"floor(q) = "<<floor(q)<<endl;
+ cout<<"ceil(q) = "<<ceil(q)<<endl;
+
  bigrational q1,q2,q3;
  cout << "Enter three rationals separated by whitespace: ";
  cin>>q1>>q2>>q3;

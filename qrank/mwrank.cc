@@ -67,14 +67,18 @@ int main(int argc, char **argv)
   long hlimq0 = hlimq; if(hlimq0!=0) hlimq0=10;
   
   Curvedata CD;
+  vector<bigrational> ai;
 
-  while ( getcurve(CD,!opt.get_quiet())	 )
+  //  while ( getcurve(CD,!opt.get_quiet())	 )
+  while ( getcurve(ai,!opt.get_quiet())	 )
     {
+      cout << "Curve "<< 
+	"["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"] :\t";
       start_time();
 
 //  Step 1: 2-descent
 
-      two_descent two_d(&CD, verbose, selmer_only, 
+      two_descent two_d(ai, verbose, selmer_only, 
 			hlimq0, hlimq, 
 			opt.get_naux(), second_descent);
       two_d.report_rank();

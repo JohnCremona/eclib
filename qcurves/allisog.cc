@@ -26,7 +26,7 @@
 
 #include "matrix.h"
 #include "isogs.h"
-#include "reader.h"
+#include "getcurve.h"
 
 int main(){
   set_precision(string("Enter number of decimal places").c_str());
@@ -35,15 +35,13 @@ int main(){
 
   initprimes(string("PRIMES").c_str(),0);
 	
-  CurveReader input;
-  Curve E;
-  Curvedata D;
-  CurveRed C;
+  bigint v;
+  vector<bigrational> ai(5);
 
-  while (input>>E)
+  while (getcurve(ai,verbose))
     {
-      D = Curvedata(E);
-      C = CurveRed(D);
+      Curvedata D(Curvedata(ai,v),1);
+      CurveRed C(D);
       IsogenyClass cl(C ,verbose);
       cl.grow();
       //      cl.display(cout);

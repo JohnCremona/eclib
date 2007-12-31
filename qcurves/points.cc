@@ -35,137 +35,32 @@
 // Point member functions
 //
 
-void Point::reduce(void)
-{
-  if(sign(Z)==0){  // point at infinity
-    X = 0 ;
-    Y = 1 ;
-    return ;
-  }
-  if(Z==1){  // integral point, no work needed
-    return ;
-  }
-  bigint d = gcd(X, Y) ; d = gcd(d, Z) ; // now d = gcd(X, Y, Z)
-  if(sign(d)==0){
-    cout << "##Point::reduce:  Bad point: gcd == 0 \n" ;
-    X = 0 ; Y = 1 ; Z = 0;
-    abort() ;
-    return ;
-  }
-  if(d!=1) {
-    X /=  d ;
-    Y /=  d ;
-    Z /=  d ;
-  }
-  if(sign(Z)<0){
-    ::negate(X) ;
-    ::negate(Y) ;
-    ::negate(Z) ;
-  }
-}
-
-// Point input: 3 formats allowed are 
-// [x:y:z], [x,y], [x/z,y/z] with any type of brackets
-
-istream& operator>>(istream & is, Point& P)
-{
-  char c; 
-  //  is.flags( is.flags() | ios::dec );  //force decimal input (bug fix)
-  is>>c;
-  //  cout<<"First char read = "<<c<<"\n";
-  bigint x,y,z,z2,z3;
-  is >> x >> c;
-  //  cout<<"Next char read = "<<c<<"\n";
-  switch(c) {
-  case ',': is >> y >> c;  P.X=x; P.Y=y; P.Z=1; break;
-  case '/': is >> z2 >> c >> y >> c >> z3 >> c; z=z3/z2; 
-    //    cout<<"x="<<x<<", z2="<<z2<<", y="<<y<<", z3="<<z3<<", z="<<z<<endl;
-    P.X=x*z; P.Y=y; P.Z=z3; break;
-  case ':': P.X=x; is >> P.Y >> c >> P.Z >> c; break;
-  case ']': default: P.X=P.Y=P.Z=0; // null point
-  }
-
-  P.ord = 0; P.height = -1.0; if(P.isvalid()) P.reduce(); return is; 
-}
-
-// test of equality of points
-int eq(const Point&P, const Point&Q) // assumes same curve
-{
-  bigint temp = P.X*Q.Z-P.Z*Q.X;
-  int ans = (sign(temp)==0);
-  if(!ans) return 0;
-  temp = P.Y*Q.Z-P.Z*Q.Y;
-  ans = (sign(temp)==0); 
-  if(!ans) return 0;
-  temp = P.Y*Q.X-P.X*Q.Y;
-  ans = (sign(temp)==0); 
-  return ans;
-}
-
-// Shifting coords: 
-// N.B. (1) This changes the curve too
-//      (2) This uses coords (x/z^2,y/z^3)
-
-void raw_shift_point(const bigint& x, const bigint& y, const bigint& z, 
-                const bigint& u, const bigint& r, 
-                const bigint& s, const bigint& t, 
-                bigint& newx, bigint& newy, bigint& newz, int back)
-{
-  //cout<<"x="<<x<<", y="<<y<<", z="<<z<<endl;
-  //cout<<"\t[u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
-  const bigint& z2 = z*z;
-  const bigint& z3 = z*z2;
-  if(back)
-    {
-      const bigint& u2 = u*u;
-      const bigint& u3 = u*u2;
-      newx = u2*x + r*z2;
-      newy = u3*y + u2*s*x*z + t*z3;
-      newz = z;
-    }
-  else
-    {
-      newx = x - r*z2;
-      newy = y - s*x*z + (r*s-t)*z3;
-      newz = u*z;
-    }
-  //cout<<"newx="<<newx<<", newy="<<newy<<", newz="<<newz<<endl;
-
-  const bigint& newz2 = newz*newz;
-  const bigint& v2 = gcd(newx, newz2);
-  const bigint& v3 = gcd(newy, newz*newz2);
-  if(sign(v2)!=0) {newx/=v2;   newy/=v3;   newz/=(v3/v2);}
-  //cout<<"newx="<<newx<<", newy="<<newy<<", newz="<<newz<<endl;
-}
-
 // Shifts P via T = (u, r, s, t) on to newc.   
 // N.B. Assumes that (1) T(P.E) = newc
 //                   (2) T(P) is on newc
 // "back" means use reverse transform
 
-Point shift(const Point& P, Curvedata* newc, 
-	    const bigint& u, const bigint& r, const bigint& s, 
-	    const bigint& t, int back)
+Point transform(const Point& P, Curvedata* newc, 
+		const bigint& u, 
+		const bigint& r, const bigint& s, const bigint& t, 
+		int back)
 {
   if(P.iszero()) return Point(newc);
   if(!P.isvalid())
-    cout << "Attempting to shift the point " << P 
+    cout << "Attempting to trabsform the point " << P 
 	 << "which is not a valid point on its curve " << P.getcurve() << "!\n";
-  const bigint& oldz = gcd(P.X, P.Z);
-  const bigint& oldx = P.X/oldz;
-  const bigint& oldy = P.Y;
-  bigint newx, newy, newz;
-  raw_shift_point(oldx, oldy, oldz, u, r, s, t, newx, newy, newz, back);
-  
-  Point ans(newc, newx*newz, newy, pow(newz,3));
-  if(!ans.isvalid())
+  Point Q(newc,transform(P,u,r,s,t,back));
+  if(!Q.isvalid())
     {
-      cout << "Result of shifting the point " << P;
-      cout << " is " << ans << " which is not a valid point on its curve " 
-	   << ans.getcurve() << "!\n";
+      cout << "Result of transforming the point " << P << " on curve "<<(Curve)*(P.E) << " via [u,r,s,t]=["<<u<<","<<r<<","<<s<<","<<t<<"]";
+      if(back) cout<<" (inverse) ";
+      cout << " is " << Q << " which is not a valid point on its curve " 
+	   << (Curve)(*newc) << "!\n";
     }
-  return ans;
+  return Q;
 }
+
+// Genuine elliptic curve point functions:
 
 // addition and subtraction
 void Point::operator+=(const Point& Q)  // P += Q; 
@@ -305,12 +200,12 @@ int order(Point& p)
 {
   // ASSUME that point is valid; check before calling if unknown
   if (p.ord) {return p.ord;}
-  bigint eight, z=p.Z; eight=8;
+  bigint eight, z=getZ(p); eight=8;
   if (is_zero(z))  {p.ord = 1; return 1; }
   if (z>eight)     {p.ord =-1; return -1;}
   Point q = p;  long ord=1;
   while ( (sign(z)!=0) && (z<=eight) ) // (worst denom of a torsion point)
-    {ord++;   q+=p;  z = q.Z;}
+    {ord++;   q+=p;  z = getZ(q); }
   if (sign(z)!=0) ord = -1;
   p.ord = ord;
   return ord;
@@ -328,7 +223,7 @@ int order(Point& p, vector<Point>& multiples)
   multiples.push_back(p);
   Point q = p;
   bigint eight; eight=8;
-  while ( (!q.iszero()) && (q.Z<=eight) 
+  while ( (!q.iszero()) && (getZ(q)<=eight) 
 	                 && (multiples.size()<13) ) // 12 is max poss order
   { 
     q+=p;
@@ -351,8 +246,10 @@ int Point::isvalid() const // P on its curve ?
     abort();
     return 0 ;
   }
-  if((sign(X)==0)&&(sign(Y)==0)&&(sign(Z)==0)) return 0;   // Null point, useful for terminating input
-  if(sign(Z)==0) return 1 ;                    // Point at infinity is on a curve
+// Null point, useful for terminating input:
+  if((sign(X)==0)&&(sign(Y)==0)&&(sign(Z)==0)) return 0;   
+// Point at infinity is on a curve
+  if((sign(X)==0)&&(sign(Z)==0)) return 1 ;
   else{
     // should calculate 
     //                       y^2 +a1 x y + a3 y 
@@ -375,77 +272,6 @@ int Point::isvalid() const // P on its curve ?
     return Lhs == Rhs ;
   }
 }
-
-//#define DEBUG_REALIFY
-
-// the real x and y coords of the point
-// 
-// There are different version for the various arithmetic options so
-// that when we are not using multiprecision floating point, we do not
-// overflow when the homogeneous coordinates are large
-//
-// NTL:  temporarily use RR type
-// LiDIA without m.p.: temporarily use bigrational type
-// LiDIA with m.p.: just do it
-
-void realify_point(const Point& P, bigfloat&x, bigfloat& y)
-#ifdef NTL_INTS
-{
-  RR zp=to_RR(getZ(P));  
-#ifdef NTL_ALL
-  x=to_RR(getX(P))/zp;
-  y=to_RR(getY(P))/zp;
-#else
-  x=to_double(to_RR(getX(P))/zp);
-  y=to_double(to_RR(getY(P))/zp);
-#endif
-#ifdef DEBUG_REALIFY
-  cout<<"realifying P="<<P<<" (NTL version)"<<endl;
-  cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-#endif
-#ifndef NTL_ALL
-  if((abs(x)==INFINITY)||(abs(y)==INFINITY))
-    {
-      cout<<"After converting P="<<P<<" to doubles, ";
-      cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-      cout<<"insufficient precision to continue, aborting"<<endl;
-      abort();
-    }
-#endif
-}
-#else // not NTL...
-#ifdef LiDIA_INTS
-#ifndef LiDIA_ALL
-{
-  bigrational xp(getX(P),getZ(P)), yp(getY(P),getZ(P));
-  x=dbl(xp);
-  y=dbl(yp);
-#ifdef DEBUG_REALIFY
-  cout<<"P="<<P<<endl;
-  cout<<"Rational point = ("<<xp<<","<<yp<<")"<<endl;
-  cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-#endif
-  if((abs(x)==INFINITY)||(abs(y)==INFINITY))
-    {
-      cout<<"After converting P="<<P<<" to doubles, ";
-      cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-      cout<<"insufficient precision to continue, aborting"<<endl;
-      abort();
-    }
-}
-#else // LiDIA multiprecision
-{
-  bigfloat z = I2bigfloat(getZ(P));
-  x = I2bigfloat(getX(P))/z;
-  y = I2bigfloat(getY(P))/z;
-#ifdef DEBUG_REALIFY
-  cout<<"P="<<P<<endl;
-  cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-#endif
-}
-#endif
-#endif
-#endif              
 
 // find all the torsion points on a curve (Curvedata member function)
 

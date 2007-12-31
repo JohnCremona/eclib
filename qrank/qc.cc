@@ -28,8 +28,6 @@
 
 //#define DEBUG
 
-// New version:
-
 void qc(quartic& g,
         const bigint& x0,  const bigint& y0,  const bigint& z0,
         Curvedata * E, 
@@ -86,101 +84,12 @@ void qc(quartic& g,
   if(verbose) cout<<"\n";
 #endif
 
-  P = shift(oldP, E, tr_u, tr_r, tr_s, tr_t);
+  P = transform(oldP, E, tr_u, tr_r, tr_s, tr_t);
 
   valid = P.isvalid();
   if(verbose||!valid) cout<<"Point = "<<P;
   if(!valid) {cout << " -- warning: NOT on curve " << (Curve)(*E); abort();}
   if(verbose) cout << "\n\theight = " << height(P)<< "\n";
 }
-
-/* Old version
-
-void qc(quartic& g,
-        const bigint& x0,  const bigint& y0,  const bigint& z0,
-        Curvedata * E, Point& P, int verbose, int have_curve)
-{
-#ifdef DEBUG
-  cout  << "(x0:y0:z0) = ("<<x0<<" : "<<y0<<" : "<<z0<<")\n";
-#endif
-  bigint a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
-#ifdef DEBUG
-	if(verbose) cout<<"Quartic = (a,b,c,d,e) = ("<<a<<", "<<b<<", "<<c<<", "<<d<<", "<<e<<")\n";
-	if(verbose) cout  << "(x0:y0:z0) = ("<<x0<<" : "<<y0<<" : "<<z0<<")\n";
-#endif
-  bigint q,f,aa,bb,cc,dd,ee;
-
-  if(isqrt(a,q)) {ee=a; dd=b; cc=c; bb=d; aa=e; }
-  else if(isqrt(e,q)){aa=a; bb=b; cc=c; dd=d; ee=e; }
-    else 
-      {
-	q=y0;
-	aa=pow(z0,4)*a;
-	bb=pow(z0,3)*(4*a*x0 + b*z0);
-	cc=pow(z0,2)*(6*a*x0*x0 + 3*b*x0*z0 + c*z0*z0);
-	dd=z0*(4*a*pow(x0,3) + 3*b*x0*x0*z0 + 2*c*x0*z0*z0 + d*pow(z0,3));
-	ee=y0*y0;
-      }
-#ifdef DEBUG
-	if(verbose) cout<<"Quartic transformed = (a,b,c,d,e) = ("<<aa<<", "<<bb<<", "<<cc<<", "<<dd<<", "<<ee<<")\nq =  "<<q << "\n";
-#endif
-  bigint xp = -4*cc*q*q+dd*dd;
-
-  bigint a1 = 2*dd, 
-         a2 = 4*cc*ee-dd*dd, 
-         a3 = 16*ee*ee*bb, 
-         a4 = -64*ee*ee*ee*aa;
-  bigint a6 = a2*a4;
-  bigint b2 = a1*a1 + 4*a2; 
-  bigint b4 = 2*a4 + a1*a3;
-  bigint b6 = a3*a3 + 4*a6;
-  bigint c4 = b2*b2 - 24*b4; 
-  bigint c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
-  bigint newa1,newa2,newa3,newa4,newa6,newc4, newc6, newdiscr, u, u2;
-#ifdef DEBUG
-  cout<<"Original c4, c6 = " << c4 << ", " << c6 << "\n";
-#endif
-  minimise_c4c6(c4,c6,0,newc4,newc6,newdiscr,u);
-#ifdef DEBUG
-  cout<<"Minimal c4, c6 = " << newc4 << ", " << newc6 << "\n";
-#endif
-  c4c6_to_ai(newc4,newc6,newa1,newa2,newa3,newa4,newa6);
-#ifdef DEBUG
-  cout<<"Minimal ai = " << newa1 << ", " << newa2 << ", " 
-      << newa3 << ", " << newa4 << ", " << newa6 << "\n";
-#endif
-
-  Curve newE(newa1,newa2,newa3,newa4,newa6);
-  if(have_curve) // E already points to the curve point should be on
-    {
-      if(newE!=(*E))
-	{
-	  cout << "Warning: constructed curve " << newE <<"\n";
-	  cout << " not the same as original curve " << (Curve)(*E) << endl;
-	}
-    }
-  else
-    {
-      (*E) = newE;  // copy curve just constructed into given Curvedata*
-    }
-
-  bigint s = (u*newa1 - a1)/2;  mulx(u,u,u2);
-  bigint r = (u2*newa2 - a2 + s*a1 + s*s)/3; 
-  bigint t = (u2*u*newa3 - a3 - r*a1)/2;
-#ifdef DEBUG
-  if(verbose) cout<<"[u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
-#endif
-
-  bigint newx, newy, newz;
-  raw_shift_point(xp, 0, 1, u, r, s, t, newx, newy, newz);
-
-  P.init(E, newx*newz, newy, pow(newz,3));
-
-  int valid = P.isvalid();
-  if(verbose||!valid) cout<<"Point = "<<P << "\n";
-  if(!valid) cout << " -- warning: NOT on curve \n";
-}
-
-*/ // end of old version
 
 

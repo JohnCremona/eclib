@@ -1579,8 +1579,7 @@ void showpoint(Point P)
 void showpoint(Point P, Curvedata* CD, const bigint& u, const bigint& r, 
 	                               const bigint& s, const bigint& t)
 {
-  Point Q = shift(P,CD,u,r,s,t,1);
-  showpoint(Q);
+  showpoint(transform(P,CD,u,r,s,t,1));
 }
 
 void rank1::listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r,

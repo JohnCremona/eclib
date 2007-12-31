@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include "curve.h"
-#include "reader.h"
+#include "getcurve.h"
 
 void line(int w) {int wid=w; while(wid--)cout << "-";cout<<endl;}
 
@@ -31,15 +31,16 @@ int main(void)
   initprimes(string("PRIMES").c_str(),0);
   line(80);
         
-  CurveReader in;
-  Curve E;
+  int verb=1;
+  bigint v;
+  vector<bigrational> ai(5);
 
-  while (in>>E)
+  while (getcurve(ai,verb))
     {
-      Curvedata D(E,1);  // minimises here
-      cout<<"Standard minimal model: "<<(Curve)D<<endl;
-      CurveRed C(D);
-      cout << endl << "Curve ";
+      Curvedata D(ai,v); 
+      cout<<"Integral model: "<<(Curve)D<<endl;
+      CurveRed C(D);  // minimises here
+      cout << "Curve ";
       C.display(cout);
       line(80);
     }
