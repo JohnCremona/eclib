@@ -118,7 +118,7 @@ veryclean: clean
 	/bin/rm -f $(PROGS) $(TESTS)
 
 check:  $(TESTS) $(PROGS)
-	rm -f PRIMES
+	rm -f PRIMES t
 	./modtest < modtest.in > t 2>/dev/null && diff t modtest.out 
 	./homtest < homtest.in > t && diff t homtest.out
 	./hecketest < hecketest.in > t 2>/dev/null && diff t hecketest.out 
@@ -132,6 +132,7 @@ check:  $(TESTS) $(PROGS)
 	export NF_DIR=tmp_nf_dir && ./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
 	export NF_DIR=tmp_nf_dir && ./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog.out
 	rm -rf tmp_nf_dir
+	rm -f PRIMES t
 
 input: input.cc
 	$(CXX) input.cc -o inp

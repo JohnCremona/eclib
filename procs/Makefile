@@ -106,7 +106,7 @@ tar: sources
 	gzip procs.tar
 
 check: $(TESTS)
-	rm -f PRIMES
+	rm -f PRIMES t
 	./vectest1 < vectest.in >  t && diff t vectest.out
 	./vectest2 < vectest.in >  t && diff t vectest.out
 	./mattest1 < mattest.in >  t && diff t mattest.out
@@ -127,6 +127,7 @@ check: $(TESTS)
 	./thilbert < thilbert.in > t && diff t thilbert.out
 	./rcubic < rcubic.in > t && diff t rcubic.out
 	./lcubic < lcubic.in > t && diff t lcubic.out
+	rm -f PRIMES t
 
 vectest1: vectest.cc vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) $(CFLAGS) -DSCALAR_OPTION=1 vectest.cc -o vectest1$(OBJ_SUF).o
