@@ -120,10 +120,10 @@ g0ndist: distfiles
 	chmod 644 $(HOME)/curves/g0ndist/*
 
 clean:
-	/bin/rm -f *~ *$(OBJ_SUF).o  $(TESTS) $(CURVELIBNAME) *_sta *.a *.so *.dylib
+	/bin/rm -f *~ *$(OBJ_SUF).o  $(TESTS) $(CURVELIBNAME) *_sta *.a *.so *.dylib *.dll *.def
 
 veryclean: clean
-	/bin/rm -f $(PROGS) $(TESTS)
+	/bin/rm -f $(PROGS) $(TESTS) *.exe
 
 shar: sources
 	rm -f qcurves.shar qcurves.shar.Z

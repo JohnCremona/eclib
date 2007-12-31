@@ -66,12 +66,18 @@ so:
 	cd qrank && make install_so tests progs
 	cd g0n && make install_so tests progs
 
+dll: all
+	cd procs && make install_dll tests progs
+	cd qcurves && make install_dll tests progs
+	cd qrank && make install_dll tests progs
+	cd g0n && make install_dll tests progs
+
 clean:
 	cd procs && make clean
 	cd qcurves && make clean
 	cd qrank && make clean
 	cd g0n && make clean
-	cd lib && /bin/rm -f *.a *.so *.dylib 
+	cd lib && /bin/rm -f *.a *.so *.dylib *.def
 	cd include && /bin/rm -f *.h
 
 veryclean:
@@ -79,7 +85,7 @@ veryclean:
 	cd qcurves && make veryclean
 	cd qrank && make veryclean
 	cd g0n && make veryclean
-	cd lib && /bin/rm -f *.a *.so *.dylib 
+	cd lib && /bin/rm -f *.a *.so *.dylib *.def
 	cd include && /bin/rm -f *.h
 
 show:
@@ -97,6 +103,8 @@ check:
 DYN_OPTS = -dynamiclib
 # Used for creating a shared library on Linux/Unix
 SO_OPTS = -fPIC --shared
+# Used for creating a shared library on Cygwin:
+DLL_OPTS = -shared
 
 shared_dylib: all
 	cd procs && make install_dylib
@@ -109,4 +117,5 @@ shared_so: all
 	cd qcurves && make install_so
 	cd qrank && make install_so
 	cd g0n && make install_so
+
 

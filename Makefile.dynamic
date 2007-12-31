@@ -4,6 +4,7 @@
 
 DY_LIBNAME=$(LIBBASE).dylib
 SO_LIBNAME=$(LIBBASE).so
+DLL_LIBNAME=$(LIBBASE).dll
 A_LIBNAME=$(LIBBASE).a
 
 $(DY_LIBNAME): $(A_LIBNAME)
@@ -15,3 +16,9 @@ $(SO_LIBNAME): $(A_LIBNAME)
 	$(CXX) $(SO_OPTS)  $(A_LIBNAME) $(OBJS) -o $(SO_LIBNAME) $(NTLLFLAGS) $(LIBFLAGS)
 install_$(SO_LIBNAME), install_so: $(SO_LIBNAME)
 	cp $(SO_LIBNAME) $(LIBDIR)/
+
+$(DLL_LIBNAME): $(A_LIBNAME)
+	$(CXX) $(DLL_OPTS)  $(A_LIBNAME) $(OBJS) -o $(DLL_LIBNAME) $(NTLLFLAGS) $(LIBFLAGS) 
+install_$(DLL_LIBNAME), install_dll: $(DLL_LIBNAME)
+	cp $(DLL_LIBNAME) $(LIBDIR)/
+	dlltool -z $(LIBDIR)/$(LIBBASE).def --export-all-symbol $(LIBDIR)/$(DLL_LIBNAME)

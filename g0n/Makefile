@@ -112,7 +112,7 @@ progs: $(PROGS)
 tests: $(TESTS)
 
 clean:
-	/bin/rm -f *~ *$(OBJ_SUF).o *.a *.so *.dylib
+	/bin/rm -f *~ *$(OBJ_SUF).o *.a *.so *.dylib *.dll* *.def *.exe
 
 veryclean: clean
 	/bin/rm -f $(PROGS) $(TESTS)
