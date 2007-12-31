@@ -208,7 +208,7 @@ ptest: ptest$(OBJ_SUF).o arith$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/ptest ptest$(OBJ_SUF).o arith$(OBJ_SUF).o $(LFLAGS) 
 
 mptest: mptest$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o parifact$(OBJ_SUF).o
-	$(CXX) -o $(BINDIR)/mptest mptest$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS)  parifact$(OBJ_SUF).o
+	$(CXX) -o $(BINDIR)/mptest mptest$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o parifact$(OBJ_SUF).o $(LFLAGS) 
 
 tbessel: tbessel$(OBJ_SUF).o kbessel$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/tbessel tbessel$(OBJ_SUF).o kbessel$(OBJ_SUF).o $(LFLAGS)
