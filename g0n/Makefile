@@ -27,13 +27,13 @@ NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp -lpari
 LIBFLAG = -lcurvesntlint -ljcntlint -L$(LIBDIR)
 CURVELIBNAME = libcurvesntlint.a
-CURVELIBFLAG = -lcurvesntlint -L.
+CURVELIBFLAG = -L../lib -lcurvesntlint 
 RANKLIBNAME = librankntlint.a
-RANKLIBFLAG = -lrankntlint
+RANKLIBFLAG = -L../lib -lrankntlint
 OBJ_SUF = _ntl
 EXE_SUFFIX = _ntl
 G0NLIBBASE = libg0nntlint
-G0NLIBFLAG = -lg0nntlint -L.
+G0NLIBFLAG = -L../lib -lg0nntlint
 else
 ifeq ($(ARITH),NTL)
 LIBNAME = libjcntl.a
@@ -41,25 +41,25 @@ NTLCFLAGS = -DNTL_ALL  -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp -lpari
 LIBFLAG = -lcurvesntl -ljcntl -L$(LIBDIR)
 CURVELIBNAME = libcurvesntl.a
-CURVELIBFLAG = -lcurvesntl -L.
+CURVELIBFLAG = -L../lib -lcurvesntl.
 RANKLIBNAME = librankntl.a
-RANKLIBFLAG = -lrankntl
+RANKLIBFLAG = -L../lib -lrankntl
 OBJ_SUF = _n
 EXE_SUFFIX = _n
 G0NLIBBASE = libg0nntl
-G0NLIBFLAG = -lg0nntl -L.
+G0NLIBFLAG = -L../lib -lg0nntl
 else
 LIBNAME = libjc.a
 NTLCFLAGS = 
 NTLLFLAGS = 
-LIBFLAG = -lcurves -ljc -L$(LIBDIR)
+LIBFLAG = -L$(LIBDIR) -lcurves -ljc
 CURVELIBNAME = libcurves.a
 OBJ_SUF = _
 EXE_SUFFIX = _
 G0NLIBBASE = libg0n
-G0NLIBFLAG = -lg0n -L.
+G0NLIBFLAG = -L../lib -lg0n
 RANKLIBNAME = librank.a
-RANKLIBFLAG = -lrank
+RANKLIBFLAG = -L../lib -lrank
 endif
 endif
 
@@ -118,7 +118,7 @@ veryclean: clean
 	/bin/rm -f $(PROGS) $(TESTS)
 
 check:  $(TESTS) $(PROGS)
-	rm -f PRIMES
+	rm -f PRIMES t
 	./modtest < modtest.in > t 2>/dev/null && diff t modtest.out 
 	./homtest < homtest.in > t && diff t homtest.out
 	./hecketest < hecketest.in > t 2>/dev/null && diff t hecketest.out 
@@ -132,6 +132,7 @@ check:  $(TESTS) $(PROGS)
 	export NF_DIR=tmp_nf_dir && ./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
 	export NF_DIR=tmp_nf_dir && ./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog.out
 	rm -rf tmp_nf_dir
+	rm -f PRIMES t
 
 input: input.cc
 	$(CXX) input.cc -o inp

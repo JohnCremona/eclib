@@ -110,7 +110,7 @@ public:
 	      int verb=0, int sel=0, 
 	      long firstlim=20, long secondlim=5, 
 	      long n_aux=-1, int second_descent=1);
-  ~two_descent() {delete r12;}
+  ~two_descent() {delete r12; delete mwbasis;}
   long getrank() const {return rank;}
   long getselmer() const {return selmer_rank;}
   long getcertain()  const {return certain;}

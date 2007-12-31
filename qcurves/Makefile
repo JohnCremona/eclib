@@ -15,7 +15,7 @@ NTLCFLAGS = -DNTL_INTS  -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
 LIBFLAG = -ljcntlint -L$(LIBDIR)
 LIBBASE = libcurvesntlint
-CURVELIBFLAG = -lcurvesntlint -L.
+CURVELIBFLAG = -L../lib -lcurvesntlint
 OBJ_SUF = _ntl
 EXE_SUFFIX = _ntl
 else
@@ -24,7 +24,7 @@ NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
 LIBFLAG = -ljcntl -L$(LIBDIR)
 LIBBASE = libcurvesntl
-CURVELIBFLAG = -lcurvesntl -L.
+CURVELIBFLAG = -L../lib -lcurvesntl 
 OBJ_SUF = _n
 EXE_SUFFIX = _n
 else
@@ -32,7 +32,7 @@ NTLCFLAGS =
 NTLLFLAGS = 
 LIBFLAG = -ljc -L$(LIBDIR)
 LIBBASE = libcurves
-CURVELIBFLAG = -lcurves -L.
+CURVELIBFLAG = -L../lib -lcurves
 OBJ_SUF = _
 EXE_SUFFIX = _
 endif
@@ -131,7 +131,7 @@ shar: sources
 	compress qcurves.shar
 
 check:  $(TESTS) $(PROGS)
-	rm -f PRIMES
+	rm -f PRIMES t
 	./tcurve < tcurve.in > t && diff t tcurve.out 
 	./tpoints > t && diff t tpoints.out 
 	./theight < theight.in > t && diff t theight.out
@@ -150,7 +150,7 @@ check:  $(TESTS) $(PROGS)
 	./allisog < allisog.in > t 2>/dev/null && diff t allisog.out
 	./findinf < findinf.in > t 2>/dev/null && diff t findinf.out
 	./indep < indep.in > t 2>/dev/null && diff t indep.out
-
+	rm -f PRIMES t
 
 tcurve: tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o 
 	$(CXX)  -o $(BINDIR)/tcurve tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o  $(LFLAGS)

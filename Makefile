@@ -55,16 +55,16 @@ dirs:
 	mkdir -p lib
 
 dylib:
-	cd procs && make install_dylib
-	cd qcurves && make install_dylib
-	cd qrank && make install_dylib
-	cd g0n && make install_dylib
+	cd procs && make install_dylib tests progs
+	cd qcurves && make install_dylib tests progs
+	cd qrank && make install_dylib tests progs
+	cd g0n && make install_dylib tests progs
 
 so:
-	cd procs && make install_so
-	cd qcurves && make install_so
-	cd qrank && make install_so
-	cd g0n && make install_so
+	cd procs && make install_so tests progs
+	cd qcurves && make install_so tests progs
+	cd qrank && make install_so tests progs
+	cd g0n && make install_so tests progs
 
 clean:
 	cd procs && make clean
@@ -84,6 +84,12 @@ veryclean:
 
 show:
 	echo $(OPTFLAG)
+
+check: 
+	cd procs && make check
+	cd qcurves && make check
+	cd qrank && make check
+	cd g0n && make check
 
 #################################################################
 # Shared object libraries
