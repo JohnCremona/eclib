@@ -79,11 +79,13 @@ inline bigint order(const gf_element& z)
 
 #include <NTL/ZZ_p.h>
 
+extern map<ZZ,ZZ_pContext> ZZ_pContextCache;
+
 class galois_field {
   ZZ q;
  public:
-  galois_field(void) :q(to_ZZ(2))  {ZZ_p::init(q);} //dummy
-  galois_field(const ZZ& qq) :q(qq) {ZZ_p::init(q);}
+  galois_field(void);
+  galois_field(const ZZ& qq);
   bigint characteristic() const {return q;}
 };
 

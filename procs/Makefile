@@ -38,7 +38,7 @@ LIBFLAGS = $(LFLAGS)
 
 HEADERS = interface.h templates.h arith.h xmod.h marith.h gpslave.h compproc.h vec.h vector.h mat.h matrix.h sub.h subspace.h rat.h bigrat.h kbessel.h svec.h svector.h smat.h smatrix.h smat_elim.h smatrix_elim.h mvector.h mmatrix.h msubspace.h method.h splitbase.h xsplit.h conic.h legendre.h quadratic.h unimod.h illl.h hilbert.h timer.h cubic.h gf.h polys.h realroots.h parifact.h p2points.h
 
-DOTCCS = interface.cc unimod.cc arith.cc marith.cc gpslave.cc compproc.cc vec.cc vector.cc mat.cc matrix.cc sub.cc subspace.cc kbessel.cc mvector.cc mmatrix.cc msubspace.cc vectest.cc mvectest.cc mattest.cc mmattest.cc space.cc mspace.cc comptest.cc rattest.cc bigrattest.cc ptest.cc mptest.cc tbessel.cc svec.cc svector.cc svectest.cc smat.cc smatrix.cc smattest.cc random.cc smat_elim.cc smatrix_elim.cc xsplit.cc conic.cc tconic.cc legendre.cc quadratic.cc illl.cc hilbert.cc thilbert.cc tleg.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc rcubic.cc lcubic.cc p2points.cc tp2points.cc
+DOTCCS = interface.cc unimod.cc arith.cc marith.cc gpslave.cc compproc.cc vec.cc vector.cc mat.cc matrix.cc sub.cc subspace.cc kbessel.cc mvector.cc mmatrix.cc msubspace.cc vectest.cc mvectest.cc mattest.cc mmattest.cc space.cc mspace.cc comptest.cc rattest.cc bigrattest.cc ptest.cc mptest.cc tbessel.cc svec.cc svector.cc svectest.cc smat.cc smatrix.cc smattest.cc random.cc smat_elim.cc smatrix_elim.cc xsplit.cc conic.cc tconic.cc legendre.cc quadratic.cc illl.cc hilbert.cc thilbert.cc tleg.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc rcubic.cc lcubic.cc p2points.cc tp2points.cc gf.cc
 
 ARITH_OBJS  = arith$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o conic$(OBJ_SUF).o legendre$(OBJ_SUF).o unimod$(OBJ_SUF).o quadratic$(OBJ_SUF).o cubic$(OBJ_SUF).o illl$(OBJ_SUF).o hilbert$(OBJ_SUF).o parifact$(OBJ_SUF).o p2points$(OBJ_SUF).o
 TRANS_OBJS =  compproc$(OBJ_SUF).o kbessel$(OBJ_SUF).o
@@ -49,7 +49,7 @@ MLINALG_OBJS = mvector$(OBJ_SUF).o mmatrix$(OBJ_SUF).o msubspace$(OBJ_SUF).o
 SMAT_OBJS = smatrix$(OBJ_SUF).o smatrix_elim$(OBJ_SUF).o
 SVEC_OBJS = svector$(OBJ_SUF).o
 
-OBJS = interface$(OBJ_SUF).o $(ARITH_OBJS) $(TRANS_OBJS) $(LINALG_OBJS) $(MLINALG_OBJS) $(XSPLIT_OBJS) timer$(OBJ_SUF).o $(SVEC_OBJS) $(SMAT_OBJS) polys$(OBJ_SUF).o realroots$(OBJ_SUF).o 
+OBJS = interface$(OBJ_SUF).o $(ARITH_OBJS) $(TRANS_OBJS) $(LINALG_OBJS) $(MLINALG_OBJS) $(XSPLIT_OBJS) timer$(OBJ_SUF).o $(SVEC_OBJS) $(SMAT_OBJS) polys$(OBJ_SUF).o realroots$(OBJ_SUF).o gf$(OBJ_SUF).o  
 
 TESTS = vectest1 vectest2 mattest1 mattest2 space1 space2 smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic svectest1 svectest2 tp2points
 
@@ -77,7 +77,7 @@ install: sources
 	$(RANLIB) $(LIBDIR)/$(LIBNAME)
 	chmod a+rx $(LIBDIR)/$(LIBNAME)
 
-DISTFILES = arith.h xmod.h arith.cc marith.h marith.cc compproc.h compproc.cc conic.cc conic.h tconic.cc legendre.h legendre.cc tleg.cc interface.h templates.h timer.h timer.cc matrix.h mvector.h mat.h vec.h vector.h vector.cc vec.cc matrix.cc mat.cc mvector.cc quadratic.h quadratic.cc illl.h illl.cc mmatrix.h mmatrix.cc unimod.h hilbert.h hilbert.cc unimod.cc interface.cc gpslave.h gpslave.cc cubic.h cubic.cc sub.h sub.cc subspace.h subspace.cc parifact.h parifact.cc gf.h polys.h polys.cc realroots.h realroots.cc
+DISTFILES = arith.h xmod.h arith.cc marith.h marith.cc compproc.h compproc.cc conic.cc conic.h tconic.cc legendre.h legendre.cc tleg.cc interface.h templates.h timer.h timer.cc matrix.h mvector.h mat.h vec.h vector.h vector.cc vec.cc matrix.cc mat.cc mvector.cc quadratic.h quadratic.cc illl.h illl.cc mmatrix.h mmatrix.cc unimod.h hilbert.h hilbert.cc unimod.cc interface.cc gpslave.h gpslave.cc cubic.h cubic.cc sub.h sub.cc subspace.h subspace.cc parifact.h parifact.cc gf.h gf.cc polys.h polys.cc realroots.h realroots.cc
 distfiles:  $(DISTFILES)
 
 dist: distfiles
@@ -210,6 +210,9 @@ ptest: ptest$(OBJ_SUF).o arith$(OBJ_SUF).o
 mptest: mptest$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o parifact$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/mptest mptest$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS)  parifact$(OBJ_SUF).o
 
+test: test$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o parifact$(OBJ_SUF).o
+	$(CXX) -o $(BINDIR)/test test$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS)  parifact$(OBJ_SUF).o
+
 tbessel: tbessel$(OBJ_SUF).o kbessel$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/tbessel tbessel$(OBJ_SUF).o kbessel$(OBJ_SUF).o $(LFLAGS)
 
@@ -248,9 +251,6 @@ RRt: RRt.o RRextra.o
 
 gpslave$(OBJ_SUF).o: gpslave.cc interface.h templates.h marith.h arith.h xmod.h \
   gpslave.h
-
-test: test$(OBJ_SUF).o subspace$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o mmatrix$(OBJ_SUF).o mvector$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o interface$(OBJ_SUF).o
-	$(CXX) -o test test$(OBJ_SUF).o subspace$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o arith$(OBJ_SUF).o mmatrix$(OBJ_SUF).o mvector$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS)
 
 fifo: fifo$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o
 	$(CXX) -o $(BINDIR)/fifo fifo$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o arith$(OBJ_SUF).o compproc$(OBJ_SUF).o interface$(OBJ_SUF).o $(LFLAGS) 
@@ -301,6 +301,7 @@ arith$(OBJ_SUF).o: arith.cc arith.h interface.h templates.h xmod.h
 marith$(OBJ_SUF).o: marith.cc interface.h templates.h marith.h arith.h xmod.h \
   gpslave.h
 polys$(OBJ_SUF).o: polys.cc polys.h gf.h
+gf$(OBJ_SUF).o: gf.cc gf.h
 realroots$(OBJ_SUF).o: realroots.h realroots.cc
 
 ptest$(OBJ_SUF).o: ptest.cc arith.h xmod.h interface.h templates.h
@@ -311,6 +312,7 @@ linear$(OBJ_SUF).o: linear.cc linear.h
 linsyst$(OBJ_SUF).o: linsyst.cc linsyst.h linear.h
 lintest$(OBJ_SUF).o: lintest.cc linsyst.h linear.h
 mptest$(OBJ_SUF).o: interface.h templates.h marith.h mptest.cc arith.h xmod.h
+test$(OBJ_SUF).o: interface.h templates.h marith.h test.cc arith.h xmod.h
 mvectest$(OBJ_SUF).o: interface.h templates.h mvectest.cc mvector.h marith.h arith.h xmod.h
 mvector$(OBJ_SUF).o: mvector.cc mvector.h vector.h vec.h interface.h templates.h \
   arith.h xmod.h marith.h
