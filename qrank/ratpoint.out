@@ -3,68 +3,8 @@ Limit on height? I = -26356388845395184406350565808061369918064, J = -3521666096
 Minimal model for Jacobian: [1,0,1,34318214642441646362435632562579908747,3184376895814127197244886284686214848599453811643486936756]
 Checking local solublity in R:
 Checking local solublity at primes [ 2 3 5 7 11 17 67 89 139 211 281 431 443 577 647 977 1613 3863 10567 11923 15361 73277 ]:
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-new_qpsoluble with p<1000 passing to old qpsoluble.
-Using new_qpsoluble with p = 1613
----------------------------------------------
-LOCAL_SOL 
-150542317465449993216 0 334447602052445326228 0 -76507605796482039669      p=1613
-f is not 0 mod p: Case I
-Using new_qpsoluble with p = 3863
----------------------------------------------
-LOCAL_SOL 
-150542317465449993216 0 334447602052445326228 0 -76507605796482039669      p=3863
-f is not 0 mod p: Case I
-Using new_qpsoluble with p = 10567
----------------------------------------------
-LOCAL_SOL 
-150542317465449993216 0 334447602052445326228 0 -76507605796482039669      p=10567
-f is not 0 mod p: Case I
-Factorization of f = [[[5263 0 1] 1] [[0 1] 2]]
-Using new_qpsoluble with p = 11923
----------------------------------------------
-LOCAL_SOL 
-150542317465449993216 0 334447602052445326228 0 -76507605796482039669      p=11923
-f is not 0 mod p: Case I
-Using new_qpsoluble with p = 15361
----------------------------------------------
-LOCAL_SOL 
-150542317465449993216 0 334447602052445326228 0 -76507605796482039669      p=15361
-f is not 0 mod p: Case I
-Using new_qpsoluble with p = 73277
----------------------------------------------
-LOCAL_SOL 
-150542317465449993216 0 334447602052445326228 0 -76507605796482039669      p=73277
-f is not 0 mod p: Case I
 Everywhere locally soluble.
 Searching for points on (-76507605796482039669,0,334447602052445326228,0,150542317465449993216) up to height 6
-Entering qsieve::search: y^2 = -76507605796482039669x^4 + 0x^3 + 334447602052445326228x^2 + 0x^1 + 150542317465449993216
-Using speed ratios 1000 and 6.5
-11 primes used for first stage of sieving
-46 primes used for both stages of sieving together.
-Sieving primes:
- First stage: 103, 167, 79, 151, 229, 191, 109, 139, 251, 233, 67, 
- Second stage: 241, 107, 181, 193, 71, 199, 179, 73, 227, 127, 163, 157, 197, 239, 223, 149, 113, 173, 131, 101, 137, 47, 59, 83, 53, 23, 97, 61, 43, 37, 31, 41, 19, 29, 13, 
-Probabilities: Min(103) = 0.471203694975964, Cut1(67) = 0.529516596123858, Cut2(13) = 0.715976331360947, Max(211) = 1
-
-Forbidden divisors of the denominator:
-2, 3, 7, 19, 23, 31, 37, 41, 43, 47, 53, 61, 73, 79, 83, 97, 107, 109, 113, 131, 149, 151, 157, 173, 179, 191, 193, 199, 227, 229, 233, 239, 241, 
-
-Try to find the points up to height 403
-x = -4/5 gives a rational point.
 (x:y:z) = (-4:456379274456:5)
 Point = [2717410306797994865322390215100882986749083600480:31945036659247177505290259298595196252256878326866123825847:541269629646463252964269919701]
 	height = 43.74623851
