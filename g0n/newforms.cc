@@ -236,8 +236,8 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
 
   //Compute pdot, dp0, loverp
 
-  long cuspidalfactorplus = 1;
-  long cuspidalfactorminus = 1;
+  cuspidalfactorplus = 1;
+  cuspidalfactorminus = 1;
   vec bplusc, bminusc;
   if(!(nf->h1->cuspidal))
     {
@@ -251,6 +251,7 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
 	  cuspidalfactorminus = vecgcd(bminusc);
 	  bminusc/= cuspidalfactorminus;
 	  type=3-vecgcd(bplusc-bminusc);
+	  if(verbose) cout<<"Lattice type = "<<type<<endl;
 	}
       if(verbose&&(cuspidalfactorplus*cuspidalfactorminus>1))
 	{
@@ -260,15 +261,15 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
 	}
     } 
   int ncoords=nf->h1->coord_vecs.size()-1;
-  coords=vec(ncoords);
-  vec mcoords; if(!plusflag)  mcoords=vec(ncoords);
+  coordsplus=vec(ncoords);
+  if(!plusflag)  coordsminus=vec(ncoords);
   for(i=1; i<=ncoords; i++)
     {
-      coords[i]=dotmodp(nf->h1->coord_vecs[i],bplus,92681);
-      if(!plusflag) mcoords[i]=dotmodp(nf->h1->coord_vecs[i],bminus,92681);
+      coordsplus[i]=dotmodp(nf->h1->coord_vecs[i],bplus,92681);
+      if(!plusflag) coordsminus[i]=dotmodp(nf->h1->coord_vecs[i],bminus,92681);
     }
-  long denomplus=vecgcd(coords);
-  long denomminus; if(!plusflag) denomminus=vecgcd(mcoords);
+  long denomplus=vecgcd(coordsplus);
+  long denomminus; if(!plusflag) denomminus=vecgcd(coordsminus);
   if(verbose)
     { 
       cout<<"denomplus   = "<<denomplus<<endl;
@@ -395,7 +396,7 @@ if(!plusflag)
             {
               if(1==bezout(d,-n*b,a,c))
                 {
-                  vec v = nf->h1->cycle(b,d);
+                  vec v = nf->h1->chain(b,d).as_vec();
 //                if(!(nf->h1->cuspidal)) v = nf->h1->cuspidalpart(v);
                   dotplus=abs(v*bplus/denomplus);
                   dotminus=abs(v*bminus/denomminus);
@@ -534,22 +535,14 @@ void newforms::createfromscratch(long ntp)
 	  }  
     }
 
-  // Compute homspace::projcoord, so projcycle can be used
+  // Compute homspace::projcoord, so projchain can be used
   // Replaces coord_vecs of homspace with projections onto eigenspaces
   h1->projcoord.init(h1->coord_vecs.size()-1,n1ds);
   for (j=1; j<=n1ds; j++)
-    h1->projcoord.setcol(j, nflist[j-1].coords);
+    h1->projcoord.setcol(j, nflist[j-1].coordsplus);
 
   // Look for a j0 such that nflist[i].bplus[j0]!=0 for all i
   int ok=0; j0=0;
-  /*
-  cout<<h1->h1dim()<<endl;
-  cout<<dim(nflist[0].bplus)<<endl;
-  for (i=0; i<n1ds; i++)
-    {
-      cout<<i<<": "<<nflist[i].bplus<<endl;
-    }
-  */
   for(j=1; (!ok)&&(j<=h1->h1dim()); j++)
     {
       ok=1;
@@ -589,13 +582,18 @@ long newforms::dimoldpart(const vector<long> l)
 
 void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
 {
-  if(basisflag&&plusflag)
+  if(basisflag) // we already have all the data except the
+                // basis vector, so not much needs doing
     {
-      nflist[j1ds++].bplus=b1;
+      nflist[j1ds].bplus=b1;
+      if(!plusflag) nflist[j1ds].bminus=b2;
+      j1ds++;
       if(verbose) 
 	cout<<"Finished constructing basis vector for newform #"<<j1ds<<endl;
       return;
     }
+  // Now we use the newform constructor to do all the work, given only
+  // the basis vector(s):
   n1ds++;
   if(verbose) 
     {
@@ -625,10 +623,36 @@ void newforms::display(void) const
  cout<<"p0="<<p0<<endl;
  // if(dim(mvp)!=0) cout<<"mvp="<<mvp<<endl;
  cout<<"#ap=\t"<<nflist[0].aplist.size()<<endl;
- for(long i=0; i<n1ds; i++)
+ long i;
+ for(i=0; i<n1ds; i++)
    {cout<<i+1<<":\t";
     nflist[i].display();
   }
+}
+
+void newforms::display_modular_symbol_map(void) const
+{
+ long i,j,k,m;
+ for(i=0; i<h1->nsymb; i++)
+   {
+     symb s = h1->symbol(i);
+     cout<<s<<" = "<<modsym(s)<<" -> ";
+     j=h1->coordindex[i];
+     int sg=sign(j); j=abs(j);
+     if(j==0) 
+       for(k=0; k<n1ds; k++) 
+	 if(plusflag) 
+	   cout<<"0 "; 
+	 else 
+	   cout<<"(0,0) ";
+     else 
+       for(k=0; k<n1ds; k++) 
+	 if(plusflag) 
+	   cout<<rational(sg*nflist[k].coordsplus[j],nflist[k].cuspidalfactorplus)<<" ";
+	 else
+	   cout<<"("<<rational(sg*nflist[k].coordsplus[j],nflist[k].cuspidalfactorplus)<<","<<rational(sg*nflist[k].coordsminus[j],nflist[k].cuspidalfactorminus)<<") ";
+     cout<<endl;
+   }
 }
 
 void newform::display(void) const
@@ -650,7 +674,6 @@ void newform::display(void) const
   if(a!=0) cout << "[(" <<a<<","<<b<<";"<<c
 		<<","<<d<<"),"<<dotplus<<","<<dotminus
 		<<";"<<type<<"]"<<endl;
-
   if(index!=-1)cout << "Splitting index = " << index << endl;
 }
 
@@ -878,6 +901,59 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
     }
 }
 
+
+// Create from a list of Hecke eigenvalues from an elliptic curve
+
+vector<long> eiglist(CurveRed& C, int nap)
+{
+  long N = I2long(getconductor(C));
+  long p; bigint pp;
+  vector<long> ans;
+  for(primevar pr(nap); pr.ok(); pr++)
+    {
+      p=pr; pp=BIGINT(p);
+      if(N%p==0)
+	ans.push_back(LocalRootNumber(C,pp));
+      else
+	ans.push_back(I2long(Trace_Frob(C,pp)));
+    }
+  //  cout<<"eiglist("<<(Curve)C<<") = "<<ans<<endl;
+  return ans;
+}
+
+// Create from a list of elliptic curves of the right conductor:
+
+void newforms::createfromcurve(CurveRed C, int nap)
+{
+  vector<CurveRed> Clist; Clist.push_back(C);
+  return createfromcurves(Clist,nap);
+}
+void newforms::createfromcurves(vector<CurveRed> Clist, int nap)
+{
+  if(verbose) cout << "In newforms::createfromcurves()..."<<endl;
+  int ncurves = Clist.size();
+  if(ncurves==0) return;
+  if(verbose) cout << "Making homspace..."<<flush;
+  makeh1();
+  if(verbose) cout << "done." << endl;
+  mvp=h1->maninvector(p0); 
+  if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
+  form_finder splitspace(this, plusflag, nap, 0, 1, cuspidal, verbose);
+  if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
+  // j1ds counts through the newforms as they are found
+  basisflag=0; j1ds=0;
+  vector< vector<long> > eigs(ncurves);
+  int i,j;
+
+  for(i=0; i<ncurves; i++) 
+    eigs[i]=eiglist(Clist[i],nap);
+  n1ds=0; nflist.resize(0);
+  splitspace.recover(eigs);  // NB newforms::use() determines what is
+			     // done with each one as it is found;
+			     // this depends on basisflag and plusflag
+  if(verbose) cout << "...done."<<endl;
+}
+
 // Read in newform data from old-style data files eigs/xN and intdata/[ep]N
 
 void newforms::createfromolddata()
@@ -1024,6 +1100,8 @@ void newforms::makebases()
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
   form_finder splitspace(this, plusflag, nap, 0, 1, cuspidal, verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
+  // basisflag=1 controls what ::use() does with the nfs when found
+  // j1ds counts through the newforms as they are found
   basisflag=1; j1ds=0;
   vector< vector<long> > eigs(n1ds);
   int i,j;
@@ -1042,7 +1120,9 @@ void newforms::makebases()
       for(i=0; i<n1ds; i++) {vec_out(cout,eigs[i],10);    cout<<endl;}
     }
   if(!plusflag) {n1ds=0; nflist.resize(0);}
-  splitspace.recover(eigs);
+  splitspace.recover(eigs);  // NB newforms::use() determines what is
+			     // done with each one as it is found;
+			     // this depends on basisflag and plusflag
   if(verbose) cout << "...done."<<endl;
   if((n1ds>1)&&(modulus<130000)) // reorder into old order
     {
@@ -1081,6 +1161,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   long maxap=(long)(2*sqrt((double)p)); // for validity check
 
   map<long,vec> images; // [j,v] stores image of j'th M-symbol in v
+                        // (so we don't compute any more than once)
   vec bas, imagej;
   long fac;
   long p2=(p-1)>>1; // (p-1)/2
@@ -1221,5 +1302,23 @@ char* nf_filename(long n, char c)
   char* filename=new char[20];
   sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
   return filename;
+}
+
+  // for the i'th newform return the value of the modular symbol {0,r}
+rational newforms::plus_modular_symbol(const rational& r, long i) const
+{
+  return rational(h1->nfprojchain(num(r),den(r),nflist[i].coordsplus), 
+		  nflist[i].cuspidalfactorplus);  
+}
+
+pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i) const
+{
+  mat m(h1->coord_vecs.size()-1,2);
+  m.setcol(1,nflist[i].coordsplus);
+  m.setcol(2,nflist[i].coordsminus);
+  vec a = h1->projchain(num(r),den(r),m);
+  rational a1(a[1],nflist[i].cuspidalfactorplus);
+  rational a2(a[2],nflist[i].cuspidalfactorminus);
+  return pair<rational,rational> ( a1, a2 );
 }
 

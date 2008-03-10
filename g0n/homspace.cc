@@ -386,7 +386,7 @@ if (verbose>1)
    if (verbose) cout << "Finished constructing homspace." << endl;
 }
 
-svec homspace::schain(const symb& s) const
+svec homspace::chain(const symb& s) const
 {
  long i= coordindex[index(s)];
  if (i>0) return  coord_vecs[i];
@@ -409,7 +409,15 @@ vec homspace::projchaincd(long c, long d, const mat& m) const
  return vec(ncols(m));
 }
 
-svec homspace::schaincd(long c, long d) const 
+long homspace::nfprojchaincd(long c, long d, const vec& bas) const 
+{
+ long i= coordindex[index2(c,d)];
+ if (i>0) return  bas[i];
+ if (i<0) return -bas[-i];
+ return 0;
+}
+
+svec homspace::chaincd(long c, long d) const 
 {
  long i= coordindex[index2(c,d)];
  if (i>0) return  coord_vecs[i];
@@ -424,6 +432,13 @@ void homspace::add_projchaincd(vec& v, long c, long d, const mat& m) const
  if (i<0) {sub_row_to_vec(v,m,-i); return;}
 }
 
+void homspace::add_nfprojchaincd(long& a, long c, long d, const vec& bas) const 
+{
+ long i= coordindex[index2(c,d)];
+ if (i>0) {a += bas[i]; return;}
+ if (i<0) {a -= bas[-i]; return;}
+}
+
 void homspace::add_chaincd(svec& v, long c, long d) const 
 {
  long i= coordindex[index2(c,d)];
@@ -431,9 +446,9 @@ void homspace::add_chaincd(svec& v, long c, long d) const
  if (i<0) {v-=coord_vecs[-i]; return;}
 }
 
-svec homspace::schain(long nn, long dd) const
+svec homspace::chain(long nn, long dd) const
 {
-   svec ans = schaincd(0,1);
+   svec ans = chaincd(0,1);
    long c=0, d=1, e, a=nn, b=dd, q, f;
    while (b)
    { q=a/b; 
@@ -456,7 +471,7 @@ void homspace::add_chain(svec& v, long nn, long dd) const
    }
 }
 
-vec homspace::projcycle(long nn, long dd, const mat& m) const
+vec homspace::projchain(long nn, long dd, const mat& m) const
 {
    vec ans = projchaincd(0,1,m);
    long c=0, d=1, e, a=nn, b=dd, q, f;
@@ -469,7 +484,20 @@ vec homspace::projcycle(long nn, long dd, const mat& m) const
    return ans;
 }
 
-void homspace::add_projcycle(vec& v, long nn, long dd, const mat& m) const
+long homspace::nfprojchain(long nn, long dd, const vec& bas) const
+{
+   long ans = nfprojchaincd(0,1,bas);
+   long c=0, d=1, e, a=nn, b=dd, q, f;
+   while (b)
+   { q=a/b; 
+     f=a; a=-b; b= f-q*b; 
+     e=d; d= c; c=(-q*c-e)%modulus;
+     add_nfprojchaincd(ans,c,d,bas);
+   }
+   return ans;
+}
+
+void homspace::add_projchain(vec& v, long nn, long dd, const mat& m) const
 {
    add_projchaincd(v,0,1,m);
    long c=0, d=1, e, a=nn, b=dd, q, f;
@@ -478,6 +506,18 @@ void homspace::add_projcycle(vec& v, long nn, long dd, const mat& m) const
      f=a; a=-b; b= f-q*b; 
      e=d; d= c; c=(-q*c-e)%modulus;
      add_projchaincd(v,c,d,m);
+   }
+}
+
+void homspace::add_nfprojchain(long& aa, long nn, long dd, const vec& bas) const
+{
+   add_nfprojchaincd(aa,0,1,bas);
+   long c=0, d=1, e, a=nn, b=dd, q, f;
+   while (b)
+   { q=a/b; 
+     f=a; a=-b; b= f-q*b; 
+     e=d; d= c; c=(-q*c-e)%modulus;
+     add_nfprojchaincd(aa,c,d,bas);
    }
 }
 
@@ -657,7 +697,7 @@ mat homspace::conj(int dual, int display) const
  mat m(rk,rk);
  for (long j=1; j<=rk; j++) if (needed[j-1])
  {  symb s = symbol(freegens[j-1]);
-    svec colj   =  schaincd(-s.cee(),s.dee());
+    svec colj   =  chaincd(-s.cee(),s.dee());
     m.setcol(j,colj.as_vec());
  }
  if(cuspidal) m = restrict(smat(m),kern).as_mat();
@@ -671,7 +711,7 @@ smat homspace::s_conj(int dual, int display) const
  smat m(rk,rk);
  for (long j=1; j<=rk; j++) if (needed[j-1])
  {  symb s = symbol(freegens[j-1]);
-    svec colj   =  schaincd(-s.cee(),s.dee());
+    svec colj   =  chaincd(-s.cee(),s.dee());
     //    m.setrow(j-1,colj);
     m.setrow(j,colj);
  }
@@ -696,7 +736,7 @@ mat homspace::conj_restricted(const subspace& s,
     {  
       long jj=pivots(s)[j];
       symb s = symbol(freegens[jj-1]);
-      svec colj   =  schaincd(-s.cee(),s.dee());
+      svec colj   =  chaincd(-s.cee(),s.dee());
       m.setrow(j,colj.as_vec());
     }
   m = matmulmodp(m,basis(s),MODULUS);
@@ -714,7 +754,7 @@ smat homspace::s_conj_restricted(const ssubspace& s,
     {  
       long jj=pivots(s)[j];
       symb s = symbol(freegens[jj-1]);
-      svec colj   =  schaincd(-s.cee(),s.dee());
+      svec colj   =  chaincd(-s.cee(),s.dee());
       //      m.setrow(j-1,colj);
       m.setrow(j,colj);
     }
@@ -870,7 +910,7 @@ vector<long> homspace::eigrange(long i)
 vec homspace::maninvector(long p) const
 {
   long i,p2;
-  svec tvec = schain(0,p);             // =0, but sets the right length.
+  svec tvec = chain(0,p);             // =0, but sets the right length.
   if (p==2) 
     add_chain(tvec,1,2); 
   else
@@ -890,26 +930,27 @@ vec homspace::maninvector(long p) const
 
 vec homspace::manintwist(long p) const
 {
- svec sum = schain(0,p);                   // =0, but sets the right length.
- for (long i=1; i<p; i++) sum += legendre(i,p)*schain(i,p);
+ svec sum = chain(0,p);                   // =0, but sets the right length.
+ for (long i=1; i<p; i++) sum += legendre(i,p)*chain(i,p);
  if(cuspidal) return cuspidalpart(sum.as_vec()); 
  else return sum.as_vec();
 }
 
+#if(0) // no longer used
 vec homspace::projmaninvector(long p) const  // Will only work after "proj"
 {
   long i,p2;
-  vec tvec = projcycle(0,p);             // =0, but sets the right length.
+  vec tvec = projchain(0,p);             // =0, but sets the right length.
   if (p==2) 
-    add_projcycle(tvec,1,2);
+    add_projchain(tvec,1,2);
   else
     { 
       p2=(p-1)>>1;
-      for (i=1; i<=p2; i++) { add_projcycle(tvec,i,p); }
+      for (i=1; i<=p2; i++) { add_projchain(tvec,i,p); }
       if(plusflag)   
 	tvec *=2;
       else
-	for (i=1; i<=p2; i++) { add_projcycle(tvec,-i,p); }
+	for (i=1; i<=p2; i++) { add_projchain(tvec,-i,p); }
     }
   return tvec;
 }
@@ -917,36 +958,35 @@ vec homspace::projmaninvector(long p) const  // Will only work after "proj"
 vec homspace::projmaninvector(long p, const mat& m) const
 {
   long i,p2;
-  vec tvec = projcycle(0,p,m);       // =0, but sets the right length.
+  vec tvec = projchain(0,p,m);       // =0, but sets the right length.
   if (p==2) 
-    add_projcycle(tvec,1,2,m);
+    add_projchain(tvec,1,2,m);
   else
     { 
       p2=(p-1)>>1;
-      for (i=1; i<=p2; i++) { add_projcycle(tvec,i,p,m); }
+      for (i=1; i<=p2; i++) { add_projchain(tvec,i,p,m); }
       if(plusflag)   
 	tvec *=2;
       else
-	for (i=1; i<=p2; i++) { add_projcycle(tvec,-i,p,m); }
+	for (i=1; i<=p2; i++) { add_projchain(tvec,-i,p,m); }
     }
   return tvec;
 }
 
-// no longer used
 vec homspace::newhecke(long p, long n, long d) const
                                      // Will only work after "proj"
-{ vec tvec = projcycle(p*n,d);
+{ vec tvec = projchain(p*n,d);
 // cout<<"newhecke starts: tvec = "<<tvec<<endl; 
  long p2 = p>>1, dp = d*p, k;
   for (k=1+p2-p; k<=p2; k++) 
     {
-      add_projcycle(tvec,n+d*k,dp);
+      add_projchain(tvec,n+d*k,dp);
       // cout<<"tvec = "<<tvec<<endl; 
     }
   // cout<<"newhecke returns: tvec = "<<tvec<<endl; 
   return tvec;
 }
-
+#endif // no longer used
 
 matop::matop(long p)
 {

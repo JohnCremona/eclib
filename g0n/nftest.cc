@@ -48,7 +48,9 @@ int main(void)
  if (n>0)
 {
  cout << ">>> Level " << n << " <<<\t";
- newforms nf(n,1,0,verbose);
+ int plusspace=1;
+ int cuspidal=0;
+ newforms nf(n,plusspace,cuspidal,verbose);
  cout << "\nAfter constructor, about to createfromdata() \n";
  nf.createfromdata(25);
  int num = nf.n1ds; count+=num;

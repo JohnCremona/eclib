@@ -58,7 +58,7 @@ public:
   vector<long> aplist, aqlist; 
   long ap0;     // Eigenvalue of first "good" p
   long sfe;     // sign of functional equation
-  long cuspidalfactor;  // pdot =cuspidalfactor*np0
+  long cuspidalfactorplus, cuspidalfactorminus;  // pdot =cuspidalfactor*np0
   long pdot,np0,dp0,qdot;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus, 
                            //                    = cuspidalfactor*dp0
                            // qdot={q,infinity}.bplus 
@@ -72,8 +72,7 @@ public:
   // Or     type=2, lattice=[x,yi]
   // & integral over [a,b;Nc,d] is dotplus*x+dotminus*yi
   long degphi;             // degree of Weil parametrization
-  vec coords;              // vector components of each freegen (will
-			   // become one column of homspace::projcoord)
+  vec coordsplus, coordsminus;  // vector components of each freegen
 
   newform(void) {;}
   //  newform(const vec& v, const vector<long>& ap, newforms* nfs,long ind=-1);
@@ -118,6 +117,7 @@ public:
    of(0), h1(0) {;}
   ~newforms(void);
   void display(void) const;
+  void display_modular_symbol_map(void) const;
   void output_to_file(int binflag=1) const;
   void makeh1();
 // add newform with basis b1, eiglist l to current list (b2 not used):
@@ -132,6 +132,10 @@ public:
   // to createfromscratch:
   void createfromdata(long ntp, int create_from_scratch_if_absent=1);
 
+  // Create from one or a list of elliptic curves of the right conductor:
+  void createfromcurve(CurveRed C, int nap=25);
+  void createfromcurves(vector<CurveRed> Clist, int nap=25);
+
   // read newforms from old-style data files (eigs/x$N and intdata/e$N):
   void createfromolddata();
 
@@ -144,6 +148,10 @@ public:
   // Sort newforms 
   void sort(int oldorder=0);
   
+  // for the i'th newform return the value of the modular symbol {0,r}
+  rational plus_modular_symbol(const rational& r, long i=0) const;
+  pair<rational,rational> full_modular_symbol(const rational& r, long i=0) const;
+
   // next three implemented in periods.cc
 
   // Given newform with no intdata, compute least real (part of)

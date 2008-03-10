@@ -96,7 +96,6 @@ int main(void)
    ssubspace h1minus = eigenspace(conjmat,-den);
    cout<<" done, dimension = "<<dim(h1minus)<<endl;
 
-#if(1)
    for (int i=0; i<nq; i++)
      {long q=badprimes[i]; if(i<firstq) continue;
       cout << "Computing W("<<q<<")...  " << flush;
@@ -152,7 +151,7 @@ int main(void)
       mat_m temp = hplus.heckeop(p,verbose);
       stop_time();
       cout<<"Time for old method: "; show_time(cerr); cerr<<endl;
-#endif
+#endif // COMPARE_OLD
       start_time();
       mat tp = hplus.newheckeop(p,verbose);
       if(verbose)
@@ -170,7 +169,7 @@ int main(void)
       if(temp!=tplist[ip]) cout<<"Matrices differ!\n";
 #else
       cout << "done, sparsity = "<<sparsity(tplist[ip])<<". " << endl;
-#endif
+#endif // COMPARE_OLD
 #ifdef TEST_EIGS
       vector<long> eigs=hplus.eigrange(nq+ip);
       cout<<"\nChecking for eigenvalues from "<<eigs<<endl;
@@ -371,8 +370,8 @@ int main(void)
 	  totalmult+=nulty1;
 	}
 	}
-#endif
-#endif
+#endif // NTL_INTS
+#endif // LiDIA_INTS
       cout<<"Total multiplicity of rational eigenvalues = "<<totalmult<<endl;
 #endif // TEST_EIGS
 #ifdef CHECK_COMMUTE
@@ -388,17 +387,15 @@ int main(void)
 	     cout << "Problem: T_p matrices "<<ip<<" and "<<jp<<" do not commute!" << "\n";
 	   }
 	}
-#endif
-     }
+#endif //CHECK_COMMUTE
+     } // loop on p
    delete[] wqlist; delete[] tplist;
- }      // end of if(genus>0)
-
-}       // end of if(n)
-}       // end of while()
+   }      // end of if(genus>0)
+ }       // end of if(n)
+     }       // end of while(n>0) or while(n<limit)
  cout<<endl;
 exit(0);
-}       // end of main()
-#endif
+     }       // end of main()
 
 double sparsity(const mat_m& m)
   {

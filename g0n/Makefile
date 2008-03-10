@@ -175,6 +175,11 @@ nftest: nftest$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).
 	$(CXX) -o nftest nftest$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
 		oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o  $(LFLAGS)
 
+ecnf: ecnf$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o \
+		newforms$(OBJ_SUF).o
+	$(CXX) -o ecnf ecnf$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
+		oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o  $(LFLAGS)
+
 nfcount: nfcount$(OBJ_SUF).o
 	$(CXX) -o nfcount nfcount$(OBJ_SUF).o $(LFLAGS)
 
@@ -355,7 +360,8 @@ hecketest$(OBJ_SUF).o: hecketest.cc moddata.h symb.h cusp.h homspace.h
 wsplit$(OBJ_SUF).o: wsplit.cc moddata.h symb.h cusp.h homspace.h
 gd2$(OBJ_SUF).o: gd2.cc moddata.h symb.h cusp.h homspace.h
 oftest$(OBJ_SUF).o: oftest.cc moddata.h symb.h cusp.h oldforms.h
-nftest$(OBJ_SUF).o: nftest.cc moddata.h symb.h cusp.h homspace.h oldforms.h newforms.h \
+nftest$(OBJ_SUF).o: nftest.cc moddata.h symb.h cusp.h homspace.h oldforms.h newforms.h
+ecnf$(OBJ_SUF).o: ecnf.cc moddata.h symb.h cusp.h homspace.h oldforms.h newforms.h
 
 tmanin$(OBJ_SUF).o: tmanin.cc moddata.h symb.h cusp.h homspace.h oldforms.h \
 	newforms.h 

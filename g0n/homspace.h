@@ -62,56 +62,83 @@ public:
   smat s_opmat(int i,int dual,int verb=0);
   smat s_opmat_restricted(int i,const ssubspace& s, int dual,int verb=0);
 public:
-  svec schain(const symb& s) const;
+  // The next functions express M- & modular symbols in terms of the
+  // basis for H_1(X_0(N);cusps;Z) of dimension rk
+  svec chain(const symb& s) const;
   void add_chain(svec& v, const symb& s) const;
-  vec projchaincd(long c, long d, const mat& m) const;
-  vec projchaincd(long c, long d) const {return projchaincd(c,d,projcoord);}
-  void add_projchaincd(vec& v, long c, long d, const mat& m) const;
-  void add_projchaincd(vec& v, long c, long d) const 
-  {add_projchaincd(v,c,d,projcoord);}
-  svec schaincd(long c, long d) const;
+  svec chaincd(long c, long d) const;
   void add_chaincd(svec& v, long c, long d) const;
-  svec schain(long nn, long dd) const;
-  svec schain(const rational& r) const 
-  {return schain(num(r),den(r));}
+
+  svec chain(long nn, long dd) const;
+  svec chain(const rational& r) const 
+  {return chain(num(r),den(r));}
   void add_chain(svec& v, long nn, long dd) const;
   void add_chain(svec& v, const rational& r) const 
   {add_chain(v,num(r),den(r));}
+
+  // The next functions express M- & modular symbols in terms of the
+  // basis of a (dual) subspace of the whole space
+  // The "projcoord" default (which requires the initialization of the
+  // projcoord matrix as done in  newforms::createfromscratch()) which
+  // has one column for each newform
+  // NB these operate on vecs and not svecs
+  // The "nf" versions give scalars and instead of a matrix take a
+  // vector = unique column of a matrix, such as a newform's coordplus
+  // vector.
+  vec projchaincd(long c, long d, const mat& m) const;
+  vec projchaincd(long c, long d) const {return projchaincd(c,d,projcoord);}
+  long nfprojchaincd(long c, long d, const vec& bas) const;
+  void add_projchaincd(vec& v, long c, long d, const mat& m) const;
+  void add_projchaincd(vec& v, long c, long d) const {add_projchaincd(v,c,d,projcoord);}
+  void add_nfprojchaincd(long& a, long c, long d, const vec& bas) const;
+
+  vec projchain(long n, long d, const mat& m) const;
+  vec projchain(long n, long d) const  {return projchain(n,d,projcoord);}
+  long nfprojchain(long n, long d, const vec& bas) const;
+
+  void add_projchain(vec& v, long n, long d, const mat& m) const;
+  void add_projchain(vec& v, long n, long d) const {add_projchain(v,n,d,projcoord);}
+  void add_nfprojchain(long& aa, long n, long d, const vec& bas) const;
+
   vec cuspidalpart(const vec& v) const 
   {return v[pivots(kern)];}
+
+#if(0) //no longer used
   vec cycle(long n, long d) const 
   {
-    vec v = schain(n,d).as_vec(); 
+    vec v = chain(n,d).as_vec(); 
     if (cuspidal) return cuspidalpart(v); else return v;
   }
   vec cycle(const rational& r) const 
   {
-    vec v = schain(num(r),den(r)).as_vec(); 
+    vec v = chain(num(r),den(r)).as_vec(); 
     if (cuspidal) return cuspidalpart(v); else return v;
   }
   vec cycle(const modsym& m) const 
   {
-    vec v = (schain(m.beta())-schain(m.alpha())).as_vec();
+    vec v = (chain(m.beta())-chain(m.alpha())).as_vec();
     if (cuspidal) return cuspidalpart(v); else return v;
   }
-  vec projcycle(long n, long d, const mat& m) const;
-  vec projcycle(long n, long d) const 
-  {return projcycle(n,d,projcoord);}
-  void add_projcycle(vec& v, long n, long d, const mat& m) const;
-  void add_projcycle(vec& v, long n, long d) const 
-  {add_projcycle(v,n,d,projcoord);}
+#endif // no longer used
+
   svec applyop(const matop& mlist, const rational& q) const;
   svec applyop(const matop& mlist, const modsym& m) const 
   {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());} 
+
   mat calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
   mat calcop_restricted(string opname, long p, const matop& mlist, const subspace& s, int dual, int display=0) const;
+
   smat s_calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
   smat s_calcop_restricted(string opname, long p, const matop& mlist, const ssubspace& s, int dual, int display=0) const;
+
 public:
+
   mat heckeop(long p, int dual, int display=0) const;
   mat heckeop_restricted(long p, const subspace& s, int dual, int display=0) const;
+
   smat s_heckeop(long p, int dual, int display=0) const;
   smat s_heckeop_restricted(long p, const ssubspace& s, int dual, int display=0) const;
+
   mat newheckeop(long p, int dual, int display=0) const;
   mat wop(long q, int dual, int display=0) const;
   smat s_wop(long q, int dual, int display=0) const;
@@ -151,7 +178,7 @@ public:
   svec operator()(const symb& s, const homspace* h)const 
   {
     long u=s.ceered(),v=s.deered(); 
-    return h->schaincd(a*u+c*v,b*u+d*v);
+    return h->chaincd(a*u+c*v,b*u+d*v);
   }
   vec operator()(const symb& s, const homspace* h, const mat& m)const 
   {
