@@ -44,7 +44,7 @@ int getquartic(quartic& g, int verbose)
      return 0;
     
   g=quartic(a,b,c,d,e);  // will set its own invariants, roots and type
-  unsigned long code = g.set_equiv_code(eqplist);
+  g.set_equiv_code(eqplist);
   return 1;
 }
 
@@ -65,7 +65,7 @@ int main()
   cout<<endl<<endl;
   quartic* glist = new quartic[nq];
   vector<bigint> dlist;
-  int i,j,k;
+  int i,j;
 
   for(i=0; i<nq; i++)
     {

@@ -54,6 +54,7 @@ two_descent::two_descent(Curvedata* ec,
     qai.resize(5);
     bigint a1,a2,a3,a4,a6;
     ec->getai(a1,a2,a3,a4,a6);
+    v=BIGINT(1); 
     qai[0]=a1; qai[1]=a2; qai[2]=a3; qai[3]=a4; qai[4]=a6;
     do_the_descent(firstlim,secondlim,n_aux,second_descent);
   }
@@ -89,7 +90,6 @@ void two_descent::do_the_descent(long firstlim, long secondlim,
 	cout<<"Working with minimal curve "<<(Curve)e_min
 	    <<" via [u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
       }
-    mwbasis = new mw(&e_min,verbose>2);
     two_torsion_exists = (two_torsion(e_min).size()>1) ;
     if(two_torsion_exists) 
       r12=new rank2(&e_min,verbose,selmer_only,firstlim,secondlim,second_descent);
@@ -100,6 +100,8 @@ void two_descent::do_the_descent(long firstlim, long secondlim,
     rank = r12->getrank();
     selmer_rank = r12->getselmer();
     certain=r12->getcertain();
+    // the last parameter here is set to a known upper bound on the rank
+    mwbasis = new mw(&e_min,verbose>2,1,selmer_rank);
 }
 
 void two_descent::report_rank() const

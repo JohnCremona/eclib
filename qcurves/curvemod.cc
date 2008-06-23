@@ -85,7 +85,7 @@ curvemodq::curvemodq(const curvemodq& C) // copy constructor
   order=C.order;
 }
 
-curvemodq& curvemodq::operator=(const curvemodq& C) // assignment
+void curvemodq::operator=(const curvemodq& C) // assignment
 {
   q=C.q; 
   delete Fq;

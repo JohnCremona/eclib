@@ -79,6 +79,7 @@ public:
     P.ord=0;
     P.height=to_bigfloat(-1.0);
     // NB P's Curve should have been set when it was constructed.
+    return is;
   }
 
   // test of equality of points        

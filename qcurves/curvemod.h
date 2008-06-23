@@ -79,7 +79,7 @@ public:
   curvemodq(const Curve& E, const bigint& qq);
   ~curvemodq();
   curvemodq(const curvemodq& C); // copy constructor
-  curvemodq& operator=(const curvemodq& C); // assignment
+  void operator=(const curvemodq& C); // assignment
   
   // access
   void get_ai(gf_element& aa1, gf_element& aa2, gf_element& aa3, gf_element& aa4, gf_element& aa6) const

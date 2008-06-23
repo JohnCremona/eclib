@@ -96,7 +96,7 @@ int main(void)
      if(n!=nc) cout<<" ------WRONG CONDUCTOR!";
      cout << "\t" << r << "\t" << nt << "\t" << degphi << endl;
    }
- delete[] code;
 }       // end of if(n)
 }       // end of while()
+ delete[] code;
 }       // end of main()
