@@ -44,7 +44,7 @@ a is a square with exact square root 11
 
 Enter a positive bigint a (999 to stop): 
 
-Test of ressol (sqrt mod p)
+Test of sqrt mod p
 Enter a prime p: 23
 sqrt(1 mod p) = 1	---OK
 sqrt(2 mod p) = 5	---OK

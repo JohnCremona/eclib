@@ -111,7 +111,7 @@ inline gf_element ItoGF(const galois_field& F, int a)
 inline gf_element sqrt(const galois_field& F, const gf_element& a)
 {
   bigint rd;  
-  ressol(rd,rep(a),F.characteristic());
+  sqrt_mod_p(rd,rep(a),F.characteristic());
   return ZtoGF(F,rd);
 }
 
@@ -123,7 +123,7 @@ inline int sqrt(const galois_field& F, const gf_element& a, gf_element& r)
     {
     case -1: return 0;
     case 1:
-      ressol(rd,repa,q); // & carry through to next lines
+      sqrt_mod_p(rd,repa,q); // & carry through to next lines
     case 0: 
       r= ZtoGF(F,rd);
     }

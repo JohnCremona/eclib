@@ -213,135 +213,6 @@ int isqrt(const bigint& in, bigint& root)
   return 0;
 }
 
-#if !(defined(LiDIA_INTS)||defined(NTL_INTS))
-// Then we must include some functions otherwise in LiDIA and NTL
-// The following code is borrowed from LiDIA file ressol.c
-// simplified to work under libg++
-//
-// Input:
-//    prime number p
-//    0 <= a < p
-//
-// Output:
-//    square root r of a mod p
-//    0 <= r < p
-// 
-// Condition: p = 2^s * (2k+1) + 1
-//	      where s fits in a long
-//
-// Algorithm: Shanks-Ressol
-//
-
-long jacobi(const bigint& a, const bigint& p)
-{
-  return legendre(a,p);
-}
-
-power_mod(bigint& ans, const bigint& base, const bigint& expo, const bigint& m)
-{
-  bigint b(base), e(expo);
-  ans=1;
-  while(e>0)
-  {
-    if(odd(e)) {ans*=b; ans%=m;}
-    b*=b; b%=m;
-    e>>=1;
-  }
-}
-
-void ressol(bigint & x, const bigint & a, const bigint & p)
-{
-  if ( p == 2 ) { x=a;  return;   }
- 
-// (1) p = 3 mod 4 
-  bigint v, p2=p>>1;
-  if ( (p%4) == 3 ) {
-    if (legendre(a, p)==1) {
-      v = (p + 1)/4;
-      power_mod(x, a, v, p);
-      if(x>p2) x=p-x;
-      return;
-    }
-    else
-      {
-	cout<<"In ressol: a = " << a << " is not a quadratic residue";
-	cout<< " mod p = "<<p<<endl;
-	abort();
-      }
-  }
-
-  bigint r, n, c, z, k;
-  long   s, t;
-
-  // (2) initialisation:
-  // compute k, s : p = 2^s (2k+1) + 1 
-  // (MM: shift_right as part of the loop)
-  k = p - 1;
-  s = divide_out(k,2);
-  k = (k-1)/2;
-
-  // (3) initial values
-  power_mod(r, a, k, p);
-  
-  square(n, r);
-  n %= p; // n = (r * r) % p;
-  n *= a;
-  n %= p; // n = (n * a) % p;
-  r *= a;
-  r %= p; // r = (r * a) % p;
-  
-  if ( is_one(n) ) {
-    x=r;
-    if(x>p2) x=p-x;
-    return;
-  }
-  
-  // (4) non-quadratic residue
-  z=2;
-  while ( legendre(z,p) == 1 ) z+=1;
-  
-  v=(k*2)+1; // v = (k << 1) + 1;
-  power_mod(c, z, v, p);
-  
-  // (5) iteration
-  while (n > 1)
-    {
-      k  = n;
-      t  = s;
-      s  = 0;
-      
-      while ( !is_one(k) )
-	{
-	  square(k, k);
-	  k%= p;         // k = (k * k) % p; 
-	  s++; 
-	}
-      
-      t -= s; 
-      if (t == 0)
-	{
-	  cout<<"In ressol: a = " << a << " is not a quadratic residue";
-	  cout<< " mod p = "<<p<<endl;
-	  abort();
-	}
-       
-      v = 1<<(t-1);     // v = 1 << (t-1);
-      power_mod(c, c, v, p);
-      r *= c;
-      r %= p;             // r = (r * c) % p;
-      square(c, c);
-      c %= p;             // c = (c * c) % p;
-      n *= c;
-      n %= p;             // n = (n * c) % p;
-    } 
-
-  
-  x=r;
-  if(x>p2) x=p-x;
-  return;
-} 
-
-#endif
 
 int sqrt_mod_2_power(bigint& x, const bigint& a, int e)
 {
@@ -376,8 +247,8 @@ int sqrt_mod_p_power(bigint& x, const bigint& a, const bigint& p, int e)
   bigint a1 = a%p;
   if(a1==0) return 0;  // p ndiv a only
   if(legendre(a1,p)==-1) return 0;
-  if(a1<0) a1+=p;  // since ressol wants it between 0 and p-1
-  ressol(x,a1,p);  
+  if(a1<0) a1+=p;  // since sqrt_mod_p wants it between 0 and p-1
+  sqrt_mod_p(x,a1,p);  
   //  cout<<"sqrt("<<a1<<" mod "<<p<<") = "<<x<<endl;
   if(e==1) {return 1;}
   bigint s = invmod(2*x,p);
@@ -466,8 +337,8 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x)
 	  else
 	    {
 	      if(legendre(amodp,p)==-1) return 0;
-	      if(amodp<0) amodp+=p;  // since ressol wants it between 0 and p-1
-	      ressol(xmodp,amodp,p);
+	      if(amodp<0) amodp+=p;  // sqrt_mod_p wants it between 0 and p-1
+	      sqrt_mod_p(xmodp,amodp,p);
 	    }
 	}
       // Now Chinese xmodp with previous (x mod m)

@@ -94,7 +94,7 @@ int main()
      else cout << "a is not a square\n";
    }
 
-  cout<<"\n\nTest of ressol (sqrt mod p)\n";
+  cout<<"\n\nTest of sqrt mod p\n";
   bigint bb,p,r;
   while(cout << "Enter a prime p: ", cin>>p, cout<<p<<endl, is_positive(p))
     {
@@ -105,7 +105,7 @@ int main()
 	  if(legendre(bb,p)==1)
 	    {
 	      bb%=p; if(bb<0) bb+=p;
-	      ressol(r,bb,p);
+	      sqrt_mod_p(r,bb,p);
 	      cout << "sqrt("<<x<<" mod p) = " << r << "\t";
 	      if(div(p,(r*r-x))) cout << "---OK\n";
 	      else {cout << "---WRONG\n"; nbad++;}

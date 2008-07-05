@@ -160,12 +160,6 @@ long gcd(const bigint& a, long b);
 int modrat(const bigint& n, const bigint& m, const bigint& lim, 
            /* return values: */ bigint& a, bigint& b);
 
-#if !(defined(LiDIA_INTS)||defined(NTL_INTS))
-long jacobi(const bigint& a, const bigint& p);
-power_mod(bigint& ans, const bigint& base, const bigint& expo, const bigint& m);
-void ressol(bigint & x, const bigint & a, const bigint & p);
-#endif
-
 int sqrt_mod_2_power(bigint& x, const bigint& a, int e);
 int sqrt_mod_p_power(bigint& x, const bigint& a, const bigint& p, int e);
 int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m);

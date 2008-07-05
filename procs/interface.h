@@ -172,7 +172,7 @@ inline bigint pow(const bigint& a, long e)  {return power(a,e);}
 
 //N.B. no power to bigint exponent in NTL
 inline long jacobi(const bigint& a, const bigint& p)  {return Jacobi(a,p);}
-inline void ressol(bigint & x, const bigint & a, const bigint & p)  
+inline void sqrt_mod_p(bigint & x, const bigint & a, const bigint & p)  
   {SqrRootMod(x,a,p); if(x>(p-x)) x= p-x;}
 inline void power_mod(bigint& ans, const bigint& base, const bigint& expo, const bigint& m) 
  {PowerMod(ans,base,expo,m);}
