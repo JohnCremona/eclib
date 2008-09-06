@@ -133,9 +133,9 @@ install_progs: progs install_docs
 	done
 
 dist: distfiles
-	(cd ../rankdist; make clean; /bin/rm -f *.cc *.h $(DOCS) tmrank.in)
-	(cd ../procs; make dist;)
-	(cd ../qcurves; make dist)
+	(cd ../rankdist; ${MAKE} clean; /bin/rm -f *.cc *.h $(DOCS) tmrank.in)
+	(cd ../procs; ${MAKE} dist;)
+	(cd ../qcurves; ${MAKE} dist)
 	for f in $(HEADERS) $(DOTCCS) tmrank.in $(DOCS); \
           do $(CP) $${f} $(HOME)/curves/rankdist; done
 	chmod 644 $(HOME)/curves/rankdist/*

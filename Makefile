@@ -45,46 +45,46 @@ endif
 #
 
 all: dirs
-	cd procs && make lib install
-	cd qcurves && make lib install
-	cd qrank && make lib install
-	cd g0n && make lib install
+	cd procs && ${MAKE} lib install
+	cd qcurves && ${MAKE} lib install
+	cd qrank && ${MAKE} lib install
+	cd g0n && ${MAKE} lib install
 
 dirs: 
 	mkdir -p include
 	mkdir -p lib
 
 dylib:
-	cd procs && make install_dylib tests progs
-	cd qcurves && make install_dylib tests progs
-	cd qrank && make install_dylib tests progs
-	cd g0n && make install_dylib tests progs
+	cd procs && ${MAKE} install_dylib tests progs
+	cd qcurves && ${MAKE} install_dylib tests progs
+	cd qrank && ${MAKE} install_dylib tests progs
+	cd g0n && ${MAKE} install_dylib tests progs
 
 so:
-	cd procs && make install_so tests progs
-	cd qcurves && make install_so tests progs
-	cd qrank && make install_so tests progs
-	cd g0n && make install_so tests progs
+	cd procs && ${MAKE} install_so tests progs
+	cd qcurves && ${MAKE} install_so tests progs
+	cd qrank && ${MAKE} install_so tests progs
+	cd g0n && ${MAKE} install_so tests progs
 
 dll: all
-	cd procs && make install_dll tests progs
-	cd qcurves && make install_dll tests progs
-	cd qrank && make install_dll tests progs
-	cd g0n && make install_dll tests progs
+	cd procs && ${MAKE} install_dll tests progs
+	cd qcurves && ${MAKE} install_dll tests progs
+	cd qrank && ${MAKE} install_dll tests progs
+	cd g0n && ${MAKE} install_dll tests progs
 
 clean:
-	cd procs && make clean
-	cd qcurves && make clean
-	cd qrank && make clean
-	cd g0n && make clean
+	cd procs && ${MAKE} clean
+	cd qcurves && ${MAKE} clean
+	cd qrank && ${MAKE} clean
+	cd g0n && ${MAKE} clean
 	cd lib && /bin/rm -f *.a *.so *.dylib *.def
 	cd include && /bin/rm -f *.h
 
 veryclean:
-	cd procs && make veryclean
-	cd qcurves && make veryclean
-	cd qrank && make veryclean
-	cd g0n && make veryclean
+	cd procs && ${MAKE} veryclean
+	cd qcurves && ${MAKE} veryclean
+	cd qrank && ${MAKE} veryclean
+	cd g0n && ${MAKE} veryclean
 	cd lib && /bin/rm -f *.a *.so *.dylib *.def
 	cd include && /bin/rm -f *.h
 
@@ -92,10 +92,10 @@ show:
 	echo $(OPTFLAG)
 
 check: 
-	cd procs && make check
-	cd qcurves && make check
-	cd qrank && make check
-	cd g0n && make check
+	cd procs && ${MAKE} check
+	cd qcurves && ${MAKE} check
+	cd qrank && ${MAKE} check
+	cd g0n && ${MAKE} check
 
 #################################################################
 # Shared object libraries
@@ -107,15 +107,15 @@ SO_OPTS = -fPIC --shared
 DLL_OPTS = -shared
 
 shared_dylib: all
-	cd procs && make install_dylib
-	cd qcurves && make install_dylib
-	cd qrank && make install_dylib
-	cd g0n && make install_dylib
+	cd procs && ${MAKE} install_dylib
+	cd qcurves && ${MAKE} install_dylib
+	cd qrank && ${MAKE} install_dylib
+	cd g0n && ${MAKE} install_dylib
 
 shared_so: all
-	cd procs && make install_so
-	cd qcurves && make install_so
-	cd qrank && make install_so
-	cd g0n && make install_so
+	cd procs && ${MAKE} install_so
+	cd qcurves && ${MAKE} install_so
+	cd qrank && ${MAKE} install_so
+	cd g0n && ${MAKE} install_so
 
 

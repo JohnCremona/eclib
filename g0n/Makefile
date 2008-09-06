@@ -70,8 +70,8 @@ OBJS = cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).
 objs: $(OBJS)
 
 g0ndist: sources
-	(cd ../procs; make g0ndist;)
-	(cd ../qcurves; make g0ndist)
+	(cd ../procs; ${MAKE} g0ndist;)
+	(cd ../qcurves; ${MAKE} g0ndist)
 	$(CP) $(DOT_H) $(HOME)/curves/g0ndist
 	$(CP) $(DOT_CC) $(HOME)/curves/g0ndist
 	chmod 644 $(HOME)/curves/g0ndist/*
