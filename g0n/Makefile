@@ -19,7 +19,7 @@ sources: $(DOT_H) $(DOT_CC)
 
 TESTS = modtest homtest hecketest nftest mhcount oftest
 
-PROGS = tmanin h1bsd h1curve pcurve nfhpcurve h1clist checkap h1bsd h1bsdcurisog h1degphi hpcurve nfcount
+PROGS = tmanin h1bsd h1curve pcurve nfhpcurve h1clist checkap h1bsd h1bsdcurisog h1degphi hpcurve nfcount ecnf
 
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a

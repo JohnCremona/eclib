@@ -741,14 +741,18 @@ vector<bigint> pdivs(const bigint& number, int trace)
 #ifdef USE_PARI_FACTORING
   return pdivs_pari(number);
 #else
-#ifdef LiDIA_INTS
+
 #ifdef USE_GP_FACTORING
   return pdivs_gp(number, trace);
 #else
+
+#ifdef LiDIA_INTS
   return pdivs_lidia(number, trace);
-#endif
 #else
-  return pdivs_gp(number, trace);
+
+  return pdivs_trial(number, trace);
+
+#endif
 #endif
 #endif
 }

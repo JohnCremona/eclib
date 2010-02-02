@@ -31,6 +31,9 @@ int qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d
 int qpsoluble(const bigint& a, const bigint& c, const bigint& e, const bigint& p);
 // latter assumes b=d=0
 
+int Rsoluble(const quartic& g);
+int Rsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,  
+	      const bigint& e);
 
 
 // Checks for local solubility in Qp for all p in plist; 

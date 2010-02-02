@@ -42,7 +42,7 @@ protected:
   Curvedata* the_curve;
   int verbose, certain, success, selmer_only, do_second_descent;
   long num_aux;
-  long rank, selmer_rank;
+  long rank, rank_bound, selmer_rank;
   Curvedata IJ_curve;  // [0,0,0,-27*I,-27*J]
   bigint tr_u,tr_r,tr_s,tr_t;  // transformation from latter to minimal curve
   long lim1, lim2;
@@ -67,6 +67,7 @@ public:
      num_aux(n_aux), lim1(firstlim), lim2(secondlim) {;}
   virtual ~rank12() {;}
   long getrank() const {return rank;}
+  long getrankbound() const {return rank_bound;}
   long getselmer() const {return selmer_rank;}
   long getcertain()  const {return certain;}
   int ok()      const {return success;}

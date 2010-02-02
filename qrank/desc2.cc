@@ -33,7 +33,7 @@
 #include "sqfdiv.h"
 #include "desc2.h"
 #include "timer.h"  // for timing of conic solving
-#include "hilbert.h" // temporary until moved to ../procs
+#include "hilbert.h"
 
 #ifndef QSIEVE_OPT
 #define QSIEVE_OPT 0 // uses Stoll's sieve

@@ -1,3 +1,364 @@
+2005-04-25  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* saturate.cc, saturate.h:
+	Added odd_primes_only flag (default 0) to saturate() so we do not
+	2-saturate after a 2-descent
+
+	* mwprocs.cc:
+	Added odd_primes_only flag (default 0) to saturate() so we do not
+	2-saturate after a 2-descent
+
+	Removed dummy call to index_bound() and subsequent processing of any
+	points found.  Instead the user is expected to do a preliminary search
+	before saturating, if desired.
+
+	* mwprocs.h:
+	Added odd_primes_only flag (default 0) to saturate() so we do not
+	2-saturate after a 2-descent
+
+2005-04-24  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* pointsmod.cc:
+	Corrected bug in which points were being initialized to 0 with order 1
+	but then having their x/y coords set "manually" without the order
+	being reset to 0 (i.e. unknown).
+
+	* saturate.cc:
+	Calls to index_bound() now pass a ref to a vector of points which will
+	hold those found in the search.
+
+	index_bound() now gets a list of any points of infinite order found
+	from the point_min_height_finder object.
+
+	Index bound truncation now adds 0.1 to prevent borderline cases being
+	missed
+
+	* saturate.h:
+	Argument to index_bound() is now a pointer not a reference to a
+	Curvedata, so we can pass it to shift()
+
+	* mwprocs.cc:
+	Before saturating, does a call to index_bound() and processes the
+	points thus found, which may already increase the index
+
+	* htconst.cc, htconst.h:
+	Added data all_points, a list of all non-torsion points founds, with a
+	function to return this
+
+2005-04-24  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* pointsmod.cc:
+	Corrected bug in which points were being initialized to 0 with order 1
+	but then having their x/y coords set "manually" without the order
+	being reset to 0 (i.e. unknown).
+
+	* saturate.cc:
+	Calls to index_bound() now pass a ref to a vector of points which will
+	hold those found in the search.
+
+	index_bound() now gets a list of any points of infinite order found
+	from the point_min_height_finder object.
+
+	Index bound truncation now adds 0.1 to prevent borderline cases being
+	missed
+
+	* saturate.h:
+	Argument to index_bound() is now a pointer not a reference to a
+	Curvedata, so we can pass it to shift()
+
+	* mwprocs.cc:
+	Before saturating, does a call to index_bound() and processes the
+	points thus found, which may already increase the index
+
+	* htconst.cc, htconst.h:
+	Added data all_points, a list of all non-torsion points founds, with a
+	function to return this
+
+2005-04-16  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* ffmod.h: Deleted comment about LiDIA being required
+
+	* pointsmod.cc:
+	Mainly addition of comments to explain strategy for my_isomorphism_type()
+
+2005-04-14  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tlss.cc, realroots.cc, polys.cc: Minor changes for -Wall
+
+	* elog.cc: 1. Removed some redundant declarations for -Wall
+	2. Added return statement to division_points() !!
+
+	* egr.cc: Added some debugging code (NB debugging not yet complete)
+
+2005-04-05  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* saturate.cc, pointsmod.h: Minor things to keep -Wall happy
+
+	* pointsmod.cc: 1. Minor things to keep -Wall happy
+	2. Calls my_isomorphism_type even under LiDIA to avoid LiDIA bugs
+
+	* points.cc, mwprocs.cc, lambda.cc, isogs.cc, htconst.cc, heights.cc, ffmod.cc:
+	Minor things to keep -Wall happy
+
+2005-03-20  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* saturate.cc:
+	1. if p>10 only finds "lazy basis" for points mod q, i.e. does not
+	   bother with a second generator.
+	2. sturation verbosity flag is set if verbose>1
+
+	* pointsmod.cc, pointsmod.h:
+	Added lazy_flag: if set, only computes a point of large order, not
+	necessarily a fill Z-basis.
+	Added function one_generator() to find a point of "large" order on a
+	curve mod q.
+
+2005-01-18  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat3.cc:
+	bug fix: call to saturate() omitted the sat_bd parameter (now set to -1,
+	i.e. the default)
+
+	* saturate.h: 1. bug fix: saturate_points() needs a paramater sat_bd
+
+	* saturate.cc: 1. bug fix: saturate_points() needs a paramater sat_bd
+	2. warning output if search limit > 16 in index_bound()
+
+2005-01-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat3.cc:
+	turned off egr and increased precision to 100 (for the rank 15 example)
+
+	* saturate.cc, saturate.h:
+	saturation of points now controlled further using "sat" parameter
+
+	* points.cc, points.h:
+	added function realify_point() to give real x and y coords as
+	"bigfloats" depending on arithmetic version used.
+
+	* mwprocs.cc, mwprocs.h:
+	processing and saturation of points now controlled firther using "sat"
+	parameter
+
+	* htconst.cc:
+	introduced bigfloat version of factorial() to handle larger ranks
+
+	* heights.cc:
+	in real_height(), conversion of point to real point is now done
+	by function realify_point()
+
+	* elog.cc:
+	in elliptic_logarithm(), conversion of point to real point is now done
+	by function realify_point()
+
+2005-01-08  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: Updated distfiles for mwrank distribution
+
+2005-01-07  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* pointsmod.cc:
+	Big fix to my_isomorphism_type (problem raised by q=401, ordP=48,
+	could not decide between orders 8*48 and 9*48).  Now for each ordP in
+	the first phase it computed a list of the possible n2 and only stops
+	when this has exactly 1 entry (valid since for the exceptional primes
+	q<100 and q=181, 331, 547 we find the group order via legendre
+	symbols).
+
+	* tsat2.cc: Changed verbosity to 1 from 0 (as it's used in testing)
+
+	* mwprocs.cc:
+	Fixed bug: after saturation, the height pairing matrix and regulator
+	need updating (unless index=1 of course).
+
+	* findinf.cc:
+	Saturation now reports the index gain and any failed primes
+
+	* curvemod.cc:
+	Changed exceptional list of small primes to q<100 or q=181 or q=331 or
+	q=547 : for all other primes the group structure is uniquely
+	determined by the exponent.
+
+	* mwprocs.cc, mwprocs.h:
+	Added parameters to new saturate() function to deliver index and
+	(possible) file prime list
+
+	* tsat3.cc: changed verbosity to 1 (was 2)
+
+	* pointsmod.cc:
+	fixed bug in my_isomorphism_type(): strategy for stopping use of
+	random points for first generator was wrong, leading to errors if
+	group order = 2*odd and the generator found has odd order.
+
+	* curvemod.cc:
+	corrected bug in set_order() where when q<300 we were calling
+	my_isomorphism_type after computing the order via legendre.
+
+	* tsat3.cc: 1. All the functionality is now moved to library functions.
+	2. Final output line in input file format.
+
+	* telog.cc: added some more test cases
+
+	* targets:
+	Added OBJ_SUF to .o filenames to avoid recompilation for different
+	values of ARITH
+
+	* saturate.cc:
+	1. do_saturation() member function now return success flag and list of
+	   failed primes as well as index
+	2. new saturate() function does it automatically after determining
+	   saturation index bound -- with an option to use egr strategy
+	3. added independent functions index_bound() and tamagawa_primes()
+
+	* saturate.h:
+	1. do_saturation() member function now return success flag and list of
+	   failed primes as well as index
+	2. new saturate() function does it automatically after determining
+	   saturation index bound -- with an option to use egr strategy
+
+	* pointsmod.cc:
+	1. curvemodqbasis::set_basis() now calls my_isomorphism_type under NTL
+	2. some debugging in merge_points_2()
+
+	* points.h: removed spaces around : in point output
+
+	* mwprocs.cc, mwprocs.h:
+	Added member function to do automatic saturation on current basis
+
+	* findinf.cc: Added call to automatic saturation at end of search
+
+	* egr.cc, egr.h: changed name of function from egr() to egr_subgroup()
+
+	* curvemod.h:
+	added get_modulus() function to curvemodq class for LiDIA/NTL compatibility
+
+	* babygiant.cc: all the functions have now been moved to library files
+
+2004-12-28  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* tsat3.cc: minor
+
+	* saturate.h: cosmetic
+
+	* pointsmod.cc, pointsmod.h:
+	Added my_bg_algorithm() and my_isomorphism_type() which work under
+	both NTL and LiDIA, shadowing the latter's versions.
+
+	* gf.h:
+	added function order() as interface to gf_element::order() under LiDIA
+	and a new function under NTL, which is currently totally naive as only
+	used for elements of very small order....
+
+	* ffmod.cc:
+	corrected  bug in weil_pol code, and also in its debugging code
+
+	* ffmod.h: Made fields f1,f2,h1,h2 public (temporary for debugging)
+
+	* elog.cc: improved precision handling in complex AGM
+
+	* curvemod.cc: set_order now uses my_isomorphism_type()
+
+	* curvemod.h: set_order() no longer just uses legendre
+
+	* cperiods.cc:
+	Improced precision handling in low precision arithmetic version
+
+2004-12-21  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* findinf2.cc: Minor NTL compatibility things
+
+	* ffmod.cc: Simplified weil_pol()
+
+2004-09-10  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* targets: Added realroots.* to appropriate lists for make install
+
+2004-09-07  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* gf.h: corrected typo in sqrt()
+
+	* tsat3.cc: correctly convert bigfloat -> double in all arithmetics
+
+	* thtconst.cc: force a BIGINT cast for NTL
+
+2004-09-05  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* htconst.cc:
+	Now includes realroots.h instead of having those functions here
+
+	* tsat3.cc, tsat.cc: minor
+
+	* thtconst.cc: Added various stuff used in paper with SIksek & Prickett
+
+	* targets: added realroots.h/cc
+
+	* sieve_search.cc: minor debugging output addition
+
+	* realroots.cc, realroots.h:
+	functions for finding real roots of a polynomial
+
+	* findinf2.cc: Just made default for modopt 0
+
+	* egr.cc: Mainly debugging code
+
+	* babygiant.cc:
+	Lots of new stuff for computing point orders and group structure.
+	Should be moved into library .h/cc files soon
+
+	* tsat3.cc: Tidy up after version conflict
+
+	* pointsmod.cc: Added operator n*P for bigint n
+	Use sqrt function for gf_element sqrt
+	Add some debug functionality after computing isomorphism_type
+
+	* pointsmod.h: Added operator n*P for bigint n
+
+2004-09-04  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* gf.h: added compatible LiDIA/NTL sqrt functions for gf_element
+
+	* ffmod.cc:
+	IMproved functions vertical() etc so they work consistently in spceial
+	cases.
+
+	* ffmod.cc, ffmod.h: updated weil pairing functions
+
+	* egr.cc: In type Im, image in component group now computed directly
+
+	* curvemod.cc, curvemod.h: curvemodq class now has order field (bigint)
+
+2004-06-28  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
+
+	* egr.cc: turned off all debugging code
+
+	* ChangeLog: updated 28/06/04
+
+	* Makefile: update
+
+	* tht2.cc: A simple program to compute the height bound on input curves
+
+	* targets: added findinf2 and tht2
+
+	* findinf2.cc:
+	Just like findinf except that it does the searching on the
+	optimal_x_shift'ed curve to get a better height bound.
+
+	* tsat3.cc: (1) reduced precision to more sensible 30
+	(2) added in automatic x-shifting to get a better height bound before
+	(searching
+	(3) put all code which uses the EGR subgroup into #ifdef USE_EGR,
+	(currently turned OFF until further testing)
+
+	* thtconst.cc:
+	(1) removed function opt_x_shift() from here, as it is now in
+	    curve.h/curvedatdata.cc
+	(2) added set_precision(30) as the default of 15 was giving bad
+	    results.
+
+	* findinf.cc: Just made the comment description more accurate
+
+	* curvedata.cc, curve.h: Added function opt_x_shift()
+
 2004-06-28  Prof. J. E. Cremona  <jec@fermat.maths.nott.ac.uk>
 
 	* Makefile: update

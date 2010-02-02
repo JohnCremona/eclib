@@ -1506,6 +1506,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   n2 <<= selmer_rank_B;
   rank = rank_A + rank_B;
   selmer_rank = selmer_rank_A + selmer_rank_B;
+  rank_bound = selmer_rank;
   sha_rank = selmer_rank - rank;
   sha2 = (n2/n1);
   certain = (sha_rank==0)||(selmer_only);

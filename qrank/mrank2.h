@@ -25,7 +25,7 @@ class rank2 : public rank12 { // class to do 2-descent via 2-isogeny
 private:
   vector<bigint> badprimes, supp0, supp1;  
   vector<bigint> elsgens0, elsgens1, els2gens0, els2gens1, glsgens0, glsgens1;  
-  long rank_bound, best_rank_bound, best_isogeny, index2;
+  long selmer_rank_prime, best_rank_bound, best_isogeny, index2;
   long nt2gens0, nt2gens1, mask0, mask1;
   long els0, els1, gls0, gls1;   // after first descent
   long els20, els21, gls20, gls21;   // after second descent

@@ -467,8 +467,8 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
       cout<<"After els2 sieving, nels2gens = " << nels2gens;
       cout << endl;
 
-      cout<<"2-rank of phi";if(which) cout<<"'";
-      cout<<"(S^2(E";       if(!which) cout<<"'";
+      cout<<"2-rank of phi";if(!which) cout<<"'";
+      cout<<"(S^2(E";       if(which) cout<<"'";
       cout<<")) = "<<nels2gens<<endl;
 
       if(nels2gens>0) cout<<"(els2)gens: "<<els2gens<<endl;
@@ -775,6 +775,11 @@ void rank2::local_descent(const bigint& x0)
       find_els2gens(1,cdash,ddash);
       rank_bound = els20+els21-2;
     }
+  if(do_second_descent) 
+    {
+      selmer_rank = els1+els20-1+ddash_is_sq;
+      selmer_rank_prime = els0+els21-1+d_is_sq;
+    }
   if(verbose)
     {
       if(do_second_descent) 
@@ -783,8 +788,8 @@ void rank2::local_descent(const bigint& x0)
 	  cout<<"rk(phi'(S^{2}(E)))=\t"<<els20<<endl;
 	  cout<<"rk(phi(S^{2}(E')))=\t"<<els21<<endl;
 	}
-      cout<<"rk(S^{2}(E))=\t"<<els1+els20-1+ddash_is_sq<<endl;
-      cout<<"rk(S^{2}(E'))=\t"<<els0+els21-1+d_is_sq<<endl;
+      cout<<"rk(S^{2}(E))=\t"<<selmer_rank<<endl;
+      cout<<"rk(S^{2}(E'))=\t"<<selmer_rank_prime<<endl;
       cout<<endl;
     }
 }
@@ -869,7 +874,6 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
   
   int rerun_needed=(rank_bound>best_rank_bound);
   rank_bound=best_rank_bound;
-  selmer_rank=rank_bound; // for compatibility with full 2-descent
 
   if(verbose&&best_isogeny>0)
     {      

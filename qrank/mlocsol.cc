@@ -166,6 +166,19 @@ int qpsoluble(const bigint& a, const bigint& c, const bigint& e, const bigint& p
   else return zpsol(e,zero,c,zero,a,p,zero,1);
 } /* end of qpsoluble */
 
+int Rsoluble(const quartic& g)
+{
+  return ((g.gettype()>1)||(g.geta()>BIGINT(0)));
+}
+
+int Rsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,  
+	      const bigint& e)
+{
+  quartic g(a,b,c,d,e);
+  return Rsoluble(g);
+}
+
+
 //#define CHECK_LOC_SOL 1
 
 int locallysoluble(const quartic& g, const vector<bigint>& plist, bigint& badp)
@@ -193,7 +206,15 @@ int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigi
 		   const bigint& e, const vector<bigint>& plist, bigint& badp)
 {
   //  cout<<"("<<a<<","<<b<<","<<c<<","<<d<<","<<e<<")\n";
+
+  // First check R-solubility
+  if (!Rsoluble(a,b,c,d,e))
+    {
+      badp = BIGINT(0);
+      return 0;
+    }
   int sol = 1;
+
   if(is_zero(b)&&is_zero(d)) // do a quick Hilbert check:
     {
       bigint d = c*c-4*a*e;

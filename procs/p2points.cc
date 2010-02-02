@@ -109,7 +109,7 @@ void P2Point::getrealcoordinates(bigfloat&x, bigfloat& y) const
 #ifndef NTL_ALL
   if((abs(x)==INFINITY)||(abs(y)==INFINITY))
     {
-      cout<<"After converting P="<<P<<" to doubles, ";
+      cout<<"After converting P to doubles, ";
       cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
       cout<<"insufficient precision to continue, aborting"<<endl;
       abort();
