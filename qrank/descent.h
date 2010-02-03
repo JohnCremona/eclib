@@ -84,7 +84,7 @@ class two_descent {
 private: rank12 * r12;  // does all the work
   int verbose, two_torsion_exists, selmer_only;
   int success, certain, fullmw;
-  long rank, selmer_rank, sat_bound;
+  long rank, rank_bound, selmer_rank, sat_bound;
   mw* mwbasis;
   vector<bigrational> qai;  // Coefficients of initial curve
   Curvedata e_orig, e_min;
@@ -113,6 +113,7 @@ public:
 	      long n_aux=-1, int second_descent=1);
   ~two_descent() {delete r12; delete mwbasis;}
   long getrank() const {return rank;}
+  long getrankbound() const {return rank_bound;}
   long getselmer() const {return selmer_rank;}
   long getcertain()  const {return certain;}
   int ok()      const {return success;}

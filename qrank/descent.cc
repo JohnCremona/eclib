@@ -98,10 +98,11 @@ void two_descent::do_the_descent(long firstlim, long secondlim,
 
     success=r12->ok();
     rank = r12->getrank();
+    rank_bound = r12->getrankbound();
     selmer_rank = r12->getselmer();
     certain=r12->getcertain();
     // the last parameter here is set to a known upper bound on the rank
-    mwbasis = new mw(&e_min,verbose>2,1,selmer_rank);
+    mwbasis = new mw(&e_min,verbose>2,1,rank_bound);
 }
 
 void two_descent::report_rank() const
@@ -110,6 +111,7 @@ void two_descent::report_rank() const
   if(selmer_only)
     {
       cout << "selmer-rank = " << selmer_rank << endl;
+      cout << "upper bound on rank = " << rank_bound << endl;
     }
   else
     {
@@ -118,7 +120,7 @@ void two_descent::report_rank() const
       else 
 	{
 	  if(two_torsion_exists)
-	    cout<< rank << " <= rank <= " << selmer_rank << endl;
+	    cout<< rank << " <= rank <= " << rank_bound << endl;
 	  else
 	    cout<< rank << " <= rank <= selmer-rank = " << selmer_rank << endl;
 	}   
@@ -249,7 +251,7 @@ void two_descent::show_result_status()
     {
       cout << "The rank has not been completely determined, \n";
       cout << "only a lower bound of "<<rank
-	   <<" and an upper bound of "<<selmer_rank<<".\n";
+	   <<" and an upper bound of "<<rank_bound<<".\n";
       cout<<endl;
       if(fullmw)
 	{
@@ -276,7 +278,7 @@ void two_descent::pari_output()
 {
   vector<P2Point>plist=getbasis();
   cout<<"[["<<rank;
-  if(rank<selmer_rank)  cout<<","<<selmer_rank;
+  if(rank<rank_bound)  cout<<","<<rank_bound;
   cout<<"],[";
   for(int i=0; i<rank; i++)
     {
