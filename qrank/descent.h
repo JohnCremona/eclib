@@ -36,6 +36,7 @@
 
 class rank1;
 class rank2;
+class two_descent;
 
 class rank12 {
 protected: 
@@ -71,6 +72,12 @@ public:
   long getselmer() const {return selmer_rank;}
   long getcertain()  const {return certain;}
   int ok()      const {return success;}
+  //
+  virtual long getselmerprime() const=0;
+  virtual Curvedata getEprime() const=0;
+  virtual long getselmerphi() const=0;
+  virtual long getselmerphiprime() const=0;
+  //
   virtual void listpoints()=0;
   virtual void listpoints(Curvedata* CD_orig, 
 			  const bigint& u, const bigint& r, 
@@ -115,6 +122,10 @@ public:
   long getrank() const {return rank;}
   long getrankbound() const {return rank_bound;}
   long getselmer() const {return selmer_rank;}
+  long getselmerprime() const {return r12->getselmerprime();}
+  Curvedata getEprime() const {return r12->getEprime();}
+  long getselmerphi() const {return r12->getselmerphi();}
+  long getselmerphiprime() const {return r12->getselmerphiprime();}
   long getcertain()  const {return certain;}
   int ok()      const {return success;}
   int get2t() const {return two_torsion_exists;}

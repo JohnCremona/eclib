@@ -25,13 +25,14 @@ class rank2 : public rank12 { // class to do 2-descent via 2-isogeny
 private:
   vector<bigint> badprimes, supp0, supp1;  
   vector<bigint> elsgens0, elsgens1, els2gens0, els2gens1, glsgens0, glsgens1;  
-  long selmer_rank_prime, best_rank_bound, best_isogeny, index2;
+  long selmer_rank_phi_Eprime, selmer_rank_phiprime_E, selmer_rank_Eprime;
+  long best_rank_bound, best_isogeny, index2;
   long nt2gens0, nt2gens1, mask0, mask1;
   long els0, els1, gls0, gls1;   // after first descent
   long els20, els21, gls20, gls21;   // after second descent
   int d_is_sq, ddash_is_sq;
   bigint e2, e3, e2dash, e3dash, s2, s4, s6;
-  Curvedata ee, eedash;
+  Curvedata ee, eedash, Eprime;
   vector<Point> pointlist, fullpointlist, two_torsion;  
   int npoints, npoints1, fullnpoints, ntwo_torsion;;
 public: 
@@ -40,6 +41,10 @@ public:
 // lim2 is (double) bound on log max {|x|,|z| }, i.e. logarithmic
 // sel is selmer_only switch
 // second is do-second-descent switch
+  Curvedata getEprime() const {return Eprime;}
+  long getselmerprime() const {return selmer_rank_Eprime;}
+  long getselmerphi() const {return selmer_rank_phi_Eprime;}
+  long getselmerphiprime() const {return selmer_rank_phiprime_E;}
   void listgens();
   void listgens(Curvedata* CD_orig, const bigint& u, const bigint& r, 
 		const bigint& s, const bigint& t);

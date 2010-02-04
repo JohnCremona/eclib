@@ -703,10 +703,14 @@ void rank2::local_descent(const bigint& x0)
 
   ee     = Curvedata(zero,  c,  zero,  d,  zero);
   eedash = Curvedata(zero,cdash,zero,ddash,zero);
+  Eprime = Curvedata(eedash,1); // minimal model
   if(verbose) 
-    cout<<"Using 2-isogenous curve "<<(Curve)(Curvedata(eedash,0))
-	<<endl;
-
+    {
+    cout<<"Using 2-isogenous curve "<<(Curve)(eedash);
+    if (eedash!=Eprime)
+      cout<<" (minimal model "<<(Curve)(Eprime)<<")";
+    cout<<endl;
+    }
   supp0 = pdivs(d);
   supp1 = pdivs(ddash);
   badprimes.clear();
@@ -744,13 +748,15 @@ void rank2::local_descent(const bigint& x0)
   find_elsgens(0,c,d);
   //  cout<<"Calling find_elsgens(1,...)"<<endl;
   find_elsgens(1,cdash,ddash);
+  selmer_rank_phi_Eprime = els0; 
+  selmer_rank_phiprime_E = els1;
   rank_bound = els0+els1-2;
 
   if(verbose) 
     {
       cout<<"After first local descent, rank bound = "<<rank_bound<<"\n";
-      cout<<"rk(S^{phi}(E'))=\t"<<els0<<endl;
-      cout<<"rk(S^{phi'}(E))=\t"<<els1<<endl;
+      cout<<"rk(S^{phi}(E'))=\t"<<selmer_rank_phi_Eprime<<endl;
+      cout<<"rk(S^{phi'}(E))=\t"<<selmer_rank_phiprime_E<<endl;
       cout<<endl;
       cout<<"-------------------------------------------------------\n";
       cout<<"Second step, determining 2nd descent Selmer groups\n";
@@ -775,11 +781,9 @@ void rank2::local_descent(const bigint& x0)
       find_els2gens(1,cdash,ddash);
       rank_bound = els20+els21-2;
     }
-  if(do_second_descent) 
-    {
-      selmer_rank = els1+els20-1+ddash_is_sq;
-      selmer_rank_prime = els0+els21-1+d_is_sq;
-    }
+// NB these are only upper bounds if !do_second_descent
+  selmer_rank = els1+els20-1+ddash_is_sq;
+  selmer_rank_Eprime = els0+els21-1+d_is_sq;
   if(verbose)
     {
       if(do_second_descent) 
@@ -787,10 +791,19 @@ void rank2::local_descent(const bigint& x0)
 	  cout<<"After second local descent, rank bound = "<<rank_bound<<"\n";
 	  cout<<"rk(phi'(S^{2}(E)))=\t"<<els20<<endl;
 	  cout<<"rk(phi(S^{2}(E')))=\t"<<els21<<endl;
+	  cout<<"rk(S^{2}(E))=\t"<<selmer_rank<<endl;
+	  cout<<"rk(S^{2}(E'))=\t"<<selmer_rank_Eprime<<endl;
+	  cout<<endl;
 	}
-      cout<<"rk(S^{2}(E))=\t"<<selmer_rank<<endl;
-      cout<<"rk(S^{2}(E'))=\t"<<selmer_rank_prime<<endl;
-      cout<<endl;
+      else
+	{
+	  cout<<"No second local descent done, rank bound = "<<rank_bound<<"\n";
+	  cout<<"rk(phi'(S^{2}(E)))<=\t"<<els20<<endl;
+	  cout<<"rk(phi(S^{2}(E')))<=\t"<<els21<<endl;
+	  cout<<"rk(S^{2}(E))<=\t"<<selmer_rank<<endl;
+	  cout<<"rk(S^{2}(E'))<=\t"<<selmer_rank_Eprime<<endl;
+	  cout<<endl;	  
+	}
     }
 }
 

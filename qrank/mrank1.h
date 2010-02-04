@@ -82,6 +82,10 @@ public:
 		                      const bigint& s, const bigint& t);
   vector<Point> getgens() const;
   vector<Point> getpoints();
+  long getselmerprime() const {return selmer_rank;}
+  long getselmerphi() const {return selmer_rank;}
+  long getselmerphiprime() const {return selmer_rank;}
+  Curvedata getEprime() const {return *the_curve;}
 };
 
 

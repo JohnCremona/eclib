@@ -115,8 +115,31 @@ void two_descent::report_rank() const
     }
   else
     {
+      if(verbose)
+	if(two_torsion_exists)
+	  {
+	    cout << "\nUsed descent via 2-isogeny with isogenous curve E' = "<<(Curve)(getEprime())<<endl;
+	  }
+	else
+	  {
+	    cout << "\nUsed full 2-descent via multiplication-by-2 map"<<endl;
+	  }
       if(certain) 
-	cout << "Rank = " << rank << endl;
+	{
+	  cout << "Rank = " << rank << endl;
+	  if (verbose)
+	    if(two_torsion_exists)
+	      {
+		cout << "Rank of S^2(E)  = "<< getselmer() << endl;
+		cout << "Rank of S^2(E') = "<< getselmerprime() <<endl;
+		cout << "Rank of S^phi(E') = "<< getselmerphi() <<endl;
+		cout << "Rank of S^phi'(E) = "<< getselmerphiprime() <<endl<<endl;
+	      }
+	    else
+	      {
+		cout << "Rank of S^2(E)  = "<< getselmer() << endl<<endl;
+	      }
+	}
       else 
 	{
 	  if(two_torsion_exists)

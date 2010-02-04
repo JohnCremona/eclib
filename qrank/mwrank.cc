@@ -82,6 +82,7 @@ int main(int argc, char **argv)
 			hlimq0, hlimq, 
 			opt.get_naux(), second_descent);
       two_d.report_rank();
+     
 
       if((!two_d.ok())||selmer_only) continue;  // to next curve
       if(!verbose&&!opt.get_ptl()&&!opt.get_output_pari()) continue;
