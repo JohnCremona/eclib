@@ -369,7 +369,7 @@ void initprimes(const char* pfilename, int verb)
 
 extra_prime_class::~extra_prime_class()
 {
-  write_to_file(string("PRIMES").c_str());
+  //  write_to_file(string("PRIMES").c_str());
 }
 
 void extra_prime_class::write_to_file(const char* pfilename, int verb)
