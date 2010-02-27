@@ -86,7 +86,7 @@ lib: $(OBJS)
 	ar r $(RANKLIBNAME) $(OBJS)
 	$(RANLIB) $(RANKLIBNAME)
 
-install_lib: $(HEADERS) $(RANKLIBNAME)
+install_lib: $(HEADERS) lib
 	(cd $(INCDIR); rm -f $(HEADERS))
 	for f in $(HEADERS); \
 	 do cp $${f} $(INCDIR); \

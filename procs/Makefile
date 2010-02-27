@@ -66,8 +66,7 @@ lib: headers objs
 	ar r $(LIBNAME) $(OBJS)
 	$(RANLIB) $(LIBNAME)
 
-install: sources
-	${MAKE} lib 
+install: sources lib
 	chmod a+r *
 	(cd $(INCDIR); rm -f $(HEADERS))
 	$(CP) $(HEADERS) $(INCDIR)

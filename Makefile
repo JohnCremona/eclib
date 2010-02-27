@@ -55,22 +55,22 @@ dirs:
 	mkdir -p lib
 
 dylib:
-	cd procs && ${MAKE} install_dylib tests progs
-	cd qcurves && ${MAKE} install_dylib tests progs
-	cd qrank && ${MAKE} install_dylib tests progs
-	cd g0n && ${MAKE} install_dylib tests progs
+	cd procs && ${MAKE} install_dylib && ${MAKE} tests progs
+	cd qcurves && ${MAKE} install_dylib && ${MAKE} tests progs
+	cd qrank && ${MAKE} install_dylib && ${MAKE} tests progs
+	cd g0n && ${MAKE} install_dylib && ${MAKE} tests progs
 
 so:
-	cd procs && ${MAKE} install_so tests progs
-	cd qcurves && ${MAKE} install_so tests progs
-	cd qrank && ${MAKE} install_so tests progs
-	cd g0n && ${MAKE} install_so tests progs
+	cd procs && ${MAKE} install_so && ${MAKE} tests progs
+	cd qcurves && ${MAKE} install_so && ${MAKE} tests progs
+	cd qrank && ${MAKE} install_so && ${MAKE} tests progs
+	cd g0n && ${MAKE} install_so && ${MAKE} tests progs
 
 dll: all
-	cd procs && ${MAKE} install_dll tests progs
-	cd qcurves && ${MAKE} install_dll tests progs
-	cd qrank && ${MAKE} install_dll tests progs
-	cd g0n && ${MAKE} install_dll tests progs
+	cd procs && ${MAKE} install_dll && ${MAKE} tests progs
+	cd qcurves && ${MAKE} install_dll && ${MAKE} tests progs
+	cd qrank && ${MAKE} install_dll && ${MAKE} tests progs
+	cd g0n && ${MAKE} install_dll && ${MAKE} tests progs
 
 clean:
 	cd procs && ${MAKE} clean
