@@ -35,8 +35,9 @@ int main(void)
  int n=1; 
  int plus=1;
  int verbose=0;
- cout << "Verbose? "; cin >> verbose;
- cout << "Plus space? "; cin >> plus;
+ int cuspidal=0;
+ // cout << "Verbose? "; cin >> verbose;
+ // cout << "Plus space, minus space or full space (+1,-1,0)? "; cin >> plus;
  int limit; 
 #ifdef AUTOLOOP
   cout<<"Enter first and last levels: ";cin>>n>>limit; n--;
@@ -47,13 +48,23 @@ int main(void)
  if (n>0)
 {
   //  start_time();
-  cout << ">>>Level " << n << "\t";
   {
-  homspace hplus(n,plus,0,verbose);
-  int genus = hplus.h1dim();
-  cout << "Dimension = " << genus << "\t";
-  int d = hplus.h1denom();
-  if(d>1) cout<<"denom = "<<d;
+    long *dims = new long[3];
+    cout << "\n>>>Level " << n << "\n";
+    for (plus=1; plus>-2; plus--)
+      {
+	homspace hplus(n,plus, cuspidal,verbose);
+	int dim = hplus.h1dim();
+	dims[plus+1]=dim;
+	cout << "\t\tDimension (sign="<<plus<<") = " << dim << "\t";
+	int d = hplus.h1denom();
+	if(d>1) cout<<" (denom = "<<d<<")";
+	cout<<endl;
+      }
+    if (dims[1]==dims[0]+dims[2])
+      cout<<"\tDimensions add up OK at level "<<n<<endl;
+    else
+      cout<<"****************Dimensions inconsistent for level "<<n<<" ***************"<<endl;
   }
   cout<<endl;
   //  stop_time();

@@ -170,7 +170,9 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
   int verbose=(nf->verbose);
   if(verbose) 
     {
-      cout<<"Creating H1"; if(plusflag) cout<<"+"; 
+      cout<<"Creating H1"; 
+      if(plusflag==+1) cout<<"+"; 
+      if(plusflag==-1) cout<<"-"; 
       cout<<" newform from aplist..."<<endl;
     }
   // Some default/unset values:

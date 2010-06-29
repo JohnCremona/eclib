@@ -150,6 +150,7 @@ public:
   
   // for the i'th newform return the value of the modular symbol {0,r}
   rational plus_modular_symbol(const rational& r, long i=0) const;
+  rational minus_modular_symbol(const rational& r, long i=0) const;
   pair<rational,rational> full_modular_symbol(const rational& r, long i=0) const;
 
   // next three implemented in periods.cc

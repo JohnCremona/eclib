@@ -41,7 +41,7 @@ public:
 public:
   // Constructor (does all the work):
   homspace(long n, // the level
-	   int hp, // plus-space flag (0 or 1)
+	   int hp, // plus-space flag (0 or 1 or -1)
 	   int hcusp, // cuspidal flag (0 or 1)
 	   int verbose // verbosity (0 : no output
 	               //	     1 : basic short output
