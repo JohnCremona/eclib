@@ -294,7 +294,7 @@ inline RR tan(const RR& x) {return sin(x)/cos(x);}
 RR atan2(const RR&, const RR&);
 inline int is_approx_zero(const RR& x)
   {return abs(x)<power2_RR(2-RR::precision());}
-};
+}
 #include <complex>
 typedef complex<RR> CC;
 #define bigcomplex CC

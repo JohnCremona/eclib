@@ -394,6 +394,88 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, std::set<int>& ons, 
   return *this;
 }
 
+svec& svec::add_mod_p(const svec& w, const scalar& p)
+{
+  if (d!=w.d)
+    {
+      cout << "Incompatible svecs in svec::add_scalar_times()\n";
+      abort();
+      return *this;
+    }
+  map<int,scalar>::const_iterator  wi=w.entries.begin();
+  map<int,scalar>::iterator vi=entries.begin();
+  while(wi!=w.entries.end())
+    {
+      if(vi==entries.end())
+	{
+	  while(wi!=w.entries.end())
+	    {
+	      entries[wi->first]=wi->second;
+	      wi++;
+	    } 	    
+	}
+      else
+	{
+	  if((vi->first)<(wi->first)) {vi++;} 
+	  else
+	    if((wi->first)<(vi->first)) 
+	      {
+		entries[wi->first]=wi->second;
+		wi++;
+	      } 
+	    else
+	      {
+		scalar sum = xmod((vi->second) + (wi->second),p);
+		if(sum) {vi->second = sum; vi++;}
+		else {vi++; entries.erase(wi->first); }
+		wi++;
+	      }
+	}
+    }
+  return *this;
+}
+
+svec& svec::sub_mod_p(const svec& w, const scalar& p)
+{
+  if (d!=w.d)
+    {
+      cout << "Incompatible svecs in svec::add_scalar_times()\n";
+      abort();
+      return *this;
+    }
+  map<int,scalar>::const_iterator  wi=w.entries.begin();
+  map<int,scalar>::iterator vi=entries.begin();
+  while(wi!=w.entries.end())
+    {
+      if(vi==entries.end())
+	{
+	  while(wi!=w.entries.end())
+	    {
+	      entries[wi->first]=-(wi->second);
+	      wi++;
+	    } 	    
+	}
+      else
+	{
+	  if((vi->first)<(wi->first)) {vi++;} 
+	  else
+	    if((wi->first)<(vi->first)) 
+	      {
+		entries[wi->first]=-(wi->second);
+		wi++;
+	      } 
+	    else
+	      {
+		scalar sum = xmod((vi->second) - (wi->second),p);
+		if(sum) {vi->second = sum; vi++;}
+		else {vi++; entries.erase(wi->first); }
+		wi++;
+	      }
+	}
+    }
+  return *this;
+}
+
 svec& svec::operator/=(scalar scal)
 {
   if(scal==0) 

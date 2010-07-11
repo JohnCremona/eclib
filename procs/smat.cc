@@ -163,6 +163,8 @@ mat smat::operator*( const mat& m )
 
 // Definitions of non-member, friend operators and functions
 
+// smat * (row) svec
+
 svec operator* ( const smat& A, const svec& v )
 {
   if( A.nco != dim(v) ) 
@@ -181,7 +183,86 @@ svec operator* ( const smat& A, const svec& v )
   return prod;
 }
 
+vec operator*  (smat& m, const vec& v)
+{
+  int r = nrows(m), c=ncols(m);
+  if(c!=dim(v))
+    {
+      cout<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
+      abort();
+    }
+  vec w(r);
+  for(int i=1; i<=r; i++) w.set(i,m.row(i)*v);
+  return w;
+}
 
+// (col) svec * smat
+
+svec operator* ( const svec& v, const smat& A )
+{
+  if( v.d != nrows(A) ) 
+    { 
+      cout << "incompatible sizes in v*A\n"; 
+      cout << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
+      abort();
+    }
+  svec prod(ncols(A));
+  map<int,scalar>::const_iterator vi;
+  for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
+    prod += (vi->second)*(A.rows[vi->first]);
+  return prod;
+}
+
+svec mult_mod_p( const smat& A, const svec& v, const scalar& p  )
+{
+  if( A.nco != dim(v) ) 
+    { 
+      cout << "incompatible smat*svec\n"; 
+      cout << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
+      abort();
+    }
+  int n = A.nro, j; scalar s;
+  svec prod(n);
+  for(j = 1; j<=n; j++)  
+    {
+      s = dotmodp(A.rows[j],v,p);
+      if(s) prod.entries[j]=s;
+    }
+  return prod;
+}
+
+svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
+{
+  if( v.d != nrows(A) ) 
+    { 
+      cout << "incompatible sizes in v*A mod p\n"; 
+      cout << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
+      abort();
+    }
+  svec prod(ncols(A));
+  map<int,scalar>::const_iterator vi;
+  for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
+    prod.add_scalar_times_mod_p(A.rows[vi->first],vi->second,p);
+  return prod;
+}
+
+smat operator* ( const smat& A, const smat& B )
+{
+  //  cout<<"smat*smat called with dim(A)="<<dim(A)<<", dim(B)="<<dim(B)<<endl;
+  if( A.nco != B.nro ) 
+    { 
+      cout << "incompatible smats in operator *\n"; 
+      cout << "Dimensions "<<dim(A)<<" and "<<dim(B)<<endl;
+      abort();
+    }
+  smat prod( A.nro, B.nco );
+  int j;
+  for(j=1; j<=A.nro; j++)
+    prod.rows[j] = A.rows[j] * B;
+  return prod;
+}
+
+#if(0)
 smat operator* ( const smat& A, const smat& B )
 {
   if( A.nco != B.nro ) 
@@ -208,8 +289,25 @@ smat operator* ( const smat& A, const smat& B )
     }  
   return prod;
 }
+#endif
 
-//#if(0)
+smat mult_mod_p ( const smat& A, const smat& B, const scalar& p )
+{
+  //  cout<<"mult_mod_p called with dim(A)="<<dim(A)<<", dim(B)="<<dim(B)<<endl;
+  if( A.nco != B.nro ) 
+    { 
+      cout << "incompatible smats in mult_mod_p(smat,smat,p)\n"; 
+      cout << "Dimensions "<<dim(A)<<" and "<<dim(B)<<endl;
+      abort();
+    }
+  int j;
+  smat prod( A.nro, B.nco );
+  for(j=1; j<=A.nro; j++)
+    prod.rows[j] = mult_mod_p(A.rows[j], B, p);
+  return prod;
+}
+
+#if(0)
 smat mult_mod_p ( const smat& A, const smat& B, const scalar& p )
 {
   //  cout<<"Multiplying mod-p smats of size "<<A.nro<<"x"<<A.nco<<" and "<<B.nro<<"x"<<B.nco<<"..."<<flush;
@@ -253,7 +351,7 @@ smat mult_mod_p ( const smat& A, const smat& B, const scalar& p )
   //  cout<<"done"<<endl;
   return prod;
 }
-//#endif
+#endif
 #if(0)
 smat mult_mod_p ( const smat& A, const smat& B, const scalar& p )
 {

@@ -330,7 +330,7 @@ RR atan2 (const RR & y, const RR & x)
   
   return z;
 }
-};
+}
 
 
 // The template version requires an automatic conversion from 0 to an

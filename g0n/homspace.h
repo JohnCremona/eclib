@@ -206,12 +206,3 @@ inline ostream& operator<< (ostream& s, const mat22& m)
    m.show(s);
    return s;
 }  
-
-// The following should be moved to ../procs
-
-// sparse matrix * sparse vector multiplication:
-svec operator*(smat& m, const svec& v);
-// sparse matrix * nonsparse vector multiplication:
-vec operator*(smat& m, const vec& v);
-// construction of a 1-dimensional sparse subspace from a vector:
-ssubspace make1d(const vec& bas, long&piv);
