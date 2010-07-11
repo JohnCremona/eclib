@@ -1,7 +1,7 @@
 Documentation for the g0n library
 
 %  created 20070125
-%  Time-stamp: <22-Nov-2007 18:28:59 jec>
+%  Time-stamp: <2010-07-11 20:31:55 john>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -131,7 +131,7 @@ class: homspace (derived from symbdata)
 The main class for holding a "modular symbols space".
 The constructor does a lot of work:
   homspace(long n, // the level
-	   int hp, // plus-space flag (0 or 1)
+	   int hp, // plus-space flag (0 or 1 or -1)
 	   int hcusp, // cuspidal flag (0 or 1)
 	   int verbose // verbosity (0 : no output
 	               //	     1 : basic short output
@@ -139,8 +139,7 @@ The constructor does a lot of work:
 	   );
 
 The plus-space flag switches between working on H_1^+ (by quotienting
-out extra relations (c:d)=(-c:d)) or the full H_1.  Working in the -1
-eigenspace is _not_ implemented.
+out extra relations (c:d)=(-c:d)), H_1^-,  or the full H_1.
 
 If the cupsidal flag is 1 then the space computed is the kernel of
 the boundary map to the cusps, and all operators are restricted to

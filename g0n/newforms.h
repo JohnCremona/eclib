@@ -50,7 +50,7 @@ class newform {
   friend class newforms;
 public:
   newforms *nf;  // the "parent"
-  int plusflag;   // 1 for old-style newform, 0 for old-style h1newform
+  int sign;   // 1/-1 for old-style newform, 0 for old-style h1newform
   vec bplus,bminus; // DUAL eigenvectors
   scalar type;            // 2 for rectangular, 1 for triangular 
 			  //  period lattice
@@ -87,7 +87,7 @@ public:
 class newforms :public level, splitter_base   {
   friend class newform;
 private:
-  int verbose; long maxdepth, cuspidal, plusflag;
+  int verbose; long maxdepth, cuspidal, sign;
   int basisflag;  // is set, then use() only sets bases for newforms
 		  // already defined.
   mat opmat(int i, int d, int v=0) 
@@ -112,8 +112,8 @@ protected:
 public:
   long n1ds, j1ds;
   vector<newform> nflist;
-  newforms(long n, int plus, int cuspidalflag, int disp) 
-  :level(n), verbose(disp), cuspidal(cuspidalflag), plusflag(plus), 
+  newforms(long n, int sgn, int cuspidalflag, int disp) 
+  :level(n), verbose(disp), cuspidal(cuspidalflag), sign(sgn), 
    of(0), h1(0) {;}
   ~newforms(void);
   void display(void) const;
@@ -150,6 +150,7 @@ public:
   
   // for the i'th newform return the value of the modular symbol {0,r}
   rational plus_modular_symbol(const rational& r, long i=0) const;
+  rational minus_modular_symbol(const rational& r, long i=0) const;
   pair<rational,rational> full_modular_symbol(const rational& r, long i=0) const;
 
   // next three implemented in periods.cc

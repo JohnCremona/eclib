@@ -266,7 +266,7 @@ int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>
 	 }
      }
    return ans ;
- };    // of rootsequiv()
+ }    // of rootsequiv()
  
  
 int equiv(const quartic* q1, const quartic* q2, const vector<bigint>& dlist, int info)

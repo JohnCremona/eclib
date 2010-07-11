@@ -81,11 +81,37 @@ homspace::homspace(long n, int hp, int hcusp, int verbose) :symbdata(n)
 
 // 2-term relations:
 
-if (plusflag)
+// if (plusflag==1)
+//   for (j=0; j<nsymb; j++)
+//   {if (check[j]==0)
+//    { rel[0]=j;
+//      rel[1]=rsof(j);
+//      rel[2]=sof(j);
+//      rel[3]=sof(rel[1]);
+//      if (verbose>1)
+//        cout << "Relation: " << rel[0]<<" "<<rel[1]<<" "<<rel[2]<<" "<<rel[3]<<endl;
+//      for (k=0; k<4; k++) check[rel[k]]=1;
+//      if ( (j==rel[2]) || (j==rel[3]) )
+//          for (k=0; k<4; k++) coordindex[rel[k]]=0;
+//      else
+//      {   ngens++;
+//          gens[ngens] = j;
+//          if (verbose>1)  cout << "gens["<<ngens<<"]="<<j<<endl;
+//          coordindex[rel[0]] =  ngens;
+//          coordindex[rel[1]] =  ngens;
+//          coordindex[rel[2]] = -ngens;
+//          coordindex[rel[3]] = -ngens;
+//      }
+//      }
+//    }
+if (plusflag!=0)
   for (j=0; j<nsymb; j++)
   {if (check[j]==0)
    { rel[0]=j;
-     rel[1]=rsof(j);
+     if (plusflag==-1) 
+       rel[1]=rof(j);
+     else
+       rel[1]=rsof(j);
      rel[2]=sof(j);
      rel[3]=sof(rel[1]);
      if (verbose>1)
@@ -104,7 +130,7 @@ if (plusflag)
      }
      }
    }
-else
+if (plusflag==0)
   {for (j=0; j<nsymb; j++)
    {if (check[j]==0)
     {rel[0]=j;
@@ -149,7 +175,7 @@ if (verbose>1)
 // 3-term relations
  
 //   long maxnumrel = 20+(2*ngens)/3;
-   long maxnumrel = ngens;
+ long maxnumrel = ngens+10;  
 
    if (verbose)
      {
@@ -234,7 +260,7 @@ if (verbose>1)
    if (verbose) 
      {
        cout << "Finished 3-term relations: numrel = "<<numrel<<" ( maxnumrel = "<<maxnumrel<<")"<<endl;
-       // Compute with predicted value (got full H_1 only):
+       // Compare with predicted value (for full H_1 only):
        /*
        if(!plusflag)
 	 {
@@ -298,10 +324,10 @@ if (verbose>1)
 	   cout << "pivots = " << pivs <<endl;
 	 }
      }
+   freegens = new int[rk]; 
+   if (!freegens) abort(string("freegens").c_str());
    if (rk>0)
    {
-     freegens = new int[rk]; 
-     if (!freegens) abort(string("freegens").c_str());
    for (i=0; i<rk; i++) freegens[i] = gens[pivs[i+1]];
    if (verbose>1)
     { cout << "freegens: ";
@@ -384,6 +410,14 @@ if (verbose>1)
         }
    }
    if (verbose) cout << "Finished constructing homspace." << endl;
+}
+
+homspace::~homspace()
+{ 
+  if (coordindex) delete[] coordindex; 
+  if (needed) delete[] needed; 
+  if (freegens) delete[] freegens; 
+  if (freemods) delete[] freemods;  
 }
 
 svec homspace::chain(const symb& s) const
@@ -911,16 +945,19 @@ vec homspace::maninvector(long p) const
 {
   long i,p2;
   svec tvec = chain(0,p);             // =0, but sets the right length.
-  if (p==2) 
-    add_chain(tvec,1,2); 
-  else
-    { 
-      p2=(p-1)>>1;
-      for (i=1; i<=p2; i++) { add_chain(tvec,i,p); }
-      if(plusflag)   
-	tvec *=2;
+  if (plusflag!=-1) 
+    {
+      if (p==2) 
+	add_chain(tvec,1,2); 
       else
-	for (i=1; i<=p2; i++) { add_chain(tvec,-i,p); }
+	{ 
+	  p2=(p-1)>>1;
+	  for (i=1; i<=p2; i++) { add_chain(tvec,i,p); }
+	  if(plusflag)   
+	    tvec *=2;
+	  else
+	    for (i=1; i<=p2; i++) { add_chain(tvec,-i,p); }
+	}
     }
   if(cuspidal) 
     return cuspidalpart(tvec.as_vec()); 
@@ -941,6 +978,7 @@ vec homspace::projmaninvector(long p) const  // Will only work after "proj"
 {
   long i,p2;
   vec tvec = projchain(0,p);             // =0, but sets the right length.
+  if (plusflag==-1) return tvec;
   if (p==2) 
     add_projchain(tvec,1,2);
   else
@@ -959,6 +997,7 @@ vec homspace::projmaninvector(long p, const mat& m) const
 {
   long i,p2;
   vec tvec = projchain(0,p,m);       // =0, but sets the right length.
+  if (plusflag==-1) return tvec;
   if (p==2) 
     add_projchain(tvec,1,2,m);
   else
@@ -1435,46 +1474,3 @@ matop::matop(long p)
 	}
   }
 }
-
-/* NOTE: This should probably be moved to ../procs */
-
-svec operator*(smat& m, const svec& v)
-{
-  int r = nrows(m), c=ncols(m);
-  if(c!=dim(v))
-    {
-      cout<<"Error in smat*svec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
-      abort();
-    }
-  svec w(r);
-  //  for(int i=0; i<r; i++) w.set(i,m.row(i)*v);
-  for(int i=1; i<=r; i++) w.set(i,m.row(i)*v);
-  return w;
-}
-
-vec operator*(smat& m, const vec& v)
-{
-  int r = nrows(m), c=ncols(m);
-  if(c!=dim(v))
-    {
-      cout<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
-      abort();
-    }
-  vec w(r);
-  //  for(int i=1; i<=r; i++) w.set(i,m.row(i-1)*v);
-  for(int i=1; i<=r; i++) w.set(i,m.row(i)*v);
-  return w;
-}
-
-ssubspace make1d(const vec& bas, long&piv) 
-// make a 1-D ssubspace with basis bas
-{
-  smat tbasis(1,dim(bas));
-  svec sbas(bas);
-  tbasis.setrow(1,sbas);
-  vec pivs(1); // initialised to 0
-  pivs[1]=sbas.first_index();
-  piv=sbas.elem(pivs[1]);
-  return ssubspace(transpose(tbasis),pivs);
-}
-

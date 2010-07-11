@@ -34,7 +34,7 @@ private:
   bigint e2, e3, e2dash, e3dash, s2, s4, s6;
   Curvedata ee, eedash, Eprime;
   vector<Point> pointlist, fullpointlist, two_torsion;  
-  int npoints, npoints1, fullnpoints, ntwo_torsion;;
+  int npoints, npoints1, fullnpoints, ntwo_torsion;
 public: 
   rank2(Curvedata* ec, int verb,int sel=0, long l1=20, long l2=5,int second=1);
 // lim1  is (bigint) bound on |x|+|z| in naive search

@@ -63,6 +63,9 @@ public:
   // which an entry is deleted
   svec& add_scalar_times_mod_p(const svec&, scalar, std::set<int>& ons, std::set<int>& offs, 
 			       const scalar& p=BIGPRIME);
+  // two hand-coded special cases:
+  svec& add_mod_p(const svec& w, const scalar& p);
+  svec& sub_mod_p(const svec& w, const scalar& p);
 
   int size() const {return entries.size();}
      
@@ -96,11 +99,14 @@ public:
   friend inline int operator!=(const vec& v1, const svec& v2) {return v2!=v1;}
   friend smat transpose(const smat&);
   friend smat operator* ( const smat&, const smat&);
-  friend smat mult_mod_p ( const smat&, const smat&, const scalar&);
   friend smat sidmat(scalar);
   friend scalar content(const svec& v);
   friend scalar make_primitive(svec& v); // divides by & returns content
   friend svec operator* ( const smat& A, const svec& v );
+  friend svec operator* ( const svec& v, const smat& A );
+  friend svec mult_mod_p( const smat& A, const svec& v, const scalar& p  );
+  friend svec mult_mod_p( const svec& v, const smat& A, const scalar& p  );
+  friend smat mult_mod_p ( const smat&, const smat&, const scalar&);
 };
 
 // Declaration of non-friend functions
