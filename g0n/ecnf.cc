@@ -49,9 +49,12 @@ int main(void)
   cout<<endl;
 
   // Construct newforms class (this does little work)
-  int plusspace=1;
+  int sign=1;
   int cuspidal=0;
-  newforms nf(n,plusspace,cuspidal,verbose);
+
+  cout<<"Enter sign (1,-1,0 for both):"; cin>>sign;
+
+  newforms nf(n,sign,cuspidal,verbose);
 
   // Create the newform from the curve (first create the homspace,
   // then split off the eigenspace)
@@ -75,11 +78,11 @@ int main(void)
       cout<<"Enter numerator and denominator of r: "; 
       cin>>ws;  if(cin.eof()) {cout<<endl; break;}
       cin >> nu >> de; r=rational(nu,de);
-      if(plusspace)
-	{
-	  cout<<"{0,"<<r<<"} -> "<< nf.plus_modular_symbol(r)<<endl;
-	}
-      else
+      if(sign==+1)
+        cout<<"{0,"<<r<<"} -> "<< nf.plus_modular_symbol(r)<<endl;
+      if(sign==-1)
+        cout<<"{0,"<<r<<"} -> "<< nf.minus_modular_symbol(r)<<endl;
+      if(sign==0)
 	{
 	  pair<rational,rational> s = nf.full_modular_symbol(r);
 	  cout<<"{0,"<<r<<"} -> ("<< s.first << "," << s.second << ")" <<endl;
@@ -92,15 +95,15 @@ int main(void)
 	if(gcd(nu,de)==1)
 	  {
 	    r=rational(nu,de);
-	    if(plusspace)
-	      {
-		cout<<"{0,"<<r<<"} -> "<< nf.plus_modular_symbol(r)<<endl;
-	      }
-	    else
-	      {
-		pair<rational,rational> s = nf.full_modular_symbol(r);
-		cout<<"{0,"<<r<<"} -> ("<< s.first << "," << s.second << ")" <<endl;
-	      }   
+            if(sign==+1)
+              cout<<"{0,"<<r<<"} -> "<< nf.plus_modular_symbol(r)<<endl;
+            if(sign==-1)
+              cout<<"{0,"<<r<<"} -> "<< nf.minus_modular_symbol(r)<<endl;
+            if(sign==0)
+              {
+                pair<rational,rational> s = nf.full_modular_symbol(r);
+                cout<<"{0,"<<r<<"} -> ("<< s.first << "," << s.second << ")" <<endl;
+              }
 	  }
       }
 }       // end of main()

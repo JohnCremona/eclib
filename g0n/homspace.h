@@ -47,9 +47,7 @@ public:
 	               //	     1 : basic short output
 	               //            2 : lots of detail)
 	   );
-  ~homspace() 
-  { delete[] coordindex; delete[] needed; delete[] freegens; delete[] freemods;
-  }
+  ~homspace();
   long h1cuspdim() const {return dim(kern);}
   long h1dim() const {return dimension;}  // No confusion with subspace::dim
   long h1denom() const {return denom3;}

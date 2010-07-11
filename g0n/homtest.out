@@ -1,11 +1,77 @@
-Verbose? Plus space? Enter first and last levels: >>>Level 900	Dimension = 186	
->>>Level 901	Dimension = 82	
->>>Level 902	Dimension = 130	
->>>Level 903	Dimension = 120	
->>>Level 904	Dimension = 118	
->>>Level 905	Dimension = 92	denom = 2
->>>Level 906	Dimension = 156	
->>>Level 907	Dimension = 76	
->>>Level 908	Dimension = 117	
->>>Level 909	Dimension = 104	
->>>Level 910	Dimension = 176	
+Enter first and last levels: 
+>>>Level 900
+		Dimension (sign=1) = 186	
+		Dimension (sign=0) = 361	
+		Dimension (sign=-1) = 175	
+	Dimensions add up OK at level 900
+
+
+>>>Level 901
+		Dimension (sign=1) = 82	
+		Dimension (sign=0) = 161	
+		Dimension (sign=-1) = 79	
+	Dimensions add up OK at level 901
+
+
+>>>Level 902
+		Dimension (sign=1) = 130	
+		Dimension (sign=0) = 253	
+		Dimension (sign=-1) = 123	
+	Dimensions add up OK at level 902
+
+
+>>>Level 903
+		Dimension (sign=1) = 120	
+		Dimension (sign=0) = 233	
+		Dimension (sign=-1) = 113	
+	Dimensions add up OK at level 903
+
+
+>>>Level 904
+		Dimension (sign=1) = 118	
+		Dimension (sign=0) = 229	
+		Dimension (sign=-1) = 111	
+	Dimensions add up OK at level 904
+
+
+>>>Level 905
+		Dimension (sign=1) = 92	 (denom = 2)
+		Dimension (sign=0) = 181	
+		Dimension (sign=-1) = 89	
+	Dimensions add up OK at level 905
+
+
+>>>Level 906
+		Dimension (sign=1) = 156	
+		Dimension (sign=0) = 305	
+		Dimension (sign=-1) = 149	
+	Dimensions add up OK at level 906
+
+
+>>>Level 907
+		Dimension (sign=1) = 76	
+		Dimension (sign=0) = 151	
+		Dimension (sign=-1) = 75	
+	Dimensions add up OK at level 907
+
+
+>>>Level 908
+		Dimension (sign=1) = 117	
+		Dimension (sign=0) = 229	
+		Dimension (sign=-1) = 112	
+	Dimensions add up OK at level 908
+
+
+>>>Level 909
+		Dimension (sign=1) = 104	
+		Dimension (sign=0) = 205	
+		Dimension (sign=-1) = 101	
+	Dimensions add up OK at level 909
+
+
+>>>Level 910
+		Dimension (sign=1) = 176	
+		Dimension (sign=0) = 337	
+		Dimension (sign=-1) = 161	
+	Dimensions add up OK at level 910
+

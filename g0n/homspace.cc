@@ -324,10 +324,10 @@ if (verbose>1)
 	   cout << "pivots = " << pivs <<endl;
 	 }
      }
+   freegens = new int[rk]; 
+   if (!freegens) abort(string("freegens").c_str());
    if (rk>0)
    {
-     freegens = new int[rk]; 
-     if (!freegens) abort(string("freegens").c_str());
    for (i=0; i<rk; i++) freegens[i] = gens[pivs[i+1]];
    if (verbose>1)
     { cout << "freegens: ";
@@ -410,6 +410,14 @@ if (verbose>1)
         }
    }
    if (verbose) cout << "Finished constructing homspace." << endl;
+}
+
+homspace::~homspace()
+{ 
+  if (coordindex) delete[] coordindex; 
+  if (needed) delete[] needed; 
+  if (freegens) delete[] freegens; 
+  if (freemods) delete[] freemods;  
 }
 
 svec homspace::chain(const symb& s) const

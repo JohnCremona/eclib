@@ -36,6 +36,7 @@ int main(void)
  int plus=1;
  int verbose=0;
  int cuspidal=0;
+ long *dims = new long[3];
  // cout << "Verbose? "; cin >> verbose;
  // cout << "Plus space, minus space or full space (+1,-1,0)? "; cin >> plus;
  int limit; 
@@ -49,7 +50,6 @@ int main(void)
 {
   //  start_time();
   {
-    long *dims = new long[3];
     cout << "\n>>>Level " << n << "\n";
     for (plus=1; plus>-2; plus--)
       {
@@ -71,4 +71,5 @@ int main(void)
   //  show_time();
 }       // end of if(n)
 }       // end of while()
+  delete[] dims;
 }       // end of main()
