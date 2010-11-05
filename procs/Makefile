@@ -125,9 +125,9 @@ check: $(TESTS)
 	./tconic < tconic.in > t && diff t tconic.out
 	./tleg < tleg.in > t && diff t tleg.out
 	./thilbert < thilbert.in > t && diff t thilbert.out
-	./rcubic < rcubic.in > t && diff t rcubic.out
+	./rcubic < rcubic.in > t && diff t rcubic$(OBJ_SUF).out
 	./lcubic < lcubic.in > t && diff t lcubic.out
-	./tp2points < tp2points.in > t && diff t tp2points.out
+	./tp2points < tp2points.in > t && diff t tp2points$(OBJ_SUF).out
 	rm -f PRIMES t 1
 
 vectest1: vectest.cc vector$(OBJ_SUF).o arith$(OBJ_SUF).o interface$(OBJ_SUF).o
