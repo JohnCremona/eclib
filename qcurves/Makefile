@@ -133,22 +133,22 @@ shar: sources
 check:  $(TESTS) $(PROGS)
 	rm -f PRIMES t
 	./tcurve < tcurve.in > t && diff t tcurve.out 
-	./tpoints > t && diff t tpoints.out 
-	./theight < theight.in > t && diff t theight.out
-	./thtconst < tcurve.in > t && diff t thtconst.out
+	./tpoints > t && diff t tpoints$(OBJ_SUF).out 
+	./theight < theight.in > t && diff t theight$(OBJ_SUF).out
+	./thtconst < tcurve.in > t && diff t thtconst$(OBJ_SUF).out
 	./tegr < tegr.in > t && diff t tegr.out
-	./telog > t && diff t telog.out
+	./telog > t && diff t telog$(OBJ_SUF).out
 	./tdivpol > t && diff t tdivpol.out
-	./tperiods < tperiods.in > t 2>/dev/null && diff t tperiods.out
+	./tperiods < tperiods$(OBJ_SUF).in > t 2>/dev/null && diff t tperiods$(OBJ_SUF).out
 	./tsat < tsat.in > t 2>/dev/null && diff t tsat.out
 	./tsat2 < tsat2.in > t 2>/dev/null && diff t tsat2.out
-	./tsat3 < tsat2.in > t 2>/dev/null && diff t tsat3.out
+	./tsat3 < tsat2.in > t 2>/dev/null && diff t tsat3$(OBJ_SUF).out
 	./conductor < conductor.in > t 2>/dev/null && diff t conductor.out
 	./tate < tate.in > t 2>/dev/null && diff t tate.out
-	./torsion < torsion.in > t 2>/dev/null && diff t torsion.out
+	./torsion < torsion$(OBJ_SUF).in > t 2>/dev/null && diff t torsion.out
 	./twist < twist.in > t 2>/dev/null && diff t twist.out
-	./allisog < allisog.in > t 2>/dev/null && diff t allisog.out
-	./findinf < findinf.in > t 2>/dev/null && diff t findinf.out
+	./allisog < allisog$(OBJ_SUF).in > t 2>/dev/null && diff t allisog.out
+	./findinf < findinf$(OBJ_SUF).in > t 2>/dev/null && diff t findinf$(OBJ_SUF).out
 	./indep < indep.in > t 2>/dev/null && diff t indep.out
 	rm -f PRIMES t
 
