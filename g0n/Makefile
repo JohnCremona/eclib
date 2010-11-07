@@ -130,7 +130,7 @@ check:  $(TESTS) $(PROGS)
 	./oftest < oftest.in > t && diff t oftest.out
 	./nfhpcurve < nfhpcurve.in > t 2>/dev/null && diff t nfhpcurve.out
 	./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
-	./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog.out
+	./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog$(OBJ_SUF).out
 	rm -rf newforms
 	rm -f PRIMES t
 
