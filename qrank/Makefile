@@ -146,7 +146,7 @@ check: $(PROGS) $(TESTS)
 	rm -f PRIMES t
 	./tequiv < tequiv.in > t && diff t tequiv.out
 	./tred < tred.in > t 2>/dev/null && diff t tred.out
-	./ratpoint < ratpoint.in > t 2>/dev/null && diff t ratpoint.out
+	./ratpoint < ratpoint.in > t 2>/dev/null && diff t ratpoint$(OBJ_SUF).out
 	./mwrank < mwrank.in > t 2>/dev/null && diff t mwrank.out
 	rm -f PRIMES t
 
