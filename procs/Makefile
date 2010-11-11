@@ -76,7 +76,7 @@ install: sources lib
 	$(RANLIB) $(LIBDIR)/$(LIBNAME)
 	chmod a+rx $(LIBDIR)/$(LIBNAME)
 
-DISTFILES = arith.h xmod.h arith.cc marith.h marith.cc compproc.h compproc.cc conic.cc conic.h tconic.cc legendre.h legendre.cc tleg.cc interface.h templates.h timer.h timer.cc matrix.h mvector.h mat.h vec.h vector.h vector.cc vec.cc matrix.cc mat.cc mvector.cc quadratic.h quadratic.cc illl.h illl.cc mmatrix.h mmatrix.cc unimod.h hilbert.h hilbert.cc unimod.cc interface.cc gpslave.h gpslave.cc cubic.h cubic.cc sub.h sub.cc subspace.h subspace.cc parifact.h parifact.cc gf.h gf.cc polys.h polys.cc realroots.h realroots.cc
+DISTFILES = arith.h xmod.h arith.cc marith.h marith.cc compproc.h compproc.cc conic.cc conic.h tconic.cc legendre.h legendre.cc tleg.cc interface.h templates.h timer.h timer.cc matrix.h mvector.h mat.h vec.h vector.h vector.cc vec.cc matrix.cc mat.cc mvector.cc quadratic.h quadratic.cc illl.h illl.cc mmatrix.h mmatrix.cc unimod.h hilbert.h hilbert.cc unimod.cc interface.cc gpslave.h gpslave.cc cubic.h cubic.cc sub.h sub.cc subspace.h subspace.cc parifact.h parifact.cc gf.h gf.cc polys.h polys.cc realroots.h realroots.cc p2points.h p2points.cc rat.h bigrat.h
 distfiles:  $(DISTFILES)
 
 dist: distfiles
