@@ -1370,7 +1370,7 @@ char* nf_filename(long n, char c)
   else
     nf_file = string(nf_dir);
   char* filename=new char[20];
-  sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
+  sprintf(filename,"%s/%c%ld",nf_file.c_str(),c,n);
   return filename;
 }
 
