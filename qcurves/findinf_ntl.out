@@ -1,0 +1,37 @@
+Input curve [0,0,1,-7,6]
+Rank of points found is 3
+Generator 1 is [1:-1:1]; height 0.668205165651928
+Generator 2 is [-2:3:1]; height 1.36857250535393
+Generator 3 is [-14:25:8]; height 2.71735939281229
+Regulator =  0.417143558758385
+Points have been successfully saturated
+
+[[1,-1],[-2,3],[-7/4,25/8]]
+
+Input curve [0,1,1,-2,0]
+Rank of points found is 2
+Generator 1 is [0:-1:1]; height 0.327000773651605
+Generator 2 is [-1:1:1]; height 0.686667083305586
+Regulator =  0.152460177943144
+Points have been successfully saturated
+
+[[0,-1],[-1,1]]
+
+Input curve [2/5,-1/45,1/1800,-7/810000,7/60750000]
+Searching on standard minimal model [0,1,1,-2,0]
+(points found will be transferred back at end)
+Transformation: 	[u,r,s,t] = [1,-5,-6,23] with scale factor 30
+[-6:1:900] maps to [-1:1:1] on [0,1,1,-2,0], with height 0.686667083305586
+Rank of known points is 1 with regulator 0.686667083305586
+
+Rank of points found is 2
+Generator 1 is [0:-1:1]; height 0.327000773651605
+	--maps back to [-75:11:13500] on input curve
+Generator 2 is [-2:0:1]; height 0.920757782685102
+	--maps back to [-42:7:5400] on input curve
+Regulator =  0.152460177943144
+Points have been successfully saturated
+
+[[-1/180,11/13500],[-7/900,7/5400]]
+
+
