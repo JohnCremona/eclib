@@ -72,8 +72,11 @@ public:
   friend inline vector<int> dim(const smat& A) 
   {vector<int>d; d.push_back(A.nro);d.push_back(A.nco);return d;}
   friend vector<std::set<int> > row_supports(const smat& A);
+  friend vec operator*  (smat& m, const vec& v);
   friend svec operator* ( const smat& A, const svec& v );
-  friend svec operator* ( const smat& A, const vec& v ) {return A*svec(v);}
+  friend svec operator* ( const svec& v, const smat& A );
+  friend svec mult_mod_p( const smat& A, const svec& v, const scalar& p  );
+  friend svec mult_mod_p( const svec& v, const smat& A, const scalar& p  );
   friend smat operator* ( const smat& A, const smat& B );
   friend smat mult_mod_p ( const smat& A, const smat& B, const scalar& p );
   friend smat transpose(const smat&);

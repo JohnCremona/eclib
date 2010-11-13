@@ -41,15 +41,13 @@ public:
 public:
   // Constructor (does all the work):
   homspace(long n, // the level
-	   int hp, // plus-space flag (0 or 1)
+	   int hp, // plus-space flag (0 or 1 or -1)
 	   int hcusp, // cuspidal flag (0 or 1)
 	   int verbose // verbosity (0 : no output
 	               //	     1 : basic short output
 	               //            2 : lots of detail)
 	   );
-  ~homspace() 
-  { delete[] coordindex; delete[] needed; delete[] freegens; delete[] freemods;
-  }
+  ~homspace();
   long h1cuspdim() const {return dim(kern);}
   long h1dim() const {return dimension;}  // No confusion with subspace::dim
   long h1denom() const {return denom3;}
@@ -208,12 +206,3 @@ inline ostream& operator<< (ostream& s, const mat22& m)
    m.show(s);
    return s;
 }  
-
-// The following should be moved to ../procs
-
-// sparse matrix * sparse vector multiplication:
-svec operator*(smat& m, const svec& v);
-// sparse matrix * nonsparse vector multiplication:
-vec operator*(smat& m, const vec& v);
-// construction of a 1-dimensional sparse subspace from a vector:
-ssubspace make1d(const vec& bas, long&piv);

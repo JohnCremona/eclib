@@ -134,3 +134,6 @@ private:
 ssubspace kernel(const smat& m);
 ssubspace eigenspace(const smat& m, scalar lambda);
 ssubspace subeigenspace(const smat& m, scalar l, const ssubspace& s);
+
+// construction of a 1-dimensional sparse subspace from a vector:
+ssubspace make1d(const vec& bas, long&piv);

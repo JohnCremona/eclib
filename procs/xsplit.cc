@@ -188,7 +188,8 @@ void form_finder::go_down(long eig, int last)
   ssubspace s(0);
   make_submat();
 
-  if(verbose>1) cout<<"Using sparse elimination (density ="
+  if(verbose>1) cout<<"Using sparse elimination (size = "
+                    <<dim(submats[depth])<<", density ="
 		    <<density(submats[depth])<<")..."<<flush;
   if(verbose>3) cout<<"submat = "<<submats[depth]<<flush;
 

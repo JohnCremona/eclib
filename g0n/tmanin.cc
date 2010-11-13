@@ -39,7 +39,7 @@ int main(void)
  init_time();
  start_time();
  long n=110, stopp; 
- int output, verbose;
+ int output, verbose, sign=1, cuspidal=0;
 
  cout << "Program tmanin.  Using METHOD = " << METHOD << " to find newforms" << endl;
 #ifdef MODULAR
@@ -50,6 +50,7 @@ int main(void)
  cin  >> stopp; cout << endl;
  output=1; 
  cout << "Output Hecke eigenvalues to file? (0/1) ";  cin >> output;
+ cout << "Sign? (-1/0/1) ";  cin >> sign;
 #ifdef AUTOLOOP
  long limit;
  cout<<"Enter first and last N: ";cin>>n>>limit; n--;
@@ -61,8 +62,7 @@ int main(void)
 {
   cout << "\n>>>Level " << n;
   if(verbose)cout<<endl; else cout<< ":\t";
-  int plus=1, cuspidal=0;
-  newforms nf(n,plus,cuspidal,verbose); 
+  newforms nf(n,sign,cuspidal,verbose); 
   int noldap=25;
   nf.createfromscratch(noldap);
   if(verbose>1) nf.display();

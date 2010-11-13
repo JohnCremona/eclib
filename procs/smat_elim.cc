@@ -415,7 +415,8 @@ void smat_elim::step4new ( )
   // per row, I found that the final elimination stage did not take
   // any longer.
 
-  while((nhcol<nco)&&(!step4finished())) {
+  int nco8=nco; //nco>>3;
+  while((nhcol<nco8)&&(!step4finished())) {
 
 #ifdef TRACE_ELIM
     //  cout<<"Using "<<nhcol<<" heavy columns..."<<flush;
@@ -501,13 +502,16 @@ void smat_elim::step5 ( )
 	{
 	  // find row of least weight in this col:
 	  ci = column[col].begin();
-	  row = *ci; wt=rows[row].size();
+	  row = *ci; 
+          /*
+          wt=rows[row].size();
 	  for(; (wt>1)&&(ci!=column[col].end()); ci++)
 	    if(rows[*ci].size() < wt) 
 	      {
 		row = *ci; wt=rows[*ci].size();
 	      }
 	  //	  cout<<wt<<")"<<flush;
+          */
 	  clear_col( row, col );
 	  eliminate( row, col );
 	}
@@ -1013,4 +1017,19 @@ ssubspace subeigenspace(const smat& m1, scalar l, const ssubspace& s)
 {
   return combine(s,eigenspace(restrict(m1,s), l));
 }
+
+ssubspace make1d(const vec& bas, long&piv) 
+// make a 1-D ssubspace with basis bas
+{
+  smat tbasis(1,dim(bas));
+  svec sbas(bas);
+  tbasis.setrow(1,sbas);
+  vec pivs(1); // initialised to 0
+  pivs[1]=sbas.first_index();
+  piv=sbas.elem(pivs[1]);
+  return ssubspace(transpose(tbasis),pivs);
+}
+
+
+
 #undef TRACE_ELIM
