@@ -76,8 +76,9 @@ inline int trust_denom(long d) { return (d<251);}
 
 int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat&y0)
 {
-  int have_both=0, have_ip=0;
+  int have_both=0;
   int have_rp = get_real_period(i,x0,verbose);
+  int have_ip = 0;
   rp_known = have_rp;
   // have_rp is set if we know a real period; rp_known is set if we
   // know that it is the real period (strictly, the least real part of
@@ -195,6 +196,26 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
   }
   if(!have_both) {a=d=1; b=c=0; dotplus=dotminus=0;}
   return have_both;
+}
+
+// Given a newform (the i'th in newforms) at level n ,with known data
+// including a matrix [a0,b0;Nc0,d0] whose integral is
+// dotplus*x0+dotminus*y0*i (where x0 and y0 are real and imaginary
+// periods).  Computes both x0 and y0.  rp_known, ip_known are success
+// flags.
+
+int newforms::get_both_periods(long i, bigfloat&x0, bigfloat&y0)
+{
+  if(nflist[i].a==0)
+    {
+      //      cout<<"Cannot compute get_periods(): matrix not known."<<<endl;
+      return 0;
+    }
+  periods_direct integrator(this,&(nflist[i]));
+  integrator.compute(nflist[i].a,nflist[i].b,nflist[i].c,nflist[i].d);
+  x0 = abs(integrator.rper()) / to_bigfloat(nflist[i].dotplus);
+  y0 = abs(integrator.iper()) / to_bigfloat(nflist[i].dotminus);
+  return 1;
 }
 
 int get_curve(long n, long fac, long maxnx, long maxny,

@@ -26,12 +26,14 @@ class cusplist {
     const moddata* N;
     rational *list;
     long number,maxnumber;
-    int cuspeq(const rational& c1, const rational& c2) const;
+  int cuspeq(const rational& c1, const rational& c2, int plusflag=0) const;
  public:
     cusplist(long n=0, const moddata* iN=0) :N(iN), number(0), maxnumber(n)
       { list=new rational[n];}
     ~cusplist() {delete[] list;}
     long index(const rational& a);
+    long index_1(const rational& a);
+    long index_2(const rational& a);
     rational item(long n) const {return list[n];}  //should check n really
     void display() const 
       {for(long i=0; i<number; i++) cout<<i<<"\t"<<list[i]<<endl;}

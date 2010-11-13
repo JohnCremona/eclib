@@ -34,7 +34,9 @@ void smat_elim::init_elim( )
 {
 #ifdef TRACE_ELIM
   cout<<"smat_elim::init()"<<endl; //cout<<" smat =\n"<<(smat)(*this)<<endl;
+  cout << "BIGPRIME = "<<BIGPRIME<<endl;
 #endif
+  half = invmod0(2);
   reduce_mod_p();
   rank = 0;
   position = vector<int>(nro+1,-1);  // row numbers start at 1
@@ -84,32 +86,35 @@ void smat_elim::echelon_form( )
   cout<<"Starting steps 1-2-3..."<<flush;
 #endif
   int prog=nrows_left+ncols_left+1, pass=0;
-  while(nrows_left+ncols_left<prog)
+  while((nrows_left+ncols_left<prog) && (active_entry_count()>0))
     {
       prog=nrows_left+ncols_left;
       pass++;
 #ifdef TRACE_ELIM
       cout<<"Pass "<<pass<<endl;
 #endif
-  for(int fc=1; fc<=2; fc++)
+      for(int fc=1; (fc<=2)&&(active_entry_count()>0); fc++)
     {
+      elim_light_cols();
+#ifdef TRACE_ELIM
+      // cout << "after elim_light_cols()" << endl; 
+      // cout << "# of rows eliminated so far: " << get_rank( ) << endl;
+      // if( flag ) cout << " matrix: " << (*this) << endl;
+      // if(flag>1) cout << " = " << this->as_mat();
+      // if( flag2 ) cout<<"("<<get_population( *this )<<" entries)"<<endl;
+      // show_progress();
+#endif
+      if (active_entry_count()==0) {  ech_form=1; return;}
       elim_light_rows(fc);
 #ifdef TRACE_ELIM
-      cout << "after elim_light_rows("<<fc<<")" << endl; 
-      cout << "# of rows eliminated so far: " << get_rank( ) << endl;
-      if( flag ) cout << " matrix: " << (*this) << endl;
-      if(flag>1) cout << " = " << this->as_mat();
-      if( flag2 ) cout<<"("<<get_population( *this )<<" entries)"<<endl;
+      // cout << "after elim_light_rows("<<fc<<")" << endl; 
+      // cout << "# of rows eliminated so far: " << get_rank( ) << endl;
+      // if( flag ) cout << " matrix: " << (*this) << endl;
+      // if(flag>1) cout << " = " << this->as_mat();
+      // if( flag2 ) cout<<"("<<get_population( *this )<<" entries)"<<endl;
+      // show_progress();
 #endif
-      //if(fc==1)    
-  elim_light_cols(fc);
-#ifdef TRACE_ELIM
-      cout << "after elim_light_cols("<<fc<<")" << endl; 
-      cout << "# of rows eliminated so far: " << get_rank( ) << endl;
-      if( flag ) cout << " matrix: " << (*this) << endl;
-      if(flag>1) cout << " = " << this->as_mat();
-      if( flag2 ) cout<<"("<<get_population( *this )<<" entries)"<<endl;
-#endif
+      if (active_entry_count()==0) {  ech_form=1; return;}
     }
     }
 #ifdef TRACE_ELIM
@@ -122,6 +127,10 @@ void smat_elim::echelon_form( )
   density = (double)pop/(nco*nro);
   cout<<"Rank so far = "<<rank<<"; "
       <<pop<<" entries (density = "<<density<<")\n";
+  show_progress();
+#endif
+  if (active_entry_count()==0) {  ech_form=1; return;}
+#ifdef TRACE_ELIM
   cout<<"Starting (new) step 4..."<<flush;
   //cout<<"Starting (old) step 4..."<<flush;
   starttime=clock();
@@ -138,6 +147,10 @@ void smat_elim::echelon_form( )
   density = (double)pop/(nco*nro);
   cout<<"Rank so far = "<<rank<<"; "
       <<pop<<" entries (density = "<<density<<")\n";
+  show_progress();
+#endif
+  if (active_entry_count()==0) {  ech_form=1; return;}
+#ifdef TRACE_ELIM
   cout<<"Starting step 5 (all remaining elimination)..."<<flush;
   starttime=clock();
 #endif
@@ -154,6 +167,7 @@ void smat_elim::echelon_form( )
   density = (double)pop/(nco*nro);
   cout<<"Rank so far = "<<rank<<"; "
       <<pop<<" entries (density = "<<density<<")\n";
+  show_progress();
 #endif
   ech_form=1;
 }
@@ -179,6 +193,7 @@ void smat_elim::reduced_echelon_form( )
   double density = (double)pop/(nco*nro);
   cout<<"Rank so far = "<<rank<<"; "
       <<pop<<" entries (density = "<<density<<")\n";
+  show_progress();
 #endif
   red_ech_form=1;
 }
@@ -195,7 +210,7 @@ void smat_elim::eliminate( int& row, int& col ) //1<=col<=nco;
 {
   rank++;
 #ifdef TRACE_ELIM
-  //  cout<<"Eliminating (row,col) = ("<<row<<","<<col<<"); rank now "<<rank<<endl;
+  cout<<"Eliminating (row,col) = ("<<row<<","<<col<<"); rank now "<<rank<<endl;
 #else
   //  cout<<"."<<flush;
 #endif
@@ -260,13 +275,27 @@ void smat_elim::elim_light_cols(int fc)
 
   // Find the cols with at most fc entries:
 
+#ifdef TRACE_ELIM
+    cout<<"elim_light_cols("<<fc<<"): light cols are "<<endl;
+#endif
   //  light_cols.clear();  
-  for( col = 1; col <= nco; col++ )
+  // for( col = 1; col <= nco; col++ )
+  for( col = nco; col >=1; col-- )
     {
       wt=column[col].size();
-      if((  wt>0 ) && ( wt <= fc ) ) light_cols.push(col);
+      if((  wt>0 ) && ( wt <= fc ) ) 
+	{
+	  light_cols.push(col);
+#ifdef TRACE_ELIM
+	  	  cout<<col<<" ";
+#endif
+	}
     }
+#ifdef TRACE_ELIM
+    cout<<endl;
+#endif
     
+
   // Loop through these (but we may add to the list as we go along):
   
   std::set<int>::const_iterator ri;
@@ -274,13 +303,134 @@ void smat_elim::elim_light_cols(int fc)
     {
       col=light_cols.front(); light_cols.pop();
       if(column[col].size() ==0 ) continue;
+#ifdef TRACE_ELIM
+  // cout<<"Column weights: ";
+  // for(int jcol = 1; jcol <= nco; jcol++ )    
+  //     cout<<column[jcol].size()<<" ";
+  // cout<<endl;
+      cout<<"working on column "<<col<<" of weight "<<column[col].size()<<endl;
+#endif
       row = *(column[col].begin());
+      scalar piv = rows[row].elem(col);
       wt=rows[row].size();
       for((ri=column[col].begin())++; ri!=column[col].end(); ri++)
 	if(rows[*ri].size()<wt) 
 	  wt=rows[row=*ri].size();
+#ifdef TRACE_ELIM
+      //      cout<<"clearing/eliminating (row,col) = ("<<row<<","<<col<<")"<<endl;
+#endif
       clear_col( row, col, 0, fc );
       eliminate( row, col );
+#ifdef TRACE_ELIM
+      //            show_progress();
+#endif
+    }
+}
+
+// eliminate (row,col) for columns of weight <= 2
+void smat_elim::elim_light_cols()
+{
+  if(finished()) 
+    {
+#ifdef TRACE_ELIM
+      cout<<"elim_light_cols() quitting, already finished"<<endl;
+#endif
+      return;
+    }
+  int wt, wt2, row, col, row_wt;
+
+  // Find the cols with at most 2 entries:
+  //  light_cols_2.clear();
+#ifdef TRACE_ELIM
+  cout<<"light_cols_1 starts with size "<<light_cols_1.size()<<endl;
+  cout<<"light_cols_2 starts with size "<<light_cols_2.size()<<endl;
+  //  cout<<"elim_light_cols(): light cols are "<<endl;
+#endif
+  //for( col = 1; col <= nco; col++ )
+  for( col = nco; col >=1; col-- )
+    {
+      wt=column[col].size();
+      if(wt==1)
+	{
+	  light_cols_1.push(col);
+#ifdef TRACE_ELIM
+	  //	  cout<<col<<"(1) ";
+#endif
+	}
+      if(wt==2)
+	{
+	  light_cols_2.push(col);
+	  //	  light_cols_2.push_back(col);
+	  ///	  light_cols_2.insert(light_cols_2.begin(),col);
+	  // row_wt = rows[*(column[col].begin())].size() + rows[*(column[col].begin()++)].size();
+	  // light_cols_2.insert(light_cols_2.begin(),pair<int,int>(row_wt,col));
+#ifdef TRACE_ELIM
+	  //	  cout<<col<<"(2) ";
+#endif
+	}
+    }
+#ifdef TRACE_ELIM
+  //  cout<<endl;
+#endif
+    
+#ifdef TRACE_ELIM
+  cout<<"light_cols_1 has size "<<light_cols_1.size()<<endl;
+  cout<<"light_cols_2 has size "<<light_cols_2.size()<<endl;
+#endif
+
+  // Loop through these (but we may add to the list as we go along):
+  
+  std::set<int>::const_iterator ri;
+  while(!light_cols_1.empty() || !light_cols_2.empty())
+    {
+      if(!light_cols_1.empty())
+	{
+	  col=light_cols_1.front(); light_cols_1.pop();
+	}
+      else
+	{
+	  //	  col=light_cols_2.begin()->second; 
+	  col=light_cols_2.front(); 
+	  //	  cout << "About to use col "<<col<<" of weight "<<column[col].size()<<", size of light_cols_2 was "<<light_cols_2.size();
+	  //	  light_cols_2.erase(light_cols_2.begin());
+	  light_cols_2.pop();
+	  //	  cout << ", is now "<<light_cols_2.size()<<endl;
+	}
+      if(column[col].size() ==0 ) continue;
+#ifdef TRACE_ELIM
+  // cout<<"Column weights: ";
+  // for(int jcol = 1; jcol <= nco; jcol++ )    
+  //     cout<<column[jcol].size()<<" ";
+  // cout<<endl;
+      cout<<"working on column "<<col<<" with weight "<<column[col].size()<<", row wts ";
+#endif
+      row = *(column[col].begin());
+      wt=rows[row].size();
+#ifdef TRACE_ELIM
+      cout<<wt<<" ";
+#endif
+      for((ri=column[col].begin())++; ri!=column[col].end(); ri++)
+	{
+	  wt2 = rows[*ri].size();
+#ifdef TRACE_ELIM
+	  cout<<wt2<<" ";
+#endif
+	  if(wt2<wt) 
+	    {
+	      wt=wt2; row=*ri;
+	    }
+	}
+#ifdef TRACE_ELIM
+      //      cout<<"clearing/eliminating (row,col) = ("<<row<<","<<col<<")"<<endl;
+#endif
+#ifdef TRACE_ELIM
+      cout<<endl;
+#endif
+      clear_col( row, col, 0, -99 );
+      eliminate( row, col );
+#ifdef TRACE_ELIM
+      //            show_progress();
+#endif
     }
 }
 
@@ -503,15 +653,14 @@ void smat_elim::step5 ( )
 	  // find row of least weight in this col:
 	  ci = column[col].begin();
 	  row = *ci; 
-          /*
           wt=rows[row].size();
+
 	  for(; (wt>1)&&(ci!=column[col].end()); ci++)
 	    if(rows[*ci].size() < wt) 
 	      {
 		row = *ci; wt=rows[*ci].size();
 	      }
-	  //	  cout<<wt<<")"<<flush;
-          */
+
 	  clear_col( row, col );
 	  eliminate( row, col );
 	}
@@ -591,13 +740,14 @@ void smat_elim::step6 ( )
 // M (weight threshold, default 0): this is a "light" col with at most
 // M entries; these are indicated by flag array light_cols (global to
 // class), which should be updated if necessary
-
+//#define TRACE_ELIM
 void 
 smat_elim::clear_col( int row, int col, int fr, int fc, int M, int frl, int fcl)
 {
 #ifdef TRACE_ELIM
-  //  cout<<"Entering clear_col ("<<row<<","<<col<<") "<<endl;
-  //  cout<<"column[col] = "<<column[col]<<endl;
+  cout<<"Entering clear_col ("<<row<<","<<col<<") "<<endl;
+  cout<<"column[col] = "<<column[col]<<endl;
+  cout<<"rows[row] = "<<rows[row]<<endl;
 #endif
   map<int,scalar>::const_iterator ri;
   // for each changed row, these sets contain column #s added/deleted
@@ -617,24 +767,51 @@ smat_elim::clear_col( int row, int col, int fr, int fc, int M, int frl, int fcl)
     }
   if(s!=1)
     {
-      s = invmod0(s);
-      rows[row].mult_by_scalar_mod_p(s);
+      if(s==-1)
+	{
+	  rows[row] = -rows[row];
+	}
+      else
+	if(s==2)
+	  {
+	    rows[row].mult_by_scalar_mod_p(half);
+	  }
+	else
+	  if(s==-2)
+	    {
+	      rows[row].mult_by_scalar_mod_p(-half);
+	    }
+	  else
+	    {
+#ifdef TRACE_ELIM
+	      //	      cout<<"inverting pivot "<<s<<endl;
+#endif
+	      s = invmod0(s);
+	      rows[row].mult_by_scalar_mod_p(s);
+	    }
     }
+    
 
   // eliminate col from other rows cutting col 
   for( coli=column[col].begin(); coli!=column[col].end(); coli++ ) 
     {
       row2 = *coli;
       if( row2 == row ) continue;
+#ifdef TRACE_ELIM
+      cout<<"(before) rows[row2] = "<<rows[row2]<<endl;
+#endif
       cols_in.clear();
       cols_out.clear();
-      //      cout<<rows[row2]<<endl;
       rows[row2].add_scalar_times_mod_p(rows[row], -rows[row2].elem(col), 
 					cols_in, cols_out);
-      //      cout<<rows[row2]<<endl;
       // update column lists for OTHER columns (this col will be
       // cleared anyway, and deleting the current entry will
       // invalidate the iterator coli)
+#ifdef TRACE_ELIM
+      cout<<"(after)  rows[row2] = "<<rows[row2]<<endl;
+      cout<<"cols_in  = "<<cols_in<<endl;
+      cout<<"cols_out = "<<cols_out<<endl;
+#endif
       for( ci=cols_in.begin(); ci!=cols_in.end(); ci++ ) 
 	{if((*ci)!=col) {column[*ci].insert(row2);}}
       for( ci=cols_out.begin(); ci!=cols_out.end(); ci++ ) 
@@ -642,7 +819,6 @@ smat_elim::clear_col( int row, int col, int fr, int fc, int M, int frl, int fcl)
 	  {
 	    column[*ci].erase(row2); 
 	    if(column[*ci].size()==0) {ncols_left--;}
-
 	  }
 	}
 
@@ -662,29 +838,70 @@ smat_elim::clear_col( int row, int col, int fr, int fc, int M, int frl, int fcl)
   
   // update column lists for the cols in this row
   //  cout<<"updating column lists for cols in row "<<row<<endl;
+  multimap<int,int>::iterator cols;
   for( ri=rows[row].begin(); ri!=rows[row].end(); ri++ ) 
     {
       col2 = ri->first; 
-      if(col2!=col) column[col2].erase(row);
-      if(column[col2].size()==0) {ncols_left--;}
+      if (col2==col) continue;
+      column[col2].erase(row);
+      wt = column[col2].size();
+      if(wt==0) {ncols_left--;}
 
-      if( fc ) // add column# col2 to list if its weight is <=fc
+      if(fc>0)
 	{
-	  wt = column[col2].size();
-	  if( 0<wt && wt <= fc ) light_cols.push(col2);
+	  if((0<wt)&&(wt<=fc)) // add column# col2 to list if its weight is <=fc
+	    light_cols.push(col2);
 	}        
-#if(0)
-      if( M ) // set flag of column# col2 if its weight is <=M
+      else if( fc==-99 ) // special processing of light_cols_1/2
 	{
-	  wt = column[col2].size();
-	  light_col_flag[col2] = ( (0<wt) && (wt<=M) );  // 0 or 1
-	}
-#endif
-    }
+//	  cout<<"column["<<col2<<"] = "<<column[col2]<<", wt="<<wt<<endl;
+	  int add_to_1=0, add_to_2=0, erase_from_2=0;
+	  if (cols_in.find(col2) == cols_in.end())
+	    {
+	      if (cols_out.find(col2) == cols_out.end())
+		{
+		  // This col was on both row and row2, is still in row2,
+		  // and the new weight is 1 less than it was
+		  erase_from_2 = add_to_1 = (wt==1);
+		  add_to_2=(wt==2);
+		}
+	      else
+		{
+		  erase_from_2 = (wt==0);
+		  add_to_1 = (wt==1);
+		  add_to_2 = (wt==2);
+		}  
+	    }
+
+	  if(erase_from_2)
+	    {	     
 #ifdef TRACE_ELIM
-  //  if(fc) cout<<"light_cols now = "<<light_cols<<endl;
-  //  if(M) cout<<"light_col_flag now = "<<light_col_flag<<endl;
+		  cout<<"Removing col "<<col2<<" of weight "<<wt<<" from light_cols_2"<<endl;
 #endif
+		  //light_cols_2.erase(col2); 
+		  // for (cols=light_cols_2.begin(); cols!=light_cols_2.end(); cols++)
+		  //   if (cols->second == col2) 
+		  //     {
+		  // 	light_cols_2.erase(cols); 
+		  // 	break;
+		  //     }
+	    }
+	  if(add_to_2)
+	    {
+#ifdef TRACE_ELIM
+	      cout<<"Adding col "<<col2<<" of weight "<<wt<<" to light_cols_2"<<endl;
+#endif
+	      light_cols_2.push(col2);	      
+	      // int row_wt = rows[*(column[col2].begin())].size() 
+	      // 	+ rows[*(column[col2].begin()++)].size();
+	      // light_cols_2.insert(light_cols_2.begin(),pair<int,int>(row_wt,col2));
+	    }
+	  if(add_to_1)
+	    {
+	      light_cols_1.push(col2);	      
+	    }
+	}
+    }
 }
 
 // compute the number of "light"  columns intersecting row# row
@@ -768,7 +985,15 @@ smat smat_elim::oldkernel( vec& pc, vec& npc)
   long starttime,stoptime;
 #endif
   echelon_form();
+#ifdef TRACE_ELIM
+  cout<<"...finished echelon_form()..."<<flush;
+  cout<<"Starting reduced_echelon_form()..."<<flush;
+#endif
   reduced_echelon_form();
+#ifdef TRACE_ELIM
+  cout<<"...finished reduced_echelon_form()..."<<flush;
+  cout<<"Starting reduce_mod_p()..."<<flush;
+#endif
   reduce_mod_p();
 #ifdef TRACE_ELIM
   cout<<"finished echelon_form()"<<endl;
@@ -852,6 +1077,7 @@ smat smat_elim::oldkernel( vec& pc, vec& npc)
   return kerbasis;
 }
 
+//#define TRACE_ELIM
 // This version works on an echelon form which is *not* necessarily in
 // reduced echelon form (avoiding the need for the back-substitution
 // step6()) 
@@ -860,13 +1086,17 @@ smat smat_elim::kernel( vec& pc, vec& npc)
   int i,j,k,l,ny;
   scalar a;
 #ifdef TRACE_ELIM
-  cout<<"Starting echelon_form()..."<<flush;
+  cout<<"In kernel, starting echelon_form()..."<<flush;
   long starttime,stoptime;
 #endif
   echelon_form();
+#ifdef TRACE_ELIM
+  cout<<"...finished echelon_form()..."<<flush;
+  cout<<"Starting reduce_mod_p()..."<<flush;
+#endif
   reduce_mod_p();
 #ifdef TRACE_ELIM
-  cout<<"finished echelon_form()"<<endl;
+  cout<<"finished reduce_mod_p()"<<endl;
   //  cout<<"Now A = \n"<<(*this)<<endl;
   //  cout<<"After elimination, A = \n"<<(this->as_mat())<<endl;
   //  cout<<"Checking echelon form: "<<check_echelon()<<endl;
@@ -882,7 +1112,7 @@ smat smat_elim::kernel( vec& pc, vec& npc)
   npc.init( nullity );
   vector<int> ind(nco+1,0);
 #ifdef TRACE_ELIM
-  //  cout<<"Setting up pc and npc..."<<flush;
+  cout<<"Setting up pc and npc..."<<flush;
 #endif
   ny = 0;
   k = 0;

@@ -47,9 +47,9 @@ int main(void)
 #endif
  if (n>0)
 {
- newforms nf(n,1,0,0);
+ newforms nf(n,0);
  int noldap=25;
- nf.createfromdata(noldap,0); // do not create from scratch if data absent
+ nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
  for(int i=0; i<nf.n1ds; i++)
    {
      codeletter(i,code);

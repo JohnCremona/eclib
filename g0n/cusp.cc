@@ -25,23 +25,63 @@
 #include "symb.h"
 #include "cusp.h"
 
-int cusplist::cuspeq(const rational& c1, const rational& c2) const
+// This function tests cusps for Gamma_0(N)-equivalence, unless
+// plusflag is +1 in which case it tests for equivalence under
+// <Gamma_0(N),-I>
+
+int cusplist::cuspeq(const rational& c1, const rational& c2, int plusflag) const
 {
-//cout<<"Testing equivalence of cusps "<<c1<<" and "<<c2<<endl;
-   long p1 = num(c1), p2 = num(c2), q1 = den(c1), q2 = den(c2);
-   long s1,r1,s2,r2;
-   bezout(p1,q1,s1,r1);  s1*=q2;
-   bezout(p2,q2,s2,r2);  s2*=q1;
-   long q3 = N->gcd(q1*q2);
-   int ans = ((s1-s2)%q3==0) || (N->plusflag && ((s1+s2)%q3==0));
-//cout<<"Returning "<<ans<<endl;   
-   return ans;
+  //  cout<<"Testing equivalence of cusps "<<c1<<" and "<<c2<<endl;
+  if (c1==c2) return 1;
+  long p1 = num(c1), p2 = num(c2), q1 = den(c1), q2 = den(c2);
+  if ((N->gcd(q1))!=(N->gcd(q2))) return 0;
+  long s1,r1,s2,r2;
+  bezout(p1,q1,s1,r1);  s1*=q2;
+  bezout(p2,q2,s2,r2);  s2*=q1;
+  long q3 = N->gcd(q1*q2);
+  int ans = ((s1-s2)%q3==0);       // 1 iff [c1]=[c2]
+  //  cout << "ans = "<<ans<<endl;
+  if (ans || (plusflag!=+1)) return ans;
+  ans = ((s1+s2)%q3==0);         // 1 iff [c1]=[-c2]  
+  //  cout << "ans = "<<ans<<endl;
+  return ans;
 }
  
 long cusplist::index(const rational& c)
-{  // adds c to list if not there already, and return index
-   long ans=-1;
-   for (long i=0; (i<number) && (ans<0); i++) if (cuspeq(c,list[i]))  ans=i;
-   if (ans==-1) {list[number]=c; ans=number; number++;}
-   return ans;
+{  // adds c to list if not there already, and return index (offset by 1)
+   for (long i=0; i<number; i++) 
+     if (cuspeq(c,list[i], N->plusflag)) 
+       return (i+1);  // note offset
+   list[number]=c; 
+   number++;
+   //   cout<<"Adding c="<<c<<" as cusp number "<<number<<endl;
+   return number;
+}
+
+long cusplist::index_1(const rational& c)
+{ // adds c to list if not there already, and return index (offset by 1)
+  // For use with minus space; only one of [c],[-c] is stored and the
+  // index returned is negative if [-c] is the one listed and 0 if
+  // [c]=[-c] (which are not listed)
+  if (cuspeq(c,-c,0)) {return 0;}
+  for (long i=0; i<number; i++) 
+    {
+      if (cuspeq(c,list[i], 0)) return (i+1);  // note offset
+      if (cuspeq(-c,list[i], 0)) return -(i+1);
+    }
+  list[number]=c; 
+  number++;
+  return number;
+}
+
+long cusplist::index_2(const rational& c)
+{ // adds c to list if not there already, and return index (offset by 1)
+  // For use with minus space; only store [c] if [c]=[-c]
+  if (!cuspeq(c,-c,0)) {return 0;}
+   for (long i=0; i<number; i++) 
+     if (cuspeq(c,list[i], 0)) 
+       return (i+1);  // note offset
+   list[number]=c; 
+   number++;
+   return number;
 }

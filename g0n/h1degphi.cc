@@ -65,7 +65,7 @@ cin>>n>>limit;
  while (cout<<"Enter level: ", cin>>n, n>0) {
    cout<<endl;  
 #endif
- newforms nf(n,0,0,1);
+ newforms nf(n,1);
  for(int xi=0; xi<nf.n1ds; xi++)
    { int i = xi;
 #ifdef BOOKORDER

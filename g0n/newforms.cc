@@ -158,7 +158,7 @@ newform::newform(const vector<int>& data, const vector<long>& aq, const vector<l
   aqlist=aq;
   aplist=ap;
   index=-1;
-  pdot=qdot=0;
+  pdot=0;
 }
 
 // Newform constructor, given the homology basis vector(s) and
@@ -168,32 +168,98 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
    :nf(nfs), sign(nfs->sign), bplus(vplus),bminus(vminus),aplist(ap),index(ind) 
 {
   int verbose=(nf->verbose);
+  long n = nf->modulus;
+  
   if(verbose) 
     {
       cout<<"Creating H1"; 
       if(sign==+1) cout<<"+"; 
       if(sign==-1) cout<<"-"; 
       cout<<" newform from aplist..."<<endl;
+      if(verbose>1)
+        {
+          if(sign!=-1) cout<<"bplus = "<<bplus<<endl;
+          if(sign!=+1) cout<<"bminus = "<<bminus<<endl;
+        }
     }
-  // Some default/unset values:
-  a=d=1;b=c=0; dotplus=dotminus=1;
-  degphi=type=qdot=0; // flags that these has not yet been set
-  lminus = mminus = 0;
-  lplus = mplus = 0;
   
-  long n = nf->modulus;
-  long denom = nf->h1->h1denom();
-  
+  // check_expand_contract();
+
   // Fixing the eigenvalue lists: ap is indexed by primes in natural
   // order we need to extract aq (computing any not yet there).
   
-  // At the same time we change the enties in aplist for bad primes q
+  // At the same time we change the entries in aplist for bad primes q
   // from the Wq-eigenvalue to the newform coefficient.
+  fixup_eigs();
+
+  // Compute cuspidalfactors and type (only if sign=0):
+
+  type = 0;
+  find_cuspidal_factors();
+
+  // Compute projected coordsplus/minus and denomplus/minus
+
+  find_coords_plus_minus();
   
+  // Compute pdot, dp0, loverp (unless sign is -1)
+
+  find_bsd_ratio();
+  
+  // Find deg(phi) (only if sign is 0)
+  degphi = 0;
+  find_degphi();
+
+  // Find twisting primes if N non-square
+
+  lplus=mplus=0;
+  lminus=mminus=0;
+  find_twisting_primes();
+
+  // find a,b,c,d,dotplus,dotminus
+
+  a=b=c=d=0;
+  dotplus=dotminus=0;
+  find_matrix();
+}
+
+int newform::check_expand_contract()
+{
+  int success=1;
+  long denom = nf->h1->h1denom();
+  vec bplusx, bminusx, tvec;
+  if (sign!=-1) 
+    {
+      bplusx= nf->h1->extend_coords(bplus);
+      tvec = nf->h1->contract_coords(bplusx);
+      tvec /= denom;
+      if (tvec!=bplus)
+	{
+	  success=0;
+	  cout<<"! bplus ="<<bplus<<" extends to "<<bplusx<<" which contracts to "<<tvec<<endl;
+	}
+    }
+  if (sign!=+1) 
+    {
+      bminusx= nf->h1->extend_coords(bminus);
+      tvec = nf->h1->contract_coords(bminusx);
+      tvec /= denom;
+      if (tvec!=bminus)
+	{
+	  success=0;
+	  cout<<"! bminus="<<bminus<<"  extends to "<<bminusx<<" which contracts to "<<tvec<<endl;
+	}
+    }
+  return success;
+}
+
+void newform::fixup_eigs()
+{ 
+  long denom = nf->h1->h1denom();
   aqlist.resize(nf->npdivs);
   vector<long>::iterator api=aplist.begin(), pi=nf->plist.begin();
   vector<long>::iterator aqi=aqlist.begin();
   primevar pr;   long q, i, j;
+  long n = nf->modulus;
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
       q=pr.value(); pr++;
@@ -217,94 +283,35 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
       while(aqi!=aqlist.end()) // compute missing aq
 	{
 	  q=*pi++;
-	  if(verbose) cout<<"Computing Wq for q="<<q<<"..."<<flush;
+	  if(nf->verbose) cout<<"Computing Wq for q="<<q<<"..."<<flush;
 	  smat Wq = nf->h1->s_heckeop_restricted(q,espace,1,0);
 	  long aq = Wq.elem(1,1) / piv;
-	  if(verbose) cout<<"aq ="<<aq<<endl;
+	  if(nf->verbose) cout<<"aq ="<<aq<<endl;
 	  *aqi++=aq;
 	}
     }
-  if(verbose) cout<<"aqlist = "<<aqlist<<endl;
-
-  // get ap for p=p0:
-
-  pr.init(); api=aplist.begin();
-  while(pr.value()!=nf->p0) {pr++; api++;}
-  ap0=*api;
-  np0 = 1 + (nf->p0) - ap0;
-  if(verbose) cout<<"ap0 = "<<ap0<<"\tnp0 = "<<np0<<endl;
-
+  if(nf->verbose) cout<<"aqlist = "<<aqlist<<endl;
+  
   //Compute sfe:
 
   sfe=-1;
   for(i=0; i<(nf->npdivs); i++) sfe*=aqlist[i];
-  if(verbose) cout<<"sfe = "<<sfe<<endl;
+  if(nf->verbose) cout<<"sfe = "<<sfe<<endl;
+}
 
-  //Compute pdot, dp0, loverp
+void newform::find_bsd_ratio()
+{
+  // get ap for p=p0:
 
-  cuspidalfactorplus = 1;
-  cuspidalfactorminus = 1;
-  vec bplusc, bminusc;
-  if(!(nf->h1->cuspidal))
-    {
-      smat tkernbas = transpose(nf->h1->kern.bas());
-      if(sign!=-1) // do this if sign = 0,1
-        {
-          bplusc=tkernbas*bplus;
-          cuspidalfactorplus = vecgcd(bplusc);
-          bplusc /= cuspidalfactorplus;
-        }
-      if(sign!=+1) // do this if sign = 0,-1 
-	{
-	  bminusc=tkernbas*bminus;
-	  cuspidalfactorminus = vecgcd(bminusc);
-	  bminusc/= cuspidalfactorminus;
-        }
-      if(sign==0) // do this if sign = 0
-        {
-	  type=3-vecgcd(bplusc-bminusc);
-	  if(verbose) cout<<"Lattice type = "<<type<<endl;
-        }
-   
-      if(verbose&&(cuspidalfactorplus*cuspidalfactorminus>1))
-	{
-          if(sign!=-1)
-            cout<<"cuspidalfactorplus  = "<<cuspidalfactorplus<<endl;
-	  if(sign!=+1) 
-	    cout<<"cuspidalfactorminus = "<<cuspidalfactorminus<<endl;
-	}
-    } 
-  int ncoords=nf->h1->coord_vecs.size()-1;
-  if(sign!=-1)
-    coordsplus=vec(ncoords);
-  if(sign!=+1)  
-    coordsminus=vec(ncoords);
-  for(i=1; i<=ncoords; i++)
-    {
-      if(sign!=-1)
-        coordsplus[i]=dotmodp(nf->h1->coord_vecs[i],bplus,92681);
-      if(sign!=+1) 
-        coordsminus[i]=dotmodp(nf->h1->coord_vecs[i],bminus,92681);
-    }
-  long denomplus, denomminus; 
-  if(sign!=+1) 
-    denomminus=vecgcd(coordsminus);
-  if(sign!=-1) 
-    denomplus=vecgcd(coordsplus);
-  if(verbose)
-    { 
-      if(sign!=-1) 
-        cout<<"denomplus   = "<<denomplus<<endl;
-      if(sign!=+1) 
-        cout<<"denomminus   = "<<denomminus<<endl;
-      if(sign==0) 
-        cout<<"type = "<<type<<endl;
-    }
-  if(sign!=-1) 
-    denomplus  *=cuspidalfactorplus;
-  if(sign!=+1) 
-    denomminus *=cuspidalfactorminus;
-  
+  primevar pr; 
+  vector<long>::const_iterator api=aplist.begin();
+  while(pr.value()!=nf->p0) {pr++; api++;}
+  ap0=*api;
+  np0 = 1 + (nf->p0) - ap0;
+  if(nf->verbose) cout<<"ap0 = "<<ap0<<"\tnp0 = "<<np0<<endl;
+
+  if(sign==-1) return;
+
   // DO NOT scale pdot by denom: factor will cancel when used to compute ap
   pdot = abs((nf->mvp)*bplus); 
   dp0=pdot;
@@ -320,87 +327,169 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
 	}
     }
   loverp = rational(dp0,np0);   
-  if(verbose) 
+  if(nf->verbose) 
     {
       cout<<"pdot = "<<pdot<<endl;
       cout<<"dp0 = "<<dp0<<endl;
       cout<<"np0 = "<<np0<<endl;
       cout<<"loverp = "<<loverp<<endl;
     }
+}
 
-  if(verbose) cout<<"type = "<<type<<endl;
+void newform::find_coords_plus_minus()
+{
+  int verbose = nf->verbose;
+  int i, ncoords=nf->h1->coord_vecs.size()-1;
+  svec cvi;
+  if(sign!=-1)
+    coordsplus=vec(ncoords);
+  if(sign!=+1)  
+    coordsminus=vec(ncoords);
+  //  if(verbose) cout<<"About to compute coordsplus/minus"<<endl;
+  for(i=1; i<=ncoords; i++)
+    {
+      cvi = nf->h1->coord_vecs[i];
+      if(sign!=-1)
+        coordsplus[i]=dotmodp(cvi,bplus,92681);
+      if(sign!=+1) 
+        coordsminus[i]=dotmodp(cvi,bminus,92681);
+    }
 
-if(sign==0) 
-  {
-  //
-  // Find deg(phi)
-  //
+  if(sign!=+1) 
+    {
+      denomminus=vecgcd(coordsminus)*cuspidalfactorminus;
+      if(verbose) cout<<"denomminus   = "<<denomminus<<endl;
+    }
+  if(sign!=-1) 
+    {
+      denomplus=vecgcd(coordsplus)*cuspidalfactorplus;
+      if(verbose) cout<<"denomplus   = "<<denomplus<<endl;
+    }  
+}
+
+void newform::find_cuspidal_factors()
+{
+  vec bplusc, bminusc;
+  int verbose = nf->verbose;
+
+  if(!(nf->h1->cuspidal))
+    {
+      if(sign!=-1) // do this if sign = 0,1
+        {
+          bplusc=(nf->h1->tkernbas)*bplus;
+          cuspidalfactorplus = vecgcd(bplusc);
+          bplusc /= cuspidalfactorplus;
+        }
+      if(sign!=+1) // do this if sign = 0,-1 
+	{
+	  bminusc=(nf->h1->tkernbas)*bminus;
+	  cuspidalfactorminus = vecgcd(bminusc);
+	  bminusc/= cuspidalfactorminus;
+        }
+      if(sign==0)  // do this only if sign = 0
+        {
+	  type=3-vecgcd(bplusc-bminusc);
+	  if(verbose) cout<<"Lattice type = "<<type<<endl;
+        }
+   
+      if(verbose&&(cuspidalfactorplus*cuspidalfactorminus>1))
+	{
+          if(sign!=-1)
+            {
+              cout<<"cuspidalfactorplus  = "<<cuspidalfactorplus<<endl; 
+              if(verbose>1) cout<<"bplusc = "<<bplusc<<endl;
+            }
+	  if(sign!=+1) 
+            {
+              cout<<"cuspidalfactorminus = "<<cuspidalfactorminus<<endl;
+              if(verbose>1) cout<<"bminusc = "<<bminusc<<endl;
+            }
+	}
+    } 
+}
+  
+void newform::find_degphi()
+{
+  if(sign!=0) return;
 #ifdef DEG_PHI
-    if(verbose) cout<<"computing deg(phi)..."<<flush;
+    if(nf->verbose) cout<<"computing deg(phi)..."<<flush;
     degphi=jumpinfo->degphi(bplusc,bminusc,type);
-    if(verbose) cout<<"done..."<<flush;
+    if(nf->verbose) cout<<"done..."<<flush;
 #else
     degphi=0;
 #endif
-  }
- 
-  //
-  // Find twisting primes if N non-square
-  //
-  if(verbose) cout<<"computing twisting primes..."<<flush;
+}
 
-  if(dp0!=0) // when sign=-1, dp0 will always be 0
+void newform::find_twisting_primes()
+{
+  int verbose=(nf->verbose);
+  if(verbose) cout<<"computing twisting primes (sign="<<sign<<")..."<<flush;
+  if(sign!=-1) 
+    if(dp0!=0)
+      {
+	lplus=1; // so we need not search for a prime 1(mod 4) below
+	mplus=1; // dummy value, not used
+      }
+    else
+      {
+	lplus=0;
+	mplus =0;
+      }
+  if(sign!=+1) 
     {
-      lplus=1; 
-      mplus=1; // dummy value, not used
+      lminus=0;
+      mminus=0;
+    }  
+  if(nf->squarelevel) return;
+
+  long n = nf->modulus;
+  for (primevar lvar; lvar.ok() && 
+	 (((sign!=-1)&&(mplus==0)) ||
+	  ((sign!=+1)&&(mminus==0))); lvar++)
+    {
+      //cout << "Trying l = " << lvar << endl;
+      while (n%lvar==0) {lvar++;}
+      long l = lvar;
+      //cout << "Trying l = " << l << endl;
+      if (legendre(-n,l)!=sfe) continue;
+      //cout << "Legendre condition passed... " << endl;
+
+      if((sign!=-1)&&(mplus==0)&&(l%4==1))
+	{
+	  lplus = l;   
+	  //cout << "Trying lplus = " << l << "\n";
+	  map<long,vec>::const_iterator vi = nf->mvlplusvecs.find(l);
+	  if(vi==nf->mvlplusvecs.end())
+	    mplus = abs((nf->mvlplusvecs[l]=nf->h1->manintwist(l))*bplus);
+	  else
+	    mplus = abs((vi->second)*bplus);
+	  if((denomplus>1)&&(mplus!=0))
+	    {
+	      if(::div(denomplus,mplus))  mplus/=denomplus;
+	      else 
+		cout<<"Warning in newform constructor: mplus not divisible by denomplus!"
+		    <<endl; 
+	    }
+	}
+      if((sign!=+1)&&(mminus==0)&&(l%4==3))
+	{
+	  lminus = l;   
+	  //cout << "Trying lminus = " << l << "\n";
+	  map<long,vec>::const_iterator vi = nf->mvlminusvecs.find(l);
+	  if(vi==nf->mvlminusvecs.end())
+	    mminus = abs((nf->mvlminusvecs[l]=nf->h1->manintwist(l))*bminus);
+	  else
+	    mminus = abs((vi->second)*bminus);
+	  if((denomminus>1)&&(mminus!=0))
+	    {
+	      if(::div(denomminus,mminus))  mminus/=denomminus;
+	      else 
+		cout<<"Warning in newform constructor: mminus="<<mminus<<" is not divisible by denomminus="<<denomminus<<"!"
+		    <<endl; 
+	    }
+	}
     }
 
-  if(!nf->squarelevel)
-    for (primevar lvar; lvar.ok() && 
-           (((sign!=-1)&&(mplus==0)) ||
-            ((sign!=+1)&&(mminus==0))); lvar++)
-      {
-        //        cout << "Trying l = " << lvar << endl;
-	while (n%lvar==0) {lvar++;}
-	long l = lvar;
-        //        cout << "Trying l = " << l << endl;
-	if (legendre(-n,l)!=sfe) continue;
-        //        cout << "Legendre condition passed... " << endl;
-
-	if((sign!=-1)&&(mplus==0)&&(l%4==1))
-	  {
-	    lplus = l;  // cout << "Trying lplus = " << l << "\n";
-	    map<long,vec>::const_iterator vi = nf->mvlplusvecs.find(l);
-	    if(vi==nf->mvlplusvecs.end())
-	      mplus = abs((nf->mvlplusvecs[l]=nf->h1->manintwist(l))*bplus);
-	    else
-	      mplus = abs((vi->second)*bplus);
-	    if((denomplus>1)&&(mplus!=0))
-	      {
-		if(::div(denomplus,mplus))  mplus/=denomplus;
-		else 
-		  cout<<"Warning in newform constructor: mplus not divisible by denomplus!"
-		      <<endl; 
-	      }
-	  }
-	if((sign!=+1)&&(mminus==0)&&(l%4==3))
-	  {
-	    lminus = l;  // cout << "Trying lminus = " << l << "\n";
-	    map<long,vec>::const_iterator vi = nf->mvlminusvecs.find(l);
-	    if(vi==nf->mvlminusvecs.end())
-	      mminus = abs((nf->mvlminusvecs[l]=nf->h1->manintwist(l))*bminus);
-	    else
-	      mminus = abs((vi->second)*bminus);
-	    if((denomminus>1)&&(mminus!=0))
-	      {
-		if(::div(denomminus,mminus))  mminus/=denomminus;
-		else 
-		  cout<<"Warning in newform constructor: mminus not divisible by denomminus!"
-		      <<endl; 
-	      }
-	  }
-      }
-  
   if(verbose) 
     {
       cout<<"done..."<<flush;
@@ -409,12 +498,15 @@ if(sign==0)
       cout<<"lminus = "<<lminus<<endl;
       cout<<"mminus = "<<mminus<<endl;
     }
+}
 
-  if(sign!=0) return;
-
-  // find a,b,c,d,dotplus,dotminus
+void newform::find_matrix()
+{
+  int verbose=(nf->verbose);
   if(verbose) cout<<"computing a,b,c,d..."<<flush;
+  long n = nf->modulus;
   int found=0;
+  vec v;
   for(d=2; !found; d++)
     {
       if(1==gcd(d,n))
@@ -423,17 +515,37 @@ if(sign==0)
             {
               if(1==bezout(d,-n*b,a,c))
                 {
-                  vec v = nf->h1->chain(b,d).as_vec();
+		  //                  cout<<"b/d = "<<b<<"/"<<d<<": ";
+                  v = nf->h1->chain(b,d).as_vec();
+		  //                  cout<<"v="<<v<<endl;
 //                if(!(nf->h1->cuspidal)) v = nf->h1->cuspidalpart(v);
-                  dotplus=abs(v*bplus/denomplus);
-                  dotminus=abs(v*bminus/denomminus);
-                  found=((dotplus!=0)&&(dotminus!=0));
+                  if(sign!=-1)
+                    {
+                      dotplus=v*bplus;
+                      if(::div(denomplus,dotplus))  
+                        dotplus/=denomplus;
+                      else 
+                        cout<<"Warning in find_matrix: dotplus not divisible by denomplus!"<<endl; 
+                      dotplus=abs(dotplus);
+                    }
+                  if(sign!=+1)
+                    {
+                      dotminus=v*bminus;
+                      if(::div(denomminus,dotminus))  
+                        dotminus/=denomminus;
+                      else 
+                        cout<<"Warning in find_matrix: dotminus not divisible by denomminus!"<<endl; 
+                      dotminus=abs(dotminus);
+                    }
+                  found=(((dotplus!=0)||(sign==-1))&&
+                         ((dotminus!=0)||(sign==+1)));
                 }
             }
         }
     }
   b--; d--;  //because they get incremented BEFORE the loop end-test
   if(d<0) {a=-a; b=-b; c=-c; d=-d;} // because we need d>0 for integration
+
   if(verbose) 
     {
       cout<<"done: ";
@@ -490,16 +602,49 @@ newforms::~newforms(void)
   if(h1) delete h1;
 }
 
-void newforms::makeh1()
+void newforms::makeh1(int s)
 {
-  //  if(!h1) cout<<"Constructing h1 with sign="<<sign<<endl;
-  //  else cout<<"h1 already exists"<<endl;
-  if(!h1) h1 = new homspace(modulus,sign,cuspidal,0);
+  if(s==1)
+    {
+      if(!h1plus)
+	{
+	  if(verbose) cout<<"Constructing H1 (with sign=+1) ..."<<flush;
+	  h1plus = new homspace(modulus,1,0,0 /*verbose*/);
+	  if(verbose) cout<<"done"<<endl;
+	}
+      h1 = h1plus;
+      return;
+    }
+  if(s==-1)
+    {
+      if(!h1minus)
+	{
+	  if(verbose) cout<<"Constructing H1 (with sign=-1) ..."<<flush;
+	  h1minus = new homspace(modulus,-1,0,0 /*verbose*/);
+	  if(verbose) cout<<"done"<<endl;
+	}
+      h1 = h1minus;
+      return;
+    }
+  if(s==0)
+    {
+      if(!h1full)
+	{
+	  if(verbose) cout<<"Constructing H1 (with sign=0) ..."<<flush;
+	  h1full = new homspace(modulus,0,0,0 /*verbose*/);
+	  if(verbose) cout<<"done"<<endl;
+	}
+      h1 = h1full;
+      return;
+    }
+  cout<<"Error in makeh1(s): s = "<<s<<" should be one of 0,1,-1"<<endl;
+  return;
 }
 
-void newforms::createfromscratch(long ntp)
+void newforms::createfromscratch(int s, long ntp)
 {
-  makeh1();
+  sign = s;
+  makeh1(s);
   //  cout<<"Constructing oldforms with sign="<<sign<<endl; 
   of = new oldforms(ntp,h1,(verbose>1),sign); // h1 provides the level*
   if(verbose>1) of->display();
@@ -516,7 +661,7 @@ void newforms::createfromscratch(long ntp)
        if (totalmult==0) n1ds=0;      
        else 
 	 {
-	   form_finder ff(this,(sign!=0),maxdepth,mindepth,1,cuspidal,verbose);
+	   form_finder ff(this,(sign!=0),maxdepth,mindepth,1,0,verbose);
 	   basisflag=0;
 	   ff.find();
 	 }
@@ -589,8 +734,16 @@ void newforms::createfromscratch(long ntp)
     }
   if(ok)
     {
-      if(verbose)  cout<<"j0="<<j0<<endl;
+      if(verbose>1)  cout<<"j0="<<j0<<endl;
       jlist.insert(j0);
+      for (i=0; i<n1ds; i++) 
+	{
+	  nflist[i].j0 = j0;
+	  if(sign==-1)
+	    nflist[i].fac = nflist[i].bminus[j0];
+	  else
+	    nflist[i].fac = nflist[i].bplus[j0];
+	}
     }
   else
     {
@@ -603,6 +756,8 @@ void newforms::createfromscratch(long ntp)
 	  vec& bas = nflist[i].bplus;
 	  j=1; while(bas[j]==0) j++;
 	  jlist.insert(j);
+	  nflist[i].j0 = j;
+	  nflist[i].fac = nflist[i].bplus[j];
 	}
       if(verbose)  cout<<"jlist="<<jlist<<endl;
     }
@@ -622,20 +777,45 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
   if(basisflag) // we already have all the data except the
                 // basis vector, so not much needs doing
     {
+      if(verbose) 
+	cout<<"Filling in data for for newform #"<<(j1ds+1)<<": bases..."<<flush;
+      nflist[j1ds].sign=sign;
       if(sign==+1)
         nflist[j1ds].bplus=b1;
-      if(sign!=-1)
+      if(sign==-1)
         nflist[j1ds].bminus=b1; // formfinder puts the basis vector in b1
       if(sign==0) 
-        nflist[j1ds].bplus=b1;
-        nflist[j1ds].bminus=b2;
+	{
+	  nflist[j1ds].bplus=b1;
+	  nflist[j1ds].bminus=b2;
+	}
+      if(verbose) 
+	cout<<"type and cuspidal factors..."<<flush;
+      nflist[j1ds].find_cuspidal_factors();
+      if(verbose) 
+	cout<<"coords..."<<flush;
+      nflist[j1ds].find_coords_plus_minus();
+      if(sign==0)
+	{
+	  if(verbose) 
+	    cout<<"twisting primes..."<<flush;
+	  nflist[j1ds].find_twisting_primes();
+	  if(verbose) 
+	    cout<<"matrix..."<<flush;
+	  nflist[j1ds].find_matrix();
+	}
+      if(verbose) 
+	cout<<"done."<<endl;
       j1ds++;
       if(verbose) 
-	cout<<"Finished constructing basis vector(s) for newform #"<<j1ds<<endl;
+	cout<<"Finished filling in data for newform #"<<j1ds<<endl;
       return;
     }
-  // Now we use the newform constructor to do all the work, given only
-  // the basis vector(s):
+
+  // Code for initial newform construction
+
+  // We use the newform constructor to do all the work, given the basis vector(s) and aplist:
+
   n1ds++;
   if(verbose) 
     {
@@ -648,7 +828,7 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
   else
     nflist.push_back(newform(b1,b2,aplist,this));
   if(verbose) 
-    cout<<"Finished constructing newform #"<<n1ds<<endl;
+    cout<<"Finished constructing newform #"<<n1ds<<" with sign = "<<sign<<endl;
 }
 
 // Sort newforms 
@@ -723,14 +903,22 @@ void newform::display(void) const
        <<", dp0 = " << dp0
        <<", np0 = " << np0;
   if(pdot!=0) cout <<", pdot = " << pdot;
-  if(qdot!=0) cout << ", qdot = " << qdot;
   cout <<endl;
   cout << "SFE = " << sfe << ",\tL/P = " << loverp << endl;
   if(lplus>0) cout << "lplus = " << lplus << ", mplus = " << mplus << endl;
   if(lminus>0) cout << "lminus = " << lminus << ", mminus = " << mminus << endl;
-  if(a!=0) cout << "[(" <<a<<","<<b<<";"<<c
-		<<","<<d<<"),"<<dotplus<<","<<dotminus
-		<<";"<<type<<"]"<<endl;
+  if(a!=0) 
+    {
+      cout << "[(" <<a<<","<<b<<";"<<c
+           <<","<<d<<"),"<<dotplus<<","<<dotminus
+           <<";";
+      if(type) 
+        cout<<type;
+      else 
+        cout<<"?";
+      cout<<"]"<<endl;
+    }
+    
   if(index!=-1)cout << "Splitting index = " << index << endl;
 }
 
@@ -861,8 +1049,9 @@ void newforms::output_to_file(int binflag) const
 
 // Read in newform data from file NF_DIR/xN 
 
-void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
+void newforms::createfromdata(int s, long ntp, int create_from_scratch_if_absent)
 {
+  sign = s;
   long i, j, n = modulus;
   if(verbose) cout << "Retrieving newform data for N = " << n << endl;
 
@@ -875,7 +1064,7 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
       if(create_from_scratch_if_absent)
 	{
 	  if(verbose) cout<<"Creating from scratch instead"<<endl;
-	  createfromscratch(ntp);
+	  createfromscratch(sign, ntp);
 	  output_to_file();
 	  if(verbose) cout << "Finished creating newform data for N = " << n << endl;
 	  if(verbose) display();
@@ -954,7 +1143,7 @@ void newforms::createfromdata(long ntp, int create_from_scratch_if_absent)
   if(verbose) 
     {
       cout << "Finished reading newform data for N = " << n << endl;
-      display();
+      if(verbose>1) display();
     }
 }
 
@@ -980,22 +1169,23 @@ vector<long> eiglist(CurveRed& C, int nap)
 
 // Create from a list of elliptic curves of the right conductor:
 
-void newforms::createfromcurve(CurveRed C, int nap)
+void newforms::createfromcurve(int s, CurveRed C, int nap)
 {
   vector<CurveRed> Clist; Clist.push_back(C);
-  return createfromcurves(Clist,nap);
+  return createfromcurves(s,Clist,nap);
 }
-void newforms::createfromcurves(vector<CurveRed> Clist, int nap)
+void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
 {
   if(verbose) cout << "In newforms::createfromcurves()..."<<endl;
+  sign=s;
   int ncurves = Clist.size();
   if(ncurves==0) return;
   if(verbose) cout << "Making homspace..."<<flush;
-  makeh1();
+  makeh1(sign);
   if(verbose) cout << "done." << endl;
   mvp=h1->maninvector(p0); 
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
-  form_finder splitspace(this, (sign!=0), nap, 0, 1, cuspidal, verbose);
+  form_finder splitspace(this, (sign!=0), nap, 0, 1, 0, verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
   // j1ds counts through the newforms as they are found
   basisflag=0; j1ds=0;
@@ -1146,7 +1336,7 @@ void newforms::createfromolddata()
 }
 
 // Construct bases (homology eigenvectors) from eigenvalue lists:
-void newforms::makebases()
+void newforms::makebases(int flag)
 {
   if(n1ds==0) return;
   
@@ -1154,32 +1344,37 @@ void newforms::makebases()
      ((sign==+1)||(dim(nflist[0].bminus)>0))) 
     return;
   if(verbose) cout << "Making homspace..."<<flush;
-  makeh1();
+  makeh1(sign);
   if(verbose) cout << "done." << endl;
   mvp=h1->maninvector(p0); 
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
-  form_finder splitspace(this, (sign!=0), nap, 0, 1, cuspidal, verbose);
+  form_finder splitspace(this, (sign!=0), nap, 0, 1, 0, verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
-  // basisflag=1 controls what ::use() does with the nfs when found
+  // basisflag controls what ::use() does with the nfs when found
   // j1ds counts through the newforms as they are found
-  basisflag=1; j1ds=0;
+  basisflag=flag; j1ds=0;
   vector< vector<long> > eigs(n1ds);
   int i,j;
 
+  sort();
   for(i=0; i<n1ds; i++) eigs[i]=eiglist(nflist[i]);
-  if(verbose>1) 
-    {
-      cout<<"Before sorting, eig lists are:"<<endl;
-      for(i=0; i<n1ds; i++) {vec_out(cout,eigs[i],10);    cout<<endl;}
-      cout<<"sorting..."<<endl;
-    }
-  ::sort(eigs.begin(),eigs.end(),less_apvec_function());
-  if(verbose>1) 
-    {
-      cout<<"After sorting, eig lists are:"<<endl;
-      for(i=0; i<n1ds; i++) {vec_out(cout,eigs[i],10);    cout<<endl;}
-    }
-  if(sign==0) {n1ds=0; nflist.resize(0);}
+
+  // if(n1ds>1)
+  //   {
+  //     if(verbose>1) 
+  // 	{
+  // 	  cout<<"Before sorting, eig lists are:"<<endl;
+  // 	  for(i=0; i<n1ds; i++) {vec_out(cout,eigs[i],10);    cout<<endl;}
+  // 	  cout<<"sorting..."<<endl;
+  // 	}
+  //     ::sort(eigs.begin(),eigs.end(),less_apvec_function());
+  //     if(verbose>1) 
+  // 	{
+  // 	  cout<<"After sorting, eig lists are:"<<endl;
+  // 	  for(i=0; i<n1ds; i++) {vec_out(cout,eigs[i],10);    cout<<endl;}
+  // 	}
+  //   }
+  //  if(sign!=+1) {n1ds=0; nflist.resize(0);}
   splitspace.recover(eigs);  // NB newforms::use() determines what is
 			     // done with each one as it is found;
 			     // this depends on basisflag and sign
@@ -1197,6 +1392,53 @@ void newforms::makebases()
 	  cout<<"After sorting:\n"; display();
 	}
     }
+}
+
+void newforms::merge()
+{
+  if(n1ds==0) return;
+  if(verbose) cout << "Making homspace..."<<flush;
+  makeh1(0);
+  if(verbose) cout << "done." << endl;
+  vec bplus, bminus;
+  j1ds = 0; basisflag = 1;
+  mvlplusvecs.clear();
+  mvlminusvecs.clear();
+  for(int inf=0; inf<n1ds; inf++)
+   {
+     if(verbose) cout << "Newform #"<<(inf+1)<<":"<<endl;
+     if(verbose) cout<< "-about to extend bplus,bminus..."<<flush;
+     bplus.init(h1->nsymb);
+     bminus.init(h1->nsymb);
+     int i,j;
+     for(i=1; i<=h1->nsymb; i++)
+       {      
+	 j = h1plus->coordindex[i-1];
+	 if (j==0) bplus[i] = 0;
+	 else if (j>0) bplus[i] =  nflist[inf].coordsplus[j];
+	 else if (j<0) bplus[i] = -nflist[inf].coordsplus[-j];
+	 j = h1minus->coordindex[i-1];
+	 if (j==0) bminus[i] = 0;
+	 else if (j>0) bminus[i] =  nflist[inf].coordsminus[j];
+	 else if (j<0) bminus[i] = -nflist[inf].coordsminus[-j];
+       }
+     if(verbose) cout<< "done, about to contract bplus,bminus..."<<flush;
+     bplus = h1->contract_coords(bplus);
+     bplus /= vecgcd(bplus);
+     bminus = h1->contract_coords(bminus);
+     bminus /= vecgcd(bminus);
+     if(verbose) cout<< "done."<<endl;
+     if(verbose>1)
+       {
+	 cout << " new bplus  = "<<bplus <<":"<<endl;
+	 cout << " new bminus = "<<bminus<<":"<<endl;
+       } 
+     // These new dual eigenvectors are used to compute all
+     // additional data needed for curve and modular symbol
+     // computation (scaling and cuspidal factors and type)
+     use(bplus, bminus, nflist[inf].aplist);
+   }
+  
 }
 
 vector<long> newforms::apvec(long p) //  computes a[p] for each newform
@@ -1231,13 +1473,13 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   long ind;
   
   // Compute the image of the necessary M-symbols (hopefully only one)
-  //  cout<<"Computing images of M-symbols"<<endl<<flush;
+  //cout<<"Computing images of M-symbols"<<endl<<flush;
   for(std::set<long>::const_iterator jj=jlist.begin(); jj!=jlist.end(); jj++)
     {
       imagej=vec(n1ds); // initialised to 0
       j=*jj;
       symb s = h1->symbol(h1->freegens[j-1]);
-      //      cout<<"Computing image of "<<s<<"..."<<flush;
+      //cout<<"Computing image of "<<s<<"..."<<flush;
       long u=s.cee(),v=s.dee(); 
       mat& pcd = h1->projcoord;
 // Matrix [1,0;0,p]
@@ -1269,29 +1511,13 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 	      }
 	  }    
       images[j]=imagej/(h1->h1denom());
-      //      cout<<" image is "<<imagej<<endl;
+      //cout<<" image is "<<imagej<<endl;
     }
 
   for (i=0; i<n1ds; i++)
     {
-      //      cout<<"bplus="<<nflist[i].bplus<<endl;
-      //      cout<<"bminus="<<nflist[i].bminus<<endl;
-      //      cout<<"sign="<<sign<<endl;
-      vec bas;
-      if(sign==-1)
-        bas = nflist[i].bminus;
-      else
-        bas = nflist[i].bplus;
-      if(j0>0) j=j0; else
-	{
-	  j=1; while(bas[j]==0) j++;
-	}
-      //      cout<<"i="<<i<<", bas="<<bas<<", using j="<<j<<endl;
-      fac=bas[j];
-      //      cout<<", factor "<<fac<<endl;
-      imagej=images[j];
 // recover eigenvalue:
-      apv[i]=ap=imagej[i+1]/fac;
+      apv[i]=ap=images[nflist[i].j0][i+1]/nflist[i].fac;
 // check it is in range:
       if((ap>maxap)||(-ap>maxap))
 	{
@@ -1301,7 +1527,6 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 	  abort();
 	}
     }  
-
   return apv;
 }
 
@@ -1327,7 +1552,7 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
     {
       p=(long)pr;
       vector<long> apv=apvec(p);
-      if(verbose) 
+      if(verbose>1) 
 	{
 	  if(ndiv(p,modulus)) cout<<"p="; else cout<<"q="; 
 	  cout<<p<<":\t";
@@ -1397,4 +1622,3 @@ pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i)
   rational a2(a[2],nflist[i].cuspidalfactorminus);
   return pair<rational,rational> ( a1, a2 );
 }
-

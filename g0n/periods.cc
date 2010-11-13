@@ -694,6 +694,28 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
   return 0;
 }
 
+int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
+{
+  const newform* nfi = &(nflist[i]);
+  lfchi lx(this,nfi); 
+  
+  long lminus=abs(nfi->lminus);
+  long mminus=abs(nfi->mminus);
+  if(mminus!=0)
+    {
+      if(verbose) 
+	cout << "Computing imaginary period via L(f,chi,1) with chi mod "
+	     <<lminus<<"...";
+      lx.compute(lminus);
+      if(verbose) cout<<"L(f,chi,1) = "<<abs(lx.scaled_value())<<"; ";
+      y = abs(lx.scaled_value()/to_bigfloat(mminus));
+      if(verbose) cout<<"imaginary period = "<<y<<endl;
+      return 1;
+    }
+}
+
+////////////////////////////////////////////////////////
+ 
 Cperiods newforms::getperiods(long i, int method, int verbose)
   // method=1 to use periods_direct
   // method=0 to use periods_via_lfchi

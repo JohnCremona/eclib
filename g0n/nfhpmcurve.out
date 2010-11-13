@@ -1,0 +1,11 @@
+Program nfhpcurve.  Using METHOD = 2 to find newforms
+MODULUS for linear algebra = 1073741789
+Verbose output? How many primes for Hecke eigenvalues? 
+Output newforms to file? (0/1) Enter first and last N: 
+>>>Level 2002:	3 newform(s) found.
+Computing 3 curves...
+1 [1,-1,0,-691,-27531]	N = 2002
+2 [1,-1,0,-26,52]	N = 2002
+3 [1,-1,1,17,19]	N = 2002
+All curves found successfully!
+Finished level 2002

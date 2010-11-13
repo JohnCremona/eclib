@@ -36,7 +36,7 @@
 int main(void)
 {
   int limit,firstn,n=1,count=0; 
-  int verbose=0;
+  int verbose=1;
 #ifdef AUTOLOOP
   cerr<<"Enter first and last N: ";cin>>firstn>>limit; 
   n=firstn-1; cout<<endl;
@@ -48,11 +48,9 @@ int main(void)
  if (n>0)
 {
  cout << ">>> Level " << n << " <<<\t";
- int plusspace=1;
- int cuspidal=0;
- newforms nf(n,plusspace,cuspidal,verbose);
+ newforms nf(n,verbose);
  cout << "\nAfter constructor, about to createfromdata() \n";
- nf.createfromdata(25);
+ nf.createfromdata(1,25);
  int num = nf.n1ds; count+=num;
  cout << num << " newform(s), "<<nf.nap<<" eigs on file." << endl;
  // nf.makebases();
@@ -62,8 +60,8 @@ int main(void)
  nf.display();
  nf.sort(1);
  cout<<"After sort(1):"<<endl;
- nf.display();
  */
+ nf.display();
 }       // end of if(n)
 }       // end of while()
 #ifdef AUTOLOOP

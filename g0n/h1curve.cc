@@ -81,10 +81,9 @@ int main(void)
  if (n>0)
 {
  int usedata=1;
- int plus=1,cuspidal=0;
- newforms nf(n,plus,cuspidal,verb);
+ newforms nf(n,verb);
  int noldap=25;
- nf.createfromdata(noldap,0); // do not create from scratch if data absent
+ nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
  // nf.createfromolddata();
  //nf.output_to_file();
  int nnf = nf.n1ds; 

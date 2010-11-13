@@ -62,9 +62,9 @@ int main(void)
 {
   cout << "\n>>>Level " << n;
   if(verbose)cout<<endl; else cout<< ":\t";
-  newforms nf(n,sign,cuspidal,verbose); 
+  newforms nf(n,verbose); 
   int noldap=25;
-  nf.createfromscratch(noldap);
+  nf.createfromscratch(sign,noldap);
   if(verbose>1) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   if(verbose&&nf.n1ds>0) 
