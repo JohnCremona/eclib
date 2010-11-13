@@ -80,7 +80,7 @@ int main(void)
       continue;
     }
   int usedata=1;
-  newforms nf(n,usedata,5,0);
+  newforms nf(n,0);
   long fac=nf.sqfac;
   long fac6=(odd(fac)?fac:2*fac);
   if(detail&&(fac>1)) cout<<"c6 factor " << fac6 << endl;

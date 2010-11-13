@@ -1,0 +1,7 @@
+# use glob syntax.
+syntax: glob
+
+*.o
+*.a
+*~
+g0n/newforms*/x*

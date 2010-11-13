@@ -10,7 +10,7 @@ echo "N   = "$1":"
 echo ${NNF}" newforms, "${NQ}" bad primes, "${NAP}" ap"
 echo
 
-od -N ${N} -v -t dI newforms/x$1 | gawk \
+od -N ${N} -v -t dI newforms/x$1 | awk \
 'BEGIN{getline;n1=$2;naq=$3;nap=$4;npl=NF;\
 #printf("#newforms=\t%d\n",n1);\
 #printf("#aq=    \t%d\n",naq,nap);\

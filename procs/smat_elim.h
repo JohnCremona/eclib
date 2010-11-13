@@ -51,7 +51,12 @@ class smat_elim : public smat{
 			    // elimination of rows;
   vector<int> light_col_flag;   // 0/1 flag columns which are `light' : not yet
 			    // eliminated but no more than M entries
-  queue<int> light_cols, light_rows; // lists of (very) light rows/cols
+  queue<int> light_rows, light_cols; // lists of light rows & cols
+  queue<int>  light_cols_1; // lists cols of wt 1
+  queue<int>  light_cols_2; // lists cols of wt 2
+  //  multimap<int,int> light_cols_2; // lists cols of wt 2
+  deque<int> very_light_cols; // list of very light cols (wt 1 at front, wt 2 at back)
+  scalar half;
   void clear_col(int,int, int fr = 0, int fc = 0, int M = 0, int frl=0, int fcl=0);
   int get_weight( int row ); // compute the number of "light" columns
 			     // intersecting row# row
@@ -71,6 +76,7 @@ public:
   void init_elim( );
   void elim_light_rows(int fr); // eliminate (row,col) for rows of wt <=fr
   void elim_light_cols(int fc); // eliminate (row,col) for columns of wt <=fc
+  void elim_light_cols(); // eliminate (row,col) for columns of wt <=2
   void step0() {elim_light_rows(1);}
   void step1() {elim_light_cols(1);}
   void step2() {elim_light_rows(2);}
@@ -83,10 +89,18 @@ public:
   void reduced_echelon_form( ); // steps 0,1,2,3,4,5,6 in turn
   int check_echelon();       // check that we do have echelon form
   int check_red_echelon();   // check that we do have reduced echelon form
+  long active_entry_count()
+  {
+    long col, wt=0;
+    for(col = 1; col <= nco; col++ )     
+      wt +=column[col].size(); 
+    return wt;
+  }
   void show_progress() 
   {
     cout<<"#rows left = "<<nrows_left<<"\n#cols left = "<<ncols_left<<endl;
-    cout<<"Population = "<<get_population(*this)<<endl;
+    cout<<"Population = "<<get_population(*this);
+    cout<<" ( "<<active_entry_count()<<" active entries)"<<endl; 
   }
 };
 

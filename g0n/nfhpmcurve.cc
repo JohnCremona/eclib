@@ -1,4 +1,4 @@
-// FILE nfhpcurve.cc main newform- and curve-finding program
+// FILE nfhpmcurve.cc main newform- and curve-finding program
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2007 John Cremona
@@ -34,9 +34,7 @@
 #include "periods.h"
 #include "pcprocs.h"
 
-//#define AUTOLOOP
-#define MAXNY 100
-#define MAXD 10
+#define AUTOLOOP
 
 int main(void)
 {
@@ -44,8 +42,6 @@ int main(void)
  start_time();
  long n=110, stopp; 
  int output, verbose;
- long maxn = MAXNY;
- long dmax = MAXD;
 
  cout << "Program nfhpcurve.  Using METHOD = " << METHOD 
       << " to find newforms" << endl;
@@ -83,7 +79,7 @@ int main(void)
   int plus=1, cuspidal=0;
   newforms nf(n,verbose); 
   int noldap=25;
-  nf.createfromscratch(plus,noldap);
+  nf.createfromscratch(1,noldap);
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   nf.addap(stopp);
@@ -91,19 +87,42 @@ int main(void)
   long nnf = nf.n1ds, inf; 
   if(nnf==0)
     {
-      if(output) nf.output_to_file();
       cout << "No newforms.\n";
       cout << "Finished level "<<n<<endl;
+      if(output) nf.output_to_file();
       continue;
     }
 
   // Thus far, as in tmanin
 
-  // Now we search for curves as in pcurve.cc
+  if(verbose)
+    {
+      cout << endl;
+      cout << "Creating minus space..."<<endl;
+    }
+  nf.set_sign(-1);
+  if(verbose)
+    {
+      cout<<"sign = "<<nf.get_sign()<<endl;
+    }
+  nf.makebases(1);
+  if(verbose)
+    {
+      cout << "...finished creating minus data."<<endl<<endl;
+      nf.display();
+      cout << "Filling in data for newforms..."<<endl;
+    }
+  nf.set_sign(0);
+  nf.merge();
+  if(verbose) 
+    {
+      cout << "...finished filling in full data."<<endl;
+      cout << "Updated newforms: ";
+      nf.display();
+    }
+  if(output) nf.output_to_file();
 
-
-  long rootn=(long)(sqrt((double)n)+0.1); 
-  int squarelevel=(n==rootn*rootn);
+  // Now we compute the curves
   cout<<"Computing "<<nnf<<" curves...\n";
 
   long fac=nf.sqfac;
@@ -111,6 +130,7 @@ int main(void)
 
   int* success=new int[nnf];
   long nsucc=0;
+  bigfloat rperiod;
   for(inf=0; inf<nnf; inf++) success[inf]=0;
 
   while(nsucc<nnf){
@@ -123,48 +143,20 @@ int main(void)
      else cout<<(inf+1)<<" ";
      newform* nfi = &((nf.nflist)[inf]);
 
-     int rp_known=0;
-     nfi->dotplus=1; nfi->dotminus=1;  // need to reset these in case this is not 1st attempt!
-     bigfloat x0=to_bigfloat(10), y0=to_bigfloat(10);
-     int have_both = nf.find_matrix( inf, dmax, rp_known, x0, y0);
-     if(!have_both)
-       cout<<"Problem!  find_matrix() returns 0!"<<endl;
+     Curve C = nf.getcurve(inf,-1,rperiod,verbose);
+     Curvedata CD(C,1);  // The 1 causes minimalization
+     if(verbose) cout << "\nCurve = \t";
+     cout << (Curve)CD << "\t";
+     CurveRed CR(CD);
+     cout << "N = " << getconductor(CR) << endl;
+     if(verbose) cout<<endl;
 
-     if(verbose) 
-       {
-	 cout << "Minimal periods found: x0 = "<<x0<<", y0 = "<<y0<<"\n";
-	 cout << "Matrix ("<<nfi->a<<","<<nfi->b<<";"<<n*nfi->c<<","<<nfi->d<<"):\t";
-	 cout << "dotplus = "<< nfi->dotplus << ", dotminus = "<< nfi->dotminus<< "\n";
-	 cout << "Searching for scaling factors.\n";
-       }
-    
-     long nx, ny;
-     long maxnx=maxn; if(rp_known) maxnx=1;
-     int found = get_curve(n, fac, maxnx, maxn, x0, y0, nx, ny, nfi->type, verbose);
-
-     if(found)
+     if(getconductor(CR)==n)
        {
 	 success[inf]=1; nsucc++;
-	 nfi->dotplus *= nx;
-	 nfi->dotminus *= ny;
-	 cout << "[(" <<nfi->a<<","<<nfi->b<<";"<<nfi->c
-	      <<","<<nfi->d<<"),"<<nfi->dotplus<<","<<nfi->dotminus
-	      <<";"<<nfi->type<<"]"<<endl;
-
-// STEP 4:  We find a suitable twisting prime for the imaginary period
-
-	 if(!squarelevel)
-	   {
-	     bigfloat y1 = y0/to_bigfloat(ny);
-	     int ok = nf.find_lminus(inf, 0, y1);
-	     if(!ok)
-	       {
-		 cout<<"No suitable twisting prime "
-		     <<" found for imaginary period!"<<endl;
-	       }
-	   }
        }
-     else cout<<"No curve found"<<endl;
+     else 
+       cout<<"No curve found"<<endl;
 
    } // ends loop over newforms
 
@@ -172,27 +164,26 @@ int main(void)
     {
       cout<<"All curves found successfully!"<<endl;
       cout << "Finished level "<<n<<endl;
-      if(output) nf.output_to_file();
     }
   else
-    {
+    {      
       cout<<(nnf-nsucc)<<" curve(s) missing."<<endl;
-      int newstopp=stopp+500;
+      int newstopp;
+      if(stopp<500) 
+	newstopp=stopp+100;
+      else
+	newstopp=stopp+500;
       if(newstopp>32000)
       {
 	  cout<<"Cannot compute more ap, something must be wrong in newform data"<<endl;
-	  if(output) nf.output_to_file();
 	  abort();
       }
       cout<<"Computing some more ap: from "<<stopp+1<<" to "
 	  <<newstopp<<"..."<<endl;
+      nf.set_sign(1);
+      nf.makeh1(1);
       nf.addap(newstopp);
       stopp=newstopp;
-      if(maxn<10000) 
-	{
-	  maxn+=200;
-	  cout << "Now working with maxny =  " <<maxn<< endl;
-	}
 #ifdef MPFP
       if(decimal_precision()<50) 
 	{
@@ -200,9 +191,10 @@ int main(void)
 	  cout << "Now working to "<<decimal_precision()<<" decimal places" << endl;
 	}
 #endif
-    }
+    } 
   }   // ends while(nsucc<nnf)
   delete[]success;
+
   
 }       // end of if(n>0)
      }  // end of while(n>0) or while(n<limit)

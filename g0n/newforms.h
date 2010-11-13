@@ -59,9 +59,9 @@ public:
   long ap0;     // Eigenvalue of first "good" p
   long sfe;     // sign of functional equation
   long cuspidalfactorplus, cuspidalfactorminus;  // pdot =cuspidalfactor*np0
-  long pdot,np0,dp0,qdot;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus, 
-                           //                    = cuspidalfactor*dp0
-                           // qdot={q,infinity}.bplus 
+  long pdot,np0,dp0;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus, 
+                      //                    = cuspidalfactor*dp0
+
   rational loverp;  // L(f,1)/x where x = least real part of a period
                     // =np0/dp0
   long lplus, lminus;  // primes = +1, -1 mod 4
@@ -73,6 +73,8 @@ public:
   // & integral over [a,b;Nc,d] is dotplus*x+dotminus*yi
   long degphi;             // degree of Weil parametrization
   vec coordsplus, coordsminus;  // vector components of each freegen
+  long denomplus, denomminus; 
+  int j0; long fac;
 
   newform(void) {;}
   //  newform(const vec& v, const vector<long>& ap, newforms* nfs,long ind=-1);
@@ -81,6 +83,22 @@ public:
 
   void add_more_ap(int nap);
   void display(void) const;
+  // Testing function
+  int check_expand_contract();
+  // To fix eigenvalues lists after finding a newform
+  void fixup_eigs();
+  // To find BSD ratio:
+  void find_bsd_ratio();
+  // To find projected coords:
+  void find_coords_plus_minus();
+  // To find cuspidal factors:
+  void find_cuspidal_factors();
+  // To find twisting primes:
+  void find_twisting_primes();
+  // To find deg(phi):
+  void find_degphi();
+  // To get matrix and scale factors when sign==0 ...
+  void find_matrix();
 };
 
 
@@ -106,41 +124,46 @@ protected:
   vec mvp;
   map<long,vec> mvlplusvecs, mvlminusvecs;
   oldforms* of;
-  homspace* h1;
-  int j0; long nq, dq; // data used for ap computation
+  homspace *h1, *h1plus, *h1minus, *h1full;
+  int j0;                   // data used for ap computation
   std::set<long> jlist;
 public:
   long n1ds, j1ds;
   vector<newform> nflist;
-  newforms(long n, int sgn, int cuspidalflag, int disp) 
-  :level(n), verbose(disp), cuspidal(cuspidalflag), sign(sgn), 
-   of(0), h1(0) {;}
+  newforms(long n, int disp) 
+    :level(n), verbose(disp), of(0), h1(0), h1plus(0), h1minus(0), h1full(0) {;}
   ~newforms(void);
   void display(void) const;
   void display_modular_symbol_map(void) const;
   void output_to_file(int binflag=1) const;
-  void makeh1();
+  void set_sign(int s) {sign=s;}
+  int  get_sign() {return sign;}
+  void makeh1(int s);
 // add newform with basis b1, eiglist l to current list (b2 not used):
   void use(const vec& b1, const vec& b2, const vector<long> l); 
 
   // find newforms using homology; ntp is number of eigenvalues to use
   // for oldforms, *not* the number computed via homology (use addap()
   // for that):
-  void createfromscratch(long ntp);
+  void createfromscratch(int s, long ntp);
 
   // read newforms from file, if it exists, otherwise (perhaps) revert
   // to createfromscratch:
-  void createfromdata(long ntp, int create_from_scratch_if_absent=1);
+  void createfromdata(int s, long ntp, int create_from_scratch_if_absent=1);
 
   // Create from one or a list of elliptic curves of the right conductor:
-  void createfromcurve(CurveRed C, int nap=25);
-  void createfromcurves(vector<CurveRed> Clist, int nap=25);
+  void createfromcurve(int s, CurveRed C, int nap=25);
+  void createfromcurves(int s, vector<CurveRed> Clist, int nap=25);
 
   // read newforms from old-style data files (eigs/x$N and intdata/e$N):
   void createfromolddata();
 
   // Construct bases (homology eigenvectors) from eigenvalue lists:
-  void makebases();
+  // flag controls what ::use() does with the nfs when found
+  void makebases(int flag);
+
+  // Construct H1 newforms, given H1+ and H1- newforms
+  void merge();
 
   vector<long> apvec(long p);  // computes a[p] for each newform
   void addap(long last); // adds ap for primes up to the last'th prime
@@ -158,17 +181,25 @@ public:
   // Given newform with no intdata, compute least real (part of)
   // period -- unless sfe=-1 and n=square, in which case return 0
   int get_real_period(long i, bigfloat& x, int verbose=0) const;
+  // Given newform with no intdata, compute least imag (part of) period
+  int get_imag_period(long i, bigfloat& y, int verbose=0) const;
   // Given all data, compute the periods as a Cperiods
   Cperiods getperiods(long i, int method=-1, int verbose=0);
   // Given all data & Cperiods, compute the curve (using fixc6 etc)
   Curve getcurve(long i, int method, bigfloat& rperiod, int verbose=0);
 
-  // next two implemented in pcprocs.cc
+  // next three implemented in pcprocs.cc
 
   // Computes x0, y0 (real & imag parts of periods) & a matrix which
   // gives these scaled by dotplus & dotminus.  rp_known is set if we
-  // know x0 to be the least real part of a period (usually true)
+  // know x0 to be the least real part of a period (usually true).
+
   int find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat&y0);
+
+  // Compute both periods from the (known) matrix [a,b;Nc,d] and
+  // scaling factors dotplus, dotminus.  Return success flag.
+  int get_both_periods(long i, bigfloat&x0, bigfloat&y0);
+
   // Given an imaginary period y1, finds a prime lminus =3(mod 4) and
   // <=lmax for which L(f,lminus,1) is nonzero and hence a multiple
   // mminus of y1.

@@ -71,11 +71,9 @@ int main(void)
 {
   cout << "N = " << n << endl;
 
-  int usedata=1;
-  int plus=1,cuspidal=0;
-  newforms nf(n,plus,cuspidal,(detail));
+  newforms nf(n,(detail));
   int noldap=25;
-  nf.createfromdata(noldap);
+  nf.createfromdata(1,noldap);
   int squarelevel=nf.squarelevel;
   long fac=nf.sqfac;
   long nnf = nf.n1ds; 

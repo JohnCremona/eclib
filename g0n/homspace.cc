@@ -27,6 +27,7 @@
 #include "symb.h"
 #include "cusp.h"
 #include "homspace.h"
+#include "timer.h"
 
 #ifdef USE_SMATS
 #include "smatrix_elim.h"
@@ -66,9 +67,10 @@ matop::matop(long p, long n)
  
 homspace::homspace(long n, int hp, int hcusp, int verbose) :symbdata(n)
 { 
+  init_time();
    plusflag=hp;
    cuspidal=hcusp;
-   long i,j,k;
+   long i,j,k,k2,mk;
    coordindex = new int[nsymb];  
    if (!coordindex) abort(string("coordindex").c_str());
    int* check = new int[nsymb];  
@@ -199,10 +201,11 @@ if (verbose>1)
    long ij; int fix;
 
    for (i=0; i<nsymb; i++) check[i]=0;
-   for (k=0; k<nsymb; k++) if (check[k]==0)
+   for (k=0; k<nsymb; k++) 
+     {
+     if (check[k]==0)
    {
 #ifdef USE_SMATS
-     //     npos=0;
      newrel.clear();
 #else
      for (j=1; j<=ngens; j++) newrel[j]=0;
@@ -214,16 +217,18 @@ if (verbose>1)
       check[ij] = 1;
       if (plusflag) check[rof(ij)] = 1;
       fix = coordindex[ij];
-      if (verbose>1)  cout << fix << " ";
 #ifdef USE_SMATS
-      //      mergeposval(pos,val,npos,fix);
       if(fix) newrel.add(abs(fix),(fix>0?1:-1));
 #else
+      if (verbose>1)  cout << fix << " ";
       if (fix!=0) newrel[abs(fix)] += sign(fix);
 #endif
      }
-
+#ifdef USE_SMATS
+     if(verbose>1) cout<<newrel<<"\n";
+#else
      if(verbose>1) cout<<"\n";
+#endif
 #ifdef USE_SMATS
      if(newrel.size()!=0) 
        {
@@ -235,16 +240,6 @@ if (verbose>1)
 	   cout<<"Too many 3-term relations (numrel="<<numrel
 	       <<", maxnumrel="<<maxnumrel<<")"<<endl;
        }
-#if(0)
-     if(npos) 
-       {
-	 if(numrel<=maxnumrel)
-	   relmat.set_row(numrel,npos,pos,val);  // rows start at 0 not 1
-	 else 
-	   cout<<"Too many 3-term relations (numrel="<<numrel
-	       <<", maxnumrel="<<maxnumrel<<")"<<endl;
-       }
-#endif
 #else
      if (verbose>1)  cout << newrel << "\n";
      long h = vecgcd(newrel);
@@ -256,7 +251,7 @@ if (verbose>1)
      }
 #endif
     }
-
+     }
    if (verbose) 
      {
        cout << "Finished 3-term relations: numrel = "<<numrel<<" ( maxnumrel = "<<maxnumrel<<")"<<endl;
@@ -280,7 +275,12 @@ if (verbose>1)
 
    if(verbose) 
      {
-       if(verbose>1) cout << "relmat = " << relmat.as_mat() << endl;
+#ifdef USE_SMATS
+       cout << "relmat has "<< get_population(relmat)<<" nonzero entries (density = "<<density(relmat)<<")"<<endl;
+#endif
+
+       if(verbose>1) 
+         cout << "relmat = " << relmat.as_mat().slice(numrel,ngens) << endl;
        cout << "Computing kernel..."<<endl;
      }
    vec pivs, npivs;
@@ -288,7 +288,10 @@ if (verbose>1)
    smat_elim sme(relmat);
    relmat=smat(0,0);
    int d1;
+   start_time();
    smat sp = liftmat(sme.kernel(npivs,pivs),MODULUS,d1);
+   stop_time();
+   if (verbose) {cout<<"time to compute kernel = "; show_time(); cout<<endl;}
    denom1=d1;
    if(verbose>1) 
      {
@@ -320,7 +323,9 @@ if (verbose>1)
        if (verbose>1) 
 	 {
 	   //       cout << "coord:\n" ; coord.output_pretty();
-	   cout << "coord_vecs:\n" << coord_vecs << endl;
+	   cout << "coord_vecs:\n";
+           for(i=1; i<=ngens; i++) 
+             cout<<i<<": "<<coord_vecs[i].as_vec()<<"\n";
 	   cout << "pivots = " << pivs <<endl;
 	 }
      }
@@ -339,48 +344,92 @@ if (verbose>1)
   pivs.init();  npivs.init();
    }
 
-   if (verbose) cout << "About to compute cusps"<<endl;
-   cusplist cusps(2*rk, this);
+   // Compute the number of cusps
+   long maxncusps =0, dd, pp, nc;
+   vector<long>::const_iterator d,p;
+   for(d=(dlist).begin();d!=(dlist).end();d++)
+     {
+       dd = *d;
+       nc = ::gcd(dd,modulus/dd);
+       for(p=plist.begin();p!=plist.end();p++) // computing phi(dd)
+         {
+           pp = *p;
+           if ((nc%pp)==0) 
+             nc = nc*(pp-1)/pp;
+         }
+       maxncusps += nc;
+     }  
+   if (verbose) cout << "Number of cusps is "<<maxncusps<<endl;
+
+   cusplist cusps(maxncusps, this);
+
    for (i=0; i<rk; i++)
      {
        modsym m(symbol(freegens[i]));
        for (j=1; j>-3; j-=2)
 	 {
 	   rational c = (j==1 ? m.beta() : m.alpha());
-	   k = cusps.index(c);   //adds automatically if new
+           if (plusflag==-1)
+	     k = cusps.index_1(c);   //adds automatically if new, ignores if [c]=[-c]
+           else 
+             k = cusps.index(c);   //adds automatically if new
 	 }
      }
    ncusps=cusps.count();
-   if(verbose) cout << "ncusps = " << ncusps << endl;
+
+   if(verbose) 
+     {
+       cout << "ncusps = " << ncusps << endl;
+       if(verbose>1) {cusps.display(); cout<<endl;}
+     }
 
    if (verbose) cout << "About to compute matrix of delta"<<endl;
-   deltamat=mat(ncusps,rk);  // should make this sparse
+   mat deltamat=mat(ncusps,rk);  // should make this sparse
+
    for (i=0; i<rk; i++)
      {
        modsym m(symbol(freegens[i]));
        for (j=1; j>-3; j-=2)
 	 {
 	   rational c = (j==1 ? m.beta() : m.alpha());
-	   k = cusps.index(c);   //adds automatically if new
-	   deltamat(k+1,i+1) += j;  // N.B. offset of 1
+           if (plusflag==-1)
+             k = cusps.index_1(c);
+           else 
+             k = cusps.index(c);
+           if (k>0)
+             deltamat(k,i+1) += j;
+           if (k<0)
+             deltamat(-k,i+1) -= j;
 	 }
      }
    if (verbose)
      {
        cout << "delta matrix done: size "<<nrows(deltamat)<<"x"<<ncols(deltamat)<<". "<<endl;
+       if(verbose>1)
+	 cout<<"deltamat = "<<deltamat<<endl;
        cout << "About to compute kernel of delta"<<endl;
      }
    
    kern=kernel(smat(deltamat));
-   deltamat.init(0); // clear space
+   vec pivs, npivs;
+   int d2;
+   smat sk = liftmat(smat_elim(deltamat).kernel(npivs,pivs),MODULUS,d2);
+   denom2=d2;
+   tkernbas = transpose(kern.bas());         // dim(kern) x rank
+   deltamat.init(0); // clear space.
+   if(verbose>1)
+     {
+       cout<<"tkernbas = "<<tkernbas.as_mat()<<endl;
+     }
+
    if (verbose) cout << "done "<<endl;
 
    if(cuspidal)
      dimension = dim(kern);
    else
      dimension = rk;
-   denom2 = 1;
-   denom3 = denom1;
+   //   denom2 = 1;
+   denom3 = denom1*denom2;
 
    freemods = new modsym[rk]; 
    if (!freemods) abort(string("freemods").c_str());
@@ -405,7 +454,7 @@ if (verbose>1)
         if ((verbose>1)&&cuspidal)
         {
 	  cout << "Basis of ker(delta):\n";
-	  cout << kern.bas();
+	  cout << kern.bas().as_mat()<<endl;
 	  cout << "pivots: " << pivots(kern) << endl;
         }
    }
@@ -419,6 +468,37 @@ homspace::~homspace()
   if (freegens) delete[] freegens; 
   if (freemods) delete[] freemods;  
 }
+
+  // Extend a dual vector of length rk to one of length nsymb:
+vec homspace::extend_coords(const vec& v)
+{
+  //  cout<<"Extending vector "<<v<<endl;
+  vec ans(nsymb);
+  int i,j;
+  for(i=1; i<=nsymb; i++)
+    {      
+      j = coordindex[i-1];
+      if (j==0) ans[i] = 0;
+      else if (j>0) ans[i] =  v*coord_vecs[j];
+      else if (j<0) ans[i] = -v*coord_vecs[-j];
+    }
+  //  cout<<"returning "<<ans<<endl;
+  return ans;
+}
+
+  // Contract a dual vector of length nsymb to one of length rk: 
+vec homspace::contract_coords(const vec& v)
+{
+  //  cout<<"Contracting vector "<<v<<endl;
+  vec ans(rk);
+  int i;
+  for(i=1; i<=rk; i++)
+    ans[i] = v[1+freegens[i-1]];
+  //  cout<<"returning "<<ans<<endl;
+  return ans;
+}
+
+
 
 svec homspace::chain(const symb& s) const
 {
@@ -893,7 +973,7 @@ smat homspace::s_opmat_restricted(int i, const ssubspace& s, int dual, int v)
     {
       cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p
 	  <<") restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
-      smat ans = s_heckeop_restricted(p,s,dual,0); // Automatically chooses W or T
+      smat ans = s_heckeop_restricted(p,s,dual,(v>2)); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
     }

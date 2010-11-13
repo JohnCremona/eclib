@@ -49,6 +49,17 @@
 double sparsity(const mat_m& m);
 double sparsity(const mat& m);
 
+vector<long> eigrange(long p)
+{
+  long aplim=3, four_p=p<<2;
+  while (aplim*aplim<=four_p) aplim++; 
+  aplim--;
+  vector<long> ans(1+2*aplim);
+  iota(ans.begin(),ans.end(),-aplim);
+  return ans;
+}
+
+
 int main(void)
 {
  cout << "Program hecketest.  Using METHOD = " << METHOD << " to find newforms" << endl;
@@ -96,6 +107,8 @@ int main(void)
    ssubspace h1minus = eigenspace(conjmat,-den);
    cout<<" done, dimension = "<<dim(h1minus)<<endl;
 
+   int w_eigs=0;
+   cout<<"Compute W-eigenspaces? "; cin>>w_eigs;
    for (int i=0; i<nq; i++)
      {long q=badprimes[i]; if(i<firstq) continue;
       cout << "Computing W("<<q<<")...  " << flush;
@@ -108,6 +121,7 @@ int main(void)
 	  cout<<" = "<<wq<<endl;
 	  //	  wq.output_pretty();
 	}
+      if(w_eigs) {
       smat swq(wq);
       int e; long mult;
       for(e=1; e>-2; e-=2)
@@ -127,6 +141,7 @@ int main(void)
 	  show_time(cerr); cerr<<endl;
 	  cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;
 	}
+      }
       wqlist[i]=wq;
 #ifdef CHECK_COMMUTE
       if (mult_mod_p(swq,swq,BIGPRIME)==den*den*sidmat(genus)) 
@@ -171,7 +186,7 @@ int main(void)
       cout << "done, sparsity = "<<sparsity(tplist[ip])<<". " << endl;
 #endif // COMPARE_OLD
 #ifdef TEST_EIGS
-      vector<long> eigs=hplus.eigrange(nq+ip);
+      vector<long> eigs = eigrange(p); // hplus.eigrange(nq+ip);
       cout<<"\nChecking for eigenvalues from "<<eigs<<endl;
       long i,j,k,n=genus,r;
       long nulty, nulty1, totalmult=0;
@@ -216,14 +231,14 @@ int main(void)
 	  cout<<"\nTrying eigenvalue e = "<<e<<" ("<<e<<")"<<endl;
 	  e *= den;
 
-
+	  /*
 	  cout<<"Computing nullity, using my (modular) matrix code..."<<flush;
 	  start_time();
 	  nulty=dim(peigenspace(m,e,MODULUS));
 	  stop_time();
 	  show_time(cerr); cerr<<endl;
 	  cout<<" nullity="<<nulty<<endl;
-
+	  */
 	  cout<<"Computing nullity, using my sparse matrix code..."<<flush;
 	  start_time();
 	  nulty=dim(eigenspace(sm,e));
@@ -261,7 +276,7 @@ int main(void)
       cout<<"...done, sparsity =  "<<sparsity(MT); show_time(cerr); cerr<<endl;
       cout<<"Computing kernel, using my (modular) matrix code..."<<flush;
       start_time();
-      subspace  ker=pkernel(MT,MODULUS);
+      subspace  ker = pkernel(MT,MODULUS);
       nulty=dim(ker);
       int denker=denom(ker); // =1 for modular method, but set below
       stop_time();

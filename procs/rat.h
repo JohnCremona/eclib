@@ -66,8 +66,8 @@ public:
         rational& operator*=(long);
         rational& operator/=(const rational&);
         rational& operator/=(long);
-        rational operator+();
-        rational operator-();
+        rational operator+() const;
+        rational operator-() const;
         friend long floor(const rational& r);
         friend long ceil(const rational& r);
         operator double();  // conversion operator
@@ -96,12 +96,12 @@ inline rational::rational(long num_val, long den_val)
 inline rational::rational(const rational& q) :n(q.n), d(q.d) {;}
 inline void rational::operator=(const rational& q) {n=q.n; d=q.d;}
 
-inline rational rational::operator+()
+inline rational rational::operator+() const
 {
         return *this;
 }
 
-inline rational rational::operator-()
+inline rational rational::operator-() const
 {
         return rational(-n, d);
 }

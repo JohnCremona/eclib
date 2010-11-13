@@ -37,7 +37,7 @@ Searching for points (bound = 8)...done:
   and regulator 0.152460177943144
 Processing points found during 2-descent...done:
   now regulator = 0.152460177943144
-Saturating (bound = 100)...done:
+Saturating (bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,1,1,-2,0] back to original curve [0,1,1,-2,0]
 
@@ -82,7 +82,7 @@ Searching for points (bound = 8)...done:
   and regulator 1
 Processing points found during 2-descent...done:
   now regulator = 1
-Saturating (bound = 100)...done:
+Saturating (bound = 1000)...done:
   points were already saturated.
 
 
@@ -132,7 +132,7 @@ Searching for points (bound = 8)...done:
   and regulator 0.886543288687716
 Processing points found during 2-descent...done:
   now regulator = 0.886543288687716
-Saturating (bound = 100)...done:
+Saturating (bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,0,0,0,73] back to original curve [0,0,0,0,73/64]
 
@@ -221,7 +221,7 @@ Searching for points (bound = 8)...done:
   and regulator 1
 Processing points found during 2-descent...done:
 2-descent increases rank to 1,   now regulator = 24.7897653144207
-Saturating (bound = 100)...done:
+Saturating (bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,0,0,677,0] back to original curve [0,0,0,677,0]
 
@@ -355,7 +355,7 @@ Searching for points (bound = 8)...done:
   and regulator 5.83251173698765
 Processing points found during 2-descent...done:
   now regulator = 5.83251173698765
-Saturating (bound = 100)...done:
+Saturating (bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,0,0,-169,0] back to original curve [0,0,0,-169,0]
 

@@ -34,7 +34,7 @@
 
 int main(void)
 {
-  int verbose=2;
+  int verbose=0;
 
   // Read in the curve, minimise and construct CurveRed (needed for
   // conductor and Traces of Frobenius etc.)
@@ -50,15 +50,14 @@ int main(void)
 
   // Construct newforms class (this does little work)
   int sign=1;
-  int cuspidal=0;
 
   cout<<"Enter sign (1,-1,0 for both):"; cin>>sign;
 
-  newforms nf(n,sign,cuspidal,verbose);
+  newforms nf(n,verbose);
 
   // Create the newform from the curve (first create the homspace,
   // then split off the eigenspace)
-  nf.createfromcurve(CR);
+  nf.createfromcurve(sign,CR);
 
   // Display newform info
   cout << "Newform information:"<<endl;
@@ -76,8 +75,10 @@ int main(void)
   while(1)
     {
       cout<<"Enter numerator and denominator of r: "; 
-      cin>>ws;  if(cin.eof()) {cout<<endl; break;}
+      cin>>ws;  
+      if(cin.eof()) {cout<<endl; break;}
       cin >> nu >> de; r=rational(nu,de);
+      if((nu==0)&&(de==0)) {cout<<endl; break;}
       if(sign==+1)
         cout<<"{0,"<<r<<"} -> "<< nf.plus_modular_symbol(r)<<endl;
       if(sign==-1)

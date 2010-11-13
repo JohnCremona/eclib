@@ -34,7 +34,7 @@
 #define DEFAULT_OUTPUT_PARI 0
 #define DEFAULT_SELMER 0  // if set will do only local tests to get Selmer rank
 #define DEFAULT_2ND_DESCENT 1 // if set will do 2nd descent (2-torsion curves)
-#define DEFAULT_SAT_BOUND 100 // bound on saturation primes
+#define DEFAULT_SAT_BOUND 1000 // bound on saturation primes
 
 class mrank_options {
 private:
@@ -130,7 +130,7 @@ public:
       //      cerr << "\t\t\t(use -1 for automatic)\n";
       cerr << "-s\t""selmer_only""\tif set, computes Selmer rank only (default: not set)\n";
       cerr << "-d\t""skip_2nd_descent""\tif set, skips the second descent for curves with 2-torsion (default: not set)\n";
-      cerr << "-S n\t""sat_bd""\t\tupper bound on saturation primes (default=100, -1 for automatic)\n";
+      cerr << "-S n\t""sat_bd""\t\tupper bound on saturation primes (default="<<DEFAULT_SAT_BOUND<<", -1 for automatic)\n";
       cerr << endl;
     }
   

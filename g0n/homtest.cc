@@ -28,6 +28,7 @@
 #include "timer.h"
 
 #define AUTOLOOP
+//#define SHOW_TIMES
 
 int main(void)
 {
@@ -37,9 +38,10 @@ int main(void)
  int verbose=0;
  int cuspidal=0;
  long *dims = new long[3];
+ long *cdims = new long[3];
  // cout << "Verbose? "; cin >> verbose;
  // cout << "Plus space, minus space or full space (+1,-1,0)? "; cin >> plus;
- int limit; 
+ int s,limit; 
 #ifdef AUTOLOOP
   cout<<"Enter first and last levels: ";cin>>n>>limit; n--;
   while (n<limit) { n++;
@@ -48,23 +50,48 @@ int main(void)
 #endif
  if (n>0)
 {
-  //  start_time();
   {
     cout << "\n>>>Level " << n << "\n";
-    for (plus=1; plus>-2; plus--)
+    for (s=0; s<3; s++)
       {
+        plus=(s==0? 1 : (s==1? -1: 0));
+        if(verbose)
+          {
+            cout<<"Computing sign="<<plus<<" space"<<endl;
+          }
+	start_time();
 	homspace hplus(n,plus, cuspidal,verbose);
+	stop_time();
 	int dim = hplus.h1dim();
+	int cdim = hplus.h1cuspdim();
 	dims[plus+1]=dim;
-	cout << "\t\tDimension (sign="<<plus<<") = " << dim << "\t";
+	cdims[plus+1]=cdim;
 	int d = hplus.h1denom();
-	if(d>1) cout<<" (denom = "<<d<<")";
-	cout<<endl;
+	int cd = hplus.h1cdenom();
+	cout << "Sign = "; if (plus!=-1) cout<<" ";
+	cout << plus << ": ";
+	cout << "\tDimension = " << dim;
+	cout << "\tCuspidal dimension = " << cdim;
+	if(d*cd>1) cout<<" denoms ("<<d<<","<<cd<<")";
+#ifdef SHOW_TIMES
+	show_time();
+#endif
+ 	cout<<endl;
+#ifdef SHOW_TIMES
+	cout<<"***************************************************"<<endl;
+#endif
       }
+#ifdef SHOW_TIMES
+    cout<<"***************************************************"<<endl;
+#endif
     if (dims[1]==dims[0]+dims[2])
-      cout<<"\tDimensions add up OK at level "<<n<<endl;
+      continue; //cout<<"\tDimensions add up OK at level "<<n;
     else
       cout<<"****************Dimensions inconsistent for level "<<n<<" ***************"<<endl;
+    if ((cdims[1]==cdims[0]+cdims[2])&&(cdims[0]==cdims[2]))
+      continue; //cout<<"\tCuspidal dimensions add up OK at level "<<n<<endl;
+    else
+      cout<<"\t****************Cuspidal dimensions inconsistent for level "<<n<<" ***************"<<endl;
   }
   cout<<endl;
   //  stop_time();

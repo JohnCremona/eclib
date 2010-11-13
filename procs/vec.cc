@@ -219,7 +219,10 @@ vec iota(scalar n)
 
 scalar vecgcd(const vec& v)
 {
- long i=v.d; scalar g=0; scalar *vi=v.entries;
+ long i=v.d; 
+ scalar g=0; 
+ if (i==0) {g=1;} // so empty vector has content 1, not 0
+ scalar *vi=v.entries;
  while ((i--)&&(g!=1)) g=gcd(g,*vi++);
  return g;
 }

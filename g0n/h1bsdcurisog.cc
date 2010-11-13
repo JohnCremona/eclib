@@ -95,9 +95,9 @@ int main(void)
 #endif
 
  int plus=1, cuspidal=0;
- newforms nf(n,plus,cuspidal,0); 
+ newforms nf(n,0); 
  int noldap=25;
- nf.createfromdata(noldap,0); // do not create from scratch if data absent
+ nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
  long nclasses = nf.n1ds;
  for(int xi=0; xi<nclasses; xi++)
    { int i=xi;

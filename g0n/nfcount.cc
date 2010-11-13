@@ -33,7 +33,7 @@ char* nf_filename(long n, char c)
   else
     nf_file = string(nf_dir);
   char* filename=new char[20];
-  sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
+  sprintf(filename,"%s/%c%ld",nf_file.c_str(),c,n);
   return filename;
 }
 
@@ -68,7 +68,7 @@ int main(void)
   if(verbose) 
     {
       cout << num << " newform(s), "<<nap<< " eigs on file.";
-      if((num>0)&&(nap<168)) cout<<" !!!";
+      if((num>0)&&(nap<25)) cout<<" !!!";
       if(!eig_file_exists) cout<<" [No eig file exists]";
       cout<< endl;
     }

@@ -12,14 +12,14 @@ include ../Makefile
 
 DOT_H = periods.h cusp.h homspace.h newforms.h nflist.h moddata.h oldforms.h symb.h fixc6.h pcprocs.h
 
-DOT_CC = h1bsd.cc newforms.cc symb.cc checkap.cc h1bsdc.cc homspace.cc nfcount.cc h1clist.cc homtest.cc nflist.cc th1nf.cc cnf.cc h1curisog.cc hpcurve.cc nftest.cc tmanin.cc curvesort.cc h1curve.cc oftest.cc cusp.cc h1degphi.cc lf1per.cc oldforms.cc fixc6.cc pcurve.cc tnf2.cc h1first.cc periods.cc vlift.cc mhcount.cc h1test.cc moddata.cc hecketest.cc modtest.cc putoldeigs.cc h1.cc nfhpcurve.cc   
+DOT_CC = h1bsd.cc newforms.cc symb.cc checkap.cc h1bsdc.cc homspace.cc nfcount.cc h1clist.cc homtest.cc nflist.cc th1nf.cc cnf.cc h1curisog.cc hpcurve.cc nftest.cc tmanin.cc curvesort.cc h1curve.cc oftest.cc cusp.cc h1degphi.cc lf1per.cc oldforms.cc fixc6.cc pcurve.cc tnf2.cc h1first.cc periods.cc vlift.cc mhcount.cc h1test.cc moddata.cc hecketest.cc modtest.cc putoldeigs.cc h1.cc nfhpcurve.cc nfhpmcurve.cc   
 
 HEADERS = $(DOT_H)
 sources: $(DOT_H) $(DOT_CC)
 
 TESTS = modtest homtest hecketest nftest mhcount oftest
 
-PROGS = tmanin h1bsd h1curve pcurve nfhpcurve h1clist checkap h1bsd h1bsdcurisog h1degphi hpcurve nfcount ecnf
+PROGS = tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsd h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first
 
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
@@ -127,8 +127,11 @@ check:  $(TESTS) $(PROGS)
 	mkdir newforms
 	./tmanin < tmanin.in > t 2>/dev/null && diff t tmanin.out
 	./nftest < nftest.in 2>/dev/null > t && diff t nftest.out
+	./h1first < h1first.in 2>/dev/null > t && diff t h1first.out
+	./ecnf < ecnf.in 2>/dev/null > t && diff t ecnf.out
 	./oftest < oftest.in > t && diff t oftest.out
 	./nfhpcurve < nfhpcurve.in > t 2>/dev/null && diff t nfhpcurve.out
+	./nfhpmcurve < nfhpmcurve.in > t 2>/dev/null && diff t nfhpmcurve.out
 	./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
 	./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog$(OBJ_SUF).out
 	rm -rf newforms
@@ -240,6 +243,9 @@ lf1per: lf1per$(OBJ_SUF).o $(G0NLIBNAME)
 
 nfhpcurve: nfhpcurve$(OBJ_SUF).o pcprocs$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CXX) -o nfhpcurve nfhpcurve$(OBJ_SUF).o pcprocs$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
+
+nfhpmcurve: nfhpmcurve$(OBJ_SUF).o pcprocs$(OBJ_SUF).o $(G0NLIBNAME)
+	$(CXX) -o nfhpmcurve nfhpmcurve$(OBJ_SUF).o pcprocs$(OBJ_SUF).o -L. $(G0NLIBFLAG) $(LFLAGS)
 
 hpcurve: hpcurve$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CXX) -o hpcurve hpcurve$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
@@ -391,6 +397,7 @@ h1bsdc$(OBJ_SUF).o: h1bsdc.cc moddata.h oldforms.h newforms.h symb.h cusp.h  per
 h1bsdc$(OBJ_SUF).o: h1bsdc.cc moddata.h oldforms.h newforms.h symb.h cusp.h periods.h curvesort.cc
 lf1per$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h lf1per.cc
 nfhpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h cusp.h pcprocs.h nfhpcurve.cc
+nfhpmcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h cusp.h pcprocs.h nfhpmcurve.cc
 hpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h hpcurve.cc
 pcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h pcurve.cc
 allpcurve$(OBJ_SUF).o:  moddata.h oldforms.h newforms.h periods.h homspace.h symb.h allpcurve.cc

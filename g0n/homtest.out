@@ -1,77 +1,55 @@
 Enter first and last levels: 
 >>>Level 900
-		Dimension (sign=1) = 186	
-		Dimension (sign=0) = 361	
-		Dimension (sign=-1) = 175	
-	Dimensions add up OK at level 900
-
+Sign =  1: 	Dimension = 186	Cuspidal dimension = 145
+Sign = -1: 	Dimension = 175	Cuspidal dimension = 145
+Sign =  0: 	Dimension = 361	Cuspidal dimension = 290
 
 >>>Level 901
-		Dimension (sign=1) = 82	
-		Dimension (sign=0) = 161	
-		Dimension (sign=-1) = 79	
-	Dimensions add up OK at level 901
-
+Sign =  1: 	Dimension = 82	Cuspidal dimension = 79
+Sign = -1: 	Dimension = 79	Cuspidal dimension = 79
+Sign =  0: 	Dimension = 161	Cuspidal dimension = 158
 
 >>>Level 902
-		Dimension (sign=1) = 130	
-		Dimension (sign=0) = 253	
-		Dimension (sign=-1) = 123	
-	Dimensions add up OK at level 902
-
+Sign =  1: 	Dimension = 130	Cuspidal dimension = 123
+Sign = -1: 	Dimension = 123	Cuspidal dimension = 123
+Sign =  0: 	Dimension = 253	Cuspidal dimension = 246
 
 >>>Level 903
-		Dimension (sign=1) = 120	
-		Dimension (sign=0) = 233	
-		Dimension (sign=-1) = 113	
-	Dimensions add up OK at level 903
-
+Sign =  1: 	Dimension = 120	Cuspidal dimension = 113
+Sign = -1: 	Dimension = 113	Cuspidal dimension = 113
+Sign =  0: 	Dimension = 233	Cuspidal dimension = 226
 
 >>>Level 904
-		Dimension (sign=1) = 118	
-		Dimension (sign=0) = 229	
-		Dimension (sign=-1) = 111	
-	Dimensions add up OK at level 904
-
+Sign =  1: 	Dimension = 118	Cuspidal dimension = 111
+Sign = -1: 	Dimension = 111	Cuspidal dimension = 111
+Sign =  0: 	Dimension = 229	Cuspidal dimension = 222
 
 >>>Level 905
-		Dimension (sign=1) = 92	 (denom = 2)
-		Dimension (sign=0) = 181	
-		Dimension (sign=-1) = 89	
-	Dimensions add up OK at level 905
-
+Sign =  1: 	Dimension = 92	Cuspidal dimension = 89 denoms (2,2)
+Sign = -1: 	Dimension = 89	Cuspidal dimension = 89
+Sign =  0: 	Dimension = 181	Cuspidal dimension = 178
 
 >>>Level 906
-		Dimension (sign=1) = 156	
-		Dimension (sign=0) = 305	
-		Dimension (sign=-1) = 149	
-	Dimensions add up OK at level 906
-
+Sign =  1: 	Dimension = 156	Cuspidal dimension = 149
+Sign = -1: 	Dimension = 149	Cuspidal dimension = 149
+Sign =  0: 	Dimension = 305	Cuspidal dimension = 298
 
 >>>Level 907
-		Dimension (sign=1) = 76	
-		Dimension (sign=0) = 151	
-		Dimension (sign=-1) = 75	
-	Dimensions add up OK at level 907
-
+Sign =  1: 	Dimension = 76	Cuspidal dimension = 75
+Sign = -1: 	Dimension = 75	Cuspidal dimension = 75
+Sign =  0: 	Dimension = 151	Cuspidal dimension = 150
 
 >>>Level 908
-		Dimension (sign=1) = 117	
-		Dimension (sign=0) = 229	
-		Dimension (sign=-1) = 112	
-	Dimensions add up OK at level 908
-
+Sign =  1: 	Dimension = 117	Cuspidal dimension = 112
+Sign = -1: 	Dimension = 112	Cuspidal dimension = 112
+Sign =  0: 	Dimension = 229	Cuspidal dimension = 224
 
 >>>Level 909
-		Dimension (sign=1) = 104	
-		Dimension (sign=0) = 205	
-		Dimension (sign=-1) = 101	
-	Dimensions add up OK at level 909
-
+Sign =  1: 	Dimension = 104	Cuspidal dimension = 99
+Sign = -1: 	Dimension = 101	Cuspidal dimension = 99
+Sign =  0: 	Dimension = 205	Cuspidal dimension = 198
 
 >>>Level 910
-		Dimension (sign=1) = 176	
-		Dimension (sign=0) = 337	
-		Dimension (sign=-1) = 161	
-	Dimensions add up OK at level 910
-
+Sign =  1: 	Dimension = 176	Cuspidal dimension = 161
+Sign = -1: 	Dimension = 161	Cuspidal dimension = 161
+Sign =  0: 	Dimension = 337	Cuspidal dimension = 322

@@ -30,13 +30,13 @@ class homspace :public symbdata {
 public:
   int *coordindex,*needed,*freegens;
   long rk,denom1,denom2;
-  mat deltamat;
-  ssubspace kern;
+  ssubspace kern; // kernel(delta) basis
+  smat tkernbas; // transpose of kernel(delta) basis
   modsym *freemods;
 public:
   vector<svec> coord_vecs;
   mat projcoord; // # cols = # newforms after they are found
-  long dimension, denom3, ncusps;
+  long dimension, denom3, ncusps, ncusps2;
   int cuspidal;  // if 1 then compute cuspidal homology
 public:
   // Constructor (does all the work):
@@ -50,7 +50,8 @@ public:
   ~homspace();
   long h1cuspdim() const {return dim(kern);}
   long h1dim() const {return dimension;}  // No confusion with subspace::dim
-  long h1denom() const {return denom3;}
+  long h1denom() const {return denom1;}
+  long h1cdenom() const {return denom3;}
   long h1ncusps() const {return ncusps;}
   vector<long> eigrange(long i);
   long op_prime(int i);  // the i'th operator prime for Tp or Wq
@@ -59,6 +60,12 @@ public:
   // versions returning an smat:
   smat s_opmat(int i,int dual,int verb=0);
   smat s_opmat_restricted(int i,const ssubspace& s, int dual,int verb=0);
+
+  // Extend a dual vector of length rk to one of length nsymb:
+  vec extend_coords(const vec& v);
+  // Contract a dual vector of length nsymb to one of length rk: 
+  vec contract_coords(const vec& v);
+
 public:
   // The next functions express M- & modular symbols in terms of the
   // basis for H_1(X_0(N);cusps;Z) of dimension rk
