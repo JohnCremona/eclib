@@ -345,7 +345,7 @@ int modrat(long n, long m, float lim, long& a, long& b)
      {
        if (abs(rr)<lim) {a=r; b=rr; return 1;}
        else cout << "modrat error: no reconstruction for " << n << " mod " << m << "\n";
-//     cout<<" = "<<a<<"/"<<b<<"\n";
+       cout<<" = "<<a<<"/"<<b<<"\n";
        abort();
        return 0;
      }
@@ -478,24 +478,9 @@ long kronecker(long x, long y)
 
 long val2(unsigned long z)
 {
-  static char tab[64]={-1,0,1,12,2,6,-1,13,3,-1,7,-1,-1,-1,-1,14,10,4,-1,-1,8,-1,-1,25,-1,-1,-1,-1,-1,21,27,15,31,11,5,-1,-1,-1,-1,-1,9,-1,-1,24,-1,-1,20,26,30,-1,-1,-1,-1,23,-1,19,29,-1,22,18,28,17,16,-1};
-
-  if (!z) return -1;
-#ifdef __alpha
-  long s;
-  if(longis64bit) 
-    {
-      if (! (z&0xffffffff)) { s = 32; z >>=32; } else s = 0;
-    }
-#endif
-  z |= ~z + 1;
-  z += z << 4;
-  z += z << 6;
-  z ^= z << 16; /* or  z -= z<<16 */
-#ifdef __alpha
-  if(longis64bit) return s + tab[(z&0xffffffff)>>26];
-#endif
-  return tab[z>>26];
+  int v=0;
+  while (!(z&1)) {v++; z>>=1;}
+  return v;
 }
 
 int is_squarefree(long n)
