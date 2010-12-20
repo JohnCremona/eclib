@@ -133,10 +133,6 @@ moddata::moddata(long n) :level(n)
  if (ndivs>0) {dstarts.reserve(ndivs);}
 }
 
-moddata::~moddata()  { ; }
-// No explicit action needed as destructors for members will be called anyway
-
-
 void moddata::display() const
 {
  cout << "Level = " << modulus << "\n";

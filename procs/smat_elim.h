@@ -69,9 +69,6 @@ public:
   smat kernel( vec&, vec& );
   // constructor:
   smat_elim( const smat& sm) : smat( sm ) { ; };
-  //  smat_elim( int r = 0,int c = 0 );
-  // destructor:
-  ~smat_elim() {;}
   int get_rank( ) { return rank; }
   void init_elim( );
   void elim_light_rows(int fr); // eliminate (row,col) for rows of wt <=fr
