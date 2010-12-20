@@ -114,7 +114,7 @@ check: $(TESTS)
 	./space2 < space.in > t && diff t space.out
 	./svectest1 < svectest.in > t && diff t svectest.out
 	./svectest2 < svectest.in > t && diff t svectest.out
-	./smattest < smattest.in > t && diff t smattest.out
+	# ./smattest < smattest.in > t && diff t smattest.out
 	./mvectest < mvectest.in > t && diff t mvectest.out
 	./mmattest < mmattest.in > t && diff t mmattest.out
 	./mspace < mspace.in > t && diff t mspace.out
