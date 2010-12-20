@@ -99,4 +99,5 @@ int main(void)
 }       // end of if(n)
 }       // end of while()
   delete[] dims;
+  delete[] cdims;
 }       // end of main()

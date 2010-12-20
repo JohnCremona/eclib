@@ -189,9 +189,6 @@ if (verbose>1)
 #ifdef USE_SMATS
    smat relmat((int)maxnumrel,(int)ngens);
    svec newrel(ngens);
-   //   int* pos = new int[3];
-   //   scalar* val = new scalar[3];
-   //   int npos;
 #else
    mat relmat(maxnumrel,ngens);
    vec newrel(ngens);

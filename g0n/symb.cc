@@ -76,6 +76,20 @@ ostream& operator<< (ostream& s, const modsym& m)
 }  
  
 //Members of class symblist:
+
+symblist::symblist(long n) 
+{
+  maxnum=n; 
+  num=0; 
+  list=new symb[n];
+}
+
+symblist::~symblist()
+{
+  delete[] list;
+}
+
+
 void symblist::add(const symb& s, long start)
 {
  if (index(s,start)==-1) 

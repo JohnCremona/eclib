@@ -53,7 +53,6 @@ protected:
 public:
   long nsymb;
  moddata(long n);                                //constructor
- ~moddata();                                    //destructor
  void display() const;
  void abort(const char* mess) const 
   {

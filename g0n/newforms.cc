@@ -598,8 +598,10 @@ void newform::add_more_ap(int nap)
 
 newforms::~newforms(void)
 {
-  if(of) delete of;  
-  if(h1) delete h1;
+  delete of;  
+  delete h1plus;
+  delete h1minus;
+  delete h1full;
 }
 
 void newforms::makeh1(int s)

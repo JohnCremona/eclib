@@ -64,8 +64,8 @@ class symblist {
     map<pair<long,long>,long> hashtable;
     long num,maxnum;
  public:
-    symblist(long n=0) {maxnum=n; num=0; list=new symb[n];}
-    ~symblist() {delete[] list;}
+  symblist(long n=0);
+  ~symblist();
     void add(const symb& s, long start=0);
     long index(const symb& s, long start=0) const;
     symb operator[](long n) const {return list[n];}
