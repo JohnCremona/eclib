@@ -152,8 +152,8 @@ modtest: modtest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o
 homtest: homtest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o
 	$(CXX) -o homtest homtest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o  $(LFLAGS)
 
-oftest: oftest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o homspace$(OBJ_SUF).o newforms$(OBJ_SUF).o  cusp$(OBJ_SUF).o
-	$(CXX) -o oftest oftest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o homspace$(OBJ_SUF).o newforms$(OBJ_SUF).o  cusp$(OBJ_SUF).o $(LFLAGS)
+oftest: oftest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o homspace$(OBJ_SUF).o newforms$(OBJ_SUF).o  cusp$(OBJ_SUF).o periods$(OBJ_SUF).o
+	$(CXX) -o oftest oftest$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o homspace$(OBJ_SUF).o newforms$(OBJ_SUF).o  cusp$(OBJ_SUF).o periods$(OBJ_SUF).o $(LFLAGS)
 
 hecketest: hecketest$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o
 	$(CXX) -o hecketest hecketest$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
@@ -174,14 +174,14 @@ tnfd: tnfd$(OBJ_SUF).o nfd$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o sym
 		 $(LFLAGS)
 
 nftest: nftest$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o \
-		newforms$(OBJ_SUF).o
+		newforms$(OBJ_SUF).o periods$(OBJ_SUF).o
 	$(CXX) -o nftest nftest$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
-		oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o  $(LFLAGS)
+		oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o periods$(OBJ_SUF).o  $(LFLAGS)
 
 ecnf: ecnf$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o \
-		newforms$(OBJ_SUF).o
+		newforms$(OBJ_SUF).o periods$(OBJ_SUF).o
 	$(CXX) -o ecnf ecnf$(OBJ_SUF).o cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o \
-		oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o  $(LFLAGS)
+		oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o periods$(OBJ_SUF).o  $(LFLAGS)
 
 nfcount: nfcount$(OBJ_SUF).o
 	$(CXX) -o nfcount nfcount$(OBJ_SUF).o $(LFLAGS)
