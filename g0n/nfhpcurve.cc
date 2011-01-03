@@ -34,7 +34,7 @@
 #include "periods.h"
 #include "pcprocs.h"
 
-#define AUTOLOOP
+//#define AUTOLOOP
 #define MAXNY 100
 #define MAXD 10
 
