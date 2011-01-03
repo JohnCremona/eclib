@@ -40,18 +40,18 @@ int main(void)
 {
  init_time();
  start_time();
- long n=110, stopp; 
+ long n=110, stopp, stopp0; 
+ long prec0=20;
  int output, verbose;
 
  cout << "Program nfhpcurve.  Using METHOD = " << METHOD 
       << " to find newforms" << endl;
- set_precision(20);
 #ifdef MODULAR
  cout << "MODULUS for linear algebra = " << MODULUS << endl;
 #endif
  cout << "Verbose output? "; cin>>verbose;
  cout << "How many primes for Hecke eigenvalues? ";
- cin  >> stopp; cout << endl;
+ cin  >> stopp0; cout << endl;
  output=1; 
  cout << "Output newforms to file? (0/1) ";  cin >> output;
 #ifdef AUTOLOOP
@@ -78,10 +78,13 @@ int main(void)
     }
   int plus=1, cuspidal=0;
   newforms nf(n,verbose); 
-  int noldap=25;
+  int noldap=25; // stopp0 must be at least this big!
+  if (stopp0<noldap) stopp0=noldap;
   nf.createfromscratch(1,noldap);
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
+  stopp=stopp0;
+  // Must make sure that this is big enough to catch the bad primes...?
   nf.addap(stopp);
 
   long nnf = nf.n1ds, inf; 
@@ -128,75 +131,53 @@ int main(void)
   long fac=nf.sqfac;
   if(verbose&&(fac>1)) cout<<"c4 factor " << fac << endl;
 
-  int* success=new int[nnf];
-  long nsucc=0;
+  stopp = stopp0; // will be increased if necessary
+  set_precision(prec0);
   bigfloat rperiod;
-  for(inf=0; inf<nnf; inf++) success[inf]=0;
+  vector<int> forms;
+  for(inf=0; inf<nnf; inf++) forms.push_back(inf);
 
-  while(nsucc<nnf){
-
-  for(inf=0; inf<nnf; inf++)
-   {
-     if(success[inf]) continue;
-     if(verbose) 
-       cout<<"\n"<<"Form number "<<inf+1<<"\n";
-     else cout<<(inf+1)<<" ";
-     newform* nfi = &((nf.nflist)[inf]);
-
-     Curve C = nf.getcurve(inf,-1,rperiod,verbose);
-     Curvedata CD(C,1);  // The 1 causes minimalization
-     if(verbose) cout << "\nCurve = \t";
-     cout << (Curve)CD << "\t";
-     CurveRed CR(CD);
-     cout << "N = " << getconductor(CR) << endl;
-     if(verbose) cout<<endl;
-
-     if(getconductor(CR)==n)
-       {
-	 success[inf]=1; nsucc++;
-       }
-     else 
-       cout<<"No curve found"<<endl;
-
-   } // ends loop over newforms
-
-  if(nsucc==nnf)
+  while(forms.size()>0)
     {
-      cout<<"All curves found successfully!"<<endl;
-      cout << "Finished level "<<n<<endl;
-    }
-  else
-    {      
-      cout<<(nnf-nsucc)<<" curve(s) missing."<<endl;
-      int newstopp;
-      if(stopp<500) 
-	newstopp=stopp+100;
-      else
-	newstopp=stopp+500;
-      if(newstopp>32000)
-      {
-	  cout<<"Cannot compute more ap, something must be wrong in newform data"<<endl;
-	  abort();
-      }
-      cout<<"Computing some more ap: from "<<stopp+1<<" to "
-	  <<newstopp<<"..."<<endl;
-      nf.set_sign(1);
-      nf.makeh1(1);
-      nf.addap(newstopp);
-      stopp=newstopp;
-#ifdef MPFP
-      if(decimal_precision()<50) 
+      forms = nf.showcurves(forms,verbose);
+      if(forms.size()==0)
 	{
-	  set_precision(decimal_precision()+10);
-	  cout << "Now working to "<<decimal_precision()<<" decimal places" << endl;
+	  cout<<"All curves found successfully!"<<endl;
+	  cout << "Finished level "<<n<<endl;
 	}
+      else
+	{      
+	  cout<<forms.size()<<" curve(s) missing: ";
+	  for(vector<int>::const_iterator inf=forms.begin(); inf!=forms.end(); inf++)
+	    cout<<(*inf+1)<<" ";
+	  cout<<endl;
+	  int newstopp;
+	  if(stopp<500) 
+	    newstopp=2*stopp;
+	  else
+	    newstopp=stopp+500;
+	  if(newstopp>32000)
+	    {
+	      cout<<"Cannot compute more ap, something must be wrong in newform data"<<endl;
+	      abort();
+	    }
+	  cout<<"Computing some more ap: from "<<stopp+1<<" to "
+	      <<newstopp<<"..."<<endl;
+	  nf.set_sign(1);
+	  nf.makeh1(1);
+	  nf.addap(newstopp);
+	  stopp=newstopp;
+	  if(output) nf.output_to_file();
+#ifdef MPFP
+	  if(decimal_precision()<50) 
+	    {
+	      set_precision(decimal_precision()+5);
+	      cout << "Now working to "<<decimal_precision()<<" decimal places" << endl;
+	    }
 #endif
-    } 
-  }   // ends while(nsucc<nnf)
-  delete[]success;
-
-  
-}       // end of if(n>0)
+	} 
+    }
+ }       // end of if(n>0)
      }  // end of while(n>0) or while(n<limit)
  }       // end of main()
 

@@ -111,7 +111,7 @@ vector<long> eiglist(const newform& f, int oldorder)
     {
       eigs=f.aplist; // copy; now adjust the aq:
       eigsi=eigs.begin();
-      while(aqi!=f.aqlist.end())
+      while((aqi!=f.aqlist.end())&&(eigsi!=eigs.end()))
 	{
 	  if(::div(pr,N)) *eigsi = (*aqi++);
 	  eigsi++; pr++;
@@ -176,7 +176,7 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
       if(sign==+1) cout<<"+"; 
       if(sign==-1) cout<<"-"; 
       cout<<" newform from aplist..."<<endl;
-      if(verbose>1)
+      if(verbose>2)
         {
           if(sign!=-1) cout<<"bplus = "<<bplus<<endl;
           if(sign!=+1) cout<<"bminus = "<<bminus<<endl;
@@ -397,12 +397,12 @@ void newform::find_cuspidal_factors()
           if(sign!=-1)
             {
               cout<<"cuspidalfactorplus  = "<<cuspidalfactorplus<<endl; 
-              if(verbose>1) cout<<"bplusc = "<<bplusc<<endl;
+              if(verbose>2) cout<<"bplusc = "<<bplusc<<endl;
             }
 	  if(sign!=+1) 
             {
               cout<<"cuspidalfactorminus = "<<cuspidalfactorminus<<endl;
-              if(verbose>1) cout<<"bminusc = "<<bminusc<<endl;
+              if(verbose>2) cout<<"bminusc = "<<bminusc<<endl;
             }
 	}
     } 
@@ -651,7 +651,9 @@ void newforms::createfromscratch(int s, long ntp)
   of = new oldforms(ntp,h1,(verbose>1),sign); // h1 provides the level*
   if(verbose>1) of->display();
   maxdepth = of->nap;
-  long mindepth = npdivs;
+  long mindepth = npdivs; // must include at least one good p, and it
+			  // is cheap to continue recursing after
+			  // reaching dimension 1.
   n1ds = 0;
   int upperbound = h1->dimension-(of->totalolddim);
   if(upperbound>0)  // Else no newforms certainly so do no work!
@@ -682,16 +684,10 @@ void newforms::createfromscratch(int s, long ntp)
 
   if((n1ds>1)&&(modulus<130000)) // reorder into old order
     {
-      if(verbose) 
-	{
-	  cout<<"Reordering newforms into old order as N<130000"<<endl;
-	  //	  cout<<"Before sorting:\n"; display();
-	}
+      if(verbose) cout<<"Reordering newforms into old order as N<130000"<<endl;
+      // if(verbose) cout<<"Before sorting:\n"; display();
       sort(1);
-      if(verbose) 
-	{
-	  //	  cout<<"After sorting:\n"; display();
-	}
+      // if(verbose) cout<<"After sorting:\n"; display();
     }
   // At this point the newforms may contain different numbers of ap,
   // so we need to even these up, which we do by computing more ap for
@@ -712,18 +708,18 @@ void newforms::createfromscratch(int s, long ntp)
 	  }  
     }
 
-  // Compute homspace::projcoord, so projchain can be used
-  // Replaces coord_vecs of homspace with projections onto eigenspaces
-  h1->projcoord.init(h1->coord_vecs.size()-1,n1ds);
-  if(sign==-1)
-    for (j=1; j<=n1ds; j++)
-      h1->projcoord.setcol(j, nflist[j-1].coordsminus);
-  else
-    for (j=1; j<=n1ds; j++)
-      h1->projcoord.setcol(j, nflist[j-1].coordsplus);
+   // Compute homspace::projcoord, so projchain can be used
+   // Replaces coord_vecs of homspace with projections onto eigenspaces
+   make_projcoord();
 
-  // Look for a j0 such that nflist[i].bplus/bminus[j0]!=0 for all i
-  int ok=0; j0=0;
+   // Look for a j0 such that nflist[i].bplus/bminus[j0]!=0 for all i, or a set of such j
+   find_jlist();
+}  
+
+
+void newforms::find_jlist()
+{
+  int i, j, ok=0; j0=0;
   for(j=1; (!ok)&&(j<=h1->h1dim()); j++)
     {
       ok=1;
@@ -763,8 +759,21 @@ void newforms::createfromscratch(int s, long ntp)
 	}
       if(verbose)  cout<<"jlist="<<jlist<<endl;
     }
-}  
+}
 
+// Compute homspace::projcoord, so projchain can be used
+// Replaces coord_vecs of homspace with projections onto eigenspaces
+void newforms::make_projcoord()
+{
+  h1->projcoord.init(h1->coord_vecs.size()-1,n1ds);
+  int j;
+  if(sign==-1)
+    for (j=1; j<=n1ds; j++)
+      h1->projcoord.setcol(j, nflist[j-1].coordsminus);
+  else
+    for (j=1; j<=n1ds; j++)
+      h1->projcoord.setcol(j, nflist[j-1].coordsplus);
+}
 
 long newforms::dimoldpart(const vector<long> l) 
 {
@@ -1359,7 +1368,11 @@ void newforms::makebases(int flag)
   int i,j;
 
   sort();
-  for(i=0; i<n1ds; i++) eigs[i]=eiglist(nflist[i]);
+  for(i=0; i<n1ds; i++) 
+    {
+      //      cout<<i+1<<": "<<eiglist(nflist[i])<<endl;
+      eigs[i]=eiglist(nflist[i]);
+    }
 
   // if(n1ds>1)
   //   {
@@ -1445,7 +1458,7 @@ void newforms::merge()
 
 vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 {
-  //  cout<<"In apvec with p = "<<p<<endl;
+  //cout<<"In apvec with p = "<<p<<endl;
   vector<long> apv(n1ds);
   vec v;
   long i,j,iq,ap; 
@@ -1476,12 +1489,14 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   
   // Compute the image of the necessary M-symbols (hopefully only one)
   //cout<<"Computing images of M-symbols"<<endl<<flush;
+  //cout<<"jlist = "<<jlist<<endl;
   for(std::set<long>::const_iterator jj=jlist.begin(); jj!=jlist.end(); jj++)
     {
       imagej=vec(n1ds); // initialised to 0
       j=*jj;
+      //cout<<"Computing image of "<<j<<"'th M-symbol "<<endl;
       symb s = h1->symbol(h1->freegens[j-1]);
-      //cout<<"Computing image of "<<s<<"..."<<flush;
+      //cout<<" = "<<s<<"..."<<flush;
       long u=s.cee(),v=s.dee(); 
       mat& pcd = h1->projcoord;
 // Matrix [1,0;0,p]
@@ -1623,4 +1638,39 @@ pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i)
   rational a1(a[1],nflist[i].cuspidalfactorplus);
   rational a2(a[2],nflist[i].cuspidalfactorminus);
   return pair<rational,rational> ( a1, a2 );
+}
+
+  // Attempt to compute and display the elliptic curve for each
+  // newform; return a list of newform indices where this failed.
+vector<int> newforms::showcurves(vector<int> forms, int verbose)
+{
+  if((verbose>1)&&(sqfac>1)) cout<<"c4 factor " << sqfac << endl;
+
+  bigfloat rperiod;
+  vector<int> badcurves; // will hold the indices of forms for which we fail to find a curve
+  vector<int>::const_iterator inf; // will iterate through the forms to be used
+
+  for(inf=forms.begin(); inf!=forms.end(); inf++)
+   {
+     if(verbose) 
+       cout<<"\n"<<"Form number "<<*inf+1<<"\n";
+     else cout<<(*inf+1)<<" ";
+
+     newform* nfi = &(nflist[*inf]);
+     Curve C = getcurve(*inf,-1,rperiod,verbose);
+     Curvedata CD(C,1);  // The 1 causes minimalization
+     if(verbose) cout << "\nCurve = \t";
+     cout << (Curve)CD << "\t";
+     CurveRed CR(CD);
+     cout << "N = " << getconductor(CR) << endl;
+     if(verbose) cout<<endl;
+
+     if(getconductor(CR)!=modulus)
+       {
+	 cout<<"No curve found"<<endl;
+	 badcurves.push_back(*inf);
+       }
+   }
+
+  return badcurves;
 }

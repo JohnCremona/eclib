@@ -151,6 +151,13 @@ public:
   // to createfromscratch:
   void createfromdata(int s, long ntp, int create_from_scratch_if_absent=1);
 
+  // Compute homspace::projcoord, so projchain can be used
+  // Replaces coord_vecs of homspace with projections onto eigenspaces
+  void make_projcoord();
+
+  // Look for a j0 such that nflist[i].bplus/bminus[j0]!=0 for all i, or a set of such j
+  void find_jlist();
+
   // Create from one or a list of elliptic curves of the right conductor:
   void createfromcurve(int s, CurveRed C, int nap=25);
   void createfromcurves(int s, vector<CurveRed> Clist, int nap=25);
@@ -187,6 +194,10 @@ public:
   Cperiods getperiods(long i, int method=-1, int verbose=0);
   // Given all data & Cperiods, compute the curve (using fixc6 etc)
   Curve getcurve(long i, int method, bigfloat& rperiod, int verbose=0);
+
+  // Attempt to compute and display the elliptic curve for each
+  // newform in forms; return a (sub)list of newform indices where this failed.
+  vector<int> showcurves(vector<int> forms, int verbose);
 
   // next three implemented in pcprocs.cc
 

@@ -12,14 +12,14 @@ include ../Makefile
 
 DOT_H = periods.h cusp.h homspace.h newforms.h nflist.h moddata.h oldforms.h symb.h fixc6.h pcprocs.h
 
-DOT_CC = h1bsd.cc newforms.cc symb.cc checkap.cc h1bsdc.cc homspace.cc nfcount.cc h1clist.cc homtest.cc nflist.cc th1nf.cc cnf.cc h1curisog.cc hpcurve.cc nftest.cc tmanin.cc curvesort.cc h1curve.cc oftest.cc cusp.cc h1degphi.cc lf1per.cc oldforms.cc fixc6.cc pcurve.cc tnf2.cc h1first.cc periods.cc vlift.cc mhcount.cc h1test.cc moddata.cc hecketest.cc modtest.cc putoldeigs.cc h1.cc nfhpcurve.cc nfhpmcurve.cc   
+DOT_CC = h1bsd.cc newforms.cc symb.cc checkap.cc h1bsdc.cc homspace.cc nfcount.cc h1clist.cc homtest.cc nflist.cc th1nf.cc cnf.cc h1curisog.cc hpcurve.cc nftest.cc tmanin.cc curvesort.cc h1curve.cc oftest.cc cusp.cc h1degphi.cc lf1per.cc oldforms.cc fixc6.cc pcurve.cc tnf2.cc h1first.cc periods.cc vlift.cc mhcount.cc h1test.cc moddata.cc hecketest.cc modtest.cc putoldeigs.cc h1.cc nfhpcurve.cc nfhpmcurve.cc moreap.cc  
 
 HEADERS = $(DOT_H)
 sources: $(DOT_H) $(DOT_CC)
 
 TESTS = modtest homtest hecketest nftest mhcount oftest
 
-PROGS = tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsd h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first
+PROGS = tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsd h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first moreap
 
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
@@ -203,6 +203,9 @@ checkap: checkap$(OBJ_SUF).o
 
 tmanin: tmanin$(OBJ_SUF).o $(G0NLIBNAME)
 	$(CXX) -o tmanin tmanin$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
+
+moreap: moreap$(OBJ_SUF).o $(G0NLIBNAME)
+	$(CXX) -o moreap moreap$(OBJ_SUF).o $(G0NLIBFLAG) $(LFLAGS)
 
 getoldeigs: getoldeigs$(OBJ_SUF).o
 	$(CXX) -o getoldeigs getoldeigs$(OBJ_SUF).o $(LFLAGS)

@@ -1,0 +1,42 @@
+#!/bin/bash
+
+################################################################
+#   for use on fermat
+################################################################
+
+PROG=nfhpmcurve
+
+FIRSTN=$1
+LASTN=$2
+
+LOGFILE=run$BASHPID.log
+
+rm -f $LOGFILE
+echo "Running $PROG from $FIRSTN to $LASTN" > $LOGFILE
+
+N=$FIRSTN
+
+if [ "x"$NF_DIR == "x" ]; then 
+    export NF_DIR="newforms"
+fi
+
+echo "Running $PROG from $FIRSTN to $LASTN"
+echo "Newforms directory is $NF_DIR"
+echo "Log file is $LOGFILE"
+
+LASTN=`expr $LASTN + 1`
+
+while [ "$N" != "$LASTN" ]
+do
+  if [ -e "$NF_DIR/x$N" ]; then
+     echo "file $NF_DIR/x$N exists already, skipping" >> $LOGFILE
+  else
+  if [ -e "$PROG.out_$N" ]; then
+     echo "Level $N running already, skipping" >> $LOGFILE
+  else
+     echo "running $PROG on level $N" >> $LOGFILE
+     echo "0 2000 1 $N $N" | nice ./$PROG > $PROG.out_$N 2>&1
+  fi
+  fi
+  N=`expr $N + 1`
+done

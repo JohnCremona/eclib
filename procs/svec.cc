@@ -303,6 +303,14 @@ svec& svec::mult_by_scalar_mod_p(scalar scal, const scalar& p)
   return *this;
 }
 
+inline scalar xmm(scalar a, scalar b, scalar m)
+{
+  //return xmodmul(a,b,m);
+  //return (a*b) % m;
+  return (a*(long)b) % m;
+  //return (scalar)(((long)a*(long)b) % (long)m);
+}
+
 svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, const scalar& p)
 {
   if (d!=w.d)
@@ -320,7 +328,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, const scalar& p)
 	{
 	  while(wi!=w.entries.end())
 	    {
-	      entries[wi->first]=xmodmul(a,(wi->second),p);
+	      entries[wi->first]=xmm(a,(wi->second),p);
 	      wi++;
 	    } 	    
 	}
@@ -330,12 +338,12 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, const scalar& p)
 	  else
 	    if((wi->first)<(vi->first)) 
 	      {
-		entries[wi->first]=xmodmul(a,(wi->second),p);
+		entries[wi->first]=xmm(a,(wi->second),p);
 		wi++;
 	      } 
 	    else
 	      {
-		scalar sum = xmod((vi->second) + xmodmul(a, (wi->second),p),p);
+		scalar sum = xmod((vi->second) + xmm(a, (wi->second),p),p);
 		if(sum) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first); }
 		wi++;
@@ -366,7 +374,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, std::set<int>& ons, 
 	{
 	  while(wi!=w.entries.end())
 	    {
-	      entries[wi->first]=xmodmul(a,(wi->second),p);
+	      entries[wi->first]=xmm(a,(wi->second),p);
 	      ons.insert(wi->first);
 	      wi++;
 	    } 	    
@@ -377,13 +385,13 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, std::set<int>& ons, 
 	  else
 	    if((wi->first)<(vi->first)) 
 	      {
-		entries[wi->first]=xmodmul(a,(wi->second),p);
+		entries[wi->first]=xmm(a,(wi->second),p);
 		ons.insert(wi->first);
 		wi++;
 	      } 
 	    else
 	      {
-		scalar sum = xmod((vi->second) + xmodmul(a, (wi->second),p),p);
+		scalar sum = xmod((vi->second) + xmm(a, (wi->second),p),p);
 		if(sum) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first); offs.insert(wi->first);}
 		wi++;

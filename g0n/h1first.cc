@@ -64,18 +64,19 @@ int main(void)
 	cout << "saved updated newform data to file" << endl;     
       
 #ifdef SHOWCURVES
-      for(int i=0; i<nf.n1ds; i++)
+      int inf, nnf = nf.n1ds;
+      // Now we compute the curves
+      cout<<"Computing "<<nnf<<" curves...\n";
+      vector<int> forms;
+      for(inf=0; inf<nnf; inf++) forms.push_back(inf);
+      vector<int> failures = nf.showcurves(forms,0);
+      if(failures.size()>0)
 	{
-	  if(verbose) cout << "\nForm number ";
-	  cout << i+1 << ": ";
-	  bigfloat rperiod;
-	  Curve C = nf.getcurve(i, -1, rperiod, verbose);
-	  Curvedata CD(C,1);  // The 1 causes minimalization
-	  if(verbose) cout << "\nCurve = \t";
-	  cout << (Curve)CD << "\t";
-	  CurveRed CR(CD);
-	  cout << "N = " << getconductor(CR) << endl;
-	  if(verbose) cout<<endl;
+	  cout<<"No curve found for "<<failures.size()<<" forms: "<<failures<<endl;
+	}
+      else
+	{
+	  cout<<"All curves found OK"<<endl;
 	}
 #endif
       
