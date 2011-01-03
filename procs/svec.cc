@@ -307,7 +307,7 @@ inline scalar xmm(scalar a, scalar b, scalar m)
 {
   //return xmodmul(a,b,m);
   //return (a*b) % m;
-  return (a*(long)b) % m;
+  return (a*(int64_t)b) % m;
   //return (scalar)(((long)a*(long)b) % (long)m);
 }
 
