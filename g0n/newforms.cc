@@ -299,6 +299,41 @@ void newform::fixup_eigs()
   if(nf->verbose) cout<<"sfe = "<<sfe<<endl;
 }
 
+// Before recovering eigenbases, we need to put back the aq into the
+// aplist (and resort, for efficiency).
+void newform::unfix_eigs()
+{ 
+  vector<long>::iterator api=aplist.begin();
+  vector<long>::iterator aqi=aqlist.begin();
+  primevar pr;
+  long n = nf->modulus;
+  while((api!=aplist.end())&&(aqi!=aqlist.end()))
+    {
+      if(::div(pr.value(),n)) *api=*aqi++; 
+      api++;
+      pr++;
+    }
+}
+
+// After recovering eigenbases, we need to replace the ap for bad p
+void newform::refix_eigs()
+{ 
+  vector<long>::iterator api=aplist.begin();
+  primevar pr;
+  long n = nf->modulus, np = nf->npdivs, ip=0, q;
+  while((api!=aplist.end())&&(ip<np))
+    {
+      q=pr.value();
+      if(::div(q,n)) 
+	{
+	  *api=(::div(q*q,n)? 0: -*api);
+	  ip++;
+	}
+      api++;
+      pr++;
+    }
+}
+
 void newform::find_bsd_ratio()
 {
   // get ap for p=p0:
@@ -851,6 +886,20 @@ void newforms::sort(int oldorder)
     ::sort(nflist.begin(),nflist.end(),less_newform_new());
 }
   
+// Before recovering eigenbases, we need to put back the aq into the
+// aplist (and resort, for efficiency).
+void newforms::unfix_eigs()
+{
+  for(int i=0; i<n1ds; i++)
+    nflist[i].unfix_eigs();
+}
+
+// After recovering eigenbases, we need to refix the aplist
+void newforms::refix_eigs()
+{
+  for(int i=0; i<n1ds; i++)
+    nflist[i].refix_eigs();
+}
 
 void newforms::display(void) const
 {
@@ -1367,45 +1416,31 @@ void newforms::makebases(int flag)
   vector< vector<long> > eigs(n1ds);
   int i,j;
 
-  sort();
+  unfix_eigs();
+  if((n1ds>1)&&(modulus<130000)) // reorder into old order
+    {
+      if(verbose) cout<<"Reordering newforms before recovery as N<130000"<<endl;
+      if(verbose>1) {cout<<"Before sorting:\n"; display();}
+      sort();
+      if(verbose>1) {cout<<"After sorting:\n"; display();}
+    }
   for(i=0; i<n1ds; i++) 
     {
-      //      cout<<i+1<<": "<<eiglist(nflist[i])<<endl;
-      eigs[i]=eiglist(nflist[i]);
+      eigs[i] = nflist[i].aplist;
+      //      cout<<i+1<<": ";vec_out(cout,eigs[i],10); cout<<endl;
     }
 
-  // if(n1ds>1)
-  //   {
-  //     if(verbose>1) 
-  // 	{
-  // 	  cout<<"Before sorting, eig lists are:"<<endl;
-  // 	  for(i=0; i<n1ds; i++) {vec_out(cout,eigs[i],10);    cout<<endl;}
-  // 	  cout<<"sorting..."<<endl;
-  // 	}
-  //     ::sort(eigs.begin(),eigs.end(),less_apvec_function());
-  //     if(verbose>1) 
-  // 	{
-  // 	  cout<<"After sorting, eig lists are:"<<endl;
-  // 	  for(i=0; i<n1ds; i++) {vec_out(cout,eigs[i],10);    cout<<endl;}
-  // 	}
-  //   }
-  //  if(sign!=+1) {n1ds=0; nflist.resize(0);}
   splitspace.recover(eigs);  // NB newforms::use() determines what is
 			     // done with each one as it is found;
 			     // this depends on basisflag and sign
   if(verbose) cout << "...done."<<endl;
+  refix_eigs();
   if((n1ds>1)&&(modulus<130000)) // reorder into old order
     {
-      if(verbose) 
-	{
-	  cout<<"Reordering newforms back into old order as N<130000"<<endl;
-	  if(verbose>1) cout<<"Before sorting:\n"; display();
-	}
+      if(verbose) cout<<"Reordering newforms after recovery as N<130000"<<endl;
+      if(verbose>1) {cout<<"Before sorting:\n"; display();}
       sort(1);
-      if(verbose>1) 
-	{
-	  cout<<"After sorting:\n"; display();
-	}
+      if(verbose>1) {cout<<"After sorting:\n"; display();}
     }
 }
 

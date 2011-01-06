@@ -87,6 +87,9 @@ public:
   int check_expand_contract();
   // To fix eigenvalues lists after finding a newform
   void fixup_eigs();
+  // To fix eigenvalues lists before/after recovering bases
+  void unfix_eigs();
+  void refix_eigs();
   // To find BSD ratio:
   void find_bsd_ratio();
   // To find projected coords:
@@ -177,6 +180,9 @@ public:
 
   // Sort newforms 
   void sort(int oldorder=0);
+  // To fix eigenvalues lists before/after recovering bases
+  void unfix_eigs();
+  void refix_eigs();
   
   // for the i'th newform return the value of the modular symbol {0,r}
   rational plus_modular_symbol(const rational& r, long i=0) const;
