@@ -41,7 +41,9 @@
 
 int main(void)
 {
-  set_precision(20);
+  int prec0 = 10; 
+  int prec = prec0;
+  set_precision(prec);
  int limit,n=1; 
  char* code = new char[20];
 #ifdef AUTOLOOP
@@ -77,7 +79,20 @@ int main(void)
      bigfloat rperiod;
      int r = x.rank();
 
+     prec = prec0;
+     set_precision(prec);
      Curve C = nf.getcurve(i, -1, rperiod);
+     while (C.isnull() && (prec<100))
+       {
+	 prec += 10;
+	 set_precision(prec);
+	 C = nf.getcurve(i, -1, rperiod);
+       }
+     if (C.isnull())
+       {
+	 cout<<setw(6)<<n<<code<<": bad c4, c6"<<endl;
+	 continue;
+       }
      Curvedata CD(C,1);  // The 1 causes minimalization
 
      bigint a1,a2,a3,a4,a6;

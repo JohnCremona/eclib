@@ -120,9 +120,9 @@ Curve::Curve(const bigint& c4, const bigint& c6)
     }
   else 
     {
-      cout << " ## attempt to call Curve constructor"
-           << " with invalid invariants c4 = "<<c4<<", c6 = "<<c6
-           << ": reading as null curve\n";
+      // cout << " ## attempt to call Curve constructor"
+      //      << " with invalid invariants c4 = "<<c4<<", c6 = "<<c6
+      //      << ": reading as null curve\n";
         a1=0; a2=0; a3=0; a4=0; a6=0;
     }
 }
