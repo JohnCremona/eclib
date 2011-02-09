@@ -27,8 +27,8 @@
 #include "homspace.h"
 #include "timer.h"
 
-#define AUTOLOOP
-//#define SHOW_TIMES
+//#define AUTOLOOP
+#define SHOW_TIMES
 
 int main(void)
 {

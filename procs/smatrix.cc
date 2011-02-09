@@ -20,10 +20,11 @@
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 // 
 //////////////////////////////////////////////////////////////////////////
+ 
+// Original version by Luiz Figueiredo
 
 #include "arith.h"
 #include "smatrix.h"
-#include "random.cc"
 
 #undef scalar
 #undef vec

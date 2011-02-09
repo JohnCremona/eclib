@@ -1,4 +1,4 @@
-// smatrix2.h: manage declarations for sparse integer matrix classes
+// smatrix.h: manage declarations for sparse integer matrix classes
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2005 John Cremona
@@ -20,6 +20,8 @@
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 // 
 //////////////////////////////////////////////////////////////////////////
+ 
+// Original version by Luiz Figueiredo
  
 #if     !defined(_SMATRIX_H)
 #define _SMATRIX_H      1       //flags that this file has been included

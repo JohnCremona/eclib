@@ -25,86 +25,95 @@
  
 // Not to be included directly by user: use smatrix_elim.h
 
-#include <queue>
- 
 class smat_elim : public smat{
 
  private:
   
-  int rank;                  // initially 0; incremented whenever a
-			     // row is eliminated;
-  int nrows_left, ncols_left; // # rows/cols not yet eliminated
-  int ech_form, red_ech_form; // flags to show that reduction has taken place
-  vector<std::set<int> > column;  // an array of ordered lists, one per
-			     // col, of row nos which have nonzero
-			     // entries in that col;
-  vector<int> position;     // array indexed by row numbers r;
-			    // initially -1; 0 iff row is zero; else c
-			    // where row r was eliminated using pivot
-			    // at (r,c) after clearing rest of column c
-  vector<int> elim_col;     // array indexed by column numbers c;
-			    // initially -1; else r where row r was
-			    // eliminated using pivot at (r,c) after
-			    // clearing rest of column c;
-  vector<int> elim_row;     // array indexed by 1..rank;
-			    // initially 0; else gives the order of
-			    // elimination of rows;
-  vector<int> light_col_flag;   // 0/1 flag columns which are `light' : not yet
-			    // eliminated but no more than M entries
-  queue<int> light_rows, light_cols; // lists of light rows & cols
-  queue<int>  light_cols_1; // lists cols of wt 1
-  queue<int>  light_cols_2; // lists cols of wt 2
-  //  multimap<int,int> light_cols_2; // lists cols of wt 2
-  deque<int> very_light_cols; // list of very light cols (wt 1 at front, wt 2 at back)
-  scalar half;
-  void clear_col(int,int, int fr = 0, int fc = 0, int M = 0, int frl=0, int fcl=0);
-  int get_weight( int row ); // compute the number of "light" columns
-			     // intersecting row# row
-  void eliminate( int&, int& );
-  int finished() {return (nrows_left==0)&&(ncols_left==0);}
-  int step4finished();
+  class list {
+  public:
+    typedef int type;    //use this till smat is made a template class.
+    static int listsize;
+    int maxsize;
+    type *list_array;
+    int num;
+    int index;
+    void put( type& X) { 
+      if( num >= maxsize ) 
+	{
+// 	  cout<<"About to grow list from size "<<maxsize<<endl;
+	  grow();
+// 	  cout<<"Finished growing list, new size "<<maxsize<<endl;
+	}
+      list_array[ num++ ] = X; 
+    }
+    int find( type& X, int ub, int lb = 0 );
+    void grow ();
+    type next() { 
+      if( index < num ) return( list_array[index++] ); else return(-1); 
+    }
+    list( int m = 10);
+    ~list( );
+    void clear( int m=0); 
+    
+  };
+  friend ostream& operator<< (ostream&s, const smat_elim::list&);
+
+  class ordlist : public list {
+  public:
+    void put( type& X);
+    void put( list& L);     // L must be ordered
+    void remove( type& X );
+    void remove( list& L );     // L must be ordered
+    ordlist( int m = 10) : list(m) {;}
+  };
+  
+  int rank;
+  ordlist* column; // an array of lists, oner per col, of row nos
+		   // which have nonzero entries in that col
+  int *position;     
+  int *elim_col;     // in which row was col eliminated;
+  int *elim_row;       //order of elimination of rows;
+  void clear_col(int,int,list&, int fr = 0, int fc = 0,int M = 0,int *li =0);
+  void check_col( int col, list& L );
+  void check_row (int d2, int row2, list& L ); 
+  int get_weight( int, int* ); 
 
 public:
-  smat oldkernel( vec&, vec& );
-  smat kernel( vec&, vec& );
-  // constructor:
-  smat_elim( const smat& sm) : smat( sm ) { ; };
   int get_rank( ) { return rank; }
-  void init_elim( );
-  void elim_light_rows(int fr); // eliminate (row,col) for rows of wt <=fr
-  void elim_light_cols(int fc); // eliminate (row,col) for columns of wt <=fc
-  void elim_light_cols(); // eliminate (row,col) for columns of wt <=2
-  void step0() {elim_light_rows(1);}
-  void step1() {elim_light_cols(1);}
-  void step2() {elim_light_rows(2);}
-  void step3() {elim_light_cols(2);}
-  void step4(); // eliminate (row,col) for "light" columns 
-  void step4new(); // eliminate (row,col) for "light" columns 
-  void step5(); // all remaining elimination
-  void step6(); // back-substitution
-  void echelon_form( ); // steps 0,1,2,3,4,5 in turn
-  void reduced_echelon_form( ); // steps 0,1,2,3,4,5,6 in turn
-  int check_echelon();       // check that we do have echelon form
-  int check_red_echelon();   // check that we do have reduced echelon form
-  long active_entry_count()
-  {
-    long col, wt=0;
-    for(col = 1; col <= nco; col++ )     
-      wt +=column[col].size(); 
-    return wt;
-  }
-  void show_progress() 
-  {
-    cout<<"#rows left = "<<nrows_left<<"\n#cols left = "<<ncols_left<<endl;
-    cout<<"Population = "<<get_population(*this);
-    cout<<" ( "<<active_entry_count()<<" active entries)"<<endl; 
-  }
+  void init( );
+  void step0();
+  void step1();
+  void step2();
+  void step3();
+  void step4();
+  void standard( );
+  void back_sub( );
+  void sparse_elimination( );
+  smat kernel( vec&, vec& );
+  void normalize( int, int );
+  void eliminate( int&, int& );
+  void free_space( int col );
+  void elim( int row1, int row2, scalar v2 );
+  // constructor:
+  smat_elim( const smat& sm) : smat( sm ) { init(); };
+  smat_elim( int r = 0,int c = 0 );
+  // destructor:
+  ~smat_elim();
 };
 
-int rank(smat& sm);
+inline ostream& operator<< (ostream&s, const smat_elim::list& L)
+{
+  s<<"[";
+  int n=L.num;
+  int* x=L.list_array;
+  while(n--) s<<(*x++)<<" ";
+  s<<"]";
+  return s;
+}
 
-// nullity of sm-lambda*I
-inline int nullity(const smat& sm, const scalar& lambda) 
+long rank(smat& sm);
+
+inline long nullity(const smat& sm, const scalar& lambda) // nullity of sm-lambda*I
 {
   smat sma(sm); sma-=lambda;  return ncols(sm)-rank(sma);
 }

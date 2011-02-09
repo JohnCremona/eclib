@@ -283,7 +283,7 @@ if (verbose>1)
    vec pivs, npivs;
 #ifdef USE_SMATS
    smat_elim sme(relmat);
-   relmat=smat(0,0);
+   //relmat=smat(0,0); // clear space
    int d1;
    start_time();
    smat sp = liftmat(sme.kernel(npivs,pivs),MODULUS,d1);
@@ -300,7 +300,7 @@ if (verbose>1)
    coord_vecs.resize(ngens+1); // 0'th is unused
    for(i=1; i<=ngens; i++) 
      coord_vecs[i]=sp.row(i);
-   sp=smat(0,0); // clear space
+   //sp=smat(0,0); // clear space
 #else
    subspace sp = kernel(relmat);
    rk = dim(sp);
@@ -673,7 +673,6 @@ smat homspace::s_calcop_restricted(string opname, long p, const matop& mlist,
      { 
        long jj = pivots(s)[j];
        svec colj = applyop(mlist,freemods[jj-1]);
-       //       m.setrow(j-1,colj);
        m.setrow(j,colj);
      }
   //  m = m*basis(s);
@@ -713,8 +712,6 @@ smat homspace::s_calcop(string opname, long p, const matop& mlist,
   smat m(rk,rk);
   for (long j=0; j<rk; j++) if (needed[j])
      { svec colj = applyop(mlist,freemods[j]);
-     //     cout<<"Setting row "<<j<<" to "<<colj<<endl;
-     //       m.setrow(j,colj);
        m.setrow(j+1,colj);
      }
   if(cuspidal) 
@@ -823,7 +820,6 @@ smat homspace::s_conj(int dual, int display) const
  for (long j=1; j<=rk; j++) if (needed[j-1])
  {  symb s = symbol(freegens[j-1]);
     svec colj   =  chaincd(-s.cee(),s.dee());
-    //    m.setrow(j-1,colj);
     m.setrow(j,colj);
  }
  if(cuspidal) 
@@ -866,7 +862,6 @@ smat homspace::s_conj_restricted(const ssubspace& s,
       long jj=pivots(s)[j];
       symb s = symbol(freegens[jj-1]);
       svec colj   =  chaincd(-s.cee(),s.dee());
-      //      m.setrow(j-1,colj);
       m.setrow(j,colj);
     }
   //  cout<<"m = "<<m<<" = "<<m.as_mat()<<endl;

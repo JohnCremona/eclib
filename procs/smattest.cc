@@ -24,30 +24,61 @@
 // Original version by Luiz Figueiredo
 
 //#include <sys/types.h>
-#include <time.h>
 #include <sys/times.h>
 //#include <sys/param.h>
 //#include <iostream>
+#include "random.cc"
 #include "arith.h"
 
 //#define SCALAR_OPTION 1 // ints
 #define SCALAR_OPTION 2   // longs
 
-const int MAX_FILL=25;
-
-#include "subspace.h"
-#include "smatrix.h"
 #include "smatrix_elim.h"
 
 long starttime,stoptime;
 
+void random_fill_in( smat& sm, int max, scalar seed )
+{
+  int *intpos = new int [sm.nco];
+  scalar *scalarval = new scalar [sm.nco];
+  for( int r = 0; r < sm.nro; r++ )
+    {
+      int *lp = intpos; scalar *lv =scalarval;
+      for( int i = 0; i < sm.nco; i++ ) { *lp++ = 0; *lv++ = 0; }
+      int count = 0;
+      int N = int( (max+1) * ran0( seed ) ); //number of entries in row i
+      if( N == (max+1) ) N--;  // could occur !
+      for( int s = 0; s < N; s++ )
+	{
+	  int v = int( 20 * ran0( seed ) ) - 10; // value between -10 & 9
+	  if( v != 0 ) 
+	    {  
+	      int p = int( sm.nco * ran0( seed ) ); //position in matrix
+	      if( p == sm.nco ) p--;
+	      if( intpos[ p ] == 0 ) count++;
+	      intpos[ p ] = 1;
+	      scalarval[ p ] = v;
+	    }
+	}
+      delete[] sm.col[r]; delete[] sm.val[r];
+      int *ptr = sm.col[r] = new int [ count + 1 ];
+      scalar *vptr = sm.val[r] = new scalar [ count ];
+      *ptr++ = count;
+      for( int l = 0; l < sm.nco; l++ )
+	{
+	  if( intpos[l] != 0 ) 
+	    {
+	      *ptr++ = l+1;
+	      *vptr++ = scalarval[ l ];
+	    }
+	}
+    }
+  delete[] intpos;
+  delete[] scalarval;
+}
+
 int main(void)
 { 
-  cout<<"BIGPRIME = "<<BIGPRIME<<endl;
-  starttime = clock();
-  //  cout<<"raw start time = "<<starttime<<endl;
-  //  cout<<"CLOCKS_PER_SEC = "<<CLOCKS_PER_SEC<<endl;
-
   cout << "enter 0 to exit\n";
   cout << "enter 1 to do all tests \n";
   cout << "enter 2 to operations \n"; 
@@ -57,7 +88,6 @@ int main(void)
   cout << "enter 6 to multiply smat by smat \n" << "enter> "<<endl;
   cout << "enter 7 to find eigenspaces \n" << "enter> "<<endl;
   int t,i;
-  scalar seed=10;
   cin >> t;
   
   while( t != 0 ) {
@@ -69,10 +99,8 @@ int main(void)
 	cin >> nr;
 	cout << "enter # of colums:\n";
 	cin >> nc;
-	cout << "Unitialized new smat sm = " << flush;
 	smat sm(nr,nc);
-	cout << "(constructor finished)"<< endl;
-	cout << sm << endl;
+	cout << "Unitialized new smat sm = " << sm << endl;
 	cout << "Enter any number "; cin >> i;
 //******** test of constructor from matrix  ***************
 	//mat a; 
@@ -88,16 +116,14 @@ int main(void)
 	cout << "Enter any number "; cin >> i;
 
  //*******  test of copy constructor  *******************
-	cout << "Copy of smat = " << endl;
 	smat sm2 = sm1;
-	cout << sm2 << endl;
+	cout << "Copy of smat = " << endl << sm2 << endl;
 	cout << "Enter any number "; cin >> i;
   
 //********  test of assignment   **************
         smat sm3;
-	cout << "Copy using assignment= " << endl;
 	sm3 = sm1;
-	cout << sm3 << endl;
+	cout << "Copy using assignment= " << endl << sm3 << endl;
 	cout << "Enter any number "; cin >> i;
 	
 //********* testing function as_matrix *****
@@ -108,27 +134,43 @@ int main(void)
 	int numCol;
 	cin >> numCol;
 	smat T( numRow, numCol );
-	/*
-	cout << " Now enter smat for conversion" << endl;
-	cout << " for each row, enter first value then position for each of the entries" << endl;
-	cout << " for each row terminate input by typing zero as a value." << endl;
-	cin >> T;
-	*/
-	random_fill_in(T,MAX_FILL,seed);
-	cout << endl << "smat = " << endl << T << endl;
+	// cout << " Now enter smat for conversion" << endl;
+	// cout << " for each row, enter first value then position for each of the entries" << endl;
+	// cout << " for each row terminate input by typing zero as a value." << endl;
+	// cin >> T;
+        int max=10, seed = 10;
+        random_fill_in( T, max, seed );
+	cout << endl << "smat = " << endl << T;
 	cout << "smat as a matrix = "<< endl << T.as_mat( ) << endl;
-	cout << "Row support sets:\n";
-	vector<std::set<int> > supps=row_supports(T);
-	for(i=1; i<=numRow; i++) cout << i << ": "<< supps[i] << endl;
 	cout << "Enter any number "; cin >> i;
 
 	//*********  testing ref to (i,j) entry **********
-	cout << "Enter position (row,col): ";
+	cout << "Enter position: (row,col)";
 	int j,k;
 	cin >> j;
 	cin >> k;
 	cout << "T(" << j <<" , " << k << ") = " << T.elem(j,k) <<endl;
 	
+	// *** testing set_row *** //
+	cout << "testing set_row" << endl;
+	cout << "enter new row : which row ? (starting from zero)" << endl;
+	int i, d;
+	cin >> i;
+	cout << "number of non-zero elements ?" << endl;
+	cin >> d;
+	int n = d;
+	int *pos = new int [d+1];
+	scalar *val = new scalar [d];
+	cout << "values ? " << endl;
+	while( n-- ) cin >> *val++;
+	cout << " positions ? " << endl;
+	n = d;
+	while( n-- ) cin >> *pos++;
+	pos -= d; val -= d;
+	T.set_row(i, d, pos, val);
+	cout << " new matrix : " << endl;
+	cout << T << endl;
+	delete[] pos; delete[] val;
 	}
    
 //*********testing operations ***********
@@ -141,24 +183,20 @@ int main(void)
 	cout << "Enter size of smat A row,col: "<< endl; 
 	cin >> row >> col;
 	smat A( row, col );
-	/*
-	cout << "Enter entries of A: "<< endl; 
-	cin >> A;
-	*/
-	random_fill_in(A,MAX_FILL,seed);
+        random_fill_in( A, 10, 10 );
+	// cout << "Enter entries of A: "<< endl; 
+	// cin >> A;
 	cout << "Enter size of smat B: row,col: "<< endl; 
 	cin >> row >> col;
 	smat B( row, col );
-	/*
-	cout << "Enter entries of B: "<< endl; 
-	cin >> B;
-	*/
-	random_fill_in(B,MAX_FILL,seed);
+        random_fill_in( B, 10, 10 );
+	// cout << "Enter entries of B: "<< endl; 
+	// cin >> B;
 	cout << "matrix A" << endl << A << endl;
 	cout << "matrix B" << endl << B << endl;
 	cout << "Enter any number "; cin >> i;
 	smat C = A;
-	cout << "C = A = " << endl << C << endl;
+	cout << "C = A = " << endl << C;
 	cout << "Enter any number "; cin >> i;
 	cout << "B==A?" << (B==A) << endl;
 	cout << "B!=A?" << (B!=A) << endl;
@@ -178,10 +216,10 @@ int main(void)
 	cout << "after B/=2, B = " << B << endl;
 	cout << "Enter any number "; cin >> i;
 	cout << "A+B=" << (A+B) << endl;
-	cout << "Now A = " << A << "\nand B = " << B << endl;
+	cout << "Now A = " << A << "and B = " << B << endl;
 	cout << "Enter any number "; cin >> i;
 	cout << "A-B=" << (A-B) << endl;
-	cout << "Now A = " << A << "\nand B = " << B;
+	cout << "Now A = " << A << "and B = " << B;
 
 
 	cout << "test addition of scalar to smat" << endl;
@@ -208,15 +246,12 @@ int main(void)
 	  cout<<"scalar addition WRONG\n";
 
 	cout << "test multiplication of smat by matrix" << endl;
-	cout << "enter smat number of rows, cols: " << endl;
+	cout << "enter smat: first row, col and then the rows" << endl;
 	cin >> row >> col;
 	smat sm(row,col);
-	/*
-	cin >> sm;
-	*/
-	random_fill_in(sm,MAX_FILL,seed);
-
-	cout << " now enter matrix: nrows, ncols and then the entries"<<endl;
+        random_fill_in( sm, 10, 10 );
+	// cin >> sm;
+	cout << " now enter matrix: first row, col and then the entries"<<endl;
 	cin >> row >> col;
 	mat m(row, col);
 	cin >> m;
@@ -230,11 +265,12 @@ int main(void)
 	else
 	  cout<<"Wrong! Correct is \n"<<sm_as_m*m<<endl;
 	
-	A = sm;//at(m);
+	A = smat(100,100);
+        random_fill_in( A, 10, 10 );
 	cout<<"Testing transpose function"<<endl;
-	cout << "A = "<<A<<" = "<<A.as_mat()<<endl;
+	// cout << "A = "<<A<<" = "<<A.as_mat()<<endl;
 	smat At = transpose(A);
-	cout << "A^t = "<<At<<" = "<<At.as_mat()<<endl;
+	// cout << "A^t = "<<At<<" = "<<At.as_mat()<<endl;
 	smat Att = transpose(At);
 	cout<<"A=(A^t)^t ? ";
 	if(A==Att) cout<<"yes!"<<endl; else cout<<"no!"<<endl;
@@ -246,32 +282,14 @@ int main(void)
 	cout << "enter dimension first smat;" << endl;
 	cin >> row1 >> col1;
 	smat sm1(row1,col1);
-	/*
 	cout << "now enter first smat;" << endl;
 	cin >> sm1;
-	*/
-	random_fill_in(sm1,MAX_FILL,seed);
-	cout<<"sm1 = "<<sm1<<endl;
 	cout << "enter dimension second smat;" << endl;
 	cin >> row2 >> col2;
 	smat sm2(row2, col2);
-	/*
 	cin >> sm2;
-	*/
-	random_fill_in(sm2,MAX_FILL,seed);
-	cout<<"sm2 = "<<sm2<<endl;
 	cout << " the product is: " << endl;
-	cout << "product = " << flush; 
-	smat prod = sm1*sm2;
-	cout << prod << endl;
-	cout << "product mod " << BIGPRIME << " = " << flush;
-	smat prod_mod_p = mult_mod_p(sm1,sm2,BIGPRIME);
-	cout << prod_mod_p << endl;
-	if(prod==prod_mod_p)
-	  cout<<"--agree"<<endl;
-	else
-	  cout<<"--DO NOT agree"<<endl;
-
+	cout << sm1*sm2 << endl;
 	}
 
        if ( t == 3 )
@@ -290,9 +308,7 @@ int main(void)
 	      m3.set( r, r+c+1, -1 );
 	    }
 	  }
-	  cout << "finished creating matrices"<<endl;
 	  smat sm1(m1); smat sm2 (m2); smat sm3 (m3); smat sm(row,col);
-	  cout << "finished creating smats"<<endl;
 	  cout << "want to see matrices ? ";
 	  int see; cin >> see;
 	  if( see )
@@ -304,121 +320,90 @@ int main(void)
 	  cout << "Loop how many times ?" << endl;
 	  int j, loop; cin >> loop;
 
-	  cout <<"Starting loop using smats..."<<flush;
-	  starttime=clock();
-	  for(j = 0; j < loop; j++) 
-	    { 
-	      sm += sm1;
-	      sm -= 2*sm2; 
-	      sm += 3*sm3; 
-	      if(see>1) cout<<sm<<endl; else cout<<"."<<flush;
-	    }
-	  stoptime=clock();
-
-	  cout << "...done"<<endl;
-	  if( see ) cout << " resulting smat = " << sm << endl;
-	  cout << "smat cpu time = " 
-	    //	       << ((stoptime-starttime)) << " ticks = "
-	       << ((double)(stoptime-starttime)/CLOCKS_PER_SEC) 
-	       << " seconds"<<endl;
-	  sm1 = smat(); sm2 = smat(); sm3 = smat();
-
-	  cout <<"Starting loop using mats..."<<flush;
-	  starttime=clock();  
+	  starttime = clock();
 	  for(j = 0; j < loop; j++) 
 	    {  
 	      m += m1;
 	      m -= 2*m2; 
 	      m += 3*m3; 
 	      if(see>1) cout<<m<<endl; else cout<<"."<<flush;
-	    }
-	  stoptime=clock();
+	    }  
+	  stoptime = clock();
 
-	  cout << "...done"<<endl;
 	  if( see ) cout << " resulting matrix = " << m << endl;
 	  cout << "matrix cpu time = " 
-	    //	       << ((stoptime-starttime)) << " ticks = "
 	       << ((double)(stoptime-starttime)/CLOCKS_PER_SEC) 
 	       << " seconds"<<endl;
 	  m1.init(0,0); m2.init(0,0); m3.init(0,0);
 	  
-	  if( sm == m ) cout << "results are equal" << endl;
+	  starttime = clock();
+	  for(j = 0; j < loop; j++) 
+	    { 
+	      sm += sm1;
+	      sm -= 2*sm2; 
+	      sm += 3*sm3; 
+	      if(see>1) cout<<sm<<endl; else cout<<"."<<flush;
+	    } 		  
+	  stoptime = clock();
+
+	  if( see ) cout << " resulting smat = " << sm << endl;
+	  cout << "smat cpu time = " 
+	       << ((double)(stoptime-starttime)/CLOCKS_PER_SEC) 
+	       << " seconds"<<endl;
+	  sm1 = smat(); sm2 = smat(); sm3 = smat();
+	  if( sm == smat(m) ) cout << "results are equal" << endl;
 	  else cout << "problem: results are not equal ! " << endl;
 	  }
 
 	  if( t == 4 )
 	  {
 	    cout << "enter size of matrix for elimination (row,col) "<< endl;
-	    int nro,nc,max;
+	    int nro,nc;
 	    cin >> nro; cin >> nc;
 	    smat sm(nro,nc);
-	    //	    cout << "enter matrix as an smat" << endl;
+	    cout << "enter matrix as an smat" << endl;
+	    int max=10, seed = 10;
+	    random_fill_in( sm, max, seed );
 	    //	    cin >> sm;
-	    cout << "How many maximum number of non-zero entries per row?\n";
-	    cin >> max;
-	    cout << "enter seed for random number generator\n";
-	    cin >> seed;
-	    random_fill_in(sm,max,seed);
 	    cout << "display matrices? ( 0 = no; 1 = yes )" << endl;
 	    int flag, flag2;
 	    cin >> flag;
 	    cout << "display fill-in information?" << endl;
 	    cin >> flag2;
-	    if( flag ) cout << "matrix A is " << sm;
-	    if(flag>1) cout << " = " << sm.as_mat();
-	    if( flag ) cout << endl;
+	    if( flag ) cout << "matrix A is " << sm << endl;
 	    smat_elim A (sm );
-	    A.init_elim();
 	    if( flag2 ) 
-	      { cout << "initial population: "<< get_population(A)<<endl; }
-	    A.show_progress();
-	    for(int pass=1; pass<=3; pass++){cout<<"Pass "<<pass<<endl;
-	    for(int fc=1; fc<=2; fc++)
-	      {
-		A.elim_light_rows(fc);
-		cout << "after elim_light_rows("<<fc<<")" << endl; 
-		cout << "# of rows eliminated so far: " << A.get_rank( ) << endl;
-		A.show_progress();
-		if( flag ) cout << " matrix: " << A << endl;
-		if(flag>1) cout << " = " << A.as_mat();
-		if( flag2 ) cout<<"("<<get_population( A )<<" entries)"<<endl;
-		A.elim_light_cols(fc);
-		cout << "after elim_light_cols("<<fc<<")" << endl; 
-		cout << "# of rows eliminated so far: " << A.get_rank( ) << endl;
-		A.show_progress();
-		if( flag ) cout << " matrix: " << A << endl;
-		if(flag>1) cout << " = " << A.as_mat();
-		if( flag2 ) cout<<"("<<get_population( A )<<" entries)"<<endl;
-	      }
-	    }
-	    A.step4new();
-	    A.reduce_mod_p();
+	      { cout << "initial population: "; display_population(A); }
+	    A.step0();
+	    cout << "after step0 " << endl;
+	    cout << "# of rows eliminated so far: " << A.get_rank( ) << endl;
+	    if( flag ) cout << " matrix: " << A << endl;
+	    if( flag2 ) display_population( A );
+	    A.step1();
+	    cout << "after step1" << endl;
+	    cout << "# of rows eliminated so far: " << A.get_rank( ) << endl;
+	    if( flag ) cout << " matrix: " << A << endl;
+	    if( flag2 ) display_population( A );
+	    A.step2();
+	    cout << "after step2" << endl;
+	    cout << "# of rows eliminated so far: " << A.get_rank( ) << endl;
+	    if( flag ) cout << " matrix: " << A << endl;
+	    if( flag2 ) display_population( A );
+	    A.step3();
+	    cout << "after step3" << endl; 
+	    cout << "# of rows eliminated so far: " << A.get_rank( ) << endl;
+	    if( flag ) cout << " matrix: " << A << endl;
+	    if( flag2 ) display_population( A );
+	    A.step4();
 	    cout << "after step4" << endl;
 	    cout << "# of rows eliminated so far: " << A.get_rank( ) << endl;
-	    A.show_progress();
 	    if( flag ) cout << " matrix: " << A << endl;
-	    if(flag>1) cout << " = " << A.as_mat();
-	    if( flag2 ) cout<<"("<<get_population( A )<<" entries)"<<endl;
-	    A.step5( );
-	    A.reduce_mod_p();
-	    cout << "after step5 " << endl;
+	    if( flag2 ) display_population( A );
+	    A.standard( );
+	    cout << "after standard " << endl;
 	    cout << "rank of matrix: " << A.get_rank( ) << endl;
-	    A.show_progress();
 	    if( flag ) cout << " matrix: " << A << endl;
-	    if(flag>1) cout << " = " << A.as_mat();
-	    if( flag2 ) cout<<"("<<get_population( A )<<" entries)"<<endl;
-	    cout<<"Echelon form?         "<<A.check_echelon()<<endl;
-	    cout<<"Reduced echelon form? "<<A.check_red_echelon()<<endl;
-	    A.step6( );
-	    A.reduce_mod_p();
-	    cout << "after step6 " << endl;
-	    cout << "rank of matrix: " << A.get_rank( ) << endl;
-	    A.show_progress();
-	    if( flag ) cout << " matrix: " << A << endl;
-	    if(flag>1) cout << " = " << A.as_mat();
-	    if( flag2 ) cout<<"("<<get_population( A )<<" entries)"<<endl;
-	    cout<<"Echelon form?         "<<A.check_echelon()<<endl;
-	    cout<<"Reduced echelon form? "<<A.check_red_echelon()<<endl;
+	    if( flag2 ) display_population( A );
 	  }
     if( t == 5 )
       {
@@ -427,35 +412,36 @@ int main(void)
 	int nro,nc;
 	cin >> nro; cin >> nc;
 	smat sm(nro,nc);
-	int rand=1;
-	//	cout << "Do you want to input the matrix for elimination or do you want\n"; 
-	//	cout << "a matrix with random entries? (1 for random and zero otherwise\n";
-	//	cin >> rand;
-	int flag=1, max;
-	cout << "want to determine the rank using matrix? (1 = yes; 0 = no )\n";
+	int rand;
+	cout << "Do you want to input the matrix for elimination or do you want\n";
+	cout << "a matrix with random entries? (1 for random and zero otherwise\n";
+	cin >> rand;
+	int flag;
+	cout << "want to determine the rank using matrix? (1 = yes; 0 = no )";
 	cin >> flag;
 	if( rand ) 
 	  {
 	    cout << "How many maximum number of non-zero entries per row?\n";
+	    int max, seed;
 	    cin >> max;
 	    cout << "enter seed for random number generator\n";
 	    cin >> seed;
 	    cout << "calculating matrix,\n";
 	    random_fill_in( sm, max, seed );
 	    cout << "done\n";
-	    //	    cout<<"Matrix = "<<sm<<"\n=\n";sm.as_mat().output_pari(cout);
 	  }
-	//	else
-	//	  {
-	//	    cout << "enter matrix as an smat" << endl;
-	//	    cin >> sm;
-	//	  }
-
+	else
+	  {
+	    cout << "enter matrix as an smat" << endl;
+	    cin >> sm;
+	  }
+	smat_elim A( sm );
 	vec pc, npc;
-	mat ker_bas;	
+	
 	if( flag ) {
-	  long rk, ny; scalar pr = BIGPRIME;
-	  mat ker_mat = echmodp( sm.as_mat(), pc, npc, rk, ny, pr);
+	  long rk, ny; scalar pr = 92861;
+	  mat m = sm.as_mat ();  
+	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
 	  cout << " rank using echmodp : " << rk;
 	  int pop = 0;
 	  int nro = nrows(ker_mat);
@@ -466,65 +452,41 @@ int main(void)
 	    }
 	  }
 	  cout << " number of non-zero entries: " << pop << endl;
-	  //	  cout << "mat kernel = " << ker_mat<<endl;
-	  ker_bas = basis(pkernel(sm.as_mat(),BIGPRIME));
-	  //	  cout << "Basis = "<<ker_bas<<endl;
-	  //	  cout << "A*kernel = " << matmulmodp(sm.as_mat(),ker_bas,BIGPRIME)<<endl;
 	}
-	smat_elim A( sm );
-	smat result;
-#define COMPARE_KERNEL
-#ifdef COMPARE_KERNEL
-	cout << "Computing kernel (old method)"<<endl;
-	smat ker = A.oldkernel(pc,npc);
-	cout << "rank is:   " << dim( pc ) << endl;
-	cout << "nullity is:" << dim( npc ) << endl;
-	cout<<"A now has "<<get_population( A )<<" entries"<<endl;
-	cout<<"kernel has "<<get_population( ker )<<" entries"<<endl;
-	//	cout<<"old kernel = "<<ker.as_mat()<<endl;
-	/*
-	result = mult_mod_p(sm,ker,BIGPRIME);
-	result.reduce_mod_p();
-	if( result == smat(nc,dim(npc)) ) cout << "old kernel correct\n";
-	else cout << "PROBLEM : old kernel not correct!\n";
-	*/
-	A=smat_elim(sm);
-#endif
-	cout << "Computing kernel (new method)"<<endl;
-	smat newker = A.kernel(pc,npc);
-	cout << "rank is:   " << dim( pc ) << endl;
-	cout << "nullity is:" << dim( npc ) << endl;
-	cout<<"A now has "<<get_population( A )<<" entries"<<endl;
-	cout<<"kernel has "<<get_population( newker )<<" entries"<<endl;
-	//	cout<<"new kernel = "<<newker.as_mat()<<endl;
-#ifdef COMPARE_KERNEL
-	if(ker==newker) cout<<"old and new kernels are equal"<<endl;
-	else 
-	  {
-	    cout<<"old and new kernels DISAGREE"<<endl;
-	    //	    cout<<"old-new="<<(ker-newker).as_mat()<<endl;
-	  }
-#endif
-	/*
-	result = mult_mod_p(sm,newker,BIGPRIME);
-	result.reduce_mod_p();
-	if( result == smat(nc,dim(npc)) ) cout << "new kernel correct\n";
-	else cout << "PROBLEM : new kernel not correct!\n";
-	*/
-	if(flag)
-	  {
-	    smat ker1(ker_bas); ker1.reduce_mod_p();
-	    result = mult_mod_p(sm,ker1,BIGPRIME);
-	    result.reduce_mod_p();
-	    if( result == smat(nc,dim(npc)) ) cout << "non-sparse kernel correct\n";
-	    else cout << "PROBLEM : new kernel not correct!\n";
-	//	    if(ker1==ker) cout<<"Agrees with non-sparse result"<<endl;
-	//	    else {
-	//	      cout<<"Does NOT agree with non-sparse result"<<endl;
-	//	      cout<<"Non-sparse kernel basis = "<<ker1.as_mat()<<endl;
-	//	      cout<<"Sparse kernel basis     = "<<ker<<endl;
-	    }
-      }      
+	/********A.step0 ();
+	  cout << "step0 : A * ker_mat is : ";
+	  if( (A*ker_mat) ==  smat(nro)) cout << "0";
+	  else cout << "problem in step0!!!";
+	  A.step1 ();
+	  cout << "step1 : A * ker_mat is : ";
+	  if( (A*ker_mat) ==  smat(nro)) cout << "0";
+	  else cout << "problem in step1!!!";
+	  A.step2();
+	  cout << "step2 : A * ker_mat is : ";
+	  if( (A*ker_mat) ==  smat(nro)) cout << "0";
+	  else cout << "problem in step2!!!";
+	  A.step3 ();
+	  cout << "step3 : A * ker_mat is : ";
+	  if( (A*ker_mat) ==  smat(nro)) cout << "0";
+	  else cout << "problem in step3!!!";
+	  A.step4 ();
+	  cout << "step4 : A * ker_mat is : ";
+	  if( (A*ker_mat) ==  smat(nro)) cout << "0";
+	  else cout << "problem in step4!!!";
+	  A.standard();
+	  cout << "standard : A * ker_mat is : ";
+	  if( (A*ker_mat) == smat(nro)) cout << "0";
+	  else cout << "problem in standard!!!";*****/
+	smat ker = A.kernel(pc,npc);
+	cout << "rank is:" << dim( pc ) << endl;
+	display_population(ker);
+	smat result = mult_mod_p(sm,ker,BIGPRIME);
+	// cout << "sm  is:\n" << sm.as_mat() << endl;
+	// cout << "ker is:\n" << ker.as_mat() << endl;
+	// cout << "result is:\n" << result.as_mat() << endl;
+	if( result == smat(nro) ) cout << "kernel correct\n";
+	else cout << "PROBLEM : kernel not correct!\n";
+      }
     if(t==7)
       {
 	cout << "Test of kernel and eigenspace operations\n";
@@ -532,9 +494,8 @@ int main(void)
 	cout << "Enter size of (square) smat A: "<< endl; 
 	cin >> row;
 	smat A( row, row );
-	random_fill_in(A,MAX_FILL,seed);
-	//	cout << "Enter entries of A: "<< endl; 
-	//	cin >> A;
+	cout << "Enter entries of A: "<< endl; 
+	cin >> A;
 	cout << "A = \n"<<A <<endl;
 	cout << "A (as matrix) = "; A.as_mat().output_pari(); cout <<endl;
 	ssubspace ker = kernel(A);
@@ -548,12 +509,9 @@ int main(void)
 	ssubspace e = eigenspace(A,lambda);
 	cout << "Eigenspace for lambda = "<<lambda<<" has dimension " << dim(e) << endl;
       }
-
     cout << "enter new value of t  ";
     cin >> t;
   }  
-
-
   cout<<endl;
   return(0);
 }

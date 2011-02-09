@@ -407,6 +407,9 @@ void newform::find_cuspidal_factors()
   vec bplusc, bminusc;
   int verbose = nf->verbose;
 
+  cuspidalfactorplus=1;
+  cuspidalfactorminus=1;
+
   if(!(nf->h1->cuspidal))
     {
       if(sign!=-1) // do this if sign = 0,1
