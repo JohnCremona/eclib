@@ -92,6 +92,7 @@ public:
   smat kernel( vec&, vec& );
   void normalize( int, int );
   void eliminate( int&, int& );
+  void step5dense();
   void free_space( int col );
   void elim( int row1, int row2, scalar v2 );
   // constructor:

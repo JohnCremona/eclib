@@ -1262,40 +1262,66 @@ mat echelonl(const mat& entries, vec& pc, vec& npc,
 
 void elimp(const mat& m, long r1, long r2, long pos, scalar pr)
 {
- long nc=m.nco;
- scalar *mr1 = m.entries + (r1-1)*nc,
-      *mr2 = m.entries + (r2-1)*nc;
- scalar p = mod(mr1[pos-1],pr), q=mod(mr2[pos-1],pr);
+  long nc=m.nco;
+  scalar *mr1 = m.entries + (r1-1)*nc + (pos-1),
+         *mr2 = m.entries + (r2-1)*nc + (pos-1);
+  scalar p = xmod(*mr1,pr), q=xmod(*mr2,pr);
+  nc -= (pos-1);
  if(p==1)
-   if(q==0) {;} // nothing to do
-   else
+   { 
+     if(q==0) {return;} // nothing to do
      if(q==1)
-       while(nc--)
-	 {
-	   (*mr2)= mod(*mr2-*mr1,pr);
-	   mr1++; mr2++;
-	 }
-     else // general q
-       while(nc--)
-	 {
-	   (*mr2)= mod(*mr2-xmodmul(q,*mr1,pr),pr);
-	   mr1++; mr2++;
-	 }
- else // general p (p!=1)
-   if(q==0) {;} // nothing to do
-   else 
-     if(q==1)
+       {
+         while(nc--)
+           {
+             (*mr2)= xmod(*mr2-*mr1,pr);
+             mr1++; mr2++;
+           }
+         return;
+       }
+     if(q==-1)
+       {
+         while(nc--)
+           {
+             (*mr2)= xmod(*mr2+*mr1,pr);
+             mr1++; mr2++;
+           }
+         return;
+       }
+     // general q
      while(nc--)
        {
-	 (*mr2)= mod(xmodmul(p,*mr2,pr)-*mr1,pr);
+         (*mr2)= xmod(*mr2-xmodmul(q,*mr1,pr),pr);
+         mr1++; mr2++;
+       }
+     return;
+   }
+ // general p (p!=1)
+ if(q==0) {return;} // nothing to do
+ if(q==1)
+   { 
+     while(nc--)
+       {
+	 (*mr2)= xmod(xmodmul(p,*mr2,pr)-*mr1,pr);
 	 mr1++; mr2++;
        }
-     else // general q
-       while(nc--)
-	 {
-	   (*mr2)= mod(xmodmul(p,*mr2,pr)-xmodmul(q,*mr1,pr),pr);
-	   mr1++; mr2++;
-	 }
+     return;
+   }
+ if(q==-1)
+   { 
+     while(nc--)
+       {
+	 (*mr2)= xmod(xmodmul(p,*mr2,pr)+*mr1,pr);
+	 mr1++; mr2++;
+       }
+     return;
+   }
+ // general q
+ while(nc--)
+   {
+     (*mr2)= xmod(xmodmul(p,*mr2,pr)-xmodmul(q,*mr1,pr),pr);
+     mr1++; mr2++;
+   }
 }
 
 void elimp1(const mat& m, long r1, long r2, long pos, scalar pr)
@@ -1303,22 +1329,34 @@ void elimp1(const mat& m, long r1, long r2, long pos, scalar pr)
 {
  long nc=m.nco;
  scalar *mr1 = m.entries + (r1-1)*nc,
-      *mr2 = m.entries + (r2-1)*nc;
- scalar q=mod(mr2[pos-1],pr);
- if(q==0) {;}
- else
-   if(q==1)
-   while(nc--)
-     {
-       (*mr2)= mod(*mr2-*mr1,pr);
-       mr1++; mr2++;
-     }
-   else  // general q
+        *mr2 = m.entries + (r2-1)*nc;
+ scalar q=xmod(mr2[pos-1],pr);
+ if(q==0) return;
+ if(q==1)
+   { 
      while(nc--)
        {
-	 (*mr2)= mod((*mr2)-xmodmul(q,*mr1,pr),pr);
-	 mr1++; mr2++;
+         (*mr2)= xmod(*mr2-*mr1,pr);
+         mr1++; mr2++;
        }
+     return;
+   }
+ if(q==-1)
+   { 
+     while(nc--)
+       {
+         (*mr2)= xmod(*mr2+*mr1,pr);
+         mr1++; mr2++;
+       }
+     return;
+   }
+  // general q
+ while(nc--)
+   {
+     if(*mr1)
+       (*mr2)= xmod((*mr2)-xmodmul(q,*mr1,pr),pr);
+     mr1++; mr2++;
+   }
 }
 
 //#define TRACE 1 
@@ -1463,7 +1501,23 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
        {
 	 pcols[++rk] = c;
 	 if (rmin>r) m.swaprows(r,rmin);
-	 for (r3 = r+1 ; r3<=nr; r3++) elimp(m,r,r3,c,pr);
+	 entriesij = m.entries+(r-1)*nc;
+         scalar fac;
+         if (min!=1)
+           {
+             if(min==-1)
+               {
+                 n=nc; while(n--) {*entriesij = - (*entriesij); entriesij++;}
+               }
+             else
+               {
+                 //                 cout<<"pivot = "<<min<<endl;
+                 fac = xmod(invmod(min,pr),pr);
+                 n=nc; while(n--) {*entriesij = xmodmul(fac , *entriesij, pr); entriesij++;}
+               }
+           }
+	 for (r3 = r+1 ; r3<=nr; r3++) elimp1(m,r,r3,c,pr);
+	 // for (r3 = r+1 ; r3<=nr; r3++) elimp(m,r,r3,c,pr);
 	 r++;
        }
    }
@@ -1524,8 +1578,20 @@ mat echmodp_uptri(const mat& entries, vec& pcols, vec& npcols,
 	 pcols[++rk] = c;
 	 if (rmin>r) m.swaprows(r,rmin);
 	 entriesij = m.entries+(r-1)*nc;
-	 scalar fac = xmod(invmod(min,pr),pr);
-	 n=nc; while(n--) {*entriesij = xmodmul(fac , *entriesij, pr); entriesij++;}
+         scalar fac;
+         if (min!=1)
+           {
+             if(min==-1)
+               {
+                 n=nc; while(n--) {*entriesij = - (*entriesij); entriesij++;}
+               }
+             else
+               {
+                 //                 cout<<"pivot = "<<min<<endl;
+                 fac = xmod(invmod(min,pr),pr);
+                 n=nc; while(n--) {*entriesij = xmodmul(fac , *entriesij, pr); entriesij++;}
+               }
+           }
 	 for (r3 = r+1 ; r3<=nr; r3++) elimp1(m,r,r3,c,pr);
 	 r++;
        }

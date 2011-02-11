@@ -23,6 +23,23 @@
  
 // ONLY to be included by svector.cc
 
+inline scalar xmm(scalar a, scalar b, scalar m)
+{
+  //return xmodmul(a,b,m);
+  //return (a*b) % m;
+  return (a*(int64_t)b) % m;
+  //return (scalar)(((long)a*(long)b) % (long)m);
+}
+inline scalar xmm0(scalar a, scalar b)
+{
+  //return xmodmul(a,b,m);
+  //return (a*b) % m;
+  return (a*(int64_t)b) % BIGPRIME;
+  //return (scalar)(((long)a*(long)b) % (long)m);
+}
+
+
+
 // Definitions of member operators and functions:
 
 svec::svec(const vec& v)
@@ -299,16 +316,8 @@ svec& svec::mult_by_scalar_mod_p(scalar scal, const scalar& p)
   if(scal!=1)
     for( map<int,scalar>::iterator vi=entries.begin(); 
 	 vi != entries.end(); vi++)
-      (vi->second)=xmodmul(vi->second,scal,p);
+      (vi->second)=xmm(vi->second,scal,p);
   return *this;
-}
-
-inline scalar xmm(scalar a, scalar b, scalar m)
-{
-  //return xmodmul(a,b,m);
-  //return (a*b) % m;
-  return (a*(int64_t)b) % m;
-  //return (scalar)(((long)a*(long)b) % (long)m);
 }
 
 svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, const scalar& p)
@@ -562,7 +571,7 @@ scalar dotmodp(const svec& v, const vec& w, scalar pr)
   scalar ans=0;
   map<int,scalar>::const_iterator vi;
   for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
-    ans=xmod(ans+xmodmul(vi->second,w[vi->first],pr),pr);
+    ans=xmod(ans+xmm(vi->second,w[vi->first],pr),pr);
   return ans;
 }
 
@@ -576,7 +585,7 @@ scalar dotmodp(const svec& v, const svec& w, scalar pr)
       if((vi->first)<(wi->first)) {vi++;} else
 	if((wi->first)<(vi->first)) {wi++;} else
 	  {
-	    ans=xmod(ans+xmodmul(vi->second,wi->second,pr),pr);
+	    ans=xmod(ans+xmm(vi->second,wi->second,pr),pr);
 	    vi++; wi++;
 	  }
     }

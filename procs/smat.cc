@@ -25,6 +25,22 @@
  
 // ONLY to be included by smatrix.cc
 
+inline scalar xmm(scalar a, scalar b, scalar m)
+{
+  //return xmodmul(a,b,m);
+  //return (a*b) % m;
+  return (a*(int64_t)b) % m;
+  //return (scalar)(((long)a*(long)b) % (long)m);
+}
+inline scalar xmm0(scalar a, scalar b)
+{
+  //return xmodmul(a,b,m);
+  //return (a*b) % m;
+  return (a*(int64_t)b) % BIGPRIME;
+  //return (scalar)(((long)a*(long)b) % (long)m);
+}
+
+
 void showrow(int*pos, scalar*val) // for debugging
 {
   int d=pos[0]; 
@@ -439,7 +455,7 @@ smat& smat::mult_by_scalar_mod_p (scalar scal, const scalar& p)
     {
       d = *col[i];
       veci = val[i];
-      while(d--) {(*veci) = xmodmul(*veci,scal,p); veci++;}
+      while(d--) {(*veci) = xmm(*veci,scal,p); veci++;}
     }
   return *this;
 }
@@ -627,7 +643,7 @@ smat operator* ( const smat& A, const smat& B )
       for( l = 0, i = 0; l < ncol[c] && i < d; ) {
 	if( posA[i] < posB[l] ) i++;
 	else if( posA[i] >  posB[l] ) l++;
-	else soma= xmod0(soma + xmodmul0(A.val[r][i++] , colB_val[c][l++]));
+	else soma= xmod0(soma + xmm0(A.val[r][i++] , colB_val[c][l++]));
       }
       if( soma != 0 ) {
 	aux_pos[count] = c+1;
@@ -900,7 +916,7 @@ smat liftmat(const smat& mm, scalar pr, scalar& dd, int trace)
   if(trace) cout << "Common denominator = " << dd << "\n";
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
-      m.val[nr][nc] = mod(xmodmul(dd,(m.val[nr][nc]),pr),pr);
+      m.val[nr][nc] = mod(xmm(dd,(m.val[nr][nc]),pr),pr);
   if(trace) cout << "Lifted smat = " << m.as_mat() << "\n";
   return m;
 }

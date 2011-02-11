@@ -24,6 +24,23 @@
 //  implements structured modular elimination
 //  original written by Luiz Figueiredo
 
+inline scalar xmm(scalar a, scalar b, scalar m)
+{
+  //return xmodmul(a,b,m);
+  //return (a*b) % m;
+  return (a*(int64_t)b) % m;
+  //return (scalar)(((long)a*(long)b) % (long)m);
+}
+inline scalar xmm0(scalar a, scalar b)
+{
+  //return xmodmul(a,b,m);
+  //return (a*b) % m;
+  return (a*(int64_t)b) % BIGPRIME;
+  //return (scalar)(((long)a*(long)b) % (long)m);
+}
+
+
+
 //#define TRACE_LISTS
 //#define TRACE_FIND
 
@@ -51,7 +68,9 @@ smat_elim::list::grow()
   type* newi = new_array;
   type *P = list_array;
   int s = maxsize;
-  while(s--) *newi++ = *P++;
+  // while(s--) *newi++ = *P++;
+  size_t n = s*sizeof(type);
+  memmove(newi,P,n);
   maxsize += growth;
   delete [] list_array;  list_array=new_array;
 }
@@ -98,9 +117,14 @@ smat_elim::ordlist::put( type& X )
   else {
     int ind = find( X, num-1 );
     if( (ind==num)||(list_array[ind] != X )) {  // if X is not already in there
-      type *array = list_array + num -1;
-      for( int r = num; r > ind; r-- ) array[1] = *array--;
-      array[1] = X;
+      // type *array = list_array + num -1;
+      // for( int r = num; r > ind; r-- ) array[1] = *array--;
+      // array[1] = X;
+      type *source = list_array+num-1;
+      type *dest = list_array+num;
+      size_t n = sizeof(type)*(num-ind);
+      memmove(dest, source, n);
+      list_array[num-1]=X;
       num++;
     }
   }
@@ -166,8 +190,13 @@ smat_elim::ordlist::remove( type& X )
       cerr<<"while removing "<<X<<" from "<<(*this)<<endl;
       abort(); 
     }
-  type *array = list_array + ind;
-  for( int s = ind + 1; s < num; s++, array++ ) *array = array[1];
+  // type *array = list_array + ind;
+  // for( int s = ind + 1; s < num; s++, array++ ) *array = array[1];
+  type *source = list_array + ind +1;
+  type *dest   = list_array + ind ;
+  size_t n = sizeof(type)*(num-1-ind);
+  memmove(dest,source,n);
+
   num--;
 #ifdef TRACE_LISTS
   cout<<", result is "<<(*this)<<endl;
@@ -252,7 +281,7 @@ smat_elim::~smat_elim()
   delete [] column;
 }
 
-#define TRACE_ELIM
+//#define TRACE_ELIM
 
 void smat_elim::sparse_elimination( )
 {
@@ -320,15 +349,31 @@ void smat_elim::sparse_elimination( )
   density = (double)pop/(nco*nro);
   cout<<"Rank so far = "<<rank<<"; "
       <<pop<<" entries (density = "<<density<<")\n";
-  cout<<"Starting step 5 (remaining elimination)..."<<flush;
 #endif
-  standard( );
+#if(0)  // use dense method for final elimination
+#ifdef TRACE_ELIM
+  cout << "Switching to dense mode..."<<endl;
+#endif
+  step5dense();
 #ifdef TRACE_ELIM
   cout<<"finished"<<endl;
   pop=get_population(*this);
   density = (double)pop/(nco*nro);
   cout<<"Rank so far = "<<rank<<"; "
       <<pop<<" entries (density = "<<density<<")\n";
+#endif
+#else  // use sparse method for final elimination
+#ifdef TRACE_ELIM
+    cout<<"Starting step 5 (remaining elimination)..."<<flush;
+#endif
+     standard( );
+#ifdef TRACE_ELIM
+  cout<<"finished"<<endl;
+  pop=get_population(*this);
+  density = (double)pop/(nco*nro);
+  cout<<"Rank so far = "<<rank<<"; "
+      <<pop<<" entries (density = "<<density<<")\n";
+#endif
 #endif
 }
 
@@ -673,12 +718,13 @@ void smat_elim::normalize( int row, int col0)
   if( val[row][count] != 1 ) {
     scalar invValue = invmod0( val[row][count]);
     scalar *values = val[row];
-    while(d--) { *values = xmodmul0( *values , invValue ); values++; }
+    while(d--) { *values = xmm0( *values , invValue ); values++; }
   }
 }
 
 void smat_elim::eliminate( int& row, int& col0 ) //1<=col0<=nco;
 {
+  //  cout<<"Eliminating (r,c)=("<<row<<","<<col0<<")"<<endl;
   elim_col[ col0 - 1 ] = row;
   position[ row ] = col0;
   elim_row[ rank++ ] = row;
@@ -737,12 +783,12 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
       { 
 	if( *pos1 < *pos2 ) { 
 	  lri[di-d].put(row2);
-	  *P++ = *pos1++; *V++ = xmodmul0( v2,(*veci1++) ); d--; 
+	  *P++ = *pos1++; *V++ = xmm0( v2,(*veci1++) ); d--; 
 	}
 	else if(( *P++ = *pos2++ ) < *pos1 ) { *V++ = *veci2++; d2--; }
 	else
 	  {
-	    if( (*V++ = xmod0(xmodmul0(v2,(*veci1++)) + (*veci2++))) == 0)
+	    if( (*V++ = xmod0(xmm0(v2,(*veci1++)) + (*veci2++))) == 0)
 	      { lro[di-d].put(row2); V--; P--; k--;}
 	    *pos1++;
 	    d--;
@@ -754,7 +800,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
       { *P++ = *pos2++; *V++ = *veci2++; k++; d2--; }
     else while( d ) {
       lri[di-d].put(row2);
-      *P++ = *pos1++; *V++ = xmodmul0(v2,(*veci1++)); k++; d--;
+      *P++ = *pos1++; *V++ = xmm0(v2,(*veci1++)); k++; d--;
     }
     *col[row2] = k;
     if( fr ) check_row(d2i, row2, L);         // check condition for rows
@@ -826,11 +872,11 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
   while( d && d2 )
     { 
       if( *pos1 < *pos2 ) 
-	{*P++ = *pos1++; *V++ = xmodmul0( v2,(*veci1++) ); d--; }
+	{*P++ = *pos1++; *V++ = xmm0( v2,(*veci1++) ); d--; }
       else if(( *P++ = *pos2++ ) < *pos1 ) { *V++ = *veci2++; d2--; }
       else
 	{
-	  if( (*V++ = xmod0(xmodmul0(v2,(*veci1++)) + (*veci2++))) == 0)
+	  if( (*V++ = xmod0(xmm0(v2,(*veci1++)) + (*veci2++))) == 0)
 	    { V--; P--; k--;}
 	  *pos1++;
 	  d--;
@@ -841,11 +887,91 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
   if( d == 0 ) while( d2 )
     { *P++ = *pos2++; *V++ = *veci2++; k++; d2--; }
   else if( d2 == 0 ) while( d )
-    { *P++ = *pos1++; *V++ = xmodmul0(v2,(*veci1++)); k++; d--; }
+    { *P++ = *pos1++; *V++ = xmm0(v2,(*veci1++)); k++; d--; }
   *col[row2] = k;
   delete [] oldMat;
   delete [] oldVal;
 }
+
+void smat_elim::step5dense()
+{
+  // (1) Extract the uneliminated "dense" part 
+  
+  vector<int> remaining_rows, remaining_cols;
+
+  // Remaining rows are those with "position" code -1 or those which are empty
+  int i, j;
+  for(i=0; i<nro; i++) 
+    if( (*col[i] >0) && (position[i] == -1) )
+      remaining_rows.push_back(i+1);
+  int nrr = remaining_rows.size();
+
+  // Remaining cols are those with positive column weight
+  for(j=0; j<nco; j++) 
+    if (((column+j)->num)>0) 
+      remaining_cols.push_back(j+1);
+  int nrc = remaining_cols.size();
+
+  cout<<nrr<<" remaining rows, " <<nrc<<" remaining cols"<<endl;
+  //  cout<<" remaining rows: " << remaining_rows<<endl;
+  //  cout<<" remaining cols: " << remaining_cols<<endl;
+  
+  mat dmat(nrr, nrc);
+  map<int,scalar>::const_iterator vi;
+  vector<int>::const_iterator rci;
+  for (i=0; i<nrr; i++)
+    {
+      svec v = row(remaining_rows[i]);
+      j=0;
+      for(vi=v.entries.begin();
+          vi!=v.entries.end(); vi++)
+        {
+          while (remaining_cols[j]<(vi->first)) j++;
+          dmat.set(i+1,j+1,vi->second);
+        }
+    }
+
+  // (2) reduce this to echeclon form
+
+  vec pc,npc; long rk,ny;
+  dmat = echmodp_uptri(dmat,pc,npc,rk,ny,BIGPRIME);
+  // cout<<"Rank = "<<rk<<endl;
+  // cout<<"Nullity = "<<ny<<endl;
+  // cout<<"Pivotal columns:    "<<pc<<endl;
+  // cout<<"Nonpivotal columns: "<<npc<<endl;
+  
+  // (3) put it back into the sparse structure
+
+  // the (i,j) entry of dmat goes in the remaining_rows[i-1]'the rowm
+  // remaining_cols[j-1] column.  For simplicity of coding, we create
+  // the new rows as svecs and the use setrow().
+  int nrd = nrows(dmat); // may be less that nrr since 0 rows are trimmed
+  int ncd = ncols(dmat);
+  svec rowi(nco);
+  for(i=1; i<=nrd; i++)
+    {
+      rowi.clear();
+      for(int j=1; j<=nrc; j++)
+        rowi.set(remaining_cols[j-1],dmat(i,j));
+      setrow(remaining_rows[i-1],rowi);
+    }
+  rowi.clear();
+  for(i=nrd+1; i<=nrr; i++)
+    setrow(remaining_rows[i-1],rowi);
+
+  // (4) Use the known echelon form for these changed rows to eliminate them
+
+  for(i=1; i<=nrd; i++) 
+    {
+      if (xmod0(dmat(i,pc[i])-1)) cout<<"Bad pivot #"<<i<<" ("<<dmat(i,pc[i])<<")"<<endl;
+      int r = remaining_rows[i-1]-1;
+      int c = remaining_cols[pc[i]-1];
+      //      cout<<"Eliminating (r,c)=("<<r<<","<<c<<")"<<endl;
+      eliminate(r,c);
+      free_space(remaining_cols[pc[i]-1]);
+    }
+}
+
 
 long rank(smat& sm)
 {

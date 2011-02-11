@@ -2230,24 +2230,7 @@ enter seed for random number generator
 calculating matrix,
 done
  rank using echmodp : 95 number of non-zero entries: 525
-Starting sparse_elimination()...Starting sparse elimination: 100 rows, 100 columns, 488 entries (density = 0.0488)
-Starting step 0...finished
-Rank so far = 7; 452 entries (density = 0.0452)
-Starting step 1...Step 1, column weights:
-Step 1, list size = 4
-finished
-Rank so far = 11; 452 entries (density = 0.0452)
-Starting step 2...finished
-Rank so far = 27; 449 entries (density = 0.0449)
-Starting step 3...finished
-Rank so far = 37; 487 entries (density = 0.0487)
-Starting step 4...finished
-Rank so far = 80; 914 entries (density = 0.0914)
-Starting step 5......remaining elimination......back-substitution...finished
-Rank so far = 95; 519 entries (density = 0.0519)
-finished sparse_elimination()
-Setting up pc and npc...Constructing basis for kernel...Finished constructing basis for kernel
 rank is:95
- number of non-zero entries: 429
+ number of non-zero entries: 420
 kernel correct
 enter new value of t  
