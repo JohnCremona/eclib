@@ -124,7 +124,7 @@ smat_elim::ordlist::put( type& X )
       type *dest = list_array+num;
       size_t n = sizeof(type)*(num-ind);
       memmove(dest, source, n);
-      list_array[num-1]=X;
+      list_array[ind]=X;
       num++;
     }
   }

@@ -163,6 +163,13 @@ int main(void)
 		     <<" found for imaginary period!"<<endl;
 	       }
 	   }
+
+         bigfloat rperiod;
+         Curve C = nf.getcurve(inf, -1, rperiod);
+         if (C.isnull())
+           {
+             success[inf]=0; nsucc--;
+           }
        }
      else cout<<"No curve found"<<endl;
 
