@@ -82,22 +82,36 @@ int main(void)
      prec = prec0;
      set_precision(prec);
      Curve C = nf.getcurve(i, -1, rperiod);
-     while (C.isnull() && (prec<100))
+     Curvedata CD;
+     CurveRed CR;
+     bigint nc; int nt;
+     bigint a1,a2,a3,a4,a6;
+     if (!C.isnull())
+       {
+	 C = nf.getcurve(i, -1, rperiod);
+         CD = Curvedata(C,1);  // The 1 causes minimalization
+         CR = CurveRed(CD);
+         nc = getconductor(CR);
+         if(n!=nc) C = Curve();  // wrong conductor; reset to null curve
+       }
+    while (C.isnull() && (prec<100))
        {
 	 prec += 10;
 	 set_precision(prec);
 	 C = nf.getcurve(i, -1, rperiod);
+         CD = Curvedata(C,1);  // The 1 causes minimalization
+         CR = CurveRed(CD);
+         nc = getconductor(CR);
+         if(n!=nc) C = Curve();  // wrong conductor; reset to null curve
        }
      if (C.isnull())
        {
-	 cout<<setw(6)<<n<<code<<": bad c4, c6"<<endl;
+	 cout<<setw(6)<<n<<code<<": bad curve"<<endl;
 	 continue;
        }
-     Curvedata CD(C,1);  // The 1 causes minimalization
 
-     bigint a1,a2,a3,a4,a6;
      CD.getai(a1,a2,a3,a4,a6);
-     int nt = ntorsion(CD);
+     nt = ntorsion(CD);
      //     cout.form("%4d\t%s\t1\t",n,code);
      cout<<setw(6)<<n<<"\t"<<code<<"\t1\t";
 #ifdef CURVE_IS_ONE_FIELD
@@ -105,9 +119,6 @@ int main(void)
 #else
      cout<<a1<<" "<<a2<<" "<<a3<<" "<<a4<<" "<<a6;
 #endif
-     CurveRed CR(CD);
-     bigint nc = getconductor(CR);
-     if(n!=nc) cout<<" ------WRONG CONDUCTOR!";
      cout << "\t" << r << "\t" << nt << "\t" << degphi << endl;
    }
 }       // end of if(n)
