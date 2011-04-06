@@ -36,7 +36,7 @@ void ratapprox(bigfloat x, long& a, long& b)
 {
   long c, x0, x1, x2, y0, y1, y2;
   bigfloat xx, diff;
-  bigfloat eps = to_bigfloat(1.0e-6);
+  bigfloat eps = to_bigfloat(1.0e-7);
   xx = x; x0 = 0; x1 = 1; y0 = 1; y1 = 0;
 //cout<<"ratapprox("<<x<<"): \n";
   diff = 1;
@@ -58,7 +58,7 @@ void ratapprox(bigfloat x, long& a, long& b)
 // "trustworthy": always with multiprecision, but only if below
 // a fixed bound otherwise.
 #ifdef MPFP // Multi-Precision Floating Point
-inline int trust_denom(long d) { return (d<1000);}
+inline int trust_denom(long d) { return (d<10000);}
 #else
 inline int trust_denom(long d) { return (d<251);}
 #endif

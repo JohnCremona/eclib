@@ -48,6 +48,8 @@ const int use_egr=0;
 #define INPUT_CLASS_IS_LETTER // we only use letters now!
 
 //void codeletter(int i, char* code, int width=0);
+// Utility function for parsing input of lists of integers such as [], [2], [2,2] 
+vector<int> input_list(istream & is);
 
 int main()
 {
@@ -80,10 +82,19 @@ int main()
   cout<<endl;
   cout << N<<code<<ncurve<<" = "<< E << endl;
 
-  // Input the number of points and the points:
+  // Input the rank:
 
   Point P(C);
   cin >> npts;
+  cout<<"rank =  "<<npts<<endl;
+
+  // Input the torsion structure:
+  vector<int> torsion_group = input_list(cin);
+  int trank = torsion_group.size();
+  cout<<"torsion group structure =  "<<torsion_group<<" (torsion rank "<<trank<<")"<<endl;
+
+  // Input the points of infinite order (if any):
+
   vector<Point> points; points.reserve(npts);
   j=0; 
   while(j<npts)
@@ -97,7 +108,24 @@ int main()
       points.push_back(P); 
       j++;
     }
-  cout<<"Input points: "<<points<<endl;
+  cout<<"Input non-torsion points: "<<points<<endl;
+
+  // Input the points of finite order (if any):
+
+  vector<Point> tpoints; points.reserve(trank);
+  j=0; 
+  while(j<trank)
+    { 
+      cin >> P;
+      if ( !P.isvalid() ) 
+	{
+	  cout<<"point "<<P<<" not on curve.\n\n"; 
+	  abort();
+	}
+      tpoints.push_back(P); 
+      j++;
+    }
+  cout<<"Input torsion points: "<<tpoints<<endl;
 
   bigint index;
   vector<long> unsatprimes;
@@ -141,6 +169,25 @@ int main()
   cout<<"=============================================================="<<endl;
   }
 }
+
+// Utility function for parsing input of lists of integers such as [], [2], [2,2] 
+vector<int> input_list(istream & is)
+{
+  char c; int a; vector<int> ai;
+  is>>c;  // swallow first [
+  is>>ws>>c;
+  if (c==']') return ai;
+  is.unget();
+  while (c!=']')
+    {
+      is >> a >> c; // c is a comma or ]
+      ai.push_back(a);
+   }
+  return ai; 
+}
+
+
+
 
 #if(0)
 void codeletter(int i, char* code, int width)

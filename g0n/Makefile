@@ -47,7 +47,7 @@ RANKLIBFLAG = -L../lib -lrankntl
 OBJ_SUF = _n
 EXE_SUFFIX = _n
 G0NLIBBASE = libg0nntl
-G0NLIBFLAG = -L../lib -lg0nntl
+G0NLIBFLAG = -L. -L../lib -lg0nntl
 else
 LIBNAME = libjc.a
 NTLCFLAGS = 

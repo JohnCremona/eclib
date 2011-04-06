@@ -385,9 +385,9 @@ void newform::find_coords_plus_minus()
     {
       cvi = nf->h1->coord_vecs[i];
       if(sign!=-1)
-        coordsplus[i]=dotmodp(cvi,bplus,92681);
+        coordsplus[i]=dotmodp(cvi,bplus,BIGPRIME);
       if(sign!=+1) 
-        coordsminus[i]=dotmodp(cvi,bminus,92681);
+        coordsminus[i]=dotmodp(cvi,bminus,BIGPRIME);
     }
 
   if(sign!=+1) 
@@ -1494,6 +1494,14 @@ void newforms::merge()
   
 }
 
+
+void update(const mat& pcd, vec& imagej, long ind)
+{
+  if(ind>0) imagej+=pcd.row(ind);
+  else if(ind<0) imagej-=pcd.row(-ind);
+  //  cout<<"updated imagej is "<<imagej<<endl;
+}
+
 vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 {
   //cout<<"In apvec with p = "<<p<<endl;
@@ -1528,6 +1536,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   // Compute the image of the necessary M-symbols (hopefully only one)
   //cout<<"Computing images of M-symbols"<<endl<<flush;
   //cout<<"jlist = "<<jlist<<endl;
+
   for(std::set<long>::const_iterator jj=jlist.begin(); jj!=jlist.end(); jj++)
     {
       imagej=vec(n1ds); // initialised to 0
@@ -1539,12 +1548,14 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
       mat& pcd = h1->projcoord;
 // Matrix [1,0;0,p]
       ind = h1->coordindex[h1->index2(u,p*v)];
-      if(ind>0) imagej+=pcd.row(ind);
-      else if(ind<0) imagej-=pcd.row(-ind);
+      update(pcd,imagej,ind);
+      // if(ind>0) imagej+=pcd.row(ind);
+      // else if(ind<0) imagej-=pcd.row(-ind);
 // Matrix [p,0;0,1]
       ind = h1->coordindex[h1->index2(p*u,v)];
-      if(ind>0) imagej+=pcd.row(ind);
-      else if(ind<0) imagej-=pcd.row(-ind);
+      update(pcd,imagej,ind);
+      // if(ind>0) imagej+=pcd.row(ind);
+      // else if(ind<0) imagej-=pcd.row(-ind);
 // Other matrices
       for(sg=0; sg<2; sg++) // signs
 	for(r=1; r<=p2; r++)
@@ -1553,16 +1564,18 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 	    b = sg ? -r : r ;
 	    u1=u*p; u2=v-u*b;
 	    ind = h1->coordindex[h1->index2(u1,u2)];
-	    if(ind>0) imagej+=pcd.row(ind);
-	    else if(ind<0) imagej-=pcd.row(-ind);
+            update(pcd,imagej,ind);
+	    // if(ind>0) imagej+=pcd.row(ind);
+	    // else if(ind<0) imagej-=pcd.row(-ind);
 	    while(b!=0)
 	      {
 		c=mod(a,b); q=(a-c)/b;
 		if(q==1) {u3=  u2-u1;} else {u3=q*u2-u1;}
 		a=-b; b=c; u1=u2; u2=u3;
 		ind = h1->coordindex[h1->index2(u1,u2)];
-		if(ind>0) imagej+=pcd.row(ind);
-		else if(ind<0) imagej-=pcd.row(-ind);
+                update(pcd,imagej,ind);
+		// if(ind>0) imagej+=pcd.row(ind);
+		// else if(ind<0) imagej-=pcd.row(-ind);
 	      }
 	  }    
       images[j]=imagej/(h1->h1denom());
@@ -1605,7 +1618,7 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
   // Now compute and output the rest of the ap...
   for(primevar pr(last,1+nflist[0].aplist.size()); pr.ok(); pr++) 
     {
-      p=(long)pr;
+      p=(long)pr;   
       vector<long> apv=apvec(p);
       if(verbose>1) 
 	{

@@ -142,7 +142,7 @@ check:  $(TESTS) $(PROGS)
 	./tperiods < tperiods$(OBJ_SUF).in > t 2>/dev/null && diff t tperiods$(OBJ_SUF).out
 	./tsat < tsat.in > t 2>/dev/null && diff t tsat.out
 	./tsat2 < tsat2.in > t 2>/dev/null && diff t tsat2.out
-	./tsat3 < tsat2.in > t 2>/dev/null && diff t tsat3$(OBJ_SUF).out
+	./tsat3 < tsat3.in > t 2>/dev/null && diff t tsat3$(OBJ_SUF).out
 	./conductor < conductor.in > t 2>/dev/null && diff t conductor.out
 	./tate < tate.in > t 2>/dev/null && diff t tate.out
 	./torsion < torsion$(OBJ_SUF).in > t 2>/dev/null && diff t torsion.out
