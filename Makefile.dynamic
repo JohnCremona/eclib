@@ -13,7 +13,7 @@ install_$(DY_LIBNAME), install_dylib: $(DY_LIBNAME)
 	cp $(DY_LIBNAME) $(LIBDIR)/
 
 $(SO_LIBNAME): $(A_LIBNAME)
-	$(CXX) $(SO_OPTS)  $(A_LIBNAME) $(OBJS) -o $(SO_LIBNAME) $(NTLLFLAGS) $(LIBFLAGS)
+	$(CXX) $(SO_OPTS) -Wl,-soname,$(SONAME) $(A_LIBNAME) $(OBJS) -o $(SO_LIBNAME) $(NTLLFLAGS) $(LIBFLAGS)
 install_$(SO_LIBNAME), install_so: $(SO_LIBNAME)
 	cp $(SO_LIBNAME) $(LIBDIR)/
 

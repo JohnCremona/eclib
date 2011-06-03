@@ -456,4 +456,5 @@ aphecketest: hecketest$(OBJ_SUF).o cusp$(OBJ_SUF).o aphomspace$(OBJ_SUF).o symb$
 
 
 LIBBASE=$(G0NLIBBASE)
+SONAME=$(LIBBASE).so.0
 include ../Makefile.dynamic

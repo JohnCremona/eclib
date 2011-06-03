@@ -364,4 +364,5 @@ pcount: pcount.cc
 	g++ -g -static -o pcount pcount.cc -I/usr/local/LiDIA/include \
 	-L/local/jec/LiDIA/library/.libs -lLiDIA -lgmp
 
+SONAME=$(LIBBASE).so.0
 include ../Makefile.dynamic

@@ -444,5 +444,6 @@ new.o: new.C new.H
 	$(CXX) -g $(CFLAGS) -DHAVE_ATEXIT new.C
 
 
+SONAME=$(LIBBASE).so.0
 include ../Makefile.dynamic
 
