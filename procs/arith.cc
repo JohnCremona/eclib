@@ -346,7 +346,6 @@ int modrat(long n, long m, float lim, long& a, long& b)
        if (abs(rr)<lim) {a=r; b=rr; return 1;}
        else cout << "modrat error: no reconstruction for " << n << " mod " << m << "\n";
        cout<<" = "<<a<<"/"<<b<<"\n";
-       abort();
        return 0;
      }
  }

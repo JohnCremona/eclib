@@ -27,8 +27,9 @@
 #include <sys/times.h>
 //#include <sys/param.h>
 //#include <iostream>
-#include "random.cc"
 #include "arith.h"
+float ran0( long& idum ); 
+float ran0( int& idum ); 
 
 //#define SCALAR_OPTION 1 // ints
 #define SCALAR_OPTION 2   // longs

@@ -41,10 +41,10 @@ int main(void)
  init_time();
  start_time();
  long n=110, stopp, stopp0; 
- long prec0=20;
+ long prec0=25;
  int output, verbose;
 
- cout << "Program nfhpcurve.  Using METHOD = " << METHOD 
+ cout << "Program nfhpmcurve.  Using METHOD = " << METHOD 
       << " to find newforms" << endl;
 #ifdef MODULAR
  cout << "MODULUS for linear algebra = " << MODULUS << endl;
@@ -144,6 +144,7 @@ int main(void)
 	{
 	  cout<<"All curves found successfully!"<<endl;
 	  cout << "Finished level "<<n<<endl;
+	  if(output) nf.output_to_file();
 	}
       else
 	{      

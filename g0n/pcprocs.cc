@@ -58,7 +58,7 @@ void ratapprox(bigfloat x, long& a, long& b)
 // "trustworthy": always with multiprecision, but only if below
 // a fixed bound otherwise.
 #ifdef MPFP // Multi-Precision Floating Point
-inline int trust_denom(long d) { return (d<10000);}
+inline int trust_denom(long d) { return (d<1000);}
 #else
 inline int trust_denom(long d) { return (d<251);}
 #endif
@@ -159,10 +159,11 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 	   {
 	     bigfloat ratio=y/y0;
 	     ratapprox(ratio, nry, dry);
+             //             cout<<"dry = "<<dry<<", trusted? "<<trust_denom(dry)<<endl;
 	     if(trust_denom(dry)) dotminus0=lcm(dotminus0,dry);
 	     if(verbose>1) 
 	       cout<<"imag part = " << y << ", y/y0 = " << ratio   
-		   << " =~= "<<nry<<"/"<<dry<<"\n";
+		   << " =~= "<<nry<<"/"<<dry<<"\n"<<"dotminus0 updated to "<<dotminus0<<endl;
 	   }
 	  else
 	    if(y>0.001)
@@ -175,8 +176,8 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 	      have_both=1;
 	      if(trust_denom(drx)) {nrx0=nrx; drx0=drx;} 
 	      nry0=nry; dry0=dry;
-	      //	      cout<<"nrx0="<<nrx0<<endl;	      
-	      //	      cout<<"drx0="<<drx0<<endl;	      
+             //              cout<<"nrx0="<<nrx0<<endl;	      
+             //              cout<<"drx0="<<drx0<<endl;	      
 	      nflist[i].a=a;
 	      nflist[i].b=b;
 	      nflist[i].c=c;

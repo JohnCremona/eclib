@@ -302,7 +302,69 @@ vec lift(const vec& v, scalar pr)
  return ans;
 }
 
+//#define LIFT_DEBUG
 int liftok(vec& v, scalar pr)
+{
+  long i, j, d = dim(v);
+ scalar g, nu, de, seed=10; 
+ int success, succ;
+ float lim = sqrt(pr/2.0)-1;
+ scalar maxallowed = 10*int(lim);
+#ifdef LIFT_DEBUG
+ cout<<"Lifting vector v = "<<v<<endl;
+#endif
+ // reduce vector entries mod p to lie in (-p/2,p/2), and find the
+ // maximum entry:
+ scalar vi, maxvi=0;
+ for (i=1; i<=d; i++) 
+   {
+     v[i]=vi=mod(v[i],pr);
+     maxvi=max(maxvi,abs(vi));   
+   }
+#ifdef LIFT_DEBUG
+ cout<<"Reduced v = "<<v<<", with max entry "<<maxvi<<endl;
+#endif
+
+ // NB We do *not* make cumulative rescalings, since it is possible
+ // for an apparently successful modrat reconstruction to give an
+ // incorrect denominator.  I have an example with pr=2^30-35 where
+ // the correct denominator is 4666 and one entry of the correct
+ // primitive scaled vector is 47493 (greater than lim = 23170) but
+ // since 47493/4666 = 587037152 = -10193/21607 (mod pr), rational
+ // reconstruction returned nu=-10193, de = 21607.  If we kept the
+ // (unsuccessful) scaling by 21607, all subsequent numerators would
+ // be multiplied by this and we would never succeed.
+
+ // This code allows for some entries to be >lim, and works as long as
+ // (1) there is a lift with all entried at most 10*lim, (2) at least
+ // one entry has the correct denominator, which is equaivalent to
+ // requiring that in the primitive rescaling, there is an entry
+ // coprime to the first non-zero entry.
+
+ vec newv = v;
+ for(i=1; (i<=d) && (maxvi>maxallowed); i++)
+   {
+     succ=modrat(v[i],pr,lim,nu,de);     de=abs(de);
+     if ((!succ)||(de==1)) continue; // loop on i
+     // scale by de & recompute max entry:
+#ifdef LIFT_DEBUG
+     cout<<"Scaling by d="<<de<<endl;
+#endif
+     maxvi = 0;
+     for (j=1; j<=d; j++) 
+       {
+         newv[j] = vi = mod(xmodmul(de,v[j],pr),pr);
+         maxvi=max(maxvi,abs(vi));
+       }
+#ifdef LIFT_DEBUG
+     cout<<"Now v = "<<newv<<", with max entry "<<maxvi<<endl;
+#endif
+   }
+ v = newv;
+ return (maxvi<=lim);
+}
+
+int old_liftok(vec& v, scalar pr)
 {
  long i, d = dim(v);
  scalar g, nu, de; 

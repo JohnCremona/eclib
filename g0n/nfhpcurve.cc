@@ -184,16 +184,18 @@ int main(void)
   else
     {
       cout<<(nnf-nsucc)<<" curve(s) missing."<<endl;
+      if(output) nf.output_to_file();
       int newstopp=stopp+500;
-      if(newstopp>32000)
+      //      if(newstopp>32000)
+      if(newstopp>10000)
       {
 	  cout<<"Cannot compute more ap, something must be wrong in newform data"<<endl;
-	  if(output) nf.output_to_file();
 	  abort();
       }
       cout<<"Computing some more ap: from "<<stopp+1<<" to "
 	  <<newstopp<<"..."<<endl;
       nf.addap(newstopp);
+      if(output) nf.output_to_file();
       stopp=newstopp;
       if(maxn<10000) 
 	{

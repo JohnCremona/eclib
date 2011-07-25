@@ -37,7 +37,7 @@
 #include "../g0n/curvesort.cc"
 
 #define USE_EGR
-#define SAT_BND 2000 // saturation bound:  use -1 for global default
+#define SAT_BND 100000 // saturation bound:  use -1 for global default
 
 #ifdef USE_EGR
 const int use_egr=1;
