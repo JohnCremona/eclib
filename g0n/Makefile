@@ -95,7 +95,7 @@ install_lib: $(HEADERS) $(G0NLIBNAME)
 install: lib install_lib
 
 
-CFLAGS = -c  $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT #-DNF_DIR=\"$(NF_DIR)\"
+CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT #-DNF_DIR=\"$(NF_DIR)\"
 LFLAGS = $(DYN_FLAGS) $(LIBFLAG) -lpari -L$(PARILIBDIR) $(NTLLFLAGS) $(IOLIB) -lm
 
 LIBFLAGS = $(LFLAGS)
@@ -117,14 +117,19 @@ clean:
 veryclean: clean
 	/bin/rm -f $(PROGS) $(TESTS)
 
+# This is the name of a directory which will be used for newform
+# input/output in the "make check" tests and removed afterwards.
+
+export NF_DIR:=nftmp
+
 check:  $(TESTS) $(PROGS)
 	rm -f PRIMES t
 	./modtest < modtest.in > t 2>/dev/null && diff t modtest.out 
 	./homtest < homtest.in > t && diff t homtest.out
 	./hecketest < hecketest.in > t 2>/dev/null && diff t hecketest.out 
 	./mhcount < mhcount.in > t && diff t  mhcount.out
-	rm -rf newforms
-	mkdir newforms
+	rm -rf $(NF_DIR)
+	mkdir $(NF_DIR)
 	./tmanin < tmanin.in > t 2>/dev/null && diff t tmanin.out
 	./nftest < nftest.in 2>/dev/null > t && diff t nftest.out
 	./h1first < h1first.in 2>/dev/null > t && diff t h1first.out
@@ -134,7 +139,7 @@ check:  $(TESTS) $(PROGS)
 	./nfhpmcurve < nfhpmcurve.in > t 2>/dev/null && diff t nfhpmcurve.out
 	./h1clist < h1clist.in > t 2>/dev/null && diff t h1clist.out
 	./h1bsdcurisog < h1bsdcurisog.in > t 2>/dev/null && diff t h1bsdcurisog$(OBJ_SUF).out
-	rm -rf newforms
+	rm -rf $(NF_DIR)
 	rm -f PRIMES t
 
 input: input.cc
