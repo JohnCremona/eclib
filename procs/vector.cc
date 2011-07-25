@@ -23,6 +23,7 @@
  
 #include "arith.h"
 #include "vector.h"
+#include "random.cc"
 
 #undef scalar
 #undef vec
