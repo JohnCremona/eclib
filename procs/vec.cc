@@ -305,7 +305,7 @@ vec lift(const vec& v, scalar pr)
 //#define LIFT_DEBUG
 int liftok(vec& v, scalar pr)
 {
-  long i, j, d = dim(v);
+  long i0, i, j, d = dim(v);
  scalar g, nu, de, seed=10; 
  int success, succ;
  float lim = sqrt(pr/2.0)-1;
@@ -313,18 +313,6 @@ int liftok(vec& v, scalar pr)
 #ifdef LIFT_DEBUG
  cout<<"Lifting vector v = "<<v<<endl;
 #endif
- // reduce vector entries mod p to lie in (-p/2,p/2), and find the
- // maximum entry:
- scalar vi, maxvi=0;
- for (i=1; i<=d; i++) 
-   {
-     v[i]=vi=mod(v[i],pr);
-     maxvi=max(maxvi,abs(vi));   
-   }
-#ifdef LIFT_DEBUG
- cout<<"Reduced v = "<<v<<", with max entry "<<maxvi<<endl;
-#endif
-
  // NB We do *not* make cumulative rescalings, since it is possible
  // for an apparently successful modrat reconstruction to give an
  // incorrect denominator.  I have an example with pr=2^30-35 where
@@ -342,26 +330,74 @@ int liftok(vec& v, scalar pr)
  // coprime to the first non-zero entry.
 
  vec newv = v;
- for(i=1; (i<=d) && (maxvi>maxallowed); i++)
+ scalar vi0, inv_vi0, vi, maxvi=0;
+ for(i0=1; i0<=d; i0++)
    {
-     succ=modrat(v[i],pr,lim,nu,de);     de=abs(de);
-     if ((!succ)||(de==1)) continue; // loop on i
-     // scale by de & recompute max entry:
-#ifdef LIFT_DEBUG
-     cout<<"Scaling by d="<<de<<endl;
-#endif
-     maxvi = 0;
-     for (j=1; j<=d; j++) 
+     // scale so that i0'th entry is 1 mod p, then reduce vector
+     // entries mod p to lie in (-p/2,p/2), and find the maximum
+     // entry:
+     while((vi0=mod(v[i0],pr))==0) {i0++;} // skip over any zero entries
+     inv_vi0=invmod(vi0,pr);
+     for (i=1; i<=d; i++) 
        {
-         newv[j] = vi = mod(xmodmul(de,v[j],pr),pr);
-         maxvi=max(maxvi,abs(vi));
+         v[i]=vi=mod(xmodmul(inv_vi0,v[i],pr),pr);
+         maxvi=max(maxvi,abs(vi));   
        }
 #ifdef LIFT_DEBUG
-     cout<<"Now v = "<<newv<<", with max entry "<<maxvi<<endl;
+     cout<<"Reduced v = "<<v<<", with max entry "<<maxvi<<endl;
 #endif
+     if(maxvi<=maxallowed) // no scaling needed!
+           {
+             // Normalize so first nonzero entry is positive:
+             for(i0=1; i0<=d; i0++)
+               {
+                 while(v[i0]==0) {i0++;}
+                 if(v[i0]<0) v=-v;
+                 return 1;
+               }
+             return 0; // should not happen: means v==0!
+           }         
+
+     for(i=1; (i<=d); i++)
+       {
+         succ=modrat(v[i],pr,lim,nu,de);     de=abs(de);
+         if ((!succ)||(de==1)) continue; // loop on i
+         // scale by de & recompute max entry:
+#ifdef LIFT_DEBUG
+         cout<<"Scaling by d="<<de<<endl;
+#endif
+         maxvi = 0;
+         for (j=1; j<=d; j++) 
+           {
+             newv[j] = vi = mod(xmodmul(de,v[j],pr),pr);
+             maxvi=max(maxvi,abs(vi));
+           }
+#ifdef LIFT_DEBUG
+         cout<<"Now v = "<<newv<<", with max entry "<<maxvi<<endl;
+#endif
+         if(maxvi<=maxallowed)
+           {
+             v = newv;
+             // Normalize so first nonzero entry is positive:
+             for(i0=1; i0<=d; i0++)
+               {
+                 while(v[i0]==0) {i0++;}
+                 if(v[i0]<0) v=-v;
+                 return 1;
+               }
+             return 0; // should not happen: means v==0!
+           }         
+       }
    }
  v = newv;
- return (maxvi<=lim);
+ // Normalize so first nonzero entry is positive:
+ for(i0=1; i0<=d; i0++)
+   {
+     while(v[i0]==0) {i0++;}
+     if(v[i0]<0) v=-v;
+     return (maxvi<=lim);
+   }
+ return 0;
 }
 
 int old_liftok(vec& v, scalar pr)
