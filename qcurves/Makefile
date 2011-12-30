@@ -50,25 +50,25 @@ LIBFLAGS = $(LFLAGS)
 
 OBJS = curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o points$(OBJ_SUF).o heights$(OBJ_SUF).o cperiods$(OBJ_SUF).o isogs$(OBJ_SUF).o mwprocs$(OBJ_SUF).o lambda$(OBJ_SUF).o sifter$(OBJ_SUF).o sieve_search$(OBJ_SUF).o htconst$(OBJ_SUF).o egr$(OBJ_SUF).o saturate$(OBJ_SUF).o divpol$(OBJ_SUF).o pointsmod$(OBJ_SUF).o curvemod$(OBJ_SUF).o ffmod$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o getcurve$(OBJ_SUF).o 
 
-objs: $(OBJS)
-
 HEADERS = curve.h points.h cperiods.h isogs.h reader.h mwprocs.h lambda.h sifter.h sieve_search.h htconst.h egr.h saturate.h divpol.h pointsmod.h curvemod.h ffmod.h tlss.h elog.h getcurve.h 
-headers: $(HEADERS)
 
 DOTCCS = curve.cc curvedata.cc curvered.cc points.cc cperiods.cc isogs.cc heights.cc mwprocs.cc lambda.cc sifter.cc indep.cc sieve_search.cc htconst.cc egr.cc saturate.cc divpol.cc pointsmod.cc curvemod.cc ffmod.cc tlss.cc elog.cc getcurve.cc 
 
 PROGCCS =  tcurve.cc tpoints.cc theight.cc tate.cc torsion.cc conductor.cc twist.cc allisog.cc findinf.cc indep.cc tsat.cc tperiods.cc thtconst.cc thtbound.cc tegr.cc telog.cc tdivpol.cc
 
-sources: $(HEADERS) $(DOTCCS) $(PROGCCS)
-
 TESTS = tcurve tpoints theight thtconst tegr telog tdivpol tperiods tsat tsat2 tsat3 # thtbound
-tests: $(TESTS)
 
 PROGS = tate torsion conductor twist allisog findinf indep 
+
 STATIC_PROGS = tate_sta torsion_sta conductor_sta twist_sta allisog_sta findinf_sta indep_sta
+
+all: $(OBJS)
+headers: $(HEADERS)
+objs: $(OBJS)
+sources: $(HEADERS) $(DOTCCS) $(PROGCCS)
+tests: $(TESTS)
 progs: $(PROGS)
 static_progs: $(STATIC_PROGS)
-
 lib: $(CURVELIBNAME)
 
 $(CURVELIBNAME): $(OBJS)
@@ -76,7 +76,7 @@ $(CURVELIBNAME): $(OBJS)
 	ar r $(CURVELIBNAME) $(OBJS)
 	$(RANLIB) $(CURVELIBNAME)
 
-install_lib: $(HEADERS) lib
+install_lib: headers lib
 	(cd $(INCDIR); rm -f $(HEADERS))
 	for f in $(HEADERS); \
 	 do cp $${f} $(INCDIR); \
@@ -86,38 +86,14 @@ install_lib: $(HEADERS) lib
 	cp $(CURVELIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(CURVELIBNAME)
 
-install_progs: progs #static_progs
+install_progs: progs
 	for f in $(PROGS); \
 	do strip $${f}; \
-	   cp $${f} $(PROGSDIR)/$${f}${EXE_SUFFIX}; \
-	   chmod a+rx $(PROGSDIR)/$${f}${EXE_SUFFIX}; \
-	   cp $${f} $(FTP_SUBDIR)/$${f}${EXE_SUFFIX}; \
-	   /bin/rm -f $(FTP_SUBDIR)/$${f}${EXE_SUFFIX}.gz; \
-	   gzip $(FTP_SUBDIR)/$${f}${EXE_SUFFIX}; \
-	   chmod 755 $(FTP_SUBDIR)/$${f}${EXE_SUFFIX}.gz; \
+	   cp $${f} $(BINDIR)/; \
+	   chmod a+rx $(BINDIR)/$${f}; \
 	done
 
-install: install_lib
-
-DISTFILES = curve.h points.h reader.h curve.cc curvedata.cc curvered.cc \
-            heights.cc points.cc mwprocs.h mwprocs.cc  \
-	    isogs.h isogs.cc cperiods.h cperiods.cc \
-            findinf.cc tate.cc conductor.cc torsion.cc twist.cc \
-            allisog.cc sieve_search.h sieve_search.cc \
-            indep.cc sifter.h sifter.cc htconst.h htconst.cc \
-	    saturate.h saturate.cc divpol.h divpol.cc tlss.h tlss.cc \
-	    pointsmod.h pointsmod.cc elog.h elog.cc \
-	    curvemod.h curvemod.cc ffmod.h ffmod.cc egr.h egr.cc \
-            lambda.h lambda.cc getcurve.h getcurve.cc
-distfiles: $(DISTFILES)
-
-dist: distfiles
-	$(CP) $(DISTFILES) $(HOME)/curves/rankdist
-	chmod 644 $(HOME)/curves/rankdist/*
-
-g0ndist: distfiles
-	$(CP) $(DISTFILES) $(HOME)/curves/g0ndist
-	chmod 644 $(HOME)/curves/g0ndist/*
+install: install_lib install_progs
 
 clean:
 	/bin/rm -f *~ *$(OBJ_SUF).o  $(TESTS) $(CURVELIBNAME) *_sta *.a *.so *.dylib *.dll *.def
@@ -125,12 +101,7 @@ clean:
 veryclean: clean
 	/bin/rm -f $(PROGS) $(TESTS) *.exe
 
-shar: sources
-	rm -f qcurves.shar qcurves.shar.Z
-	shar -i files -o qcurves.shar
-	compress qcurves.shar
-
-check:  $(TESTS) $(PROGS)
+check:  tests progs
 	rm -f PRIMES t
 	./tcurve < tcurve.in > t && diff t tcurve.out 
 	./tpoints > t && diff t tpoints$(OBJ_SUF).out 
@@ -153,97 +124,97 @@ check:  $(TESTS) $(PROGS)
 	rm -f PRIMES t
 
 tcurve: tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o 
-	$(CXX)  -o $(BINDIR)/tcurve tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o  $(LFLAGS)
+	$(CXX)  -o ./tcurve tcurve$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o  $(LFLAGS)
 
 tperiods: tperiods$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o getcurve$(OBJ_SUF).o
-	$(CXX) -o $(BINDIR)/tperiods tperiods$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o \
+	$(CXX) -o ./tperiods tperiods$(OBJ_SUF).o cperiods$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o \
 		curvered$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o getcurve$(OBJ_SUF).o $(LFLAGS)
 
 qperiods: qperiods$(OBJ_SUF).o
-	$(CXX)  -o $(BINDIR)/qperiods qperiods$(OBJ_SUF).o  $(LFLAGS)
+	$(CXX)  -o ./qperiods qperiods$(OBJ_SUF).o  $(LFLAGS)
 
 tpoints: tpoints$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tpoints tpoints$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./tpoints tpoints$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 
 telog: telog$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/telog telog$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./telog telog$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 theight: theight$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/theight theight$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./theight theight$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 
 twist: twist$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/twist twist$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./twist twist$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 twist_sta: twist$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX) -static -o $(BINDIR)/twist_sta twist$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -static -o ./twist_sta twist$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 torsion: torsion$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/torsion torsion$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./torsion torsion$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 torsion_sta: torsion$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX) -static -o $(BINDIR)/torsion_sta torsion$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -static -o ./torsion_sta torsion$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 tate: tate$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tate tate$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./tate tate$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 tate_sta: tate$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -static -o $(BINDIR)/tate_sta tate$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -static -o ./tate_sta tate$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 conductor: conductor$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/conductor conductor$(OBJ_SUF).o $(CURVELIBNAME)  $(LFLAGS)
+	$(CXX)  -o ./conductor conductor$(OBJ_SUF).o $(CURVELIBNAME)  $(LFLAGS)
 
 conductor_sta: conductor$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -static -o $(BINDIR)/conductor_sta conductor$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -static -o ./conductor_sta conductor$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 csearch: csearch$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/csearch csearch$(OBJ_SUF).o   $(CURVELIBNAME)  $(LFLAGS)
+	$(CXX)  -o ./csearch csearch$(OBJ_SUF).o   $(CURVELIBNAME)  $(LFLAGS)
 
 bdw2357: bdw2357$(OBJ_SUF).o   $(CURVELIBNAME)
-	$(CXX) -o $(BINDIR)/bdw2357 bdw2357$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -o ./bdw2357 bdw2357$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 
 bdw2357a: bdw2357a$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX) -o $(BINDIR)/bdw2357a bdw2357a$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -o ./bdw2357a bdw2357a$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 bdw2311: bdw2311$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX) -o $(BINDIR)/bdw2311 bdw2311$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -o ./bdw2311 bdw2311$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 
 getjay: getjay$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX) -o $(BINDIR)/getjay getjay$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -o ./getjay getjay$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 
 isogsort: isogsort$(OBJ_SUF).o   $(CURVELIBNAME)
-	$(CXX) -o $(BINDIR)/isogsort isogsort$(OBJ_SUF).o   $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -o ./isogsort isogsort$(OBJ_SUF).o   $(CURVELIBNAME) $(LFLAGS)
 
 search: search$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/search search$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./search search$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 findinf: findinf$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/findinf findinf$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./findinf findinf$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 indep: indep$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/indep indep$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./indep indep$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 indep_sta: indep$(OBJ_SUF).o  $(CURVELIBNAME)
-	$(CXX) -static -o $(BINDIR)/indep_sta indep$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -static -o ./indep_sta indep$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 ellisog: ellisog$(OBJ_SUF).o   $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/ellisog ellisog$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./ellisog ellisog$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 
 allisog: allisog$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/allisog allisog$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./allisog allisog$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 allisog_sta: allisog$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX) -static -o $(BINDIR)/allisog_sta allisog$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX) -static -o ./allisog_sta allisog$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 
 t2isog$(OBJ_SUF).o: t2isog.cc isogs.h
 t2isog: t2isog$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/t2isog t2isog$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./t2isog t2isog$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 
 tsat: tsat$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tsat tsat$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./tsat tsat$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 tsat2: tsat2$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tsat2 tsat2$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./tsat2 tsat2$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 tsat3: tsat3$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tsat3 tsat3$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./tsat3 tsat3$(OBJ_SUF).o  $(CURVELIBNAME) $(LFLAGS)
 
 
 thtconst: thtconst$(OBJ_SUF).o htconst$(OBJ_SUF).o points$(OBJ_SUF).o curve$(OBJ_SUF).o cperiods$(OBJ_SUF).o curvedata$(OBJ_SUF).o	curvered$(OBJ_SUF).o egr$(OBJ_SUF).o heights$(OBJ_SUF).o mwprocs$(OBJ_SUF).o sieve_search$(OBJ_SUF).o saturate$(OBJ_SUF).o tlss$(OBJ_SUF).o elog$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o ffmod$(OBJ_SUF).o divpol$(OBJ_SUF).o
@@ -270,9 +241,9 @@ test_iso: test_iso$(OBJ_SUF).o curvemod$(OBJ_SUF).o pointsmod$(OBJ_SUF).o $(CURV
 	   $(CXX) -o test_iso test_iso$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
 
 tegr: tegr$(OBJ_SUF).o egr$(OBJ_SUF).o $(CURVELIBNAME)
-	$(CXX)  -o $(BINDIR)/tegr tegr$(OBJ_SUF).o egr$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
+	$(CXX)  -o ./tegr tegr$(OBJ_SUF).o egr$(OBJ_SUF).o $(CURVELIBNAME) $(LFLAGS)
 tdivpol: tdivpol$(OBJ_SUF).o divpol$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o
-	$(CXX)  -o $(BINDIR)/tdivpol tdivpol$(OBJ_SUF).o divpol$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o $(LFLAGS)
+	$(CXX)  -o ./tdivpol tdivpol$(OBJ_SUF).o divpol$(OBJ_SUF).o curve$(OBJ_SUF).o curvedata$(OBJ_SUF).o $(LFLAGS)
 
 
 # DEPENDENCIES
@@ -352,7 +323,7 @@ lllbasis$(OBJ_SUF).o: lllbasis.cc lllbasis.h points.h curve.h
 
 tlllbasis$(OBJ_SUF).o: tlllbasis.cc lllbasis.h
 tlllbasis: tlllbasis$(OBJ_SUF).o lllbasis$(OBJ_SUF).o
-	$(CXX)  -o $(BINDIR)/tlllbasis tlllbasis$(OBJ_SUF).o lllbasis$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
+	$(CXX)  -o ./tlllbasis tlllbasis$(OBJ_SUF).o lllbasis$(OBJ_SUF).o  $(CURVELIBFLAG) $(LFLAGS)
 
 iso3: iso3.cc
 	g++ -g -static -o iso3 iso3.cc -I/usr/local/LiDIA/include \

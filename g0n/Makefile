@@ -15,11 +15,12 @@ DOT_H = periods.h cusp.h homspace.h newforms.h nflist.h moddata.h oldforms.h sym
 DOT_CC = h1bsd.cc newforms.cc symb.cc checkap.cc h1bsdc.cc homspace.cc nfcount.cc h1clist.cc homtest.cc nflist.cc th1nf.cc cnf.cc h1curisog.cc hpcurve.cc nftest.cc tmanin.cc curvesort.cc h1curve.cc oftest.cc cusp.cc h1degphi.cc lf1per.cc oldforms.cc fixc6.cc pcurve.cc tnf2.cc h1first.cc periods.cc vlift.cc mhcount.cc h1test.cc moddata.cc hecketest.cc modtest.cc putoldeigs.cc h1.cc nfhpcurve.cc nfhpmcurve.cc moreap.cc  
 
 HEADERS = $(DOT_H)
-sources: $(DOT_H) $(DOT_CC)
 
 TESTS = modtest homtest hecketest nftest mhcount oftest
 
 PROGS = tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsd h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first moreap
+
+OBJS = cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o periods$(OBJ_SUF).o fixc6$(OBJ_SUF).o
 
 ifeq ($(ARITH),NTL_INTS)
 LIBNAME = libjcntlint.a
@@ -65,16 +66,10 @@ endif
 
 G0NLIBNAME = $(G0NLIBBASE).a
 
-OBJS = cusp$(OBJ_SUF).o homspace$(OBJ_SUF).o symb$(OBJ_SUF).o moddata$(OBJ_SUF).o oldforms$(OBJ_SUF).o newforms$(OBJ_SUF).o periods$(OBJ_SUF).o fixc6$(OBJ_SUF).o
-
+sources: $(DOT_H) $(DOT_CC)
 objs: $(OBJS)
-
-g0ndist: sources
-	(cd ../procs; ${MAKE} g0ndist;)
-	(cd ../qcurves; ${MAKE} g0ndist)
-	$(CP) $(DOT_H) $(HOME)/curves/g0ndist
-	$(CP) $(DOT_CC) $(HOME)/curves/g0ndist
-	chmod 644 $(HOME)/curves/g0ndist/*
+progs: $(PROGS)
+tests: $(TESTS)
 
 $(G0NLIBNAME): $(OBJS)
 	ar r $(G0NLIBNAME) $(OBJS)
@@ -92,8 +87,14 @@ install_lib: $(HEADERS) $(G0NLIBNAME)
 	cp $(G0NLIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(G0NLIBNAME)
 
-install: lib install_lib
+install_progs: progs
+	for f in $(PROGS); \
+	do strip $${f}; \
+	   cp $${f} $(BINDIR)/; \
+	   chmod a+rx $(BINDIR)/$${f}; \
+	done
 
+install: install_lib install_progs
 
 CFLAGS = -c $(OPTFLAG)  -I$(INCDIR) $(NTLCFLAGS) -I$(PARIINCDIR) -DMETHOD=2 -DUSE_XSPLIT #-DNF_DIR=\"$(NF_DIR)\"
 LFLAGS = $(DYN_FLAGS) $(LIBFLAG) -lpari -L$(PARILIBDIR) $(NTLLFLAGS) $(IOLIB) -lm
@@ -106,10 +107,6 @@ LIBFLAGS = $(LFLAGS)
 
 # TARGETS
 
-
-progs: $(PROGS)
-
-tests: $(TESTS)
 
 clean:
 	/bin/rm -f *~ *$(OBJ_SUF).o *.a *.so *.dylib *.dll* *.def *.exe

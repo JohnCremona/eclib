@@ -61,25 +61,24 @@ LIBFLAGS = $(LFLAGS)
 # TARGETS
 
 HEADERS = mrank2.h mequiv.h mlocsol.h mglobsol.h msoluble.h mquartic.h mrank1.h qc.h sqfdiv.h version.h minim.h reduce.h transform.h desc2.h bitspace.h options.h GetOpt.h twoadic.h descent.h
-headers: $(HEADERS)
-
 DOTCCS = mequiv.cc  mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc tmrank.cc ratpoint.cc qc.cc mwrank.cc sqfdiv.cc version.cc minim.cc reduce.cc transform.cc desc2.cc tred.cc bitspace.cc GetOpt.cc twoadic.cc descent.cc # d2.cc tequiv.cc tred.cc
-
-sources: $(HEADERS) $(DOTCCS)
-
 DOCS = mwrank.info mwrank.options mwrank.changes mwrank.readme
-docs: $(DOCS)
-
-DISTFILES = $(HEADERS) mequiv.cc mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc tmrank.cc ratpoint.cc d2.cc qc.cc mwrank.cc sqfdiv.cc version.cc minim.cc reduce.cc transform.cc desc2.cc bitspace.cc twoadic.h twoadic.cc descent.cc $(DOCS) tmrank.in
-
-distfiles: $(DISTFILES)
-
-clean:
-	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.a *.so *.dylib
+PROGS = mwrank ratpoint
+STATIC_PROGS = mwrank_sta ratpoint_sta
+TESTS = $(PROGS) tmrank tequiv tred
 
 OBJS = mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o twoadic$(OBJ_SUF).o descent$(OBJ_SUF).o
 
+headers: $(HEADERS)
+sources: $(HEADERS) $(DOTCCS)
+docs: $(DOCS)
+progs: $(PROGS)
+static_progs: $(STATIC_PROGS)
+tests: $(TESTS) 
 objs: $(OBJS)
+
+clean:
+	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.a *.so *.dylib
 
 lib: $(OBJS)
 	rm -f $(RANKLIBNAME)
@@ -96,19 +95,19 @@ install_lib: $(HEADERS) lib
 	cp $(RANKLIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(RANKLIBNAME)
 
-install: lib install_lib
+install_progs: progs
+	for f in $(PROGS); \
+	do strip $${f}; \
+	   cp $${f} $(BINDIR)/; \
+	   chmod a+rx $(BINDIR)/$${f}; \
+	done
+
+install: lib install_lib install_progs
 
 install_docs: $(DOCS) 
 	for f in $(DOCS); \
 	do cp $${f} $(FTP_DIR)/$${f}; chmod 644 $(FTP_DIR)/$${f}; done
 
-PROGS = mwrank ratpoint
-progs: $(PROGS)
-STATIC_PROGS = mwrank_sta ratpoint_sta
-static_progs: $(STATIC_PROGS)
-
-TESTS = $(PROGS) tmrank tequiv tred
-tests: $(TESTS) 
 
 test1: tmrank
 	time ./tmrank < tmrank.in
@@ -119,28 +118,8 @@ test2: mwrank
 alltests: tests test1 test2
 
 veryclean: clean
-	(cd $(BINDIR); /bin/rm -f $(TESTS) $(PROGS))
-
-install_progs: progs install_docs
-	for f in $(PROGS); \
-	do strip $${f}; \
-	   cp $${f} $(FTP_SUBDIR)/$${f}$(EXE_SUFFIX); \
-	   /bin/rm -f $(FTP_SUBDIR)/$${f}$(EXE_SUFFIX).gz; \
-	   gzip $(FTP_SUBDIR)/$${f}$(EXE_SUFFIX); \
-	   chmod 755 $(FTP_SUBDIR)/$${f}$(EXE_SUFFIX).gz; \
-	   cp $${f} $(PROGSDIR)/$${f}$(EXE_SUFFIX); \
-	   chmod 755 $(PROGSDIR)/$${f}$(EXE_SUFFIX); \
-	done
-
-dist: distfiles
-	(cd ../rankdist; ${MAKE} clean; /bin/rm -f *.cc *.h $(DOCS) tmrank.in)
-	(cd ../procs; ${MAKE} dist;)
-	(cd ../qcurves; ${MAKE} dist)
-	for f in $(HEADERS) $(DOTCCS) tmrank.in $(DOCS); \
-          do $(CP) $${f} $(HOME)/curves/rankdist; done
-	chmod 644 $(HOME)/curves/rankdist/*
-	chmod 755 $(HOME)/curves/rankdist/configure
-	chmod 755 $(HOME)/curves/rankdist/configure.ac
+	/bin/rm -f $(PROGS) $(TESTS)
+	(cd $(BINDIR); /bin/rm -f $(PROGS))
 
 check: $(PROGS) $(TESTS)
 	rm -f PRIMES t

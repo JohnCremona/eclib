@@ -21,7 +21,7 @@ CP = cp -p
 # these paths are relative to the current path of the Makefile it is included from
 INCDIR = ../include
 LIBDIR = ../lib
-BINDIR = .
+BINDIR = ../bin
 
 
 
@@ -53,6 +53,7 @@ all: dirs
 dirs: 
 	mkdir -p include
 	mkdir -p lib
+	mkdir -p bin
 
 dylib:
 	cd procs && ${MAKE} install_dylib && ${MAKE} tests progs
@@ -79,6 +80,7 @@ clean:
 	cd g0n && ${MAKE} clean
 	if [ -d lib ] ; then cd lib && /bin/rm -f *.a *.so *.dylib *.def ; fi
 	if [ -d include ] ; then cd include && /bin/rm -f *.h ; fi
+	if [ -d bin ] ; then cd bin && /bin/rm -f * ; fi
 
 veryclean:
 	cd procs && ${MAKE} veryclean
@@ -87,6 +89,7 @@ veryclean:
 	cd g0n && ${MAKE} veryclean
 	if [ -d lib ] ; then cd lib && /bin/rm -f *.a *.so *.dylib *.def ; fi
 	if [ -d include ] ; then cd include && /bin/rm -f *.h ; fi
+	if [ -d bin ] ; then cd bin && /bin/rm -f * ; fi
 
 show:
 	echo $(OPTFLAG)
