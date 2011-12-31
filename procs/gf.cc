@@ -1,4 +1,4 @@
-// gf.cc:  common interface for LiDIA's galois_field/gf_element & NTL's ZZ_p
+// gf.cc:  interface for NTL's ZZ_p
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2005 John Cremona
@@ -23,8 +23,6 @@
  
 #include "marith.h"
 #include "gf.h"
-
-#ifdef NTL_INTS
 
 map<ZZ,ZZ_pContext> ZZ_pContextCache;
 
@@ -54,6 +52,3 @@ galois_field::galois_field(const ZZ& qq)
       t->second.restore();
     }
 }
-
-
-#endif

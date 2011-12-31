@@ -20,27 +20,21 @@
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 // 
 //////////////////////////////////////////////////////////////////////////
- // and functions for point counting and elliptic curve discrete log
-
-
-// Under LiDIA pointmodq is a wrapper for point<gf_element>; under NTL
-// it is self-contained.  We provided a common interface.
 
 // curvemodqbasis is derived from curvemodq (see file curvemod.h) and
 // contains a Z-basis for the group of points
 
-// The baby-step-giant step algorithm in my_bg_algorithm is adapted
-// from LiDIA's bg_algorithm() with few changes.
+// The baby-step-giant step algorithm in my_bg_algorithm was
+// originally adapted from LiDIA's bg_algorithm(); it has some changes.
 
 // The point-counting and group structure algorithm in
 // my_isomorphism_type() provide the same functionality as LiDIA's
-// isomorphism_type() but has been rewritten from scratch by JEC; a
-// main difference from the LiDIA version is the use of Weil pairing
-// when the group is not cyclic.  This is only intended for use when q
-// is small-medium sized (NOT cryptographic!) -- as is also true of
-// LiDIA's isomorphism_type().  The current implementation is only for
-// prime fields, but the same strategy would work over arbitrary
-// finite fields.
+// isomorphism_type() but has been rewritten from scratch; a main
+// difference from the LiDIA version is the use of Weil pairing when
+// the group is not cyclic.  This is only intended for use when q is
+// small-medium sized (NOT cryptographic!).  The current
+// implementation is only for prime fields, but the same strategy
+// would work over arbitrary finite fields.
 
 #include "curve.h"
 #include "points.h"
@@ -48,13 +42,6 @@
 #include "curvemod.h"
 #include "pointsmod.h"
 #include "ffmod.h"
-
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-
-void set_order_point(pointmodq& P, const bigint& n)
-{;}
-
-#else // NTL
 
 void set_order_point(pointmodq& P, const bigint& n)
 {P.set_order(n);}
@@ -258,8 +245,6 @@ pointmodq curvemodq::random_point()
   return ans;
 }
 
-#endif //LiDIA/NTL split
-
 pointmodq reduce_point(const Point& P,  const curvemodq& Emodq)
 {
   //  cout<<"Reducing "<<P<<" mod q -> "<<flush;
@@ -286,11 +271,7 @@ void curvemodqbasis::set_basis()
       one_generator(*this,n1,P1);
       return;
     }
-  //#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-  //  this->isomorphism_type(n1,n2,P1,P2);
-  //#else
   my_isomorphism_type(*this,n1,n2,P1,P2);
-  //#endif
   n=n1*n2;
 #ifdef DEBUG_ISO_TYPE
   cout<<"Group structure of "<<(*this)<<" mod "<<::get_modulus(*this)<<": \n";
@@ -351,7 +332,7 @@ vector<pointmodq> curvemodqbasis::get_pbasis(int p)
 {
   vector<pointmodq> ans;
   if((n%p)!=0) return ans;
-#if 1 // defined(LiDIA_INTS) || defined(LiDIA_ALL)
+#if 1
   if((n1%p)==0) ans.push_back((n1/p)*P1);
   if((n2%p)==0) ans.push_back((n2/p)*P2);
 #else

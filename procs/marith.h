@@ -85,8 +85,6 @@ vector<bigint> pdivs_trial(const bigint& number, int trace=0);
 vector<bigint> pdivs_gp(const bigint& number, int trace=0);
 // The following uses pari library's factorization if available:
 vector<bigint> pdivs_pari(const bigint& number, int trace=0);
-// The following uses LiDIA factorization ifdef LiDIAINTS, else pdivs_trial():
-vector<bigint> pdivs_lidia(const bigint& number, int trace=0);
 // The following uses one of the above
 vector<bigint> pdivs(const bigint& number, int trace=0);
 

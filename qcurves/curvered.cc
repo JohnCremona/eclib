@@ -1087,23 +1087,8 @@ bigint Trace_Frob(CurveRed& c, const bigint& p)
 	}
       return three-n;
     }
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-      // Count points naively
-      // y^2+(a1*x+a3)*y-(x^3+a2*x^2+a4*x+a6) = y^2+ay+b
-      int a1=bigint_mod_long(c.a1,3), a2=bigint_mod_long(c.a2,3), 
-	a3=bigint_mod_long(c.a3,3),  a4=bigint_mod_long(c.a4,3), 
-	a6=bigint_mod_long(c.a6,3);   
-      for(x=0; x<p; x++)
-	{
-	  bigint a = (a1*x+a3)%p;
-	  bigint b = (-((x+a2)*x+a4)*x+a6)%p;
-	  bigint d = (b*b-a)%p;  
-	  n += (1+legendre(d,p));
-	}
-#else // NTL
   curvemodq Cq = reduce_curve(c,p); 
   n = Cq.group_order();
-#endif
   bigint ans = one+p-n;
   return ans;
 }

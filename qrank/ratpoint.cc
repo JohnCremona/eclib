@@ -52,13 +52,7 @@ int getquartic(quartic& g)
 int main()
 {
   show_version();
-#ifdef LiDIA
-  long lidia_precision=40;
-  cout<<"Enter number of decimal places: "; cin>>lidia_precision;
-  bigfloat::precision(lidia_precision);
-#else
   cout.precision(15);
-#endif
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   
   int verb; cout << "Verbose? "; cin >> verb;

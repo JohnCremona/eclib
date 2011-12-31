@@ -25,9 +25,7 @@
 
 #include "points.h"  // which includes curve.h
 #include "cperiods.h"
-#ifdef NTL_INTS
 #include <NTL/RR.h>   // for the realify_point() function
-#endif
 
 //#define DEBUG_TORSION
 
@@ -374,12 +372,11 @@ vector<bigint> three_torsion_x(Curvedata& E)
   bigint b2, b4, b6, b8;
   E.getbi(b2,b4,b6,b8);
   vector<bigint> xlist = Introotsquartic(b2,9*b4,27*b6,27*b8);
-  // NB None of the implementation of Introosquartic() in marith.cc
-  // fix the order of the roots, which depends on either (1) the order
-  // of the factors in NTL's Z[X] factorization routine, or (2) the
-  // order of the roots returned by LiDIA's complex roots() function.
-  // HENCE the order of the 3-torsion point x-coordinates (when there
-  // are two) is not well-defined without the sorting done here.
+  // NB The implementation of Introosquartic() in marith.cc does not
+  // fix the order of the roots, which depends on the order of the
+  // factors in NTL's Z[X] factorization routine.  HENCE the order of
+  // the 3-torsion point x-coordinates (when there are two) is not
+  // well-defined without the sorting done here.
 #ifdef DEBUG_TORSION
   cout<<"\nthree_torsion_x() finds unsorted xlist =  "<<xlist<<"\n";
 #endif

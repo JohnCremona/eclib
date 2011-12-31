@@ -24,7 +24,6 @@
 #include "mvector.h"
 #include "mmatrix.h"
 #include "illl.h"
-//#include <LiDIA/bigint_lattice.h>
 
 int main()
 {
@@ -50,21 +49,6 @@ int main()
   cout<<"After reduction, vectors are:\n";
   for(i=1; i<=n; i++) cout<<b[i]<<endl;
   cout<<endl;
-
-/*
-  cout << "SECOND METHOD: using LiDIA's bigint_lattice class\n";
-
-  bigint_lattice M(3,3);
-  for(i=0; i<3; i++) 
-    for(j=0; j<=i; j++)
-      {
-	bigint mij=sdot(b,i+1,j+1);
-	M.sto(i,j,mij);
-	if(j<i) M.sto(j,i,mij);
-      }
-  M.set_gram_glag();
-  cout<<"Gram matrix = "<<M<<endl;
-*/
 
 
   vec_m shortest=b[1];

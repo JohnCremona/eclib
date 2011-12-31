@@ -1,13 +1,13 @@
 README file for programs mwrank, findinf, ratpoint
 
-There are three programs in this distribution, called mwrank, findinf
-and ratpoint.  The first two work on elliptic curves over Q given by
-Weierstrass equations with standard coefficients [a1,a2,a3,a4,a6].  If
-the input curve is non-minimal or non-standard (where standard means
-a1,a3 in {0,1} and a2 in {-1,0,1}) the input curve is replaced by a
-standard minimal model, and points found are transferred back to the
-original input model.  The programs tell you when the model is
-changed.
+There are three main programs in this distribution, called mwrank,
+findinf and ratpoint.  The first two work on elliptic curves over Q
+given by Weierstrass equations with standard coefficients
+[a1,a2,a3,a4,a6].  If the input curve is non-minimal or non-standard
+(where standard means a1,a3 in {0,1} and a2 in {-1,0,1}) the input
+curve is replaced by a standard minimal model, and points found are
+transferred back to the original input model.  The programs tell you
+when the model is changed.
 
 In all cases there are 2 possible input formats for curves:
 
@@ -26,14 +26,18 @@ points as they are found (verbose=1) or nothing until a final report
 (verbose=0); also, if verbose=1 then one can opt for a simple list of
 the points found, with no post-processing, or a full processing of the
 points to find linear dependencies between them using the height
-pairing.   The "regulator" output is just the regulator of the
-subgroup of points found.
+pairing.  The "regulator" output is just the regulator of the subgroup
+of points found.  Currently the sieve is based on Michael Stoll's
+programme (which originated with a program of Elkies, with
+developments by Stoll and Colin Stahlke).  Added in Jan 2005: the
+subgroup of points found is (by default) automatically saturated at
+the end.
 
-mwrank is described more fully in the file mwrank.doc.  Briefly,
+mwrank is described more fully in the file mwrank.info.  Briefly,
 mwrank does a 2-descent to determine the rank and gives points
-covering the cosets of 2E(Q) in E(Q); depending on command-line
-options, it may go further and attempt to complete to a Mordell-Weil
-basis by doing further points searching as in findinf.
+covering the cosets of 2E(Q) in E(Q); it then goes on to complete to a
+Mordell-Weil basis via a sieve-based saturation process after
+determining an upper bound for the index.
 
 ratpoint works with quartics g(x) with integer coefficients,
 g(x)=a*x^4+b*x^3+c*x^2+d*x+e.  It finds the Jacobian E of the curve
@@ -41,29 +45,49 @@ C:y^2=g(x), searches C for rational points and maps any point found to
 E using the 2-covering map.  Current version quits as soon as one
 point on C is found.
 
-Systems supported:
+Other programs: tmrank is a version of mwrank designed for testing
+with the input file tmrank.in.  Each line of tmrank.in contains a
+curve and its correct rank, and tmrank uses mwrank to compute the rank
+and checks the result.
 
-*Versions for Sun (SunOS 4) are in sun/mwrank.gz etc.
-*Versions for SGI (IRIX  5) are in sgi/mwrank.gz etc.
-*(1) Versions for DOS (386+ with coprocessor) are in dos/mwrank.exe etc.
-*Versions for Linux (ELF) are in linux/mwrank.gz etc.
+	        tate: Runs Tate's algorithm, outputs detail of
+             	        reduction types etc.
+		conductor: just output conductor
+		torsion: outputs number (and optionally structure) of
+             	        torsion points
+		allisog: find the complete isogeny class of the input
+             	        curve by computing a succession of isogenies
+             	        of prime degree.  WARNING: this is unreliable
+             	        and causes lots of warning messages if run in
+             	        standard precision.  With higher precision
+             	        (under LiDIA) it is reliable, though a lot
+             	        slower.   I also have a Pari/GP program to do
+             	        the same thing, available on request.
+
+These four can be run interactively (by entering "tty" for the input
+filename at the prompt) or in batch mode by entering the filename.
+The file should contain a list of curves in the standard format, with
+[0,0,0,0,0] to terminate cleanly.
+
+	       twist: computes quadratic twists of a given curve,
+	       giving their minimal models etc.  Interactive.
+	       
+	       indep: tests whether given points on a curve are
+	       independent, using 2-descent NOT heights.  Test with 
+	       "indep < e23".
+
+Systems supported: no binaries are now provided, only source.
+
+Sources: mwrank.tar.gz is a gzipped tar file of the distribution.  It
+requires pre-installation of NTL. This NTL version may be used with or
+without multiprecision floating point (see mwrank.info for more
+details).
+
+	John Cremona
+        john.cremona@gmail.com
+
+ original: 6/2/95 
+
+ updated: 7/8/95, 12/1/98, 20/4/00, 16/8/00, 5/7/01, 7/1/05, 10/5/05, 31/12/11
 
 
-(1) Only has very OLD versions as I have not at present got access to
-a suitable DOS machine with GCC installed, sorry.
-
-Executables for systems other than alpha and intel-linux are out date.
-Sources: for gcc-2.7 and earlier use mwrank2.7.tar.gz, which does not
-require LiDIA (though is faster of you have it).  For gcc-2.8 use
-mwrank2.8.tar.gz which DOES require LiDIA for the multiprecision
-integers.  No source which works with gcc-2.9 is available yet.
-
-
-							John Cremona
-
-							 6/2/95
-						updated	 7/8/95
-						updated	12/1/98
-						updated	20/4/00
-
-						john.cremona@nottingham.ac.uk

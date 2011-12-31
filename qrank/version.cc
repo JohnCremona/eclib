@@ -29,22 +29,10 @@ void show_version()
 {
   cerr << "Version compiled on " << __DATE__ << " at " << __TIME__ << " by GCC " << __VERSION__ << "\n";
   cerr << "using base arithmetic option ";
-#ifdef LiDIA_ALL
-    cerr << "LiDIA_ALL (LiDIA bigints and multiprecision floating point)";
-#else
-#ifdef LiDIA_INTS
-  cerr << "LiDIA_INTS (LiDIA bigints and no multiprecision floating point)";
-#else
 #ifdef NTL_ALL
   cerr << "NTL_ALL (NTL bigints and multiprecision floating point)";
 #else
-#ifdef NTL_INTS
   cerr << "NTL_INTS (NTL bigints and no multiprecision floating point)";
-#else
-  cerr << "libg++, no multiprecision floating point";
-#endif
-#endif
-#endif
 #endif
   cerr<<endl;
 }

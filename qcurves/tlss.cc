@@ -128,17 +128,6 @@ vector<int> TLSS::map1point(const Point& P) const
       cout<<"after multiplying by "<<I2long(n1/p)<<", get "<<Pmodq<<endl;
       cout<<"finding discrete log of "<<Pmodq<<" w.r.t. "<<P1<<endl;
 #endif
-
-      // Method 1: use LiDIA's discrete log (was buggy)
-      /*
-      ans[0]=I2long(bg_algorithm(P1,Pmodq,0,p-1));
-      */
-
-      // Method 2: elementary method (OK for small p!)
-
-#ifdef debugTL
-      cout<<"discrete log: finding which multiple of "<<P1<<" is "<<Pmodq<<"..."<<endl;
-#endif
       pointmodq Q(Emodq);
       pointmodq minusPmodq=-Pmodq;
       for(i=0; i<p; i++) 

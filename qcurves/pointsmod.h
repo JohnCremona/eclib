@@ -20,44 +20,27 @@
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 // 
 //////////////////////////////////////////////////////////////////////////
- // and functions for point counting and elliptic curve discrete log
-
-
-// Under LiDIA pointmodq is a wrapper for point<gf_element>; under NTL
-// it is self-contained.  We provided a common interface.
 
 // curvemodqbasis is derived from curvemodq (see file curvemod.h) and
 // contains a Z-basis for the group of points
 
-// The baby-step-giant step algorithm in my_bg_algorithm is adapted
-// from LiDIA's bg_algorithm() with few changes.
+// The baby-step-giant step algorithm in my_bg_algorithm was
+// originally adapted from LiDIA's bg_algorithm(); it has some changes.
 
 // The point-counting and group structure algorithm in
 // my_isomorphism_type() provide the same functionality as LiDIA's
-// isomorphism_type() but has been rewritten from scratch by JEC; a
-// main difference from the LiDIA version is the use of Weil pairing
-// when the group is not cyclic.  This is only intended for use when q
-// is small-medium sized (NOT cryptographic!) -- as is also true of
-// LiDIA's isomorphism_type().  The current implementation is only for
-// prime fields, but the same strategy would work over arbitrary
-// finite fields.
+// isomorphism_type() but has been rewritten from scratch; a main
+// difference from the LiDIA version is the use of Weil pairing when
+// the group is not cyclic.  This is only intended for use when q is
+// small-medium sized (NOT cryptographic!).  The current
+// implementation is only for prime fields, but the same strategy
+// would work over arbitrary finite fields.
 
 // allow for multiple includes
 #ifndef _POINTSMOD_
 #define _POINTSMOD_
 
 class ffmodq;
-
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-
-#define pointmodq point<gf_element>
-
-inline galois_field base_field(const pointmodq& P)
-{
-  return P.get_x().get_field();
-}
-
-#else // NTL
 
 // Class for points on an elliptic curve mod q
 // 
@@ -174,8 +157,6 @@ inline galois_field base_field(const pointmodq& P)
 inline bigint order_point(pointmodq& P) // not const as may set the order
 { return P.get_order();}
 
-#endif // end of LiDIA/NTL split
-
 pointmodq reduce_point(const Point& P,  const curvemodq& Emodq);
 
 class curvemodqbasis : public curvemodq { 
@@ -260,4 +241,4 @@ void my_isomorphism_type_new(curvemodq& Cq,
 void set_order_point(pointmodq& P, const bigint& n);
 
 
-#endif
+#endif // #define _POINTSMOD_

@@ -15,17 +15,10 @@ NTLCFLAGS = -DNTL_INTS -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp -lpari
 OBJ_SUF = _ntl
 else
-ifeq ($(ARITH),NTL)
 LIBBASE = libjcntl
 NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -lgmp -lpari
 OBJ_SUF = _n
-else
-LIBBASE = libjc.a
-NTLCFLAGS =
-NTLLFLAGS =
-OBJ_SUF = ._
-endif
 endif
 
 LIBNAME=$(LIBBASE).a
@@ -89,6 +82,7 @@ clean:
 	/bin/rm -f *$(OBJ_SUF).o *~ *.a *.so *.dylib
 
 veryclean: clean
+	/bin/rm -f $(TESTS) $(PROGS)
 	(cd $(BINDIR); /bin/rm -f $(TESTS) $(PROGS))
 
 check: tests progs
@@ -231,8 +225,6 @@ CCt: CCt.o CC.o RRextra.o
 RRextra.o: RRextra.h RRextra.cc
 RRt.o: RRt.cc RRextra.h
 	$(CC) -c -g $(OPTFLAG) -I$(NTLINCDIR) -I$(NTLINCDIR) RRt.cc 
-RRt: RRt.o RRextra.o
-	$(CC) -o RRt RRt.o RRextra.o -L$(NTLLIBDIR) -lLiDIA $(LFLAGS)
 
 
 gpslave$(OBJ_SUF).o: gpslave.cc interface.h templates.h marith.h arith.h xmod.h \
@@ -408,11 +400,6 @@ testlat: testlat$(OBJ_SUF).o
 
 illl$(OBJ_SUF).o: illl.cc mvector.h vector.h vec.h interface.h templates.h arith.h \
   xmod.h marith.h illl.h
-#ifdef NTL_INTS
-#	$(CXX) -c -g $(NTLCFLAGS) illl.cc
-#endif
-# since with -O gcc-2.95 gives an internal compiler error!
-# -- doesn't any more
 
 tilll$(OBJ_SUF).o: illl.h tilll.cc mmatrix.h mvector.h marith.h
 tilll: tilll$(OBJ_SUF).o illl$(OBJ_SUF).o marith$(OBJ_SUF).o gpslave$(OBJ_SUF).o mvector$(OBJ_SUF).o mmatrix$(OBJ_SUF).o matrix$(OBJ_SUF).o vector$(OBJ_SUF).o \

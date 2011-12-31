@@ -122,24 +122,6 @@ bigcomplex discriminant(const bigcomplex& b, const bigcomplex& c, const bigcompl
       -  to_bigfloat(18)*bc*d +  to_bigfloat(4)*c*cc;
 }
  
-#ifdef LIDIA_ALL
-
-vector<bigcomplex> solvecubic(const bigcomplex& c1, const bigcomplex& c2, const bigcomplex& c3)
-{
-  polynomial<bigcomplex> f; 
-  bigcomplex* croots =  new bigcomplex[3];
-
-  f.set_degree(3);  f[3]=1;  f[2]=c1;  f[1]=c2;  f[0]=c3;
-  roots(f,croots);  // LiDIA's roots function wants 2nd parameter to be plain array
-  vector<bigcomplex> roots(3);
-  for(int i=0; i<3; i++) roots[i]=croots[i];
-  delete[]  croots;
-  return roots;
-}
-
-#else
-
-//#define DEBUG_CUBIC
 
 bigcomplex cube_root(const bigcomplex& z)
 {
@@ -259,9 +241,6 @@ for(i=0; i<3;i++) cout << roots[i] << "\n";
 
   return roots;
 }
- 
-#endif
-
 
 vector<bigcomplex> solverealquartic(const bigfloat& a, const bigfloat& b, const bigfloat& c, const bigfloat& d, const bigfloat& e)
 {
@@ -396,23 +375,6 @@ vector<bigcomplex> solverealquartic(const bigfloat& a, const bigfloat& b, const 
   return roots;
 }
 
-#ifdef LiDIA_ALL
-
-vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const bigcomplex& c, const bigcomplex& d)
-{
-  polynomial<bigcomplex> f; 
-  bigcomplex* croots =  new bigcomplex[4];
-
-  f.set_degree(4);  f[4]=1;  f[3]=a;  f[2]=b;  f[1]=c;  f[0]=d;
-  roots(f,croots);  // LiDIA's roots function wants 2nd parameter to be plain array
-  vector<bigcomplex> roots(4);
-  for(int i=0; i<4; i++) roots[i]=croots[i];
-  delete[]  croots;
-  return roots;
-}
-
-#else
-
 vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const bigcomplex& c, const bigcomplex& d)
 { bigcomplex p,q,r,aa,e,f1,f2;
   static bigfloat zero = to_bigfloat(0);
@@ -487,8 +449,6 @@ vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const 
 #endif
   return roots;
 }
-
-#endif
 
 void quadsolve(const bigfloat& p, const bigfloat& q, 
 	       bigcomplex& root1, bigcomplex& root2)

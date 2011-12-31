@@ -40,7 +40,7 @@ class mrank_options {
 private:
   int quiet;            // 0/1, controls header output
   int verbose;          // 0-3, controls output verbosity
-  long precision;       // 1-\infty, controls LiDIA precision
+  long precision;       // 1-\infty, controls decimal precision
   long hlimq;           // 1-20, height limit for quartic search
   long naux;            // number of primes used in syzygy sieve
   long hlimc;           // 1-15, height limit for curve search
@@ -158,7 +158,7 @@ public:
       if(quiet)cerr<<"ON"; else cerr<<"OFF"; cerr<<"\n";
       cerr << "PARI/GP output "; 
       if(output_pari)cerr<<"ON"; else cerr<<"OFF"; cerr<<"\n";
-      cerr << "Precision = " << precision << " decimal places (only relevant for LiDIA version)\n";
+      cerr << "Precision = " << precision << " decimal places (only relevant for multiprecision version)\n";
       cerr << "Verbosity level = " << verbose << "\n";
       cerr << "Limit on height for point search on quartics: "<<hlimq<<"\n";
       cerr << "Number of auxiliary primes for syzygy sieving: "<<naux<<"\n";

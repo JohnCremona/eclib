@@ -1,4 +1,4 @@
-// gf.h:  common interface for LiDIA's galois_field/gf_element & NTL's ZZ_p
+// gf.h:  interface for NTL's ZZ_p
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2005 John Cremona
@@ -24,58 +24,6 @@
 // allow for multiple includes
 #ifndef _GF_H_
 #define _GF_H_
-
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-
-#include "LiDIA/gf_element.h"
-
-#define NewGF(field,name) gf_element name(field)
-#define GFinit(field,name) name.assign_zero(field)
-#define GFSetZ(name,Zvalue) name.assign(Zvalue)
-#define LiftGF(name) name.lift_to_Z()
-#define GFrandomize(name) name.randomize()
-#define IsZero(name) name.is_zero()
-
-inline gf_element ZtoGF(const galois_field& F, const bigint& a)
-{
-  gf_element b(F); b.assign(a); return b;
-}
-
-inline gf_element ItoGF(const galois_field& F, int a)
-{
-  bigint aa; aa.assign(a);
-  gf_element b(F); b.assign(aa); return b;
-}
-
-inline gf_element root_of_unity(const galois_field& F, int n)
-{
-  gf_element mu(F); 
-  bigint qm1 = F.number_of_elements()-1;
-  if(!((qm1%n).is_zero())) return mu; // =0
-  qm1/=n;
-  mu.assign_primitive_element(F);
-  power(mu,mu,qm1);
-  return mu;
-}
-
-inline gf_element sqrt(const galois_field& F, const gf_element& a)
-{
-  return sqrt(a);
-}
-
-// Returns 1 if a is a square (root in r), else 0
-inline int sqrt(const galois_field& F, const gf_element& a, gf_element& r)
-{
-  if ( a.is_square() ) {r=sqrt(a); return 1;} 
-  return 0;
-}
-
-inline bigint order(const gf_element& z)
-{
-  return z.order();
-}
-
-#else // NTL
 
 #include <NTL/ZZ_p.h>
 
@@ -152,8 +100,6 @@ inline bigint order(const gf_element& z)
   return n;
 }
 
-#endif
-
 inline vector<gf_element> roots_of_unity(const galois_field& Fq, int p)
 {
   gf_element mu = root_of_unity(Fq,p); // =0 if p ndiv q-1
@@ -165,4 +111,4 @@ inline vector<gf_element> roots_of_unity(const galois_field& Fq, int p)
   return mu_p;
 }
 
-#endif
+#endif // #define _GF_H_

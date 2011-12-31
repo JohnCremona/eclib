@@ -35,10 +35,6 @@
 #include "sieve_search.h"
 #include "mwprocs.h"
 
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-#define NextPrime next_prime
-#endif
-
 
 int randint(int top)
 {

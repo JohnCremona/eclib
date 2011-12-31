@@ -23,14 +23,7 @@
  
 //#define DEBUG_NEW_LOCSOL
 
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-#include <LiDIA/Fp_polynomial.h>
-#include <LiDIA/factorization.h>
-#endif
-
-#if defined(NTL_INTS) || defined(NTL_ALL)
 #include <NTL/ZZ_pXFactoring.h>
-#endif
 
 #include "mlocsol.h"
 #include "quadratic.h"
@@ -238,8 +231,6 @@ int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigi
    return sol;
 }  /* end of locallysoluble */
 
-#if defined(LiDIA_INTS) || defined(NTL_INTS)
-
 /* Samir Siksek's Local Solubility Test for odd p */
 
 // The following is the cross-over between the B&SD method & the SS method
@@ -296,29 +287,7 @@ int new_zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,co
   return res;
 }
 
-#else  // for compatibility, call old ones.
-
-int new_qpsoluble(const quartic& g, const bigint& p, int verbose)
-{
-  return qpsoluble(g,p);
-}
-int new_qpsoluble_ace(const bigint& a, const bigint& c, const bigint& e, 
-		      const bigint& p, int verbose)
-{
-  return qpsoluble(a,c,e,p);
-}
-int new_qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
-			const bigint& e, const bigint& p, int verbose)
-{
-  return qpsoluble(a,b,c,d,e,p);
-}
-
-#endif // defined(LiDIA_INTS) || defined(NTL_INTS)
-
 /* Samir's Local Solubility Test for odd p */
-/* Separate code for NTL and LiDIA polynomial interface */
-
-#ifdef NTL_INTS
 
 #define Factorization vec_pair_ZZ_pX_long
 #define Term pair_ZZ_pX_long
@@ -501,215 +470,6 @@ int local_sol(const bigint& p, bigint *c, int verbose)
   delete[] d;
   return fl;
 }
-
-#endif // NTL_INTS
-
-#ifdef LiDIA_INTS
-
-factorization<Fp_polynomial> fact_c(const bigint& p,bigint *c)
-{
-  Fp_polynomial f;
-  f.set_modulus(p);
-  for (long i=0; i<5; i++) { f.set_coefficient(c[i],i); }
-#ifdef DEBUG_NEW_LOCSOL
-  cout<<"About to call factor(f) with f = "<<f<<endl;
-#endif
-  factorization<Fp_polynomial> fact_f=factor(f);
-  return fact_f;
-}
-
-int local_sol(const bigint& p,bigint *c, int verbose)
-{
-#ifdef DEBUG_NEW_LOCSOL
-  verbose=1;
-#endif
-  if (verbose)
-    {  cout << "---------------------------------------------\n";
-       cout << "LOCAL_SOL \n";
-       cout << c[4] << " " << c[3] << " " << c[2] << " " << c[1] << " ";
-       cout << c[0] << "      p=" << p << endl;
-    }
-
-  bigint r[2],t;
-  long e,fl,i;
-  bigint p2=p*p;
-  int zeromodp=1;
-  for (i=0; i<5 && zeromodp; i++) {zeromodp=div(p,c[i]);}
-  Fp_polynomial F;
-  if (zeromodp)
-    { // Case II  (s is zero on entry) (Case I is below)
-      if (verbose) cout << "Case II" << endl;
-      zeromodp=1;
-      for (i=0; i<5 && zeromodp; i++) { zeromodp=div(p2,c[i]); }
-      bigint *dd=new bigint[5];
-      if (zeromodp)
-         { for (i=0; i<5; i++)   { dd[i]=c[i]/p2; }
-           int res=local_sol(p,dd,verbose);
-           delete[] dd;
-           return res;
-         }
-      for (i=0; i<5; i++)        { dd[i]=c[i]/p; }
-      factorization<Fp_polynomial> fact_f=fact_c(p,dd);
-      // Is there a non-repeated root
-      if (verbose) cout << fact_f << endl;
-      for (i=0; i<fact_f.no_of_components(); i++)
-        { e=fact_f.prime_exponent(i);
-          F=fact_f.prime_base(i).base();
-          if (F.degree()==1 && e==1)
-             { if (verbose) cout << "Non-Repeated Root " << endl;
-               delete[] dd;
-               return 1;
-             }
-        }
-
-      // Go through each repeated root and make the
-      // required transformation
-      
-      bigint *d=new bigint[5];
-      fl=0;
-      for (i=0; i<fact_f.no_of_components() && !fl; i++)
-        { 
-          F=fact_f.prime_base(i).base();
-          e=fact_f.prime_exponent(i);
-          if (F.degree()==1 && e!=1)
-            { bigint r=-F[0];
-	      if (verbose) 
-		cout << "Repeated Root=" << r << endl;
-              d[4]=dd[4]*p2*p;
-              d[3]=p2*(dd[3]+4*dd[4]*r);
-              d[2]=p*(dd[2]+6*dd[4]*r*r+3*dd[3]*r);
-              d[1]=(2*dd[2]*r+4*dd[4]*r*r*r+3*dd[3]*r*r+dd[1]);
-              d[0]=((((dd[4]*r+dd[3])*r+dd[2])*r+dd[1])*r+dd[0])/p;
-	      if (verbose) 
-		cout << "local_sol about to call itself recursively " << endl;
-              fl=local_sol(p,d,verbose);
-            }
-        }
-      delete[] d;
-      delete [] dd;
-      if (verbose) cout << "local_sol returns " << fl << endl;
-      return fl;
-    }
-// CASE I
-  if (verbose) cout << "Case I, f non zero mod p" << endl;
-  bigint unit;
-  zeromodp=1;
-  for (i=4; i>=0 && zeromodp; i--)
-     { unit=c[i];
-       zeromodp=div(p,unit);
-     }
-  // If leading non-zero term is a square return 1
-  if (jacobi(unit,p)==1)      
-    {
-      if(verbose) cout<<"LOCAL_SOL returns 1: leading nonzero term is square"<<endl;
-      return 1; 
-    }
-  // If f is a constant mod p and constant not a square return 0
-  if (i==-1) 
-    { 
-      if(verbose) cout<<"LOCAL_SOL returns 0: f mod p is const, nonsquare"<<endl;
-      return 0; 
-    }
-  // Factorize f
-
-  factorization<Fp_polynomial> fact_f=fact_c(p,c);
-  long nc=fact_f.no_of_components();
-  // Check if of the form unit*g^2
-  if (verbose) cout << "f mod p factors: "<<fact_f << endl;
-  if (verbose) cout << "("<<nc<<" irreducibles) " << endl;
-  for (i=0; i<nc; i++)
-    { if (fact_f.prime_exponent(i)%2!=0) 
-      { 
-	if(verbose) cout<<"LOCAL_SOL returns 1: f mod p has a non-square factor"<<endl;
-	return 1; 
-      } 
-    }
-  if (verbose) cout << "Roots mod p:\t";
-  // Compute roots mod p
-  long num_r=0;
-  for (i=0; i<nc; i++)
-     { 
-       F=fact_f.prime_base(i).base();
-       if (F.degree()==1)
-         { 
-	   r[num_r]=-F[0];
-	   if (verbose) { cout << r[num_r] << "\t";}
-	   num_r=num_r+1;
-         }
-     }
-  if (num_r==0) 
-    { 
-      if(verbose) cout<<"LOCAL_SOL returns 0: f mod p has no roots"<<endl;
-      return 0; 
-    }
-  else
-    if (verbose) cout << "\nf mod p has "<<num_r << "roots" << endl;
-
-  // Now need to determine F s.t. f mod p=const*F^2
-  if (nc==1) // f mod p is 2nd or 4th power of an irreducible
-    { 
-      F=fact_f.prime_base(0).base();
-      if(verbose) cout<<"f mod p is a power of F= "<<F<<endl;
-      if (fact_f.prime_exponent(0)==4) F=F*F; 
-      if(verbose) cout<<"f mod p is const*F^2 where F = "<<F<<endl;
-    }
-  else
-    { 
-      F=fact_f.prime_base(0).base() * fact_f.prime_base(1).base();
-      if(verbose) 
-	{
-	  cout<<"1st irreducible = "<<fact_f.prime_base(0).base()<<endl;
-	  cout<<"2nd irreducible = "<<fact_f.prime_base(1).base()<<endl;
-	  cout<<"F is their product: "<<F<<endl;
-	}
-    }
-  bigint te,g0,g1,g2;
-  g2=F[0];
-  g1=F[1];
-  g0=0;
-  if (F.degree()==2) { g0=1; }
-  if (verbose) 
-    {
-      cout << "F = " << g0 << " " << g1 << " " << g2 << endl;
-      cout << "F = " << F << " is such that f mod p = const*F^2" << endl;
-    }
-  // Now determine h
-  bigint h0,h1,h2,h3,h4;
-  h4=(c[4]-unit*g0*g0)/p;
-  h3=(c[3]-2*unit*g1*g0)/p;
-  h2=(c[2]-2*unit*g2*g0-unit*g1*g1)/p;
-  h1=(c[1]-2*unit*g1*g2)/p;
-  h0=(c[0]-unit*g2*g2)/p;
-  if (verbose)
-    { cout << "h =" << h4 << " " << h3 << " " 
-	   << h2 << " " << h1 << " " << h0 << endl;
-    }
-  // For each root which is also a root of h
-  // transform the equations and call again
-  
-  bigint *d=new bigint[5];
-  fl=0;
-  for (i=0; i<num_r && !fl; i++)
-    { te=(((h4*r[i]+h3)*r[i]+h2)*r[i])%p;
-      te=((te+h1)*r[i]+h0)%p;
-      if (te.is_zero())
-        { if (verbose) cout << "Using " << r[i] << endl;
-          d[4]=c[4]*p2;
-          d[3]=p*(c[3]+4*c[4]*r[i]);
-          d[2]=(c[2]+6*c[4]*r[i]*r[i]+3*c[3]*r[i]);
-          d[1]=(2*c[2]*r[i]+4*c[4]*r[i]*r[i]*r[i]+3*c[3]*r[i]*r[i]+c[1])/p;
-          d[0]=((((c[4]*r[i]+c[3])*r[i]+c[2])*r[i]+c[1])*r[i]+c[0])/(p2);
-	  if (verbose) 
-	    cout << "local_sol about to call itself recursively " << endl;
-          fl=local_sol(p,d,verbose);
-        }
-    }
-  delete[] d;
-  if (verbose) cout << "local_sol returns " << fl << endl;
-  return fl;
-}
-
-#endif // LiDIA_INTS
 
 
 /* END OF FILE MLOCSOL.CC */

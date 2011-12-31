@@ -270,14 +270,12 @@ long posmod(long a, long b)
   return(c);
 }
 
-//#ifndef LiDIA_INTS
 long gcd(long a, long b)
 {
   long c;
   while (b!=0) {c=a%b; a=b; b=c;}
   return abs(a);
 }
-//#endif
 
 int gcd(int a, int b)
 {

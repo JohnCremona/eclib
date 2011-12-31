@@ -22,10 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <iomanip>
-#ifdef LiDIA_INTS
-#include <LiDIA/bigint_matrix.h>
-#include <LiDIA/bigmod_matrix.h>
-#endif
 #include "interface.h"
 #include "moddata.h"
 #include "symb.h"

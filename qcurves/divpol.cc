@@ -21,10 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-
 // NB the external interface uses a simple vector<bigint> of
 // coefficients rather than a polynomial type to simplify the
-// NTL/LiDIA interface
+// NTL interface
 
 #include "points.h"
 #include "polys.h"

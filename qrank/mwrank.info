@@ -24,7 +24,7 @@ output should say this).
 As of Jan 2005, the saturation stage is done much more efficiently
 using the "saturation sieve" method.
 
-Now there is only one program mwrank.  Saturation is done unless the
+Now there is only one program, mwrank.  Saturation is done unless the
 generating points are not going to be output (e.g. with command-line
 flags -v 0 and neither -l nor -o).
 
@@ -49,9 +49,10 @@ These can of course be from a file, as in
 To end the input either use a "null curve" [0,0,0,0,0] or EOF
 (e.g. Control-d at the terminal).
 
-The input coefficients MUST be integers:  attempting to input
-non-integral rationals including the '/' symbol will cause an error
-message to be output and the program will abort.
+The input coefficients must be integers or rationals.  If they are not
+integral, the program will convert to an integral model for the
+descent and point-finding, but will list the generators at the end on
+the original model.
 
 The curves are prompted for, unless verbosity is set to 0.
 
@@ -116,32 +117,7 @@ the distributed (executable) version of the program does not have
 this.  The reason: my programs currently either use multi-fp for ALL
 fp arithmetic, or for NONE; and turning it on (which is a simple
 compiler switch) slows down other parts of the program a lot, so for
-most curves it is better to have it off.  Ask me for a multi-fp
-version if you want one, or build your own from the sources, using
-LiDIA.
-
-(b) [OBSOLETE since Jan 2005: the -c flag has no effect as saturation
-is now done differently.] if the parameter -c is set to a nonzero
-value, then after the 2-descent when we (should) have points covering
-the cosets of 2E(Q) in E(Q) a further search is done, on the curve
-itself, up to a certain bound on the logarithmic height.  The program
-computes a suitable bound such that if it searches that far you are
-guaranteed to have the full Mordell-Weil group.  You can use this
-value by entering "-c -1", BUT for many curves it will not be
-practical to search that far.  So I have put a ceiling on this of 20
-(this can be changed: see the source file mwrank.cc, macro
-MAX_HEIGHT).  You can put your chosen bound on it with the
-command-line option -c, for example "mwrank -c 5 ...".
-
-OLD WARNING USED TO SAY: this is currently one of the weakest parts of
-the program.  There are more intelligent ways of expanding the
-subgroup of full rank to the full M-W basis, but I have not
-implemented them.  So you are recommended to give a small value for a
-first run (or even 0, i.e. leave it as the default in which this step
-is omitted entirely)
-
-BUT a "more intelligent way" _has_ now been implemented!
-
+most curves it is better to have it off.
 
 B. WHAT IT DOES
 
@@ -153,7 +129,7 @@ I have successfully run curves of rank 13, such as Fermigier's
 	[0,36861504658225,0,1807580157674409809510400,0]   
 and also his rank 14 curve
 	[0,2429469980725060,0,275130703388172136833647756388,0]
-and most recently (2001) Dujella's rank 15 curve
+and more recently (2001) Dujella's rank 15 curve
         [1,0,1,34318214642441646362435632562579908747,3184376895814127197244886284686214848599453811643486936756]
 all of which take less than 30 seconds with default parameters on 
 an 800MHz Athlon.
@@ -246,28 +222,20 @@ Saturation was implemented during 2004 and added to mwrank in January
 ARITHMETIC
 
 mwrank and friends need to use a multi-precision integer package.  The
-only ones recognised are libg++ (which has disappeared from gcc since
-2.8), LiDIA and NTL.  If you compile the source code, the
-configuration program will need to know where you have one of these
-installed.  The binaries will tell you when they start up which
-arithmetic they are using (unless you use the quiet flag "-q").  [This
-feature will not appear in binaries compiled before August 2000.]
+only one now supported is NTL.  When you compile the source code, the
+configuration program will need to know where NTL is installed.  The
+binaries will tell you when they start up which arithmetic they are
+using (unless you use the quiet flag "-q").
 
-There are several versions of the linux binaries for mwrank:
-mwrank_ntl (uses NTL arithmetic but no multi-precision floating
-point), mwrank_n (uses NTL arithmetic and multi-precision floating
-point), mwrank_li (uses LiDIA arithmetic but no multi-precision
-floating point), mwrank_l (uses LiDIA arithmetic and multi-precision
-floating point).  All have been compiled as static so you do not have
-to have any libraries installed to run them.
+I no longer distribute binaries.
 
-It is recommended that you use the multi-precision versions for curves
+It is recommended that you use the multi-precision version for curves
 with large coefficients; otherwise results may be wrong.
 
 You can aid the factorization of large integers in several ways:
 
 (a) If you have the PARI/GP installed (it checks for the existence of
-$PATH_TO_GPgp, or /usr/local/bin/gp if the environment variable
+$PATH_TO_GP, or /usr/local/bin/gp if the environment variable
 PATH_TO_GP is not set; i.e. the default value is /usr/local/bin/ (with
 the trailing /)) then factorization will be done by GP using its
 factor() function.  This will cause (small) temporary files to be
@@ -300,16 +268,9 @@ Please report strange behaviour to me in a reasonable way (you must
 say when you got your copy of the program and include an input file
 which gives the problem); I do not guarantee to do anything about it
 -- I am busy and this is not a commercial package! -- but I will do my
-best.  I particularly reserve the right NOT to deal with problems
-which are machine-dependent!
+best.
 
+John Cremona (john.cremona@gmail.com)
 
-							John Cremona
-							3 February 1995
-						updated	12 January 1998
-						updated	25 September 2000 
-						updated	 5 July 2001 
-						updated	12 November 2003
-						updated	 5 January 2005
-						updated	10 May 2005
-
+ 3 February 1995, updated 12 January 1998, 25 September 2000, 5 July 2001,
+ 12 November 2003, 5 January 2005, 10 May 2005, 31 December 2011.

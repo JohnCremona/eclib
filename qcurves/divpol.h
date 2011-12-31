@@ -26,8 +26,7 @@
 #define _DIVPOL_
 
 // These functions return the vector of coefficients (starting with
-// the constant term rather than polynomial types (which depend on
-// whether NTL or LiDIA is being used)
+// the constant term) rather than polynomial types
 
 // div_pol_odd(a1,a2,a3,a4,a6,n) returns the coefficients of the
 // polynomial in x whose zeros are the (x-coordinates of the) non-zero
@@ -41,4 +40,4 @@ vector<bigint> div_pol_odd(const bigint& a1,const bigint& a2,const bigint& a3,co
 
 vector<bigint> makepdivpol(Curvedata* EE, int p);
 
-#endif
+#endif // #define _DIVPOL_

@@ -19,7 +19,6 @@ CURVELIBFLAG = -L../lib -lcurvesntlint
 OBJ_SUF = _ntl
 EXE_SUFFIX = _ntl
 else
-ifeq ($(ARITH),NTL)
 NTLCFLAGS = -DNTL_ALL -I$(NTLINCDIR)
 NTLLFLAGS = -L$(NTLLIBDIR) -lntl -L$(LIBDIR) -lgmp  -lpari
 LIBFLAG = -ljcntl -L$(LIBDIR)
@@ -27,15 +26,6 @@ LIBBASE = libcurvesntl
 CURVELIBFLAG = -L../lib -lcurvesntl 
 OBJ_SUF = _n
 EXE_SUFFIX = _n
-else
-NTLCFLAGS = 
-NTLLFLAGS = 
-LIBFLAG = -ljc -L$(LIBDIR)
-LIBBASE = libcurves
-CURVELIBFLAG = -L../lib -lcurves
-OBJ_SUF = _
-EXE_SUFFIX = _
-endif
 endif
 
 CURVELIBNAME=$(LIBBASE).a

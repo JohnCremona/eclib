@@ -22,9 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include "p2points.h"
-#ifdef NTL_INTS
 #include <NTL/RR.h>   // for the realify_point() function
-#endif
 
 //
 // P2Point member functions
@@ -88,11 +86,8 @@ int eq(const P2Point&P, const P2Point&Q)
 // overflow when the homogeneous coordinates are large
 //
 // NTL:  temporarily use RR type
-// LiDIA without m.p.: temporarily use bigrational type
-// LiDIA with m.p.: just do it
 
 void P2Point::getrealcoordinates(bigfloat&x, bigfloat& y) const
-#ifdef NTL_INTS
 {
   RR zp=to_RR(Z);  
 #ifdef NTL_ALL
@@ -116,39 +111,6 @@ void P2Point::getrealcoordinates(bigfloat&x, bigfloat& y) const
     }
 #endif
 }
-#else // not NTL...
-#ifdef LiDIA_INTS
-#ifndef LiDIA_ALL
-{
-  bigrational xp, yp;  getaffinecoordinates(xp,yp);
-  x=dbl(xp);
-  y=dbl(yp);
-#ifdef DEBUG_REALIFY
-  cout<<"P="<<P<<endl;
-  cout<<"Rational point = ("<<xp<<","<<yp<<")"<<endl;
-  cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-#endif
-  if((abs(x)==INFINITY)||(abs(y)==INFINITY))
-    {
-      cout<<"After converting P="<<P<<" to doubles, ";
-      cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-      cout<<"insufficient precision to continue, aborting"<<endl;
-      abort();
-    }
-}
-#else // LiDIA multiprecision
-{
-  bigfloat z = I2bigfloat(getZ(P));
-  x = I2bigfloat(getX(P))/z;
-  y = I2bigfloat(getY(P))/z;
-#ifdef DEBUG_REALIFY
-  cout<<"P="<<P<<endl;
-  cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-#endif
-}
-#endif
-#endif
-#endif              
 
 // Coordinate transforms useful for elliptic curve points 
 P2Point scale(const P2Point& P, const bigint& u, int back)

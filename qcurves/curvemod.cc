@@ -22,32 +22,11 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-// NB Under LiDIA this is just an interface to LiDIA's
-// elliptic_curve<gf_element>;  under NTL it is self-contained
-
 #include "curve.h"
 #include "points.h"
 #include "polys.h"
 #include "curvemod.h"
 #include "pointsmod.h"
-
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-
-curvemodq reduce_curve(const Curve& E, const bigint& q)
-{
-  galois_field gf(q);
-  //  cout<<"In reduce_curve(), q="<<q<<", field = "<<gf<<  endl;
-  gf_element A1(gf),A2(gf),A3(gf),A4(gf),A6(gf);
-  bigint a1,a2,a3,a4,a6;
-  E.getai(a1,a2,a3,a4,a6);
-  A1.assign(a1);  A2.assign(a2);  A3.assign(a3);  
-  A4.assign(a4);  A6.assign(a6);
-  curvemodq c(A1,A2,A3,A4,A6);
-  //  cout<<"Returning "<<c<<endl;
-  return c;
-}
-
-#else // NTL
 
 // constructors 
 curvemodq::curvemodq(void) 
@@ -126,8 +105,6 @@ void curvemodq::set_group_order()
   my_isomorphism_type(*this,n1,n2,P1,P2);
   order=n1*n2;
 }
-
-#endif // end of LiDIA/NTL split
 
 // Division poly functions:
 

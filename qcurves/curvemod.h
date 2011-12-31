@@ -22,10 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-// NB Under LiDIA this is just an interface to LiDIA's
-// elliptic_curve<gf_element>;  under NTL it is self-contained
-
-
 // allow for multiple includes
 #ifndef _CURVEMOD_
 #define _CURVEMOD_
@@ -36,32 +32,6 @@
 // The q is fixed -- must be set before use!
 //
 
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-
-#include "LiDIA/elliptic_curve.h"
-#include "LiDIA/point.h"
-class elliptic_curve<gf_element>;
-class point<gf_element>;
-#define pointmodq point<gf_element>
-#define curvemodq elliptic_curve<gf_element>
-
-// Two class methods not in LiDIA but provided below for NTL version:
-#define set_group_order group_order
-#define set_group_order_via_legendre group_order
-
-curvemodq reduce_curve(const Curve& E, const bigint& q);
-
-inline bigint get_modulus(const curvemodq& E)
-{
-  return E.discriminant().get_field().characteristic();
-}
-
-inline galois_field get_field(const curvemodq& E)
-{
-  return E.discriminant().get_field();
-}
-
-#else // NTL
 
 class pointmodq;
 
@@ -119,7 +89,7 @@ inline ostream& operator<<(ostream& os, const curvemodq& C)
   return os;
 }
 
-  // just a wrapper round the constructor, for LiDIA-compatibility:
+  // just a wrapper round the constructor, (originally for for LiDIA-compatibility):
 
 inline curvemodq reduce_curve(const Curve& E, const bigint& q)
 {
@@ -129,10 +99,8 @@ inline curvemodq reduce_curve(const Curve& E, const bigint& q)
 inline galois_field get_field(const curvemodq& C) { return galois_field(C.q); }
 inline bigint get_modulus(const curvemodq& C) { return C.q; }
 
-#endif // LiDIA/NTL split
-
 FqPoly div_pol_odd(const curvemodq& C, int n); 
 FqPoly makepdivpol(const curvemodq& C, int p);
 
 
-#endif
+#endif // #define _CURVEMOD_

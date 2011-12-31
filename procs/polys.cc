@@ -1,4 +1,4 @@
-// polys.cc : implements uniform interface to LiDIA/NTL polynomials
+// polys.cc : implements interface to NTL polynomials
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2005 John Cremona
@@ -33,31 +33,6 @@ FqPoly reduce(const ZPoly& f, const galois_field& Fq)
   return fmodq;
 }
 
-#ifdef LiDIA_INTS
-
-vector<gf_element> roots(const FqPoly& f)
-{
-  // make f monic:
-  FqPoly f1;
-  divide(f1,f,f.lead_coeff());
-  // reduce to distinct roots case:
-  galois_field F=f.get_field();
-  FqPoly g,h; g.assign_x(F);         //X
-  power(h,g,F.number_of_elements()); //X^q
-  h=h-g;                             //X^q-X
-  gcd(f1,f1,h);
-  base_vector<gf_element> r = find_roots(f1);
-  int i, nr = r.size();  
-  vector<gf_element>ans;
-  ans.reserve(nr);
-  for(i=0; i<nr; i++) ans.push_back(r[i]);
-  return ans;
-}
-
-#endif // LiDIA_INTS
-
-#ifdef NTL_INTS
-
 vector<gf_element> roots(const FqPoly& f)
 {
   // make f monic:
@@ -72,26 +47,6 @@ vector<gf_element> roots(const FqPoly& f)
   return ans;
 }
 
-/*
-vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint q)
-{
-  ZZ_p::init(q);
-  ZZ_pX f; ZZ_p ci;
-  for (long i=0; i<coeffs.size(); i++) 
-    { ci=to_ZZ_p(coeffs[i]); SetCoeff(f,i,ci); }
-
-  vector<gf_element> r = roots(f);
-  int i, nr = r.length();
-
-  vector<bigint> ans;
-  ans.reserve(nr);
-  for(int i=0; i<nr; i++) ans.push_back(rep(r[i]));
-  sort(ans.begin(),ans.end());
-  return ans;
-}
-*/
-
-#endif // NTL_INTS
 
 vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint q)
 {

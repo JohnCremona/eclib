@@ -47,9 +47,6 @@ int locallysoluble(const bigint& a, const bigint& c, const bigint& e,
 // latter assumes b=d=0
 
 
-// The following will only be properly defined if LiDIA_INTS is
-// defined, otherwise they just call the old ones.
-
 /* Samir Siksek's Local Solubility Test for odd p */
 
 int local_sol(const bigint& p,bigint *c, int verbose=0);

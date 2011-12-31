@@ -76,43 +76,18 @@ The file should contain a list of curves in the standard format, with
 	       independent, using 2-descent NOT heights.  Test with 
 	       "indep < e23".
 
-Systems supported: only linux binaries are now provided.
+Systems supported: no binaries are now provided, only source.
 
-*(0) Old versions for Sun (Solaris 7) are in sun/.
-*(1) Old versions for SGI (IRIX  5.3) are in sgi/.
-*(2) Versions for DOS/Wondiws are in dos/.
-*Versions for Linux-Intel are in linux-intel/.
-*(3) Versions for Linux-alpha are in linux-alpha/.
-*(4) Versions for DEC alpha (OSF) are in alpha/.
-
-(1) I don't have access to a newer SGI, and this one only has
-    gcc-2.3.3, so this version is OLD.
-
-(2) Has some very OLD versions, which really should not be used
-(suffix .exe.old).  Also zip files containing recent versions for
-DOS/WOndows, kindly provided by Tom Womack.  I no longer do any
-programming on DOS or Windows machines, so please contact Tom at
-tom@womack.net for any queries regarding these, which are built from
-the latest source files as of May 2000.
-
-(3,4) I no longer have access to any alpha machines, so these are OLD.
-
-Sources: mwrank.tar.gz is a gzipper tar file of the distribution.  It
-requires pre-installation of either LiDIA or NTL.  The NTL version is
-generally faster.  Both NTL and LiDIA version may be used with or
+Sources: mwrank.tar.gz is a gzipped tar file of the distribution.  It
+requires pre-installation of NTL. This NTL version may be used with or
 without multiprecision floating point (see mwrank.info for more
 details).
 
+	John Cremona
+        john.cremona@gmail.com
 
-							John Cremona
+ original: 6/2/95 
 
-							 6/2/95
-						updated	 7/8/95
-						updated	12/1/98
-						updated	20/4/00
-						updated	16/8/00
-						updated	 5/7/01
-						updated	 7/1/05
-						updated	10/5/05
+ updated: 7/8/95, 12/1/98, 20/4/00, 16/8/00, 5/7/01, 7/1/05, 10/5/05, 31/12/11
 
-						john.cremona@nottingham.ac.uk
+

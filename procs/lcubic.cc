@@ -44,13 +44,8 @@ int main()
       if(neg) 
 	{
 	  ::negate(maxdisc);
-#ifdef LiDIA_ALL
-	  fac1 = sqrt(bigfloat(8,27));
-	  fac2 = power(bigfloat(2),inverse(bigfloat(3)));
-#else
 	  fac1 = sqrt((double)8)/sqrt((double)27);
 	  fac2 = 1.2599210498948731647672106072782283505;
-#endif
 	  cout << "Negative discriminants down to " << maxdisc << endl;
 	}
       else

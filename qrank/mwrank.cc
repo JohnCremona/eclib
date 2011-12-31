@@ -40,17 +40,11 @@ int main(int argc, char **argv)
   int verbose = (opt.get_verbose());
   //opt.show();
   if(!opt.get_quiet()) {opt.banner(1);  show_version();}
-#if defined(LiDIA_ALL) || defined(NTL_ALL)
-  long lidia_precision=opt.get_precision();
-  set_precision(lidia_precision);
-  if(verbose) cerr<<"Using "<<
-#if defined(LiDIA_ALL)
-		"LiDIA"
-#else
-		"NTL"
-#endif
-		  <<" multiprecision floating point with "
-		  <<lidia_precision <<" decimal places.\n";
+#if defined(NTL_ALL)
+  long decimal_precision=opt.get_precision();
+  set_precision(decimal_precision);
+  if(verbose) cerr<<"Using NTL multiprecision floating point with "
+		  <<decimal_precision <<" decimal places.\n";
 #else
   cout.precision(15);
   cerr.precision(15);

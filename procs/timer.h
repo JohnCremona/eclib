@@ -25,17 +25,6 @@
 #define _TIMER_H      1
                            //flags that this file has been included
 
-#ifdef LiDIA_INTS
-#include "LiDIA/timer.h"
-#else
-#ifdef NTL_INTS
-#include "NTL/tools.h"
-#else
-#include <time.h>
-#include <sys/times.h>
-#endif
-#endif
-
 void init_time();
 void start_time();
 void stop_time();

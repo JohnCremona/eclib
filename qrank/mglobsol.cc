@@ -425,7 +425,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 				int upper, bigfloat upper_bound, int posxonly)
 {
 // Adjust bounds so exact roots are not missed by rounding error
-#if !defined(LiDIA_ALL) && !defined(NTL_ALL)
+#if !defined(NTL_ALL)
   bigfloat eps_adjust(to_bigfloat(0.000001));
   if(lower) lower_bound-=eps_adjust;
   if(upper) upper_bound+=eps_adjust;

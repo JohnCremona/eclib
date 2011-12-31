@@ -21,12 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if defined(LiDIA_INTS) || defined(LiDIA_ALL)
-#include <LiDIA/polynomial.h>
-#endif
-#ifdef NTL_INTS
 #include <NTL/ZZXFactoring.h>
-#endif
 
 // if USE_PARI_FACTORING is set we use the pari C library for factoring 
 // (via a string interface defined in parifact.h/cc) 
@@ -47,17 +42,6 @@
 bigint show(const bigint& a) {cout<<a<<endl; return a;}
 vector<bigint> show(const vector<bigint>& a) {cout<<a<<endl; return a;}
  
-#if defined(LiDIA_INTS) // then we can use the LiDIA bigint functions
-
-bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy) 
-  {return xgcd(xx,yy,aa,bb);}
-int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
-  { div_rem(q,r,a,b); return is_zero(r);}
-int divides(const bigint& a, long b, bigint& q, long& r)
-  { div_rem(q,r,a,b); return (r==0);}
-
-#else
-#if defined(NTL_INTS)
 bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy)
 {bigint ans; XGCD(ans,xx,yy,aa,bb); return ans;}
 int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
@@ -65,37 +49,6 @@ int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
 int divides(const bigint& a, long b, bigint& q, long& r)
   { r=DivRem(q,a,b); return (r==0);}
 
-#else // we use our own
-bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy)
-{bigint a,b,c,x,oldx,newx,y,oldy,newy,q;
- oldx = 1; oldy = 0; x = 0; y = 1; a = aa; b = bb;
- while (b!=0)
- { q = a/b; 
-   c    = a    - q*b; a    = b; b = c;
-   newx = oldx - q*x; oldx = x; x = newx;
-   newy = oldy - q*y; oldy = y; y = newy;
-  }
- if (a<0) {xx=-oldx; yy=-oldy; return(-a);}
- else     {xx= oldx; yy= oldy; return( a);}
-}
-
-int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
-  { divide(a,b,q,r); return is_zero(r);}
-int divides(const bigint& a, long b, bigint& q, long& r)
-  { divide(a,b,q,r); return (r==0);}
-#endif //NTL
-#endif //LiDIA_ALL
-
-#if defined(LiDIA_INTS)
-// LiDIA bigints have no setbit function, so we add one:
-
-void setbit(bigint& a, int e)
-{
-  if(e<0) return;
-  if(a.bit(e)) return;
-  bitwise_or(a,bigint(1)<<e,a);          // replces e'th bit of a by 1
-}
-#endif
 
 // oddsqrt works on odd n, called by isqrt
 //
@@ -186,8 +139,8 @@ int sqrtnr(bigint& root, const bigint& n)
   return (sqr(root)==n);
 }
 
-//NB The code here proved faster than any of the version builtin to
-// LiDIA, libg++ or NTL
+//NB The code here proved faster than any of the version builtin to NTL
+
 int isqrt(const bigint& in, bigint& root)
 {
 //  cout<<"In isqrt with n = " << in << endl;
@@ -545,15 +498,8 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
   plist = vector_union(plist,pdivs_trial_div(n));
   if(trace) cout<< "After using trial division, n= " <<n<<", plist = "<< plist << endl;
 
-#if defined(NTL_INTS)
   if(n>1) if(ProbPrime(n)) 
     {plist.push_back(n); the_extra_primes.add(n); n=1; }
-#else
-#if defined(LiDIA_INTS)
-  if(n>1) if(n.is_prime()) 
-    {plist.push_back(n); the_extra_primes.add(n); n=1; }
-#endif
-#endif
 
   if (n>1) // failed to factor it 
     {
@@ -565,62 +511,6 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
   if(trace) cout<< "pdivs_trial() returns " << plist << endl;
   return plist;
 }
-
-#if defined(LiDIA_INTS)
-#include "LiDIA/rational_factorization.h"
-
-vector<bigint> pdivs_lidia(const bigint& number, int trace)
-{
-  trace=1;
-  if(trace) cout << "In pdivs_lidia() with number = " << number << endl;
-  bigint n(number);
-  if(sign(n)<0) n.negate();
-  if(n<2)  // because otherwise LiDIA says that 1 has 1 as a prime factor
-           // which messes things up...
-    {
-      vector<bigint> plist;   // empty
-      return plist;
-    }
-  rational_factorization f(n);
-  if(trace>1)  f.verbose(1);  // for testing only
-// First use any primes from the "extra" list
-  long i;
-  std::set<bigint>::const_iterator pr = the_extra_primes.the_primes.begin(); 
-  while(pr!=the_extra_primes.the_primes.end()) f.refine(*pr++);
-  if(trace) cout << "After using extra primes: " << f << endl;
-  f.trialdiv();
-  if(trace) cout << "After using trial division: " << f << endl;
-  if(!f.is_prime_factorization()) f.ecm(34);
-  if(!f.is_prime_factorization()) f.factor();
-  if(trace) cout << "After calling factor():   " << f << endl;
-  if(!f.is_prime_factorization()) 
-    {
-  // eliminate prime powers	  
-      int no_change=1;
-      while(no_change)
-	{
-	  long i,np = f.no_of_comp();
-	  bigint q,p;
-	  for(i=0; i<np; i++) 
-	    {
-	      p=f.base(i);
-	      if(is_power(q,p)) {no_change=0; f.refine(q); break;}
-	    }
-	}
-      if(trace) cout << "After eliminating powers():   " << f << endl;
-    }
-  long np = f.no_of_comp();
-  vector<bigint> plist(np);
-  for(i=0; i<np; i++) 
-    {
-      plist[i]=f.base(i);
-      //  keep this prime for later use...
-      the_extra_primes.add(plist[i]);
-    }
-  if(trace) cout<<"returning "<<plist<<endl;
-  return plist;
-}
-#endif
 
 // 
 
@@ -746,13 +636,7 @@ vector<bigint> pdivs(const bigint& number, int trace)
   return pdivs_gp(number, trace);
 #else
 
-#ifdef LiDIA_INTS
-  return pdivs_lidia(number, trace);
-#else
-
   return pdivs_trial(number, trace);
-
-#endif
 #endif
 #endif
 }
@@ -1006,20 +890,14 @@ bigint chrem(const bigint& a1, const bigint& a2,
 }
 
 
-
 //
 // general functions
 //
-#if defined(LiDIA_ALL) // then we use LiDIA's rounding functions
-bigint Iround(bigfloat x) {bigint a;        x.bigintify(a); return a;}
-bigint Ifloor(bigfloat x) {bigint a; floor(x).bigintify(a); return a;}
-bigint Iceil(bigfloat x)  {bigint a;  ceil(x).bigintify(a); return a;}
-#else // we use our own
+
 #if defined(NTL_ALL)
 bigint Iround(bigfloat x) {return RoundToZZ(x);}
 bigint Ifloor(bigfloat x) {return FloorToZZ(x);}
 bigint Iceil (bigfloat x) {return CeilToZZ(x);}
-
 #else
 bigint Iceil(double x)  {return -Ifloor(-x);}
 bigint Iround(double x) {return (x>0?Ifloor(x+0.5):Iceil(x-0.5));}
@@ -1032,33 +910,6 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
   int s=1;
   if(x==0.0) return ans;
   if(x<0) {x=-x; s=-1;}
-/*  old version
- static double d_big = BIG;
- static bigint I_big = BIG;
- bigint shift(1); int sh=1;
- while(x>0.0)
-   {
-     double highx = floor(x/d_big);
-     double lowx  = x-highx*d_big;
-     cout << "lowx = " << lowx << endl;
-     long lowa;
-     if(fabs(lowx)<0.001) lowa=0; 
-     else
-       if(sh) 
-	 {
-	   if(s>0) lowa = (long)floor(lowx);
-	   else    lowa = (long)ceil(lowx); 
-	 }
-       else
-	 { 
-	   lowa = (long)floor(lowx);
-	 }
-     ans+=lowa*shift;
-     x=highx;
-     shift*=I_big; sh=0;
-   }
-*/
-// New version, well thought out and tested bit by bit:
 //#define DEBUG_IFLOOR
  int e;
  double y = frexp(x,&e);
@@ -1094,26 +945,6 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
  return ans; 
 }
 
-// even older version -- don't use!
-
-// #define BIG 100000000
-// 
-// bigint Ifloor(double x)
-// {
-//  double big=BIG;
-//  bigint ans(0);
-//  int s=sign(x); 
-//  if(s==0) return ans;
-//  if(s<0) x=-x;
-//  double highx = x/big;  highx=floor(highx);
-//  double lowx  = x-(highx*big);
-//  long lowa = (s>0)? (long)floor(lowx): (long)ceil(lowx); 
-//  long higha=(long)highx;
-//  ans+=higha;  ans*=BIG; ans+=lowa;
-//  if(s<0) negate(ans);
-//  return ans; 
-// }
-#endif
 #endif
 
 bigint mod(const bigint& a, const bigint& b)
@@ -1384,8 +1215,6 @@ int kronecker(const bigint& d, long n)
 { 
   return kronecker(mod(d,n),n);
 }
-
-
  
 long gcd(const bigint& a, long b)
 {
@@ -1427,11 +1256,7 @@ int modrat(const bigint& n, const bigint& m, const bigint& lim,
 // root-finding functions for monic integer cubics and quartics
 //
 // With NTL we factor the polynomial in Z[X] and pick out degree 1 factors
-// With LiDIA we find the complex roots and determine which are integers
-// Otherwise we find the complex roots ourselves and determine which are integers
 
-
-#ifdef NTL_INTS
 vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c)
 {
   ZZX f; vec_pair_ZZX_long factors; bigint cont;
@@ -1467,212 +1292,6 @@ vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c
   return iroots;   
 }
 
-#else
-
-#ifdef LiDIA_INTS
-vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c)
-{
-#ifndef LiDIA_ALL
-#undef bigcomplex
-#undef bigfloat
-#endif
-  polynomial<bigcomplex> f; 
-  bigcomplex* croots =  new bigcomplex[3];
-  bigfloat rx;
-#ifndef LiDIA_ALL
-#define bigcomplex complex<double>
-#define bigfloat double
-#endif
-  vector<bigint> iroots;
-  bigint x, cx;
-  int i;
-
-  f.set_degree(3);
-  f[3]=1;  f[2]=a;  f[1]=b;  f[0]=c;
-//    cout<<"Cubic polynomial f is " << f << endl;
-  roots(f,croots);  // LiDIA's roots function wants 2nd parameter to be plain array
-
-//    cout<<"Roots of  f are ";
-//    for(i=0; i<3; i++) cout<<croots[i]<<" ";
-//    cout<<endl;
-
-  for (i=0; i<3; i++)
-    {
-      rx=real(croots[i]);
-      rx.bigintify(x);
-      if (is_zero(x)) 
-	{
-	  if (is_zero(c)) 
-	    { //x=0 is a root, so add to list if not there already:
-	      if(find(iroots.begin(),iroots.end(),x)==iroots.end())
-		iroots.push_back(x);
-	    }
-	} 
-      else
-	{
-	  cx = c/x;
-	  if (x*cx==c)
-	    if ( is_zero((x+a)*x+b+cx) )
-	      { //x is a root, so add to list if not there already:
-		if(find(iroots.begin(),iroots.end(),x)==iroots.end())
-		  iroots.push_back(x);
-	      }
-	}
-    }
-  delete[] croots;
-  return iroots;   
-}
-
-vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c, const bigint& d)
-{
-#ifndef LiDIA_ALL
-#undef bigcomplex
-#undef bigfloat
-#endif
-  polynomial<bigcomplex> f; 
-  bigcomplex* croots =  new bigcomplex[4];
-  bigfloat rx;
-#ifndef LiDIA_ALL
-#define bigcomplex complex<double>
-#define bigfloat double
-#endif
-  vector<bigint> iroots;
-  bigint x, dx;
-  int i;
-
-  f.set_degree(4);
-  f[4]=1;  f[3]=a;  f[2]=b;  f[1]=c; f[0]=d;
-//    cout<<"Quartic polynomial f is " << f << endl;
-  roots(f,croots);  // LiDIA's roots function wants 2nd parameter to be plain array
-
-//    cout<<"Roots of  f are ";
-//    for(i=0; i<4; i++) cout<<croots[i]<<" ";
-//    cout<<endl;
-
-  for (i=0; i<4; i++)
-    {
-      rx=real(croots[i]);
-      rx.bigintify(x);
-      if (is_zero(x)) 
-	{
-	  if (is_zero(c)) 
-	    { //x=0 is a root, so add to list if not there already:
-	      if(find(iroots.begin(),iroots.end(),x)==iroots.end())
-		iroots.push_back(x);
-	    }
-	} 
-      else
-	{
-	  dx = d/x;
-	  if (x*dx==d)
-	    if ( is_zero(((x+a)*x+b)*x+c+dx) )
-	      { //x is a root, so add to list if not there already:
-		if(find(iroots.begin(),iroots.end(),x)==iroots.end())
-		  iroots.push_back(x);
-	      }
-	}
-    }
-  delete[] croots;
-  return iroots;   
-}
-
-#else // neither LiDIA not NTL available, use our own complex solvecubic function
-
-vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c)
-{ bigcomplex za(I2bigfloat(a)), zb(I2bigfloat(b)), zc(I2bigfloat(c));
-  bigcomplex* croots =  solvecubic(za,zb,zc);
-  vector<bigint> iroots;
-  bigint x,cx;
-  for (int i=0; i<3; i++)
-    {x = Iround(real(croots[i]));
-    if (is_zero(x)) 
-    {
-      if (is_zero(c)) 
-        {
-	  if(find(iroots.begin(),iroots.end(),x)==iroots.end())
-	  iroots.push_back(x);
-        }
-    } 
-    else
-        {cx = c/x;
-         if (x*cx==c)
-            if ( is_zero((x+a)*x+b+cx) )
-              {
-		if(find(iroots.begin(),iroots.end(),x)==iroots.end())
-		  iroots.push_back(x);
-              }
-        }
-     }
-  delete[] croots;
-  return iroots;  
-}
-
-vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c, const bigint& d)
-{
-  bigfloat xa(bigfloat(1)), xb(I2bigfloat(a)), xc(I2bigfloat(b)), 
-           xd(I2bigfloat(c)), xe(I2bigfloat(d));
-  bigcomplex* croots =  solverealquartic(xa,xb,xc,xd,xe);
-  vector<bigint> iroots;
-  bigint x,dx;
-  for (int i=0; i<4; i++)
-    {
-      bigcomplex z = croots[i];
-      if(is_real(z))
-	{
-	  x = Iround(real(z));
-	  if (is_zero(x)) 
-	    {
-	      if (is_zero(d)) 
-		{
-		  if(find(iroots.begin(),iroots.end(),x)==iroots.end())
-		    iroots.push_back(x);
-		}
-	    } 
-	  else
-	    {dx = d/x;
-	     if (x*dx==d)
-	       if ( is_zero(((x+a)*x+b)*x+c+dx) )
-		 {
-		   if(find(iroots.begin(),iroots.end(),x)==iroots.end())
-		     iroots.push_back(x);
-		 }
-	   }
-	}
-    }
-  delete[] croots;
-  return iroots;  
-}
-
-#endif
-#endif
-
-// The following old versions are no longer used:
-
-int oldkronecker(const bigint& d, const bigint& n)
-{ int ans=0; bigint m=n; long d4=posmod(d,4);
-  if (is_one(gcd(d,n)) && ((d4==0)||(d4==1)))
-  { ans=1;
-    while (is_zero(m%4)) m/=4;
-    if (is_zero(m%2)) {m/=2; ans*=(posmod(d,8)==1 ? 1 : -1);}
-    ans *= legendre(d,m);
-  }
-  return ans;
-}
- 
-int oldkronecker(const bigint& d, long n)
-{ 
-  bigint m=BIGINT(n);  if (!is_one(gcd(d,m))) return 0;
-  int ans=0, par=0;   
-  long d8=posmod(d,8); long d4=d8&3;
-  if((d4==0)||(d4==1))
-    { 
-      while(!(n&1)) {n<<=1;par++;}
-      m=n;
-      ans = legendre(d,m);
-      if((d8!=1)&&(par&1)) ans=-ans;
-    }
-  return ans;
-}
 
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
 // roots are put in r which should be allocated of size 3

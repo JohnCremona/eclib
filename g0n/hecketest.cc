@@ -23,16 +23,11 @@
 //
 #include "interface.h"
 #include "timer.h"
-#ifdef LiDIA_INTS
-#include <LiDIA/bigint_matrix.h>
-#else
-#ifdef NTL_INTS
 #include <NTL/mat_ZZ.h>
 #include <NTL/mat_poly_ZZ.h>
 #include <NTL/ZZXFactoring.h>
 #include <NTL/LLL.h>
-#endif
-#endif
+
 #include "moddata.h"
 #include "symb.h"
 #include "cusp.h"
@@ -194,37 +189,7 @@ int main(void)
       mat m = tplist[ip].shorten(dummy);
       //      if(verbose) cout<<"shortened matrix: \n"<<m<<endl;
       smat sm=smat(m);
-#ifdef LiDIA_INTS
-      bigint_matrix M(n,n);
-      for(i=1; i<=n; i++) 
-	for(j=1; j<=n; j++) 
-	  M.sto(i-1,j-1,tplist[ip](i,j));
-      //      cout<<"LiDIA matrix = "<<M<<endl;
 
-      for(k=0; k<(eigs.size()); k++)
-	{
-	  long e = eigs[k];
-	  cout<<"\nTrying eigenvalue e = "<<e<<endl;
-	  for(i=0;i<n;i++) M.sto(i,i,tplist[ip](i+1,i+1)-e*den);
-	  //	  cout<<"Adjusted LiDIA matrix = "<<M<<endl;
-	  //	  nulty = (n-rank(M));
-/*
-	  start_time();
-	  bigint detM = det(M);
-	  nulty = (detM==0);
-	  stop_time();
-	  cout<<"det(M-e) = "<<detM<<endl;
-	  if(nulty) cout<<" IS "; else cout<<" is NOT ";
-	  cout<<"an eigenvalue "; show_time(cerr); cerr << endl;
-*/
-	  start_time();
-	  long rankM = rank(M);
-	  stop_time();
-	  cout << "Nullity(M-e) = "<<n-rankM; show_time(cerr); cerr<<endl;
-	  totalmult+=(rankM<n);
-	}
-#else
-#ifdef NTL_INTS
       for(k=0; k<eigs.size(); k++)
 	{
 	  long e = eigs[k];
@@ -385,8 +350,6 @@ int main(void)
 	  totalmult+=nulty1;
 	}
 	}
-#endif // NTL_INTS
-#endif // LiDIA_INTS
       cout<<"Total multiplicity of rational eigenvalues = "<<totalmult<<endl;
 #endif // TEST_EIGS
 #ifdef CHECK_COMMUTE

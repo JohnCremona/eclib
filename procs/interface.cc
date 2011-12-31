@@ -25,16 +25,6 @@
 
 // integers and rationals
 
-//////////////////////////
-#if defined(LiDIA_INTS) 
-//////////////////////////
-
-//////////////////////////////////////////////////////////////////
-#else  // non-LiDIA Integers and Rationals
-//////////////////////////////////////////////////////////////////
-
-#ifdef NTL_INTS  // NTL Integers and Rationals
-
 int I2int(const ZZ& x)
 {
   if(IsZero(x)) return 0;
@@ -74,54 +64,8 @@ long I2long(const bigint& x)
   }
 }
 
-//////////////////////////////////////////////////////////////////
-#else  // libg++ Integers and Rationals (now obsolete)
-//////////////////////////////////////////////////////////////////
-
-// integers
-
-void nearest(bigint& c, const bigint& a, const bigint& b)
- {bigint a0=(a%b);  c = (a-a0)/b; if(2*a0>b) c+=1;}
-bigint roundover(const bigint& a, const bigint& b)
- {bigint a0=(a%b); bigint c = (a-a0)/b; if(2*a0>b) c+=1; return c;}
-
-// rationals
-
-#endif // NTL_INTS
-#endif // LiDIA_INTS
-
 // Reals and Complexes
 
-//////////////////////////////////////////////////////////////////
-#ifdef LiDIA_ALL
-//////////////////////////////////////////////////////////////////
-
-// reals
-
-
-// complexes
-
-
-//////////////////////////////////////////////////////////////////
-#else  // non-LiDIA doubles and libg++ Complexes
-//////////////////////////////////////////////////////////////////
-
-// reals
-
-
-//#ifdef NTL_INTS
-#if(0) // now implemented by to_double(x) in .h
-double I2double(const bigint& x) 
-{
-  if(IsZero(x)) return 0;
-  double ans=1; int i=NumBits(x)-1;
-  while(i--) { ans*=2; if(bit(x,i)) ans++; }
-  if(x<0) return -ans;
-  return ans;
-}
-#endif  // of #ifdef  NTL_INTS
-
-#ifdef NTL_ALL
 RR Pi() 
 {
   static long pr;
@@ -188,10 +132,8 @@ void Compute_Euler(RR& y)
 long prec() {return RR::precision();}
 void setprec(long p) { RR::SetPrecision(p);}
 
-RR atan(const RR& x) 
+RR atan(const RR& x)   // translated from LiDIA
 {
-  // translated from LiDIA
-
   long i, j, ex, t = prec(); // t stores input precision for restoring later
   long m, u, f;
   RR y;
@@ -334,7 +276,7 @@ RR atan2 (const RR & y, const RR & x)
 
 
 // The template version requires an automatic conversion from 0 to an
-// RR, sp cannot be used as is.  We have manually instantiated it
+// RR, so cannot be used as is.  We have manually instantiated it
 // here.
 istream& operator>>(istream& is, CC& z)
 {
@@ -365,11 +307,3 @@ istream& operator>>(istream& is, CC& z)
     }
   return is;
 }
-#endif  // of #ifdef  NTL_ALL
-
-// complexes
-
-
-//////////////////////////////////////////////////////////////////
-#endif // reals and complexes
-//////////////////////////////////////////////////////////////////
