@@ -424,6 +424,11 @@ void newform::find_cuspidal_factors()
         {
 	  type=3-vecgcd(bplusc-bminusc);
 	  if(verbose) cout<<"Lattice type = "<<type<<endl;
+          if((type!=1)&&(type!=2))
+            {
+              cout<<"Error: lattice type computed to be "<<type<<", should be 1 or 2!"<<endl;
+              abort();
+            }
         }
    
       if(verbose&&(cuspidalfactorplus*cuspidalfactorminus>1))

@@ -58,7 +58,7 @@ void ratapprox(bigfloat x, long& a, long& b)
 // "trustworthy": always with multiprecision, but only if below
 // a fixed bound otherwise.
 #ifdef MPFP // Multi-Precision Floating Point
-inline int trust_denom(long d) { return (d<1000);}
+inline int trust_denom(long d) { return (d<501);} // 1000);}
 #else
 inline int trust_denom(long d) { return (d<251);}
 #endif

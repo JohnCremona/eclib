@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2007 John Cremona
-// 
+//
 // This file is part of the mwrank/g0n package.
-// 
+//
 // mwrank is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // mwrank is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with mwrank; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
-//                
+//
 
 #include <iomanip>
 #include "moddata.h"
@@ -41,13 +41,14 @@
 
 int main(void)
 {
-  int prec0 = 10; 
+  int prec0 = 25;
+  int maxprec = 100;
   int prec = prec0;
   set_precision(prec);
- int limit,n=1; 
+ int limit,n=1;
  char* code = new char[20];
 #ifdef AUTOLOOP
- cerr<<"Enter first and last N: ";cin>>n>>limit; 
+ cerr<<"Enter first and last N: ";cin>>n>>limit;
  n--; cerr<<endl;
 #ifdef CURVE_IS_ONE_FIELD
  cerr << "    N\tC\t#\t[a1,a2,a3,a4,a6]\tr\t|T|\tdeg(phi)" << endl;
@@ -62,11 +63,11 @@ int main(void)
 #endif
  if (n>0)
 {
-  newforms nf(n,0); 
+  newforms nf(n,0);
   int noldap=25;
   nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
-  int nnf = nf.n1ds; 
-  int inf = 1; 
+  int nnf = nf.n1ds;
+  int inf = 1;
  for(int xi=0; xi<nnf; xi++)
    { int i=xi;
      codeletter(xi,code);
@@ -79,22 +80,13 @@ int main(void)
      bigfloat rperiod;
      int r = x.rank();
 
-     prec = prec0;
-     set_precision(prec);
-     Curve C = nf.getcurve(i, -1, rperiod);
+     Curve C;
      Curvedata CD;
      CurveRed CR;
      bigint nc; int nt;
      bigint a1,a2,a3,a4,a6;
-     if (!C.isnull())
-       {
-	 C = nf.getcurve(i, -1, rperiod);
-         CD = Curvedata(C,1);  // The 1 causes minimalization
-         CR = CurveRed(CD);
-         nc = getconductor(CR);
-         if(n!=nc) C = Curve();  // wrong conductor; reset to null curve
-       }
-    while (C.isnull() && (prec<100))
+     prec = prec0-10;
+     while (C.isnull() && (prec<maxprec))
        {
 	 prec += 10;
 	 set_precision(prec);

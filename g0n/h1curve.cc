@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2007 John Cremona
-// 
+//
 // This file is part of the mwrank/g0n package.
-// 
+//
 // mwrank is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // mwrank is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with mwrank; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 //
 #include <fstream>
@@ -52,17 +52,21 @@ int checkap(const level* iN, const newform& nf, CurveRed& CR, long pmax=100);
 
 int main(void)
 {
-  set_precision(string("Enter number of decimal places").c_str());
- int verb=0; 
+  int prec0 = 25;
+  int maxprec = 100;
+  int prec = prec0;
+  set_precision(prec);
+  //  set_precision(string("Enter number of decimal places").c_str());
+ int verb=0;
 #ifdef SINGLE
  verb=0;
 #else
  cout<<"See detail? "; cin>>verb;
 #endif
- int limit,n=1; 
+ int limit,n=1;
  char* code = new char[20];
 #ifdef AUTOLOOP
- cout<<"Enter first and last N: ";cin>>n>>limit; 
+ cout<<"Enter first and last N: ";cin>>n>>limit;
  n--; cout<<endl;
  cout<<endl<<"Table of curves computed from newforms via periods"<<endl;
 #ifdef BOOKORDER
@@ -86,15 +90,15 @@ int main(void)
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
  // nf.createfromolddata();
  //nf.output_to_file();
- int nnf = nf.n1ds; 
- int inf = 1; 
+ int nnf = nf.n1ds;
+ int inf = 1;
 #ifndef SINGLE
  if(verb>1) nf.display();
 #else
-// if(nnf>1) 
+// if(nnf>1)
    {
      cout << "Enter form number (between 1 and "<<nnf<<"): "; cin>>inf;
-     if((inf<1)||(inf>nnf)) 
+     if((inf<1)||(inf>nnf))
        {
 	 cout << "Not in range!\n"; inf=1; nnf=0;
        }
@@ -115,30 +119,53 @@ int main(void)
      //#endif
 
      bigfloat rperiod;
-     Curve C = nf.getcurve(i, -1, rperiod, verb);
-     Curvedata CD(C,1);  // The 1 causes minimalization
-     if(getdiscr(Curvedata(CD,0))!=getdiscr(CD))
+     Curve C;
+     Curvedata CD;
+     CurveRed CR;
+     bigint nc;
+     prec = prec0-10;
+     set_precision(prec);
+     C = Curve();
+     while (C.isnull() && (prec<maxprec))
        {
-	 cout << "Non-minimal curve = \t" << C << ", minimal curve = \t";
+	 prec += 10;
+	 set_precision(prec);
+	 C = nf.getcurve(i, -1, rperiod, verb);
+         if (!C.isnull())
+           {
+             CD = Curvedata(C,1);  // The 1 causes minimalization
+             CR = CurveRed(CD);
+             nc = getconductor(CR);
+             if(n!=nc) C = Curve();  // wrong conductor; reset to null curve
+           }
        }
-     else if(verb) cout << "Curve = \t";
-     cout << (Curve)CD << "\t";
-     CurveRed CR(CD);
-     bigint nc = getconductor(CR);
-     cout << "N = " << getconductor(CR);
-     if(n!=nc) 
+     if(C.isnull())
        {
-	 cout<<" ------WRONG CONDUCTOR!";
+         cout << "bad curve, even after trying precision up to "<<maxprec<<endl;
 	 bad_ones.push_back(pair<int,int>(n,i+1));
        }
      else
        {
-	 if(!checkap(&nf, nf.nflist[i],  CR))
-	   cout<<" ----- a_p do not agree!";
-	 //     else
-	 //     cout<<" ----- a_p agree for p<100";
+         if(getdiscr(Curvedata(C,0))!=getdiscr(CD))
+           {
+             cout << "Non-minimal curve = \t" << C << ", minimal curve = \t";
+           }
+         else if(verb) cout << "Curve = \t";
+         cout << (Curve)CD << "\t";
+         cout << "N = " << nc;
+         if(n!=nc)
+           {
+             cout<<" ------WRONG CONDUCTOR!";
+           }
+         else
+           {
+             if(!checkap(&nf, nf.nflist[i],  CR))
+               cout<<" ----- a_p do not agree!";
+             //     else
+             //     cout<<" ----- a_p agree for p<100";
+           }
+         cout<<endl;
        }
-     cout<<endl;
 #ifdef SINGLE
      bigint c6=getc6(CD),  c4=getc4(CD);
      char* f = new char[20];
@@ -159,7 +186,7 @@ int main(void)
 }       // end of if(n)
 }       // end of while()
 
- if (bad_ones.size()>0) 
+ if (bad_ones.size()>0)
    {
      cout<<"\nNumber of bad curves: "<<bad_ones.size()<<endl;
      cout<<"List of bad curves\n";

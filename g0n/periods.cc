@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2007 John Cremona
-// 
+//
 // This file is part of the mwrank/g0n package.
-// 
+//
 // mwrank is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // mwrank is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with mwrank; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 //
 #include "compproc.h"
@@ -32,7 +32,7 @@
 #include "periods.h"
 #include "fixc6.h"
 
-//#define CHECK_PERIODS // check that curves constructed from periods 
+#define CHECK_PERIODS // check that curves constructed from periods
                       // have the same periods...
 
 //#define TRACE_CACHE
@@ -41,7 +41,7 @@
 /////////////////////////////////////
 //  functions for character class  //
 /////////////////////////////////////
- 
+
 character::character(long m)
 {
   modul=m;
@@ -49,7 +49,7 @@ character::character(long m)
   init();
 }
 
-character::~character() 
+character::~character()
 {
   delete [] chartable;
 }
@@ -71,10 +71,10 @@ void character::reset(long m)
 /////////////////////////////////
 //  functions for summer class //
 /////////////////////////////////
- 
+
 #ifndef NEW_OP_ORDER
-vector<long> resort_aplist(const level* iN, 
-			   const vector<long>& primelist, 
+vector<long> resort_aplist(const level* iN,
+			   const vector<long>& primelist,
 			   const vector<long>& apl)
 {
   long N = iN->modulus;
@@ -94,12 +94,12 @@ vector<long> resort_aplist(const level* iN,
       }
     else // p is bad
       {
-	if(::div(p*p,N)) 
+	if(::div(p*p,N))
 	  {
 	    aplist.push_back(0);
 // 	    cout << "i = "<<i<<",\tp = " << p << "\ta_p = " << aplist[i] << endl;
 	  }
-	else 
+	else
 	  {
 	    j = pi-(iN->plist.begin());  // p is j'th bad prime
 	    aplist.push_back(- apl[j]);
@@ -125,25 +125,25 @@ void summer::initaplist(const level* iN, const vector<long>& apl)
 }
 
 
-void summer::use1(long n, long an)  
-{ 
- bigfloat can(to_bigfloat(-an)); 
+void summer::use1(long n, long an)
+{
+ bigfloat can(to_bigfloat(-an));
  can /=  to_bigfloat(n);
- if (n<rootlimit) {an_cache[n]=an; 
+ if (n<rootlimit) {an_cache[n]=an;
 #ifdef TRACE_CACHE
  cout<<"Caching an["<<n<<"]="<<an<<endl;
 #endif
  }
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
  cout<<"use1(("<<n<<","<<an<<")"<<endl;
 #endif
  if (n<limit1) { sum1 += func1(n) * can;}
 }
-  
-void summer::use2(long n, long an)  
-{  
+
+void summer::use2(long n, long an)
+{
  bigfloat can(to_bigfloat(-an)); can /=  to_bigfloat(n);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
  cout<<"use2("<<n<<","<<an<<")"<<endl;
  cout<<"(n,an,can)=("<<n<<","<<an<<","<<can<<"):\t";
 #endif
@@ -724,7 +724,7 @@ Cperiods newforms::getperiods(long i, int method, int verbose)
   newform* nfi = &(nflist[i]);
   if(method==-1) // find and use best method
     {
-      if(this->squarelevel) 
+      if((this->squarelevel) || ((nfi->lplus)==0) || ((nfi->lminus)==0))
 	method=1;
       else
 	{
@@ -798,15 +798,26 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   if(verbose) cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
 #endif
   Curve C(ic4,ic6);
-#ifdef CHECK_PERIODS
   if(C.isnull()) return C;
-// Check periods were correct:
   Curvedata CD(C,1);  // The 1 causes minimalization
+  CurveRed CR(CD);
+  if (getconductor(CR) != n)
+    {
+      if (verbose)
+        cout << "Constructed curve "<<C<<" has wrong conductor "<<getconductor(CR)<<endl;
+      C = Curve(); // reset to null curve
+      return C;
+    }
+#ifdef CHECK_PERIODS
+// Check periods were correct:
+//  verbose=1;
   Cperiods cpC(CD);
   bigcomplex wRC, wRIC;
   cpC.getwRI(wRC, wRIC);
   wR=abs(wR); wRI=abs(imag(wRI));
   wRC=abs(wRC); wRIC=abs(imag(wRIC));
+  //cout<<"C = "<<CD<<endl;
+  //  cout<<"type(C)="<<get_lattice_type(cpC)<<endl;
   if((get_lattice_type(cp)!=get_lattice_type(cpC)))
     {
       cout<<"Period lattice type of constructed curve does not match that"
@@ -818,7 +829,7 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   if((abs((wR-wRC)/wRC)>0.0001))
     {
       cout<<"Real period of constructed curve does not match that"
-	  <<" of the newform"<<endl;
+	  <<" of the newform (using decimal precision "<<decimal_precision()<<")"<<endl;
       cout<<"Real period of C: "<<real(wRC)<<endl;
       cout<<"Real period of f: "<<real(wR)<<endl;
       cout<<"Ratio = "<<real(wR)/real(wRC)<<endl;
@@ -827,7 +838,7 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   if((abs((wRI-wRIC)/wRIC)>0.0001))
     {
       cout<<"Second period of constructed curve does not match that"
-	  <<" of the newform"<<endl;
+	  <<" of the newform (using decimal precision "<<decimal_precision()<<")"<<endl;
       cout<<"Imag part of second period of C: "<<real(wRIC)<<endl;
       cout<<"Imag part of second period of f: "<<real(wRI)<<endl;
       cout<<"Ratio of imaginary parts = "<<real(wRI)/real(wRIC)<<endl;

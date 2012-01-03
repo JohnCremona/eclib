@@ -157,7 +157,7 @@ int main(void)
 	    newstopp=2*stopp;
 	  else
 	    newstopp=stopp+500;
-	  if(newstopp>32000)
+	  if(newstopp>10000)
 	    {
 	      cout<<"Cannot compute more ap, something must be wrong in newform data"<<endl;
 	      abort();
