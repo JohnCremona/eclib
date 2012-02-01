@@ -78,7 +78,7 @@ tests: $(TESTS)
 objs: $(OBJS)
 
 clean:
-	/bin/rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.a *.so *.dylib
+	rm -f *$(OBJ_SUF).o *~ $(RANKLIBNAME) *.a *.so *.dylib
 
 lib: $(OBJS)
 	rm -f $(RANKLIBNAME)
@@ -90,7 +90,7 @@ install_lib: $(HEADERS) lib
 	for f in $(HEADERS); \
 	 do cp $${f} $(INCDIR); \
 	done
-	chmod a+r $(INCDIR)/*
+	chmod a+r $(INCDIR)/*.h
 	rm -f $(LIBDIR)/$(RANKLIBNAME)
 	cp $(RANKLIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(RANKLIBNAME)
@@ -118,8 +118,8 @@ test2: mwrank
 alltests: tests test1 test2
 
 veryclean: clean
-	/bin/rm -f $(PROGS) $(TESTS)
-	(cd $(BINDIR); /bin/rm -f $(PROGS))
+	rm -f $(PROGS) $(TESTS)
+	(cd $(BINDIR); rm -f $(PROGS))
 
 check: $(PROGS) $(TESTS)
 	rm -f PRIMES t
@@ -133,7 +133,6 @@ mwrank: version$(OBJ_SUF).o mwrank$(OBJ_SUF).o descent$(OBJ_SUF).o mrank1$(OBJ_S
 	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o \
 	desc2$(OBJ_SUF).o transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o \
 	twoadic$(OBJ_SUF).o
-	chmod og+r *
 	$(CXX) -o mwrank version$(OBJ_SUF).o mwrank$(OBJ_SUF).o descent$(OBJ_SUF).o mrank1$(OBJ_SUF).o mrank2$(OBJ_SUF).o mequiv$(OBJ_SUF).o mquartic$(OBJ_SUF).o \
 	mlocsol$(OBJ_SUF).o mglobsol$(OBJ_SUF).o  qc$(OBJ_SUF).o sqfdiv$(OBJ_SUF).o desc2$(OBJ_SUF).o \
 	transform$(OBJ_SUF).o minim$(OBJ_SUF).o reduce$(OBJ_SUF).o bitspace$(OBJ_SUF).o GetOpt$(OBJ_SUF).o twoadic$(OBJ_SUF).o \

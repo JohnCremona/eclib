@@ -82,7 +82,7 @@ install_lib: $(HEADERS) $(G0NLIBNAME)
 	for f in $(HEADERS); \
 	 do cp $${f} $(INCDIR); \
 	done
-	chmod a+r $(INCDIR)/*
+	chmod a+r $(INCDIR)/*.h
 	rm -f $(LIBDIR)/$(G0NLIBNAME)
 	cp $(G0NLIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(G0NLIBNAME)
@@ -109,10 +109,10 @@ LIBFLAGS = $(LFLAGS)
 
 
 clean:
-	/bin/rm -f *~ *$(OBJ_SUF).o *.a *.so *.dylib *.dll* *.def *.exe
+	rm -f *~ *$(OBJ_SUF).o *.a *.so *.dylib *.dll* *.def *.exe
 
 veryclean: clean
-	/bin/rm -f $(PROGS) $(TESTS)
+	rm -f $(PROGS) $(TESTS)
 
 # This is the name of a directory which will be used for newform
 # input/output in the "make check" tests and removed afterwards.

@@ -71,7 +71,7 @@ install_lib: headers lib
 	for f in $(HEADERS); \
 	 do cp $${f} $(INCDIR); \
 	done
-	chmod a+r $(INCDIR)/*
+	chmod a+r $(INCDIR)/*.h
 	rm -f $(LIBDIR)/$(CURVELIBNAME)
 	cp $(CURVELIBNAME) $(LIBDIR)
 	chmod a+rx $(LIBDIR)/$(CURVELIBNAME)
@@ -86,10 +86,10 @@ install_progs: progs
 install: install_lib install_progs
 
 clean:
-	/bin/rm -f *~ *$(OBJ_SUF).o  $(TESTS) $(CURVELIBNAME) *_sta *.a *.so *.dylib *.dll *.def
+	rm -f *~ *$(OBJ_SUF).o  $(TESTS) $(CURVELIBNAME) *_sta *.a *.so *.dylib *.dll *.def
 
 veryclean: clean
-	/bin/rm -f $(PROGS) $(TESTS) *.exe
+	rm -f $(PROGS) $(TESTS) *.exe
 
 check:  tests progs
 	rm -f PRIMES t

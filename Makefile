@@ -78,18 +78,18 @@ clean:
 	cd qcurves && ${MAKE} clean
 	cd qrank && ${MAKE} clean
 	cd g0n && ${MAKE} clean
-	if [ -d lib ] ; then cd lib && /bin/rm -f *.a *.so *.dylib *.def ; fi
-	if [ -d include ] ; then cd include && /bin/rm -f *.h ; fi
-	if [ -d bin ] ; then cd bin && /bin/rm -f * ; fi
+	if [ -d lib ] ; then cd lib && rm -f *.a *.so *.dylib *.def ; fi
+	if [ -d include ] ; then cd include && rm -f *.h ; fi
+	if [ -d bin ] ; then cd bin && rm -f * ; fi
 
 veryclean:
 	cd procs && ${MAKE} veryclean
 	cd qcurves && ${MAKE} veryclean
 	cd qrank && ${MAKE} veryclean
 	cd g0n && ${MAKE} veryclean
-	if [ -d lib ] ; then cd lib && /bin/rm -f *.a *.so *.dylib *.def ; fi
-	if [ -d include ] ; then cd include && /bin/rm -f *.h ; fi
-	if [ -d bin ] ; then cd bin && /bin/rm -f * ; fi
+	if [ -d lib ] ; then cd lib && rm -f *.a *.so *.dylib *.def ; fi
+	if [ -d include ] ; then cd include && rm -f *.h ; fi
+	if [ -d bin ] ; then cd bin && rm -f * ; fi
 
 show:
 	echo $(OPTFLAG)

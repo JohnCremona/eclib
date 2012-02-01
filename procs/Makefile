@@ -60,7 +60,6 @@ lib: headers objs
 	$(RANLIB) $(LIBNAME)
 
 install_lib: headers lib
-	chmod a+r *
 	(cd $(INCDIR); rm -f $(HEADERS))
 	$(CP) $(HEADERS) $(INCDIR)
 	chmod a+r $(INCDIR)/*.h
@@ -79,11 +78,11 @@ install_progs: progs
 install: install_lib install_progs
 
 clean:
-	/bin/rm -f *$(OBJ_SUF).o *~ *.a *.so *.dylib
+	rm -f *$(OBJ_SUF).o *~ *.a *.so *.dylib
 
 veryclean: clean
-	/bin/rm -f $(TESTS) $(PROGS)
-	(cd $(BINDIR); /bin/rm -f $(TESTS) $(PROGS))
+	rm -f $(TESTS) $(PROGS)
+	(cd $(BINDIR); rm -f $(TESTS) $(PROGS))
 
 check: tests progs
 	rm -f PRIMES t 1
