@@ -105,7 +105,7 @@ check:
 # Used for creating a shared library on OS X.
 DYN_OPTS = -dynamiclib
 # Used for creating a shared library on Linux/Unix
-SO_OPTS = -fPIC --shared -Wl,--as-needed
+SO_OPTS = -fPIC --shared
 # Used for creating a shared library on Cygwin:
 DLL_OPTS = -shared
 
