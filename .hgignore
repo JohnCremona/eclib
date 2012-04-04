@@ -8,5 +8,5 @@ bin/*
 include/*
 lib/*
 m4
-libsrc/Makefile.j
+libsrc/Makefile.jc
 tests/Makefile.jc
