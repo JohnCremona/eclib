@@ -90,6 +90,16 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_CHECK_FUNCS([floor memmove memset pow sqrt strchr])
 
+AC_ARG_ENABLE([allprogs],
+   AS_HELP_STRING([--enable-allprogs],
+                  [build all programs and tests (default is to only build the library and mwrank)]),
+     [case "${enableval}" in
+       yes) allprogs=true ;;
+       no)  allprogs=false ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-allprogs]) ;;
+     esac],[allprogs=true])
+AM_CONDITIONAL([ALLPROGS], [test x$allprogs = xtrue])
+
 AC_CONFIG_FILES([
   libsrc/Makefile
   tests/Makefile

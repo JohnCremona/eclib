@@ -195,7 +195,11 @@ d2_SOURCES=d2.cc
 tcon2_SOURCES=tcon2.cc
 tlegcert_SOURCES=tlegcert.cc
 
+if ALLPROGS
 bin_PROGRAMS=$(PROCS_TESTS) $(QCURVES_TESTS) $(QRANK_TESTS) $(G0N_TESTS) $(extra_progs)
+else
+bin_PROGRAMS=mwrank
+endif
 
 # NB Do NOT include the following files above, since they are not
 # compiled by themselves but only included in other files which are

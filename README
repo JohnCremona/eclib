@@ -1,5 +1,6 @@
 In addition to the generic installation instructions given in the
-INSTALL file, note the following:
+INSTALL file, note the following.  You can see all options to
+configure by typing ./configure --help.
 
 1. The configure script will check or the existence of gmp and will
 fail if it does not find it.
@@ -13,6 +14,15 @@ configure, like this:
 
 If you have Sage installed in SAGE_ROOT then you can use
 $SAGE_ROOT/local for both of these.
+
+3. By default a lot of programs, including test programs, are built
+and will be installed by "make install".  We only provide one option
+here:  if you do
+
+./configure --disable-allprogs
+
+then the only program built will be mwrank.  (The whole eclib library
+will always be built).
 
 3. After running make, "make check" will build and run a lot of test
 programs (in the subdirectory tests) and check that they give the
