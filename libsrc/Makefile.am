@@ -14,8 +14,6 @@ DOTHS = $(PROCS_DOTHS) $(QCURVES_DOTHS) $(QRANK_DOTHS) $(G0N_DOTHS)
 
 PROCS_DOTCCS = interface.cc unimod.cc arith.cc marith.cc gpslave.cc compproc.cc vector.cc matrix.cc subspace.cc kbessel.cc mvector.cc mmatrix.cc msubspace.cc svector.cc smatrix.cc smatrix_elim.cc xsplit.cc conic.cc legendre.cc quadratic.cc illl.cc hilbert.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc p2points.cc gf.cc
 
-# NB Do NOT include {vec.cc, mat.cc, sub.cc, smat.cc, svec.cc, smat_elim.cc, random.cc }  in the above
-
 QCURVES_DOTCCS = curve.cc curvedata.cc curvered.cc points.cc cperiods.cc isogs.cc heights.cc mwprocs.cc lambda.cc sifter.cc sieve_search.cc htconst.cc egr.cc saturate.cc divpol.cc pointsmod.cc curvemod.cc ffmod.cc tlss.cc elog.cc getcurve.cc
 
 QRANK_DOTCCS = mequiv.cc  mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc qc.cc sqfdiv.cc version.cc minim.cc reduce.cc transform.cc desc2.cc bitspace.cc GetOpt.cc twoadic.cc descent.cc
@@ -23,6 +21,13 @@ QRANK_DOTCCS = mequiv.cc  mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc
 G0N_DOTCCS = newforms.cc symb.cc homspace.cc cusp.cc oldforms.cc fixc6.cc periods.cc moddata.cc pcprocs.cc nfd.cc
 
 DOTCCS = $(PROCS_DOTCCS) $(QCURVES_DOTCCS) $(QRANK_DOTCCS) $(G0N_DOTCCS)
+
+# NB Do NOT include the following files above, since they are not
+# compiled by themselves but only included in other files which are
+# compiled.  But they do need to be in the distribution made by "make
+# dist" so we must list them here:
+
+EXTRA_DIST = vec.cc mat.cc sub.cc smat.cc svec.cc smat_elim.cc random.cc
 
 libjc_la_SOURCES = $(DOTCCS)
 include_HEADERS = $(DOTHS)

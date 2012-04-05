@@ -4,9 +4,13 @@ syntax: glob
 *~
 *.old
 autom4te.cache
-bin/*
-include/*
-lib/*
 m4
 libsrc/Makefile.jc
 tests/Makefile.jc
+aclocal.m4
+config.guess
+config.sub
+depcomp
+install-sh
+ltmain.sh
+missing

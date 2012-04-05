@@ -702,11 +702,6 @@ uninstall-am:
 	tags tags-recursive uninstall uninstall-am
 
 
-dirs:
-	mkdir -p include
-	mkdir -p lib
-	mkdir -p bin
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
