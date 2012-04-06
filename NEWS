@@ -1,0 +1,8 @@
+News: this is the first version of eclib to
+
+(1) not use four separate directories for sources, and build four
+separate libraries; instead all the library sources are here (in
+./libsrc) and the programs are in ./tests.
+
+(2) use autotools!
+

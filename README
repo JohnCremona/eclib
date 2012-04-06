@@ -1,0 +1,36 @@
+In addition to the generic installation instructions given in the
+INSTALL file, note the following.  You can see all options to
+configure by typing ./configure --help.
+
+1. The configure script will check or the existence of gmp and will
+fail if it does not find it.
+
+2. Both NTL and PARI are required.  If they have not been installed in
+a place where the system will find them automatically (such as
+/usr/local) then you will need to specify where they are when you
+configure, like this:
+
+./configure --with-pari=<path> --with-ntl=<path>
+
+If you have Sage installed in SAGE_ROOT then you can use
+$SAGE_ROOT/local for both of these.
+
+3. By default a lot of programs, including test programs, are built
+and will be installed by "make install".  We only provide one option
+here:  if you do
+
+./configure --disable-allprogs
+
+then the only program built will be mwrank.  (The whole eclib library
+will always be built).
+
+3. After running make, "make check" will build and run a lot of test
+programs (in the subdirectory tests) and check that they give the
+expected output (using test input files in tests/in and comparing with
+the expected outputs in tests/out).
+
+4. "make install" will install header files, library files, and test
+program binaries in subdirectories include, lib, bin in /usr/local by
+default, so that you would need to run "make install" with superuser
+privileges).  You can specify an alternative place either by adding
+--prefix=<path> to the ./configure command line.

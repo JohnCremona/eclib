@@ -1,0 +1,15 @@
+This directory contains some useful scripts for viewing the contents
+of newforms files as created by programs in the g0n series (see
+../docs/g0n.txt), which are by default in the subdirectory "newforms"
+of the directory in which those programs are run.
+
+For each level N (a positive integer) the file newforms/xN contains
+data in binary format.  The scripts are not sophisticated, and just
+give a shell error if that file does not exists.
+
+./nnf N  shows the number of (rational) newforms at level N
+./nap N  shows the number of a_p stored
+./showdata N shows all the auxiliary data
+./showeigs N shows all the a_q and a_p
+./shownf N   shows all the above
+
