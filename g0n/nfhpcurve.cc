@@ -35,7 +35,7 @@
 #include "pcprocs.h"
 
 //#define AUTOLOOP
-#define MAXNY 100
+#define MAXNY 10000
 #define MAXD 10
 
 int main(void)
