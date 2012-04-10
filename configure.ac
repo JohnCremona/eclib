@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [2012-04-04], [john.cremona@gmail.com])
-AM_INIT_AUTOMAKE([-Wall -Werror])
+AC_INIT([eclib], [2012-04-10], [john.cremona@gmail.com])
+AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
 #AC_CONFIG_HEADERS([config.h])
@@ -18,11 +18,6 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 # Checks for libraries.
-
-AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
-[GNU MP not found, see http://swox.com/gmp])])
-
-AC_CHECK_LIB(m, cos)
 
 # The following AC_ARG_WITH section were written by Volker Braun
 
