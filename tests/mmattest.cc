@@ -156,5 +156,5 @@ else
  a.init(); 
 }
 time(&stoptime);
-cout << "cpu time = " << (stoptime-starttime) << " seconds\n";
+//cout << "cpu time = " << (stoptime-starttime) << " seconds\n";
 }

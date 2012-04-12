@@ -33,9 +33,11 @@
 #include "points.h"
 
 #define AUTOLOOP
-#define BOOKORDER       // if defined, sorts newforms/curves into order
-                        // in the Book (relevant up to 500 only)
+//#define BOOKORDER       // if defined, sorts newforms/curves into order
+                         // in the Book (relevant up to 500 only)
 #include "curvesort.cc"
+//#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+
 #define CURVE_IS_ONE_FIELD // outputs      [a1,a2,a3,a4,a6]
                            // else outputs a1 a2 a3 a4 a6
 
@@ -68,6 +70,33 @@ int main(void)
   nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
   int nnf = nf.n1ds;
   int inf = 1;
+  if(nnf>0)
+    {
+      // cout<<"****************************"<<endl;
+      // cout<<"N="<<n<<" before sorting: "<<endl;
+      // cout<<"****************************"<<endl;
+      // for (inf=0; inf<nnf; inf++)
+      //   {
+      //     codeletter(inf,code);
+      //     cout<<code<<": ";
+      //     vec_out(cout,nf.nflist[inf].aplist,20);  // outputs at most 20 eigs.
+      //     cout<<endl;
+      //   }
+#ifdef LMFDB_ORDER
+      nf.sort();
+#endif
+      // cout<<"****************************"<<endl;
+      // cout<<"N="<<n<<" after  sorting: "<<endl;
+      // cout<<"****************************"<<endl;
+      // for (inf=0; inf<nnf; inf++)
+      //   {
+      //     codeletter(inf,code);
+      //     cout<<code<<": ";
+      //     vec_out(cout,nf.nflist[inf].aplist,20);  // outputs at most 20 eigs.
+      //     cout<<endl;
+      //   }
+      // cout<<"****************************"<<endl;
+    }
  for(int xi=0; xi<nnf; xi++)
    { int i=xi;
      codeletter(xi,code);
