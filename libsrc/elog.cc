@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "compproc.h"
-#include "elog.h"
+#include <eclib/compproc.h>
+#include <eclib/elog.h>
 
 bigfloat ssqrt(const bigfloat& x)
 {

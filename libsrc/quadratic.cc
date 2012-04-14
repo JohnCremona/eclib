@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "unimod.h"
-#include "quadratic.h"
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
+#include <eclib/quadratic.h>
 
 quadratic::~quadratic() {delete [] coeffs;}
 

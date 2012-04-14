@@ -23,19 +23,19 @@
 //
 
 #include <iomanip>
-#include "moddata.h"
-#include "symb.h"
-#include "oldforms.h"
-#include "homspace.h"
-#include "cperiods.h"     //from qcurves, for computing conductors
-#include "newforms.h"
-#include "periods.h"
-#include "points.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/oldforms.h>
+#include <eclib/homspace.h>
+#include <eclib/cperiods.h>     //from qcurves, for computing conductors
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <eclib/points.h>
 
 #define AUTOLOOP
 //#define BOOKORDER       // if defined, sorts newforms/curves into order
                          // in the Book (relevant up to 500 only)
-#include "curvesort.cc"
+#include <curvesort.cc>
 //#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 #define CURVE_IS_ONE_FIELD // outputs      [a1,a2,a3,a4,a6]

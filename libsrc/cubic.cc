@@ -22,10 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
  //
 
-#include "marith.h"
-#include "unimod.h"
-#include "cubic.h"
-#include "realroots.h"
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
+#include <eclib/cubic.h>
+#include <eclib/realroots.h>
 
 void cubic::init()
 {

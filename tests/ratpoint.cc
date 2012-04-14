@@ -21,12 +21,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "points.h"
-#include "mquartic.h"
-#include "msoluble.h"
-#include "qc.h"
-#include "version.h"
+#include <eclib/marith.h>
+#include <eclib/points.h>
+#include <eclib/mquartic.h>
+#include <eclib/msoluble.h>
+#include <eclib/qc.h>
+#include <eclib/version.h>
 
 
 int getquartic(quartic& g)

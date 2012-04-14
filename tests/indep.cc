@@ -25,8 +25,8 @@
 // independent in E(Q)/2E(Q), and is now largely obsolete, being
 // superceded by general saturation algorithms
 
-#include "points.h"
-#include "sifter.h"
+#include <eclib/points.h>
+#include <eclib/sifter.h>
 
 int main()
 {

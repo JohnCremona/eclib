@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "bitspace.h"
-#include "sqfdiv.h"
+#include <eclib/marith.h>
+#include <eclib/bitspace.h>
+#include <eclib/sqfdiv.h>
 
 //#define DEBUG
 

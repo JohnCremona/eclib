@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "arith.h"
-#include "matrix.h"
+#include <eclib/arith.h>
+#include <eclib/matrix.h>
 
 #undef scalar
 #undef vec

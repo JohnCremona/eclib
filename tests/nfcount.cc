@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <fstream>
-#include "arith.h"
+#include <eclib/arith.h>
 
 char* nf_filename(long n, char c)
 {

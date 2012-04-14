@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
-#include "kbessel.h"
+#include <eclib/kbessel.h>
 
 using namespace std;
 

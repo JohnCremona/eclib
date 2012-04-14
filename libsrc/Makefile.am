@@ -2,13 +2,13 @@
 
 lib_LTLIBRARIES = libjc.la
 
-PROCS_DOTHS = interface.h templates.h arith.h xmod.h marith.h gpslave.h compproc.h vec.h vector.h mat.h matrix.h sub.h subspace.h rat.h bigrat.h kbessel.h svec.h svector.h smat.h smatrix.h smat_elim.h smatrix_elim.h mvector.h mmatrix.h msubspace.h method.h splitbase.h xsplit.h conic.h legendre.h quadratic.h unimod.h illl.h hilbert.h timer.h cubic.h gf.h polys.h realroots.h parifact.h p2points.h
+PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/arith.h eclib/xmod.h eclib/marith.h eclib/gpslave.h eclib/compproc.h eclib/vec.h eclib/vector.h eclib/mat.h eclib/matrix.h eclib/sub.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svec.h eclib/svector.h eclib/smat.h eclib/smatrix.h eclib/smat_elim.h eclib/smatrix_elim.h eclib/mvector.h eclib/mmatrix.h eclib/msubspace.h eclib/method.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h
 
-QCURVES_DOTHS = curve.h points.h cperiods.h isogs.h reader.h mwprocs.h lambda.h sifter.h sieve_search.h htconst.h egr.h saturate.h divpol.h pointsmod.h curvemod.h ffmod.h tlss.h elog.h getcurve.h
+QCURVES_DOTHS = eclib/curve.h eclib/points.h eclib/cperiods.h eclib/isogs.h eclib/reader.h eclib/mwprocs.h eclib/lambda.h eclib/sifter.h eclib/sieve_search.h eclib/htconst.h eclib/egr.h eclib/saturate.h eclib/divpol.h eclib/pointsmod.h eclib/curvemod.h eclib/ffmod.h eclib/tlss.h eclib/elog.h eclib/getcurve.h
 
-QRANK_DOTHS = mrank2.h mequiv.h mlocsol.h mglobsol.h msoluble.h mquartic.h mrank1.h qc.h sqfdiv.h version.h minim.h reduce.h transform.h desc2.h bitspace.h options.h GetOpt.h twoadic.h descent.h
+QRANK_DOTHS = eclib/mrank2.h eclib/mequiv.h eclib/mlocsol.h eclib/mglobsol.h eclib/msoluble.h eclib/mquartic.h eclib/mrank1.h eclib/qc.h eclib/sqfdiv.h eclib/version.h eclib/minim.h eclib/reduce.h eclib/transform.h eclib/desc2.h eclib/bitspace.h eclib/options.h eclib/GetOpt.h eclib/twoadic.h eclib/descent.h
 
-G0N_DOTHS = periods.h cusp.h homspace.h newforms.h moddata.h oldforms.h symb.h fixc6.h pcprocs.h nfd.h
+G0N_DOTHS = eclib/periods.h eclib/cusp.h eclib/homspace.h eclib/newforms.h eclib/moddata.h eclib/oldforms.h eclib/symb.h eclib/fixc6.h eclib/pcprocs.h eclib/nfd.h
 
 DOTHS = $(PROCS_DOTHS) $(QCURVES_DOTHS) $(QRANK_DOTHS) $(G0N_DOTHS)
 
@@ -30,5 +30,5 @@ DOTCCS = $(PROCS_DOTCCS) $(QCURVES_DOTCCS) $(QRANK_DOTCCS) $(G0N_DOTCCS)
 EXTRA_DIST = vec.cc mat.cc sub.cc smat.cc svec.cc smat_elim.cc random.cc
 
 libjc_la_SOURCES = $(DOTCCS)
-include_HEADERS = $(DOTHS)
+nobase_include_HEADERS = $(DOTHS)
 ACLOCAL_AMFLAGS = -I m4

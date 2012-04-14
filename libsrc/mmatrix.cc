@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "mmatrix.h"
+#include <eclib/marith.h>
+#include <eclib/mmatrix.h>
 
 const bigint MBIGPRIME=atoI(string("6074000003").c_str());
 // will convert this string to an bigint

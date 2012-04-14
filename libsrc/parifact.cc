@@ -23,8 +23,8 @@
 
 #ifdef USE_PARI_FACTORING
 
-#include "pari/pari.h"
-#include "parifact.h"
+#include <pari/pari.h>
+#include <eclib/parifact.h>
 
 //#define DEBUG_GPFACT
 #include <iostream>

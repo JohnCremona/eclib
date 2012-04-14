@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "compproc.h"
-#include "marith.h"
+#include <eclib/compproc.h>
+#include <eclib/marith.h>
 
 int main(void)
 { 

@@ -23,12 +23,12 @@
 
 
 #include <fstream>
-#include "points.h"
-#include "mwprocs.h"
-#include "sifter.h"
-#include "compproc.h"
-#include "egr.h"
-#include "htconst.h"
+#include <eclib/points.h>
+#include <eclib/mwprocs.h>
+#include <eclib/sifter.h>
+#include <eclib/compproc.h>
+#include <eclib/egr.h>
+#include <eclib/htconst.h>
 
 #define INPUT_CLASS_IS_LETTER // we only use letters now!
 
@@ -39,7 +39,7 @@ int verbose;
 char genfile[30];
 char ccode[5];
 
-#include "curvesort.cc" // for codeletter() function
+#include <curvesort.cc> // for codeletter() function
 
 int main()
 {  

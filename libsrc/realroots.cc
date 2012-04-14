@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "compproc.h"
-#include "realroots.h"
+#include <eclib/compproc.h>
+#include <eclib/realroots.h>
 
 bigfloat safe_sqrt(const bigfloat& x)
 {

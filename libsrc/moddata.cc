@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "moddata.h"
+#include <eclib/moddata.h>
 
 level::level(long n, long neigs)
 {

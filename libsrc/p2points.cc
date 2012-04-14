@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "p2points.h"
+#include <eclib/p2points.h>
 #include <NTL/RR.h>   // for the realify_point() function
 
 //

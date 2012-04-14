@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "arith.h"
-#include "svector.h"
+#include <eclib/arith.h>
+#include <eclib/svector.h>
 
 int main(void)
 {

@@ -36,7 +36,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 subdir = libsrc
-DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
+DIST_COMMON = $(nobase_include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -104,7 +104,7 @@ CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(libjc_la_SOURCES)
 DIST_SOURCES = $(libjc_la_SOURCES)
-HEADERS = $(include_HEADERS)
+HEADERS = $(nobase_include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -232,10 +232,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 lib_LTLIBRARIES = libjc.la
-PROCS_DOTHS = interface.h templates.h arith.h xmod.h marith.h gpslave.h compproc.h vec.h vector.h mat.h matrix.h sub.h subspace.h rat.h bigrat.h kbessel.h svec.h svector.h smat.h smatrix.h smat_elim.h smatrix_elim.h mvector.h mmatrix.h msubspace.h method.h splitbase.h xsplit.h conic.h legendre.h quadratic.h unimod.h illl.h hilbert.h timer.h cubic.h gf.h polys.h realroots.h parifact.h p2points.h
-QCURVES_DOTHS = curve.h points.h cperiods.h isogs.h reader.h mwprocs.h lambda.h sifter.h sieve_search.h htconst.h egr.h saturate.h divpol.h pointsmod.h curvemod.h ffmod.h tlss.h elog.h getcurve.h
-QRANK_DOTHS = mrank2.h mequiv.h mlocsol.h mglobsol.h msoluble.h mquartic.h mrank1.h qc.h sqfdiv.h version.h minim.h reduce.h transform.h desc2.h bitspace.h options.h GetOpt.h twoadic.h descent.h
-G0N_DOTHS = periods.h cusp.h homspace.h newforms.h moddata.h oldforms.h symb.h fixc6.h pcprocs.h nfd.h
+PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/arith.h eclib/xmod.h eclib/marith.h eclib/gpslave.h eclib/compproc.h eclib/vec.h eclib/vector.h eclib/mat.h eclib/matrix.h eclib/sub.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svec.h eclib/svector.h eclib/smat.h eclib/smatrix.h eclib/smat_elim.h eclib/smatrix_elim.h eclib/mvector.h eclib/mmatrix.h eclib/msubspace.h eclib/method.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h
+QCURVES_DOTHS = eclib/curve.h eclib/points.h eclib/cperiods.h eclib/isogs.h eclib/reader.h eclib/mwprocs.h eclib/lambda.h eclib/sifter.h eclib/sieve_search.h eclib/htconst.h eclib/egr.h eclib/saturate.h eclib/divpol.h eclib/pointsmod.h eclib/curvemod.h eclib/ffmod.h eclib/tlss.h eclib/elog.h eclib/getcurve.h
+QRANK_DOTHS = eclib/mrank2.h eclib/mequiv.h eclib/mlocsol.h eclib/mglobsol.h eclib/msoluble.h eclib/mquartic.h eclib/mrank1.h eclib/qc.h eclib/sqfdiv.h eclib/version.h eclib/minim.h eclib/reduce.h eclib/transform.h eclib/desc2.h eclib/bitspace.h eclib/options.h eclib/GetOpt.h eclib/twoadic.h eclib/descent.h
+G0N_DOTHS = eclib/periods.h eclib/cusp.h eclib/homspace.h eclib/newforms.h eclib/moddata.h eclib/oldforms.h eclib/symb.h eclib/fixc6.h eclib/pcprocs.h eclib/nfd.h
 DOTHS = $(PROCS_DOTHS) $(QCURVES_DOTHS) $(QRANK_DOTHS) $(G0N_DOTHS)
 PROCS_DOTCCS = interface.cc unimod.cc arith.cc marith.cc gpslave.cc compproc.cc vector.cc matrix.cc subspace.cc kbessel.cc mvector.cc mmatrix.cc msubspace.cc svector.cc smatrix.cc smatrix_elim.cc xsplit.cc conic.cc legendre.cc quadratic.cc illl.cc hilbert.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc p2points.cc gf.cc
 QCURVES_DOTCCS = curve.cc curvedata.cc curvered.cc points.cc cperiods.cc isogs.cc heights.cc mwprocs.cc lambda.cc sifter.cc sieve_search.cc htconst.cc egr.cc saturate.cc divpol.cc pointsmod.cc curvemod.cc ffmod.cc tlss.cc elog.cc getcurve.cc
@@ -249,7 +249,7 @@ DOTCCS = $(PROCS_DOTCCS) $(QCURVES_DOTCCS) $(QRANK_DOTCCS) $(G0N_DOTCCS)
 # dist" so we must list them here:
 EXTRA_DIST = vec.cc mat.cc sub.cc smat.cc svec.cc smat_elim.cc random.cc
 libjc_la_SOURCES = $(DOTCCS)
-include_HEADERS = $(DOTHS)
+nobase_include_HEADERS = $(DOTHS)
 ACLOCAL_AMFLAGS = -I m4
 all: all-am
 
@@ -429,23 +429,26 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-includeHEADERS: $(include_HEADERS)
+install-nobase_includeHEADERS: $(nobase_include_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
-	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_list) | while read dir files; do \
+	  xfiles=; for file in $$files; do \
+	    if test -f "$$file"; then xfiles="$$xfiles $$file"; \
+	    else xfiles="$$xfiles $(srcdir)/$$file"; fi; done; \
+	  test -z "$$xfiles" || { \
+	    test "x$$dir" = x. || { \
+	      echo "$(MKDIR_P) '$(DESTDIR)$(includedir)/$$dir'"; \
+	      $(MKDIR_P) "$(DESTDIR)$(includedir)/$$dir"; }; \
+	    echo " $(INSTALL_HEADER) $$xfiles '$(DESTDIR)$(includedir)/$$dir'"; \
+	    $(INSTALL_HEADER) $$xfiles "$(DESTDIR)$(includedir)/$$dir" || exit $$?; }; \
 	done
 
-uninstall-includeHEADERS:
+uninstall-nobase_includeHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(includedir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(includedir)" && rm -f $$files
@@ -587,7 +590,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-includeHEADERS
+install-data-am: install-nobase_includeHEADERS
 
 install-dvi: install-dvi-am
 
@@ -633,7 +636,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
+uninstall-am: uninstall-libLTLIBRARIES uninstall-nobase_includeHEADERS
 
 .MAKE: install-am install-strip
 
@@ -643,14 +646,15 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-includeHEADERS install-info \
-	install-info-am install-libLTLIBRARIES install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	install-html-am install-info install-info-am \
+	install-libLTLIBRARIES install-man \
+	install-nobase_includeHEADERS install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-includeHEADERS \
-	uninstall-libLTLIBRARIES
+	tags uninstall uninstall-am uninstall-libLTLIBRARIES \
+	uninstall-nobase_includeHEADERS
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

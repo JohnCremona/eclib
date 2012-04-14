@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include "mquartic.h"
-#include "mequiv.h"
+#include <eclib/mquartic.h>
+#include <eclib/mequiv.h>
 #define NEQPLIST 0        // Number of primes for equiv-test sieving
 
 vector<long> eqplist;

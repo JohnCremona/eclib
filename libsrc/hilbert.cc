@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "quadratic.h"
-#include "hilbert.h"
+#include <eclib/marith.h>
+#include <eclib/quadratic.h>
+#include <eclib/hilbert.h>
 
 //#define DEBUG_HILBERT
 

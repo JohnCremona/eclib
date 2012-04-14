@@ -22,14 +22,14 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <iomanip>
-#include "interface.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"
-#include "newforms.h"
+#include <eclib/interface.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>
+#include <eclib/newforms.h>
 
 // Functions for ordering newforms
 // (1) Old ordering (first aq, then ap for good p);

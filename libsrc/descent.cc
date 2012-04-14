@@ -26,13 +26,13 @@
 // computing rank via general 2-descent and descent via 2-isogeny
 // repectively); class two_descent is a user interface to these
 
-#include "compproc.h"
-#include "points.h"
-#include "mwprocs.h"
-#include "mquartic.h"
-#include "descent.h"
-#include "mrank1.h"
-#include "mrank2.h"
+#include <eclib/compproc.h>
+#include <eclib/points.h>
+#include <eclib/mwprocs.h>
+#include <eclib/mquartic.h>
+#include <eclib/descent.h>
+#include <eclib/mrank1.h>
+#include <eclib/mrank2.h>
 
 #define PRE_SATURATION_SEARCH_LIMIT 8
 

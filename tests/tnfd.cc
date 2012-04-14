@@ -23,14 +23,14 @@
 //
 //
 #include <iostream>
-#include "interface.h"
-#include "timer.h"
-#include "marith.h"
-#include "msubspace.h"
-#include "moddata.h"
-#include "symb.h"
-#include "homspace.h"
-#include "nfd.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
+#include <eclib/marith.h>
+#include <eclib/msubspace.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/homspace.h>
+#include <eclib/nfd.h>
 
 #define OUTPUT_PARI_STYLE
 //#define DEBUG

@@ -23,9 +23,9 @@
 //
 //#define TEST
 
-#include "compproc.h"
-#include "cperiods.h"
-#include "getcurve.h"
+#include <eclib/compproc.h>
+#include <eclib/cperiods.h>
+#include <eclib/getcurve.h>
 
 int main(){
   set_precision(string("Enter number of decimal places").c_str());

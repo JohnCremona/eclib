@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "quadratic.h"
-#include "conic.h"
-#include "legendre.h"
+#include <eclib/marith.h>
+#include <eclib/quadratic.h>
+#include <eclib/conic.h>
+#include <eclib/legendre.h>
 
 #ifndef CONIC_METHOD
 #define CONIC_METHOD 4

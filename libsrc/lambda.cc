@@ -28,8 +28,8 @@
 // (2) Intended for use in computing Heegner points (not yet implemented)
 
 
-#include "points.h"
-#include "lambda.h"
+#include <eclib/points.h>
+#include <eclib/lambda.h>
 
 #define MAX_NUM_LAMBDA 1000
 

@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "msubspace.h"
+#include <eclib/msubspace.h>
 const bigint MBIGPRIME=atoI("6074000003");
 // will convert this string to an bigint
 //This is nearly the largest p such that (p/2)^2 < 2^63.

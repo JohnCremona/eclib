@@ -24,8 +24,8 @@
 // NB This is used for proving that points are independent; now
 // largely obsolete, being superceded by general saturation algorithms
 
-#include "points.h"
-#include "sifter.h"
+#include <eclib/points.h>
+#include <eclib/sifter.h>
 
 void sifter::init()
 {

@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
-#include "bigrat.h"
+#include <eclib/bigrat.h>
 
 int main(void)
 {

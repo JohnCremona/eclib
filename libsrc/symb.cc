@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "moddata.h"
-#include "symb.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
 
 // Friend of class symb:
 ostream& operator<< (ostream& s, const symb& sy)

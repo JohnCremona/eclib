@@ -23,8 +23,8 @@
  
 #include <iostream>
 #include <iomanip>
-#include "interface.h"
-#include "timer.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
 
 #ifndef CLK_TCK
 #define CLK_TCK	CLOCKS_PER_SEC

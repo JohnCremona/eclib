@@ -23,8 +23,8 @@
  
 //#define CHECK_RESTRICT   // define this to make restrict_mat and prestrict check
                            //  invariance of subspaces.
-#include "marith.h"
-#include "msubspace.h"
+#include <eclib/marith.h>
+#include <eclib/msubspace.h>
 
 // Definitions of nonmember, nonfriend operators and functions:
 

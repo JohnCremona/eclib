@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "arith.h"
-#include "vector.h"
+#include <eclib/arith.h>
+#include <eclib/vector.h>
 #include "random.cc"
 
 #undef scalar

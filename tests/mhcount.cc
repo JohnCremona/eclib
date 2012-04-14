@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include "arith.h"
+#include <eclib/arith.h>
 
 void outmat(int n, long a, long b, long c, long d)
 {

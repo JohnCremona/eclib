@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-#include "points.h"
+#include <eclib/points.h>
 
 int main(){
   //  set_precision(string("Enter number of decimal places").c_str());

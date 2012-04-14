@@ -22,14 +22,14 @@
 //////////////////////////////////////////////////////////////////////////
 //
 #include <fstream>
-#include "moddata.h"
-#include "symb.h"
-#include "oldforms.h"
-#include "homspace.h"
-#include "cperiods.h"     //from qcurves, for computing conductors
-#include "newforms.h"
-#include "periods.h"
-#include "curvesort.cc"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/oldforms.h>
+#include <eclib/homspace.h>
+#include <eclib/cperiods.h>     //from qcurves, for computing conductors
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <curvesort.cc>
 
 #define AUTOLOOP
 

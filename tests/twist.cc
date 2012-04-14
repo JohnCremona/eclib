@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "curve.h"
-#include "getcurve.h"
+#include <eclib/curve.h>
+#include <eclib/getcurve.h>
 
 int main(){
 

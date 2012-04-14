@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "interface.h"
-#include "marith.h"
-#include "unimod.h"
+#include <eclib/interface.h>
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
 
 unimod operator*(const unimod& a, const unimod& b)
 {

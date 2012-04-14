@@ -25,9 +25,9 @@
 // Notation: g(x,z) is replaced by g(m11*x+m12*z,m21*x+m22*z)/m00^2
 //
 
-#include "marith.h"
-#include "unimod.h"
-#include "transform.h"
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
+#include <eclib/transform.h>
 
 bigint g_content(const bigint& ga, const bigint& gb, const bigint& gc, 
 		 const bigint& gd, const bigint& ge)

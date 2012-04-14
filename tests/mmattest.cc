@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <time.h>
-#include "mmatrix.h"
+#include <eclib/mmatrix.h>
 
 int main(void)
 {

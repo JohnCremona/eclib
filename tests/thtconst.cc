@@ -21,12 +21,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include "points.h"  // from qcurves library
-#include "sieve_search.h"
-#include "cperiods.h"
-#include "elog.h"
-#include "egr.h"
-#include "htconst.h"
+#include <eclib/points.h>  // from qcurves library
+#include <eclib/sieve_search.h>
+#include <eclib/cperiods.h>
+#include <eclib/elog.h>
+#include <eclib/egr.h>
+#include <eclib/htconst.h>
 
 
 bigint a1,a2,a3,a4,a6;

@@ -21,11 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "mmatrix.h"
-#include "conic.h"
-#include "legendre.h"
-#include "illl.h"
+#include <eclib/marith.h>
+#include <eclib/mmatrix.h>
+#include <eclib/conic.h>
+#include <eclib/legendre.h>
+#include <eclib/illl.h>
 
 //#define DEBUG_MINV
 //#define DEBUG_LEM1

@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "curve.h"
-#include "polys.h" // for nrootscubic
-#include "curvemod.h" // for point counting to get ap
-#include "ffmod.h"
+#include <eclib/curve.h>
+#include <eclib/polys.h> // for nrootscubic
+#include <eclib/curvemod.h> // for point counting to get ap
+#include <eclib/ffmod.h>
 
 ostream& operator<<(ostream& os, const Kodaira_code& c)
 {

@@ -23,7 +23,7 @@
  
 // originally adapted from Elliptic.cc by Oisin McGuiness
 
-#include "curve.h"
+#include <eclib/curve.h>
 
 //Kraus' conditions:
 

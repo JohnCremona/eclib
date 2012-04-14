@@ -26,15 +26,15 @@
 // discrete log a la Siksek when the p-torsion in E(F_q) is cyclic,
 // else use the Tate-Lichtenbaum pairing
 
-#include "matrix.h"
-#include "subspace.h"
+#include <eclib/matrix.h>
+#include <eclib/subspace.h>
 
-#include "points.h"
-#include "polys.h"
-#include "curvemod.h"
-#include "pointsmod.h"
-#include "ffmod.h"
-#include "tlss.h"
+#include <eclib/points.h>
+#include <eclib/polys.h>
+#include <eclib/curvemod.h>
+#include <eclib/pointsmod.h>
+#include <eclib/ffmod.h>
+#include <eclib/tlss.h>
 
 void TLSS::init(int  pp, int verb)
 {

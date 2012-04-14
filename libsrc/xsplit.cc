@@ -24,7 +24,7 @@
 #include <unistd.h>  // for unlink() (not needed on linux)
 
 #define USE_SPARSE 1
-#include "xsplit.h"
+#include <eclib/xsplit.h>
 
 
 // STORE_OPMATS flag: only relevant when bigmats=1.  Each opmat (on
@@ -34,7 +34,7 @@
 
 //#define STORE_OPMATS
 
-#include "smatrix_elim.h"
+#include <eclib/smatrix_elim.h>
 subspace sparse_combine(const subspace& s1, const subspace& s2);
 mat sparse_restrict(const mat& m, const subspace& s);
 smat restrict_mat(const smat& m, const subspace& s);

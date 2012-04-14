@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "mvector.h"
+#include <eclib/marith.h>
+#include <eclib/mvector.h>
 
 // Definitions of member operators and functions:
 

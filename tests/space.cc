@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "arith.h"
-#include "subspace.h"
+#include <eclib/arith.h>
+#include <eclib/subspace.h>
 
 int main()
 {

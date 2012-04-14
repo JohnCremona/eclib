@@ -21,16 +21,16 @@
 //
 //////////////////////////////////////////////////////////////////////////
 //
-#include "compproc.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"  // from qcurves
-#include "newforms.h"
-#include "periods.h"
-#include "fixc6.h"
+#include <eclib/compproc.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>  // from qcurves
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <eclib/fixc6.h>
 
 #define CHECK_PERIODS // check that curves constructed from periods
                       // have the same periods...

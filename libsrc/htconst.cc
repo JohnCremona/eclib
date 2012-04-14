@@ -24,24 +24,24 @@
 // Here we implement (1) Silverman, (2) CPS (Cremona/Prickett/Siksek)
 // bounds on the difference between naive and canonical height.
 
-#include "marith.h"
-#include "curve.h"
-#include "compproc.h"
-#include "matrix.h"
-#include "subspace.h"
-#include "cperiods.h"
-#include "points.h"
-#include "sieve_search.h"
-#include "polys.h"
-#include "curvemod.h"
-#include "pointsmod.h"
-#include "saturate.h"
-#include "mwprocs.h"
-#include "elog.h"
-#include "egr.h"
-#include "htconst.h"
+#include <eclib/marith.h>
+#include <eclib/curve.h>
+#include <eclib/compproc.h>
+#include <eclib/matrix.h>
+#include <eclib/subspace.h>
+#include <eclib/cperiods.h>
+#include <eclib/points.h>
+#include <eclib/sieve_search.h>
+#include <eclib/polys.h>
+#include <eclib/curvemod.h>
+#include <eclib/pointsmod.h>
+#include <eclib/saturate.h>
+#include <eclib/mwprocs.h>
+#include <eclib/elog.h>
+#include <eclib/egr.h>
+#include <eclib/htconst.h>
 
-#include "realroots.h"
+#include <eclib/realroots.h>
 
 // Code for Silverman bound
 

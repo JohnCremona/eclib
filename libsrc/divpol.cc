@@ -25,9 +25,9 @@
 // coefficients rather than a polynomial type to simplify the
 // NTL interface
 
-#include "points.h"
-#include "polys.h"
-#include "divpol.h"
+#include <eclib/points.h>
+#include <eclib/polys.h>
+#include <eclib/divpol.h>
 
 vector<bigint> makepdivpol(Curvedata* E, int p)
 {

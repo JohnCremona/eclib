@@ -23,28 +23,28 @@
 //
 #include <fstream>
 #include <iomanip>
-#include "moddata.h"
-#include "symb.h"
-#include "oldforms.h"
-#include "homspace.h"
-#include "cperiods.h"
-#include "newforms.h"
-#include "periods.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/oldforms.h>
+#include <eclib/homspace.h>
+#include <eclib/cperiods.h>
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
 
-#include "points.h"
-#include "polys.h"
-#include "curvemod.h"
-#include "pointsmod.h"
-#include "ffmod.h"
-#include "divpol.h"
-#include "tlss.h"
-#include "elog.h"
-#include "saturate.h"
-#include "sieve_search.h"
-#include "mwprocs.h"
-#include "isogs.h"
+#include <eclib/points.h>
+#include <eclib/polys.h>
+#include <eclib/curvemod.h>
+#include <eclib/pointsmod.h>
+#include <eclib/ffmod.h>
+#include <eclib/divpol.h>
+#include <eclib/tlss.h>
+#include <eclib/elog.h>
+#include <eclib/saturate.h>
+#include <eclib/sieve_search.h>
+#include <eclib/mwprocs.h>
+#include <eclib/isogs.h>
 
-#include "descent.h"
+#include <eclib/descent.h>
 
 //#define AUTOLOOP
 //#define POS_RANK_ONLY  1  // for testing
@@ -54,7 +54,7 @@
 
 //#define DEBUG_BSD
 
-#include "curvesort.cc"
+#include <curvesort.cc>
 
 int main(void)
 {

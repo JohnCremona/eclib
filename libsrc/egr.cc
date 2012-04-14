@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "points.h"
-#include "egr.h"
-#include "matrix.h"
+#include <eclib/points.h>
+#include <eclib/egr.h>
+#include <eclib/matrix.h>
 
 //#define DEBUG_EGR
 //#define DEBUG_EGR_EXTRA

@@ -25,7 +25,7 @@
 #include <iostream>  // for debugging only
 #include <cmath>
 using namespace std;
-#include "kbessel.h"
+#include <eclib/kbessel.h>
 #ifndef M_LN2
 #define M_LN2   0.69314718055994530942
 #endif

@@ -22,10 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-#include "curve.h"
-#include "points.h"
-#include "cperiods.h"
-#include "elog.h"
+#include <eclib/curve.h>
+#include <eclib/points.h>
+#include <eclib/cperiods.h>
+#include <eclib/elog.h>
 
 int test1(Curvedata& CD, Cperiods& per, const Point& P)
 {

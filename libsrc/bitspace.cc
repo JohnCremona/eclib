@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
-#include "bitspace.h"
+#include <eclib/bitspace.h>
 
 using namespace std;
 

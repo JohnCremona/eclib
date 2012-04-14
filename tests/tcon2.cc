@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "quadratic.h"
-#include "conic.h"
+#include <eclib/marith.h>
+#include <eclib/quadratic.h>
+#include <eclib/conic.h>
 
 #define VERBOSITY 0
 #ifndef CONIC_METHOD

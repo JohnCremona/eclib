@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "interface.h"
-#include "timer.h"
-#include "moddata.h"
-#include "symb.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
 
 #define AUTOLOOP
 

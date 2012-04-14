@@ -24,9 +24,9 @@
 //#define TEST
 //#define DUMP_DATA
 
-#include "matrix.h"
-#include "isogs.h"
-#include "getcurve.h"
+#include <eclib/matrix.h>
+#include <eclib/isogs.h>
+#include <eclib/getcurve.h>
 
 int main(){
   set_precision(string("Enter number of decimal places").c_str());

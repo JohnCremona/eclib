@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "curve.h"
-#include "getcurve.h"
+#include <eclib/curve.h>
+#include <eclib/getcurve.h>
 
 void line(int w) {int wid=w; while(wid--)cout << "-";cout<<endl;}
 

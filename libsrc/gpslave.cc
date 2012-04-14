@@ -25,8 +25,8 @@
 
 #include <unistd.h>  // for unlink() (not needed on linux)
 #include <sstream>
-#include "gpslave.h"
-#include "marith.h"
+#include <eclib/gpslave.h>
+#include <eclib/marith.h>
 
 //#define DEBUG_PARI_SLAVE
 

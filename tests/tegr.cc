@@ -22,14 +22,14 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-#include "matrix.h"
-#include "cperiods.h"
-#include "points.h"
-#include "sieve_search.h"
-#include "cperiods.h"
-#include "elog.h"
-#include "egr.h"
-#include "htconst.h"
+#include <eclib/matrix.h>
+#include <eclib/cperiods.h>
+#include <eclib/points.h>
+#include <eclib/sieve_search.h>
+#include <eclib/cperiods.h>
+#include <eclib/elog.h>
+#include <eclib/egr.h>
+#include <eclib/htconst.h>
 
 void codeletter(int i, char* code, int width=0);
 

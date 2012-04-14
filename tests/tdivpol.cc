@@ -22,10 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-#include "curve.h"
+#include <eclib/curve.h>
 
-#include "polys.h"
-#include "divpol.h"
+#include <eclib/polys.h>
+#include <eclib/divpol.h>
 
 int main()
 {

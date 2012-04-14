@@ -23,8 +23,8 @@
  
 // Original version by Luiz Figueiredo
 
-#include "arith.h"
-#include "smatrix.h"
+#include <eclib/arith.h>
+#include <eclib/smatrix.h>
 
 #undef scalar
 #undef vec

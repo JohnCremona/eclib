@@ -21,18 +21,18 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "interface.h"
-#include "timer.h"
-#include "xsplit.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"     //from qcurves, for computing conductors
-#include "newforms.h"
-#include "periods.h"
-#include "pcprocs.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
+#include <eclib/xsplit.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>     //from qcurves, for computing conductors
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <eclib/pcprocs.h>
 
 //#define AUTOLOOP
 #define MAXNY 100

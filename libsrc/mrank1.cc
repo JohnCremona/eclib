@@ -21,16 +21,16 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "points.h"   // from qcurves library
-#include "mwprocs.h"   // from qcurves library
-#include "mquartic.h"
-#include "mequiv.h"
-#include "msoluble.h"
-#include "qc.h"
+#include <eclib/points.h>   // from qcurves library
+#include <eclib/mwprocs.h>   // from qcurves library
+#include <eclib/mquartic.h>
+#include <eclib/mequiv.h>
+#include <eclib/msoluble.h>
+#include <eclib/qc.h>
 #define USE_BIGINTS
-#include "descent.h"
-#include "mrank1.h"
-#include "twoadic.h"
+#include <eclib/descent.h>
+#include <eclib/mrank1.h>
+#include <eclib/twoadic.h>
 
 #ifdef USE_BIGINTS
 //#define DEFAULT_NAUX 12

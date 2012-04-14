@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "matrix.h"
-#include "isogs.h"
-#include "points.h"
+#include <eclib/matrix.h>
+#include <eclib/isogs.h>
+#include <eclib/points.h>
 
 #define DEBUG
 

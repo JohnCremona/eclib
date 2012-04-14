@@ -29,9 +29,9 @@
 
 
 #include <unistd.h>  // for unlink() (not needed on linux)
-#include "marith.h"
+#include <eclib/marith.h>
 #ifdef USE_GP_FACTORING
-#include "gpslave.h"
+#include <eclib/gpslave.h>
 #endif
 #include <sstream>
 
@@ -515,7 +515,7 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
 // 
 
 #ifdef USE_PARI_FACTORING
-#include "parifact.h"
+#include <eclib/parifact.h>
 
 bigint
 read_bigint_from_string(char* intstr)

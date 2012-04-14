@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "mvector.h"
-#include "mmatrix.h"
-#include "illl.h"
+#include <eclib/mvector.h>
+#include <eclib/mmatrix.h>
+#include <eclib/illl.h>
 
 int main()
 {

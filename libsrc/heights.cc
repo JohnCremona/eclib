@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "points.h"  // which includes curve.h
+#include <eclib/points.h>  // which includes curve.h
 
 bigfloat height(Point& P)
 {
