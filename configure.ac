@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [2012-04-12], [john.cremona@gmail.com])
+AC_INIT([eclib], [2012-04-13], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -65,7 +65,7 @@ NTL_LIBS="${NTL_LIBS} -lgmp -lntl"
 AC_SUBST(NTL_LIBS)
 AC_SUBST(NTL_CFLAGS)
 
-AM_CXXFLAGS="${NTL_CFLAGS} ${PARI_CFLAGS} -fPIC -DNTL_ALL -DUSE_PARI_FACTORING -DMETHOD=2 -DNEW_OP_ORDER"
+AM_CXXFLAGS="${NTL_CFLAGS} ${PARI_CFLAGS} -DNTL_ALL -DUSE_PARI_FACTORING -DMETHOD=2 -DNEW_OP_ORDER"
 AM_LDFLAGS="${NTL_LIBS} ${PARI_LIBS}"
 
 AC_SUBST([AM_CXXFLAGS])
