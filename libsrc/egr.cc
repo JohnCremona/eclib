@@ -1,7 +1,7 @@
 // egr.cc: implementation of functions for reduction of points & component groups
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

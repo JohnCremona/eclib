@@ -1,7 +1,7 @@
 // parislave.cc: class for starting up a "slave" background gp process 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

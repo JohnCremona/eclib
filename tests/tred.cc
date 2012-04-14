@@ -1,7 +1,7 @@
 // TRED.CC:  Test program for reduction of quartics to minimal I,J
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

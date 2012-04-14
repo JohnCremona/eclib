@@ -1,7 +1,7 @@
 // svectest.cc: Test of sparse vector package
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

@@ -1,7 +1,7 @@
 // FILE H1CURVE.CC: Program to list curves
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 //
 // This file is part of the mwrank/g0n package.
 //

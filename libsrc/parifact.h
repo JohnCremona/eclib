@@ -1,7 +1,7 @@
 /* parifact.h: integer factorization using libpari, interface via strings */
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

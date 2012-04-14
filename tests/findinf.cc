@@ -1,7 +1,7 @@
 // findinf.cc:  program to find points up to given naive height
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

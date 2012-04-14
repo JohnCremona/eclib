@@ -1,7 +1,7 @@
 // mrank2.h: declaration of class rank2 for descent via 2-isogeny
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

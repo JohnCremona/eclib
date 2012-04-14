@@ -1,7 +1,7 @@
 // tmrank.cc:  test program for mwrank: read from (e.g.) tmrank.in
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

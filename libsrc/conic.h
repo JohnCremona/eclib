@@ -1,7 +1,7 @@
 // conic.h: declarations of functions for solving conics (see also legendre.h)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 

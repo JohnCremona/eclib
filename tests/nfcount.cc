@@ -1,7 +1,7 @@
 // FILE NFCOUNT.CC:  program to count newforms (from data files)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 

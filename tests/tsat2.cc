@@ -1,7 +1,7 @@
 // tsat2.cc -- test for saturate.h/cc reading from gens files directly
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
