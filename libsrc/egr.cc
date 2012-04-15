@@ -844,7 +844,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
 	  cout<<"colmin = "<<colmin<<" at imin="<<imin<<endl;
 #endif
 	  for(i=1; i<=npts; i++)
-	    if(ndiv(colmin,m(i,j)))
+	    if(ndivides(colmin,m(i,j)))
 	      {
 		r = m(i,j) % colmin;
 		q = (m(i,j) - r) / colmin;

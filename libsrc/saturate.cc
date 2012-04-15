@@ -409,7 +409,7 @@ vector<Point> pCoTorsion(const vector<Point>& AllTorsion, int p)
 
   // Case 0:
 
-  if(ndiv(p,ntorsion)) return ans; // empty
+  if(ndivides(p,ntorsion)) return ans; // empty
 
   //  find point Q of maximal order:
 

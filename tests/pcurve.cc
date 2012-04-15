@@ -83,7 +83,7 @@ int main(void)
   nnf=inf;
 #endif
   primevar pr; long p0;                  // First "good" prime
-  while (p0=(long)pr, ::div(p0,n)) pr++; 
+  while (p0=(long)pr, ::divides(p0,n)) pr++; 
   
  for(long i=inf-1; i<nnf; i++)
    {

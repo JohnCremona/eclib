@@ -107,10 +107,10 @@ void oldforms::getoldclasses(long d, int verbose)
 		{  
 		  p = (long)pr;
 		  if(verbose>1) cout<<"p="<<p<<endl;
-		  if(::div(p,n))
+		  if(::divides(p,n))
 		    {
 		      beta = *betai++;
-		      if(::div(p,d)) aq = *aqj++;
+		      if(::divides(p,d)) aq = *aqj++;
 		      else aq=1;
 		      if (beta==0)
 			{
@@ -127,7 +127,7 @@ void oldforms::getoldclasses(long d, int verbose)
 			  else 
 			    {
 			      xmult=beta/2 +1;
-			      if(::div(p,d) && (aq==-1)) 
+			      if(::divides(p,d) && (aq==-1)) 
 				xmult--;
 			    }
 			  if (!bit) xmult=1+beta-xmult;

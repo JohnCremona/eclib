@@ -94,7 +94,7 @@ vector<long> resort_aplist(const level* iN,
       }
     else // p is bad
       {
-	if(::div(p*p,N))
+	if(::divides(p*p,N))
 	  {
 	    aplist.push_back(0);
 // 	    cout << "i = "<<i<<",\tp = " << p << "\ta_p = " << aplist[i] << endl;
@@ -273,7 +273,7 @@ void summer::sumit()
   for(j=2; j<=n2p; j++)
     {
       a2p_cache[j]=a2p_cache[j-1]*aplist[0];
-      if(ndiv(2,N)) a2p_cache[j]-=2*a2p_cache[j-2];
+      if(ndivides(2,N)) a2p_cache[j]-=2*a2p_cache[j-2];
     }
 #ifdef TRACE_CACHE
   cout<<"a2p_cache = "<<a2p_cache<<endl;
@@ -286,7 +286,7 @@ void summer::sumit()
   for(j=2; j<=n3p; j++)
     {
       a3p_cache[j]=a3p_cache[j-1]*aplist[1];
-      if(ndiv(3,N)) a3p_cache[j]-=3*a3p_cache[j-2];
+      if(ndivides(3,N)) a3p_cache[j]-=3*a3p_cache[j-2];
     }
 #ifdef TRACE_CACHE
   cout<<"a3p_cache = "<<a3p_cache<<endl;
@@ -299,7 +299,7 @@ void summer::sumit()
   for(j=2; j<=n5p; j++)
     {
       a5p_cache[j]=a5p_cache[j-1]*aplist[2];
-      if(ndiv(5,N)) a5p_cache[j]-=5*a5p_cache[j-2];
+      if(ndivides(5,N)) a5p_cache[j]-=5*a5p_cache[j-2];
     }
 #ifdef TRACE_CACHE
   cout<<"a5p_cache = "<<a5p_cache<<endl;
@@ -312,7 +312,7 @@ void summer::sumit()
   for(j=2; j<=n7p; j++)
     {
       a7p_cache[j]=a7p_cache[j-1]*aplist[3];
-      if(ndiv(7,N)) a7p_cache[j]-=7*a7p_cache[j-2];
+      if(ndivides(7,N)) a7p_cache[j]-=7*a7p_cache[j-2];
     }
 #ifdef TRACE_CACHE
   cout<<"a7p_cache = "<<a7p_cache<<endl;

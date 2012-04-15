@@ -91,7 +91,7 @@ int main(void)
   nnf=inf;
 #endif
   primevar pr; long p0;                  // First "good" prime
-  while (p0=(long)pr, ::div(p0,n)) pr++; 
+  while (p0=(long)pr, ::divides(p0,n)) pr++; 
   
   ofstream data;
   if(dump&&(nnf>0))

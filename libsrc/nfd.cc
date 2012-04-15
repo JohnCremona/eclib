@@ -336,7 +336,7 @@ vec_m nfd::ap(long p)
   matop *matlist;
   long k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
   vec_m apvec(dims);
-  int bad = ::div(p,n);
+  int bad = ::divides(p,n);
   if(bad) return apvec; // temporary fix!
   if(bad) matlist=new matop(p,n);
   else    matlist=new matop(p);
@@ -377,7 +377,7 @@ mat_m nfd::heckeop(long p)
   long rk = nrows(K);
   matop *matlist;
   long j,k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
-  int bad = ::div(p,n);
+  int bad = ::divides(p,n);
   if(bad) 
     {
       cout<<"q = "<<p<<"\t";

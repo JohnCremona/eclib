@@ -75,7 +75,7 @@ int main()
      start_time();
      for(ip=0; ip<nap; ip++, pr++)
        {
-	 p=pr; bad = ::div(p,n);
+	 p=pr; bad = ::divides(p,n);
 	 if(verbose)
 	   {
 	     mat_m tp = form.oldheckeop(p);

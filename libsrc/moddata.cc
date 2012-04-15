@@ -35,7 +35,7 @@ level::level(long n, long neigs)
   while(primelist.size()<(unsigned)nap)
     {
       p=pr;
-      if (ndiv(p,modulus)) 
+      if (ndivides(p,modulus)) 
 	{
 	  if(p0==0) p0=p;
 	  primelist.push_back(p);
@@ -46,7 +46,7 @@ level::level(long n, long neigs)
   for(long ip=0; ip<npdivs; ip++) 
     {
       p = plist[ip];
-      if(::div(p*p,n)) sqfac*=p;
+      if(::divides(p*p,n)) sqfac*=p;
     }
   long rootn=(long)(sqrt((double)n)+0.1); // rounded down
   squarelevel=(n==rootn*rootn);

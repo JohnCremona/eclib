@@ -179,15 +179,15 @@ inline int is_zero(long n) {return n==0;}
 
 long val(long factor, long number); // order of factor in number
 
-inline int div(long factor,long number) 
+inline int divides(long factor,long number) 
 { 
   return (factor==0) ? (number==0) : (number%factor==0);
 }
 
-inline int ndiv(long factor,long number) 
+inline int ndivides(long factor,long number) 
 {
   return (factor==0) ? (number!=0) : (number%factor!=0);
-  //  return !::div(factor,number);
+  //  return !::divides(factor,number);
 }
 
 inline long m1pow(long a) {return (a%2 ?  -1 : +1);}

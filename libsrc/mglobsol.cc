@@ -501,7 +501,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 // Check that w has no impossible prime factors:
       int w_is_ok = 1; long nwp;
       for(nwp=0; (nwp<nwprimes) && w_is_ok; nwp++)
-	w_is_ok = ndiv(wprimes[nwp],w);
+	w_is_ok = ndivides(wprimes[nwp],w);
       if(!w_is_ok) 
 	{
 //	  if(verbose) cout << " -- skipping w="<<w<<" (bad prime factor) \n";
@@ -600,7 +600,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 
 // Check that u has no impossible prime factors:
 	  for(nwp=0; (nwp<nwprimes) && u_is_ok; nwp++)
-	    u_is_ok = ndiv(uprimes[nwp],u);
+	    u_is_ok = ndivides(uprimes[nwp],u);
 
 	  if(!u_is_ok) continue;	  
 
