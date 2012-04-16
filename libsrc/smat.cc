@@ -284,7 +284,7 @@ smat& smat::operator=(const smat& sm)
 
 smat& smat::operator+=(const smat& mat2)
 {
-  if ((nro==mat2.nro))
+  if (nro==mat2.nro)
     {
       for(int i = 0; i < nro; i++ )
 	{
@@ -340,7 +340,7 @@ smat& smat::operator+=(const smat& mat2)
 
 smat& smat::operator-=(const smat& mat2)
 {
-  if ((nro==mat2.nro))
+  if (nro==mat2.nro)
     {
       for(int i = 0; i < nro; i++ ) 
 	{

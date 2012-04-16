@@ -712,6 +712,7 @@ int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
       if(verbose) cout<<"imaginary period = "<<y<<endl;
       return 1;
     }
+  return 0;
 }
 
 ////////////////////////////////////////////////////////

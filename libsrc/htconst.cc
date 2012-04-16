@@ -597,7 +597,7 @@ bigfloat old_calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat&
 	     { rr=rt[i].real(); i=3; }
 	}
       numint=0; 
-      if (rr<=1.0);
+      if (rr<=1.0)
 	{ numint=1;  
           i1l=rr;  i1u=1.0;
 	  if (rr<-1.0) { i1l=-1.0; }

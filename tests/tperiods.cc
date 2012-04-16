@@ -39,7 +39,8 @@ int main(){
     {
       cout << "Input curve = ";
       cout <<"["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"]:" << endl;
-      Curvedata CD(Curvedata(ai,v),1);
+      Curvedata CDin(ai,v); // v holds scaling factor
+      Curvedata CD(CDin,1); // 1 for minimise
       cout << "Minimal model = "<<(Curve)CD<<endl;
       Cperiods cp(CD);
       cout << "Periods: " << cp << endl; 
