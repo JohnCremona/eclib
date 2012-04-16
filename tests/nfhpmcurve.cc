@@ -35,6 +35,7 @@
 #include <eclib/pcprocs.h>
 
 #define AUTOLOOP
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 int main(void)
 {
@@ -81,6 +82,9 @@ int main(void)
   int noldap=25; // stopp0 must be at least this big!
   if (stopp0<noldap) stopp0=noldap;
   nf.createfromscratch(1,noldap);
+#ifdef LMFDB_ORDER
+  nf.sort();
+#endif
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   stopp=stopp0;

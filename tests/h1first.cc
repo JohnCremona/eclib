@@ -34,6 +34,7 @@
 
 #define AUTOLOOP
 #define SHOWCURVES
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 int main(void)
 {
@@ -54,6 +55,9 @@ int main(void)
       cout << ">>>Level " << n << "<<<" << endl;
       newforms nf(n,verbose); 
       nf.createfromdata(0,25,0);
+#ifdef LMFDB_ORDER
+      nf.sort();
+#endif
       if(verbose) 
 	cout << "finished reading newform data from file" << endl;     
       nf.makebases(1);

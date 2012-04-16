@@ -32,6 +32,7 @@
 #include <eclib/newforms.h>
 
 //#define AUTOLOOP
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 int main(void)
 {
@@ -53,6 +54,9 @@ int main(void)
  nf.createfromdata(1,25);
  int num = nf.n1ds; count+=num;
  cout << num << " newform(s), "<<nf.nap<<" eigs on file." << endl;
+#ifdef LMFDB_ORDER
+ nf.sort();
+#endif
  // nf.makebases();
  /*
  nf.sort();

@@ -35,6 +35,8 @@
 #include <eclib/pcprocs.h>
 
 //#define AUTOLOOP
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+
 #define MAXNY 100
 #define MAXD 10
 
@@ -84,6 +86,9 @@ int main(void)
   newforms nf(n,verbose); 
   int noldap=25;
   nf.createfromscratch(plus,noldap);
+#ifdef LMFDB_ORDER
+  nf.sort();
+#endif
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   nf.addap(stopp);

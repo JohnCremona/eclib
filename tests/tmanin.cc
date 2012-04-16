@@ -33,6 +33,7 @@
 #include <eclib/newforms.h>
 
 #define AUTOLOOP
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 int main(void)
 {
@@ -65,6 +66,9 @@ int main(void)
   newforms nf(n,verbose); 
   int noldap=25;
   nf.createfromscratch(sign,noldap);
+#ifdef LMFDB_ORDER
+  nf.sort();
+#endif
   if(verbose>1) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   if(verbose&&nf.n1ds>0) 

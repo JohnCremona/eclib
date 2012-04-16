@@ -54,6 +54,8 @@
 
 //#define DEBUG_BSD
 
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+
 #include <curvesort.cc>
 
 int main(void)
@@ -98,6 +100,9 @@ int main(void)
  newforms nf(n,0); 
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
+#ifdef LMFDB_ORDER
+ nf.sort();
+#endif
  long nclasses = nf.n1ds;
  for(int xi=0; xi<nclasses; xi++)
    { int i=xi;

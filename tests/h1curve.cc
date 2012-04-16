@@ -37,6 +37,8 @@
 #define AUTOLOOP
 #endif
 
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+
 // If this is defined, the fisc6 output is placed in subdirectory
 // fixc6 in file fixc6/fixc6.N (one per level); otherwise it is all
 // put in ./fixc6.extra
@@ -72,6 +74,9 @@ int main(void)
 #ifdef BOOKORDER
  cout<<"(reordered to agree with Book for levels up to 1000)"<<endl;
 #endif
+#ifdef LMFDB_ORDER
+ cout<<"(reordered to agree with LMFDB for levels over 1000)"<<endl;
+#endif
  if(!verb)
    {
      cout << "\nN \t# \t";
@@ -90,6 +95,9 @@ int main(void)
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
  // nf.createfromolddata();
  //nf.output_to_file();
+ #ifdef LMFDB_ORDER
+ nf.sort();
+ #endif
  int nnf = nf.n1ds;
  int inf = 1;
 #ifndef SINGLE

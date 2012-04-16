@@ -36,7 +36,7 @@
 //#define BOOKORDER       // if defined, sorts newforms/curves into order
                          // in the Book (relevant up to 500 only)
 #include <curvesort.cc>
-//#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 #define CURVE_IS_ONE_FIELD // outputs      [a1,a2,a3,a4,a6]
                            // else outputs a1 a2 a3 a4 a6
