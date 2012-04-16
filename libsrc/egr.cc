@@ -213,10 +213,12 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
   bigint d;  sqrt_mod_p_power(d,d2,p,N2);
   bigint alpha1 = (d-a1);
   if(odd(alpha1))
-    if(p==2) 
-      cout<<"Problem in ComponentGroups::ImageInComponentGroup_Im(): "
-	  <<"quadratic has no roots\n";  
-    else alpha1+=pN; // saves inverting 2 mod pN
+    {
+      if(p==2)
+        cout<<"Problem in ComponentGroups::ImageInComponentGroup_Im(): "
+            <<"quadratic has no roots\n";
+      else alpha1+=pN; // saves inverting 2 mod pN
+    }
   alpha1/=2;
   bigint alpha2 = (-a1-alpha1);
 #ifdef DEBUG_EGR_EXTRA

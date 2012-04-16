@@ -157,7 +157,9 @@ int main()
 	
       if(verbose) cout<<"\nMax height = "<<maxht<<endl;
       if(rank==1) 
-	if(r2==rank) maxht/=9;	else maxht/=4;  
+        {
+          if(r2==rank) maxht/=9;	else maxht/=4;
+        }
       // since in this case we know that the index is at least 2 (or 3).
       double ht_bound = height_constant(CD);
       if(verbose) cout << "height bound = " << ht_bound << "\n";

@@ -1143,7 +1143,7 @@ const int max_search_bound = 18;
 
 bigfloat lower_height_bound_search(const Curvedata& CD, const bigfloat& reg)
 {
-  const int verbose=0;
+  int verbose=0;
   // Find optimally x-shifted curve for better point searching...
   bigint x_shift;
   Curvedata C_opt = opt_x_shift(CD,x_shift);

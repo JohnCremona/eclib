@@ -116,38 +116,42 @@ void two_descent::report_rank() const
   else
     {
       if(verbose)
-	if(two_torsion_exists)
-	  {
-	    cout << "\nUsed descent via 2-isogeny with isogenous curve E' = "<<(Curve)(getEprime())<<endl;
-	  }
-	else
-	  {
-	    cout << "\nUsed full 2-descent via multiplication-by-2 map"<<endl;
-	  }
-      if(certain) 
+        {
+          if(two_torsion_exists)
+            {
+              cout << "\nUsed descent via 2-isogeny with isogenous curve E' = "<<(Curve)(getEprime())<<endl;
+            }
+          else
+            {
+              cout << "\nUsed full 2-descent via multiplication-by-2 map"<<endl;
+            }
+        }
+      if(certain)
 	{
 	  cout << "Rank = " << rank << endl;
 	  if (verbose)
-	    if(two_torsion_exists)
-	      {
-		cout << "Rank of S^2(E)  = "<< getselmer() << endl;
-		cout << "Rank of S^2(E') = "<< getselmerprime() <<endl;
-		cout << "Rank of S^phi(E') = "<< getselmerphi() <<endl;
-		cout << "Rank of S^phi'(E) = "<< getselmerphiprime() <<endl<<endl;
-	      }
-	    else
-	      {
-		cout << "Rank of S^2(E)  = "<< getselmer() << endl<<endl;
-	      }
+            {
+              if(two_torsion_exists)
+                {
+                  cout << "Rank of S^2(E)  = "<< getselmer() << endl;
+                  cout << "Rank of S^2(E') = "<< getselmerprime() <<endl;
+                  cout << "Rank of S^phi(E') = "<< getselmerphi() <<endl;
+                  cout << "Rank of S^phi'(E) = "<< getselmerphiprime() <<endl<<endl;
+                }
+              else
+                {
+                  cout << "Rank of S^2(E)  = "<< getselmer() << endl<<endl;
+                }
+            }
 	}
-      else 
+      else
 	{
 	  if(two_torsion_exists)
 	    cout<< rank << " <= rank <= " << rank_bound << endl;
 	  else
 	    cout<< rank << " <= rank <= selmer-rank = " << selmer_rank << endl;
-	}   
-    } 
+	}
+    }
 }
 
 void two_descent::saturate(long sat_bd)

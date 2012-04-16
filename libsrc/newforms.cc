@@ -463,17 +463,19 @@ void newform::find_twisting_primes()
 {
   int verbose=(nf->verbose);
   if(verbose) cout<<"computing twisting primes (sign="<<sign<<")..."<<flush;
-  if(sign!=-1) 
-    if(dp0!=0)
-      {
-	lplus=1; // so we need not search for a prime 1(mod 4) below
-	mplus=1; // dummy value, not used
-      }
-    else
-      {
-	lplus=0;
-	mplus =0;
-      }
+  if(sign!=-1)
+    {
+      if(dp0!=0)
+        {
+          lplus=1; // so we need not search for a prime 1(mod 4) below
+          mplus=1; // dummy value, not used
+        }
+      else
+        {
+          lplus=0;
+          mplus =0;
+        }
+    }
   if(sign!=+1) 
     {
       lminus=0;
