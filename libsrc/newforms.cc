@@ -1657,18 +1657,6 @@ void output_to_file_no_newforms(long n, int binflag)
   out.close();
    
 }
-char* nf_filename(long n, char c)
-{
-  char* nf_dir = getenv("NF_DIR"); 
-  string nf_file;
-  if (nf_dir==NULL) 
-    nf_file = string("./newforms");
-  else
-    nf_file = string(nf_dir);
-  char* filename=new char[20];
-  sprintf(filename,"%s/%c%ld",nf_file.c_str(),c,n);
-  return filename;
-}
 
   // for the i'th newform return the value of the modular symbol {0,r}
 rational newforms::plus_modular_symbol(const rational& r, long i) const

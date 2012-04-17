@@ -24,22 +24,10 @@
 #include <fstream>
 #include <iomanip>
 #include <eclib/arith.h>
+#include <eclib/moddata.h> // for nf_filename
 #define BOOKORDER       // if defined, sorts newforms & curves into order
                         // in the Book (relevant up to 500 only)
 #include <curvesort.cc>
-
-char* nf_filename(long n, char c)
-{
-  char* nf_dir = getenv("NF_DIR"); 
-  string nf_file;
-  if (nf_dir==NULL) 
-    nf_file = string("./newforms");
-  else
-    nf_file = string(nf_dir);
-  char* filename=new char[20];
-  sprintf(filename,"%s/%c%ld",nf_file.c_str(),c,n);
-  return filename;
-}
 
 int main()
 {

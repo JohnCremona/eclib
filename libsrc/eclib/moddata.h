@@ -62,3 +62,9 @@ public:
  long gcd(long res) const {return gcdtable[reduce(res)];}
  long unitdiv(long res) const {return unitdivlist[reduce(res)];}
 };
+
+// Function to construct a string representing newform filename,
+// including a prefix (default "newforms/" but taken from envoronment
+// variable NF_DIR if defined), followed by a single character
+// (usually 'x') and the decimal digits of n (positive integer).
+char* nf_filename(long n, char c);

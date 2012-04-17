@@ -226,5 +226,4 @@ public:
 
 void output_to_file_no_newforms(long n, int binflag=1);
 vector<long> eiglist(const newform& f, int oldorder=0);
-char* nf_filename(long n, char c);
 

@@ -26,19 +26,7 @@
 #include <fstream>
 using namespace std;
 #include <eclib/arith.h>
-
-char* nf_filename(long n, char c)
-{
-  char* nf_dir = getenv("NF_DIR"); 
-  string nf_file;
-  if (nf_dir==NULL) 
-    nf_file = string("./newforms");
-  else
-    nf_file = string(nf_dir);
-  char* filename=new char[20];
-  sprintf(filename,"%s/%c%ld",nf_file.c_str(),c,n);
-  return filename;
-}
+#include <eclib/moddata.h> // for nf_filename
 
 const long MAXNAP = 100000;
 
