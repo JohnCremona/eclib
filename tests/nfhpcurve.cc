@@ -37,7 +37,7 @@
 //#define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
-#define MAXNY 100
+#define MAXNY 10000
 #define MAXD 10
 
 int main(void)

@@ -689,9 +689,20 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
     }
   
   // we only reach here if sfe=-1 and level is square  
-  if(verbose) 
-    cout << "Unable to compute real period via L(f,chi,1)..."<<endl;
-  return 0;
+  if(verbose) cout << "Unable to compute real period via L(f,chi,1)...";
+
+  long dotplus = nfi->dotplus;
+  if (dotplus==0)
+    {
+      if(verbose) cout << "Unable to compute real period."<<endl;
+      return 0;
+    }
+  periods_direct pd(this,nfi);
+  if(verbose) cout<<"...computing directly...";
+  pd.compute();
+  x = abs(pd.rper()/dotplus);
+  if(verbose) cout<<"real period = "<<x<<endl;
+  return 1;
 }
 
 int newforms::get_imag_period(long i, bigfloat& y, int verbose) const

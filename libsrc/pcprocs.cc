@@ -220,7 +220,7 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 	    getc4c6(w1,w2,c4,c6);
 	    bigint ic4 = fac*Iround(real(c4)/fac);
 	    bigint ic6 = fac6*Iround(real(c6)/fac6);
-	    int close=abs(I2bigfloat(ic4)-real(c4))<0.00001;
+	    int close=(abs(I2bigfloat(ic4)-real(c4))<0.00001)&&(abs(I2bigfloat(ic6)-real(c6))<0.00001);
 	    int validc4c6 = valid_invariants(ic4,ic6);
 	    if((validc4c6||close)&&detail)
 	      {
@@ -229,8 +229,8 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 		cout << "c4 = " << real(c4) << ", c6 = " << real(c6) << "\n";
 		cout << "ic4 = " << ic4 << ", ic6 = " << ic6 << "\n";
 	      }
-//	    if(validc4c6&&close)
-	    if(validc4c6)
+	    if(validc4c6&&close)
+              //	    if(validc4c6)
 	      {
 		Curve C(ic4,ic6);
 		Curvedata CD(C,1);
