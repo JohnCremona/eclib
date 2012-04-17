@@ -1,7 +1,7 @@
 // saturate.cc: implementation of class saturator for sieving E(Q)/pE(Q)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,22 +21,22 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "matrix.h"
-#include "subspace.h"
+#include <eclib/matrix.h>
+#include <eclib/subspace.h>
 
-#include "points.h"
-#include "polys.h"
-#include "curvemod.h"
-#include "pointsmod.h"
-#include "ffmod.h"
-#include "divpol.h"
-#include "tlss.h"
-#include "elog.h"
-#include "sieve_search.h"
-#include "mwprocs.h"
-#include "saturate.h"
-#include "egr.h"
-#include "htconst.h"
+#include <eclib/points.h>
+#include <eclib/polys.h>
+#include <eclib/curvemod.h>
+#include <eclib/pointsmod.h>
+#include <eclib/ffmod.h>
+#include <eclib/divpol.h>
+#include <eclib/tlss.h>
+#include <eclib/elog.h>
+#include <eclib/sieve_search.h>
+#include <eclib/mwprocs.h>
+#include <eclib/saturate.h>
+#include <eclib/egr.h>
+#include <eclib/htconst.h>
 
 // If point search bound is greater than this, output a warning
 // message and reduce to this value:
@@ -409,7 +409,7 @@ vector<Point> pCoTorsion(const vector<Point>& AllTorsion, int p)
 
   // Case 0:
 
-  if(ndiv(p,ntorsion)) return ans; // empty
+  if(ndivides(p,ntorsion)) return ans; // empty
 
   //  find point Q of maximal order:
 

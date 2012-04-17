@@ -1,7 +1,7 @@
 // FILE TNFD.CC:  test program for nfd (d-dimensional newform) class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -23,14 +23,14 @@
 //
 //
 #include <iostream>
-#include "interface.h"
-#include "timer.h"
-#include "marith.h"
-#include "msubspace.h"
-#include "moddata.h"
-#include "symb.h"
-#include "homspace.h"
-#include "nfd.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
+#include <eclib/marith.h>
+#include <eclib/msubspace.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/homspace.h>
+#include <eclib/nfd.h>
 
 #define OUTPUT_PARI_STYLE
 //#define DEBUG
@@ -75,7 +75,7 @@ int main()
      start_time();
      for(ip=0; ip<nap; ip++, pr++)
        {
-	 p=pr; bad = ::div(p,n);
+	 p=pr; bad = ::divides(p,n);
 	 if(verbose)
 	   {
 	     mat_m tp = form.oldheckeop(p);

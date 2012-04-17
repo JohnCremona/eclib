@@ -1,7 +1,7 @@
 // FILE H1CURVE.CC: Program to list curves
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 //
 // This file is part of the mwrank/g0n package.
 //
@@ -22,20 +22,22 @@
 //////////////////////////////////////////////////////////////////////////
 //
 #include <fstream>
-#include "compproc.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "curve.h"     //from qcurves
-#include "cperiods.h"     //from qcurves, for computing conductors
-#include "newforms.h"
-#include "periods.h"
+#include <eclib/compproc.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/curve.h>     //from qcurves
+#include <eclib/cperiods.h>     //from qcurves, for computing conductors
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
 
 #ifndef SINGLE   // so Makefile can override
 #define AUTOLOOP
 #endif
+
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 // If this is defined, the fisc6 output is placed in subdirectory
 // fixc6 in file fixc6/fixc6.N (one per level); otherwise it is all
@@ -44,7 +46,7 @@
 
 #define BOOKORDER       // if defined, sorts newforms/curves into order
                         // in the Book (relevant up to 500 only)
-#include "curvesort.cc"
+#include <curvesort.cc>
 
 vector<pair<int,int> > bad_ones; // holds bad (n,i) list
 
@@ -72,6 +74,9 @@ int main(void)
 #ifdef BOOKORDER
  cout<<"(reordered to agree with Book for levels up to 1000)"<<endl;
 #endif
+#ifdef LMFDB_ORDER
+ cout<<"(reordered to agree with LMFDB for levels over 1000)"<<endl;
+#endif
  if(!verb)
    {
      cout << "\nN \t# \t";
@@ -90,6 +95,9 @@ int main(void)
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
  // nf.createfromolddata();
  //nf.output_to_file();
+ #ifdef LMFDB_ORDER
+ nf.sort();
+ #endif
  int nnf = nf.n1ds;
  int inf = 1;
 #ifndef SINGLE

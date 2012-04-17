@@ -1,7 +1,7 @@
 // sieve_search.cc: implementations of classes point_processor and qsieve
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -29,9 +29,9 @@
 // Last change : JC, Aug 19 2002, adapted for stdc++ library
 
 #include <stdlib.h> // for qsort
-#include "interface.h"
-#include "marith.h"
-#include "sieve_search.h"
+#include <eclib/interface.h>
+#include <eclib/marith.h>
+#include <eclib/sieve_search.h>
 
 //debug info printed out if DEBUG_QS is defined to 0; more info if defined to 1
 //#define DEBUG_FORBIDDEN

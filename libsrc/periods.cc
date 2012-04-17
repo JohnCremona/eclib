@@ -1,7 +1,7 @@
 // FILE PERIODS.CC : implementation of classes for integrating newforms
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 //
 // This file is part of the mwrank/g0n package.
 //
@@ -21,16 +21,16 @@
 //
 //////////////////////////////////////////////////////////////////////////
 //
-#include "compproc.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"  // from qcurves
-#include "newforms.h"
-#include "periods.h"
-#include "fixc6.h"
+#include <eclib/compproc.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>  // from qcurves
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <eclib/fixc6.h>
 
 #define CHECK_PERIODS // check that curves constructed from periods
                       // have the same periods...
@@ -94,7 +94,7 @@ vector<long> resort_aplist(const level* iN,
       }
     else // p is bad
       {
-	if(::div(p*p,N))
+	if(::divides(p*p,N))
 	  {
 	    aplist.push_back(0);
 // 	    cout << "i = "<<i<<",\tp = " << p << "\ta_p = " << aplist[i] << endl;
@@ -273,7 +273,7 @@ void summer::sumit()
   for(j=2; j<=n2p; j++)
     {
       a2p_cache[j]=a2p_cache[j-1]*aplist[0];
-      if(ndiv(2,N)) a2p_cache[j]-=2*a2p_cache[j-2];
+      if(ndivides(2,N)) a2p_cache[j]-=2*a2p_cache[j-2];
     }
 #ifdef TRACE_CACHE
   cout<<"a2p_cache = "<<a2p_cache<<endl;
@@ -286,7 +286,7 @@ void summer::sumit()
   for(j=2; j<=n3p; j++)
     {
       a3p_cache[j]=a3p_cache[j-1]*aplist[1];
-      if(ndiv(3,N)) a3p_cache[j]-=3*a3p_cache[j-2];
+      if(ndivides(3,N)) a3p_cache[j]-=3*a3p_cache[j-2];
     }
 #ifdef TRACE_CACHE
   cout<<"a3p_cache = "<<a3p_cache<<endl;
@@ -299,7 +299,7 @@ void summer::sumit()
   for(j=2; j<=n5p; j++)
     {
       a5p_cache[j]=a5p_cache[j-1]*aplist[2];
-      if(ndiv(5,N)) a5p_cache[j]-=5*a5p_cache[j-2];
+      if(ndivides(5,N)) a5p_cache[j]-=5*a5p_cache[j-2];
     }
 #ifdef TRACE_CACHE
   cout<<"a5p_cache = "<<a5p_cache<<endl;
@@ -312,7 +312,7 @@ void summer::sumit()
   for(j=2; j<=n7p; j++)
     {
       a7p_cache[j]=a7p_cache[j-1]*aplist[3];
-      if(ndiv(7,N)) a7p_cache[j]-=7*a7p_cache[j-2];
+      if(ndivides(7,N)) a7p_cache[j]-=7*a7p_cache[j-2];
     }
 #ifdef TRACE_CACHE
   cout<<"a7p_cache = "<<a7p_cache<<endl;
@@ -712,6 +712,7 @@ int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
       if(verbose) cout<<"imaginary period = "<<y<<endl;
       return 1;
     }
+  return 0;
 }
 
 ////////////////////////////////////////////////////////

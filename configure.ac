@@ -2,8 +2,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [2012-04-04], [john.cremona@gmail.com])
-AM_INIT_AUTOMAKE([-Wall -Werror])
+AC_INIT([eclib], [2012-04-16], [john.cremona@gmail.com])
+AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
 #AC_CONFIG_HEADERS([config.h])
@@ -19,10 +19,27 @@ AC_PROG_INSTALL
 
 # Checks for libraries.
 
-AC_CHECK_LIB(gmp, __gmpz_init, , [AC_MSG_ERROR(
-[GNU MP not found, see http://swox.com/gmp])])
-
-AC_CHECK_LIB(m, cos)
+dnl Find GMP
+AC_ARG_WITH(gmp,
+  [AS_HELP_STRING([--with-gmp=<path>],
+                  [prefix of gmp installation. e.g. /usr/local or /usr])],
+  [GMP_PREFIX="$with_gmp"],
+  [AC_CHECK_LIB([gmp], [__gmpz_init], ,
+    AC_MSG_ERROR([gmp library not found.
+    Maybe you want to call configure with the --with-gmp=<path> option?
+    This tells configure where to find the gmp library and headers.
+    e.g. --with-gmp=/usr/local or --with-gmp=/usr]))]
+)
+if test "x$GMP_PREFIX" != x ; then
+  GMP_LIBS=" -L${GMP_PREFIX}/lib"
+  GMP_CFLAGS=" -I${GMP_PREFIX}/include"
+else
+  GMP_LIBS=""
+  GMP_CFLAGS=""
+fi
+GMP_LIBS="${GMP_LIBS} -lgmp"
+AC_SUBST(GMP_LIBS)
+AC_SUBST(GMP_CFLAGS)
 
 # The following AC_ARG_WITH section were written by Volker Braun
 
@@ -70,8 +87,8 @@ NTL_LIBS="${NTL_LIBS} -lgmp -lntl"
 AC_SUBST(NTL_LIBS)
 AC_SUBST(NTL_CFLAGS)
 
-AM_CXXFLAGS="${NTL_CFLAGS} ${PARI_CFLAGS} -fPIC -DNTL_ALL -DUSE_PARI_FACTORING -DMETHOD=2 -DNEW_OP_ORDER"
-AM_LDFLAGS="${NTL_LIBS} ${PARI_LIBS}"
+AM_CXXFLAGS="${NTL_CFLAGS} ${PARI_CFLAGS} ${GMP_CFLAGS} -DNTL_ALL -DUSE_PARI_FACTORING -DMETHOD=2 -DNEW_OP_ORDER"
+AM_LDFLAGS="${NTL_LIBS} ${PARI_LIBS} ${GMP_LIBS}"
 
 AC_SUBST([AM_CXXFLAGS])
 AC_SUBST([AM_LDFLAGS])

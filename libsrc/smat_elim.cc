@@ -1,7 +1,7 @@
 // smat_elim.cc: implementation of class smat_elim
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -736,6 +736,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
   int numRow = (column+col0-1)->num;
   int d = col[row][0];
   int *pos1 = col[row]+1;
+  int temp;
   if( numRow == 1 ) {
     for( int s = 0; s < d; s++ ) {
       int c = pos1[s] - 1;
@@ -790,7 +791,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
 	  {
 	    if( (*V++ = xmod0(xmm0(v2,(*veci1++)) + (*veci2++))) == 0)
 	      { lro[di-d].put(row2); V--; P--; k--;}
-	    *pos1++;
+	    temp=*pos1++; // unused, but prevents compiler warning
 	    d--;
 	    d2--;
 	  }
@@ -869,6 +870,7 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
   int *P = col[row2] = new int [ d + d2 + 1 ]; P++;
   scalar *V = val[row2] = new scalar [ d + d2 ];
   int k = 0;       /*k will be # of non-zero entries of sum*/
+  int temp;
   while( d && d2 )
     { 
       if( *pos1 < *pos2 ) 
@@ -878,7 +880,7 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
 	{
 	  if( (*V++ = xmod0(xmm0(v2,(*veci1++)) + (*veci2++))) == 0)
 	    { V--; P--; k--;}
-	  *pos1++;
+	  temp=*pos1++; // unused, but prevents compiler warning
 	  d--;
 	  d2--;
 	}

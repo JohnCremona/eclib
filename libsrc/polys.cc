@@ -1,7 +1,7 @@
 // polys.cc : implements interface to NTL polynomials
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "polys.h"
+#include <eclib/marith.h>
+#include <eclib/polys.h>
 
 FqPoly reduce(const ZPoly& f, const galois_field& Fq)
 {

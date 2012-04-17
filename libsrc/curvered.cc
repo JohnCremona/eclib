@@ -1,7 +1,7 @@
 // curvered.cc -- implementation of CurveRed class etc.
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "curve.h"
-#include "polys.h" // for nrootscubic
-#include "curvemod.h" // for point counting to get ap
-#include "ffmod.h"
+#include <eclib/curve.h>
+#include <eclib/polys.h> // for nrootscubic
+#include <eclib/curvemod.h> // for point counting to get ap
+#include <eclib/ffmod.h>
 
 ostream& operator<<(ostream& os, const Kodaira_code& c)
 {

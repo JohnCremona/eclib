@@ -1,7 +1,7 @@
 // findinf.cc:  program to find points up to given naive height
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,24 +21,24 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "interface.h"
-#include "compproc.h"
+#include <eclib/interface.h>
+#include <eclib/compproc.h>
 
-#include "matrix.h"
-#include "subspace.h"
+#include <eclib/matrix.h>
+#include <eclib/subspace.h>
 
-#include "points.h"
-#include "polys.h"
-#include "curvemod.h"
-#include "pointsmod.h"
-#include "ffmod.h"
-#include "divpol.h"
-#include "tlss.h"
-#include "elog.h"
-#include "saturate.h"
-#include "getcurve.h"
-#include "sieve_search.h"
-#include "mwprocs.h"
+#include <eclib/points.h>
+#include <eclib/polys.h>
+#include <eclib/curvemod.h>
+#include <eclib/pointsmod.h>
+#include <eclib/ffmod.h>
+#include <eclib/divpol.h>
+#include <eclib/tlss.h>
+#include <eclib/elog.h>
+#include <eclib/saturate.h>
+#include <eclib/getcurve.h>
+#include <eclib/sieve_search.h>
+#include <eclib/mwprocs.h>
 
 int main()
 {

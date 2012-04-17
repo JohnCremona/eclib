@@ -1,7 +1,7 @@
 // FILE MHCOUNT.CC: Program to list/count Manin-Heilbronn matrices
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include "arith.h"
+#include <eclib/arith.h>
 
 void outmat(int n, long a, long b, long c, long d)
 {

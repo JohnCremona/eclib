@@ -1,7 +1,7 @@
 // points.cc:  implementations for Point class for points on elliptic curves
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -23,8 +23,8 @@
  
 // originally adapted from Elliptic.cc by Oisin McGuiness
 
-#include "points.h"  // which includes curve.h
-#include "cperiods.h"
+#include <eclib/points.h>  // which includes curve.h
+#include <eclib/cperiods.h>
 #include <NTL/RR.h>   // for the realify_point() function
 
 //#define DEBUG_TORSION

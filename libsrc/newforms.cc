@@ -1,7 +1,7 @@
 // FILE  NEWFORMS.CC: implementation of newforms class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -22,14 +22,14 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <iomanip>
-#include "interface.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"
-#include "newforms.h"
+#include <eclib/interface.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>
+#include <eclib/newforms.h>
 
 // Functions for ordering newforms
 // (1) Old ordering (first aq, then ap for good p);
@@ -99,7 +99,7 @@ vector<long> eiglist(const newform& f, int oldorder)
 	*eigsi++ = *aqi++;
       while(api!=f.aplist.end())
 	{
-	  if(!::div(pr,N)) *eigsi++ = *api;     
+	  if(ndivides(pr,N)) *eigsi++ = *api;     
 	  api++; pr++;
 	}
     }
@@ -109,7 +109,7 @@ vector<long> eiglist(const newform& f, int oldorder)
       eigsi=eigs.begin();
       while((aqi!=f.aqlist.end())&&(eigsi!=eigs.end()))
 	{
-	  if(::div(pr,N)) *eigsi = (*aqi++);
+	  if(::divides(pr.value(),N)) *eigsi = (*aqi++);
 	  eigsi++; pr++;
 	}
     }
@@ -259,10 +259,10 @@ void newform::fixup_eigs()
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
       q=pr.value(); pr++;
-      if(::div(q,n)) 
+      if(::divides(q,n)) 
 	{
 	  *aqi++=*api; 
-	  *api=(::div(q*q,n)? 0: -*api);
+	  *api=(::divides(q*q,n)? 0: -*api);
 	  pi++;
 	}
       api++;
@@ -305,7 +305,7 @@ void newform::unfix_eigs()
   long n = nf->modulus;
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
-      if(::div(pr.value(),n)) *api=*aqi++; 
+      if(::divides(pr.value(),n)) *api=*aqi++; 
       api++;
       pr++;
     }
@@ -320,9 +320,9 @@ void newform::refix_eigs()
   while((api!=aplist.end())&&(ip<np))
     {
       q=pr.value();
-      if(::div(q,n)) 
+      if(::divides(q,n)) 
 	{
-	  *api=(::div(q*q,n)? 0: -*api);
+	  *api=(::divides(q*q,n)? 0: -*api);
 	  ip++;
 	}
       api++;
@@ -351,7 +351,7 @@ void newform::find_bsd_ratio()
     {
       if(denomplus>1)
 	{
-	  if(::div(denomplus,dp0))  dp0/=denomplus;
+	  if(::divides(denomplus,dp0))  dp0/=denomplus;
 	  else 
 	    cout<<"newform constructor error: dp0 not divisible by denomplus!"
 		<<endl; 
@@ -463,17 +463,19 @@ void newform::find_twisting_primes()
 {
   int verbose=(nf->verbose);
   if(verbose) cout<<"computing twisting primes (sign="<<sign<<")..."<<flush;
-  if(sign!=-1) 
-    if(dp0!=0)
-      {
-	lplus=1; // so we need not search for a prime 1(mod 4) below
-	mplus=1; // dummy value, not used
-      }
-    else
-      {
-	lplus=0;
-	mplus =0;
-      }
+  if(sign!=-1)
+    {
+      if(dp0!=0)
+        {
+          lplus=1; // so we need not search for a prime 1(mod 4) below
+          mplus=1; // dummy value, not used
+        }
+      else
+        {
+          lplus=0;
+          mplus =0;
+        }
+    }
   if(sign!=+1) 
     {
       lminus=0;
@@ -504,7 +506,7 @@ void newform::find_twisting_primes()
 	    mplus = abs((vi->second)*bplus);
 	  if((denomplus>1)&&(mplus!=0))
 	    {
-	      if(::div(denomplus,mplus))  mplus/=denomplus;
+	      if(::divides(denomplus,mplus))  mplus/=denomplus;
 	      else 
 		cout<<"Warning in newform constructor: mplus not divisible by denomplus!"
 		    <<endl; 
@@ -521,7 +523,7 @@ void newform::find_twisting_primes()
 	    mminus = abs((vi->second)*bminus);
 	  if((denomminus>1)&&(mminus!=0))
 	    {
-	      if(::div(denomminus,mminus))  mminus/=denomminus;
+	      if(::divides(denomminus,mminus))  mminus/=denomminus;
 	      else 
 		cout<<"Warning in newform constructor: mminus="<<mminus<<" is not divisible by denomminus="<<denomminus<<"!"
 		    <<endl; 
@@ -561,7 +563,7 @@ void newform::find_matrix()
                   if(sign!=-1)
                     {
                       dotplus=v*bplus;
-                      if(::div(denomplus,dotplus))  
+                      if(::divides(denomplus,dotplus))  
                         dotplus/=denomplus;
                       else 
                         cout<<"Warning in find_matrix: dotplus not divisible by denomplus!"<<endl; 
@@ -570,7 +572,7 @@ void newform::find_matrix()
                   if(sign!=+1)
                     {
                       dotminus=v*bminus;
-                      if(::div(denomminus,dotminus))  
+                      if(::divides(denomminus,dotminus))  
                         dotminus/=denomminus;
                       else 
                         cout<<"Warning in find_matrix: dotminus not divisible by denomminus!"<<endl; 
@@ -608,9 +610,9 @@ void newform::add_more_ap(int nap)
   while(aplist.size()<nap)
     {
       p=pr;
-      if(::div(p,nf->modulus))
+      if(::divides(p,nf->modulus))
 	{
-	  if(::div(p*p,nf->modulus)) 
+	  if(::divides(p*p,nf->modulus)) 
 	    ap=0; 
 	  else
 	    ap=-aqlist[find(nf->plist.begin(),nf->plist.end(),p)-nf->plist.begin()];
@@ -1320,7 +1322,7 @@ void newforms::createfromolddata()
   for(k=0, j=0; j<plist.size(); j++)
     {
       q = plist[j];
-      int q2divN = ::div(q*q,modulus);
+      int q2divN = ::divides(q*q,modulus);
       while((long)pr!=q) {pr++; k++;}
       for(i=0; i<n1ds; i++)
 	{
@@ -1509,9 +1511,9 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   vector<long> apv(n1ds);
   vec v;
   long i,j,iq,ap; 
-  if(::div(p,modulus)) // we already have all the aq
+  if(::divides(p,modulus)) // we already have all the aq
     { 
-      if(::div(p*p,modulus))
+      if(::divides(p*p,modulus))
 	for (i=0; i<n1ds; i++) apv[i] = 0;
       else
 	{
@@ -1609,7 +1611,7 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
     for(primevar pr(nflist[0].aplist.size()); pr.ok(); pr++, j++) 
       {
 	p=(long)pr;
-	if(ndiv(p,modulus)) cout<<"p="; else cout<<"q="; 
+	if(ndivides(p,modulus)) cout<<"p="; else cout<<"q="; 
 	cout<<p<<":\t";
 	{
 	  for (i=0; i<n1ds; i++) cout<<nflist[i].aplist[j]<<"\t";
@@ -1623,7 +1625,7 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
       vector<long> apv=apvec(p);
       if(verbose>1) 
 	{
-	  if(ndiv(p,modulus)) cout<<"p="; else cout<<"q="; 
+	  if(ndivides(p,modulus)) cout<<"p="; else cout<<"q="; 
 	  cout<<p<<":\t";
 	  for (i=0; i<n1ds; i++) cout<<apv[i]<<"\t";
 	  cout<<endl;

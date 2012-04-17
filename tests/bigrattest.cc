@@ -1,7 +1,7 @@
 // bigrattest.cc: test of bigrational number package
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
-#include "bigrat.h"
+#include <eclib/bigrat.h>
 
 int main(void)
 {

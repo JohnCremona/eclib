@@ -1,7 +1,7 @@
 // smatrix.cc: implementation of class smat (sparse integer matrices)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -23,8 +23,8 @@
  
 // Original version by Luiz Figueiredo
 
-#include "arith.h"
-#include "smatrix.h"
+#include <eclib/arith.h>
+#include <eclib/smatrix.h>
 
 #undef scalar
 #undef vec

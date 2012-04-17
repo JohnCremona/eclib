@@ -1,7 +1,7 @@
 // conic.cc: implementations of functions for solving conics
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "conic.h"
-#include "legendre.h"
+#include <eclib/marith.h>
+#include <eclib/conic.h>
+#include <eclib/legendre.h>
 
 //#define DEBUG_CONIC
 //#define DEBUG_CONIC_2

@@ -30,7 +30,7 @@ extern "C" void *__builtin_alloca(...);
 #else
 char *alloca ();
 #endif
-#include "GetOpt.h"
+#include <eclib/GetOpt.h>
 
 char* GetOpt::nextchar = 0;
 int GetOpt::first_nonopt = 0;

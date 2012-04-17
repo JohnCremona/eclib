@@ -1,7 +1,7 @@
 // mmatrix.cc: implementation of multiprecision integer matrix class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "mmatrix.h"
+#include <eclib/marith.h>
+#include <eclib/mmatrix.h>
 
 const bigint MBIGPRIME=atoI(string("6074000003").c_str());
 // will convert this string to an bigint

@@ -1,7 +1,7 @@
 // mlocsol.cc: implementation of functions for local solubility of quartics 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -25,9 +25,9 @@
 
 #include <NTL/ZZ_pXFactoring.h>
 
-#include "mlocsol.h"
-#include "quadratic.h"
-#include "hilbert.h"
+#include <eclib/mlocsol.h>
+#include <eclib/quadratic.h>
+#include <eclib/hilbert.h>
 
 int psquare(const bigint& aa, const bigint& p);  
 /* tests if aa is a p-adic square */

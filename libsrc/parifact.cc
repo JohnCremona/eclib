@@ -1,7 +1,7 @@
 /* parifact.cc: integer factorization using libpari, interface via strings */
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -23,8 +23,8 @@
 
 #ifdef USE_PARI_FACTORING
 
-#include "pari/pari.h"
-#include "parifact.h"
+#include <pari/pari.h>
+#include <eclib/parifact.h>
 
 //#define DEBUG_GPFACT
 #include <iostream>

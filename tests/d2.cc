@@ -1,7 +1,7 @@
 // d2.cc:  program for 2nd descent from a phi-descent homogeneous space
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,20 +21,20 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "marith.h"
-#include "unimod.h"
-#include "points.h"
-#include "mquartic.h"
-#include "transform.h"
-#include "msoluble.h"
-//#include "samir.h"
-#include "qc.h"
-#include "quadratic.h"
-#include "conic.h"
-#include "minim.h"
-#include "reduce.h"
-#include "sqfdiv.h"
-#include "desc2.h"
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
+#include <eclib/points.h>
+#include <eclib/mquartic.h>
+#include <eclib/transform.h>
+#include <eclib/msoluble.h>
+//#include <eclib/samir.h>
+#include <eclib/qc.h>
+#include <eclib/quadratic.h>
+#include <eclib/conic.h>
+#include <eclib/minim.h>
+#include <eclib/reduce.h>
+#include <eclib/sqfdiv.h>
+#include <eclib/desc2.h>
 
 
 bigcomplex roots[4];

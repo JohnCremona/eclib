@@ -1,7 +1,7 @@
 // vector.cc: manage implementations of integer vector classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "arith.h"
-#include "vector.h"
+#include <eclib/arith.h>
+#include <eclib/vector.h>
 #include "random.cc"
 
 #undef scalar

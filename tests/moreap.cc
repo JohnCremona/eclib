@@ -1,7 +1,7 @@
 // FILE moreap.cc: computes more ap for given level(s)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2010 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,13 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 #include <fstream>
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"     //from qcurves, for computing conductors
-#include "newforms.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>     //from qcurves, for computing conductors
+#include <eclib/newforms.h>
 
 //#define AUTOLOOP
 

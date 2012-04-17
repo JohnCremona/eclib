@@ -1,7 +1,7 @@
 // tperiods.cc -- input a curve, find its periods
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -23,9 +23,9 @@
 //
 //#define TEST
 
-#include "compproc.h"
-#include "cperiods.h"
-#include "getcurve.h"
+#include <eclib/compproc.h>
+#include <eclib/cperiods.h>
+#include <eclib/getcurve.h>
 
 int main(){
   set_precision(string("Enter number of decimal places").c_str());
@@ -39,7 +39,8 @@ int main(){
     {
       cout << "Input curve = ";
       cout <<"["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"]:" << endl;
-      Curvedata CD(Curvedata(ai,v),1);
+      Curvedata CDin(ai,v); // v holds scaling factor
+      Curvedata CD(CDin,1); // 1 for minimise
       cout << "Minimal model = "<<(Curve)CD<<endl;
       Cperiods cp(CD);
       cout << "Periods: " << cp << endl; 

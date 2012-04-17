@@ -1,7 +1,7 @@
 // FILE OLDFORMS.CC: implementation of class oldforms
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,13 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "cperiods.h"
-#include "oldforms.h"
-#include "newforms.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/cperiods.h>
+#include <eclib/oldforms.h>
+#include <eclib/newforms.h>
 
 inline int testbit(long a, long i) {return (a& (1<<i));}
 
@@ -107,10 +107,10 @@ void oldforms::getoldclasses(long d, int verbose)
 		{  
 		  p = (long)pr;
 		  if(verbose>1) cout<<"p="<<p<<endl;
-		  if(::div(p,n))
+		  if(::divides(p,n))
 		    {
 		      beta = *betai++;
-		      if(::div(p,d)) aq = *aqj++;
+		      if(::divides(p,d)) aq = *aqj++;
 		      else aq=1;
 		      if (beta==0)
 			{
@@ -127,7 +127,7 @@ void oldforms::getoldclasses(long d, int verbose)
 			  else 
 			    {
 			      xmult=beta/2 +1;
-			      if(::div(p,d) && (aq==-1)) 
+			      if(::divides(p,d) && (aq==-1)) 
 				xmult--;
 			    }
 			  if (!bit) xmult=1+beta-xmult;

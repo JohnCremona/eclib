@@ -1,7 +1,7 @@
 // kbessel.cc: implementation of K-Bessel function for arbitrary real
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -25,7 +25,7 @@
 #include <iostream>  // for debugging only
 #include <cmath>
 using namespace std;
-#include "kbessel.h"
+#include <eclib/kbessel.h>
 #ifndef M_LN2
 #define M_LN2   0.69314718055994530942
 #endif

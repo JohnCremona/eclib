@@ -1,7 +1,7 @@
 // FILE CHECKGENS.CC -- Program to check input gens are Mordell-Weil basis
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -23,12 +23,12 @@
 
 
 #include <fstream>
-#include "points.h"
-#include "mwprocs.h"
-#include "sifter.h"
-#include "compproc.h"
-#include "egr.h"
-#include "htconst.h"
+#include <eclib/points.h>
+#include <eclib/mwprocs.h>
+#include <eclib/sifter.h>
+#include <eclib/compproc.h>
+#include <eclib/egr.h>
+#include <eclib/htconst.h>
 
 #define INPUT_CLASS_IS_LETTER // we only use letters now!
 
@@ -39,7 +39,7 @@ int verbose;
 char genfile[30];
 char ccode[5];
 
-#include "curvesort.cc" // for codeletter() function
+#include <curvesort.cc> // for codeletter() function
 
 int main()
 {  
@@ -157,7 +157,9 @@ int main()
 	
       if(verbose) cout<<"\nMax height = "<<maxht<<endl;
       if(rank==1) 
-	if(r2==rank) maxht/=9;	else maxht/=4;  
+        {
+          if(r2==rank) maxht/=9;	else maxht/=4;
+        }
       // since in this case we know that the index is at least 2 (or 3).
       double ht_bound = height_constant(CD);
       if(verbose) cout << "height bound = " << ht_bound << "\n";

@@ -1,7 +1,7 @@
 // torsion.cc: program to find & display torsion points
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "points.h"
-#include "getcurve.h"
+#include <eclib/points.h>
+#include <eclib/getcurve.h>
 
 
 int main(){

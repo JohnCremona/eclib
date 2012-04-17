@@ -1,7 +1,7 @@
 // interface.cc: implementation of non-inline functions from interface.h
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "interface.h"
+#include <eclib/interface.h>
 
 // integers and rationals
 

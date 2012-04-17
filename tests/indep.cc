@@ -1,7 +1,7 @@
 // indep.cc: program to test input points for (in)dependence 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -25,8 +25,8 @@
 // independent in E(Q)/2E(Q), and is now largely obsolete, being
 // superceded by general saturation algorithms
 
-#include "points.h"
-#include "sifter.h"
+#include <eclib/points.h>
+#include <eclib/sifter.h>
 
 int main()
 {

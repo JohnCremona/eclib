@@ -1,7 +1,7 @@
 // mwprocs.cc: implementation of class mw for Mordell-Weil basis
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -24,25 +24,25 @@
 
 //#define DEBUG_QSIEVE
 
-#include "interface.h"
-#include "compproc.h"
+#include <eclib/interface.h>
+#include <eclib/compproc.h>
 
-#include "matrix.h"
-#include "subspace.h"
+#include <eclib/matrix.h>
+#include <eclib/subspace.h>
 
-#include "points.h"
-#include "polys.h"
-#include "curvemod.h"
-#include "pointsmod.h"
-#include "ffmod.h"
-#include "divpol.h"
-#include "tlss.h"
-#include "elog.h"
-#include "saturate.h"
+#include <eclib/points.h>
+#include <eclib/polys.h>
+#include <eclib/curvemod.h>
+#include <eclib/pointsmod.h>
+#include <eclib/ffmod.h>
+#include <eclib/divpol.h>
+#include <eclib/tlss.h>
+#include <eclib/elog.h>
+#include <eclib/saturate.h>
 
-#include "sieve_search.h"
+#include <eclib/sieve_search.h>
 
-#include "mwprocs.h"
+#include <eclib/mwprocs.h>
 
 //
 // some locally called general functions, belong in library maybe:

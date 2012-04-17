@@ -1,7 +1,7 @@
 // illl.cc: implementations of functions for integer LLL
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "illl.h"
+#include <eclib/illl.h>
 
 //#define DEBUG_LLL
 //#define TRACE_LLL

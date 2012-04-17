@@ -1,7 +1,7 @@
 // p2points.cc:  implementations for P2Point class for points in P^2(Q)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "p2points.h"
+#include <eclib/p2points.h>
 #include <NTL/RR.h>   // for the realify_point() function
 
 //

@@ -1,7 +1,7 @@
 // qc.cc: implementation of function for mapping quartic point to curve
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "points.h"   // from qcurve library
-#include "mquartic.h"
-#include "qc.h"
+#include <eclib/marith.h>
+#include <eclib/points.h>   // from qcurve library
+#include <eclib/mquartic.h>
+#include <eclib/qc.h>
 
 //#define DEBUG
 

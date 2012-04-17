@@ -1,7 +1,7 @@
 // FILE APLIST.CC: program for listing ap
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -23,10 +23,10 @@
 
 #include <fstream>
 #include <iomanip>
-#include "arith.h"
+#include <eclib/arith.h>
 #define BOOKORDER       // if defined, sorts newforms & curves into order
                         // in the Book (relevant up to 500 only)
-#include "curvesort.cc"
+#include <curvesort.cc>
 
 char* nf_filename(long n, char c)
 {
@@ -37,7 +37,7 @@ char* nf_filename(long n, char c)
   else
     nf_file = string(nf_dir);
   char* filename=new char[20];
-  sprintf(filename,"%s/%c%d",nf_file.c_str(),c,n);
+  sprintf(filename,"%s/%c%ld",nf_file.c_str(),c,n);
   return filename;
 }
 

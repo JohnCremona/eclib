@@ -1,7 +1,7 @@
 // egr.cc: implementation of functions for reduction of points & component groups
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "points.h"
-#include "egr.h"
-#include "matrix.h"
+#include <eclib/points.h>
+#include <eclib/egr.h>
+#include <eclib/matrix.h>
 
 //#define DEBUG_EGR
 //#define DEBUG_EGR_EXTRA
@@ -213,10 +213,12 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
   bigint d;  sqrt_mod_p_power(d,d2,p,N2);
   bigint alpha1 = (d-a1);
   if(odd(alpha1))
-    if(p==2) 
-      cout<<"Problem in ComponentGroups::ImageInComponentGroup_Im(): "
-	  <<"quadratic has no roots\n";  
-    else alpha1+=pN; // saves inverting 2 mod pN
+    {
+      if(p==2)
+        cout<<"Problem in ComponentGroups::ImageInComponentGroup_Im(): "
+            <<"quadratic has no roots\n";
+      else alpha1+=pN; // saves inverting 2 mod pN
+    }
   alpha1/=2;
   bigint alpha2 = (-a1-alpha1);
 #ifdef DEBUG_EGR_EXTRA
@@ -844,7 +846,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
 	  cout<<"colmin = "<<colmin<<" at imin="<<imin<<endl;
 #endif
 	  for(i=1; i<=npts; i++)
-	    if(ndiv(colmin,m(i,j)))
+	    if(ndivides(colmin,m(i,j)))
 	      {
 		r = m(i,j) % colmin;
 		q = (m(i,j) - r) / colmin;

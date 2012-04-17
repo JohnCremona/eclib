@@ -1,7 +1,7 @@
 // FILE CUSP.CC
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
 
 // This function tests cusps for Gamma_0(N)-equivalence, unless
 // plusflag is +1 in which case it tests for equivalence under

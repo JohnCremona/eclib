@@ -1,7 +1,7 @@
 // smattest.cc: test of sparse matrix package
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -27,14 +27,14 @@
 #include <sys/times.h>
 //#include <sys/param.h>
 //#include <iostream>
-#include "arith.h"
+#include <eclib/arith.h>
 float ran0( long& idum ); 
 float ran0( int& idum ); 
 
 //#define SCALAR_OPTION 1 // ints
 #define SCALAR_OPTION 2   // longs
 
-#include "smatrix_elim.h"
+#include <eclib/smatrix_elim.h>
 
 long starttime,stoptime;
 

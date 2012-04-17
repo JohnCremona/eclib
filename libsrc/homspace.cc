@@ -1,7 +1,7 @@
 // FILE HOMSPACE.CC: Implemention of class homspace
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -23,14 +23,14 @@
 
 #define USE_SMATS // Warning:  no longer testing without this switched on!
 
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "timer.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/timer.h>
 
 #ifdef USE_SMATS
-#include "smatrix_elim.h"
+#include <eclib/smatrix_elim.h>
 #endif
 
 const string W_opname("W");
@@ -156,7 +156,7 @@ if (verbose)
 {cout << "After 2-term relations, ngens = "<<ngens<<"\n";
 // Compare with predicted value:
 /*
- int nu2=(::div((long)4,modulus)?0:1);
+ int nu2=(::divides((long)4,modulus)?0:1);
  static int nu2table[4] = {0,2,1,0};
  for(i=0; nu2&&(i<npdivs); i++)  nu2 *= nu2table[plist[i]%4];
  int ngens0=(nsymb-nu2)/2;
@@ -256,7 +256,7 @@ if (verbose>1)
        /*
        if(!plusflag)
 	 {
-	   int nu3=(::div((long)9,modulus)?0:1);
+	   int nu3=(::divides((long)9,modulus)?0:1);
 	   static int nu3table[3] = {1,2,0};
 	   for(i=0; nu3&&(i<npdivs); i++)  nu3 *= nu3table[plist[i]%3];
 	   int ntriangles=(nsymb+2*nu3)/3;
@@ -766,7 +766,7 @@ smat homspace::s_heckeop_restricted(long p,const ssubspace& s,
  
 mat homspace::newheckeop(long p, int dual, int display) const
 {
-  if(::div(p,modulus)) return wop(p,display);
+  if(::divides(p,modulus)) return wop(p,display);
   matop hmats(p); // constructs H-matrices
   long j, nmats=hmats.size();
   svec colj(rk);    mat m(rk,rk); 
@@ -900,7 +900,7 @@ mat homspace::opmat(int i, int dual, int v)
   long p = op_prime(i);
   if(v) 
     {
-      cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p<<")..."<<flush;
+      cout<<"Computing " << ((::divides(p,modulus)) ? W_opname : T_opname) <<"("<<p<<")..."<<flush;
       mat ans = heckeop(p,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -920,7 +920,7 @@ smat homspace::s_opmat(int i, int dual, int v)
   long p = op_prime(i);
   if(v) 
     {
-      cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p<<")..."<<flush;
+      cout<<"Computing " << ((::divides(p,modulus)) ? W_opname : T_opname) <<"("<<p<<")..."<<flush;
       smat ans = s_heckeop(p,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -941,7 +941,7 @@ mat homspace::opmat_restricted(int i, const subspace& s, int dual, int v)
   long p = op_prime(i);
   if(v) 
     {
-      cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p
+      cout<<"Computing " << ((::divides(p,modulus)) ? W_opname : T_opname) <<"("<<p
 	  <<") restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
       mat ans = heckeop_restricted(p,s,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
@@ -963,7 +963,7 @@ smat homspace::s_opmat_restricted(int i, const ssubspace& s, int dual, int v)
   long p = op_prime(i);
   if(v) 
     {
-      cout<<"Computing " << ((::div(p,modulus)) ? W_opname : T_opname) <<"("<<p
+      cout<<"Computing " << ((::divides(p,modulus)) ? W_opname : T_opname) <<"("<<p
 	  <<") restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
       smat ans = s_heckeop_restricted(p,s,dual,(v>2)); // Automatically chooses W or T
       cout<<"done."<<endl;
@@ -1009,7 +1009,7 @@ vector<long> homspace::eigrange(long i)
 {
   if((i<0)||(i>=nap)) return vector<long>(0);  // shouldn't happen
   long p = op_prime(i);
-  if(::div(p,modulus))  return vector<long>(pm1,pm1+2);
+  if(::divides(p,modulus))  return vector<long>(pm1,pm1+2);
   return T_eigrange(p);
 }
 

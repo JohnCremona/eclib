@@ -46,7 +46,7 @@ svectest2_SOURCES=svectest.cc
 svectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
 
 check_procs: procs_tests
-	echo Running procs checks...
+	@echo Running procs checks...
 	./vectest1 < $(test_input_dir)/vectest.in >  vectest1.testout && diff vectest1.testout $(test_output_dir)/vectest.out
 	./vectest2 < $(test_input_dir)/vectest.in >  vectest2.testout && diff vectest2.testout $(test_output_dir)/vectest.out
 	./mattest1 < $(test_input_dir)/mattest.in >  mattest1.testout && diff mattest1.testout $(test_output_dir)/mattest.out
@@ -93,7 +93,7 @@ findinf_SOURCES=findinf.cc
 indep_SOURCES=indep.cc
 
 check_qcurves: qcurves_tests
-	echo Running qcurves checks...
+	@echo Running qcurves checks...
 	./tcurve < $(test_input_dir)/tcurve.in > tcurve.testout && diff tcurve.testout $(test_output_dir)/tcurve.out
 	./tpoints > tpoints.testout && diff tpoints.testout $(test_output_dir)/tpoints.out
 	./theight < $(test_input_dir)/theight.in > theight.testout && diff theight.testout $(test_output_dir)/theight.out
@@ -124,14 +124,14 @@ mwrank_SOURCES=mwrank.cc
 ratpoint_SOURCES=ratpoint.cc
 
 check_qrank: qrank_tests
-	echo Running qrank checks...
+	@echo Running qrank checks...
 	./tequiv < $(test_input_dir)/tequiv.in > tequiv.testout && diff tequiv.testout $(test_output_dir)/tequiv.out
 	./tred < $(test_input_dir)/tred.in > tred.testout 2>/dev/null && diff tred.testout $(test_output_dir)/tred.out
 	./ratpoint < $(test_input_dir)/ratpoint.in > ratpoint.testout 2>/dev/null && diff ratpoint.testout $(test_output_dir)/ratpoint.out
 	./mwrank < $(test_input_dir)/mwrank.in > mwrank.testout 2>/dev/null && diff mwrank.testout $(test_output_dir)/mwrank.out
 	rm -f PRIMES 1
 
-G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first moreap
+G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first moreap qexp
 g0n_tests: $(G0N_TESTS)
 
 # NB aplist, checkgens and tnfd are not currently tested in check_g0n
@@ -157,6 +157,7 @@ nfcount_SOURCES=nfcount.cc
 ecnf_SOURCES=ecnf.cc
 h1first_SOURCES=h1first.cc
 moreap_SOURCES=moreap.cc
+qexp_SOURCES=qexp.cc
 
 # This is the name of a directory which will be used for newform
 # input/output in the "make check" tests and removed afterwards.
@@ -164,7 +165,7 @@ moreap_SOURCES=moreap.cc
 export NF_DIR:=nftmp
 
 check_g0n:  g0n_tests
-	echo Running g0n checks...
+	@echo Running g0n checks...
 	./modtest < $(test_input_dir)/modtest.in > modtest.testout 2>/dev/null && diff modtest.testout $(test_output_dir)/modtest.out
 	./homtest < $(test_input_dir)/homtest.in > homtest.testout && diff homtest.testout $(test_output_dir)/homtest.out
 	./hecketest < $(test_input_dir)/hecketest.in > hecketest.testout 2>/dev/null && diff hecketest.testout $(test_output_dir)/hecketest.out
@@ -180,6 +181,8 @@ check_g0n:  g0n_tests
 	./nfhpmcurve < $(test_input_dir)/nfhpmcurve.in > nfhpmcurve.testout 2>/dev/null && diff nfhpmcurve.testout $(test_output_dir)/nfhpmcurve.out
 	./h1clist < $(test_input_dir)/h1clist.in > h1clist.testout 2>/dev/null && diff h1clist.testout $(test_output_dir)/h1clist.out
 	./h1bsdcurisog < $(test_input_dir)/h1bsdcurisog.in > h1bsdcurisog.testout 2>/dev/null && diff h1bsdcurisog.testout $(test_output_dir)/h1bsdcurisog.out
+	echo 0 25 1  1 50 60 | ./tmanin > /dev/null 2>/dev/null 
+	./qexp < $(test_input_dir)/qexp.in > qexp.testout 2>/dev/null && diff qexp.testout $(test_output_dir)/qexp.out
 	rm -rf $(NF_DIR)
 
 tests: procs_tests qcurves_tests qrank_tests g0n_tests

@@ -1,7 +1,7 @@
 // FILE HOMTEST.CC: Test program for homspace class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,11 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "timer.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/timer.h>
 
 #define AUTOLOOP
 //#define SHOW_TIMES

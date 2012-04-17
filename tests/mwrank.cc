@@ -1,7 +1,7 @@
 // mwrank.cc:  program to find Mordell-Weil group via 2-descent and saturation
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,12 +21,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "mwprocs.h"
-#include "getcurve.h"
-#include "timer.h"
-#include "options.h"
-#include "descent.h"
-#include "version.h"
+#include <eclib/mwprocs.h>
+#include <eclib/getcurve.h>
+#include <eclib/timer.h>
+#include <eclib/options.h>
+#include <eclib/descent.h>
+#include <eclib/version.h>
 
 #define MAX_HEIGHT 20 // will never search for points on curve of naive 
                       // logarithmic height greater than this 

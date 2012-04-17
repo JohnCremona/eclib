@@ -1,7 +1,7 @@
 // mattest.cc: Matrix package test program
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,10 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
-#include "interface.h"
-#include "timer.h"
-#include "arith.h"
-#include "matrix.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
+#include <eclib/arith.h>
+#include <eclib/matrix.h>
 
 int main(void)
 {

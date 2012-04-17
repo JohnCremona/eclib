@@ -1,7 +1,7 @@
 // mglobsol.cc: implementation of class quartic_sieve and functions for quartic solubility testing
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -24,7 +24,7 @@
 // (1) simple search with function ratpoint()
 // (2) sieve-assisted search using class quartic_sieve
 
-#include "mglobsol.h"
+#include <eclib/mglobsol.h>
 
 int test(const bigint& x, const bigint& z, const bigint& y2, bigint&xx, bigint&yy, bigint&zz)
 {
@@ -501,7 +501,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 // Check that w has no impossible prime factors:
       int w_is_ok = 1; long nwp;
       for(nwp=0; (nwp<nwprimes) && w_is_ok; nwp++)
-	w_is_ok = ndiv(wprimes[nwp],w);
+	w_is_ok = ndivides(wprimes[nwp],w);
       if(!w_is_ok) 
 	{
 //	  if(verbose) cout << " -- skipping w="<<w<<" (bad prime factor) \n";
@@ -600,7 +600,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 
 // Check that u has no impossible prime factors:
 	  for(nwp=0; (nwp<nwprimes) && u_is_ok; nwp++)
-	    u_is_ok = ndiv(uprimes[nwp],u);
+	    u_is_ok = ndivides(uprimes[nwp],u);
 
 	  if(!u_is_ok) continue;	  
 

@@ -1,7 +1,7 @@
 // cubic.cc:  implementation of integer cubic class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,10 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
  //
 
-#include "marith.h"
-#include "unimod.h"
-#include "cubic.h"
-#include "realroots.h"
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
+#include <eclib/cubic.h>
+#include <eclib/realroots.h>
 
 void cubic::init()
 {

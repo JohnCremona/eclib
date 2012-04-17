@@ -1,7 +1,7 @@
 // mspace.cc: test program for msubspace class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "msubspace.h"
+#include <eclib/msubspace.h>
 const bigint MBIGPRIME=atoI("6074000003");
 // will convert this string to an bigint
 //This is nearly the largest p such that (p/2)^2 < 2^63.

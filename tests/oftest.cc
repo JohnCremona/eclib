@@ -1,7 +1,7 @@
 // FILE OFTEST.CC  -- Test program for oldform class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <time.h>
-#include "moddata.h"
-#include "oldforms.h"
+#include <eclib/moddata.h>
+#include <eclib/oldforms.h>
 
 #define AUTOLOOP
 

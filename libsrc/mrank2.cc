@@ -1,7 +1,7 @@
 // mrank2.cc: implementation of class rank2 for descent via 2-isogeny
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,16 +22,16 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iomanip> // for setbase(), used for hex output of codes
-#include "bitspace.h"
-#include "compproc.h"
-#include "points.h"
-#include "mwprocs.h"
-#include "mquartic.h"
-#include "msoluble.h"
-#include "descent.h"
-#include "mrank2.h"
-#include "sqfdiv.h"
-#include "desc2.h"
+#include <eclib/bitspace.h>
+#include <eclib/compproc.h>
+#include <eclib/points.h>
+#include <eclib/mwprocs.h>
+#include <eclib/mquartic.h>
+#include <eclib/msoluble.h>
+#include <eclib/descent.h>
+#include <eclib/mrank2.h>
+#include <eclib/sqfdiv.h>
+#include <eclib/desc2.h>
 
 #ifndef QSIEVE_OPT
 #define QSIEVE_OPT 0 // uses Stoll's sieve

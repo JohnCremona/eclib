@@ -1,7 +1,7 @@
 // TMANIN.CC: Program for finding newforms & computing ap
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -22,17 +22,18 @@
 //////////////////////////////////////////////////////////////////////////
 //
 //
-#include "interface.h"
-#include "timer.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"
-#include "newforms.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>
+#include <eclib/newforms.h>
 
 #define AUTOLOOP
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 int main(void)
 {
@@ -65,6 +66,9 @@ int main(void)
   newforms nf(n,verbose); 
   int noldap=25;
   nf.createfromscratch(sign,noldap);
+#ifdef LMFDB_ORDER
+  nf.sort();
+#endif
   if(verbose>1) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   if(verbose&&nf.n1ds>0) 

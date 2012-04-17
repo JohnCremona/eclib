@@ -1,7 +1,7 @@
 // heights.cc: implementation of height functions declared in points.h
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "points.h"  // which includes curve.h
+#include <eclib/points.h>  // which includes curve.h
 
 bigfloat height(Point& P)
 {

@@ -1,7 +1,7 @@
 // matrix.cc: manage implementation of integer matrix classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "arith.h"
-#include "matrix.h"
+#include <eclib/arith.h>
+#include <eclib/matrix.h>
 
 #undef scalar
 #undef vec

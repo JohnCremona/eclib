@@ -1,7 +1,7 @@
 // tilll.cc: test program for illl integer lll reduction
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "mvector.h"
-#include "mmatrix.h"
-#include "illl.h"
+#include <eclib/mvector.h>
+#include <eclib/mmatrix.h>
+#include <eclib/illl.h>
 
 int main()
 {

@@ -1,7 +1,7 @@
 // lambda.h   Declarations of functions which compute Silverman's
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -28,8 +28,8 @@
 // (2) Intended for use in computing Heegner points (not yet implemented)
 
 
-#include "points.h"
-#include "lambda.h"
+#include <eclib/points.h>
+#include <eclib/lambda.h>
 
 #define MAX_NUM_LAMBDA 1000
 

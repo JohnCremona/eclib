@@ -1,7 +1,7 @@
 // MODTEST.CC  -- Test for modular symbols
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "interface.h"
-#include "timer.h"
-#include "moddata.h"
-#include "symb.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
 
 #define AUTOLOOP
 

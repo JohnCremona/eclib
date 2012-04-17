@@ -1,7 +1,7 @@
 // THEIGHT.CC -- test of height procedures
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-#include "points.h"
+#include <eclib/points.h>
 
 int main(){
   set_precision(100);

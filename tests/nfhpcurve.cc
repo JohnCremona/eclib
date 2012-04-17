@@ -1,7 +1,7 @@
 // FILE nfhpcurve.cc main newform- and curve-finding program
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,20 +21,22 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "interface.h"
-#include "timer.h"
-#include "xsplit.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"     //from qcurves, for computing conductors
-#include "newforms.h"
-#include "periods.h"
-#include "pcprocs.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
+#include <eclib/xsplit.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>     //from qcurves, for computing conductors
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <eclib/pcprocs.h>
 
 //#define AUTOLOOP
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+
 #define MAXNY 100
 #define MAXD 10
 
@@ -84,6 +86,9 @@ int main(void)
   newforms nf(n,verbose); 
   int noldap=25;
   nf.createfromscratch(plus,noldap);
+#ifdef LMFDB_ORDER
+  nf.sort();
+#endif
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   nf.addap(stopp);

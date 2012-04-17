@@ -1,7 +1,7 @@
 // realroots.cc: implementation of funtions for real roots of polynomials
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "compproc.h"
-#include "realroots.h"
+#include <eclib/compproc.h>
+#include <eclib/realroots.h>
 
 bigfloat safe_sqrt(const bigfloat& x)
 {

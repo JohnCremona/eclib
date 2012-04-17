@@ -1,7 +1,7 @@
 // FILE SYMB.CC: Implementations for symbols
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "moddata.h"
-#include "symb.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
 
 // Friend of class symb:
 ostream& operator<< (ostream& s, const symb& sy)

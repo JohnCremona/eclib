@@ -1,7 +1,7 @@
 // twoadic.cc: implementation of functions for existence of 2-adic points
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
-#include "mlocsol.h"
-#include "twoadic.h"
+#include <eclib/mlocsol.h>
+#include <eclib/twoadic.h>
 
 // The following due to Michael Stoll:
 

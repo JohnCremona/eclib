@@ -1,7 +1,7 @@
 // FILE HECKETEST.CC  -- Test program for Hecke operators
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,20 +21,20 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include "interface.h"
-#include "timer.h"
+#include <eclib/interface.h>
+#include <eclib/timer.h>
 #include <NTL/mat_ZZ.h>
 #include <NTL/mat_poly_ZZ.h>
 #include <NTL/ZZXFactoring.h>
 #include <NTL/LLL.h>
 
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "smatrix_elim.h"
-#include "mmatrix.h"
-#include "msubspace.h"
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/smatrix_elim.h>
+#include <eclib/mmatrix.h>
+#include <eclib/msubspace.h>
 
 //#define AUTOLOOP
 //#define COMPARE_OLD

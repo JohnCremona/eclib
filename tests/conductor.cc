@@ -1,7 +1,7 @@
 // conductor.cc: program to call Tate's algorithm and display conductors
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "curve.h"
-#include "getcurve.h"
+#include <eclib/curve.h>
+#include <eclib/getcurve.h>
 
 int main(void)
 {

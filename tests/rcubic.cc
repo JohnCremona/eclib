@@ -1,7 +1,7 @@
 // rcubic.cc: Program for reducing integer cubics
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "unimod.h"
-#include "cubic.h"
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
+#include <eclib/cubic.h>
 
 int main()
 {

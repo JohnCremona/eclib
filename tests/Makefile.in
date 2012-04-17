@@ -69,7 +69,7 @@ am__EXEEXT_4 = modtest$(EXEEXT) homtest$(EXEEXT) hecketest$(EXEEXT) \
 	pcurve$(EXEEXT) nfhpcurve$(EXEEXT) nfhpmcurve$(EXEEXT) \
 	h1clist$(EXEEXT) checkap$(EXEEXT) h1bsdcurisog$(EXEEXT) \
 	h1degphi$(EXEEXT) hpcurve$(EXEEXT) nfcount$(EXEEXT) \
-	ecnf$(EXEEXT) h1first$(EXEEXT) moreap$(EXEEXT)
+	ecnf$(EXEEXT) h1first$(EXEEXT) moreap$(EXEEXT) qexp$(EXEEXT)
 am__EXEEXT_5 = aplist$(EXEEXT) checkgens$(EXEEXT) tnfd$(EXEEXT) \
 	d2$(EXEEXT) tcon2$(EXEEXT) tlegcert$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
@@ -188,6 +188,9 @@ pcurve_LDADD = $(LDADD)
 am_ptest_OBJECTS = ptest.$(OBJEXT)
 ptest_OBJECTS = $(am_ptest_OBJECTS)
 ptest_LDADD = $(LDADD)
+am_qexp_OBJECTS = qexp.$(OBJEXT)
+qexp_OBJECTS = $(am_qexp_OBJECTS)
+qexp_LDADD = $(LDADD)
 am_ratpoint_OBJECTS = ratpoint.$(OBJEXT)
 ratpoint_OBJECTS = $(am_ratpoint_OBJECTS)
 ratpoint_LDADD = $(LDADD)
@@ -324,32 +327,7 @@ SOURCES = $(allisog_SOURCES) $(aplist_SOURCES) $(bigrattest_SOURCES) \
 	$(mptest_SOURCES) $(mspace_SOURCES) $(mvectest_SOURCES) \
 	$(mwrank_SOURCES) $(nfcount_SOURCES) $(nfhpcurve_SOURCES) \
 	$(nfhpmcurve_SOURCES) $(nftest_SOURCES) $(oftest_SOURCES) \
-	$(pcurve_SOURCES) $(ptest_SOURCES) $(ratpoint_SOURCES) \
-	$(rattest_SOURCES) $(rcubic_SOURCES) $(smattest_SOURCES) \
-	$(space1_SOURCES) $(space2_SOURCES) $(svectest1_SOURCES) \
-	$(svectest2_SOURCES) $(tate_SOURCES) $(tbessel_SOURCES) \
-	$(tcon2_SOURCES) $(tconic_SOURCES) $(tcurve_SOURCES) \
-	$(tdivpol_SOURCES) $(tegr_SOURCES) $(telog_SOURCES) \
-	$(tequiv_SOURCES) $(theight_SOURCES) $(thilbert_SOURCES) \
-	$(thtconst_SOURCES) $(tilll_SOURCES) $(tleg_SOURCES) \
-	$(tlegcert_SOURCES) $(tmanin_SOURCES) $(tmrank_SOURCES) \
-	$(tnfd_SOURCES) $(torsion_SOURCES) $(tp2points_SOURCES) \
-	$(tperiods_SOURCES) $(tpoints_SOURCES) $(tred_SOURCES) \
-	$(tsat_SOURCES) $(tsat2_SOURCES) $(tsat3_SOURCES) \
-	$(twist_SOURCES) $(vectest1_SOURCES) $(vectest2_SOURCES)
-DIST_SOURCES = $(allisog_SOURCES) $(aplist_SOURCES) \
-	$(bigrattest_SOURCES) $(checkap_SOURCES) $(checkgens_SOURCES) \
-	$(comptest_SOURCES) $(conductor_SOURCES) $(d2_SOURCES) \
-	$(ecnf_SOURCES) $(findinf_SOURCES) $(h1bsd_SOURCES) \
-	$(h1bsdcurisog_SOURCES) $(h1clist_SOURCES) $(h1curve_SOURCES) \
-	$(h1degphi_SOURCES) $(h1first_SOURCES) $(hecketest_SOURCES) \
-	$(homtest_SOURCES) $(hpcurve_SOURCES) $(indep_SOURCES) \
-	$(lcubic_SOURCES) $(mattest1_SOURCES) $(mattest2_SOURCES) \
-	$(mhcount_SOURCES) $(mmattest_SOURCES) $(modtest_SOURCES) \
-	$(moreap_SOURCES) $(mptest_SOURCES) $(mspace_SOURCES) \
-	$(mvectest_SOURCES) $(mwrank_SOURCES) $(nfcount_SOURCES) \
-	$(nfhpcurve_SOURCES) $(nfhpmcurve_SOURCES) $(nftest_SOURCES) \
-	$(oftest_SOURCES) $(pcurve_SOURCES) $(ptest_SOURCES) \
+	$(pcurve_SOURCES) $(ptest_SOURCES) $(qexp_SOURCES) \
 	$(ratpoint_SOURCES) $(rattest_SOURCES) $(rcubic_SOURCES) \
 	$(smattest_SOURCES) $(space1_SOURCES) $(space2_SOURCES) \
 	$(svectest1_SOURCES) $(svectest2_SOURCES) $(tate_SOURCES) \
@@ -363,6 +341,32 @@ DIST_SOURCES = $(allisog_SOURCES) $(aplist_SOURCES) \
 	$(tred_SOURCES) $(tsat_SOURCES) $(tsat2_SOURCES) \
 	$(tsat3_SOURCES) $(twist_SOURCES) $(vectest1_SOURCES) \
 	$(vectest2_SOURCES)
+DIST_SOURCES = $(allisog_SOURCES) $(aplist_SOURCES) \
+	$(bigrattest_SOURCES) $(checkap_SOURCES) $(checkgens_SOURCES) \
+	$(comptest_SOURCES) $(conductor_SOURCES) $(d2_SOURCES) \
+	$(ecnf_SOURCES) $(findinf_SOURCES) $(h1bsd_SOURCES) \
+	$(h1bsdcurisog_SOURCES) $(h1clist_SOURCES) $(h1curve_SOURCES) \
+	$(h1degphi_SOURCES) $(h1first_SOURCES) $(hecketest_SOURCES) \
+	$(homtest_SOURCES) $(hpcurve_SOURCES) $(indep_SOURCES) \
+	$(lcubic_SOURCES) $(mattest1_SOURCES) $(mattest2_SOURCES) \
+	$(mhcount_SOURCES) $(mmattest_SOURCES) $(modtest_SOURCES) \
+	$(moreap_SOURCES) $(mptest_SOURCES) $(mspace_SOURCES) \
+	$(mvectest_SOURCES) $(mwrank_SOURCES) $(nfcount_SOURCES) \
+	$(nfhpcurve_SOURCES) $(nfhpmcurve_SOURCES) $(nftest_SOURCES) \
+	$(oftest_SOURCES) $(pcurve_SOURCES) $(ptest_SOURCES) \
+	$(qexp_SOURCES) $(ratpoint_SOURCES) $(rattest_SOURCES) \
+	$(rcubic_SOURCES) $(smattest_SOURCES) $(space1_SOURCES) \
+	$(space2_SOURCES) $(svectest1_SOURCES) $(svectest2_SOURCES) \
+	$(tate_SOURCES) $(tbessel_SOURCES) $(tcon2_SOURCES) \
+	$(tconic_SOURCES) $(tcurve_SOURCES) $(tdivpol_SOURCES) \
+	$(tegr_SOURCES) $(telog_SOURCES) $(tequiv_SOURCES) \
+	$(theight_SOURCES) $(thilbert_SOURCES) $(thtconst_SOURCES) \
+	$(tilll_SOURCES) $(tleg_SOURCES) $(tlegcert_SOURCES) \
+	$(tmanin_SOURCES) $(tmrank_SOURCES) $(tnfd_SOURCES) \
+	$(torsion_SOURCES) $(tp2points_SOURCES) $(tperiods_SOURCES) \
+	$(tpoints_SOURCES) $(tred_SOURCES) $(tsat_SOURCES) \
+	$(tsat2_SOURCES) $(tsat3_SOURCES) $(twist_SOURCES) \
+	$(vectest1_SOURCES) $(vectest2_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -396,6 +400,8 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+GMP_CFLAGS = @GMP_CFLAGS@
+GMP_LIBS = @GMP_LIBS@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -554,7 +560,7 @@ tequiv_SOURCES = tequiv.cc
 tred_SOURCES = tred.cc
 mwrank_SOURCES = mwrank.cc
 ratpoint_SOURCES = ratpoint.cc
-G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first moreap
+G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first moreap qexp
 
 # NB aplist, checkgens and tnfd are not currently tested in check_g0n
 modtest_SOURCES = modtest.cc
@@ -578,6 +584,7 @@ nfcount_SOURCES = nfcount.cc
 ecnf_SOURCES = ecnf.cc
 h1first_SOURCES = h1first.cc
 moreap_SOURCES = moreap.cc
+qexp_SOURCES = qexp.cc
 extra_progs = aplist checkgens tnfd d2 tcon2 tlegcert
 aplist_SOURCES = aplist.cc
 checkgens_SOURCES = checkgens.cc
@@ -785,6 +792,9 @@ pcurve$(EXEEXT): $(pcurve_OBJECTS) $(pcurve_DEPENDENCIES)
 ptest$(EXEEXT): $(ptest_OBJECTS) $(ptest_DEPENDENCIES) 
 	@rm -f ptest$(EXEEXT)
 	$(CXXLINK) $(ptest_OBJECTS) $(ptest_LDADD) $(LIBS)
+qexp$(EXEEXT): $(qexp_OBJECTS) $(qexp_DEPENDENCIES) 
+	@rm -f qexp$(EXEEXT)
+	$(CXXLINK) $(qexp_OBJECTS) $(qexp_LDADD) $(LIBS)
 ratpoint$(EXEEXT): $(ratpoint_OBJECTS) $(ratpoint_DEPENDENCIES) 
 	@rm -f ratpoint$(EXEEXT)
 	$(CXXLINK) $(ratpoint_OBJECTS) $(ratpoint_LDADD) $(LIBS)
@@ -941,6 +951,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/oftest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pcurve.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ptest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qexp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ratpoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rattest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rcubic.Po@am__quote@
@@ -1321,7 +1332,7 @@ uninstall-am: uninstall-binPROGRAMS
 procs_tests: $(PROCS_TESTS)
 
 check_procs: procs_tests
-	echo Running procs checks...
+	@echo Running procs checks...
 	./vectest1 < $(test_input_dir)/vectest.in >  vectest1.testout && diff vectest1.testout $(test_output_dir)/vectest.out
 	./vectest2 < $(test_input_dir)/vectest.in >  vectest2.testout && diff vectest2.testout $(test_output_dir)/vectest.out
 	./mattest1 < $(test_input_dir)/mattest.in >  mattest1.testout && diff mattest1.testout $(test_output_dir)/mattest.out
@@ -1347,7 +1358,7 @@ check_procs: procs_tests
 qcurves_tests: $(QCURVES_TESTS)
 
 check_qcurves: qcurves_tests
-	echo Running qcurves checks...
+	@echo Running qcurves checks...
 	./tcurve < $(test_input_dir)/tcurve.in > tcurve.testout && diff tcurve.testout $(test_output_dir)/tcurve.out
 	./tpoints > tpoints.testout && diff tpoints.testout $(test_output_dir)/tpoints.out
 	./theight < $(test_input_dir)/theight.in > theight.testout && diff theight.testout $(test_output_dir)/theight.out
@@ -1369,7 +1380,7 @@ check_qcurves: qcurves_tests
 qrank_tests: $(QRANK_TESTS)
 
 check_qrank: qrank_tests
-	echo Running qrank checks...
+	@echo Running qrank checks...
 	./tequiv < $(test_input_dir)/tequiv.in > tequiv.testout && diff tequiv.testout $(test_output_dir)/tequiv.out
 	./tred < $(test_input_dir)/tred.in > tred.testout 2>/dev/null && diff tred.testout $(test_output_dir)/tred.out
 	./ratpoint < $(test_input_dir)/ratpoint.in > ratpoint.testout 2>/dev/null && diff ratpoint.testout $(test_output_dir)/ratpoint.out
@@ -1383,7 +1394,7 @@ g0n_tests: $(G0N_TESTS)
 export NF_DIR:=nftmp
 
 check_g0n:  g0n_tests
-	echo Running g0n checks...
+	@echo Running g0n checks...
 	./modtest < $(test_input_dir)/modtest.in > modtest.testout 2>/dev/null && diff modtest.testout $(test_output_dir)/modtest.out
 	./homtest < $(test_input_dir)/homtest.in > homtest.testout && diff homtest.testout $(test_output_dir)/homtest.out
 	./hecketest < $(test_input_dir)/hecketest.in > hecketest.testout 2>/dev/null && diff hecketest.testout $(test_output_dir)/hecketest.out
@@ -1399,6 +1410,8 @@ check_g0n:  g0n_tests
 	./nfhpmcurve < $(test_input_dir)/nfhpmcurve.in > nfhpmcurve.testout 2>/dev/null && diff nfhpmcurve.testout $(test_output_dir)/nfhpmcurve.out
 	./h1clist < $(test_input_dir)/h1clist.in > h1clist.testout 2>/dev/null && diff h1clist.testout $(test_output_dir)/h1clist.out
 	./h1bsdcurisog < $(test_input_dir)/h1bsdcurisog.in > h1bsdcurisog.testout 2>/dev/null && diff h1bsdcurisog.testout $(test_output_dir)/h1bsdcurisog.out
+	echo 0 25 1  1 50 60 | ./tmanin > /dev/null 2>/dev/null 
+	./qexp < $(test_input_dir)/qexp.in > qexp.testout 2>/dev/null && diff qexp.testout $(test_output_dir)/qexp.out
 	rm -rf $(NF_DIR)
 
 tests: procs_tests qcurves_tests qrank_tests g0n_tests

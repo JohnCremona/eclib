@@ -1,7 +1,7 @@
 // FILE h1first.cc :  h1 (full space)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -21,19 +21,20 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "marith.h"
-#include "moddata.h"
-#include "symb.h"
-#include "cusp.h"
-#include "homspace.h"
-#include "oldforms.h"
-#include "cperiods.h"     //from qcurves, for computing conductors
-#include "newforms.h"
-#include "periods.h"
-#include "pcprocs.h"
+#include <eclib/marith.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/cusp.h>
+#include <eclib/homspace.h>
+#include <eclib/oldforms.h>
+#include <eclib/cperiods.h>     //from qcurves, for computing conductors
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <eclib/pcprocs.h>
 
 #define AUTOLOOP
 #define SHOWCURVES
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 int main(void)
 {
@@ -54,6 +55,9 @@ int main(void)
       cout << ">>>Level " << n << "<<<" << endl;
       newforms nf(n,verbose); 
       nf.createfromdata(0,25,0);
+#ifdef LMFDB_ORDER
+      nf.sort();
+#endif
       if(verbose) 
 	cout << "finished reading newform data from file" << endl;     
       nf.makebases(1);

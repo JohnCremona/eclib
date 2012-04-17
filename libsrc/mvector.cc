@@ -1,7 +1,7 @@
 // mvector.cc: implementations of multiprecision integer vector class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "mvector.h"
+#include <eclib/marith.h>
+#include <eclib/mvector.h>
 
 // Definitions of member operators and functions:
 

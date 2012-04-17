@@ -1,7 +1,7 @@
 // tequiv.cc: test program for quartic equivalence
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include "mquartic.h"
-#include "mequiv.h"
+#include <eclib/mquartic.h>
+#include <eclib/mequiv.h>
 #define NEQPLIST 0        // Number of primes for equiv-test sieving
 
 vector<long> eqplist;

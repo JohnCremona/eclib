@@ -1,7 +1,7 @@
 // sifter.cc: implementation of class for sifting E(Q)/2E(Q)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -24,8 +24,8 @@
 // NB This is used for proving that points are independent; now
 // largely obsolete, being superceded by general saturation algorithms
 
-#include "points.h"
-#include "sifter.h"
+#include <eclib/points.h>
+#include <eclib/sifter.h>
 
 void sifter::init()
 {

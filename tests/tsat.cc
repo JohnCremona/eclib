@@ -1,7 +1,7 @@
 // tsat.cc -- test for saturate.h/cc
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,18 +22,18 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-#include "interface.h"
-#include "matrix.h"
-#include "curve.h"
-#include "points.h"
-#include "cperiods.h"
-#include "polys.h"
-#include "curvemod.h"
-#include "pointsmod.h"
-#include "saturate.h"
-#include "elog.h"
-#include "sieve_search.h"
-#include "mwprocs.h"
+#include <eclib/interface.h>
+#include <eclib/matrix.h>
+#include <eclib/curve.h>
+#include <eclib/points.h>
+#include <eclib/cperiods.h>
+#include <eclib/polys.h>
+#include <eclib/curvemod.h>
+#include <eclib/pointsmod.h>
+#include <eclib/saturate.h>
+#include <eclib/elog.h>
+#include <eclib/sieve_search.h>
+#include <eclib/mwprocs.h>
 
 
 int randint(int top)

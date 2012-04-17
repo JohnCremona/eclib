@@ -1,7 +1,7 @@
 // gf.cc:  interface for NTL's ZZ_p
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "gf.h"
+#include <eclib/marith.h>
+#include <eclib/gf.h>
 
 map<ZZ,ZZ_pContext> ZZ_pContextCache;
 

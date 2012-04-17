@@ -1,7 +1,7 @@
 // descent.cc: implementation of classes rank12 and two_descent
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -26,13 +26,13 @@
 // computing rank via general 2-descent and descent via 2-isogeny
 // repectively); class two_descent is a user interface to these
 
-#include "compproc.h"
-#include "points.h"
-#include "mwprocs.h"
-#include "mquartic.h"
-#include "descent.h"
-#include "mrank1.h"
-#include "mrank2.h"
+#include <eclib/compproc.h>
+#include <eclib/points.h>
+#include <eclib/mwprocs.h>
+#include <eclib/mquartic.h>
+#include <eclib/descent.h>
+#include <eclib/mrank1.h>
+#include <eclib/mrank2.h>
 
 #define PRE_SATURATION_SEARCH_LIMIT 8
 
@@ -116,38 +116,42 @@ void two_descent::report_rank() const
   else
     {
       if(verbose)
-	if(two_torsion_exists)
-	  {
-	    cout << "\nUsed descent via 2-isogeny with isogenous curve E' = "<<(Curve)(getEprime())<<endl;
-	  }
-	else
-	  {
-	    cout << "\nUsed full 2-descent via multiplication-by-2 map"<<endl;
-	  }
-      if(certain) 
+        {
+          if(two_torsion_exists)
+            {
+              cout << "\nUsed descent via 2-isogeny with isogenous curve E' = "<<(Curve)(getEprime())<<endl;
+            }
+          else
+            {
+              cout << "\nUsed full 2-descent via multiplication-by-2 map"<<endl;
+            }
+        }
+      if(certain)
 	{
 	  cout << "Rank = " << rank << endl;
 	  if (verbose)
-	    if(two_torsion_exists)
-	      {
-		cout << "Rank of S^2(E)  = "<< getselmer() << endl;
-		cout << "Rank of S^2(E') = "<< getselmerprime() <<endl;
-		cout << "Rank of S^phi(E') = "<< getselmerphi() <<endl;
-		cout << "Rank of S^phi'(E) = "<< getselmerphiprime() <<endl<<endl;
-	      }
-	    else
-	      {
-		cout << "Rank of S^2(E)  = "<< getselmer() << endl<<endl;
-	      }
+            {
+              if(two_torsion_exists)
+                {
+                  cout << "Rank of S^2(E)  = "<< getselmer() << endl;
+                  cout << "Rank of S^2(E') = "<< getselmerprime() <<endl;
+                  cout << "Rank of S^phi(E') = "<< getselmerphi() <<endl;
+                  cout << "Rank of S^phi'(E) = "<< getselmerphiprime() <<endl<<endl;
+                }
+              else
+                {
+                  cout << "Rank of S^2(E)  = "<< getselmer() << endl<<endl;
+                }
+            }
 	}
-      else 
+      else
 	{
 	  if(two_torsion_exists)
 	    cout<< rank << " <= rank <= " << rank_bound << endl;
 	  else
 	    cout<< rank << " <= rank <= selmer-rank = " << selmer_rank << endl;
-	}   
-    } 
+	}
+    }
 }
 
 void two_descent::saturate(long sat_bd)

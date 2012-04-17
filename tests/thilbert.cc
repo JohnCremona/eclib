@@ -1,7 +1,7 @@
 // thilbert.cc: test of Hilbert symbol functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "quadratic.h"
-#include "conic.h"
-#include "hilbert.h"
+#include <eclib/marith.h>
+#include <eclib/quadratic.h>
+#include <eclib/conic.h>
+#include <eclib/hilbert.h>
 
 //#define AUTO
 

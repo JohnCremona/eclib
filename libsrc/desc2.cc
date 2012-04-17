@@ -1,7 +1,7 @@
 // desc2.cc:  implementation of second descent (via 2-isogeny) procedure
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,19 +21,19 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "mquartic.h"
-#include "unimod.h"
-#include "quadratic.h"
-#include "conic.h"
-#include "mlocsol.h"
-#include "mglobsol.h"
-#include "transform.h"
-#include "minim.h"
-#include "reduce.h"
-#include "sqfdiv.h"
-#include "desc2.h"
-#include "timer.h"  // for timing of conic solving
-#include "hilbert.h"
+#include <eclib/mquartic.h>
+#include <eclib/unimod.h>
+#include <eclib/quadratic.h>
+#include <eclib/conic.h>
+#include <eclib/mlocsol.h>
+#include <eclib/mglobsol.h>
+#include <eclib/transform.h>
+#include <eclib/minim.h>
+#include <eclib/reduce.h>
+#include <eclib/sqfdiv.h>
+#include <eclib/desc2.h>
+#include <eclib/timer.h>  // for timing of conic solving
+#include <eclib/hilbert.h>
 
 #ifndef QSIEVE_OPT
 #define QSIEVE_OPT 0 // uses Stoll's sieve

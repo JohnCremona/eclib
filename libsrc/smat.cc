@@ -1,7 +1,7 @@
 // smat.cc: implementation of sparse integer matrix class smat
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -284,7 +284,7 @@ smat& smat::operator=(const smat& sm)
 
 smat& smat::operator+=(const smat& mat2)
 {
-  if ((nro==mat2.nro))
+  if (nro==mat2.nro)
     {
       for(int i = 0; i < nro; i++ )
 	{
@@ -340,7 +340,7 @@ smat& smat::operator+=(const smat& mat2)
 
 smat& smat::operator-=(const smat& mat2)
 {
-  if ((nro==mat2.nro))
+  if (nro==mat2.nro)
     {
       for(int i = 0; i < nro; i++ ) 
 	{

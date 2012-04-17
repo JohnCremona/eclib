@@ -1,7 +1,7 @@
 // allisog.cc: program to find curves isogenous to input curves
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -24,9 +24,9 @@
 //#define TEST
 //#define DUMP_DATA
 
-#include "matrix.h"
-#include "isogs.h"
-#include "getcurve.h"
+#include <eclib/matrix.h>
+#include <eclib/isogs.h>
+#include <eclib/getcurve.h>
 
 int main(){
   set_precision(string("Enter number of decimal places").c_str());

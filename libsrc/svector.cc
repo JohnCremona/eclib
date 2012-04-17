@@ -1,7 +1,7 @@
 // svector.cc: implementation of class svec (sparse integer vectors)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "arith.h"
-#include "svector.h"
+#include <eclib/arith.h>
+#include <eclib/svector.h>
 
 #undef scalar
 #undef vec

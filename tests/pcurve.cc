@@ -1,7 +1,7 @@
 // FILE PCURVE.CC
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -27,15 +27,15 @@
 // determine the full Gamma_0(N) period lattice.
 
 #include <iostream>
-#include "marith.h"
-#include "moddata.h"
-#include "symb.h"
-#include "oldforms.h"
-#include "homspace.h"
-#include "cperiods.h"     //from qcurves, for computing conductors
-#include "newforms.h"
-#include "periods.h"
-#include "pcprocs.h"
+#include <eclib/marith.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/oldforms.h>
+#include <eclib/homspace.h>
+#include <eclib/cperiods.h>     //from qcurves, for computing conductors
+#include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <eclib/pcprocs.h>
 
 //#define SINGLE
 #ifndef SINGLE
@@ -83,7 +83,7 @@ int main(void)
   nnf=inf;
 #endif
   primevar pr; long p0;                  // First "good" prime
-  while (p0=(long)pr, ::div(p0,n)) pr++; 
+  while (p0=(long)pr, ::divides(p0,n)) pr++; 
   
  for(long i=inf-1; i<nnf; i++)
    {

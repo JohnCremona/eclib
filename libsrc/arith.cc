@@ -1,7 +1,7 @@
 // arith.cc: definitions of arithmetic functions (single precision)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "arith.h"
+#include <eclib/arith.h>
 
 
 /* Prime number procs; adapted from Pari  */

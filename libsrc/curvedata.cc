@@ -1,7 +1,7 @@
 // curvedata.cc -- implementation of Curvedata class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-#include "curve.h"
-#include "cubic.h"
+#include <eclib/curve.h>
+#include <eclib/cubic.h>
 
 Curvedata::Curvedata(const bigint& aa1, const bigint& aa2, 
 		     const bigint& aa3, const bigint& aa4, 

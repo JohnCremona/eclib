@@ -1,7 +1,7 @@
 // isogs.cc:  implementation of class IsogenyClass and related functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "matrix.h"
-#include "isogs.h"
-#include "points.h"
+#include <eclib/matrix.h>
+#include <eclib/isogs.h>
+#include <eclib/points.h>
 
 #define DEBUG
 

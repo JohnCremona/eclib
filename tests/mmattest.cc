@@ -1,7 +1,7 @@
 // mmattest.cc: Multiprecision matrix package test program
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <time.h>
-#include "mmatrix.h"
+#include <eclib/mmatrix.h>
 
 int main(void)
 {
@@ -156,5 +156,5 @@ else
  a.init(); 
 }
 time(&stoptime);
-cout << "cpu time = " << (stoptime-starttime) << " seconds\n";
+//cout << "cpu time = " << (stoptime-starttime) << " seconds\n";
 }

@@ -1,7 +1,7 @@
 // quadratic.cc: implementation of class for handling integer quadratics
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "unimod.h"
-#include "quadratic.h"
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
+#include <eclib/quadratic.h>
 
 quadratic::~quadratic() {delete [] coeffs;}
 

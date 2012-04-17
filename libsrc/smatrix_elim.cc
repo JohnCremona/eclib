@@ -1,7 +1,7 @@
 // smatrix_elim.cc: implementation of class smat_elim
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -23,8 +23,8 @@
  
 // Original version by Luiz Figueiredo
 
-#include "arith.h"
-#include "smatrix_elim.h"
+#include <eclib/arith.h>
+#include <eclib/smatrix_elim.h>
 
 #undef scalar
 #undef vec

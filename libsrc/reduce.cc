@@ -1,7 +1,7 @@
 // reduce.cc:  implementation of quartic reduction functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,14 +21,14 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "marith.h"
-#include "unimod.h"
-#include "points.h"
-#include "mquartic.h"
-#include "transform.h"
-#include "msoluble.h"
-#include "minim.h"
-#include "reduce.h"
+#include <eclib/marith.h>
+#include <eclib/unimod.h>
+#include <eclib/points.h>
+#include <eclib/mquartic.h>
+#include <eclib/transform.h>
+#include <eclib/msoluble.h>
+#include <eclib/minim.h>
+#include <eclib/reduce.h>
 
 #define REDUCE_B
 //#define DEBUG_REDUCE

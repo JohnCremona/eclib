@@ -1,7 +1,7 @@
 // tmrank.cc:  test program for mwrank: read from (e.g.) tmrank.in
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2005 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank package.
 // 
@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
                                                    
-#include "mwprocs.h"
-#include "descent.h"
-#include "version.h"
-#include "timer.h"
+#include <eclib/mwprocs.h>
+#include <eclib/descent.h>
+#include <eclib/version.h>
+#include <eclib/timer.h>
 
 bigint a1,a2,a3,a4,a6;
 Curve C;

@@ -1,7 +1,7 @@
 // FILE nfd.cc: implementation of class nfd (higher-dimensional newforms)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2007 John Cremona
+// Copyright 1990-2012 John Cremona
 // 
 // This file is part of the mwrank/g0n package.
 // 
@@ -22,15 +22,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
-#include "marith.h"
-#include "msubspace.h"
-#include "moddata.h"
-#include "symb.h"
-#include "homspace.h"
+#include <eclib/marith.h>
+#include <eclib/msubspace.h>
+#include <eclib/moddata.h>
+#include <eclib/symb.h>
+#include <eclib/homspace.h>
 #include <NTL/mat_ZZ.h>
 #include <NTL/mat_poly_ZZ.h>
 #include <NTL/ZZXFactoring.h>
-#include "nfd.h"
+#include <eclib/nfd.h>
 
 #define OUTPUT_PARI_STYLE
 
@@ -336,7 +336,7 @@ vec_m nfd::ap(long p)
   matop *matlist;
   long k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
   vec_m apvec(dims);
-  int bad = ::div(p,n);
+  int bad = ::divides(p,n);
   if(bad) return apvec; // temporary fix!
   if(bad) matlist=new matop(p,n);
   else    matlist=new matop(p);
@@ -377,7 +377,7 @@ mat_m nfd::heckeop(long p)
   long rk = nrows(K);
   matop *matlist;
   long j,k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
-  int bad = ::div(p,n);
+  int bad = ::divides(p,n);
   if(bad) 
     {
       cout<<"q = "<<p<<"\t";
