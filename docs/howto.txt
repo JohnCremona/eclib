@@ -1,0 +1,177 @@
+Documentation for the eclib library (building and running)
+
+%  Time-stamp: <2012-04-17 16:59:13 jec>
+
+1. Download, build and install:
+
+(a) Get the latest version of eclib from
+http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/, say
+wget http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/eclib-2012-04-17.tar.gz
+
+(b) Unpack it using
+tar zxf eclib-2012-04-17.tar.gz
+
+(c) Change into that directory:
+cd eclib-2012-04-17
+
+(d) Configure using ./configure after reading the README file to see
+if you will need non-default options.
+
+(e) make; make check; [make install]
+
+For the make install step, do it as superuser if you did not specify
+something non-default as --prefix in the ./configure step, otherwise
+make sure that the bin subdirectory of the install directory (say
+INSTALL_DIR) is in
+your PATH.
+
+2. Run!
+
+(a) Make your own working directory, say
+
+mkdir ~/g0n
+cd ~/g0n
+
+(b) Make a subdirectory which will hold newform data (as binary
+files).  The default is
+
+mkdir newforms
+
+and if you use any other name you will need to set the environment
+variable NF_DIR to this directory.
+
+(c) Modular elliptic curve programs are in $INSTALL_DIR/bin.  Several
+expect to read & write files in the newforms directory $NF_DIR.
+Beware: if you change the source code and run the resulting programs,
+this may well overwrite the data files in $NF_DIR with garbage.  So
+when testing it is a good idea to create a new testing copy of
+$NF_DIR, leaving your master one untouched. My master newforms directory
+(containing all data to 235000) is 7.8G!
+
+Question: why would you want or need to copy or use old newforms data?
+Answer: to find the newforms at level N, the program will need to knw
+about newforms at all levels M<N, M|N.  If the associated files
+newforms/xM do not exist, it will create them by finding newforms at
+these lower levels (and recursively).  Not only does this take time,
+but you have to decide on a compromise: newforms files created this
+way will only contain a few Hecke eigenvalues a(p), enough to split
+off the newform from the rest of the modular symbols space at level M,
+but (almost certainly) nowhere near enough to compute elliptic curves
+at level M.  The reason my newforms directory is so large is that for
+most levels I have a(p) for up to the first 5000 primes, as many as is
+needed for recomputing the ellitpic curves from the newforms.
+
+EXAMPLE:  starting with a fresh newforms directory, running
+nfhpcurve like this:
+% echo 0 500 1 210 0 | nfhpcurve
+will find 5 elliptic curves of conductor 210 (verbose=0 (false), 500
+ap, output-to-file=1 (true), level=210, then level=0 (to quit)).
+After this:
+
+% ls newforms
+x105  x14  x15  x21  x210  x30  x35  x42  x70
+
+but the files for M<210 are minimal (130 or 132 bytes) while the one
+for N=210 is 5372 bytes.
+
+EXAMPLE: as above, but use
+% echo 0 500 1 210 210 | nfhpmcurve
+will produce essentially the same output (both to the screen and to
+the newforms directory);  the actuall difference is that the code has
+used modular symbols in both + and - spaces instead of just the +
+space (hence pm instead of p) so the curves found are guaranteed to be
+optimal.
+
+Note: there's one small change in the input line!  Many of these
+programs can be compiled with one of two options controlled by a
+compiler flag AUTOLOOP (see the cource code): if set, the program will
+loop through a range of levels after prompting for first and last; if
+not set, it will repeatedly prompt for levels, stopping when you enter
+0.  There is no reason why the code as distributed currently has
+AUTOLOOP on for nfhpmcurve and of for nfhpcurve, it's just inconsistent.
+
+To recompute all the elliptic curve in my book, try
+
+% echo 0 500 1 11 1000 | nfhpmcurve
+
+and then remember how many years it took to get that far the first
+time!  (On 17 April 2012 it took 19m12s on a single processor.)
+
+3. Utility scripts: The newforms files are binary, not human-readable,
+so there are some utility scripts to display their contents.  They are
+in the scripts directory of the source, and are currently not
+installed anywhere, and are also not written to be used out of place
+(or with NF_DIR set to anything other than newforms).  One day I will
+improve these.  Until then, just copy them all to your working
+directory (and make sure that they are executable: they are shell
+scripts).
+
+After the above,
+
+% ./nnf 210  # Number of NewForms
+5
+% ./nap 210  # Number of a(p)
+500
+% ./showdata 210 # Displays auxiliary data for each newform
+N   = 210:
+5 newforms, 4 bad primes, 500 ap
+
+followed by a blank line and then 16 more lines of data in 5 columns
+(one for each newform).
+
+% ./showeigs 210 # Displays all stored eigenvalues for each newform
+
+while display all the stored ap (precided by the aq for bad primes),
+again in columns, one for each newform.
+
+% ./shownf 210 # Displays auxiliary data and all stored eigenvalues
+               #  for each newform
+
+displays first the output of ./showdata 210 and then that of
+./showeigs 210.
+
+4. Programs to run after you have some newforms.  These are all
+written to be interactive, so there are no command line options, and
+the program prompts for all input.  Yes/no questions should be
+answered with 0 for no and 1 for yes.  These compute the curves from
+the stored newforms, and can provide details of that computation,
+allow for change of floating point precision, and so on.
+
+(a) h1clist: lists the curves with label, coefficients, rank torsion.
+Used to create the curves* files in the database (similar to Table 1
+in my book).
+
+(b) h1curve: similar.
+
+(c) aplist, qexp: aplist produces a simple text file containing the
+eigenvalues for each newform for primes up to 100 (and larger bad
+primes), called aplist* in the database, and like Table 3 in my book
+(includes Atkin-Lehner eigenvalues).  A variant is qexp which lists
+the prime coefficients of the q-expansions.
+
+(d) h1bsdcurisog: computes all BSD data for each curve and also for
+the isogenous curves, which are computed on the way, as are
+Mordell-Weil generators.  The generators are stored in a file whose
+name is prompted for.  The BSD data is output to stdout (so you
+probably want to redirect it to a file).  The output is what is in the
+database files allbsd* and roughly corresponds to Table 4 in my book.
+The generators output file are the allgens files in the database
+(Table 2 in my book).
+
+Other tables and database files:
+
+Table 5 in my book (modular parametrization degrees) relies on code
+which is now commented out (and the program h1degphi which no longer
+works) since it proved much too slow for large levels, and Mark
+Watkins's degree program was far superior.  I now compute these with
+Sage which calls watkins's sympow.
+
+Isogeny matrices: these work with elliptic curve input rather than
+modular forms.  The version here use floating point arithmetic and are
+slow in high precision but canmiss curves in low precision.  For the
+database I use Sage instead.
+
+Integral points: computed by the Sage implementation.
+
+I have a combination of bash and Sage scripts to compute all the other
+data files in ecdata.  One day these will be added to the distribution.

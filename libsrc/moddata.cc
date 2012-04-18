@@ -154,7 +154,8 @@ char* nf_filename(long n, char c)
     nf_file = string("./newforms");
   else
     nf_file = string(nf_dir);
-  char* filename=new char[nf_file.length()+20];
+  // 23 here is (max length of a long int) + '/' + c + '\0'
+  char* filename=new char[nf_file.length()+23];
   sprintf(filename,"%s/%c%ld",nf_file.c_str(),c,n);
   return filename;
 }

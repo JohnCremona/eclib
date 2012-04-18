@@ -1,18 +1,25 @@
-Documentation for the g0n library
+Documentation for the eclib library (guide to source code)
 
 %  created 20070125
-%  Time-stamp: <2010-07-11 20:31:55 john>
+%  Time-stamp: <2012-04-17 17:07:58 jec>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Note that until March/April 2012 my source code was split into four
+subdirectories (procs, qcurves, qrank and g0n) only the last of which
+contained modular symbol code for computing elliptic curves.  The
+notes here are mostly about the latter.  In the current distribution,
+there are library headers and implementation files in libsrc/eclib and
+libsrc/ respectively, and user/test programs in tests/.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Level 0:  functionality provided from other libraries
 
-Basic arithmetic, including polynomials and pari/NTL interfacing, are
-done in ../procs.
-
-Linear Algebra, including Sparse LA, are also currently done in
-../procs, but will be refactored out to be separate by Ralf-Philipp
-Weinmann. 
+Basic arithmetic, including polynomials and PARI/NTL interfacing (PARI
+is only used for integer factorization), linear algebra (including
+sparse LA), various utilities some of which are independently useful
+(reduction of cubics and quartics, solving conics, ...).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -20,7 +27,7 @@ Level 1:  low-level classes probably not useful for users to use
 directly.
 
 NB The efficiency of the implementations here is of crucial
-importance! 
+importance!
 
 ----------------------------------------------------------------------
 
@@ -146,7 +153,7 @@ the boundary map to the cusps, and all operators are restricted to
 that subspace.  However the "restricted" operators which compute
 directly the action of Tp etc on a subspace only work properly (1) for
 subspaces of the dual and (2) for the full (including non-cuspidal)
-homology.  
+homology.
 
 Functionality (most useful class functions only):
 
@@ -171,7 +178,7 @@ Functionality (most useful class functions only):
      (2) if dual==1, transposes
 
   mat heckeop_restricted(long p, const subspace& s, int dual, int
-  display=0) 
+  display=0)
   // as previous but restricted to *dual* subspace s, so dual==1 is
   // mandatory else results are not guaranteed to be meaningful
 
@@ -195,8 +202,8 @@ Functionality (most useful class functions only):
   smat s_conj(int dual, int display=0) // as above, returning sparse mat
   smat s_conj_restricted(const ssubspace& s, int dual, int display=0)  // as above, returning sparse mat
 
-  vec maninvector(long p) // for good p, returns sum_{a mod p}{0,a/p} 
-  vec manintwist(long p) // for good p, returns sum_{a mod p}chi(a){0,a/p} 
+  vec maninvector(long p) // for good p, returns sum_{a mod p}{0,a/p}
+  vec manintwist(long p) // for good p, returns sum_{a mod p}chi(a){0,a/p}
 
 ----------------------------------------------------------------------
 
@@ -221,7 +228,7 @@ Main data fields:
   vec bplus,bminus; // DUAL eigenvectors (bminus only used if plusfalg==0)
   scalar type;            // 2 for rectangular, 1 for triangular
 			  //  period lattice
-  vector<long> aplist, aqlist; 
+  vector<long> aplist, aqlist;
 // aplist is a vector of Fourier coefficients, indexed by all primes
 // aqlist is a vector of the Wq eigenvalues
 // Bother are needed since (a) the q'th Fourier coefficient is 0 when
@@ -233,13 +240,13 @@ Main data fields:
   long ap0;     // Eigenvalue of first "good" p
   long sfe;     // sign of functional equation
   rational loverp;  // L(f,1)/x where x = least real part of a period
-                    // =np0/dp0 
+                    // =np0/dp0
 
 // The bext few are technical, needed for computing periods.
   long cuspidalfactor;  // pdot =cuspidalfactor*np0
-  long pdot,np0,dp0,qdot;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus, 
+  long pdot,np0,dp0,qdot;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus,
                            //                    = cuspidalfactor*dp0
-                           // qdot={q,infinity}.bplus 
+                           // qdot={q,infinity}.bplus
   long lplus, lminus;  // primes = +1, -1 mod 4
   long mplus, mminus;  // mplus*x=sqrt(lplus)*L(fxlplus,1)
                        // mminus*yi=sqrt(-lminus)*L(fxlminus,1)
@@ -280,7 +287,8 @@ Constructors:
 Format of stored data:  newforms are stored in files in a directory
 whose name is set via the environment variable NF_DIR which defaults
 to "newforms".  Filenames within that dir are the level (in decimal)
-preceded by 'x', e.g. newforms/x11 holds the data for level 11.  
+preceded by 'x', e.g. newforms/x11 holds the data for level 11. The
+filename is constructed by the fiunction nf_filename(), in moddata.h/cc.
 
 The filename is constructed by the function
 char* nf_filename(long n, char c)  // use c='x'
@@ -305,9 +313,9 @@ Items 1-18 are "int" while the ap and aq are "short"
 9.  lminus : prime =3 (mod 4) with L(f,lminus,1) nonzero
 10. mminus : L(f,lminus,1)*sqrt(-l)=mminus*yi
 11-14. a, b, c, d : entries of a matrix M=[a,b;N*c,d] in Gamma_0(N) s.t.
-15. dotplus       : the integral of f over {0,M(0)} is 
+15. dotplus       : the integral of f over {0,M(0)} is
 16. dotminus      : dotplus*x+dotminus*yi
-17. type : type 1 if period lattice = [2x,x+yi], type 2 if [x,yi] 
+17. type : type 1 if period lattice = [2x,x+yi], type 2 if [x,yi]
 18. degphi : degree of modular parametrization
 aq : list of Wq-eigenvalues at bad primes
 ap : list of Tp- & Wq-eigenvalues at all primes
@@ -315,8 +323,8 @@ ap : list of Tp- & Wq-eigenvalues at all primes
 
 There are some shell scripts for viewing the stored data:
 
-nnf N : returns number of newforms at level N (on file -- no computation!) 
-nap N : returns number of ap stored at level N (on file -- no computation!) 
+nnf N : returns number of newforms at level N (on file -- no computation!)
+nap N : returns number of ap stored at level N (on file -- no computation!)
 showdata N : shows just the technical data, not all the ap
 showeigs N : shows all the aq and ap
 shownf N : shows all data for level N (pipe through more or less!)
@@ -343,7 +351,7 @@ Parent classes: level provides... the level, bad primes.
 		functionality of the code for modular symbols over
 		imaginary quadratic fields.
 
-Constructor:   newforms(long n, int plus, int cuspidalflag, int disp) 
+Constructor:   newforms(long n, int plus, int cuspidalflag, int disp)
 // just sets the flags, and the of and h1 pointers to 0
 // the real work is done by calling either createfromscratch() or
 // createfromdata(), see below.
@@ -358,12 +366,12 @@ Main data fields:
   // use() is what the base class does with eigenspaces when found.
 
   // flag==0 for a recursive search, where use() will call the newform
-  // constructor; 
+  // constructor;
 
   // flag==1 for recovering newforms in a plusspace from existing data,
   // where all use() has to do is set the newforms's basis vector, as the
   // newform will already have been constructed with all the other data
-  // needed. 
+  // needed.
 
   vec mvp; // the "manin vector" sum_{a mod p} {0,a/p} for p=p0, the
       	   //  smallest good prime
@@ -628,6 +636,13 @@ working.
 files: fixc6.h, fixc6.cc, fixc4.data, fixc6.data
 class: fixc6
 
+These can be completely ignored, since I gave up ising them after
+N=130000 and just use multiprecision floating point always, even
+though it is slower, with some cleverness to automatically increase
+precision as needed.  Future plans include re-introducing the standard
+double precision code (which is all still there) and using that where
+possible and sensible, for speed and flexibility.
+
 // Background: for curves with large c6 (or c4), the value cannot be computed
 // with sufficient precision without using multiprecision floating
 // point arithmetic, which slows down all the other cases
@@ -653,7 +668,7 @@ NB For levels up to 130000 these files are quite big:
 That is, out of 570226 (optimal) curves, 25808 require this "fixing"
 of c6 and 443 also for c4.
 
-NB This is *not used* when the proograms are comiled with
+NB This is *not used* when the programs are comiled with
 multiprecision floating point (i.e. NTL not NTL_INTS) so can be
 ignored for Sage.  But the programs which produce tables of curves
 from stored data *do* recompute the periods of the newforms and hence
