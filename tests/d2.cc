@@ -27,7 +27,6 @@
 #include <eclib/mquartic.h>
 #include <eclib/transform.h>
 #include <eclib/msoluble.h>
-//#include <eclib/samir.h>
 #include <eclib/qc.h>
 #include <eclib/quadratic.h>
 #include <eclib/conic.h>
@@ -42,14 +41,14 @@ int getquartic(quartic& g);  // special version for a*x^4+c*x^2+e quartics
 
 int main()
 {
-  set_precision(string("Enter number of decimal places").c_str());
+  set_precision("Enter number of decimal places");
 
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   
   bigint zero; zero=0;
   int alldesc=0, verb=0, selmer_only=0; 
   cout << "Verbose? "; cin >> verb;
-  initprimes(string("PRIMES").c_str(),0);
+  initprimes("PRIMES",0);
   double hlim=8;
   cout << "Limit on height? "; cin >> hlim;
   cout << "Stop after first point found? "; cin >> alldesc; alldesc=1-alldesc;

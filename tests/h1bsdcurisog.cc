@@ -66,7 +66,6 @@ int main(void)
  bigint nn;
  int verbose=0;
  char genfile[30];
- char* code = new char[20];
 #ifndef RANK_ZERO_ONLY
  cerr << "See detail (0/1)? "; cin >> verbose;
  cerr << "Limits on naive height in point search? "; 
@@ -106,7 +105,7 @@ int main(void)
  long nclasses = nf.n1ds;
  for(int xi=0; xi<nclasses; xi++)
    { int i=xi;
-     codeletter(xi,code);
+     string code = codeletter(xi);
      i=booknumber0(n,i);
      newform& nfi = nf.nflist[i];
      ldash1 x(&nf, &nfi);  
@@ -214,6 +213,7 @@ int main(void)
 // N.B. The following code does give some errors!  The "algebraic"
 // code for L/P has a bug which has not been fixed, so we use the
 // analytic value which is ok.
+// 19/4/2012:  I have no idea if the previous comment is still true
 	       if(ic==0) 
 		 {
 		   bigfloat diff = I2bigfloat(dloverp)*loverp_i-I2bigfloat(nloverp);

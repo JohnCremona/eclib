@@ -1015,21 +1015,17 @@ void nl(ofstream& of, int binflag)
 void newforms::output_to_file(int binflag) const
 {
   long i,j;
-  char* name;
-  if(binflag) 
-    name = nf_filename(modulus,'x');
-  else 
-    name = nf_filename(modulus,'e');
-  ofstream out(name);
+  char prefix = 'e';
+  if(binflag) prefix = 'x';
+  string name = nf_filename(modulus,prefix);
+  ofstream out(name.c_str());
   if(!out)
     {
       cout<<"Unable to open file "<<name<<" for newform output"<<endl;
-      delete[] name;
       abort();
     }
-  delete[] name;
-  
-  if(n1ds==0) 
+
+  if(n1ds==0)
     {  
       putout(out,(int)0,binflag);
       putout(out,(int)0,binflag);
@@ -1121,12 +1117,11 @@ void newforms::createfromdata(int s, long ntp, int create_from_scratch_if_absent
   long i, j, n = modulus;
   if(verbose) cout << "Retrieving newform data for N = " << n << endl;
 
-  char* name = nf_filename(modulus,'x');
-  ifstream datafile(name);
+  string name = nf_filename(modulus,'x');
+  ifstream datafile(name.c_str());
   if(!datafile.is_open())
     {
       if(verbose) cout<<"Unable to open file "<<name<<" for newform input"<<endl;
-      delete[] name;
       if(create_from_scratch_if_absent)
 	{
 	  if(verbose) cout<<"Creating from scratch instead"<<endl;
@@ -1142,7 +1137,6 @@ void newforms::createfromdata(int s, long ntp, int create_from_scratch_if_absent
 	  abort();
 	}
     }
-  delete[] name;
 
   short temp_short;
   int temp_int;
@@ -1275,18 +1269,16 @@ void newforms::createfromolddata()
   if(verbose) 
     cout << "Retrieving old-style newform data for N = " << n << endl;
 
-  char* eigsname = new char[20];
-  sprintf(eigsname,"eigs/x%ld",n);
-  ifstream eigsfile(eigsname);
+  stringstream eigsname;
+  eigsname << "eigs/x" << n;
+  ifstream eigsfile(eigsname.str().c_str());
 
   if(!eigsfile.is_open())
     {
-      cout<<"Unable to open file "<<eigsname<<" for eigs input"<<endl;
-      delete[] eigsname;
+      cout<<"Unable to open file "<<eigsname.str()<<" for eigs input"<<endl;
       abort();
       return;
     }
-  delete[] eigsname;
 
   short temp;
   eigsfile.read((char*)&temp,sizeof(short));   // # newforms
@@ -1336,24 +1328,16 @@ void newforms::createfromolddata()
   // read extra data for each newform
   vector<int> * data = new vector<int>[n1ds];
   for(i=0; i<n1ds; i++) data[i].resize(16);
-  char* intdataname = new char[20];
-  sprintf(intdataname,"intdata/e%ld",n);
-  ifstream intdatafile(intdataname);
+  stringstream intdataname;
+  intdataname << "intdata/e" << n;
+  ifstream intdatafile(intdataname.str().c_str());
   if(!intdatafile.is_open())
     {
-     intdataname[8] = 'p';
-     intdatafile.clear();
-     intdatafile.open(intdataname);
-     if(!intdatafile.is_open())
-       {
-	 cout<<"Unable to open data file "<<intdataname<<" for data input"<<endl;
-	 delete[] intdataname;
-	 abort();
-	 return;
-       }
+      cout<<"Unable to open data file "<<intdataname<<" for data input"<<endl;
+      abort();
+      return;
     }
-  delete[] intdataname;
-  
+
   long nloverp, dloverp, dp0, np0;
   for(i=0; i<n1ds; i++)
     {
@@ -1636,13 +1620,9 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
 
 void output_to_file_no_newforms(long n, int binflag)
 {
-  char* name;
-  if(binflag)
-    name = nf_filename(n,'x');
-  else 
-    name = nf_filename(n,'e');
-  ofstream out(name);
-  delete[] name;
+  char prefix = 'e';
+  if(binflag)  prefix = 'x';
+  ofstream out(nf_filename(n,prefix).c_str());
   if(binflag)
     {
       int a=0;

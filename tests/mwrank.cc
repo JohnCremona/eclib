@@ -49,7 +49,7 @@ int main(int argc, char **argv)
   cout.precision(15);
   cerr.precision(15);
 #endif
-  initprimes(string("PRIMES").c_str(),0);
+  initprimes("PRIMES",0);
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
 
   init_time();

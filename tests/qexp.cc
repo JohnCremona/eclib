@@ -48,7 +48,6 @@ int main(void)
   int limit,firstn,n=1; 
   int verbose=0;
   unsigned int nap;
-  char* code = new char[20];
 #ifdef AUTOLOOP
   cerr<<"Enter first and last N: ";cin>>firstn>>limit; cerr<<endl;
   n=firstn-1;
@@ -73,8 +72,7 @@ int main(void)
  // cout<<"After sort():"<<endl;
  for (i=0; i<num; i++)
    {
-     codeletter(i,code);
-     cout<<n<<code<<": ";
+     cout<<n<<codeletter(i)<<": ";
      vector<long>v = nf.nflist[i].aplist;
      copy(v.begin(),v.begin()+nap, ostream_iterator<long>(cout, SEPCHAR));
      //vec_out(cout,v,20);

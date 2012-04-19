@@ -30,17 +30,15 @@
 #include <eclib/elog.h>
 #include <eclib/egr.h>
 #include <eclib/htconst.h>
-
-void codeletter(int i, char* code, int width=0);
+#include "curvesort.cc"
 
 int main()
 {
-  //  set_precision(string("Enter number of decimal places").c_str());
-  initprimes(string("PRIMES").c_str(),0);
+  //  set_precision("Enter number of decimal places");
+  initprimes("PRIMES",0);
   int j, npts;
 
   long N, nclass, ncurve;
-  char code[20];
   Curve E;
 
   while(1) {
@@ -48,11 +46,10 @@ int main()
   cin >> nclass >> ncurve;
   cin >> E;
   Curvedata C(E);
-  codeletter((nclass-1),code);
   cout<<endl;
   cout<<"==============================================================="<<endl;
   cout<<endl;
-  cout << N<<code<<ncurve<<" = "<< E << endl;
+  cout << N<<codeletter(nclass-1)<<ncurve<<" = "<< E << endl;
   Point P(C);
   cin >> npts;
   vector<Point> points; points.reserve(npts);
@@ -74,19 +71,6 @@ int main()
   bigint egri = egr_index(egr_points);
   cout<<"Index of egr subgroup = "<<egri<<endl;
   }
-}
-
-void codeletter(int i, char* code, int width)
-{
-  int n=width;    // pads string to this width with blanks
-  code[n]='\0';
-  while (n) code[--n]=' ';
-
-  int nc = i%26;
-  char c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[nc];
-  n = 1 + (i-nc)/26;
-  if(width==0) code[n]='\0';
-  while (n) code[--n]=c;
 }
 
 //end of file tegr.cc

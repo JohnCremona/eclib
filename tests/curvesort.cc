@@ -259,14 +259,16 @@ int booknumber(int level, int form)  // permutes number starting from 1
   return 1+booknumber0(level,form-1);
 }
 
+#if(0) // No longer need these old code conversion utilities!
+
 // Old codes were:  A,B,...,Z,AA,BB,...,ZZ,AAA,BBB,... etc
 
 // Function to convert old code to integer (from 0)
 
-int old_codeletter_to_int(char* code)  // i counts from 0!
+int old_codeletter_to_int(string code)  // i counts from 0!
 {
-  int i = code[0]-'A';
-  int n=1; while(code[n]!='\0') n++;
+  int i = *(code.begin())-'A';
+  int n = code.size();
   return 26*(n-1)+i;
 }
 
@@ -317,36 +319,54 @@ void old_new_codeletter(int i, char* code)  // i counts from 0!
   */
 }
 
-// new-new codes (from 01.08.05) are:  a,b,...,z,ba,bb,...,bz,ca,cb,... etc.,  i.e. straight base 26 with digits a=0, b=1, ..., z=25
+#endif // No longer need these old code conversion utilities!
 
-// Function to convert new code to integer (from 0)
+// new-new codes (from 01.08.05) are:
+// a,b,...,z,ba,bb,...,bz,ca,cb,... etc., i.e. straight base 26 with
+// digits a=0, b=1, ..., z=25
 
-int codeletter_to_int(char* code)  // i counts from 0!
+// Function to convert new code to integer (from 0) for any length of code.
+// NB N=176400 has 516 < 26^2 newforms, with codes from a to vt!
+int codeletter_to_int(string code)  // i counts from 0!
 {
-  int b = code[0]-'a';
-  if(code[1]=='\0')  return b;
-  int a = code[1]-'a';
-  return 26*b+a;
+  int n=0;
+  string::iterator c;
+  for (c=code.begin(); c<code.end(); c++)
+    n = 26*n + ((*c)-'a');
+  return n;
+  // int b = code[0]-'a';
+  // if(code[1]=='\0')  return b;
+  // int a = code[1]-'a';
+  // return 26*b+a;
 }
 
 // Function to convert integer (from 0) to new code
 
-void new_codeletter(int i, char* code)  // i counts from 0!
+string new_codeletter(int i)  // i counts from 0!
 {
-  int b = i%26;
-  int a = (i-b)/26;
-  if (a==0) {code[0]=alphabet[b]; code[1]='\0';}
-  else {code[0]=alphabet[a]; code[1]=alphabet[b]; code[2]='\0';}
+  if (i==0) return string("a"); // special case -- otherwise leading
+                                // a's are omitted
+  stringstream code;
+  int n = i, r;
+  while (n)
+  {
+    r = n%26;
+    code << alphabet[r];
+    n = (n-r)/26;
+  }
+  string res = code.str();
+  reverse(res.begin(),res.end());
+  return res;
   /*
-  int j = codeletter_to_int(code);
+  int j = codeletter_to_int(code.str());
   if(i==j) return;
   cout<<i<<" -> "<<code<<" -> "<<j<<endl;
   */
 }
 
 #ifdef USE_NEW_CODE_LETTERS
-inline void codeletter(int i, char* code) {return new_codeletter(i,code);}
+inline string codeletter(int i) {return new_codeletter(i);}
 #else
-inline void codeletter(int i, char* code) {return old_codeletter(i,code);}
+inline string codeletter(int i) {return old_codeletter(i);}
 #endif
 

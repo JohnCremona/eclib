@@ -36,8 +36,8 @@ Curve C;
 Curvedata CD;
 vector<Point> plist;
 int verbose;
-char genfile[30];
-char ccode[5];
+string genfile;
+string ccode;
 
 #include <curvesort.cc> // for codeletter() function
 
@@ -49,7 +49,7 @@ int main()
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
 
   int rank, rank2, i;
-  long cond, ncurve;
+  long cond, ncurve, nclass;
   bigfloat reg, hmax;;
   cerr<<"verbose (0/1)? ";             cin >>verbose;
   verbose=0;
@@ -60,7 +60,7 @@ int main()
   cerr << "input filename for curves and generators? "; 
   cin >> genfile;
   ifstream genin;
-  genin.open(genfile);
+  genin.open(genfile.c_str());
   if(!genin.is_open()) {cerr<<"Unable to open file " << genfile << "\n"; abort();}
   cerr<<endl;
 
@@ -72,9 +72,8 @@ int main()
 #ifdef INPUT_CLASS_IS_LETTER
       genin >> ccode;
 #else
-      long nclass;
-      genin >> nclass; 
-      codeletter((nclass-1),ccode);
+      genin >> nclass;
+      ccode = codeletter(nclass-1);
       //      cout<<"After input, nclass="<<nclass<<endl;
 #endif
       genin >> ncurve;

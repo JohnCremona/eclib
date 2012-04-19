@@ -50,7 +50,7 @@ int getquartic(quartic& g, int verbose)
 
 int main()
 {
-  initprimes(string("PRIMES").c_str(),0);
+  initprimes("PRIMES",0);
   cout.precision(15);
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   

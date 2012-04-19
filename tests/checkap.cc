@@ -32,7 +32,6 @@ const long MAXNAP = 100000;
 
 int main(void)
 {
-  char* name = new char[20];
   long firstn, lastn, n, nnf, naq, nap, n2ds, ap, i, j, p;
   int ok, allok=1;
   short temp;
@@ -40,8 +39,8 @@ int main(void)
   for(n=firstn; n<=lastn; n++)
     {
       ok=1;
-      name = nf_filename(n,'x');
-      ifstream datafile(name);
+      string name = nf_filename(n,'x');
+      ifstream datafile(name.c_str());
       if(!datafile.is_open())
 	{
 	  cout<<"\nFile "<<name<<" does not exist!"<<endl;
@@ -104,5 +103,4 @@ int main(void)
     }
   
   if(allok) cout << "\nAll checked ok\n"; else cout << "\nerrors found\n";
-  delete[]name;
 }

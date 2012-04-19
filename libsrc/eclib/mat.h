@@ -69,12 +69,12 @@ public:
 	void output(ostream&s=cout) const;
 	void output_pari(ostream&s=cout)   const;
         void output_pretty(ostream&s=cout)   const;
-        void dump_to_file(char* filename) const; // binary output
-        void read_from_file(char* filename);     // binary input
+        void dump_to_file(string filename) const; // binary output
+        void read_from_file(string filename);     // binary input
 
      // non-member (friend) functions and operators
-        friend long nrows(const mat&);      
-        friend long ncols(const mat&);      
+  friend long nrows(const mat&);
+        friend long ncols(const mat&);
         friend void add_row_to_vec(vec& v, const mat& m, long i);
         friend void sub_row_to_vec(vec& v, const mat& m, long i);
         friend mat operator*(const mat&, const mat&);

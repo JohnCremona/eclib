@@ -42,20 +42,16 @@ smat restrict_mat(const smat& m, const subspace& s);
 // CLASS FORM_FINDER (was called splitter)
 
 #ifdef STORE_OPMATS
-static char* opmatfilename()
+static string opmatfilename()
 {
-  char* filename = new char[40];
-  char* tmpmatdir = getenv("TMPMATDIR");
-  if (tmpmatdir==NULL) 
-    {
-      sprintf(filename,"%s","/tmp/opmatXXXXXX");
-    }
-  else
-    {
-      sprintf(filename,"%s%s",tmpmatdir,"/opmatXXXXXX");
-    }
-  mkstemp(filename);
-  delete tmpmatdir;
+  stringstream tmp; tmpmatdir << getenv("TMPMATDIR");
+  if (tmp.str().size()==0)
+    tmp << "/tmp";
+  tmp << "/opmatXXXXXX";
+  char* f = tmp.c_str();
+  mkstemp(f);
+  string filename(f);
+  delete [] f;
   //  cout << "opmatfilename() returns "<<filename<<endl;
   return filename;
 }
@@ -76,7 +72,7 @@ form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int du
   submats = new smat[maxd];
 #ifdef STORE_OPMATS
   havemat = new int[maxd]; int i=maxd; while(i--) havemat[i]=0;
-  opfilenames=new char*[maxd+1];
+  opfilenames.resize(maxd+1);
   // filenames and files will be created as needed
 #endif
 
@@ -107,15 +103,12 @@ form_finder::~form_finder(void)
       if(havemat[i]) 
 	{
 	  unlink(opfilenames[i]);
-	  delete[] opfilenames[i];
 	}
     }
   if(!plusflag)
     {
       unlink(opfilenames[maxdepth]);
-      delete[] opfilenames[maxdepth];
     }
-  delete[] opfilenames;
   delete[] havemat; 
 #endif
   while(depth) delete nest[depth--];   // nest[0] was not created!

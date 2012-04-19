@@ -39,7 +39,7 @@ int main()
   
   int verb=1; //0; 
   //   cout << "Verbose? "; cin >> verb;
-  initprimes(string("PRIMES").c_str(),verb);
+  initprimes("PRIMES",verb);
 
   quartic g;
 

@@ -21,5 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-char* factor(const char* n);
-int is_prime(const char* p);
+#include <string>
+using namespace std;
+
+string factor(const string n);
+int is_prime(const string p);

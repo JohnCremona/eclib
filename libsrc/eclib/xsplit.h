@@ -50,7 +50,7 @@ protected:
   vec bplus, bminus;
 
   int *havemat;
-  char** opfilenames;  // temp filenames
+  vector<string> opfilenames;  // temp filenames
   smat conjmat;  // only used if plus==0 and bigmats==1
   smat the_opmat;
   smat *submats;  // holds current restriction for i>0

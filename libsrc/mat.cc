@@ -467,18 +467,18 @@ void mat::output_pretty(ostream& s) const
 //#ifdef THIS_USED_TO_WORK_WITH_GCC_2_95
 #if(1)
 
-void mat::dump_to_file(char* filename) const
+void mat::dump_to_file(string filename) const
 {
-  ofstream fout(filename,ofstream::binary);
+  ofstream fout(filename.c_str(),ofstream::binary);
   fout.write((char*)&nro,sizeof(nro));
   fout.write((char*)&nco,sizeof(nco));
   fout.write((char*)entries,nro*nco*sizeof(scalar));
   fout.close();
 }
 
-void mat::read_from_file(char* filename)
+void mat::read_from_file(string filename)
 {
-  ifstream fin(filename);
+  ifstream fin(filename.c_str());
   fin.read((char*)&nro,sizeof(nro));
   fin.read((char*)&nco,sizeof(nco));
   delete[] entries;
@@ -489,9 +489,9 @@ void mat::read_from_file(char* filename)
 
 #else
 
-void mat::dump_to_file(char* filename) const
+void mat::dump_to_file(string filename) const
 {
-  ofstream fout(filename);
+  ofstream fout(filename.c_str());
   fout<<nro<<" "<<nco<<" ";
   long size=nro*nco; 
   scalar* m=entries;
@@ -499,9 +499,9 @@ void mat::dump_to_file(char* filename) const
   fout.close();
 }
 
-void mat::read_from_file(char* filename)
+void mat::read_from_file(string filename)
 {
-  ifstream fin(filename);
+  ifstream fin(filename.c_str());
   fin>>nro>>nco;
   long size=nro*nco; 
   delete[] entries;

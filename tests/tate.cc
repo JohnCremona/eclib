@@ -28,7 +28,7 @@ void line(int w) {int wid=w; while(wid--)cout << "-";cout<<endl;}
 
 int main(void)
 {
-  initprimes(string("PRIMES").c_str(),0);
+  initprimes("PRIMES",0);
   line(80);
         
   int verb=1;

@@ -29,11 +29,11 @@
 #include <eclib/getcurve.h>
 
 int main(){
-  set_precision(string("Enter number of decimal places").c_str());
+  set_precision("Enter number of decimal places");
   int verbose=0;
   cout << "Verbose? (0/1) " << flush;  cin >> verbose;
 
-  initprimes(string("PRIMES").c_str(),0);
+  initprimes("PRIMES",0);
 	
   bigint v;
   vector<bigrational> ai(5);

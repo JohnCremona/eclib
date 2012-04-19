@@ -35,9 +35,8 @@
 
 int main(void)
 {
-  set_precision(string("Enter number of decimal places").c_str());
+  set_precision("Enter number of decimal places");
  int limit,n=1; 
- char* code = new char[20];
 #ifdef AUTOLOOP
  cout<<"Enter first and last N: ";cin>>n>>limit; 
  n--; cout<<endl;
@@ -52,14 +51,13 @@ int main(void)
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
  for(int i=0; i<nf.n1ds; i++)
    {
-     codeletter(i,code);
      //     i=booknumber0(n,i);
      newform& nfi = nf.nflist[i];
      ldash1 x(&nf, &nfi);  
      x.compute();
      bigfloat lf1 = abs(x.value());
      long r = x.rank();
-     cout << n << "\t" << code 
+     cout << n << "\t" << codeletter(i) 
 	  << "\tRank = " << r << "\tL^(r)(f,1)/r! = " << lf1 << endl;
    }
 }       // end of if(n)

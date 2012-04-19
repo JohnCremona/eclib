@@ -68,8 +68,8 @@ am__EXEEXT_4 = modtest$(EXEEXT) homtest$(EXEEXT) hecketest$(EXEEXT) \
 	tmanin$(EXEEXT) h1bsd$(EXEEXT) h1curve$(EXEEXT) \
 	pcurve$(EXEEXT) nfhpcurve$(EXEEXT) nfhpmcurve$(EXEEXT) \
 	h1clist$(EXEEXT) checkap$(EXEEXT) h1bsdcurisog$(EXEEXT) \
-	h1degphi$(EXEEXT) hpcurve$(EXEEXT) nfcount$(EXEEXT) \
-	ecnf$(EXEEXT) h1first$(EXEEXT) moreap$(EXEEXT) qexp$(EXEEXT)
+	h1degphi$(EXEEXT) nfcount$(EXEEXT) ecnf$(EXEEXT) \
+	h1first$(EXEEXT) moreap$(EXEEXT) qexp$(EXEEXT)
 am__EXEEXT_5 = aplist$(EXEEXT) checkgens$(EXEEXT) tnfd$(EXEEXT) \
 	d2$(EXEEXT) tcon2$(EXEEXT) tlegcert$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)"
@@ -128,9 +128,6 @@ hecketest_LDADD = $(LDADD)
 am_homtest_OBJECTS = homtest.$(OBJEXT)
 homtest_OBJECTS = $(am_homtest_OBJECTS)
 homtest_LDADD = $(LDADD)
-am_hpcurve_OBJECTS = hpcurve.$(OBJEXT)
-hpcurve_OBJECTS = $(am_hpcurve_OBJECTS)
-hpcurve_LDADD = $(LDADD)
 am_indep_OBJECTS = indep.$(OBJEXT)
 indep_OBJECTS = $(am_indep_OBJECTS)
 indep_LDADD = $(LDADD)
@@ -321,7 +318,32 @@ SOURCES = $(allisog_SOURCES) $(aplist_SOURCES) $(bigrattest_SOURCES) \
 	$(findinf_SOURCES) $(h1bsd_SOURCES) $(h1bsdcurisog_SOURCES) \
 	$(h1clist_SOURCES) $(h1curve_SOURCES) $(h1degphi_SOURCES) \
 	$(h1first_SOURCES) $(hecketest_SOURCES) $(homtest_SOURCES) \
-	$(hpcurve_SOURCES) $(indep_SOURCES) $(lcubic_SOURCES) \
+	$(indep_SOURCES) $(lcubic_SOURCES) $(mattest1_SOURCES) \
+	$(mattest2_SOURCES) $(mhcount_SOURCES) $(mmattest_SOURCES) \
+	$(modtest_SOURCES) $(moreap_SOURCES) $(mptest_SOURCES) \
+	$(mspace_SOURCES) $(mvectest_SOURCES) $(mwrank_SOURCES) \
+	$(nfcount_SOURCES) $(nfhpcurve_SOURCES) $(nfhpmcurve_SOURCES) \
+	$(nftest_SOURCES) $(oftest_SOURCES) $(pcurve_SOURCES) \
+	$(ptest_SOURCES) $(qexp_SOURCES) $(ratpoint_SOURCES) \
+	$(rattest_SOURCES) $(rcubic_SOURCES) $(smattest_SOURCES) \
+	$(space1_SOURCES) $(space2_SOURCES) $(svectest1_SOURCES) \
+	$(svectest2_SOURCES) $(tate_SOURCES) $(tbessel_SOURCES) \
+	$(tcon2_SOURCES) $(tconic_SOURCES) $(tcurve_SOURCES) \
+	$(tdivpol_SOURCES) $(tegr_SOURCES) $(telog_SOURCES) \
+	$(tequiv_SOURCES) $(theight_SOURCES) $(thilbert_SOURCES) \
+	$(thtconst_SOURCES) $(tilll_SOURCES) $(tleg_SOURCES) \
+	$(tlegcert_SOURCES) $(tmanin_SOURCES) $(tmrank_SOURCES) \
+	$(tnfd_SOURCES) $(torsion_SOURCES) $(tp2points_SOURCES) \
+	$(tperiods_SOURCES) $(tpoints_SOURCES) $(tred_SOURCES) \
+	$(tsat_SOURCES) $(tsat2_SOURCES) $(tsat3_SOURCES) \
+	$(twist_SOURCES) $(vectest1_SOURCES) $(vectest2_SOURCES)
+DIST_SOURCES = $(allisog_SOURCES) $(aplist_SOURCES) \
+	$(bigrattest_SOURCES) $(checkap_SOURCES) $(checkgens_SOURCES) \
+	$(comptest_SOURCES) $(conductor_SOURCES) $(d2_SOURCES) \
+	$(ecnf_SOURCES) $(findinf_SOURCES) $(h1bsd_SOURCES) \
+	$(h1bsdcurisog_SOURCES) $(h1clist_SOURCES) $(h1curve_SOURCES) \
+	$(h1degphi_SOURCES) $(h1first_SOURCES) $(hecketest_SOURCES) \
+	$(homtest_SOURCES) $(indep_SOURCES) $(lcubic_SOURCES) \
 	$(mattest1_SOURCES) $(mattest2_SOURCES) $(mhcount_SOURCES) \
 	$(mmattest_SOURCES) $(modtest_SOURCES) $(moreap_SOURCES) \
 	$(mptest_SOURCES) $(mspace_SOURCES) $(mvectest_SOURCES) \
@@ -341,32 +363,6 @@ SOURCES = $(allisog_SOURCES) $(aplist_SOURCES) $(bigrattest_SOURCES) \
 	$(tred_SOURCES) $(tsat_SOURCES) $(tsat2_SOURCES) \
 	$(tsat3_SOURCES) $(twist_SOURCES) $(vectest1_SOURCES) \
 	$(vectest2_SOURCES)
-DIST_SOURCES = $(allisog_SOURCES) $(aplist_SOURCES) \
-	$(bigrattest_SOURCES) $(checkap_SOURCES) $(checkgens_SOURCES) \
-	$(comptest_SOURCES) $(conductor_SOURCES) $(d2_SOURCES) \
-	$(ecnf_SOURCES) $(findinf_SOURCES) $(h1bsd_SOURCES) \
-	$(h1bsdcurisog_SOURCES) $(h1clist_SOURCES) $(h1curve_SOURCES) \
-	$(h1degphi_SOURCES) $(h1first_SOURCES) $(hecketest_SOURCES) \
-	$(homtest_SOURCES) $(hpcurve_SOURCES) $(indep_SOURCES) \
-	$(lcubic_SOURCES) $(mattest1_SOURCES) $(mattest2_SOURCES) \
-	$(mhcount_SOURCES) $(mmattest_SOURCES) $(modtest_SOURCES) \
-	$(moreap_SOURCES) $(mptest_SOURCES) $(mspace_SOURCES) \
-	$(mvectest_SOURCES) $(mwrank_SOURCES) $(nfcount_SOURCES) \
-	$(nfhpcurve_SOURCES) $(nfhpmcurve_SOURCES) $(nftest_SOURCES) \
-	$(oftest_SOURCES) $(pcurve_SOURCES) $(ptest_SOURCES) \
-	$(qexp_SOURCES) $(ratpoint_SOURCES) $(rattest_SOURCES) \
-	$(rcubic_SOURCES) $(smattest_SOURCES) $(space1_SOURCES) \
-	$(space2_SOURCES) $(svectest1_SOURCES) $(svectest2_SOURCES) \
-	$(tate_SOURCES) $(tbessel_SOURCES) $(tcon2_SOURCES) \
-	$(tconic_SOURCES) $(tcurve_SOURCES) $(tdivpol_SOURCES) \
-	$(tegr_SOURCES) $(telog_SOURCES) $(tequiv_SOURCES) \
-	$(theight_SOURCES) $(thilbert_SOURCES) $(thtconst_SOURCES) \
-	$(tilll_SOURCES) $(tleg_SOURCES) $(tlegcert_SOURCES) \
-	$(tmanin_SOURCES) $(tmrank_SOURCES) $(tnfd_SOURCES) \
-	$(torsion_SOURCES) $(tp2points_SOURCES) $(tperiods_SOURCES) \
-	$(tpoints_SOURCES) $(tred_SOURCES) $(tsat_SOURCES) \
-	$(tsat2_SOURCES) $(tsat3_SOURCES) $(twist_SOURCES) \
-	$(vectest1_SOURCES) $(vectest2_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -560,7 +556,7 @@ tequiv_SOURCES = tequiv.cc
 tred_SOURCES = tred.cc
 mwrank_SOURCES = mwrank.cc
 ratpoint_SOURCES = ratpoint.cc
-G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first moreap qexp
+G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi nfcount ecnf h1first moreap qexp
 
 # NB aplist, checkgens and tnfd are not currently tested in check_g0n
 modtest_SOURCES = modtest.cc
@@ -579,7 +575,6 @@ h1clist_SOURCES = h1clist.cc
 checkap_SOURCES = checkap.cc
 h1bsdcurisog_SOURCES = h1bsdcurisog.cc
 h1degphi_SOURCES = h1degphi.cc
-hpcurve_SOURCES = hpcurve.cc
 nfcount_SOURCES = nfcount.cc
 ecnf_SOURCES = ecnf.cc
 h1first_SOURCES = h1first.cc
@@ -732,9 +727,6 @@ hecketest$(EXEEXT): $(hecketest_OBJECTS) $(hecketest_DEPENDENCIES)
 homtest$(EXEEXT): $(homtest_OBJECTS) $(homtest_DEPENDENCIES) 
 	@rm -f homtest$(EXEEXT)
 	$(CXXLINK) $(homtest_OBJECTS) $(homtest_LDADD) $(LIBS)
-hpcurve$(EXEEXT): $(hpcurve_OBJECTS) $(hpcurve_DEPENDENCIES) 
-	@rm -f hpcurve$(EXEEXT)
-	$(CXXLINK) $(hpcurve_OBJECTS) $(hpcurve_LDADD) $(LIBS)
 indep$(EXEEXT): $(indep_OBJECTS) $(indep_DEPENDENCIES) 
 	@rm -f indep$(EXEEXT)
 	$(CXXLINK) $(indep_OBJECTS) $(indep_LDADD) $(LIBS)
@@ -931,7 +923,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/h1first.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hecketest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/homtest.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hpcurve.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/indep.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lcubic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mattest1-mattest.Po@am__quote@

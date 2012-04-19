@@ -309,7 +309,7 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x)
 
 extra_prime_class the_extra_primes;  // The one and only instance
 
-void initprimes(const char* pfilename, int verb)
+void initprimes(const string pfilename, int verb)
 {
   if(verb) 
     {
@@ -325,18 +325,18 @@ extra_prime_class::~extra_prime_class()
   //  write_to_file(string("PRIMES").c_str());
 }
 
-void extra_prime_class::write_to_file(const char* pfilename, int verb)
+void extra_prime_class::write_to_file(const string pfilename, int verb)
 {
   if(the_primes.size()==0) return;
   if(verb) cout << "writing primes to file " << pfilename << endl;
-  ofstream pfile(pfilename);
+  ofstream pfile(pfilename.c_str());
   copy(the_primes.begin(),the_primes.end(), ostream_iterator<bigint>(pfile, "\n"));  
   if(verb) cout << "finished writing primes to file " << pfilename << endl;
 }
 
-void extra_prime_class::read_from_file(const char* pfilename, int verb)
+void extra_prime_class::read_from_file(const string pfilename, int verb)
 {
-  ifstream pfile(pfilename);
+  ifstream pfile(pfilename.c_str());
   if(!pfile)  // default: no primes file exists
     {
       return;
@@ -517,15 +517,15 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
 #ifdef USE_PARI_FACTORING
 #include <eclib/parifact.h>
 
-bigint
-read_bigint_from_string(char* intstr)
-{
-  istringstream intin(intstr);
-  bigint p;
-  intin>>p;
-  free(intstr);  // this string was malloc'ed by the pari library!
-  return p;
-}
+// bigint
+// read_bigint_from_string(string intstr)
+// {
+//   istringstream intin(intstr.c_str());
+//   bigint p;
+//   intin>>p;
+//   free(intstr);  // this string was malloc'ed by the pari library!
+//   return p;
+// }
 
 int
 is_prime(const bigint& n)
@@ -536,7 +536,7 @@ is_prime(const bigint& n)
 }
 
 vector<bigint>
-read_vec_from_string(char* vecstr)
+read_vec_from_string(string vecstr)
 {
   //  cout<<"parsing output string "<<vecstr<<endl;
   vector<bigint> plist;
@@ -552,7 +552,6 @@ read_vec_from_string(char* vecstr)
       vecin>>skipws>>c; // swallow ",", but it might turn out to be "]"
     }
   //  cout<<"Finished reading from string"<<endl;
-  free(vecstr);  // this string was malloc'ed by the pari library!
   return plist;
 }
 
@@ -561,8 +560,7 @@ factor(const bigint& n, int proof=1)
 {
   ostringstream oss;
   oss<<n;
-  char *t = factor(oss.str().c_str());  // malloc'd by pari library
-  vector<bigint> plist =  read_vec_from_string(t); // freed there
+  vector<bigint> plist =  read_vec_from_string(factor(oss.str()));
   if(proof)
     for(vector<bigint>::const_iterator pi=plist.begin(); pi!=plist.end(); pi++)
       {

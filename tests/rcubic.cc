@@ -27,7 +27,7 @@
 
 int main()
 {
-  initprimes(string("PRIMES").c_str());
+  initprimes("PRIMES");
   bigint a, b, c, d, disc;
   unimod m;
   while(cout << "Enter cubic coeffs a, b, c, d: ",

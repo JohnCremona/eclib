@@ -33,25 +33,23 @@ public:
   CurveReader()
   {  
     tty_input=0;
-    char * filename = new char[32];
+    string filename;
     cerr << "Enter a filename for curve input (or tty): ";
     cin >> filename;
     cerr<<"filename entered is "<<filename<<endl;
-    tty_input = !strcmp(filename,"tty");
+    tty_input = (filename==string("tty"));
     if(tty_input)
       cerr<<"Taking input from terminal"<<endl;
     else
       {
 	cerr<<"using filename "<<filename<<endl;
-	in.open(filename);
+	in.open(filename.c_str());
 	if(!in) 
 	  {
 	    cerr<<"Failed to open input file "<<filename<<endl;
-	    delete[] filename;
 	    abort();
 	  }
       }
-    delete[] filename;
   }
   ~CurveReader() {if(!tty_input) in.close();}
   int operator>>(Curve& c)

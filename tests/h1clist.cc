@@ -48,7 +48,7 @@ int main(void)
   int prec = prec0;
   set_precision(prec);
  int limit,n=1;
- char* code = new char[20];
+ string code;
 #ifdef AUTOLOOP
  cerr<<"Enter first and last N: ";cin>>n>>limit;
  n--; cerr<<endl;
@@ -77,7 +77,7 @@ int main(void)
       // cout<<"****************************"<<endl;
       // for (inf=0; inf<nnf; inf++)
       //   {
-      //     codeletter(inf,code);
+      //     code = codeletter(inf);
       //     cout<<code<<": ";
       //     vec_out(cout,nf.nflist[inf].aplist,20);  // outputs at most 20 eigs.
       //     cout<<endl;
@@ -90,7 +90,7 @@ int main(void)
       // cout<<"****************************"<<endl;
       // for (inf=0; inf<nnf; inf++)
       //   {
-      //     codeletter(inf,code);
+      //     code = codeletter(inf);
       //     cout<<code<<": ";
       //     vec_out(cout,nf.nflist[inf].aplist,20);  // outputs at most 20 eigs.
       //     cout<<endl;
@@ -99,7 +99,7 @@ int main(void)
     }
  for(int xi=0; xi<nnf; xi++)
    { int i=xi;
-     codeletter(xi,code);
+     code = codeletter(xi);
 #ifdef BOOKORDER
      i=booknumber0(n,i);
 #endif
@@ -144,5 +144,4 @@ int main(void)
    }
 }       // end of if(n)
 }       // end of while()
- delete[] code;
 }       // end of main()

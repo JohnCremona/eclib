@@ -44,9 +44,8 @@
 
 int main(void)
 {
-  set_precision(string("Enter number of decimal places").c_str());
+  set_precision("Enter number of decimal places");
  int limit,n=1; 
- char* code = new char[20];
 #ifdef AUTOLOOP
  cerr<<"Enter first and last N: ";
 cin>>n>>limit; 
@@ -77,8 +76,7 @@ cin>>n>>limit;
      bigfloat rperiod;
      Curve C = nf.getcurve(i, -1, rperiod);
      Curvedata CD(C,1);  // The 1 causes minimalization
-     codeletter(xi,code);
-     cout << n << "\t" << code << "\t1\t" << degphi << " \t{";
+     cout << n << "\t" << codeletter(xi) << "\t1\t" << degphi << " \t{";
      for(ip=0; ip<npdphi; ip++)
        {
 	 long p=pdphi[ip];

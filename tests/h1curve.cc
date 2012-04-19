@@ -58,7 +58,7 @@ int main(void)
   int maxprec = 100;
   int prec = prec0;
   set_precision(prec);
-  //  set_precision(string("Enter number of decimal places").c_str());
+  //  set_precision("Enter number of decimal places");
  int verb=0;
 #ifdef SINGLE
  verb=0;
@@ -66,7 +66,6 @@ int main(void)
  cout<<"See detail? "; cin>>verb;
 #endif
  int limit,n=1;
- char* code = new char[20];
 #ifdef AUTOLOOP
  cout<<"Enter first and last N: ";cin>>n>>limit;
  n--; cout<<endl;
@@ -119,9 +118,8 @@ int main(void)
 #ifdef BOOKORDER
      i=booknumber0(n,i);
 #endif
-     codeletter(xi,code);
      if(verb) cout << "\nForm number " << i+1 << ": " << endl;
-     else     cout << n << "\t" << code << "\t";
+     else     cout << n << "\t" << codeletter(xi) << "\t";
      //#ifdef SINGLE
      if(verb) nf.nflist[i].display();
      //#endif

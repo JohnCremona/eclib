@@ -31,24 +31,21 @@
 
 int main()
 {
-  char* code = new char[20];
-  char filename[20];
-  char* f;
+  string filename;
   cout<<"Enter output filename: ";
   cin>>filename;
-  ofstream output(filename);
+  ofstream output(filename.c_str());
   int n1,n2; short temp;
   cout<<"Enter first and last values of n: ";
   cin>>n1>>n2;
   for (int n=n1; n<=n2; n++)
-    { 
-      f = nf_filename(n,'x');
-      ifstream datafile(f);
-      if (!datafile) cout<<"No file "<<f<<" exists!"<<endl;
+    {
+      string data = nf_filename(n,'x');
+      ifstream datafile(data.c_str());
+      if (!datafile) cout<<"No file "<<data<<" exists!"<<endl;
       else
         {
-//        cout<<"reading eigs from file "<<filename<<"; ";
-          int i,ic,xic,ip,jp,p,iq,nnf,naq,nap,nx; 
+          int i,ic,xic,ip,jp,p,iq,nnf,naq,nap,nx;
 	  int nbigprimes = 5;  // max no. of primes over 100
 
 	  short temp_short;
@@ -76,7 +73,7 @@ int main()
 	      for(ic=0; ic<nnf; ic++) aqtable.push_back(vector<long>(naq));
 	      for (iq=0; iq<naq; iq++)
 		for (ic=0; ic<nnf; ic++) aqtable[ic][iq]=*batchptr++;
-	      
+
 	      // read and store ap for each newform
 	      ntotal = 25*nnf;
 	      delete batch;
@@ -85,10 +82,10 @@ int main()
 	      batchptr = batch;
 	      vector< vector<long> > aptable;
 	      vector<long> bigptable;
-	      for(ic=0; ic<nnf; ic++) 
+	      for(ic=0; ic<nnf; ic++)
 		aptable.push_back(vector<long>(25+nbigprimes));
 	      for (ip=0; ip<25; ip++)
-		for (ic=0; ic<nnf; ic++) 
+		for (ic=0; ic<nnf; ic++)
 		  aptable[ic][ip]=*batchptr++;
 
 	      // deal with big bad primes (>100) if any:
@@ -101,7 +98,7 @@ int main()
 		  int p = prime_number(ip+1);
 		  while (nn%p==0) nn/=p;
 		}
-	      while (nn>1)     // then there are primes>100 dividing n 	       
+	      while (nn>1)     // then there are primes>100 dividing n
 		{
 		  while (nn%p!=0) // skip over data for p & increment p
 		    {
@@ -110,7 +107,7 @@ int main()
 		    }
 		  // now p is a "large" prime divisor of n
 		  bigptable.push_back(p);
-		  while (nn%p==0) nn/=p;		    
+		  while (nn%p==0) nn/=p;
 		  datafile.read((char*)batch,nnf*sizeof(short));
 		  batchptr=batch;
 		  for(ic=0; ic<nnf; ic++) aptable[ic][ip]=*batchptr++;
@@ -122,14 +119,13 @@ int main()
           for (xic=0; xic<nnf; xic++)
             { output<<setw(3)<<n;
 	      ic=xic;
-	      codeletter(xic,code);
-	      output<<" "<<code;
+              output<<" "<<codeletter(xic);
 #ifdef BOOKORDER
 	      ic=booknumber0(n,ic);
 #endif
 	      iq=0;
               for (int jp=0; jp<25; jp++)
-                { int p = prime_number(jp+1);  
+                { int p = prime_number(jp+1);
 		  int ap = aptable[ic][jp];
                   if (n%p==0) // W_q-eig
 		    {
@@ -139,7 +135,7 @@ int main()
 		    }
                   else        // T_p-eig
 		    {
-		      if (jp>8) output<<setw(4)<<ap; 
+		      if (jp>8) output<<setw(4)<<ap;
 		      else output<<setw(3)<<ap;
 		    }
                 }

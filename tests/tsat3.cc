@@ -47,21 +47,20 @@ const int use_egr=0;
 
 #define INPUT_CLASS_IS_LETTER // we only use letters now!
 
-//void codeletter(int i, char* code, int width=0);
 // Utility function for parsing input of lists of integers such as [], [2], [2,2] 
 vector<int> input_list(istream & is);
 
 int main()
 {
-  //  set_precision(string("Enter number of decimal places").c_str());
+  //  set_precision("Enter number of decimal places");
   set_precision(100);
-  initprimes(string("PRIMES").c_str(),0);
+  initprimes("PRIMES",0);
   int verbose = 0;
   //  cout<<"verbose (0/1)? ";             cin >>verbose;
   int j, npts;
 
-  long N, ncurve;
-  char code[20];
+  long N, ncurve, nclass;
+  string code;
   Curve E;
 
   while(!(feof(stdin))) {
@@ -72,9 +71,8 @@ int main()
 #ifdef INPUT_CLASS_IS_LETTER
   cin >> code;
 #else
-  long nclass;
   cin >> nclass; 
-  codeletter((nclass-1),code);
+  code = codeletter(nclass-1);
 #endif
   cin >> ncurve;
   cin >> E;
@@ -185,24 +183,6 @@ vector<int> input_list(istream & is)
    }
   return ai; 
 }
-
-
-
-
-#if(0)
-void codeletter(int i, char* code, int width)
-{
-  int n=width;    // pads string to this width with blanks
-  code[n]='\0';
-  while (n) code[--n]=' ';
-
-  int nc = i%26;
-  char c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[nc];
-  n = 1 + (i-nc)/26;
-  if(width==0) code[n]='\0';
-  while (n) code[--n]=c;
-}
-#endif
 
 //end of file tsat3.cc
 

@@ -34,23 +34,20 @@
 #include <eclib/elog.h>
 #include <eclib/sieve_search.h>
 #include <eclib/mwprocs.h>
+#include "curvesort.cc"
 
 #define PMIN 2
 #define PMAX 100
 
-void codeletter(int i, char* code, int width=0);
-
-
 int main()
 {
   set_precision(100);
-  initprimes(string("PRIMES").c_str(),0);
+  initprimes("PRIMES",0);
   int verbose = 1;
   //  cout<<"verbose (0/1)? ";             cin >>verbose;
   int i, j, npts;
 
   long N, nclass, ncurve;
-  char code[20];
   Curve E;
 
   long curvecount=0;
@@ -62,7 +59,6 @@ int main()
     cin >> N; if(N==0) break;
   cin >> nclass >> ncurve;
   cin >> E;
-  codeletter((nclass-1),code);
   curvecount++;
 
   Curvedata C(E);
@@ -71,7 +67,7 @@ int main()
   cout<<endl;
   cout<<"==============================================================="<<endl;
   cout<<endl;
-  cout << N<<code<<ncurve<<" = "<< E << endl;
+  cout << N<<codeletter(nclass-1)<<ncurve<<" = "<< E << endl;
   Point P(C);
   cin >> npts;
   vector<Point> points; points.reserve(npts);
@@ -123,23 +119,9 @@ int main()
       for(i=0; i<upcount; i++)
 	{
 	  vector<long> keep = keeplist[i];
-	  codeletter((keep[1]-1),code);
-	  cout<<keep[0]<<code<<keep[2]<<": index gained = "<<keep[3]<<endl;
+	  cout<<keep[0]<<codeletter(keep[1]-1)<<keep[2]<<": index gained = "<<keep[3]<<endl;
 	}
     }
-}
-
-void codeletter(int i, char* code, int width)
-{
-  int n=width;    // pads string to this width with blanks
-  code[n]='\0';
-  while (n) code[--n]=' ';
-
-  int nc = i%26;
-  char c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[nc];
-  n = 1 + (i-nc)/26;
-  if(width==0) code[n]='\0';
-  while (n) code[--n]=c;
 }
 
 //end of file tsat2.cc

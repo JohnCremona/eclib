@@ -46,14 +46,13 @@ cout << "Using A.output_pari(cout): ";  a.output_pari(cout);
 cout << "Using A.output_pretty(cout): \n";  a.output_pretty(cout);
 }
 
- char* filename = new char[20];
+ string filename;
  cout<< "Enter a filename for matrix binary output: "; cin>>filename;
  a.dump_to_file(filename);
  cout<< "Matrix dumped to file " << filename << endl;
  mat ax;
  ax.read_from_file(filename);
  cout<< "Matrix reread from file " << filename << endl;
- delete[] filename;
  cout << "B = " << ax;
  if(a==ax) cout<<"agree"; else cout << "WRONG!";
  cout<<endl;

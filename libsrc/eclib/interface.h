@@ -157,7 +157,7 @@ typedef complex<RR> CC;
 
 inline void set_precision(long n) 
   {RR::SetPrecision(long(n*3.33));RR::SetOutputPrecision(n);}
-inline void set_precision(const char* prompt) 
+inline void set_precision(const string prompt) 
   {long n; cerr<<prompt<<": "; cin>>n; set_precision(n);}
 inline long decimal_precision() {return long(RR::precision()*0.3);}
 inline int is_approx_zero(const bigcomplex& z) 
@@ -190,7 +190,7 @@ inline long decimal_precision() {return 15;}
 inline int is_zero(double x) {return fabs(x)<1e-15;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
 inline void set_precision(long n) {cout.precision(n);}
-inline void set_precision(const char* prompt)  {cout.precision(15);}
+inline void set_precision(const string prompt)  {cout.precision(15);}
 #define Pi()    (3.1415926535897932384626433832795028841)
 #define Euler() (0.57721566490153286060651209008240243104)
 inline double round(double x) {return floor(x+0.5);}

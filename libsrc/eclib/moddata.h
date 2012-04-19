@@ -54,7 +54,7 @@ public:
   long nsymb;
  moddata(long n);                                //constructor
  void display() const;
- void abort(const char* mess) const 
+ void abort(const string mess) const 
   {
     cout<<"Out of memory ("<<mess<<")\n";  
     ::abort();
@@ -67,4 +67,4 @@ public:
 // including a prefix (default "newforms/" but taken from envoronment
 // variable NF_DIR if defined), followed by a single character
 // (usually 'x') and the decimal digits of n (positive integer).
-char* nf_filename(long n, char c);
+string nf_filename(long n, char c);

@@ -28,7 +28,6 @@
 int main(void)
 {
   int limit,n=1,count=0,firstn, verbose; 
-  char* name = new char[20];
   int getindex=0;
   cout << "Verbose? (0/1) " << endl;  cin >> verbose;
   cout<<"Enter first and last N: ";cin>>firstn>>limit; 
@@ -38,8 +37,8 @@ int main(void)
 {
   if(verbose) cout << ">>> Level " << n << " <<< ";
   int num=0, nap=0, naq=0;
-  name = nf_filename(n,'x');
-  ifstream in(name);
+  string name = nf_filename(n,'x');
+  ifstream in(name.c_str());
   int eig_file_exists = in.is_open();
   if(!eig_file_exists)
     {

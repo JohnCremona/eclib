@@ -35,8 +35,8 @@ parislave the_pari_slave;  // The one and only instance
 // test if we have an executable gp to use...
 int do_we_have_pari(string& gp_path)
 {
-  char* path_to_gp = getenv("PATH_TO_GP");
-  if (path_to_gp==NULL) 
+  string path_to_gp(getenv("PATH_TO_GP"));
+  if (path_to_gp.str().size()==0) 
     gp_path = string("/usr/local/bin/gp");
   else
     gp_path = string(path_to_gp)+string("gp");

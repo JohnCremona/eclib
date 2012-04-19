@@ -26,7 +26,7 @@
 
 int main(void)
 {
-  initprimes(string("PRIMES").c_str(),0);
+  initprimes("PRIMES",0);
         
   int verb=1;
   bigint v;

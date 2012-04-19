@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <eclib/moddata.h>
+#include <iostream>
 
 level::level(long n, long neigs)
 {
@@ -146,16 +147,11 @@ void moddata::display() const
  cout << "unitdivlist: " << unitdivlist << endl;
 }
 
-char* nf_filename(long n, char c)
+string nf_filename(long n, char c)
 {
-  char* nf_dir = getenv("NF_DIR"); 
-  string nf_file;
-  if (nf_dir==NULL) 
-    nf_file = string("./newforms");
-  else
-    nf_file = string(nf_dir);
-  // 23 here is (max length of a long int) + '/' + c + '\0'
-  char* filename=new char[nf_file.length()+23];
-  sprintf(filename,"%s/%c%ld",nf_file.c_str(),c,n);
-  return filename;
+  stringstream filename;
+  filename << getenv("NF_DIR");
+  if (filename.str().size()==0) filename << "./newforms";
+  filename  << "/" << c << n;
+  return filename.str();
 }

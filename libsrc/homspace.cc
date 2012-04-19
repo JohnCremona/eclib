@@ -72,13 +72,13 @@ homspace::homspace(long n, int hp, int hcusp, int verbose) :symbdata(n)
    cuspidal=hcusp;
    long i,j,k,k2,mk;
    coordindex = new int[nsymb];  
-   if (!coordindex) abort(string("coordindex").c_str());
+   if (!coordindex) abort("coordindex");
    int* check = new int[nsymb];  
-   if (!check) abort(string("check").c_str());
+   if (!check) abort("check");
    i=nsymb; while (i--) check[i]=0;
    long ngens=0;
    int* gens = new int[nsymb+1];    // N.B. Start of gens array is at 1 not 0
-   if (!gens) abort(string("gens").c_str());
+   if (!gens) abort("gens");
    long* rel = new long[4]; if (!rel) abort("rel");
 
 // 2-term relations:
@@ -327,7 +327,7 @@ if (verbose>1)
 	 }
      }
    freegens = new int[rk]; 
-   if (!freegens) abort(string("freegens").c_str());
+   if (!freegens) abort("freegens");
    if (rk>0)
    {
    for (i=0; i<rk; i++) freegens[i] = gens[pivs[i+1]];
@@ -429,9 +429,9 @@ if (verbose>1)
    denom3 = denom1*denom2;
 
    freemods = new modsym[rk]; 
-   if (!freemods) abort(string("freemods").c_str());
+   if (!freemods) abort("freemods");
    needed   = new int[rk];    
-   if (!needed) abort(string("needed").c_str());
+   if (!needed) abort("needed");
 
    if (dimension>0)
    {

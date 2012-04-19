@@ -131,7 +131,7 @@ check_qrank: qrank_tests
 	./mwrank < $(test_input_dir)/mwrank.in > mwrank.testout 2>/dev/null && diff mwrank.testout $(test_output_dir)/mwrank.out
 	rm -f PRIMES 1
 
-G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi hpcurve nfcount ecnf h1first moreap qexp
+G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi nfcount ecnf h1first moreap qexp
 g0n_tests: $(G0N_TESTS)
 
 # NB aplist, checkgens and tnfd are not currently tested in check_g0n
@@ -152,7 +152,6 @@ h1clist_SOURCES=h1clist.cc
 checkap_SOURCES=checkap.cc
 h1bsdcurisog_SOURCES=h1bsdcurisog.cc
 h1degphi_SOURCES=h1degphi.cc
-hpcurve_SOURCES=hpcurve.cc
 nfcount_SOURCES=nfcount.cc
 ecnf_SOURCES=ecnf.cc
 h1first_SOURCES=h1first.cc

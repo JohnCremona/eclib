@@ -35,7 +35,7 @@
 
 int main()
 {
-  initprimes(string("PRIMES").c_str(),VERBOSITY);
+  initprimes("PRIMES",VERBOSITY);
   cout<<"Solving ax^2 + bxz + cz^2 = dy^2\n";
   cout<<"Using method "<<CONIC_METHOD<<endl<<endl;
 

@@ -30,8 +30,8 @@
 #include <iostream>
 using namespace std;
 
-char* 
-factor(const char* n)
+string
+factor(const string n)
 {
   if (!bot) {
     pari_init(1000000, 1000000);
@@ -41,18 +41,18 @@ factor(const char* n)
 #endif
 
   pari_sp av=avma;  // store pari stack pointer
-  GEN x = strtoi((char*)n);
+  GEN x = strtoi(n.c_str());
   setsigne(x,1);
   x = gel(Z_factor(x),1);
   settyp(x,t_VEC);
-  
-  char* ans = GENtostr(x); 
+ 
+  string ans(GENtostr(x));
   avma=av;         // restore pari stackpointer
   return ans;
 }
 
 int 
-is_prime(const char* p)
+is_prime(const string p)
 {
   if (!bot) {
     pari_init(1000000, 1000000);
@@ -62,7 +62,7 @@ is_prime(const char* p)
 #ifdef DEBUG_GPFACT
   std::cout<<"is_prime called with "<<p<<"..."<<flush;
 #endif
-  int ans = (isprime((GEN)strtoi((char*)p))==1);
+  int ans = (isprime((GEN)strtoi(p.c_str()))==1);
 #ifdef DEBUG_GPFACT
   std::cout<<"and returns "<<ans<<std::endl;
 #endif
