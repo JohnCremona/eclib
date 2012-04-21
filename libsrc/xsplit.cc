@@ -46,7 +46,7 @@ static string opmatfilename()
 {
   stringstream tmp; tmpmatdir << getenv("TMPMATDIR");
   if (tmp.str().size()==0)
-    tmp << "/tmp";
+    {tmp.clear(); tmp << "/tmp";}
   tmp << "/opmatXXXXXX";
   char* f = tmp.c_str();
   mkstemp(f);

@@ -42,10 +42,11 @@ int main(void)
   int eig_file_exists = in.is_open();
   if(!eig_file_exists)
     {
-      //      cout<<"Unable to open file "<<name<<" for newform input"<<endl;
+      cout<<"Unable to open file "<<name<<" for newform input"<<endl;
     }
   else
     {
+      //      cout<<"Opened file "<<name<<" for newform input"<<endl;
       in.read((char*)&num,sizeof(int));
       count+=num;
       in.read((char*)&naq,sizeof(int));   // = number of bad primes

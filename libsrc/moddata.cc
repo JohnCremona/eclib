@@ -149,9 +149,9 @@ void moddata::display() const
 
 string nf_filename(long n, char c)
 {
-  stringstream filename;
-  filename << getenv("NF_DIR");
-  if (filename.str().size()==0) filename << "./newforms";
-  filename  << "/" << c << n;
-  return filename.str();
+  stringstream s;
+  s << getenv("NF_DIR");
+  if (s.str().empty()) {s.clear(); s<<"./newforms";}
+  s  << "/" << c << n;
+  return s.str();
 }
