@@ -389,11 +389,13 @@ void newform::find_coords_plus_minus()
   if(sign!=+1) 
     {
       denomminus=vecgcd(coordsminus)*cuspidalfactorminus;
+      if(verbose>1) cout<<"coordsminus   = "<<coordsminus<<endl;
       if(verbose) cout<<"denomminus   = "<<denomminus<<endl;
     }
   if(sign!=-1) 
     {
       denomplus=vecgcd(coordsplus)*cuspidalfactorplus;
+      if(verbose>1) cout<<"coordsplus   = "<<coordsplus<<endl;
       if(verbose) cout<<"denomplus   = "<<denomplus<<endl;
     }  
 }
@@ -751,6 +753,7 @@ void newforms::createfromscratch(int s, long ntp)
 
    // Compute homspace::projcoord, so projchain can be used
    // Replaces coord_vecs of homspace with projections onto eigenspaces
+   // NB if #newforms>1 this MUST be re-called after any sorting of newforms
    make_projcoord();
 
    // Look for a j0 such that nflist[i].bplus/bminus[j0]!=0 for all i, or a set of such j
@@ -804,6 +807,7 @@ void newforms::find_jlist()
 
 // Compute homspace::projcoord, so projchain can be used
 // Replaces coord_vecs of homspace with projections onto eigenspaces
+// NB if #newforms>1 this MUST be re-called after any sorting of newforms
 void newforms::make_projcoord()
 {
   h1->projcoord.init(h1->coord_vecs.size()-1,n1ds);
@@ -1484,9 +1488,17 @@ void newforms::merge()
 
 void update(const mat& pcd, vec& imagej, long ind)
 {
-  if(ind>0) imagej+=pcd.row(ind);
-  else if(ind<0) imagej-=pcd.row(-ind);
-  //  cout<<"updated imagej is "<<imagej<<endl;
+  if(ind>0)
+    {
+      imagej+=pcd.row(ind);
+      return;
+    }
+  if(ind<0)
+    {
+      imagej-=pcd.row(-ind);
+      return;
+    }
+  //  cout<<"updated imagej (after using ind="<<ind<<") is "<<imagej<<endl;
 }
 
 vector<long> newforms::apvec(long p) //  computes a[p] for each newform
@@ -1531,29 +1543,24 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
       //cout<<"Computing image of "<<j<<"'th M-symbol "<<endl;
       symb s = h1->symbol(h1->freegens[j-1]);
       //cout<<" = "<<s<<"..."<<flush;
-      long u=s.cee(),v=s.dee(); 
+      long u=s.cee(),v=s.dee();
       mat& pcd = h1->projcoord;
+      //cout<<"projcoord = "<<pcd;
 // Matrix [1,0;0,p]
       ind = h1->coordindex[h1->index2(u,p*v)];
       update(pcd,imagej,ind);
-      // if(ind>0) imagej+=pcd.row(ind);
-      // else if(ind<0) imagej-=pcd.row(-ind);
 // Matrix [p,0;0,1]
       ind = h1->coordindex[h1->index2(p*u,v)];
       update(pcd,imagej,ind);
-      // if(ind>0) imagej+=pcd.row(ind);
-      // else if(ind<0) imagej-=pcd.row(-ind);
 // Other matrices
       for(sg=0; sg<2; sg++) // signs
 	for(r=1; r<=p2; r++)
 	  {
-	    a = -p; 
+	    a = -p;
 	    b = sg ? -r : r ;
 	    u1=u*p; u2=v-u*b;
 	    ind = h1->coordindex[h1->index2(u1,u2)];
             update(pcd,imagej,ind);
-	    // if(ind>0) imagej+=pcd.row(ind);
-	    // else if(ind<0) imagej-=pcd.row(-ind);
 	    while(b!=0)
 	      {
 		c=mod(a,b); q=(a-c)/b;
@@ -1561,10 +1568,8 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 		a=-b; b=c; u1=u2; u2=u3;
 		ind = h1->coordindex[h1->index2(u1,u2)];
                 update(pcd,imagej,ind);
-		// if(ind>0) imagej+=pcd.row(ind);
-		// else if(ind<0) imagej-=pcd.row(-ind);
 	      }
-	  }    
+	  }
       images[j]=imagej/(h1->h1denom());
       //cout<<" image is "<<imagej<<endl;
     }
@@ -1579,7 +1584,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 	  cout<<"Error:  eigenvalue "<<ap<<" for p="<<p
 	      <<" for form # "<<(i+1)<<" is outside valid range "
 	      <<-maxap<<"..."<<maxap<<endl;
-	  abort();
+          abort();
 	}
     }  
   return apv;

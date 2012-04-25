@@ -88,6 +88,7 @@ int main(void)
   nf.createfromscratch(plus,noldap);
 #ifdef LMFDB_ORDER
   nf.sort();
+  nf.make_projcoord(); // needed for when we add more ap
 #endif
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;

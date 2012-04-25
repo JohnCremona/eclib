@@ -84,11 +84,11 @@ int main(void)
   nf.createfromscratch(1,noldap);
 #ifdef LMFDB_ORDER
   nf.sort();
+  nf.make_projcoord(); // needed for when we add more ap
 #endif
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   stopp=stopp0;
-  // Must make sure that this is big enough to catch the bad primes...?
   nf.addap(stopp);
 
   long nnf = nf.n1ds, inf; 

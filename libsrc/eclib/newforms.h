@@ -156,6 +156,7 @@ public:
 
   // Compute homspace::projcoord, so projchain can be used
   // Replaces coord_vecs of homspace with projections onto eigenspaces
+  // NB if #newforms>1 this MUST be re-called after any sorting of newforms
   void make_projcoord();
 
   // Look for a j0 such that nflist[i].bplus/bminus[j0]!=0 for all i, or a set of such j
