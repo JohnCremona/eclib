@@ -1,4 +1,4 @@
-// tleg.cc: test program for solving legendre equations
+// solve_legendre.cc:  program for solving legendre equations
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona

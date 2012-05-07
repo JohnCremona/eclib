@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [2012-04-25], [john.cremona@gmail.com])
+AC_INIT([eclib], [2012-05-07], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -120,6 +120,7 @@ AM_CONDITIONAL([ALLPROGS], [test x$allprogs = xtrue])
 AC_CONFIG_FILES([
   libsrc/Makefile
   tests/Makefile
+  progs/Makefile
   Makefile
 ])
 AC_OUTPUT

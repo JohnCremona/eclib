@@ -1,0 +1,142 @@
+User programs and documentation
+
+================================================================================
+
+A: Two programs for solving conics over Q, using methods described in
+   Cremona & Rusin, "Efficient solution of rational conics",
+   Mathematics of Computation, 72 (2003), no. 243, pages 1417-1441.
+
+--------------------------------------------------------------------------------
+1 solve_conic
+
+  Solves "semi-diagonal" conics, with equations of the form ax^2+bxz+cz^2=dy^2.
+
+  Input: 4 integers a b c d, repeat until d=0 is input.
+  Requires  d(b^2-4ac) nonzero.
+
+  Output: both a single solution and a parametric solution.
+
+  Options (set via compiler flags, not at run-time):
+  1. TEST_PARAM (default set): if set, outputs parametric solution.
+  2. VERBOSITY (default=0): if positive, outputs details during solution.
+  3. CONIC_METHOD (default 4): control which algorithm to use:
+     0:  simple recursion, no reduction
+     1:  recursion with algebraic reduction (Denis Simon)
+     2:  recursion with lattice reduction (best non-factn-free)
+     3:  obsolete
+     4:  Uses factorization-free reduction (best)
+     5:  Uses LLL method
+
+--------------------------------------------------------------------------------
+2 solve_legendre
+
+  Solves diagonal conics, or Legendre equations, of the form ax^2+by^2+cz^2=0.
+
+  Input: 3 integers a b c, repeat until a=0 is input.
+  Requires abc non-zero.
+
+  Output: both a single solution and a parametric solution.
+
+  Options (set via compiler flags, not at run-time): same as solve_conic
+
+================================================================================
+
+B: Two programs for binary cubic forms over Q, using methods described
+   in "Reduction of binary cubic and quartic forms", LMS JCM 2 (1999),
+   62--92.
+
+--------------------------------------------------------------------------------
+1 reduce_cubics
+
+  Reduces binary cubic forms with integral coefficients (a,b,c,d)
+
+  Input: 4 integers a b c d, repeat until all are 0
+
+  Output: an equivalent reduced cubic with the SL(2,Z) reducing transform.
+
+--------------------------------------------------------------------------------
+2 list_cubics
+
+  Lists binary cubic forms with integral coefficients and given discriminant bound
+
+  Input: 1 integers maxd
+
+  Output: if maxd>0: a list of reduced cubics with 0<disc<maxd
+          if maxd<0: a list of reduced cubics with 0>disc>maxd
+
+================================================================================
+
+C: Two programs for elliptic curves over Q
+   (NB Only a small part of the library functionality is represented here)
+
+--------------------------------------------------------------------------------
+1 point_search
+
+  Program to process and/or search for points on an elliptic curve
+               (using an interface to Stoll's ratpoints together with
+               saturation and independence checking of points found)
+
+  Input: (real) bound on naive height
+         (int) verbosity flag
+         (int) option (1) process points found (2) just list them
+         (list of ints or rationals) [a1,a2,a3,a4,a6] (or a1 a2 a3 a4 a6) curve coefficients, all 0 or EOF to stop
+         (int) Number of points on the curve to be input (usually 0)
+         (int) Rank bound (serach stops when this is reached)
+         (list of triples of ints) known points as [x:y:z] with x,y,z ints.
+
+  Output: (1) details of any points input, rank and regulator
+          (2) some details of point search, relations between points
+                    found, saturation processing, ending with a list
+                    of independent points generating the saturation of
+                    the points input&found, rank and regulator.
+
+--------------------------------------------------------------------------------
+2 indep_test
+
+  Program to test points on an elliptic curve for independence,
+  using the method described in "On the computation of Mordell-Weil
+  and 2-Selmer Groups of Elliptic Curves", Rocky Mountain Journal 32
+  no.3 (2002), pp. 953--967.
+
+  Input: (int) verbosity flag
+         (list of ints or rationals) [a1,a2,a3,a4,a6] (or a1 a2 a3 a4 a6) curve coefficients, all 0 or EOF to stop
+         (int) Number of points on the curve to be input
+         (int) Number of auxiliary primes to use (use rank + a few)
+
+  Output: (1) Details of test (using reduction of E(Q)/2E(Q)) modulo auxiliary primes
+          (2) Conclusion: certainly independent, or possibly dependent
+
+================================================================================
+
+D: Two-descent and two-coverings of elliptic curves over Q
+
+--------------------------------------------------------------------------------
+1 mwrank
+
+  Documented separately
+
+--------------------------------------------------------------------------------
+2 reduce_quartics
+
+  Program to minimise and reduce (integral binary) quartics
+
+  Input: Quartic coefficients (a,b,c,d,e), integers, repeated: all 0 to finish
+
+  Output: Details of minimisation and reduction, ending with a minimal
+          reduced quartic and the associated transform.
+
+--------------------------------------------------------------------------------
+3 quartic_points
+
+  Program to check local solubility and (if locally soluble) search
+  for rational points on a quartic (2-covering of an elliptic curve).
+  Points found are mapped to the Jacobian curve via the 2-covering map.
+
+  Input: (int) verbosity flag
+         (list of ints) (a,b,c,d,e) quartic coefficients, all 0 to stop
+                  (real) naive height bound
+
+  Output: (1) information about local solubility
+          (2) information about point search, points found on the
+          quartic and their images on the Jacobian elliptic curve.
+

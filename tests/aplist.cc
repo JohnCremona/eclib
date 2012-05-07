@@ -27,7 +27,7 @@
 #include <eclib/moddata.h> // for nf_filename
 #define BOOKORDER       // if defined, sorts newforms & curves into order
                         // in the Book (relevant up to 500 only)
-#include <curvesort.cc>
+#include <eclib/curvesort.h>
 
 int main()
 {

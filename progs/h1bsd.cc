@@ -29,7 +29,7 @@
 #include <eclib/cperiods.h>     //from qcurves, for computing conductors
 #include <eclib/newforms.h>
 #include <eclib/periods.h>
-#include <curvesort.cc>
+#include <eclib/curvesort.h>
 
 #define AUTOLOOP
 

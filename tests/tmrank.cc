@@ -29,11 +29,12 @@
 bigint a1,a2,a3,a4,a6;
 Curve C;
 Curvedata CD;
-int verbose;
+int verbose=0;
 long hlimq=5; 
 long naux=-1;
 
 //#define SELMER_ONLY
+//#define TIMINGS
 
 int getcurve(void)
 {
@@ -48,13 +49,15 @@ int main()
 {
   show_version();
   set_precision(20);
+#ifdef TIMINGS
   init_time();
+#endif
   int second_descent=1;
   int selmer_only=0;
 #ifdef SELMER_ONLY
   selmer_only=1;
 #endif  
-  cout << "Verbose mode? (0/1)\n"; cin >> verbose;
+  //  cout << "Verbose mode? (0/1)\n"; cin >> verbose;
   initprimes("PRIMES",verbose);
 //  cout << "Number of sieving primes?\n"; cin >> naux;
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
@@ -66,25 +69,32 @@ int main()
       cout << "Curve "<< C << " :\t";
       if (verbose) cout << endl; else cout<<flush;
       long rank;
- 
+
+#ifdef TIMINGS
       start_time();
-      two_descent two_d(&CD, verbose, selmer_only, 
-			20, hlimq, 
+#endif
+      two_descent two_d(&CD, verbose, selmer_only,
+			20, hlimq,
 			naux, second_descent);
+#ifdef TIMINGS
       stop_time();
- 
+#endif
+
       if (two_d.ok())
-        {   
+        {
 #ifdef SELMER_ONLY
 	  rank = two_d.getselmer();
 	  cout << "(r2) Selmer rank = " << rank << "\t" << flush;
 #else
 	  rank=two_d.getrank();
-          cout << "Rank = " << rank << "\t" << flush;
+          cout << "Rank = " << rank << "  ";
 #endif
-	  show_time();cout<<endl;
+#ifdef TIMINGS
+	  show_time();
+#endif
+          cout<<endl;
           if (rank!=filerank) cout << "Wrong! rank of "<<C
-				   <<" should be " << filerank 
+                                   <<" should be " << filerank
 				   << " not "<<rank<<endl;
         }
       else cout << "Failed to compute rank\n";

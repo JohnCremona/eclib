@@ -1,7 +1,7 @@
-Documentation for the eclib library (guide to source code)
+Documentation for the modular symbol programs in the eclib library (guide to source code)
 
 %  created 20070125
-%  Time-stamp: <2012-04-17 17:07:58 jec>
+%  Time-stamp: <2012-05-07 17:30:02 jec>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -10,7 +10,7 @@ subdirectories (procs, qcurves, qrank and g0n) only the last of which
 contained modular symbol code for computing elliptic curves.  The
 notes here are mostly about the latter.  In the current distribution,
 there are library headers and implementation files in libsrc/eclib and
-libsrc/ respectively, and user/test programs in tests/.
+libsrc/ respectively, test programs in tests/ and user programs in progs/.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -636,7 +636,7 @@ working.
 files: fixc6.h, fixc6.cc, fixc4.data, fixc6.data
 class: fixc6
 
-These can be completely ignored, since I gave up ising them after
+These can be completely ignored, since I gave up using them after
 N=130000 and just use multiprecision floating point always, even
 though it is slower, with some cleverness to automatically increase
 precision as needed.  Future plans include re-introducing the standard

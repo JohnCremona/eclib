@@ -1,4 +1,4 @@
-// tconic.cc: conic test program
+// solve_conic.cc: conic solving program for semi-diagonal conics over Q
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona

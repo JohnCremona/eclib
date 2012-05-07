@@ -39,7 +39,7 @@ int verbose;
 string genfile;
 string ccode;
 
-#include <curvesort.cc> // for codeletter() function
+#include <eclib/curvesort.h> // for codeletter() function
 
 int main()
 {  

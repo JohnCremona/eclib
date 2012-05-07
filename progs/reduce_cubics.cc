@@ -1,4 +1,4 @@
-// rcubic.cc: Program for reducing integer cubics
+// reduce_cubics.cc: Program for reducing integer binary cubic forms
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona

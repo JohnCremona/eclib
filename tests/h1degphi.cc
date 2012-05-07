@@ -40,7 +40,7 @@
 
 //#SHOW_FACTORIZATION
 
-#include <curvesort.cc>
+#include <eclib/curvesort.h>
 
 int main(void)
 {

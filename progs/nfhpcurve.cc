@@ -191,7 +191,9 @@ int main(void)
     {
       cout<<(nnf-nsucc)<<" curve(s) missing."<<endl;
       if(output) nf.output_to_file();
-      int newstopp=stopp+500;
+      int newstopp=stopp;
+      if (newstopp<1000) newstopp+=500;
+      else newstopp+=1000;
       //      if(newstopp>32000)
       if(newstopp>10000)
       {

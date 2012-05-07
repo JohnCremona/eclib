@@ -1,4 +1,4 @@
-// TRED.CC:  Test program for reduction of quartics to minimal I,J
+// REDUCE_QUARTICS.CC:  Program for minimisation and reduction of quartics
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona

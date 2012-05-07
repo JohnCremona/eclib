@@ -34,7 +34,7 @@
 #include <eclib/elog.h>
 #include <eclib/sieve_search.h>
 #include <eclib/mwprocs.h>
-#include <curvesort.cc>
+#include <eclib/curvesort.h>
 
 #define USE_EGR
 #define SAT_BND 100000 // saturation bound:  use -1 for global default

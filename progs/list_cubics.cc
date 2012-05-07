@@ -1,4 +1,4 @@
-// lcubic.cc: Program for listing integer cubics with given discriminant
+// list_cubicx.cc: Program for listing integer cubics with given discriminant bound
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona

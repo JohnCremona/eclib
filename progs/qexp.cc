@@ -30,7 +30,7 @@
 #include <eclib/oldforms.h>
 #include <eclib/cperiods.h>
 #include <eclib/newforms.h>
-#include "curvesort.cc"
+#include <eclib/curvesort.h>
 
 #define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output

@@ -46,7 +46,7 @@
 
 #define BOOKORDER       // if defined, sorts newforms/curves into order
                         // in the Book (relevant up to 500 only)
-#include <curvesort.cc>
+#include <eclib/curvesort.h>
 
 vector<pair<int,int> > bad_ones; // holds bad (n,i) list
 

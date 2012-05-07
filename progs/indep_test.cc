@@ -1,4 +1,4 @@
-// indep.cc: program to test input points for (in)dependence 
+// indep_test.cc: program to test input points for (in)dependence 
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona

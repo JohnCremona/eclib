@@ -56,7 +56,7 @@
 
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
-#include <curvesort.cc>
+#include <eclib/curvesort.h>
 
 int main(void)
 {

@@ -1,4 +1,4 @@
-// findinf.cc:  program to find points up to given naive height
+// point_search.cc:  program to find points up to given naive height
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona

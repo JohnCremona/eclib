@@ -30,7 +30,7 @@
 #include <eclib/elog.h>
 #include <eclib/egr.h>
 #include <eclib/htconst.h>
-#include "curvesort.cc"
+#include <eclib/curvesort.h>
 
 int main()
 {

@@ -6,7 +6,9 @@ AM_LDFLAGS      = -ljc -L$(top_builddir)/libsrc $(NTL_LIBS) $(PARI_LIBS)
 test_input_dir = $(srcdir)/in
 test_output_dir = $(srcdir)/out
 
-PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace tconic tleg thilbert rcubic lcubic tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert
+################ PROCS #############################################
+
+PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert
 procs_tests: $(PROCS_TESTS)
 
 # NB tcon2 and tlegcert are not currently tested in check_procs
@@ -21,11 +23,7 @@ mvectest_SOURCES=mvectest.cc
 mmattest_SOURCES=mmattest.cc
 mspace_SOURCES=mspace.cc
 tbessel_SOURCES=tbessel.cc
-tconic_SOURCES=tconic.cc
-tleg_SOURCES=tleg.cc
 thilbert_SOURCES=thilbert.cc
-rcubic_SOURCES=rcubic.cc
-lcubic_SOURCES=lcubic.cc
 tp2points_SOURCES=tp2points.cc
 tilll_SOURCES=tilll.cc
 vectest1_SOURCES=vectest.cc
@@ -63,14 +61,12 @@ check_procs: procs_tests
 	./bigrattest < $(test_input_dir)/bigrattest.in > bigrattest.testout && diff bigrattest.testout $(test_output_dir)/bigrattest.out
 	./ptest < $(test_input_dir)/ptest.in > ptest.testout && diff ptest.testout $(test_output_dir)/ptest.out
 	./mptest < $(test_input_dir)/mptest.in > mptest.testout && diff mptest.testout $(test_output_dir)/mptest.out
-	./tconic < $(test_input_dir)/tconic.in > tconic.testout && diff tconic.testout $(test_output_dir)/tconic.out
-	./tleg < $(test_input_dir)/tleg.in > tleg.testout && diff tleg.testout $(test_output_dir)/tleg.out
 	./thilbert < $(test_input_dir)/thilbert.in > thilbert.testout && diff thilbert.testout $(test_output_dir)/thilbert.out
-	./rcubic < $(test_input_dir)/rcubic.in > rcubic.testout && diff rcubic.testout $(test_output_dir)/rcubic$(OBJ_SUF).out
-	./lcubic < $(test_input_dir)/lcubic.in > lcubic.testout && diff lcubic.testout $(test_output_dir)/lcubic.out
 	./tp2points < $(test_input_dir)/tp2points.in > tp2points.testout && diff tp2points.testout $(test_output_dir)/tp2points$(OBJ_SUF).out
 
-QCURVES_TESTS = tcurve tpoints theight thtconst tegr telog tdivpol tperiods tsat tsat2 tsat3 conductor tate torsion twist allisog findinf indep
+################ QCURVES #############################################
+
+QCURVES_TESTS = tcurve tpoints theight thtconst tegr telog tdivpol tperiods tsat tsat2 tsat3 conductor tate torsion twist allisog
 qcurves_tests: $(QCURVES_TESTS)
 
 tcurve_SOURCES=tcurve.cc
@@ -89,8 +85,6 @@ tate_SOURCES=tate.cc
 torsion_SOURCES=torsion.cc
 twist_SOURCES=twist.cc
 allisog_SOURCES=allisog.cc
-findinf_SOURCES=findinf.cc
-indep_SOURCES=indep.cc
 
 check_qcurves: qcurves_tests
 	@echo Running qcurves checks...
@@ -110,28 +104,25 @@ check_qcurves: qcurves_tests
 	./torsion < $(test_input_dir)/torsion.in > torsion.testout 2>/dev/null && diff torsion.testout $(test_output_dir)/torsion.out
 	./twist < $(test_input_dir)/twist.in > twist.testout 2>/dev/null && diff twist.testout $(test_output_dir)/twist.out
 	./allisog < $(test_input_dir)/allisog.in > allisog.testout 2>/dev/null && diff allisog.testout $(test_output_dir)/allisog.out
-	./findinf < $(test_input_dir)/findinf.in > findinf.testout 2>/dev/null && diff findinf.testout $(test_output_dir)/findinf.out
-	./indep < $(test_input_dir)/indep.in > indep.testout 2>/dev/null && diff indep.testout $(test_output_dir)/indep.out
 
-QRANK_TESTS = tmrank tequiv tred mwrank ratpoint d2
+################ QRANK #############################################
+
+QRANK_TESTS = tmrank tequiv d2
 qrank_tests: $(QRANK_TESTS)
 # NB d2 is not currently tested in check_qrank
 
 tmrank_SOURCES=tmrank.cc
 tequiv_SOURCES=tequiv.cc
-tred_SOURCES=tred.cc
-mwrank_SOURCES=mwrank.cc
-ratpoint_SOURCES=ratpoint.cc
 
 check_qrank: qrank_tests
 	@echo Running qrank checks...
 	./tequiv < $(test_input_dir)/tequiv.in > tequiv.testout && diff tequiv.testout $(test_output_dir)/tequiv.out
-	./tred < $(test_input_dir)/tred.in > tred.testout 2>/dev/null && diff tred.testout $(test_output_dir)/tred.out
-	./ratpoint < $(test_input_dir)/ratpoint.in > ratpoint.testout 2>/dev/null && diff ratpoint.testout $(test_output_dir)/ratpoint.out
-	./mwrank < $(test_input_dir)/mwrank.in > mwrank.testout 2>/dev/null && diff mwrank.testout $(test_output_dir)/mwrank.out
+	./tmrank < $(test_input_dir)/tmrank-short.in > tmrank.testout 2>/dev/null && diff tmrank.testout $(test_output_dir)/tmrank-short.out
 	rm -f PRIMES 1
 
-G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog h1degphi nfcount ecnf h1first moreap qexp
+################ G0N #############################################
+
+G0N_TESTS = modtest homtest hecketest nftest mhcount oftest tmanin h1degphi
 g0n_tests: $(G0N_TESTS)
 
 # NB aplist, checkgens and tnfd are not currently tested in check_g0n
@@ -143,20 +134,7 @@ nftest_SOURCES=nftest.cc
 mhcount_SOURCES=mhcount.cc
 oftest_SOURCES=oftest.cc
 tmanin_SOURCES=tmanin.cc
-h1bsd_SOURCES=h1bsd.cc
-h1curve_SOURCES=h1curve.cc
-pcurve_SOURCES=pcurve.cc
-nfhpcurve_SOURCES=nfhpcurve.cc
-nfhpmcurve_SOURCES=nfhpmcurve.cc
-h1clist_SOURCES=h1clist.cc
-checkap_SOURCES=checkap.cc
-h1bsdcurisog_SOURCES=h1bsdcurisog.cc
 h1degphi_SOURCES=h1degphi.cc
-nfcount_SOURCES=nfcount.cc
-ecnf_SOURCES=ecnf.cc
-h1first_SOURCES=h1first.cc
-moreap_SOURCES=moreap.cc
-qexp_SOURCES=qexp.cc
 
 # This is the name of a directory which will be used for newform
 # input/output in the "make check" tests and removed afterwards.
@@ -173,15 +151,7 @@ check_g0n:  g0n_tests
 	mkdir $(NF_DIR)
 	./tmanin < $(test_input_dir)/tmanin.in > tmanin.testout 2>/dev/null && diff tmanin.testout $(test_output_dir)/tmanin.out
 	./nftest < $(test_input_dir)/nftest.in 2>/dev/null > nftest.testout && diff nftest.testout $(test_output_dir)/nftest.out
-	./h1first < $(test_input_dir)/h1first.in 2>/dev/null > h1first.testout && diff h1first.testout $(test_output_dir)/h1first.out
-	./ecnf < $(test_input_dir)/ecnf.in 2>/dev/null > ecnf.testout && diff ecnf.testout $(test_output_dir)/ecnf.out
 	./oftest < $(test_input_dir)/oftest.in > oftest.testout && diff oftest.testout $(test_output_dir)/oftest.out
-	./nfhpcurve < $(test_input_dir)/nfhpcurve.in > nfhpcurve.testout 2>/dev/null && diff nfhpcurve.testout $(test_output_dir)/nfhpcurve.out
-	./nfhpmcurve < $(test_input_dir)/nfhpmcurve.in > nfhpmcurve.testout 2>/dev/null && diff nfhpmcurve.testout $(test_output_dir)/nfhpmcurve.out
-	./h1clist < $(test_input_dir)/h1clist.in > h1clist.testout 2>/dev/null && diff h1clist.testout $(test_output_dir)/h1clist.out
-	./h1bsdcurisog < $(test_input_dir)/h1bsdcurisog.in > h1bsdcurisog.testout 2>/dev/null && diff h1bsdcurisog.testout $(test_output_dir)/h1bsdcurisog.out
-	echo 0 25 1  1 50 60 | ./tmanin > /dev/null 2>/dev/null 
-	./qexp < $(test_input_dir)/qexp.in > qexp.testout 2>/dev/null && diff qexp.testout $(test_output_dir)/qexp.out
 	rm -rf $(NF_DIR)
 
 tests: procs_tests qcurves_tests qrank_tests g0n_tests
@@ -197,19 +167,11 @@ d2_SOURCES=d2.cc
 tcon2_SOURCES=tcon2.cc
 tlegcert_SOURCES=tlegcert.cc
 
-if ALLPROGS
-bin_PROGRAMS=$(PROCS_TESTS) $(QCURVES_TESTS) $(QRANK_TESTS) $(G0N_TESTS) $(extra_progs)
-else
-bin_PROGRAMS=mwrank
-endif
+noinst_PROGRAMS=$(PROCS_TESTS) $(QCURVES_TESTS) $(QRANK_TESTS) $(G0N_TESTS) $(extra_progs)
 
-# NB Do NOT include the following files above, since they are not
-# compiled by themselves but only included in other files which are
-# compiled.  But they do need to be in the distribution made by "make
-# dist" so we must list them here.  We also list the directories in
-# and out which contain the test input and expected output files for
-# the tests run by "make check".
+# We list here the directories in and out which contain the test input
+# and expected output files for the tests run by "make check".
 
-EXTRA_DIST = curvesort.cc in out
+EXTRA_DIST = in out
 
 ACLOCAL_AMFLAGS = -I m4

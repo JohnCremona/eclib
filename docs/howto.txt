@@ -1,6 +1,6 @@
 Documentation for the eclib library (building and running)
 
-%  Time-stamp: <2012-04-17 16:59:13 jec>
+%  Time-stamp: <2012-05-07 17:30:46 jec>
 
 1. Download, build and install:
 
@@ -22,8 +22,7 @@ if you will need non-default options.
 For the make install step, do it as superuser if you did not specify
 something non-default as --prefix in the ./configure step, otherwise
 make sure that the bin subdirectory of the install directory (say
-INSTALL_DIR) is in
-your PATH.
+INSTALL_DIR) is in your PATH.
 
 2. Run!
 

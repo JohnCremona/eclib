@@ -8,7 +8,7 @@ QCURVES_DOTHS = eclib/curve.h eclib/points.h eclib/cperiods.h eclib/isogs.h ecli
 
 QRANK_DOTHS = eclib/mrank2.h eclib/mequiv.h eclib/mlocsol.h eclib/mglobsol.h eclib/msoluble.h eclib/mquartic.h eclib/mrank1.h eclib/qc.h eclib/sqfdiv.h eclib/version.h eclib/minim.h eclib/reduce.h eclib/transform.h eclib/desc2.h eclib/bitspace.h eclib/options.h eclib/GetOpt.h eclib/twoadic.h eclib/descent.h
 
-G0N_DOTHS = eclib/periods.h eclib/cusp.h eclib/homspace.h eclib/newforms.h eclib/moddata.h eclib/oldforms.h eclib/symb.h eclib/fixc6.h eclib/pcprocs.h eclib/nfd.h
+G0N_DOTHS = eclib/periods.h eclib/cusp.h eclib/homspace.h eclib/newforms.h eclib/moddata.h eclib/oldforms.h eclib/symb.h eclib/fixc6.h eclib/pcprocs.h eclib/nfd.h eclib/curvesort.h
 
 DOTHS = $(PROCS_DOTHS) $(QCURVES_DOTHS) $(QRANK_DOTHS) $(G0N_DOTHS)
 
@@ -18,7 +18,7 @@ QCURVES_DOTCCS = curve.cc curvedata.cc curvered.cc points.cc cperiods.cc isogs.c
 
 QRANK_DOTCCS = mequiv.cc  mrank1.cc mlocsol.cc mglobsol.cc mquartic.cc mrank2.cc qc.cc sqfdiv.cc version.cc minim.cc reduce.cc transform.cc desc2.cc bitspace.cc GetOpt.cc twoadic.cc descent.cc
 
-G0N_DOTCCS = newforms.cc symb.cc homspace.cc cusp.cc oldforms.cc fixc6.cc periods.cc moddata.cc pcprocs.cc nfd.cc
+G0N_DOTCCS = newforms.cc symb.cc homspace.cc cusp.cc oldforms.cc fixc6.cc periods.cc moddata.cc pcprocs.cc nfd.cc curvesort.cc
 
 DOTCCS = $(PROCS_DOTCCS) $(QCURVES_DOTCCS) $(QRANK_DOTCCS) $(G0N_DOTCCS)
 
