@@ -26,6 +26,8 @@
 // computing rank via general 2-descent and descent via 2-isogeny
 // repectively); class two_descent is a user interface to these
 
+#include <stdexcept>
+
 #include <eclib/compproc.h>
 #include <eclib/points.h>
 #include <eclib/mwprocs.h>
@@ -74,7 +76,8 @@ two_descent::two_descent(vector<bigrational> ai,
 #endif
     qai=ai;
     e_orig = Curvedata(ai, v);
-    if(e_orig.isnull()) exit(1);
+    if(e_orig.isnull())
+	throw std::invalid_argument ("The curve is null!");
     if(verbose&&(v!=1)) 
       cout<<"integral model = "<<(Curve)e_orig<<" with scale factor "<<v<<endl;
     // Do the work as in the previous constructor
