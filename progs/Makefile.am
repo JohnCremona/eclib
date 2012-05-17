@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(NTL_CFLAGS) $(PARI_CFLAGS)
-AM_LDFLAGS      = -ljc -L$(top_builddir)/libsrc $(NTL_LIBS) $(PARI_LIBS)
+AM_LDFLAGS      = -lec -L$(top_builddir)/libsrc $(NTL_LIBS) $(PARI_LIBS)
 
 test_input_dir = $(srcdir)/in
 test_output_dir = $(srcdir)/out

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-lib_LTLIBRARIES = libjc.la
+lib_LTLIBRARIES = libec.la
 
 PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/arith.h eclib/xmod.h eclib/marith.h eclib/gpslave.h eclib/compproc.h eclib/vec.h eclib/vector.h eclib/mat.h eclib/matrix.h eclib/sub.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svec.h eclib/svector.h eclib/smat.h eclib/smatrix.h eclib/smat_elim.h eclib/smatrix_elim.h eclib/mvector.h eclib/mmatrix.h eclib/msubspace.h eclib/method.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h
 
@@ -29,6 +29,6 @@ DOTCCS = $(PROCS_DOTCCS) $(QCURVES_DOTCCS) $(QRANK_DOTCCS) $(G0N_DOTCCS)
 
 EXTRA_DIST = vec.cc mat.cc sub.cc smat.cc svec.cc smat_elim.cc random.cc
 
-libjc_la_SOURCES = $(DOTCCS)
+libec_la_SOURCES = $(DOTCCS)
 nobase_include_HEADERS = $(DOTHS)
 ACLOCAL_AMFLAGS = -I m4
