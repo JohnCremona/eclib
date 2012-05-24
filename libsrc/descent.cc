@@ -162,15 +162,18 @@ void two_descent::saturate(long sat_bd)
 
 // Do a quick search for points on the curve before processing points
   bigfloat hlim=to_bigfloat(PRE_SATURATION_SEARCH_LIMIT);
-  bigfloat oldreg=mwbasis->regulator();
-  if(verbose) cout <<"Searching for points (bound = "<<hlim<<")..." << flush;
-  mwbasis->search(hlim);
-  if(verbose) cout<<"done:"<<endl;
-  long search_rank=mwbasis->getrank();
-  bigfloat newreg=mwbasis->regulator();
-  if(verbose) cout<<"  found points of rank "<<search_rank
-		  <<"\n  and regulator "<<newreg<<endl;
-  
+  bigfloat oldreg=mwbasis->regulator(), newreg=to_bigfloat(1);
+  long search_rank=0;
+  if ((r12->getrank()>0) || !(r12->getcertain()))
+    {
+      if(verbose) cout <<"Searching for points (bound = "<<hlim<<")..." << flush;
+      mwbasis->search(hlim);
+      if(verbose) cout<<"done:"<<endl;
+      search_rank=mwbasis->getrank();
+      newreg=mwbasis->regulator();
+      if(verbose) cout<<"  found points which generate a subgroup of rank "<<search_rank
+                      <<"\n  and regulator "<<newreg<<endl;
+    }
   if(verbose) cout <<"Processing points found during 2-descent..." << flush;
   mwbasis->process(r12->getgens(),0); // no saturation yet
   if(verbose) cout <<"done:"<<endl;
@@ -182,15 +185,18 @@ void two_descent::saturate(long sat_bd)
       cout <<"  now regulator = "<<mwbasis->regulator()<<endl;
     }
   sat_bound=sat_bd; // store for reporting later
-  if(sat_bd==0) 
+  if((sat_bd==0) || (rank==0))
     {
-      fullmw=0;
-      if(verbose) cout <<"No saturation being done" << endl;
+      if (rank>0)
+        {
+          fullmw=0;
+          if(verbose) cout <<"No saturation being done" << endl;
+        }
     }
   else
     {
 //  Saturate
-      if(verbose) cout <<"Saturating (bound = "<<sat_bd<<")..." << flush;
+      if(verbose) cout <<"Saturating (with bound = "<<sat_bd<<")..." << flush;
       bigint index; vector<long> unsat;
       int sat_ok = mwbasis->saturate(index,unsat,sat_bd,1);
       // The last parameter 1 says not to bother with 2-saturation!
