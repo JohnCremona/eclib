@@ -149,8 +149,15 @@ inline RR sinh(const RR& x) {return (exp(x)-exp(-x))/2;}
 inline RR tan(const RR& x) {return sin(x)/cos(x);}
 RR atan2(const RR&, const RR&);
 inline int is_approx_zero(const RR& x)
-  {return abs(x)<power2_RR(2-RR::precision());}
-}
+//  {return abs(x)<power2_RR(2-RR::precision());}
+{
+  if (IsZero(x)) return 1;
+  long n = x.exponent()+RR::precision()-1;
+  if (n>=0) return 0;
+  // cout<<"x="<<x<<", exponent="<<x.exponent()<<", mantissa="<<x.mantissa()<<", precision="<<RR::precision()<<endl;
+  // cout<<"is_approx_zero() returns "<<(x.mantissa()<power2_ZZ(-n))<<endl;
+  return abs(x.mantissa())<power2_ZZ(-n);}
+} // namespace NTL
 #include <complex>
 typedef complex<RR> CC;
 #define bigcomplex CC

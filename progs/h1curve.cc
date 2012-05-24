@@ -61,7 +61,7 @@ int main(void)
   //  set_precision("Enter number of decimal places");
  int verb=0;
 #ifdef SINGLE
- verb=0;
+ verb=1;
 #else
  cout<<"See detail? "; cin>>verb;
 #endif

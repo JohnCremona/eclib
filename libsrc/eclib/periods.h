@@ -99,6 +99,7 @@ class periods_direct :public summer {
 private:
   long eps_N, a, b, c, d, dotplus, dotminus;
   bigfloat theta1,theta2;
+  vector<bigfloat> ctab, stab;  // array of cos(j*2*pi/d), sin(j*2*pi/d), for j mod d
   void use(long n, long an);
 
 public:

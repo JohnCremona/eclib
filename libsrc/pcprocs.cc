@@ -36,7 +36,8 @@
 // "trustworthy": always with multiprecision, but only if below
 // a fixed bound otherwise.
 #ifdef MPFP // Multi-Precision Floating Point
-inline int trust_denom(long d) { return (d<501);} // 1000);}
+//inline int trust_denom(long d) { return (d<501);} // 1000);}
+inline int trust_denom(long d) { return (d<1201);} // 1000);}
 #else
 inline int trust_denom(long d) { return (d<251);}
 #endif
@@ -69,18 +70,24 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
   if(nflist[i].dp0!=0) lplus=0;
   int rp_fixed = !have_rp;
 
-  periods_direct integrator(this,&(nflist[i]));
   long nrx=1, nry=1, drx=1, dry=1;
   long nrx0=1, nry0=1, drx0=1, dry0=1;
-  long a, b, c, d;
+  long a, b, b1, c, d;
   long& dotplus=(nflist[i].dotplus);
   long& dotminus=(nflist[i].dotminus);
+  long nf_a = nflist[i].a,  nf_b = nflist[i].b;
+  long nf_c = nflist[i].c,  nf_d = nflist[i].d;
+  dotplus = dotminus = 1;  // must do this before creating the integrator from the newform
   long dotplus0=1, dotminus0=1;
+  periods_direct integrator(this,&(nflist[i]));
   
-  for(d=2; (d<dmax)||(!have_both); d++)
+  for(d=nf_d; (d<dmax)||(!have_both); d++)
     {
       if(gcd(modulus,d)!=1) continue; long d2=d/2;
-      for(b=1; (b<=d2); b++)
+      b1 = 1;
+      if(d==nf_d) b1=nf_b;
+      //      for(b=b1; (b<=d2)&&(!have_both); b++)
+      for(b=b1; (b<=d2); b++)
 	{
 	  if(bezout(d,modulus*b,a,c)!=1) continue;
 	  c=-c;
@@ -207,6 +214,7 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 	 
   bigcomplex w1, w2; bigcomplex c4, c6;
   bigfloat x1=x0, y1=y0;
+  bigfloat c4err, c6err, c4c6err;
   for(nx=1; (nx<=maxnx); nx++)
     {x1=x0/to_bigfloat(nx);
     for(ny=1; (ny<=maxny); ny++)
@@ -218,19 +226,32 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 	    else {w1=bigcomplex(2*x1,zero); w2=bigcomplex(x1,y1);}
 	    bigcomplex tau=normalize(w1,w2);
 	    getc4c6(w1,w2,c4,c6);
+            // cout<<"w1 = "<<w1<<endl;
+            // cout<<"w2 = "<<w2<<endl;
+            // cout<<"c4 = "<<c4<<endl;
+            // cout<<"c6 = "<<c6<<endl;
 	    bigint ic4 = fac*Iround(real(c4)/fac);
 	    bigint ic6 = fac6*Iround(real(c6)/fac6);
-	    int close=(abs(I2bigfloat(ic4)-real(c4))<0.00001)&&(abs(I2bigfloat(ic6)-real(c6))<0.00001);
-	    int validc4c6 = valid_invariants(ic4,ic6);
-	    if((validc4c6||close)&&detail)
+            c4err = abs(I2bigfloat(ic4)-real(c4));
+            c6err = abs(I2bigfloat(ic6)-real(c6));
+            c4c6err = max(c4err, c6err);
+	    int close = (c4c6err<0.001);
+	    int validc4c6 = 0;
+            validc4c6 = valid_invariants(ic4,ic6);
+            if((validc4c6&&close)&&detail)
 	      {
 		cout << "type = " << type << ", nx = " << nx << ", ny = " << ny << "\n"; 
+                //                cout << "x = " << x1 << ", y = " << y1 << "\n";
 		cout << "w1 = " << w1 << ", w2 = " << w2 << "\n";
 		cout << "c4 = " << real(c4) << ", c6 = " << real(c6) << "\n";
 		cout << "ic4 = " << ic4 << ", ic6 = " << ic6 << "\n";
 	      }
-	    if(validc4c6&&close)
-              //	    if(validc4c6)
+            // We relax the closeness criterion here, but do not
+            // ignore it completely since there have been cases where
+            // c4,c6 were valid & give the right conductor but are not
+            // actually correct.
+	    close = (c4c6err<0.01);
+	    if(validc4c6&&close) // if(validc4c6)
 	      {
 		Curve C(ic4,ic6);
 		Curvedata CD(C,1);

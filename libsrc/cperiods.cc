@@ -364,6 +364,9 @@ bigcomplex Cperiods::X_coord(const bigcomplex& qz)
       cout<<"qtm = "<<qtm<<", X-term = "<<term<<", sum = "<<sum<<endl;      
 #endif
     }
+#ifdef DEBUG_XY
+  cout<<"--at end of 1st loop, term/sum = "<<(term/sum)<<"  "<<is_approx_zero(term/sum)<<endl;      
+#endif
   term = one; qtm = qtau;
   while ( ! SMALL(term/sum) )
     { w = qtm / qz;
@@ -374,6 +377,9 @@ bigcomplex Cperiods::X_coord(const bigcomplex& qz)
       cout<<"qtm = "<<qtm<<", X-term = "<<term<<", sum = "<<sum<<endl;      
 #endif
     }
+#ifdef DEBUG_XY
+  cout<<"--at end of 2nd loop, term/sum = "<<(term/sum)<<"  "<<is_approx_zero(term/sum)<<endl;      
+#endif
   bigcomplex ans = sum*TWOPIEYE*TWOPIEYE;
 #ifdef DEBUG_XY
   cout<<"X_coord returning ans = "<<ans<<endl;
@@ -400,9 +406,12 @@ bigcomplex Cperiods::Y_coord(const bigcomplex& qz)
       qtm *= qtau;
       sum += term;
 #ifdef DEBUG_XY
-      cout<<"Y-term = "<<term<<", sum = "<<sum<<endl;      
+      cout<<"Y-term = "<<term<<", sum = "<<sum<<"  "<<is_approx_zero(term/sum)<<endl;      
 #endif
     }
+#ifdef DEBUG_XY
+  cout<<"--at end of 1st loop, term/sum = "<<(term/sum)<<"  "<<is_approx_zero(term/sum)<<endl;      
+#endif
 // negative m terms;  qtm=qt^n where n=-m
   qtm = qtau; term = one;
   while ( ! SMALL(term/sum) )
@@ -414,6 +423,9 @@ bigcomplex Cperiods::Y_coord(const bigcomplex& qz)
       cout<<"Y-term = "<<term<<", sum = "<<sum<<endl;      
 #endif
     }
+#ifdef DEBUG_XY
+  cout<<"--at end of 2nd loop, term/sum = "<<(term/sum)<<endl;      
+#endif
   bigcomplex ans =  sum * TWOPIEYE * TWOPIEYE * TWOPIEYE;
 #ifdef DEBUG_XY
   cout<<"Y_coord returning ans = "<<ans<<endl;

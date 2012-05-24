@@ -39,6 +39,7 @@
 
 #define MAXNY 10000
 #define MAXD 10
+#define MAXNAP 20000
 
 int main(void)
 {
@@ -130,7 +131,8 @@ int main(void)
      newform* nfi = &((nf.nflist)[inf]);
 
      int rp_known=0;
-     nfi->dotplus=1; nfi->dotminus=1;  // need to reset these in case this is not 1st attempt!
+     // nfi->dotplus=1;  // This will have been set correctly
+     nfi->dotminus=1;
      bigfloat x0=to_bigfloat(10), y0=to_bigfloat(10);
      int have_both = nf.find_matrix( inf, dmax, rp_known, x0, y0);
      if(!have_both)
@@ -192,10 +194,11 @@ int main(void)
       cout<<(nnf-nsucc)<<" curve(s) missing."<<endl;
       if(output) nf.output_to_file();
       int newstopp=stopp;
-      if (newstopp<1000) newstopp+=500;
-      else newstopp+=1000;
-      //      if(newstopp>32000)
-      if(newstopp>10000)
+      if (newstopp<1000)
+        newstopp+=500;
+      else
+        newstopp+=1000;
+      if(newstopp>MAXNAP)
       {
 	  cout<<"Cannot compute more ap, something must be wrong in newform data"<<endl;
 	  abort();

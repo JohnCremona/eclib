@@ -37,6 +37,8 @@
 #define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
+#define MAXNAP 20000
+
 int main(void)
 {
  init_time();
@@ -161,7 +163,7 @@ int main(void)
 	    newstopp=2*stopp;
 	  else
 	    newstopp=stopp+500;
-	  if(newstopp>10000)
+	  if(newstopp>MAXNAP)
 	    {
 	      cout<<"Cannot compute more ap, something must be wrong in newform data"<<endl;
 	      abort();

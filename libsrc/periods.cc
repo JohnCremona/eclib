@@ -452,8 +452,25 @@ void periods_direct::compute(void)
   if (d<0) { a=-a;b=-b;c=-c;d=-d;}
 
   bigfloat drecip =  to_bigfloat(1) / to_bigfloat(d);
+  if (ctab.size()!=d) // else same d as before, no need to recompute
+    {
+      int j; bigfloat x;
+      ctab.clear();
+      stab.clear();
+      for(j=0; j<d; j++)
+        {
+          x = (TWOPI)*to_bigfloat(j)*drecip;
+          ctab.push_back(cos(x));
+          stab.push_back(sin(x));
+        }
+    }
+  // cout<<"d = "<<d<<endl;
+  // cout<<"ctab = "<<ctab<<endl;
+  // cout<<"stab = "<<stab<<endl;
   theta1 = to_bigfloat(b) * drecip;
   theta2 = to_bigfloat(c) * drecip;
+  b = posmod(b,d);
+  c = posmod(c,d);
   factor2 = factor1 * drecip;
   long dp = decimal_precision();
   Iasb(limit1,(-dp*LOG10-log((1-exp(factor1))/3))/(factor1)) ;
@@ -483,8 +500,8 @@ void periods_direct::compute(void)
 #endif
   //  cout<<"rp = "<<rp<<endl;
   //  cout<<"ip = "<<ip<<endl;
-  rp = sum1; if(dotplus!=1)  rp/=to_bigfloat(dotplus);
-  ip = sum2; if(dotminus!=1) ip/=to_bigfloat(dotminus);
+  rp = sum1; if(dotplus!=0)  rp/=to_bigfloat(dotplus);
+  ip = sum2; if(dotminus!=0) ip/=to_bigfloat(dotminus);
 }
  
 void periods_direct::use(long n, long an)  
@@ -501,14 +518,9 @@ void periods_direct::use(long n, long an)
 #endif
   }
   bigfloat dn = to_bigfloat(n);
-  bigfloat dan = to_bigfloat(an);
-  bigfloat coeff = -dan/dn;
+  bigfloat coeff = - to_bigfloat(an)/dn;
   bigfloat ef2 = coeff * exp(dn*factor2);
-  bigfloat dn2pi = dn*(TWOPI);
-  bigfloat c1 = ef2*cos(dn2pi*theta1),
-           s1 = ef2*sin(dn2pi*theta1),
-           c2 = ef2*cos(dn2pi*theta2),
-           s2 = ef2*sin(dn2pi*theta2);
+  int nbd = (n*b)%d, ncd = (n*c)%d;
   if(eps_N==-1) 
     {
       if(n<limit1)
@@ -519,13 +531,13 @@ void periods_direct::use(long n, long an)
 #endif
 	  sum1 += (2*ef1); 
 	}
-      sum1 -= (c1+c2);
-      sum2 -= (s1+s2);
+      sum1 -= ef2*(ctab[nbd]+ctab[ncd]);
+      sum2 -= ef2*(stab[nbd]+stab[ncd]);
     }
   else
     {
-      sum1 += (c1-c2);
-      sum2 += (s1-s2);
+      sum1 += ef2*(ctab[nbd]-ctab[ncd]);
+      sum2 += ef2*(stab[nbd]-stab[ncd]);
     }
 #ifdef TRACE_USE 
   cout<<"done: sum1 = "<<sum1<<", sum2 = "<<sum2<<endl;
@@ -689,19 +701,12 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
     }
   
   // we only reach here if sfe=-1 and level is square  
-  if(verbose) cout << "Unable to compute real period via L(f,chi,1)...";
 
-  long dotplus = nfi->dotplus;
-  if (dotplus==0)
-    {
-      if(verbose) cout << "Unable to compute real period."<<endl;
-      return 0;
-    }
   periods_direct pd(this,nfi);
   if(verbose) cout<<"...computing directly...";
   pd.compute();
-  x = abs(pd.rper()/dotplus);
-  if(verbose) cout<<"real period = "<<x<<endl;
+  x = abs(pd.rper()); // NB already scaled by dotplus obtained from the newform.
+  if(verbose) cout<<"real period (after scaling) = "<<x<<endl;
   return 1;
 }
 

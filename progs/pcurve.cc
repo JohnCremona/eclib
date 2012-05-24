@@ -71,7 +71,7 @@ int main(void)
 {
   cout << "N = " << n << endl;
 
-  newforms nf(n,(detail));
+  newforms nf(n,detail);
   int noldap=25;
   nf.createfromdata(1,noldap);
   int squarelevel=nf.squarelevel;
@@ -85,6 +85,7 @@ int main(void)
   primevar pr; long p0;                  // First "good" prime
   while (p0=(long)pr, ::divides(p0,n)) pr++; 
   
+  int anyfound=0;
  for(long i=inf-1; i<nnf; i++)
    {
      if(detail) cout<<"\n"<<"Form number "<<i+1<<"\n";
@@ -97,7 +98,8 @@ int main(void)
      int rp_known=0, have_both=0;
      long lplus=nfi->lplus, mplus=nfi->mplus;
      long s = nfi->sfe;
-     nfi->dotplus=1;     nfi->dotminus=1;  // In case wrong values were on the file!
+     //nfi->dotplus=1;     
+     nfi->dotminus=1;  // In case wrong values were on the file!
 
 // STEP 1: find the real period using L(f,1) is L/P nonzero,
 //         or via L(f,chi,1)
@@ -126,11 +128,13 @@ int main(void)
 // curve.  
      
      long nx, ny; int type;  
-     long maxnx=maxn; if(rp_known) maxnx=1;
+     long maxnx=maxn; 
+     if(rp_known) maxnx=1;
      int found = get_curve(n, fac, maxnx, maxn, x0, y0, nx, ny, type, detail);
 
      if(found)
        {
+         anyfound=1;
 	 cout<<"before rescaling, dotplus="<<nfi->dotplus<<", dotminus="<<nfi->dotminus<<endl;
 	 cout<<"rescaling by nx = "<<nx<<", ny="<<ny<<endl;
 	 nfi->dotplus *= nx;
@@ -169,14 +173,17 @@ int main(void)
        }
      else cout<<"No curve found\n";
 
-// dump complete data file into NF_DIR/e$N.
+// dump complete data file into NF_DIR/x$N.
 
+   }       // end of forms loop
+ if (anyfound)
+   {
      cout<<"Store newform data? "; cin>>dump;
      if(dump)
        {
-	 nf.output_to_file();
+         nf.output_to_file();
        }
-   }       // end of forms loop
+   }
 }       // end of if(n)
 }       // end of while()
 }       // end of main()
