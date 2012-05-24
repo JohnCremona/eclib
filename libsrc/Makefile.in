@@ -39,7 +39,10 @@ subdir = libsrc
 DIST_COMMON = $(nobase_include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -68,7 +71,7 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libjc_la_LIBADD =
+libec_la_LIBADD =
 am__objects_1 = interface.lo unimod.lo arith.lo marith.lo gpslave.lo \
 	compproc.lo vector.lo matrix.lo subspace.lo kbessel.lo \
 	mvector.lo mmatrix.lo msubspace.lo svector.lo smatrix.lo \
@@ -87,8 +90,8 @@ am__objects_4 = newforms.lo symb.lo homspace.lo cusp.lo oldforms.lo \
 	fixc6.lo periods.lo moddata.lo pcprocs.lo nfd.lo curvesort.lo
 am__objects_5 = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	$(am__objects_4)
-am_libjc_la_OBJECTS = $(am__objects_5)
-libjc_la_OBJECTS = $(am_libjc_la_OBJECTS)
+am_libec_la_OBJECTS = $(am__objects_5)
+libec_la_OBJECTS = $(am_libec_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -102,8 +105,8 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libjc_la_SOURCES)
-DIST_SOURCES = $(libjc_la_SOURCES)
+SOURCES = $(libec_la_SOURCES)
+DIST_SOURCES = $(libec_la_SOURCES)
 HEADERS = $(nobase_include_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -231,7 +234,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-lib_LTLIBRARIES = libjc.la
+lib_LTLIBRARIES = libec.la
 PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/arith.h eclib/xmod.h eclib/marith.h eclib/gpslave.h eclib/compproc.h eclib/vec.h eclib/vector.h eclib/mat.h eclib/matrix.h eclib/sub.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svec.h eclib/svector.h eclib/smat.h eclib/smatrix.h eclib/smat_elim.h eclib/smatrix_elim.h eclib/mvector.h eclib/mmatrix.h eclib/msubspace.h eclib/method.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h
 QCURVES_DOTHS = eclib/curve.h eclib/points.h eclib/cperiods.h eclib/isogs.h eclib/reader.h eclib/mwprocs.h eclib/lambda.h eclib/sifter.h eclib/sieve_search.h eclib/htconst.h eclib/egr.h eclib/saturate.h eclib/divpol.h eclib/pointsmod.h eclib/curvemod.h eclib/ffmod.h eclib/tlss.h eclib/elog.h eclib/getcurve.h
 QRANK_DOTHS = eclib/mrank2.h eclib/mequiv.h eclib/mlocsol.h eclib/mglobsol.h eclib/msoluble.h eclib/mquartic.h eclib/mrank1.h eclib/qc.h eclib/sqfdiv.h eclib/version.h eclib/minim.h eclib/reduce.h eclib/transform.h eclib/desc2.h eclib/bitspace.h eclib/options.h eclib/GetOpt.h eclib/twoadic.h eclib/descent.h
@@ -248,7 +251,7 @@ DOTCCS = $(PROCS_DOTCCS) $(QCURVES_DOTCCS) $(QRANK_DOTCCS) $(G0N_DOTCCS)
 # compiled.  But they do need to be in the distribution made by "make
 # dist" so we must list them here:
 EXTRA_DIST = vec.cc mat.cc sub.cc smat.cc svec.cc smat_elim.cc random.cc
-libjc_la_SOURCES = $(DOTCCS)
+libec_la_SOURCES = $(DOTCCS)
 nobase_include_HEADERS = $(DOTHS)
 ACLOCAL_AMFLAGS = -I m4
 all: all-am
@@ -316,8 +319,8 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libjc.la: $(libjc_la_OBJECTS) $(libjc_la_DEPENDENCIES) 
-	$(CXXLINK) -rpath $(libdir) $(libjc_la_OBJECTS) $(libjc_la_LIBADD) $(LIBS)
+libec.la: $(libec_la_OBJECTS) $(libec_la_DEPENDENCIES) 
+	$(CXXLINK) -rpath $(libdir) $(libec_la_OBJECTS) $(libec_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
