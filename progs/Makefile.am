@@ -26,7 +26,7 @@ check_procs: procs_progs
 ################ QCURVES (elliptic curves programs, excluding two-descent) #################
 
 QCURVES_PROGS = point_search indep_test
-qcurves_progs: $(QCURVES_TESTS)
+qcurves_progs: $(QCURVES_PROGS)
 
 point_search_SOURCES=point_search.cc
 indep_test_SOURCES=indep_test.cc
