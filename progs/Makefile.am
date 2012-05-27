@@ -102,6 +102,7 @@ check: check_procs check_qcurves check_qrank check_g0n
 if ALLPROGS
 bin_PROGRAMS=$(PROCS_PROGS) $(QCURVES_PROGS) $(QRANK_PROGS) $(G0N_PROGS)
 else
+noinst_PROGRAMS=$(PROCS_PROGS) $(QCURVES_PROGS) $(QRANK_PROGS) $(G0N_PROGS)
 bin_PROGRAMS=mwrank
 endif
 
