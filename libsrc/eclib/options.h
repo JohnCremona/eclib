@@ -145,7 +145,7 @@ public:
       if(which)
 	cerr << "and finally saturate to obtain generating points on the curve.\n";
 
-      cerr << "For more details see the file mwrank.doc.\n";
+      cerr << "For more details see the mwrank documentation.\n";
       cerr << "For details of algorithms see the author's book.\n\n";
       cerr << "Please acknowledge use of this program in published work, \n";
       cerr << "and send problems to john.cremona@gmail.com.\n\n";
