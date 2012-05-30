@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [2012-05-24], [john.cremona@gmail.com])
+AC_INIT([eclib], [2012-05-30], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -87,7 +87,7 @@ AC_CHECK_FUNCS([floor memmove memset pow sqrt strchr])
 
 AC_ARG_ENABLE([allprogs],
    AS_HELP_STRING([--enable-allprogs],
-                  [build all programs and tests (default is to only build the library and mwrank)]),
+                  [build all programs and tests [default=yes], otherwise only build the library and mwrank]),
      [case "${enableval}" in
        yes) allprogs=true ;;
        no)  allprogs=false ;;

@@ -3,21 +3,20 @@ syntax: glob
 
 *~
 *.old
+configure
+Makefile
+Makefile.in
+*/Makefile
+*/Makefile.in
 autom4te.cache
 m4
 libsrc/Makefile.jc
-libsrc/.deps
-libsrc/.libs
-libsrc/*.o
-libsrc/*.lo
+*/.deps
+*/.libs
+*/*.o
+*/*.lo
+*/*.la
 tests/Makefile.jc
-tests/.deps
-tests/.libs
-tests/*.o
-progs/.deps
-progs/.libs
-progs/*.o
-progs/*.lo
 eclib*.tar.gz
 aclocal.m4
 config.guess
@@ -28,3 +27,4 @@ depcomp
 install-sh
 ltmain.sh
 missing
+libtool
