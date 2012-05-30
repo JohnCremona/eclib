@@ -1,3 +1,3 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libsrc tests progs
+SUBDIRS = libsrc tests progs doc man

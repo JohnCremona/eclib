@@ -99,6 +99,8 @@ AC_CONFIG_FILES([
   libsrc/Makefile
   tests/Makefile
   progs/Makefile
+  doc/Makefile
+  man/Makefile
   Makefile
 ])
 AC_OUTPUT

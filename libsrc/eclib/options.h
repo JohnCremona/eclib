@@ -117,12 +117,11 @@ public:
       cerr << "mrank/mwrank command line options (can be in any order):\n\n";
       cerr << "-h\t""help""\t\tprints this info and quits\n";
       cerr << "-q\t""quiet""\t\tturns OFF banner display\n";
-      cerr << "-v n\t""verbosity""\tsets verbosity to n (default=1)\n";
+      cerr << "-v n\t""verbosity""\tsets verbosity to n (default="<<DEFAULT_VERBOSE<<")\n";
       cerr << "-o\t""PARI/GP output""\tturns ON extra PARI/GP short output (default is OFF)\n";
-      cerr << "-p n\t""precision""\tsets precision to n decimals (default=15)\n";
-      cerr << "\t\t\t(irrelevant unless compiled with multiprecision option)\n";
-      cerr << "-b n\t""quartic bound""\tbound on quartic point search (default=10)\n";
-      cerr << "-x n\t""n aux""\t\tnumber of aux primes used for sieving (default=6)\n";
+      cerr << "-p n\t""precision""\tsets precision to n decimals (default="<<DEFAULT_PRECISION<<")\n";
+      cerr << "-b n\t""quartic bound""\tbound on quartic point search (default="<<DEFAULT_HLIMQ<<")\n";
+      cerr << "-x n\t""n aux""\t\tnumber of aux primes used for sieving (default="<<DEFAULT_NAUX<<")\n";
       cerr << "-l\t""list""\t\tturns ON listing of points (default ON unless v=0)\n";
       cerr << "-t\t""trace""\t\tturns ON trace of quartic equivalence testing (debugging only)\n";
       //      cerr << "-c n\t""curve bound""\tbound on curve point search\n";

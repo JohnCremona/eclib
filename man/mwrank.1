@@ -1,0 +1,47 @@
+.TH MWRANK "1" "May 2012" "mwrank 2012-07-30" "User Commands"
+.SH NAME
+mwrank \- determines the rank of an elliptic curve E over Q by 2-descent
+and generating points for E(Q) modulo torsion
+.SH DESCRIPTION
+mwrank is organized as a loop where the user enters curves one by one and the
+program displays what it can compute about them.  An elliptic
+curve is entered by giving its Weierstrass coefficients (which may be
+integers or rationals, either as [a1,a2,a3,a4,a6] or as a1 a2 a3 a4 a6.
+
+Here are mwrank command line options (can be in any order):
+.PP
+.HP
+\fB\-h\fR      help            prints this info and quits
+.IP
+.HP
+\fB\-q\fR      quiet           turns OFF banner display
+.IP
+.HP
+\fB\-v\fR n    verbosity       sets verbosity to n (default=1)
+.IP
+.HP
+\fB\-o\fR      PARI/GP output  turns ON extra PARI/GP short output (default is OFF)
+.IP
+.HP
+\fB\-p\fR n    precision       sets precision to n decimals (default=15)
+.IP
+.HP
+\fB\-b\fR n    quartic bound   bound on quartic point search (default=10)
+.IP
+.HP
+\fB\-x\fR n    n aux           number of aux primes used for sieving (default=6)
+.IP
+.HP
+\fB\-l\fR      list            turns ON listing of points (default ON unless v=0)
+.IP
+.HP
+\fB\-t\fR      trace           turns ON trace of quartic equivalence testing (debugging only)
+.IP
+.HP
+\fB\-s\fR      selmer_only     if set, computes Selmer rank only (default: not set)
+.IP
+.HP
+\fB\-d\fR      skip_2nd_descent        if set, skips the second descent for curves with 2\-torsion (default: not set)
+.IP
+.HP
+\fB\-S\fR n    sat_bd          upper bound on saturation primes (default=1000, \fB\-1\fR for automatic)
