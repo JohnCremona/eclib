@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
-// 
+//
 // This file is part of the mwrank/g0n package.
-// 
+//
 // mwrank is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // mwrank is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with mwrank; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #include <eclib/marith.h>
@@ -38,39 +38,74 @@
 
 int main(void)
 {
-  set_precision("Enter number of decimal places");
-  int verbose,limit=210,n=130; 
+  long prec0=25;
+  int verbose,output,limit=210,n=130;
   cout << "Program h1first.  Using METHOD = " << METHOD << endl;
-  cout << "Verbose output? "; cin>>verbose;
+  cerr << "Verbose output? "; cin>>verbose;
+  cerr << "Output updated newform data? "; cin>>output;
 #ifdef AUTOLOOP
-  cout<<"Enter first and last N: ";cin>>n>>limit;  n--;
+  cerr<<"Enter first and last N: ";cin>>n>>limit;  n--;
   while (n<limit) { n++;
 #else
   while (n>0) { cout<<"\n\nEnter level: "; cin>>n;
 #endif
   if (n>0)
     {
-      int usedata=0;
       if(verbose) cout << "\n\n";
       cout << ">>>Level " << n << "<<<" << endl;
-      newforms nf(n,verbose); 
-      nf.createfromdata(0,25,0);
+      newforms nf(n,verbose>1);
+      if(verbose)
+        {
+          cout << "Reading newform data from file..." << flush;
+        }
+      nf.createfromdata(1,0,0);
+      long inf, nnf = nf.n1ds;
+      if(verbose)
+        {
+          cout << "done: " << nnf << " newforms." << endl;
+        }
+      if(nnf==0)
+        {
+          cout << "No newforms.\n";
+          cout << "Finished level "<<n<<endl;
+          continue;
+        }
 #ifdef LMFDB_ORDER
       nf.sort();
 #endif
-      if(verbose) 
-	cout << "finished reading newform data from file" << endl;     
+      if(verbose)
+        {
+          cout << "Finding +1 eigenvectors..." << flush;
+        }
       nf.makebases(1);
-      if(verbose) 
-	cout << "finished constructing h1newforms" << endl;     
-      nf.output_to_file();
-      if(verbose) 
-	cout << "saved updated newform data to file" << endl;     
-      
+      if(verbose)
+        {
+          cout << "done.\nNow finding -1 eigenvectors..." << flush;
+        }
+      nf.set_sign(-1);
+      nf.makebases(1);
+      if(verbose)
+        {
+          cout << "done.\nNow filling in data for newforms..."<<flush;
+        }
+      nf.set_sign(0);
+      nf.merge();
+
+      if(verbose)
+        {
+          cout << "done.\nUpdated newforms: ";
+          nf.display();
+        }
+      if(output)
+        {
+          nf.output_to_file();
+          if(verbose)
+            cout << "saved updated newform data to file" << endl;
+        }
+
 #ifdef SHOWCURVES
-      int inf, nnf = nf.n1ds;
       // Now we compute the curves
-      cout<<"Computing "<<nnf<<" curves...\n";
+      if(verbose) cout<<"Computing "<<nnf<<" curves...\n";
       vector<int> forms;
       for(inf=0; inf<nnf; inf++) forms.push_back(inf);
       vector<int> failures = nf.showcurves(forms,0);
@@ -80,12 +115,11 @@ int main(void)
 	}
       else
 	{
-	  cout<<"All curves found OK"<<endl;
+	  if(verbose) cout<<"All curves found OK"<<endl;
 	}
 #endif
-      
     }       // end of if(n)
   }       // end of while()
-  cout<<"Finished"<<endl;
+  if(verbose) cout<<"Finished"<<endl;
   }       // end of main()
 
