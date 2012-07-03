@@ -105,10 +105,14 @@ int main(void)
 #endif
      newform& nfi = nf.nflist[i];
      int degphi = nfi.degphi;
-     ldash1 x(&nf, &nfi);
      bigfloat rperiod;
-     int r = x.rank();
-
+     int r = 0;
+     if (num(nfi.loverp)==0)
+       {
+         set_precision(16);
+         ldash1 x(&nf, &nfi);
+         r = x.rank();
+       }
      Curve C;
      Curvedata CD;
      CurveRed CR;

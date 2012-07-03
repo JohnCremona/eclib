@@ -88,12 +88,9 @@ int main(void)
 #endif
  if (n>0)
 {
- int usedata=1;
  newforms nf(n,verb);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
- // nf.createfromolddata();
- //nf.output_to_file();
  #ifdef LMFDB_ORDER
  nf.sort();
  #endif

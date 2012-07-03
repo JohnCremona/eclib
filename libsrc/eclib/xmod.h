@@ -109,7 +109,9 @@ inline int xmodmul(int a, int b, int m)
 
 #define XMOD_METHOD "ints and longs"
 const int BIGPRIME = PRIME30;
-const int HALF_BIGPRIME = BIGPRIME>>1;
+const int HALF_BIGPRIME = BIGPRIME>>1; // = 536870894;
+const int TWO_BIGPRIME = 2147483578; // 2*BIGPRIME
+const long INV_BIGPRIME = 4294967436; // = 2^32+140 = [2^62/p]
 
 inline int xmod(int a, int m) {return a%m;}
 inline long xmod(long a, long m) {return a%m;}
@@ -162,8 +164,25 @@ inline long xmodmul0(long a, long b)
 
 #endif // ifdef USE_DMOD
 
+static int table_invs[20] = {0,1, 536870895, 357913930, 805306342, 214748358, 178956965, 920350105, 402653171, 477218573, 107374179, 97612890, 626349377, 330382089, 997045947, 71582786, 738197480, 442128972, 775480181, 226050903};
+
 inline long invmod0(long aa)
-{long x=0,oldx=1,newx,a=aa,b=BIGPRIME,c,q;
+{
+  long a=aa;
+
+  // if |a| is small, use look-up table:
+  if ((a>0)&&(a<20)) return table_invs[a];
+  long ma=-a;
+  if ((ma>0)&&(ma<20)) return -table_invs[ma];
+  // if a = BIGPRIME-ma with ma small, use look-up table:
+  ma+=BIGPRIME; // = BIGPRIME-a
+  if ((ma>0)&&(ma<20)) return -table_invs[ma];
+  // if a = -BIGPRIME+ma with ma small, use look-up table:
+  ma=a-BIGPRIME;
+  if ((ma>0)&&(ma<20)) return table_invs[ma];
+
+ // General code, use Euclidean Algorithm:
+ long x=0,oldx=1,newx,b=BIGPRIME,c,q;
  while (b!=0)
  { q = a/b; 
    c    = a    - q*b; a    = b; b = c;
@@ -177,7 +196,22 @@ inline long invmod0(long aa)
 }
 
 inline int invmod0(int aa)
-{int x=0,oldx=1,newx,a=aa,b=BIGPRIME,c,q;
+{
+  int a=aa;
+
+  // if |a| is small, use look-up table:
+  if ((a>0)&&(a<20)) return table_invs[a];
+  int ma=-a;
+  if ((ma>0)&&(ma<20)) return -table_invs[ma];
+  // if a = BIGPRIME-ma with ma small, use look-up table:
+  ma+=BIGPRIME; // = BIGPRIME-a
+  if ((ma>0)&&(ma<20)) return -table_invs[ma];
+  // if a = -BIGPRIME+ma with ma small, use look-up table:
+  ma=a-BIGPRIME;
+  if ((ma>0)&&(ma<20)) return table_invs[ma];
+
+ // General code, use Euclidean Algorithm:
+ int x=0,oldx=1,newx,b=BIGPRIME,c,q;
  while (b!=0)
  { q = a/b; 
    c    = a    - q*b; a    = b; b = c;

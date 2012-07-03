@@ -26,20 +26,55 @@
 
 inline scalar xmm(scalar a, scalar b, scalar m)
 {
+  if (a==1) return b;
+  if (a==-1) return -b;
+  if (b==1) return a;
+  if (b==-1) return -a;
   //return xmodmul(a,b,m);
   //return (a*b) % m;
   return (a*(int64_t)b) % m;
   //return (scalar)(((long)a*(long)b) % (long)m);
 }
+
 inline scalar xmm0(scalar a, scalar b)
 {
+  if (a==1) return b;
+  if (a==-1) return -b;
+  if (b==1) return a;
+  if (b==-1) return -a;
+
   //return xmodmul(a,b,m);
   //return (a*b) % m;
-  return (a*(int64_t)b) % BIGPRIME;
   //return (scalar)(((long)a*(long)b) % (long)m);
+
+  /* this works fine:
+  return (a*(int64_t)b) % BIGPRIME;
+  */
+  // the following should work faster (no divisions!  Thanks to David Harvey)
+  if(a<0) a+=BIGPRIME;
+  if(b<0) b+=BIGPRIME;
+ long ab = a*(int64_t)b;
+ long r = ab-((INV_BIGPRIME*(ab>>30))>>32)*BIGPRIME;
+ r -= ( ((r>=TWO_BIGPRIME)?BIGPRIME:0) + ((r>=BIGPRIME)?BIGPRIME:0) );
+ /*
+ // check:
+ scalar r2 = (a*(int64_t)b) % BIGPRIME;
+ if (r!=r2)
+ {
+ cout << "Problem with "<<a<<"*"<<b<<" (mod "<<BIGPRIME<<"): computed "<<r<<", not "<<r2<<endl;
+ return r2;
+}
+ */
+ return (scalar)r;
 }
 
-
+inline scalar addmod0(scalar a, scalar b)
+{
+  scalar c=a+b;
+  c += ((c<0)?BIGPRIME:0);
+  c -= ((c>=BIGPRIME)?BIGPRIME:0);
+  return c;
+}
 
 //#define TRACE_LISTS
 //#define TRACE_FIND
@@ -247,6 +282,7 @@ smat_elim::ordlist::remove( list& L )  // L must be ordered
 void smat_elim::init( )
 {
   //  cout<<"smat_elim::init()  with smat:\n"<<(smat)(*this)<<endl;
+  //  this->reduce_mod_p(BIGPRIME);
   //  cout<<"smat_elim::init()  after reducing:\n"<<(smat)(*this)<<endl;
   list::listsize = 10;
   rank = 0;
@@ -774,7 +810,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
     int d2i = d2;
     scalar *oldVal = val[row2]; int *oldMat = col[row2];
     scalar *veci2 = oldVal;
-    scalar v2 = -1*veci2[ind];
+    scalar v2 = mod0(BIGPRIME-veci2[ind]);
     int *P = col[row2] = new int [ d + d2 + 1 ]; P++;
     scalar *V = val[row2] = new scalar [ d + d2 ];
 
@@ -789,7 +825,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
 	else if(( *P++ = *pos2++ ) < *pos1 ) { *V++ = *veci2++; d2--; }
 	else
 	  {
-	    if( (*V++ = xmod0(xmm0(v2,(*veci1++)) + (*veci2++))) == 0)
+	    if( (*V++ = addmod0(xmm0(v2,(*veci1++)) , (*veci2++))) == 0)
 	      { lro[di-d].put(row2); V--; P--; k--;}
 	    temp=*pos1++; // unused, but prevents compiler warning
 	    d--;
@@ -878,7 +914,7 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
       else if(( *P++ = *pos2++ ) < *pos1 ) { *V++ = *veci2++; d2--; }
       else
 	{
-	  if( (*V++ = xmod0(xmm0(v2,(*veci1++)) + (*veci2++))) == 0)
+	  if( (*V++ = addmod0(xmm0(v2,(*veci1++)) , (*veci2++))) == 0)
 	    { V--; P--; k--;}
 	  temp=*pos1++; // unused, but prevents compiler warning
 	  d--;

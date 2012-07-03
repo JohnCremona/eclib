@@ -108,6 +108,7 @@ int main(void)
 
   // Now we search for curves as in pcurve.cc
 
+  if(output) nf.output_to_file();
 
   long rootn=(long)(sqrt((double)n)+0.1); 
   int squarelevel=(n==rootn*rootn);

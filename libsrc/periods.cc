@@ -429,7 +429,6 @@ periods_direct::periods_direct(const level* iN, const newform*f)
   initaplist(iN, f->aplist);
   factor1 = -(TWOPI)  / sqrt(to_bigfloat(N));
   type=f->type;
-  dotplus=f->dotplus, dotminus=f->dotminus;
   a=f->a,b=f->b,c=f->c,d=f->d;
 }
 
@@ -497,11 +496,11 @@ void periods_direct::compute(void)
 
 #ifdef TRACE_CACHE
   cout << "Returned from sumit()" << endl;
+  cout<<"rp = "<<rp<<endl;
+  cout<<"ip = "<<ip<<endl;
 #endif
-  //  cout<<"rp = "<<rp<<endl;
-  //  cout<<"ip = "<<ip<<endl;
-  rp = sum1; if(dotplus!=0)  rp/=to_bigfloat(dotplus);
-  ip = sum2; if(dotminus!=0) ip/=to_bigfloat(dotminus);
+  rp = sum1;
+  ip = sum2;
 }
  
 void periods_direct::use(long n, long an)  
@@ -620,7 +619,7 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
 
 void ldash1::compute(void) 
 {
-  const bigfloat two=to_bigfloat(2);
+  static const bigfloat two=to_bigfloat(2);
   if(computed) return;
   sumit(); ld1=two*sum1; computed=1;
   if(r==0) return;
@@ -705,8 +704,11 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
   periods_direct pd(this,nfi);
   if(verbose) cout<<"...computing directly...";
   pd.compute();
-  x = abs(pd.rper()); // NB already scaled by dotplus obtained from the newform.
-  if(verbose) cout<<"real period (after scaling) = "<<x<<endl;
+  x = abs(pd.rper());
+  long dotplus = (nfi->dotplus);
+  if (!dotplus) return 0;
+  x /= dotplus;
+  if(verbose) cout<<"real period (after scaling by "<<dotplus<<") = "<<x<<endl;
   return 1;
 }
 
@@ -763,8 +765,9 @@ Cperiods newforms::getperiods(long i, int method, int verbose)
 	   }
          periods_direct per(this,nfi);
          per.compute();
-	 Cperiods cp = per.getperiods();
-         return cp;
+         return Cperiods(per.rper()/(nfi->dotplus),
+                         per.iper()/(nfi->dotminus),
+                         (nfi->type));;
        }
      else
        {
@@ -947,17 +950,18 @@ bigfloat myg1(bigfloat x)
 
 bigfloat CG(int r, bigfloat x) // Cohen's G_r(x)
 {
+  static const bigfloat one = to_bigfloat(1);
   bigfloat emx=exp(-x), ans=x, term=x;
   vector<bigfloat> Av(r+1);  // indexed from 0 to r
-  int j, n=1;
-  for(j=0;j<=r;j++) Av[j]=to_bigfloat(1);
+  int j; bigfloat n=one;
+  for(j=0;j<=r;j++) Av[j]=one;
   while(!is_approx_zero(emx*term*Av[r]))
     //while(!is_approx_zero(term*Av[r]))
     {
       n++;
       // update A-vector, term and sum
-      for(j=1;j<=r;j++) Av[j]+=(Av[j-1]/to_bigfloat(n)); 
-      term*=(x/to_bigfloat(n));
+      for(j=1;j<=r;j++) Av[j]+=(Av[j-1]/n); 
+      term*=(x/n);
       ans+=(Av[r]*term);
     }
   return emx*ans;
@@ -965,23 +969,26 @@ bigfloat CG(int r, bigfloat x) // Cohen's G_r(x)
 
 bigfloat Glarge(int r, bigfloat x) // Cohen's Gamma_r(x) for large x
 {
-  bigfloat emx=exp(-x), ans=to_bigfloat(0), term=-to_bigfloat(1)/x;
+  static const bigfloat zero = to_bigfloat(0);
+  static const bigfloat one = to_bigfloat(1);
+  static const bigfloat two = to_bigfloat(2);
+  bigfloat emx=exp(-x), ans=zero, term=-one/x;
   vector<bigfloat> Cv(r+1);  // indexed from 0 to r
-  int j, n=0;
-  Cv[0]=to_bigfloat(1);
-  for(j=1;j<=r;j++) Cv[j]=to_bigfloat(0); 
+  int j; bigfloat n=zero;
+  Cv[0]=one;
+  for(j=1;j<=r;j++) Cv[j]=zero;
   //  cout<<"emx*term="<<emx*term<<endl;
   while(!is_approx_zero(abs(emx*term)))
     //while(!is_approx_zero(abs(term)))
     {
       n++;
       // update C-vector, term and sum
-      for(j=r;j>0;j--) Cv[j]+=(Cv[j-1]/to_bigfloat(n)); 
-      term*=(-to_bigfloat(n)/x);
+      for(j=r;j>0;j--) Cv[j]+=(Cv[j-1]/n);
+      term*=(-n/x);
       ans+=(Cv[r]*term);
       //      cout<<"term="<<term<<"; ans="<<ans<<endl;
     }
-  return to_bigfloat(2)*emx*ans;
+  return two*emx*ans;
 }
 
 bigfloat Q(int r, bigfloat x)  // Q_r(x) polynomial from AMEC p.44
@@ -994,15 +1001,27 @@ bigfloat Q(int r, bigfloat x)  // Q_r(x) polynomial from AMEC p.44
   static const bigint nz4=atoI("2482306838570394152367457601777793352247775704274910416102594171643891396599068147834147756326957412925856");
   bigfloat zeta4; MakeRR(zeta4,nz4,-350);
 #else
- const bigfloat zeta2 = 1.6449340668482264364724151666460251892189499;
- const bigfloat zeta3 = 1.20205690315959428539973816151144999076498629;
- const bigfloat zeta4 = 1.08232323371113819151600369654116790277475095;
+ static const bigfloat zeta2 = 1.6449340668482264364724151666460251892189499;
+ static const bigfloat zeta3 = 1.20205690315959428539973816151144999076498629;
+ static const bigfloat zeta4 = 1.08232323371113819151600369654116790277475095;
 #endif
+ static const bigfloat two = to_bigfloat(2);
+ static const bigfloat three = to_bigfloat(3);
+ static const bigfloat four = to_bigfloat(4);
+ static const bigfloat nine = to_bigfloat(9);
+ static const bigfloat sixteen = to_bigfloat(16);
+ static const bigfloat twentyfour = to_bigfloat(24);
+ static const bigfloat const1 = nine*zeta4/sixteen;
+ static const bigfloat const2 = zeta3/three;
+ static const bigfloat const3 = zeta4/four;
+ static const bigfloat half = to_bigfloat(1)/two;
+ static const bigfloat third = to_bigfloat(1)/three;
+ static const bigfloat twenty4th = to_bigfloat(1)/twentyfour;
   switch(r) {
   case 1: default: return x;
-  case 2: return (x*x+zeta2)/to_bigfloat(2);
-  case 3: return x*(x*x/to_bigfloat(3)+zeta2)/to_bigfloat(2)-zeta3/to_bigfloat(3);
-  case 4: return to_bigfloat(9)*zeta4/to_bigfloat(16)+x*(-zeta3/to_bigfloat(3)+x*(zeta2/to_bigfloat(4)+x*x/to_bigfloat(24)));
+  case 2: return (x*x+zeta2)*half;
+  case 3: return x*(x*x*third+zeta2)*half-const2;
+  case 4: return const1 +x*(-const2+x*(const3+x*x*twenty4th));
   }
 }
 bigfloat P(int r, bigfloat x)  // P_r(x) polynomial from AMEC p.44
@@ -1018,11 +1037,10 @@ bigfloat Gsmall(int r, bigfloat x) // Cohen's Gamma_r(x) for small x
 
 bigfloat G(int r, bigfloat x)  // G_r(x)
 {
-  bigfloat x0 = 
 #ifndef MPFP // Multi-Precision Floating Point
-    to_bigfloat(14);
+    static const  bigfloat x0 = to_bigfloat(14);
 #else
-    to_bigfloat(log(10)*decimal_precision());
+    static const  bigfloat x0 = to_bigfloat(log(10)*decimal_precision());
 #endif
     //  cout<<"switch point = "<<x0<<endl;
     //  cout<<"x="<<x<<endl;

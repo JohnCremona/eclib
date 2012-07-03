@@ -61,10 +61,14 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
   rp_known = have_rp;
   // have_rp is set if we know a real period; rp_known is set if we
   // know that it is the real period (strictly, the least real part of
-  // a period), which is usually the case here, the exception being
-  // when sfe=-1 and n is square.
+  // a period), which should always be the case.
 
-  // the following are to allow us a choice for the real period; 
+  // The code below allows for the situation where we do not know the
+  // correct scaling factor for the real period, so that x0 will be an
+  // unknown integer multiple of the minimal real period; in that
+  // sitiuation we would have have_rp=1 but rp_known=0.
+
+  // the following are to allow us a choice for the real period;
   // we'll use the value which has greater precision
   long lplus = nflist[i].lplus;
   if(nflist[i].dp0!=0) lplus=0;
@@ -77,10 +81,9 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
   long& dotminus=(nflist[i].dotminus);
   long nf_a = nflist[i].a,  nf_b = nflist[i].b;
   long nf_c = nflist[i].c,  nf_d = nflist[i].d;
-  dotplus = dotminus = 1;  // must do this before creating the integrator from the newform
   long dotplus0=1, dotminus0=1;
   periods_direct integrator(this,&(nflist[i]));
-  
+
   for(d=nf_d; (d<dmax)||(!have_both); d++)
     {
       if(gcd(modulus,d)!=1) continue; long d2=d/2;

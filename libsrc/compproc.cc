@@ -85,27 +85,29 @@ void getc4c6(const bigcomplex& w1, const bigcomplex& w2,
   bigfloat pi(Pi());
   bigfloat x = two*pi*tau.real();
   bigfloat y = two*pi*tau.imag();
+  bigfloat nx = x, ny=y;
   bigcomplex q = exp(-y) *  bigcomplex(cos(x),sin(x));
   bigcomplex f = two*pi/w2;
-  bigcomplex f2 = f*f;  
+  bigcomplex f2 = f*f;
   bigcomplex f4=f2*f2;
   
-  bigcomplex term   = bigcomplex(one); 
+  bigcomplex term   = bigcomplex(one);
   bigcomplex qpower = bigcomplex(one);
   bigcomplex sum4   = bigcomplex(zero);
   bigcomplex sum6   = bigcomplex(zero);
   
   bigfloat n, n2;
 
-  for (n=1; 
+  for (n=1;
 #ifdef MPFP
-       !is_approx_zero(term); 
+       (n==1)|| (!is_approx_zero(term/sum6));
 #else
-       !is_zero(term); 
+       (n==1)|| (!is_zero(term/sum6));
 #endif
        n+=1)
     {  n2      = n*n;
-       qpower *= q;
+       qpower = exp(-ny) *  bigcomplex(cos(nx),sin(nx));
+       nx += x; ny += y;
        term    = n*n2*qpower/(one-qpower);
        sum4   += term;
        term   *= n2;
