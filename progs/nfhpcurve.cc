@@ -45,7 +45,7 @@ int main(void)
 {
  init_time();
  start_time();
- long n=110, stopp; 
+ long n=1, stopp; // have a dud (but positive) value of n here to avoid mishaps
  int output, verbose;
  long maxn = MAXNY;
  long dmax = MAXD;
