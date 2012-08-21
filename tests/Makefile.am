@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(NTL_CFLAGS) $(PARI_CFLAGS)
-AM_LDFLAGS      = -lec -L$(top_builddir)/libsrc $(NTL_LIBS) $(PARI_LIBS)
+AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(NTL_CFLAGS) $(PARI_CFLAGS) $(GMP_CFLAGS) -DNTL_ALL
+LDADD           = $(top_builddir)/libsrc/libec.la $(PARI_LIBS) $(NTL_LIBS) $(GMP_LIBS)
 
 test_input_dir = $(srcdir)/in
 test_output_dir = $(srcdir)/out

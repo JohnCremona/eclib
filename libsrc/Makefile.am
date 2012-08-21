@@ -1,5 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
+AM_CPPFLAGS = $(NTL_CFLAGS) $(PARI_CFLAGS) $(GMP_CFLAGS) -DNTL_ALL -DUSE_PARI_FACTORING -DNEW_OP_ORDER
+LIBADD      = $(NTL_LIBS) $(PARI_LIBS) $(GMP_LIBS)
+
 lib_LTLIBRARIES = libec.la
 
 PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/arith.h eclib/xmod.h eclib/marith.h eclib/gpslave.h eclib/compproc.h eclib/vec.h eclib/vector.h eclib/mat.h eclib/matrix.h eclib/sub.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svec.h eclib/svector.h eclib/smat.h eclib/smatrix.h eclib/smat_elim.h eclib/smatrix_elim.h eclib/mvector.h eclib/mmatrix.h eclib/msubspace.h eclib/method.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h
