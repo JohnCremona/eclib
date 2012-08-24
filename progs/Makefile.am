@@ -1,15 +1,18 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(NTL_CFLAGS) $(PARI_CFLAGS) $(GMP_CFLAGS) -DNTL_ALL
-LDADD           = $(top_builddir)/libsrc/libec.la $(PARI_LIBS) $(NTL_LIBS) $(GMP_LIBS)
+LIBS            = $(top_builddir)/libsrc/libec.la $(PARI_LIBS) $(NTL_LIBS) $(GMP_LIBS)
+
+check_run = echo "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_dir)/$${prog}.in > $${prog}.testout 2>/dev/null && diff $${prog}.testout $(test_output_dir)/$${prog}.out || exit $$?
 
 test_input_dir = $(srcdir)/in
 test_output_dir = $(srcdir)/out
 
 ################ PROCS (conics & cubics programs) #################
 
-PROCS_PROGS =  solve_conic solve_legendre reduce_cubics list_cubics
-procs_progs: $(PROCS_PROGS)
+PROCS_PROGS = solve_conic solve_legendre reduce_cubics list_cubics
+PROCS_PROGS_SUFFIXED = $(PROCS_PROGS:=$(EXEEXT))
+procs_progs: $(PROCS_PROGS_SUFFIXED)
 
 solve_conic_SOURCES=solve_conic.cc
 solve_legendre_SOURCES=solve_legendre.cc
@@ -18,28 +21,31 @@ list_cubics_SOURCES=list_cubics.cc
 
 check_procs: procs_progs
 	@echo Checking conics and cubics programs...
-	./solve_conic < $(test_input_dir)/solve_conic.in > solve_conic.testout && diff solve_conic.testout $(test_output_dir)/solve_conic.out
-	./solve_legendre < $(test_input_dir)/solve_legendre.in > solve_legendre.testout && diff solve_legendre.testout $(test_output_dir)/solve_legendre.out
-	./reduce_cubics < $(test_input_dir)/reduce_cubics.in > reduce_cubics.testout && diff reduce_cubics.testout $(test_output_dir)/reduce_cubics$(OBJ_SUF).out
-	./list_cubics < $(test_input_dir)/list_cubics.in > list_cubics.testout && diff list_cubics.testout $(test_output_dir)/list_cubics.out
+	for prog in $(PROCS_PROGS); do $(check_run); done
 
 ################ QCURVES (elliptic curves programs, excluding two-descent) #################
 
 QCURVES_PROGS = point_search indep_test
-qcurves_progs: $(QCURVES_PROGS)
+QCURVES_PROGS_SUFFIXED = $(QCURVES_PROGS:=$(EXEEXT))
+qcurves_progs: $(QCURVES_PROGS_SUFFIXED)
 
 point_search_SOURCES=point_search.cc
 indep_test_SOURCES=indep_test.cc
 
 check_qcurves: qcurves_progs
 	@echo Checking qcurves programs...
-	./point_search < $(test_input_dir)/point_search.in > point_search.testout 2>/dev/null && diff point_search.testout $(test_output_dir)/point_search.out
-	./indep_test < $(test_input_dir)/indep_test.in > indep_test.testout 2>/dev/null && diff indep_test.testout $(test_output_dir)/indep_test.out
+	for prog in $(QCURVES_PROGS); do $(check_run); done
 
 ################ QCURVES (elliptic curves two-descent programs) #################
 
+# When allprogs is disabled the only binary to be built and installed
+# is mwrank, but we want "make check" to build and test all.
+
 QRANK_PROGS = mwrank reduce_quartics quartic_points
-qrank_progs: $(QRANK_PROGS)
+QRANK_CHECK_PROGS = reduce_quartics quartic_points
+QRANK_PROGS_SUFFIXED = $(QRANK_PROGS:=$(EXEEXT))
+QRANK_CHECK_PROGS_SUFFIXED = $(QRANK_CHECK_PROGS:=$(EXEEXT))
+qrank_progs: $(QRANK_PROGS_SUFFIXED)
 
 mwrank_SOURCES=mwrank.cc
 reduce_quartics_SOURCES=reduce_quartics.cc
@@ -47,17 +53,14 @@ quartic_points_SOURCES=quartic_points.cc
 
 check_qrank: qrank_progs
 	@echo Checking qrank programs...
-	./mwrank < $(test_input_dir)/mwrank.in > mwrank.testout 2>/dev/null && diff mwrank.testout $(test_output_dir)/mwrank.out
-	./reduce_quartics < $(test_input_dir)/reduce_quartics.in > reduce_quartics.testout 2>/dev/null && diff reduce_quartics.testout $(test_output_dir)/reduce_quartics.out
-	./quartic_points < $(test_input_dir)/quartic_points.in > quartic_points.testout 2>/dev/null && diff quartic_points.testout $(test_output_dir)/quartic_points.out
+	for prog in $(QRANK_PROGS); do $(check_run); done
 	rm -f PRIMES 1
 
 ################ G0N (modular symbols programs) #################
 
-G0N_PROGS = h1bsd h1curve pcurve nfhpcurve nfhpmcurve h1clist checkap h1bsdcurisog nfcount ecnf h1first moreap qexp
-g0n_progs: $(G0N_PROGS)
-
-# NB aplist, checkgens and tnfd are not currently tested in check_g0n
+G0N_PROGS = ecnf nfhpcurve nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist h1degphi
+G0N_PROGS_SUFFIXED = $(G0N_PROGS:=$(EXEEXT))
+g0n_progs: $(G0N_PROGS_SUFFIXED)
 
 h1bsd_SOURCES=h1bsd.cc
 h1curve_SOURCES=h1curve.cc
@@ -72,9 +75,12 @@ ecnf_SOURCES=ecnf.cc
 h1first_SOURCES=h1first.cc
 moreap_SOURCES=moreap.cc
 qexp_SOURCES=qexp.cc
+aplist_SOURCES=aplist.cc
+h1degphi_SOURCES=h1degphi.cc
 
 # This is the name of a directory which will be used for newform
 # input/output in the "make check" tests and removed afterwards.
+# This does not work with the export!
 
 export NF_DIR:=nftmp
 
@@ -82,28 +88,23 @@ check_g0n:  g0n_progs
 	@echo Checking g0n programs...
 	rm -rf $(NF_DIR)
 	mkdir $(NF_DIR)
-	./ecnf < $(test_input_dir)/ecnf.in 2>/dev/null > ecnf.testout && diff ecnf.testout $(test_output_dir)/ecnf.out
-	./nfhpcurve < $(test_input_dir)/nfhpcurve.in > nfhpcurve.testout 2>/dev/null && diff nfhpcurve.testout $(test_output_dir)/nfhpcurve.out
-	./nfhpmcurve < $(test_input_dir)/nfhpmcurve.in > nfhpmcurve.testout 2>/dev/null && diff nfhpmcurve.testout $(test_output_dir)/nfhpmcurve.out
-	./h1first < $(test_input_dir)/h1first.in 2>/dev/null > h1first.testout && diff h1first.testout $(test_output_dir)/h1first.out
-	./h1clist < $(test_input_dir)/h1clist.in > h1clist.testout 2>/dev/null && diff h1clist.testout $(test_output_dir)/h1clist.out
-	./h1bsdcurisog < $(test_input_dir)/h1bsdcurisog.in > h1bsdcurisog.testout 2>/dev/null && diff h1bsdcurisog.testout $(test_output_dir)/h1bsdcurisog.out
-	echo 0 25 1 `seq 50 60` 0 | ./nfhpcurve > /dev/null 2>/dev/null
-	./qexp < $(test_input_dir)/qexp.in > qexp.testout 2>/dev/null && diff qexp.testout $(test_output_dir)/qexp.out
+	for prog in $(G0N_PROGS); do $(check_run); done
 	rm -rf $(NF_DIR)
 
 #################################################################################
 
-progs: procs_progs qcurves_progs qrank_progs g0n_progs
-all: progs
 check: check_procs check_qcurves check_qrank check_g0n
 	rm -f *.testout PRIMES 1
 
+# When allprogs is disabled the only binary to be built and installed
+# is mwrank, but we want "make check" to build and test all.
+
 if ALLPROGS
 bin_PROGRAMS=$(PROCS_PROGS) $(QCURVES_PROGS) $(QRANK_PROGS) $(G0N_PROGS)
+check_PROGRAMS=
 else
-noinst_PROGRAMS=$(PROCS_PROGS) $(QCURVES_PROGS) $(QRANK_PROGS) $(G0N_PROGS)
-bin_PROGRAMS=mwrank
+bin_PROGRAMS=mwrank$(EXEEXT)
+check_PROGRAMS=$(PROCS_PROGS) $(QCURVES_PROGS) $(QRANK_CHECK_PROGS) $(G0N_PROGS)
 endif
 
 # We list here the directories in and out which contain the test input

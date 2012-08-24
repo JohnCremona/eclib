@@ -38,7 +38,7 @@
 
 int main()
 {
- init_time();
+  // init_time();
  cout << "Program tnfd." << endl;
 #ifdef MODULAR
  cout << "MODULUS for linear algebra = " << MODULUS << endl;
@@ -72,7 +72,7 @@ int main()
      int i, ip, nap=5, bad;
      cout<<"Number of ap? ";  cin>>nap;
      primevar pr; long p;
-     start_time();
+     //     start_time();
      for(ip=0; ip<nap; ip++, pr++)
        {
 	 p=pr; bad = ::divides(p,n);
@@ -109,8 +109,8 @@ int main()
 	     cout<<apvec<<endl;
 	   }
        }
-     stop_time();
-     show_time();
+     //     stop_time();
+     //     show_time();
      cout<<endl;
    }
  exit(0);

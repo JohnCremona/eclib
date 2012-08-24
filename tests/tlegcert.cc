@@ -47,7 +47,7 @@ int main()
       cout << "Enter coefficients a b c: ";
       cin >> a >> b >> c;
       cout<<a<<" "<<b<<" "<<c<<endl; 
-      if(a==0) abort();
+      if(a==0) exit(0);
       cout << "Enter certificate k1 k2 k3: ";
       cin >> k1 >> k2 >> k3;
       int use_lll=(CONIC_METHOD==5);
@@ -93,7 +93,6 @@ int main()
 	cout<<" -- wrong!\n";
     }      
     }
-  abort();
 }
 
 

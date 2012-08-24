@@ -1,0 +1,41 @@
+See details? Enter max d: Enter max scaling factor for periods: Enter first and last N: 
+N = 11
+Retrieving newform data for N = 11
+Finished reading newform data for N = 11
+
+Form number 1
+Computing real period via L(f,1): L(f,1) = 0.25384186085591068435; real period = 0.63460465213977667565
+Minimal periods found: x0 = 0.63460465213977667565, y0 = 1.4588166169384952293
+Matrix (4,1;11,3):	dotplus = 1, dotminus = 1
+Searching for scaling factors.
+type = 1, nx = 1, ny = 1
+w1 = (0.63460465213977667565,1.4588166169384952293), w2 = (1.2692093042795533513,0)
+c4 = 496.00000000000015164, c6 = 20008.000000000004591
+ic4 = 496, ic6 = 20008
+Curve is [0,-1,1,-10,-20]  N = 11  before rescaling, dotplus=1, dotminus=1
+rescaling by nx = 1, ny=1
+[(4,1;1,3),1,1;1]
+Updated newform data:
+aplist = [ -2 -1 1 -2 1 4 -2 0 -1 0 7 3 -8 -6 8 -6 5 12 -7 -3 ...]
+aq = [ -1 ]
+ap0 = -2, dp0 = 2, np0 = 5
+SFE = 1,	L/P = 2/5
+lplus = 1, mplus = 1
+lminus = 3, mminus = 2
+[(4,1;1,3),1,1;1]
+test reconstruction of curve from updated data:
+Finding periods -- via L(f_chi) using twists by 1 and 3
+[w_1,w_2] = [(-1.2692093042795534217,0),(-0.63460465213977671087,-1.4588166169384952293)]
+tau       = (0.5,1.1493901061232523806) (abs(tau)=1.253434328576500002)
+w_R = (-1.2692093042795534217,0)	w_IR = (-0.63460465213977671087,-1.4588166169384952293)
+
+c4 = 495.99999999999999985
+c6 = 20007.999999999999998
+After rounding:
+ic4 = 496
+ic6 = 20008
+Lattice type checks OK
+Real period checks OK
+Imag period checks OK
+Curve = 	[0,-1,1,-10,-20]	N = 11
+Store newform data? 

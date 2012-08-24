@@ -83,6 +83,4 @@ int main(void)
       << "] has roots:\n";
   for(iroot=0; iroot<4; iroot++) cout<<croots[iroot]<<"\n";
   cout<<endl;
-
-   abort();
 }

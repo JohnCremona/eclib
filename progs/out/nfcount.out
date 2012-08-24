@@ -1,0 +1,15 @@
+Verbose? (0/1) 
+Enter first and last N: 
+>>> Level 50 <<< 2 newform(s), 100 eigs on file.
+>>> Level 51 <<< 1 newform(s), 100 eigs on file.
+>>> Level 52 <<< 1 newform(s), 100 eigs on file.
+>>> Level 53 <<< 1 newform(s), 100 eigs on file.
+>>> Level 54 <<< 2 newform(s), 100 eigs on file.
+>>> Level 55 <<< 1 newform(s), 100 eigs on file.
+>>> Level 56 <<< 2 newform(s), 100 eigs on file.
+>>> Level 57 <<< 3 newform(s), 100 eigs on file.
+>>> Level 58 <<< 2 newform(s), 100 eigs on file.
+>>> Level 59 <<< 0 newform(s), 0 eigs on file.
+>>> Level 60 <<< 0 newform(s), 0 eigs on file.
+
+15 newform(s) in range 50...60

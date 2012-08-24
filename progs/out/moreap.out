@@ -1,0 +1,38 @@
+Program moreap
+---------------
+
+For each N, assumes that the file newforms/xN exists, and computes more
+Hecke eigenvalues.
+Output new eigs to file (1/0)? Output new eigs to screen (1/0)? Display newforms (1/0)? Attempt curve construction (1/0)? Enter level: How many primes for Hecke eigenvalues? 
+
+>>>Level 11	Retrieving newform data for N = 11
+Finished reading newform data for N = 11
+
+1 newform(s) at level 11:
+p0=2
+#ap=	100
+1:	aplist = [ -2 -1 1 -2 1 4 -2 0 -1 0 7 3 -8 -6 8 -6 5 12 -7 -3 ...]
+aq = [ -1 ]
+ap0 = -2, dp0 = 2, np0 = 5
+SFE = 1,	L/P = 2/5
+lplus = 1, mplus = 1
+lminus = 3, mminus = 2
+[(4,1;1,3),1,1;1]
+Making homspace...Constructing H1 (with sign=+1) ...done
+done.
+Making form_finder (nap=100)...Recovering eigenspace bases with form_finder...
+Form number 1 with eigs -2 -1 1 -2 -1 4 -2 0 -1 0 ...
+Entering form_finder, depth = 0, dimension 2
+restarting at depth = 0, dimension 2
+Computing T(2)...done.
+ eig -2 gives new subspace at depth 1 of dimension 1
+Filling in data for for newform #1: bases...type and cuspidal factors...cuspidalfactorplus  = 5
+coords...denomplus   = 5
+done.
+Finished filling in data for newform #1
+...done.
+About to start computing ap......done.
+Computing 1 curves...
+1 [0,-1,1,-10,-20]	N = 11
+All curves found OK
+Enter level: 

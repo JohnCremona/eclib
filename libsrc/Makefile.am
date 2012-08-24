@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 AM_CPPFLAGS = $(NTL_CFLAGS) $(PARI_CFLAGS) $(GMP_CFLAGS) -DNTL_ALL -DUSE_PARI_FACTORING -DNEW_OP_ORDER
-LIBADD      = $(NTL_LIBS) $(PARI_LIBS) $(GMP_LIBS)
+LIBS        = $(NTL_LIBS) $(PARI_LIBS) $(GMP_LIBS)
 
 lib_LTLIBRARIES = libec.la
 
@@ -33,5 +33,6 @@ DOTCCS = $(PROCS_DOTCCS) $(QCURVES_DOTCCS) $(QRANK_DOTCCS) $(G0N_DOTCCS)
 EXTRA_DIST = vec.cc mat.cc sub.cc smat.cc svec.cc smat_elim.cc random.cc
 
 libec_la_SOURCES = $(DOTCCS)
+libec_la_LDFLAGS = -no-undefined $(AM_LDFLAGS)
 nobase_include_HEADERS = $(DOTHS)
 ACLOCAL_AMFLAGS = -I m4

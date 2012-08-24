@@ -1,0 +1,7 @@
+Solving ax^2 + by^2 + cz^2 = 0
+Using method 4
+
+Enter coefficients a b c: 10000000019 10000000033 -10000010639
+Enter certificate k1 k2 k3: Solution: (x:y:z) = (16081092938:20311652644:-25906834446)
+ --OK
+Enter coefficients a b c: 0 0 0

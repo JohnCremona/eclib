@@ -1,0 +1,18 @@
+Verbose? Limit on height? Stop after first point found? Selmer only (0/1: if 1, just tests whether second descent possible)? Enter quartic coefficients (a,0,c,0,e) or just a c e 
+cd-curve       (nearer):	[0,111,0,2738,0]
+cd-dash-curve (further):	[0,-222,0,1369,0]
+I = 45177, J = 19146834
+Minimal model for Jacobian: [0,0,0,-15059,-709142]
+Checking local solublity at primes [ 2 3 37 ]:
+Everywhere locally soluble.
+------------------------------------------
+
+RESULTS
+
+Quartic has rational point (x:y:z) = (883:37002:145)
+Point on  (c,d)  curve = [-113054905:-32672766:3048625]
+height = 13.565420700285587132
+Point on (c',d') curve = [175298864692140:22290732796922058:2098872790442875]
+height = 27.130841400571174264
+
+Enter quartic coefficients (a,0,c,0,e) or just a c e 
