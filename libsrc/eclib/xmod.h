@@ -111,7 +111,7 @@ inline int xmodmul(int a, int b, int m)
 const int BIGPRIME = PRIME30;
 const int HALF_BIGPRIME = BIGPRIME>>1; // = 536870894;
 const int TWO_BIGPRIME = 2147483578; // 2*BIGPRIME
-const long INV_BIGPRIME = 4294967436; // = 2^32+140 = [2^62/p]
+const int64_t INV_BIGPRIME = 4294967436LL; // = 2^32+140 = [2^62/p]
 
 inline int xmod(int a, int m) {return a%m;}
 inline long xmod(long a, long m) {return a%m;}

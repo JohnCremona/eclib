@@ -28,7 +28,7 @@ using namespace std;
 
 int main()
 {
-  cout.precision(16);
+  cout.precision(15);
   double x;
   int debug=0;
 //  cout << "Debug? "; cin>>debug;

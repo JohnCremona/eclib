@@ -53,8 +53,8 @@ inline scalar xmm0(scalar a, scalar b)
   // the following should work faster (no divisions!  Thanks to David Harvey)
   if(a<0) a+=BIGPRIME;
   if(b<0) b+=BIGPRIME;
- long ab = a*(int64_t)b;
- long r = ab-((INV_BIGPRIME*(ab>>30))>>32)*BIGPRIME;
+ int64_t ab = a*(int64_t)b;
+ int64_t r = ab-((INV_BIGPRIME*(ab>>30))>>32)*BIGPRIME;
  r -= ( ((r>=TWO_BIGPRIME)?BIGPRIME:0) + ((r>=BIGPRIME)?BIGPRIME:0) );
  /*
  // check:
