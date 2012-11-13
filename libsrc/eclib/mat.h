@@ -99,6 +99,8 @@ public:
                                   long& rk, long& ny, scalar pr);
 	friend mat echmodp_uptri(const mat& m, vec& pcols, vec& npcols,
                                   long& rk, long& ny, scalar pr);
+        friend mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
+                                 long& rk, long& ny, scalar pr);
 	friend subspace combine(const subspace& s1, const subspace& s2);
         friend mat restrict_mat(const mat& m, const subspace& s, int cr);
 	friend mat liftmat(const mat& mm, scalar pr, scalar& dd, int trace=0);

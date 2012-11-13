@@ -440,7 +440,7 @@ int main(void)
 	vec pc, npc;
 	
 	if( flag ) {
-	  long rk, ny; scalar pr = 92861;
+	  long rk, ny; scalar pr = BIGPRIME;
 	  mat m = sm.as_mat ();  
 	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
 	  cout << " rank using echmodp : " << rk;

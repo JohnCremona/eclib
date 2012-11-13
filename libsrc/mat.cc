@@ -1547,12 +1547,166 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
  return m.slice(rk,nc);
 }
 
-// The following function computes the upper-triangular echelon form of m modulo the prime pr.
+#define FLINT_RREF 1
+//#define TRACE_FLINT_RREF
+#if FLINT_RREF
+#include "flint/fmpz.h"
+#if (SCALAR_OPTION==1)
+#include "flint/hmod_mat.h"
+#undef uscalar
+#undef mod_mat
+#undef mod_mat_init
+#undef mod_mat_clear
+#undef mod_mat_entry
+#undef mod_mat_rref
+#define uscalar hlimb_t // unsigned int
+#define mod_mat hmod_mat_t // uses unsigned ints
+#define mod_mat_init hmod_mat_init
+#define mod_mat_clear hmod_mat_clear
+#define mod_mat_entry hmod_mat_entry
+#define mod_mat_rref hmod_mat_rref
+#else
+#include "flint/nmod_mat.h"
+#undef uscalar
+#undef mod_mat
+#undef mod_mat_init
+#undef mod_mat_clear
+#undef mod_mat_entry
+#undef mod_mat_rref
+#define uscalar mp_limb_t // unsigned long
+#define mod_mat nmod_mat_t // uses unsigned longs
+#define mod_mat_init nmod_mat_init
+#define mod_mat_clear nmod_mat_clear
+#define mod_mat_entry nmod_mat_entry
+#define mod_mat_rref nmod_mat_rref
+#endif
+#include "flint/profiler.h"
+
+// FLINT has two types for modular matrices, nmod_mat_t with entries
+// of type mp_limb_t (unsigned long) and hmod_mat_t, with entries
+// hlimb_t (unsigned int).  We use the former when scalar=long and the
+// latter when scalar=int.  The unsigned scalar types are #define'd as
+// uscalar.
+
+mat ref_via_flint(const mat& M, scalar pr)
+{
+  long nr=nrows(M), nc=ncols(M);
+  long i, j, n=max(nr,nc);
+
+  // copy of the modulus for FLINT
+  uscalar mod = (uscalar)pr;
+
+  // create flint matrix copy of M:
+  mod_mat A;
+  mod_mat_init(A, nr, nc, mod);
+  for(i=0; i<nr; i++)
+    for(j=0; j<nc; j++)
+      mod_mat_entry(A,i,j) = M(i+1,j+1);
+
+  // reduce A to rref:
+#ifdef TRACE_FLINT_RREF
+  timeit_t t;
+  timeit_start(t);
+  cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
+#endif
+  long rank = mod_mat_rref(A);
+#ifdef TRACE_FLINT_RREF
+  timeit_stop(t);
+  cerr<<" cpu = "<<(t->cpu)<<" ms, wall = "<<(t->wall)<<" ms"<<endl;
+#endif
+
+  // copy back to a new matrix for return:
+  mat ans(nr,nc);
+  for(i=0; i<nr; i++)
+    for(j=0; j<nc; j++)
+      ans(i+1,j+1) = mod_mat_entry(A,i,j);
+
+  mod_mat_clear(A);
+  return ans;
+}
+
+// The following function computes the reduced echelon form
+// of M modulo the prime pr, calling FLINT's nmod_mat_rref function.
+
+mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
+                                  long& rk, long& ny, scalar pr)
+{
+  long nr=nrows(M), nc=ncols(M);
+  long i, j, k, n=max(nr,nc);
+
+#ifdef TRACE_FLINT_RREF
+#if (SCALAR_OPTION==1)
+  cout << "In ref_via_flint(M) with M having "<<nr<<" rows and "<<nc<<" columns, using hmod_mat and modulus "<<pr<<"."<<endl;
+#else
+  cout << "In ref_via_flint(M) with M having "<<nr<<" rows and "<<nc<<" columns, using nmod_mat and modulus "<<pr<<"."<<endl;
+#endif
+  //  cout << "Size of  scalar = "<<8*sizeof(scalar)<<" bits"<<endl;
+  //  cout << "Size of uscalar = "<<8*sizeof(uscalar)<<" bits"<<endl;
+#endif
+
+  // copy of the modulus
+  uscalar mod = (uscalar)pr;
+
+  // create flint matrix copy of M:
+  mod_mat A;
+  mod_mat_init(A, nr, nc, mod);
+  for(i=0; i<nr; i++)
+    for(j=0; j<nc; j++)
+      mod_mat_entry(A,i,j) = (uscalar)posmod(M(i+1,j+1),pr);
+
+#ifdef TRACE_FLINT_RREF
+  timeit_t t;
+  timeit_start(t);
+  cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
+#endif
+
+  // reduce A to rref:
+  rk = mod_mat_rref(A);
+#ifdef TRACE_FLINT_RREF
+  timeit_stop(t);
+  cerr<<"rank = "<<rk<<". cpu = "<<(t->cpu)<<" ms, wall = "<<(t->wall)<<" ms"<<endl;
+#endif
+
+  // construct vectors of pivotal and non-pivotal columns
+  ny = nc-rk;
+  pcols.init(rk);
+  npcols.init(ny);
+  for (i = j = k = 0; i < rk; i++)
+    {
+      while (mod_mat_entry(A, i, j) == 0UL)
+        {
+          npcols[k+1] = j+1;
+          k++;
+          j++;
+        }
+      pcols[i+1] = j+1;
+      j++;
+    }
+  while (k < ny)
+    {
+      npcols[k+1] = j+1;
+      k++;
+      j++;
+    }
+
+  // copy back to a new matrix for return:
+  mat ans(rk,nc);
+  for(i=0; i<rk; i++)
+    for(j=0; j<nc; j++)
+      ans(i+1,j+1) = mod_mat_entry(A,i,j);
+
+  mod_mat_clear(A);
+  return ans;
+}
+#endif // FLINT_RREF
+
+// The following function computes the upper-triangular echelon form
+// of m modulo the prime pr.
 
 mat echmodp_uptri(const mat& entries, vec& pcols, vec& npcols,
                                   long& rk, long& ny, scalar pr)
 {
-// cout << "In echmodp_uptri with entries = " << entries;
+// cout << "In echmodp_uptri with matrix = " << entries;
  long nc,nr,r,c,r2,r3,rmin;
  scalar min, mr2c;
  nr=entries.nro, nc=entries.nco;
@@ -1568,12 +1722,12 @@ mat echmodp_uptri(const mat& entries, vec& pcols, vec& npcols,
      mij=m.entries+(r-1)*nc+c-1;
      min = *mij;   rmin = r;
      for (r2=r+1, mij+=nc; (r2<=nr)&&(min==0); r2++, mij+=nc)
-       { 
+       {
 	 mr2c = *mij;
 	 if (0!=mr2c) { min=mr2c; rmin=r2 ;}
        }
      if (min==0) npcols[++ny] = c;
-     else       
+     else
        {
 	 pcols[++rk] = c;
 	 if (rmin>r) m.swaprows(r,rmin);

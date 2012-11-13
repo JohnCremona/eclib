@@ -317,98 +317,76 @@ smat_elim::~smat_elim()
   delete [] column;
 }
 
-//#define TRACE_ELIM
+#define TRACE_ELIM 0
+#define TRACE_DENSE 0
+#define FLINT_RREF
 
 void smat_elim::sparse_elimination( )
 {
-#ifdef TRACE_ELIM
+#if TRACE_ELIM || TRACE_DENSE
   int pop=get_population(*this);
-  double density = (double)pop/(nco*nro);
-  cout<<"Starting sparse elimination: "<<nro<<" rows, "<<nco<<" columns, "<<pop<<" entries (density = "<<density<<")\n";
+  double dens = density(*this); //(double)pop/(nco*nro);
+  cout<<"Starting sparse elimination: "<<nro<<" rows, "<<nco<<" columns, "<<pop<<" entries (density = "<<dens<<")\n";
   //  cout<<"row weights:\n";
   //  for(int i=0; i<nro; i++) cout<<col[i][0]<<" ";
   //  cout<<endl;
   //  cout<<(*this)<<endl;
+#endif
+#if TRACE_ELIM
   cout<<"Starting step 0..."<<flush;
 #endif
   step0();
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"finished\n"; 
-  //  cout<<(*this)<<endl;
-  pop=get_population(*this);
-  density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+  report();
   cout<<"Starting step 1..."<<flush;
 #endif
   step1();
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"finished\n";
-  //  cout<<(*this)<<endl;
-  pop=get_population(*this);
-  density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+  report();
   cout<<"Starting step 2..."<<flush;
 #endif
   step2();
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"finished\n";
-  pop=get_population(*this);
-  density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+  report();
   cout<<"Starting step 3..."<<flush;
 #endif
   step3();
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"finished\n";
-  pop=get_population(*this);
-  density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+  report();
   cout<<"Starting step 4..."<<flush;
 #endif
   step4();
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"finished\n";
-  pop=get_population(*this);
-  density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+  report();
   cout<<"Starting step 4..."<<flush;
 #endif
   step4();
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"finished\n";
-  pop=get_population(*this);
-  density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+  report();
 #endif
 #if(0)  // use dense method for final elimination
-#ifdef TRACE_ELIM
+#if TRACE_ELIM || TRACE_DENSE
   cout << "Switching to dense mode..."<<endl;
 #endif
   step5dense();
-#ifdef TRACE_ELIM
-  cout<<"finished"<<endl;
-  pop=get_population(*this);
-  density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+#if TRACE_ELIM || TRACE_DENSE
+  cout<<"finished, ";
+  report();
 #endif
 #else  // use sparse method for final elimination
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
     cout<<"Starting step 5 (remaining elimination)..."<<flush;
 #endif
      standard( );
-#ifdef TRACE_ELIM
-  cout<<"finished"<<endl;
-  pop=get_population(*this);
-  density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+#if TRACE_ELIM
+  cout<<"finished, ";
+  report();
 #endif
 #endif
 }
@@ -416,11 +394,11 @@ void smat_elim::sparse_elimination( )
 smat smat_elim::kernel( vec& pc, vec& npc)
 {
   int i,n,r,denom = 1;
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Starting sparse_elimination()..."<<flush;
 #endif
   sparse_elimination( );
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"finished sparse_elimination()"<<endl;
 #endif
 
@@ -428,11 +406,11 @@ smat smat_elim::kernel( vec& pc, vec& npc)
   int nullity = nco - rank;
   if (nullity>0)
     {
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Starting back-substitution..."<<flush;
 #endif
       back_sub();
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"finished back-substitution"<<endl;
 #endif
 
@@ -442,7 +420,7 @@ smat smat_elim::kernel( vec& pc, vec& npc)
   npc.init( nullity );
 
   /* set-up vecs pc & npc */
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Setting up pc and npc..."<<flush;
 #endif
   int ny = 0, k = 0;
@@ -454,7 +432,7 @@ smat smat_elim::kernel( vec& pc, vec& npc)
     }
 
   /* write basis for kernel */
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Constructing basis for kernel..."<<flush;
 #endif
   for( n = 1; n <= nullity; n++ )
@@ -488,12 +466,17 @@ smat smat_elim::kernel( vec& pc, vec& npc)
       axp = aux_col;
       axv = aux_val;
       *pos++ = count;
-      for( n = 0; n < count; n++ ) { *pos++ = *axp++; *val++ = *axv++; }
+
+      size_t nbytes = count*sizeof(int);
+      memmove(pos,axp,nbytes);
+      nbytes = count*sizeof(scalar);
+      memmove(val,axv,nbytes);
+      // for( n = 0; n < count; n++ ) { *pos++ = *axp++; *val++ = *axv++; }
     }
   delete[]new_row;
   delete[]aux_val;
   delete[]aux_col;
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Finished constructing basis for kernel"<<endl;
   //  cout<<"Basis = "<<basis<<endl;
 #endif
@@ -544,14 +527,14 @@ void smat_elim::step1 ()
   
   list L(nco);
   int col0,col1;
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Step 1, column weights:"<<endl;  
   //  for( col0 = 0; col0 < nco; col0++ ) cout<<(column+col0)->num<<" ";
   //  cout<<endl;
 #endif
   for( col0 = 0; col0 < nco; col0++ )
     if( (column+col0)->num == 1 ) {col1=col0+1; L.put(col1);}
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Step 1, list size = "<<L.num<<endl;  
 #endif
   while( (col0 = L.next()) != -1 ) {
@@ -629,14 +612,14 @@ void smat_elim::step4 ( )
     }
   int Mstep = int(maxcolwt/100);
   if (Mstep==0) Mstep=1;
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Step 4, max column weight = "<<maxcolwt<<endl;  
 #endif
   
   //  for( M = 20; M >= 4; M--)
   for( M = maxcolwt; M >= 3; M-=Mstep)
     {
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
   cout<<"Step 4, M = "<<M;  
 #endif
       /* divides columns in `light' and `heavy' */
@@ -647,12 +630,9 @@ void smat_elim::step4 ( )
 	if( 0 < wt && wt <= M ) {*l++ = 1; nlight++;} //light
 	else *l++ = 0;     //heavy; includes columns already eliminated
       }
-#ifdef TRACE_ELIM
+#if TRACE_ELIM
       cout<<", "<<nlight<<" light columns; ";  
-  int pop=get_population(*this);
-  double density = (double)pop/(nco*nro);
-  cout<<"Rank so far = "<<rank<<"; "
-      <<pop<<" entries (density = "<<density<<")\n";
+      report();
 #endif
   if (nlight==0) break; // from the loop over M
   if (nlight<(nco/2)) break; // from the loop over M
@@ -691,7 +671,14 @@ void smat_elim::standard ( ){
   // remaining elimination
 
   int i, col0, row, wt, mincolwt;
-  while(1)
+  double density_threshhold = 0.04; // 0.15; // 0.2; // 0.1;
+
+ // this threshhold can be changed: the code here works fine when the
+ // density is low, but when it is higher it's best to switch to using
+ // a dense structure for the remaining elimination.  It might also be
+ // better not to recompute the density after every single step.
+
+  while(active_density() < density_threshhold)
     {
   // Find minimum positive column weight
       mincolwt=nro+1; col0=-1;
@@ -700,8 +687,8 @@ void smat_elim::standard ( ){
           wt = (column+i)->num;
           if( (wt>0) && (mincolwt > wt) ) {col0=i+1; mincolwt=wt;}
         }
-      if (col0==-1) break;  // this is how the while(1) is ended
-#ifdef TRACE_ELIM
+      if (col0==-1) return;  // this is how the while(1) is ended
+#if TRACE_ELIM
       //      cout<<"... wt "<<mincolwt<<flush;
 #endif
       row = (column+col0-1)->next();
@@ -710,20 +697,12 @@ void smat_elim::standard ( ){
       clear_col( row, col0, temp );
       eliminate( row, col0 );
       free_space( col0 );
+#if TRACE_ELIM
+      report();
+#endif
     }
-
-  // for( int col0 = 1; col0 <= nco; col0++ )
-  //   {
-  //     if( (column+col0-1)->num > 0 ) {
-  //       int row = (column+col0-1)->next();
-  //       normalize( row, col0 ); 
-  //       list temp(0);
-  //       clear_col( row, col0, temp );
-  //       eliminate( row, col0 );
-  //       free_space( col0 );
-  //     }
-  //   }
-}  
+  step5dense();
+}
 
 void smat_elim::back_sub ( ){
 
@@ -894,6 +873,56 @@ int smat_elim::get_weight( int row, int* lightness )
   return wt;
 }
 
+int smat_elim::n_active_cols() // number of active columns
+{
+  // Remaining cols are those with positive column weight
+  int j, nrc;
+  for(j=nrc=0; j<nco; j++) 
+    if (((column+j)->num)>0) 
+      nrc++;
+  return nrc;
+}
+
+int smat_elim::n_active_rows() // number of active rows
+{
+  // Remaining rows are those with "position" code -1 or those which are empty
+  int i, nrr;
+  for(i=nrr=0; i<nro; i++)
+    if( (*col[i] >0) && (position[i] == -1) )
+      nrr++;
+  return nrr;
+}
+
+long smat_elim::n_active_entries() // number of active entries
+{
+  // Remaining cols are those with positive column weight
+  int j; long n=0;
+  for(j=0; j<nco; j++)
+    n += ((column+j)->num); 
+  return n;
+}
+
+double smat_elim::active_density() // density of non-eliminated part
+{
+  double d = n_active_entries();
+  int n = n_active_cols();
+  if (!n) return 0;
+  d /= n;
+  n = n_active_rows();
+  if (!n) return 0;
+  d /= n;
+  return d;
+}
+
+void smat_elim::report()
+{
+  cerr << n_active_entries() << " active entries in ("
+       << n_active_rows() << "," << n_active_cols()
+       << ") active (rows, cols).  Active density = "
+       << active_density() << endl;
+  cerr<<"Rank so far = "<<rank<<endl;
+}
+
 /* old fashioned elim function for back elimination. Have to change this 
  * later.
  * Do row2+= v2*row1 */
@@ -933,13 +962,17 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
 
 void smat_elim::step5dense()
 {
-  // (1) Extract the uneliminated "dense" part 
-  
+#if TRACE_DENSE
+  report();
+  cerr<<"switching to dense elimination"<<endl;
+#endif
+  // (1) Extract the uneliminated "dense" part
+
   vector<int> remaining_rows, remaining_cols;
 
   // Remaining rows are those with "position" code -1 or those which are empty
   int i, j;
-  for(i=0; i<nro; i++) 
+  for(i=0; i<nro; i++)
     if( (*col[i] >0) && (position[i] == -1) )
       remaining_rows.push_back(i+1);
   int nrr = remaining_rows.size();
@@ -949,11 +982,17 @@ void smat_elim::step5dense()
     if (((column+j)->num)>0) 
       remaining_cols.push_back(j+1);
   int nrc = remaining_cols.size();
-
-  cout<<nrr<<" remaining rows, " <<nrc<<" remaining cols"<<endl;
-  //  cout<<" remaining rows: " << remaining_rows<<endl;
-  //  cout<<" remaining cols: " << remaining_cols<<endl;
-  
+#if TRACE_DENSE
+    cout<<nrr<<" remaining rows, " <<nrc<<" remaining cols"<<endl;
+    //    cout<<" remaining rows: " << remaining_rows<<endl;
+    //    cout<<" remaining cols: " << remaining_cols<<endl;
+#endif
+  if(nrr*nrc==0) //(nrr*nrc<10000) // avoid overheads of switching to dense if
+                    // there's not a lot left to do
+    {
+      standard();
+      return;
+    }
   mat dmat(nrr, nrc);
   map<int,scalar>::const_iterator vi;
   vector<int>::const_iterator rci;
@@ -969,21 +1008,30 @@ void smat_elim::step5dense()
         }
     }
 
-  // (2) reduce this to echeclon form
+  // (2) reduce this to echelon form
 
-  vec pc,npc; long rk,ny;
-  dmat = echmodp_uptri(dmat,pc,npc,rk,ny,BIGPRIME);
-  // cout<<"Rank = "<<rk<<endl;
-  // cout<<"Nullity = "<<ny<<endl;
-  // cout<<"Pivotal columns:    "<<pc<<endl;
-  // cout<<"Nonpivotal columns: "<<npc<<endl;
-  
+#if TRACE_DENSE
+    cout<<"Constructed dense matrix" <<endl;
+#endif
+    vec pc,npc; long rk,ny;
+#ifdef FLINT_RREF
+    dmat = ref_via_flint(dmat,pc,npc,rk,ny,BIGPRIME);
+#else
+    dmat = echmodp_uptri(dmat,pc,npc,rk,ny,BIGPRIME);
+#endif
+#if TRACE_DENSE
+    cout<<"...finished elmination, rank = "<<rk;
+    cout<<", nullity = "<<ny<<endl;
+    // cout<<"Pivotal columns:    "<<pc<<endl;
+    // cout<<"Nonpivotal columns: "<<npc<<endl;
+#endif
+
   // (3) put it back into the sparse structure
 
-  // the (i,j) entry of dmat goes in the remaining_rows[i-1]'the rowm
+  // the (i,j) entry of dmat goes in the remaining_rows[i-1]'th row,
   // remaining_cols[j-1] column.  For simplicity of coding, we create
   // the new rows as svecs and the use setrow().
-  int nrd = nrows(dmat); // may be less that nrr since 0 rows are trimmed
+  int nrd = nrows(dmat); // may be less than nrr since 0 rows are trimmed
   int ncd = ncols(dmat);
   svec rowi(nco);
   for(i=1; i<=nrd; i++)
@@ -999,6 +1047,9 @@ void smat_elim::step5dense()
 
   // (4) Use the known echelon form for these changed rows to eliminate them
 
+#if TRACE_DENSE
+    cout<<"remaining elimination within sparse structure"<<endl;
+#endif
   for(i=1; i<=nrd; i++) 
     {
       if (xmod0(dmat(i,pc[i])-1)) cout<<"Bad pivot #"<<i<<" ("<<dmat(i,pc[i])<<")"<<endl;
@@ -1008,6 +1059,9 @@ void smat_elim::step5dense()
       eliminate(r,c);
       free_space(remaining_cols[pc[i]-1]);
     }
+#if TRACE_DENSE
+    cout<<"finished dense step"<<endl;
+#endif
 }
 
 
