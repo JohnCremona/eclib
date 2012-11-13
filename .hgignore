@@ -16,6 +16,11 @@ libsrc/Makefile.jc
 */*.o
 */*.lo
 */*.la
+bin/*
+include/*
+lib/*
+share/*
+newforms/*
 tests/Makefile.jc
 eclib*.tar.gz
 aclocal.m4
