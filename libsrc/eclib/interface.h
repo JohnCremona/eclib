@@ -71,7 +71,7 @@ using namespace std;
 using namespace NTL;
 
 #define bigint ZZ
-#define bigrational QQ  // not defined in NTL
+//#define bigrational QQ  // not defined in NTL
 
 #define BIGINT(val) to_ZZ(val)
 inline bigint atoI(const char* s) {return to_ZZ(s);}

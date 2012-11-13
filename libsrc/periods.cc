@@ -680,7 +680,7 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
       lx.compute(1);
       if(verbose) cout<<"L(f,1) = "<<abs(lx.value())<<"; ";
       rational lop=nfi->loverp;
-      x = abs(lx.value()/to_bigfloat(lop)); 
+      x = abs(lx.value()*to_bigfloat(den(lop))/to_bigfloat(num(lop))); 
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }

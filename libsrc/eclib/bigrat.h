@@ -156,7 +156,7 @@ inline bigrational& bigrational::operator/=(bigint num_val2)
         return *this;
 }
 
-//inline bigrational::operator bigfloat() {return double(n)/double(d);}
+inline bigrational::operator bigfloat() {return I2bigfloat(n)/I2bigfloat(d);}
 
 // Definitions of non-member bigrational functions
 
