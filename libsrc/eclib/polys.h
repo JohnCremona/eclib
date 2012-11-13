@@ -28,7 +28,9 @@
 // NB --warning!  In NTL there is a universal modulus set by a single
 // call to ZZ_p::init(q).
 
+#include "interface.h"  // scalars
 #include "gf.h"  // scalars
+#include "bigrat.h"
 
 #include <NTL/ZZ_pX.h>
 #include <NTL/ZZ_pXFactoring.h>
@@ -52,6 +54,7 @@
 
 vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint p);
 vector<gf_element> roots(const FqPoly& f);
+vector<bigrational> roots(const vector<bigint>& coeffs);
 
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
 int nrootscubic(const bigint& bb, const bigint& cc, const bigint& dd, const bigint& p);

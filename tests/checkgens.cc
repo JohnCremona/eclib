@@ -29,6 +29,7 @@
 #include <eclib/compproc.h>
 #include <eclib/egr.h>
 #include <eclib/htconst.h>
+#include <eclib/elog.h>
 
 #define INPUT_CLASS_IS_LETTER // we only use letters now!
 
@@ -104,6 +105,20 @@ int main()
 	      cout << " not on curve! ";  abort();
 	    }
 	}
+
+      // A test of our division-by-2 code:
+
+      for(vector<Point>::const_iterator Pi=plist.begin(); Pi!=plist.end(); Pi++)
+        {
+          Point P = *Pi;
+          Point Q = 2*P;
+          vector<Point> Qhalves = division_points(CD,Q,2);
+          if(Qhalves.size()==0)
+            {
+              cout<<"ERROR: Q="<<Q<<"=2*P for P="<<P<<" but halving Q failed!"<<endl;
+            }
+        }
+
 
       // Do nothing at all apart from checking points are on curve
       // (since we have a separate program for saturation now):

@@ -271,6 +271,38 @@ int Point::isvalid() const // P on its curve ?
   }
 }
 
+// Find all points with a given rational x-coordinate:
+vector<Point> points_from_x(Curvedata &E, const bigrational& x)
+{
+  //  cout<<"Trying to construct points with x="<<x<<endl;
+  bigint a1,a2,a3,a4,a6,b2,b4,b6,b8;
+  E.getai(a1,a2,a3,a4,a6);
+  E.getbi(b2,b4,b6,b8);
+  vector<Point> ans;
+  bigint xn = num(x), xd2=den(x), xd, xd4, s, t, yn;
+  //  cout<<"xd2 = "<<xd2<<endl;
+  if(isqrt(xd2,xd)) // xd2=xd^2
+    {
+      //      cout<<"xd = "<<xd<<endl;
+      xd4 = xd2*xd2;
+      s = ((4*xn+b2*xd2)*xn+(2*b4*xd4))*xn+b6*xd4*xd2;
+      //      cout<<"s = "<<s<<endl;
+      if(isqrt(s,t)) // s=t^2
+        {
+          //          cout<<"t = "<<t<<endl;
+          yn = t - (a1*xn+a3*xd2)*xd;
+          divide_exact(yn,BIGINT(2),yn);
+          //          cout<<"yn = "<<yn<<endl;
+          Point P(E,xn*xd,yn,xd2*xd);
+          //          cout<<"point="<<P<<endl;
+          ans.push_back(P);
+          if (!is_zero(t)) ans.push_back(-P);
+        }
+    }
+  return ans;
+}
+
+
 // find all the torsion points on a curve (Curvedata member function)
 
 vector<Point> old_torsion_points(Curvedata& E);  // code is below

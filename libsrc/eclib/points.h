@@ -136,6 +136,9 @@ public:
 
 }; // end of point class
 
+// list of 0,1 or 2 points with given x-coordinate:
+vector<Point> points_from_x(Curvedata &E, const bigrational& x);
+
 // the real x and y coords of the point
 void realify_point(const Point& P, bigfloat&x, bigfloat& y);
 

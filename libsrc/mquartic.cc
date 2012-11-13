@@ -242,24 +242,25 @@ void quartic::operator=(const quartic& q)
   //cout<<" Quartic op=, LHS now: "; dump(cout);
 }
 
-int quartic::trivial() const // Checks for a rational root 
+int quartic::trivial() const // Checks for a rational root
 {
-//    cout << "Checking triviality...\n";
-      int i,found;
-      bigint num; bigfloat realroot;
-      int start = (type==1)? 5 :
-                  (type==2)? 1 : 3;
-//    cout << "Start = " << start << "\n"; 
-      bigint ac = a*c, a2d = a*a*d, a3e = a*a*a*e;
-      bigfloat ra = I2bigfloat(a);
-      for (i = start, found=0; i<=4 &&  ! found; i++)
-         { //  cout << "i= "<<i<<", root = "<<(roots[i-1])<<endl;
-            realroot = real((roots)[i-1]);
-            num = Iround(ra*realroot);
-            found = (((((num+b)*num+ac)*num+a2d)*num+a3e)== 0);
-         }
-//    cout << "...returning "<<found<<endl;
-      return(found);
+  return rational_roots().size()>0;
+}
+
+vector<bigrational> quartic::rational_roots() const // returns rational roots
+{
+  bigint num;
+  int i, start = (type==1)? 5 : (type==2)? 1 : 3;
+  bigint ac = a*c, a2d = a*a*d, a3e = a*a*a*e;
+  bigfloat ra = I2bigfloat(a);
+  vector<bigrational> ans;
+  for (i = start; i<=4 ; i++)
+    {
+      num = Iround(ra*real((roots)[i-1]));
+      if (((((num+b)*num+ac)*num+a2d)*num+a3e)== 0)
+        ans.push_back(bigrational(num,a));
+    }
+  return(ans);
 }
 
 void quartic::make_zpol()

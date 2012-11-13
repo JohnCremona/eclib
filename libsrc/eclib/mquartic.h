@@ -27,6 +27,7 @@
 #define NEW_EQUIV
 #include "compproc.h"
 #include "marith.h"
+#include "bigrat.h"
 #include "points.h"
 #include "realroots.h"
 
@@ -94,6 +95,7 @@ public:
           {
 	    b*=2; c*=4; d*=8; e*=16; ii*=16; jj*=64; disc*=4096;
          }
+        vector<bigrational> rational_roots() const; // returns rational roots
         int trivial() const;     // Checks for a rational root
 	long nrootsmod(long p) const;
         friend ostream& operator<<(ostream& s, const quartic& q);

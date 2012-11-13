@@ -4,13 +4,13 @@ Retrieving newform data for N = 11
 Finished reading newform data for N = 11
 
 Form number 1
-Computing real period via L(f,1): L(f,1) = 0.25384186085591068435; real period = 0.63460465213977667565
-Minimal periods found: x0 = 0.63460465213977667565, y0 = 1.4588166169384952293
+Computing real period via L(f,1): L(f,1) = 0.25384186085591068435; real period = 0.63460465213977671087
+Minimal periods found: x0 = 0.63460465213977671087, y0 = 1.4588166169384952293
 Matrix (4,1;11,3):	dotplus = 1, dotminus = 1
 Searching for scaling factors.
 type = 1, nx = 1, ny = 1
-w1 = (0.63460465213977667565,1.4588166169384952293), w2 = (1.2692093042795533513,0)
-c4 = 496.00000000000015164, c6 = 20008.000000000004591
+w1 = (0.63460465213977671087,1.4588166169384952293), w2 = (1.2692093042795534217,0)
+c4 = 495.99999999999999988, c6 = 20007.999999999999996
 ic4 = 496, ic6 = 20008
 Curve is [0,-1,1,-10,-20]  N = 11  before rescaling, dotplus=1, dotminus=1
 rescaling by nx = 1, ny=1

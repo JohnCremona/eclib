@@ -64,6 +64,44 @@ vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint q)
   return ans;
 }
 
+//#define TRACE_ROOTS
+vector<bigrational> roots(const vector<bigint>& coeffs)
+{
+#ifdef TRACE_ROOTS
+  cout<<"Finding rational roots of polynomial f with coefficients "<<coeffs<<endl;
+#endif
+  ZZX f,g; ZZ c;
+  vector<bigrational> ans;
+  int i, d = coeffs.size()-1;  // degree
+  if(d<1) return ans;
+  for(i=0; i<=d; i++)
+    SetCoeff(f,d-i,coeffs[i]);
+#ifdef TRACE_ROOTS
+  cout<<"f = "<<f<<endl;
+#endif
+  vec_pair_ZZX_long factors;
+  factor(c,factors,f);
+#ifdef TRACE_ROOTS
+  cout<<"f has "<<factors.length()<<" factors"<<endl;
+#endif
+  for(i=0; i<factors.length(); i++)
+    {
+      g = factors[i].a;
+#ifdef TRACE_ROOTS
+      cout<<"factor "<<g<<" has degree "<<deg(g)<<endl;
+#endif
+      if(deg(g)==1)
+        {
+          bigrational root = bigrational(-coeff(g,0),coeff(g,1));
+#ifdef TRACE_ROOTS
+          cout<<"root "<<root<<endl;
+#endif
+          ans.push_back(root);
+        }
+    }
+  return ans;
+}
+
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
 int nrootscubic(const bigint& b, const bigint& c, const bigint& d, const bigint& p)
 {

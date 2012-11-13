@@ -22,6 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/compproc.h>
+#include <eclib/marith.h>
+#include <eclib/polys.h>
 #include <eclib/elog.h>
 
 bigfloat ssqrt(const bigfloat& x)
@@ -245,15 +247,63 @@ Point ellztopoint(Curvedata& E, Cperiods& per, const bigcomplex& z, const bigint
   return Point(E);
 }
 
+// Given P, returns a (possibly empty) vector of solutions Q to 2*Q=P
+//#define DEBUG_DIVBY2
+
+vector<Point> division_points_by2(Curvedata& E,  const Point& P)
+{
+#ifdef DEBUG_DIVBY2
+  cout<<"Trying to divide P="<<P<<" by 2..."<<endl;
+#endif
+  if(P.iszero()) return two_torsion(E);
+
+  bigint b2,b4,b6,b8;
+  E.getbi(b2,b4,b6,b8);
+  bigint xPn=getX(P), xPd=getZ(P);
+  bigint g = gcd(xPn,xPd); xPn/=g; xPd/=g;
+  vector<bigint> q; // quartic coefficients
+  q.push_back(xPd);
+  q.push_back(-4*xPn);
+  q.push_back(-(b4*xPd+b2*xPn));
+  q.push_back(-2*(b6*xPd+b4*xPn));
+  q.push_back(-(b8*xPd+b6*xPn));
+#ifdef DEBUG_DIVBY2
+  cout<<"Looking for rational roots of "<<q<<endl;
+#endif
+  vector<bigrational> xans = roots(q); // q.rational_roots();
+#ifdef DEBUG_DIVBY2
+  cout<<"Possible x-coordinates:"<<xans<<endl;
+#endif
+  vector<Point> ans;
+  for(vector<bigrational>::const_iterator x=xans.begin(); x!=xans.end(); x++)
+    {
+      vector<Point> x_points = points_from_x(E,*x);
+      for(vector<Point>::const_iterator Qi=x_points.begin(); 
+          Qi!=x_points.end(); Qi++)
+        {
+          Point Q = *Qi;
+          if(2*Q==P) // as it might = -P
+            {
+#ifdef DEBUG_DIVBY2
+              cout << "Solution found: " << Q << endl;
+#endif
+              ans.push_back(Q);
+            }
+        }
+    }
+  return ans;
+}
+
+//#define DEBUG_DIVPT
+
 // Returns a (possibly empty) vector of solutions to m*Q=P
 
 vector<Point> division_points(Curvedata& E,  const Point& P, int m)
 {
+  if(m==2) return division_points_by2(E,P);
   Cperiods cp(E);
   return division_points(E,cp,P,m);
 }
-
-//#define DEBUG_DIVPT
 
 vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int m)
 {
