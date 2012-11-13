@@ -50,6 +50,7 @@ int less_ap(long a, long b, int old=0)
   else return sign(a-b); // this way round! +1 before -1 etc
 }
 
+// Compare two ap-vectors lexicographically, using less_ap(.,.,old):
 int less_apvec(const vector<long>& v, const vector<long>& w, int old=0); 
 int less_apvec(const vector<long>& v, const vector<long>& w, int old) 
 {
@@ -1411,14 +1412,8 @@ void newforms::makebases(int flag)
   int i,j;
 
   unfix_eigs();
-  if((n1ds>1)&&(modulus<130000)) // reorder into old order
-    {
-      if(verbose) cout<<"Reordering newforms before recovery as N<130000"<<endl;
-      if(verbose>1) {cout<<"Before sorting:\n"; display();}
-      sort();
-      if(verbose>1) {cout<<"After sorting:\n"; display();}
-    }
-  for(i=0; i<n1ds; i++) 
+  sort();
+  for(i=0; i<n1ds; i++)
     {
       eigs[i] = nflist[i].aplist;
       //      cout<<i+1<<": ";vec_out(cout,eigs[i],10); cout<<endl;
@@ -1429,13 +1424,10 @@ void newforms::makebases(int flag)
 			     // this depends on basisflag and sign
   if(verbose) cout << "...done."<<endl;
   refix_eigs();
-  if((n1ds>1)&&(modulus<130000)) // reorder into old order
-    {
-      if(verbose) cout<<"Reordering newforms after recovery as N<130000"<<endl;
-      if(verbose>1) {cout<<"Before sorting:\n"; display();}
-      sort(1);
-      if(verbose>1) {cout<<"After sorting:\n"; display();}
-    }
+  if(verbose>1) cout<<"Reordering newforms after recovery"<<endl;
+  if(verbose>1) {cout<<"Before sorting:\n"; display();}
+  sort(int(modulus<130000)); // old order for N<130000, else new order
+  if(verbose>1) {cout<<"After sorting:\n"; display();}
 }
 
 void newforms::merge()
