@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
-AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(NTL_CFLAGS) $(PARI_CFLAGS) $(GMP_CFLAGS) -DNTL_ALL
-LIBS            = $(top_builddir)/libsrc/libec.la $(PARI_LIBS) $(NTL_LIBS) $(GMP_LIBS)
+AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(FLINT_CFLAGS) $(NTL_CFLAGS) $(PARI_CFLAGS) $(GMP_CFLAGS) -DNTL_ALL
+LIBS            = $(top_builddir)/libsrc/libec.la $(FLINT_LIBS) $(PARI_LIBS) $(NTL_LIBS) $(GMP_LIBS)
 
 check_run = echo "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_dir)/$${prog}.in > $${prog}.testout 2>/dev/null && diff $${prog}.testout $(test_output_dir)/$${prog}.out || exit $$?
 
@@ -58,7 +58,7 @@ check_qrank: qrank_progs
 
 ################ G0N (modular symbols programs) #################
 
-G0N_PROGS = ecnf nfhpcurve nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist h1degphi
+G0N_PROGS = ecnf nfhpcurve nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist
 G0N_PROGS_SUFFIXED = $(G0N_PROGS:=$(EXEEXT))
 g0n_progs: $(G0N_PROGS_SUFFIXED)
 
@@ -76,11 +76,10 @@ h1first_SOURCES=h1first.cc
 moreap_SOURCES=moreap.cc
 qexp_SOURCES=qexp.cc
 aplist_SOURCES=aplist.cc
-h1degphi_SOURCES=h1degphi.cc
 
 # This is the name of a directory which will be used for newform
 # input/output in the "make check" tests and removed afterwards.
-# This does not work with the export!
+# This does not work without the export!
 
 export NF_DIR:=nftmp
 
