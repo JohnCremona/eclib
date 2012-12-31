@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib-flint], [2012-10-5], [john.cremona@gmail.com])
+AC_INIT([eclib-flint], [2012-12-31], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -110,11 +110,11 @@ AC_ARG_WITH(flint,
   [AS_HELP_STRING([--with-flint=<path>],
                   [prefix of FLINT installation. e.g. /usr/local or /usr])],
   [],
-  [AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref_, hmod_mat_rref_],[ ],
+  [AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref, hmod_mat_rref],[ ],
     AC_MSG_ERROR([FLINT Library not found.
     Maybe you want to call configure with the --with-flint=<path> option?
     This tells configure where to find the FLINT library and headers.
-    e.g. --with-flint=/usr/local or --with-flint=/usr]))]
+    e.g. --with-flint=/usr/local or --with-flint=/usr]),[${GMP_LIBS}])]
 )
 case "$with_flint" in
   ""|yes)
@@ -125,11 +125,11 @@ case "$with_flint" in
     AC_MSG_ERROR([Compiling without libflint impossible (but --without-flint given)])
     ;;
   *)
-    FLINT_LIBS="${with_flint}/lib/libflint.so"
+    FLINT_LIBS="${with_flint}/lib"
     FLINT_CFLAGS="-I${with_flint}/include"
     ;;
 esac
-#FLINT_LIBS="${FLINT_LIBS} -lflint"
+FLINT_LIBS="${FLINT_LIBS} -lflint"
 AC_SUBST(FLINT_LIBS)
 AC_SUBST(FLINT_CFLAGS)
 
