@@ -1,0 +1,35 @@
+# use glob syntax.
+syntax: glob
+
+*~
+*.old
+configure
+Makefile
+Makefile.in
+*/Makefile
+*/Makefile.in
+autom4te.cache
+m4
+libsrc/Makefile.jc
+*/.deps
+*/.libs
+*/*.o
+*/*.lo
+*/*.la
+bin/*
+include/*
+lib/*
+share/*
+newforms/*
+tests/Makefile.jc
+eclib*.tar.gz
+aclocal.m4
+config.guess
+config.sub
+config.log
+config.status
+depcomp
+install-sh
+ltmain.sh
+missing
+libtool
