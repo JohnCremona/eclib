@@ -1,8 +1,9 @@
+
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib-flint], [2012-12-31], [john.cremona@gmail.com])
+AC_INIT([eclib], [2013-01-01], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -34,19 +35,20 @@ AC_ARG_WITH(gmp,
 )
 case "$with_gmp" in
   ""|yes)
-    GMP_LIBS=""
+    GMP_LDFLAGS=""
     GMP_CFLAGS=""
     ;;
   no)
     AC_MSG_ERROR([Compiling without libgmp impossible (but --without-gmp given)])
     ;;
   *)
-    GMP_LIBS="-L${with_gmp}/lib"
+    GMP_LDFLAGS="-L${with_gmp}/lib"
     GMP_CFLAGS="-I${with_gmp}/include"
     ;;
 esac
-GMP_LIBS="${GMP_LIBS} -lgmp"
+GMP_LIBS="-lgmp"
 AC_SUBST(GMP_LIBS)
+AC_SUBST(GMP_LDFLAGS)
 AC_SUBST(GMP_CFLAGS)
 
 dnl Find PARI
@@ -62,20 +64,21 @@ AC_ARG_WITH(pari,
 )
 case "$with_pari" in
   ""|yes)
-    PARI_LIBS=""
+    PARI_LDFLAGS=""
     PARI_CFLAGS=""
     ;;
   no)
     AC_MSG_ERROR([Compiling without libpari impossible (but --without-pari given)])
     ;;
   *)
-    PARI_LIBS="-L${with_pari}/lib"
+    PARI_LDFLAGS="-L${with_pari}/lib"
     PARI_CFLAGS="-I${with_pari}/include"
     ;;
 esac
-PARI_LIBS="${PARI_LIBS} -lpari"
+PARI_LIBS="-lpari"
 AC_SUBST(PARI_LIBS)
 AC_SUBST(PARI_CFLAGS)
+AC_SUBST(PARI_LDFLAGS)
 
 dnl Find the NTL Library
 AC_ARG_WITH(ntl,
@@ -90,48 +93,52 @@ AC_ARG_WITH(ntl,
 )
 case "$with_ntl" in
   ""|yes)
-    NTL_LIBS=""
+    NTL_LDFLAGS=""
     NTL_CFLAGS=""
     ;;
   no)
     AC_MSG_ERROR([Compiling without libntl impossible (but --without-ntl given)])
     ;;
   *)
-    NTL_LIBS="-L${with_ntl}/lib"
+    NTL_LDFLAGS="-L${with_ntl}/lib"
     NTL_CFLAGS="-I${with_ntl}/include"
     ;;
 esac
-NTL_LIBS="${NTL_LIBS} -lntl"
+NTL_LIBS="-lntl"
 AC_SUBST(NTL_LIBS)
 AC_SUBST(NTL_CFLAGS)
+AC_SUBST(NTL_LDFLAGS)
 
-dnl Find the FLINT Library
+dnl Find the FLINT Library and determine if it has the nmod_mat module
+dnl (in FLINT from version 2.3)
+dnl
+dnl NB If your version of FLINT includes the optional hmod_mat module,
+dnl then compile with FLINT_LEVEL=2 by either using configure as usual
+dnl and then doing "make CXXFLAGS='-DFLINT_LEVEL=2'", or adding
+dnl CXXFLAGS='-DFLINT_LEVEL=2' to the ./configure command.  In either
+dnl case, ignore the warnings about FLINT_LEVEL being redfined.
+dnl
+dnl First set defaults for when no suitable FLINT is found
+dnl
+FLINT_CFLAGS="-DFLINT_LEVEL=0";
+FLINT_LDFLAGS="";
+FLINT_LIBS="";
 AC_ARG_WITH(flint,
-  [AS_HELP_STRING([--with-flint=<path>],
-                  [prefix of FLINT installation. e.g. /usr/local or /usr])],
-  [],
-  [AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref, hmod_mat_rref],[ ],
-    AC_MSG_ERROR([FLINT Library not found.
-    Maybe you want to call configure with the --with-flint=<path> option?
-    This tells configure where to find the FLINT library and headers.
-    e.g. --with-flint=/usr/local or --with-flint=/usr]),[${GMP_LIBS}])]
+  [AS_HELP_STRING([--with-flint=<path>],[prefix of FLINT installation.])],
+  [FLINT_CFLAGS="-DFLINT_LEVEL=1 -I${with_flint}/include";
+   FLINT_LDFLAGS="-L${with_flint}/lib";
+   FLINT_LIBS="-lflint";
+   AC_MSG_NOTICE([Building with FLINT support from ${with_flint}])],
+  [AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref],
+    [FLINT_CFLAGS="-DFLINT_LEVEL=1";
+     FLINT_LIBS="-lflint";
+     AC_MSG_NOTICE([Building with FLINT support from system install])],
+    [AC_MSG_NOTICE([No suitable FLINT Library (version >=2.3) found])],
+    [${GMP_LIBS}])]
 )
-case "$with_flint" in
-  ""|yes)
-    FLINT_LIBS=""
-    FLINT_CFLAGS=""
-    ;;
-  no)
-    AC_MSG_ERROR([Compiling without libflint impossible (but --without-flint given)])
-    ;;
-  *)
-    FLINT_LIBS="${with_flint}/lib"
-    FLINT_CFLAGS="-I${with_flint}/include"
-    ;;
-esac
-FLINT_LIBS="${FLINT_LIBS} -lflint"
 AC_SUBST(FLINT_LIBS)
 AC_SUBST(FLINT_CFLAGS)
+AC_SUBST(FLINT_LDFLAGS)
 
 # Checks for header files.
 AC_FUNC_ALLOCA
