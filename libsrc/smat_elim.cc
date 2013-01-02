@@ -319,7 +319,6 @@ smat_elim::~smat_elim()
 
 #define TRACE_ELIM 0
 #define TRACE_DENSE 0
-#define FLINT_RREF
 
 void smat_elim::sparse_elimination( )
 {
@@ -1014,10 +1013,10 @@ void smat_elim::step5dense()
     cout<<"Constructed dense matrix" <<endl;
 #endif
     vec pc,npc; long rk,ny;
-#ifdef FLINT_RREF
-    dmat = ref_via_flint(dmat,pc,npc,rk,ny,BIGPRIME);
-#else
+#if FLINT_LEVEL==0
     dmat = echmodp_uptri(dmat,pc,npc,rk,ny,BIGPRIME);
+#else
+    dmat = ref_via_flint(dmat,pc,npc,rk,ny,BIGPRIME);
 #endif
 #if TRACE_DENSE
     cout<<"...finished elmination, rank = "<<rk;

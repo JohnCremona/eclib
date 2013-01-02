@@ -1547,11 +1547,19 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
  return m.slice(rk,nc);
 }
 
-#define FLINT_RREF 1
+// Possible FLINT_LEVEL values are as follows.
+//
+// 0: no FLINT support (or a version <2.3)
+// 1: support for 64-bit nmod_mat (standard from version 2.3)
+// 2: support for 32-bit hmod_mat (non-standard, from version 2.3)
+//
+// The configure script should have detected whether the functions
+// nmod_mat_rref and/or hmod_mat_rref are available to be used here.
+//
+#if FLINT_LEVEL!=0
 //#define TRACE_FLINT_RREF
-#if FLINT_RREF
 #include "flint/fmpz.h"
-#if (SCALAR_OPTION==1)
+#if (SCALAR_OPTION==1)&&(FLINT_LEVEL==2)
 #include "flint/hmod_mat.h"
 #undef uscalar
 #undef mod_mat
@@ -1582,11 +1590,13 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
 #endif
 #include "flint/profiler.h"
 
-// FLINT has two types for modular matrices, nmod_mat_t with entries
-// of type mp_limb_t (unsigned long) and hmod_mat_t, with entries
+// FLINT has two types for modular matrices: standard in FLINT-2.3 has
+// nmod_mat_t with entries of type mp_limb_t (unsigned long);
+// non-standard (in an optional branch) is hmod_mat_t, with entries
 // hlimb_t (unsigned int).  We use the former when scalar=long and the
-// latter when scalar=int.  The unsigned scalar types are #define'd as
-// uscalar.
+// latter when scalar=int, provided that the optional functions are
+// present, which should have been determined by the configure script.
+// The unsigned scalar types are #define'd as uscalar.
 
 mat ref_via_flint(const mat& M, scalar pr)
 {
@@ -1698,7 +1708,7 @@ mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
   mod_mat_clear(A);
   return ans;
 }
-#endif // FLINT_RREF
+#endif // FLINT_LEVEL
 
 // The following function computes the upper-triangular echelon form
 // of m modulo the prime pr.
