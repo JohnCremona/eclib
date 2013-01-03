@@ -2,20 +2,40 @@ In addition to the generic installation instructions given in the
 INSTALL file, note the following.  You can see all options to
 configure by typing ./configure --help.
 
-1. The configure script will check or the existence of gmp and will
+1. DEPENDENCIES
+
+(a) The configure script will check or the existence of gmp and will
 fail if it does not find it.
 
-2. Both NTL and PARI are required.  If they have not been installed in
-a place where the system will find them automatically (such as
+(b) Both NTL and PARI are required.  If they have not been installed
+in a place where the system will find them automatically (such as
 /usr/local) then you will need to specify where they are when you
 configure, like this:
 
 ./configure --with-pari=<path> --with-ntl=<path>
 
 If you have Sage installed in SAGE_ROOT then you can use
-$SAGE_ROOT/local for both of these.
+$SAGE_ROOT/local for both of these.  Note that when you specify these
+locations, no check is done that a usable version exists in that
+place: it will be assumed that <path>/include and <path>/lib contain
+appropriate include files and libraries, and the build will fail if
+not.
 
-3. By default a lot of programs, including test programs, are built
+(c) FLINT is optional (from eclib-2013-01-01) and only used for one
+part of sparse matrix reduction, which is used in the modular symbol
+code but not mwrank or other elliptic curve programs.  If a suitable
+FLINT version is found (which must be at least version 2.3, to contain
+the nmod_mat module) it will be used.  If in addition you have the
+optional FLINT module hmod_mat (which does modular matrix operations
+using 32-bit data types) this can be activated as follows; the
+advantage being that the modular symbol code will require less RAM to
+run: either (i) after ./configure, edit ./Makefile and all */Makefile,
+setting FLINT_LEVEL=2 (instead of =1); or (ii) edit configure itself
+similarly (in two places) and rerun it; or (iii) append
+CXXFLAGS='-DFLINT_LEVEL=2' to the make invocation (and ignore warnings
+about FLINT_LEVEL being redefined).
+
+2. By default a lot of programs, including test programs, are built
 and will be installed by "make install".  We only provide one option
 here:  if you do
 
