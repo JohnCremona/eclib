@@ -26,14 +26,6 @@
 #define USE_SPARSE 1
 #include <eclib/xsplit.h>
 
-
-// STORE_OPMATS flag: only relevant when bigmats=1.  Each opmat (on
-// ambient space) is stored in a temporary disk file when first
-// computed, then read in when needed later.  Otherwise recomputed
-// each time -- saves on memory at the expense of speed
-
-//#define STORE_OPMATS
-
 #include <eclib/smatrix_elim.h>
 subspace sparse_combine(const subspace& s1, const subspace& s2);
 mat sparse_restrict(const mat& m, const subspace& s);
@@ -41,21 +33,7 @@ smat restrict_mat(const smat& m, const subspace& s);
 
 // CLASS FORM_FINDER (was called splitter)
 
-#ifdef STORE_OPMATS
-static string opmatfilename()
-{
-  stringstream tmp; tmpmatdir << getenv("TMPMATDIR");
-  if (tmp.str().size()==0)
-    {tmp.clear(); tmp << "/tmp";}
-  tmp << "/opmatXXXXXX";
-  char* f = tmp.c_str();
-  mkstemp(f);
-  string filename(f);
-  delete [] f;
-  //  cout << "opmatfilename() returns "<<filename<<endl;
-  return filename;
-}
-#endif
+//#define DEBUG_NEST
 
 form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int dualflag, int bigmatsflag, int v)
 :h(hh), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v), 
@@ -64,17 +42,15 @@ form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int du
   denom1 = h->matden();
   dimen  = h->matdim();
   depth=0;
-  nest = new ssubspace*[maxd];
+#ifdef DEBUG_NEST
+  cerr << "Allocating nest, an array of maxd+1="<<(maxd+1)<<" ssubspace*"<<endl;
+#endif
+  nest = new ssubspace*[maxd+1];
   //  nest[0] = new ssubspace(dimen); // this just wastes space, but we must now
                                   // treat depth 0 differently in go_down() 
   subdim=dimen;
   eiglist = vector<long>(maxd);
   submats = new smat[maxd];
-#ifdef STORE_OPMATS
-  havemat = new int[maxd]; int i=maxd; while(i--) havemat[i]=0;
-  opfilenames.resize(maxd+1);
-  // filenames and files will be created as needed
-#endif
 
   targetdim = 1;
   if(!plusflag) // full conjmat not needed when plusflag is true
@@ -83,12 +59,6 @@ form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int du
       if(bigmats)
 	{
 	  conjmat=h->s_opmat(-1,dual); 
-#ifdef STORE_OPMATS
-	  opfilenames[maxd]=opmatfilename();
-	  // cout<<"Writing conjmat to file " << opfilenames[maxd] << "\n";
-	  conjmat.dump_to_file(opfilenames[maxd]);
-	  conjmat.init(0,0); // release space until needed 
-#endif
 	}
     }
 }
@@ -96,22 +66,13 @@ form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int du
 form_finder::~form_finder(void) 
 {
   //  while(depth+1) delete nest[depth--]; 
-#ifdef STORE_OPMATS
-  long i;
-  for(i=0; i<maxdepth; i++) 
+  while(depth)    // nest[0] was not created!
     {
-      if(havemat[i]) 
-	{
-	  unlink(opfilenames[i]);
-	}
-    }
-  if(!plusflag)
-    {
-      unlink(opfilenames[maxdepth]);
-    }
-  delete[] havemat; 
+#ifdef DEBUG_NEST
+      cerr << "Deleting nest["<<depth<<"]"<<endl;
 #endif
-  while(depth) delete nest[depth--];   // nest[0] was not created!
+      delete nest[depth--];
+    }
   delete[] nest; 
   delete[] submats;
 }
@@ -119,23 +80,7 @@ form_finder::~form_finder(void)
 
 void form_finder::make_opmat(long i) 
 { 
-#ifdef STORE_OPMATS
-  if(!havemat[i]) 
-    {
-      the_opmat=h->s_opmat(i,dual,verbose); 
-      opfilenames[i]=opmatfilename();
-//    cout<<"Writing matrix "<<i<<" to file " << opfilenames[i] << "\n";
-      the_opmat.dump_to_file(opfilenames[i]);
-      havemat[i]=1;
-    }
-  else
-    {
-//    cout<<"Reading matrix "<<i<<" from file " << opfilenames[i] << "\n";
-      the_opmat.read_from_file(opfilenames[i]);
-    }
-#else
   the_opmat=h->s_opmat(i,dual,verbose); 
-#endif
 }
 
 void form_finder::make_submat()
@@ -150,6 +95,9 @@ void form_finder::make_submat()
       else
 	{
 	  if(verbose>1) cout<<"restricting the_opmat to subspace..."<<flush;
+#ifdef DEBUG_NEST
+          cerr<<"Accessing nest["<<depth<<"]"<<endl;
+#endif
 	  submats[depth] = restrict_mat(the_opmat,*nest[depth]);
 	  if(verbose>1) cout<<"done."<<endl;
 	}
@@ -163,6 +111,9 @@ void form_finder::make_submat()
 	    submats[depth]= h->s_opmat(depth,1,verbose);
 	  else
 	    {
+#ifdef DEBUG_NEST
+              cerr << "accessing nest["<<depth<<"]"<<endl;
+#endif
 	      submats[depth] = h->s_opmat_restricted(depth,*nest[depth],1,verbose);
 	    }
 	}
@@ -189,13 +140,27 @@ void form_finder::go_down(long eig, int last)
   s = eigenspace(submats[depth],eig2);
   if(((depth==0)&&(dim(s)>0)&&(nrows(submats[depth])>1000))||last)
     submats[depth]=smat(0,0); // to save space (will recompute when needed)
-  if(verbose>1) cout<<"done (dim = "<<dim(s)<<"), combining subspaces..."<<flush;
+ if(verbose>1) cout<<"done (dim = "<<dim(s)<<"), combining subspaces..."<<flush;
   if(depth==0)
-    nest[depth+1] = new ssubspace(s);
+    {
+#ifdef DEBUG_NEST
+      cerr << "creating nest["<<(depth+1)<<"]"<<endl;
+#endif
+      nest[depth+1] = new ssubspace(s);
+    }
   else
-    nest[depth+1] = new ssubspace(combine(*nest[depth],s));
+    {
+#ifdef DEBUG_NEST
+      cerr << "accessing nest["<<depth<<"]"<<endl;
+      cerr << "creating nest["<<(depth+1)<<"]"<<endl;
+#endif
+      nest[depth+1] = new ssubspace(combine(*nest[depth],s));
+    }
   if(verbose>1) cout<<"done."<<endl;
   depth++;
+#ifdef DEBUG_NEST
+  cerr << "accessing nest["<<depth<<"]"<<endl;
+#endif
   subdim = dim(*(nest[depth]));
   if(verbose>1) cout<<"Eigenvalue "<<eig<<" has multiplicity "<<subdim<<endl;
   if(verbose&&(subdim>0))
@@ -207,11 +172,19 @@ void form_finder::go_up()
 {
   if(depth>0) 
     {
+#ifdef DEBUG_NEST
+      cerr << "Deleting nest["<<depth<<"]"<<endl;
+#endif
       delete nest[depth]; 
-      submats[depth]=smat(0,0); 
       depth--;
     }
-  if(depth) subdim = dim(*nest[depth]);
+  if(depth) 
+    {
+#ifdef DEBUG_NEST
+      cerr << "accessing nest["<<depth<<"]"<<endl;
+#endif
+      subdim = dim(*nest[depth]);
+    }
   else      subdim = dimen;
 }
 
@@ -235,10 +208,18 @@ void form_finder::make_basis()
 	  bplus[1]=1;
 	}
       else 
-	bplus = getbasis1(nest[depth]);
+        {
+#ifdef DEBUG_NEST
+          cerr << "accessing nest["<<depth<<"]"<<endl;
+#endif
+          bplus = getbasis1(nest[depth]);
+        }
       return;
     }
 
+#ifdef DEBUG_NEST
+  cerr << "accessing nest["<<depth<<"]"<<endl;
+#endif
   ssubspace* s = nest[depth];  // only used when depth>0
   ssubspace *spm0, *spm;
   SCALAR eig = denom1;
@@ -246,15 +227,9 @@ void form_finder::make_basis()
   smat subconjmat;          // only used when depth>0
   if(bigmats)
     {
-#ifdef STORE_OPMATS
-      conjmat.read_from_file(opfilenames[maxdepth]);
-#endif
       if(depth) subconjmat=restrict_mat(conjmat,*s);
       else      subconjmat=conjmat;  
       // will only be a 2x2 in this case (genus 1 only!)
-#ifdef STORE_OPMATS
-      conjmat=smat(0,0);
-#endif
     }
   else
     {
