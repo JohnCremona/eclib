@@ -33,3 +33,6 @@ install-sh
 ltmain.sh
 missing
 libtool
+
+# Mac cache files 
+.DS_Store
