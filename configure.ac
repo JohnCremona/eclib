@@ -22,35 +22,6 @@ AC_PROG_INSTALL
 
 # The following AC_ARG_WITH section were written by Volker Braun
 
-dnl Find GMP
-AC_ARG_WITH(gmp,
-  [AS_HELP_STRING([--with-gmp=<path>],
-                  [prefix of GMP installation. e.g. /usr/local or /usr])],
-  [],
-  [AC_CHECK_LIB([gmp], [__gmpz_add],[ ],
-    AC_MSG_ERROR([GMP library not found.
-    Maybe you want to call configure with the --with-gmp=<path> option?
-    This tells configure where to find the GMP library and headers.
-    e.g. --with-gmp=/usr/local or --with-gmp=/usr]))]
-)
-case "$with_gmp" in
-  ""|yes)
-    GMP_LDFLAGS=""
-    GMP_CFLAGS=""
-    ;;
-  no)
-    AC_MSG_ERROR([Compiling without libgmp impossible (but --without-gmp given)])
-    ;;
-  *)
-    GMP_LDFLAGS="-L${with_gmp}/lib"
-    GMP_CFLAGS="-I${with_gmp}/include"
-    ;;
-esac
-GMP_LIBS="-lgmp"
-AC_SUBST(GMP_LIBS)
-AC_SUBST(GMP_LDFLAGS)
-AC_SUBST(GMP_CFLAGS)
-
 dnl Find PARI
 AC_ARG_WITH(pari,
   [AS_HELP_STRING([--with-pari=<path>],
