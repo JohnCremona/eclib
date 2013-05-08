@@ -48,6 +48,7 @@
 #include <iterator>
 using namespace std;
 #include "templates.h"
+#include <stdint.h>
 
 #ifndef MININT
 #define MININT numeric_limits<int>::min()
