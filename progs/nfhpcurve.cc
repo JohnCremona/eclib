@@ -34,7 +34,7 @@
 #include <eclib/periods.h>
 #include <eclib/pcprocs.h>
 
-//#define AUTOLOOP
+#define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 #define MAXNY 10000
