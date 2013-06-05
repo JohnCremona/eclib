@@ -39,37 +39,43 @@
 // directly -- ONLY possible when dual=1
 
 class form_finder {
-protected:
-  splitter_base* h;
-  int plusflag, dual, bigmats, verbose, targetdim;
-  long maxdepth, mindepth, depth, subdim, dimen;
-  SCALAR denom1;
-  ssubspace** nest;     // array of pointers to subspaces
-// "Current" subspace is *nest[depth] of dimension subdim
-  vector<long> eiglist;
-  vec bplus, bminus;
+  public:
+    form_finder(splitter_base* hh, int plus, int maxd, int mind=0, 
+                int dualflag=1, int bigmatsflag=0, int v=0);
+    ~form_finder(void); 
+    
+    void find();
+    void recover(vector< vector<long> > eigs);
+    void splitoff(const vector<long>& eigs);
+    
+    vec  getbasis() const {return bplus;}
+    vec  getbasisplus() const {return bplus;}
+    vec  getbasisminus() const {return bminus;}
+  
+  protected:
+    splitter_base *h;
+    
+    int            plusflag, dual, bigmats, verbose, targetdim;
+    long           maxdepth, mindepth, depth, subdim, dimen;
+    SCALAR         denom1;
+    vector<long>   eiglist;
+    vec            bplus, bminus;
+    ssubspace**    nest;                  // Array of pointers to subspaces.
+                                          // "Current" subspace is *nest[depth] 
+                                          // of dimension subdim
 
-  int *havemat;
-  vector<string> opfilenames;  // temp filenames
-  smat conjmat;  // only used if plus==0 and bigmats==1
-  smat the_opmat;
-  smat *submats;  // holds current restriction for i>0
-  void make_opmat(long i);  // puts it in the_opmat
-  void make_submat();
-  void go_down(long eig, int last=0);
-  void go_up();
-  void make_basis();
-  vec getbasis1(const ssubspace* s); //assuming dim(s)=1, get basis vector
-public:
-  form_finder(splitter_base* hh, int plus, int maxd, int mind=0, 
-              int dualflag=1, int bigmatsflag=0, int v=0);
-  ~form_finder(void); 
-  void find();
-  void recover(vector< vector<long> > eigs);
-  void splitoff(const vector<long>& eigs);
-  vec getbasis() const {return bplus;}
-  vec getbasisplus() const {return bplus;}
-  vec getbasisminus() const {return bminus;}
+    int           *havemat;
+    vector<string> opfilenames;           // Temp filenames
+    smat           conjmat;               // Only used if plus==0 and bigmats==1
+    smat           the_opmat;
+    smat          *submats;               // Holds current restriction for i>0
+    
+    void make_opmat(long i);              // Puts it in the_opmat
+    void make_submat();
+    void go_down(long eig, int last=0);
+    void go_up();
+    void make_basis();
+    vec  getbasis1(const ssubspace* s);   // Assuming dim(s)=1, get basis vector
 };
 
 #endif
