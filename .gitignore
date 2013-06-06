@@ -37,6 +37,9 @@ libtool
 # Mac cache files 
 .DS_Store
 
+# Temporary swap files
+.*.swp
+
 # Program executables
 progs/aplist
 progs/checkap
