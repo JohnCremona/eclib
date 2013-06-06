@@ -37,7 +37,7 @@ smat restrict_mat(const smat& m, const subspace& s);
 
 form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int dualflag, int bigmatsflag, int v)
 :h(hh), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v), 
- maxdepth(maxd), mindepth(mind)
+ maxdepth(maxd), mindepth(mind), gnfcount(0)
 {
   denom1 = h->matden();
   dimen  = h->matdim();
@@ -366,63 +366,79 @@ void form_finder::splitoff(const vector<long>& eigs)
 
 void form_finder::find()
 {
- vector<long> subeiglist(eiglist.begin(),eiglist.begin()+depth);
+  vector<long> subeiglist(eiglist.begin(),eiglist.begin()+depth);
  
- if (verbose) 
-    cout << "In formfinder, depth = " << depth 
-         << ", aplist = " << subeiglist << ";\t";
+  if(verbose) cout << "In formfinder, depth = " << depth 
+                   << ", aplist = " << subeiglist << ";\t";
+
+  int dimold = h->dimoldpart(subeiglist);
  
- int dimold = h->dimoldpart(subeiglist);
- 
- if (verbose) cout << "dimsofar=" << subdim
+  if(verbose) cout << "dimsofar=" << subdim
                    << ", dimold=" << dimold
                    << ", dimnew=" << subdim-dimold << "\n";
  
- if(dimold==subdim)
- {
-   if(verbose)
-   {
-    cout << "Abandoning a common eigenspace of dimension " << subdim;
-    cout << " which is a sum of oldclasses." << endl;
-   }
-   return;   // This branch of the recursion ends: all is old
- }
+  if( dimold == subdim ) {
+    if(verbose) {
+      cout << "Abandoning a common eigenspace of dimension " << subdim;
+      cout << " which is a sum of oldclasses." << endl;
+    }
+    return;   // This branch of the recursion ends: all is old
+  }
 
- if((subdim==targetdim) && (depth>mindepth))
- { 
-   make_basis();
-   h->use(bplus,bminus,subeiglist); 
-   return;
- }
+  if( ( subdim == targetdim ) && ( depth > mindepth ) ) { 
+    make_basis();
+    // h->use(bplus,bminus,subeiglist); 
+    store(bplus,bminus,subeiglist);
+    return;
+  }
 
- if(depth==maxdepth)
- { 
-   if(1) // we want to see THIS message whatever the verbosity level!
-   { 
-     cout << "\nFound a " << subdim << "D common eigenspace\n";
-     cout << "Abandoning, even though oldforms only make up ";
-     cout << dimold << "D of this." << endl;
-   }
-   return;
- }
+  if( depth == maxdepth ) { 
+    if(1) {       // we want to see THIS message whatever the verbosity level! 
+      cout << "\nFound a " << subdim << "D common eigenspace\n";
+      cout << "Abandoning, even though oldforms only make up ";
+      cout << dimold << "D of this." << endl;
+    }
+    return;
+  }
  
- // The recursive part:
- vector<long> t_eigs = h->eigrange(depth);
- vector<long>::const_iterator apvar = t_eigs.begin();
+  // The recursive part:
+  vector<long> t_eigs = h->eigrange(depth);
+  vector<long>::const_iterator apvar = t_eigs.begin();
  
- if(verbose) 
-   cout << "Testing eigenvalues " << t_eigs << " at level " << (depth+1) << endl;
+  if(verbose) cout << "Testing eigenvalues " << t_eigs 
+                   << " at level " << (depth+1) << endl;
  
- while(apvar!=t_eigs.end())
- { 
-   // cout << "Going down with ap = " << (*apvar) <<endl;
-   long eig = *apvar++;
-   go_down(eig,apvar==t_eigs.end());
-   if(subdim>0) find();
-   go_up();
- }
+  while( apvar != t_eigs.end() ) { 
+    // cout << "Going down with ap = " << (*apvar) <<endl;
+    long eig = *apvar++;
+    go_down(eig,apvar==t_eigs.end());
+    if(subdim>0) find();
+    go_up();
+  }  
 
- if(verbose) cout << "Finished at level " << (depth+1) << endl;
+  if(verbose) cout << "Finished at level " << (depth+1) << endl;
+
+  // Now compute all newforms only if recursion has finished
+  if( apvar == t_eigs.end() && depth == 0 ) {
+    cout << "Now performing use() on all lists at once" << endl;
+    for( int nf = 0; nf < gnfcount; nf++ ) {
+      h-> use(gbplus[nf],gbminus[nf],gaplist[nf]);
+    }
+  }
+}
+
+void form_finder::store(vec bp, vec bm, vector<long> eigs) {
+  // Store sub-bplus,bminus,eiglists in class level containers
+  gbplus.push_back(bp);
+  gbminus.push_back(bm);
+  gaplist.push_back(eigs);
+
+  // Increment global counter
+  gnfcount++;
+
+  // Inform about newform count
+  if(verbose) 
+    cout << "Current newform subtotal count at " << gnfcount << endl;
 }
 
 #if (METHOD==2)

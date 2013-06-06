@@ -47,28 +47,32 @@ class form_finder {
     void find();
     void recover(vector< vector<long> > eigs);
     void splitoff(const vector<long>& eigs);
+    void store(vec bp, vec bm, vector<long> eigs);
     
     vec  getbasis() const {return bplus;}
     vec  getbasisplus() const {return bplus;}
     vec  getbasisminus() const {return bminus;}
   
   protected:
-    splitter_base *h;
+    splitter_base* h;
     
     int            plusflag, dual, bigmats, verbose, targetdim;
+    int            gnfcount;              // Global newform counter
     long           maxdepth, mindepth, depth, subdim, dimen;
     SCALAR         denom1;
     vector<long>   eiglist;
     vec            bplus, bminus;
+    vector< vector<long> > gaplist;       // Vector to hold all (sub)eiglists
+    vector<vec>    gbplus, gbminus;       // Vector to hold all bplus/bminus
     ssubspace**    nest;                  // Array of pointers to subspaces.
                                           // "Current" subspace is *nest[depth] 
                                           // of dimension subdim
 
-    int           *havemat;
+    int*           havemat;
     vector<string> opfilenames;           // Temp filenames
     smat           conjmat;               // Only used if plus==0 and bigmats==1
     smat           the_opmat;
-    smat          *submats;               // Holds current restriction for i>0
+    smat*          submats;               // Holds current restriction for i>0
     
     void make_opmat(long i);              // Puts it in the_opmat
     void make_submat();
