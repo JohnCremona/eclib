@@ -419,7 +419,7 @@ void form_finder::find()
   if(verbose) cout << "Finished at level " << (depth+1) << endl;
 
   // Now compute all newforms only if recursion has finished
-  if( apvar == t_eigs.end() && depth == 0 ) {
+  if( depth == 0 ) {
     cout << "Now performing use() on all lists at once" << endl;
     for( int nf = 0; nf < gnfcount; nf++ ) {
       h-> use(gbplus[nf],gbminus[nf],gaplist[nf]);
