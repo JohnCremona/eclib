@@ -24,6 +24,8 @@
 #if     !defined(_XSPLIT_H)
 #define _XSPLIT_H      1       //flags that this file has been included
 
+#include <boost/threads/mutex.hpp>
+
 #include "method.h"  // #defines form_finder=form_finder0/1/2/3/4
 #include "splitbase.h"
 
@@ -73,6 +75,11 @@ class form_finder {
     smat           conjmat;               // Only used if plus==0 and bigmats==1
     smat           the_opmat;
     smat*          submats;               // Holds current restriction for i>0
+   
+    // NEW THINGS REQUIRED
+    //threadpool/job queue
+    ff_data* root; 
+    boost::mutex store_lock;              // Lock for store() function 
     
     void make_opmat(long i);              // Puts it in the_opmat
     void make_submat();
