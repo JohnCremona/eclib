@@ -342,13 +342,11 @@ int modrat(long n, long m, float lim, long& a, long& b)
    if (r<lim)
      {
        if (abs(rr)<lim) {a=r; b=rr; return 1;}
-       else cout << "modrat error: no reconstruction for " << n << " mod " << m << "\n";
-       cout<<" = "<<a<<"/"<<b<<"\n";
+       cout << "\nmodrat error: no reconstruction for " << n << " mod " << m << "\n";
        return 0;
      }
  }
- cout << "modrat error: common factor with " << n << " mod " << m << "\n";
- abort();
+ cout << "\nmodrat error: common factor with " << n << " mod " << m << "\n";
  return 0;
 }
 
