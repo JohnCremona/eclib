@@ -279,10 +279,14 @@ subspace psubeigenspace(const mat& m1, scalar l, const subspace& s, scalar pr)
 //Attempts to lift from a mod-p subspace to a normal Q-subspace by expressing
 //basis as rational using modrat and clearing denominators
 //
-subspace lift(const subspace& s, scalar pr, int trace)
+int lift(const subspace& s, scalar pr, subspace& ans, int trace)
 {
   scalar dd;
-  const mat& m = liftmat(s.basis,pr,dd,trace);
-  subspace ans(m, pivots(s), dd);
-  return ans;
+  mat m;
+  if (liftmat(s.basis,pr,m,dd,trace))
+    {
+      ans = subspace(m, pivots(s), dd);
+      return 1;
+    }
+  return 0;
 }

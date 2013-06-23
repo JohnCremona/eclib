@@ -269,15 +269,18 @@ vec form_finder::getbasis1(const ssubspace* s)
 {
   VEC b = basis(*s).as_mat().col(1);
 #ifdef MODULAR
-  if(!liftok(b,MODULUS)) 
-     cout << "Unable to lift eigenvector from mod " << MODULUS << endl;
+  VEC bb;
+  if(lift(b,MODULUS,bb))
+    b = bb;
+  else
+    cout << "Unable to lift eigenvector from mod " << MODULUS << endl;
 #else
   makeprimitive(b);
 #endif
 #ifdef MULTI
   scalar n=0; // dummy variable to gt the right type in next line
   return b.shorten(n);
-#else      
+#else
   return b;
 #endif
 }

@@ -254,7 +254,10 @@ int main(void)
 	{
 	  cout<<"lifting kernel..."<<flush;
 	  start_time();
-	  mat MTR = liftmat(prestrict(m,ker,MODULUS),MODULUS,denker);
+	  mat MTR;
+          int ok = liftmat(prestrict(m,ker,MODULUS),MODULUS,MTR,denker);
+          if (!ok)
+            cout << "**!!!** failed to lift modular kernel\n" << endl;
 	  stop_time();
 	  cout<<"done, denom(ker)="<<denker; show_time(cerr); cout<<endl;
 	  if(nulty<21) 

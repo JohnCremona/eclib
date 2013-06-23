@@ -103,8 +103,8 @@ public:
                                  long& rk, long& ny, scalar pr);
 	friend subspace combine(const subspace& s1, const subspace& s2);
         friend mat restrict_mat(const mat& m, const subspace& s, int cr);
-	friend mat liftmat(const mat& mm, scalar pr, scalar& dd, int trace=0);
-	friend subspace lift(const subspace& s, scalar pr, int trace=0);
+        friend int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace=0);
+        friend int lift(const subspace& s, scalar pr, subspace& ans, int trace=0);
 	friend subspace pcombine(const subspace& s1, const subspace& s2, scalar pr);
 	friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr);
 	friend mat matmulmodp(const mat&, const mat&, scalar pr);

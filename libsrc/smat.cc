@@ -890,12 +890,12 @@ smat sidmat(scalar n)  // identity matrix
   return I;
 }
 
-smat liftmat(const smat& mm, scalar pr, scalar& dd, int trace)
+int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace)
 {
   scalar modulus=pr,n,d; long nr,nc; dd=1;
   int succ=0,success=1;
   float lim=floor(sqrt(pr/2.0));
-  smat m = mm;
+  m = mm;
   if(trace)
     {
       cout << "Lifting mod-p smat;  smat mod "<<pr<<" is:\n";
@@ -910,13 +910,16 @@ smat liftmat(const smat& mm, scalar pr, scalar& dd, int trace)
 	success = success && succ;
 	dd=lcm(d,dd);
       }
-  if(!success) 
-    cout << "Problems encountered with modrat lifting of smat." << endl;
+  if(!success)
+    {
+      //cout << "Problems encountered with modrat lifting of smat." << endl;
+      return 0;
+    }
   dd=abs(dd);
   if(trace) cout << "Common denominator = " << dd << "\n";
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
       m.val[nr][nc] = mod(xmm(dd,(m.val[nr][nc]),pr),pr);
   if(trace) cout << "Lifted smat = " << m.as_mat() << "\n";
-  return m;
+  return 1;
 }

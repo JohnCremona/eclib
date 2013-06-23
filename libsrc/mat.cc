@@ -1799,12 +1799,12 @@ mat matmulmodp(const mat& m1, const mat& m2, scalar pr)
  return m3;
 }
 
-mat liftmat(const mat& mm, scalar pr, scalar& dd, int trace)
+int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace)
 {
   scalar modulus=pr,n,d; long nr,nc,nrc; dd=1;
   int succ,success=1;
   float lim=floor(sqrt(pr/2.0));
-  mat m = mm; scalar *mp;
+  m = mm; scalar *mp;
   if(trace)
     {
       cout << "Lifting mod-p mat;  mat mod "<<pr<<" is:\n";
@@ -1820,8 +1820,11 @@ mat liftmat(const mat& mm, scalar pr, scalar& dd, int trace)
       dd=lcm(d,dd);
     }
   if(!success) 
-    cout << "Problems encountered with modrat lifting of mat." << endl;
-  dd=abs(dd);
+    {
+      //cout << "Problems encountered with modrat lifting of mat." << endl;
+      return 0;
+    }
+   dd=abs(dd);
   if(trace) cout << "Common denominator = " << dd << "\n";
   nrc=nr*nc; mp=m.entries;
   while(nrc--)
@@ -1829,7 +1832,7 @@ mat liftmat(const mat& mm, scalar pr, scalar& dd, int trace)
 	*mp=mod(xmodmul(dd,(*mp),pr),pr); 
 	mp++;
       }
-  return m;
+  return 1;
 }
 
 double sparsity(const mat& m)

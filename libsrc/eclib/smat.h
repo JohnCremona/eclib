@@ -87,7 +87,7 @@ public:
      {return (((double)(get_population(m)))/m.nro)/m.nco;}
      friend void random_fill_in( smat&, int, scalar ); //the elimination program
      friend smat sidmat(scalar);  // identity matrix
-     friend smat liftmat(const smat& mm, scalar pr, scalar& dd, int trace=0);
+     friend int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace=0);
  };
 
 // Declaration of non-friend functions

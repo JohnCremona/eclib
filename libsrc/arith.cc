@@ -324,6 +324,8 @@ int modrat(int n, int m, float lim, int& a, int& b)
   return ans;
 }
 
+//#define DEBUG_MODRAT
+
 int modrat(long n, long m, float lim, long& a, long& b)
 {long q,r,t,qq,rr,tt,quot;
 // cout<<"modrat("<<n<<","<<m<<")";
@@ -342,11 +344,15 @@ int modrat(long n, long m, float lim, long& a, long& b)
    if (r<lim)
      {
        if (abs(rr)<lim) {a=r; b=rr; return 1;}
+#ifdef DEBUG_MODRAT
        cout << "\nmodrat error: no reconstruction for " << n << " mod " << m << "\n";
+#endif
        return 0;
      }
  }
+#ifdef DEBUG_MODRAT
  cout << "\nmodrat error: common factor with " << n << " mod " << m << "\n";
+#endif
  return 0;
 }
 
