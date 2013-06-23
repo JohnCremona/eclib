@@ -36,7 +36,7 @@ inline scalar xmm0(scalar a, scalar b)
 {
   //return xmodmul(a,b,m);
   //return (a*b) % m;
-  return (a*(int64_t)b) % BIGPRIME;
+  return (a*(int64_t)b) % DEFAULT_MODULUS;
   //return (scalar)(((long)a*(long)b) % (long)m);
 }
 

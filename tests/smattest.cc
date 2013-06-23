@@ -440,7 +440,7 @@ int main(void)
 	vec pc, npc;
 	
 	if( flag ) {
-	  long rk, ny; scalar pr = BIGPRIME;
+	  long rk, ny; scalar pr = DEFAULT_MODULUS;
 	  mat m = sm.as_mat ();  
 	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
 	  cout << " rank using echmodp : " << rk;
@@ -481,7 +481,7 @@ int main(void)
 	smat ker = A.kernel(pc,npc);
 	cout << "rank is:" << dim( pc ) << endl;
 	display_population(ker);
-	smat result = mult_mod_p(sm,ker,BIGPRIME);
+	smat result = mult_mod_p(sm,ker,DEFAULT_MODULUS);
 	// cout << "sm  is:\n" << sm.as_mat() << endl;
 	// cout << "ker is:\n" << ker.as_mat() << endl;
 	// cout << "result is:\n" << result.as_mat() << endl;

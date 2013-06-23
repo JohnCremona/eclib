@@ -67,6 +67,7 @@ class smat_elim : public smat{
     ordlist( int m = 10) : list(m) {;}
   };
   
+  scalar modulus;
   int rank;
   ordlist* column; // an array of lists, oner per col, of row nos
 		   // which have nonzero entries in that col
@@ -101,7 +102,7 @@ public:
   void free_space( int col );
   void elim( int row1, int row2, scalar v2 );
   // constructor:
-  smat_elim( const smat& sm) : smat( sm ) { init(); };
+  smat_elim( const smat& sm, scalar mod=DEFAULT_MODULUS) : smat( sm ), modulus(mod) { init(); };
   smat_elim( int r = 0,int c = 0 );
   // destructor:
   ~smat_elim();
@@ -117,11 +118,11 @@ inline ostream& operator<< (ostream&s, const smat_elim::list& L)
   return s;
 }
 
-long rank(smat& sm);
+long rank(smat& sm, scalar mod=DEFAULT_MODULUS);
 
-inline long nullity(const smat& sm, const scalar& lambda) // nullity of sm-lambda*I
+inline long nullity(const smat& sm, const scalar& lambda, scalar mod=DEFAULT_MODULUS) // nullity of sm-lambda*I
 {
-  smat sma(sm); sma-=lambda;  return ncols(sm)-rank(sma);
+  smat sma(sm); sma-=lambda;  return ncols(sm)-rank(sma,mod);
 }
 
 class ssubspace {
@@ -129,7 +130,7 @@ class ssubspace {
 public:
      // constructors
         ssubspace(int n=0);
-        ssubspace(const smat& b, const vec& p);
+        ssubspace(const smat& b, const vec& p, scalar mod=DEFAULT_MODULUS);
 	ssubspace(const ssubspace& s);
      // destructor
         ~ssubspace();
@@ -140,16 +141,18 @@ public:
         inline void clear() { pivots.init(); basis=smat(0,0);}
         inline vec pivs() const {return pivots;}  // the pivot vector
         inline smat bas() const {return basis;}   // the basis matrix
+        inline scalar mod() const {return modulus;}   // the (prime) modulus
 
      // non-member (friend) functions and operators
         friend int dim(const ssubspace& s)     {return ncols(s.basis);}
         friend vec pivots(const ssubspace& s)  {return s.pivots;}
-        friend smat basis(const ssubspace& s)  {return s.basis;}  
+        friend smat basis(const ssubspace& s)  {return s.basis;}
 	friend ssubspace combine(const ssubspace& s1, const ssubspace& s2);
 	friend smat restrict_mat(const smat& m, const ssubspace& s);
 
 // Implementation
 private:
+       scalar modulus;
        vec pivots;
        smat basis;
 };
@@ -157,9 +160,9 @@ private:
 
 // Declarations of nonmember, nonfriend operators and functions:
 
-ssubspace kernel(const smat& m);
-ssubspace eigenspace(const smat& m, scalar lambda);
+ssubspace kernel(const smat& m, scalar mod=DEFAULT_MODULUS);
+ssubspace eigenspace(const smat& m, scalar lambda, scalar mod=DEFAULT_MODULUS);
 ssubspace subeigenspace(const smat& m, scalar l, const ssubspace& s);
 
 // construction of a 1-dimensional sparse subspace from a vector:
-ssubspace make1d(const vec& bas, long&piv);
+ssubspace make1d(const vec& bas, long&piv, scalar mod=DEFAULT_MODULUS);

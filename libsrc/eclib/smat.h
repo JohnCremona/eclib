@@ -52,10 +52,10 @@ public:
      smat& operator-= (const scalar& s)   // subtracts scalar*identity
       {this->operator+=(-s); return *this;}
      smat& operator*= (scalar);
-     void sub_mod_p(const scalar& lambdal, const scalar& p=BIGPRIME); 
+     void sub_mod_p(const scalar& lambdal, const scalar& p=DEFAULT_MODULUS); 
       // subtracts scalar*identity mod p
-     void reduce_mod_p(const scalar& p=BIGPRIME);
-     smat& mult_by_scalar_mod_p (scalar scal, const scalar& p=BIGPRIME);
+     void reduce_mod_p(const scalar& p=DEFAULT_MODULUS);
+     smat& mult_by_scalar_mod_p (scalar scal, const scalar& p=DEFAULT_MODULUS);
      smat& operator/= (scalar);
      mat operator*( const mat& );
      void set_row ( int, int, int*, scalar* );
@@ -79,7 +79,7 @@ public:
      friend smat transpose(const smat&);
      friend int operator==(const smat&, const smat&);
   // Equality mod p:
-     friend int eqmodp(const smat&, const smat&, const scalar& p=BIGPRIME);
+     friend int eqmodp(const smat&, const smat&, const scalar& p=DEFAULT_MODULUS);
      friend ostream& operator<< (ostream&s, const smat&);
      friend istream& operator>> (istream&s, smat&);
      friend int get_population (const smat& );      //mainly used for testing

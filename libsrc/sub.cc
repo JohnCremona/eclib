@@ -105,7 +105,7 @@ mat restrict_mat(const mat& m, const subspace& s, int cr)
 //  for (i=1; (i<=n) && check; i++)
 //  for (j=1; (j<=d) && check; j++)
 //   check = (dd*m.row(i)*b.col(j) == b.row(i)*ans.col(j));
-    int check = (dd*matmulmodp(m,sb,BIGPRIME) == matmulmodp(sb,ans,BIGPRIME));
+    int check = (dd*matmulmodp(m,sb,DEFAULT_MODULUS) == matmulmodp(sb,ans,DEFAULT_MODULUS));
     if (!check) 
       {
 	cout<<"Error in restrict_mat: subspace not invariant!\n";

@@ -698,7 +698,7 @@ mat echelon(const mat& entries, vec& pcols, vec& npcols,
   switch (method)
     {case 0: return echelon0(entries,pcols,npcols,rk,ny,d);
      case 1: return echelonl(entries,pcols,npcols,rk,ny,d);
-     case 2: return echelonp(entries,pcols,npcols,rk,ny,d,BIGPRIME);
+     case 2: return echelonp(entries,pcols,npcols,rk,ny,d,DEFAULT_MODULUS);
      default: return echelon0(entries,pcols,npcols,rk,ny,d);
     }        
 }

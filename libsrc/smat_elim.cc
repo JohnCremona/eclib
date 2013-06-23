@@ -36,6 +36,9 @@ inline scalar xmm(scalar a, scalar b, scalar m)
   //return (scalar)(((long)a*(long)b) % (long)m);
 }
 
+#if(0)
+// This special version only works modulo BIGPRIME, not a general modulus:
+
 inline scalar xmm0(scalar a, scalar b)
 {
   if (a==1) return b;
@@ -68,11 +71,21 @@ inline scalar xmm0(scalar a, scalar b)
  return (scalar)r;
 }
 
+#endif
+
 inline scalar addmod0(scalar a, scalar b)
 {
   scalar c=a+b;
-  c += ((c<0)?BIGPRIME:0);
-  c -= ((c>=BIGPRIME)?BIGPRIME:0);
+  c += ((c<0)?DEFAULT_MODULUS:0);
+  c -= ((c>=DEFAULT_MODULUS)?DEFAULT_MODULUS:0);
+  return c;
+}
+
+inline scalar addmod(scalar a, scalar b, scalar mod)
+{
+  scalar c=a+b;
+  c += ((c<0)?mod:0);
+  c -= ((c>=mod)?mod:0);
   return c;
 }
 
@@ -282,7 +295,7 @@ smat_elim::ordlist::remove( list& L )  // L must be ordered
 void smat_elim::init( )
 {
   //  cout<<"smat_elim::init()  with smat:\n"<<(smat)(*this)<<endl;
-  //  this->reduce_mod_p(BIGPRIME);
+  //  this->reduce_mod_p(modulus);
   //  cout<<"smat_elim::init()  after reducing:\n"<<(smat)(*this)<<endl;
   list::listsize = 10;
   rank = 0;
@@ -730,9 +743,9 @@ void smat_elim::normalize( int row, int col0)
   if( col[row][count+1] != col0 ) 
     { cerr << "error in normalize "; abort(); }
   if( val[row][count] != 1 ) {
-    scalar invValue = invmod0( val[row][count]);
+    scalar invValue = invmod( val[row][count], modulus);
     scalar *values = val[row];
-    while(d--) { *values = xmm0( *values , invValue ); values++; }
+    while(d--) { *values = xmm( *values , invValue, modulus ); values++; }
   }
 }
 
@@ -788,7 +801,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
     int d2i = d2;
     scalar *oldVal = val[row2]; int *oldMat = col[row2];
     scalar *veci2 = oldVal;
-    scalar v2 = mod0(BIGPRIME-veci2[ind]);
+    scalar v2 = mod(modulus-veci2[ind],modulus);
     int *P = col[row2] = new int [ d + d2 + 1 ]; P++;
     scalar *V = val[row2] = new scalar [ d + d2 ];
 
@@ -798,12 +811,12 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
       { 
 	if( *pos1 < *pos2 ) { 
 	  lri[di-d].put(row2);
-	  *P++ = *pos1++; *V++ = xmm0( v2,(*veci1++) ); d--; 
+	  *P++ = *pos1++; *V++ = xmm( v2,(*veci1++), modulus ); d--; 
 	}
 	else if(( *P++ = *pos2++ ) < *pos1 ) { *V++ = *veci2++; d2--; }
 	else
 	  {
-	    if( (*V++ = addmod0(xmm0(v2,(*veci1++)) , (*veci2++))) == 0)
+	    if( (*V++ = addmod(xmm(v2,(*veci1++),modulus) , (*veci2++), modulus)) == 0)
 	      { lro[di-d].put(row2); V--; P--; k--;}
 	    temp=*pos1++; // unused, but prevents compiler warning
 	    d--;
@@ -815,7 +828,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
       { *P++ = *pos2++; *V++ = *veci2++; k++; d2--; }
     else while( d ) {
       lri[di-d].put(row2);
-      *P++ = *pos1++; *V++ = xmm0(v2,(*veci1++)); k++; d--;
+      *P++ = *pos1++; *V++ = xmm(v2,(*veci1++), modulus); k++; d--;
     }
     *col[row2] = k;
     if( fr ) check_row(d2i, row2, L);         // check condition for rows
@@ -938,11 +951,11 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
   while( d && d2 )
     { 
       if( *pos1 < *pos2 ) 
-	{*P++ = *pos1++; *V++ = xmm0( v2,(*veci1++) ); d--; }
+	{*P++ = *pos1++; *V++ = xmm( v2,(*veci1++),modulus ); d--; }
       else if(( *P++ = *pos2++ ) < *pos1 ) { *V++ = *veci2++; d2--; }
       else
 	{
-	  if( (*V++ = addmod0(xmm0(v2,(*veci1++)) , (*veci2++))) == 0)
+	  if( (*V++ = addmod(xmm(v2,(*veci1++),modulus) , (*veci2++), modulus)) == 0)
 	    { V--; P--; k--;}
 	  temp=*pos1++; // unused, but prevents compiler warning
 	  d--;
@@ -953,7 +966,7 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
   if( d == 0 ) while( d2 )
     { *P++ = *pos2++; *V++ = *veci2++; k++; d2--; }
   else if( d2 == 0 ) while( d )
-    { *P++ = *pos1++; *V++ = xmm0(v2,(*veci1++)); k++; d--; }
+                       { *P++ = *pos1++; *V++ = xmm(v2,(*veci1++),modulus); k++; d--; }
   *col[row2] = k;
   delete [] oldMat;
   delete [] oldVal;
@@ -1014,9 +1027,9 @@ void smat_elim::step5dense()
 #endif
     vec pc,npc; long rk,ny;
 #if FLINT_LEVEL==0
-    dmat = echmodp_uptri(dmat,pc,npc,rk,ny,BIGPRIME);
+    dmat = echmodp_uptri(dmat,pc,npc,rk,ny,modulus);
 #else
-    dmat = ref_via_flint(dmat,pc,npc,rk,ny,BIGPRIME);
+    dmat = ref_via_flint(dmat,pc,npc,rk,ny,modulus);
 #endif
 #if TRACE_DENSE
     cout<<"...finished elmination, rank = "<<rk;
@@ -1051,7 +1064,8 @@ void smat_elim::step5dense()
 #endif
   for(i=1; i<=nrd; i++) 
     {
-      if (xmod0(dmat(i,pc[i])-1)) cout<<"Bad pivot #"<<i<<" ("<<dmat(i,pc[i])<<")"<<endl;
+      if (xmod(dmat(i,pc[i])-1,modulus))
+        cout<<"Bad pivot #"<<i<<" ("<<dmat(i,pc[i])<<")"<<endl;
       int r = remaining_rows[i-1]-1;
       int c = remaining_cols[pc[i]-1];
       //      cout<<"Eliminating (r,c)=("<<r<<","<<c<<")"<<endl;
@@ -1064,60 +1078,62 @@ void smat_elim::step5dense()
 }
 
 
-long rank(smat& sm)
+long rank(smat& sm, scalar mod)
 {
-  smat_elim sme(sm);
+  smat_elim sme(sm,mod);
   vec pivs, npivs;
   (void) sme.kernel(npivs,pivs);
   return sme.get_rank();
 }
 
 ssubspace::ssubspace(int n) 
-:pivots(iota((scalar)n)),basis(sidmat((scalar)n))
+ :pivots(iota((scalar)n)),basis(sidmat((scalar)n))
 {}
 
-ssubspace::ssubspace(const smat& b, const vec& p)
-:pivots(p),basis(b)
+ssubspace::ssubspace(const smat& b, const vec& p, scalar mod)
+  :pivots(p),basis(b),modulus(mod)
 {}
 
-ssubspace::ssubspace(const ssubspace& s) 
-:pivots(s.pivots),basis(s.basis) 
+ssubspace::ssubspace(const ssubspace& s)
+  :pivots(s.pivots),basis(s.basis),modulus(s.modulus)
 {}
 
-// destructor -- no need to do anything as componenets have their own
+// destructor -- no need to do anything as components have their own
 ssubspace::~ssubspace() 
 {}
 
 // assignment
 void ssubspace::operator=(const ssubspace& s) 
 {
-  pivots=s.pivots; 
-  basis=s.basis; 
+  pivots=s.pivots;
+  basis=s.basis;
+  modulus=s.modulus;
 }
 
 // Definitions of nonmember, nonfriend operators and functions:
 
 ssubspace combine(const ssubspace& s1, const ssubspace& s2)
-{ 
-  return ssubspace(mult_mod_p(s1.basis,s2.basis,BIGPRIME),s1.pivots[s2.pivots]);
+{
+  scalar mod = s1.modulus;
+  return ssubspace(mult_mod_p(s1.basis,s2.basis,mod),s1.pivots[s2.pivots],mod);
 }
  
 smat restrict_mat(const smat& m, const ssubspace& s)
 { 
-  return mult_mod_p(m.select_rows(pivots(s)),basis(s),BIGPRIME);
+  return mult_mod_p(m.select_rows(pivots(s)),basis(s),s.modulus);
 }
  
-ssubspace kernel(const smat& sm)
+ssubspace kernel(const smat& sm, scalar mod)
 {
   vec pivs, npivs;
-  smat kern = smat_elim(sm).kernel(npivs,pivs);
-  return ssubspace(kern,pivs);
+  smat kern = smat_elim(sm,mod).kernel(npivs,pivs);
+  return ssubspace(kern,pivs,mod);
 }
  
-ssubspace eigenspace(const smat& m1, scalar lambda)
+ssubspace eigenspace(const smat& m1, scalar lambda, scalar mod)
 {
   smat m = m1; m.sub_mod_p(lambda);
-  return kernel(m);
+  return kernel(m,mod);
 }
  
 ssubspace subeigenspace(const smat& m1, scalar l, const ssubspace& s)
@@ -1126,7 +1142,7 @@ ssubspace subeigenspace(const smat& m1, scalar l, const ssubspace& s)
 }
 
 
-ssubspace make1d(const vec& bas, long&piv) 
+ssubspace make1d(const vec& bas, long&piv, scalar mod) 
 // make a 1-D ssubspace with basis bas
 {
   smat tbasis(1,dim(bas));
@@ -1135,5 +1151,5 @@ ssubspace make1d(const vec& bas, long&piv)
   vec pivs(1); // initialised to 0
   pivs[1]=sbas.first_index();
   piv=sbas.elem(pivs[1]);
-  return ssubspace(transpose(tbasis),pivs);
+  return ssubspace(transpose(tbasis),pivs,mod);
 }
