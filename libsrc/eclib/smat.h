@@ -88,6 +88,8 @@ public:
      friend void random_fill_in( smat&, int, scalar ); //the elimination program
      friend smat sidmat(scalar);  // identity matrix
      friend int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace=0);
+     friend int liftmats_chinese(const smat& mm1, scalar pr1, const smat& mm2, scalar pr2,
+                                 smat& m, scalar& dd);
  };
 
 // Declaration of non-friend functions
