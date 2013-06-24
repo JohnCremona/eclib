@@ -104,9 +104,9 @@ void elim1(const vec& a, vec& b, long pos);
 void elim2(const vec& a, vec& b, long pos, scalar lastpivot);
 vec reverse(vec& order);
 vec express(const vec& v, const vec& v1, const vec& v2);
-vec lift(const vec& v, scalar pr);  //lifts a mod-p vector to a rational
-                                        //and scales to a primitive vec in Z.
-int liftok(vec& v, scalar pr);  //lifts a mod-p vector in place to a rational
+int lift(const vec& v, scalar pr, vec& ans);  //lifts a mod-p vector to a rational
+                                   //and scales to a primitive vec in Z. Returns success flag
+//int liftok(vec& v, scalar pr);  //lifts a mod-p vector in place to a rational
                                //and scales to a primitive vec in Z; returns success
 scalar dotmodp(const vec& v1, const vec& v2, scalar pr);
 

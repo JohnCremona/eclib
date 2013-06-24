@@ -63,7 +63,7 @@ int main(void)
 #endif
  init_time();
  start_time();
- bigint P = BIGINT(BIGPRIME);
+ bigint P = BIGINT(MODULUS);
  int n=1; 
  int plus=1;
  int verbose=0;
@@ -139,7 +139,7 @@ int main(void)
       }
       wqlist[i]=wq;
 #ifdef CHECK_COMMUTE
-      if (mult_mod_p(swq,swq,BIGPRIME)==den*den*sidmat(genus)) 
+      if (mult_mod_p(swq,swq,MODULUS)==den*den*sidmat(genus)) 
 	cout << "Involution!" << "\n";
       else
 	cout << "NOT an involution...." << "\n";
@@ -254,7 +254,10 @@ int main(void)
 	{
 	  cout<<"lifting kernel..."<<flush;
 	  start_time();
-	  mat MTR = liftmat(prestrict(m,ker,MODULUS),MODULUS,denker);
+	  mat MTR;
+          int ok = liftmat(prestrict(m,ker,MODULUS),MODULUS,MTR,denker);
+          if (!ok)
+            cout << "**!!!** failed to lift modular kernel\n" << endl;
 	  stop_time();
 	  cout<<"done, denom(ker)="<<denker; show_time(cerr); cout<<endl;
 	  if(nulty<21) 

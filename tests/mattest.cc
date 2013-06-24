@@ -139,7 +139,7 @@ int method=0;
 cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
 cin>>method;
 cout << "\nUsing method " << method;
-if(method==2) cout << " (modulus = " << BIGPRIME << ")";
+if(method==2) cout << " (modulus = " << DEFAULT_MODULUS << ")";
 cout << endl;
 ref = echelon(aug, pc, npc, rk, ny, denom, method);
 cout << "Echelon matrix = " << ref;

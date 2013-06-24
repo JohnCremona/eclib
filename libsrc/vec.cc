@@ -269,10 +269,12 @@ vec express(const vec& v, const vec& v1, const vec& v2)
    return ans;
 }
 
-vec lift(const vec& v, scalar pr)
+#if(0) // simple version of lift
+
+int lift(const vec& v, scalar pr, vec& ans)
 {
  long i, d = dim(v);
- vec ans(d);
+ ans =vec(d);
  int success, succ;
  float lim = sqrt(pr/2.0);
  scalar g, nu, de;  // = least common denom. after lifting via modrat
@@ -294,16 +296,17 @@ vec lift(const vec& v, scalar pr)
        }
      for (i=1; i<=d; i++) ans[i] = mod(xmodmul(g,ans[i],pr),pr);
    }
- if(!success) 
+ if(!success)
    {
-     cout << "vec failed to lift from mod " << pr << " after two rounds.\n";
-     abort();
+     //cout << "vec failed to lift from mod " << pr << " after two rounds.\n";
+     return 0;
    }
- return ans;
+ return 1;
 }
 
+#else
 //#define LIFT_DEBUG
-int liftok(vec& v, scalar pr)
+int lift(const vec& v, scalar pr, vec& ans)
 {
   long i0, i, j, d = dim(v);
  scalar g, nu, de, seed=10; 
@@ -329,7 +332,7 @@ int liftok(vec& v, scalar pr)
  // requiring that in the primitive rescaling, there is an entry
  // coprime to the first non-zero entry.
 
- vec newv = v;
+ ans = v; // starts as a copy, and will be rescaled in place
  scalar vi0, inv_vi0, vi, maxvi=0;
  for(i0=1; i0<=d; i0++)
    {
@@ -338,29 +341,29 @@ int liftok(vec& v, scalar pr)
      // entry:
      while((vi0=mod(v[i0],pr))==0) {i0++;} // skip over any zero entries
      inv_vi0=invmod(vi0,pr);
-     for (i=1; i<=d; i++) 
+     for (i=1; i<=d; i++)
        {
-         v[i]=vi=mod(xmodmul(inv_vi0,v[i],pr),pr);
-         maxvi=max(maxvi,abs(vi));   
+         ans[i]=vi=mod(xmodmul(inv_vi0,ans[i],pr),pr);
+         maxvi=max(maxvi,abs(vi));
        }
 #ifdef LIFT_DEBUG
-     cout<<"Reduced v = "<<v<<", with max entry "<<maxvi<<endl;
+     cout<<"Reduced v = "<<ans<<", with max entry "<<maxvi<<endl;
 #endif
      if(maxvi<=maxallowed) // no scaling needed!
            {
              // Normalize so first nonzero entry is positive:
              for(i0=1; i0<=d; i0++)
                {
-                 while(v[i0]==0) {i0++;}
-                 if(v[i0]<0) v=-v;
+                 while(ans[i0]==0) {i0++;}
+                 if(ans[i0]<0) ans=-ans;
                  return 1;
                }
              return 0; // should not happen: means v==0!
-           }         
+           }
 
      for(i=1; (i<=d); i++)
        {
-         succ=modrat(v[i],pr,lim,nu,de);     de=abs(de);
+         succ=modrat(ans[i],pr,lim,nu,de);     de=abs(de);
          if ((!succ)||(de==1)) continue; // loop on i
          // scale by de & recompute max entry:
 #ifdef LIFT_DEBUG
@@ -369,37 +372,37 @@ int liftok(vec& v, scalar pr)
          maxvi = 0;
          for (j=1; j<=d; j++) 
            {
-             newv[j] = vi = mod(xmodmul(de,v[j],pr),pr);
+             ans[j] = vi = mod(xmodmul(de,ans[j],pr),pr);
              maxvi=max(maxvi,abs(vi));
            }
 #ifdef LIFT_DEBUG
-         cout<<"Now v = "<<newv<<", with max entry "<<maxvi<<endl;
+         cout<<"Now v = "<<ans<<", with max entry "<<maxvi<<endl;
 #endif
          if(maxvi<=maxallowed)
            {
-             v = newv;
              // Normalize so first nonzero entry is positive:
              for(i0=1; i0<=d; i0++)
                {
-                 while(v[i0]==0) {i0++;}
-                 if(v[i0]<0) v=-v;
+                 while(ans[i0]==0) {i0++;}
+                 if(ans[i0]<0) ans=-ans;
                  return 1;
                }
              return 0; // should not happen: means v==0!
-           }         
+           }
        }
    }
- v = newv;
  // Normalize so first nonzero entry is positive:
  for(i0=1; i0<=d; i0++)
    {
-     while(v[i0]==0) {i0++;}
-     if(v[i0]<0) v=-v;
+     while(ans[i0]==0) {i0++;}
+     if(ans[i0]<0) ans=-ans;
      return (maxvi<=lim);
    }
  return 0;
 }
+#endif
 
+#if(0) // old version
 int old_liftok(vec& v, scalar pr)
 {
  long i, d = dim(v);
@@ -444,6 +447,7 @@ int old_liftok(vec& v, scalar pr)
    }
  return success;
 }
+#endif
 
 scalar dotmodp(const vec& v1, const vec& v2, scalar pr)
 {

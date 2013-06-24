@@ -324,29 +324,48 @@ int modrat(int n, int m, float lim, int& a, int& b)
   return ans;
 }
 
+//#define DEBUG_MODRAT
+
 int modrat(long n, long m, float lim, long& a, long& b)
 {long q,r,t,qq,rr,tt,quot;
-// cout<<"modrat("<<n<<","<<m<<")";
+#ifdef DEBUG_MODRAT
+ cout<<"modrat("<<n<<","<<m<<")\n";
+#endif
  q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1; 
  if (r<lim) 
    { 
-//   cout<<" = "<<a<<"/"<<b<<"\n";
+#ifdef DEBUG_MODRAT
+     cout<<" = "<<a<<"/"<<b<<"\n";
+#endif
      return 1;
    }
  while (r!=0) 
  { 
    quot = q/r;
-// cout<<"q,r,t = "<<q<<" "<<r<<" "<<t<<"\n";
+#ifdef DEBUG_MODRAT
+   cout<<"q,r,t = "<<q<<" "<<r<<" "<<t<<"\n";
+#endif
    t  =  q-quot*r;   q = r;   r = t;
    tt = qq-quot*rr; qq = rr; rr = tt;
    if (r<lim)
      {
-       if (abs(rr)<lim) {a=r; b=rr; return 1;}
+       if (abs(rr)<lim) 
+         {
+           a=r; b=rr; 
+#ifdef DEBUG_MODRAT
+           cout<<" success:  "<<a<<"/"<<b<<"\n";
+#endif
+           return 1;
+         }
+#ifdef DEBUG_MODRAT
        cout << "\nmodrat error: no reconstruction for " << n << " mod " << m << "\n";
+#endif
        return 0;
      }
  }
+#ifdef DEBUG_MODRAT
  cout << "\nmodrat error: common factor with " << n << " mod " << m << "\n";
+#endif
  return 0;
 }
 

@@ -53,7 +53,7 @@
 #define SCALAR_OPTION 2
 #endif
 
-#include "arith.h"   // defines BIGPRIME
+#include "arith.h"
 #include "vector.h"
 #include "matrix.h"
 #include "subspace.h"
@@ -72,7 +72,7 @@
 						    // this string to
 						    // a bigint
 #else
-#define MODULUS BIGPRIME  // used for modular linear algebra
+#define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
 #define SCALAR scalar
 #define VEC vec
 #define MAT mat

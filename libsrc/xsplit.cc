@@ -269,15 +269,18 @@ vec form_finder::getbasis1(const ssubspace* s)
 {
   VEC b = basis(*s).as_mat().col(1);
 #ifdef MODULAR
-  if(!liftok(b,MODULUS)) 
-     cout << "Unable to lift eigenvector from mod " << MODULUS << endl;
+  VEC bb;
+  if(lift(b,MODULUS,bb))
+    b = bb;
+  else
+    cout << "Unable to lift eigenvector from mod " << MODULUS << endl;
 #else
   makeprimitive(b);
 #endif
 #ifdef MULTI
   scalar n=0; // dummy variable to gt the right type in next line
   return b.shorten(n);
-#else      
+#else
   return b;
 #endif
 }
@@ -376,7 +379,7 @@ void form_finder::find()
 #if (METHOD==2)
 subspace sparse_combine(const subspace& s1, const subspace& s2)
 {
-  // we assume s1, s2 are subspace mod BIGPRIME!
+  // we assume s1, s2 are subspace mod DEFAULT_MODULUS
    scalar d=denom(s1)*denom(s2);
    const smat& sm1(basis(s1)), sm2(basis(s2));
    const mat& b = (sm1*sm2).as_mat(); 
@@ -422,7 +425,7 @@ mat sparse_restrict(const mat& m, const subspace& s)
 smat restrict_mat(const smat& m, const subspace& s)
 {
   if(dim(s)==nrows(m)) return m; // trivial special case, s is whole space
-  return mult_mod_p(m.select_rows(pivots(s)),smat(basis(s)),BIGPRIME);
+  return mult_mod_p(m.select_rows(pivots(s)),smat(basis(s)),MODULUS);
 }
 
 #endif

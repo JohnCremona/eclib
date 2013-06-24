@@ -105,7 +105,7 @@ mat restrict_mat(const mat& m, const subspace& s, int cr)
 //  for (i=1; (i<=n) && check; i++)
 //  for (j=1; (j<=d) && check; j++)
 //   check = (dd*m.row(i)*b.col(j) == b.row(i)*ans.col(j));
-    int check = (dd*matmulmodp(m,sb,BIGPRIME) == matmulmodp(sb,ans,BIGPRIME));
+    int check = (dd*matmulmodp(m,sb,DEFAULT_MODULUS) == matmulmodp(sb,ans,DEFAULT_MODULUS));
     if (!check) 
       {
 	cout<<"Error in restrict_mat: subspace not invariant!\n";
@@ -279,10 +279,14 @@ subspace psubeigenspace(const mat& m1, scalar l, const subspace& s, scalar pr)
 //Attempts to lift from a mod-p subspace to a normal Q-subspace by expressing
 //basis as rational using modrat and clearing denominators
 //
-subspace lift(const subspace& s, scalar pr, int trace)
+int lift(const subspace& s, scalar pr, subspace& ans, int trace)
 {
   scalar dd;
-  const mat& m = liftmat(s.basis,pr,dd,trace);
-  subspace ans(m, pivots(s), dd);
-  return ans;
+  mat m;
+  if (liftmat(s.basis,pr,m,dd,trace))
+    {
+      ans = subspace(m, pivots(s), dd);
+      return 1;
+    }
+  return 0;
 }
