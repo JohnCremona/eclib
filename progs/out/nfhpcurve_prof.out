@@ -1,0 +1,109 @@
+Program nfhpcurve.  Using METHOD = 2 to find newforms
+MODULUS for linear algebra = 1073741789
+Verbose output? How many primes for Hecke eigenvalues? 
+Output newforms to file? (0/1) Enter level: 
+>>>Level 11:	1 newform(s) found.
+Computing 1 curves...
+1 [0,-1,1,-10,-20]  N = 11  [(4,1;1,3),1,1;1]
+All curves found successfully!
+Finished level 11
+Enter level: 
+>>>Level 37:	2 newform(s) found.
+Computing 2 curves...
+1 [0,0,1,-1,0]  N = 37  [(14,1;3,8),1,1;2]
+2 [0,1,1,-23,-50]  N = 37  [(15,1;2,5),1,1;2]
+All curves found successfully!
+Finished level 37
+Enter level: 
+>>>Level 50:	2 newform(s) found.
+Computing 2 curves...
+1 [1,0,1,-1,-2]  N = 50  [(17,1;1,3),1,1;1]
+2 [1,1,1,-3,1]  N = 50  [(17,1;1,3),1,1;1]
+All curves found successfully!
+Finished level 50
+Enter level: 
+>>>Level 51:	1 newform(s) found.
+Computing 1 curves...
+1 [0,1,1,1,-1]  N = 51  [(13,1;1,4),1,1;1]
+All curves found successfully!
+Finished level 51
+Enter level: 
+>>>Level 52:	1 newform(s) found.
+Computing 1 curves...
+1 [0,0,0,1,-10]  N = 52  [(21,1;2,5),1,1;1]
+All curves found successfully!
+Finished level 52
+Enter level: 
+>>>Level 53:	1 newform(s) found.
+Computing 1 curves...
+1 [1,-1,1,0,0]  N = 53  [(-21,1;-2,5),1,1;1]
+All curves found successfully!
+Finished level 53
+Enter level: 
+>>>Level 54:	2 newform(s) found.
+Computing 2 curves...
+1 [1,-1,0,12,8]  N = 54  [(11,1;1,5),1,1;1]
+2 [1,-1,1,1,-1]  N = 54  [(11,1;1,5),1,1;1]
+All curves found successfully!
+Finished level 54
+Enter level: 
+>>>Level 55:	1 newform(s) found.
+Computing 1 curves...
+1 [1,-1,0,1,0]  N = 55  [(14,1;1,4),1,1;1]
+All curves found successfully!
+Finished level 55
+Enter level: 
+>>>Level 56:	2 newform(s) found.
+Computing 2 curves...
+1 [0,0,0,1,2]  N = 56  [(19,1;1,3),1,1;1]
+2 [0,-1,0,0,-4]  N = 56  [(19,1;1,3),1,1;1]
+All curves found successfully!
+Finished level 56
+Enter level: 
+>>>Level 57:	3 newform(s) found.
+Computing 3 curves...
+1 [0,-1,1,-2,2]  N = 57  [(23,1;2,5),1,1;1]
+2 [0,1,1,20,-32]  N = 57  [(23,1;2,5),1,1;1]
+3 [1,0,1,-7,5]  N = 57  [(23,1;2,5),1,1;2]
+All curves found successfully!
+Finished level 57
+Enter level: 
+>>>Level 58:	2 newform(s) found.
+Computing 2 curves...
+1 [1,-1,0,-1,1]  N = 58  [(-23,1;-2,5),1,1;1]
+2 [1,1,1,5,9]  N = 58  [(-23,1;-2,5),1,1;1]
+******************************L(f,31)/ip = 19.99999933184035365079434 is not integral! (denom = 1496649)
+Using rounded value mminus=20
+All curves found successfully!
+Finished level 58
+Enter level: 
+>>>Level 59:	0 newform(s) found.
+No newforms.
+Finished level 59
+Enter level: 
+>>>Level 60:	0 newform(s) found.
+No newforms.
+Finished level 60
+Enter level: 
+>>>Level 77:	3 newform(s) found.
+Computing 3 curves...
+1 [0,0,1,2,0]  N = 77  [(31,1;2,5),1,1;1]
+2 [0,1,1,-49,600]  N = 77  [(26,1;1,3),2,2;1]
+3 [1,1,0,4,11]  N = 77  [(26,1;1,3),1,1;1]
+All curves found successfully!
+Finished level 77
+Enter level: 
+>>>Level 90:	3 newform(s) found.
+Computing 3 curves...
+1 [1,-1,0,6,0]  N = 90  [(-77,2;-3,7),1,1;1]
+2 [1,-1,1,-8,11]  N = 90  [(-77,2;-3,7),1,1;1]
+3 [1,-1,1,13,-61]  N = 90  [(13,1;1,7),2,2;1]
+All curves found successfully!
+Finished level 90
+Enter level: 
+>>>Level 389:	1 newform(s) found.
+Computing 1 curves...
+1 [0,1,1,-2,0]  N = 389  [(-111,1;-2,7),1,1;2]
+All curves found successfully!
+Finished level 389
+Enter level: 
