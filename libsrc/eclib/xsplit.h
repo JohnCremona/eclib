@@ -24,10 +24,11 @@
 #if     !defined(_XSPLIT_H)
 #define _XSPLIT_H      1       //flags that this file has been included
 
-#include <boost/threads/mutex.hpp>
+//#include <boost/threads/mutex.hpp>
 
 #include "method.h"  // #defines form_finder=form_finder0/1/2/3/4
 #include "splitbase.h"
+#include "xsplit_data.h"
 
 // flags set on construction:
 
@@ -47,6 +48,7 @@ class form_finder {
     ~form_finder(void); 
     
     void find();
+    void find(ff_data &data);
     void recover(vector< vector<long> > eigs);
     void splitoff(const vector<long>& eigs);
     void store(vec bp, vec bm, vector<long> eigs);
@@ -79,13 +81,14 @@ class form_finder {
     // NEW THINGS REQUIRED
     //threadpool/job queue
     ff_data* root; 
-    boost::mutex store_lock;              // Lock for store() function 
+    ff_data* current;
+    //boost::mutex store_lock;              // Lock for store() function 
     
-    void make_opmat(long i);              // Puts it in the_opmat
-    void make_submat();
-    void go_down(long eig, int last=0);
+    void make_opmat(long i, ff_data *data); // Puts it in the_opmat
+    void make_submat(ff_data *data);
+    void go_down(ff_data &data, long eig, int last=0);
     void go_up();
-    void make_basis();
+    void make_basis(ff_data &data);
     vec  getbasis1(const ssubspace* s);   // Assuming dim(s)=1, get basis vector
 };
 

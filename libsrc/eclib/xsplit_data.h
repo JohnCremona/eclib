@@ -13,11 +13,11 @@
 #include <cstdlib>
 #include <cassert>
 #include <vector>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
+//#include <boost/thread/thread.hpp>
+//#include <boost/thread/mutex.hpp>
 
 #include "eclib/xsplit.h"
-#include "eclib/threadpool.h"
+//#include "eclib/threadpool.h"
 
 // Forward declaration of classes
 class form_finder;
@@ -53,25 +53,25 @@ class ff_data {
     void addChild( ff_data *child );        // Store new child of current node 
 
     // Make form_finder class a friend to gain access to protected/private methods
-    friend form_finder;
+    friend class form_finder;
 
   private:
     long               depth_;              // Indicator of current depth
     long               subdim_;             // Dimension of current subspace
     long               eigenvalue_;         // Corresponding eigenvalue
     vector< long >     eiglist_;            // Sequence of eigenvalues leading to current
-    vec                bplus_, bminus_;     //
-    ssubspace*         nest_;               // Pointer to current subspace (to be created)
+    vec                bplus_, bminus_;
+    ssubspace*         nest_;               // Current subspace (to be created)
     smat               conjmat_;            // Used only when plus==0 and bigmats==1
-    smat               the_opmat_;          //
-    smat*              submat_;             // Pointer to 
+    smat               the_opmat_;
+    smat               submat_;
 
     ff_data*           parent_;             // Pointer to parent data node
     vector< ff_data* > children_;           // Pointers to corresponding data nodes
 
     // Multithreading
-    boost::mutex child_lock_;               // Lock for adding a new child node
-}
+    // boost::mutex child_lock_;               // Lock for adding a new child node
+};
 
 #endif
 

@@ -49,13 +49,13 @@ form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int du
   // Set initial values
   // form_finder class is a friend of ff_data class
   // so may access private members
-  r.subdim_ = dimen;
-  r.eiglist_ = vector< long >(maxd);
+  root -> subdim_ = dimen;
+  root -> eiglist_ = vector< long >(maxd);
   
   targetdim = 1;
   if( !plusflag ) {           // full conjmat not needed when plusflag is true
     targetdim=2;
-    if( bigmats ) r.conjmat = h->s_opmat(-1,dual); 
+    if( bigmats ) root -> conjmat_ = h -> s_opmat(-1,dual); 
   }
 }
 
@@ -67,42 +67,42 @@ form_finder::~form_finder(void) {
   delete root;
 }
 
-void form_finder::make_opmat(long i, ff_data &data) { 
-  data.the_opmat_ = h->s_opmat(i,dual,verbose); 
+void form_finder::make_opmat(long i, ff_data *data) { 
+  data -> the_opmat_ = h -> s_opmat(i,dual,verbose); 
 }
 
-void form_finder::make_submat( ff_data &data ) {
+void form_finder::make_submat( ff_data *data ) {
   // Cache current data node depth
-  long depth = data.depth_;
+  long depth = data -> depth_;
 
   if( bigmats ) { 
     // fetch the_opmat from file, or compute
     make_opmat(depth,data);
     
     if( depth == 0 ) {
-	    data.submat_ = the_opmat;
+	    data -> submat_ = data -> the_opmat_;
 	  }
     else {
 	    if( verbose > 1 ) cout << "restricting the_opmat to subspace..." << flush;
 #ifdef DEBUG_NEST
       cerr << "Accessing nest[" << depth << "]" << endl;
 #endif
-	    data.submat_ = restrict_mat(data.the_opmat_,data.nest_);
+	    data -> submat_ = restrict_mat(data -> the_opmat_,*(data -> nest_));
 	    if( verbose > 1 ) cout << "done." << endl;
 	  }
       
-    data.the_opmat_ = smat(0,0); // releases its space
+    data -> the_opmat_ = smat(0,0); // releases its space
   }
   else {
-    if( nrows(data.submat_) == 0 ) {
+    if( nrows(data -> submat_) == 0 ) {
 	    if( depth == 0 ) {  
-        data.submats_ = h->s_opmat(depth,1,verbose);
+        data -> submat_ = h -> s_opmat(depth,1,verbose);
 	    }
       else {
 #ifdef DEBUG_NEST
         cerr << "accessing nest[" << depth << "]" << endl;
 #endif
-	      data.submat_ = h->s_opmat_restricted(depth,data.nest_,1,verbose);
+	      data -> submat_ = h -> s_opmat_restricted(depth,*(data -> nest_),1,verbose);
 	    }
 	  }
   }
@@ -115,7 +115,7 @@ void form_finder::make_submat( ff_data &data ) {
  * data node. Data node passed as parameter will become the
  * _parent_ of this new data node.
  */
-void form_finder::go_down(long eig, int last, ff_data &data) {
+void form_finder::go_down(ff_data &data, long eig, int last) {
   // Cache current depth
   long depth = data.depth_;
 
@@ -127,13 +127,13 @@ void form_finder::go_down(long eig, int last, ff_data &data) {
 
   // Configure data node ancestry 
   data.addChild( child );
-  child.parent_ = *data;
+  child -> parent_ = &data;
 
   // Set new depth
-  child.depth_ = depth + 1;
+  child -> depth_ = depth + 1;
   
   // Store new test eigenvalue in new node
-  child.eigenvalue_ = eig;
+  child -> eigenvalue_ = eig;
   
   SCALAR eig2 = eig*denom1;
   if(verbose>1)
@@ -145,15 +145,15 @@ void form_finder::go_down(long eig, int last, ff_data &data) {
   make_submat(child);
 
   if(verbose>1) cout << "Using sparse elimination (size = "
-                     << dim(child.submat_) << ", density ="
-		                 << density(child.submat_) << ")..." << flush;
-  if(verbose>3) cout << "submat = " << child.submat_ << flush;
+                     << dim(child -> submat_) << ", density ="
+		                 << density(child -> submat_) << ")..." << flush;
+  if(verbose>3) cout << "submat = " << child -> submat_ << flush;
 
-  s = eigenspace(child.submat_,eig2);
+  s = eigenspace(child -> submat_,eig2);
 
   // Save space (will recompute when needed)
-  if(((depth==0)&&(dim(s)>0)&&(nrows(child.submat_)>1000))||last)
-    child.submat_ = smat(0,0); 
+  if(((depth==0)&&(dim(s)>0)&&(nrows(child -> submat_)>1000))||last)
+    child -> submat_ = smat(0,0); 
      
   if(verbose>1) cout << "done (dim = " << dim(s) << "), combining subspaces..." << flush;
   
@@ -161,14 +161,14 @@ void form_finder::go_down(long eig, int last, ff_data &data) {
 #ifdef DEBUG_NEST
     cerr << "creating nest[" << (depth+1) << "]" << endl;
 #endif
-    child.nest_ = new ssubspace(s);
+    child -> nest_ = new ssubspace(s);
   }
   else {
 #ifdef DEBUG_NEST
     cerr << "accessing nest[" << depth     << "]" << endl;
     cerr << "creating nest["  << (depth+1) << "]" << endl;
 #endif
-    child.nest_ = new ssubspace(combine( *(data.nest_),s ));
+    child -> nest_ = new ssubspace(combine( *(data.nest_),s ));
   }
   
   if(verbose>1) cout << "done." << endl;
@@ -179,23 +179,38 @@ void form_finder::go_down(long eig, int last, ff_data &data) {
 #ifdef DEBUG_NEST
   cerr << "accessing nest[" << depth << "]" << endl;
 #endif
-  child.subdim_ = dim( *(child.nest_) );
+  child -> subdim_ = dim( *(child -> nest_) );
   
   if(verbose>1) {
     cout << "Eigenvalue " << eig 
-         << " has multiplicity " << child.subdim_ << endl;
+         << " has multiplicity " << child -> subdim_ << endl;
   }
-  if(verbose && (child.subdim_>0)) {
+  if(verbose && (child -> subdim_>0)) {
     cout << " eig " << eig 
          << " gives new subspace at depth " << depth
-         << " of dimension " << child.subdim_ << endl;
+         << " of dimension " << child -> subdim_ << endl;
   }
 }
 
 void form_finder::go_up() {
-  // May not be required anymore
-  // Potentially change to return parent data node
-  // of given node, and perform memory management.
+  // SERIAL
+  // Store pointer to current node
+  ff_data *temp = current;
+
+  // Update current node point to be parent
+  // of current node (important for serial
+  // version)
+  current = current -> parent_;
+
+  // Old branch no longer required
+  // Call delete to release memory
+  delete temp;
+
+  // MULTITHREADING
+  // Extra check on the number of completed children
+  // is required before deleting the current node
+  // i.e. only delete once all children have
+  // been deleted (via child-completion-counter)
 }
 
 void form_finder::make_basis( ff_data &data ) {
@@ -240,35 +255,30 @@ void form_finder::make_basis( ff_data &data ) {
   SCALAR eig = denom1;
   //  if(depth) eig*=denom(*s);
   smat subconjmat;          // only used when depth>0
-  if(bigmats)
-  {
-    if(depth) subconjmat = restrict_mat(data.conjmat_,*s);
-    else      subconjmat = data.conjmat_;  
+  if(bigmats) {
+    subconjmat = (depth) ? restrict_mat(data.conjmat_, *s) : data.conjmat_;
     // will only be a 2x2 in this case (genus 1 only!)
   }
-  else
-  {
+  else {
     subconjmat=h->s_opmat_restricted(-1,*s,1,verbose);
   }
 
-  for(long signeig=+1; signeig>-2; signeig-=2)
-  {
+  for(long signeig=+1; signeig>-2; signeig-=2) {
     SCALAR seig; 
            seig = data.eigenvalue_;
     
     if(signeig<0) seig =- data.eigenvalue_;
     
-    if(depth)
-    {
+    if(depth) {
 	    spm0 = new ssubspace(eigenspace(subconjmat,seig));
-	    spm = new ssubspace(combine(*s,*spm0));
+	    spm  = new ssubspace(combine(*s,*spm0));
 	    delete spm0;
     }
-    else 
-        spm = new ssubspace(eigenspace(subconjmat,seig));
-    
-    if(dim(*spm)!=1)
-    {
+    else {
+      spm = new ssubspace(eigenspace(subconjmat,seig));
+    }
+
+    if(dim(*spm)!=1) {
       cout << "error in form_finder::makebasis; ";
       cout << "\nfinal (";
       
@@ -351,9 +361,15 @@ void form_finder::splitoff(const vector<long>& eigs)
 }
 
 void form_finder::find() {
-  find( data );
+  find( current );
   
+  // MULTITHREADING
+  // Join all threads in threadpool to wait for all jobs to finish
+  // Or detect when all branches of the tree has been traversed
+
   // Now compute all newforms only if recursion has finished
+  // NOTE may not be able to perform in parallel due to 
+  // use of class level variables in nerforms class
   cout << "Now performing use() on all lists at once" << endl;
   for( int nf = 0; nf < gnfcount; nf++ ) {
     h-> use(gbplus[nf],gbminus[nf],gaplist[nf]);
@@ -412,7 +428,7 @@ void form_finder::find( ff_data &data )
     // cout << "Going down with ap = " << (*apvar) <<endl;
     long eig = *apvar++;
 
-    go_down(eig,apvar==t_eigs.end(),data);
+    go_down(data,eig,apvar==t_eigs.end());
     
     // Only call following statements in serial version
     if( data.subdim_ > 0 ) find( data );
@@ -425,7 +441,7 @@ void form_finder::find( ff_data &data )
 
 void form_finder::store(vec bp, vec bm, vector<long> eigs) {
   // Lock function
-  boost::mutex::scoped_lock lock( store_lockhere );
+  // boost::mutex::scoped_lock lock( store_lock );
 
   // Store sub-bplus,bminus,eiglists in class level containers
   gbplus.push_back(bp);
