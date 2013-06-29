@@ -44,14 +44,15 @@ form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int du
   dimen  = h->matdim();
  
   // Create and initialise new data object as root node
-  root = new ff_data();
+  // passing a constant pointer of current form_finder object
+  // to data class constructor
+  root = new ff_data( this );
 
   // Set initial values
   // form_finder class is a friend of ff_data class
   // so may access private members
   root -> subdim_ = dimen;
-  root -> eiglist_ = vector< long >(maxd);
-  
+ 
   targetdim = 1;
   if( !plusflag ) {           // full conjmat not needed when plusflag is true
     targetdim=2;
@@ -67,42 +68,42 @@ form_finder::~form_finder(void) {
   delete root;
 }
 
-void form_finder::make_opmat(long i, ff_data *data) { 
-  data -> the_opmat_ = h -> s_opmat(i,dual,verbose); 
+void form_finder::make_opmat(long i, ff_data &data) { 
+  data.the_opmat_ = h -> s_opmat(i,dual,verbose); 
 }
 
-void form_finder::make_submat( ff_data *data ) {
+void form_finder::make_submat( ff_data &data ) {
   // Cache current data node depth
-  long depth = data -> depth_;
+  long depth = data.depth_;
 
   if( bigmats ) { 
     // fetch the_opmat from file, or compute
     make_opmat(depth,data);
     
     if( depth == 0 ) {
-	    data -> submat_ = data -> the_opmat_;
+	    data.submat_ = data.the_opmat_;
 	  }
     else {
 	    if( verbose > 1 ) cout << "restricting the_opmat to subspace..." << flush;
 #ifdef DEBUG_NEST
       cerr << "Accessing nest[" << depth << "]" << endl;
 #endif
-	    data -> submat_ = restrict_mat(data -> the_opmat_,*(data -> nest_));
+	    data.submat_ = restrict_mat(data.the_opmat_,*(data.nest_));
 	    if( verbose > 1 ) cout << "done." << endl;
 	  }
       
-    data -> the_opmat_ = smat(0,0); // releases its space
+    data.the_opmat_ = smat(0,0); // releases its space
   }
   else {
-    if( nrows(data -> submat_) == 0 ) {
+    if( nrows(data.submat_) == 0 ) {
 	    if( depth == 0 ) {  
-        data -> submat_ = h -> s_opmat(depth,1,verbose);
+        data.submat_ = h -> s_opmat(depth,1,verbose);
 	    }
       else {
 #ifdef DEBUG_NEST
         cerr << "accessing nest[" << depth << "]" << endl;
 #endif
-	      data -> submat_ = h -> s_opmat_restricted(depth,*(data -> nest_),1,verbose);
+	      data.submat_ = h -> s_opmat_restricted(depth,*(data.nest_),1,verbose);
 	    }
 	  }
   }
@@ -119,41 +120,44 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   // Cache current depth
   long depth = data.depth_;
 
-  if(verbose>1)
-    cout << "Increasing depth to " << depth+1 << ", trying eig = " << eig << "..." << flush;
- 
-  // Initiate new data node
-  ff_data *child = new ff_data();
+  if( verbose > 1 ) cout << "Increasing depth to " << depth+1 << ", "
+                         << "trying eig = " << eig << "..." << flush;
+
+  // Initiate new data node, passing a constant
+  // reference of the current form_finder object
+  // to the data class constructor
+  ff_data *child = new ff_data( this );
 
   // Configure data node ancestry 
-  data.addChild( child );
+  data.addChild( eig, child );
   child -> parent_ = &data;
 
   // Set new depth
   child -> depth_ = depth + 1;
-  
+    
   // Store new test eigenvalue in new node
   child -> eigenvalue_ = eig;
-  
+
   SCALAR eig2 = eig*denom1;
-  if(verbose>1)
-    cout << "after scaling, eig =  " << eig2 << "..." << flush;
+  if( verbose > 1 ) cout << "after scaling, eig =  " << eig2 << "..." << flush;
   // if(depth) eig2*= denom(*nest[depth]); // else latter is 1 anyway
   ssubspace s(0);
 
-  // Pass new data node through to make_submat()
-  make_submat(child);
+  // Pass data node through to make_submat()
+  // NOTE we do not pass through new child data node since
+  // make_submat() prepares submat_ for new node
+  make_submat(data);
 
   if(verbose>1) cout << "Using sparse elimination (size = "
-                     << dim(child -> submat_) << ", density ="
-		                 << density(child -> submat_) << ")..." << flush;
-  if(verbose>3) cout << "submat = " << child -> submat_ << flush;
+                     << dim(data.submat_) << ", density ="
+		                 << density(data.submat_) << ")..." << flush;
+  if(verbose>3) cout << "submat = " << data.submat_ << flush;
 
-  s = eigenspace(child -> submat_,eig2);
+  s = eigenspace(data.submat_,eig2);
 
   // Save space (will recompute when needed)
-  if(((depth==0)&&(dim(s)>0)&&(nrows(child -> submat_)>1000))||last)
-    child -> submat_ = smat(0,0); 
+  if(((depth==0)&&(dim(s)>0)&&(nrows(data.submat_)>1000))||last)
+    data.submat_ = smat(0,0); 
      
   if(verbose>1) cout << "done (dim = " << dim(s) << "), combining subspaces..." << flush;
   
@@ -190,12 +194,15 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
          << " gives new subspace at depth " << depth
          << " of dimension " << child -> subdim_ << endl;
   }
+
+  // SERIAL Set current node pointer to new child node
+  current = child;
 }
 
 void form_finder::go_up() {
   // SERIAL
-  // Store pointer to current node
-  ff_data *temp = current;
+  // Store eigenvalue of current node
+  long eig = current -> eigenvalue_;
 
   // Update current node point to be parent
   // of current node (important for serial
@@ -203,8 +210,10 @@ void form_finder::go_up() {
   current = current -> parent_;
 
   // Old branch no longer required
-  // Call delete to release memory
-  delete temp;
+  // Erasing node via children array of parent
+  // (now current), which calls destructor
+  // of object (ff_data), using eigenvalue as key
+  current -> children_.erase(eig);
 
   // MULTITHREADING
   // Extra check on the number of completed children
@@ -240,7 +249,7 @@ void form_finder::make_basis( ff_data &data ) {
 #ifdef DEBUG_NEST
       cerr << "accessing nest[" << depth << "]" << endl;
 #endif
-      bplus = getbasis1(data.nest_);
+      data.bplus_ = getbasis1(data.nest_);
     }
      
     return;
@@ -315,12 +324,9 @@ vec form_finder::getbasis1(const ssubspace* s)
 #endif
 }
 
-void form_finder::recover(vector< vector<long> > eigs)
-{
-  for(unsigned int iform=0; iform<eigs.size(); iform++)
-  {
-    if(verbose)
-  	{
+void form_finder::recover(vector< vector<long> > eigs) {
+  for(unsigned int iform=0; iform<eigs.size(); iform++) {
+    if(verbose) {
 	    cout << "Form number " << iform+1 << " with eigs ";
 	    
       int n = eigs[iform].size(); 
@@ -335,33 +341,63 @@ void form_finder::recover(vector< vector<long> > eigs)
   }  
 }
 
-void form_finder::splitoff(const vector<long>& eigs)
-{
-  if(verbose)
-    cout<<"Entering form_finder, depth = "<<depth<<", dimension "<<subdim<<endl;
+void form_finder::splitoff(const vector<long>& eigs) {
+  // Always start at root node
+  current = root;
 
-// BACKTRACK:
+  // Temporary variables
+  long depth  = current -> depth_;
+  long subdim = current -> subdim_; 
 
-  while(!startswith(eiglist,eigs,depth,0)) go_up();
-
-// GO DEEPER, UNTIL DIMENSION = TARGET DIMENSION:
-
-  if(verbose)
-    cout<<"restarting at depth = "<<depth<<", dimension "<<subdim<<endl;
-
-  while((subdim>targetdim) && (depth<maxdepth))
-  {
-    go_down(eigs[depth],1);
+  if( verbose ) {
+    cout << "Entering form_finder, depth = " << depth 
+         << ", dimension " << subdim << endl;
   }
 
-  make_basis();
-  h->use(bplus,bminus,eigs); 
+  // Walk down nodes (if any already created) for common branches
+  while( current -> children_[eigs[depth]] != NULL ) {
+    // Update current node pointer
+    current = current -> children_[eigs[depth]];
+
+    // Update new depth
+    // Should always be depth+1
+    depth = current -> depth_;
+
+    // Update new subdimension
+    subdim = current -> subdim_;
+  }
+
+  // Current node is new branch point
+  // We want to trim old branches to save memory ...
+  // (calling clear also calls destructor on objects)
+  current -> children_.clear(); 
+
+  if( verbose ) {
+    cout << "restarting at depth = " << depth << ", "
+         << "dimension " << subdim << endl;
+  }
+  
+  // ... and grow a new branch down to required depth.
+  while( (subdim > targetdim) && (depth < maxdepth) ) {
+    go_down(*current,eigs[depth],1);
+  }
+
+  // Creating newforms
+  // No need to call store() first since
+  // we call this function in serial
+  make_basis(*current);
+  h->use(current -> bplus_,current -> bminus_,eigs); 
   
   return;
 }
 
 void form_finder::find() {
-  find( current );
+  // Whenever we call base find() function, we 
+  // reset current node pointer to root node
+  current = root;
+
+  // Proceed in recursive find, passing a node through
+  find( *current );
   
   // MULTITHREADING
   // Join all threads in threadpool to wait for all jobs to finish
@@ -370,14 +406,13 @@ void form_finder::find() {
   // Now compute all newforms only if recursion has finished
   // NOTE may not be able to perform in parallel due to 
   // use of class level variables in nerforms class
-  cout << "Now performing use() on all lists at once" << endl;
+  if(verbose) cout << "Now performing use() on all lists at once" << endl;
   for( int nf = 0; nf < gnfcount; nf++ ) {
     h-> use(gbplus[nf],gbminus[nf],gaplist[nf]);
   }
 }
 
-void form_finder::find( ff_data &data )
-{
+void form_finder::find( ff_data &data ) {
   // Cache values of current data
   long depth  = data.depth();
   long subdim = data.subdim();
@@ -425,13 +460,14 @@ void form_finder::find( ff_data &data )
                    << " at level " << (depth+1) << endl;
 
   while( apvar != t_eigs.end() ) { 
-    // cout << "Going down with ap = " << (*apvar) <<endl;
+    if( verbose > 1 ) cout << "Going down with ap = " << (*apvar) <<endl;
     long eig = *apvar++;
 
     go_down(data,eig,apvar==t_eigs.end());
     
-    // Only call following statements in serial version
-    if( data.subdim_ > 0 ) find( data );
+    // SERIAL We pass find() the new child node created in 
+    // go_down() and referenced by `current' pointer
+    if( current -> subdim_ > 0 ) find( *current );
     go_up();
   }  
   
@@ -493,7 +529,7 @@ mat sparse_restrict(const mat& m, const subspace& s)
   check=0;
   if(check) {
     int ok = (ans.as_mat()==RESTRICT(m,s));
-    if (!ok) 
+    if(!ok)
     {
       cout<<"Error in sparse_restrict: sparse result differs fromnormal!\n";
       abort();

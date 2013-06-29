@@ -13,13 +13,19 @@
 #include <cstdlib>
 #include <cassert>
 #include <vector>
+#include <tr1/unordered_map>
 //#include <boost/thread/thread.hpp>
 //#include <boost/thread/mutex.hpp>
 
-#include "eclib/xsplit.h"
-//#include "eclib/threadpool.h"
+// Header files for macros and 
+// custom data structures
+#include "method.h"
+#include "smatrix_elim.h"
+//#include "threadpool.h"
 
 // Forward declaration of classes
+// ... prevents circular includes.
+// form_finder only required as pointer
 class form_finder;
 
 /**
@@ -31,48 +37,56 @@ class form_finder;
 class ff_data {
   public:
     // Constructor, destructor.
-    ff_data();
+    ff_data( form_finder* ff );
     ~ff_data();
 
     // Overload operators
     void operator()();                      // Executed upon submission to job queue
 
-    // Getters
-    ssubspace*     submats( long depth );   // Return parent subspace of current depth
-    long           depth();                 // Return current depth
-    long           subdim();                // Return subdimension
-    long           eig();                   // Return associated eigenvalue
-    vector< long > eiglist();               // Return sequence of eigenvalues
+    // Getters (to maintain consistency)
+    ssubspace*     submats();                   // Return parent subspace
+    long           depth();                     // Return current depth
+    long           subdim();                    // Return subdimension
+    long           eig();                       // Return associated eigenvalue
+    vector< long > eiglist();                   // Return sequence of eigenvalues
 
     // Modifiers (available if needed i.e. not a friend class)
-    void increaseDepth( long delta = 1 );   // Increase current depth
-    void decreaseDepth( long delta = 1 );   // Decrease current depth
-    void setEiglist( long idx, long eig );  // Store eigenvalue in local eiglist
-    void storeBplus( vec bp );              // Store vector bplus
-    void storeBminus( vec bm );             // Store vector bminus
-    void addChild( ff_data *child );        // Store new child of current node 
+    void increaseDepth( long delta = 1 );       // Increase current depth
+    void decreaseDepth( long delta = 1 );       // Decrease current depth
+    void setEiglist( long idx, long eig );      // Store eigenvalue in local eiglist
+    void storeBplus( vec bp );                  // Store vector bplus
+    void storeBminus( vec bm );                 // Store vector bminus
+    void addChild( long eig, ff_data *child );  // Store new child of current node 
 
     // Make form_finder class a friend to gain access to protected/private methods
     friend class form_finder;
 
   private:
+    typedef std::tr1::unordered_map< int, ff_data* > indexedData;
+    
+    form_finder*       ff_;                 // Back-pointer to form_finder class
+                                            // Allows access to form_finder methods      
+
     long               depth_;              // Indicator of current depth
     long               subdim_;             // Dimension of current subspace
     long               eigenvalue_;         // Corresponding eigenvalue
     vector< long >     eiglist_;            // Sequence of eigenvalues leading to current
     vec                bplus_, bminus_;
-    ssubspace*         nest_;               // Current subspace (to be created)
+    ssubspace*         nest_;               // Current subspace (dynamically created)
     smat               conjmat_;            // Used only when plus==0 and bigmats==1
     smat               the_opmat_;
     smat               submat_;
 
     ff_data*           parent_;             // Pointer to parent data node
-    vector< ff_data* > children_;           // Pointers to corresponding data nodes
-
+    indexedData        children_;           // Pointers to corresponding data nodes
+    int                numChildren_;        // Store number of children
+    int                childCount_;         // Class counter for children
+    
     // Multithreading
     // boost::mutex child_lock_;               // Lock for adding a new child node
 };
 
+
 #endif
 
-// End of XSPLIT_DATA.H
+// end of XSPLIT_DATA.H

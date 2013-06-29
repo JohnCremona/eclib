@@ -7,6 +7,7 @@
 
 // Include headers
 #include "eclib/xsplit_data.h"
+#include "eclib/xsplit.h"
 
 /**
  * ff_data()
@@ -14,10 +15,12 @@
  * Main constructor.
  * Simply initiates private variables.
  */
-ff_data::ff_data()
-  : depth_( 0 ),
+ff_data::ff_data( form_finder* ff )
+  : ff_( ff ),
+    depth_( 0 ),
     subdim_( 0 ),
     eigenvalue_( 0 ),
+    eiglist_(),
     nest_( NULL ),
     conjmat_( NULL ),
     the_opmat_( NULL ),
@@ -35,12 +38,11 @@ ff_data::ff_data()
 ff_data::~ff_data() {
   // Delete dynamically created objects
   delete nest_;
-  delete submat_
 
   // Delete children data nodes
-  for( int i = 0; i < children_.size(); i++ ) {
-    if( children_[i] != NULL ) delete children_[i];
-  }
+  // Calling clear() on children_ object also calls each
+  // elements destructor.
+  children_.clear();
 }
 
 /**
@@ -52,7 +54,7 @@ ff_data::~ff_data() {
  */
 void ff_data::operator()() {
  // Call find() on current eigenvalue
- if( subdim_ > 0 ) ff_.find( this );
+ if( subdim_ > 0 ) ff_ -> find( *this );
  //   In find(), create a new instance of ff_data for each test
  //   eigenvalue. Pass on depth, nest, and eiglist.
  
@@ -67,11 +69,9 @@ void ff_data::operator()() {
  * submats()
  *
  * Returns relevant subspace of current depth.
- * Performs checks for valid access.
  */
-ssubspace* ff_data::submats( long depth ) {
-  assert( depth == depth_ || depth == depth_ - 1  );
-  return ( depth == depth_ ) ? nest_current : nest_parent;
+ssubspace* ff_data::submats() {
+  return nest_;
 }
 
 /**
@@ -99,17 +99,9 @@ long ff_data::subdim() {
  * current instance of class
  */
 long ff_data::eig() {
-  return eig_;
+  return eigenvalue_;
 }
 
-/**
- * eiglist()
- *
- * Return sequence of eigenvalues
- */
-vector< long > ff_data::eiglist() {
-  return eiglist_;
-}
 /**
  * eiglist()
  *
@@ -121,18 +113,19 @@ vector< long > ff_data::eiglist() {
  */
 vector< long > ff_data::eiglist() {
   // Return precomputed eiglist if available
-  if( eiglist_ != NULL ) {
+  if( !eiglist_.empty() ) {
     return eiglist_;
   }
 
-  // Root node
+  // Root node (depth==0)
   if( parent_ == NULL ) {
-    return;
+    // Return empty vector
+    return vector< long >();
   }
 
   // Else, we concatenate lists from further
   // up the tree.
-  eiglist_ = parent_.eiglist();
+  eiglist_ = parent_ -> eiglist();
   eiglist_.push_back( eigenvalue_ );
 
   return eiglist_;
@@ -169,7 +162,7 @@ void ff_data::decreaseDepth( long delta ) {
  */
 void ff_data::setEiglist( long idx, long eig ) {
   assert( idx == depth_ );
-  eiglist_[depth] = eig;
+  eiglist_[idx] = eig;
 }
 
 /**
@@ -197,13 +190,15 @@ void ff_data::storeBminus( vec bm ) {
  *
  * Provides multithreaded support to adding a 
  * new data node to the children vector.
+ * TODO - lock possibly no longer required
+ * due to use of unordered_map 
  */
-void ff_data::addChild( ff_data *child ) {
+void ff_data::addChild( long eig, ff_data *child ) {
   // Lock vector with scoped lock 
-  boost::mutex::scoped_lock lock( child_lock_ );
+  //boost::mutex::scoped_lock lock( child_lock_ );
 
   // Add to vector
-  children_.push_back( child );
+  children_[eig] = child;
 }
 
-// End of XSPLIT_DATA.CC
+// end of XSPLIT_DATA.CC
