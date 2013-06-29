@@ -44,12 +44,13 @@
 
 int main(void) {
 
-#if PROFILE
+#ifdef PROFILE
   // Initiate global timers
   init_time();
   
   // Open timer log file
-  ofstream profile.open('times.dat',std::ios::out);
+  ofstream profile;
+  profile.open("runtimes.dat",ios::out|ios::trunc);
   if( profile == NULL ) {
     cout << "Cannot open output file ... exiting" << endl;
     exit( EXIT_FAILURE );
@@ -237,17 +238,19 @@ int main(void) {
   
 }       // end of if(n>0)
      
-#if PROFILE
+#ifdef PROFILE
 // Stop timer and write to file
-stop_timer();
-profile << "Level " << n << ": " << get_time() << "seconds" << end;'
+stop_time();
+profile << "Level " << n << " ";
+show_time(profile);
+profile << endl;
 #endif
 
      }  // end of while(n>0) or while(n<limit)
 
-#if PROFILE
+#ifdef PROFILE
 // Close output file
-profile.close()
+profile.close();
 #endif
 
  }       // end of main()
