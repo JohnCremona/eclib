@@ -11,7 +11,7 @@ test_output_dir = $(srcdir)/out
 
 ################ PROCS #############################################
 
-PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert
+PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert timingtest
 PROCS_TESTS_SUFFIXED = $(PROCS_TESTS:=$(EXEEXT))
 procs_tests: $(PROCS_TESTS_SUFFIXED)
 
@@ -46,6 +46,7 @@ svectest2_SOURCES=svectest.cc
 svectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
 tcon2_SOURCES=tcon2.cc
 tlegcert_SOURCES=tlegcert.cc
+timingtest_SOURCES=timing.cc
 
 check_procs: procs_tests
 	@echo Running procs checks...
