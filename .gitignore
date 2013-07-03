@@ -9,7 +9,8 @@ Makefile.in
 */Makefile
 */Makefile.in
 autom4te.cache
-m4
+m4/*
+!m4/ax_*
 libsrc/Makefile.jc
 */.deps
 */.libs
