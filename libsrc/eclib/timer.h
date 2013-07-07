@@ -23,12 +23,61 @@
  
 #ifndef _TIMER_H
 #define _TIMER_H      1
-                           //flags that this file has been included
+
+#include <sys/time.h>
+
+// Determine which library to use
+// Preprocessor directives defined by Autotools
+#if defined HAVE_TR1_UNORDERED_MAP
+#include <tr1/unordered_map>
+#elif defined HAVE_UNORDERED_MAP
+#include <unordered_map>
+#endif
 
 void init_time();
 void start_time();
 void stop_time();
 void show_time(ostream& s = cout);
+
+// New class object for modularity (same code)
+class timer {
+  public:
+    timer();
+    timer( string filename );
+    ~timer();                   
+
+    void    stream( string filename = "" );
+    void    start( string name = "default" );
+    void    split( string name = "default" );
+    void    stop( string name = "default" );
+    void    stopAll();
+    void    write( string message );
+    void    show( int nline = 0, string name = "default", 
+                  int idx1 = 0, int idx2 = -1 );
+    void    showAll( int nline = 0 );
+    void    clear( string name = "default" );
+    void    clearAll();
+    void    add( string name );
+    void    list();
+
+    int     count( string name = "default" );
+    double  total( string name = "default" );
+    double  average( string name = "default" );
+
+#if defined HAVE_TR1_UNORDERED_MAP 
+    typedef std::tr1::unordered_map< string, vector<double> > timers;
+#elif defined HAVE_UNORDERED_MAP
+    typedef unordered_map< string, vector<double> > timers;
+#endif
+
+  private:
+    ostream*  s_;
+    ofstream  file_;
+    timers    times_;
+    
+    template< typename T > 
+    string toString( T el );
+};
 
 #ifndef TIME_CONICS
 #define TIME_CONICS 0

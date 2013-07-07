@@ -45,19 +45,12 @@
 int main(void) {
 
 #ifdef PROFILE
-  // Initiate global timers
-  init_time();
-  
-  // Open timer log file
-  ofstream profile;
-  profile.open("runtimes.dat",ios::out|ios::trunc);
-  if( profile == NULL ) {
-    cout << "Cannot open output file ... exiting" << endl;
-    exit( EXIT_FAILURE );
-  }
-
   // Initialise start timer
-  start_time();
+  timer profile("runtimes.dat");
+
+  // Add subtimers
+  profile.add("tmanin");
+  profile.add("pcurve");
 #endif
 
   long n=1, stopp; // have a dud (but positive) value of n here to avoid mishaps
@@ -82,6 +75,13 @@ int main(void) {
   while (n<limit) { n++;
 #else
      while (n>0) { cout<<"Enter level: "; cin>>n;
+#endif
+#ifdef PROFILE
+  // Start default timer
+  profile.start();
+
+  // Start tmanin timer
+  profile.start("tmanin");
 #endif
   if (n>0) {
     cout << "\n>>>Level " << n;
@@ -117,6 +117,14 @@ int main(void) {
     }
 
   // Thus far, as in tmanin
+
+#ifdef PROFILE
+  // Stop tmanin timer
+  profile.stop("tmanin");
+
+  // Start pcurve timer
+  profile.start("pcurve");
+#endif
 
   // Now we search for curves as in pcurve.cc
 
@@ -239,19 +247,21 @@ int main(void) {
 }       // end of if(n>0)
      
 #ifdef PROFILE
-// Stop timer and write to file
-stop_time();
-profile << "Level " << n << " ";
-show_time(profile);
-profile << endl;
+  // Stop timers 
+  profile.stop("pcurve");
+  profile.stop();
+
+  // Write timers to file
+  stringstream s;
+  s << n;
+  profile.write( "Level " + s.str() + "\t" );
+  profile.showAll();
+  profile.write( "\n" );
+
+  // Clear all timers
+  profile.clearAll();
 #endif
 
      }  // end of while(n>0) or while(n<limit)
-
-#ifdef PROFILE
-// Close output file
-profile.close();
-#endif
-
  }       // end of main()
 
