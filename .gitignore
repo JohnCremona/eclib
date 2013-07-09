@@ -102,8 +102,10 @@ tests/telog
 tests/tequiv
 tests/theight
 tests/thilbert
+tests/threading
 tests/thtconst
 tests/tilll
+tests/timing
 tests/tlegcert
 tests/tmanin
 tests/tmrank

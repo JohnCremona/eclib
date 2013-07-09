@@ -24,7 +24,12 @@
 #ifndef _TIMER_H
 #define _TIMER_H      1
 
+// Timer header files
+#ifdef _WIN32
+#include <windows.h>
+#else
 #include <sys/time.h>
+#endif
 
 // Determine which library to use
 // Preprocessor directives defined by Autotools
@@ -71,10 +76,12 @@ class timer {
 #endif
 
   private:
-    ostream*  s_;
-    ofstream  file_;
-    timers    times_;
+    ostream* s_;
+    ofstream file_;
+    timers   times_;
     
+    double   getWallTime();
+
     template< typename T > 
     string toString( T el );
 };

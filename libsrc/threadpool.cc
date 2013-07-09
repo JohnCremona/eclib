@@ -11,6 +11,9 @@
  * void, i.e. nothing is returned.
  */
 
+// Compile this only if Boost is installed
+#ifdef MULTITHREAD
+
 // Include header files
 #include "eclib/threadpool.h"
 
@@ -22,14 +25,15 @@
  * Additional counters are initialised and
  * cached for ease of access.
  */
-Threadpool::Threadpool( unsigned int numThreads, int verbose )
+//template< class Task >
+threadpool::threadpool( unsigned int numThreads, int verbose )
   : maxThreads( boost::thread::hardware_concurrency() ),
-    work( io_service ),
+    work_( new boost::asio::io_service::work( io_service_ ) ),
     verbose( verbose ) {
-  
+ 
   // Store actual number of threads to be used.
   // If not specified, we use the system limit.
-  threadCount = ( !numThreads ) ? numThreads : maxThreads;
+  threadCount = ( numThreads > 0 ) ? numThreads : maxThreads;
 
   // We limit the number of threads to the system limit.
   // Note: it is best to not use all available threads
@@ -48,36 +52,46 @@ Threadpool::Threadpool( unsigned int numThreads, int verbose )
 
   // Create threads and add to threadpool
   for( unsigned int i = 0; i < threadCount; i++  ) {
-    threads.create_thread( boost::bind( &boost::asio::io_service::run, &io_service ) );
+    threads_.create_thread( boost::bind( &boost::asio::io_service::run, &io_service_ ) );
   }
-
-  // Declare threadpool operational
-  if( verbose ) std::cout << "Threadpool is now operational." << std::endl;
 
 }
 
 /**
  * ~Threadpool()
  *
- * Desctructor. Closes io_service to prevent further
+ * Desctructor. Simply calls close() 
+ */
+//template< class Task >
+threadpool::~threadpool() {
+  close();
+}
+
+
+/**
+ * close()
+ *
+ * Closes io_service_ to prevent further
  * jobs added to job queue. Joins all threads in 
  * threadpool; currently running jobs are completed
  * before returning control to calling thread.
- */
-Threadpool::~Threadpool() {
-  io_service.stop();
-  threads.join_all();
-}
-
-/**
- * post()
  *
- * Add a job to the job queue so that the next
- * idle thread in the threadpool may execute it.
+ * This blocking method exists in case we wish 
+ * to close the threadpool before end-of-scope,
+ * or to detect when all previously posted 
+ * jobs have finished.
  */
-void Threadpool::post( Task task ) {
-  // Add new task to job queue
-  io_service.post( boost::bind( task ) );
+void threadpool::close() {
+  // We destroy the work class on the io_service object
+  // so that we can exit once all jobs posted have finished
+  work_.reset();
+
+  // run() blocks until all posted jobs have finished
+  io_service_.run();
+
+  // We close the threadpool and join all threads
+  io_service_.stop();
+  threads_.join_all();
 }
 
 /**
@@ -86,7 +100,8 @@ void Threadpool::post( Task task ) {
  * Returns number of threads initiated 
  * in threadpool.
  */
-unsigned int Threadpool::getThreadCount() {
+//template< class Task >
+unsigned int threadpool::getThreadCount() {
   return threadCount;
 }
 
@@ -96,6 +111,9 @@ unsigned int Threadpool::getThreadCount() {
  * Returns maximum number of threads available.
  * Provides easier access.
  */
-unsigned int Threadpool::getMaxThreads() {
+//template< class Task >
+unsigned int threadpool::getMaxThreads() {
   return maxThreads;
 }
+
+#endif // MULTITHREAD

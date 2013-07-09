@@ -39,13 +39,14 @@ void show_time(ostream& s)
   s<<" ("<<(stoptime-starttime)<<" seconds)" << flush; 
 }
 
-// Implementation of timer class (essentially the same as above)
+// Implementation of timer class 
+// (essentially the same as above and more)
 /**
  * timer()
  *
  * Default constructor.
  */
-timer::timer() {
+timer::timer() : s_( NULL ) {
   // Set up default stream to standard-out
   stream();
 }
@@ -55,7 +56,7 @@ timer::timer() {
  *
  * Constructor. Output filename given.
  */
-timer::timer( string filename ) {
+timer::timer( string filename ) : s_( NULL ) {
   // Set up stream 
   stream( filename );
 }
@@ -85,13 +86,18 @@ timer::~timer() {
  * which will be flushed and closed safely, if required.
  */
 void timer::stream( string filename ) {
+  // Flush current stream if defined, just to be safe
+  if( s_ != NULL ) {
+    s_ -> flush();
+  }
+
   // First check if a filename was given
   if( !filename.size() ) {
     // Default stream to standard-out
     s_ = &cout;
   } else {
     // Open new file
-    file_.open(filename.c_str(),ios::out|ios::trunc);
+    file_.open(filename.c_str(),ios::out|ios::app);
     
     // Check is file successfully opened
     if( file_ == NULL ) {
@@ -149,7 +155,7 @@ void timer::start( string name ) {
  * Logs the current time for specified timer.
  */
 void timer::split( string name ) {
-  times_[name].push_back( GetTime() );
+  times_[name].push_back( getWallTime() );
 }
 
 /**
@@ -307,6 +313,34 @@ double timer::average( string name ) {
   vector<double>::size_type size = times_[name].size();
 
   return total( name ) / size;
+}
+
+/**
+ * getWallTime()
+ *
+ * Returns the real time in seconds. Only use this method
+ * to find elapsed time. Do not base calculations on this 
+ * method. Subject to changes in system time.
+ * Accuracy varies over different systems.
+ */
+double timer::getWallTime() {
+#ifdef _WIN32
+  // Windows real time clock
+  FILETIME  tm;
+  ULONGLONG t;
+
+  GetSystemTimeAsFileTime( &tm );
+  
+  t = ((ULONGLONG)tm.dwHighDateTime << 32) | (ULONGLONG)tm.dwLowDateTime;
+  return (double) t / 10000000.0;
+#else
+  // POSIX real time clock
+  struct timeval tm;
+
+  gettimeofday( &tm, NULL );
+
+  return (double) tm.tv_sec + (double) tm.tv_usec / 1000000.0;
+#endif
 }
 
 /** 

@@ -85,6 +85,14 @@ int main(void) {
 #endif
   if (n>0) {
     cout << "\n>>>Level " << n;
+#ifdef PROFILE
+    {
+    // Scope stringstream object
+    stringstream level;
+    level << "Level " << n << " ";
+    profile.write(level.str());
+    }
+#endif
     // Temporary code to skip non-square-free levels
     //
     //  if(!is_squarefree(n)) {cout<<" --not square-free, skipping!\n"; continue;}
@@ -94,6 +102,9 @@ int main(void) {
       cout<<"Not a valid conductor!"<<endl;
       output_to_file_no_newforms(n);
       cout << "Finished level "<<n<<endl;
+#ifdef PROFILE
+    profile.write("Not a valid conductor!\n");
+#endif
       continue;
     }
   int plus=1, cuspidal=0;
@@ -113,6 +124,9 @@ int main(void) {
     if(output) nf.output_to_file();
       cout << "No newforms.\n";
       cout << "Finished level "<<n<<endl;
+#ifdef PROFILE
+    profile.write("No newforms.\n");
+#endif
       continue;
     }
 
@@ -252,9 +266,6 @@ int main(void) {
   profile.stop();
 
   // Write timers to file
-  stringstream s;
-  s << n;
-  profile.write( "Level " + s.str() + "\t" );
   profile.showAll();
   profile.write( "\n" );
 
