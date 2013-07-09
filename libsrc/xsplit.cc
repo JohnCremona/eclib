@@ -246,37 +246,30 @@ void form_finder::make_basis( ff_data &data ) {
       data.bplus_[1] = 1;
 	  }
     else {
-#ifdef DEBUG_NEST
-      cerr << "accessing nest[" << depth << "]" << endl;
-#endif
       data.bplus_ = getbasis1(data.nest_);
     }
      
     return;
   }
 
-#ifdef DEBUG_NEST
-  cerr << "accessing nest[" << depth << "]" << endl;
-#endif
-
   ssubspace* s = data.nest_;  // only used when depth>0
   ssubspace *spm0, *spm;
   SCALAR eig = denom1;
-  //  if(depth) eig*=denom(*s);
-  smat subconjmat;          // only used when depth>0
-  if(bigmats) {
+  // if(depth) eig*=denom(*s);
+  smat subconjmat;            // only used when depth>0
+  if( bigmats ) {
     subconjmat = (depth) ? restrict_mat(data.conjmat_, *s) : data.conjmat_;
     // will only be a 2x2 in this case (genus 1 only!)
   }
   else {
-    subconjmat=h->s_opmat_restricted(-1,*s,1,verbose);
+    subconjmat = h->s_opmat_restricted(-1,*s,1,verbose);
   }
 
   for(long signeig=+1; signeig>-2; signeig-=2) {
     SCALAR seig; 
-           seig = data.eigenvalue_;
+           seig = eig;
     
-    if(signeig<0) seig =- data.eigenvalue_;
+    if(signeig<0) seig =- eig;
     
     if(depth) {
 	    spm0 = new ssubspace(eigenspace(subconjmat,seig));
