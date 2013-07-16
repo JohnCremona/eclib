@@ -97,7 +97,7 @@ void timer::stream( string filename ) {
     s_ = &cout;
   } else {
     // Open new file
-    file_.open(filename.c_str(),ios::out|ios::app);
+    file_.open(filename.c_str(),ios::out|ios::trunc);
     
     // Check is file successfully opened
     if( file_ == NULL ) {
