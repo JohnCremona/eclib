@@ -22,8 +22,12 @@
 
 class threadpool {
   public:
-    threadpool( unsigned int numThreads = 0, int verbose = 0 );
+    threadpool();
+    threadpool( unsigned int numThreads, int verbose );
     ~threadpool();
+
+    void start( unsigned int numThreads, int verbose );
+    void close();
 
     /**
      * post()
@@ -34,19 +38,23 @@ class threadpool {
      */
     template< class Task >
     void post( Task &task ) {
+      // Check start() was called
+      if( verbose_ == -1 ) {
+        std::cout << "Must call start() before using post(). Exiting ..." << std::endl;
+        abort();
+      }
+
       // Add reference to new task to job queue
       io_service_.post( boost::bind< void >( boost::ref( task ) ) );
     }
-
-    void close();
 
     unsigned int getThreadCount();
     unsigned int getMaxThreads();
 
   private:
-    unsigned int maxThreads;
-    unsigned int threadCount;
-             int verbose;
+    unsigned int maxThreads_;
+    unsigned int threadCount_;
+             int verbose_;
 
     boost::asio::io_service io_service_;
     boost::shared_ptr< boost::asio::io_service::work > work_;

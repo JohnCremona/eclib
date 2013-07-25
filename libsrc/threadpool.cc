@@ -20,41 +20,21 @@
 /**
  * Threadpool()
  *
- * Main constructor. Creates required number of
- * threads, and sets them to wait for jobs.
- * Additional counters are initialised and
- * cached for ease of access.
+ * Default constructor. Must call start() before using threadpool.
  */
-//template< class Task >
-threadpool::threadpool( unsigned int numThreads, int verbose )
-  : maxThreads( boost::thread::hardware_concurrency() ),
-    work_( new boost::asio::io_service::work( io_service_ ) ),
-    verbose( verbose ) {
- 
-  // Store actual number of threads to be used.
-  // If not specified, we use the system limit.
-  threadCount = ( numThreads > 0 ) ? numThreads : maxThreads;
+threadpool::threadpool() 
+  : maxThreads_( 0 ), threadCount_( 0 ), verbose_( -1 ),
+    work_( new boost::asio::io_service::work( io_service_ ) )
+{}
 
-  // We limit the number of threads to the system limit.
-  // Note: it is best to not use all available threads
-  if( threadCount > maxThreads ) {
-    // Reset limit
-    threadCount = maxThreads;
-
-    // Notify
-    if( verbose ) std::cout << "Requested more threads than available." 
-                            << std::endl; 
-  }
-
-  // Declare the final number of threads to be used
-  if( verbose ) std::cout << "Threadpool will be using " << threadCount 
-                          << " threads." << std::endl;
-
-  // Create threads and add to threadpool
-  for( unsigned int i = 0; i < threadCount; i++  ) {
-    threads_.create_thread( boost::bind( &boost::asio::io_service::run, &io_service_ ) );
-  }
-
+/**
+ * threadpool()
+ *
+ * Main constructor.
+ */
+threadpool::threadpool( unsigned int numThreads, int verbose ) 
+  : work_( new boost::asio::io_service::work( io_service_ ) ) {
+  start( numThreads, verbose );
 }
 
 /**
@@ -62,11 +42,48 @@ threadpool::threadpool( unsigned int numThreads, int verbose )
  *
  * Desctructor. Simply calls close() 
  */
-//template< class Task >
 threadpool::~threadpool() {
   close();
 }
 
+/**
+ * start();
+ *
+ * Must be called after constructor, and allows for threadpool 
+ * to be restarted after a call to close().
+ */
+void threadpool::start( unsigned int numThreads, int verbose ) {
+  // Store verbosity
+  verbose_ = verbose;
+
+  // Store maximum number of threads system can support
+  maxThreads_ = boost::thread::hardware_concurrency();
+
+  
+  // Store actual number of threads to be used.
+  // If not specified, we use the system limit.
+  threadCount_ = ( numThreads > 0 ) ? numThreads : maxThreads_;
+
+  // We limit the number of threads to the system limit.
+  // Note: it is best to not use all available threads
+  if( threadCount_ > maxThreads_ ) {
+    // Reset limit
+    threadCount_ = maxThreads_;
+
+    // Notify
+    if( verbose_ ) std::cout << "Requested more threads than available." 
+                            << std::endl; 
+  }
+
+  // Declare the final number of threads to be used
+  if( verbose_ ) std::cout << "Threadpool will be using " << threadCount_ 
+                          << " threads." << std::endl;
+
+  // Create threads and add to threadpool
+  for( unsigned int i = 0; i < threadCount_; i++  ) {
+    threads_.create_thread( boost::bind( &boost::asio::io_service::run, &io_service_ ) );
+  }
+}
 
 /**
  * close()
@@ -100,9 +117,8 @@ void threadpool::close() {
  * Returns number of threads initiated 
  * in threadpool.
  */
-//template< class Task >
 unsigned int threadpool::getThreadCount() {
-  return threadCount;
+  return threadCount_;
 }
 
 /**
@@ -111,9 +127,8 @@ unsigned int threadpool::getThreadCount() {
  * Returns maximum number of threads available.
  * Provides easier access.
  */
-//template< class Task >
 unsigned int threadpool::getMaxThreads() {
-  return maxThreads;
+  return maxThreads_;
 }
 
 #endif // MULTITHREAD

@@ -1,8 +1,7 @@
 /**
  * xsplit_data.cc
  *
- * Implementation of data structure used
- * in xsplit.cc (form_finder class).
+ * Implementation of data structure used in xsplit.cc (form_finder class).
  */
 
 // Include headers
@@ -17,6 +16,7 @@
  */
 ff_data::ff_data( form_finder* ff )
   : ff_( ff ),
+    status_( INTERNAL ),
     depth_( 0 ),
     subdim_( 0 ),
     eigenvalue_( 0 ),
@@ -24,8 +24,7 @@ ff_data::ff_data( form_finder* ff )
     nest_( NULL ),
     conjmat_( NULL ),
     the_opmat_( NULL ),
-    parent_( NULL ) {
-}
+    parent_( NULL ) {}
 
 /**
  * ~ff_data()
@@ -39,12 +38,12 @@ ff_data::~ff_data() {
   // Delete dynamically created objects
   delete nest_;
 
-  // Delete children data nodes
-  // Calling clear() on children_ object also calls each
-  // elements destructor.
+  // Delete children data nodes. Calling clear() on children_ 
+  // object also calls each elements destructor.
   children_.clear();
 }
 
+#ifdef MULTITHREAD
 /**
  * operator()
  *
@@ -53,16 +52,30 @@ ff_data::~ff_data() {
  * newforms, or  whether further recursion is necessary.
  */
 void ff_data::operator()() {
- // Call find() on current eigenvalue
- if( subdim_ > 0 ) ff_ -> find( *this );
- //   In find(), create a new instance of ff_data for each test
- //   eigenvalue. Pass on depth, nest, and eiglist.
+  //std::cout << "** IN OPERATOR() with eig = " << eigenvalue_ << std::endl;
+  // Call go_down() on current node, passing through its parent
+  // to keep interface consistent with original.
+  ff_ -> go_down( *(this->parent_), eigenvalue_, 0 );
+
+  // Call find() on current node
+  if( subdim_ > 0 ) ff_ -> find( *this );
  
- // Upon completion, delete current instance of ff_data 
- // i.e. commit suicide
- // PROVIDED we do not reference anything of this instance 
- // anywhere in the remaining code, and otherwise.
- delete this;
+  // TODO 
+  // CANNOT DELETE NODE HERE
+  // we reference parent_ -> submat in go_down
+  // Instead, we call go_up and check if all children have
+  // finished. If so, we can delete this node.
+  if( status_ != INTERNAL ) ff_ -> go_up( *this );
+}
+#endif
+
+/**
+ * status()
+ *
+ * Return status of current node.
+ */
+nodestatus ff_data::status() {
+  return status_;
 }
 
 /**
@@ -95,8 +108,7 @@ long ff_data::subdim() {
 /** 
  * eig()
  *
- * Returns eigenvalue corresponding to
- * current instance of class
+ * Returns eigenvalue corresponding to current instance of class.
  */
 long ff_data::eig() {
   return eigenvalue_;
@@ -105,26 +117,18 @@ long ff_data::eig() {
 /**
  * eiglist()
  *
- * Build sequence of eigenvalues for current 
- * node by traversing up the tree.
- * If an eiglist has already been computed,
- * we simply return it to avoid accessing
- * more nodes than necessary.
+ * Build sequence of eigenvalues for current node by traversing up the tree.
+ * If an eiglist has already been computed, we simply return it to 
+ * avoid accessing more nodes than necessary.
  */
 vector< long > ff_data::eiglist() {
   // Return precomputed eiglist if available
-  if( !eiglist_.empty() ) {
-    return eiglist_;
-  }
+  if( !eiglist_.empty() ) return eiglist_;
 
-  // Root node (depth==0)
-  if( parent_ == NULL ) {
-    // Return empty vector
-    return vector< long >();
-  }
+  // Root node (depth==0). Return empty vector.
+  if( parent_ == NULL ) return vector< long >();
 
-  // Else, we concatenate lists from further
-  // up the tree.
+  // Else, we concatenate lists from further up the tree.
   eiglist_ = parent_ -> eiglist();
   eiglist_.push_back( eigenvalue_ );
 
@@ -132,10 +136,52 @@ vector< long > ff_data::eiglist() {
 }
 
 /**
+ * child()
+ *
+ * Returns pointer to child w.r.t. given eigenvalue.
+ */
+ff_data* ff_data::child( long eig ) {
+  return children_[ map(eig) ];
+}
+
+/**
+ * numCompleteChildren()
+ *
+ * Returns number of completed children for current node.
+ */
+int ff_data::numCompleteChildren() {
+  int completeCount = 0;        // Counter
+
+  vector< childstatus >::iterator it;
+  for( it = completedChildren_.begin(); it != completedChildren_.end(); it++ ) {
+    if( *it != NOT_COMPLETE ) completeCount++; 
+  }
+
+  return completeCount;
+}
+
+/**
+ * complete()
+ *
+ * Return true if all children complete.
+ */
+bool ff_data::complete() {
+  return ( numCompleteChildren() == numChildren_ ) ? true : false;
+}
+
+/** 
+ * setStatus()
+ *
+ * Store status of current node.
+ */
+void ff_data::setStatus( nodestatus s ) {
+  status_ = s;
+}
+
+/**
  * increaseDepth()
  *
- * Increases current depth.
- * First check delta is positive.
+ * Increases current depth. First check delta is positive.
  */
 void ff_data::increaseDepth( long delta ) {
   assert( delta > 0 );
@@ -145,8 +191,7 @@ void ff_data::increaseDepth( long delta ) {
 /**
  * decreaseDepth()
  *
- * Decrease current depth.
- * First check delta is positive.
+ * Decrease current depth. First check delta is positive.
  */
 void ff_data::decreaseDepth( long delta ) {
   assert( delta > 0 );
@@ -154,15 +199,22 @@ void ff_data::decreaseDepth( long delta ) {
 }
 
 /**
- * setEiglist()
+ * increaseSubmatUsage()
  *
- * Store given eigenvalue in local
- * eiglist. 
- * Index must equal current depth.
+ * Locked counter increment method.
  */
-void ff_data::setEiglist( long idx, long eig ) {
-  assert( idx == depth_ );
-  eiglist_[idx] = eig;
+void ff_data::increaseSubmatUsage() {
+#ifdef MULTITHREAD
+  try {
+  boost::mutex::scoped_lock lock( submat_lock_ );
+  }
+  catch(boost::lock_error& le) {
+    std::cout << "** Exception on thread " << boost::this_thread::get_id() << " when locking submat_lock_" << std::endl;
+    std::cout << le.what() << std::endl;
+  }
+#endif
+
+  ++submatUsage_;
 }
 
 /**
@@ -188,17 +240,110 @@ void ff_data::storeBminus( vec bm ) {
 /** 
  * addChild()
  *
- * Provides multithreaded support to adding a 
- * new data node to the children vector.
- * TODO - lock possibly no longer required
- * due to use of unordered_map 
+ * Adds a new data node to the children vector.
  */
-void ff_data::addChild( long eig, ff_data *child ) {
-  // Lock vector with scoped lock 
-  //boost::mutex::scoped_lock lock( child_lock_ );
+void ff_data::addChild( long eig, ff_data &child ) {
+  child.setParent( this );                // Set parent
+  child.setEigenvalue( eig );             // Set eigenvalue
+  children_[map(eig)] = &child;           // Add to vector
+}
 
-  // Add to vector
-  children_[eig] = child;
+/**
+ * eraseChild()
+ * 
+ * Calls the destructor for the data node corresponding to given eigenvalue.
+ */
+void ff_data::eraseChild( long eig ) {
+  eraseChild( map(eig) );
+}
+
+/**
+ * eraseChild()
+ *
+ * Overloaded method. Main method for destroying children.
+ */
+void ff_data::eraseChild( int idx ) {
+  delete children_[ idx ];                  // Call destructor
+  children_[ idx ] = NULL;                  // Set value to null
+  completedChildren_[ idx ] = DESTROYED;    // Update child status
+}
+
+/**
+ * setParent()
+ *
+ * Stores pointer to parent data node.
+ */
+void ff_data::setParent( ff_data *parent ) {
+  parent_ = parent;
+}
+
+/**
+ * setEigenvalue()
+ *
+ * Stores eigenvalue.
+ */
+void ff_data::setEigenvalue( long eig ) {
+  eigenvalue_ = eig;
+}
+
+/**
+ * numChildren()
+ *
+ * Store number of children and resize vectors to correct size.
+ */
+void ff_data::numChildren( int size ) {
+  numChildren_ = size;
+
+  children_.resize( size, NULL );
+  completedChildren_.resize( size, NOT_COMPLETE );
+}
+
+/**
+ * childStatus()
+ *
+ * Sets value in map to 'flag', given a child node.
+ * Monitors how many of a nodes children have completed.
+ */
+void ff_data::childStatus( long eig, childstatus flag ) {
+#ifdef MULTITHREAD
+  //try
+  //{
+  boost::mutex::scoped_lock lock( childComplete_lock_ );
+  //}
+  //catch(boost::lock_error& le) {
+  //  std::cout << "** Exception on thread " << boost::this_thread::get_id() << " when locking childComplete_lock_" << std::endl;
+  //  std::cout << le.what() << std::endl;
+  //}
+#endif
+
+  //std::cout << "** IN CHILDSTATUS with eig = " << eig << " eigenvalue = " << eigenvalue_ << " depth = " << depth_ << endl; 
+
+  completedChildren_[map(eig)] = flag;
+}
+
+/**
+ * eraseCompletedChldren()
+ *
+ * Loops through containers and destroying completed children.
+ */
+void ff_data::eraseCompletedChildren() {
+  for( int i = 0; i < numChildren_; i++ ) {
+    if( completedChildren_[i] == COMPLETE ) eraseChild( i );
+  }
+}
+
+/**
+ * map()
+ *
+ * Hash function to map given eigenvalue
+ * to an index value. Removes dependancy on unordered_map.
+ */
+int ff_data::map( long eig ) {
+  if( numChildren_ == 2 ) {
+    return ( eig == 1 ) ? eig : 0;
+  } else {
+    return eig + ( numChildren_ - 1 ) / 2;
+  }
 }
 
 // end of XSPLIT_DATA.CC

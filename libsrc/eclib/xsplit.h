@@ -24,11 +24,17 @@
 #if     !defined(_XSPLIT_H)
 #define _XSPLIT_H      1       //flags that this file has been included
 
-//#include <boost/threads/mutex.hpp>
+// MULTITHREAD defined by Autotools
+#ifdef MULTITHREAD 
+#include <boost/thread/mutex.hpp>
+#endif
 
 #include "method.h"  // #defines form_finder=form_finder0/1/2/3/4
 #include "splitbase.h"
 #include "xsplit_data.h"
+#ifdef MULTITHREAD
+#include "threadpool.h"
+#endif
 
 // flags set on construction:
 
@@ -53,35 +59,39 @@ class form_finder {
     void splitoff(const vector<long>& eigs);
     void store(vec bp, vec bm, vector<long> eigs);
     
-    vec  getbasis() const {return current -> bplus_;}
-    vec  getbasisplus() const {return current -> bplus_;}
-    vec  getbasisminus() const {return current -> bminus_;}
+    vec  getbasis( ff_data &data ) const {return data.bplus_;}
+    vec  getbasisplus( ff_data &data ) const {return data.bplus_;}
+    vec  getbasisminus( ff_data &data ) const {return data.bminus_;}
+
+    friend class ff_data; 
   
   protected:
     splitter_base* h;
     
     int            plusflag, dual, bigmats, verbose, targetdim;
-    int            gnfcount;              // Global newform counter
+    int            gnfcount;                  // Global newform counter
     long           maxdepth, mindepth, dimen;
     SCALAR         denom1;
-    vector< vector<long> > gaplist;       // Vector to hold all (sub)eiglists
-    vector<vec>    gbplus, gbminus;       // Vector to hold all bplus/bminus
+    vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists
+    vector<vec>    gbplus, gbminus;           // Vector to hold all bplus/bminus
 
     int*           havemat;
-    vector<string> opfilenames;           // Temp filenames
+    vector<string> opfilenames;               // Temp filenames
    
-    // NEW THINGS REQUIRED
-    //threadpool/job queue
-    ff_data* root;                          // Always points to root data node
-    ff_data* current;                       // Indicator pointer (serial)
-    //boost::mutex store_lock;              // Lock for store() function 
+    ff_data* root;                            // Always points to root data node
+    ff_data* current;
     
-    void make_opmat(long i, ff_data &data); // Puts it in the_opmat
+    void make_opmat(long i, ff_data &data);   // Puts it in the_opmat
     void make_submat(ff_data &data);
     void go_down(ff_data &data, long eig, int last=0);
-    void go_up();
+    void go_up( ff_data &data );
     void make_basis(ff_data &data);
-    vec  getbasis1(const ssubspace* s);   // Assuming dim(s)=1, get basis vector
+    vec  getbasis1(const ssubspace* s);       // Assuming dim(s)=1, get basis vector
+
+#ifdef MULTITHREAD
+    threadpool   pool;                        // Job queue
+    boost::mutex store_lock;                  // Lock for store() function
+#endif
 };
 
 #endif

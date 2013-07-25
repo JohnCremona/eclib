@@ -24,8 +24,14 @@
 #include <unistd.h>  // for unlink() (not needed on linux)
 
 #define USE_SPARSE 1
+#define NUM_THREADS 4
+//#define PROFILE 
+//#undef MULTITHREAD
 #include <eclib/xsplit.h>
-#include <eclib/xsplit_data.h>
+
+#ifdef PROFILE 
+#include <eclib/timer.h>
+#endif
 
 #include <eclib/smatrix_elim.h>
 subspace sparse_combine(const subspace& s1, const subspace& s2);
@@ -33,8 +39,6 @@ mat sparse_restrict(const mat& m, const subspace& s);
 smat restrict_mat(const smat& m, const subspace& s);
 
 // CLASS FORM_FINDER (was called splitter)
-
-//#define DEBUG_NEST
 
 form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int dualflag, int bigmatsflag, int v)
 :h(hh), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v), 
@@ -85,9 +89,6 @@ void form_finder::make_submat( ff_data &data ) {
 	  }
     else {
 	    if( verbose > 1 ) cout << "restricting the_opmat to subspace..." << flush;
-#ifdef DEBUG_NEST
-      cerr << "Accessing nest[" << depth << "]" << endl;
-#endif
 	    data.submat_ = restrict_mat(data.the_opmat_,*(data.nest_));
 	    if( verbose > 1 ) cout << "done." << endl;
 	  }
@@ -100,9 +101,6 @@ void form_finder::make_submat( ff_data &data ) {
         data.submat_ = h -> s_opmat(depth,1,verbose);
 	    }
       else {
-#ifdef DEBUG_NEST
-        cerr << "accessing nest[" << depth << "]" << endl;
-#endif
 	      data.submat_ = h -> s_opmat_restricted(depth,*(data.nest_),1,verbose);
 	    }
 	  }
@@ -123,30 +121,17 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   if( verbose > 1 ) cout << "Increasing depth to " << depth+1 << ", "
                          << "trying eig = " << eig << "..." << flush;
 
-  // Initiate new data node, passing a constant
-  // reference of the current form_finder object
-  // to the data class constructor
-  ff_data *child = new ff_data( this );
-
-  // Configure data node ancestry 
-  data.addChild( eig, child );
-  child -> parent_ = &data;
+  // Locate required child w.r.t test eigenvalue
+  ff_data *child = data.child( eig ); 
 
   // Set new depth
   child -> depth_ = depth + 1;
     
-  // Store new test eigenvalue in new node
-  child -> eigenvalue_ = eig;
-
   SCALAR eig2 = eig*denom1;
   if( verbose > 1 ) cout << "after scaling, eig =  " << eig2 << "..." << flush;
   // if(depth) eig2*= denom(*nest[depth]); // else latter is 1 anyway
+  //                        ^ data.nest_
   ssubspace s(0);
-
-  // Pass data node through to make_submat()
-  // NOTE we do not pass through new child data node since
-  // make_submat() prepares submat_ for new node
-  make_submat(data);
 
   if(verbose>1) cout << "Using sparse elimination (size = "
                      << dim(data.submat_) << ", density ="
@@ -155,34 +140,34 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 
   s = eigenspace(data.submat_,eig2);
 
+#ifdef MULTITHREAD
+  // Increment data usage counter for parent node
+  data.increaseSubmatUsage();
+
+  // Reset current submat if all children have used it
+  // Save space (will recompute when needed)
+  if(    ( depth == 0 )
+      && ( dim(s) > 0 )
+      && ( nrows(data.submat_) > 1000 )
+      && ( data.submatUsage_ == data.numChildren_ )
+    )
+    data.submat_ = smat(0,0); 
+#else
   // Save space (will recompute when needed)
   if(((depth==0)&&(dim(s)>0)&&(nrows(data.submat_)>1000))||last)
     data.submat_ = smat(0,0); 
-     
+#endif
+
   if(verbose>1) cout << "done (dim = " << dim(s) << "), combining subspaces..." << flush;
   
-  if( depth == 0 ) {
-#ifdef DEBUG_NEST
-    cerr << "creating nest[" << (depth+1) << "]" << endl;
-#endif
-    child -> nest_ = new ssubspace(s);
-  }
-  else {
-#ifdef DEBUG_NEST
-    cerr << "accessing nest[" << depth     << "]" << endl;
-    cerr << "creating nest["  << (depth+1) << "]" << endl;
-#endif
-    child -> nest_ = new ssubspace(combine( *(data.nest_),s ));
-  }
+  if( depth == 0 ) child -> nest_ = new ssubspace(s);
+  else             child -> nest_ = new ssubspace(combine( *(data.nest_),s ));
   
   if(verbose>1) cout << "done." << endl;
   
   // Local depth increment (does not effect data nodes)
   depth++;
 
-#ifdef DEBUG_NEST
-  cerr << "accessing nest[" << depth << "]" << endl;
-#endif
   child -> subdim_ = dim( *(child -> nest_) );
   
   if(verbose>1) {
@@ -194,33 +179,28 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
          << " gives new subspace at depth " << depth
          << " of dimension " << child -> subdim_ << endl;
   }
-
-  // SERIAL Set current node pointer to new child node
-  current = child;
 }
 
-void form_finder::go_up() {
-  // SERIAL
-  // Store eigenvalue of current node
-  long eig = current -> eigenvalue_;
+void form_finder::go_up( ff_data &data ) {
+  // Cache pointer to parent data node
+  ff_data *parent = data.parent_;
 
-  // Update current node point to be parent
-  // of current node (important for serial
-  // version)
-  current = current -> parent_;
+#ifdef MULTITHREAD
+  // Lock parent node with scoped lock 
+  boost::mutex::scoped_lock lock( parent -> go_up_lock_ );
+#endif
 
-  // Old branch no longer required
-  // Erasing node via children array of parent
-  // (now current), which calls destructor
+  // Erasing node via children array of parent which calls destructor
   // of object (ff_data), using eigenvalue as key
-  current -> children_.erase(eig);
+  parent -> childStatus( data.eigenvalue_, COMPLETE );
+  parent -> eraseChild( data.eigenvalue_ );
 
-  // MULTITHREADING
-  // Extra check on the number of completed children
-  // is required before deleting the current node
-  // i.e. only delete once all children have
-  // been deleted (via child-completion-counter)
+#ifdef MULTITHREAD
+  // Only last child to complete will execute the following
+  if( parent -> complete() ) go_up( *data.parent_ );
+#endif
 }
+
 
 void form_finder::make_basis( ff_data &data ) {
   // Cache data values
@@ -228,8 +208,7 @@ void form_finder::make_basis( ff_data &data ) {
   long subdim = data.subdim();
   vector< long > eiglist = data.eiglist();
 
-  if(subdim!=targetdim)
-  {
+  if( subdim != targetdim ) {
     cout << "error in form_finder::make_basis with eiglist = ";
     for(int i=0; i<depth; i++) 
       cout << eiglist[i] << ",";
@@ -265,6 +244,8 @@ void form_finder::make_basis( ff_data &data ) {
     subconjmat = h->s_opmat_restricted(-1,*s,1,verbose);
   }
 
+  // C++11 loop over two variables (similar to python)
+  // for( int b : { -1,+1 } ) { /* use b as -1 or +1 */ }
   for(long signeig=+1; signeig>-2; signeig-=2) {
     SCALAR seig; 
            seig = eig;
@@ -279,7 +260,7 @@ void form_finder::make_basis( ff_data &data ) {
     else {
       spm = new ssubspace(eigenspace(subconjmat,seig));
     }
-
+    
     if(dim(*spm)!=1) {
       cout << "error in form_finder::makebasis; ";
       cout << "\nfinal (";
@@ -335,6 +316,7 @@ void form_finder::recover(vector< vector<long> > eigs) {
 }
 
 void form_finder::splitoff(const vector<long>& eigs) {
+
   // Always start at root node
   current = root;
 
@@ -352,8 +334,7 @@ void form_finder::splitoff(const vector<long>& eigs) {
     // Update current node pointer
     current = current -> children_[eigs[depth]];
 
-    // Update new depth
-    // Should always be depth+1
+    // Update new depth (should always be depth+1)
     depth = current -> depth_;
 
     // Update new subdimension
@@ -372,7 +353,18 @@ void form_finder::splitoff(const vector<long>& eigs) {
   
   // ... and grow a new branch down to required depth.
   while( (subdim > targetdim) && (depth < maxdepth) ) {
+    // Create new child node
+    ff_data *child = new ff_data( this );
+
+    // Configure data node ancestry
+    current -> addChild( eigs[depth], *child );
+
+    // Proceed to go down
     go_down(*current,eigs[depth],1);
+
+    // Cache new values
+    depth  = current -> depth_;
+    subdim = current -> subdim_;
   }
 
   // Creating newforms
@@ -385,16 +377,47 @@ void form_finder::splitoff(const vector<long>& eigs) {
 }
 
 void form_finder::find() {
-  // Whenever we call base find() function, we 
-  // reset current node pointer to root node
-  current = root;
+#ifdef PROFILE 
+  // TODO
+  // REMOVE PROFILING BEFORE FINALISING
+  // Initiate timing for internal profiling
+  // Filenames hard-coded in.
+  // find() only called once per program, so we 
+  // can keep timer object local to function. 
+  timer profile("runtimes_form_finder.dat");
+
+  // Setup subtimers
+  profile.add("find");
+  profile.add("use");
+
+  // Start timers for profiling
+  profile.start("find");
+#endif
+
+#ifdef MULTITHREAD
+  // Start job queue. We keep job queue local to ensure threads are 
+  // not kept busy for longer than necessary.
+  pool.start( NUM_THREADS, verbose );
+#endif
 
   // Proceed in recursive find, passing a node through
+  //find( *root );
+  current = root;
   find( *current );
   
-  // MULTITHREADING
+#ifdef MULTITHREAD
   // Join all threads in threadpool to wait for all jobs to finish
   // Or detect when all branches of the tree has been traversed
+  pool.close();
+#endif
+
+#ifdef PROFILE
+  // Stop find timer
+  profile.stop("find");
+
+  // Start store timer
+  profile.start("use");
+#endif
 
   // Now compute all newforms only if recursion has finished
   // NOTE may not be able to perform in parallel due to 
@@ -403,6 +426,15 @@ void form_finder::find() {
   for( int nf = 0; nf < gnfcount; nf++ ) {
     h-> use(gbplus[nf],gbminus[nf],gaplist[nf]);
   }
+
+#ifdef PROFILE 
+  // Stop store timer
+  profile.stop("use");
+
+  // Write times to file
+  profile.showAll();
+  profile.write("\n");
+#endif
 }
 
 void form_finder::find( ff_data &data ) {
@@ -423,6 +455,7 @@ void form_finder::find( ff_data &data ) {
                    << ", dimnew=" << subdim-dimold << "\n";
  
   if( dimold == subdim ) {
+    data.setStatus( ALL_OLD );     // Set status of current node
     if(verbose) {
       cout << "Abandoning a common eigenspace of dimension " << subdim;
       cout << " which is a sum of oldclasses." << endl;
@@ -431,12 +464,14 @@ void form_finder::find( ff_data &data ) {
   }
 
   if( ( subdim == targetdim ) && ( depth > mindepth ) ) { 
+    data.setStatus( FOUND_NEW );   // Set status of current node
     make_basis( data );
     store(data.bplus_,data.bminus_,subeiglist);
     return;
   }
 
   if( depth == maxdepth ) { 
+    data.setStatus( COMMON_EIGENSPACE );   // Set status of current node
     if(1) {       // we want to see THIS message whatever the verbosity level! 
       cout << "\nFound a " << subdim << "D common eigenspace\n";
       cout << "Abandoning, even though oldforms only make up ";
@@ -444,33 +479,63 @@ void form_finder::find( ff_data &data ) {
     }
     return;
   }
- 
+
+  // Pass data node through to make_submat()
+  // NOTE originally called in go_down(), but relocated here since
+  // it only needs to be called once per node. 
+  make_submat(data);
+
   // The recursive part:
   vector<long> t_eigs = h->eigrange(depth);
   vector<long>::const_iterator apvar = t_eigs.begin();
- 
+
   if(verbose) cout << "Testing eigenvalues " << t_eigs 
                    << " at level " << (depth+1) << endl;
+
+  // Set children counter
+  data.numChildren( t_eigs.size() );
 
   while( apvar != t_eigs.end() ) { 
     if( verbose > 1 ) cout << "Going down with ap = " << (*apvar) <<endl;
     long eig = *apvar++;
 
+    // Initiate new data node, passing a constant reference of the current 
+    // form_finder object to the data class constructor
+    ff_data *child = new ff_data( this );
+
+    // Configure data node ancestry
+    data.addChild( eig, *child );
+
+#ifdef MULTITHREAD
+    // Post newly created child node to threadpool
+    pool.post< ff_data >( *child );
+
+    // Include following when controlling depth of parallelisation
+    // work in serial instead ... no point adding to job queue
+    //go_down(data,eig,apvar==t_eigs.end());
+    //if( child -> subdim_ > 0 ) find( *child );
+    //go_up( *child );
+#else   
+    // Pass through current data node and new test
+    // eigenvalue to go_down()
     go_down(data,eig,apvar==t_eigs.end());
     
-    // SERIAL We pass find() the new child node created in 
-    // go_down() and referenced by `current' pointer
-    if( current -> subdim_ > 0 ) find( *current );
-    go_up();
+    // We pass find() the new child node 
+    if( child -> subdim_ > 0 ) find( *child );
+    go_up( *child );
+#endif
   }  
-  
-  // NOTE - Remove this statement with multithreading ...
+
+#ifndef MULTITHREAD
   if(verbose) cout << "Finished at level " << (depth+1) << endl;
+#endif
 }
 
 void form_finder::store(vec bp, vec bm, vector<long> eigs) {
+#ifdef MULTITHREAD
   // Lock function
-  // boost::mutex::scoped_lock lock( store_lock );
+  boost::mutex::scoped_lock lock( store_lock );
+#endif
 
   // Store sub-bplus,bminus,eiglists in class level containers
   gbplus.push_back(bp);
