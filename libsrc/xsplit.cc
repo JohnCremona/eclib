@@ -84,9 +84,7 @@ void form_finder::make_submat( ff_data &data ) {
     // fetch the_opmat from file, or compute
     make_opmat(depth,data);
     
-    if( depth == 0 ) {
-	    data.submat_ = data.the_opmat_;
-	  }
+    if( depth == 0 ) data.submat_ = data.the_opmat_;
     else {
 	    if( verbose > 1 ) cout << "restricting the_opmat to subspace..." << flush;
 	    data.submat_ = restrict_mat(data.the_opmat_,*(data.nest_));
@@ -97,12 +95,8 @@ void form_finder::make_submat( ff_data &data ) {
   }
   else {
     if( nrows(data.submat_) == 0 ) {
-	    if( depth == 0 ) {  
-        data.submat_ = h -> s_opmat(depth,1,verbose);
-	    }
-      else {
-	      data.submat_ = h -> s_opmat_restricted(depth,*(data.nest_),1,verbose);
-	    }
+	    if( depth == 0 ) data.submat_ = h -> s_opmat(depth,1,verbose);
+      else             data.submat_ = h -> s_opmat_restricted(depth,*(data.nest_),1,verbose);
 	  }
   }
 }
@@ -140,7 +134,6 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 
   s = eigenspace(data.submat_,eig2);
 
-#ifdef MULTITHREAD
   // Increment data usage counter for parent node
   data.increaseSubmatUsage();
 
@@ -149,14 +142,9 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   if(    ( depth == 0 )
       && ( dim(s) > 0 )
       && ( nrows(data.submat_) > 1000 )
-      && ( data.submatUsage_ == data.numChildren_ )
-    )
+      && ( data.submatUsage_ == data.numChildren_ ) ) {
     data.submat_ = smat(0,0); 
-#else
-  // Save space (will recompute when needed)
-  if(((depth==0)&&(dim(s)>0)&&(nrows(data.submat_)>1000))||last)
-    data.submat_ = smat(0,0); 
-#endif
+  }
 
   if(verbose>1) cout << "done (dim = " << dim(s) << "), combining subspaces..." << flush;
   
@@ -518,11 +506,11 @@ void form_finder::find( ff_data &data ) {
 #else   
     // Pass through current data node and new test
     // eigenvalue to go_down()
-    go_down(data,eig,apvar==t_eigs.end());
+    go_down( data, eig, apvar==t_eigs.end() );
     
     // We pass find() the new child node 
     if( child -> subdim_ > 0 ) find( *child );
-    go_up( *child );
+    if( data.status_ != INTERNAL )go_up( *child );
 #endif
   }  
 

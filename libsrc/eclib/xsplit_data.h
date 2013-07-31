@@ -99,7 +99,6 @@ class ff_data {
     ff_data*            parent_;             // Pointer to parent data node
     vector<ff_data*>    children_;           // Pointers to corresponding data nodes
     int                 numChildren_;        // Store number of children
-    int                 childCount_;         // Class counter for children
     vector<childstatus> completedChildren_;  // Flags for child completion
     int                 submatUsage_;        // Counter for submat
 

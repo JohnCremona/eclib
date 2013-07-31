@@ -52,7 +52,6 @@ ff_data::~ff_data() {
  * newforms, or  whether further recursion is necessary.
  */
 void ff_data::operator()() {
-  //std::cout << "** IN OPERATOR() with eig = " << eigenvalue_ << std::endl;
   // Call go_down() on current node, passing through its parent
   // to keep interface consistent with original.
   ff_ -> go_down( *(this->parent_), eigenvalue_, 0 );
@@ -150,7 +149,7 @@ ff_data* ff_data::child( long eig ) {
  * Returns number of completed children for current node.
  */
 int ff_data::numCompleteChildren() {
-  int completeCount = 0;        // Counter
+  int completeCount = 0;
 
   vector< childstatus >::iterator it;
   for( it = completedChildren_.begin(); it != completedChildren_.end(); it++ ) {
@@ -205,13 +204,7 @@ void ff_data::decreaseDepth( long delta ) {
  */
 void ff_data::increaseSubmatUsage() {
 #ifdef MULTITHREAD
-  try {
   boost::mutex::scoped_lock lock( submat_lock_ );
-  }
-  catch(boost::lock_error& le) {
-    std::cout << "** Exception on thread " << boost::this_thread::get_id() << " when locking submat_lock_" << std::endl;
-    std::cout << le.what() << std::endl;
-  }
 #endif
 
   ++submatUsage_;
@@ -306,17 +299,8 @@ void ff_data::numChildren( int size ) {
  */
 void ff_data::childStatus( long eig, childstatus flag ) {
 #ifdef MULTITHREAD
-  //try
-  //{
   boost::mutex::scoped_lock lock( childComplete_lock_ );
-  //}
-  //catch(boost::lock_error& le) {
-  //  std::cout << "** Exception on thread " << boost::this_thread::get_id() << " when locking childComplete_lock_" << std::endl;
-  //  std::cout << le.what() << std::endl;
-  //}
 #endif
-
-  //std::cout << "** IN CHILDSTATUS with eig = " << eig << " eigenvalue = " << eigenvalue_ << " depth = " << depth_ << endl; 
 
   completedChildren_[map(eig)] = flag;
 }
