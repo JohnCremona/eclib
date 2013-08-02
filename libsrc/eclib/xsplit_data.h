@@ -26,7 +26,7 @@
 class form_finder;
 
 // Ennumerate node and child flags, exposed to global scope for outside access
-enum nodestatus  { INTERNAL, ALL_OLD, FOUND_NEW, COMMON_EIGENSPACE };
+enum nodestatus  { INTERNAL, ALL_OLD, FOUND_NEW, MAX_DEPTH };
 enum childstatus { NOT_COMPLETE, COMPLETE, DESTROYED };
 
 /**

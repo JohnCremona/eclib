@@ -459,7 +459,7 @@ void form_finder::find( ff_data &data ) {
   }
 
   if( depth == maxdepth ) { 
-    data.setStatus( COMMON_EIGENSPACE );   // Set status of current node
+    data.setStatus( MAX_DEPTH );   // Set status of current node
     if(1) {       // we want to see THIS message whatever the verbosity level! 
       cout << "\nFound a " << subdim << "D common eigenspace\n";
       cout << "Abandoning, even though oldforms only make up ";

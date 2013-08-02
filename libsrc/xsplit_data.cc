@@ -59,11 +59,7 @@ void ff_data::operator()() {
   // Call find() on current node
   if( subdim_ > 0 ) ff_ -> find( *this );
  
-  // TODO 
-  // CANNOT DELETE NODE HERE
-  // we reference parent_ -> submat in go_down
-  // Instead, we call go_up and check if all children have
-  // finished. If so, we can delete this node.
+  // Call go_up() only if this branch has ended
   if( status_ != INTERNAL ) ff_ -> go_up( *this );
 }
 #endif
