@@ -253,7 +253,7 @@ void ff_data::eraseChild( long eig ) {
  */
 void ff_data::eraseChild( int idx ) {
   delete children_[ idx ];                  // Call destructor
-  children_[ idx ] = NULL;                  // Set value to null
+  //children_[ idx ] = NULL;                  // Set value to null
   completedChildren_[ idx ] = DESTROYED;    // Update child status
 }
 
@@ -283,7 +283,8 @@ void ff_data::setEigenvalue( long eig ) {
 void ff_data::numChildren( int size ) {
   numChildren_ = size;
 
-  children_.resize( size, NULL );
+  //children_.resize( size, NULL );
+  children_.reserve( size );
   completedChildren_.resize( size, NOT_COMPLETE );
 }
 

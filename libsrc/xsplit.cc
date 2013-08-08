@@ -170,7 +170,7 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 }
 
 void form_finder::go_up( ff_data &data ) {
-  // Cache pointer to parent data node
+  // Cache pointer to parent data node for access after current node is deleted
   ff_data *parent = data.parent_;
 
 #ifdef MULTITHREAD
@@ -185,7 +185,8 @@ void form_finder::go_up( ff_data &data ) {
 
 #ifdef MULTITHREAD
   // Only last child to complete will execute the following
-  if( parent -> complete() ) go_up( *data.parent_ );
+  // Detects if parent is root node
+  if( parent -> complete() && parent -> parent_ != NULL ) go_up( *parent );
 #endif
 }
 
@@ -459,7 +460,6 @@ void form_finder::find( ff_data &data ) {
   }
 
   if( depth == maxdepth ) { 
-    data.setStatus( MAX_DEPTH );   // Set status of current node
     if(1) {       // we want to see THIS message whatever the verbosity level! 
       cout << "\nFound a " << subdim << "D common eigenspace\n";
       cout << "Abandoning, even though oldforms only make up ";
