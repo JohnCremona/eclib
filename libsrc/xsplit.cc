@@ -25,13 +25,8 @@
 
 #define USE_SPARSE 1
 #define NUM_THREADS 4
-//#define PROFILE 
 //#undef MULTITHREAD
 #include <eclib/xsplit.h>
-
-#ifdef PROFILE 
-#include <eclib/timer.h>
-#endif
 
 #include <eclib/smatrix_elim.h>
 subspace sparse_combine(const subspace& s1, const subspace& s2);
@@ -366,23 +361,6 @@ void form_finder::splitoff(const vector<long>& eigs) {
 }
 
 void form_finder::find() {
-#ifdef PROFILE 
-  // TODO
-  // REMOVE PROFILING BEFORE FINALISING
-  // Initiate timing for internal profiling
-  // Filenames hard-coded in.
-  // find() only called once per program, so we 
-  // can keep timer object local to function. 
-  timer profile("runtimes_form_finder.dat");
-
-  // Setup subtimers
-  profile.add("find");
-  profile.add("use");
-
-  // Start timers for profiling
-  profile.start("find");
-#endif
-
 #ifdef MULTITHREAD
   // Start job queue. We keep job queue local to ensure threads are 
   // not kept busy for longer than necessary.
@@ -400,30 +378,11 @@ void form_finder::find() {
   pool.close();
 #endif
 
-#ifdef PROFILE
-  // Stop find timer
-  profile.stop("find");
-
-  // Start store timer
-  profile.start("use");
-#endif
-
   // Now compute all newforms only if recursion has finished
-  // NOTE may not be able to perform in parallel due to 
-  // use of class level variables in nerforms class
   if(verbose) cout << "Now performing use() on all lists at once" << endl;
   for( int nf = 0; nf < gnfcount; nf++ ) {
     h-> use(gbplus[nf],gbminus[nf],gaplist[nf]);
   }
-
-#ifdef PROFILE 
-  // Stop store timer
-  profile.stop("use");
-
-  // Write times to file
-  profile.showAll();
-  profile.write("\n");
-#endif
 }
 
 void form_finder::find( ff_data &data ) {
@@ -504,13 +463,14 @@ void form_finder::find( ff_data &data ) {
     //if( child -> subdim_ > 0 ) find( *child );
     //go_up( *child );
 #else   
-    // Pass through current data node and new test
-    // eigenvalue to go_down()
+    // Pass through current data node and new test eigenvalue to go_down()
     go_down( data, eig, apvar==t_eigs.end() );
     
-    // We pass find() the new child node 
+    // We pass new child node to find() 
     if( child -> subdim_ > 0 ) find( *child );
-    if( data.status_ != INTERNAL )go_up( *child );
+
+    // Only go_up() if current node is end of branch
+    if( data.status_ != INTERNAL ) go_up( *child );
 #endif
   }  
 
