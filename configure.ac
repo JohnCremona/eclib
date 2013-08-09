@@ -19,8 +19,13 @@ AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
-# Checks for libraries.
+# Checks for system features and libraries, via macros defined in m4/ directory
+AX_CXX_COMPILE_STDCXX_0X
+AX_CXX_COMPILE_STDCXX_11([],[optional])
+AX_CXX_HEADER_TR1_UNORDERED_MAP
+AX_CXX_HEADER_UNORDERED_MAP
 
+# Check for libraries
 # The following AC_ARG_WITH section were written by Volker Braun
 
 dnl Find PARI
