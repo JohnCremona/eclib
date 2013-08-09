@@ -27,16 +27,19 @@ int main( int argc, char** argv ) {
   cout << "Output Hecke eigenvalues to file? (0/1) ";  cin >> output;
   cout << "Sign? (-1/0/1) ";  cin >> sign;
 
-  // Start timer
-  timer profile("tmanin_runtimes.dat");
-  profile.add("createfromscratch");
-
   cout<<"Enter first and last N: ";cin>>n>>limit;
 
   if( n <= 0 ) {
     cout << "Invalid level" << endl;
     exit( EXIT_FAILURE );
   }
+
+  // Start timer
+  stringstream s;
+  s << "tmanin_runtimes-" << n << "-" << limit << ".dat";
+  string filename = s.str();
+  timer profile(filename);
+  profile.add("createfromscratch");
 
   for( long level = n; level <= limit; level++ ) {  
 
