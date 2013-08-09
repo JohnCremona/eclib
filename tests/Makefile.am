@@ -98,7 +98,7 @@ check_qrank: qrank_tests
 
 ################ G0N #############################################
 
-G0N_TESTS = modtest homtest hecketest mhcount tmanin nftest oftest tnfd
+G0N_TESTS = modtest homtest hecketest mhcount tmanin tmanin_prof nftest oftest tnfd
 G0N_TESTS_SUFFIXED = $(G0N_TESTS:=$(EXEEXT))
 g0n_tests: $(G0N_TESTS_SUFFIXED)
 
@@ -112,6 +112,7 @@ nftest_SOURCES=nftest.cc
 mhcount_SOURCES=mhcount.cc
 oftest_SOURCES=oftest.cc
 tmanin_SOURCES=tmanin.cc
+tmanin_prof_SOURCES=tmanin_prof.cc
 tnfd_SOURCES=tnfd.cc
 
 # This is the name of a directory which will be used for newform
