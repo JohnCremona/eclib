@@ -115,7 +115,7 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 
   // Set new depth
   child -> depth_ = depth + 1;
-    
+   
   SCALAR eig2 = eig*denom1;
   if( verbose > 1 ) cout << "after scaling, eig =  " << eig2 << "..." << flush;
   // if(depth) eig2*= denom(*nest[depth]); // else latter is 1 anyway
@@ -152,7 +152,7 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   depth++;
 
   child -> subdim_ = dim( *(child -> nest_) );
-  
+
   if(verbose>1) {
     cout << "Eigenvalue " << eig 
          << " has multiplicity " << child -> subdim_ << endl;
@@ -178,13 +178,10 @@ void form_finder::go_up( ff_data &data ) {
   parent -> childStatus( data.eigenvalue_, COMPLETE );
   parent -> eraseChild( data.eigenvalue_ );
 
-#ifdef MULTITHREAD
   // Only last child to complete will execute the following
   // Detects if parent is root node
   if( parent -> complete() && parent -> parent_ != NULL ) go_up( *parent );
-#endif
 }
-
 
 void form_finder::make_basis( ff_data &data ) {
   // Cache data values
@@ -419,6 +416,7 @@ void form_finder::find( ff_data &data ) {
   }
 
   if( depth == maxdepth ) { 
+    data.setStatus( MAX_DEPTH );
     if(1) {       // we want to see THIS message whatever the verbosity level! 
       cout << "\nFound a " << subdim << "D common eigenspace\n";
       cout << "Abandoning, even though oldforms only make up ";
@@ -461,7 +459,7 @@ void form_finder::find( ff_data &data ) {
     // work in serial instead ... no point adding to job queue
     //go_down(data,eig,apvar==t_eigs.end());
     //if( child -> subdim_ > 0 ) find( *child );
-    //go_up( *child );
+    //if( data.status_ != INTERNAL ) go_up( *child );
 #else   
     // Pass through current data node and new test eigenvalue to go_down()
     go_down( data, eig, apvar==t_eigs.end() );
@@ -470,7 +468,7 @@ void form_finder::find( ff_data &data ) {
     if( child -> subdim_ > 0 ) find( *child );
 
     // Only go_up() if current node is end of branch
-    if( data.status_ != INTERNAL ) go_up( *child );
+    if( child -> status_ != INTERNAL || child -> subdim_ == 0 ) go_up( *child );
 #endif
   }  
 

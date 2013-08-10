@@ -37,10 +37,7 @@ ff_data::ff_data( form_finder* ff )
 ff_data::~ff_data() {
   // Delete dynamically created objects
   delete nest_;
-
-  // Delete children data nodes. Calling clear() on children_ 
-  // object also calls each elements destructor.
-  children_.clear();
+  nest_ = NULL;
 }
 
 #ifdef MULTITHREAD
@@ -60,7 +57,7 @@ void ff_data::operator()() {
   if( subdim_ > 0 ) ff_ -> find( *this );
  
   // Call go_up() only if this branch has ended
-  if( status_ != INTERNAL ) ff_ -> go_up( *this );
+  if( status_ != INTERNAL || subdim_ > 0 ) ff_ -> go_up( *this );
 }
 #endif
 
@@ -253,7 +250,7 @@ void ff_data::eraseChild( long eig ) {
  */
 void ff_data::eraseChild( int idx ) {
   delete children_[ idx ];                  // Call destructor
-  //children_[ idx ] = NULL;                  // Set value to null
+  children_[ idx ] = NULL;                  // Set value to null
   completedChildren_[ idx ] = DESTROYED;    // Update child status
 }
 
@@ -283,8 +280,8 @@ void ff_data::setEigenvalue( long eig ) {
 void ff_data::numChildren( int size ) {
   numChildren_ = size;
 
-  //children_.resize( size, NULL );
-  children_.reserve( size );
+  children_.resize( size, NULL );
+  //children_.reserve( size );
   completedChildren_.resize( size, NOT_COMPLETE );
 }
 
