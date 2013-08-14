@@ -62,7 +62,6 @@ void ff_data::operator()() {
   if( subdim_ > 0 ) ff_ -> find( *this );
 
   // Call go_up() only if this branch has ended
-  ECLOG(0) << "child->status=" << child->status_ << " child->subdim=" << child->subdim_ << endl;
   if( status_ != INTERNAL || subdim_ == 0 ) ff_ -> go_up( *this );
 
 #ifdef ECLIB_MULTITHREAD_DEBUG
