@@ -25,7 +25,7 @@
 
 #define USE_SPARSE 1
 #define NUM_THREADS 4
-//#undef MULTITHREAD
+#include <eclib/logger.h>
 #include <eclib/xsplit.h>
 
 #include <eclib/smatrix_elim.h>
@@ -39,6 +39,8 @@ form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int du
 :h(hh), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v), 
  maxdepth(maxd), mindepth(mind), gnfcount(0)
 {
+  eclogger::setLevel( verbose );
+
   denom1 = h->matden();
   dimen  = h->matdim();
  
@@ -81,9 +83,9 @@ void form_finder::make_submat( ff_data &data ) {
     
     if( depth == 0 ) data.submat_ = data.the_opmat_;
     else {
-	    if( verbose > 1 ) cout << "restricting the_opmat to subspace..." << flush;
+	    ECLOG(1) << "restricting the_opmat to subspace...";
 	    data.submat_ = restrict_mat(data.the_opmat_,*(data.nest_));
-	    if( verbose > 1 ) cout << "done." << endl;
+	    ECLOG(1) << "done." << endl;
 	  }
       
     data.the_opmat_ = smat(0,0); // releases its space
@@ -107,9 +109,6 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   // Cache current depth
   long depth = data.depth_;
 
-  if( verbose > 1 ) cout << "Increasing depth to " << depth+1 << ", "
-                         << "trying eig = " << eig << "..." << flush;
-
   // Locate required child w.r.t test eigenvalue
   ff_data *child = data.child( eig ); 
 
@@ -117,15 +116,22 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   child -> depth_ = depth + 1;
    
   SCALAR eig2 = eig*denom1;
-  if( verbose > 1 ) cout << "after scaling, eig =  " << eig2 << "..." << flush;
+
+  ECLOG(1) << "Increasing depth to " << depth+1 << ", "
+           << "trying eig = " << eig << "..."
+           << "after scaling, eig =  " << eig2 << "..." << endl;
   // if(depth) eig2*= denom(*nest[depth]); // else latter is 1 anyway
   //                        ^ data.nest_
   ssubspace s(0);
 
-  if(verbose>1) cout << "Using sparse elimination (size = "
-                     << dim(data.submat_) << ", density ="
-		                 << density(data.submat_) << ")..." << flush;
-  if(verbose>3) cout << "submat = " << data.submat_ << flush;
+  vector<int> submat_dim = dim(data.submat_);
+  stringstream submat_dim_ss;
+  std::copy(submat_dim.begin(),submat_dim.end(),ostream_iterator<int>(submat_dim_ss," "));
+
+  ECLOG(1) << "Using sparse elimination (size = [ "
+                     << submat_dim_ss.str() << "], density ="
+		                 << density(data.submat_) << ")..." << endl;
+  ECLOG(3) << "submat = " << data.submat_ << flush;
 
   s = eigenspace(data.submat_,eig2);
 
@@ -134,33 +140,30 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 
   // Reset current submat if all children have used it
   // Save space (will recompute when needed)
-  if(    ( depth == 0 )
-      && ( dim(s) > 0 )
-      && ( nrows(data.submat_) > 1000 )
-      && ( data.submatUsage_ == data.numChildren_ ) ) {
-    data.submat_ = smat(0,0); 
-  }
+  //if(    ( depth == 0 )
+  //    && ( dim(s) > 0 )
+  //    && ( nrows(data.submat_) > 1000 )
+  //    && ( data.submatUsage_ == data.numChildren_ ) ) {
+  //  data.submat_ = smat(0,0); 
+  //}
 
-  if(verbose>1) cout << "done (dim = " << dim(s) << "), combining subspaces..." << flush;
+  ECLOG(1) << "done (dim = " << dim(s) << "), combining subspaces..." << flush;
   
   if( depth == 0 ) child -> nest_ = new ssubspace(s);
   else             child -> nest_ = new ssubspace(combine( *(data.nest_),s ));
   
-  if(verbose>1) cout << "done." << endl;
+  ECLOG(1) << "done." << endl;
   
-  // Local depth increment (does not effect data nodes)
-  depth++;
+  depth++; // Local depth increment (does not effect data nodes)
 
   child -> subdim_ = dim( *(child -> nest_) );
 
-  if(verbose>1) {
-    cout << "Eigenvalue " << eig 
-         << " has multiplicity " << child -> subdim_ << endl;
-  }
-  if(verbose && (child -> subdim_>0)) {
-    cout << " eig " << eig 
-         << " gives new subspace at depth " << depth
-         << " of dimension " << child -> subdim_ << endl;
+  ECLOG(1) << "Eigenvalue " << eig 
+           << " has multiplicity " << child -> subdim_ << endl;
+  if(child -> subdim_>0) {
+    ECLOG(0) << " eig " << eig 
+             << " gives new subspace at depth " << depth
+             << " of dimension " << child -> subdim_ << endl;
   }
 }
 
@@ -171,16 +174,26 @@ void form_finder::go_up( ff_data &data ) {
 #ifdef MULTITHREAD
   // Lock parent node with scoped lock 
   boost::mutex::scoped_lock lock( parent -> go_up_lock_ );
+#ifdef ECLIB_MULTITHREAD_DEBUG
+  ECLOG(1) <<"in go_up for eig="<<data.eigenvalue_<<" depth="<<data.depth_<<" status="<<data.status_<<std::endl;
 #endif
+#endif
+
+  long eig=data.eigenvalue_;
 
   // Erasing node via children array of parent which calls destructor
   // of object (ff_data), using eigenvalue as key
   parent -> childStatus( data.eigenvalue_, COMPLETE );
   parent -> eraseChild( data.eigenvalue_ );
 
+#ifdef MULTITHREAD
   // Only last child to complete will execute the following
   // Detects if parent is root node
-  if( parent -> complete() && parent -> parent_ != NULL ) go_up( *parent );
+  if( parent -> complete() && parent -> parent_ != NULL ) {
+    lock.unlock();
+    go_up( *parent );
+  }
+#endif
 }
 
 void form_finder::make_basis( ff_data &data ) {
@@ -389,22 +402,23 @@ void form_finder::find( ff_data &data ) {
   vector< long > eiglist = data.eiglist();
 
   vector<long> subeiglist(eiglist.begin(),eiglist.begin()+depth);
- 
-  if(verbose) cout << "In formfinder, depth = " << depth 
-                   << ", aplist = " << subeiglist << ";\t";
 
-  int dimold = h->dimoldpart(subeiglist);
  
-  if(verbose) cout << "dimsofar=" << subdim
-                   << ", dimold=" << dimold
-                   << ", dimnew=" << subdim-dimold << "\n";
+  int dimold = h->dimoldpart(subeiglist);
+
+  stringstream subeiglist_ss;
+  std::copy(subeiglist.begin(),subeiglist.end(),ostream_iterator<long>(subeiglist_ss," "));
+
+  ECLOG(0) << "In formfinder, depth = " << depth 
+           << ", aplist = [ " << subeiglist_ss.str() << "];\t"
+           << "dimsofar=" << subdim
+           << ", dimold=" << dimold
+           << ", dimnew=" << subdim-dimold << "\n";
  
   if( dimold == subdim ) {
     data.setStatus( ALL_OLD );     // Set status of current node
-    if(verbose) {
-      cout << "Abandoning a common eigenspace of dimension " << subdim;
-      cout << " which is a sum of oldclasses." << endl;
-    }
+    ECLOG(0) << "Abandoning a common eigenspace of dimension " << subdim
+             << " which is a sum of oldclasses." << endl;
     return;   // This branch of the recursion ends: all is old
   }
 
@@ -434,14 +448,17 @@ void form_finder::find( ff_data &data ) {
   vector<long> t_eigs = h->eigrange(depth);
   vector<long>::const_iterator apvar = t_eigs.begin();
 
-  if(verbose) cout << "Testing eigenvalues " << t_eigs 
-                   << " at level " << (depth+1) << endl;
+  stringstream t_eigs_ss;
+  std::copy(t_eigs.begin(),t_eigs.end(),ostream_iterator<long>(t_eigs_ss," "));
+
+  ECLOG(0) << "Testing eigenvalues [ " << t_eigs_ss.str() 
+           << "] at level " << (depth+1) << endl;
 
   // Set children counter
   data.numChildren( t_eigs.size() );
 
   while( apvar != t_eigs.end() ) { 
-    if( verbose > 1 ) cout << "Going down with ap = " << (*apvar) <<endl;
+    ECLOG(1) << "Going down with ap = " << (*apvar) <<endl;
     long eig = *apvar++;
 
     // Initiate new data node, passing a constant reference of the current 
@@ -467,13 +484,12 @@ void form_finder::find( ff_data &data ) {
     // We pass new child node to find() 
     if( child -> subdim_ > 0 ) find( *child );
 
-    // Only go_up() if current node is end of branch
-    if( child -> status_ != INTERNAL || child -> subdim_ == 0 ) go_up( *child );
+    go_up( *child );
 #endif
   }  
 
 #ifndef MULTITHREAD
-  if(verbose) cout << "Finished at level " << (depth+1) << endl;
+  ECLOG(0) << "Finished at level " << (depth+1) << endl;
 #endif
 }
 
@@ -492,8 +508,7 @@ void form_finder::store(vec bp, vec bm, vector<long> eigs) {
   gnfcount++;
 
   // Inform about newform count
-  if(verbose) 
-    cout << "Current newform subtotal count at " << gnfcount << endl;
+  ECLOG(0) << "Current newform subtotal count at " << gnfcount << endl;
 }
 
 #if (METHOD==2)

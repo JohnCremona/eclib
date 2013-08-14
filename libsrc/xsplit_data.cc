@@ -5,6 +5,7 @@
  */
 
 // Include headers
+#include "eclib/logger.h"
 #include "eclib/xsplit_data.h"
 #include "eclib/xsplit.h"
 
@@ -53,11 +54,20 @@ void ff_data::operator()() {
   // to keep interface consistent with original.
   ff_ -> go_down( *(this->parent_), eigenvalue_, 0 );
 
+#ifdef ECLIB_MULTITHREAD_DEBUG
+  ECLOG(1) << "Executing node (eig=" << eigenvalue_ << " depth=" <<depth_ << ")" << endl;
+#endif
+
   // Call find() on current node
   if( subdim_ > 0 ) ff_ -> find( *this );
- 
+
   // Call go_up() only if this branch has ended
-  if( status_ != INTERNAL || subdim_ > 0 ) ff_ -> go_up( *this );
+  ECLOG(0) << "child->status=" << child->status_ << " child->subdim=" << child->subdim_ << endl;
+  if( status_ != INTERNAL || subdim_ == 0 ) ff_ -> go_up( *this );
+
+#ifdef ECLIB_MULTITHREAD_DEBUG
+  ECLOG(1) << "Completed node (eig=" << eigenvalue_ << " depth=" <<depth_ << " status=" << status_ << ")" << endl;
+#endif
 }
 #endif
 
@@ -200,6 +210,11 @@ void ff_data::increaseSubmatUsage() {
   boost::mutex::scoped_lock lock( submat_lock_ );
 #endif
 
+#ifdef ECLIB_MULTITHREAD_DEBUG
+  ECLOG(2) << "Increasing submat usage from " << submatUsage_ << " to " << submatUsage_+1 
+           << " for node eig=" << eigenvalue_ << " depth=" << depth_ << endl;
+#endif
+
   ++submatUsage_;
 }
 
@@ -229,9 +244,9 @@ void ff_data::storeBminus( vec bm ) {
  * Adds a new data node to the children vector.
  */
 void ff_data::addChild( long eig, ff_data &child ) {
-  child.setParent( this );                // Set parent
-  child.setEigenvalue( eig );             // Set eigenvalue
-  children_[map(eig)] = &child;           // Add to vector
+  child.setParent( this ); 
+  child.setEigenvalue( eig );
+  children_[map(eig)] = &child;
 }
 
 /**
@@ -249,9 +264,14 @@ void ff_data::eraseChild( long eig ) {
  * Overloaded method. Main method for destroying children.
  */
 void ff_data::eraseChild( int idx ) {
-  delete children_[ idx ];                  // Call destructor
-  children_[ idx ] = NULL;                  // Set value to null
-  completedChildren_[ idx ] = DESTROYED;    // Update child status
+#ifdef ECLIB_MULTITHREAD_DEBUG
+  ECLOG(2) << "Deleting node (eig=" << children_[idx]->eigenvalue_ 
+           << " depth=" << depth_+1 << " status=" << children_[idx]->status_ << ")" << endl;
+#endif
+
+  delete children_[ idx ];
+  children_[ idx ] = NULL;
+  completedChildren_[ idx ] = DESTROYED;
 }
 
 /**
@@ -281,7 +301,6 @@ void ff_data::numChildren( int size ) {
   numChildren_ = size;
 
   children_.resize( size, NULL );
-  //children_.reserve( size );
   completedChildren_.resize( size, NOT_COMPLETE );
 }
 
@@ -320,7 +339,7 @@ int ff_data::map( long eig ) {
   if( numChildren_ == 2 ) {
     return ( eig == 1 ) ? eig : 0;
   } else {
-    return eig + ( numChildren_ - 1 ) / 2;
+    return eig + ( numChildren_ - 1 ) * 0.5;
   }
 }
 

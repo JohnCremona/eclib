@@ -24,6 +24,8 @@
 #if     !defined(_XSPLIT_H)
 #define _XSPLIT_H      1       //flags that this file has been included
 
+//#undef MULTITHREAD
+
 // MULTITHREAD defined by Autotools
 #ifdef MULTITHREAD 
 #include <boost/thread/mutex.hpp>
