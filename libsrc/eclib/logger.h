@@ -15,6 +15,7 @@
 // Include headers
 #include <iostream>
 #include <iomanip>
+#include <cstdio>
 #include <sstream>
 
 #ifdef MULTITHREAD
