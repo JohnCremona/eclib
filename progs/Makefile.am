@@ -62,7 +62,7 @@ check_qrank: qrank_progs
 
 ################ G0N (modular symbols programs) #################
 
-G0N_PROGS = ecnf nfhpcurve nfhpcurve_prof nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist
+G0N_PROGS = ecnf nfhpcurve nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist
 G0N_PROGS_SUFFIXED = $(G0N_PROGS:=$(EXEEXT))
 g0n_progs: $(G0N_PROGS_SUFFIXED)
 
@@ -70,7 +70,6 @@ h1bsd_SOURCES=h1bsd.cc
 h1curve_SOURCES=h1curve.cc
 pcurve_SOURCES=pcurve.cc
 nfhpcurve_SOURCES=nfhpcurve.cc
-nfhpcurve_prof_SOURCES=nfhpcurve_prof.cc
 nfhpmcurve_SOURCES=nfhpmcurve.cc
 h1clist_SOURCES=h1clist.cc
 checkap_SOURCES=checkap.cc
