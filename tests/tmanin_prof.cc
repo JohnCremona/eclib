@@ -9,36 +9,34 @@
 #include <eclib/cperiods.h>
 #include <eclib/newforms.h>
 
-#define AUTOLOOP
 #define LMFDB_ORDER       
 
 int main( int argc, char** argv ) {
 
-  long n, stopp, limit; 
-  int output=1, verbose, sign=1, cuspidal=0, noldap=25;
+  long n, stopp=25, limit; 
+  int output=1, verbose=0, sign=1, cuspidal=0, noldap=25;
 
   cout << "Program tmanin_prof.  Using METHOD = " << METHOD << " to find newforms" << endl;
 #ifdef MODULAR
   cout << "MODULUS for linear algebra = " << MODULUS << endl;
 #endif
-  cout << "Verbose output? "; cin>>verbose;
-  cout << "How many primes for Hecke eigenvalues? ";
-  cin  >> stopp; cout << endl;
-  cout << "Output Hecke eigenvalues to file? (0/1) ";  cin >> output;
-  cout << "Sign? (-1/0/1) ";  cin >> sign;
 
-  cout<<"Enter first and last N: ";cin>>n>>limit;
+  if( argc > 2 ) {
+    n     = atoi( argv[1] );
+    limit = atoi( argv[2] );
+  } else {
+    cout<<"Enter first and last N: ";cin>>n>>limit;
+  }
 
-  if( n <= 0 ) {
-    cout << "Invalid level" << endl;
+  if( n <= 0 || limit < n ) {
+    cout << "Invalid levels" << endl;
     exit( EXIT_FAILURE );
   }
 
   // Start timer
   stringstream s;
   s << "tmanin_runtimes-" << n << "-" << limit << ".dat";
-  string filename = s.str();
-  timer profile(filename);
+  timer profile(s.str());
   profile.add("createfromscratch");
 
   for( long level = n; level <= limit; level++ ) {  
