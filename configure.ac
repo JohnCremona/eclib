@@ -21,7 +21,7 @@ AC_PROG_LIBTOOL
 
 # Checks for system features and libraries, via macros defined in m4/ directory
 AX_CXX_COMPILE_STDCXX_0X
-AX_CXX_COMPILE_STDCXX_11([],[optional])
+#AX_CXX_COMPILE_STDCXX_11([],[optional])
 AX_CXX_HEADER_TR1_UNORDERED_MAP
 AX_CXX_HEADER_UNORDERED_MAP
 
