@@ -24,7 +24,7 @@
 #include <unistd.h>  // for unlink() (not needed on linux)
 
 #define USE_SPARSE 1
-#define NUM_THREADS 4
+#define ECLIB_INT_NUM_THREADS 15
 #include <eclib/logger.h>
 #include <eclib/xsplit.h>
 
@@ -372,9 +372,18 @@ void form_finder::splitoff(const vector<long>& eigs) {
 
 void form_finder::find() {
 #ifdef MULTITHREAD
+  // Set number of threads to use either through default
+  // ECLIB_INT_NUM_THREADS macro defined above, or
+  // ECLIB_EXT_NUM_THREADS environment variable.
+  unsigned int eclib_num_threads = ECLIB_INT_NUM_THREADS;
+
+  stringstream s;
+  s << getenv("ECLIB_EXT_NUM_THREADS");
+  if( !s.str().empty() ) eclib_num_threads = atoi(s.str().c_str());
+
   // Start job queue. We keep job queue local to ensure threads are 
   // not kept busy for longer than necessary.
-  pool.start( NUM_THREADS, verbose );
+  pool.start( eclib_num_threads, verbose );
 #endif
 
   // Proceed in recursive find, passing a node through
