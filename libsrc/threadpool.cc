@@ -1,7 +1,7 @@
 /**
  * threadpool.cc
  *
- * Simple, no-frills threadpool for C++11 threads or Boost threads.
+ * Simple, no-frills threadpool for Boost threads.
  * Some features have been made available specifically for ECLIB.
  *
  * These include use of verbosity level in constructor, to be 
@@ -59,7 +59,6 @@ void threadpool::start( unsigned int numThreads, int verbose ) {
   // Store maximum number of threads system can support
   maxThreads_ = boost::thread::hardware_concurrency();
 
-  
   // Store actual number of threads to be used.
   // If not specified, we use the system limit.
   threadCount_ = ( numThreads > 0 ) ? numThreads : maxThreads_;
@@ -81,7 +80,7 @@ void threadpool::start( unsigned int numThreads, int verbose ) {
                            << maxThreads_ << " threads." << std::endl;
 
   // Create threads and add to threadpool
-  for( unsigned int i = 0; i < threadCount_; i++  ) {
+  for( unsigned int i = 0; i < threadCount_-1; i++  ) {
     threads_.create_thread( boost::bind( &boost::asio::io_service::run, &io_service_ ) );
   }
 }
