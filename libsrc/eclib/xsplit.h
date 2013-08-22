@@ -24,17 +24,17 @@
 #if     !defined(_XSPLIT_H)
 #define _XSPLIT_H      1       //flags that this file has been included
 
-//#undef MULTITHREAD
+//#undef ECLIB_MULTITHREAD
 
-// MULTITHREAD defined by Autotools
-#ifdef MULTITHREAD 
+// ECLIB_MULTITHREAD defined by Autotools
+#ifdef ECLIB_MULTITHREAD 
 #include <boost/thread/mutex.hpp>
 #endif
 
 #include "method.h"  // #defines form_finder=form_finder0/1/2/3/4
 #include "splitbase.h"
 #include "xsplit_data.h"
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
 #include "threadpool.h"
 #endif
 
@@ -90,7 +90,7 @@ class form_finder {
     void make_basis(ff_data &data);
     vec  getbasis1(const ssubspace* s);       // Assuming dim(s)=1, get basis vector
 
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
     threadpool   pool;                        // Job queue
     boost::mutex store_lock;                  // Lock for store() function
 #endif

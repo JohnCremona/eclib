@@ -13,7 +13,7 @@
 #include <cassert>
 #include <vector>
 
-#ifdef MULTITHREAD 
+#ifdef ECLIB_MULTITHREAD 
 #include <boost/thread/mutex.hpp>
 #endif
 
@@ -40,7 +40,7 @@ class ff_data {
     ff_data( form_finder* ff );
     ~ff_data();
 
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
     void operator()();                              // Executed upon submission to job queue
 #endif
 
@@ -102,7 +102,7 @@ class ff_data {
     vector<childstatus> completedChildren_;  // Flags for child completion
     int                 submatUsage_;        // Counter for submat
 
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
     boost::mutex        childComplete_lock_; // Lock for completed children
     boost::mutex        submat_lock_;        // Lock for submat usage
     boost::mutex        go_up_lock_;         // Lock for go_up() method    

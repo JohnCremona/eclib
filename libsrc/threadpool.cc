@@ -12,7 +12,7 @@
  */
 
 // Compile this only if Boost is installed
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
 
 // Include header files
 #include "eclib/threadpool.h"
@@ -132,4 +132,4 @@ unsigned int threadpool::getMaxThreads() {
   return maxThreads_;
 }
 
-#endif // MULTITHREAD
+#endif // ECLIB_MULTITHREAD

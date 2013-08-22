@@ -51,7 +51,7 @@ void eclogger::setLevel( const int verbose ) {
  * Returns stream object.
  */
 std::ostringstream& eclogger::stream() {
-#if defined(MULTITHREAD) && defined(ECLIB_MULTITHREAD_DEBUG)
+#if defined(ECLIB_MULTITHREAD) && defined(ECLIB_MULTITHREAD_DEBUG)
   s << "Thread " << boost::this_thread::get_id() << "\t"; 
 #endif
 

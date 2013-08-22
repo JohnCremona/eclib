@@ -41,7 +41,7 @@ ff_data::~ff_data() {
   nest_ = NULL;
 }
 
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
 /**
  * operator()
  *
@@ -205,7 +205,7 @@ void ff_data::decreaseDepth( long delta ) {
  * Locked counter increment method.
  */
 void ff_data::increaseSubmatUsage() {
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
   boost::mutex::scoped_lock lock( submat_lock_ );
 #endif
 
@@ -310,7 +310,7 @@ void ff_data::numChildren( int size ) {
  * Monitors how many of a nodes children have completed.
  */
 void ff_data::childStatus( long eig, childstatus flag ) {
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
   boost::mutex::scoped_lock lock( childComplete_lock_ );
 #endif
 

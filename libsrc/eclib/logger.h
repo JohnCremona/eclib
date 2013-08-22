@@ -18,7 +18,7 @@
 #include <cstdio>
 #include <sstream>
 
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
 #include <boost/thread/thread.hpp>
 
 // Uncomment if multithreading debug messages required

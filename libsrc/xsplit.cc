@@ -171,7 +171,7 @@ void form_finder::go_up( ff_data &data ) {
   // Cache pointer to parent data node for access after current node is deleted
   ff_data *parent = data.parent_;
 
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
   // Lock parent node with scoped lock 
   boost::mutex::scoped_lock lock( parent -> go_up_lock_ );
 #ifdef ECLIB_MULTITHREAD_DEBUG
@@ -186,7 +186,7 @@ void form_finder::go_up( ff_data &data ) {
   parent -> childStatus( data.eigenvalue_, COMPLETE );
   parent -> eraseChild( data.eigenvalue_ );
 
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
   // Only last child to complete will execute the following
   // Detects if parent is root node
   if( parent -> complete() && parent -> parent_ != NULL ) {
@@ -371,7 +371,7 @@ void form_finder::splitoff(const vector<long>& eigs) {
 }
 
 void form_finder::find() {
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
   // Set number of threads to use either through default
   // ECLIB_INT_NUM_THREADS macro defined above, or
   // ECLIB_EXT_NUM_THREADS environment variable.
@@ -391,7 +391,7 @@ void form_finder::find() {
   current = root;
   find( *current );
   
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
   // Join all threads in threadpool to wait for all jobs to finish
   // Or detect when all branches of the tree has been traversed
   pool.close();
@@ -477,7 +477,7 @@ void form_finder::find( ff_data &data ) {
     // Configure data node ancestry
     data.addChild( eig, *child );
 
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
     // Post newly created child node to threadpool
     pool.post< ff_data >( *child );
 
@@ -497,13 +497,13 @@ void form_finder::find( ff_data &data ) {
 #endif
   }  
 
-#ifndef MULTITHREAD
+#ifndef ECLIB_MULTITHREAD
   ECLOG(0) << "Finished at level " << (depth+1) << endl;
 #endif
 }
 
 void form_finder::store(vec bp, vec bm, vector<long> eigs) {
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
   // Lock function
   boost::mutex::scoped_lock lock( store_lock );
 #endif

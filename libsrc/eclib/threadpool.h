@@ -6,7 +6,7 @@
  */
 
 // Include only if Boost installed
-#ifdef MULTITHREAD
+#ifdef ECLIB_MULTITHREAD
 
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
@@ -64,4 +64,4 @@ class threadpool {
 
 #endif // THREADPOOL_H
 
-#endif // MULTITHREAD
+#endif // ECLIB_MULTITHREAD

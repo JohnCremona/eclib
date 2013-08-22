@@ -34,7 +34,7 @@ if test "$ax_cv_boost" = "yes"; then
   if test "$ax_cv_boost_system" = "yes"; then
     if test "$ax_cv_boost_asio" = "yes"; then
       if test "$ax_cv_boost_thread" = "yes"; then
-        AC_DEFINE([MULTITHREAD],[1],[Define if multithreading available and requested])
+        AC_DEFINE([ECLIB_MULTITHREAD],[1],[Define if multithreading available and requested])
       fi
     fi
   fi
