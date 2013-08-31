@@ -75,9 +75,9 @@ void threadpool::start( unsigned int numThreads, int verbose ) {
   }
 
   // Declare the final number of threads to be used
-  if( verbose_ ) std::cout << "Threadpool will be using " << threadCount_ 
-                           << " threads from a total of " 
-                           << maxThreads_ << " threads." << std::endl;
+  if( verbose_ > 1 ) std::cout << "Threadpool will be using " << threadCount_ 
+                               << " threads from a total of " 
+                               << maxThreads_ << " threads." << std::endl;
 
   // Create threads and add to threadpool
   for( unsigned int i = 0; i < threadCount_-1; i++  ) {

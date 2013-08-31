@@ -25,6 +25,7 @@
 
 #define USE_SPARSE 1
 #define ECLIB_INT_NUM_THREADS 15
+#define ECLIB_RECURSION_DIM_LIMIT 5821
 #include <eclib/logger.h>
 #include <eclib/xsplit.h>
 
@@ -323,8 +324,6 @@ void form_finder::splitoff(const vector<long>& eigs) {
          << ", dimension " << subdim << endl;
   }
  
-  cout << "Num children of root = "<<current->numChildren_<<endl;
-  
   // Walk down nodes (if any already created) for common branches
   while( current -> numChildren_ > 0
       && current -> children_[eigs[depth]] != NULL ) {
@@ -483,14 +482,16 @@ void form_finder::find( ff_data &data ) {
     data.addChild( eig, *child );
 
 #ifdef ECLIB_MULTITHREAD
-    // Post newly created child node to threadpool
-    pool.post< ff_data >( *child );
-
-    // Include following when controlling depth of parallelisation
-    // work in serial instead ... no point adding to job queue
-    //go_down(data,eig,apvar==t_eigs.end());
-    //if( child -> subdim_ > 0 ) find( *child );
-    //if( data.status_ != INTERNAL ) go_up( *child );
+    //if( data.subdim_ > ECLIB_RECURSION_DIM_LIMIT ) {
+      // Post newly created child node to threadpool
+      pool.post< ff_data >( *child );
+    //}
+    //else {
+      // Parallel granularity control. Continue in serial.
+      //go_down( data, eig, apvar==t_eigs.end() );
+      //if( child -> subdim_ > 0 ) find( *child );
+      //go_up( *child );
+    //}
 #else   
     // Pass through current data node and new test eigenvalue to go_down()
     go_down( data, eig, apvar==t_eigs.end() );

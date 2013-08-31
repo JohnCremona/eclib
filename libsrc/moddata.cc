@@ -151,8 +151,8 @@ string of_filename(long n, char c)
 {
   stringstream s;
   s << getenv("OF_DIR");
-  if (s.str().empty()) {s.clear(); s<<"./newforms";}
-  s  << "/" << c << n;
+  if (s.str().empty()) {s.clear(); s<<nf_filename(n,c);}
+  else { s  << "/" << c << n; }
   return s.str();
 }
 
