@@ -81,7 +81,6 @@ class form_finder {
     vector<string> opfilenames;               // Temp filenames
    
     ff_data* root;                            // Always points to root data node
-    ff_data* current;
     
     void make_opmat(long i, ff_data &data);   // Puts it in the_opmat
     void make_submat(ff_data &data);

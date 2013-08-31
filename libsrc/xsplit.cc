@@ -312,7 +312,7 @@ void form_finder::recover(vector< vector<long> > eigs) {
 void form_finder::splitoff(const vector<long>& eigs) {
 
   // Always start at root node
-  current = root;
+  ff_data *current = root;
 
   // Temporary variables
   long depth  = current -> depth_;
@@ -322,24 +322,24 @@ void form_finder::splitoff(const vector<long>& eigs) {
     cout << "Entering form_finder, depth = " << depth 
          << ", dimension " << subdim << endl;
   }
-
+ 
+  cout << "Num children of root = "<<current->numChildren_<<endl;
+  
   // Walk down nodes (if any already created) for common branches
-  while( current -> children_[eigs[depth]] != NULL ) {
+  while( current -> numChildren_ > 0
+      && current -> children_[eigs[depth]] != NULL ) {
     // Update current node pointer
     current = current -> children_[eigs[depth]];
 
-    // Update new depth (should always be depth+1)
-    depth = current -> depth_;
-
-    // Update new subdimension
+    // Update data
+    depth  = current -> depth_;
     subdim = current -> subdim_;
   }
-
+  
   // Current node is new branch point
   // We want to trim old branches to save memory ...
-  // (calling clear also calls destructor on objects)
-  current -> children_.clear(); 
-
+  current -> eraseCompletedChildren();
+  
   if( verbose ) {
     cout << "restarting at depth = " << depth << ", "
          << "dimension " << subdim << endl;
@@ -347,25 +347,33 @@ void form_finder::splitoff(const vector<long>& eigs) {
   
   // ... and grow a new branch down to required depth.
   while( (subdim > targetdim) && (depth < maxdepth) ) {
+    // Get number of test eigenvalues
+    if( current -> numChildren_ <= 0 ) {
+      vector<long> t_eigs = h->eigrange(depth);
+      current -> numChildren( t_eigs.size() );
+    }
+
     // Create new child node
     ff_data *child = new ff_data( this );
-
+    
     // Configure data node ancestry
     current -> addChild( eigs[depth], *child );
-
+ 
+    // Create submat for current node
+    make_submat( *current );
+    
     // Proceed to go down
     go_down(*current,eigs[depth],1);
 
-    // Cache new values
-    depth  = current -> depth_;
-    subdim = current -> subdim_;
+    // Update to new values
+    current = child;
+    depth   = current -> depth_;
+    subdim  = current -> subdim_;
   }
 
   // Creating newforms
-  // No need to call store() first since
-  // we call this function in serial
   make_basis(*current);
-  h->use(current -> bplus_,current -> bminus_,eigs); 
+  h->use(current->bplus_,current->bminus_,eigs); 
   
   return;
 }
@@ -387,9 +395,7 @@ void form_finder::find() {
 #endif
 
   // Proceed in recursive find, passing a node through
-  //find( *root );
-  current = root;
-  find( *current );
+  find( *root );
   
 #ifdef ECLIB_MULTITHREAD
   // Join all threads in threadpool to wait for all jobs to finish
@@ -412,7 +418,6 @@ void form_finder::find( ff_data &data ) {
 
   vector<long> subeiglist(eiglist.begin(),eiglist.begin()+depth);
 
- 
   int dimold = h->dimoldpart(subeiglist);
 
   stringstream subeiglist_ss;

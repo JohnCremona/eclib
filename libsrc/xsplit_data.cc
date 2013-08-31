@@ -25,7 +25,8 @@ ff_data::ff_data( form_finder* ff )
     nest_( NULL ),
     conjmat_( NULL ),
     the_opmat_( NULL ),
-    parent_( NULL ) {}
+    parent_( NULL ),
+    numChildren_( 0 ) {}
 
 /**
  * ~ff_data()
@@ -323,8 +324,10 @@ void ff_data::childStatus( long eig, childstatus flag ) {
  * Loops through containers and destroying completed children.
  */
 void ff_data::eraseCompletedChildren() {
-  for( int i = 0; i < numChildren_; i++ ) {
-    if( completedChildren_[i] == COMPLETE ) eraseChild( i );
+  if( numChildren_ > 0 ) {
+    for( int i = 0; i < numChildren_; i++ ) {
+      if( completedChildren_[i] == COMPLETE ) eraseChild( i );
+    }
   }
 }
 
