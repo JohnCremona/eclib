@@ -24,7 +24,7 @@
 #include <unistd.h>  // for unlink() (not needed on linux)
 
 #define USE_SPARSE 1
-#define ECLIB_INT_NUM_THREADS 15
+#define ECLIB_INT_NUM_THREADS 8
 #define ECLIB_RECURSION_DIM_LIMIT 5821
 #include <eclib/logger.h>
 #include <eclib/xsplit.h>
