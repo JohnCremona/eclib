@@ -176,11 +176,11 @@ void form_finder::go_up( ff_data &data ) {
   // Lock parent node with scoped lock 
   boost::mutex::scoped_lock lock( parent -> go_up_lock_ );
 #ifdef ECLIB_MULTITHREAD_DEBUG
-  ECLOG(1) <<"in go_up for eig="<<data.eigenvalue_<<" depth="<<data.depth_<<" status="<<data.status_<<std::endl;
+  ECLOG(1) << "in go_up for eig=" << data.eigenvalue_ 
+           << " depth=" << data.depth_
+           <<" status=" << data.status_ << std::endl;
 #endif
 #endif
-
-  long eig=data.eigenvalue_;
 
   // Erasing node via children array of parent which calls destructor
   // of object (ff_data), using eigenvalue as key
@@ -188,12 +188,10 @@ void form_finder::go_up( ff_data &data ) {
   parent -> eraseChild( data.eigenvalue_ );
 
 #ifdef ECLIB_MULTITHREAD
-  // Only last child to complete will execute the following
-  // Detects if parent is root node
-  if( parent -> complete() && parent -> parent_ != NULL ) {
-    lock.unlock();
-    go_up( *parent );
-  }
+  lock.unlock();
+  
+  // Only last child to complete will execute the following (Detects if parent is root node)
+  if( parent -> complete() && parent -> parent_ != NULL ) go_up( *parent );
 #endif
 }
 
@@ -483,16 +481,16 @@ void form_finder::find( ff_data &data ) {
     data.addChild( eig, *child );
 
 #ifdef ECLIB_MULTITHREAD
-    //if( data.subdim_ > ECLIB_RECURSION_DIM_LIMIT ) {
+    if( data.subdim_ > ECLIB_RECURSION_DIM_LIMIT ) {
       // Post newly created child node to threadpool
       pool.post< ff_data >( *child );
-    //}
-    //else {
+    }
+    else {
       // Parallel granularity control. Continue in serial.
-      //go_down( data, eig, apvar==t_eigs.end() );
-      //if( child -> subdim_ > 0 ) find( *child );
-      //go_up( *child );
-    //}
+      go_down( data, eig, apvar==t_eigs.end() );
+      if( child -> subdim_ > 0 ) find( *child );
+      //if( child -> status_ != INTERNAL || child -> subdim_ == 0 ) go_up( *child );
+    }
 #else   
     // Pass through current data node and new test eigenvalue to go_down()
     go_down( data, eig, apvar==t_eigs.end() );
