@@ -18,6 +18,9 @@
 #include <cstdio>
 #include <sstream>
 
+// Disable multithreading
+// #undef ECLIB_MULTITHREAD
+
 #ifdef ECLIB_MULTITHREAD
 #include <boost/thread/thread.hpp>
 

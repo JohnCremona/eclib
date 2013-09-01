@@ -24,9 +24,9 @@
 #if     !defined(_XSPLIT_H)
 #define _XSPLIT_H      1       //flags that this file has been included
 
-//#undef ECLIB_MULTITHREAD
+// Disable multithreading
+// #undef ECLIB_MULTITHREAD
 
-// ECLIB_MULTITHREAD defined by Autotools
 #ifdef ECLIB_MULTITHREAD 
 #include <boost/thread/mutex.hpp>
 #endif

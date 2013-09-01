@@ -13,6 +13,9 @@
 #include <cassert>
 #include <vector>
 
+// Disable multithreading
+// #undef ECLIB_MULTITHREAD
+
 #ifdef ECLIB_MULTITHREAD 
 #include <boost/thread/mutex.hpp>
 #endif
