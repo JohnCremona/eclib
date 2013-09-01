@@ -327,8 +327,9 @@ void form_finder::splitoff(const vector<long>& eigs) {
   // Walk down nodes (if any already created) for common branches
   while( current -> numChildren_ > 0
       && current -> children_[eigs[depth]] != NULL ) {
+ 
     // Update current node pointer
-    current = current -> children_[eigs[depth]];
+    current = current -> child(eigs[depth]);
 
     // Update data
     depth  = current -> depth_;
