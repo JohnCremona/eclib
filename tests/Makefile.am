@@ -51,7 +51,6 @@ tcon2_SOURCES=tcon2.cc
 tlegcert_SOURCES=tlegcert.cc
 timing_SOURCES=timing.cc
 threading_SOURCES=threading.cc
-threading_LDFLAGS=${AM_LDFLAGS} -lboost_timer
 
 check_procs: procs_tests
 	@echo Running procs checks...
