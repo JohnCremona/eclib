@@ -286,9 +286,13 @@ if (verbose>1)
    //relmat=smat(0,0); // clear space
    int d1;
    start_time();
-   smat sp = liftmat(sme.kernel(npivs,pivs),MODULUS,d1);
+   smat sp;
+   int ok = liftmat(sme.kernel(npivs,pivs),MODULUS,sp,d1);
    stop_time();
-   if (verbose) {cout<<"time to compute kernel = "; show_time(); cout<<endl;}
+   if (!ok)
+     cout << "**!!!** failed to lift modular kernel of relation matrix\n" << endl;
+   else
+     if (verbose) {cout<<"time to compute kernel = "; show_time(); cout<<endl;}
    denom1=d1;
    if(verbose>1) 
      {
@@ -410,7 +414,10 @@ if (verbose>1)
    kern=kernel(smat(deltamat));
    vec pivs, npivs;
    int d2;
-   smat sk = liftmat(smat_elim(deltamat).kernel(npivs,pivs),MODULUS,d2);
+   smat sk;
+   int ok = liftmat(smat_elim(deltamat).kernel(npivs,pivs),MODULUS,sk,d2);
+   if (!ok)
+     cout << "**!!!** failed to lift modular kernel of delta matrix\n" << endl;
    denom2=d2;
    tkernbas = transpose(kern.bas());         // dim(kern) x rank
    deltamat.init(0); // clear space.

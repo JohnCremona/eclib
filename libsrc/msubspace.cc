@@ -73,8 +73,6 @@ mat_m restrict_mat(const mat_m& m, const msubspace& s)
   for (i=1; (i<=n) && check; i++)
   for (j=1; (j<=d) && check; j++)
     check = (dd*m.row(i)*sb.col(j) == sb.row(i)*ans.col(j));
-//#define BIGPRIME 92681
-//int check = (dd*matmulmodp(m,sb,BIGPRIME) == matmulmodp(sb,ans,BIGPRIME));
   if (!check) 
     {
       cout<<"Error in restrict_mat: msubspace not invariant!\n";

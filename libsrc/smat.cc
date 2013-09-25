@@ -36,7 +36,7 @@ inline scalar xmm0(scalar a, scalar b)
 {
   //return xmodmul(a,b,m);
   //return (a*b) % m;
-  return (a*(int64_t)b) % BIGPRIME;
+  return (a*(int64_t)b) % DEFAULT_MODULUS;
   //return (scalar)(((long)a*(long)b) % (long)m);
 }
 
@@ -890,12 +890,12 @@ smat sidmat(scalar n)  // identity matrix
   return I;
 }
 
-smat liftmat(const smat& mm, scalar pr, scalar& dd, int trace)
+int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace)
 {
   scalar modulus=pr,n,d; long nr,nc; dd=1;
   int succ=0,success=1;
   float lim=floor(sqrt(pr/2.0));
-  smat m = mm;
+  m = mm;
   if(trace)
     {
       cout << "Lifting mod-p smat;  smat mod "<<pr<<" is:\n";
@@ -910,13 +910,66 @@ smat liftmat(const smat& mm, scalar pr, scalar& dd, int trace)
 	success = success && succ;
 	dd=lcm(d,dd);
       }
-  if(!success) 
-    cout << "Problems encountered with modrat lifting of smat." << endl;
+  if(!success)
+    {
+      //cout << "Problems encountered with modrat lifting of smat." << endl;
+      return 0;
+    }
   dd=abs(dd);
   if(trace) cout << "Common denominator = " << dd << "\n";
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
       m.val[nr][nc] = mod(xmm(dd,(m.val[nr][nc]),pr),pr);
   if(trace) cout << "Lifted smat = " << m.as_mat() << "\n";
-  return m;
+  return 1;
+}
+
+//#define DEBUG_CHINESE
+
+int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
+                     smat& m, scalar& dd)
+{
+  long modulus=(long)pr1*(long)pr2,n,d,mij;
+  long nr,nc,u,v;
+  float lim=floor(sqrt(modulus/2.0));
+
+  dd = bezout(pr1,pr2,u,v); //==1
+  if (dd!=1) return 0;
+
+  // First time through: compute CRTs, common denominator and success flag
+  m = m1; // NB We assume that m1 and m2 have nonzero entries in the same places
+  for(nr=0; nr<m1.nro; nr++)
+    for(nc=0; nc<m1.col[nr][0]; nc++)
+      {
+        mij = mod(v*m1.val[nr][nc],pr1)*pr2 + mod(u*m2.val[nr][nc],pr2)*pr1;
+        mij = mod(mij,modulus);
+#ifdef DEBUG_CHINESE
+        if (((mij-m1.val[nr][nc])%pr1)||((mij-m2.val[nr][nc])%pr2))
+          {
+            cout<< "bad CRT(["<<m1.val[nr][nc]<<","<<m2.val[nr][nc]<<"],["<<pr1<<","<<pr2<<"]) = "<<mij<<endl;
+          }
+#endif
+        m.val[nr][nc] = mij;
+	if (modrat(mij,modulus,lim,n,d))
+          dd=lcm(d,dd);
+        else
+          {
+#ifdef DEBUG_CHINESE
+            cout<<"CRT("<<m1.val[nr][nc]<<","<<m2.val[nr][nc]<<")="<<mij<<" (mod "<<modulus<<") fails to lift (lim="<<lim<<")\n";
+            cout << "Problems encountered in chinese lifting of smat modulo "<<pr1<<" and "<<pr2<< endl;
+#endif
+            return 0;
+          }
+      }
+  dd=abs(dd);
+#ifdef DEBUG_CHINESE
+  cout << "Common denominator = " << dd << "\n";
+#endif
+  // Second time through: rescale
+  for(nr=0; nr<m.nro; nr++)
+    for(nc=0; nc<m.col[nr][0]; nc++)
+      {
+        m.val[nr][nc] = mod(xmodmul((dd/d),(long)m.val[nr][nc],modulus),modulus);
+      }
+  return 1;
 }

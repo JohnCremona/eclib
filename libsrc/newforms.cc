@@ -382,9 +382,9 @@ void newform::find_coords_plus_minus()
     {
       cvi = nf->h1->coord_vecs[i];
       if(sign!=-1)
-        coordsplus[i]=dotmodp(cvi,bplus,BIGPRIME);
+        coordsplus[i]=dotmodp(cvi,bplus,MODULUS);
       if(sign!=+1) 
-        coordsminus[i]=dotmodp(cvi,bminus,BIGPRIME);
+        coordsminus[i]=dotmodp(cvi,bminus,MODULUS);
     }
 
   if(sign!=+1) 

@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
+#include <eclib/interface.h>
 #include <eclib/bitspace.h>
 
 using namespace std;
@@ -34,11 +35,12 @@ bitspace::bitspace(long d)
 	  <<"! replacing with 0\n";
       d=0;
     }
-  if(d>32)
+  if(d>NTL_BITS_PER_LONG)
     {
       cout<<"Error in bitspace constructor with dimension "<<d
-	  <<">32! replacing with 32\n";
-      d=32;
+	  <<">" <<NTL_BITS_PER_LONG<<"! replacing with "
+          <<NTL_BITS_PER_LONG<<"\n";
+      d=NTL_BITS_PER_LONG;
     }
   maxdim=d;
   pivs = new long[maxdim];

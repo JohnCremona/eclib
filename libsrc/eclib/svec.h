@@ -48,21 +48,21 @@ public:
   void set(int i, scalar a);   // sets i'th entry to a
   void add(int i, scalar a);   // adds a to i'th entry
   void sub(int i, scalar a);   // subtracts a from i'th entry
-  void add_mod_p(int i, scalar a, const scalar& p=BIGPRIME);   // adds a to i'th entry, mod p
-  void sub_mod_p(int i, scalar a, const scalar& p=BIGPRIME);   // subtracts a from i'th entry, mod p
+  void add_mod_p(int i, scalar a, const scalar& p=DEFAULT_MODULUS);   // adds a to i'th entry, mod p
+  void sub_mod_p(int i, scalar a, const scalar& p=DEFAULT_MODULUS);   // subtracts a from i'th entry, mod p
   svec& add_scalar_times(const svec&, scalar);
   svec& operator+= (const svec& w);
   svec& operator-= (const svec& w);
   svec& operator*= (scalar);
   svec& operator/= (scalar);
-  void reduce_mod_p(const scalar& p=BIGPRIME);
-  svec& mult_by_scalar_mod_p(scalar, const scalar& p=BIGPRIME);
-  svec& add_scalar_times_mod_p(const svec&, scalar, const scalar& p=BIGPRIME);
+  void reduce_mod_p(const scalar& p=DEFAULT_MODULUS);
+  svec& mult_by_scalar_mod_p(scalar, const scalar& p=DEFAULT_MODULUS);
+  svec& add_scalar_times_mod_p(const svec&, scalar, const scalar& p=DEFAULT_MODULUS);
   // Same as previous except returns two sets of indices: "ons" are
   // indices for which an entry is created, and "offs" are indices for
   // which an entry is deleted
   svec& add_scalar_times_mod_p(const svec&, scalar, std::set<int>& ons, std::set<int>& offs, 
-			       const scalar& p=BIGPRIME);
+			       const scalar& p=DEFAULT_MODULUS);
   // two hand-coded special cases:
   svec& add_mod_p(const svec& w, const scalar& p);
   svec& sub_mod_p(const svec& w, const scalar& p);
@@ -83,7 +83,7 @@ public:
 
   friend inline int dim(const svec& v)  {return v.d;}
   // Equality mod p:
-  friend int eqmodp(const svec&, const svec&, const scalar& p=BIGPRIME);
+  friend int eqmodp(const svec&, const svec&, const scalar& p=DEFAULT_MODULUS);
   friend ostream& operator<< (ostream&s, const svec&);
   friend scalar operator*(const svec&, const svec&); //dot product
   friend scalar operator*(const svec&, const vec&);

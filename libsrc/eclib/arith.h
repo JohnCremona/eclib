@@ -26,31 +26,7 @@
                            //flags that this file has been included
 #include "interface.h"
 #include <cstring> // for memset gcc >= 4.3
-#include "xmod.h" // supercedes the macros here
-
-// #define USE_DMOD
-
-// #ifdef USE_DMOD
-// #define BIGPRIME 134217689   // = 2^27-39
-// #define xmod(a,p) dmod((a),(p))
-// #define xmodmul(a,b,p) dmodmul((a),(b),(p))
-// #else
-// #define BIGPRIME 92681 //This is the largest p such that (p/2)^2 < 2^31.
-// #define xmod(a,p) mod((a),(p))
-// #define xmodmul(a,b,p) mod((a)*(b),(p))
-// #endif
-
-// // The following achieve modular reduction and multiplication using doubles, 
-// // which allows a prime modulus of just under 2^27 to be used; without, the
-// // largest is under 2^16.5
-
-// long dmod(long a, long m);
-// long dmodmul(long a, long b, long m);
-
-// longlist replaced by vector<long>
-
-// longvar replaced by iterators
-
+#include "xmod.h" // supercedes the macros which used to be here
 
 /* Prime number class; adapted from Pari  */
 

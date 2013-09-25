@@ -50,7 +50,7 @@ public:
         friend mat restrict_mat(const mat& m, const subspace& s, int cr);
 	friend subspace pcombine(const subspace& s1, const subspace& s2, scalar pr);
 	friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr);
-	friend subspace lift(const subspace& s, scalar pr, int trace);
+        friend int lift(const subspace& s, scalar pr, subspace& ans, int trace);
 
 
 // Implementation
