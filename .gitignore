@@ -22,6 +22,7 @@ include/*
 lib/*
 share/*
 newforms/*
+progs/newforms/*
 tests/Makefile.jc
 eclib*.tar.gz
 aclocal.m4
