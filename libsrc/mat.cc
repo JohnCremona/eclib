@@ -1041,7 +1041,7 @@ long rank(const mat& entries)
 
 long nullity(const mat& m)
 {
- return ncols(m)-rank(m);
+ return ncols(m)-::rank(m);
 }
 
 long trace(const mat& a)

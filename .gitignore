@@ -9,7 +9,8 @@ Makefile.in
 */Makefile
 */Makefile.in
 autom4te.cache
-m4
+m4/*
+!m4/ax_*
 libsrc/Makefile.jc
 */.deps
 */.libs
@@ -33,6 +34,15 @@ install-sh
 ltmain.sh
 missing
 libtool
+*.testout
+
+# Mac cache files 
+.DS_Store
+
+# Temporary swap files
+.*.swp
+
+# Program executables
 progs/aplist
 progs/checkap
 progs/ecnf
@@ -47,6 +57,7 @@ progs/moreap
 progs/mwrank
 progs/nfcount
 progs/nfhpcurve
+progs/nfhpcurve_prof
 progs/nfhpmcurve
 progs/pcurve
 progs/point_search
@@ -91,8 +102,10 @@ tests/telog
 tests/tequiv
 tests/theight
 tests/thilbert
+tests/threading
 tests/thtconst
 tests/tilll
+tests/timing
 tests/tlegcert
 tests/tmanin
 tests/tmrank

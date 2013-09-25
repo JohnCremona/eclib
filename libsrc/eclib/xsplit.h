@@ -24,8 +24,19 @@
 #if     !defined(_XSPLIT_H)
 #define _XSPLIT_H      1       //flags that this file has been included
 
+// Disable multithreading
+// #undef ECLIB_MULTITHREAD
+
+#ifdef ECLIB_MULTITHREAD 
+#include <boost/thread/mutex.hpp>
+#endif
+
 #include "method.h"  // #defines form_finder=form_finder0/1/2/3/4
 #include "splitbase.h"
+#include "xsplit_data.h"
+#ifdef ECLIB_MULTITHREAD
+#include "threadpool.h"
+#endif
 
 // flags set on construction:
 
@@ -39,37 +50,49 @@
 // directly -- ONLY possible when dual=1
 
 class form_finder {
-protected:
-  splitter_base* h;
-  int plusflag, dual, bigmats, verbose, targetdim;
-  long maxdepth, mindepth, depth, subdim, dimen;
-  SCALAR denom1;
-  ssubspace** nest;     // array of pointers to subspaces
-// "Current" subspace is *nest[depth] of dimension subdim
-  vector<long> eiglist;
-  vec bplus, bminus;
+  public:
+    form_finder(splitter_base* hh, int plus, int maxd, int mind=0, 
+                int dualflag=1, int bigmatsflag=0, int v=0);
+    ~form_finder(void); 
+    
+    void find();
+    void find(ff_data &data);
+    void recover(vector< vector<long> > eigs);
+    void splitoff(const vector<long>& eigs);
+    void store(vec bp, vec bm, vector<long> eigs);
+    
+    vec  getbasis( ff_data &data ) const {return data.bplus_;}
+    vec  getbasisplus( ff_data &data ) const {return data.bplus_;}
+    vec  getbasisminus( ff_data &data ) const {return data.bminus_;}
 
-  int *havemat;
-  vector<string> opfilenames;  // temp filenames
-  smat conjmat;  // only used if plus==0 and bigmats==1
-  smat the_opmat;
-  smat *submats;  // holds current restriction for i>0
-  void make_opmat(long i);  // puts it in the_opmat
-  void make_submat();
-  void go_down(long eig, int last=0);
-  void go_up();
-  void make_basis();
-  vec getbasis1(const ssubspace* s); //assuming dim(s)=1, get basis vector
-public:
-  form_finder(splitter_base* hh, int plus, int maxd, int mind=0, 
-              int dualflag=1, int bigmatsflag=0, int v=0);
-  ~form_finder(void); 
-  void find();
-  void recover(vector< vector<long> > eigs);
-  void splitoff(const vector<long>& eigs);
-  vec getbasis() const {return bplus;}
-  vec getbasisplus() const {return bplus;}
-  vec getbasisminus() const {return bminus;}
+    friend class ff_data; 
+  
+  protected:
+    splitter_base* h;
+    
+    int            plusflag, dual, bigmats, verbose, targetdim;
+    int            gnfcount;                  // Global newform counter
+    long           maxdepth, mindepth, dimen;
+    SCALAR         denom1;
+    vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists
+    vector<vec>    gbplus, gbminus;           // Vector to hold all bplus/bminus
+
+    int*           havemat;
+    vector<string> opfilenames;               // Temp filenames
+   
+    ff_data* root;                            // Always points to root data node
+    
+    void make_opmat(long i, ff_data &data);   // Puts it in the_opmat
+    void make_submat(ff_data &data);
+    void go_down(ff_data &data, long eig, int last=0);
+    void go_up( ff_data &data );
+    void make_basis(ff_data &data);
+    vec  getbasis1(const ssubspace* s);       // Assuming dim(s)=1, get basis vector
+
+#ifdef ECLIB_MULTITHREAD
+    threadpool   pool;                        // Job queue
+    boost::mutex store_lock;                  // Lock for store() function
+#endif
 };
 
 #endif

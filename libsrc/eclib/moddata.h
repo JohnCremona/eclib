@@ -63,8 +63,12 @@ public:
  long unitdiv(long res) const {return unitdivlist[reduce(res)];}
 };
 
+// Returns oldform filename. Default is "newforms/", but can
+// be changed via OF_DIR environment variable.
+string of_filename(long n, char c);
+
 // Function to construct a string representing newform filename,
-// including a prefix (default "newforms/" but taken from envoronment
+// including a prefix (default "newforms/" but taken from environment
 // variable NF_DIR if defined), followed by a single character
 // (usually 'x') and the decimal digits of n (positive integer).
 string nf_filename(long n, char c);

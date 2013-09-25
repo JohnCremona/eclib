@@ -1,8 +1,11 @@
 ## Process this file with automake to produce Makefile.in
 
-AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(FLINT_CFLAGS) $(NTL_CFLAGS) $(PARI_CFLAGS) -DNTL_ALL
-AM_LDFLAGS         = $(FLINT_LDFLAGS) $(NTL_LDFLAGS) $(PARI_LDFLAGS)
-LIBS            = $(top_builddir)/libsrc/libec.la $(FLINT_LIBS) $(PARI_LIBS) $(NTL_LIBS)
+LDFLAGS_BOOST = $(BOOST_LDFLAGS) $(BOOST_ASIO_LDFLAGS) $(BOOST_THREAD_LDFLAGS)
+BOOST_LIBS = $(BOOST_ASIO_LIB) $(BOOST_THREAD_LIB) 
+
+AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(FLINT_CFLAGS) $(NTL_CFLAGS) $(PARI_CFLAGS) $(BOOST_CPPFLAGS) -DNTL_ALL
+AM_LDFLAGS         = $(FLINT_LDFLAGS) $(NTL_LDFLAGS) $(PARI_LDFLAGS) $(BOOST_LDFLAGS)
+LIBS            = $(top_builddir)/libsrc/libec.la $(FLINT_LIBS) $(PARI_LIBS) $(NTL_LIBS) $(BOOST_LIBS)
 
 check_run = echo "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_dir)/$${prog}.in > $${prog}.testout 2>/dev/null && diff $${prog}.testout $(test_output_dir)/$${prog}.out || exit $$?
 
@@ -11,7 +14,7 @@ test_output_dir = $(srcdir)/out
 
 ################ PROCS #############################################
 
-PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert
+PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert timing threading
 PROCS_TESTS_SUFFIXED = $(PROCS_TESTS:=$(EXEEXT))
 procs_tests: $(PROCS_TESTS_SUFFIXED)
 
@@ -46,6 +49,9 @@ svectest2_SOURCES=svectest.cc
 svectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
 tcon2_SOURCES=tcon2.cc
 tlegcert_SOURCES=tlegcert.cc
+timing_SOURCES=timing.cc
+threading_SOURCES=threading.cc
+threading_LDFLAGS=${AM_LDFLAGS} -lboost_timer
 
 check_procs: procs_tests
 	@echo Running procs checks...
@@ -98,7 +104,7 @@ check_qrank: qrank_tests
 
 ################ G0N #############################################
 
-G0N_TESTS = modtest homtest hecketest mhcount tmanin nftest oftest tnfd
+G0N_TESTS = modtest homtest hecketest mhcount tmanin nftest oftest tnfd 
 G0N_TESTS_SUFFIXED = $(G0N_TESTS:=$(EXEEXT))
 g0n_tests: $(G0N_TESTS_SUFFIXED)
 

@@ -17,9 +17,30 @@ LT_INIT
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_INSTALL
+AC_PROG_LIBTOOL
 
-# Checks for libraries.
+# Checks for system features and libraries, via macros defined in m4/ directory
+AX_CXX_COMPILE_STDCXX_0X
+#AX_CXX_COMPILE_STDCXX_11([],[optional])
+AX_CXX_HEADER_TR1_UNORDERED_MAP
+AX_CXX_HEADER_UNORDERED_MAP
+# Boost 1.35.0+ required for Asio (1.25.0 for Thread)
+AX_BOOST_BASE([1.35.0])
+AX_BOOST_SYSTEM
+AX_BOOST_ASIO
+AX_BOOST_THREAD
 
+if test "$ax_cv_boost" = "yes"; then
+  if test "$ax_cv_boost_system" = "yes"; then
+    if test "$ax_cv_boost_asio" = "yes"; then
+      if test "$ax_cv_boost_thread" = "yes"; then
+        AC_DEFINE([ECLIB_MULTITHREAD],[1],[Define if multithreading available and requested])
+      fi
+    fi
+  fi
+fi
+
+# Check for libraries
 # The following AC_ARG_WITH section were written by Volker Braun
 
 dnl Find PARI

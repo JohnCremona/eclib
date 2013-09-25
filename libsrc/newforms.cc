@@ -1122,7 +1122,7 @@ void newforms::createfromdata(int s, long ntp, int create_from_scratch_if_absent
   long i, j, n = modulus;
   if(verbose) cout << "Retrieving newform data for N = " << n << endl;
 
-  string name = nf_filename(modulus,'x');
+  string name = of_filename(modulus,'x');
   ifstream datafile(name.c_str());
   if(!datafile.is_open())
     {
