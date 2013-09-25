@@ -117,7 +117,6 @@ nftest_SOURCES=nftest.cc
 mhcount_SOURCES=mhcount.cc
 oftest_SOURCES=oftest.cc
 tmanin_SOURCES=tmanin.cc
-tmanin_prof_SOURCES=tmanin_prof.cc
 tnfd_SOURCES=tnfd.cc
 
 # This is the name of a directory which will be used for newform
