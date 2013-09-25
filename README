@@ -35,6 +35,15 @@ similarly (in two places) and rerun it; or (iii) append
 CXXFLAGS='-DFLINT_LEVEL=2' to the make invocation (and ignore warnings
 about FLINT_LEVEL being redefined).
 
+(d) Boost is optional (from eclib-2013-09-00) and provides parallel
+capabilities in the form_finder class. Configure with --with-boost
+specifying location of a fully built version of Boost, i.e. not
+just the header files. After initial configure, if an error occurs,
+run autoreconf and configure again. Autotools will initiate the 
+macros in m4/ directory and look for Boost.asio, Boost.thread, and 
+Boost.system. Refer ti ./configure --help for more configuration
+options.
+
 2. By default a lot of programs, including test programs, are built
 and will be installed by "make install".  We only provide one option
 here:  if you do
