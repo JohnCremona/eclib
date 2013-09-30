@@ -37,6 +37,6 @@ AC_DEFUN([AX_CXX_HEADER_UNORDERED_MAP], [
   AC_LANG_RESTORE
   ])
   if test "$ax_cv_cxx_unordered_map" = yes; then
-    AC_DEFINE(HAVE_UNORDERED_MAP,,[Define if unordered_map is present. ])
+    AC_DEFINE(HAVE_UNORDERED_MAP,[1],[Define if unordered_map is present. ])
   fi
 ])

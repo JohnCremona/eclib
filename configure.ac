@@ -30,14 +30,11 @@ AX_BOOST_SYSTEM
 AX_BOOST_ASIO
 AX_BOOST_THREAD
 
-if test "$ax_cv_boost" = "yes"; then
-  if test "$ax_cv_boost_system" = "yes"; then
-    if test "$ax_cv_boost_asio" = "yes"; then
-      if test "$ax_cv_boost_thread" = "yes"; then
-        AC_DEFINE([ECLIB_MULTITHREAD],[1],[Define if multithreading available and requested])
-      fi
-    fi
-  fi
+if [test "$ax_cv_boost"        = "yes"] && 
+   [test "$ax_cv_boost_system" = "yes"] &&
+   [test "$ax_cv_boost_asio"   = "yes"] &&
+   [test "$ax_cv_boost_thread" = "yes"]; then
+   AC_DEFINE([ECLIB_MULTITHREAD],[1],[Define if multithreading available and requested])
 fi
 
 # Check for libraries

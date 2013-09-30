@@ -99,7 +99,7 @@ AC_DEFUN([AX_BOOST_THREAD],
 
 			AC_SUBST(BOOST_CPPFLAGS)
 
-			AC_DEFINE(HAVE_BOOST_THREAD,,[define if the Boost::Thread library is available])
+			AC_DEFINE(HAVE_BOOST_THREAD,[1],[define if the Boost::Thread library is available])
             BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
 
 			LDFLAGS_SAVE=$LDFLAGS
