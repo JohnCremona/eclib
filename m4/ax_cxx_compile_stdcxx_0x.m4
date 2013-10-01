@@ -102,6 +102,6 @@ AC_DEFUN([AX_CXX_COMPILE_STDCXX_0X], [
   if test "$ax_cv_cxx_compile_cxx0x_native" = yes ||
      test "$ax_cv_cxx_compile_cxx0x_cxx" = yes ||
      test "$ax_cv_cxx_compile_cxx0x_gxx" = yes; then
-    AC_DEFINE(HAVE_STDCXX_0X,,[Define if g++ supports C++0x features. ])
+    AC_DEFINE(HAVE_STDCXX_0X,[1],[Define if g++ supports C++0x features. ])
   fi
 ])

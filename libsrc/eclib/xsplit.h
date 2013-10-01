@@ -2,6 +2,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
+//                     Marcus Mo     (parallel code)
 // 
 // This file is part of the eclib package.
 // 

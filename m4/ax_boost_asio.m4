@@ -86,7 +86,7 @@ AC_DEFUN([AX_BOOST_ASIO],
          AC_LANG_POP([C++])
 		])
 		if test "x$ax_cv_boost_asio" = "xyes"; then
-			AC_DEFINE(HAVE_BOOST_ASIO,,[define if the Boost::ASIO library is available])
+			AC_DEFINE(HAVE_BOOST_ASIO,[1],[define if the Boost::ASIO library is available])
 			BN=boost_system
 			BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
             if test "x$ax_boost_user_asio_lib" = "x"; then

@@ -84,7 +84,7 @@ AC_DEFUN([AX_BOOST_SYSTEM],
 		if test "x$ax_cv_boost_system" = "xyes"; then
 			AC_SUBST(BOOST_CPPFLAGS)
 
-			AC_DEFINE(HAVE_BOOST_SYSTEM,,[define if the Boost::System library is available])
+			AC_DEFINE(HAVE_BOOST_SYSTEM,[1],[define if the Boost::System library is available])
             BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
 
 			LDFLAGS_SAVE=$LDFLAGS

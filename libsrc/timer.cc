@@ -2,6 +2,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
+//                     Marcus Mo     (timer class)
 // 
 // This file is part of the eclib package.
 // 
