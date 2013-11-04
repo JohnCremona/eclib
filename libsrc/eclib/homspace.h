@@ -69,17 +69,22 @@ public:
 public:
   // The next functions express M- & modular symbols in terms of the
   // basis for H_1(X_0(N);cusps;Z) of dimension rk
-  svec chain(const symb& s) const;
-  void add_chain(svec& v, const symb& s) const;
-  svec chaincd(long c, long d) const;
-  void add_chaincd(svec& v, long c, long d) const;
+  svec zero_coords() const {return svec(rk);} // zero vector
+  svec coords_from_index(int ind) const;
+  vec proj_coords_from_index(int ind, const mat& m) const;
+  long nfproj_coords_from_index(int ind, const vec& bas) const;
+  svec coords(const symb& s) const;
+  svec coords_cd(long c, long d) const;
+  svec coords(long nn, long dd) const;
+  svec coords(const rational& r) const  {return coords(num(r),den(r));}
+  svec coords(const modsym& m) const;
 
-  svec chain(long nn, long dd) const;
-  svec chain(const rational& r) const 
-  {return chain(num(r),den(r));}
-  void add_chain(svec& v, long nn, long dd) const;
-  void add_chain(svec& v, const rational& r) const 
-  {add_chain(v,num(r),den(r));}
+  // versions which add to an existing svec:
+  void add_coords(svec& v, const symb& s) const;
+  void add_coords_cd(svec& v, long c, long d) const;
+  void add_coords(svec& v, long nn, long dd) const;
+  void add_coords(svec& v, const rational& r) const  {add_coords(v,num(r),den(r));}
+  void add_coords(svec& v, const modsym& r) const;
 
   // The next functions express M- & modular symbols in terms of the
   // basis of a (dual) subspace of the whole space
@@ -90,45 +95,27 @@ public:
   // The "nf" versions give scalars and instead of a matrix take a
   // vector = unique column of a matrix, such as a newform's coordplus
   // vector.
-  vec projchaincd(long c, long d, const mat& m) const;
-  vec projchaincd(long c, long d) const {return projchaincd(c,d,projcoord);}
-  long nfprojchaincd(long c, long d, const vec& bas) const;
-  void add_projchaincd(vec& v, long c, long d, const mat& m) const;
-  void add_projchaincd(vec& v, long c, long d) const {add_projchaincd(v,c,d,projcoord);}
-  void add_nfprojchaincd(long& a, long c, long d, const vec& bas) const;
+  vec proj_coords_cd(long c, long d, const mat& m) const;
+  vec proj_coords_cd(long c, long d) const {return proj_coords_cd(c,d,projcoord);}
+  long nfproj_coords_cd(long c, long d, const vec& bas) const;
+  void add_proj_coords_cd(vec& v, long c, long d, const mat& m) const;
+  void add_proj_coords_cd(vec& v, long c, long d) const {add_proj_coords_cd(v,c,d,projcoord);}
+  void add_nfproj_coords_cd(long& a, long c, long d, const vec& bas) const;
 
-  vec projchain(long n, long d, const mat& m) const;
-  vec projchain(long n, long d) const  {return projchain(n,d,projcoord);}
-  long nfprojchain(long n, long d, const vec& bas) const;
+  vec proj_coords(long n, long d, const mat& m) const;
+  vec proj_coords(long n, long d) const  {return proj_coords(n,d,projcoord);}
+  long nfproj_coords(long n, long d, const vec& bas) const;
 
-  void add_projchain(vec& v, long n, long d, const mat& m) const;
-  void add_projchain(vec& v, long n, long d) const {add_projchain(v,n,d,projcoord);}
-  void add_nfprojchain(long& aa, long n, long d, const vec& bas) const;
+  void add_proj_coords(vec& v, long n, long d, const mat& m) const;
+  void add_proj_coords(vec& v, long n, long d) const {add_proj_coords(v,n,d,projcoord);}
+  void add_nfproj_coords(long& aa, long n, long d, const vec& bas) const;
 
   vec cuspidalpart(const vec& v) const 
   {return v[pivots(kern)];}
 
-#if(0) //no longer used
-  vec cycle(long n, long d) const 
-  {
-    vec v = chain(n,d).as_vec(); 
-    if (cuspidal) return cuspidalpart(v); else return v;
-  }
-  vec cycle(const rational& r) const 
-  {
-    vec v = chain(num(r),den(r)).as_vec(); 
-    if (cuspidal) return cuspidalpart(v); else return v;
-  }
-  vec cycle(const modsym& m) const 
-  {
-    vec v = (chain(m.beta())-chain(m.alpha())).as_vec();
-    if (cuspidal) return cuspidalpart(v); else return v;
-  }
-#endif // no longer used
-
   svec applyop(const matop& mlist, const rational& q) const;
-  svec applyop(const matop& mlist, const modsym& m) const 
-  {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());} 
+  svec applyop(const matop& mlist, const modsym& m) const;
+  //  {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());} 
 
   mat calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
   mat calcop_restricted(string opname, long p, const matop& mlist, const subspace& s, int dual, int display=0) const;
@@ -180,15 +167,19 @@ public:
     long n=num(q),de=den(q); 
     return rational(a*n+b*de,c*n+d*de);
   }
+  modsym operator()(const modsym& m)const
+  {
+    return modsym((*this)(m.alpha()),(*this)(m.beta()));
+  }
   svec operator()(const symb& s, const homspace* h)const 
   {
     long u=s.ceered(),v=s.deered(); 
-    return h->chaincd(a*u+c*v,b*u+d*v);
+    return h->coords_cd(a*u+c*v,b*u+d*v);
   }
   vec operator()(const symb& s, const homspace* h, const mat& m)const 
   {
     long u=s.cee(),v=s.dee(); 
-    return h->projchaincd(a*u+c*v,b*u+d*v,m);
+    return h->proj_coords_cd(a*u+c*v,b*u+d*v,m);
   }
 };
 

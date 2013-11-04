@@ -560,7 +560,7 @@ void newform::find_matrix()
               if(1==bezout(d,-n*b,a,c))
                 {
 		  //                  cout<<"b/d = "<<b<<"/"<<d<<": ";
-                  v = nf->h1->chain(b,d).as_vec();
+                  v = nf->h1->coords(b,d).as_vec();
 		  //                  cout<<"v="<<v<<endl;
 //                if(!(nf->h1->cuspidal)) v = nf->h1->cuspidalpart(v);
                   if(sign!=-1)
@@ -752,7 +752,7 @@ void newforms::createfromscratch(int s, long ntp)
 	  }  
     }
 
-   // Compute homspace::projcoord, so projchain can be used
+   // Compute homspace::projcoord, so proj_coords can be used
    // Replaces coord_vecs of homspace with projections onto eigenspaces
    // NB if #newforms>1 this MUST be re-called after any sorting of newforms
    make_projcoord();
@@ -806,7 +806,7 @@ void newforms::find_jlist()
     }
 }
 
-// Compute homspace::projcoord, so projchain can be used
+// Compute homspace::projcoord, so proj_coords can be used
 // Replaces coord_vecs of homspace with projections onto eigenspaces
 // NB if #newforms>1 this MUST be re-called after any sorting of newforms
 void newforms::make_projcoord()
@@ -1638,13 +1638,13 @@ void output_to_file_no_newforms(long n, int binflag)
   // for the i'th newform return the value of the modular symbol {0,r}
 rational newforms::plus_modular_symbol(const rational& r, long i) const
 {
-  return rational(h1->nfprojchain(num(r),den(r),nflist[i].coordsplus), 
+  return rational(h1->nfproj_coords(num(r),den(r),nflist[i].coordsplus), 
 		  nflist[i].cuspidalfactorplus);  
 }
 
 rational newforms::minus_modular_symbol(const rational& r, long i) const
 {
-  return rational(h1->nfprojchain(num(r),den(r),nflist[i].coordsminus), 
+  return rational(h1->nfproj_coords(num(r),den(r),nflist[i].coordsminus), 
 		  nflist[i].cuspidalfactorminus);  
 }
 
@@ -1653,7 +1653,7 @@ pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i)
   mat m(h1->coord_vecs.size()-1,2);
   m.setcol(1,nflist[i].coordsplus);
   m.setcol(2,nflist[i].coordsminus);
-  vec a = h1->projchain(num(r),den(r),m);
+  vec a = h1->proj_coords(num(r),den(r),m);
   rational a1(a[1],nflist[i].cuspidalfactorplus);
   rational a2(a[2],nflist[i].cuspidalfactorminus);
   return pair<rational,rational> ( a1, a2 );
