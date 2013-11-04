@@ -502,149 +502,176 @@ vec homspace::contract_coords(const vec& v)
   return ans;
 }
 
-
-
-svec homspace::chain(const symb& s) const
+svec homspace::coords_from_index(int ind) const
 {
- long i= coordindex[index(s)];
+ long i= coordindex[ind];
  if (i>0) return  coord_vecs[i];
  if (i<0) return -coord_vecs[-i];
- return svec(rk);
+ return zero_coords();
 }
 
-void homspace::add_chain(svec& v, const symb& s) const
+vec homspace::proj_coords_from_index(int ind, const mat& m) const
 {
- long i= coordindex[index(s)];
- if (i>0) {v+=coord_vecs[i]; return;}
- if (i<0) {v-=coord_vecs[-i]; return;}
-}
-
-vec homspace::projchaincd(long c, long d, const mat& m) const 
-{
- long i= coordindex[index2(c,d)];
+ long i= coordindex[ind];
  if (i>0) return  m.row(i);
  if (i<0) return -m.row(-i);
  return vec(ncols(m));
 }
 
-long homspace::nfprojchaincd(long c, long d, const vec& bas) const 
+long homspace::nfproj_coords_from_index(int ind, const vec& bas) const
 {
- long i= coordindex[index2(c,d)];
+ long i= coordindex[ind];
  if (i>0) return  bas[i];
  if (i<0) return -bas[-i];
  return 0;
 }
 
-svec homspace::chaincd(long c, long d) const 
+svec homspace::coords(const symb& s) const
 {
- long i= coordindex[index2(c,d)];
- if (i>0) return  coord_vecs[i];
- if (i<0) return -coord_vecs[-i];
- return svec(rk);
+  return coords_from_index(index(s));
 }
 
-void homspace::add_projchaincd(vec& v, long c, long d, const mat& m) const 
+void homspace::add_coords(svec& v, const symb& s) const
 {
- long i= coordindex[index2(c,d)];
- if (i>0) {add_row_to_vec(v,m,i); return;}
- if (i<0) {sub_row_to_vec(v,m,-i); return;}
+  v += coords_from_index(index(s));
 }
 
-void homspace::add_nfprojchaincd(long& a, long c, long d, const vec& bas) const 
+svec homspace::coords_cd(long c, long d) const
 {
- long i= coordindex[index2(c,d)];
- if (i>0) {a += bas[i]; return;}
- if (i<0) {a -= bas[-i]; return;}
+  return coords_from_index(index2(c,d));
 }
 
-void homspace::add_chaincd(svec& v, long c, long d) const 
+void homspace::add_coords_cd(svec& v, long c, long d) const 
 {
- long i= coordindex[index2(c,d)];
- if (i>0) {v+=coord_vecs[i]; return;}
- if (i<0) {v-=coord_vecs[-i]; return;}
+  v += coords_from_index(index2(c,d));
 }
 
-svec homspace::chain(long nn, long dd) const
+vec homspace::proj_coords_cd(long c, long d, const mat& m) const 
 {
-   svec ans = chaincd(0,1);
-   long c=0, d=1, e, a=nn, b=dd, q, f;
-   while (b)
-   { q=a/b; 
-     f=a; a=-b; b= f-q*b; 
-     e=d; d= c; c=(-q*c-e)%modulus;
-     add_chaincd(ans,c,d);
-   }
+  return proj_coords_from_index(index2(c,d), m);
+}
+
+void homspace::add_proj_coords_cd(vec& v, long c, long d, const mat& m) const 
+{
+  v += proj_coords_from_index(index2(c,d), m);
+}
+
+long homspace::nfproj_coords_cd(long c, long d, const vec& bas) const 
+{
+  return nfproj_coords_from_index(index2(c,d), bas);
+}
+
+void homspace::add_nfproj_coords_cd(long& a, long c, long d, const vec& bas) const 
+{
+  a += nfproj_coords_from_index(index2(c,d), bas);
+}
+
+svec homspace::coords(long nn, long dd) const
+{
+   svec ans = zero_coords();
+   add_coords(ans, nn, dd);
    return ans;
 }
 
-void homspace::add_chain(svec& v, long nn, long dd) const
+svec homspace::coords(const modsym& m) const
 {
-   add_chaincd(v,0,1);
-   long c=0, d=1, e, a=nn, b=dd, q, f;
-   while (b)
-   { q=a/b; 
-     f=a; a=-b; b= f-q*b; 
-     e=d; d= c; c=(-q*c-e)%modulus;
-     add_chaincd(v,c,d);
+  svec ans = zero_coords();
+  add_coords(ans, m);
+  return ans;
+}
+
+void homspace::add_coords(svec& vv, const modsym& m) const
+{
+  rational al = m.alpha(), be=m.beta();
+  long a=num(be), b=num(al), c=den(be), d=den(al), u, v;
+  long de = a*d-b*c;
+  if (de<0) {de=-de; b=-b; d=-d;}
+  if (de==1)
+    {
+      add_coords_cd(vv, c, d);
+      return;
+    }
+  // now de>1
+  long g = bezout(a,c, u,v); // =1
+  long nu = b*u+v*d;
+  //
+  // now m = M{0,infinity} = U.{nu/de,infinity} where U=[a,-v;c,u], so
+  // we find the CF expansion of nu/de.
+  //
+  long C=c, D=u, r=nu, s=de, q, t, e;
+  while (s)
+    {
+      t=s; s=mod(r,s); q=(r-s)/t;  r=-t;
+      e=D; D=-C; C= q*C+e;
+      add_coords_cd(vv, -D, C);
    }
 }
 
-vec homspace::projchain(long nn, long dd, const mat& m) const
+
+vec homspace::proj_coords(long nn, long dd, const mat& m) const
 {
-   vec ans = projchaincd(0,1,m);
-   long c=0, d=1, e, a=nn, b=dd, q, f;
-   while (b)
-   { q=a/b; 
-     f=a; a=-b; b= f-q*b; 
-     e=d; d= c; c=(-q*c-e)%modulus;
-     add_projchaincd(ans,c,d,m);
-   }
+   vec ans = vec(ncols(m));
+   add_proj_coords(ans, nn, dd, m);
    return ans;
 }
 
-long homspace::nfprojchain(long nn, long dd, const vec& bas) const
+long homspace::nfproj_coords(long nn, long dd, const vec& bas) const
 {
-   long ans = nfprojchaincd(0,1,bas);
-   long c=0, d=1, e, a=nn, b=dd, q, f;
-   while (b)
-   { q=a/b; 
-     f=a; a=-b; b= f-q*b; 
-     e=d; d= c; c=(-q*c-e)%modulus;
-     add_nfprojchaincd(ans,c,d,bas);
-   }
-   return ans;
+  long ans = 0;
+  add_nfproj_coords(ans, nn, dd, bas);
+  return ans;
 }
 
-void homspace::add_projchain(vec& v, long nn, long dd, const mat& m) const
+void homspace::add_coords(svec& v, long nn, long dd) const
 {
-   add_projchaincd(v,0,1,m);
+   add_coords_cd(v,0,1);
    long c=0, d=1, e, a=nn, b=dd, q, f;
    while (b)
-   { q=a/b; 
-     f=a; a=-b; b= f-q*b; 
-     e=d; d= c; c=(-q*c-e)%modulus;
-     add_projchaincd(v,c,d,m);
+     {
+       f=b; b=mod(a,b); q=(a-b)/f; a= -f;
+       e=d; d=-c; c=q*c+e;
+       add_coords_cd(v,c,d);
+     }
+}
+
+void homspace::add_proj_coords(vec& v, long nn, long dd, const mat& m) const
+{
+   add_proj_coords_cd(v,0,1,m);
+   long c=0, d=1, e, a=nn, b=dd, q, f;
+   while (b)
+   {
+     f=b; b=mod(a,b); q=(a-b)/f; a= -f;
+     e=d; d=-c; c=q*c+e;
+     add_proj_coords_cd(v,c,d,m);
    }
 }
 
-void homspace::add_nfprojchain(long& aa, long nn, long dd, const vec& bas) const
+void homspace::add_nfproj_coords(long& aa, long nn, long dd, const vec& bas) const
 {
-   add_nfprojchaincd(aa,0,1,bas);
+   add_nfproj_coords_cd(aa,0,1,bas);
    long c=0, d=1, e, a=nn, b=dd, q, f;
    while (b)
-   { q=a/b; 
-     f=a; a=-b; b= f-q*b; 
-     e=d; d= c; c=(-q*c-e)%modulus;
-     add_nfprojchaincd(aa,c,d,bas);
+   {
+     f=b; b=mod(a,b); q=(a-b)/f; a= -f;
+     e=d; d=-c; c=q*c+e;
+     add_nfproj_coords_cd(aa,c,d,bas);
    }
 }
 
 svec homspace::applyop(const matop& mlist, const rational& q) const
-{ svec ans(rk);  long i=mlist.size();
-  while (i--) add_chain(ans,mlist[i](q));
+{ svec ans(rk);
+  long i=mlist.size();
+  while (i--) add_coords(ans,mlist[i](q));
   return ans;
 }
- 
+
+svec homspace::applyop(const matop& mlist, const modsym& m) const
+{ svec ans(rk);
+  long i=mlist.size();
+  while (i--)  ans += coords((mlist[i])(m));
+  return ans;
+}
+
 // copy of routine from ../procs/xsplit.cc:
 mat sparse_restrict(const mat& m, const subspace& s);
 smat restrict_mat(const smat& m, const subspace& s);
@@ -812,7 +839,7 @@ mat homspace::conj(int dual, int display) const
  mat m(rk,rk);
  for (long j=1; j<=rk; j++) if (needed[j-1])
  {  symb s = symbol(freegens[j-1]);
-    svec colj   =  chaincd(-s.cee(),s.dee());
+    svec colj   =  coords_cd(-s.cee(),s.dee());
     m.setcol(j,colj.as_vec());
  }
  if(cuspidal) m = restrict_mat(smat(m),kern).as_mat();
@@ -826,7 +853,7 @@ smat homspace::s_conj(int dual, int display) const
  smat m(rk,rk);
  for (long j=1; j<=rk; j++) if (needed[j-1])
  {  symb s = symbol(freegens[j-1]);
-    svec colj   =  chaincd(-s.cee(),s.dee());
+    svec colj   =  coords_cd(-s.cee(),s.dee());
     m.setrow(j,colj);
  }
  if(cuspidal) 
@@ -850,7 +877,7 @@ mat homspace::conj_restricted(const subspace& s,
     {  
       long jj=pivots(s)[j];
       symb s = symbol(freegens[jj-1]);
-      svec colj   =  chaincd(-s.cee(),s.dee());
+      svec colj   =  coords_cd(-s.cee(),s.dee());
       m.setrow(j,colj.as_vec());
     }
   m = matmulmodp(m,basis(s),MODULUS);
@@ -868,7 +895,7 @@ smat homspace::s_conj_restricted(const ssubspace& s,
     {  
       long jj=pivots(s)[j];
       symb s = symbol(freegens[jj-1]);
-      svec colj   =  chaincd(-s.cee(),s.dee());
+      svec colj   =  coords_cd(-s.cee(),s.dee());
       m.setrow(j,colj);
     }
   //  cout<<"m = "<<m<<" = "<<m.as_mat()<<endl;
@@ -1023,19 +1050,19 @@ vector<long> homspace::eigrange(long i)
 vec homspace::maninvector(long p) const
 {
   long i,p2;
-  svec tvec = chain(0,p);             // =0, but sets the right length.
+  svec tvec = coords(0,p);             // =0, but sets the right length.
   if (plusflag!=-1) 
     {
       if (p==2) 
-	add_chain(tvec,1,2); 
+	add_coords(tvec,1,2); 
       else
 	{ 
 	  p2=(p-1)>>1;
-	  for (i=1; i<=p2; i++) { add_chain(tvec,i,p); }
+	  for (i=1; i<=p2; i++) { add_coords(tvec,i,p); }
 	  if(plusflag)   
 	    tvec *=2;
 	  else
-	    for (i=1; i<=p2; i++) { add_chain(tvec,-i,p); }
+	    for (i=1; i<=p2; i++) { add_coords(tvec,-i,p); }
 	}
     }
   if(cuspidal) 
@@ -1046,8 +1073,8 @@ vec homspace::maninvector(long p) const
 
 vec homspace::manintwist(long p) const
 {
- svec sum = chain(0,p);                   // =0, but sets the right length.
- for (long i=1; i<p; i++) sum += legendre(i,p)*chain(i,p);
+ svec sum = coords(0,p);                   // =0, but sets the right length.
+ for (long i=1; i<p; i++) sum += legendre(i,p)*coords(i,p);
  if(cuspidal) return cuspidalpart(sum.as_vec()); 
  else return sum.as_vec();
 }
@@ -1056,18 +1083,18 @@ vec homspace::manintwist(long p) const
 vec homspace::projmaninvector(long p) const  // Will only work after "proj"
 {
   long i,p2;
-  vec tvec = projchain(0,p);             // =0, but sets the right length.
+  vec tvec = proj_coords(0,p);             // =0, but sets the right length.
   if (plusflag==-1) return tvec;
   if (p==2) 
-    add_projchain(tvec,1,2);
+    add_proj_coords(tvec,1,2);
   else
     { 
       p2=(p-1)>>1;
-      for (i=1; i<=p2; i++) { add_projchain(tvec,i,p); }
+      for (i=1; i<=p2; i++) { add_proj_coords(tvec,i,p); }
       if(plusflag)   
 	tvec *=2;
       else
-	for (i=1; i<=p2; i++) { add_projchain(tvec,-i,p); }
+	for (i=1; i<=p2; i++) { add_proj_coords(tvec,-i,p); }
     }
   return tvec;
 }
@@ -1075,30 +1102,30 @@ vec homspace::projmaninvector(long p) const  // Will only work after "proj"
 vec homspace::projmaninvector(long p, const mat& m) const
 {
   long i,p2;
-  vec tvec = projchain(0,p,m);       // =0, but sets the right length.
+  vec tvec = proj_coords(0,p,m);       // =0, but sets the right length.
   if (plusflag==-1) return tvec;
   if (p==2) 
-    add_projchain(tvec,1,2,m);
+    add_proj_coords(tvec,1,2,m);
   else
     { 
       p2=(p-1)>>1;
-      for (i=1; i<=p2; i++) { add_projchain(tvec,i,p,m); }
+      for (i=1; i<=p2; i++) { add_proj_coords(tvec,i,p,m); }
       if(plusflag)   
 	tvec *=2;
       else
-	for (i=1; i<=p2; i++) { add_projchain(tvec,-i,p,m); }
+	for (i=1; i<=p2; i++) { add_proj_coords(tvec,-i,p,m); }
     }
   return tvec;
 }
 
 vec homspace::newhecke(long p, long n, long d) const
                                      // Will only work after "proj"
-{ vec tvec = projchain(p*n,d);
+{ vec tvec = proj_coords(p*n,d);
 // cout<<"newhecke starts: tvec = "<<tvec<<endl; 
  long p2 = p>>1, dp = d*p, k;
   for (k=1+p2-p; k<=p2; k++) 
     {
-      add_projchain(tvec,n+d*k,dp);
+      add_proj_coords(tvec,n+d*k,dp);
       // cout<<"tvec = "<<tvec<<endl; 
     }
   // cout<<"newhecke returns: tvec = "<<tvec<<endl; 
