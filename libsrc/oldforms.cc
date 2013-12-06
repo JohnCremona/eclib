@@ -31,9 +31,6 @@
 
 inline int testbit(long a, long i) {return (a& (1<<i));}
 
-static long emptylist[33] = {1,2,3,4,5,6,7,8,9,10,12,13,16,18,22,23,25,28,29,31,41,47,59,60,68,71,74,81,86,87,93,95,97};
-static std::set<long> emptyset(emptylist, emptylist + 33);
-
 // Implementation of oldforms member functions
 
 oldforms::oldforms(long intp, const level* iN, int verbose, int plus)
@@ -101,39 +98,37 @@ void oldforms::getoldclasses(long d, int verbose)
 	      mult=1; j=0; 
 	      betai=betalist.begin();
 	      aqj=aqlist.begin();
-	      for (ip=0, pr.init(); 
-		   (ip<nap)&&(mult>0)&&(betai!=betalist.end()); 
-		   ip++, pr++)
-		{  
-		  p = (long)pr;
-		  if(verbose>1) cout<<"p="<<p<<endl;
-		  if(::divides(p,n))
-		    {
-		      beta = *betai++;
-		      if(::divides(p,d)) aq = *aqj++;
-		      else aq=1;
-		      if (beta==0)
-			{
-			  nextoldformap[ip] = aq;
-			  if(verbose>1) 
-			    cout<<"setting entry #"<<ip<<" to "<<aq<<endl;
-			}
-		      else
-			{ 
-			  bit = testbit(c,j++);
-			  nextoldformap[ip] = bit?1:-1;
-			  if (odd(beta)) 
-			    xmult =  (beta+1)/2;
-			  else 
-			    {
-			      xmult=beta/2 +1;
-			      if(::divides(p,d) && (aq==-1)) 
-				xmult--;
-			    }
-			  if (!bit) xmult=1+beta-xmult;
-			  mult*=xmult;
-			}
-		    }
+              for (qj=(N->plist).begin(); qj!=(N->plist).end(); qj++)
+		{
+		  p = *qj;
+                  ip = prime_pi(p);
+		  if(verbose>1) cout<<"p="<<p<<" (ip="<<ip<<")"<<endl;
+                  beta = *betai++;
+                  if(::divides(p,d))
+                    aq = *aqj++;
+                  else
+                    aq=1;
+                  if (beta==0)
+                    {
+                      nextoldformap[ip] = aq;
+                      if(verbose>1)
+                        cout<<"setting entry #"<<ip<<" to "<<aq<<endl;
+                    }
+                  else
+                    {
+                      bit = testbit(c,j++);
+                      nextoldformap[ip] = bit?1:-1;
+                      if (odd(beta))
+                        xmult =  (beta+1)/2;
+                      else
+                        {
+                          xmult=beta/2 +1;
+                          if(::divides(p,d) && (aq==-1))
+                            xmult--;
+                        }
+                      if (!bit) xmult=1+beta-xmult;
+                      mult*=xmult;
+                    }
 		}
 	      if (mult>0)
 		{

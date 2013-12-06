@@ -63,7 +63,8 @@ inline vector<long> primes (long n)  /* returns list of first n primes */
   {return the_primes.getfirst(n);}
 inline long nprimes(void) {return the_primes.NPRIMES;}
 inline long maxprime(void) {return the_primes.BIGGESTPRIME;}
-                            
+long prime_pi(long p); // returns i>=0 such that p is the i'th prime
+
 class primevar {
 public:
         long val;        /* current value */

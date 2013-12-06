@@ -144,6 +144,15 @@ vector<long> primeclass::getfirst (long n)  /* returns list of first n primes */
   return ans;
 }
 
+// returns i>=0 such that p is the i'th prime
+long prime_pi(long p)
+{
+  primevar pr;
+  int ip=0;
+  while ((long)pr<p) {pr++; ip++;}
+  return ip;
+}
+
 
 long primdiv(long aa)
 {
