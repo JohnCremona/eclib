@@ -163,12 +163,15 @@ inline int is_approx_zero(const RR& x)
 typedef complex<RR> CC;
 #define bigcomplex CC
 
-inline void set_precision(long n) 
+inline void set_precision(long n)
   {RR::SetPrecision(long(n*3.33));RR::SetOutputPrecision(n);}
-inline void set_precision(const string prompt) 
+inline void set_bit_precision(long n)
+  {RR::SetPrecision(n);}
+inline void set_precision(const string prompt)
   {long n; cerr<<prompt<<": "; cin>>n; set_precision(n);}
 inline long decimal_precision() {return long(RR::precision()*0.3);}
-inline int is_approx_zero(const bigcomplex& z) 
+inline long bit_precision() {return RR::precision();}
+inline int is_approx_zero(const bigcomplex& z)
   {return is_approx_zero(z.real())&&is_approx_zero(z.imag());}
 inline RR to_bigfloat(const int& n) {return to_RR(n);}
 inline RR to_bigfloat(const long& n) {return to_RR(n);}

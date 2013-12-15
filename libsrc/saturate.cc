@@ -200,12 +200,26 @@ int saturator::enlarge()
     }
   if(verbose>0) cout<<"This point may be in "<<p<<"E(Q): "<<Q<<endl;
   vector<Point> Pi;
+  long prec, original_prec;
   if(order(Q)==-1) // non-torsion point
-    Pi=division_points(*E,Q,p);
+    {
+      prec = original_prec = bit_precision();
+      //cout << "Saving bit precision "<<prec<<endl;
+      Pi=division_points(*E,Q,p);
+      while((Pi.size()==0)&&(prec<128*original_prec))
+        {
+          prec *= 2;
+          set_bit_precision(prec);
+          Pi=division_points(*E,Q,p);
+        }
+      set_bit_precision(original_prec);
+      //cout << "Restoring bit precision "<<bit_precision()<<endl;
+    }
   if(Pi.size()==0)
     {
       if(verbose>0) cout<<"...but it isn't! "
-			<<"(this may be due to insufficient precision)"<<endl;
+			<<"(this may be due to insufficient precision: decimal precision ("
+                        <<prec<<" was used)"<<endl;
       return 0;
     }
   if(verbose>0) cout<<"...and it is! "<<endl;

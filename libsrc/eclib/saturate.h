@@ -34,7 +34,7 @@
 
 // automatic saturation will only saturate at primes less than this,
 // unless overridden by the sat_bd parameter:
-const long SAT_MAX_PRIME = 1000;
+const long SAT_MAX_PRIME = 100000;
 
 class saturator {
 private: 
