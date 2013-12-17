@@ -42,6 +42,10 @@
 // message and reduce to this value:
 const int max_search_bound = 18;
 
+// How many auxiliary primes to use without the image increasing in
+// rank before attempting to enlarge the subgroup:
+const int n_aux_stuck = 20;
+
 void saturator::reset_points(const vector<Point>& PP)
 {
   Plist=PP;
@@ -203,22 +207,26 @@ int saturator::enlarge()
   long prec, original_prec;
   if(order(Q)==-1) // non-torsion point
     {
-      prec = original_prec = bit_precision();
-      //cout << "Saving bit precision "<<prec<<endl;
+      // cout << "[attempting to divide by "<<p<<" using bit precision "
+      //      <<bit_precision()<<"]"<<endl;
       Pi=division_points(*E,Q,p);
-      while((Pi.size()==0)&&(prec<128*original_prec))
+      if(Pi.size()==0)
         {
+          prec = original_prec = bit_precision();
+          //cout << "Saving bit precision "<<prec<<endl;
           prec *= 2;
           set_bit_precision(prec);
+          // cout << "[attempting to divide by "<<p<<" using bit precision "
+          //      <<prec<<"]"<<endl;
           Pi=division_points(*E,Q,p);
+          set_bit_precision(original_prec);
+          //cout << "Restoring bit precision "<<bit_precision()<<endl;
         }
-      set_bit_precision(original_prec);
-      //cout << "Restoring bit precision "<<bit_precision()<<endl;
     }
   if(Pi.size()==0)
     {
       if(verbose>0) cout<<"...but it isn't! "
-			<<"(this may be due to insufficient precision: decimal precision ("
+			<<"(this may be due to insufficient precision: decimal precision "
                         <<prec<<" was used)"<<endl;
       return 0;
     }
@@ -247,7 +255,7 @@ int saturator::do_saturation(int pp, int maxntries)
   p=pp;
   if(verbose>1) 
     cout<<"Testing "<<p<<"-saturation..."<<endl;
-  if(test_saturation(p,20)) return 0;
+  if(test_saturation(p,n_aux_stuck)) return 0;
   if(verbose>1) 
     cout<<"Points not (yet) proved to be "<<p
 	<<"-saturated, attempting enlargement..."<<endl;
@@ -266,7 +274,7 @@ int saturator::do_saturation(int pp, int maxntries)
 	      return -1;
 	    }
 	}
-      if(test_saturation_extra(p,20)) return log_index;
+      if(test_saturation_extra(p,n_aux_stuck)) return log_index;
       if(verbose>1) cout<<"Points not (yet) proved to be "<<p
 	  <<"-saturated, attempting enlargement..."<<endl;
     }
