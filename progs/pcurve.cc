@@ -135,8 +135,8 @@ int main(void)
      if(found)
        {
          anyfound=1;
-	 cout<<"before rescaling, dotplus="<<nfi->dotplus<<", dotminus="<<nfi->dotminus<<endl;
-	 cout<<"rescaling by nx = "<<nx<<", ny="<<ny<<endl;
+	 // cout<<"before rescaling, dotplus="<<nfi->dotplus<<", dotminus="<<nfi->dotminus<<endl;
+	 // cout<<"rescaling by nx = "<<nx<<", ny="<<ny<<endl;
 	 nfi->dotplus *= nx;
 	 nfi->dotminus *= ny;
 	 nfi->type=type;
