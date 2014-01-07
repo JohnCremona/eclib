@@ -81,7 +81,7 @@ public:
       while ((option_char = getopt ()) != EOF)
 	switch (option_char)
 	  {
-	  case 'h': help();  abort(); break;
+	  case 'h': help();  exit(0); break;
 	  case 'q': quiet = 1; break;
 	  case 'p': precision = atoi (getopt.optarg); break;
 	  case 'v': verbose = atoi (getopt.optarg); break;

@@ -47,7 +47,7 @@ public:
 	if(!in) 
 	  {
 	    cerr<<"Failed to open input file "<<filename<<endl;
-	    abort();
+	    exit(1);
 	  }
       }
   }

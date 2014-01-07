@@ -57,7 +57,7 @@ class threadpool {
       // Check start() was called
       if( verbose_ == -1 ) {
         std::cout << "Must call start() before using post(). Exiting ..." << std::endl;
-        abort();
+        exit(1);
       }
 
       // Add reference to new task to job queue

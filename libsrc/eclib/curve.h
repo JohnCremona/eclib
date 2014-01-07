@@ -184,7 +184,7 @@ public:
   virtual void output(ostream& os) const;
   void input(istream& is)
     {cout<<"*** You cannot input a CurvedataExtra -- must be just Curve\n";
-     abort(); }
+     exit(1); }
   void getroots(bigfloat& r1, bigfloat& r2, bigfloat& r3) const
     {r1=roots[0]; r2=roots[1]; r3=roots[2]; }
       // NB caller should then look at conncomp to see how many are set
