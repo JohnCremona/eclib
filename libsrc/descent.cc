@@ -187,7 +187,11 @@ void two_descent::saturate(long sat_bd)
   sat_bound=sat_bd; // store for reporting later
   if((sat_bd==0) || (rank==0))
     {
-      if (rank>0)
+      if (rank==0)
+        {
+          fullmw = 1;
+        }
+      else // positive rank but we have not checked saturation
         {
           fullmw=0;
           if(verbose) cout <<"No saturation being done" << endl;
