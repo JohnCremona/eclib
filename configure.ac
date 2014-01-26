@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [2013-05-26], [john.cremona@gmail.com])
+AC_INIT([eclib], [20140126], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
