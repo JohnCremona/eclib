@@ -59,6 +59,8 @@ public:
         friend bigrational operator/(bigint, const bigrational&);
         friend int operator==(const bigrational&, const bigrational&);
         friend int operator!=(const bigrational&, const bigrational&);
+        friend int operator<(const bigrational&, const bigrational&);
+        friend int operator>(const bigrational&, const bigrational&);
         friend ostream& operator<< (ostream&s, const bigrational&);
         friend istream& operator>> (istream& is, bigrational& r);
         bigrational& operator+=(const bigrational&);
@@ -250,6 +252,16 @@ inline int operator==(const bigrational& q1, const bigrational& q2)
 inline int operator!=(const bigrational& q1, const bigrational& q2)
 {
         return q1.n*q2.d != q2.n*q1.d;
+}
+
+inline int operator<(const bigrational& q1, const bigrational& q2)
+{
+        return q1.n*q2.d < q2.n*q1.d;
+}
+
+inline int operator>(const bigrational& q1, const bigrational& q2)
+{
+        return q1.n*q2.d > q2.n*q1.d;
 }
 
 inline ostream& operator<<(ostream& s, const bigrational& q)

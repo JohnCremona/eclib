@@ -4,10 +4,7 @@ configure by typing ./configure --help.
 
 1. DEPENDENCIES
 
-(a) The configure script will check or the existence of gmp and will
-fail if it does not find it.
-
-(b) Both NTL and PARI are required.  If they have not been installed
+(a) Both NTL and PARI are required.  If they have not been installed
 in a place where the system will find them automatically (such as
 /usr/local) then you will need to specify where they are when you
 configure, like this:
@@ -21,7 +18,7 @@ place: it will be assumed that <path>/include and <path>/lib contain
 appropriate include files and libraries, and the build will fail if
 not.
 
-(c) FLINT is optional (from eclib-2013-01-01) and only used for one
+(b) FLINT is optional (from eclib-2013-01-01) and only used for one
 part of sparse matrix reduction, which is used in the modular symbol
 code but not mwrank or other elliptic curve programs.  If a suitable
 FLINT version is found (which must be at least version 2.3, to contain
@@ -35,12 +32,12 @@ similarly (in two places) and rerun it; or (iii) append
 CXXFLAGS='-DFLINT_LEVEL=2' to the make invocation (and ignore warnings
 about FLINT_LEVEL being redefined).
 
-(d) Boost is optional (from eclib-2013-09-00) and provides parallel
+(c) Boost is optional (from eclib-2013-09-00) and provides parallel
 capabilities in the form_finder class. Configure with --with-boost
 specifying location of a fully built version of Boost, i.e. not
 just the header files. After initial configure, if an error occurs,
-run autoreconf and configure again. Autotools will initiate the 
-macros in m4/ directory and look for Boost.asio, Boost.thread, and 
+run autoreconf and configure again. Autotools will initiate the
+macros in m4/ directory and look for Boost.asio, Boost.thread, and
 Boost.system. Refer ti ./configure --help for more configuration
 options.
 

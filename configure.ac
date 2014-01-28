@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [20140126], [john.cremona@gmail.com])
+AC_INIT([eclib], [20140128], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -49,7 +49,7 @@ AC_ARG_WITH(pari,
     AC_MSG_ERROR([Pari library not found.
     Maybe you want to call configure with the --with-pari=<path> option?
     This tells configure where to find the PARI library and headers.
-    e.g. --with-pari=/usr/local or --with-pari=/usr]),[${GMP_LIBS}])]
+    e.g. --with-pari=/usr/local or --with-pari=/usr]),[ ])]
 )
 case "$with_pari" in
   ""|yes)
@@ -78,7 +78,7 @@ AC_ARG_WITH(ntl,
     AC_MSG_ERROR([NTL Library not found.
     Maybe you want to call configure with the --with-ntl=<path> option?
     This tells configure where to find the NTL library and headers.
-    e.g. --with-ntl=/usr/local or --with-ntl=/usr]),[${GMP_LIBS}])]
+    e.g. --with-ntl=/usr/local or --with-ntl=/usr]),[ ])]
 )
 case "$with_ntl" in
   ""|yes)
@@ -122,7 +122,7 @@ AC_ARG_WITH(flint,
      FLINT_LIBS="-lflint";
      AC_MSG_NOTICE([Building with FLINT support from system install])],
     [AC_MSG_NOTICE([No suitable FLINT Library (version >=2.3) found])],
-    [${GMP_LIBS}])]
+    [ ])]
 )
 if test ${with_flint} = no; then
  FLINT_CFLAGS="-DFLINT_LEVEL=0"

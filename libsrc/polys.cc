@@ -99,6 +99,7 @@ vector<bigrational> roots(const vector<bigint>& coeffs)
           ans.push_back(root);
         }
     }
+  sort(ans.begin(), ans.end());
   return ans;
 }
 
