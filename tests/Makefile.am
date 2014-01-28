@@ -124,14 +124,15 @@ tnfd_SOURCES=tnfd.cc
 
 export NF_DIR:=nftmp
 
-check_g0n:  g0n_tests
+check_g0n: g0n_tests
 	@echo Running g0n checks...
 	rm -rf $(NF_DIR)
 	mkdir $(NF_DIR)
 	for prog in $(G0N_TESTS); do $(check_run); done
 	rm -rf $(NF_DIR)
 
-check: check_procs check_qcurves check_qrank check_g0n
+check:
+	$(MAKE) check_procs check_qcurves check_qrank check_g0n
 	rm -f *.testout PRIMES 1
 
 

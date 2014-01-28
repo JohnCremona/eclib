@@ -87,7 +87,7 @@ aplist_SOURCES=aplist.cc
 
 export NF_DIR:=nftmp
 
-check_g0n:  g0n_progs
+check_g0n: g0n_progs
 	@echo Checking g0n programs...
 	rm -rf $(NF_DIR)
 	mkdir $(NF_DIR)
@@ -96,7 +96,8 @@ check_g0n:  g0n_progs
 
 #################################################################################
 
-check: check_procs check_qcurves check_qrank check_g0n
+check:
+	$(MAKE) check_procs check_qcurves check_qrank check_g0n
 	rm -f *.testout PRIMES 1
 
 # When allprogs is disabled the only binary to be built and installed
