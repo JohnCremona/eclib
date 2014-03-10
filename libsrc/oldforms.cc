@@ -60,11 +60,13 @@ void oldforms::getoldclasses(long d, int verbose)
       if(verbose) cout << "Getting oldclasses for divisor M = " << d << "\n";
       newforms olddata(d,verbose);
       olddata.createfromdata(1,25,1);
-      long nforms=olddata.n1ds;
+      long nforms = olddata.n1ds;
+      long oldnap = olddata.nap;
       if(nforms==0) return;
-      if(olddata.nap<25)
+      if(oldnap<25)
 	{
 	  olddata.addap(25);
+          oldnap = olddata.nap;
 	  olddata.output_to_file();
 	}
       if(verbose>1) cout << "Computing W multiplicities." << "\n";
@@ -90,7 +92,7 @@ void oldforms::getoldclasses(long d, int verbose)
 	  if(verbose>1) 
 	    {
 	      cout<<"form #"<<(iform+1)<<": "<<"aqlist="<<aqlist<<endl;
-	      cout<<"aplist before adjusting="<<nextoldformap<<endl;
+	      cout<<"aplist before adjusting (size "<<oldnap<<") ="<<nextoldformap<<endl;
 	    }
 	  for (c=0; c<(1<<k); c++) // 2^k different oldclasses
 	    {  
@@ -110,14 +112,22 @@ void oldforms::getoldclasses(long d, int verbose)
                     aq=1;
                   if (beta==0)
                     {
-                      nextoldformap[ip] = aq;
-                      if(verbose>1)
-                        cout<<"setting entry #"<<ip<<" to "<<aq<<endl;
+                      if(ip<oldnap)
+                        {
+                          nextoldformap[ip] = aq;
+                          if(verbose>1)
+                            cout<<"setting entry #"<<ip<<" to "<<aq<<endl;
+                        }
                     }
                   else
                     {
                       bit = testbit(c,j++);
-                      nextoldformap[ip] = bit?1:-1;
+                      if(ip<oldnap)
+                        {
+                          nextoldformap[ip] = bit?1:-1;
+                          if(verbose>1)
+                            cout<<"setting entry #"<<ip<<" to "<<aq<<endl;
+                        }
                       if (odd(beta))
                         xmult =  (beta+1)/2;
                       else
