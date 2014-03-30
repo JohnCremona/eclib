@@ -145,8 +145,7 @@ bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint
 #endif
   bigfloat * hcoeffs; // will hold coeffs of covariant quadratic
   bigfloat realphi, phi;       // will hold specific real roots
-  long type;
-  
+
   if(is_positive(disc))
     {
       // all the phi are real;  order them so that a*phi[i] decreases
@@ -162,7 +161,6 @@ bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint
       
       if((is_negative(H))&&(H*H>16*a*a*ii)) 
 	{ 
-	  type = 2; 
 	  realphi = phi2; phi = phi2;
 #ifdef DEBUG_REDUCE
 	  cout<<"Type = 2, phi = "<<phi<<"\n";
@@ -170,7 +168,6 @@ bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint
 	}
       else
 	{ 
-	  type = 1; 
 	  realphi = phi1; phi = phi3;
 #ifdef DEBUG_REDUCE
 	  cout<<"Type = 1, phi = "<<phi<<"\n";
@@ -180,7 +177,6 @@ bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint
     }
   else // disc < 0
     {
-      type=3;
 #ifdef DEBUG_REDUCE
       cout<<"Type = 3, ";
 #endif

@@ -162,11 +162,10 @@ newform::newform(const vector<int>& data, const vector<long>& aq, const vector<l
 // Hecke eigenvalues
 
 newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, newforms* nfs,long ind)
-   :nf(nfs), sign(nfs->sign), bplus(vplus),bminus(vminus),aplist(ap),index(ind) 
+   :nf(nfs), sign(nfs->sign), bplus(vplus),bminus(vminus),index(ind),aplist(ap)
 {
   int verbose=(nf->verbose);
-  long n = nf->modulus;
-  
+
   if(verbose) 
     {
       cout<<"Creating H1"; 
@@ -255,7 +254,7 @@ void newform::fixup_eigs()
   aqlist.resize(nf->npdivs);
   vector<long>::iterator api=aplist.begin(), pi=nf->plist.begin();
   vector<long>::iterator aqi=aqlist.begin();
-  primevar pr;   long q, i, j;
+  primevar pr;   long q, i;
   long n = nf->modulus;
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
@@ -601,7 +600,7 @@ void newform::find_matrix()
 
 void newform::add_more_ap(int nap)
 {
-  if(aplist.size()>=nap) return;
+  if((int)aplist.size()>=nap) return;
   int verbose=(nf->verbose);
   long piv, p, ap;
   // Do not make the espace right away, as it is possible that the
@@ -610,7 +609,7 @@ void newform::add_more_ap(int nap)
   int have_espace=0;
 
   primevar pr(nap,aplist.size()+1);
-  while(aplist.size()<nap)
+  while((int)aplist.size()<nap)
     {
       p=pr;
       if(::divides(p,nf->modulus))
@@ -724,7 +723,7 @@ void newforms::createfromscratch(int s, long ntp)
 
   if(n1ds==0) return;
 
-  int i,j,nap,maxnap=0;
+  int i,nap,maxnap=0;
 
   if((n1ds>1)&&(modulus<130000)) // reorder into old order
     {
@@ -928,7 +927,7 @@ void newforms::display(void) const
 
 void newforms::display_modular_symbol_map(void) const
 {
- long i,j,k,m;
+ long i,j,k;
  rational rplus, rminus;
  for(i=0; i<h1->nsymb; i++)
    {
@@ -1098,7 +1097,7 @@ void newforms::output_to_file(int binflag) const
   nl(out,binflag);
   
   // Lines 20-(20+#aq):  aq for each newform;  then blank line
-  for(j=0; j<nflist[0].aqlist.size(); j++)
+  for(j=0; j<int(nflist[0].aqlist.size()); j++)
     {
       for(i=0; i<n1ds; i++) putout(out,(short)nflist[i].aqlist[j],binflag); 
       nl(out,binflag);
@@ -1106,7 +1105,7 @@ void newforms::output_to_file(int binflag) const
   nl(out,binflag);
   
   // Lines (21+#aq)-(20+#aq+#ap):  ap for each newform
-  for(j=0; j<nflist[0].aplist.size(); j++)
+  for(j=0; j<int(nflist[0].aplist.size()); j++)
     {
       for(i=0; i<n1ds; i++) putout(out,(short)nflist[i].aplist[j],binflag); 
       nl(out,binflag);
@@ -1143,7 +1142,6 @@ void newforms::createfromdata(int s, long ntp, int create_from_scratch_if_absent
 	}
     }
 
-  short temp_short;
   int temp_int;
   datafile.read((char*)&temp_int,sizeof(int));   // = number of newforms
   n1ds=temp_int;
@@ -1255,7 +1253,7 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
   // j1ds counts through the newforms as they are found
   basisflag=0; j1ds=0;
   vector< vector<long> > eigs(ncurves);
-  int i,j;
+  int i;
 
   for(i=0; i<ncurves; i++) 
     eigs[i]=eiglist(Clist[i],nap);
@@ -1316,7 +1314,7 @@ void newforms::createfromolddata()
   vector<long> * aq = new vector<long>[n1ds];
   for(i=0; i<n1ds; i++) aq[i].resize(npdivs);
   primevar pr; long q, k, a;
-  for(k=0, j=0; j<plist.size(); j++)
+  for(k=0, j=0; j<int(plist.size()); j++)
     {
       q = plist[j];
       int q2divN = ::divides(q*q,modulus);
@@ -1409,7 +1407,7 @@ void newforms::makebases(int flag)
   // j1ds counts through the newforms as they are found
   basisflag=flag; j1ds=0;
   vector< vector<long> > eigs(n1ds);
-  int i,j;
+  int i;
 
   unfix_eigs();
   sort();
@@ -1518,9 +1516,8 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   map<long,vec> images; // [j,v] stores image of j'th M-symbol in v
                         // (so we don't compute any more than once)
   vec bas, imagej;
-  long fac;
   long p2=(p-1)>>1; // (p-1)/2
-  long sl, sg, x1, x2, x3, y1, y2, y3, a, b, c, q, r;
+  long sg, a, b, c, q, r;
   long u1,u2,u3;
   long ind;
   
@@ -1675,7 +1672,6 @@ vector<int> newforms::showcurves(vector<int> forms, int verbose)
        cout<<"\n"<<"Form number "<<*inf+1<<"\n";
      else cout<<(*inf+1)<<" ";
 
-     newform* nfi = &(nflist[*inf]);
      Curve C = getcurve(*inf,-1,rperiod,verbose);
      Curvedata CD(C,1);  // The 1 causes minimalization
      if(verbose) cout << "\nCurve = \t";

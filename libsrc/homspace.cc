@@ -70,7 +70,7 @@ homspace::homspace(long n, int hp, int hcusp, int verbose) :symbdata(n)
   init_time();
    plusflag=hp;
    cuspidal=hcusp;
-   long i,j,k,k2,mk;
+   long i,j,k;
    coordindex = new int[nsymb];  
    if (!coordindex) abort("coordindex");
    int* check = new int[nsymb];  
@@ -592,7 +592,7 @@ void homspace::add_coords(svec& vv, const modsym& m) const
       return;
     }
   // now de>1
-  long g = bezout(a,c, u,v); // =1
+  bezout(a,c, u,v); // =1
   long nu = b*u+v*d;
   //
   // now m = M{0,infinity} = U.{nu/de,infinity} where U=[a,-v;c,u], so

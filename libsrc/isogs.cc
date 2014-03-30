@@ -390,7 +390,7 @@ void IsogenyClass::dumpdata(ostream& os, long rank)
 // output for textab to input
 {
   os << ncurves << "\n";
-  long ic, jc, np, il, nj;
+  long ic, jc, il, nj;
   char sep = ' ';
   for (ic=0; ic<ncurves; ic++)
     {
@@ -401,7 +401,6 @@ void IsogenyClass::dumpdata(ostream& os, long rank)
 //cout << "C.ntorsion = " << C.ntorsion << endl;
       os << C.get_ntorsion() << sep;
 //cout << "After C.get_ntorsion(), C.ntorsion = " << C.ntorsion << endl;
-      np = C.the_bad_primes.size();
       if(sign(C.discr)>0) os << "+1" <<sep;
       else  os << "-1" <<sep;
       vector<bigint>::const_iterator pi;

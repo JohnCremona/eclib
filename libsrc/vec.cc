@@ -309,8 +309,8 @@ int lift(const vec& v, scalar pr, vec& ans)
 int lift(const vec& v, scalar pr, vec& ans)
 {
   long i0, i, j, d = dim(v);
- scalar g, nu, de, seed=10; 
- int success, succ;
+ scalar nu, de;
+ int succ;
  float lim = sqrt(pr/2.0)-1;
  scalar maxallowed = 10*int(lim);
 #ifdef LIFT_DEBUG

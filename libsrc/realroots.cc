@@ -179,22 +179,22 @@ vector<bigfloat> realroots( const vector<bigfloat>& coeff )
     bigfloat disc = 4*ii*ii*ii-jj*jj;
     bigfloat H = 8*a*c - 3*b*b, R = b*b*b + 8*d*a*a - 4*a*b*c;
     bigfloat Q = H*H-16*a*a*ii;  // = 3*Q really
-    int type, nrr;
-    if(disc<0) 
-      {type=3; nrr=2;}       // 2 real roots
-    else 
+    int type;
+    if(disc<0)
+      {type=3;}       // 2 real roots
+    else
       {
-	if((H<0)&&(Q>0)) 
-	  {type=2; nrr=4;}   // 4 real roots
-	else 
-	  {type=1; nrr=0;}   // 0 real roots
+	if((H<0)&&(Q>0))
+	  {type=2;}   // 4 real roots
+	else
+	  {type=1;}   // 0 real roots
       }
     bigcomplex c1(to_bigfloat(0)), c2(-3*ii), c3(jj);
     vector<bigcomplex> cphi = solvecubic( c1, c2, c3);
     vector<bigcomplex> roots(4);
     bigfloat a4=4*a;
     bigfloat oneover4a = to_bigfloat(1)/a4;
-    
+
     if(type==1) return ans;
 
     if(type<3)  // all roots are real

@@ -42,10 +42,8 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   long denh = h1->h1denom(); dH=denh;
   vector<long> badprimes = h1->plist;
   mat K = basis(h1->kern).as_mat();
-  long rk = nrows(K);
   mat_m tp, tp1; mat_m m;
-  long d, i,j,k,l, p; 
-  long iq, q, p0;
+  long d, i,j, p;
   bigint ap1;
 
   Hscales.resize(dimh+1);
@@ -334,7 +332,7 @@ vec_m nfd::ap(long p)
   mat K = basis(h1->kern).as_mat();
   long rk = nrows(K);
   matop *matlist;
-  long k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
+  long k,l,n = h1->modulus, dims=dim(S);
   vec_m apvec(dims);
   int bad = ::divides(p,n);
   if(bad) return apvec; // temporary fix!
@@ -345,11 +343,12 @@ vec_m nfd::ap(long p)
     {
       long Kkj = K(k+1,pivots(S)[1]);
       if(Kkj!=0)
-	{	       
+	{
 	  bigint mKkj; mKkj = Kkj;
 	  if(bad)
 	    {
-	      modsym s = h1->freemods[k];
+              continue;  // not yet implemented
+	      // modsym s = h1->freemods[k];
 	      //	      for(l=0; l<matlist->size(); l++)
 	      //		apvec += mKkj*(*matlist)[l](s,h1,projcoord);
 	      //  apvec += mKkj*h1->applyop(*matlist,s,projcoord);

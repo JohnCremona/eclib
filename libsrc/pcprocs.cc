@@ -79,8 +79,8 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
   long a, b, b1, c, d;
   long& dotplus=(nflist[i].dotplus);
   long& dotminus=(nflist[i].dotminus);
-  long nf_a = nflist[i].a,  nf_b = nflist[i].b;
-  long nf_c = nflist[i].c,  nf_d = nflist[i].d;
+  long nf_b = nflist[i].b;
+  long nf_d = nflist[i].d;
   long dotplus0=1, dotminus0=1;
   periods_direct integrator(this,&(nflist[i]));
 

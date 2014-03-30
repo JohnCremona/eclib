@@ -38,11 +38,10 @@ smat restrict_mat(const smat& m, const subspace& s);
 // CLASS FORM_FINDER (was called splitter)
 
 form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int dualflag, int bigmatsflag, int v)
-:h(hh), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v), 
- maxdepth(maxd), mindepth(mind), gnfcount(0)
+:h(hh), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v),
+gnfcount(0), maxdepth(maxd), mindepth(mind)
 {
   eclogger::setLevel( verbose );
-
   denom1 = h->matden();
   dimen  = h->matdim();
  

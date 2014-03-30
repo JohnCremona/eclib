@@ -588,9 +588,8 @@ vector<Point> old_torsion_points(Curvedata& E)
   if ( E.isnull() ) return vector<Point>(0);
   bigint a1,a2,a3,a4,a6,sa2,sa4,sa6, d, x, y ;
   E.getai(a1,a2,a3,a4,a6);
-  long i,nroots,ntp;  int scaled_flag;
+  long i,nroots;  int scaled_flag;
   vector<Point> points;
-  ntp = 1;
   points.push_back(Point(E)) ;     // zero point
   if ( (sign(a1)==0) && (sign(a3)==0) )
     {sa2=a2; sa4=a4; sa6=a6; scaled_flag=0; }
@@ -598,7 +597,7 @@ vector<Point> old_torsion_points(Curvedata& E)
     {sa2 = a1*a1 + 4*a2;
      sa4 = 8*a1*a3 + 16*a4;
      sa6 = 16*a3*a3 + 64*a6;
-     scaled_flag=1; 
+     scaled_flag=1;
     }
   d = sa2*sa2*(sa4*sa4 - 4*sa2*sa6) + 18*sa2*sa4*sa6
                     - 4*sa4*sa4*sa4 - 27*sa6*sa6;

@@ -71,7 +71,7 @@ void oldforms::getoldclasses(long d, int verbose)
 	}
       if(verbose>1) cout << "Computing W multiplicities." << "\n";
       long m = n/d;
-      long k=0, xmult, mult, j, beta, q; 
+      long k=0, xmult, mult, j, beta;
       vector<long> betalist; // =new long[N->npdivs];
       vector<long>::const_iterator qj=(N->plist).begin();
       while(qj!=(N->plist).end())

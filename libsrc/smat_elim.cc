@@ -763,7 +763,6 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
   int numRow = (column+col0-1)->num;
   int d = col[row][0];
   int *pos1 = col[row]+1;
-  int temp;
   if( numRow == 1 ) {
     for( int s = 0; s < d; s++ ) {
       int c = pos1[s] - 1;
@@ -818,7 +817,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
 	  {
 	    if( (*V++ = addmod(xmm(v2,(*veci1++),modulus) , (*veci2++), modulus)) == 0)
 	      { lro[di-d].put(row2); V--; P--; k--;}
-	    temp=*pos1++; // unused, but prevents compiler warning
+	    pos1++;
 	    d--;
 	    d2--;
 	  }
@@ -947,7 +946,6 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
   int *P = col[row2] = new int [ d + d2 + 1 ]; P++;
   scalar *V = val[row2] = new scalar [ d + d2 ];
   int k = 0;       /*k will be # of non-zero entries of sum*/
-  int temp;
   while( d && d2 )
     { 
       if( *pos1 < *pos2 ) 
@@ -957,7 +955,7 @@ void smat_elim::elim( int row1, int row2, scalar v2 )
 	{
 	  if( (*V++ = addmod(xmm(v2,(*veci1++),modulus) , (*veci2++), modulus)) == 0)
 	    { V--; P--; k--;}
-	  temp=*pos1++; // unused, but prevents compiler warning
+	  pos1++; // unused, but prevents compiler warning
 	  d--;
 	  d2--;
 	}
@@ -1044,7 +1042,6 @@ void smat_elim::step5dense()
   // remaining_cols[j-1] column.  For simplicity of coding, we create
   // the new rows as svecs and the use setrow().
   int nrd = nrows(dmat); // may be less than nrr since 0 rows are trimmed
-  int ncd = ncols(dmat);
   svec rowi(nco);
   for(i=1; i<=nrd; i++)
     {
@@ -1091,11 +1088,11 @@ ssubspace::ssubspace(int n)
 {}
 
 ssubspace::ssubspace(const smat& b, const vec& p, scalar mod)
-  :pivots(p),basis(b),modulus(mod)
+  :modulus(mod),pivots(p),basis(b)
 {}
 
 ssubspace::ssubspace(const ssubspace& s)
-  :pivots(s.pivots),basis(s.basis),modulus(s.modulus)
+  :modulus(s.modulus),pivots(s.pivots),basis(s.basis)
 {}
 
 // destructor -- no need to do anything as components have their own

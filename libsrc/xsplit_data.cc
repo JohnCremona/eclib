@@ -40,8 +40,8 @@ ff_data::ff_data( form_finder* ff )
     eigenvalue_( 0 ),
     eiglist_(),
     nest_( NULL ),
-    conjmat_( NULL ),
-    the_opmat_( NULL ),
+    conjmat_(),
+    the_opmat_(),
     parent_( NULL ),
     numChildren_( 0 ) {}
 

@@ -1373,7 +1373,7 @@ mat echelonp(const mat& entries, vec& pcols, vec& npcols,
                 cout << "In echelonp\n";
 #endif /* TRACE */
  long nc,nr,r,c,r2,r3,rmin;
- scalar min, mr2c,lastpivot;
+ scalar min, mr2c;
  nr=nrows(entries), nc=ncols(entries);
  mat m(nr,nc);
  scalar *mij=m.entries, *entriesij=entries.entries;
@@ -1381,7 +1381,7 @@ mat echelonp(const mat& entries, vec& pcols, vec& npcols,
  while(n--) *mij++ = xmod(*entriesij++,pr);
  pcols.init(nc);
  npcols.init(nc);
- rk=0; ny=0; r=1; lastpivot=1;
+ rk=0; ny=0; r=1;
  for (c=1; (c<=nc)&&(r<=nr); c++)
  {
    min = m(r,c);   rmin = r;
@@ -1601,7 +1601,7 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
 mat ref_via_flint(const mat& M, scalar pr)
 {
   long nr=nrows(M), nc=ncols(M);
-  long i, j, n=max(nr,nc);
+  long i, j;
 
   // copy of the modulus for FLINT
   uscalar mod = (uscalar)pr;
@@ -1619,7 +1619,7 @@ mat ref_via_flint(const mat& M, scalar pr)
   timeit_start(t);
   cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
 #endif
-  long rank = mod_mat_rref(A);
+  mod_mat_rref(A);
 #ifdef TRACE_FLINT_RREF
   timeit_stop(t);
   cerr<<" cpu = "<<(t->cpu)<<" ms, wall = "<<(t->wall)<<" ms"<<endl;
@@ -1642,7 +1642,7 @@ mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
                                   long& rk, long& ny, scalar pr)
 {
   long nr=nrows(M), nc=ncols(M);
-  long i, j, k, n=max(nr,nc);
+  long i, j, k;
 
 #ifdef TRACE_FLINT_RREF
 #if (SCALAR_OPTION==1)

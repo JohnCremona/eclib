@@ -451,7 +451,7 @@ void periods_direct::compute(void)
   if (d<0) { a=-a;b=-b;c=-c;d=-d;}
 
   bigfloat drecip =  to_bigfloat(1) / to_bigfloat(d);
-  if (ctab.size()!=d) // else same d as before, no need to recompute
+  if (int(ctab.size())!=d) // else same d as before, no need to recompute
     {
       int j; bigfloat x;
       ctab.clear();

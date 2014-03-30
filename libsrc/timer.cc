@@ -297,7 +297,7 @@ double timer::total( string name ) {
   vector<double>::size_type size = times_[name].size();
   double total = 0;
   
-  for( int i = 0; i < size; i++ ) {
+  for( int i = 0; i < (int)size; i++ ) {
     total += times_[name][i];
   }
 

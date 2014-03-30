@@ -142,7 +142,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 		       const bigint& d, const bigint& e)
 {
   long firsti, i, oldnumber=0, thisnumber, nfl; 
-  char ab; unsigned long code;  
+  char ab;
   int trivial=0, newone=1, gls=0, els=0;
   quartic * qlist, *thisq;;
   bigint x,y,z, badp; 	  Point Ptemp;
@@ -201,7 +201,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 
   // Check current is inequivalent to previous
 
-  code = thisq->set_equiv_code(eqplist);
+  thisq->set_equiv_code(eqplist);
   firsti = (extra2==1 ? nfl : 0);
   for (i=firsti; newone && (i<thisnumber); i++)
     { 
@@ -672,7 +672,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   static const bigfloat zero=to_bigfloat(0);
   bigint rsq, r, rem, h, d, e, ee;
   bigfloat r1, r2, r3, xr;
-  long efactor, cfactor;
+  long efactor;
   bigcomplex c1;
   // Unnecessary initializations to keep -Wall happy:
   bigfloat phi=zero,phi1,phi2,phi3; 
@@ -682,7 +682,6 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   
 
   int extraextra2 = div(64,ii)&&div(128,jj);  // Pascale's extra condition
-  cfactor = 1;
   cmod3 = mod(jj,3);
 
   if (verbose) cout << "Looking for Type " << t << " quartics:\n";
