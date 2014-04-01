@@ -55,6 +55,7 @@ case "$with_pari" in
   ""|yes)
     PARI_LDFLAGS=""
     PARI_CFLAGS=""
+    GP="gp"
     ;;
   no)
     AC_MSG_ERROR([Compiling without libpari impossible (but --without-pari given)])
@@ -62,12 +63,14 @@ case "$with_pari" in
   *)
     PARI_LDFLAGS="-L${with_pari}/lib"
     PARI_CFLAGS="-I${with_pari}/include"
+    GP="${with_pari}/bin/gp"
     ;;
 esac
 PARI_LIBS="-lpari"
 AC_SUBST(PARI_LIBS)
 AC_SUBST(PARI_CFLAGS)
 AC_SUBST(PARI_LDFLAGS)
+AC_SUBST(GP)
 
 dnl Find the NTL Library
 AC_ARG_WITH(ntl,
@@ -168,6 +171,7 @@ AM_CONDITIONAL([ALLPROGS], [test x$allprogs = xtrue])
 
 AC_CONFIG_FILES([
   libsrc/Makefile
+  libsrc/gpslave.cc
   tests/Makefile
   progs/Makefile
   doc/Makefile
