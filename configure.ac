@@ -109,26 +109,35 @@ dnl case, ignore the warnings about FLINT_LEVEL being redfined.
 dnl
 dnl First set defaults for when no suitable FLINT is found
 dnl
-FLINT_CFLAGS="-DFLINT_LEVEL=0"
-FLINT_LDFLAGS=""
-FLINT_LIBS=""
 AC_ARG_WITH(flint,
   [AS_HELP_STRING([--with-flint=<path>],[prefix of FLINT installation.])],
-  [FLINT_CFLAGS="-DFLINT_LEVEL=1 -I${with_flint}/include";
-   FLINT_LDFLAGS="-L${with_flint}/lib";
-   FLINT_LIBS="-lflint"],
-  [AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref],
-    [FLINT_CFLAGS="-DFLINT_LEVEL=1";
-     FLINT_LIBS="-lflint";
-     AC_MSG_NOTICE([Building with FLINT support from system install])],
-    [AC_MSG_NOTICE([No suitable FLINT Library (version >=2.3) found])],
-    [ ])]
+  [  
+    if test "$withval" = "no"; then
+       want_flint=no
+    elif test "$withval" = "yes"; then
+        want_flint=yes
+        AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref],
+        [FLINT_CFLAGS="-DFLINT_LEVEL=1";
+         FLINT_LIBS="-lflint";
+         AC_MSG_NOTICE([Building with FLINT support from system install])],
+        [AC_MSG_NOTICE([No suitable FLINT Library (version >=2.3) found])],
+        [])
+    else
+        want_flint=yes
+        FLINT_CFLAGS="-DFLINT_LEVEL=1 -I$withval/include"
+	FLINT_LDFLAGS="-L$withval/lib";
+        FLINT_LIBS="-lflint"
+    fi
+    ],
+    [want_flint=no]
 )
-if test ${with_flint} = no; then
- FLINT_CFLAGS="-DFLINT_LEVEL=0"
- FLINT_LDFLAGS=""
- FLINT_LIBS=""
+
+if test "x$want_flint" = "xno"; then
+       FLINT_CFLAGS="-DFLINT_LEVEL=0"
+       FLINT_LDFLAGS=""
+       FLINT_LIBS=""
 fi
+
 AC_SUBST(FLINT_LIBS)
 AC_SUBST(FLINT_CFLAGS)
 AC_SUBST(FLINT_LDFLAGS)
