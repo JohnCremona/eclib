@@ -102,8 +102,10 @@ void timer::stream( string filename ) {
     
     // Check is file successfully opened
     if( file_ == NULL ) {
-      cout << "File " << filename << " could not be opened ... exiting" << endl;
-      exit( EXIT_FAILURE );
+      {
+        cout << "File " << filename << " could not be opened ... using stout" << endl;
+        s_ = &cout;
+      }
     }
 
     // Point main reference to newly opened file
@@ -124,8 +126,8 @@ void timer::add( string name ) {
   // Check if default timer is being added
   if( name.compare("default") == 0 ) {
     cout << "Timer of name `default' cannot be used. "
-         << "Try another name ... exiting" << endl;
-    exit( EXIT_FAILURE );
+         << "Try another name ... ignoring" << endl;
+    return;
   }
 
   // Existence based on length of vector
