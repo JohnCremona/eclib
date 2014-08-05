@@ -33,6 +33,12 @@
 // class for  points on elliptic curves
 //
 
+class Point;
+Point transform(const Point& p,  Curvedata* newc, 
+			 const bigint& u, 
+			 const bigint& r, const bigint& s, const bigint& t, 
+			 int back=0); 
+
 class Point : public P2Point { 
   Curvedata *E;    // pointer to the curve that the point is on
   int ord;         // order: 0 if not calculated yet, -1 if infinite
@@ -109,7 +115,7 @@ public:
   friend Point transform(const Point& p,  Curvedata* newc, 
 			 const bigint& u, 
 			 const bigint& r, const bigint& s, const bigint& t, 
-			 int back=0); 
+			 int back); 
 
   void operator+=(const Point&) ; // P1 += P2 ; order and height unknown
   void operator-=(const Point&) ; // P1 -= P2 ; ditto

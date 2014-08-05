@@ -21,6 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+int eqmodp(const svec&, const svec&, const scalar& p=DEFAULT_MODULUS);
+ 
 class svec {
 
   friend class smat;
@@ -83,7 +85,7 @@ public:
 
   friend inline int dim(const svec& v)  {return v.d;}
   // Equality mod p:
-  friend int eqmodp(const svec&, const svec&, const scalar& p=DEFAULT_MODULUS);
+  friend int eqmodp(const svec&, const svec&, const scalar& p);
   friend ostream& operator<< (ostream&s, const svec&);
   friend scalar operator*(const svec&, const svec&); //dot product
   friend scalar operator*(const svec&, const vec&);

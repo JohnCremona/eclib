@@ -30,6 +30,16 @@
 //
 // class for  points in P^2(Q), used as base for points on elliptic curves etc.
 //
+class P2Point;
+P2Point scale(const P2Point& P, const bigint& u, int back=0); 
+P2Point scale(const P2Point& P, long u=1, int back=0); 
+P2Point shift(const P2Point& P,
+      const bigint& r, const bigint& s, const bigint& t, 
+      int back=0); 
+P2Point transform(const P2Point& P,
+			   const bigint& u, 
+			   const bigint& r, const bigint& s, const bigint& t, 
+			   int back=0); 
 
 class P2Point{ 
   friend class Point;
@@ -100,15 +110,15 @@ public:
     { X=Q.X ; Y=Q.Y; Z=Q.Z;  }
 
   // Coordinate transforms useful for elliptic curve points 
-  friend P2Point scale(const P2Point& P, const bigint& u, int back=0); 
-  friend P2Point scale(const P2Point& P, long u=1, int back=0); 
+  friend P2Point scale(const P2Point& P, const bigint& u, int back); 
+  friend P2Point scale(const P2Point& P, long u, int back); 
   friend P2Point shift(const P2Point& P,
 		       const bigint& r, const bigint& s, const bigint& t, 
-		       int back=0); 
+		       int back); 
   friend P2Point transform(const P2Point& P,
 			   const bigint& u, 
 			   const bigint& r, const bigint& s, const bigint& t, 
-			   int back=0); 
+			   int back); 
 
   void getcoordinates(bigint& x, bigint& y, bigint& z) const
     {x=X; y=Y; z=Z; }

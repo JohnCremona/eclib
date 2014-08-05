@@ -23,6 +23,9 @@
  
 // Original version by Luiz Figueiredo
 
+int eqmodp(const smat&, const smat&, const scalar& p=DEFAULT_MODULUS);
+int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace=0);
+
 class smat {
 
 friend class smat_elim;
@@ -79,7 +82,7 @@ public:
      friend smat transpose(const smat&);
      friend int operator==(const smat&, const smat&);
   // Equality mod p:
-     friend int eqmodp(const smat&, const smat&, const scalar& p=DEFAULT_MODULUS);
+     friend int eqmodp(const smat&, const smat&, const scalar& p);
      friend ostream& operator<< (ostream&s, const smat&);
      friend istream& operator>> (istream&s, smat&);
      friend int get_population (const smat& );      //mainly used for testing
@@ -87,7 +90,7 @@ public:
      {return (((double)(get_population(m)))/m.nro)/m.nco;}
      friend void random_fill_in( smat&, int, scalar ); //the elimination program
      friend smat sidmat(scalar);  // identity matrix
-     friend int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace=0);
+     friend int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace);
      friend int liftmats_chinese(const smat& mm1, scalar pr1, const smat& mm2, scalar pr2,
                                  smat& m, scalar& dd);
  };

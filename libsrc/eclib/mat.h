@@ -32,6 +32,9 @@
 #define INT_MIN (-INT_MAX-1)
 #endif
 
+int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace=0);
+int lift(const subspace& s, scalar pr, subspace& ans, int trace=0);
+
 class mat {
 friend class subspace;
 friend class mat_m;
@@ -103,8 +106,8 @@ public:
                                  long& rk, long& ny, scalar pr);
 	friend subspace combine(const subspace& s1, const subspace& s2);
         friend mat restrict_mat(const mat& m, const subspace& s, int cr);
-        friend int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace=0);
-        friend int lift(const subspace& s, scalar pr, subspace& ans, int trace=0);
+        friend int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace);
+        friend int lift(const subspace& s, scalar pr, subspace& ans, int trace);
 	friend subspace pcombine(const subspace& s1, const subspace& s2, scalar pr);
 	friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr);
 	friend mat matmulmodp(const mat&, const mat&, scalar pr);

@@ -32,6 +32,8 @@ class subspace;
 
 class vec;
 vec iota(scalar n);                      // (1,2,...,n)
+mat restrict_mat(const mat& m, const subspace& s, int cr=0);
+mat prestrict(const mat& m, const subspace& s, scalar pr, int cr=0);
 
 class vec {
 friend class svec;
@@ -78,9 +80,9 @@ public:
         friend scalar vecgcd(const vec&);
         friend void swapvec(vec& v, vec& w);
         friend int member(scalar a, const vec& v);//tests if a=v[i] for some i
-        friend mat restrict_mat(const mat& m, const subspace& s, int cr=0);
+        friend mat restrict_mat(const mat& m, const subspace& s, int cr);
         friend mat_m restrict_mat(const mat_m& m, const msubspace& s);
-        friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr=0);
+        friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr);
         friend mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr);
 
 // Implementation

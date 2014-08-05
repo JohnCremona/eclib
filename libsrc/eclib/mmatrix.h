@@ -27,6 +27,8 @@
 #include "mvector.h"
 #include "matrix.h"
 
+msubspace lift(const msubspace& s, const bigint& pr, int =0);
+
 class mat_m {
 friend class msubspace;
 public:
@@ -84,7 +86,7 @@ public:
                                   long& rk, long& ny, const bigint& pr);
         friend msubspace combine(const msubspace& s1, const msubspace& s2);
         friend mat_m restrict_mat(const mat_m& m, const msubspace& s);
-        friend msubspace lift(const msubspace& s, const bigint& pr, int =0);
+        friend msubspace lift(const msubspace& s, const bigint& pr, int);
         friend msubspace pcombine(const msubspace& s1, const msubspace& s2, const bigint& pr);
         friend mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr);
         friend mat_m matmulmodp(const mat_m&, const mat_m&, const bigint& pr);
