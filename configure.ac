@@ -77,11 +77,7 @@ AC_ARG_WITH(ntl,
   [AS_HELP_STRING([--with-ntl=<path>],
                   [prefix of NTL installation. e.g. /usr/local or /usr])],
   [],
-  [AC_CHECK_LIB([ntl], [_ntl_gmul],[ ],
-    AC_MSG_ERROR([NTL Library not found.
-    Maybe you want to call configure with the --with-ntl=<path> option?
-    This tells configure where to find the NTL library and headers.
-    e.g. --with-ntl=/usr/local or --with-ntl=/usr]),[ ])]
+  []
 )
 case "$with_ntl" in
   ""|yes)
@@ -96,6 +92,21 @@ case "$with_ntl" in
     NTL_CFLAGS="-I${with_ntl}/include"
     ;;
 esac
+
+AC_LANG_PUSH(C++)
+CPPFLAGS_save="$CPPFLAGS"
+LDFLAGS_save="$LDFLAGS"
+CPPFLAGS="$CPPFLAGS $NTL_CFLAGS"
+LDFLAGS="$LDFLAGS $NTL_LDFLAGS"
+AC_CHECK_HEADER(NTL/ZZ.h, found_ntl=yes, found_ntl=no)
+LDFLAGS="$LDFLAGS_save"
+CPPFLAGS="$CPPFLAGS_save"
+AC_LANG_POP(C++)
+
+if test "x$found_ntl" = "xno"; then
+  AC_MSG_ERROR([Could not find NTL, you might want to use --with-ntl=<path> to point to its location])
+fi
+
 NTL_LIBS="-lntl"
 AC_SUBST(NTL_LIBS)
 AC_SUBST(NTL_CFLAGS)
