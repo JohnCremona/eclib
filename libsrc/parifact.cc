@@ -33,7 +33,7 @@ using namespace std;
 string
 factor(const string n)
 {
-  if (!bot) {
+  if (!avma) {
     pari_init(1000000, 1000000);
   }
 #ifdef DEBUG_GPFACT
@@ -54,7 +54,7 @@ factor(const string n)
 int 
 is_prime(const string p)
 {
-  if (!bot) {
+  if (!avma) {
     pari_init(1000000, 1000000);
   }
   pari_sp av=avma;  // store pari stack pointer
