@@ -230,10 +230,14 @@ void cubic::mathews_reduce(unimod& m)
 	}
       alpha = real_root();
       k = Iround(-alpha/2 - I2bigfloat(b())/I2bigfloat(2*a()));
-      x_shift(k,m);
+      if (k!=0)
+        {
+          s=1;
+          x_shift(k,m);
 #ifdef DEBUG
       cout << "Shift by "<<k<<": "<<(*this)<<endl;
 #endif
+        }
       bigint plus1, minus1;  plus1=1; minus1=-1;
       while(mat_c2()>0) 
 	{
