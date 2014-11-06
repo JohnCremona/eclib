@@ -43,7 +43,7 @@ int main()
       if(disc>0)
 	{
 	  cout << "Using Hessian to reduce...\n";
-	  g.hess_reduce(m);
+          g.hess_reduce(m);
 	  cout << "Hessian reduced cubic = "<<g<<endl;
 	  cout << "after transform by "<<m<<endl;
 	  cout << "Root of Hessian = " << g.hess_root() << endl;
@@ -57,14 +57,14 @@ int main()
 	  cout << "g(alpha) = " << ga << endl;
 // First use Mathews reduction
 	  cout << "Using Mathews reduction ...\n";
-	  g.mathews_reduce(m);
+          g.mathews_reduce(m);
 	  cout << "Mathews reduced cubic = "<<g<<endl;
 	  cout << "after transform by "<<m<<endl;
 
 // Now use JC/Julia reduction
 	  cout << "Using JC/Julia reduction ...\n";
 	  g=g0;
-	  g.jc_reduce(m);
+          g.jc_reduce(m);
 	  cout << "JC/Julia reduced cubic = "<<g<<endl;
 	  cout << "after transform by "<<m<<endl;
 	}

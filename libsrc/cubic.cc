@@ -78,6 +78,9 @@ void cubic::invert(unimod& m)
   m.invert();
 }
 
+// The quantity called C_1 in the paper, = Norm(h2-h0) and should be
+// POSITIVE for a reduced form:
+
 bigint cubic::j_c1() const
 {
   bigint b2=sqr(b());
@@ -104,6 +107,9 @@ bigint cubic::j_c1() const
 	  108*c3*d2*a() - 18*c4*bd + 27*d2*c2*b2 - 486*d3*ac*b() - 54*d2*b4;
 
 }
+
+// MINUS the quantity called C_2 in the paper, = -Norm(h0-h1) and should be
+// NEGATIVE for a reduced form:
 
 bigint cubic::j_c2() const
 {
@@ -133,6 +139,9 @@ bigint cubic::j_c2() const
 	  + 18*b4*ac - 27*a2*b2*c2 + 6*b5*c() - 648*b2*c()*a2*d() 
     + 162*a()*d()*b4 +  1458*a3*d2*b();
 }
+
+// The quantity called C_3 in the paper, = Norm(h0+h1) and should be
+// POSITIVE for a reduced form:
 
 bigint cubic::j_c3() const
 { 
@@ -267,10 +276,14 @@ void cubic::jc_reduce(unimod& m)
       bigfloat h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
       bigfloat h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc; 
       k = Iround(-h1/(2*h0));
-      x_shift(k,m);
+      if (k!=0)
+        {
+          s=1;
+          x_shift(k,m);
 #ifdef DEBUG
-      cout << "Shift by "<<k<<": "<<(*this)<<endl;
+          cout << "Initial shift by "<<k<<": "<<(*this)<<endl;
 #endif
+        }
       while(j_c2()>0) 
 	{
 	  s=1; x_shift(minus1,m);
@@ -285,6 +298,9 @@ void cubic::jc_reduce(unimod& m)
 	  cout << "Shift by +1: "<<(*this)<<endl;
 #endif
 	}
+#ifdef DEBUG
+      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<endl;
+#endif
     }
   if(a()<0) {::negate(coeffs[0]); ::negate(coeffs[1]);}
 }

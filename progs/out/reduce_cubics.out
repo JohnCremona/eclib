@@ -8,4 +8,14 @@ after transform by [1,0;0,1]
 Using JC/Julia reduction ...
 JC/Julia reduced cubic = [123,-135,246,222]
 after transform by [1,-1;0,1]
+Enter cubic coeffs a, b, c, d: Input cubic = [11276,-159331,750302,-1177513]
+Discriminant = -104060401000
+Real root alpha = 4.848316386
+g(alpha) = 0
+Using Mathews reduction ...
+Mathews reduced cubic = [11276,9809,2692,222]
+after transform by [1,5;0,1]
+Using JC/Julia reduction ...
+JC/Julia reduced cubic = [83,-100,-245,-650]
+after transform by [14,9;3,2]
 Enter cubic coeffs a, b, c, d: 
