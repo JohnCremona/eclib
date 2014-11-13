@@ -79,7 +79,7 @@ void cubic::invert(unimod& m)
 }
 
 // The quantity called C_1 in the paper, = Norm(h2-h0) and should be
-// POSITIVE for a reduced form:
+// NON-NEGATIVE for a reduced form:
 
 bigint cubic::j_c1() const
 {
@@ -109,7 +109,7 @@ bigint cubic::j_c1() const
 }
 
 // MINUS the quantity called C_2 in the paper, = -Norm(h0-h1) and should be
-// NEGATIVE for a reduced form:
+// NON-POSITIVE for a reduced form:
 
 bigint cubic::j_c2() const
 {
@@ -144,7 +144,7 @@ bigint cubic::j_c2() const
 // POSITIVE for a reduced form:
 
 bigint cubic::j_c3() const
-{ 
+{
   bigint a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
   bigint b2=b*b;
   bigint b3=b*b2;
@@ -170,12 +170,28 @@ bigint cubic::j_c3() const
 	  + 27*a2*b2*c2 + 6*b5*c - 648*b2*c*a2*d + 162*a*d*b4 + 1458*a3*d2*b;
 }
 
+// The quantity C_4 (not in the paper), = Norm(h1)/8 and should be
+// NON-NEGATIVE for a reduced form with C1=0 (i.e. when h0=h2 we want h1>=0).
+
+bigint cubic::j_c4() const
+{
+  bigint a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
+  bigint b2=b*b;
+  bigint b3=b*b2;
+  bigint b4=b*b3;
+  bigint a2=a*a;
+  bigint c2=c*c;
+  bigint c3=c*c2;
+
+  return 27*d*c3*a2 + (27*d^2*b3 - 54*d*c2*b2 + 9*c^4*b)*a + 9*d*c*b4 - 2*c3*b3;
+}
+
 //#define DEBUG
 
 bigcomplex cubic::hess_root() const
 {
   bigfloat discr = I2bigfloat(disc());
-  if(!is_positive(disc())) 
+  if(!is_positive(disc()))
     {
       cout<<"Error: hess_root called with negative dicriminant!\n";
       return to_bigfloat(0);
@@ -184,7 +200,7 @@ bigcomplex cubic::hess_root() const
   bigfloat Q = I2bigfloat(q_semi());
   bigfloat delta = sqrt(3*discr);
   bigcomplex gamma(-Q,delta); gamma/=(2*P);
-  return gamma;  
+  return gamma;
 }
 
 void cubic::hess_reduce(unimod& m)
@@ -195,6 +211,8 @@ void cubic::hess_reduce(unimod& m)
   while(s)
     {
       s=0;
+      // NB roundover(a,b) returns c such that a/b=c+x and -1/2 < x <= 1/2,
+      // so after the shift (when P>0) we have -P <= Q < P.
       k = roundover(-q_semi(),2*p_semi());
       if(!is_zero(k))
 	{
@@ -211,6 +229,14 @@ void cubic::hess_reduce(unimod& m)
 #endif
 	}
     }
+  // Now we have -P <= Q < P <= R and test for boundary condition
+  if((p_semi()==r_semi()) && (q_semi()<0))
+    {
+      invert(m);
+#ifdef DEBUG
+      cout << "Final inversion: " << (*this) << endl;
+#endif
+    }
   if(a()<0) {::negate(coeffs[0]); ::negate(coeffs[2]);}
 }
 
@@ -221,7 +247,7 @@ void cubic::mathews_reduce(unimod& m)
   while(s)
     {
       s=0;
-      if(mat_c1()<0) 
+      if(mat_c1()<0)
 	{
 	  s=1; invert(m);
 #ifdef DEBUG
@@ -239,14 +265,14 @@ void cubic::mathews_reduce(unimod& m)
 #endif
         }
       bigint plus1, minus1;  plus1=1; minus1=-1;
-      while(mat_c2()>0) 
+      while(mat_c2()>0)
 	{
 	  s=1; x_shift(plus1,m);
 #ifdef DEBUG
 	  cout << "Shift by +1: "<<(*this)<<endl;
 #endif
 	}
-      while(mat_c3()<0) 
+      while(mat_c3()<0)
 	{
 	  s=1; x_shift(minus1,m);
 #ifdef DEBUG
@@ -266,47 +292,63 @@ void cubic::jc_reduce(unimod& m)
   while(s)
     {
       s=0;
-      if(j_c1()<0) 
+      if(j_c1()<0)
 	{
 	  s=1;  invert(m);
 #ifdef DEBUG
 	  cout << "invert: " << (*this) << endl;
 #endif
 	}
-      bigfloat alpha = real_root();
-      bigfloat ra = I2bigfloat(a());
-      bigfloat rb = I2bigfloat(b());
-      bigfloat rc = I2bigfloat(c());
-      bigfloat h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
-      bigfloat h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc; 
-      k = Iround(-h1/(2*h0));
-      if (k!=0)
+      if ((j_c2()>0) || (j_c3()<0))
         {
           s=1;
-          x_shift(k,m);
+          bigfloat alpha = real_root();
+          bigfloat ra = I2bigfloat(a());
+          bigfloat rb = I2bigfloat(b());
+          bigfloat rc = I2bigfloat(c());
+          bigfloat h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+          bigfloat h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc; 
 #ifdef DEBUG
-          cout << "Initial shift by "<<k<<": "<<(*this)<<endl;
+          cout << "h0 = "<<h0<<endl;
+          cout << "h1 = "<<h1<<endl;
+          cout << "-h1/(2*h0) = "<<(-h1/(2*h0))<<endl;
+#endif
+          k = Iround(-h1/(2*h0));
+          if (k!=0)
+            {
+              x_shift(k,m);
+#ifdef DEBUG
+              cout << "Initial shift by "<<k<<": "<<(*this)<<endl;
+#endif
+            }
+          // Two loops to guard against rounding error in computing k:
+          while(j_c2()>0)
+            {
+              x_shift(minus1,m);
+#ifdef DEBUG
+              cout << "Shift by -1: "<<(*this)<<endl;
+#endif
+            }
+          while(j_c3()<0)
+            {
+              x_shift(plus1,m);
+#ifdef DEBUG
+              cout << "Shift by +1: "<<(*this)<<endl;
+#endif
+            }
+        }
+      if ((j_c1()==0) && (j_c4()<0))
+        {
+          s=1;  invert(m);
+#ifdef DEBUG
+          cout << "invert: " << (*this) << endl;
 #endif
         }
-      while(j_c2()>0) 
-	{
-	  s=1; x_shift(minus1,m);
 #ifdef DEBUG
-	  cout << "Shift by -1: "<<(*this)<<endl;
-#endif
-	}
-      while(j_c3()<0) 
-	{
-	  s=1;   x_shift(plus1,m);
-#ifdef DEBUG
-	  cout << "Shift by +1: "<<(*this)<<endl;
-#endif
-	}
-#ifdef DEBUG
-      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<endl;
+      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
 #endif
     }
-  if(a()<0) {::negate(coeffs[0]); ::negate(coeffs[1]);}
+  if(a()<0) {::negate(coeffs[0]); ::negate(coeffs[2]);}
 }
 
   // Just shifts x:

@@ -102,6 +102,7 @@ public:
   bigint j_c1() const;
   bigint j_c2() const;
   bigint j_c3() const;
+  bigint j_c4() const;
 
   bigcomplex hess_root() const;
   bigfloat real_root() const;  // requires disc<0

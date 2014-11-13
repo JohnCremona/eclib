@@ -1,4 +1,4 @@
-// list_cubicx.cc: Program for listing integer cubics with given discriminant bound
+// list_cubics.cc: Program for listing integer cubics with given discriminant bound
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -88,12 +88,18 @@ int main()
 				{
 				  cout<<disc<<"\t";
 				  cubic g(a,b,c,d);
-				  cout<<g<<"\t----------->\t";
+				  cout<<g;
+                                  if(disc!=g.disc())
+                                    cout<<" [WRONG DISC]";
+				  cout<<"\t---(reduces to)--->\t";
 				  if(neg)
 				    g.jc_reduce(m);
 				  else
-				    g.hess_reduce(m);
-				  cout<<g<<endl;
+                                    g.hess_reduce(m);
+				  cout<<g;
+                                  if(disc!=g.disc())
+                                    cout<<" [WRONG DISC]";
+                                  cout<<endl;
 				}
 			    }
 			}
