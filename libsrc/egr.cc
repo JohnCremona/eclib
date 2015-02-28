@@ -795,7 +795,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
   cout<<"In comp_map_image, m="<<m;
   cout<<"moduli = "<<moduli<<endl;
 #endif
-  int npts=nrows(m), np=ncols(m);
+  int npts=m.nrows(), np=m.ncols();
   int i, j, jj;
   if(np==0) return ans;
   for(j=1; j<=np; j++)

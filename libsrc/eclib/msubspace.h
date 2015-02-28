@@ -81,7 +81,7 @@ msubspace pimage(const mat_m& mat, const bigint& pr);
 msubspace peigenspace(const mat_m& mat, const bigint& lambda, const bigint& pr);
 msubspace psubeigenspace(const mat_m& mat, const bigint& l, const msubspace& s, const bigint& pr);
 
-inline int dim(const msubspace& s) {return ncols(s.basis);}  // the dimension
+inline int dim(const msubspace& s) {return s.basis.ncols();}  // the dimension
 inline bigint denom(const msubspace& s) {return s.denom;}   // the denominator
 inline vec_i pivots(const msubspace& s) {return s.pivots;} // the pivot vector
 inline mat_m basis(const msubspace& s) {return s.basis;}  // the basis matrix

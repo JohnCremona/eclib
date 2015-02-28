@@ -3,12 +3,13 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [20141106], [john.cremona@gmail.com])
+AC_INIT([eclib], [20150228], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
 #AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
+AM_PROG_AR
 
 # Initialise libtools:
 LT_INIT
@@ -21,6 +22,7 @@ AC_PROG_LIBTOOL
 
 # Checks for system features and libraries, via macros defined in m4/ directory
 AX_CXX_COMPILE_STDCXX_0X
+# Uncomment this to check for C++-11 compliance (no C++-11 features are used)
 #AX_CXX_COMPILE_STDCXX_11([],[optional])
 AX_CXX_HEADER_TR1_UNORDERED_MAP
 AX_CXX_HEADER_UNORDERED_MAP

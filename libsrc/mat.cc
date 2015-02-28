@@ -329,9 +329,6 @@ mat& mat::operator/=(scalar scal)
 
 // Definitions of non-member, friend operators and functions
 
-long nrows(const mat& m) {return m.nro;}
-long ncols(const mat& m) {return m.nco;}
-
 // add/sub row i of mat to v (implemented in mat.cc)
 void add_row_to_vec(vec& v, const mat& m, long i)
 {
@@ -673,7 +670,7 @@ mat idmat(scalar n)
 mat transpose(const mat& m)
 {
  long i,j,nr,nc;
- nr=ncols(m); nc=nrows(m);
+ nr=m.ncols(); nc=m.nrows();
  mat ans(nr, nc);
  for (i=1; i<=nr; i++)
   for (j=1; j<=nc; j++)
@@ -954,72 +951,13 @@ x cout<<": pivot = "<<mi1[pcols[r]]<<endl;
   return ans;
 }
 
-//  Original version 
-
-// mat echelon0(const mat& entries, vec& pcols, vec& npcols,
-//                long& rk, long& ny, long& d)
-// {
-//  long nc, nr;
-//  long r,c,r2,r3,rmin;
-//  long min, mr2c,lastpivot;
-//  rk=0; ny=0; r=1; lastpivot=1;
-// 
-//  mat m(entries);
-//  nc=ncols(m); nr=nrows(m);
-//  pcols.init(nc);
-//  npcols.init(nc);
-//  for (c=1; (c<=nc)&&(r<=nr); c++)
-//   {min = abs(m(r,c));
-//    rmin = r;
-//    for (r2=r+1; (r2<=nr)&&(min!=1); r2++)
-//    { mr2c = abs(m(r2,c));
-//      if ((0<mr2c) && ((mr2c<min) || (min==0))) { min=mr2c; rmin=r2 ;}
-//    }
-//    if (min==0) npcols[++ny] = c;
-//    else
-//      {pcols[++rk] = c;
-//       if (rmin>r) m.swaprows(r,rmin);
-//       for (r3 = r+1 ; r3<=nr; r3++)
-//          elimrows2(m,r,r3,c,lastpivot);
-//       lastpivot=min;
-//       r++;
-//      }
-//  }
-//  for (c = rk+ny+1; c<=nc; c++) npcols[++ny] = c;
-//  pcols  =  pcols.slice(rk);
-//  npcols =  npcols.slice(ny);    // truncate index vectors
-// // cout << "In echelon:\n";
-// // cout << "pcols = " << pcols << "\n";
-// // cout << "npcols = " << npcols << "\n";
-//  d=1;
-//  lastpivot=1;
-//  if (ny>0)
-//   {for (r=1; r<=rk; r++)  m.clearrow(r);
-//    for (r=1;r<=rk; r++)
-//       for (r2=r+1; r2<=rk; r2++)
-//         elimrows1(m,r2,r,pcols[r2]);
-//    for (r=1; r<=rk; r++)
-//       d = (d*m(r,pcols[r]))/gcd(d,m(r,pcols[r]));
-//    d = abs(d);
-//    for (r=1; r<=rk; r++)
-//       {long fac = d/m(r,pcols[r]);
-//        m.multrow(r,fac);
-//       }
-//  }
-//  else 
-//        for (r=1; r<=rk; r++)
-//         for (c=1; c<=nc; c++)
-//           m.set(r,c, (c==pcols[r]));  // 0 or 1 !
-//  return m.slice(rk,nc);
-// }
-
-long rank(const mat& entries)
+long mat::rank() const
 {
  long rk,nr,nc,r,c,r2,r3,rmin;
  long min, mr2c,lastpivot;
  rk=0; r=1; lastpivot=1;
- mat m(entries);
- nc=ncols(m); nr=nrows(m);
+ mat m(*this);
+ nc=m.ncols(); nr=m.nrows();
  for (c=1; (c<=nc)&&(r<=nr); c++)
  { min = abs(m(r,c));
    rmin = r;
@@ -1039,51 +977,31 @@ long rank(const mat& entries)
  return rk;
 }
 
-long nullity(const mat& m)
+long mat::nullity() const
 {
- return ncols(m)-::rank(m);
+ return nco-rank();
 }
 
-long trace(const mat& a)
-{ long i; long ans=0;
-  for (i=1; i<=nrows(a); i++) ans += a(i,i);
+long mat::trace() const
+{ long i=0; scalar* aii=entries; long ans=0;
+  for (; i<nro; i++, aii+=(nco+1))
+    ans += *aii;
   return ans;
 }
- 
-/*    OLD VERSION
-vector<long> charpoly(const mat& a)
-{ long i,k,r,n = nrows(a);
-  vec tlist = vec(n);
-  mat apower(a);
-  vector<long> clist(n+1);
-  tlist[1] = trace(a);
-  for (i=2; i<=n; i++)
-      { apower*=a;
-        tlist[i] = trace(apower);
-      }
-   clist[n]=1;
-   for (k=1; k<=n; k++)
-      { long temp = 0;
-         for (r=1; r<=k; r++)  temp+= tlist[r]*clist[n+r-k];
-         clist[n-k]= -temp/k;
-      }
-  return clist;
-}
-*/
 
-// NEW VERSION -- FADEEV'S METHOD
+// FADEEV'S METHOD
 
-vector<long> charpoly(const mat& a)
-{ long n = nrows(a);
-  mat b(a);
+vector<long> mat::charpoly() const
+{ long n = nrows();
+  mat b(*this);
   mat id(idmat((scalar)n));
   vector<long> clist(n+1);
-  long t = trace(a);
+  long t = trace();
   clist[n]   =  1;
   clist[n-1] = -t;
   for (long i=2; i<=n; i++)
-      { b=a*(b-t*id);          //     cout << b;   // (for testing only)
-        t=trace(b)/i;
+    { b=(*this)*(b-t*id);          //     cout << b;   // (for testing only)
+        t=b.trace()/i;
         clist[n-i] = -t;
       }
   if (!(b==t*id)) 
@@ -1093,23 +1011,23 @@ vector<long> charpoly(const mat& a)
   return clist;
 }
 
- 
-long determinant(const mat& m)
+long mat::determinant() const
 {
- vector<long> cp = charpoly(m);
- long det = cp[0];
- if (nrows(m)%2==1) det=-det;
- return det;
+ long det = charpoly()[0];
+ if (nrows()%2==1)
+   return -det;
+ else
+   return det;
 }
 
 mat addscalar(const mat& m, scalar c)
 {
-  return m+(c*idmat((scalar)nrows(m)));
+  return m+(c*idmat((scalar)m.nrows()));
 }
  
 vec apply(const mat& m, const vec& v)    // same as *(mat, vec)
 {
- long nr=nrows(m), nc=ncols(m);
+ long nr=m.nrows(), nc=m.ncols();
  vec ans(nr);
  if (nc==dim(v))
    for (long i=1; i<=nr; i++) 
@@ -1374,7 +1292,7 @@ mat echelonp(const mat& entries, vec& pcols, vec& npcols,
 #endif /* TRACE */
  long nc,nr,r,c,r2,r3,rmin;
  scalar min, mr2c;
- nr=nrows(entries), nc=ncols(entries);
+ nr=entries.nrows(), nc=entries.ncols();
  mat m(nr,nc);
  scalar *mij=m.entries, *entriesij=entries.entries;
  long n=nr*nc;
@@ -1600,7 +1518,7 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
 
 mat ref_via_flint(const mat& M, scalar pr)
 {
-  long nr=nrows(M), nc=ncols(M);
+  long nr=M.nrows(), nc=M.ncols();
   long i, j;
 
   // copy of the modulus for FLINT
@@ -1641,7 +1559,7 @@ mat ref_via_flint(const mat& M, scalar pr)
 mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
                                   long& rk, long& ny, scalar pr)
 {
-  long nr=nrows(M), nc=ncols(M);
+  long nr=M.nrows(), nc=M.ncols();
   long i, j, k;
 
 #ifdef TRACE_FLINT_RREF
@@ -1837,7 +1755,7 @@ int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace)
 
 double sparsity(const mat& m)
 {
-    long nr=nrows(m), nc=ncols(m);
+    long nr=m.nrows(), nc=m.ncols();
     if(nr==0) return 1;
     if(nc==0) return 1;
     scalar* matij=m.entries;

@@ -387,9 +387,6 @@ mat_l mat_m::shorten(long x) const
 
 // Definitions of non-member, friend operators and functions
 
-long nrows(const mat_m& m) {return m.nro;}
-long ncols(const mat_m& m) {return m.nco;}
-
 mat_m operator*(const mat_m& m1, const mat_m& m2)
 {
  long j,k, m=m1.nro, n=m1.nco, p=m2.nco;
@@ -598,7 +595,7 @@ mat_m midmat(long n)
 mat_m transpose(const mat_m& m)
 {
  long i,j,nr,nc;
- nr=ncols(m); nc=nrows(m);
+ nr=m.ncols(); nc=m.nrows();
  mat_m ans(nr, nc);
  for (i=1; i<=nr; i++)
   for (j=1; j<=nc; j++)
@@ -747,13 +744,13 @@ mat_m echelon0(const mat_m& m1, vec_i& pc, vec_i& npc,
   return ans;
 }
 
-long rank(const mat_m& m1)
+long mat_m::rank() const
 {
  long rk,nr,nc,r,c,r2,r3,rmin;
  bigint min, mr2c,lastpivot;
  rk=0; r=1; lastpivot=1;
- mat_m m(m1);
- nc=ncols(m); nr=nrows(m);
+ mat_m m(*this);
+ nc=m.ncols(); nr=m.nrows();
  for (c=1; (c<=nc)&&(r<=nr); c++)
  { min = abs(m(r,c));
    rmin = r;
@@ -777,33 +774,34 @@ long rank(const mat_m& m1)
  return rk;
 }
 
-long nullity(const mat_m& m)
+long mat_m::nullity() const
 {
- return ncols(m)-rank(m);
+ return ncols()-rank();
 }
 
-bigint trace(const mat_m& a)
-{ long i; bigint ans;
-  for (i=1; i<=nrows(a); i++) ans += a(i,i);
+bigint mat_m::trace() const
+{ long i=0; bigint* aii=entries; bigint ans=BIGINT(0);
+  for (; i<nro; i++, aii+=(nco+1))
+    ans += *aii;
   return ans;
 }
- 
-// CHARPOLY -- FADEEV'S METHOD
 
-vector<bigint> charpoly(const mat_m& a)
-{ long n = nrows(a);
-  mat_m b(a);
+// FADEEV'S METHOD
+
+vector<bigint> mat_m::charpoly() const
+{ long n = nrows();
+  mat_m b(*this);
   mat_m id(midmat(n)), tid;
   vector<bigint> clist(n+1);
-  bigint t = trace(a), ii;
+  bigint t = trace(), ii;
   clist[n]   =  1;
   clist[n-1] = -t;
   for (long i=2; i<=n; i++)
       { tid=t*id;
 	b-=tid;
-	b=b*a;          //     cout << b;   // (for testing only)
+	b=b*(*this);          //     cout << b;   // (for testing only)
 	ii=i;
-        t=trace(b)/ii;
+        t=b.trace()/ii;
         clist[n-i] = -t;
       }
   tid=t*id;
@@ -815,18 +813,18 @@ vector<bigint> charpoly(const mat_m& a)
   return clist;
 }
 
- 
-bigint determinant(const mat_m& m)
+bigint mat_m::determinant() const
 {
- vector<bigint> cp = charpoly(m);
- bigint det = cp[0];
- if (nrows(m)%2==1) det=-det;
- return det;
+ bigint det = charpoly()[0];
+ if (nrows()%2==1)
+   return -det;
+ else
+   return det;
 }
 
 mat_m addscalar(const mat_m& m, const bigint& c)
 {
-  mat_m ans(midmat(nrows(m)));
+  mat_m ans(midmat(m.nrows()));
   ans*=c;
   ans+=m;
   return ans;
@@ -834,7 +832,7 @@ mat_m addscalar(const mat_m& m, const bigint& c)
  
 vec_m apply(const mat_m& m, const vec_m& v)    // same as *(mat_m, vec_m)
 {
- long nr=nrows(m), nc=ncols(m);
+ long nr=m.nrows(), nc=m.ncols();
  vec_m ans(nr);
  if (nc==dim(v))
    for (long i=1; i<=nr; i++) 
@@ -869,7 +867,7 @@ mat_m echelonp(const mat_m& m1, vec_i& pcols, vec_i& npcols,
 #endif /* TRACE */
  long nc,nr,r,c,r2,r3,rmin;
  bigint min, mr2c,lastpivot, temp;
- nr=nrows(m1), nc=ncols(m1);
+ nr=m1.nrows(), nc=m1.ncols();
  mat_m m(nr,nc);
  for (c=1; c<=nc; c++) 
    for (r=1; r<=nr; r++) m(r,c)=mod(m1(r,c),pr); 

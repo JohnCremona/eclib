@@ -66,12 +66,13 @@ class smat_elim : public smat{
     void remove( list& L );     // L must be ordered
     ordlist( int m = 10) : list(m) {;}
   };
-  
+
   scalar modulus;
   int rank;
+
   ordlist* column; // an array of lists, oner per col, of row nos
 		   // which have nonzero entries in that col
-  int *position;     
+  int *position;
   int *elim_col;     // in which row was col eliminated;
   int *elim_row;       //order of elimination of rows;
   void clear_col(int,int,list&, int fr = 0, int fc = 0,int M = 0,int *li =0);
@@ -83,7 +84,7 @@ class smat_elim : public smat{
   long n_active_entries(); // number of active entries
   double active_density(); // density of non-eliminated part
   void report(); // report current state (density etc)
-  
+
 public:
   int get_rank( ) { return rank; }
   void init( );
@@ -118,13 +119,6 @@ inline ostream& operator<< (ostream&s, const smat_elim::list& L)
   return s;
 }
 
-long rank(smat& sm, scalar mod=DEFAULT_MODULUS);
-
-inline long nullity(const smat& sm, const scalar& lambda, scalar mod=DEFAULT_MODULUS) // nullity of sm-lambda*I
-{
-  smat sma(sm); sma-=lambda;  return ncols(sm)-rank(sma,mod);
-}
-
 class ssubspace {
 
 public:
@@ -144,7 +138,7 @@ public:
         inline scalar mod() const {return modulus;}   // the (prime) modulus
 
      // non-member (friend) functions and operators
-        friend int dim(const ssubspace& s)     {return ncols(s.basis);}
+        friend int dim(const ssubspace& s)     {return s.basis.ncols();}
         friend vec pivots(const ssubspace& s)  {return s.pivots;}
         friend smat basis(const ssubspace& s)  {return s.basis;}
 	friend ssubspace combine(const ssubspace& s1, const ssubspace& s2);

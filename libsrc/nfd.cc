@@ -330,7 +330,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 vec_m nfd::ap(long p)
 {
   mat K = basis(h1->kern).as_mat();
-  long rk = nrows(K);
+  long rk = K.nrows();
   matop *matlist;
   long k,l,n = h1->modulus, dims=dim(S);
   vec_m apvec(dims);
@@ -373,7 +373,7 @@ mat_m nfd::oldheckeop(long p)
 mat_m nfd::heckeop(long p)
 {
   mat K = basis(h1->kern).as_mat();
-  long rk = nrows(K);
+  long rk = K.nrows();
   matop *matlist;
   long j,k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
   int bad = ::divides(p,n);
@@ -424,7 +424,7 @@ mat_m nfd::heckeop(long p)
 
 bigint inverse(const mat_m& a, mat_m& ainv)
 {
-  long d = nrows(a);
+  long d = a.nrows();
   mat_m aug=colcat(a,midmat(d));
   long rk, ny; vec pc,npc; bigint denom;
   mat_m ref = echelon(aug, pc, npc, rk, ny, denom);
@@ -436,7 +436,7 @@ bigint inverse(const mat_m& a, mat_m& ainv)
 void showmatrix(const mat_m& m)
 {
 #ifdef OUTPUT_PARI_STYLE
-  long i,j, nc=ncols(m),nr=nrows(m);
+  long i,j, nc=m.ncols(),nr=m.nrows();
   cout << "[";
   for(i=0; i<nr; i++)
     {

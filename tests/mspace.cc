@@ -40,22 +40,22 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   cout << "Enter entries of M: ";
   cin >> m;
   cout << " M = " << m;
-  cout << "Trace(M) = " << trace(m) << endl;
+  cout << "Trace(M) = " << m.trace() << endl;
   //
   mat_m mpower=m;
   for (i=2; i<=r; i++)
     {mpower=mpower*m;
      cout << "m^" << i << " = " << mpower;
-     cout << "Trace(m^" << i << ") = " << trace(mpower) << endl;
+     cout << "Trace(m^" << i << ") = " << mpower.trace() << endl;
    }
 //
   {
-    vector<bigint> cp = charpoly(m);
+    vector<bigint> cp = m.charpoly();
     cout << "char. poly. of m has coefficients " << cp << endl;
   }
-  cout << "det(M) = " << determinant(m) << endl;
-  cout << "rank(M) = " << rank(m) << endl;
-  cout << "nullity(M) = " << nullity(m) << endl;
+  cout << "det(M) = " << m.determinant() << endl;
+  cout << "rank(M) = " << m.rank() << endl;
+  cout << "nullity(M) = " << m.nullity() << endl;
   {
     msubspace ker = kernel(m);
     mat_m kerbasis = basis(ker);

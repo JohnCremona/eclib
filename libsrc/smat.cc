@@ -475,18 +475,18 @@ smat& smat::operator/=(scalar scal)
 
 mat smat::operator*( const mat& m )
 {
-  if( nco != nrows(m) )
+  if( nco != m.nrows() )
     {
       cerr << "incompatible smat & mat in operator*\n";
       abort();
     }
-  mat product( nro, ncols(m) );
+  mat product( nro, m.ncols() );
   int i, j, d, t;
   scalar ans;
   for( i = 1; i <= nro; i++ ) 
     {
       d = col[i-1][0];
-      for( j = 1; j <= ncols(m); j++ ) 
+      for( j = 1; j <= m.ncols(); j++ ) 
 	{
 	  ans = 0;
 	  for( t = 0; t < d; t++ ) ans += val[i-1][t]*m(col[i-1][t+1],j);
@@ -496,6 +496,10 @@ mat smat::operator*( const mat& m )
   return product;
 }
 
+long smat::nullity(const scalar& lambda, scalar mod) // nullity of this-lambda*I
+{
+  smat sma(*this); sma-=lambda;  return sma.ncols()-sma.rank(mod);
+}
 
 // Definitions of non-member, friend operators and functions
 
@@ -519,7 +523,7 @@ svec operator* ( const smat& A, const svec& v )
 
 vec operator*  (smat& m, const vec& v)
 {
-  int r = nrows(m), c=ncols(m);
+  int r = m.nrows(), c=m.ncols();
   if(c!=dim(v))
     {
       cout<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
@@ -534,13 +538,13 @@ vec operator*  (smat& m, const vec& v)
 
 svec operator* ( const svec& v, const smat& A )
 {
-  if( v.d != nrows(A) ) 
+  if( v.d != A.nrows() ) 
     { 
       cout << "incompatible sizes in v*A\n"; 
       cout << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
       abort();
     }
-  svec prod(ncols(A));
+  svec prod(A.ncols());
   map<int,scalar>::const_iterator vi;
   for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
     prod += (vi->second)*(A.row(vi->first));
@@ -549,13 +553,13 @@ svec operator* ( const svec& v, const smat& A )
 
 svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
 {
-  if( v.d != nrows(A) ) 
+  if( v.d != A.nrows() ) 
     { 
       cout << "incompatible sizes in v*A\n"; 
       cout << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
       abort();
     }
-  svec prod(ncols(A));
+  svec prod(A.ncols());
   map<int,scalar>::const_iterator vi;
   for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
     prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);

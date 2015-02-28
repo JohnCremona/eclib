@@ -64,10 +64,15 @@ public:
   //the parameter here is a dummy just to distinguish these
         mat_i  shorten(int) const;
         mat_l shorten(long) const;
+        long nrows() const {return nro;}
+        long ncols() const {return nco;}
+        long rank() const;
+        long nullity() const;
+        bigint trace() const;
+        vector<bigint> charpoly() const;
+        bigint determinant() const;
 
      // non-member (friend) functions and operators
-        friend long nrows(const mat_m&);      
-        friend long ncols(const mat_m&);      
         friend mat_m operator*(const mat_m&, const mat_m&);
         friend vec_m operator*(const mat_m&, const vec_m&);
         friend int operator==(const mat_m&, const mat_m&);
@@ -115,11 +120,6 @@ mat_m echelon(const mat_m& m, vec_i& pcols, vec_i& npcols,
                           long& rk, long& ny, bigint& d, int method=0);
 mat_m echelon(const mat_m& m, vec_l& pcols, vec_l& npcols,
                           long& rk, long& ny, bigint& d, int method=0);
-long rank(const mat_m&);
-long nullity(const mat_m&);
-bigint trace(const mat_m&);
-vector<bigint> charpoly(const mat_m&);
-bigint determinant(const mat_m&);
 mat_m addscalar(const mat_m&, const bigint&);
 vec_m apply(const mat_m&, const vec_m&);
 

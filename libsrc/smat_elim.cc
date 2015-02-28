@@ -1041,7 +1041,7 @@ void smat_elim::step5dense()
   // the (i,j) entry of dmat goes in the remaining_rows[i-1]'th row,
   // remaining_cols[j-1] column.  For simplicity of coding, we create
   // the new rows as svecs and the use setrow().
-  int nrd = nrows(dmat); // may be less than nrr since 0 rows are trimmed
+  int nrd = dmat.nrows(); // may be less than nrr since 0 rows are trimmed
   svec rowi(nco);
   for(i=1; i<=nrd; i++)
     {
@@ -1075,9 +1075,9 @@ void smat_elim::step5dense()
 }
 
 
-long rank(smat& sm, scalar mod)
+long smat::rank(scalar mod)
 {
-  smat_elim sme(sm,mod);
+  smat_elim sme(*this,mod);
   vec pivs, npivs;
   (void) sme.kernel(npivs,pivs);
   return sme.get_rank();

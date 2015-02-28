@@ -123,9 +123,9 @@ cout << "Now A = " << a;
 cout << "Enter any number "; cin >> i;
 }
 {
-vector<long> cp = charpoly(a);
+vector<long> cp = a.charpoly();
 cout << "char. poly. of A has coefficients " << cp << endl;
-cout << "det(A) = " << determinant(a) << endl;
+cout << "det(A) = " << a.determinant() << endl;
 }
 {
 aug = colcat(a,idmat(r));

@@ -300,9 +300,9 @@ if (verbose>1)
        cout << "pivots = "<<pivs << endl;
        cout << "denom = "<<d1 << endl;
      }
-   rk = ncols(sp);
+   rk = sp.ncols();
    coord_vecs.resize(ngens+1); // 0'th is unused
-   for(i=1; i<=ngens; i++) 
+   for(i=1; i<=ngens; i++)
      coord_vecs[i]=sp.row(i);
    //sp=smat(0,0); // clear space
 #else
@@ -405,7 +405,7 @@ if (verbose>1)
      }
    if (verbose)
      {
-       cout << "delta matrix done: size "<<nrows(deltamat)<<"x"<<ncols(deltamat)<<". "<<endl;
+       cout << "delta matrix done: size "<<deltamat.nrows()<<"x"<<deltamat.ncols()<<". "<<endl;
        if(verbose>1)
 	 cout<<"deltamat = "<<deltamat<<endl;
        cout << "About to compute kernel of delta"<<endl;
@@ -515,7 +515,7 @@ vec homspace::proj_coords_from_index(int ind, const mat& m) const
  long i= coordindex[ind];
  if (i>0) return  m.row(i);
  if (i<0) return -m.row(-i);
- return vec(ncols(m));
+ return vec(m.ncols());
 }
 
 long homspace::nfproj_coords_from_index(int ind, const vec& bas) const
@@ -610,7 +610,7 @@ void homspace::add_coords(svec& vv, const modsym& m) const
 
 vec homspace::proj_coords(long nn, long dd, const mat& m) const
 {
-   vec ans = vec(ncols(m));
+   vec ans = vec(m.ncols());
    add_proj_coords(ans, nn, dd, m);
    return ans;
 }

@@ -80,7 +80,7 @@ subspace peigenspace(const mat& m, scalar lambda, scalar pr);
 subspace psubeigenspace(const mat& m, scalar l, const subspace& s, scalar pr);
 
 
-inline int dim(const subspace& s) {return ncols(s.basis);}  // the dimension
+inline int dim(const subspace& s) {return s.basis.ncols();}  // the dimension
 inline scalar denom(const subspace& s) {return s.denom;}    // the denominator
 inline vec pivots(const subspace& s) {return s.pivots;}     // the pivot vector
 inline mat basis(const subspace& s) {return s.basis;}       // the basis matrix

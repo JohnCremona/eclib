@@ -69,6 +69,13 @@ public:
         mat& operator*=(scalar);
         mat& operator/=(scalar);
 	const scalar* get_entries()const{return entries;}
+        long nrows() const {return nro;}
+        long ncols() const {return nco;}
+        long rank() const;
+        long nullity() const;
+        long trace() const;
+        vector<long> charpoly() const;
+        long determinant() const;
 	void output(ostream&s=cout) const;
 	void output_pari(ostream&s=cout)   const;
         void output_pretty(ostream&s=cout)   const;
@@ -76,8 +83,6 @@ public:
         void read_from_file(string filename);     // binary input
 
      // non-member (friend) functions and operators
-  friend long nrows(const mat&);
-        friend long ncols(const mat&);
         friend void add_row_to_vec(vec& v, const mat& m, long i);
         friend void sub_row_to_vec(vec& v, const mat& m, long i);
         friend mat operator*(const mat&, const mat&);
@@ -136,10 +141,5 @@ mat transpose(const mat& m);
 mat submat(const mat& m, const vec& iv, const vec& jv);
 mat echelon(const mat& m, vec& pcols, vec& npcols,
                           long& rk, long& ny, scalar& d, int method=0);  // default method 0: scalars
-long rank(const mat&);
-long nullity(const mat&);
-long trace(const mat&);
-vector<long> charpoly(const mat&);
-long determinant(const mat&);
 mat addscalar(const mat&, scalar);
 vec apply(const mat&, const vec&);

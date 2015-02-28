@@ -445,8 +445,8 @@ int main(void)
 	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
 	  cout << " rank using echmodp : " << rk;
 	  int pop = 0;
-	  int nro = nrows(ker_mat);
-	  int nco = ncols(ker_mat);
+	  int nro = ker_mat.nrows();
+	  int nco = ker_mat.ncols();
 	  for( int r = 1; r <= nro; r++ ) {
 	    for( int c = 1; c <= nco; c++ ) {
 	      pop += ( ker_mat( r, c ) != 0 );

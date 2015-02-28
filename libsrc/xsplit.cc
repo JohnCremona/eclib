@@ -92,7 +92,7 @@ void form_finder::make_submat( ff_data &data ) {
     data.the_opmat_ = smat(0,0); // releases its space
   }
   else {
-    if( nrows(data.submat_) == 0 ) {
+    if( data.submat_.nrows() == 0 ) {
 	    if( depth == 0 ) data.submat_ = h -> s_opmat(depth,1,verbose);
       else             data.submat_ = h -> s_opmat_restricted(depth,*(data.nest_),1,verbose);
 	  }
@@ -143,7 +143,7 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   // Save space (will recompute when needed)
   //if(    ( depth == 0 )
   //    && ( dim(s) > 0 )
-  //    && ( nrows(data.submat_) > 1000 )
+  //    && ( data.submat_.nrows() > 1000 )
   //    && ( data.submatUsage_ == data.numChildren_ ) ) {
   //  data.submat_ = smat(0,0); 
   //}
@@ -542,7 +542,7 @@ subspace sparse_combine(const subspace& s1, const subspace& s2)
 
 mat sparse_restrict(const mat& m, const subspace& s)
 {
-  if(dim(s)==nrows(m)) return m; // trivial special case, s is whole space
+  if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
   scalar dd = denom(s);  // will be 1 if s is a mod-p subspace
   mat b(basis(s));
   smat sm(m), sb(b);
@@ -576,7 +576,7 @@ mat sparse_restrict(const mat& m, const subspace& s)
 
 smat restrict_mat(const smat& m, const subspace& s)
 {
-  if(dim(s)==nrows(m)) return m; // trivial special case, s is whole space
+  if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
   return mult_mod_p(m.select_rows(pivots(s)),smat(basis(s)),MODULUS);
 }
 

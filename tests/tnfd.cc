@@ -84,7 +84,7 @@ int main()
 	     if(bad) cout<<"W("; else cout<<"T(";
 	     cout <<p<<") = "; 
 	     showmatrix(tp);
-	     vector<bigint> cptp = charpoly(tp);
+	     vector<bigint> cptp = tp.charpoly();
 	     for(i=0; i<dims; i++)
 	       {
 		 bigint temp = cptp[i];

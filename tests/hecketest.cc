@@ -381,7 +381,7 @@ exit(0);
 double sparsity(const mat_m& m)
   {
     double count=0;
-    long i,j,nr=nrows(m), nc=ncols(m);
+    long i,j,nr=m.nrows(), nc=m.ncols();
     for(i=0; i<nr; i++)
       for(j=0; j<nc; j++)
 	if(!is_zero(m(i+1,j+1))) count=count+1;

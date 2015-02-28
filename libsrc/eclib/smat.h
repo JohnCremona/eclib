@@ -65,11 +65,13 @@ public:
      smat select_rows(const vec& rows) const;
      void setrow ( int i, const svec& v); // i counts from 1
      svec row(int) const; // extract row i as an svec
-     
+     int nrows() const {return nro;}
+     int ncols() const {return nco;}
+     long rank(scalar mod=DEFAULT_MODULUS);
+     long nullity(const scalar& lambda, scalar mod=DEFAULT_MODULUS); // nullity of this-lambda*I
+
      // non-member (friend) functions and operators
 
-     friend inline int nrows(const smat& A) {return A.nro;}
-     friend inline int ncols(const smat& A) {return A.nco;}
      friend inline vector<int> dim(const smat& A) 
      {vector<int>d; d.push_back(A.nro);d.push_back(A.nco);return d;}
      friend vec operator*  (smat& m, const vec& v);

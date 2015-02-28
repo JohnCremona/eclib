@@ -71,7 +71,7 @@ subspace combine(const subspace& s1, const subspace& s2)
 mat expressvectors(const mat& m, const subspace& s)
 { vec p = pivots(s);
   long   n = dim(s);
-  mat ans(n,ncols(m));
+  mat ans(n,m.ncols());
   for (int i=1; i<=n; i++) ans.setrow(i, m.row(p[i]));
   return ans;
 }
@@ -101,7 +101,7 @@ mat restrict_mat(const mat& m, const subspace& s, int cr)
 // N.B. The following check is strictly unnecessary and slows it down, 
 // but is advisable! 
   if(cr) {
-//  int check = 1, n = nrows(b);
+//  int check = 1, n = b.nrows();
 //  for (i=1; (i<=n) && check; i++)
 //  for (j=1; (j<=d) && check; j++)
 //   check = (dd*m.row(i)*b.col(j) == b.row(i)*ans.col(j));
@@ -121,7 +121,7 @@ subspace kernel(const mat& m1, int method)
    scalar d;
    vec pcols,npcols;
    mat m = echelon(m1,pcols,npcols, rank, nullity, d, method);
-   int dim = ncols(m);
+   int dim = m.ncols();
    mat basis(dim,nullity);
    for (n=1; n<=nullity; n++) basis.set(npcols[n],n,d);
    for (r=1; r<=rank; r++)
@@ -212,7 +212,7 @@ subspace oldpkernel(const mat& m1, scalar pr)   // using full echmodp
    long rank, nullity, n, r, i, j;
    vec pcols,npcols;
    mat m = echmodp(m1,pcols,npcols, rank, nullity, pr);
-   int dim = ncols(m);
+   int dim = m.ncols();
    mat basis(dim,nullity);
    for (n=1; n<=nullity; n++) basis.set(npcols[n],n,1);
    for (r=1; r<=rank; r++)
@@ -229,7 +229,7 @@ subspace pkernel(const mat& m1, scalar pr)
   long rank, nullity, i, j, jj, t, tt;
   vec pcols,npcols;
   mat m = echmodp_uptri(m1,pcols,npcols, rank, nullity, pr);
-  int dim = ncols(m);
+  int dim = m.ncols();
   mat basis(dim,nullity);
   for(j=nullity; j>0; j--)
     {

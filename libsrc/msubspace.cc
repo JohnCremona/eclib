@@ -69,7 +69,7 @@ mat_m restrict_mat(const mat_m& m, const msubspace& s)
 // N.B. The following check is strictly unnecessary and slows it down, 
 // but is advisable! 
 #ifdef CHECK_RESTRICT
-  int check = 1; n = nrows(sb);
+  int check = 1; n = sb.nrows();
   for (i=1; (i<=n) && check; i++)
   for (j=1; (j<=d) && check; j++)
     check = (dd*m.row(i)*sb.col(j) == sb.row(i)*ans.col(j));
@@ -88,7 +88,7 @@ msubspace kernel(const mat_m& mat, int method)
    bigint d, zero; zero=0;
    vec_i pcols,npcols;
    mat_m m = echelon(mat,pcols,npcols, rank, nullity, d, method);
-   long dim = ncols(m);
+   long dim = m.ncols();
    mat_m basis(dim,nullity);
    for (n=1; n<=nullity; n++) basis.set(npcols[n],n,d);
    for (r=1; r<=rank; r++)
@@ -174,7 +174,7 @@ msubspace pkernel(const mat_m& mat, const bigint& pr)
    long rank, nullity, n, r, i, j;
    vec_i pcols,npcols;
    mat_m m = echmodp(mat,pcols,npcols, rank, nullity, pr);
-   long dim = ncols(m);
+   long dim = m.ncols();
    mat_m basis(dim,nullity);
    bigint one; one=1;
    for (n=1; n<=nullity; n++) basis.set(npcols[n],n,one);
