@@ -14,6 +14,22 @@ AM_PROG_AR
 # Initialise libtools:
 LT_INIT
 
+# The version of the libtool library is of the form current:revision:age
+#
+# When doing a release, they should be updated like this:
+# 1. If no interfaces changed, only implementations: just increment
+# revision.
+# 2. If interfaces were added, none removed: increment current, set
+# revision to zero and increment age.
+# 3. If interfaces were removed (breaks backward compatibility): increment
+# current, and set both revision and age to zero.
+LT_CURRENT=1
+LT_REVISION=0
+LT_AGE=0
+AC_SUBST(LT_CURRENT)
+AC_SUBST(LT_REVISION)
+AC_SUBST(LT_AGE)
+
 # Checks for programs:
 AC_PROG_CXX
 AC_PROG_CC
