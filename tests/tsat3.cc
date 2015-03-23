@@ -125,9 +125,14 @@ int main()
     }
   cout<<"Input torsion points: "<<tpoints<<endl;
 
-  bigint index;
+  bigint index = BIGINT(1);
   vector<long> unsatprimes;
-  int success = saturate_points(C, points, index, unsatprimes, SAT_BND, use_egr, (verbose));
+  int success = 1;
+
+  if (npts)
+    {
+      success = saturate_points(C, points, index, unsatprimes, SAT_BND, use_egr, (verbose));
+    }
 
   if(success)
     {

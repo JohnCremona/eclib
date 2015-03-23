@@ -621,7 +621,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
       imagematrix.push_back(im);
       vector<int> CG=CGS.ComponentGroup(*pi);
       for(unsigned int ni=0; ni<CG.size(); ni++, n++)
-	moduli.push_back(CG[ni]);	
+	moduli.push_back(CG[ni]);
     }
   mat m(Plist.size(),n);
   unsigned int j=0, j1, j2, i;
@@ -806,7 +806,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
 #endif
       if(modulus==1) continue;
 #ifdef DEBUG_INDEX
-      cout<<"Column = "<<m.col(j)<<endl;
+      cout<<"Column "<<j<<" = "<<m.col(j)<<endl;
 #endif
       for(i=1; (i<=npts); i++) m(i,j)=m(i,j)%modulus;
       long g=0,gm;
@@ -830,7 +830,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
 #endif
       if(modulus==1) continue;
 #ifdef DEBUG_INDEX
-      cout<<"Column = "<<m.col(j)<<endl;
+      cout<<"Column "<<j<<" = "<<m.col(j)<<endl;
 #endif
       long colmin=modulus, imin=0, r, q;
       while(abs(colmin)>1)
@@ -843,7 +843,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
 	      if(abs(m(i,j))<abs(colmin)) colmin=m(i,j);
 	  for(i=1; i<=npts; i++) if(m(i,j)==colmin) {imin=i; break;}
 #ifdef DEBUG_INDEX
-	  cout<<"colmin = "<<colmin<<" at imin="<<imin<<endl;
+	  cout<<"colmin = "<<colmin<<" at row imin="<<imin<<endl;
 #endif
 	  for(i=1; i<=npts; i++)
 	    if(ndivides(colmin,m(i,j)))
@@ -856,31 +856,36 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
 		for(jj=1; jj<=np; jj++) m(i,jj)-=q*m(imin,jj);
 	      }
 #ifdef DEBUG_INDEX
-	  cout<<"Column = "<<m.col(j)<<endl;
+	  cout<<"Column "<<j<<" = "<<m.col(j)<<endl;
 #endif
-	}     
+	}
       // now |colmin|=1 and we can clear
 #ifdef DEBUG_INDEX
       cout<<"colmin = "<<colmin<<", clearing..."<<endl;
-      cout<<"Column = "<<m.col(j)<<endl;
+      cout<<"Column "<<j<<" = "<<m.col(j)<<endl;
 #endif
-      for(i=1; i<=npts; i++) if(m(i,j)==colmin) {imin=i; break;}
+      for(i=1; i<=npts; i++)
+        if(m(i,j)==colmin)
+          {
+            imin=i; break;
+          }
       for(i=1; i<=npts; i++)
 	if(i!=imin)
-	  for(jj=1; jj<=np; jj++) 
-	    {
-	      if(colmin==1)
-		m(i,jj)-=m(i,j)*m(imin,jj);
-	      else
-		m(i,jj)+=m(i,j)*m(imin,jj);
-	    }
+          {
+            long piv = m(i,j)*colmin;
+            for(jj=1; jj<=np; jj++)
+              {
+		m(i,jj) = (m(i,jj)-piv*m(imin,jj)) % moduli[jj-1];
+              }
+          }
       // now update matrix and ans:
 #ifdef DEBUG_INDEX
+      cout<<"Now matrix = "<<m<<endl;
       cout<<"Column = "<<m.col(j)<<endl;
       cout<<"multiplying ans and row "<<imin<<" by "<<modulus<<endl;
 #endif
       ans*=modulus;
-      for(jj=1; jj<=np; jj++) 
+      for(jj=1; jj<=np; jj++)
 	m(imin,jj)=(modulus*m(imin,jj))%moduli[jj-1];
 #ifdef DEBUG_INDEX
       cout<<"Now matrix = "<<m<<endl;
