@@ -66,7 +66,8 @@ class ff_data {
 
     // Getters (to maintain consistency)
     nodestatus     status();                        // Return status of current node
-    ssubspace*     submats();                       // Return parent subspace
+    ssubspace*     abs_space();                     // Return parent absolute subspace
+    ssubspace*     rel_space();                     // Return parent relative subspace
     long           depth();                         // Return current depth
     long           subdim();                        // Return subdimension
     long           eig();                           // Return associated eigenvalue
@@ -111,13 +112,15 @@ class ff_data {
     long                eigenvalue_;         // Corresponding eigenvalue
     vector< long >      eiglist_;            // Sequence of eigenvalues leading to current
     vec                 bplus_, bminus_;
-    ssubspace*          nest_;               // Current subspace (dynamically created)
+    ssubspace*          abs_space_;          // Current absolute subspace (dynamically created)
+    ssubspace*          rel_space_;          // Current relative subspace (dynamically created)
     smat                conjmat_;            // Used only when plus==0 and bigmats==1
     smat                the_opmat_;
     smat                submat_;
 
     ff_data*            parent_;             // Pointer to parent data node
     vector<ff_data*>    children_;           // Pointers to corresponding data nodes
+    ff_data*            child_;              // Pointer to favoured child
     int                 numChildren_;        // Store number of children
     vector<childstatus> completedChildren_;  // Flags for child completion
     int                 submatUsage_;        // Counter for submat

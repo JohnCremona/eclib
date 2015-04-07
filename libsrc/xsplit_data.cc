@@ -39,7 +39,8 @@ ff_data::ff_data( form_finder* ff )
     subdim_( 0 ),
     eigenvalue_( 0 ),
     eiglist_(),
-    nest_( NULL ),
+    abs_space_( NULL ),
+    rel_space_( NULL ),
     conjmat_(),
     the_opmat_(),
     parent_( NULL ),
@@ -55,8 +56,10 @@ ff_data::ff_data( form_finder* ff )
  */
 ff_data::~ff_data() {
   // Delete dynamically created objects
-  delete nest_;
-  nest_ = NULL;
+  delete abs_space_;
+  delete rel_space_;
+  abs_space_ = NULL;
+  rel_space_ = NULL;
 }
 
 #ifdef ECLIB_MULTITHREAD
@@ -98,12 +101,21 @@ nodestatus ff_data::status() {
 }
 
 /**
- * submats()
+ * abs_space()
  *
- * Returns relevant subspace of current depth.
+ * Returns absolute subspace of current depth.
  */
-ssubspace* ff_data::submats() {
-  return nest_;
+ssubspace* ff_data::abs_space() {
+  return abs_space_;
+}
+
+/**
+ * rel_space()
+ *
+ * Returns relative subspace of current depth.
+ */
+ssubspace* ff_data::rel_space() {
+  return rel_space_;
 }
 
 /**

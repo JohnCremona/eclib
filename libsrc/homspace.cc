@@ -739,7 +739,57 @@ mat homspace::calcop(string opname, long p, const matop& mlist,
     }
   return m;
 }
- 
+
+vec homspace::calcop_col(string opname, long p, int j, const matop& mlist,
+                         int display) const
+{
+  // j counts from 1
+  vec colj = applyop(mlist,freemods[j-1]).as_vec();
+  if (display)
+    {
+      cout << "Image of "<<j<<"-th generator under " << opname << "(" << p << ") = "
+           << colj << endl;
+    }
+  return colj;
+}
+
+mat homspace::calcop_cols(string opname, long p, const vec& jlist, const matop& mlist,
+                         int display) const
+{
+  int i, d = dim(jlist);
+  mat m(d,rk);
+  for (i=1; i<=d; i++)
+    {
+      m.setrow(i, applyop(mlist,freemods[jlist[i]-1]).as_vec());
+    }
+  return m;
+}
+
+svec homspace::s_calcop_col(string opname, long p, int j, const matop& mlist,
+                         int display) const
+{
+  // j counts from 1
+  svec colj = applyop(mlist,freemods[j-1]);
+  if (display)
+    {
+      cout << "Image of "<<j<<"-th generator under " << opname << "(" << p << ") = "
+           << colj.as_vec() << endl;
+    }
+  return colj;
+}
+
+smat homspace::s_calcop_cols(string opname, long p, const vec& jlist, const matop& mlist,
+                         int display) const
+{
+  int i, d = dim(jlist);
+  smat m(d,rk);
+  for (i=1; i<=d; i++)
+    {
+      m.setrow(i, applyop(mlist,freemods[jlist[i]-1]));
+    }
+  return m;
+}
+
 smat homspace::s_calcop(string opname, long p, const matop& mlist, 
 			int dual, int display) const
 {
@@ -782,6 +832,34 @@ smat homspace::s_heckeop(long p, int dual, int display) const
  return s_calcop(name,p,matlist,dual,display);
 }
  
+vec homspace::heckeop_col(long p, int j, int display) const
+{
+ matop matlist(p,modulus);
+ string name = ((modulus%p) ? T_opname : W_opname);
+ return calcop_col(name,p,j,matlist,display);
+}
+
+mat homspace::heckeop_cols(long p, const vec& jlist, int display) const
+{
+ matop matlist(p,modulus);
+ string name = ((modulus%p) ? T_opname : W_opname);
+ return calcop_cols(name,p,jlist,matlist,display);
+}
+
+svec homspace::s_heckeop_col(long p, int j, int display) const
+{
+ matop matlist(p,modulus);
+ string name = ((modulus%p) ? T_opname : W_opname);
+ return s_calcop_col(name,p,j,matlist,display);
+}
+
+smat homspace::s_heckeop_cols(long p, const vec& jlist, int display) const
+{
+ matop matlist(p,modulus);
+ string name = ((modulus%p) ? T_opname : W_opname);
+ return s_calcop_cols(name,p,jlist,matlist,display);
+}
+
 mat homspace::heckeop_restricted(long p,const subspace& s, 
 				 int dual, int display) const
 {
@@ -846,6 +924,50 @@ mat homspace::conj(int dual, int display) const
  if(dual) m=transpose(m);
  if (display) cout << "Matrix of conjugation = " << m;
  return m;
+}
+
+vec homspace::conj_col(int j, int display) const
+{
+  // j counts from 1
+  symb s = symbol(freegens[j-1]);
+  vec colj   =  coords_cd(-s.cee(),s.dee()).as_vec();
+  if (display) cout << "Column "<<j<<" of matrix of conjugation = " << colj << endl;
+  return colj;
+}
+
+mat homspace::conj_cols(const vec& jlist, int display) const
+{
+  int d = dim(jlist);
+  mat m(d,rk);
+  int i;
+  for (i=1; i<=d; i++)
+    {
+      symb s = symbol(freegens[jlist[i]-1]);
+      m.setrow(i, coords_cd(-s.cee(),s.dee()).as_vec());
+    }
+  return m;
+}
+
+svec homspace::s_conj_col(int j, int display) const
+{
+  // j counts from 1
+  symb s = symbol(freegens[j-1]);
+  svec colj   =  coords_cd(-s.cee(),s.dee());
+  if (display) cout << "Column "<<j<<" of matrix of conjugation = " << colj.as_vec() << endl;
+  return colj;
+}
+
+smat homspace::s_conj_cols(const vec& jlist, int display) const
+{
+  int d = dim(jlist);
+  smat m(d,rk);
+  int i;
+  for (i=1; i<=d; i++)
+    {
+      symb s = symbol(freegens[jlist[i]-1]);
+      m.setrow(i, coords_cd(-s.cee(),s.dee()));
+    }
+  return m;
 }
 
 smat homspace::s_conj(int dual, int display) const
@@ -940,6 +1062,100 @@ mat homspace::opmat(int i, int dual, int v)
       return ans;
     }
   else return heckeop(p,dual,0); // Automatically chooses W or T
+}
+
+vec homspace::opmat_col(int i, int j, int v)
+{
+  if(i==-1) return conj_col(j,v);
+  if((i<0)||(i>=nap))
+    {
+      cout<<"Error in homspace::opmat_col(): called with i = " << i << endl;
+      ::abort();
+      return vec(dimension);  // shouldn't happen
+    }
+  long p = op_prime(i);
+  if(v)
+    {
+      cout<<"Computing col "<<j<<" of " << ((::divides(p,modulus)) ? W_opname : T_opname)
+          <<"("<<p<<")..."<<flush;
+    }
+  vec ans = heckeop_col(p,j,0); // Automatically chooses W or T
+  if(v)
+    {
+      cout<<"done."<<endl;
+    }
+  return ans;
+}
+
+mat homspace::opmat_cols(int i, const vec& jlist, int v)
+{
+  if(i==-1) return conj_cols(jlist,v);
+  int d = dim(jlist);
+  if((i<0)||(i>=nap))
+    {
+      cout<<"Error in homspace::opmat_cols(): called with i = " << i << endl;
+      ::abort();
+      return mat(d,rk);  // shouldn't happen
+    }
+  long p = op_prime(i);
+  if(v)
+    {
+      cout<<"Computing "<<d<<" cols of " << ((::divides(p,modulus)) ? W_opname : T_opname)
+          <<"("<<p<<")..."<<flush;
+    }
+  mat ans = heckeop_cols(p,jlist,0); // Automatically chooses W or T
+  if(v)
+    {
+      cout<<"done."<<endl;
+    }
+  return ans;
+}
+
+svec homspace::s_opmat_col(int i, int j, int v)
+{
+  if(i==-1) return s_conj_col(j,v);
+  if((i<0)||(i>=nap))
+    {
+      cout<<"Error in homspace::opmat_col(): called with i = " << i << endl;
+      ::abort();
+      return svec(dimension);  // shouldn't happen
+    }
+  long p = op_prime(i);
+  if(v)
+    {
+      cout<<"Computing col "<<j<<" of " << ((::divides(p,modulus)) ? W_opname : T_opname)
+          <<"("<<p<<")..."<<flush;
+    }
+  svec ans = s_heckeop_col(p,j,0); // Automatically chooses W or T
+  if(v)
+    {
+      cout<<"done."<<endl;
+    }
+  return ans;
+}
+
+smat homspace::s_opmat_cols(int i, const vec& jlist, int v)
+{
+  if(i==-1) return s_conj_cols(jlist,v);
+  int d = dim(jlist);
+  if((i<0)||(i>=nap))
+    {
+      cout<<"Error in homspace::opmat_col(): called with i = " << i << endl;
+      ::abort();
+      return smat(d,rk);  // shouldn't happen
+    }
+  long p = op_prime(i);
+  if(v)
+    {
+      cout<<"Computing "<<d<<" cols of " << ((::divides(p,modulus)) ? W_opname : T_opname)
+          <<"("<<p<<")..."<<flush;
+    }
+  smat ans = s_heckeop_cols(p,jlist,0); // Automatically chooses W or T
+  if(v)
+    {
+      cout<<"done."<<endl;
+    }
+  return ans;
 }
 
 smat homspace::s_opmat(int i, int dual, int v)

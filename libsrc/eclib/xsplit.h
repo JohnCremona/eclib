@@ -78,22 +78,25 @@ class form_finder {
     vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists
     vector<vec>    gbplus, gbminus;           // Vector to hold all bplus/bminus
 
-    int*           havemat;
-    vector<string> opfilenames;               // Temp filenames
-   
     ff_data* root;                            // Always points to root data node
-    
+
     void make_opmat(long i, ff_data &data);   // Puts it in the_opmat
     void make_submat(ff_data &data);
+    smat make_nested_submat(long ip, ff_data &data);
     void go_down(ff_data &data, long eig, int last=0);
     void go_up( ff_data &data );
     void make_basis(ff_data &data);
-    vec  getbasis1(const ssubspace* s);       // Assuming dim(s)=1, get basis vector
+    vec make_basis1(ff_data &data);  // current space has dim. 1
+    vec make_basis2(ff_data &data, const svec& v);  // current space has dim. >1 and
+                                                    // relative basis vector v
 
 #ifdef ECLIB_MULTITHREAD
     threadpool   pool;                        // Job queue
     boost::mutex store_lock;                  // Lock for store() function
 #endif
 };
+
+vec  getbasis1(const ssubspace* s);       // Assuming dim(s)=1, get basis vector
+vec  lift(const vec& v);                  // Lift basis vector
 
 #endif

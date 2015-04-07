@@ -113,10 +113,18 @@ private:
 		  // already defined.
   mat opmat(int i, int d, int v=0) 
   {return h1->opmat(i,d,v);}
+  vec opmat_col(int i, int j, int v=0)
+  {return h1->opmat_col(i,j,v);}
+  mat opmat_cols(int i, const vec& jlist, int v=0)
+  {return h1->opmat_cols(i,jlist,v);}
   mat opmat_restricted(int i, const subspace& s, int d, int v=0) 
   {return h1->opmat_restricted(i,s,d,v);}
   smat s_opmat(int i, int d, int v=0) 
   {return h1->s_opmat(i,d,v);}
+  svec s_opmat_col(int i, int j, int v=0)
+  {return h1->s_opmat_col(i,j,v);}
+  smat s_opmat_cols(int i, const vec& jlist, int v=0)
+  {return h1->s_opmat_cols(i,jlist,v);}
   smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0) 
   {return h1->s_opmat_restricted(i,s,d,v);}
   long matdim(void)  {return h1->dimension;} 

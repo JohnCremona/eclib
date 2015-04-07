@@ -70,6 +70,7 @@ form_finder::~form_finder(void) {
   delete root;
 }
 
+// This is only used when bigmats==1 and we compute opmats on the entire ambient space:
 void form_finder::make_opmat(long i, ff_data &data) { 
   data.the_opmat_ = h -> s_opmat(i,dual,verbose); 
 }
@@ -81,23 +82,89 @@ void form_finder::make_submat( ff_data &data ) {
   if( bigmats ) { 
     // fetch the_opmat from file, or compute
     make_opmat(depth,data);
-    
+
     if( depth == 0 ) data.submat_ = data.the_opmat_;
     else {
 	    ECLOG(1) << "restricting the_opmat to subspace...";
-	    data.submat_ = restrict_mat(data.the_opmat_,*(data.nest_));
+	    data.submat_ = restrict_mat(data.the_opmat_,*(data.abs_space_));
 	    ECLOG(1) << "done." << endl;
 	  }
-      
+
     data.the_opmat_ = smat(0,0); // releases its space
   }
   else {
-    if( data.submat_.nrows() == 0 ) {
-	    if( depth == 0 ) data.submat_ = h -> s_opmat(depth,1,verbose);
-      else             data.submat_ = h -> s_opmat_restricted(depth,*(data.nest_),1,verbose);
-	  }
+    if( data.submat_.nrows() == 0 ) // else we have it already
+      {
+        if( depth == 0 )
+          data.submat_ = h -> s_opmat(depth,1,verbose);
+        else
+          {
+            //data.submat_ = h -> s_opmat_restricted(depth,*(data.abs_space_),1,verbose);
+            data.submat_ = make_nested_submat(depth,data);
+            // if (!eqmodp(m,data.submat_))
+            //   {
+            //     cout << "error computing matrix at depth "<<depth<<" the new way"<<endl;
+            //     if (verbose)
+            //       {
+            //         cout<<"old matrix = "<<data.submat_.as_mat()<<endl;
+            //         cout<<"new matrix = "<<m.as_mat()<<endl;
+            //       }
+            //   }
+          }
+      }
   }
 }
+
+/**
+ * make_nested_submat()
+ *
+ * Computes and returns the submat -- new nested version
+ */
+
+smat form_finder::make_nested_submat(long ip, ff_data &data)
+{
+  long depth = data.depth_;  // current depth
+  long subdim = data.subdim_;  // current dimension
+  ff_data *d = &data; // Pointer to nodes
+  int i, j, level;
+
+  ECLOG(1) << "Computing operator of size " << subdim
+           << " at depth " << depth << "..." << flush;
+
+  // first we go up the chain, composing pivotal indices
+
+  vec jlist = iota((scalar)subdim);
+  smat b = d->rel_space_->bas();
+  level = depth;
+  while (level--)
+    {
+      ECLOG(2) << "["<<level<<"]" << flush;
+      jlist = d->rel_space_->pivs()[jlist];
+      d->parent_->child_ = d;
+      d = d->parent_;
+      if(level) b = mult_mod_p(d->rel_space_->bas(), b, MODULUS);
+    }
+
+  // now compute the matrix of images of the j'th generator for j in jlist
+  ECLOG(2) << "basis done... " << flush;
+  smat m = h -> s_opmat_cols(ip, jlist, 0);
+  ECLOG(2) << "opmat done... " << flush;
+  m = mult_mod_p(m,b,MODULUS);
+
+  // // finally go back down projecting this vector into each subspace in turn
+
+  // ECLOG(2) <<"depth [0]"<<flush;
+  // level = depth;
+  // while (level--)
+  //   {
+  //     d = d->child_;
+  //     m = mult_mod_p(m, d->rel_space_->bas(), MODULUS);
+  //     ECLOG(2) <<"["<<d->depth_<<"]"<<flush;
+  //   }
+  ECLOG(1) <<"...done."<<endl;
+  return m;
+}
+
 
 /**
  * go_down()
@@ -121,8 +188,6 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   ECLOG(1) << "Increasing depth to " << depth+1 << ", "
            << "trying eig = " << eig << "..."
            << "after scaling, eig =  " << eig2 << "..." << endl;
-  // if(depth) eig2*= denom(*nest[depth]); // else latter is 1 anyway
-  //                        ^ data.nest_
   ssubspace s(0);
 
   vector<int> submat_dim = dim(data.submat_);
@@ -131,10 +196,10 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 
   ECLOG(1) << "Using sparse elimination (size = [ "
                      << submat_dim_ss.str() << "], density ="
-		                 << density(data.submat_) << ")..." << endl;
+		                 << density(data.submat_) << ")..." << flush;
   ECLOG(3) << "submat = " << data.submat_ << flush;
 
-  s = eigenspace(data.submat_,eig2);
+  s = eigenspace(data.submat_,eig2); // the relative eigenspace
 
   // Increment data usage counter for parent node
   data.increaseSubmatUsage();
@@ -148,16 +213,19 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   //  data.submat_ = smat(0,0); 
   //}
 
-  ECLOG(1) << "done (dim = " << dim(s) << "), combining subspaces..." << flush;
-  
-  if( depth == 0 ) child -> nest_ = new ssubspace(s);
-  else             child -> nest_ = new ssubspace(combine( *(data.nest_),s ));
-  
-  ECLOG(1) << "done." << endl;
+  ECLOG(1) << "done (dim = " << dim(s) << ")"<<endl;
+  // ECLOG(1) << ", combining subspaces..." << flush;
+
+  child -> rel_space_ = new ssubspace(s);
+  // if( depth == 0 )
+  //   child -> abs_space_ = new ssubspace(s);
+  // else
+  //   child -> abs_space_ = new ssubspace(combine( *(data.abs_space_),s ));
+  // ECLOG(1) << "done." << endl;
   
   depth++; // Local depth increment (does not effect data nodes)
 
-  child -> subdim_ = dim( *(child -> nest_) );
+  child -> subdim_ = dim( *(child -> rel_space_) );
 
   ECLOG(1) << "Eigenvalue " << eig 
            << " has multiplicity " << child -> subdim_ << endl;
@@ -212,20 +280,29 @@ void form_finder::make_basis( ff_data &data ) {
 
   if(plusflag) {
     // must treat separately since we did not
-    // define nest[0] in order to save space
+    // define abs_space[0] in order to save space
     if(depth==0) {
-      data.bplus_    = vec(dimen); 
+      data.bplus_    = vec(dimen);
       data.bplus_[1] = 1;
 	  }
     else {
-      data.bplus_ = getbasis1(data.nest_);
+      //data.bplus_ = getbasis1(data.abs_space_);
+      data.bplus_ = make_basis1(data);
+      // if (v!=data.bplus_)
+      //   {
+      //     cout<<"correct basis vector "<<data.bplus_<<endl;
+      //     cout<<"but new basis vector "<<v<<endl;
+      //   }
     }
-     
+
     return;
   }
 
-  ssubspace* s = data.nest_;  // only used when depth>0
-  ssubspace *spm0, *spm;
+  ssubspace* s;
+  if( bigmats ) {
+    s = data.abs_space_;  // only used when depth>0
+  }
+  ssubspace *spm_rel, *spm_abs;
   SCALAR eig = denom1;
   // if(depth) eig*=denom(*s);
   smat subconjmat;            // only used when depth>0
@@ -234,51 +311,90 @@ void form_finder::make_basis( ff_data &data ) {
     // will only be a 2x2 in this case (genus 1 only!)
   }
   else {
-    subconjmat = h->s_opmat_restricted(-1,*s,1,verbose);
+    //subconjmat = h->s_opmat_restricted(-1,*s,1,verbose);
+    subconjmat = make_nested_submat(-1,data);
+    // if (!eqmodp(m,subconjmat))
+    //   {
+    //     cout << "error computing conjugation matrix at depth "<<depth<<" the new way"<<endl;
+    //     if (verbose)
+    //       {
+    //         cout<<"old matrix = "<<subconjmat.as_mat()<<endl;
+    //         cout<<"new matrix = "<<m.as_mat()<<endl;
+    //       }
+    //   }
+
   }
 
   // C++11 loop over two variables (similar to python)
   // for( int b : { -1,+1 } ) { /* use b as -1 or +1 */ }
   for(long signeig=+1; signeig>-2; signeig-=2) {
-    SCALAR seig; 
+    SCALAR seig;
            seig = eig;
-    
+
     if(signeig<0) seig =- eig;
-    
+
     if(depth) {
-	    spm0 = new ssubspace(eigenspace(subconjmat,seig));
-	    spm  = new ssubspace(combine(*s,*spm0));
-	    delete spm0;
+	    spm_rel = new ssubspace(eigenspace(subconjmat,seig));
+	    //spm_abs  = new ssubspace(combine(*s,*spm_rel));
     }
     else {
-      spm = new ssubspace(eigenspace(subconjmat,seig));
+      spm_rel = new ssubspace(eigenspace(subconjmat,seig));
+      //spm_abs = spm_rel;
     }
-    
-    if(dim(*spm)!=1) {
+
+    if(dim(*spm_rel)!=1) {
       cout << "error in form_finder::makebasis; ";
       cout << "\nfinal (";
-      
-      if(signeig>0) cout << "+"; 
+
+      if(signeig>0) cout << "+";
       else cout << "-";
-        
-      cout << ") subspace has dimension " << dim(*spm) << endl;
+
+      cout << ") subspace has dimension " << dim(*spm_rel) << endl;
       cout << "aborting this branch!" << endl;
-	    delete spm;
+      //delete spm_abs;
+      delete spm_rel;
       return;
     }
-    
-    if(signeig>0) data.bplus_  = getbasis1(spm);
-    else          data.bminus_ = getbasis1(spm);
 
-    delete spm;
+    //vec v = getbasis1(spm_abs);
+    vec w = make_basis2(data, spm_rel->bas().as_mat().col(1));
+
+    if(signeig>0) data.bplus_  = w;
+    else          data.bminus_ = w;
+
+    //delete spm_abs;
+    delete spm_rel;
   }
 }
 
-vec form_finder::getbasis1(const ssubspace* s)
+vec form_finder::make_basis2(ff_data &data, const svec& v)
 {
-  VEC b = basis(*s).as_mat().col(1);
+  ff_data *d = &data;
+  int level = data.depth_;
+  svec w = v;
+  while (level--)
+    {
+      w = mult_mod_p(w, transpose(d->rel_space_->bas()), MODULUS);
+      d = d->parent_;
+    }
+  return lift(w.as_vec());
+}
+
+vec form_finder::make_basis1(ff_data &data)
+{
+  svec v(1);  v.set(1,1);
+  return make_basis2(data, v);
+}
+
+vec getbasis1(const ssubspace* s)
+{
+  return lift(basis(*s).as_mat().col(1));
+}
+
+vec lift(const vec& v)
+{
 #ifdef MODULAR
-  VEC bb;
+  VEC b=v, bb;
   if(lift(b,MODULUS,bb))
     b = bb;
   else

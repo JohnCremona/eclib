@@ -56,9 +56,13 @@ public:
   vector<long> eigrange(long i);
   long op_prime(int i);  // the i'th operator prime for Tp or Wq
   mat opmat(int i, int dual, int verb=0);
+  vec opmat_col(int i, int j, int verb=0);
+  mat opmat_cols(int i, const vec& jlist, int verb=0);
   mat opmat_restricted(int i,const subspace& s, int dual, int verb=0);
   // versions returning an smat:
   smat s_opmat(int i,int dual,int verb=0);
+  svec s_opmat_col(int i, int j, int verb=0);
+  smat s_opmat_cols(int i, const vec& jlist, int verb=0);
   smat s_opmat_restricted(int i,const ssubspace& s, int dual,int verb=0);
 
   // Extend a dual vector of length rk to one of length nsymb:
@@ -118,26 +122,38 @@ public:
   //  {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());} 
 
   mat calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
+  vec calcop_col(string opname, long p, int j, const matop& mlist, int display=0) const;
+  mat calcop_cols(string opname, long p, const vec& jlist, const matop& mlist, int display=0) const;
   mat calcop_restricted(string opname, long p, const matop& mlist, const subspace& s, int dual, int display=0) const;
 
   smat s_calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
+  svec s_calcop_col(string opname, long p, int j, const matop& mlist, int display=0) const;
+  smat s_calcop_cols(string opname, long p, const vec& jlist, const matop& mlist, int display=0) const;
   smat s_calcop_restricted(string opname, long p, const matop& mlist, const ssubspace& s, int dual, int display=0) const;
 
 public:
 
   mat heckeop(long p, int dual, int display=0) const;
+  vec heckeop_col(long p, int j, int display=0) const;
+  mat heckeop_cols(long p, const vec& jlist, int display=0) const;
   mat heckeop_restricted(long p, const subspace& s, int dual, int display=0) const;
 
   smat s_heckeop(long p, int dual, int display=0) const;
+  svec s_heckeop_col(long p, int j, int display=0) const;
+  smat s_heckeop_cols(long p, const vec& jlist, int display=0) const;
   smat s_heckeop_restricted(long p, const ssubspace& s, int dual, int display=0) const;
 
   mat newheckeop(long p, int dual, int display=0) const;
   mat wop(long q, int dual, int display=0) const;
   smat s_wop(long q, int dual, int display=0) const;
   mat fricke(int dual, int display=0) const;
-  mat conj(int dual,int display=0) const;
+  mat conj(int dual, int display=0) const;
+  vec conj_col(int j, int display=0) const;
+  mat conj_cols(const vec& jlist, int display=0) const;
   mat conj_restricted(const subspace& s, int dual,int display=0) const;
   smat s_conj(int dual, int display=0) const;
+  svec s_conj_col(int j, int display=0) const;
+  smat s_conj_cols(const vec& jlist, int display=0) const;
   smat s_conj_restricted(const ssubspace& s, int dual, int display=0) const;
   vec maninvector(long p) const;
   vec projmaninvector(long p) const;
