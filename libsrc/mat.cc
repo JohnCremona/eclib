@@ -1539,7 +1539,7 @@ void mod_mat_from_mat(mod_mat& A, const mat& M, scalar pr)
       mod_mat_entry(A,i,j) = (uscalar)posmod(M(i+1,j+1),pr);
 }
 
-mat mat_from_mod_mat(const mod_mat& A)
+mat mat_from_mod_mat(const mod_mat& A, scalar a) // scalar just to fix return type
 {
   long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
 
@@ -1574,7 +1574,7 @@ mat ref_via_flint(const mat& M, scalar pr)
 #endif
 
   // copy back to a new matrix for return:
-  mat ans = mat_from_mod_mat(A);
+  mat ans = mat_from_mod_mat(A, pr);
 
   // clear the flint matrix and return:
   mod_mat_clear(A);
@@ -1640,7 +1640,7 @@ mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
     }
 
   // copy back to a new matrix for return:
-  mat ans = mat_from_mod_mat(A).slice(rk,nc);
+  mat ans = mat_from_mod_mat(A,pr).slice(rk,nc);
 
   // clear the flint matrix and return:
   mod_mat_clear(A);
