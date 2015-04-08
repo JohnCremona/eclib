@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [20150323], [john.cremona@gmail.com])
+AC_INIT([eclib], [20150408], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -23,8 +23,8 @@ LT_INIT
 # revision to zero and increment age.
 # 3. If interfaces were removed (breaks backward compatibility): increment
 # current, and set both revision and age to zero.
-LT_CURRENT=1
-LT_REVISION=1
+LT_CURRENT=2
+LT_REVISION=0
 LT_AGE=0
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
