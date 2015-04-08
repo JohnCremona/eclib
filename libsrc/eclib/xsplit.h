@@ -87,8 +87,8 @@ class form_finder {
     void go_up( ff_data &data );
     void make_basis(ff_data &data);
     vec make_basis1(ff_data &data);  // current space has dim. 1
-    vec make_basis2(ff_data &data, const svec& v);  // current space has dim. >1 and
-                                                    // relative basis vector v
+    vec make_basis2(ff_data &data, const vec& v);  // current space has dim. >1 and
+                                                   // relative basis vector v
 
 #ifdef ECLIB_MULTITHREAD
     threadpool   pool;                        // Job queue

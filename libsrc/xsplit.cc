@@ -29,7 +29,6 @@
 #define ECLIB_RECURSION_DIM_LIMIT 5821
 #include <eclib/logger.h>
 #include <eclib/xsplit.h>
-
 #include <eclib/smatrix_elim.h>
 subspace sparse_combine(const subspace& s1, const subspace& s2);
 mat sparse_restrict(const mat& m, const subspace& s);
@@ -101,15 +100,6 @@ void form_finder::make_submat( ff_data &data ) {
           {
             //data.submat_ = h -> s_opmat_restricted(depth,*(data.abs_space_),1,verbose);
             data.submat_ = make_nested_submat(depth,data);
-            // if (!eqmodp(m,data.submat_))
-            //   {
-            //     cout << "error computing matrix at depth "<<depth<<" the new way"<<endl;
-            //     if (verbose)
-            //       {
-            //         cout<<"old matrix = "<<data.submat_.as_mat()<<endl;
-            //         cout<<"new matrix = "<<m.as_mat()<<endl;
-            //       }
-            //   }
           }
       }
   }
@@ -143,25 +133,16 @@ smat form_finder::make_nested_submat(long ip, ff_data &data)
       d->parent_->child_ = d;
       d = d->parent_;
       if(level) b = mult_mod_p(d->rel_space_->bas(), b, MODULUS);
+      //if(level) b = mult_mod_p_flint(d->rel_space_->bas(), b, MODULUS);
     }
 
   // now compute the matrix of images of the j'th generator for j in jlist
-  ECLOG(2) << "basis done... " << flush;
+  ECLOG(2) << " basis done... " << flush;
   smat m = h -> s_opmat_cols(ip, jlist, 0);
   ECLOG(2) << "opmat done... " << flush;
   m = mult_mod_p(m,b,MODULUS);
-
-  // // finally go back down projecting this vector into each subspace in turn
-
-  // ECLOG(2) <<"depth [0]"<<flush;
-  // level = depth;
-  // while (level--)
-  //   {
-  //     d = d->child_;
-  //     m = mult_mod_p(m, d->rel_space_->bas(), MODULUS);
-  //     ECLOG(2) <<"["<<d->depth_<<"]"<<flush;
-  //   }
-  ECLOG(1) <<"...done."<<endl;
+  //m = mult_mod_p_flint(m,b,MODULUS);
+  ECLOG(1) <<"done."<<endl;
   return m;
 }
 
@@ -288,11 +269,6 @@ void form_finder::make_basis( ff_data &data ) {
     else {
       //data.bplus_ = getbasis1(data.abs_space_);
       data.bplus_ = make_basis1(data);
-      // if (v!=data.bplus_)
-      //   {
-      //     cout<<"correct basis vector "<<data.bplus_<<endl;
-      //     cout<<"but new basis vector "<<v<<endl;
-      //   }
     }
 
     return;
@@ -313,16 +289,6 @@ void form_finder::make_basis( ff_data &data ) {
   else {
     //subconjmat = h->s_opmat_restricted(-1,*s,1,verbose);
     subconjmat = make_nested_submat(-1,data);
-    // if (!eqmodp(m,subconjmat))
-    //   {
-    //     cout << "error computing conjugation matrix at depth "<<depth<<" the new way"<<endl;
-    //     if (verbose)
-    //       {
-    //         cout<<"old matrix = "<<subconjmat.as_mat()<<endl;
-    //         cout<<"new matrix = "<<m.as_mat()<<endl;
-    //       }
-    //   }
-
   }
 
   // C++11 loop over two variables (similar to python)
@@ -367,22 +333,22 @@ void form_finder::make_basis( ff_data &data ) {
   }
 }
 
-vec form_finder::make_basis2(ff_data &data, const svec& v)
+vec form_finder::make_basis2(ff_data &data, const vec& v)
 {
   ff_data *d = &data;
   int level = data.depth_;
-  svec w = v;
+  vec w = v;
   while (level--)
     {
-      w = mult_mod_p(w, transpose(d->rel_space_->bas()), MODULUS);
+      w = mult_mod_p(d->rel_space_->bas(), w, MODULUS);
       d = d->parent_;
     }
-  return lift(w.as_vec());
+  return lift(w);
 }
 
 vec form_finder::make_basis1(ff_data &data)
 {
-  svec v(1);  v.set(1,1);
+  vec v(1);  v.set(1,1);
   return make_basis2(data, v);
 }
 
@@ -414,7 +380,7 @@ void form_finder::recover(vector< vector<long> > eigs) {
   for(unsigned int iform=0; iform<eigs.size(); iform++) {
     if(verbose) {
 	    cout << "Form number " << iform+1 << " with eigs ";
-	    
+
       int n = eigs[iform].size(); 
       if(n>10) n = 10;
 
@@ -641,7 +607,7 @@ void form_finder::store(vec bp, vec bm, vector<long> eigs) {
   gnfcount++;
 
   // Inform about newform count
-  ECLOG(0) << "Current newform subtotal count at " << gnfcount << endl;
+  ECLOG(1) << "Current newform subtotal count at " << gnfcount << endl;
 }
 
 #if (METHOD==2)

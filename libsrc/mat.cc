@@ -1484,12 +1484,16 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
 #undef mod_mat_init
 #undef mod_mat_clear
 #undef mod_mat_entry
+#undef mod_mat_nrows
+#undef mod_mat_ncols
 #undef mod_mat_rref
 #define uscalar hlimb_t // unsigned int
 #define mod_mat hmod_mat_t // uses unsigned ints
 #define mod_mat_init hmod_mat_init
 #define mod_mat_clear hmod_mat_clear
 #define mod_mat_entry hmod_mat_entry
+#define mod_mat_nrows hmod_mat_nrows
+#define mod_mat_ncols hmod_mat_ncols
 #define mod_mat_rref hmod_mat_rref
 #else
 #include "flint/nmod_mat.h"
@@ -1498,12 +1502,16 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
 #undef mod_mat_init
 #undef mod_mat_clear
 #undef mod_mat_entry
+#undef mod_mat_nrows
+#undef mod_mat_ncols
 #undef mod_mat_rref
 #define uscalar mp_limb_t // unsigned long
 #define mod_mat nmod_mat_t // uses unsigned longs
 #define mod_mat_init nmod_mat_init
 #define mod_mat_clear nmod_mat_clear
 #define mod_mat_entry nmod_mat_entry
+#define mod_mat_nrows nmod_mat_nrows
+#define mod_mat_ncols nmod_mat_ncols
 #define mod_mat_rref nmod_mat_rref
 #endif
 #include "flint/profiler.h"
@@ -1516,7 +1524,7 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
 // present, which should have been determined by the configure script.
 // The unsigned scalar types are #define'd as uscalar.
 
-mat ref_via_flint(const mat& M, scalar pr)
+void mod_mat_from_mat(mod_mat& A, const mat& M, scalar pr)
 {
   long nr=M.nrows(), nc=M.ncols();
   long i, j;
@@ -1525,11 +1533,33 @@ mat ref_via_flint(const mat& M, scalar pr)
   uscalar mod = (uscalar)pr;
 
   // create flint matrix copy of M:
-  mod_mat A;
   mod_mat_init(A, nr, nc, mod);
   for(i=0; i<nr; i++)
     for(j=0; j<nc; j++)
-      mod_mat_entry(A,i,j) = M(i+1,j+1);
+      mod_mat_entry(A,i,j) = (uscalar)posmod(M(i+1,j+1),pr);
+}
+
+mat mat_from_mod_mat(const mod_mat& A)
+{
+  long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
+
+  // create matrix copy of A:
+  mat M(nr, nc);
+  long i, j;
+  for(i=0; i<nr; i++)
+    for(j=0; j<nc; j++)
+      M(i+1,j+1) = mod_mat_entry(A,i,j);
+  return M;
+}
+
+mat ref_via_flint(const mat& M, scalar pr)
+{
+  long nr=M.nrows(), nc=M.ncols();
+  long i, j;
+
+  // create flint matrix copy of M:
+  mod_mat A;
+  mod_mat_from_mat(A,M,pr);
 
   // reduce A to rref:
 #ifdef TRACE_FLINT_RREF
@@ -1544,11 +1574,9 @@ mat ref_via_flint(const mat& M, scalar pr)
 #endif
 
   // copy back to a new matrix for return:
-  mat ans(nr,nc);
-  for(i=0; i<nr; i++)
-    for(j=0; j<nc; j++)
-      ans(i+1,j+1) = mod_mat_entry(A,i,j);
+  mat ans = mat_from_mod_mat(A);
 
+  // clear the flint matrix and return:
   mod_mat_clear(A);
   return ans;
 }
@@ -1572,15 +1600,9 @@ mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
   //  cout << "Size of uscalar = "<<8*sizeof(uscalar)<<" bits"<<endl;
 #endif
 
-  // copy of the modulus
-  uscalar mod = (uscalar)pr;
-
   // create flint matrix copy of M:
   mod_mat A;
-  mod_mat_init(A, nr, nc, mod);
-  for(i=0; i<nr; i++)
-    for(j=0; j<nc; j++)
-      mod_mat_entry(A,i,j) = (uscalar)posmod(M(i+1,j+1),pr);
+  mod_mat_from_mat(A,M,pr);
 
 #ifdef TRACE_FLINT_RREF
   timeit_t t;
@@ -1618,11 +1640,9 @@ mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
     }
 
   // copy back to a new matrix for return:
-  mat ans(rk,nc);
-  for(i=0; i<rk; i++)
-    for(j=0; j<nc; j++)
-      ans(i+1,j+1) = mod_mat_entry(A,i,j);
+  mat ans = mat_from_mod_mat(A).slice(rk,nc);
 
+  // clear the flint matrix and return:
   mod_mat_clear(A);
   return ans;
 }

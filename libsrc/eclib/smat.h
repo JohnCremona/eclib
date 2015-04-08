@@ -78,9 +78,11 @@ public:
      friend svec operator* ( const smat& A, const svec& v );
      friend svec operator* ( const svec& v, const smat& A );
      friend svec mult_mod_p( const smat& A, const svec& v, const scalar& p  );
+     friend vec mult_mod_p( const smat& A, const vec& v, const scalar& p  );
      friend svec mult_mod_p( const svec& v, const smat& A, const scalar& p  );
      friend smat operator* ( const smat& A, const smat& B );
      friend smat mult_mod_p ( const smat& A, const smat& B, const scalar& p );
+     friend smat mult_mod_p_flint ( const smat& A, const smat& B, const scalar& p );
      friend smat transpose(const smat&);
      friend int operator==(const smat&, const smat&);
   // Equality mod p:

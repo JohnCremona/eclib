@@ -566,6 +566,36 @@ svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
   return prod;
 }
 
+svec mult_mod_p( const smat& A, const svec& v, const scalar& p  )
+{
+  if( v.d != A.ncols() )
+    {
+      cout << "incompatible sizes in A*v\n";
+      cout << "Dimensions "<<dim(A)<<" and "<<v.d<<endl;
+      abort();
+    }
+  svec w(A.nrows());
+  int i;
+  for(i=1; i<=A.nrows(); i++)
+    w.set(i,dotmodp(A.row(i),v,p));
+  return w;
+}
+
+vec mult_mod_p( const smat& A, const vec& v, const scalar& p  )
+{
+  if( dim(v) != A.ncols() )
+    {
+      cout << "incompatible sizes in A*v\n";
+      cout << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
+      abort();
+    }
+  vec w(A.nrows());
+  int i;
+  for(i=1; i<=A.nrows(); i++)
+    w.set(i,dotmodp(A.row(i),v,p));
+  return w;
+}
+
 #if(1)
 smat operator* ( const smat& A, const smat& B )
 {
@@ -977,3 +1007,125 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
       }
   return 1;
 }
+
+// Possible FLINT_LEVEL values are as follows.
+//
+// 0: no FLINT support (or a version <2.3)
+// 1: support for 64-bit nmod_mat (standard from version 2.3)
+// 2: support for 32-bit hmod_mat (non-standard, from version 2.3)
+//
+// The configure script should have detected whether the functions
+// nmod_mat_rref and/or hmod_mat_rref are available to be used here.
+//
+#if FLINT_LEVEL!=0
+//#define TRACE_FLINT_RREF
+#include "flint/fmpz.h"
+#if (SCALAR_OPTION==1)&&(FLINT_LEVEL==2)
+#include "flint/hmod_mat.h"
+#undef uscalar
+#undef mod_mat
+#undef mod_mat_init
+#undef mod_mat_clear
+#undef mod_mat_entry
+#undef mod_mat_nrows
+#undef mod_mat_ncols
+#undef mod_mat_rref
+#undef mod_mat_mul
+#define uscalar hlimb_t // unsigned int
+#define mod_mat hmod_mat_t // uses unsigned ints
+#define mod_mat_init hmod_mat_init
+#define mod_mat_clear hmod_mat_clear
+#define mod_mat_entry hmod_mat_entry
+#define mod_mat_nrows hmod_mat_nrows
+#define mod_mat_ncols hmod_mat_ncols
+#define mod_mat_rref hmod_mat_rref
+#define mod_mat_mul hmod_mat_mul
+#else
+#include "flint/nmod_mat.h"
+#undef uscalar
+#undef mod_mat
+#undef mod_mat_init
+#undef mod_mat_clear
+#undef mod_mat_entry
+#undef mod_mat_nrows
+#undef mod_mat_ncols
+#undef mod_mat_rref
+#undef mod_mat_mul
+#define uscalar mp_limb_t // unsigned long
+#define mod_mat nmod_mat_t // uses unsigned longs
+#define mod_mat_init nmod_mat_init
+#define mod_mat_clear nmod_mat_clear
+#define mod_mat_entry nmod_mat_entry
+#define mod_mat_nrows nmod_mat_nrows
+#define mod_mat_ncols nmod_mat_ncols
+#define mod_mat_rref nmod_mat_rref
+#define mod_mat_mul nmod_mat_mul
+#endif
+#include "flint/profiler.h"
+#include "eclib/timer.h"
+
+// FLINT has two types for modular matrices: standard in FLINT-2.3 has
+// nmod_mat_t with entries of type mp_limb_t (unsigned long);
+// non-standard (in an optional branch) is hmod_mat_t, with entries
+// hlimb_t (unsigned int).  We use the former when scalar=long and the
+// latter when scalar=int, provided that the optional functions are
+// present, which should have been determined by the configure script.
+// The unsigned scalar types are #define'd as uscalar.
+
+void mod_mat_from_smat(mod_mat& A, const smat& M, scalar pr)
+{
+  long nr=M.nrows(), nc=M.ncols();
+  long i, j;
+
+  // copy of the modulus for FLINT
+  uscalar mod = (uscalar)pr;
+
+  // create flint matrix copy of M:
+  mod_mat_init(A, nr, nc, mod);
+  for(i=0; i<nr; i++)
+    for(j=0; j<nc; j++)
+      mod_mat_entry(A,i,j) = (uscalar)posmod(M.elem(i+1,j+1),pr);
+}
+
+smat smat_from_mod_mat(const mod_mat& A, const scalar& p) //scalar just to fix return type
+{
+  long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
+
+  // create matrix copy of A:
+  smat M(nr, nc);
+  long i, j;
+  for(i=0; i<nr; i++)
+    {
+      svec rowi(nc);
+      for(j=0; j<nc; j++)
+        rowi.set(j+1, mod_mat_entry(A,i,j));
+      M.setrow(i+1,rowi);
+    }
+  return M;
+}
+
+smat mult_mod_p_flint ( const smat& A, const smat& B, const scalar& pr )
+{
+  if( A.ncols() != B.nrows() )
+    {
+      cerr << "incompatible smats in operator *\n";
+      abort();
+    }
+  mod_mat AA, BB, CC;
+  mod_mat_from_smat(AA,A,pr);
+  mod_mat_from_smat(BB,B,pr);
+  mod_mat_init(CC, A.nrows(), B.ncols(), pr);
+  // timer T;
+  // T.start();
+  // mod_mat_mul(CC,AA,BB);
+  // T.stop();
+  // cout<<"mult_mod_p_flint time (size "<<dim(A)<<"x"<<dim(B)<<"): ";
+  // T.show();
+  smat C = smat_from_mod_mat(CC, pr);
+  mod_mat_clear(AA);
+  mod_mat_clear(BB);
+  mod_mat_clear(CC);
+  return C;
+}
+
+#endif
