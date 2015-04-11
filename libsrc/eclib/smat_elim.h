@@ -79,6 +79,7 @@ class smat_elim : public smat{
   void check_col( int col, list& L );
   void check_row (int d2, int row2, list& L ); 
   int get_weight( int, int* ); 
+  int has_weight_one( int, int* ); 
   int n_active_cols(); // number of active columns
   int n_active_rows(); // number of active rows
   long n_active_entries(); // number of active entries

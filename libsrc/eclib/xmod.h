@@ -132,8 +132,51 @@ inline int mod0(int a)
 inline long xmod0(long a) {return (a%(long)BIGPRIME);}
 inline long mod0(long a) {return mod0((int)(a%BIGPRIME));}
 
+inline int xmodmul0(int a, int b)
+{
+  return ((int)( ( (int64_t)(a)*(int64_t)(b) ) % (int64_t)(BIGPRIME) ))%BIGPRIME;
+}
+
+inline long xmodmul0(long a, long b)
+{
+  return (long)(((int)( ( (int64_t)(a)*(int64_t)(b) ) % (int64_t)(BIGPRIME) ))%BIGPRIME);
+}
+
+// This special version only works modulo BIGPRIME, not a general modulus:
+// It should work faster (no divisions)!  Thanks to David Harvey.
+
+inline int xmm0(int a, int b)
+{
+  if (a==1) return b;
+  if (a==-1) return -b;
+  if (b==1) return a;
+  if (b==-1) return -a;
+  // check:
+  //  int r2 = (a*(int64_t)b) % BIGPRIME;
+  if(a<0) a+=BIGPRIME;
+  if(b<0) b+=BIGPRIME;
+  int64_t ab = a*(int64_t)b;
+  int64_t r = ab-((INV_BIGPRIME*(ab>>30))>>32)*BIGPRIME;
+  r -= ( ((r>=TWO_BIGPRIME)?BIGPRIME:0) + ((r>=BIGPRIME)?BIGPRIME:0) );
+  if (r>HALF_BIGPRIME) r-=BIGPRIME;
+  // check:
+  // if (r!=r2)
+  //   {
+  //     cout << "Problem with "<<a<<"*"<<b<<" (mod "<<BIGPRIME
+  //          <<"): computed "<<r<<", not "<<r2<<endl;
+  //     return r2;
+  //   }
+  return (int)r;
+}
+
+inline long xmm0(long a, long b)
+{
+  return (a*(int64_t)b) % BIGPRIME;
+}
+
 inline int xmodmul(int a, int b, int m)
 {
+  if (m==BIGPRIME) return xmm0(a,b);
   return ((int)( ( (int64_t)(a)*(int64_t)(b) ) % (int64_t)(m) ))%m;
 }
 
@@ -150,16 +193,6 @@ inline int xmodmul(long a, long b, int m)
 inline long xmodmul(long a, long b, long m)
 {
   return ((long)( ( (int64_t)(a)*(int64_t)(b) ) % (int64_t)(m) ))%m;
-}
-
-inline int xmodmul0(int a, int b)
-{
-  return ((int)( ( (int64_t)(a)*(int64_t)(b) ) % (int64_t)(BIGPRIME) ))%BIGPRIME;
-}
-
-inline long xmodmul0(long a, long b) 
-{
-  return (long)(((int)( ( (int64_t)(a)*(int64_t)(b) ) % (int64_t)(BIGPRIME) ))%BIGPRIME);
 }
 
 #endif // ifdef USE_DMOD

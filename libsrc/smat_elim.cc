@@ -652,7 +652,7 @@ void smat_elim::step4 ( )
 	{
 	  /* eliminates rows with weight 1 */
 	  for( r = 0, row = -1; r < nro; r++ ) {
-	    if(get_weight(r, lightness) == 1 && position[r] == -1) 
+	    if(has_weight_one(r, lightness) && position[r] == -1) 
 	      { row = r; break; }
 	  }
 	  if( row != -1 ) 
@@ -882,6 +882,19 @@ int smat_elim::get_weight( int row, int* lightness )
   int d = *pos++;
   while( d-- ) wt += lightness[ *pos++ - 1 ];
   return wt;
+}
+
+int smat_elim::has_weight_one( int row, int* lightness )
+{
+  int wt = 0;
+  int *pos = col[row];
+  int d = *pos++;
+  while( d-- )
+    {
+      wt += lightness[ *pos++ - 1 ];
+      if (wt>1) return 0;
+    }
+  return (wt==1);
 }
 
 int smat_elim::n_active_cols() // number of active columns

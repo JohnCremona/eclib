@@ -25,22 +25,6 @@
  
 // ONLY to be included by smatrix.cc
 
-inline scalar xmm(scalar a, scalar b, scalar m)
-{
-  //return xmodmul(a,b,m);
-  //return (a*b) % m;
-  return (a*(int64_t)b) % m;
-  //return (scalar)(((long)a*(long)b) % (long)m);
-}
-inline scalar xmm0(scalar a, scalar b)
-{
-  //return xmodmul(a,b,m);
-  //return (a*b) % m;
-  return (a*(int64_t)b) % DEFAULT_MODULUS;
-  //return (scalar)(((long)a*(long)b) % (long)m);
-}
-
-
 void showrow(int*pos, scalar*val) // for debugging
 {
   int d=pos[0]; 
@@ -455,7 +439,7 @@ smat& smat::mult_by_scalar_mod_p (scalar scal, const scalar& p)
     {
       d = *col[i];
       veci = val[i];
-      while(d--) {(*veci) = xmm(*veci,scal,p); veci++;}
+      while(d--) {(*veci) = xmodmul(*veci,scal,p); veci++;}
     }
   return *this;
 }
@@ -619,93 +603,6 @@ smat mult_mod_p ( const smat& A, const smat& B, const scalar& p )
   return prod;
 }
 #endif
-
-#if(0)
-smat operator* ( const smat& A, const smat& B )
-{
-  if( A.nco != B.nro ) { cerr << "incompatible smats in operator *\n"; abort();}
-  int nro = A.nro, nco = B.nco;
-  smat prod( nro, nco );
-  
-  /* writes columns of B */
-  
-  int* ncol = new int [nco];
-  int *nc = ncol;
-  int l, r, s;
-  for( l = 0; l < nco; l++ ) *nc++ = 0;
-  
-  for( r = 0; r <B.nro; r++ ) // counts # of elements in each col
-    {
-      int d = *B.col[r];
-      int *p = B.col[r] + 1;
-      while( d-- ) ncol[*p++ - 1]++;
-    }
-  scalar **colB_val = new scalar * [nco];
-  int **colB_mat = new int * [nco];
-  for( l = 0; l < nco; l++ ) {
-    colB_val[l] = new scalar [ncol[l]];
-    colB_mat[l] = new int [ncol[l]];
-  }
-  int * aux = new int [nco];
-  int *a=aux;
-  for( s = 0; s < nco; s++ ) *a++ = 0;
-
-  for( r = 0; r < B.nro; r++ ) {
-    int d = *B.col[r];
-    scalar *v = B.val[r];
-    int *p = B.col[r] + 1;
-    while( d-- ) {
-      int col = *p++ - 1;
-      colB_mat[col][aux[col]] = r+1;
-      colB_val[col][aux[col]++] = *v++ ;
-    }
-  }
-
-  /* multiply A and B */
- 
-  int * aux_pos = new int [nco];
-  
-  for( r = 0; r < nro; r++ ) {
-    int count = 0;
-    int d = *A.col[r];
-    int *ax = aux, *axp = aux_pos; //reusing aux. It will now hold values of *
-    for( int m = 0; m < nco; m++ ) { *ax++ = 0; *axp++ = 0; }
-    int *posA = A.col[r] +1;
-    for( int i, c = 0; c < nco; c++ ) { 
-      scalar soma = 0;
-      int *posB = colB_mat[c];
-      for( l = 0, i = 0; l < ncol[c] && i < d; ) {
-	if( posA[i] < posB[l] ) i++;
-	else if( posA[i] >  posB[l] ) l++;
-	else soma= xmod0(soma + xmm0(A.val[r][i++] , colB_val[c][l++]));
-      }
-      if( soma != 0 ) {
-	aux_pos[count] = c+1;
-	aux[count++] = mod0(soma);
-      }
-    }
-    delete [] prod.col[r];
-    delete [] prod.val[r];
-    int *pos = prod.col[r] = new int [count+1];
-    scalar *val = prod.val[r] = new scalar [count];
-    *pos++ = count;
-    for( ax = aux, axp = aux_pos, l = 0; l < count; l++ ) {
-      *pos++ = *axp++;
-      *val++ = *ax++;
-    }
-  }
-
-  delete [] aux;
-  delete [] aux_pos;
-  delete [] ncol;
-  for( l = 0; l < nco; l++ ) { delete [] colB_mat[l]; delete [] colB_val[l]; }
-  delete [] colB_mat; delete [] colB_val;
-
-  return prod;
-}
-
-#endif
-
 
 smat transpose ( const smat& A )
 {
@@ -953,7 +850,7 @@ int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace)
   if(trace) cout << "Common denominator = " << dd << "\n";
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
-      m.val[nr][nc] = mod(xmm(dd,(m.val[nr][nc]),pr),pr);
+      m.val[nr][nc] = mod(xmodmul(dd,(m.val[nr][nc]),pr),pr);
   if(trace) cout << "Lifted smat = " << m.as_mat() << "\n";
   return 1;
 }
