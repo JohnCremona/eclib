@@ -35,19 +35,17 @@ mat::mat(long nr, long nc)
  long n=nr*nc;
  entries=new scalar[n];  
  if (!entries) {cout<<"Out of memory in mat constructor!\n"; abort();}
- scalar* m1=entries;
- while(n--) *m1++ = 0;
+ memset(entries, 0, n*sizeof(scalar));
 }
 
 mat::mat(const mat& m)
 {
  nro=m.nro;
  nco=m.nco;
- long n = nro*nco;
- entries=new scalar[n]; 
+ long n=nro*nco;
+ entries=new scalar[n];
  if (!entries) {cout<<"Out of memory in mat constructor!\n"; abort();}
- scalar *m1=entries, *m2=m.entries;
- while(n--) *m1++ = *m2++;
+ memcpy(entries, m.entries, n*sizeof(scalar));
 }
 
 mat::~mat()
@@ -66,21 +64,20 @@ void mat::init(long nr, long nc) // assigns to zero mat of given size;
    }
  nro = nr;
  nco = nc;
- scalar *m1=entries;
- while(n--) *m1++ = 0;
+ memset(entries, 0, n*sizeof(scalar));
 }
 
 scalar& mat::operator()(long i, long j)  const   // returns ref to (i,j) entry
 {
- if ((0<i) && (i<=nro) && (0<j) && (j<=nco)) 
+  // if ((0<i) && (i<=nro) && (0<j) && (j<=nco)) 
    return entries[(i-1)*nco+(j-1)];
- else 
-   {
-     cout << "Bad indices ("<<i<<","<<j<<") in mat::sub (nro="<<nro
-	  <<", nco="<<nco<<"\n"; 
-     abort();
-     return entries[0];
-   }
+ // else 
+ //   {
+ //     cout << "Bad indices ("<<i<<","<<j<<") in mat::sub (nro="<<nro
+ //          <<", nco="<<nco<<"\n"; 
+ //     abort();
+ //     return entries[0];
+ //   }
 }
 
 
@@ -99,9 +96,9 @@ mat mat::slice(long r1,long r2,long c1,long c2) const
  scalar* ap=ans.entries, *mp=entries+r1*nco+c1;
  while(n--)
    {
-     c=cc;
-     while(c--) *ap++ = *mp++; 
-     mp+=(nco-cc);
+     memcpy(ap, mp, cc*sizeof(scalar));
+     ap += cc;
+     mp += nco;
    }
  return ans;
 }
@@ -194,14 +191,10 @@ void mat::setcol(long j, const vec& v)
 vec mat::row(long i) const
 {
  vec mi(nco);
- long j=nco; scalar *entriesij=entries+(i-1)*nco, *v=mi.entries;
- if ((0<i) && (i<=nro)) 
-   while(j--) *v++ = *entriesij++;
- else 
-   {
-     cout << "Bad row number "<<i<<" in function mat::row (nro="<<nro<<")\n";
-     abort();
-   }
+ if ((0<i) && (i<=nro))
+   memcpy(mi.entries, entries+(i-1)*nco, nco*sizeof(scalar));
+ else
+   cout << "Bad row number "<<i<<" in function mat::row (nro="<<nro<<")\n";
  return mi;
 }
 
@@ -211,11 +204,8 @@ vec mat::col(long j) const
  long i=nro; scalar *entriesij=entries+(j-1), *v=mj.entries;
  if ((0<j) && (j<=nco))
    while(i--) {*v++ = *entriesij; entriesij+=nco;}
- else 
-   {
-     cout << "Bad column number "<<j<<" in function mat::col (nco="<<nco<<")\n";
-     abort();
-   }
+ else
+   cout << "Bad column number "<<j<<" in function mat::col (nco="<<nco<<")\n";
  return mj;
 }
 
@@ -228,7 +218,7 @@ void mat::swaprows(long r1, long r2)
       long nc=nco, a;
       while(nc--) {a = *mr1; *mr1++ = *mr2; *mr2++ = a; }
     }
-  else 
+  else
     {
       cout << "Bad row numbers " << r1 << "," << r2 << " in swaprow (nro="<<nro<<")\n";
       abort();
@@ -1020,6 +1010,20 @@ long mat::determinant() const
    return det;
 }
 
+void vec::sub_row(const mat& m, int i)
+{
+  scalar* vi=entries, *wi=m.entries+(i-1)*d; long n=d;
+  if (d==m.ncols()) {while(n--)(*vi++)-=(*wi++);}
+  else {cout << "Incompatible vecs in vec::sub_row\n"; abort();}
+}
+
+void vec::add_row(const mat& m, int i)
+{
+  scalar* vi=entries, *wi=m.entries+(i-1)*d; long n=d;
+  if (d==m.ncols()) {while(n--)(*vi++)+=(*wi++);}
+  else {cout << "Incompatible vecs in vec::add_row(): d="<<d<<" but m has "<<m.ncols()<<"cols \n"; abort();}
+}
+
 mat addscalar(const mat& m, scalar c)
 {
   return m+(c*idmat((scalar)m.nrows()));
@@ -1654,8 +1658,8 @@ mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
 mat echmodp_uptri(const mat& entries, vec& pcols, vec& npcols,
                                   long& rk, long& ny, scalar pr)
 {
-// cout << "In echmodp_uptri with matrix = " << entries;
- long nc,nr,r,c,r2,r3,rmin;
+// cout << "In echmodp_uptri with matrix = " << entries; 
+long nc,nr,r,c,r2,r3,rmin;
  scalar min, mr2c;
  nr=entries.nro, nc=entries.nco;
  mat m(nr,nc);

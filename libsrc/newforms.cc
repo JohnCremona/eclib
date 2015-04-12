@@ -1478,17 +1478,9 @@ void newforms::merge()
 
 void update(const mat& pcd, vec& imagej, long ind)
 {
-  if(ind>0)
-    {
-      imagej+=pcd.row(ind);
-      return;
-    }
-  if(ind<0)
-    {
-      imagej-=pcd.row(-ind);
-      return;
-    }
-  //  cout<<"updated imagej (after using ind="<<ind<<") is "<<imagej<<endl;
+  if(ind>0) imagej.add_row(pcd,ind);
+  else
+    if(ind<0) imagej.sub_row(pcd,-ind);
 }
 
 vector<long> newforms::apvec(long p) //  computes a[p] for each newform

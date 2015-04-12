@@ -33,38 +33,37 @@ vec::~vec()
 vec::vec(long n)
 {
  d=n;
- entries=new scalar[n]; 
+ entries=new scalar[n];
  if (!entries) {cout<<"Out of memory!\n"; abort();}
- scalar *v=entries; while(n--) *v++=0;
+ memset(entries, 0, n*sizeof(scalar));
 }
 
 vec::vec(long n, scalar* arr)   //entries must have at least n elements!
 {
  d=n;
- entries=new scalar[n];  
- if (!entries) {cout<<"Out of memory!\n"; abort();} 
- scalar *v=entries; while(n--) *v++=*arr++;
+ entries=new scalar[n];
+ if (!entries) {cout<<"Out of memory!\n"; abort();}
+ memcpy(entries, arr, n*sizeof(scalar));
 }
 
 vec::vec(const vec& v)                       // copy constructor
 {
   d=v.d;
-  entries=new scalar[d];  
+  entries=new scalar[d];
   if (!entries) {cout<<"Out of memory!\n"; abort();}
-  scalar *v1=entries, *v2=v.entries; long n=d;
-  while(n--) *v1++=*v2++;
+  memcpy(entries, v.entries, d*sizeof(scalar));
 }
 
-void vec::init(long n)                 // (re)-initializes 
+void vec::init(long n)                 // (re)-initializes
 {
  if (d!=n) // no point in deleting if same size
    {
      delete[] entries;
      d = n;
-     entries=new scalar[d];  
+     entries=new scalar[d];
      if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
- scalar *v=entries; while(n--) *v++=0;
+ memset(entries, 0, n*sizeof(scalar));
 }
 
 vec& vec::operator=(const vec& v)                    // assignment
@@ -77,8 +76,7 @@ vec& vec::operator=(const vec& v)                    // assignment
      entries=new scalar[d];  
      if (!entries) {cout<<"Out of memory!\n"; abort();}
    }
- scalar *v1=entries, *v2=v.entries; long n=d; 
- while(n--) *v1++=*v2++;
+ memcpy(entries,v.entries,d*sizeof(scalar));
  return *this;
 }
 
@@ -130,8 +128,7 @@ vec vec::slice(long first, long last) const       // returns subvector
  if (last==-1) {last=first; first=1;}
  long n = last-first+1;
  vec ans(n);
- scalar *veci=entries+(first-1), *ansi=ans.entries; long i=n;
- while (i--) *ansi++ = *veci++;
+ memcpy(ans.entries,entries+(first-1),n*sizeof(scalar));
  return ans;
 }
 
@@ -158,6 +155,12 @@ void vec::add(long i, scalar x)
 {
  if ((i>0) && (i<=d)) entries[i-1]+=x;
  else {cout << "bad subscript in vec::add\n"; abort(); }
+}
+
+void vec::add_modp(long i, scalar x, scalar p)
+{
+  if ((i>0) && (i<=d)) entries[i-1]=xmod(entries[i-1]+x,p);
+  else {cout << "bad subscript in vec::add_modp\n"; abort(); }
 }
 
 // Definitions of non-member, friend operators and functions
@@ -269,42 +272,6 @@ vec express(const vec& v, const vec& v1, const vec& v2)
    return ans;
 }
 
-#if(0) // simple version of lift
-
-int lift(const vec& v, scalar pr, vec& ans)
-{
- long i, d = dim(v);
- ans =vec(d);
- int success, succ;
- float lim = sqrt(pr/2.0);
- scalar g, nu, de;  // = least common denom. after lifting via modrat
- for (i=1, g=1, success=1; i<=d; i++) 
-   {
-     succ = modrat(ans[i],pr,lim,nu,de); de=abs(de);
-     success = success && succ;
-     g=lcm(g,de);
-   }
- for (i=1; i<=d; i++) ans[i] = mod(xmodmul(g,ans[i],pr),pr);
-//Repeat if any failures were found
- if(!success)
-   {
-     for (i=1, g=1, success=1; i<=d; i++) 
-       {
-	 succ = modrat(ans[i],pr,lim,nu,de); de=abs(de);
-	 success = success && succ;
-	 g=lcm(g,de);
-       }
-     for (i=1; i<=d; i++) ans[i] = mod(xmodmul(g,ans[i],pr),pr);
-   }
- if(!success)
-   {
-     //cout << "vec failed to lift from mod " << pr << " after two rounds.\n";
-     return 0;
-   }
- return 1;
-}
-
-#else
 //#define LIFT_DEBUG
 int lift(const vec& v, scalar pr, vec& ans)
 {
@@ -400,58 +367,13 @@ int lift(const vec& v, scalar pr, vec& ans)
    }
  return 0;
 }
-#endif
 
-#if(0) // old version
-int old_liftok(vec& v, scalar pr)
-{
- long i, d = dim(v);
- scalar g, nu, de; 
- int success, succ;
- float lim = sqrt(pr/2.0)-1;
- // scale vector so that first non-zero entry is 1
- i=1; while(mod(v[i],pr)==0) i++;
- scalar ivi = invmod(v[i],pr); v[i]=1; i++;
- for (; i<=d; i++) v[i]=mod(xmodmul(ivi,v[i],pr),pr);
-
- for (i=1, g=1, success=1; i<=d; i++) 
-   {
-     succ=modrat(v[i],pr,lim,nu,de); de=abs(de);
-     success = success && succ;
-// Can't say success=success&&modrat(...) as then after first fail it does
-// not call modrat at all due to clever compiler!
-     g=lcm(g,de);
-//     if(succ&&(de>1))cout<<"Found denom of "<<de<<" from "<<v[i]<<", new g = "<<g<<"; ";
-   }
- if(!success) 
-   {
-     cout << "modrat problems encountered lifting vector:\n";
-     cout << v << "\n from mod " << pr << endl;
-     cout << "Using denom = " << g << endl;
-   }
- for (i=1; i<=d; i++) v[i] = mod(xmodmul(g,v[i],pr),pr);
-//  if(!success) // have another go
-//    {
-//      for (i=1, g=1, success=1; i<=d; i++) 
-//        {
-// 	 succ=modrat(v[i],pr,lim,nu,de); de=abs(de);
-// 	 success = success && succ;
-// 	 g=lcm(g,de);
-//        }
-//      for (i=1; i<=d; i++) v[i] = mod(xmodmul(g,v[i],pr),pr);
-//    }
- if(!success) 
-   {
-     cout << "returning vector:\n";
-     cout << v << endl;
-   }
- return success;
-}
-#endif
 
 scalar dotmodp(const vec& v1, const vec& v2, scalar pr)
 {
   scalar ans=0;
-  for(long i=1; i<=dim(v1); i++) ans=mod(ans+mod(v1[i]*v2[i],pr),pr);
+  scalar *v1i=v1.entries, *v2i=v2.entries;
+  long n=v1.d;
+  while (n--) ans=mod(ans+xmodmul(*v1i++,*v2i++,pr),pr);
   return ans;
 }

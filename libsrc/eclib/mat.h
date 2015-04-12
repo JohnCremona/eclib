@@ -40,6 +40,7 @@ friend class subspace;
 friend class mat_m;
 friend class smat;
 friend class svec;
+friend class vec;
 friend class smat_elim;
 public:
      // constructors

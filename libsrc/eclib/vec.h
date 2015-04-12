@@ -53,14 +53,17 @@ public:
         vec& operator=(const vec&);         // assignment
         scalar& operator[](long i) const;            // the i'th component 
         vec& operator+=(const vec&);
+        void add_row(const mat&m, int i);
         void addmodp(const vec&, scalar);
         vec& operator-=(const vec&);
+        void sub_row(const mat&m, int i);
         vec& operator*=(scalar);
         vec& operator/=(scalar);
         vec slice(long,long=-1) const;           // returns subvec
         vec operator[](const vec&) const;   // subscript composition
         void set(long i, scalar x);                  // sets v[i]=x
         void add(long i, scalar x);                  // v[i]+=x
+        void add_modp(long i, scalar x, scalar p);                  // v[i]+=x mod p
         scalar sub(long i) const;                    // same as v[i] (no ref)
 	const scalar* get_entries()const {return entries;}
      // non-member (friend) functions and operators
@@ -84,6 +87,7 @@ public:
         friend mat_m restrict_mat(const mat_m& m, const msubspace& s);
         friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr);
         friend mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr);
+        friend scalar dotmodp(const vec& v1, const vec& v2, scalar pr);
 
 // Implementation
 private:
@@ -108,9 +112,6 @@ vec reverse(vec& order);
 vec express(const vec& v, const vec& v1, const vec& v2);
 int lift(const vec& v, scalar pr, vec& ans);  //lifts a mod-p vector to a rational
                                    //and scales to a primitive vec in Z. Returns success flag
-//int liftok(vec& v, scalar pr);  //lifts a mod-p vector in place to a rational
-                               //and scales to a primitive vec in Z; returns success
-scalar dotmodp(const vec& v1, const vec& v2, scalar pr);
 
 // inline function definitions
 

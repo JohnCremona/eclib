@@ -133,16 +133,14 @@ smat form_finder::make_nested_submat(long ip, ff_data &data)
       d->parent_->child_ = d;
       d = d->parent_;
       if(level) b = mult_mod_p(d->rel_space_->bas(), b, MODULUS);
-      //if(level) b = mult_mod_p_flint(d->rel_space_->bas(), b, MODULUS);
     }
 
   // now compute the matrix of images of the j'th generator for j in jlist
-  ECLOG(2) << " basis done... " << flush;
+  ECLOG(2) << " basis done..." << flush;
   smat m = h -> s_opmat_cols(ip, jlist, 0);
-  ECLOG(2) << "opmat done... " << flush;
+  ECLOG(2) << " sub-opmat done..." << flush;
   m = mult_mod_p(m,b,MODULUS);
-  //m = mult_mod_p_flint(m,b,MODULUS);
-  ECLOG(1) <<"done."<<endl;
+  ECLOG(1) <<" opmat done."<<endl;
   return m;
 }
 

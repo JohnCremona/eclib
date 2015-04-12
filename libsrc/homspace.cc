@@ -553,7 +553,9 @@ vec homspace::proj_coords_cd(long c, long d, const mat& m) const
 
 void homspace::add_proj_coords_cd(vec& v, long c, long d, const mat& m) const 
 {
-  v += proj_coords_from_index(index2(c,d), m);
+  long n = coordindex[index2(c,d)];
+  if (n>0) v.add_row(m,n);
+  else if (n<0) v.sub_row(m,-n);
 }
 
 long homspace::nfproj_coords_cd(long c, long d, const vec& bas) const 
