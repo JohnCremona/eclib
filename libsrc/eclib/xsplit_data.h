@@ -94,7 +94,8 @@ class ff_data {
     void setParent( ff_data *parent );              // Store parent node pointer
     void setEigenvalue( long eig );                 // Store eigenvalue
 
-    void numChildren( int size );                   // Store number of children
+    void setChildren( vector<long> eigs );          // Stores number of children
+                                                    //  and eigrange
     void childStatus( long eig, childstatus flag ); // Sets completed children
     
     void eraseCompletedChildren();                  // Destroys completed children
@@ -110,6 +111,7 @@ class ff_data {
     long                depth_;              // Indicator of current depth
     long                subdim_;             // Dimension of current subspace
     long                eigenvalue_;         // Corresponding eigenvalue
+    vector< long >      eigrange_;           // List of all of all eigenvalues at this depth (used by map)
     vector< long >      eiglist_;            // Sequence of eigenvalues leading to current
     vec                 bplus_, bminus_;
     ssubspace*          abs_space_;          // Current absolute subspace (dynamically created)
@@ -121,14 +123,14 @@ class ff_data {
     ff_data*            parent_;             // Pointer to parent data node
     vector<ff_data*>    children_;           // Pointers to corresponding data nodes
     ff_data*            child_;              // Pointer to favoured child
-    int                 numChildren_;        // Store number of children
+    int                 numChildren_;        // Number of children
     vector<childstatus> completedChildren_;  // Flags for child completion
     int                 submatUsage_;        // Counter for submat
 
 #ifdef ECLIB_MULTITHREAD
     boost::mutex        childComplete_lock_; // Lock for completed children
     boost::mutex        submat_lock_;        // Lock for submat usage
-    boost::mutex        go_up_lock_;         // Lock for go_up() method    
+    boost::mutex        go_up_lock_;         // Lock for go_up() method
 #endif
 
     // Helper methods

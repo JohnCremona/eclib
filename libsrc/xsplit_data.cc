@@ -38,6 +38,7 @@ ff_data::ff_data( form_finder* ff )
     depth_( 0 ),
     subdim_( 0 ),
     eigenvalue_( 0 ),
+    eigrange_( 0 ),
     eiglist_(),
     abs_space_( NULL ),
     rel_space_( NULL ),
@@ -67,7 +68,7 @@ ff_data::~ff_data() {
  * operator()
  *
  * Overloaded operator(). Required for object to be passed to 
- * job queue. Task is to scan test eignvalues to identify 
+ * job queue. Task is to scan test eigenvalues to identify 
  * newforms, or  whether further recursion is necessary.
  */
 void ff_data::operator()() {
@@ -324,13 +325,14 @@ void ff_data::setEigenvalue( long eig ) {
 /**
  * numChildren()
  *
- * Store number of children and resize vectors to correct size.
+ * Stores number of children and eigrange, and resize vectors to correct size.
  */
-void ff_data::numChildren( int size ) {
-  numChildren_ = size;
+void ff_data::setChildren( vector<long> eigs ) {
+  numChildren_ = eigs.size();
+  eigrange_ = eigs;
 
-  children_.resize( size, NULL );
-  completedChildren_.resize( size, NOT_COMPLETE );
+  children_.resize( numChildren_, NULL );
+  completedChildren_.resize( numChildren_, NOT_COMPLETE );
 }
 
 /**
@@ -365,13 +367,29 @@ void ff_data::eraseCompletedChildren() {
  *
  * Hash function to map given eigenvalue
  * to an index value. Removes dependancy on unordered_map.
+ *
+ * N.B. This function no longer makes assumptions on the eigenvalues,
+ * the number of which is numChildren_: in current practice, if
+ * numChildren_==2, they are [-1,+1] while otherwise
+ * numChildren_==2n+1 and they are [-n,...,-2,-1,0,1,2,...,n], but
+ * this specific choice is no longer relied on.
  */
 int ff_data::map( long eig ) {
-  if( numChildren_ == 2 ) {
-    return ( eig == 1 ) ? eig : 0;
-  } else {
-    return eig + ( numChildren_ - 1 ) * 0.5;
-  }
+  int i = (int)(find(eigrange_.begin(),eigrange_.end(),eig)-eigrange_.begin());
+  return i;
+  //
+  // old code which relied on "knowing" the eigrange_ list by convention.
+  // int j;
+  // if( numChildren_ == 2 ) {
+  //   j = ( eig == 1 ) ? eig : 0;
+  // } else {
+  //   j = eig + ( numChildren_ - 1 ) * 0.5;
+  // }
+  // if (i!=j)
+  //   {
+  //     cout<<"map("<<eig<<"): i="<<i<<", j="<<j<<" (eigrange at depth "<<depth_<<" is "<<eigrange_<<endl;
+  //   }
+  // return j;
 }
 
 // end of XSPLIT_DATA.CC

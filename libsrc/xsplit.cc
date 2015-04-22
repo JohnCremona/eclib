@@ -407,7 +407,7 @@ void form_finder::splitoff(const vector<long>& eigs) {
  
   // Walk down nodes (if any already created) for common branches
   while( current -> numChildren_ > 0
-      && current -> children_[eigs[depth]] != NULL ) {
+         && current -> child(eigs[depth]) != NULL ) {
  
     // Update current node pointer
     current = current -> child(eigs[depth]);
@@ -431,7 +431,7 @@ void form_finder::splitoff(const vector<long>& eigs) {
     // Get number of test eigenvalues
     if( current -> numChildren_ <= 0 ) {
       vector<long> t_eigs = h->eigrange(depth);
-      current -> numChildren( t_eigs.size() );
+      current -> setChildren( t_eigs );
     }
 
     // Create new child node
@@ -550,7 +550,7 @@ void form_finder::find( ff_data &data ) {
            << "] at level " << (depth+1) << endl;
 
   // Set children counter
-  data.numChildren( t_eigs.size() );
+  data.setChildren( t_eigs );
 
   while( apvar != t_eigs.end() ) { 
     ECLOG(1) << "Going down with ap = " << (*apvar) <<endl;
