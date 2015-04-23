@@ -16,6 +16,8 @@ LT_INIT
 
 # The version of the libtool library is of the form current:revision:age
 #
+# See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
+#
 # When doing a release, they should be updated like this:
 # 1. If no interfaces changed, only implementations: just increment
 # revision.
@@ -42,6 +44,14 @@ AX_CXX_COMPILE_STDCXX_0X
 #AX_CXX_COMPILE_STDCXX_11([],[optional])
 AX_CXX_HEADER_TR1_UNORDERED_MAP
 AX_CXX_HEADER_UNORDERED_MAP
+
+# NB At present if configure finds boost on your system then it WILL
+# define ECLIB_MULTITHREAD which you may not want, if you have not put
+# --with-boost on the configure line.  This should be fixed.  Until
+# then, if your system has boost but you do not want to use
+# multithreading, manually edit out the lines in configure which
+# define ECLIB_MULTITHREAD=1.
+#
 # Boost 1.35.0+ required for Asio (1.25.0 for Thread)
 AX_BOOST_BASE([1.35.0])
 AX_BOOST_SYSTEM
