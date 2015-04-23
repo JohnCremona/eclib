@@ -9,6 +9,8 @@ Makefile.in
 */Makefile
 */Makefile.in
 autom4te.cache
+ar-lib
+compile
 m4/*
 !m4/ax_*
 libsrc/Makefile.jc
@@ -21,10 +23,12 @@ bin/*
 include/*
 lib/*
 share/*
-newforms/*
-progs/newforms/*
+newforms
+progs/newforms
+progs/newforms
 tests/Makefile.jc
 eclib*.tar.gz
+eclib*.tar.bz2
 aclocal.m4
 config.guess
 config.sub

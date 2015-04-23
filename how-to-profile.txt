@@ -1,0 +1,8 @@
+make clean
+CXXFLAGS='-pg' LDFLAGS='-pg -static' ./configure --prefix=$PWD --with-flint=/usr/local --with-pari=/usr/local
+make
+cd tests # or progs
+libtool --mode=execute ./tmanin
+# this creates gmon.out
+libtool --mode=execute gprof ./tmanin| less
+
