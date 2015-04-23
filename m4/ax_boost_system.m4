@@ -41,22 +41,16 @@ AC_DEFUN([AX_BOOST_SYSTEM],
                         e.g. --with-boost-system=boost_system-gcc-mt ]),
         [
         if test "$withval" = "no"; then
-			    want_boost="no"
+			want_boost="no"
         elif test "$withval" = "yes"; then
-          want_boost="yes"
-          ax_boost_user_system_lib=""
+            want_boost="yes"
+            ax_boost_user_system_lib=""
         else
-		      want_boost="yes"
-		      ax_boost_user_system_lib="$withval"
-		    fi
+		    want_boost="yes"
+		ax_boost_user_system_lib="$withval"
+		fi
         ],
-        [
-        if test "$ax_cv_boost" = "yes"; then
-          want_boost="yes"
-        else
-          want_boost="no"
-        fi
-        ]
+        [want_boost="yes"]
 	)
 
 	if test "x$want_boost" = "xyes"; then
@@ -84,7 +78,7 @@ AC_DEFUN([AX_BOOST_SYSTEM],
 		if test "x$ax_cv_boost_system" = "xyes"; then
 			AC_SUBST(BOOST_CPPFLAGS)
 
-			AC_DEFINE(HAVE_BOOST_SYSTEM,[1],[define if the Boost::System library is available])
+			AC_DEFINE(HAVE_BOOST_SYSTEM,,[define if the Boost::System library is available])
             BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
 
 			LDFLAGS_SAVE=$LDFLAGS

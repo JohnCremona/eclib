@@ -40,22 +40,16 @@ AC_DEFUN([AX_BOOST_THREAD],
                         e.g. --with-boost-thread=boost_thread-gcc-mt ]),
         [
         if test "$withval" = "no"; then
-			    want_boost="no"
+			want_boost="no"
         elif test "$withval" = "yes"; then
-          want_boost="yes"
-          ax_boost_user_thread_lib=""
+            want_boost="yes"
+            ax_boost_user_thread_lib=""
         else
-		      want_boost="yes"
-		      ax_boost_user_thread_lib="$withval"
-		    fi
+		    want_boost="yes"
+		ax_boost_user_thread_lib="$withval"
+		fi
         ],
-        [
-        if test "$ax_cv_boost" = "yes"; then
-          want_boost="yes"
-        else
-          want_boost="no"
-        fi
-        ]
+        [want_boost="yes"]
 	)
 
 	if test "x$want_boost" = "xyes"; then
@@ -99,7 +93,7 @@ AC_DEFUN([AX_BOOST_THREAD],
 
 			AC_SUBST(BOOST_CPPFLAGS)
 
-			AC_DEFINE(HAVE_BOOST_THREAD,[1],[define if the Boost::Thread library is available])
+			AC_DEFINE(HAVE_BOOST_THREAD,,[define if the Boost::Thread library is available])
             BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
 
 			LDFLAGS_SAVE=$LDFLAGS

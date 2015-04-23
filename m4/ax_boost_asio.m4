@@ -40,22 +40,16 @@ AC_DEFUN([AX_BOOST_ASIO],
                         e.g. --with-boost-asio=boost_system-gcc41-mt-1_34 ]),
         [
         if test "$withval" = "no"; then
-			    want_boost="no"
+			want_boost="no"
         elif test "$withval" = "yes"; then
-          want_boost="yes"
-          ax_boost_user_asio_lib=""
+            want_boost="yes"
+            ax_boost_user_asio_lib=""
         else
-		      want_boost="yes"
-          ax_boost_user_asio_lib="$withval"
-        fi
+		    want_boost="yes"
+		ax_boost_user_asio_lib="$withval"
+		fi
         ],
-        [
-        if test "$ax_cv_boost" = "yes"; then
-          want_boost="yes"
-        else
-          want_boost="no"
-        fi
-        ]
+        [want_boost="yes"]
 	)
 
 	if test "x$want_boost" = "xyes"; then
@@ -86,7 +80,7 @@ AC_DEFUN([AX_BOOST_ASIO],
          AC_LANG_POP([C++])
 		])
 		if test "x$ax_cv_boost_asio" = "xyes"; then
-			AC_DEFINE(HAVE_BOOST_ASIO,[1],[define if the Boost::ASIO library is available])
+			AC_DEFINE(HAVE_BOOST_ASIO,,[define if the Boost::ASIO library is available])
 			BN=boost_system
 			BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
             if test "x$ax_boost_user_asio_lib" = "x"; then
