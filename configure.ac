@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [20150423], [john.cremona@gmail.com])
+AC_INIT([eclib], [20150510], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -53,10 +53,11 @@ AX_CXX_HEADER_UNORDERED_MAP
 # define ECLIB_MULTITHREAD=1.
 #
 # Boost 1.35.0+ required for Asio (1.25.0 for Thread)
-AX_BOOST_BASE([1.35.0])
+AX_BOOST_BASE([1.35.0], [
 AX_BOOST_SYSTEM
 AX_BOOST_ASIO
 AX_BOOST_THREAD
+])
 
 if [test "$ax_cv_boost_system" = "yes"] &&
    [test "$ax_cv_boost_asio"   = "yes"] &&
