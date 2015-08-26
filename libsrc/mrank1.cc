@@ -645,13 +645,13 @@ void rank1::getquartics1()
   static bigint zero = BIGINT(0);
   IJ_curve = Curvedata(zero,zero,zero,-27*ii,-27*jj,0);  // don't minimise
 
-  if (posdisc) 
+  if (posdisc)
     {
       gettype(2);  // get type 2s first as they are a subgroup of index 1 or 2
-      if(!have_eggpoint) 
+      if(!(have_eggpoint || have_large_quartics))
 	gettype(1);
-    }  
-  else 
+    }
+  else
     {
       gettype(3);
     }
@@ -1401,12 +1401,12 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   long e0,e1,e2;
   if(!intlog2(n0,e0,0))
     {
-      success=0; 
-      cout<<"!!! Fatal error: n0=#E[2]="<<n0<<" is not a power of 2\n";
-      cout<<"Please inform author by email!\n";
+      success=0;
+      cout<<"\n\n!!! Fatal error in mwrank: n0=#E[2]="<<n0<<" is not a power of 2\n";
+      cout<<"This is a bug: please report!\n";
       return;
     }
-  
+
   posdisc = is_positive(d1728);
   npoints1=npoints2=0;
   n1=n2=1;
@@ -1461,7 +1461,9 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   long keep_n3 = n3, e3;
   if (!intlog2(n3,e3,1))
     {
-      cout<<"\n!!! n3 = "<<keep_n3<<" not a power of 2, rounding up to "<<n3<<"\n";
+      success=0;
+      cout<<"\n\n!!! Fatal error in mwrank: n3 ="<<keep_n3<<" not a power of 2\n";
+      cout<<"This is a bug: please report!\n";
     }
   long selmer_rank_B = rank_B + e3;
 
@@ -1473,7 +1475,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
       if(!selmer_only) 
 	cout << "Sha     rank contribution from B=im(eps) = " << e3 << endl;
     }
-  
+
   long keep_n1=n1, keep_n2=n2;
   if (!intlog2(n1,e1,1))
     {
@@ -1485,13 +1487,13 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
     }
   if (!intlog2(n2,e2,0))
     {
-      success=0; 
-      cout<<"\n\n!!! Fatal error: n2 = "<<keep_n2<<" not a power of 2\n";
-      cout<<"Please inform author by email!\n";
+      success=0;
+      cout<<"\n\n!!! Fatal error in eclib: n2 = "<<keep_n2<<" not a power of 2\n";
+      cout<<"This is a bug: please report!\n";
     }
-  
+
   long rank_A = e1-e0,  selmer_rank_A = e2-e0;
-    
+
   if(verbose)
     {
       if(!selmer_only) 

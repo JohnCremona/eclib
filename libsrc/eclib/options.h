@@ -27,7 +27,7 @@
 #define DEFAULT_VERBOSE 1
 #define DEFAULT_PRECISION 15
 #define DEFAULT_HLIMQ 10
-#define DEFAULT_NAUX 8
+#define DEFAULT_NAUX 15
 #define DEFAULT_HLIMC 0
 #define DEFAULT_TRACEEQUIV 0
 #define DEFAULT_PTL -99  // if not set manually will be set to same as verbose
