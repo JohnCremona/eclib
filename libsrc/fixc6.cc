@@ -34,8 +34,10 @@ fixc6::fixc6()
   return;
 #else
 
-  long n=1; int i; bigint c4,c6;
   ifstream datafile("fixc6.data");
+  if (!datafile) return;
+
+  long n=1; int i; bigint c4,c6;
   while(n) 
     {
       datafile>>n>>i>>c6;

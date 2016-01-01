@@ -49,7 +49,7 @@
 int main(void)
 {
   initprimes("PRIMES",0);
-  set_precision("Enter number of decimal places");
+  set_precision(20);
  long limit,n=1; 
  int dump=1, detail; 
  long maxn, dmax=DMAX;

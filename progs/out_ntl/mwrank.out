@@ -1,0 +1,362 @@
+Curve [0,1,1,-2,0] :	Basic pair: I=112, J=-1712
+disc=2688768
+2-adic index bound = 2
+By Lemma 5.1(a), 2-adic index = 1
+2-adic index = 1
+One (I,J) pair
+Looking for quartics with I = 112, J = -1712
+Looking for Type 2 quartics:
+Trying positive a from 1 up to 2 (square a first...)
+(1,0,-8,4,4)	--nontrivial...(x:y:z) = (1 : 1 : 0)
+Point = [1:0:1]
+	height = 0.476711659343739
+Rank of B=im(eps) increases to 1
+Trying positive a from 1 up to 2 (...then non-square a)
+Trying negative a from -1 down to -1
+Finished looking for Type 2 quartics.
+Looking for Type 1 quartics:
+Trying positive a from 1 up to 3 (square a first...)
+(1,0,4,12,8)	--nontrivial...(x:y:z) = (1 : 1 : 0)
+Point = [-1:1:1]
+	height = 0.686667083305586
+Rank of B=im(eps) increases to 2 (The previous point is on the egg)
+Exiting search for Type 1 quartics after finding one which is globally soluble.
+Mordell rank contribution from B=im(eps) = 2
+Selmer  rank contribution from B=im(eps) = 2
+Sha     rank contribution from B=im(eps) = 0
+Mordell rank contribution from A=ker(eps) = 0
+Selmer  rank contribution from A=ker(eps) = 0
+Sha     rank contribution from A=ker(eps) = 0
+
+Used full 2-descent via multiplication-by-2 map
+Rank = 2
+Rank of S^2(E)  = 2
+
+Searching for points (bound = 8)...done:
+  found points which generate a subgroup of rank 2
+  and regulator 0.152460177943144
+Processing points found during 2-descent...done:
+  now regulator = 0.152460177943144
+Saturating (with bound = 1000)...done:
+  points were already saturated.
+Transferring points from minimal curve [0,1,1,-2,0] back to original curve [0,1,1,-2,0]
+
+Generator 1 is [0:-1:1]; height 0.327000773651605
+Generator 2 is [-1:1:1]; height 0.686667083305586
+
+Regulator = 0.152460177943144
+
+The rank and full Mordell-Weil basis have been determined unconditionally.
+Curve [0,0,0,0,-675/4] :	integral model = [0,0,0,0,-10800] with scale factor 2
+Working with minimal curve [0,0,1,0,-169] via [u,r,s,t] = [2,0,0,4]
+Basic pair: I=0, J=291600
+disc=-85030560000
+2-adic index bound = 2
+By Lemma 5.1(a), 2-adic index = 1
+2-adic index = 1
+One (I,J) pair
+Looking for quartics with I = 0, J = 291600
+Looking for Type 3 quartics:
+Trying positive a from 1 up to 12 (square a first...)
+Trying positive a from 1 up to 12 (...then non-square a)
+(2,-2,-78,298,-328)	--trivial
+Trying negative a from -1 down to -19
+(-3,0,0,60,0)	--trivial
+(-7,-4,12,44,8)	--trivial
+(-7,12,36,36,0)	--trivial
+(-7,-13,-42,-28,8)	--trivial
+Finished looking for Type 3 quartics.
+Mordell rank contribution from B=im(eps) = 0
+Selmer  rank contribution from B=im(eps) = 0
+Sha     rank contribution from B=im(eps) = 0
+Mordell rank contribution from A=ker(eps) = 0
+Selmer  rank contribution from A=ker(eps) = 0
+Sha     rank contribution from A=ker(eps) = 0
+
+Used full 2-descent via multiplication-by-2 map
+Rank = 0
+Rank of S^2(E)  = 0
+
+Processing points found during 2-descent...done:
+  now regulator = 1
+
+
+Regulator = 1
+
+The rank and full Mordell-Weil basis have been determined unconditionally.
+Curve [0,0,0,0,73/64] :	integral model = [0,0,0,0,73] with scale factor 2
+Basic pair: I=0, J=-1971
+disc=-3884841
+2-adic index bound = 2
+2-adic index = 2
+Two (I,J) pairs
+Looking for quartics with I = 0, J = -1971
+Looking for Type 3 quartics:
+Trying positive a from 1 up to 3 (square a first...)
+(1,0,6,3,-3)	--nontrivial...(x:y:z) = (1 : 1 : 0)
+Point = [-4:3:1]
+	height = 0.962573188092379
+Rank of B=im(eps) increases to 1
+Trying positive a from 1 up to 3 (...then non-square a)
+Trying negative a from -1 down to -2
+Finished looking for Type 3 quartics.
+Looking for quartics with I = 0, J = -126144
+Looking for Type 3 quartics:
+Trying positive a from 1 up to 14 (square a first...)
+(1,0,-12,72,-12)	--nontrivial...(x:y:z) = (1 : 1 : 0)
+Point = [2:9:1]
+	height = 0.923943171600397
+Doubling global 2-adic index to 2
+global 2-adic index is equal to local index
+so we abort the search for large quartics
+Rank of B=im(eps) increases to 2
+Exiting search for large quartics after finding enough globally soluble ones.
+Mordell rank contribution from B=im(eps) = 2
+Selmer  rank contribution from B=im(eps) = 2
+Sha     rank contribution from B=im(eps) = 0
+Mordell rank contribution from A=ker(eps) = 0
+Selmer  rank contribution from A=ker(eps) = 0
+Sha     rank contribution from A=ker(eps) = 0
+
+Used full 2-descent via multiplication-by-2 map
+Rank = 2
+Rank of S^2(E)  = 2
+
+Searching for points (bound = 8)...done:
+  found points which generate a subgroup of rank 2
+  and regulator 0.886543288687716
+Processing points found during 2-descent...done:
+  now regulator = 0.886543288687716
+Saturating (with bound = 1000)...done:
+  points were already saturated.
+Transferring points from minimal curve [0,0,0,0,73] back to original curve [0,0,0,0,73/64]
+
+Generator 1 is [-8:3:8]; height 0.962573188092379
+Generator 2 is [4:9:8]; height 0.923943171600397
+
+Regulator = 0.886543288687716
+
+The rank and full Mordell-Weil basis have been determined unconditionally.
+Curve [0,0,0,677,0] :	
+1 points of order 2:
+[0:0:1]
+
+Using 2-isogenous curve [0,0,0,-2708,0]
+-------------------------------------------------------
+First step, determining 1st descent Selmer groups
+-------------------------------------------------------
+After first local descent, rank bound = 1
+rk(S^{phi}(E'))=	1
+rk(S^{phi'}(E))=	2
+
+-------------------------------------------------------
+Second step, determining 2nd descent Selmer groups
+-------------------------------------------------------
+After second local descent, rank bound = 1
+rk(phi'(S^{2}(E)))=	1
+rk(phi(S^{2}(E')))=	2
+rk(S^{2}(E))=	2
+rk(S^{2}(E'))=	2
+
+Third step, determining E(Q)/phi(E'(Q)) and E'(Q)/phi'(E(Q))
+-------------------------------------------------------
+1. E(Q)/phi(E'(Q))
+-------------------------------------------------------
+(c,d)  =(0,677)
+(c',d')=(0,-2708)
+This component of the rank is 0
+-------------------------------------------------------
+2. E'(Q)/phi'(E(Q))
+-------------------------------------------------------
+First stage (no second descent yet)...
+(-1,0,0,0,2708):  (x:y:z) = (502:279022:85)
+	Curve E' 	Point [-21420340:-140069044:614125], height = 12.3948826572104
+	Curve E 	Point [830499826893070:-7145241014093919:77690502163000], height = 24.7897653144207
+After first global descent, this component of the rank = 2
+
+-------------------------------------------------------
+Summary of results:
+-------------------------------------------------------
+	rank(E) = 1
+	#E(Q)/2E(Q) = 4
+
+Information on III(E/Q):
+	#III(E/Q)[phi']    = 1
+	#III(E/Q)[2]       = 1
+
+Information on III(E'/Q):
+	#phi'(III(E/Q)[2]) = 1
+	#III(E'/Q)[phi]    = 1
+	#III(E'/Q)[2]      = 1
+
+-------------------------------------------------------
+
+List of points on E = [0,0,0,677,0]:
+
+I.  Points on E mod phi(E')
+--none (modulo torsion).
+
+
+II. Points on phi(E') mod 2E
+Point [830499826893070:-7145241014093919:77690502163000], height = 24.7897653144207
+-------------------------------------------------------
+Computing full set of 2 coset representatives for
+2E(Q) in E(Q) (modulo torsion), and sorting into height order....done.
+
+
+Used descent via 2-isogeny with isogenous curve E' = [0,0,0,-2708,0]
+Rank = 1
+Rank of S^2(E)  = 2
+Rank of S^2(E') = 2
+Rank of S^phi(E') = 1
+Rank of S^phi'(E) = 2
+
+Searching for points (bound = 8)...done:
+  found points which generate a subgroup of rank 0
+  and regulator 1
+Processing points found during 2-descent...done:
+2-descent increases rank to 1,   now regulator = 24.7897653144207
+Saturating (with bound = 1000)...done:
+  points were already saturated.
+Transferring points from minimal curve [0,0,0,677,0] back to original curve [0,0,0,677,0]
+
+Generator 1 is [830499826893070:-7145241014093919:77690502163000]; height 24.7897653144207
+
+Regulator = 24.7897653144207
+
+The rank and full Mordell-Weil basis have been determined unconditionally.
+Curve [0,0,0,-169,0] :	
+3 points of order 2:
+[-13:0:1], [0:0:1], [13:0:1]
+
+****************************
+* Using 2-isogeny number 1 *
+****************************
+
+Using 2-isogenous curve [0,78,0,169,0] (minimal model [0,0,0,-1859,30758])
+-------------------------------------------------------
+First step, determining 1st descent Selmer groups
+-------------------------------------------------------
+After first local descent, rank bound = 1
+rk(S^{phi}(E'))=	2
+rk(S^{phi'}(E))=	1
+
+-------------------------------------------------------
+Second step, determining 2nd descent Selmer groups
+-------------------------------------------------------
+After second local descent, rank bound = 1
+rk(phi'(S^{2}(E)))=	2
+rk(phi(S^{2}(E')))=	1
+rk(S^{2}(E))=	3
+rk(S^{2}(E'))=	2
+
+****************************
+* Using 2-isogeny number 2 *
+****************************
+
+Using 2-isogenous curve [0,0,0,676,0]
+-------------------------------------------------------
+First step, determining 1st descent Selmer groups
+-------------------------------------------------------
+After first local descent, rank bound = 1
+rk(S^{phi}(E'))=	2
+rk(S^{phi'}(E))=	1
+
+-------------------------------------------------------
+Second step, determining 2nd descent Selmer groups
+-------------------------------------------------------
+After second local descent, rank bound = 1
+rk(phi'(S^{2}(E)))=	2
+rk(phi(S^{2}(E')))=	1
+rk(S^{2}(E))=	3
+rk(S^{2}(E'))=	2
+
+****************************
+* Using 2-isogeny number 3 *
+****************************
+
+Using 2-isogenous curve [0,-78,0,169,0] (minimal model [0,0,0,-1859,-30758])
+-------------------------------------------------------
+First step, determining 1st descent Selmer groups
+-------------------------------------------------------
+After first local descent, rank bound = 1
+rk(S^{phi}(E'))=	3
+rk(S^{phi'}(E))=	0
+
+-------------------------------------------------------
+Second step, determining 2nd descent Selmer groups
+-------------------------------------------------------
+After second local descent, rank bound = 1
+rk(phi'(S^{2}(E)))=	3
+rk(phi(S^{2}(E')))=	0
+rk(S^{2}(E))=	3
+rk(S^{2}(E'))=	2
+
+After second local descent, combined upper bound on rank = 1
+Third step, determining E(Q)/phi(E'(Q)) and E'(Q)/phi'(E(Q))
+-------------------------------------------------------
+1. E(Q)/phi(E'(Q))
+-------------------------------------------------------
+(c,d)  =(39,338)
+(c',d')=(-78,169)
+First stage (no second descent yet)...
+(-1,0,39,0,-338):  (x:y:z) = (19:102:5)
+	Curve E 	Point [-1805:-1938:125], height = 5.83251173698765
+After first global descent, this component of the rank = 3
+-------------------------------------------------------
+2. E'(Q)/phi'(E(Q))
+-------------------------------------------------------
+This component of the rank is 0
+
+-------------------------------------------------------
+Summary of results:
+-------------------------------------------------------
+	rank(E) = 1
+	#E(Q)/2E(Q) = 8
+
+Information on III(E/Q):
+	#III(E/Q)[phi']    = 1
+	#III(E/Q)[2]       = 1
+
+Information on III(E'/Q):
+	#phi'(III(E/Q)[2]) = 1
+	#III(E'/Q)[phi]    = 1
+	#III(E'/Q)[2]      = 1
+
+-------------------------------------------------------
+
+List of points on E = [0,0,0,-169,0]:
+
+I.  Points on E mod phi(E')
+Point [-180:-1938:125], height = 5.83251173698765
+
+II.  Points on phi(E') mod 2E
+--none (modulo torsion).
+
+-------------------------------------------------------
+Computing full set of 2 coset representatives for
+2E(Q) in E(Q) (modulo torsion), and sorting into height order....done.
+
+
+Used descent via 2-isogeny with isogenous curve E' = [0,0,0,-1859,-30758]
+Rank = 1
+Rank of S^2(E)  = 3
+Rank of S^2(E') = 2
+Rank of S^phi(E') = 3
+Rank of S^phi'(E) = 0
+
+Searching for points (bound = 8)...done:
+  found points which generate a subgroup of rank 1
+  and regulator 5.83251173698765
+Processing points found during 2-descent...done:
+  now regulator = 5.83251173698765
+Saturating (with bound = 1000)...done:
+  points were already saturated.
+Transferring points from minimal curve [0,0,0,-169,0] back to original curve [0,0,0,-169,0]
+
+Generator 1 is [-180:1938:125]; height 5.83251173698765
+
+Regulator = 5.83251173698765
+
+The rank and full Mordell-Weil basis have been determined unconditionally.
+

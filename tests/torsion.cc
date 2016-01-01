@@ -27,8 +27,9 @@
 
 int main(){
   cerr<<"Program to find and/or count torsion on a curve.\n\n";
+#ifdef NTL_ALL
   set_precision("Enter number of decimal places");
-
+#endif
   cerr<<"Enter 0 for short output (#torsion only)\n";
   cerr<<"   or 1 for long  output (list of the torsion points): ";
   int showpoints; cin >> showpoints;

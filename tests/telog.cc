@@ -67,8 +67,10 @@ void test3(Curvedata& CD, Cperiods& per, int m)
 }
 
 int main(){
+#ifdef NTL_ALL
   //  set_precision("Enter number of decimal places");
   set_precision(50);
+#endif
   initprimes("PRIMES",0);
 
   // a curve with rank 3 and D>0:

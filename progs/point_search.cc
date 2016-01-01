@@ -42,7 +42,6 @@
 
 int main()
 {
-  set_precision("Enter number of decimal places");
   initprimes("PRIMES",0);
 
   bigfloat ht_limit;

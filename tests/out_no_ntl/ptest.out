@@ -1,0 +1,34 @@
+Initialized table of 78519 primes, up to 1000253
+Enter an index: prime_number(1000) = 7919
+How many primes do you want to see (as a vector<long>)? [ 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97 ]
+Enter a number to see if it is that list: NOT in the list
+iota(10): [ 1 2 3 4 5 6 7 8 9 10 ]
+n = 527788800
+exps = [ 8 2 2 2 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
+Comparing previous prime list with [ 2 3 5 7 11 13 17 19 23 29 ]
+First starts with second, 10 items from 0: 1
+First starts with second,  5 items from 5: 1
+Second starts with first, 10 items from 0: 1
+Second starts with first,  5 items from 5: 1
+How many primes do you want to see (one by one)? Prime number 1 = 2
+Prime number 2 = 3
+Prime number 3 = 5
+Prime number 4 = 7
+Prime number 5 = 11
+Prime number 6 = 13
+Prime number 7 = 17
+Prime number 8 = 19
+Prime number 9 = 23
+Prime number 10 = 29
+
+Enter an integer m (0 to stop): Smallest prime factor of 123 is 3
+m has 2 prime divisors: [ 3 41 ]
+with exponents: 3:1	41:1	
+m has 8 divisors: [ 1 -1 3 -3 41 -41 123 -123 ]
+m has 4 positive divisors: [ 1 3 41 123 ]
+m has 1 positive divisors whose square divides m: [ 1 ]
+m has 4 positive square-free divisors: [ 1 3 41 123 ]
+
+Enter an integer m (0 to stop): Enter integers a b (0 0 to stop): gcd = 3
+lcm = 18696
+Enter integers a b (0 0 to stop): 

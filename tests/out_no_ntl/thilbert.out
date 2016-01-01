@@ -1,0 +1,12 @@
+Enter nonzero a and b: (1234,5678)_p
+0	0
+2	0
+17	1
+167	0
+617	1
+
+Global symbol = 1
+Check (should be 0) = 0
+--agrees with single call to global_hilbert()
+--agrees with solve_conic()
+Enter nonzero a and b: 

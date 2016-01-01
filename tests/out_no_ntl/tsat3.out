@@ -1,0 +1,28 @@
+
+24129181 = [0,0,1,-68799,-1969790]
+rank =  2
+torsion group structure =  [ ] (torsion rank 0)
+Input non-torsion points: [ [-1870:9257:8] [-197:1984:1] ]
+Input torsion points: [ ]
+Saturation complete --input points were saturated
+Generator 1 is [-1870:9257:8]; height 2.00839
+Generator 2 is [-197:1984:1]; height 0.182405
+
+Regulator = 0.288919
+
+24129	18	1	[0,0,1,-68799,-1969790]	2	[-1870:9257:8]	[-197:1984:1]
+==============================================================
+
+133507b2 = [1,-1,0,-898,-7905]
+rank =  2
+torsion group structure =  [ 2 2 ] (torsion rank 2)
+Input non-torsion points: [ [-178:299:8] [-23748:-59351:1728] ]
+Input torsion points: [ [34:-17:1] [-10:5:1] ]
+Saturation complete --input points were saturated
+Generator 1 is [-178:299:8]; height 4.69293
+Generator 2 is [-23748:-59351:1728]; height 6.99486
+
+Regulator = 32.7933
+
+133507	b	2	[1,-1,0,-898,-7905]	2	[-178:299:8]	[-23748:-59351:1728]
+==============================================================

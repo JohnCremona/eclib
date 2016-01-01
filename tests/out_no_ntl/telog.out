@@ -1,0 +1,74 @@
+Testing some points:
+The points are P0 = [0:2:1], P1 = [1:0:1], and P2 = [2:0:1]
+Curve [0,0,1,-7,6]
+Periods: [w_1,w_2] = [(-0,-1.48055),(2.07584,0)]
+tau       = (-0,1.40208) (abs(tau)=1.40208)
+w_R = (2.07584,0)	w_I = (0,1.48055)
+
+
+Elliptic log of P is (0.546563,0.740274)
+Reconstructed P = [0:2:1]
+OK!
+
+Elliptic log of P is (0.903829,0.740274)
+Reconstructed P = [1:0:1]
+OK!
+
+Elliptic log of P is (1.1472,0)
+Reconstructed P = [2:0:1]
+OK!
+
+Elliptic log of P is (1.09313,0)
+Reconstructed P = [245:-32:125]
+OK!
+
+Elliptic log of P is (1.80766,0)
+Reconstructed P = [14:51:1]
+OK!
+
+Elliptic log of P is (0.218556,0)
+Reconstructed P = [21:-96:1]
+OK!
+
+Elliptic log of P is (1.45039,0)
+Reconstructed P = [3:3:1]
+OK!
+
+Elliptic log of P is (1.83247,0.740274)
+Reconstructed P = [-2:-4:1]
+OK!
+
+Elliptic log of P is (0.600637,0.740274)
+Reconstructed P = [2:13:8]
+OK!
+
+(m*[0:2:1])/m = [ [0:2:1] ]
+Checking...
+[0:2:1] OK
+
+(m*[0:2:1])/m = [ [0:2:1] ]
+Checking...
+[0:2:1] OK
+
+(m*[0:2:1])/m = [ [0:2:1] ]
+Checking...
+[0:2:1] OK
+
+================================ 
+Curve [1,1,0,-202,1025]
+Periods: [w_1,w_2] = [(-8.88178e-16,0.632779),(-2.01316,-0.31639)]
+tau       = (-0.5,3.18146) (abs(tau)=3.22051)
+w_R = (4.02632,-1.97403e-13)	w_IR = (2.01316,0.31639)
+
+
+The point Q is = [-8:51:1]
+Elliptic log of P is (2.15252,0)
+Reconstructed P = [-8:51:1]
+The point P3 is = [8:-3:1]
+Elliptic log of P is (3.40172,0)
+Reconstructed P = [8:-3:1]
+(m*[8:-3:1])/m = [ [8:-3:1] ]
+Checking...
+[8:-3:1] OK
+
+================================ 

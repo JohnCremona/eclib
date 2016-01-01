@@ -352,14 +352,17 @@ int newforms::find_lminus(long i, long lmax, const bigfloat& y1)
 	  mm=nry;
 	  if(dry!=1)
 	    {
-	      cout << "******************************L(f,"<<ell<<")/ip = "
-		   <<ratio
-		   <<" is not integral! (denom = "<<dry<<")"<<endl;
-	      if(dry>10)
-		{
-		  mm=I2long(Iround(ratio));
-		  cout << "Using rounded value mminus=" << mm <<endl;
-		}
+              if (verbose>1)
+                {
+                  cout << "******************************L(f,"<<ell<<")/ip = "
+                       <<ratio
+                       <<" is not integral! (denom = "<<dry<<")"<<endl;
+                  if(dry>10)
+                    {
+                      mm=I2long(Iround(ratio));
+                      cout << "Using rounded value mminus=" << mm <<endl;
+                    }
+                }
 	    }
 	  if(verbose>1) 
 	    cout << "lminus = "<<ell<< "\tmminus = " << mm << "\n";

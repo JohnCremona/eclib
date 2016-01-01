@@ -51,7 +51,9 @@ int getcurve(void)
 
 int main()
 {
+#ifdef NTL_ALL
   set_precision(30);
+#endif
   initprimes("PRIMES",0);
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
 

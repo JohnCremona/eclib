@@ -52,8 +52,10 @@ vector<int> input_list(istream & is);
 
 int main()
 {
+#ifdef NTL_ALL
   //  set_precision("Enter number of decimal places");
   set_precision(100);
+#endif
   initprimes("PRIMES",0);
   int verbose = 0;
   //  cout<<"verbose (0/1)? ";             cin >>verbose;

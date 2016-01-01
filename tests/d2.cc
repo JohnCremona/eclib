@@ -41,8 +41,9 @@ int getquartic(quartic& g);  // special version for a*x^4+c*x^2+e quartics
 
 int main()
 {
+#ifdef NTL_ALL
   set_precision("Enter number of decimal places");
-
+#endif
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   
   bigint zero; zero=0;

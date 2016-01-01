@@ -28,7 +28,9 @@
 #include <eclib/getcurve.h>
 
 int main(){
+#ifdef NTL_ALL
   set_precision("Enter number of decimal places");
+#endif
   initprimes("PRIMES",0);
 	
   int verb=1;

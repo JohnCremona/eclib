@@ -199,7 +199,7 @@ inline int is_zero(double x) {return fabs(x)<1e-15;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
 inline void set_precision(long n) {cout.precision(n);}
 inline void set_precision(const string prompt)  {cout.precision(15);}
-#define Pi()    (3.1415926535897932384626433832795028841)
+#define Pi()    3.1415926535897932384626433832795028841
 #define Euler() (0.57721566490153286060651209008240243104)
 inline double round(double x) {return floor(x+0.5);}
 inline void Iasb(long& a, double x) {a = (long)x;}

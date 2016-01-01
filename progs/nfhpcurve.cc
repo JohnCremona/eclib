@@ -66,11 +66,11 @@ int main(void)
  cout<<"Enter first and last N: ";cin>>n>>limit; n--;
  while (n<limit) { n++;
 #else
-     while (n>0) { cout<<"Enter level: "; cin>>n;
+   while (n>0) { cout<<"Enter level: "; cin>>n; cout<<"\n";
 #endif
  if (n>0)
 {
-  cout << "\n>>>Level " << n;
+  cout << ">>>Level " << n;
   // Temporary code to skip non-square-free levels
   //
   //  if(!is_squarefree(n)) {cout<<" --not square-free, skipping!\n"; continue;}

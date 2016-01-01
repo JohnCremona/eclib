@@ -1,0 +1,46 @@
+Test run of vector package.
+
+iota(10) = [1,2,3,4,5,6,7,8,9,10]
+Enter n : Uninitialized new vec v = []
+Copy of v = []
+Initialized new vec v = [0]
+Copy of v = [0]
+Enter new entries of v: Now v = [1]
+w = [0,0,0]
+After w=v, 
+Now v = [1]
+Now w = [1]
+w==v: 1
+w!=v: 0
+Enter i : After w*=2, w = [2]
+3*v = [3]
+Now v = [1]
+v+w = [3]
+Now v = [1]
+v-w = [-1]
+Now v = [1]
+v*w = 2
+Now v = [1]
+w/2 = [1]
+Now w = [2]
+-v  = [-1]
++v  = [1]
++w  = [2]
+v = [1]; w = [2]
+Elements of v: 
+v[1] = 1
+Member test: Enter a test number: 1 IS a member of v.
+Subscript test
+Enter length of subscript vec:Enter subscript vector:The sub-vector is [1]
+Change one entry of v.  Index?New entry?New entry: v[1] = 1
+Now v = [1]
+Initial slice; length? Slice = [1]
+Now v = [1]
+General slice; beginning, end? Slice = [1]
+Now v = [1]
+w = [2]; vecgcd(w) = 2
+After makeprimitive(w), w = [1]
+u = [0]
+After swapvec(u,v):
+u = [1]
+v = [0]

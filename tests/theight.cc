@@ -25,7 +25,9 @@
 #include <eclib/points.h>
 
 int main(){
+#ifdef NTL_ALL
   set_precision(100);
+#endif
   initprimes("PRIMES",1);
   Curve E;
 

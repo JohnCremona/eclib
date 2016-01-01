@@ -1,0 +1,25 @@
+
+Subspace package test program
+
+Enter size of square matrix M: Enter entries of M:  M = 
+[[1,2,3],
+[4,5,6],
+[7,8,9]]
+Trace(M) = 15
+
+Enter number of times to repeat kernel tests: kernel(m) has basis
+
+[[1],
+[-2],
+[1]]
+pivots: [3]
+denom:  1
+Now compute kernel mod p, p = 1073741789
+kernel(m) has basis
+
+[[1],
+[-2],
+[1]]
+pivots: [3]
+!!! Agrees  with old version !!!
+Enter size of square matrix M: 

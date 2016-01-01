@@ -52,7 +52,7 @@ int getquartic(quartic& g)
 int main()
 {
   show_version();
-  cout.precision(15);
+  cout.precision(10);
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   
   int verb; cout << "Verbose? "; cin >> verb;

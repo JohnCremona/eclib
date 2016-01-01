@@ -66,6 +66,8 @@ long I2long(const bigint& x)
 
 // Reals and Complexes
 
+#ifdef NTL_ALL
+
 RR Pi() 
 {
   static long pr;
@@ -79,10 +81,6 @@ RR Pi()
     }
   return pi;
 }
-
-#ifndef LOG2
-#define LOG2            0.69314718055994530942       // log(2)
-#endif
 
 void Compute_Euler(RR&);
 RR Euler() //{return to_bigfloat(0.57721566490153286060651209008240243104);}
@@ -274,7 +272,6 @@ RR atan2 (const RR & y, const RR & x)
 }
 }
 
-
 // The template version requires an automatic conversion from 0 to an
 // RR, so cannot be used as is.  We have manually instantiated it
 // here.
@@ -307,3 +304,6 @@ istream& operator>>(istream& is, CC& z)
     }
   return is;
 }
+
+#endif // NTL_ALL
+

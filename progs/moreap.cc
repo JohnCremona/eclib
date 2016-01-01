@@ -44,8 +44,9 @@ int main(void)
  cout << "Output new eigs to screen (1/0)? "; cin>>showeigs;
  cout << "Display newforms (1/0)? "; cin>>showforms;
  cout << "Attempt curve construction (1/0)? "; cin>>findcurves;
- if(findcurves) set_precision("Enter number of decimal places");
-
+#ifdef NTL_ALL
+ if(findcurves) set_precision(20);
+#endif
 #ifdef AUTOLOOP
  cout << "How many primes for Hecke eigenvalues? ";
  cin  >> stopp; cout << endl;

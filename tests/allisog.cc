@@ -29,7 +29,9 @@
 #include <eclib/getcurve.h>
 
 int main(){
+#ifdef NTL_ALL
   set_precision("Enter number of decimal places");
+#endif
   int verbose=0;
   cout << "Verbose? (0/1) " << flush;  cin >> verbose;
 
