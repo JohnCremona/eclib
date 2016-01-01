@@ -28,11 +28,10 @@ using namespace std;
 void show_version()
 {
   cerr << "Version compiled on " << __DATE__ << " at " << __TIME__ << " by GCC " << __VERSION__ << "\n";
-  cerr << "using base arithmetic option ";
 #ifdef NTL_ALL
-  cerr << "NTL_ALL (NTL bigints and multiprecision floating point)";
+  cerr << "using NTL bigints and NTL real and complex multiprecision floating point";
 #else
-  cerr << "NTL_INTS (NTL bigints and no multiprecision floating point)";
+  cerr << "using NTL bigints but no multiprecision floating point";
 #endif
   cerr<<endl;
 }

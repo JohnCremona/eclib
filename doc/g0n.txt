@@ -1,7 +1,7 @@
 Documentation for the modular symbol programs in the eclib library (guide to source code)
 
 %  created 20070125
-%  Time-stamp: <2012-05-07 17:30:02 jec>
+%  Time-stamp: <2016-01-01 15:47:44 jec>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -668,8 +668,8 @@ NB For levels up to 130000 these files are quite big:
 That is, out of 570226 (optimal) curves, 25808 require this "fixing"
 of c6 and 443 also for c4.
 
-NB This is *not used* when the programs are comiled with
-multiprecision floating point (i.e. NTL not NTL_INTS) so can be
+NB This is *not used* when the programs are compiled with
+multiprecision floating point (i.e. NTL_ALL) so can be
 ignored for Sage.  But the programs which produce tables of curves
 from stored data *do* recompute the periods of the newforms and hence
 get the curves from their periods, and this is *much* faster using

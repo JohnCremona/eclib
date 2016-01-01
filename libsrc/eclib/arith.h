@@ -139,9 +139,6 @@ inline vector<long> sqfreedivs(long n)
 long mod(long a, long modb); /* modulus in range plus or minus half mod */
 long posmod(long a, long modb); /* ordinary modulus, but definitely positive */
 
-#ifndef NTL_INTS
-inline int abs(int a) {return (a<0) ? (-a) : a;}
-#endif
 long gcd(long, long);
 int gcd(int, int);
 long lcm(long, long);

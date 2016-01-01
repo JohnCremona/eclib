@@ -66,11 +66,7 @@ public:
   saturator(Curvedata* EE, int verb=0)
     :E(EE), verbose(verb)
     {
-#ifdef NTL_INTS
-      use_div_pols=0;//1;
-#else
       use_div_pols=0;
-#endif
       disc = getdiscr(*E);
       AllTorsion = torsion_points(*EE);
     }

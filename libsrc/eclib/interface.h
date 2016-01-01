@@ -21,17 +21,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-//  The following macro switches can be used: it is best to define them
-//  in Makefiles rather than changing this file.
-//  1. NTL_INTS     Use NTL for bigints (no bigrationals)
-//  2. NTL_ALL      Use NTL also for bigfloats (RR) and bigcomplexes (CC)
-//  3. (neither)    Defaults to NTL_ALL
+//  The macro NTL_ALL can optionally be set.  It controls whether most
+//   real and complex floating point functions are implemented using
+//   doubles and complex doubles (if not set) ot using NTL bigfloats
+//   (RR) and bigcomplexes (CC) (if set)
 
 #ifndef _INTERFACE_H_
 #define _INTERFACE_H_
 
 #ifdef NTL_ALL
-#define NTL_INTS
 #define MPFP
 #endif
 
@@ -72,7 +70,6 @@ using namespace std;
 using namespace NTL;
 
 #define bigint ZZ
-//#define bigrational QQ  // not defined in NTL
 
 #define BIGINT(val) to_ZZ(val)
 inline bigint atoI(const char* s) {return to_ZZ(s);}
