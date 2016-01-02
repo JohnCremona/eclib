@@ -111,13 +111,20 @@ case "$with_ntl" in
   ""|yes)
     NTL_LDFLAGS=""
     NTL_CFLAGS=""
+    ntl_all=true
     ;;
   no)
     AC_MSG_ERROR([Compiling without libntl impossible (but --without-ntl given)])
     ;;
+  no-mpfp)
+    NTL_LDFLAGS=""
+    NTL_CFLAGS=""
+    ntl_all=false
+    ;;
   *)
     NTL_LDFLAGS="-L${with_ntl}/lib"
     NTL_CFLAGS="-I${with_ntl}/include"
+    ntl_all=true
     ;;
 esac
 
@@ -207,6 +214,7 @@ AC_ARG_ENABLE([allprogs],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-allprogs]) ;;
      esac],[allprogs=true])
 AM_CONDITIONAL([ALLPROGS], [test x$allprogs = xtrue])
+AM_CONDITIONAL([NTL_ALL], [test x$ntl_all = xtrue])
 
 AC_CONFIG_FILES([
   libsrc/Makefile

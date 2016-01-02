@@ -42,6 +42,9 @@
 
 int main()
 {
+#ifdef NTL_ALL
+  set_precision(20);
+#endif
   initprimes("PRIMES",0);
 
   bigfloat ht_limit;

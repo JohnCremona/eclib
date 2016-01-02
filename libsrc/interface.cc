@@ -96,6 +96,8 @@ RR Euler() //{return to_bigfloat(0.57721566490153286060651209008240243104);}
   return gamma;
 }
 
+#define LOG2   0.69314718055994530942
+
 void Compute_Euler(RR& y) 
 {
   long l, n, k, x;
