@@ -23,16 +23,11 @@
  
 #include <NTL/ZZXFactoring.h>
 
-// if USE_PARI_FACTORING is set we use the pari C library for factoring 
-// (via a string interface defined in parifact.h/cc) 
-// if USE_GP_FACTORING is set we use gp for factoring (via a fifo)
-
+// We use the pari C library for factoring (via a string interface
+// defined in parifact.h/cc)
 
 #include <unistd.h>  // for unlink() (not needed on linux)
 #include <eclib/marith.h>
-#ifdef USE_GP_FACTORING
-#include <eclib/gpslave.h>
-#endif
 #include <sstream>
 
 // Utilities for debugging output -- for example, from gdb you can give the command
@@ -361,83 +356,6 @@ void extra_prime_class::read_from_file(const string pfilename, int verb)
 vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_base);
 vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax=BIGINT(maxprime()));
 
-//#define DEBUG_GP_FACTORING
-
-// The following uses pari's factorization externally if available.
-// However, numbers less than
-#define TRIAL_DIV_BOUND BIGINT(100000000)
-//#define TRIAL_DIV_BOUND BIGINT(2)
-// will be handled by trial division, and pari/gp will only be called
-// once primes factors less than
-#define TRIAL_DIV_PRIME_BOUND BIGINT(10000)
-//#define TRIAL_DIV_PRIME_BOUND BIGINT(1)
-//have been divided out.  This is to reduce the overheads involved
-//with calling gp externally
-
-#ifdef USE_GP_FACTORING
-vector<bigint> pdivs_gp(const bigint& number, int trace)
-{
-#ifdef DEBUG_GP_FACTORING
-  trace=2;
-#endif
-  if(!the_pari_slave.is_running()) 
-    {
-#ifdef DEBUG_GP_FACTORING
-      cout<<"Could not find gp, using default factorization (trial division)"
-	  << endl;
-#endif
-      return pdivs_trial(number,trace); 
-    }
-  vector<bigint> plist;
-  bigint n=abs(number);
-  if(n<2) return plist; // empty!
-
-  // for small n just use trial division...
-
-  if(n<TRIAL_DIV_BOUND) 
-    {
-#ifdef DEBUG_GP_FACTORING
-      cout<<"pdivs_gp defaulting to pdivs_trial for small n (<"<<TRIAL_DIV_BOUND<<")"<< endl;
-#endif
-      return pdivs_trial(number,trace); 
-    }
-  if(trace) cout<<"pdivs_gp factoring "<<n<<endl;
-
-  // use prime base first...
-
-  plist=pdivs_use_factorbase(n,the_extra_primes.the_primes);
-  if(trace&&plist.size()>0) 
-    cout<<"after using factorbase, have factors "<<plist
-	<<", and cofactor = "<<n<< endl;
-  if(n<2) 
-    {
-      sort(plist.begin(),plist.end());
-      return plist;
-    }
-
-  // now use small primes...
-
-  plist = vector_union(plist,pdivs_trial_div(n,TRIAL_DIV_PRIME_BOUND));
-  if(trace&&plist.size()>0) 
-    cout<<"after using trial division up to "<<TRIAL_DIV_PRIME_BOUND<<", have factors "<<plist
-	<<", and cofactor = "<<n<< endl;
-
-  if(n<2) 
-    {
-      sort(plist.begin(),plist.end());
-      return plist;
-    }
-
-  // finally call the slave gp process via the parislave class...
-
-  plist = vector_union(plist,the_pari_slave.factor(n));
-  
-  sort(plist.begin(),plist.end());
-  if(trace) cout<<"pdivs_gp returns "<<plist<<endl;
-  return plist;
-}
-#endif
-
 // n>0 will be changed;  returns prime factors from factor base and divides out from n
 
 vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_base)
@@ -512,20 +430,7 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
   return plist;
 }
 
-// 
-
-#ifdef USE_PARI_FACTORING
 #include <eclib/parifact.h>
-
-// bigint
-// read_bigint_from_string(string intstr)
-// {
-//   istringstream intin(intstr.c_str());
-//   bigint p;
-//   intin>>p;
-//   free(intstr);  // this string was malloc'ed by the pari library!
-//   return p;
-// }
 
 int
 is_prime(const bigint& n)
@@ -570,9 +475,17 @@ factor(const bigint& n, int proof=1)
 	    cout<<"WARNING:  pari's factor() returned p="<<p
 		<<" for which pari's isprime(p) FAILS!! Please report.";
 	  }
-      }    
+      }
   return plist;
 }
+
+// The following uses pari's factorization function.
+// However, numbers less than
+#define TRIAL_DIV_BOUND BIGINT(100000000)
+// will be handled by trial division, and the libpari function will
+// only be called once primes factors less than
+#define TRIAL_DIV_PRIME_BOUND BIGINT(10000)
+// have been divided out,  to reduce the overheads involved.
 
 vector<bigint> pdivs_pari(const bigint& number, int trace)
 {
@@ -584,7 +497,7 @@ vector<bigint> pdivs_pari(const bigint& number, int trace)
 
   if(n<TRIAL_DIV_BOUND) 
     {
-      return pdivs_trial(number,trace); 
+      return pdivs_trial(n,trace); 
     }
   if(trace) cout<<"pdivs_pari factoring "<<n<<endl;
 
@@ -613,32 +526,18 @@ vector<bigint> pdivs_pari(const bigint& number, int trace)
       return plist;
     }
 
-  // finally call the slave gp process via the parislave class...
+  // finally call factor() which interfaces to libpari...
 
   plist = vector_union(plist,::factor(n));
-  
   sort(plist.begin(),plist.end());
   if(trace) cout<<"pdivs_pari returns "<<plist<<endl;
   return plist;
 }
 
-#endif
-
 vector<bigint> pdivs(const bigint& number, int trace)
 {
-#ifdef USE_PARI_FACTORING
   return pdivs_pari(number);
-#else
-
-#ifdef USE_GP_FACTORING
-  return pdivs_gp(number, trace);
-#else
-
-  return pdivs_trial(number, trace);
-#endif
-#endif
 }
-
 
 vector<bigint> posdivs(const bigint& number)
 {

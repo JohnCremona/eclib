@@ -21,12 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifdef USE_PARI_FACTORING
-
 #include <pari/pari.h>
 #include <eclib/parifact.h>
 
 //#define DEBUG_GPFACT
+
 #include <iostream>
 using namespace std;
 
@@ -70,5 +69,3 @@ is_prime(const string p)
   avma=av;         // restore pari stackpointer
   return ans;
 }
-
-#endif
