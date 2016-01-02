@@ -147,6 +147,6 @@ check_PROGRAMS=$(PROCS_TESTS) $(QCURVES_TESTS) $(QRANK_TESTS) $(G0N_TESTS)
 # We list here the directories in and out which contain the test input
 # and expected output files for the tests run by "make check".
 
-EXTRA_DIST = in out
+EXTRA_DIST = in_ntl in_no_ntl out_ntl out_no_ntl
 
 ACLOCAL_AMFLAGS = -I m4

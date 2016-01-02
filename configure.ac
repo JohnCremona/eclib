@@ -26,7 +26,7 @@ LT_INIT
 # 3. If interfaces were removed (breaks backward compatibility): increment
 # current, and set both revision and age to zero.
 LT_CURRENT=2
-LT_REVISION=2
+LT_REVISION=3
 LT_AGE=0
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
