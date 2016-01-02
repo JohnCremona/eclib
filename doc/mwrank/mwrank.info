@@ -230,23 +230,21 @@ using (unless you use the quiet flag "-q").
 I no longer distribute binaries.
 
 It is recommended that you use the multi-precision version for curves
-with large coefficients; otherwise results may be wrong.
+with large coefficients; otherwise results may be wrong.  This is the
+default and requires no special configuration.
 
 You can aid the factorization of large integers in several ways:
 
-(a) If you have the PARI/GP installed (it checks for the existence of
-$PATH_TO_GP, or /usr/local/bin/gp if the environment variable
-PATH_TO_GP is not set; i.e. the default value is /usr/local/bin/ (with
-the trailing /)) then factorization will be done by GP using its
-factor() function.  This will cause (small) temporary files to be
-created in /tmp which will be deleted after use (though not if the
-program is aborted by the user).
+(a) Pari (i.e. the library libpari) is now a requirement, and is used
+to factorization of integers greater than a bound set to 10^8 in
+libsrc/marith.cc.  This is the only use made of the Pari library.
 
 (b) By default the programs initialise an array of primes < 10^6, so
-will fail to factor some numbers > 10^12 by trial division.  This
+will succeed in factoring all numbers < 10^8 by trial division.  This
 default can be increased as follows: create a file called MAXPRIME
 containing a single integer, such as 2000000 or 10000000.  Then this
-will be used instead of the default.
+will be used instead of the default for the upper bound on precomputed
+primes.
 
 (c) If a file called PRIMES exists in the current directory,
 containing zero or more prime numbers (separated by whitespace,
@@ -273,4 +271,5 @@ best.
 John Cremona (john.cremona@gmail.com)
 
  3 February 1995, updated 12 January 1998, 25 September 2000, 5 July 2001,
- 12 November 2003, 5 January 2005, 10 May 2005, 31 December 2011.
+ 12 November 2003, 5 January 2005, 10 May 2005, 31 December 2011, 2
+ January 2016.

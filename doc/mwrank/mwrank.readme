@@ -1,7 +1,7 @@
 README file for programs mwrank, findinf, ratpoint
 
-There are three main programs in this distribution, called mwrank,
-findinf and ratpoint.  The first two work on elliptic curves over Q
+There are three main programs for elliptic curves in this distribution: mwrank,
+point_search and quartic_points.  The first two work on elliptic curves over Q
 given by Weierstrass equations with standard coefficients
 [a1,a2,a3,a4,a6].  If the input curve is non-minimal or non-standard
 (where standard means a1,a3 in {0,1} and a2 in {-1,0,1}) the input
@@ -20,7 +20,7 @@ expects 5 integers separated by space.  If the input is invalid the
 programs stop, so you can use 0 0 0 0 0 to end the input stream.
 
 
-findinf searches for points on the curves up to a given bound on the
+point_search searches for points on the curves up to a given bound on the
 logarithmic height, using sieving.  One can opt for either seeing all
 points as they are found (verbose=1) or nothing until a final report
 (verbose=0); also, if verbose=1 then one can opt for a simple list of
@@ -39,7 +39,7 @@ covering the cosets of 2E(Q) in E(Q); it then goes on to complete to a
 Mordell-Weil basis via a sieve-based saturation process after
 determining an upper bound for the index.
 
-ratpoint works with quartics g(x) with integer coefficients,
+quartic_points works with quartics g(x) with integer coefficients,
 g(x)=a*x^4+b*x^3+c*x^2+d*x+e.  It finds the Jacobian E of the curve
 C:y^2=g(x), searches C for rational points and maps any point found to
 E using the 2-covering map.  Current version quits as soon as one
@@ -71,23 +71,22 @@ The file should contain a list of curves in the standard format, with
 
 	       twist: computes quadratic twists of a given curve,
 	       giving their minimal models etc.  Interactive.
-	       
+
 	       indep: tests whether given points on a curve are
-	       independent, using 2-descent NOT heights.  Test with 
+	       independent, using 2-descent NOT heights.  Test with
 	       "indep < e23".
 
 Systems supported: no binaries are now provided, only source.
 
-Sources: mwrank.tar.gz is a gzipped tar file of the distribution.  It
-requires pre-installation of NTL. This NTL version may be used with or
-without multiprecision floating point (see mwrank.info for more
-details).
+Sources: Available from https://github.com/JohnCremona/eclib/  It
+requires pre-installation of Pari and NTL.
 
 	John Cremona
         john.cremona@gmail.com
 
- original: 6/2/95 
+ original: 6/2/95
 
- updated: 7/8/95, 12/1/98, 20/4/00, 16/8/00, 5/7/01, 7/1/05, 10/5/05, 31/12/11
+ updated: 7/8/95, 12/1/98, 20/4/00, 16/8/00, 5/7/01, 7/1/05, 10/5/05,
+          31/12/11, 2/1/16
 
 

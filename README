@@ -42,20 +42,32 @@ Boost.system. Refer ti ./configure --help for more configuration
 options.
 
 2. By default a lot of programs, including test programs, are built
-and will be installed by "make install".  We only provide one option
-here:  if you do
+and will be installed by "make install".  But if you configure with
 
-./configure --disable-allprogs
+ --disable-allprogs
 
 then the only program built will be mwrank.  (The whole eclib library
 will always be built).
 
-3. After running make, "make check" will build and run a lot of test
+3. By default most of the real and complex floating point arithmetic
+is done using NTL's RR class and a complex class CC built on that. But
+if you configure with
+
+ --disable-mpfp
+
+("mpfp" = multi-precision floating point) then only standard C doubles
+and complexes will be used.  This makes some code run much faster but
+of course the results are different.  In future it is planned to
+refactor the code so that both standard and multi-precision functions
+are available simultaneously.
+
+4. After running make, "make check" will build and run a lot of test
 programs (in the subdirectory tests) and check that they give the
 expected output (using test input files in tests/in and comparing with
-the expected outputs in tests/out).
+the expected outputs in tests/out).   The test output (and in a few
+cases input) differs slightly if the --disable-mpfp is used.
 
-4. "make install" will install header files, library files, and test
+5. "make install" will install header files, library files, and test
 program binaries in subdirectories include, lib, bin in /usr/local by
 default, so that you would need to run "make install" with superuser
 privileges).  You can specify an alternative place either by adding

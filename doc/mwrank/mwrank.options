@@ -3,20 +3,20 @@
 Since December 1997, mwrank supports command-line options instead of
 prompting the user.  All options have reasonable defaults.
 
-List of command line options, their meaning and default values
+List of command line options, their meaning and default values (set in options.h)
 
 [q, l, t take no parameters; the others take an integer parameter "n"]
 
 -h	help		Displays a summary of this info and quits
 
--q	quiet mode flag	
+-q	quiet mode flag
 			Suppresses the header information (including
 			the date of compilation) which is otherwise output
 			and should be included in any problem/bug reports).
 			Default is off (i.e. not quiet).  Also
-			suppresses prompting for curves.
+			suppresses prompting for curves
 
--v n	verbosity level	
+-v n	verbosity level
 			Controls amount of output.  Range 0..3.
 			Default=1.  Level 0 only outputs the rank.
 			Use "-q -v 0" for minimal output, but note
@@ -29,7 +29,7 @@ List of command line options, their meaning and default values
 
 -o	output pari	Outputs a very terse summary of the results
 			for use by PARI/GP with suitable interface.
-			Format: 
+			Format:
 			Either  [[r],[P1,P2,...,Pr]]
 			where r is the rank and P1,...,Pr are r
 			independent points;
@@ -41,29 +41,32 @@ List of command line options, their meaning and default values
 			options (controlled by -v); for minimal useful
 			output use "-q -v 0 -o"
 
--p n	precision (#dp)	
+-p n	precision (#dp)
 			Only relevant for the multiprecision
 			floating point version.  Range 1..large,
-			default 15.
+			default 15.  This is decimal precision.
+			Stringly recommended to increase for curves
+			with 2-torsion where a second descent is used
+			since then the reduction applied to second
+			descent quartics is more effective.
 
--b n	height bound for quartic point search.  
-			Range 1..15, default 10.   5 is large enough
-			for many curves.
+-b n	height bound for quartic point search.
+			Range 1..15, default 10.
 
--x n	number of auxiliary primes used for syzygy sieving.  
-			Range 0..,default 6.  Only relevant for curves
-			with no 2-torsion.  Only worth increasing
+-x n	number of auxiliary primes used for syzygy sieving.
+			Range 0..,default 15.  Only relevant for curves
+			with no 2-torsion.  Worth increasing
 			either for curves with large discriminant, or
 			for curves with suspected large rank r, for
-			which r+1 is a good value.
+			which r+1 or r+2 are suitable values.
 
--l	points output flag.  
+-l	points output flag.
 			Controls whether generating points are output.
 			Defaults to value of "verbosity", so the only
 			function is to turn this part of the output on
 			when verbosity is 0 (i.e. -v 0 -l).
 
--t	quartic equivalence test flag.   
+-t	quartic equivalence test flag.
 			For debugging only.  Default off.
 
 -s      selmer_only     If set, does local tests on homogeneous spaces
@@ -76,7 +79,7 @@ List of command line options, their meaning and default values
 			from the 2-Selmer group itself.
 			If unset (the default) then rational points
 			are sought, to give a lower bound for the rank
-			also. 
+			also.
 
 -d     skip_2nd_descent Only relevant for curves with 2-torsion;
 			unset by default.  If set,  does no second
@@ -93,4 +96,4 @@ List of command line options, their meaning and default values
 			autimatically (but that will be reduced to a
 			default maximum of 100 if it is greater)
 
-Last update: 31/12/2011
+Last update: 2016-01-02

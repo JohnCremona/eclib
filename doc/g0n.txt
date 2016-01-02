@@ -1,7 +1,7 @@
 Documentation for the modular symbol programs in the eclib library (guide to source code)
 
 %  created 20070125
-%  Time-stamp: <2016-01-01 15:47:44 jec>
+%  Time-stamp: <2016-01-02 15:46:35 jec>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -633,15 +633,16 @@ working.
 
 ----------------------------------------------------------------------
 
-files: fixc6.h, fixc6.cc, fixc4.data, fixc6.data
+files: fixc6.h, fixc6.cc; (optional) fixc4.data, fixc6.data
 class: fixc6
 
 These can be completely ignored, since I gave up using them after
 N=130000 and just use multiprecision floating point always, even
 though it is slower, with some cleverness to automatically increase
-precision as needed.  Future plans include re-introducing the standard
-double precision code (which is all still there) and using that where
-possible and sensible, for speed and flexibility.
+precision as needed.  The standard double precision code is all still
+here (and runs when the --deisable-mpfp option is given on
+configuration).  In future the code will use that where possible and
+sensible, for speed and flexibility.
 
 // Background: for curves with large c6 (or c4), the value cannot be computed
 // with sufficient precision without using multiprecision floating
@@ -669,7 +670,7 @@ That is, out of 570226 (optimal) curves, 25808 require this "fixing"
 of c6 and 443 also for c4.
 
 NB This is *not used* when the programs are compiled with
-multiprecision floating point (i.e. NTL_ALL) so can be
+multiprecision floating point (i.e. without --disable-mpfp) so can be
 ignored for Sage.  But the programs which produce tables of curves
 from stored data *do* recompute the periods of the newforms and hence
 get the curves from their periods, and this is *much* faster using
