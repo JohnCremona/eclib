@@ -21,6 +21,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+// If this is defined, the order of primes used for Wq and Tp
+// operators is the natural order 2, 3, 5, 7, ..., mixing good and bad
+// primes.  Otherwise the order is as in primelist (see moddata.h)
+// with the bad primes first.  This is referred to in two places: the
+// homspace method op_prime(i) which returns the i'th prime to be
+// used; and in periods.cc where (when NEW_OP_ORDER is *not* set) some
+// permutation of eigenvalues needs to be done.
+#define NEW_OP_ORDER
+
 class mat22;  // fully defined below
 class matop;  // fully defined below
 #include "svector.h"
