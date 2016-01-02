@@ -111,20 +111,13 @@ case "$with_ntl" in
   ""|yes)
     NTL_LDFLAGS=""
     NTL_CFLAGS=""
-    ntl_all=true
     ;;
   no)
     AC_MSG_ERROR([Compiling without libntl impossible (but --without-ntl given)])
     ;;
-  no-mpfp)
-    NTL_LDFLAGS=""
-    NTL_CFLAGS=""
-    ntl_all=false
-    ;;
   *)
     NTL_LDFLAGS="-L${with_ntl}/lib"
     NTL_CFLAGS="-I${with_ntl}/include"
-    ntl_all=true
     ;;
 esac
 
@@ -205,6 +198,7 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 AC_CHECK_FUNCS([floor memmove memset pow sqrt strchr])
 
+# use --disable-allprogs to prevent building any executable programs except mwrank
 AC_ARG_ENABLE([allprogs],
    AS_HELP_STRING([--disable-allprogs],
                   [only build the library and mwrank, otherwise build all programs and tests]),
@@ -214,11 +208,20 @@ AC_ARG_ENABLE([allprogs],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-allprogs]) ;;
      esac],[allprogs=true])
 AM_CONDITIONAL([ALLPROGS], [test x$allprogs = xtrue])
-AM_CONDITIONAL([NTL_ALL], [test x$ntl_all = xtrue])
+
+# use --disable-mpfp to use standard C doubles only, not NTL RR
+AC_ARG_ENABLE([mpfp],
+   AS_HELP_STRING([--enable-mpfp],
+                  [use NTL RR for floating point instead of standard C doubles]),
+     [case "${enableval}" in
+       yes) mpfp=true ;;
+       no)  mpfp=false ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-mpfp]) ;;
+     esac],[mpfp=true])
+AM_CONDITIONAL([NTL_ALL], [test x$mpfp = xtrue])
 
 AC_CONFIG_FILES([
   libsrc/Makefile
-  libsrc/gpslave.cc
   tests/Makefile
   progs/Makefile
   doc/Makefile
