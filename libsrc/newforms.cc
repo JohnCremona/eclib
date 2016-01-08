@@ -1336,7 +1336,7 @@ void newforms::createfromolddata()
   ifstream intdatafile(intdataname.str().c_str());
   if(!intdatafile.is_open())
     {
-      cout<<"Unable to open data file "<<intdataname<<" for data input"<<endl;
+      cout<<"Unable to open data file "<<intdataname.str()<<" for data input"<<endl;
       abort();
       return;
     }

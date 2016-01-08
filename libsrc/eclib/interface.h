@@ -41,8 +41,11 @@
 #include <vector>
 #include <map>
 #include <algorithm>
-//#include <numeric>
+#ifdef _LIBCPP_VERSION
+#include <numeric>
+#else
 #include <ext/numeric>
+#endif
 #include <iterator>
 using namespace std;
 #include "templates.h"
@@ -154,11 +157,80 @@ inline int is_approx_zero(const RR& x)
   if (n>=0) return 0;
   // cout<<"x="<<x<<", exponent="<<x.exponent()<<", mantissa="<<x.mantissa()<<", precision="<<RR::precision()<<endl;
   // cout<<"is_approx_zero() returns "<<(x.mantissa()<power2_ZZ(-n))<<endl;
-  return abs(x.mantissa())<power2_ZZ(-n);}
+  return abs(x.mantissa())<power2_ZZ(-n);
+}
 } // namespace NTL
+#ifdef _LIBCPP_VERSION
+namespace std {
+inline namespace __1 {
+inline bool isinf(const RR& z) {
+  return false;
+}
+inline bool isnan(const RR& z) {
+  return false;
+}
+inline RR copysign(const RR& x, const RR& y) {
+  if (sign(x) != sign(y)) {
+    return -y;
+  }
+  return y;
+}
+inline bool signbit(const RR& x) {
+  return sign(x) < 0;
+}
+inline RR fmax(const RR& x, const RR& y)
+{
+  return x < y ? y : x;
+}
+}
+}
+#endif
+
 #include <complex>
 typedef complex<RR> CC;
 #define bigcomplex CC
+
+#ifdef _LIBCPP_VERSION
+template <> inline RR std::abs(const CC &z)
+{
+  RR re = z.real();
+  RR im = z.imag();
+  return sqrt(re*re + im*im);
+}
+template <> inline CC std::exp(const CC &z)
+{
+  RR im = z.imag();
+  RR e = exp(z.real());
+  return CC(e * cos(im), e * sin(im));
+}
+inline CC operator/(const CC &a, const CC &b)
+{
+  RR are = a.real();
+  RR aim = a.imag();
+  RR bre = b.real();
+  RR bim = b.imag();
+  if (abs(bre) <= abs(bim)) {
+    RR r = bre / bim;
+    RR den = bim + r*bre;
+    return CC((are*r + aim)/den, (aim*r - are)/den);
+  } else {
+    RR r = bim / bre;
+    RR den = bre + r*bim;
+    return CC((are + aim*r)/den, (aim - are*r)/den);
+  }
+}
+inline CC operator /(const RR &a, const CC &b)
+{
+  CC r(a);
+  return r/b;
+}
+inline CC &operator /=(CC &a, const CC &b)
+{
+  a = a/b;
+  return a;
+}
+
+#endif
 
 inline void set_precision(long n)
   {RR::SetPrecision(long(n*3.33));RR::SetOutputPrecision(n);}
