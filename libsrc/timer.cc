@@ -74,7 +74,7 @@ timer::~timer() {
   // Close file, if ever opened
   // Do not reference s_ _ever_. We do not
   // want to close std::cout nonetheless.
-  if( file_ != NULL ) {
+  if( file_.is_open() ) {
     file_.close();
   }
 }
@@ -101,15 +101,13 @@ void timer::stream( string filename ) {
     file_.open(filename.c_str(),ios::out|ios::trunc);
     
     // Check is file successfully opened
-    if( file_ == NULL ) {
-      {
-        cout << "File " << filename << " could not be opened ... using stout" << endl;
-        s_ = &cout;
-      }
+    if( !file_.is_open() ) {
+      cout << "File " << filename << " could not be opened ... using stout" << endl;
+      s_ = &cout;
+    } else {
+      // Point main reference to newly opened file
+      s_ = &file_;
     }
-
-    // Point main reference to newly opened file
-    s_ = &file_;
   }
 }
 
