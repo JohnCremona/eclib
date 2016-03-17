@@ -40,8 +40,6 @@ AC_PROG_LIBTOOL
 
 # Checks for system features and libraries, via macros defined in m4/ directory
 AX_CXX_COMPILE_STDCXX_0X
-# Uncomment this to check for C++-11 compliance (no C++-11 features are used)
-#AX_CXX_COMPILE_STDCXX_11([],[optional])
 AX_CXX_HEADER_TR1_UNORDERED_MAP
 AX_CXX_HEADER_UNORDERED_MAP
 
@@ -126,14 +124,19 @@ CPPFLAGS_save="$CPPFLAGS"
 LDFLAGS_save="$LDFLAGS"
 CPPFLAGS="$CPPFLAGS $NTL_CFLAGS"
 LDFLAGS="$LDFLAGS $NTL_LDFLAGS"
-AC_CHECK_HEADER(NTL/ZZ.h, found_ntl=yes, found_ntl=no)
+dnl We first check for NTL/ZZ.h with a plain c++ compiler.
+dnl if it fails we unset the cache, check if we have a c++11
+dnl capable compiler and try again with c++11 enabled, in case
+dnl NTL has been compiled with c++11 threads
+AC_CHECK_HEADER(NTL/ZZ.h, [], [
+  unset ac_cv_header_NTL_ZZ_h
+  AX_CXX_COMPILE_STDCXX(11, noext, optional)
+  AC_CHECK_HEADER(NTL/ZZ.h, [], 
+    [AC_MSG_ERROR([Could not find NTL, you might want to use --with-ntl=<path> to point to its location])]
+  )])
 LDFLAGS="$LDFLAGS_save"
 CPPFLAGS="$CPPFLAGS_save"
 AC_LANG_POP(C++)
-
-if test "x$found_ntl" = "xno"; then
-  AC_MSG_ERROR([Could not find NTL, you might want to use --with-ntl=<path> to point to its location])
-fi
 
 NTL_LIBS="-lntl"
 AC_SUBST(NTL_LIBS)
