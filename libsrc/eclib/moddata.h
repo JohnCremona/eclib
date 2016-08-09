@@ -72,3 +72,9 @@ string of_filename(long n, char c);
 // variable NF_DIR if defined), followed by a single character
 // (usually 'x') and the decimal digits of n (positive integer).
 string nf_filename(long n, char c);
+
+// Function to construct a string representing small-newform filename,
+// including a prefix (default "smallnf/" but taken from environment
+// variable SNF_DIR if defined), followed by a single character
+// (usually 'x') and the decimal digits of n (positive integer).
+string small_nf_filename(long n, char c);

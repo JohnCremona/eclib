@@ -26,7 +26,9 @@
 class newforms;
 class jumps;
 
-/* Data stored in a newform (and in data files newforms/x$N):
+#define DEFAULT_SMALL_NAP 25
+
+/* Data stored in a newform (and in data files newforms/x$N and smallnf/x$N):
    (Numbers refer to lines of data file)
 Items 1-18 are "int" while the ap and aq are "short"
 3.  sfe : sign of functional equation (=-product of aq)
@@ -146,7 +148,7 @@ public:
   ~newforms(void);
   void display(void) const;
   void display_modular_symbol_map(void) const;
-  void output_to_file(int binflag=1) const;
+  void output_to_file(int binflag=1, int smallflag=0) const;
   void set_sign(int s) {sign=s;}
   int  get_sign() {return sign;}
   void makeh1(int s);
@@ -233,6 +235,6 @@ public:
   int find_lminus(long i, long lmax, const bigfloat& y1);
 };
 
-void output_to_file_no_newforms(long n, int binflag=1);
+void output_to_file_no_newforms(long n, int binflag=1, int smallflag=0);
 vector<long> eiglist(const newform& f, int oldorder=0);
 

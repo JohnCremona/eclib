@@ -181,7 +181,8 @@ int main(void)
      cout<<"Store newform data? "; cin>>dump;
      if(dump)
        {
-         nf.output_to_file();
+         nf.output_to_file(1,0);
+         nf.output_to_file(1,1);
        }
    }
 }       // end of if(n)

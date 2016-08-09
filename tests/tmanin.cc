@@ -75,7 +75,11 @@ int main(void)
   if(verbose&&nf.n1ds>0) 
     cout<<"Computing ap for primes up to "<<prime_number(stopp)<<endl;
   nf.addap(stopp);
-  if(output) nf.output_to_file();
+  if(output)
+    {
+      nf.output_to_file(1,0); // full nf data
+      nf.output_to_file(1,1); // small nf data
+    }
   //  }
 }       // end of if(n)
 }       // end of while()

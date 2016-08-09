@@ -75,7 +75,11 @@ int main(void)
   if(!is_valid_conductor(n))
     {
       cout<<"Not a valid conductor!"<<endl;
-      output_to_file_no_newforms(n);
+      if (output) // output extended full nf data and small nf data
+	{
+	  output_to_file_no_newforms(n,1,0);
+	  output_to_file_no_newforms(n,1,1);
+	}
       cout << "Finished level "<<n<<endl;
       continue;
     }
@@ -98,7 +102,11 @@ int main(void)
     {
       cout << "No newforms.\n";
       cout << "Finished level "<<n<<endl;
-      if(output) nf.output_to_file();
+      if(output)  // output extended full nf data and small nf data
+	{
+	  nf.output_to_file(1,0);
+	  nf.output_to_file(1,1);
+	}
       continue;
     }
 
@@ -129,8 +137,11 @@ int main(void)
       cout << "Updated newforms: ";
       nf.display();
     }
-  if(output) nf.output_to_file();
-
+  if(output)  // output extended full nf data and small nf data
+    {
+      nf.output_to_file(1,0);
+      nf.output_to_file(1,1);
+    }
   // Now we compute the curves
   cout<<"Computing "<<nnf<<" curves...\n";
 
@@ -150,7 +161,11 @@ int main(void)
 	{
 	  cout<<"All curves found successfully!"<<endl;
 	  cout << "Finished level "<<n<<endl;
-	  if(output) nf.output_to_file();
+	  if(output)  // output extended full nf data and small nf data
+	    {
+	      nf.output_to_file(1,0);
+	      nf.output_to_file(1,1);
+	    }
 	}
       else
 	{      
@@ -174,7 +189,11 @@ int main(void)
 	  nf.makeh1(1);
 	  nf.addap(newstopp);
 	  stopp=newstopp;
-	  if(output) nf.output_to_file();
+	  if(output)  // output extended full nf data and small nf data
+	    {
+	      nf.output_to_file(1,0);
+	      nf.output_to_file(1,1);
+	    }
 #ifdef MPFP
 	  if(decimal_precision()<50) 
 	    {

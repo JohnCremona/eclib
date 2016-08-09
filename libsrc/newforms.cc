@@ -735,12 +735,14 @@ void newforms::createfromscratch(int s, long ntp)
   // At this point the newforms may contain different numbers of ap,
   // so we need to even these up, which we do by computing more ap for
   // those which need it.
-   if(n1ds>1)
+if(n1ds>0)
     {
       for(i=0; i<n1ds; i++) 
 	if((nap=nflist[i].aplist.size())>maxnap) maxnap=nap;
       if(verbose) 
-	cout<<"Max number of ap in newforms so far is "<<maxnap<<endl;
+	cout<<"Max number of ap in newforms so far is "<<maxnap
+	    <<", increasing to " << DEFAULT_SMALL_NAP << endl;
+      if (maxnap < DEFAULT_SMALL_NAP) maxnap = DEFAULT_SMALL_NAP;
       for(i=0; i<n1ds; i++) 
 	if((nap=nflist[i].aplist.size())<maxnap) 
 	  {
@@ -1016,12 +1018,13 @@ void putout(ofstream& of, long a, int binflag)
 void nl(ofstream& of, int binflag) 
 {if(!binflag) of<<"\n";}
 
-void newforms::output_to_file(int binflag) const
+void newforms::output_to_file(int binflag, int smallflag) const
 {
   long i,j;
   char prefix = 'e';
   if(binflag) prefix = 'x';
-  string name = nf_filename(modulus,prefix);
+  string name = smallflag ? small_nf_filename(modulus,prefix)
+                          : nf_filename(modulus,prefix);
   ofstream out(name.c_str());
   if(!out)
     {
@@ -1039,9 +1042,19 @@ void newforms::output_to_file(int binflag) const
     }
     
   // Line 1:  #newforms, #aq, #ap
+  int nap = nflist[0].aplist.size();
+  if (smallflag)
+    {
+      if (nap>=DEFAULT_SMALL_NAP) nap=DEFAULT_SMALL_NAP;
+      else
+	{
+	  cout<<"Warning: small newforms output will only have" << nap
+	      << "a_p (at least " << DEFAULT_SMALL_NAP <<"required" << endl;
+	}
+    }
   putout(out,(int)n1ds,binflag);
   putout(out,(int)nflist[0].aqlist.size(),binflag);
-  putout(out,(int)nflist[0].aplist.size(),binflag);
+  putout(out, nap,binflag);
   nl(out,binflag);
   // Line 2:  blank line
   nl(out,binflag);
@@ -1105,7 +1118,7 @@ void newforms::output_to_file(int binflag) const
   nl(out,binflag);
   
   // Lines (21+#aq)-(20+#aq+#ap):  ap for each newform
-  for(j=0; j<int(nflist[0].aplist.size()); j++)
+  for(j=0; j<nap; j++)
     {
       for(i=0; i<n1ds; i++) putout(out,(short)nflist[i].aplist[j],binflag); 
       nl(out,binflag);
@@ -1121,16 +1134,27 @@ void newforms::createfromdata(int s, long ntp, int create_from_scratch_if_absent
   long i, j, n = modulus;
   if(verbose) cout << "Retrieving newform data for N = " << n << endl;
 
-  string name = of_filename(modulus,'x');
+  string name = nf_filename(modulus,'x');
+  //if (verbose) cout<<"oldform filename = "<<name<<endl;
   ifstream datafile(name.c_str());
   if(!datafile.is_open())
     {
-      if(verbose) cout<<"Unable to open file "<<name<<" for newform input"<<endl;
+      if (verbose)
+	cout << "No file "<<name<<" exists, trying ";
+      name = small_nf_filename(modulus,'x');
+      if (verbose)
+	cout << name << "instead..."<<endl;
+      datafile.open(name.c_str());
+    }
+  if(!datafile.is_open())
+    {
+      if(verbose) cout<<"Unable to open file "<<name<<" for oldform input"<<endl;
       if(create_from_scratch_if_absent)
 	{
 	  if(verbose) cout<<"Creating from scratch instead"<<endl;
 	  createfromscratch(sign, ntp);
-	  output_to_file();
+	  output_to_file(1,0); // full newform data
+	  output_to_file(1,1); // short newform data (only DEFAULT_SMALL_NAP ap)
 	  if(verbose) cout << "Finished creating newform data for N = " << n << endl;
 	  if(verbose) display();
 	  return;
@@ -1604,11 +1628,13 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
     }
 }
 
-void output_to_file_no_newforms(long n, int binflag)
+void output_to_file_no_newforms(long n, int binflag, int smallflag)
 {
   char prefix = 'e';
   if(binflag)  prefix = 'x';
-  ofstream out(nf_filename(n,prefix).c_str());
+  string name = smallflag ? small_nf_filename(n,prefix)
+                          : nf_filename(n,prefix);
+  ofstream out(name.c_str());
   if(binflag)
     {
       int a=0;

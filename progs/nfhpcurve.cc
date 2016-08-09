@@ -33,6 +33,7 @@
 #include <eclib/newforms.h>
 #include <eclib/periods.h>
 #include <eclib/pcprocs.h>
+#include <eclib/curvesort.h>
 
 //#define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
@@ -41,12 +42,21 @@
 #define MAXD 10
 #define MAXNAP 20000
 
+string curve_filename(long n)
+{
+  stringstream s;
+  s << getenv("CURVE_DIR");
+  if (s.str().empty()) {s.clear(); s<<"./curves";}
+  s  << "/e" << n;
+  return s.str();
+}
+
 int main(void)
 {
  init_time();
  start_time();
  long n=1, stopp; // have a dud (but positive) value of n here to avoid mishaps
- int output, verbose;
+ int output, curve_output, verbose;
  long maxn = MAXNY;
  long dmax = MAXD;
 
@@ -59,8 +69,10 @@ int main(void)
  cout << "Verbose output? "; cin>>verbose;
  cout << "How many primes for Hecke eigenvalues? ";
  cin  >> stopp; cout << endl;
- output=1; 
+ output=curve_output=1; 
  cout << "Output newforms to file? (0/1) ";  cin >> output;
+ cout << "Output curves to file? (0/1) ";  cin >> curve_output;
+ ofstream curve_out;
 #ifdef AUTOLOOP
  int limit;
  cout<<"Enter first and last N: ";cin>>n>>limit; n--;
@@ -70,6 +82,8 @@ int main(void)
 #endif
  if (n>0)
 {
+  if (curve_output)
+    curve_out.open(curve_filename(n).c_str());
   cout << ">>>Level " << n;
   // Temporary code to skip non-square-free levels
   //
@@ -79,7 +93,13 @@ int main(void)
   if(!is_valid_conductor(n))
     {
       cout<<"Not a valid conductor!"<<endl;
-      output_to_file_no_newforms(n);
+      if (output) // output extended full nf data and small nf data
+	{
+	  output_to_file_no_newforms(n,1,0); // full nf data
+	  output_to_file_no_newforms(n,1,1); // small nf data
+	}
+      if (curve_output)
+	curve_out.close();
       cout << "Finished level "<<n<<endl;
       continue;
     }
@@ -98,7 +118,13 @@ int main(void)
   long nnf = nf.n1ds, inf; 
   if(nnf==0)
     {
-      if(output) nf.output_to_file();
+      if(output) // output full nf data and small nf data
+	{
+	  nf.output_to_file(1,0);
+	  nf.output_to_file(1,1);
+	}
+      if (curve_output)
+	curve_out.close();
       cout << "No newforms.\n";
       cout << "Finished level "<<n<<endl;
       continue;
@@ -108,8 +134,13 @@ int main(void)
 
   // Now we search for curves as in pcurve.cc
 
-  if(output) nf.output_to_file();
-
+  if(output) // output full nf data and small nf data -- preliminary
+	     // version before we have found the curves, in case of
+	     // timeout while finding the curves
+    {
+      nf.output_to_file(1,0);
+      nf.output_to_file(1,1);
+    }
   long rootn=(long)(sqrt((double)n)+0.1); 
   int squarelevel=(n==rootn*rootn);
   cout<<"Computing "<<nnf<<" curves...\n";
@@ -118,6 +149,7 @@ int main(void)
   if(verbose&&(fac>1)) cout<<"c4 factor " << fac << endl;
 
   int* success=new int[nnf];
+  Curve* curves = new Curve[nnf];
   long nsucc=0;
   for(inf=0; inf<nnf; inf++) success[inf]=0;
 
@@ -179,21 +211,59 @@ int main(void)
            {
              success[inf]=0; nsucc--;
            }
+	 else
+	   {
+	     curves[inf] = C;
+	   }
        }
      else cout<<"No curve found"<<endl;
 
    } // ends loop over newforms
 
+  if(output) // output full nf data and small nf data -- updated even
+	     // if not yet complete
+    {
+      nf.output_to_file(1,0);
+      nf.output_to_file(1,1);
+    }
+  if (curve_output)
+    {
+      for(inf=0; inf<nnf; inf++)
+	{
+	  if (success[inf]) // output the curve
+	    {
+	      string code = codeletter(inf);
+	      curve_out<<n<<" "<<code<<" 1 ";
+
+	      Curve C = curves[inf];
+	      bigint a1,a2,a3,a4,a6;
+	      C.getai(a1,a2,a3,a4,a6);
+	      curve_out<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";
+
+	      Curvedata CD(C,1);  // The 1 causes minimalization
+	      int nt = CD.get_ntorsion();
+	      newform& nfi = nf.nflist[inf];
+	      bigfloat rperiod;
+	      int r = 0;
+	      if (num(nfi.loverp)==0)
+		{
+		  set_precision(16);
+		  ldash1 x(&nf, &nfi);
+		  r = x.rank();
+		}
+	      curve_out << " " << r << " " << nt << " 0" << endl;
+	    }
+	}
+      curve_out.close();
+    }
   if(nsucc==nnf)
     {
       cout<<"All curves found successfully!"<<endl;
       cout << "Finished level "<<n<<endl;
-      if(output) nf.output_to_file();
     }
   else
     {
       cout<<(nnf-nsucc)<<" curve(s) missing."<<endl;
-      if(output) nf.output_to_file();
       int newstopp=stopp;
       if (newstopp<1000)
         newstopp+=500;
@@ -207,7 +277,11 @@ int main(void)
       cout<<"Computing some more ap: from "<<stopp+1<<" to "
 	  <<newstopp<<"..."<<endl;
       nf.addap(newstopp);
-      if(output) nf.output_to_file();
+      if(output)  // output extended full nf data and small nf data
+	{
+	  nf.output_to_file(1,0);
+	  nf.output_to_file(1,1);
+	}
       stopp=newstopp;
       if(maxn<10000) 
 	{
