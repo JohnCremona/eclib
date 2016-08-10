@@ -42,15 +42,6 @@
 #define MAXD 10
 #define MAXNAP 20000
 
-string curve_filename(long n)
-{
-  stringstream s;
-  s << getenv("CURVE_DIR");
-  if (s.str().empty()) {s.clear(); s<<"./curves";}
-  s  << "/e" << n;
-  return s.str();
-}
-
 int main(void)
 {
  init_time();
@@ -83,7 +74,7 @@ int main(void)
  if (n>0)
 {
   if (curve_output)
-    curve_out.open(curve_filename(n).c_str());
+    curve_out.open(single_curve_filename(n).c_str());
   cout << ">>>Level " << n;
   // Temporary code to skip non-square-free levels
   //

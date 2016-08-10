@@ -38,3 +38,11 @@ class oldforms {
   long dimoldpart(vector<long> aplist) const;
   void display(void) const;
 };
+
+// Utilities for creating filenames for curve files
+bool file_exists(string filename);
+string ecdb_filename(long N);
+string single_curve_filename(long N);
+string curve_filename(long N);
+
+

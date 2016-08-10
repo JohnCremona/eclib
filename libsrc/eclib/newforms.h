@@ -161,8 +161,11 @@ public:
   void createfromscratch(int s, long ntp);
 
   // read newforms from file, if it exists, otherwise (perhaps) revert
-  // to createfromscratch:
-  void createfromdata(int s, long ntp, int create_from_scratch_if_absent=1);
+  // to createfromscratch; if small_data_ok is set then we only need
+  // the eigenvalues so are content with a small version of the file
+  // (fewer ap and no additional data):
+  void createfromdata(int s, long ntp, int create_from_scratch_if_absent=1,
+		      int small_data_ok=0);
 
   // Compute homspace::projcoord, so projchain can be used
   // Replaces coord_vecs of homspace with projections onto eigenspaces
@@ -175,6 +178,9 @@ public:
   // Create from one or a list of elliptic curves of the right conductor:
   void createfromcurve(int s, CurveRed C, int nap=25);
   void createfromcurves(int s, vector<CurveRed> Clist, int nap=25);
+  // Lazy version which does not get the homology eigenvectors, only
+  // sets the aq & ap (for use as oldforms):
+  void createfromcurves_mini(vector<CurveRed> Clist, int nap=25);
 
   // read newforms from old-style data files (eigs/x$N and intdata/e$N):
   void createfromolddata();

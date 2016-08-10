@@ -129,18 +129,21 @@ tnfd_SOURCES=tnfd.cc
 # input/output in the "make check" tests and removed afterwards.
 
 export NF_DIR:=nftmp
-export OF_DIR:=nftmp
 export SNF_DIR:=snftmp
+export TCURVE_DIR:=tcurves
 
 check_g0n: g0n_tests
 	@echo Running g0n checks...
 	rm -rf $(NF_DIR)
 	rm -rf $(SNF_DIR)
+	rm -rf $(TCURVE_DIR)
 	mkdir $(NF_DIR)
 	mkdir $(SNF_DIR)
+	mkdir $(TCURVE_DIR)
 	for prog in $(G0N_TESTS); do $(check_run); done
 	rm -rf $(NF_DIR)
 	rm -rf $(SNF_DIR)
+	rm -rf $(TCURVE_DIR)
 
 check:
 	$(MAKE) check_procs check_qcurves check_qrank check_g0n

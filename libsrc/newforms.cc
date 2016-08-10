@@ -1031,6 +1031,11 @@ void newforms::output_to_file(int binflag, int smallflag) const
       cout<<"Unable to open file "<<name<<" for newform output"<<endl;
       abort();
     }
+  // else
+  //   {
+  //     cout<<"--outputting newforms data to "<<name<<" (smallflag="<<smallflag<<")"<<endl;
+  //     display();
+  //   }
 
   if(n1ds==0)
     {  
@@ -1128,16 +1133,17 @@ void newforms::output_to_file(int binflag, int smallflag) const
 
 // Read in newform data from file NF_DIR/xN 
 
-void newforms::createfromdata(int s, long ntp, int create_from_scratch_if_absent)
+void newforms::createfromdata(int s, long ntp,
+			      int create_from_scratch_if_absent,
+			      int small_data_ok)
 {
   sign = s;
   long i, j, n = modulus;
   if(verbose) cout << "Retrieving newform data for N = " << n << endl;
 
   string name = nf_filename(modulus,'x');
-  //if (verbose) cout<<"oldform filename = "<<name<<endl;
   ifstream datafile(name.c_str());
-  if(!datafile.is_open())
+  if(small_data_ok && !datafile.is_open())
     {
       if (verbose)
 	cout << "No file "<<name<<" exists, trying ";
@@ -1254,6 +1260,26 @@ vector<long> eiglist(CurveRed& C, int nap)
   return ans;
 }
 
+// extract the eigenvalues for bad primes
+vector<long> aqlist(vector<long> aplist, long N)
+{
+  long iq=0, p, naq = pdivs(N).size();
+  //cout << "Setting aq of size "<<naq<<endl;
+  vector<long>::const_iterator api = aplist.begin();
+  vector<long> aq(naq);
+  for(primevar pr; (iq<naq)&&pr.ok(); pr++)
+    {
+      p=pr;
+      if (N%p==0)
+	{
+	  //cout << "Setting aq["<<p<<"] = "<<*api<<endl;
+	  aq[iq++] = *api;
+	}
+      api++;
+    }
+  return aq;
+}
+
 // Create from a list of elliptic curves of the right conductor:
 
 void newforms::createfromcurve(int s, CurveRed C, int nap)
@@ -1285,6 +1311,34 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
   splitspace.recover(eigs);  // NB newforms::use() determines what is
 			     // done with each one as it is found;
 			     // this depends on basisflag and sign
+  if(verbose) cout << "...done."<<endl;
+}
+
+void newforms::createfromcurves_mini(vector<CurveRed> Clist, int nap)
+{
+  if(verbose) cout << "In newforms::createfromcurves_mini()..."<<endl;
+  int i; long N;
+  n1ds = Clist.size();
+  nflist.reserve(n1ds);
+
+  if (n1ds>0) // construct the ap and aq vectors from the curves
+    {
+      N = I2long(getconductor(Clist[0]));
+      for(i=0; i<n1ds; i++)
+	{
+	  vector<long> ap=eiglist(Clist[i],nap);
+	  vector<long> aq=aqlist(ap,N);
+	  // dummy data -- these fields are not set and will not be used
+	  vector<int> data(16,0);
+	  newform nf(data,aq,ap,this);
+	  if (verbose)
+	    {
+	      cout<<"adding this newform: "<<endl;
+	      nf.display();
+	    }
+	  nflist.push_back(newform(data,aq,ap,this));
+	}
+    }
   if(verbose) cout << "...done."<<endl;
 }
 

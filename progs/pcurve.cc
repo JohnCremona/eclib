@@ -172,14 +172,11 @@ int main(void)
 	 cout << "N = " << getconductor(CR) << endl;
        }
      else cout<<"No curve found\n";
-
-// dump complete data file into NF_DIR/x$N.
-
    }       // end of forms loop
  if (anyfound)
    {
      cout<<"Store newform data? "; cin>>dump;
-     if(dump)
+     if(dump) // dump complete data file into (S)NF_DIR/x$N.
        {
          nf.output_to_file(1,0);
          nf.output_to_file(1,1);

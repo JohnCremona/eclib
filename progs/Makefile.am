@@ -93,20 +93,20 @@ aplist_SOURCES=aplist.cc
 
 export NF_DIR:=nftmp
 export SNF_DIR:=snftmp
-export CURVE_DIR:=curtmp
+export TCURVE_DIR:=tcurves
 
 check_g0n: g0n_progs
 	@echo Checking g0n programs...
 	rm -rf $(NF_DIR)
 	rm -rf $(SNF_DIR)
-	rm -rf $(CURVE_DIR)
+	rm -rf $(TCURVE_DIR)
 	mkdir $(NF_DIR)
 	mkdir $(SNF_DIR)
-	mkdir $(CURVE_DIR)
+	mkdir $(TCURVE_DIR)
 	for prog in $(G0N_PROGS); do $(check_run); done
 	rm -rf $(NF_DIR)
 	rm -rf $(SNF_DIR)
-	rm -rf $(CURVE_DIR)
+	rm -rf $(TCURVE_DIR)
 
 #################################################################################
 
