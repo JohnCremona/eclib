@@ -39,10 +39,12 @@
 int main(void)
 {
   long prec0=25;
-  int verbose,output,limit=210,n=130;
+  int verbose,output,curve_output,limit=210,n=130;
   cout << "Program h1first.  Using METHOD = " << METHOD << endl;
   cerr << "Verbose output? "; cin>>verbose;
   cerr << "Output updated newform data? "; cin>>output;
+  cerr << "Output updated curve file? (0/1) ";  cin >> curve_output;
+  string curve_filename;
 #ifdef AUTOLOOP
   cerr<<"Enter first and last N: ";cin>>n>>limit;  n--;
   while (n<limit) { n++;
@@ -51,6 +53,10 @@ int main(void)
 #endif
   if (n>0)
     {
+      if (curve_output)
+        curve_filename=single_curve_filename(n);
+      else
+        curve_filename="no";
       if(verbose) cout << "\n\n";
       cout << ">>>Level " << n << "<<<" << endl;
       newforms nf(n,verbose>1);
@@ -108,7 +114,7 @@ int main(void)
       if(verbose) cout<<"Computing "<<nnf<<" curves...\n";
       vector<int> forms;
       for(inf=0; inf<nnf; inf++) forms.push_back(inf);
-      vector<int> failures = nf.showcurves(forms,0);
+      vector<int> failures = nf.showcurves(forms,0,curve_filename);
       if(failures.size()>0)
 	{
 	  cout<<"No curve found for "<<failures.size()<<" forms: "<<failures<<endl;

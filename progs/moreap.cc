@@ -90,7 +90,7 @@ int main(void)
       cout<<"Computing "<<nnf<<" curves...\n";
       vector<int> forms;
       for(inf=0; inf<nnf; inf++) forms.push_back(inf);
-      vector<int> failures = nf.showcurves(forms,0);
+      vector<int> failures = nf.showcurves(forms,0,"no");
       if(failures.size()>0)
 	{
 	  cout<<"No curve found for "<<failures.size()<<" forms: "<<failures<<endl;

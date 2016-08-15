@@ -220,7 +220,8 @@ public:
 
   // Attempt to compute and display the elliptic curve for each
   // newform in forms; return a (sub)list of newform indices where this failed.
-  vector<int> showcurves(vector<int> forms, int verbose);
+  // If filename is not "no", output to file also
+  vector<int> showcurves(vector<int> forms, int verbose, string filename);
 
   // next three implemented in pcprocs.cc
 

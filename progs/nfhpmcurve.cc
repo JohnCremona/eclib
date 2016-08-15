@@ -156,7 +156,7 @@ int main(void)
 
   while(forms.size()>0)
     {
-      forms = nf.showcurves(forms,verbose);
+      forms = nf.showcurves(forms,verbose,"no");
       if(forms.size()==0)
 	{
 	  cout<<"All curves found successfully!"<<endl;

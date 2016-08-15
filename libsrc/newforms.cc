@@ -30,6 +30,8 @@
 #include <eclib/oldforms.h>
 #include <eclib/cperiods.h>
 #include <eclib/newforms.h>
+#include <eclib/periods.h>
+#include <eclib/curvesort.h>
 
 // Functions for ordering newforms
 // (1) Old ordering (first aq, then ap for good p);
@@ -1730,34 +1732,62 @@ pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i)
 
   // Attempt to compute and display the elliptic curve for each
   // newform; return a list of newform indices where this failed.
-vector<int> newforms::showcurves(vector<int> forms, int verbose)
+vector<int> newforms::showcurves(vector<int> forms, int verbose, string filename)
 {
   if((verbose>1)&&(sqfac>1)) cout<<"c4 factor " << sqfac << endl;
 
+  ofstream curve_out;
+  int output_curves = (filename!="no");
+  if (output_curves) curve_out.open(filename.c_str());
   bigfloat rperiod;
+  bigint a1,a2,a3,a4,a6, N;
   vector<int> badcurves; // will hold the indices of forms for which we fail to find a curve
   vector<int>::const_iterator inf; // will iterate through the forms to be used
 
   for(inf=forms.begin(); inf!=forms.end(); inf++)
    {
-     if(verbose) 
+     if(verbose)
        cout<<"\n"<<"Form number "<<*inf+1<<"\n";
      else cout<<(*inf+1)<<" ";
 
+     if (output_curves)
+       curve_out << modulus << " "<< codeletter(*inf) << " 1 ";
+
      Curve C = getcurve(*inf,-1,rperiod,verbose);
      Curvedata CD(C,1);  // The 1 causes minimalization
+     int nt = CD.get_ntorsion();
      if(verbose) cout << "\nCurve = \t";
      cout << (Curve)CD << "\t";
      CurveRed CR(CD);
-     cout << "N = " << getconductor(CR) << endl;
+     N = getconductor(CR);
+     cout << "N = " << N << endl;
      if(verbose) cout<<endl;
 
-     if(getconductor(CR)!=modulus)
+     if(N!=modulus)
        {
 	 cout<<"No curve found"<<endl;
 	 badcurves.push_back(*inf);
+         if (output_curves)
+           curve_out<<endl;
        }
+     else
+       if (output_curves)
+         {
+           C.getai(a1,a2,a3,a4,a6);
+           curve_out<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";
+           newform& nfi = nflist[*inf];
+           int r = 0;
+           if (num(nfi.loverp)==0)
+             {
+               set_precision(16);
+               ldash1 x(this, &nfi);
+               r = x.rank();
+             }
+           curve_out<<" "<<r<<" "<<nt<<" 0"<<endl;
+         }
    }
+  if (output_curves)
+    curve_out.close();
 
   return badcurves;
 }
