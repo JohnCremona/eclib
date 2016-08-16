@@ -158,13 +158,14 @@ newform::newform(const vector<int>& data, const vector<long>& aq, const vector<l
   aplist=ap;
   index=-1;
   pdot=0;
+  rk=-1;
 }
 
 // Newform constructor, given the homology basis vector(s) and
 // Hecke eigenvalues
 
 newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, newforms* nfs,long ind)
-   :nf(nfs), sign(nfs->sign), bplus(vplus),bminus(vminus),index(ind),aplist(ap)
+  :nf(nfs), sign(nfs->sign), bplus(vplus),bminus(vminus),index(ind),aplist(ap),rk(-1)
 {
   int verbose=(nf->verbose);
 
@@ -639,6 +640,29 @@ void newform::add_more_ap(int nap)
       pr++;
     }
   if(verbose>1) cout<<"aplist = "<<aplist<<endl;
+}
+
+// Compute analytic rank and special value if not set
+void newform::compute_rank()
+{
+  if (rk==-1) // not yet computed
+    {
+      ldash1 x(nf, this);
+      Lvalue = abs(x.value()); // = L^{(r)}(f,1) -- note the r! factor!
+      rk = 0;
+      if (num(loverp)==0) // else trivially 0
+        rk = x.rank();
+    }
+}
+
+long newform::rank()
+{
+  compute_rank();  return rk;
+}
+
+bigfloat newform::special_value()
+{
+  compute_rank();  return Lvalue;
 }
 
 newforms::~newforms(void)
@@ -1755,7 +1779,6 @@ vector<int> newforms::showcurves(vector<int> forms, int verbose, string filename
 
      Curve C = getcurve(*inf,-1,rperiod,verbose);
      Curvedata CD(C,1);  // The 1 causes minimalization
-     int nt = CD.get_ntorsion();
      if(verbose) cout << "\nCurve = \t";
      cout << (Curve)CD << "\t";
      CurveRed CR(CD);
@@ -1775,14 +1798,8 @@ vector<int> newforms::showcurves(vector<int> forms, int verbose, string filename
          {
            C.getai(a1,a2,a3,a4,a6);
            curve_out<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";
-           newform& nfi = nflist[*inf];
-           int r = 0;
-           if (num(nfi.loverp)==0)
-             {
-               set_precision(16);
-               ldash1 x(this, &nfi);
-               r = x.rank();
-             }
+           int nt = CD.get_ntorsion();
+           int r = nflist[*inf].rank(); // analytic rank
            curve_out<<" "<<r<<" "<<nt<<" 0"<<endl;
          }
    }

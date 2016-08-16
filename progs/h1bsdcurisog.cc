@@ -108,15 +108,12 @@ int main(void)
      string code = codeletter(xi);
      i=booknumber0(n,i);
      newform& nfi = nf.nflist[i];
-     ldash1 x(&nf, &nfi);  
-     long r = x.rank();
+     long r = nfi.rank();
      int type = nfi.type;
      rational loverp = nfi.loverp;
-     bigint nloverp, dloverp;
-     nloverp=abs(num(loverp)); 
-     dloverp=abs(den(loverp));
-     x.compute();
-     bigfloat lf1 = abs(x.value()); // = r!*L^{(r)}(f,1) -- note the r! factor!
+     bigint nloverp; nloverp=abs(num(loverp));
+     bigint dloverp; dloverp=abs(den(loverp));
+     bigfloat lf1 = nfi.special_value();
 #ifdef DEBUG_BSD
 	 cout<<"\nL^{(r)}(f,1)/r!: " << lf1 << "\n";
 #endif

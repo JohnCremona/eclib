@@ -53,10 +53,8 @@ int main(void)
    {
      //     i=booknumber0(n,i);
      newform& nfi = nf.nflist[i];
-     ldash1 x(&nf, &nfi);  
-     x.compute();
-     bigfloat lf1 = abs(x.value());
-     long r = x.rank();
+     bigfloat lf1 = nfi.special_value();
+     long r = nfi.rank();
      cout << n << "\t" << codeletter(i) 
 	  << "\tRank = " << r << "\tL^(r)(f,1)/r! = " << lf1 << endl;
    }

@@ -234,14 +234,7 @@ int main(void)
 	      Curvedata CD(C,1);  // The 1 causes minimalization
 	      int nt = CD.get_ntorsion();
 	      newform& nfi = nf.nflist[inf];
-	      bigfloat rperiod;
-	      int r = 0;
-	      if (num(nfi.loverp)==0)
-		{
-		  set_precision(16);
-		  ldash1 x(&nf, &nfi);
-		  r = x.rank();
-		}
+	      int r = nfi.rank();
 	      curve_out << " " << r << " " << nt << " 0" << endl;
 	    }
 	}

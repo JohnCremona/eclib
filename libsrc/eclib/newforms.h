@@ -74,6 +74,8 @@ public:
   // Or     type=2, lattice=[x,yi]
   // & integral over [a,b;Nc,d] is dotplus*x+dotminus*yi
   long degphi;             // degree of Weil parametrization
+  long rk;                 // analytic rank (-1 if not set)
+  bigfloat Lvalue;         // L^(r)(f,1)/r!
   vec coordsplus, coordsminus;  // vector components of each freegen
   long denomplus, denomminus; 
   int j0; long fac;
@@ -104,6 +106,12 @@ public:
   void find_degphi();
   // To get matrix and scale factors when sign==0 ...
   void find_matrix();
+  // Compute analytic rank (if not already done)
+  void compute_rank();
+  // Return analytic rank (compute if not already done)
+  long rank();
+  // L^(r)(f,1)/r!
+  bigfloat special_value();
 };
 
 
