@@ -1732,29 +1732,33 @@ void output_to_file_no_newforms(long n, int binflag, int smallflag)
       out<<"0 0 0\n";
     }
   out.close();
-   
+
 }
 
-  // for the i'th newform return the value of the modular symbol {0,r}
-rational newforms::plus_modular_symbol(const rational& r, long i) const
+// for the i'th newform return the value of the modular symbol {0,r} (default) or {oo,r}
+rational newforms::plus_modular_symbol(const rational& r, long i, int base_at_infinity) const
 {
-  return rational(h1->nfproj_coords(num(r),den(r),nflist[i].coordsplus), 
-		  nflist[i].cuspidalfactorplus);  
+  rational a(h1->nfproj_coords(num(r),den(r),nflist[i].coordsplus),
+		  nflist[i].cuspidalfactorplus);
+  if (base_at_infinity) a-=nflist[i].loverp;
+  return a;
 }
 
-rational newforms::minus_modular_symbol(const rational& r, long i) const
+rational newforms::minus_modular_symbol(const rational& r, long i, int base_at_infinity) const
 {
-  return rational(h1->nfproj_coords(num(r),den(r),nflist[i].coordsminus), 
-		  nflist[i].cuspidalfactorminus);  
+  // Ignore the value of base_at_infinity as it does not affect the minus symbol
+  return rational(h1->nfproj_coords(num(r),den(r),nflist[i].coordsminus),
+		  nflist[i].cuspidalfactorminus);
 }
 
-pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i) const
+pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i, int base_at_infinity) const
 {
   mat m(h1->coord_vecs.size()-1,2);
   m.setcol(1,nflist[i].coordsplus);
   m.setcol(2,nflist[i].coordsminus);
   vec a = h1->proj_coords(num(r),den(r),m);
   rational a1(a[1],nflist[i].cuspidalfactorplus);
+  if (base_at_infinity) a1 -= nflist[i].loverp;
   rational a2(a[2],nflist[i].cuspidalfactorminus);
   return pair<rational,rational> ( a1, a2 );
 }

@@ -71,39 +71,47 @@ int main(void)
   // Compute more modular symbols as prompted:
 
   rational r; long nu,de;
-  cout << "Computation of further modular symbols {0,r} for rational r:"<<endl;
+  cout << "\nComputation of further modular symbols" << endl << endl;
+  cout << "Base point? (enter 0 for 0, or 1 for oo) ";
+  int base_at_infinity;
+  cin >> base_at_infinity;
+  string base = (base_at_infinity?"oo":"0");
+  cout << "Values of {" << base << ",r} for rational r:"<<endl;
   while(1)
     {
-      cout<<"Enter numerator and denominator of r: "; 
-      cin>>ws;  
+      cout<<"Enter numerator and denominator of r: ";
+      cin>>ws;
       if(cin.eof()) {cout<<endl; break;}
       cin >> nu >> de; r=rational(nu,de);
       if((nu==0)&&(de==0)) {cout<<endl; break;}
       if(sign==+1)
-        cout<<"{0,"<<r<<"} -> "<< nf.plus_modular_symbol(r)<<endl;
+        cout<<"{"<<base<<","<<r<<"} -> "<< nf.plus_modular_symbol(r, 0, base_at_infinity)<<endl;
       if(sign==-1)
-        cout<<"{0,"<<r<<"} -> "<< nf.minus_modular_symbol(r)<<endl;
+        cout<<"{"<<base<<","<<r<<"} -> "<< nf.minus_modular_symbol(r, 0, base_at_infinity)<<endl;
       if(sign==0)
 	{
-	  pair<rational,rational> s = nf.full_modular_symbol(r);
-	  cout<<"{0,"<<r<<"} -> ("<< s.first << "," << s.second << ")" <<endl;
+	  pair<rational,rational> s = nf.full_modular_symbol(r, 0, base_at_infinity);
+	  cout<<"{"<<base<<","<<r<<"} -> ("<< s.first << "," << s.second << ")" <<endl;
 	}
     }
 
-  for(de=1; de<20; de++)
+  cout << "All modular symbols with bounded denominator" << endl << endl;
+  int dmax;
+  cout << "Enter maximum denominator (0 for none): "; cin >> dmax;
+  for(de=1; de<=dmax; de++)
     for(nu=0; nu<de; nu++)
       {
 	if(gcd(nu,de)==1)
 	  {
 	    r=rational(nu,de);
             if(sign==+1)
-              cout<<"{0,"<<r<<"} -> "<< nf.plus_modular_symbol(r)<<endl;
+              cout<<"{"<<base<<","<<r<<"} -> "<< nf.plus_modular_symbol(r, 0, base_at_infinity)<<endl;
             if(sign==-1)
-              cout<<"{0,"<<r<<"} -> "<< nf.minus_modular_symbol(r)<<endl;
+              cout<<"{"<<base<<","<<r<<"} -> "<< nf.minus_modular_symbol(r, 0, base_at_infinity)<<endl;
             if(sign==0)
               {
-                pair<rational,rational> s = nf.full_modular_symbol(r);
-                cout<<"{0,"<<r<<"} -> ("<< s.first << "," << s.second << ")" <<endl;
+                pair<rational,rational> s = nf.full_modular_symbol(r, 0, base_at_infinity);
+                cout<<"{"<<base<<","<<r<<"} -> ("<< s.first << "," << s.second << ")" <<endl;
               }
 	  }
       }

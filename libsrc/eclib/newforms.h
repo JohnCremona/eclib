@@ -209,10 +209,10 @@ public:
   void unfix_eigs();
   void refix_eigs();
   
-  // for the i'th newform return the value of the modular symbol {0,r}
-  rational plus_modular_symbol(const rational& r, long i=0) const;
-  rational minus_modular_symbol(const rational& r, long i=0) const;
-  pair<rational,rational> full_modular_symbol(const rational& r, long i=0) const;
+  // for the i'th newform return the value of the modular symbol {0,r} (default) or {oo,r}
+  rational plus_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
+  rational minus_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
+  pair<rational,rational> full_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
 
   // next three implemented in periods.cc
 
