@@ -196,7 +196,7 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
   type = 0;
   find_cuspidal_factors();
 
-  // Compute projected coordsplus/minus and denomplus/minus
+  // Compute coordsplus/minus and denomplus/minus
 
   find_coords_plus_minus();
   
@@ -374,10 +374,11 @@ void newform::find_coords_plus_minus()
 {
   int verbose = nf->verbose;
   int i, ncoords=nf->h1->coord_vecs.size()-1;
+  // ncoords is the same as ngens in homspace, i.e. the number of symbols aftre 2-term relations
   svec cvi;
   if(sign!=-1)
     coordsplus=vec(ncoords);
-  if(sign!=+1)  
+  if(sign!=+1)
     coordsminus=vec(ncoords);
   //  if(verbose) cout<<"About to compute coordsplus/minus"<<endl;
   for(i=1; i<=ncoords; i++)
@@ -385,22 +386,26 @@ void newform::find_coords_plus_minus()
       cvi = nf->h1->coord_vecs[i];
       if(sign!=-1)
         coordsplus[i]=dotmodp(cvi,bplus,MODULUS);
-      if(sign!=+1) 
+      if(sign!=+1)
         coordsminus[i]=dotmodp(cvi,bminus,MODULUS);
     }
+  int contplus=vecgcd(coordsplus);
+  if (contplus>1) coordsplus/=contplus;
+  int contminus=vecgcd(coordsminus);
+  if (contminus>1) coordsminus/=contminus;
 
-  if(sign!=+1) 
+  if(sign!=+1)
     {
-      denomminus=vecgcd(coordsminus)*cuspidalfactorminus;
+      denomminus=contminus*cuspidalfactorminus;
       if(verbose>1) cout<<"coordsminus   = "<<coordsminus<<endl;
       if(verbose) cout<<"denomminus   = "<<denomminus<<endl;
     }
-  if(sign!=-1) 
+  if(sign!=-1)
     {
-      denomplus=vecgcd(coordsplus)*cuspidalfactorplus;
+      denomplus=contplus*cuspidalfactorplus;
       if(verbose>1) cout<<"coordsplus   = "<<coordsplus<<endl;
       if(verbose) cout<<"denomplus   = "<<denomplus<<endl;
-    }  
+    }
 }
 
 void newform::find_cuspidal_factors()
@@ -1655,7 +1660,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
                 update(pcd,imagej,ind);
 	      }
 	  }
-      images[j]=imagej/(h1->h1denom());
+      images[j]=imagej; //not /(h1->h1denom()); since coordsplus/minus have been made primitive
       //cout<<" image is "<<imagej<<endl;
     }
 
