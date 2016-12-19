@@ -28,14 +28,16 @@ LT_INIT
 # 2. If interfaces were added, removed or changed: now increment
 # current and set revision to zero. (c,r,a) -> (c,r+1,a) -> (c+1,0,a)
 #
-# 3. If interfaces were removed (breaking backward compatibility): now
-# set age to zero. (c,r,a) -> (c,r+1,a) -> (c+1,0,a) -> (c+1,0,0)
+# 3. If interfaces were added: now increment age:
+#  (c,r,a) -> (c,r+1,a) -> (c+1,0,a) -> (c+1,0,a+1)
+# or if interfaces were removed or changed (breaking backward compatibility):
+# now set age to zero. (c,r,a) -> (c,r+1,a) -> (c+1,0,a) -> (c+1,0,0)
 #
 # NB The suffix of the library name (libec.so here) is (c-a).a.r
 
-LT_CURRENT=3
+LT_CURRENT=4
 LT_REVISION=0
-LT_AGE=1
+LT_AGE=2
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
