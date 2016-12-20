@@ -138,7 +138,7 @@ private:
   smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0) 
   {return h1->s_opmat_restricted(i,s,d,v);}
   long matdim(void)  {return h1->dimension;} 
-  long matden(void)  {return h1->denom3;}
+  long matden(void)  {return h1->denom1;}
   vector<long> eigrange(int i) {return h1->eigrange(i);}
   long dimoldpart(const vector<long> l);
 protected:
@@ -209,10 +209,10 @@ public:
   void unfix_eigs();
   void refix_eigs();
   
-  // for the i'th newform return the value of the modular symbol {0,r}
-  rational plus_modular_symbol(const rational& r, long i=0) const;
-  rational minus_modular_symbol(const rational& r, long i=0) const;
-  pair<rational,rational> full_modular_symbol(const rational& r, long i=0) const;
+  // for the i'th newform return the value of the modular symbol {0,r} (default) or {oo,r}
+  rational plus_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
+  rational minus_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
+  pair<rational,rational> full_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
 
   // next three implemented in periods.cc
 
