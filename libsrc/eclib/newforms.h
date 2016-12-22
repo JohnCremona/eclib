@@ -79,6 +79,7 @@ public:
   vec coordsplus, coordsminus;  // vector components of each freegen
   long denomplus, denomminus; 
   int j0; long fac;
+  rational optimalityfactorplus, optimalityfactorminus;
 
   newform(void) {;}
   //  newform(const vec& v, const vector<long>& ap, newforms* nfs,long ind=-1);
@@ -102,6 +103,8 @@ public:
   void find_cuspidal_factors();
   // To find twisting primes:
   void find_twisting_primes();
+  // To find optimality factors when created from a curve:
+  void find_optimality_factors(CurveRed E, int i=0);
   // To find deg(phi):
   void find_degphi();
   // To get matrix and scale factors when sign==0 ...

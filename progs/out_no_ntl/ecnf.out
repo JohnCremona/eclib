@@ -5,7 +5,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 389:
 p0=2
-#ap=	25
+#ap=	100
 1:	aplist = [ -2 -2 -3 -5 -4 -3 -6 5 -4 -6 4 -8 -3 12 -2 -6 3 -8 -5 -10 ...]
 aq = [ -1 ]
 ap0 = -2, dp0 = 0, np0 = 5

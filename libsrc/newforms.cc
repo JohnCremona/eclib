@@ -219,6 +219,10 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
   a=b=c=d=0;
   dotplus=dotminus=0;
   find_matrix();
+
+  // Set default values for optimalityfactrplus/minus (will be reset if constructing from curves)
+  optimalityfactorplus  = 1;
+  optimalityfactorminus = 1;
 }
 
 int newform::check_expand_contract()
@@ -670,9 +674,76 @@ bigfloat newform::special_value()
   compute_rank();  return Lvalue;
 }
 
+// To find optimality factors when created from a curve E.  Here
+// CP_opt is the periods of this newform, and of the optimal curve E0,
+// which we compute earlier in the newforms class since that is where
+// getperiods() is implemented.
+
+void newform::find_optimality_factors(CurveRed E, int i)
+{
+  int verbose=(nf->verbose);
+  bigcomplex w1,w2;
+  bigfloat x0, y0, xE, yE;
+
+  // Definitions: for the period lattice of the optimal curve or
+  // newform, x0 = (type)*(least real period) and y0 = (type)*(least
+  // imag period)/i.  Here type = #components = 1 (Delta<0) or 2
+  // (Deta>0).  Note that if we are in the plus or minus quotient then
+  // we can still compute these even though we do not now the type
+  // since they generate the projections of the period lattice to the
+  // real (resp. imaginary) axis.
+
+  // Similarly xE, yE for the input curve E, though here we do know
+  // the type.
+
+  // Compute the real and/or imginary periods of the newform, which
+  // are those of the optimal curve in the isogeny class:
+  if (sign==+1)
+    {
+      nf->get_real_period(i,x0);
+      x0 *= 2;
+    }
+  else if (sign==-1)
+    {
+      // NB it is impossible to get the scaling right in this case
+      nf->get_imag_period(i,y0);
+    }
+  else
+    {
+      Cperiods CP_opt = nf->getperiods(i);
+      int opt_type = CP_opt.getwRI(w1,w2);
+      x0 = opt_type * abs(w1.real());
+      y0 = abs(w2.imag());
+    }
+
+  // Compute the real and/or imginary periods of the input curve, which may not be optimal:
+  Cperiods CP(E);
+  int Etype = CP.getwRI(w1,w2);
+  xE = Etype * abs(w1.real()); // least real period
+  yE = abs(w2.imag()); // least imag period
+  // now xE, yE are twice the least real/imag part of a period of E in both cases
+
+  // Now we find rational approximations to the rations x0/xE and
+  // y0/yE.  These will have very small numerators and denominators.
+  long n,d;
+  if (sign!=-1)
+    {
+      ratapprox(x0/xE,n,d);
+      optimalityfactorplus = rational(n,d);
+      if (verbose) cout << "x-ratio = " << (x0/xE) << " = " <<n<<"/"<<d<<" = "<<optimalityfactorplus << endl;
+    }
+  if (sign!=+1)
+    {
+      ratapprox(y0/yE,n,d);
+      optimalityfactorminus = rational(n,d);
+      if (verbose) cout << "y-ratio = " << (y0/yE) << " = " <<n<<"/"<<d<<" = "<< optimalityfactorminus << endl;
+    }
+}
+
+
 newforms::~newforms(void)
 {
-  delete of;  
+  delete of;
   delete h1plus;
   delete h1minus;
   delete h1full;
@@ -981,9 +1052,15 @@ void newforms::display_modular_symbol_map(void) const
            //           cout<<"coordsplus = "<<nflist[k].coordsplus<<endl;
            //           cout<<"coordsminus = "<<nflist[k].coordsminus<<endl;
            if(sign!=-1)
-             rplus = rational(sg*nflist[k].coordsplus[j],nflist[k].cuspidalfactorplus);
+             {
+               rplus = rational(sg*nflist[k].coordsplus[j],nflist[k].cuspidalfactorplus);
+               rplus *= nflist[k].optimalityfactorplus;
+             }
            if(sign!=+1)
-             rminus = rational(sg*nflist[k].coordsminus[j],nflist[k].cuspidalfactorminus);
+             {
+               rminus = rational(sg*nflist[k].coordsminus[j],nflist[k].cuspidalfactorminus);
+               rminus *= nflist[k].optimalityfactorminus;
+             }
            if(sign==+1) 
              cout<<rplus<<" ";
            else if(sign==-1) 
@@ -1328,6 +1405,7 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
   makeh1(sign);
   if(verbose) cout << "done." << endl;
   mvp=h1->maninvector(p0); 
+  if (nap<100) nap=100;
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
   form_finder splitspace(this, (sign!=0), nap, 0, 1, 0, verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
@@ -1342,6 +1420,12 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
   splitspace.recover(eigs);  // NB newforms::use() determines what is
 			     // done with each one as it is found;
 			     // this depends on basisflag and sign
+
+  // Get period lattice of each newform (and hence of optimal curves)
+  for(i=0; i<ncurves; i++)
+    {
+      nflist[i].find_optimality_factors(Clist[i], i);
+    }
   if(verbose) cout << "...done."<<endl;
 }
 
@@ -1741,14 +1825,17 @@ rational newforms::plus_modular_symbol(const rational& r, long i, int base_at_in
   rational a(h1->nfproj_coords(num(r),den(r),nflist[i].coordsplus),
 		  nflist[i].cuspidalfactorplus);
   if (base_at_infinity) a-=nflist[i].loverp;
+  a *= nflist[i].optimalityfactorplus;
   return a;
 }
 
 rational newforms::minus_modular_symbol(const rational& r, long i, int base_at_infinity) const
 {
   // Ignore the value of base_at_infinity as it does not affect the minus symbol
-  return rational(h1->nfproj_coords(num(r),den(r),nflist[i].coordsminus),
+  rational a(h1->nfproj_coords(num(r),den(r),nflist[i].coordsminus),
 		  nflist[i].cuspidalfactorminus);
+  a *= nflist[i].optimalityfactorminus;
+  return a;
 }
 
 pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i, int base_at_infinity) const
@@ -1759,7 +1846,9 @@ pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i,
   vec a = h1->proj_coords(num(r),den(r),m);
   rational a1(a[1],nflist[i].cuspidalfactorplus);
   if (base_at_infinity) a1 -= nflist[i].loverp;
+  a1 *= nflist[i].optimalityfactorplus;
   rational a2(a[2],nflist[i].cuspidalfactorminus);
+  a2 *= nflist[i].optimalityfactorminus;
   return pair<rational,rational> ( a1, a2 );
 }
 

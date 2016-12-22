@@ -139,6 +139,14 @@ inline rational& rational::operator-=(long num_val2)
         return *this;
 }
 
+inline rational& rational::operator*=(const rational& q2)
+{
+        n *= q2.n;
+        d *= q2.d;
+        (*this).cancel();
+        return *this;
+}
+
 inline rational& rational::operator*=(long num_val2)
 {
         n*=num_val2;
