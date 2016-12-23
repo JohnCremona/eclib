@@ -350,9 +350,15 @@ void newform::find_bsd_ratio()
 
   if(sign==-1) return;
 
+  pdot = (nf->mvp)*bplus; // should be negative since L(f,1)>=0
+  if (pdot>0)
+    {
+      coordsplus *= -1;
+      bplus *= -1;
+      pdot  *= -1;
+    }
+  dp0=abs(pdot);
   // DO NOT scale pdot by denom: factor will cancel when used to compute ap
-  pdot = abs((nf->mvp)*bplus); 
-  dp0=pdot;
   // DO scale dp0 since it is used to compute L/P
   if(dp0!=0)
     {
@@ -515,9 +521,19 @@ void newform::find_twisting_primes()
 	  //cout << "Trying lplus = " << l << "\n";
 	  map<long,vec>::const_iterator vi = nf->mvlplusvecs.find(l);
 	  if(vi==nf->mvlplusvecs.end())
-	    mplus = abs((nf->mvlplusvecs[l]=nf->h1->manintwist(l))*bplus);
+	    mplus = (nf->mvlplusvecs[l]=nf->h1->manintwist(l))*bplus;
 	  else
-	    mplus = abs((vi->second)*bplus);
+	    mplus = (vi->second)*bplus;
+          // We force mplus>0 to fix the sign of the modular symbol to
+          // agree with L(f*chi,1)>0, since L(f*chi,1) is real and a
+          // positive multiple of mplus.  This uses the fact that the
+          // Gauus sum is +sqrt(l).
+          if (mplus<0)
+            {
+              mplus *= -1;
+              bplus *= -1;
+              coordsplus *= -1;
+            }
 	  if((denomplus>1)&&(mplus!=0))
 	    {
 	      if(::divides(denomplus,mplus))  mplus/=denomplus;
@@ -532,9 +548,19 @@ void newform::find_twisting_primes()
 	  //cout << "Trying lminus = " << l << "\n";
 	  map<long,vec>::const_iterator vi = nf->mvlminusvecs.find(l);
 	  if(vi==nf->mvlminusvecs.end())
-	    mminus = abs((nf->mvlminusvecs[l]=nf->h1->manintwist(l))*bminus);
+	    mminus = (nf->mvlminusvecs[l]=nf->h1->manintwist(l))*bminus;
 	  else
-	    mminus = abs((vi->second)*bminus);
+	    mminus = (vi->second)*bminus;
+          // We force mminus<0 to fix the sign of the modular symbol
+          // to agree with L(f*chi,1)>0, since L(f*chi,1) is real and
+          // a negative multiple of mminus.  This uses the fact that
+          // the Gauus sum is +i*sqrt(l).
+          if (mminus>0)
+            {
+              mminus *= -1;
+              bminus *= -1;
+              coordsminus *= -1;
+            }
 	  if((denomminus>1)&&(mminus!=0))
 	    {
 	      if(::divides(denomminus,mminus))  mminus/=denomminus;
