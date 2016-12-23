@@ -282,6 +282,7 @@ int main(void)
     }
   }   // ends while(nsucc<nnf)
   delete[]success;
+  delete[]curves;
   
 }       // end of if(n>0)
      }  // end of while(n>0) or while(n<limit)
