@@ -1850,7 +1850,8 @@ rational newforms::plus_modular_symbol(const rational& r, long i, int base_at_in
 {
   rational a(h1->nfproj_coords(num(r),den(r),nflist[i].coordsplus),
 		  nflist[i].cuspidalfactorplus);
-  if (base_at_infinity) a-=nflist[i].loverp;
+  // {oo,r} = {0,r}+{oo,0} and loverp={oo,0} (not {0,oo}!)
+  if (base_at_infinity) a+=nflist[i].loverp;
   a *= nflist[i].optimalityfactorplus;
   return a;
 }
@@ -1871,7 +1872,8 @@ pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i,
   m.setcol(2,nflist[i].coordsminus);
   vec a = h1->proj_coords(num(r),den(r),m);
   rational a1(a[1],nflist[i].cuspidalfactorplus);
-  if (base_at_infinity) a1 -= nflist[i].loverp;
+  // {oo,r} = {0,r}+{oo,0} and loverp={oo,0} (not {0,oo}!)
+  if (base_at_infinity) a1 += nflist[i].loverp;
   a1 *= nflist[i].optimalityfactorplus;
   rational a2(a[2],nflist[i].cuspidalfactorminus);
   a2 *= nflist[i].optimalityfactorminus;

@@ -31,22 +31,25 @@
 #include <eclib/cperiods.h>
 #include <eclib/newforms.h>
 #include <eclib/curve.h>
+#include <eclib/getcurve.h>
 
 int main(void)
 {
   int verbose=0;
+  vector<bigrational> ai(5);
+  bigint v;
 
-  // Read in the curve, minimise and construct CurveRed (needed for
+  // Read in curves, minimise and construct CurveRed (needed for
   // conductor and Traces of Frobenius etc.)
-  Curve C;
-  cout << "Enter curve: "; cin >> C;
-  Curvedata CD(C,1); // minimise
-  CurveRed CR(CD);
-  bigint N = getconductor(CR);
-  int n = I2int(N);
-  cout << ">>> Level = conductor = " << n << " <<<" << endl;
-  cout << "Minimal curve = " << (Curve)(CR) << endl;
-  cout<<endl;
+  while (getcurve(ai,verbose))
+    {
+      Curvedata CD(ai,v);
+      CurveRed CR(CD);
+      bigint N = getconductor(CR);
+      int n = I2int(N);
+      cout << ">>> Level = conductor = " << n << " <<<" << endl;
+      cout << "Minimal curve = " << (Curve)(CR) << endl;
+      cout<<endl;
 
   // Construct newforms class (this does little work)
   int sign=1;
@@ -65,7 +68,11 @@ int main(void)
   cout<<endl;
 
   // Display modular symbol info
-  cout << "Modular symbol map:"<<endl;
+  cout << "Modular symbol map (";
+  if (sign!=-1) cout << "+";
+  if (sign==0) cout << ",";
+  if (sign!=1) cout << "-";
+  cout << ")" << endl;
   nf.display_modular_symbol_map();
 
   // Compute more modular symbols as prompted:
@@ -115,4 +122,5 @@ int main(void)
               }
 	  }
       }
+    }   // end of curve input loop
 }       // end of main()
