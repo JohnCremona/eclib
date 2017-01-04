@@ -1216,7 +1216,7 @@ int nrootscubic(long b, long c, long d, long p, long* roots)
   return nr;
 }
 
-void ratapprox(bigfloat x, bigint& a, bigint& b)
+void ratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxd)
 {
   bigint c, x0, x1, x2, y0, y1, y2;
   bigfloat rc, xx, diff, eps = to_bigfloat(1.0e-6);
@@ -1228,27 +1228,51 @@ void ratapprox(bigfloat x, bigint& a, bigint& b)
       y2 = y0 + c*y1; y0 = y1; y1 = y2;
       diff = abs( x - I2bigfloat(x2)/I2bigfloat(y2) );
       //      cout<<"x2 = "<<x2<<",\ty2 = "<<y2<<",\tdiff = "<<diff<<endl;
-      if ( abs(xx - rc) < eps ) diff = 0;
-      else xx = 1/(xx - rc);
+      if ( abs(xx - rc) < eps )
+        diff = 0;
+      else
+        {
+          if ( (maxd>0) && (abs(y2)>maxd) ) // go back to previous
+            {
+              diff = 0;
+              x2 = x0;
+              y2 = y0;
+            }
+          else
+            xx = 1/(xx - rc);
+        }
     }
   a = x2; b = y2;
   if ( b < 0 )
     {::negate(a); ::negate(b); }
 }
 
-void ratapprox(bigfloat x, long& a, long& b)
+void ratapprox(bigfloat x, long& a, long& b, long maxd)
 {
   long c, x0, x1, x2, y0, y1, y2;
   bigfloat xx, diff, eps = to_bigfloat(1.0e-7);
   xx = x; x0 = 0; x1 = 1; y0 = 1; y1 = 0;
   diff = 1; c=x2=y2=0;
+  //cout<<"ratapprox("<<x<<") with maxd="<<maxd<<endl;
   while ( diff > eps )
     { c = longify( xx + ( (xx>0) ? 0.5 : -0.5 ) ); // ie round(xx)
       x2 = x0 + c*x1; x0 = x1; x1 = x2;
       y2 = y0 + c*y1; y0 = y1; y1 = y2;
+      //cout<<"(x2,y2)=("<<x2<<","<<y2<<")"<<endl;
       diff = abs( x - (to_bigfloat(x2)/to_bigfloat(y2)) );
-      if ( abs(xx - c) < eps ) diff = 0;
-      else xx = 1/(xx - c);
+      if ( abs(xx - c) < eps )
+        diff = 0;
+      else
+        {
+          if ( (maxd>0) && (abs(y2)>maxd) ) // go back to previous
+            {
+              diff = 0;
+              x2 = x0;
+              y2 = y0;
+            }
+          else
+            xx = 1/(xx - c);
+        }
     }
   a = x2; b = y2;
   if ( b < 0 )    {a=-a; b=-b; }

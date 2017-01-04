@@ -517,7 +517,7 @@ void periods_direct::use(long n, long an)
 #endif
   }
   bigfloat dn = to_bigfloat(n);
-  bigfloat coeff = - to_bigfloat(an)/dn;
+  bigfloat coeff = to_bigfloat(an)/dn;
   bigfloat ef2 = coeff * exp(dn*factor2);
   int nbd = (n*b)%d, ncd = (n*c)%d;
   if(eps_N==-1) 
@@ -528,10 +528,10 @@ void periods_direct::use(long n, long an)
 #ifdef TRACE_USE 
 	  cout<<"n="<<n<<", ef1="<<ef1<<", ef2="<<ef2<<"\n";
 #endif
-	  sum1 += (2*ef1); 
+	  sum1 -= (2*ef1); 
 	}
-      sum1 -= ef2*(ctab[nbd]+ctab[ncd]);
-      sum2 -= ef2*(stab[nbd]+stab[ncd]);
+      sum1 += ef2*(ctab[nbd]+ctab[ncd]);
+      sum2 += ef2*(stab[nbd]+stab[ncd]);
     }
   else
     {
@@ -662,7 +662,7 @@ void lfchi::compute(long ell)
 #endif
   sumit();
 
-  val = 2*sum1;
+  val = -2*sum1; // - since sumit() uses -a_n
 }
  
 ////////////////////////////////////////////////////////
@@ -678,23 +678,23 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
       if(verbose) 
 	cout << "Computing real period via L(f,1): ";
       lx.compute(1);
-      if(verbose) cout<<"L(f,1) = "<<abs(lx.value())<<"; ";
+      if(verbose) cout<<"L(f,1) = "<<lx.value()<<"; ";
       rational lop=nfi->loverp;
-      x = abs(lx.value()*to_bigfloat(den(lop))/to_bigfloat(num(lop))); 
+      x = lx.value()*to_bigfloat(den(lop))/to_bigfloat(num(lop)); 
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }
   
-  long lplus=abs(nfi->lplus);
-  long mplus=abs(nfi->mplus);
+  long lplus=nfi->lplus;
+  long mplus=nfi->mplus;
   if(mplus!=0)
     {
       if(verbose) 
 	cout << "Computing real period via L(f,chi,1) with chi mod "
 	     <<lplus<<"...";
       lx.compute(lplus);
-      if(verbose) cout<<"L(f,chi,1) = "<<abs(lx.scaled_value())<<"; ";
-      x = abs(lx.scaled_value()/to_bigfloat(mplus));
+      if(verbose) cout<<"L(f,chi,1) = "<<lx.scaled_value()<<"; ";
+      x = lx.scaled_value()/to_bigfloat(mplus);
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }
@@ -704,7 +704,7 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
   periods_direct pd(this,nfi);
   if(verbose) cout<<"...computing directly...";
   pd.compute();
-  x = abs(pd.rper());
+  x = pd.rper();
   long dotplus = (nfi->dotplus);
   if (!dotplus) return 0;
   x /= dotplus;
@@ -717,16 +717,16 @@ int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
   const newform* nfi = &(nflist[i]);
   lfchi lx(this,nfi); 
   
-  long lminus=abs(nfi->lminus);
-  long mminus=abs(nfi->mminus);
+  long lminus=(nfi->lminus);
+  long mminus=(nfi->mminus);
   if(mminus!=0)
     {
       if(verbose) 
 	cout << "Computing imaginary period via L(f,chi,1) with chi mod "
 	     <<lminus<<"...";
       lx.compute(lminus);
-      if(verbose) cout<<"L(f,chi,1) = "<<abs(lx.scaled_value())<<"; ";
-      y = abs(lx.scaled_value()/to_bigfloat(mminus));
+      if(verbose) cout<<"L(f,chi,1) = "<<(lx.scaled_value())<<"; ";
+      y = (lx.scaled_value()/to_bigfloat(mminus));
       if(verbose) cout<<"imaginary period = "<<y<<endl;
       return 1;
     }
@@ -747,7 +747,7 @@ Cperiods newforms::getperiods(long i, int method, int verbose)
 	method=1;
       else
 	{
-	  long d = abs(nfi->d);
+	  long d = (nfi->d);
 	  if(d>0)
 	    method = ( d < (nfi->lplus)) || ( d < (nfi->lminus));
 	  else method=0;

@@ -180,8 +180,8 @@ vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c
 // roots are put in r which should be allocated of size 3
 int nrootscubic(long b, long c, long d, long p, long* roots);
 
-void ratapprox(bigfloat x, bigint& a, bigint& b);
-void ratapprox(bigfloat x, long& a, long& b);
+void ratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxd=BIGINT(0));
+void ratapprox(bigfloat x, long& a, long& b, long maxd=0);
 
 #endif
 // end of file marith.h

@@ -45,7 +45,7 @@ inline int trust_denom(long d) { return (d<251);}
 // Given a newform (the i'th in newforms) at level n with a real
 // period x0; Finds a matrix [a0,b0;Nc0,d0] whose integral is
 // dotplus*x0+dotminus*y0*i N.B. The value of x0 may be changed, if we
-// come across some period whose real part isnot an integer multiple
+// come across some period whose real part is not an integer multiple
 // of the original x0.
 
 // We compute periods of lots of matrices in Gamma_0(N), over all
@@ -174,7 +174,17 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
        } // end of b loop
      } // end of d loop
   x0/=to_bigfloat(dotplus0);
+  if (x0<0)
+    {
+      x0 *= -1;
+      dotplus0 *= -1;
+    }
   y0/=to_bigfloat(dotminus0);
+  if (y0<0)
+    {
+      y0 *= -1;
+      dotminus0 *= -1;
+    }
   dotplus =(dotplus0 *nrx0)/drx0;
   dotminus=(dotminus0*nry0)/dry0;
   if(verbose>1){
@@ -193,8 +203,9 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 // periods).  Computes both x0 and y0.  rp_known, ip_known are success
 // flags.
 
-int newforms::get_both_periods(long i, bigfloat&x0, bigfloat&y0)
+int newforms::get_both_periods(long i, bigfloat&x0, bigfloat&y0) const
 {
+  x0=y0=to_bigfloat(0);
   if(nflist[i].a==0)
     {
       //      cout<<"Cannot compute get_periods(): matrix not known."<<<endl;
@@ -202,8 +213,18 @@ int newforms::get_both_periods(long i, bigfloat&x0, bigfloat&y0)
     }
   periods_direct integrator(this,&(nflist[i]));
   integrator.compute(nflist[i].a,nflist[i].b,nflist[i].c,nflist[i].d);
-  x0 = abs(integrator.rper()) / to_bigfloat(nflist[i].dotplus);
-  y0 = abs(integrator.iper()) / to_bigfloat(nflist[i].dotminus);
+  int dot = nflist[i].dotplus;
+  if (dot) // else we're in a minus space
+    {
+      x0 = integrator.rper();
+      x0 /= to_bigfloat(dot);
+    }
+  dot = nflist[i].dotminus;
+  if (dot) // else we're in a plus space
+    {
+      y0 = integrator.iper();
+      y0 /= to_bigfloat(dot);
+    }
   return 1;
 }
 
@@ -214,7 +235,7 @@ int get_curve(long n, long fac, long maxnx, long maxny,
   static bigfloat zero=to_bigfloat(0);
   long fac6=(odd(fac)?fac:2*fac);
   if(detail&&(fac>1)) cout<<"c6 factor " << fac6 << endl;
-	 
+
   bigcomplex w1, w2; bigcomplex c4, c6;
   bigfloat x1=x0, y1=y0;
   bigfloat c4err, c6err, c4c6err;

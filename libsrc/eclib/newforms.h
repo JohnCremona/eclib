@@ -107,8 +107,10 @@ public:
   void find_optimality_factors(CurveRed E, int i=0);
   // To find deg(phi):
   void find_degphi();
-  // To get matrix and scale factors when sign==0 ...
+   // To get matrix and scale factors
   void find_matrix();
+   // To normalize signs:
+  void sign_normalize();
   // Compute analytic rank (if not already done)
   void compute_rank();
   // Return analytic rank (compute if not already done)
@@ -158,7 +160,7 @@ public:
     :level(n), verbose(disp), of(0), h1(0), h1plus(0), h1minus(0), h1full(0) {;}
   ~newforms(void);
   void display(void) const;
-  void display_modular_symbol_map(void) const;
+  void display_modular_symbol_map(int check=0) const;
   void output_to_file(int binflag=1, int smallflag=0) const;
   void set_sign(int s) {sign=s;}
   int  get_sign() {return sign;}
@@ -244,7 +246,7 @@ public:
 
   // Compute both periods from the (known) matrix [a,b;Nc,d] and
   // scaling factors dotplus, dotminus.  Return success flag.
-  int get_both_periods(long i, bigfloat&x0, bigfloat&y0);
+  int get_both_periods(long i, bigfloat&x0, bigfloat&y0) const;
 
   // Given an imaginary period y1, finds a prime lminus =3(mod 4) and
   // <=lmax for which L(f,lminus,1) is nonzero and hence a multiple

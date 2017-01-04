@@ -33,6 +33,12 @@
 #include <eclib/curve.h>
 #include <eclib/getcurve.h>
 
+// defining to be 1 this causes display_modular_symbol_map() to be
+// called with the check option on, which takes a lot longer but
+// checks that the algebraic modular symbols agree with numerical
+// ones, even in their sign.
+#define DEBUG 0
+
 int main(void)
 {
   int verbose=0;
@@ -73,7 +79,7 @@ int main(void)
   if (sign==0) cout << ",";
   if (sign!=1) cout << "-";
   cout << ")" << endl;
-  nf.display_modular_symbol_map();
+  nf.display_modular_symbol_map(DEBUG);
 
   // Compute more modular symbols as prompted:
 

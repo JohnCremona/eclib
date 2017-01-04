@@ -352,6 +352,10 @@ void newform::find_bsd_ratio()
 
   pdot = (nf->mvp)*bplus; // should be negative since L(f,1)>=0
   if (pdot>0)
+    // NB This will ensure that plus modular symbols have the right
+    // sign for curves where L(E,1) is nonzero, but more work is
+    // necessary for the plus symbols when L(Em1)=0, and for minus
+    // symbols.  The additional work is done in find_matrix().
     {
       coordsplus *= -1;
       bplus *= -1;
@@ -596,10 +600,9 @@ void newform::find_matrix()
             {
               if(1==bezout(d,-n*b,a,c))
                 {
-		  //                  cout<<"b/d = "<<b<<"/"<<d<<": ";
+		  //  cout<<"b/d = "<<b<<"/"<<d<<": ";
                   v = nf->h1->coords(b,d).as_vec();
-		  //                  cout<<"v="<<v<<endl;
-//                if(!(nf->h1->cuspidal)) v = nf->h1->cuspidalpart(v);
+		  //  cout<<"v="<<v<<endl;
                   if(sign!=-1)
                     {
                       dotplus=v*bplus;
@@ -607,7 +610,6 @@ void newform::find_matrix()
                         dotplus/=denomplus;
                       else 
                         cout<<"Warning in find_matrix: dotplus not divisible by denomplus!"<<endl; 
-                      dotplus=abs(dotplus);
                     }
                   if(sign!=+1)
                     {
@@ -616,7 +618,6 @@ void newform::find_matrix()
                         dotminus/=denomminus;
                       else 
                         cout<<"Warning in find_matrix: dotminus not divisible by denomminus!"<<endl; 
-                      dotminus=abs(dotminus);
                     }
                   found=(((dotplus!=0)||(sign==-1))&&
                          ((dotminus!=0)||(sign==+1)));
@@ -627,7 +628,7 @@ void newform::find_matrix()
   b--; d--;  //because they get incremented BEFORE the loop end-test
   if(d<0) {a=-a; b=-b; c=-c; d=-d;} // because we need d>0 for integration
 
-  if(verbose) 
+  if(verbose)
     {
       cout<<"done: ";
       cout << "[(" <<a<<","<<b<<";"<<c
@@ -727,12 +728,13 @@ void newform::find_optimality_factors(CurveRed E, int i)
   if (sign==+1)
     {
       nf->get_real_period(i,x0);
-      x0 *= 2;
+      x0 = 2*abs(x0);
     }
   else if (sign==-1)
     {
       // NB it is impossible to get the scaling right in this case
       nf->get_imag_period(i,y0);
+      y0 = abs(y0);
     }
   else
     {
@@ -754,18 +756,81 @@ void newform::find_optimality_factors(CurveRed E, int i)
   long n,d;
   if (sign!=-1)
     {
-      ratapprox(x0/xE,n,d);
+      ratapprox(x0/xE,n,d,163);
       optimalityfactorplus = rational(n,d);
-      if (verbose) cout << "x-ratio = " << (x0/xE) << " = " <<n<<"/"<<d<<" = "<<optimalityfactorplus << endl;
+      if (verbose) cout << "x-ratio (optimalityfactorplus) = " << (x0/xE) << " = " <<n<<"/"<<d<<" = "<<optimalityfactorplus << endl;
     }
   if (sign!=+1)
     {
-      ratapprox(y0/yE,n,d);
+      ratapprox(y0/yE,n,d,163);
       optimalityfactorminus = rational(n,d);
-      if (verbose) cout << "y-ratio = " << (y0/yE) << " = " <<n<<"/"<<d<<" = "<< optimalityfactorminus << endl;
+      if (verbose) cout << "y-ratio (optimalityfactorminus) = " << (y0/yE) << " = " <<n<<"/"<<d<<" = "<< optimalityfactorminus << endl;
     }
 }
 
+// Adjust the sign of dotplus/dotminus, mplus/mminus, pdot and the
+// associated primitive coordinate vectors by computing a period
+// numerically.  Here we only need sufficient precision to determine
+// the sign, knowing the values to be nonzero rationals with small
+// denominator.
+
+void newform::sign_normalize()
+{
+  int verbose = (nf->verbose);
+  int sign = (nf->sign);
+
+  periods_direct integrator(nf, this);
+  integrator.compute();
+  bigfloat x0 = integrator.rper();
+  bigfloat y0 = integrator.iper();
+  if(verbose>1)
+    cout<<"integral over {0,"<<b<<"/"<<d<<"} = ("<<x0<<")+i*("<<y0<<")"<<endl;
+  if (sign!=-1)
+    {
+      if (dotplus*x0<0)
+        {
+          if (verbose)
+            cout<<"flipping sign for plus symbols"<<endl;
+          coordsplus *= -1;
+          bplus *= -1;
+          dotplus *= -1;
+          pdot *= -1;
+          mplus *= -1;
+        }
+    }
+  if (sign!=+1)
+    {
+      if (dotminus*y0<0)
+        {
+          if (verbose)
+            cout<<"flipping sign for minus symbols"<<endl;
+          coordsminus *= -1;
+          dotminus *= -1;
+          bminus *= -1;
+          mminus *= -1;
+        }
+    }
+  if (verbose>1)
+    {
+      cout<<"Approximate numerical values:"<<endl;
+      if (sign==0)
+        {
+          cout<<"x = "<<(x0/dotplus)<<endl;
+          cout<<"y = "<<(y0/dotminus)<<endl;
+          cout<<"integral over {0,"<<b<<"/"<<d<<"} = ("<<x0<<")+i*("<<y0<<")"<<endl;
+        }
+      if (sign==+1)
+        {
+          cout<<"x = "<<(x0/dotplus)<<endl;
+          cout<<"integral over {0,"<<b<<"/"<<d<<"} has real      part "<<x0<<endl;
+        }
+      if (sign==-1)
+        {
+          cout<<"y = "<<(y0/dotminus)<<endl;
+          cout<<"integral over {0,"<<b<<"/"<<d<<"} has imaginary part "<<x0<<endl;
+        }
+    }
+}
 
 newforms::~newforms(void)
 {
@@ -865,30 +930,41 @@ void newforms::createfromscratch(int s, long ntp)
   // those which need it.
 if(n1ds>0)
     {
-      for(i=0; i<n1ds; i++) 
+      for(i=0; i<n1ds; i++)
 	if((nap=nflist[i].aplist.size())>maxnap) maxnap=nap;
-      if(verbose) 
+      if(verbose)
 	cout<<"Max number of ap in newforms so far is "<<maxnap
 	    <<", increasing to " << DEFAULT_SMALL_NAP << endl;
       if (maxnap < DEFAULT_SMALL_NAP) maxnap = DEFAULT_SMALL_NAP;
-      for(i=0; i<n1ds; i++) 
-	if((nap=nflist[i].aplist.size())<maxnap) 
-	  {
-	    if(verbose)
-	      cout<<"Newform #"<<(i+1)<<" has only "<<nap
-		  <<" ap so we need to compute more..."<<endl;
-	    nflist[i].add_more_ap(maxnap);
-	  }  
-    }
+      for(i=0; i<n1ds; i++)
+        {
+          if((nap=nflist[i].aplist.size())<maxnap)
+            {
+              if(verbose)
+                cout<<"Newform #"<<(i+1)<<" has only "<<nap
+                    <<" ap so we need to compute more..."<<endl;
+              nflist[i].add_more_ap(maxnap);
+            }
 
+          // Now if necessary we adjust the sign of dotplus/dotminus and the
+          // associated primitive coordinate vectors by computing a period
+          // numerically.  Here we only need sufficient precision to determine
+          // the sign, knowing the values to be nonzero rationals with small
+          // denominator.
+
+          if(verbose)
+            cout<<"Newform #"<<(i+1)<<": fixing sign normalization using approximate periods"<<endl;
+          nflist[i].sign_normalize();
+        }
+    }
    // Compute homspace::projcoord, so proj_coords can be used
    // Replaces coord_vecs of homspace with projections onto eigenspaces
    // NB if #newforms>1 this MUST be re-called after any sorting of newforms
-   make_projcoord();
+ make_projcoord();
 
    // Look for a j0 such that nflist[i].bplus/bminus[j0]!=0 for all i, or a set of such j
-   find_jlist();
-}  
+ find_jlist();
+}
 
 
 void newforms::find_jlist()
@@ -1055,14 +1131,38 @@ void newforms::display(void) const
   }
 }
 
-void newforms::display_modular_symbol_map(void) const
+#define DEBUG_SCALING
+
+void newforms::display_modular_symbol_map(int check) const
 {
  long i,j,k;
  rational rplus, rminus;
+ vector<bigfloat> x0s;
+ vector<bigfloat> y0s;
+ bigfloat x0,y0;
+ if (check)
+   for(k=0; k<n1ds; k++)
+     {
+       cout<<"getting period(s) for newform # "<<(k+1)<<endl;
+       get_both_periods(k,x0,y0);
+       cout<<"x0="<<x0<<", y0="<<y0<<endl;
+       x0s.push_back(x0);
+       y0s.push_back(y0);
+     }
+
  for(i=0; i<h1->nsymb; i++)
    {
      symb s = h1->symbol(i);
-     cout<<s<<" = "<<modsym(s)<<" -> ";
+     modsym ms = modsym(s);
+     cout<<s<<" = "<<ms<<" -> ";
+     rational alpha = ms.alpha(), beta = ms.beta();
+     long a, b, c, d, g=0;
+     if (num(alpha)==0)
+       {
+         b = num(beta);
+         d = den(beta);
+         g = bezout(-modulus*b,d,c,a); // so g=a*d-b*N*c
+       }
      j=h1->coordindex[i];
      int sg=::sign(j); j=abs(j);
      //     cout<<"j="<<j<<"("<<sg<<")"<<endl;
@@ -1075,16 +1175,49 @@ void newforms::display_modular_symbol_map(void) const
      else 
        for(k=0; k<n1ds; k++) 
          {
-           //           cout<<"coordsplus = "<<nflist[k].coordsplus<<endl;
-           //           cout<<"coordsminus = "<<nflist[k].coordsminus<<endl;
+           if (check && (g==1))
+             {
+               periods_direct integrator(this,&(nflist[k]));
+               integrator.compute(a,b,c,d);
+               x0 = integrator.rper();
+               y0 = integrator.iper();
+             }
            if(sign!=-1)
              {
-               rplus = rational(sg*nflist[k].coordsplus[j],nflist[k].cuspidalfactorplus);
+               long nrplus = sg*nflist[k].coordsplus[j];
+               long drplus = nflist[k].cuspidalfactorplus;
+               rplus = rational(nrplus,drplus);
+               if (check && (g==1))
+                 {
+                   long n = I2long(Iround(drplus *x0/x0s[k])); // should = nrplus
+                   if (n != nrplus)
+                     {
+                       cout << "plus check fails: rplus = "<<nrplus<<"/"<<drplus<<" = "<<rplus<<endl;
+                       cout << "real part = "<<x0<<endl;
+                       cout << "x0        = "<<x0s[k]<<endl;
+                       cout << "ratio     = "<<x0/x0s[k]<<endl;
+                       cout << "scaled ratio = "<<n<<endl;
+                     }
+                 }
                rplus *= nflist[k].optimalityfactorplus;
              }
            if(sign!=+1)
              {
-               rminus = rational(sg*nflist[k].coordsminus[j],nflist[k].cuspidalfactorminus);
+               long nrminus = sg*nflist[k].coordsminus[j];
+               long drminus = nflist[k].cuspidalfactorminus;
+               rminus = rational(nrminus,drminus);
+               if (check && (g==1))
+                 {
+                   long n = I2long(Iround(drminus *y0/y0s[k])); // should = nrminus
+                   if (n != nrminus)
+                     {
+                       cout << "minus check fails: rminus = "<<rminus<<endl;
+                       cout << "imag part = "<<y0<<endl;
+                       cout << "y0        = "<<y0s[k]<<endl;
+                       cout << "ratio     = "<<y0/y0s[k]<<endl;
+                       cout << "scaled ratio = "<<n<<endl;
+                     }
+                 }
                rminus *= nflist[k].optimalityfactorminus;
              }
            if(sign==+1) 
@@ -1431,7 +1564,7 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
   makeh1(sign);
   if(verbose) cout << "done." << endl;
   mvp=h1->maninvector(p0); 
-  if (nap<100) nap=100;
+  if (nap<300) nap=300;
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
   form_finder splitspace(this, (sign!=0), nap, 0, 1, 0, verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
@@ -1450,7 +1583,12 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
   // Get period lattice of each newform (and hence of optimal curves)
   for(i=0; i<ncurves; i++)
     {
+      if(verbose)
+        cout<<"Finding optimality scaling factors using approximate periods"<<endl;
       nflist[i].find_optimality_factors(Clist[i], i);
+      if(verbose)
+        cout<<"Fixing sign normalization using approximate periods"<<endl;
+      nflist[i].sign_normalize();
     }
   if(verbose) cout << "...done."<<endl;
 }
