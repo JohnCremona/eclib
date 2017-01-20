@@ -133,7 +133,7 @@ int getquartic(quartic& g)  // special version for a*x^4+c*x^2+e quartics
   bigint a, b, c, d, e;
   
   cout << "Enter quartic coefficients (a,0,c,0,e) or just a c e " << endl;
-  char ch; cin>>ch;
+  char ch=0; cin>>ch;
   if(ch=='(') cin>>a>>ch>>b>>ch>>c>>ch>>d>>ch>>e>>ch;
   else 
     {

@@ -62,7 +62,7 @@ int main()
 	      long ntotal = 16*nnf;
 	      int* batch_i = new int[ntotal];
 	      datafile.read((char*)batch_i,ntotal*sizeof(int));
-	      delete batch_i;
+	      delete[] batch_i;
 
 	      // read and store aq for each newform
 	      ntotal = naq*nnf;
@@ -76,7 +76,7 @@ int main()
 
 	      // read and store ap for each newform
 	      ntotal = 25*nnf;
-	      delete batch;
+	      delete[] batch;
 	      batch = new short[ntotal];
 	      datafile.read((char*)batch,ntotal*sizeof(short));
 	      batchptr = batch;
@@ -113,7 +113,7 @@ int main()
 		  for(ic=0; ic<nnf; ic++) aptable[ic][ip]=*batchptr++;
 		  ip++;
 		}
-	      delete batch;
+	      delete[] batch;
 	      datafile.close();
 	      //        cout<<"finished reading eigs, closed data file."<<endl;
           for (xic=0; xic<nnf; xic++)

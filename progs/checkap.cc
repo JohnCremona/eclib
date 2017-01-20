@@ -61,7 +61,8 @@ int main(void)
 	      long ntotal = 16*nnf;
 	      int* batch_i = new int[ntotal];
 	      datafile.read((char*)batch_i,ntotal*sizeof(int));
-
+              delete[] batch_i;
+              
 	      // skip over aq for each newform
 	      ntotal = naq*nnf;
 	      short* batch = new short[ntotal];
@@ -69,7 +70,7 @@ int main(void)
 	      
 	      // read and check ap for each newform
 	      ntotal = nap*nnf;
-	      delete batch;
+	      delete[] batch;
 	      batch = new short[ntotal];
 	      datafile.read((char*)batch,ntotal*sizeof(short));
 	      short* batchptr = batch;
@@ -88,7 +89,7 @@ int main(void)
 			}
 		    }
 		}
-	      delete batch;
+	      delete[] batch;
 	    } // ends if(nnf>0)
 	} // ends if(datafile)
 	    

@@ -39,6 +39,7 @@ class isprime {
       : n_( n ), prime_( 1 ) {}
     isprime( unsigned int min, unsigned int max )
       : min_( min ), max_( max ) {}
+    ~isprime() {;}
 
     void operator()() {
       // Find square root
@@ -98,7 +99,7 @@ int main( int argc, char **argv ) {
   for( unsigned int i = 2; i < N; i++ ) {
     // Create a new task object
     isprime* task = new isprime( i );
-  
+
     // Add task to container so it can be accessed later
     tasks.push_back( task );
 
@@ -135,6 +136,11 @@ int main( int argc, char **argv ) {
   std::cout << "Running with " << t << " threads" << std::endl;
   std::cout << "There are " << count << " primes up to " << N << std::endl;
   if( v ) profile.show( 1 );
+
+  // Delete tasks
+   for( std::vector< isprime* >::const_iterator it = tasks.begin();  it!=tasks.end(); it++ ) {
+     delete *it;
+   }
 
   exit( EXIT_SUCCESS );
 

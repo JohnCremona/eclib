@@ -51,7 +51,7 @@ int getcurve(vector<bigrational>& ai, int verb)
   ai.resize(5);
   if(verb) cerr  << "Enter curve: ";
   cin>>ws;  if(cin.eof()) return 0; // quit if EOF reached
-  char c;
+  char c=0;
   cin.get(c);
 #ifdef DEBUG_Q_INPUT
   cout<<"First char read = "<<c<<"\n";
