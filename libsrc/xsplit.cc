@@ -492,6 +492,9 @@ void form_finder::find() {
   pool.close();
 #endif
 
+  // Clear all nodes.  This should have been be done automatically but not all nodes are deleted when running in multithreaded mode.
+  root -> eraseChildren();
+
   // Now compute all newforms only if recursion has finished
   if(verbose>1) cout << "Now performing use() on all lists at once" << endl;
   for( int nf = 0; nf < gnfcount; nf++ ) {
