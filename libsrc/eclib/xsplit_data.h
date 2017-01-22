@@ -98,7 +98,7 @@ class ff_data {
                                                     //  and eigrange
     void childStatus( long eig, childstatus flag ); // Sets completed children
     
-    void eraseCompletedChildren();                  // Destroys completed children
+    void eraseChildren();                           // Destroys all children recursively
 
     // Make form_finder class a friend to gain access to protected/private methods
     friend class form_finder;

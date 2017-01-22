@@ -27,6 +27,7 @@
 #define USE_SPARSE 1
 #define ECLIB_INT_NUM_THREADS 8
 #define ECLIB_RECURSION_DIM_LIMIT 5821
+//#define ECLIB_MULTITHREAD_DEBUG
 #include <eclib/logger.h>
 #include <eclib/xsplit.h>
 #include <eclib/smatrix_elim.h>
@@ -389,6 +390,9 @@ void form_finder::recover(vector< vector<long> > eigs) {
  
     splitoff(eigs[iform]);
   }  
+  // Clears all nodes.  This cannot be done automatically since we
+  // don't know how many eigs lists were to be splt off.
+  root -> eraseChildren();
 }
 
 void form_finder::splitoff(const vector<long>& eigs) {
@@ -415,11 +419,15 @@ void form_finder::splitoff(const vector<long>& eigs) {
     // Update data
     depth  = current -> depth_;
     subdim = current -> subdim_;
+    if (verbose) {
+      cout << "...increasing depth to " << depth 
+           << ", dimension " << subdim << endl;
+    }
   }
   
   // Current node is new branch point
-  // We want to trim old branches to save memory ...
-  current -> eraseCompletedChildren();
+  // We trim all sub-branches ...
+  current -> eraseChildren();
   
   if( verbose ) {
     cout << "restarting at depth = " << depth << ", "
@@ -428,7 +436,7 @@ void form_finder::splitoff(const vector<long>& eigs) {
   
   // ... and grow a new branch down to required depth.
   while( (subdim > targetdim) && (depth < maxdepth) ) {
-    // Get number of test eigenvalues
+    // Get number of possible eigenvalues
     if( current -> numChildren_ <= 0 ) {
       vector<long> t_eigs = h->eigrange(depth);
       current -> setChildren( t_eigs );
@@ -455,7 +463,7 @@ void form_finder::splitoff(const vector<long>& eigs) {
   // Creating newforms
   make_basis(*current);
   h->use(current->bplus_,current->bminus_,eigs); 
-  
+
   return;
 }
 

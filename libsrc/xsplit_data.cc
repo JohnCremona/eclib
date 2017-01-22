@@ -59,8 +59,6 @@ ff_data::~ff_data() {
   // Delete dynamically created objects
   delete abs_space_;
   delete rel_space_;
-  abs_space_ = NULL;
-  rel_space_ = NULL;
 }
 
 #ifdef ECLIB_MULTITHREAD
@@ -350,14 +348,17 @@ void ff_data::childStatus( long eig, childstatus flag ) {
 }
 
 /**
- * eraseCompletedChldren()
+ * eraseChldren()
  *
- * Loops through containers and destroying completed children.
+ * Loops through containers and destroys all children.
  */
-void ff_data::eraseCompletedChildren() {
+void ff_data::eraseChildren( ) {
   if( numChildren_ > 0 ) {
     for( int i = 0; i < numChildren_; i++ ) {
-      if( completedChildren_[i] == COMPLETE ) eraseChild( i );
+      if ( children_[i] != NULL) {
+        children_[i] -> eraseChildren();
+        eraseChild( i );
+      }
     }
   }
 }
@@ -377,19 +378,6 @@ void ff_data::eraseCompletedChildren() {
 int ff_data::map( long eig ) {
   int i = (int)(find(eigrange_.begin(),eigrange_.end(),eig)-eigrange_.begin());
   return i;
-  //
-  // old code which relied on "knowing" the eigrange_ list by convention.
-  // int j;
-  // if( numChildren_ == 2 ) {
-  //   j = ( eig == 1 ) ? eig : 0;
-  // } else {
-  //   j = eig + ( numChildren_ - 1 ) * 0.5;
-  // }
-  // if (i!=j)
-  //   {
-  //     cout<<"map("<<eig<<"): i="<<i<<", j="<<j<<" (eigrange at depth "<<depth_<<" is "<<eigrange_<<endl;
-  //   }
-  // return j;
 }
 
 // end of XSPLIT_DATA.CC
