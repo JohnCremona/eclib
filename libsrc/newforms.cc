@@ -1665,7 +1665,7 @@ void newforms::createfromolddata()
     for(i=0; i<n1ds; i++) 
       ap[i][j]=*batchptr++;
   //  cout<<"Raw  ap:\n";  for(i=0; i<n1ds; i++) cout<<ap[i]<<endl;
-  delete batch;
+  delete[] batch;
 
   // extract aq for each newform
   vector<long> * aq = new vector<long>[n1ds];

@@ -109,6 +109,7 @@ double egr_height_constant(const Curvedata& CD)
   double bd = cps_real(I2bigfloat(getb2(CD)),I2bigfloat(getb4(CD)),
 		     I2bigfloat(getb6(CD)),I2bigfloat(getb8(CD)));
   if (bd==0) bd=0; // otherwise the output sometimes prints as "-0"
+  return bd;
 }
 
 double cps_bound(const Curvedata& CD)
