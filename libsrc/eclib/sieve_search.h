@@ -76,7 +76,7 @@ class point_counter : public point_processor {
 #define QS_LONG_SHIFT ((QS_LONG_LENGTH == 16) ? 4 : \
                     (QS_LONG_LENGTH == 32) ? 5 : \
 		    (QS_LONG_LENGTH == 64) ? 6 : 0)
-#define QS_LONG_MASK (~(-1L<<QS_LONG_SHIFT))
+#define QS_LONG_MASK (~(-(1L<<QS_LONG_SHIFT)))
 #define QS_HALF_MASK ((bit_array)(~((unsigned long)(-1L) / 3)))
 
      //#define PERCENT 0.6
