@@ -49,9 +49,8 @@ AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
 # Checks for system features and libraries, via macros defined in m4/ directory
-AX_CXX_COMPILE_STDCXX_0X
-AX_CXX_HEADER_TR1_UNORDERED_MAP
-AX_CXX_HEADER_UNORDERED_MAP
+# Note that unordered_map is standard since c++11
+AX_CXX_COMPILE_STDCXX(11,,mandatory)
 
 # NB At present if configure finds boost on your system then it WILL
 # define ECLIB_MULTITHREAD which you may not want, if you have not put
@@ -138,12 +137,9 @@ dnl We first check for NTL/ZZ.h with a plain c++ compiler.
 dnl if it fails we unset the cache, check if we have a c++11
 dnl capable compiler and try again with c++11 enabled, in case
 dnl NTL has been compiled with c++11 threads
-AC_CHECK_HEADER(NTL/ZZ.h, [], [
-  unset ac_cv_header_NTL_ZZ_h
-  AX_CXX_COMPILE_STDCXX(11, noext, optional)
-  AC_CHECK_HEADER(NTL/ZZ.h, [], 
+AC_CHECK_HEADER(NTL/ZZ.h, [],
     [AC_MSG_ERROR([Could not find NTL, you might want to use --with-ntl=<path> to point to its location])]
-  )])
+  )
 LDFLAGS="$LDFLAGS_save"
 CPPFLAGS="$CPPFLAGS_save"
 AC_LANG_POP(C++)
