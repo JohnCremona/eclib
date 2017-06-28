@@ -296,7 +296,7 @@ void form_finder::make_basis( ff_data &data ) {
     SCALAR seig;
            seig = eig;
 
-    if(signeig<0) seig =- eig;
+    if(signeig<0) seig = -eig;
 
     if(depth) {
 	    spm_rel = new ssubspace(eigenspace(subconjmat,seig));
