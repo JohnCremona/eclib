@@ -813,8 +813,8 @@ long qsieve::sift(long b)
 		w_high0 = w_high;
 	      range = w_high0 - w_low0;
 	      {//initialise the bits 
-		register bit_array *surv;
-		register long i;
+		bit_array *surv;
+		long i;
 		surv = survivors; // &survivors[0];
 		if(!use_odd_nums && !b&1)
 		  for(i = range; i; i--) *surv++ = QS_HALF_MASK;
@@ -854,32 +854,32 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
       bit_array *sieve_n = sieves[n].ptr;
       long kp = kpa[n];
       long p_low = w_ceil(w_low, kp), p_high = w_floor(w_high, kp);
-      register bit_array *surv;
+      bit_array *surv;
       surv = survivors;
 
       if(p_high < p_low)
 	{ 
-	  register bit_array *siv1;
-	  register long i;
+	  bit_array *siv1;
+	  long i;
 	  siv1 = &sieve_n[w_low - kp * p_high];
 	  for(i = range; i ; i--) 
 	    *surv++ &= *siv1++;
 	}
       else
 	{
-	  register bit_array *siv1;
-	  register long j;
+	  bit_array *siv1;
+	  long j;
 	  j = kp * p_low - w_low;
 	  siv1 = &sieve_n[kp-j];
 	  if(j)
 	    { 
-	      register long i;
+	      long i;
 	      for(i = j; i; i--) 
 		*surv++ &= *siv1++;
 	    }
 	  for(i = p_high - p_low; i; i--)
 	    {
-	      register bit_array *siv0;
+	      bit_array *siv0;
 	      siv0 = siv1;
 	      siv1 -= kp;
 	      while(siv1 != siv0) *surv++ &= *siv1++;
@@ -887,7 +887,7 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
 	  j = w_high - kp * p_high;
 	  if(j)
 	    {
-	      register long i;
+	      long i;
 	      siv1 -= kp;
 	      for(i = j; i; i--) 
 		*surv++ &= *siv1++;

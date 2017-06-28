@@ -55,12 +55,12 @@ primeclass::primeclass(long maxnum)
 void primeclass::init(long maxnum)  /* initializes variable pdiffptr */
                                     /* to give primes up to maxnum  */
 {
-  register long k,size=(maxnum+257)>>1;
+  long k,size=(maxnum+257)>>1;
   if(pdiffptr) delete [] pdiffptr;
   byteptr p= new unsigned char[size+1];
   if (!p) {cout<<"Out of memory in primeclass::init!"<<endl;abort();}
   memset(p, 0, size + 1); 
-  register byteptr q,r,s,fin=p+size;
+  byteptr q,r,s,fin=p+size;
   for(r=q=p,k=1;r<fin;)
     {
       do {r+=k; k+=2; r+=k;} while (*++q);
