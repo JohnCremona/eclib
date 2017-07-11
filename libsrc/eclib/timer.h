@@ -32,13 +32,7 @@
 #include <sys/time.h>
 #endif
 
-// Determine which library to use
-// Preprocessor directives defined by Autotools
-#if defined HAVE_TR1_UNORDERED_MAP
-#include <tr1/unordered_map>
-#elif defined HAVE_UNORDERED_MAP
 #include <unordered_map>
-#endif
 
 void init_time();
 void start_time();
@@ -70,11 +64,7 @@ class timer {
     double  total( string name = "default" );
     double  average( string name = "default" );
 
-#if defined HAVE_TR1_UNORDERED_MAP 
-    typedef std::tr1::unordered_map< string, vector<double> > timers;
-#elif defined HAVE_UNORDERED_MAP
     typedef unordered_map< string, vector<double> > timers;
-#endif
 
   private:
     ostream* s_;
