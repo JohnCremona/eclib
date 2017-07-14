@@ -68,7 +68,24 @@ int new_equiv(quartic* q1, quartic* q2, int info)
   const bigint& r = r1*r2;
   if(info) cout<<"u-poly = [1,0, " << -2*p<< ", "<<-8*r<<", "<<s<<"]\n";
 
-  // Compute the roots of "u-poly",  see if any are integral, and check:
+  // Compute the integral roots of "u-poly",  q1 and q2 are equivalent if there are any
+
+  vector<bigint> upolroots = Introotsquartic(BIGINT(0),-2*p, -8*r, s);
+  if (upolroots.size()>0)
+    {
+      if(info) cout<<"Root u = "<<upolroots[0]<<endl;
+      return 1;
+    }
+  else
+    {
+      if(info) cout<<"No integral roots"<<endl;
+      return 0;
+    }
+}
+
+
+#if(0) // Old code: compute the complex roots and test for integrality
+
   // The roots are sqrt(z1*w1)+sqrt(z2*w2)+sqrt(z3*w3) with some choice of signs,
   // where the wi are the z-values of the second quartic.  We compute the zi
   // from the roots of the first, then to ensure that conjugates are matched
@@ -85,7 +102,7 @@ int new_equiv(quartic* q1, quartic* q2, int info)
   bigcomplex rzw3 = rz3*sqrt((xa2*rz3*rz3+t)*tt);
 
   bigcomplex u;
-  
+
   for(long k=0; k<4; k++)
     {
       switch(k) {
@@ -113,9 +130,7 @@ int new_equiv(quartic* q1, quartic* q2, int info)
 	}
     }
 
-  if(info) cout<<"No integral roots"<<endl;
-  return 0;
-}
+#endif
 
 //#else // not using new_equiv so no need to compile this stuff
 
