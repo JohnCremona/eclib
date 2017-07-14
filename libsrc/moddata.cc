@@ -147,11 +147,21 @@ void moddata::display() const
  cout << "unitdivlist: " << unitdivlist << endl;
 }
 
+string getenv_with_default(string env_var, string def_val)
+{
+  stringstream s;
+  if (getenv(env_var.c_str()) != NULL) {
+    s << getenv(env_var.c_str());
+  } else {
+    s<<def_val;
+  }
+  return s.str();
+}
+
 string of_filename(long n, char c)
 {
   stringstream s;
-  s << getenv("OF_DIR");
-  if (s.str().empty()) {s.clear(); s<<"./newforms";}
+  s << getenv_with_default("OF_DIR","./newforms");
   s  << "/" << c << n;
   return s.str();
 }
@@ -159,8 +169,7 @@ string of_filename(long n, char c)
 string nf_filename(long n, char c)
 {
   stringstream s;
-  s << getenv("NF_DIR");
-  if (s.str().empty()) {s.clear(); s<<"./newforms";}
+  s << getenv_with_default("NF_DIR","./newforms");
   s  << "/" << c << n;
   return s.str();
 }
@@ -168,8 +177,7 @@ string nf_filename(long n, char c)
 string small_nf_filename(long n, char c)
 {
   stringstream s;
-  s << getenv("SNF_DIR");
-  if (s.str().empty()) {s.clear(); s<<"./smallnf";}
+  s << getenv_with_default("SNF_DIR","./smallnf");
   s  << "/" << c << n;
   return s.str();
 }

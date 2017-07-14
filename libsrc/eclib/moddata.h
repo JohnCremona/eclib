@@ -63,6 +63,11 @@ public:
  long unitdiv(long res) const {return unitdivlist[reduce(res)];}
 };
 
+// Utility to return a string from an environment variable with a
+// default to use if the variable is not set or empty.
+
+string getenv_with_default(string env_var, string def_val);
+
 // Returns oldform filename. Default is "newforms/", but can
 // be changed via OF_DIR environment variable.
 string of_filename(long n, char c);

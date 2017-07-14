@@ -46,8 +46,7 @@ string ecdb_filename(long N)
 {
   long a = N/10000; // rounded down
   stringstream s;
-  s << getenv("ECDB");
-  if (s.str().empty()) {s.clear(); s<<"./curves";}
+  s << getenv_with_default("ECDB","./curves");
   s << "/curves." << a << "0000-" << a << "9999";
   //  cout << "Filename for curves of conductor " << d << " is " << s.str() << endl;
   return s.str();
@@ -61,8 +60,7 @@ string ecdb_filename(long N)
 string single_curve_filename(long N)
 {
   stringstream s;
-  s << getenv("TCURVES");
-  if (s.str().empty()) {s.clear(); s<<"./tcurves";}
+  s << getenv_with_default("TCURVES_DIR","./tcurves");
   s << "/curves." << N;
   //  cout << "Filename for curves of conductor " << N << " is " << s.str() << endl;
   return s.str();
