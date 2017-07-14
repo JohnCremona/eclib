@@ -1,0 +1,49 @@
+language: generic
+os:
+  - osx
+  - linux
+
+osx_image: xcode6.4
+
+install:
+    - |
+      export PREFIX=$HOME/.local
+      mkdir $PREFIX
+      MINICONDA_URL="https://repo.continuum.io/miniconda"
+      if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+          MINICONDA_FILE="Miniconda3-latest-MacOSX-x86_64.sh"
+      else
+          MINICONDA_FILE="Miniconda3-latest-Linux-x86_64.sh"
+      fi
+      curl -L -O "${MINICONDA_URL}/${MINICONDA_FILE}"
+      bash $MINICONDA_FILE -b
+      source ~/miniconda3/bin/activate root
+      conda config --add channels conda-forge
+      conda config --set show_channel_urls true
+      conda config --set always_yes yes
+      conda create --yes --quiet -p $PREFIX gmp mpfr ntl libflint pari
+      
+script: 
+    - export CPPFLAGS="-I$PREFIX/include $CPPFLAGS"
+    - export LDFLAGS="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib $LDFLAGS"
+
+    - chmod +x autogen.sh
+    - ./autogen.sh
+
+    - chmod +x configure
+    - ./configure \
+        --prefix="$PREFIX" \
+        --with-ntl="$PREFIX" \
+        --with-pari="$PREFIX" \
+        --with-flint="$PREFIX" \
+        --with-boost="no" \
+        --disable-allprogs
+
+    - make
+    - if [ "$(uname)" == "Darwin" ]
+      then
+        make -k check | exit 0;
+      else
+        make check;
+      fi
+
