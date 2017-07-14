@@ -4,6 +4,7 @@ os:
   - linux
 
 osx_image: xcode6.4
+dist: trusty
 
 install:
     - |
