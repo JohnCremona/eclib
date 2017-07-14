@@ -8,8 +8,6 @@ dist: trusty
 
 install:
     - |
-      export PREFIX=$HOME/.local
-      mkdir $PREFIX
       MINICONDA_URL="https://repo.continuum.io/miniconda"
       if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
           MINICONDA_FILE="Miniconda3-latest-MacOSX-x86_64.sh"
@@ -22,7 +20,9 @@ install:
       conda config --add channels conda-forge
       conda config --set show_channel_urls true
       conda config --set always_yes yes
-      conda create --yes --quiet -p $PREFIX automake libtool gmp mpfr ntl libflint pari
+
+    - export PREFIX=$HOME/local
+    - conda create --yes --quiet -p $PREFIX automake libtool gmp mpfr ntl libflint pari
       
 script: 
     - export CPPFLAGS="-I$PREFIX/include $CPPFLAGS"
@@ -41,8 +41,10 @@ script:
     - make
     - |
       if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-        make -k check | exit 0;
+          set +e;
+          make -k check;
+          set -e;
       else
-        make check;
+          make check;
       fi
 
