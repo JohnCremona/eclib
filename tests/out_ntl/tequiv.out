@@ -1,4 +1,4 @@
-Verbose? How many quartics to check? 
+Verbose? How many quartics to check (0 to quit)? 
 
 Enter quartic coefficients a,b,c,d,e ?
 1: (1,0,-80,324,-244)
@@ -33,3 +33,16 @@ equiv failed on first test!
 First  has I=3472, J=-404912, disc=3463112448, type=1
 Second has I=3472, J=-404912, disc=3463112448, type=2
  new
+How many quartics to check (0 to quit)? 
+
+Enter quartic coefficients a,b,c,d,e ?
+1: (11,-11,21,-5,10)
+ new
+Enter quartic coefficients a,b,c,d,e ?
+2: (10,5,21,11,11)
+Checking equivalence of (10,5,21,11,11) and (11,-11,21,-5,10)
+u-poly = [1,0, -5334230, -150935400, 6798600758125]
+Root u = -1705
+ equivalent to #1
+How many quartics to check (0 to quit)? 
+

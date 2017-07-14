@@ -55,8 +55,11 @@ int main()
   cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
   
   int verb; cout << "Verbose? "; cin >> verb;
-  long nq;  cout << "How many quartics to check? ";  cin >> nq;
+  while (1)
+    {
+  long nq;  cout << "How many quartics to check (0 to quit)? ";  cin >> nq;
   cout<<endl<<endl;
+  if (nq<1) {return 0;}
   quartic* glist = new quartic[nq];
   vector<bigint> dlist;
   int i,j;
@@ -82,5 +85,6 @@ int main()
       if(!eq) cout<<" new"<<endl;
     }
   delete[] glist;
+    }
   return(0);
 }
