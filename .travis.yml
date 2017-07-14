@@ -31,17 +31,10 @@ script:
     - ./autogen.sh
 
     - chmod +x configure
-    - ./configure \
-        --prefix="$PREFIX" \
-        --with-ntl="$PREFIX" \
-        --with-pari="$PREFIX" \
-        --with-flint="$PREFIX" \
-        --with-boost="no" \
-        --disable-allprogs
+    - ./configure --prefix="$PREFIX" --with-ntl="$PREFIX" --with-pari="$PREFIX" --with-flint="$PREFIX" --with-boost="no" --disable-allprogs
 
     - make
-    - if [ "$(uname)" == "Darwin" ]
-      then
+    - if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
         make -k check | exit 0;
       else
         make check;
