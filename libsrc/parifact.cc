@@ -21,8 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#include <eclib/interface.h> // for getenv_with_default
 #include <pari/pari.h>
 #include <eclib/parifact.h>
+
 
 //#define DEBUG_GPFACT
 
@@ -33,7 +35,13 @@ string
 factor(const string n)
 {
   if (!avma) {
-    pari_init(1000000, 1000000);
+    long pari_size = strtol(getenv_with_default("PARI_SIZE", "100000").c_str(), NULL, 0);
+    if (pari_size==0) // e.g. syntax error in the environment variable PARI_SIZE
+      pari_size = 1000000;
+#ifdef DEBUG_GPFACT
+    std::cout<<"calling pari_init with pari_size = "<<pari_size<<endl;
+#endif
+    pari_init(pari_size, 1000000);
   }
 #ifdef DEBUG_GPFACT
   std::cout<<"factor called with "<<n<<endl;
@@ -46,6 +54,9 @@ factor(const string n)
   settyp(x,t_VEC);
  
   string ans(GENtostr(x));
+#ifdef DEBUG_GPFACT
+  std::cout<<"factor returns "<<ans<<endl;
+#endif
   avma=av;         // restore pari stackpointer
   return ans;
 }
@@ -54,7 +65,13 @@ int
 is_prime(const string p)
 {
   if (!avma) {
-    pari_init(1000000, 1000000);
+    long pari_size = strtol(getenv_with_default("PARI_SIZE", "100000").c_str(), NULL, 0);
+#ifdef DEBUG_GPFACT
+    std::cout<<"calling pari_init with pari_size = "<<pari_size<<endl;
+#endif
+    if (pari_size==0) // e.g. syntax error in the environment variable PARI_SIZE
+      pari_size = 1000000;
+    pari_init(pari_size, 1000000);
   }
   pari_sp av=avma;  // store pari stack pointer
 

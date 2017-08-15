@@ -237,7 +237,13 @@ You can aid the factorization of large integers in several ways:
 
 (a) Pari (i.e. the library libpari) is now a requirement, and is used
 to factorization of integers greater than a bound set to 10^8 in
-libsrc/marith.cc.  This is the only use made of the Pari library.
+libsrc/marith.cc.  This is the only use made of the Pari library.  By
+default the pari library is initialized with parisize=1000000.  If you
+see an error message saying " [hint] set 'parisizemax' to a non-zero
+value in your GPRC" do not follow the hint (which is wrong, we are not
+using gp at all) but instead set the environment variable PARI_SIZE to
+some larger value (e.g. do "export PARI_SIZE=100000000" but this will
+depend on your system).
 
 (b) By default the programs initialise an array of primes < 10^6, so
 will succeed in factoring all numbers < 10^8 by trial division.  This
@@ -272,4 +278,4 @@ John Cremona (john.cremona@gmail.com)
 
  3 February 1995, updated 12 January 1998, 25 September 2000, 5 July 2001,
  12 November 2003, 5 January 2005, 10 May 2005, 31 December 2011, 2
- January 2016.
+ January 2016, 15 August 2017.

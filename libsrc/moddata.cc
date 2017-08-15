@@ -147,17 +147,6 @@ void moddata::display() const
  cout << "unitdivlist: " << unitdivlist << endl;
 }
 
-string getenv_with_default(string env_var, string def_val)
-{
-  stringstream s;
-  if (getenv(env_var.c_str()) != NULL) {
-    s << getenv(env_var.c_str());
-  } else {
-    s<<def_val;
-  }
-  return s.str();
-}
-
 string of_filename(long n, char c)
 {
   stringstream s;

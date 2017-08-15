@@ -301,4 +301,9 @@ inline int is_approx_zero(const bigcomplex& z)
 
 #undef setbit
 
+// Utility to return a string from an environment variable with a
+// default to use if the variable is not set or empty.
+
+string getenv_with_default(string env_var, string def_val);
+
 #endif // #define _INTERFACE_H_

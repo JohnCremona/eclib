@@ -307,5 +307,16 @@ istream& operator>>(istream& is, CC& z)
   return is;
 }
 
+string getenv_with_default(string env_var, string def_val)
+{
+  stringstream s;
+  if (getenv(env_var.c_str()) != NULL) {
+    s << getenv(env_var.c_str());
+  } else {
+    s<<def_val;
+  }
+  return s.str();
+}
+
 #endif // NTL_ALL
 

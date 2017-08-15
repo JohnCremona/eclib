@@ -30,7 +30,8 @@ run: either (i) after ./configure, edit ./Makefile and all */Makefile,
 setting FLINT_LEVEL=2 (instead of =1); or (ii) edit configure itself
 similarly (in two places) and rerun it; or (iii) append
 CXXFLAGS='-DFLINT_LEVEL=2' to the make invocation (and ignore warnings
-about FLINT_LEVEL being redefined).
+about FLINT_LEVEL being redefined).   To carry out (ii): run
+sed -i '/FLINT_LEVEL/s/1/2/' configure
 
 (c) Boost is optional (from eclib-2013-09-00) and provides parallel
 capabilities in the form_finder class. Configure with --with-boost
