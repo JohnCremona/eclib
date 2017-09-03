@@ -1,6 +1,6 @@
 Documentation for the eclib library (building and running)
 
-%  Time-stamp: <2013-01-03 10:25:17 jec>
+%  Time-stamp: <2017-09-03 20:32:49 john>
 
 1. Download, build and install:
 
@@ -24,7 +24,7 @@ something non-default as --prefix in the ./configure step, otherwise
 make sure that the bin subdirectory of the install directory (say
 INSTALL_DIR) is in your PATH.
 
-2. Run!
+2. Run.
 
 (a) Make your own working directory, say
 
