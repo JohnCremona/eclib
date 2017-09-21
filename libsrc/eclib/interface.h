@@ -161,8 +161,7 @@ inline int is_approx_zero(const RR& x)
 }
 } // namespace NTL
 #ifdef _LIBCPP_VERSION
-namespace std {
-inline namespace __1 {
+namespace NTL {
 inline bool isinf(const RR& z) {
   return false;
 }
@@ -182,8 +181,7 @@ inline RR fmax(const RR& x, const RR& y)
 {
   return x < y ? y : x;
 }
-}
-}
+} // namespace NTL
 #endif
 
 #include <complex>
