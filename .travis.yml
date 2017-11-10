@@ -6,6 +6,11 @@ os:
 osx_image: xcode6.4
 dist: trusty
 
+matrix:
+  include:
+    - env: CONFIGURE_OPTS="--disable-mpfp"
+      os: linux
+
 install:
     - |
       MINICONDA_URL="https://repo.continuum.io/miniconda"
@@ -36,7 +41,7 @@ script:
     - ./autogen.sh
 
     - chmod +x configure
-    - ./configure --prefix="$PREFIX" --with-ntl="$PREFIX" --with-pari="$PREFIX" --with-flint="$PREFIX" --with-boost="no" --disable-allprogs
+    - ./configure --prefix="$PREFIX" --with-ntl="$PREFIX" --with-pari="$PREFIX" --with-flint="$PREFIX" --with-boost="no" --disable-allprogs $CONFIGURE_OPTS
 
     - make
     - |
