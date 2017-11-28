@@ -9,7 +9,7 @@ Looking for Type 2 quartics:
 Trying positive a from 1 up to 2 (square a first...)
 (1,0,-8,4,4)	--nontrivial...(x:y:z) = (1 : 1 : 0)
 Point = [1:0:1]
-	height = 0.476711659343739
+	height = 0.47671165934374
 Rank of B=im(eps) increases to 1
 Trying positive a from 1 up to 2 (...then non-square a)
 Trying negative a from -1 down to -1
@@ -18,7 +18,7 @@ Looking for Type 1 quartics:
 Trying positive a from 1 up to 3 (square a first...)
 (1,0,4,12,8)	--nontrivial...(x:y:z) = (1 : 1 : 0)
 Point = [-1:1:1]
-	height = 0.686667083305586
+	height = 0.686667083305587
 Rank of B=im(eps) increases to 2 (The previous point is on the egg)
 Exiting search for Type 1 quartics after finding one which is globally soluble.
 Mordell rank contribution from B=im(eps) = 2
@@ -42,7 +42,7 @@ Saturating (with bound = 1000)...done:
 Transferring points from minimal curve [0,1,1,-2,0] back to original curve [0,1,1,-2,0]
 
 Generator 1 is [0:-1:1]; height 0.327000773651605
-Generator 2 is [-1:1:1]; height 0.686667083305586
+Generator 2 is [-1:1:1]; height 0.686667083305587
 
 Regulator = 0.152460177943144
 
@@ -124,9 +124,9 @@ Rank of S^2(E)  = 2
 
 Searching for points (bound = 8)...done:
   found points which generate a subgroup of rank 2
-  and regulator 0.886543288687716
+  and regulator 0.886543288687715
 Processing points found during 2-descent...done:
-  now regulator = 0.886543288687716
+  now regulator = 0.886543288687715
 Saturating (with bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,0,0,0,73] back to original curve [0,0,0,0,73/64]
@@ -134,7 +134,7 @@ Transferring points from minimal curve [0,0,0,0,73] back to original curve [0,0,
 Generator 1 is [-8:3:8]; height 0.962573188092379
 Generator 2 is [4:9:8]; height 0.923943171600397
 
-Regulator = 0.886543288687716
+Regulator = 0.886543288687715
 
 The rank and full Mordell-Weil basis have been determined unconditionally.
 Curve [0,0,0,677,0] :	

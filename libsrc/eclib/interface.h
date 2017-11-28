@@ -231,7 +231,7 @@ inline CC &operator /=(CC &a, const CC &b)
 #endif
 
 inline void set_precision(long n)
-  {RR::SetPrecision(long(n*3.33));RR::SetOutputPrecision(n);}
+  {RR::SetPrecision(long(n*3.66));RR::SetOutputPrecision(n);}
 inline void set_bit_precision(long n)
   {RR::SetPrecision(n);}
 inline void set_precision(const string prompt)

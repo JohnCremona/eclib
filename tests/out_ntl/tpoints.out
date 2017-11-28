@@ -6,7 +6,7 @@ Now in Pari format:
 The points are P0 = [0,2], P1 = [1,0], and P2 = [2,0]
 Their negatives are -P0 = [0:-3:1], -P1 = [1:-1:1], and -P2 = [2:-1:1]
 Computing their heights:
-Heights are 0.990906333153087973882598552884, 0.66820516565192793503314205089, and 0.76704335533154620579545064655
+Heights are 0.990906333153087973882598552887, 0.668205165651927935033142050888, and 0.767043355331546205795450646552
 The origin is [0:1:0]
 Now some additions etc,:
 P0 + P1 = [3:3:1]
