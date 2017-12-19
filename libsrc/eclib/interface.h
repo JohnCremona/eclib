@@ -230,14 +230,33 @@ inline CC &operator /=(CC &a, const CC &b)
 
 #endif
 
+// NB Internal precision is always bit-precision.  We used to use
+// decimal precision in the user interface with a conversion factor of
+// 3.33 (approx log(10)/log(2)).  NTL has a default internal bit
+// precision of 150 which can be changed using RR::SetPrecision(), and
+// RR:SetOutputPrecision(d) sets the output to d decimal places
+// (default 10).  See www.shoup.net/ntl/doc/tour-ex6.html and
+// www.shoup.net/ntl/doc/RR.cpp.html.
+
+// Set internal precision to n bits and output precision to 0.3*n decimal places
 inline void set_precision(long n)
-  {RR::SetPrecision(long(n*3.33));RR::SetOutputPrecision(n);}
+{RR::SetPrecision(n); RR::SetOutputPrecision(long(0.3*n));}
+
+// Mostly for backward compatibility (used in saturate.cc) or for
+// temporarily changing internal precision when no output is relevant:
 inline void set_bit_precision(long n)
   {RR::SetPrecision(n);}
+
+// Prompt user for precision
 inline void set_precision(const string prompt)
   {long n; cerr<<prompt<<": "; cin>>n; set_precision(n);}
+
+// read current precision converted to decimal (approximately)
 inline long decimal_precision() {return long(RR::precision()*0.3);}
+
+// read current bit precision
 inline long bit_precision() {return RR::precision();}
+
 inline int is_approx_zero(const bigcomplex& z)
   {return is_approx_zero(z.real())&&is_approx_zero(z.imag());}
 inline RR to_bigfloat(const int& n) {return to_RR(n);}
@@ -265,9 +284,12 @@ inline CC pow(const CC& a, const RR& e)  {return exp(e*log(a));}
 #define bigfloat double
 
 inline long decimal_precision() {return 15;}
+inline long bit_precision() {return 53;}
 inline int is_zero(double x) {return fabs(x)<1e-15;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
-inline void set_precision(long n) {cout.precision(n);}
+
+// We cannot set internal bit precision in this mode, so we just set the output decimal precision
+inline void set_precision(long n) {cout.precision(min(15,long(0.3*n)));}
 inline void set_precision(const string prompt)  {cout.precision(15);}
 #define Pi()    3.1415926535897932384626433832795028841
 #define Euler() (0.57721566490153286060651209008240243104)

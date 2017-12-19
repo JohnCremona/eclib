@@ -34,7 +34,7 @@
 
 int main()
 {
-  //  set_precision("Enter number of decimal places");
+  //  set_precision("Enter precision in bits");
   initprimes("PRIMES",0);
   int j, npts;
 

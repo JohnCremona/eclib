@@ -26,7 +26,7 @@
 
 int main(){
 #ifdef NTL_ALL
-  set_precision(100);
+  set_precision(350);
 #endif
   initprimes("PRIMES",1);
   Curve E;

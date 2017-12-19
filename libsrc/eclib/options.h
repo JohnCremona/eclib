@@ -25,7 +25,7 @@
 
 #define DEFAULT_QUIET 0
 #define DEFAULT_VERBOSE 1
-#define DEFAULT_PRECISION 15
+#define DEFAULT_PRECISION 50
 #define DEFAULT_HLIMQ 10
 #define DEFAULT_NAUX 15
 #define DEFAULT_HLIMC 0
@@ -40,7 +40,7 @@ class mrank_options {
 private:
   int quiet;            // 0/1, controls header output
   int verbose;          // 0-3, controls output verbosity
-  long precision;       // 1-\infty, controls decimal precision
+  long precision;       // 1-\infty, controls floating point precision (in bits)
   long hlimq;           // 1-20, height limit for quartic search
   long naux;            // number of primes used in syzygy sieve
   long hlimc;           // 1-15, height limit for curve search
@@ -119,7 +119,7 @@ public:
       cerr << "-q\t""quiet""\t\tturns OFF banner display\n";
       cerr << "-v n\t""verbosity""\tsets verbosity to n (default="<<DEFAULT_VERBOSE<<")\n";
       cerr << "-o\t""PARI/GP output""\tturns ON extra PARI/GP short output (default is OFF)\n";
-      cerr << "-p n\t""precision""\tsets precision to n decimals (default="<<DEFAULT_PRECISION<<")\n";
+      cerr << "-p n\t""precision""\tsets real precision to n bits (default="<<DEFAULT_PRECISION<<")\n";
       cerr << "-b n\t""quartic bound""\tbound on quartic point search (default="<<DEFAULT_HLIMQ<<")\n";
       cerr << "-x n\t""n aux""\t\tnumber of aux primes used for sieving (default="<<DEFAULT_NAUX<<")\n";
       cerr << "-l\t""list""\t\tturns ON listing of points (default ON unless v=0)\n";
@@ -157,7 +157,7 @@ public:
       if(quiet)cerr<<"ON"; else cerr<<"OFF"; cerr<<"\n";
       cerr << "PARI/GP output "; 
       if(output_pari)cerr<<"ON"; else cerr<<"OFF"; cerr<<"\n";
-      cerr << "Precision = " << precision << " decimal places (only relevant for multiprecision version)\n";
+      cerr << "Precision = " << precision << " bits (only relevant for multiprecision version)\n";
       cerr << "Verbosity level = " << verbose << "\n";
       cerr << "Limit on height for point search on quartics: "<<hlimq<<"\n";
       cerr << "Number of auxiliary primes for syzygy sieving: "<<naux<<"\n";

@@ -60,7 +60,7 @@
 
 int main(void)
 {
-  set_precision(10);
+  set_precision(35);
  
  long limit, n=1, hlim1=10, hlim2=15; 
  bigint nn;

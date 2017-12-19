@@ -53,7 +53,7 @@ int main(void)
 
  cout << "Program nfhpcurve.  Using METHOD = " << METHOD 
       << " to find newforms" << endl;
- set_precision(25);
+ set_precision(75);
 #ifdef MODULAR
  cout << "MODULUS for linear algebra = " << MODULUS << endl;
 #endif
@@ -273,10 +273,10 @@ int main(void)
 	  cout << "Now working with maxny =  " <<maxn<< endl;
 	}
 #ifdef MPFP
-      if(decimal_precision()<50) 
+      if(bit_precision()<150) 
 	{
-	  set_precision(decimal_precision()+10);
-	  cout << "Now working to "<<decimal_precision()<<" decimal places" << endl;
+	  set_precision(bit_precision()+30);
+	  cout << "Now working with bit precision "<<bit_precision()<< endl;
 	}
 #endif
     }

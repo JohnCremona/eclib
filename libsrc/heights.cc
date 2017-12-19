@@ -156,6 +156,8 @@ bigfloat realheight(const bigfloat& x, const Curvedata* E)
   t=2*abs(b4); if(t>H) H=t;
   t=2*abs(b6); if(t>H) H=t;
   t=abs(b8);   if(t>H) H=t;
+  // NB We use decimal precision here since the formula for nlim (from
+  // Silverman) is given in terms of decimal places required.
   long precision = decimal_precision();
 #ifdef DEBUG_HEIGHT
   cout<<"decimal precision = "<<precision<<endl;

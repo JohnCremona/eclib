@@ -44,7 +44,7 @@ int main(void)
  init_time();
  start_time();
  long n=110, stopp, stopp0; 
- long prec0=25;
+ long prec0=75;
  int output, verbose;
 
  cout << "Program nfhpmcurve.  Using METHOD = " << METHOD 
@@ -195,10 +195,10 @@ int main(void)
 	      nf.output_to_file(1,1);
 	    }
 #ifdef MPFP
-	  if(decimal_precision()<50) 
+	  if(bit_precision()<150) 
 	    {
-	      set_precision(decimal_precision()+5);
-	      cout << "Now working to "<<decimal_precision()<<" decimal places" << endl;
+	      set_precision(bit_precision()+30);
+              cout << "Now working with bit precision "<<bit_precision()<< endl;
 	    }
 #endif
 	} 

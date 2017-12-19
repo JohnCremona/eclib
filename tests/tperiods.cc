@@ -29,7 +29,7 @@
 
 int main(){
 #ifdef NTL_ALL
-  set_precision("Enter number of decimal places");
+  set_precision("Enter precision in bits");
 #endif
   initprimes("PRIMES",0);
 	

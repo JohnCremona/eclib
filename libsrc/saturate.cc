@@ -231,7 +231,7 @@ int saturator::enlarge()
         {
           cout<<"...but it isn't! (this may be due to insufficient precision:";
 #ifdef NTL_ALL
-          cout << " decimal precision " <<prec<<" was used)"<<endl;
+          cout << " bit precision " <<prec<<" was used)"<<endl;
 #else
           cout << " standard double precision was used)"<<endl;
 #endif

@@ -68,8 +68,8 @@ void test3(Curvedata& CD, Cperiods& per, int m)
 
 int main(){
 #ifdef NTL_ALL
-  //  set_precision("Enter number of decimal places");
-  set_precision(50);
+  //  set_precision("Enter precision in bits");
+  set_precision(175);
 #endif
   initprimes("PRIMES",0);
 

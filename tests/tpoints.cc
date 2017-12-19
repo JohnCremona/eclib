@@ -25,8 +25,8 @@
 #include <eclib/points.h>
 
 int main(){
-  //  set_precision("Enter number of decimal places");
-  set_precision(30);
+  //  set_precision("Enter precision in bits");
+  set_precision(100);
   initprimes("PRIMES",1);
 
   Curve c(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
