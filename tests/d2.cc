@@ -44,7 +44,7 @@ int main()
 #ifdef NTL_ALL
   set_precision("Enter precision in bits");
 #endif
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  cin.flags( cin.flags() | ios::dec );
   
   bigint zero; zero=0;
   int alldesc=0, verb=0, selmer_only=0; 

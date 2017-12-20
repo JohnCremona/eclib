@@ -52,7 +52,7 @@ int main()
 {
   initprimes("PRIMES",0);
   cout.precision(50);
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  cin.flags( cin.flags() | ios::dec );
   
   int verb; cout << "Verbose? "; cin >> verb;
   while (1)

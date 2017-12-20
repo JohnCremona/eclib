@@ -60,7 +60,7 @@ int main()
   //  cout << "Verbose mode? (0/1)\n"; cin >> verbose;
   initprimes("PRIMES",verbose);
 //  cout << "Number of sieving primes?\n"; cin >> naux;
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  cin.flags( cin.flags() | ios::dec );
   while (getcurve())
     {
       int filerank;  // for testing

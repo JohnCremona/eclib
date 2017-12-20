@@ -28,7 +28,7 @@ const bigint MBIGPRIME=atoI("6074000003");
 
 int main()
 {
-cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+cin.flags( cin.flags() | ios::dec );
 
 cout << "\nM-Subspace package test program\n\n";
 

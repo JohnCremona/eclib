@@ -41,10 +41,10 @@ List of command line options, their meaning and default values (set in options.h
 			options (controlled by -v); for minimal useful
 			output use "-q -v 0 -o"
 
--p n	precision (#dp)
+-p n	precision (#bits)
 			Only relevant for the multiprecision
 			floating point version.  Range 1..large,
-			default 15.  This is decimal precision.
+			default 50.  This is bit precision.
 			Stringly recommended to increase for curves
 			with 2-torsion where a second descent is used
 			since then the reduction applied to second

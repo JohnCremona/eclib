@@ -59,7 +59,6 @@ int main(void)
   int prec = prec0;
   int delta_prec = 30;
   set_precision(prec);
-  //  set_precision("Enter number of decimal places");
  int verb=0;
 #ifdef SINGLE
  verb=1;

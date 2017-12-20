@@ -55,7 +55,7 @@ int main()
   set_precision(100);
 #endif
   initprimes("PRIMES",0);
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  cin.flags( cin.flags() | ios::dec );
 
   long nsilverbetter=0, ncpsbetter=0, n=0;
   double silvertotal=0, cpstotal=0, cps2total=0;

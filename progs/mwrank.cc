@@ -41,16 +41,16 @@ int main(int argc, char **argv)
   //opt.show();
   if(!opt.get_quiet()) {opt.banner(1);  show_version();}
 #if defined(NTL_ALL)
-  long decimal_precision=opt.get_precision();
-  set_precision(decimal_precision);
+  long bit_precision=opt.get_precision();
+  set_precision(bit_precision);
   if(verbose) cerr<<"Using NTL multiprecision floating point with "
-		  <<decimal_precision <<" decimal places.\n";
+		  << bit_precision <<" bits precision.\n";
 #else
   cout.precision(15);
   cerr.precision(15);
 #endif
   initprimes("PRIMES",0);
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  cin.flags( cin.flags() | ios::dec );
 
   init_time();
 
