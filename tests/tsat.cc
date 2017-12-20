@@ -114,11 +114,11 @@ int main()
   int index = sieve.do_saturation_upto(pmax);
   cout<<"Finished p-saturation for p up to "<<pmax;
   */
-  int index = sieve.do_saturation(pmax);
+  int log_index = sieve.do_saturation(pmax);
   cout<<"Finished p-saturation for p =  "<<pmax;
-  if(index>1) 
+  if(log_index>0) 
     {
-      cout<<", index gain = "<<index<<endl;
+      cout<<", index gain = "<<pmax<<"^"<<log_index<<endl;
       vector<Point> newpoints = sieve.getgens();
       cout<<"New generators:\n"<<newpoints<<endl;
     //  bigfloat newreg = regulator(newpoints);
