@@ -52,6 +52,7 @@ libtool
 # Program executables
 progs/aplist
 progs/checkap
+progs/cubics
 progs/ecnf
 progs/h1bsd
 progs/h1bsdcurisog

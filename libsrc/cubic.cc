@@ -203,6 +203,17 @@ bigcomplex cubic::hess_root() const
   return gamma;
 }
 
+int cubic::is_hessian_reduced() // for positive discriminant only
+{
+  bigint P = p_semi();
+  bigint R = r_semi();
+  if (P>R) return 0;
+  bigint Q = q_semi();
+  if (Q>P) return 0;
+  if (P==R) return (Q>=0);
+  return (Q>-P);
+}
+
 void cubic::hess_reduce(unimod& m)
 {
   int s=1;  bigint k;
@@ -281,6 +292,18 @@ void cubic::mathews_reduce(unimod& m)
 	}
     }
   if(a()<0) {::negate(coeffs[0]); ::negate(coeffs[2]);}
+}
+
+int cubic::is_jc_reduced() // for positive discriminant only
+{
+  bigint C1 =  j_c1();
+  if (C1<0) return 0;
+  bigint C2 = -j_c2(); // NB sign change from JCM paper
+  if (C2<0) return 0;
+  bigint C4 =  j_c4(); // = N(h1)/8, not in JCM paper
+  if (C1==0) return (C4>=0);
+  bigint C3 =  j_c3();
+  return (C3>0);
 }
 
 void cubic::jc_reduce(unimod& m)
@@ -403,4 +426,103 @@ bigfloat cubic::real_root() const
   bigfloat eta   = cube_root(eta3);
   bigfloat alpha = (eta*gamma1-gamma2)/(eta-1);
   return alpha;
+}
+
+vector<cubic> reduced_cubics(const bigint& disc, int verbose)
+{
+  bigfloat fac1, fac2, fac3;
+  bigint a, b, c, d;
+  bigint alim, blim, a2, b2, b3, cmin, cmax, r;
+  bigint P, U, U2;
+  bigfloat rdisc, ax, cx, cy, cb1, cb2;
+  unimod m;
+
+  int neg=(disc<0);
+  if(neg)
+    {
+      fac1 = sqrt((double)8)/sqrt((double)27);
+      fac2 = 1.2599210498948731647672106072782283505; // 2^(1/3)
+      fac3 = fac2;
+    }
+  else
+    {
+      fac1 = sqrt(to_bigfloat(8))/to_bigfloat(3);
+      fac2 = to_bigfloat(1);
+      fac3 = to_bigfloat(0);
+    }
+  vector<cubic> glist; // will hold reduced cubics found
+  if(verbose>1) cout << "Discriminant = " << disc << endl;
+  rdisc = sqrt(I2bigfloat(abs(disc)));
+  ax = fac1 * sqrt(rdisc);
+  cb1 = fac3*rdisc;
+  cb2 = fac2*rdisc;
+  alim=Ifloor(ax);
+  if(verbose>1) cout<<"Bound on a = " << alim << endl;
+  for(a=1; a<=alim; a++)
+    {
+      a2=a*a;
+      blim=(3*a)/2;
+      if(verbose>1) cout<<"a="<<a<<": bound on b = "<<blim<<endl;
+      for(b=-blim; b<=blim; b++)
+        {
+          b2=b*b; b3=b*b2;
+          bigfloat i3a = to_bigfloat(1)/I2bigfloat(3*a);
+          cy=(I2bigfloat(b2)+cb1)*i3a;
+          cx=(I2bigfloat(b2)-cb2)*i3a;
+          cmin=Iceil(cx);
+          cmax=Ifloor(cy);
+          if(verbose>1) cout<<"a="<<a<<", b="<<b<<": bounds on c: "<<cmin<<","<<cmax<<endl;
+          for(c=cmin; c<=cmax; c++)
+            {
+              P = b2-3*a*c;
+              U2 = 4*P*P*P-27*disc*a2;
+              if(isqrt(U2,U))
+                {
+                  if(::divides(U-2*b3+9*a*b*c,27*a2,d,r))
+                    {
+                      if (verbose && glist.size()==0) cout<<disc<<" :\n";
+                      cubic g(a,b,c,d);
+                      if(verbose) cout<<g;
+                      if (neg)
+                        {
+                          if (g.is_jc_reduced())
+                            {
+                              if(verbose) cout<<"\t (JC-reduced)";
+                            }
+                          else
+                            {
+                              if(verbose) cout<<"\t---(reduces to)--->\t";
+                              g.jc_reduce(m);
+                              if(verbose) cout<<g;
+                            }
+                        }
+                      else
+                        {
+                          if (g.is_hessian_reduced())
+                            {
+                              if(verbose) cout<<"\t (Hessian-reduced)";
+                            }
+                          else
+                            {
+                              if(verbose) cout<<"\t---(reduces to)--->\t";
+                              g.hess_reduce(m);
+                              if(verbose) cout<<g;
+                            }
+                        }
+                      if ( find(glist.begin(),glist.end(),g) == glist.end() )
+                        {
+                          glist.push_back(g);
+                          if(verbose) cout<<" -NEW";
+                        }
+                      else
+                        {
+                          if(verbose) cout<<" -REPEAT";
+                        }
+                      if(verbose) cout<<endl;
+                    }
+                }
+            } // c loop
+        }     // b loop
+    }         // a loop
+  return glist;
 }

@@ -1,4 +1,4 @@
-// list_cubics.cc: Program for listing integer cubics with given discriminant bound
+// cubics.cc: Program for listing integer cubics with given discriminant
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -28,42 +28,23 @@
 int main()
 {
   initprimes("PRIMES");
-  bigint disc, absdisc, maxdisc;
-  int neg;
+  bigint disc;
   int verbose=0;
   cerr << "Verbosity level (0, 1 or 2): ";
   cin >> verbose;
 
-  while(cerr << "Enter discriminant bound (positive or negative, 0 to stop): ",	cin >> maxdisc, !is_zero(maxdisc))
+  while(cerr << "Enter discriminant (positive or negative, 0 to stop): ", cin >> disc, !is_zero(disc))
     {
-      neg=(maxdisc<0);
-      if(neg)
-	{
-	  ::negate(maxdisc);
-	  cout << "Negative discriminants down to -" << maxdisc << endl;
-	}
+      vector<cubic> glist = reduced_cubics(disc, verbose);
+      if (glist.size()==0)
+        {
+          cout<< "No cubics with discriminant " << disc << endl;
+        }
       else
-	{
-	  cout << "Positive discriminants  up  to " << maxdisc << endl;
-	}
-
-      for(absdisc=1; absdisc<=maxdisc; absdisc++)
-	    {
-	      disc=absdisc;
-	      if(neg) ::negate(disc);
-              vector<cubic> glist = reduced_cubics(disc, verbose);
-              if (glist.size()==0)
-                {
-                  if(verbose>1)
-                    cout<< "No cubics with discriminant " << disc << endl;
-                }
-              else
-                {
-                  cout << glist.size() << " reduced cubics with discriminant " << disc;
-                  if (glist.size()>0) cout<< " : " << glist;
-                  cout << endl;
-                }
-	    }
-      cout<<endl;
+        {
+          cout << glist.size() << " reduced cubics with discriminant " << disc;
+          if (glist.size()>0) cout<< " : " << glist;
+          cout << endl;
+        }
     }
 }
