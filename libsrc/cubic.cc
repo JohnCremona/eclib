@@ -45,16 +45,14 @@ void cubic::transform(const unimod& m)
   bigint m222=sqr(m(2,2)); bigint m223=m222*m(2,2);
   bigint m122=sqr(m(1,2)); bigint m123=m122*m(1,2);
 
-  coeffs[0] = m113*a() + m(2,1)*m112*b() + m212*m(1,1)*c() + m213*d();
-  coeffs[1] = m123*a() + m(2,2)*m122*b() + m222*m(1,2)*c() + m223*d();
-
-  coeffs[3] = 3*m(1,2)*m112*a() + (m(2,2)*m112 + 2*m(2,1)*m(1,2)*m(1,1))*b() 
+  bigint A = m113*a() + m(2,1)*m112*b() + m212*m(1,1)*c() + m213*d();
+  bigint B = 3*m(1,2)*m112*a() + (m(2,2)*m112 + 2*m(2,1)*m(1,2)*m(1,1))*b()
     + (2*m(2,2)*m(2,1)*m(1,1) + m212*m(1,2))*c() + 3*m(2,2)*m212*d();
-
-  coeffs[2] = 3*m122*m(1,1)*a() + (2*m(2,2)*m(1,2)*m(1,1) + m(2,1)*m122)*b() 
+  bigint C = 3*m122*m(1,1)*a() + (2*m(2,2)*m(1,2)*m(1,1) + m(2,1)*m122)*b()
     + (m222*m(1,1) + 2*m(2,2)*m(2,1)*m(1,2))*c() + 3*m222*m(2,1)*d();
-
-}
+  bigint D = m123*a() + m(2,2)*m122*b() + m222*m(1,2)*c() + m223*d();
+  set(A,B,C,D);
+  }
 
 void cubic::x_shift(const bigint& e, unimod& m)
 {
@@ -201,7 +199,7 @@ bigint cubic::j_c4() const
   return 27*d*c3*a2 + (27*d^2*b3 - 54*d*c2*b2 + 9*c^4*b)*a + 9*d*c*b4 - 2*c3*b3;
 }
 
-#define DEBUG
+//#define DEBUG
 
 bigcomplex cubic::hess_root() const
 {
@@ -459,8 +457,10 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
   bigint P, U, absU, U2, Ud, Db2;
   int sU;
   bigfloat i3a, a23, ra2, rb2, D, D2, D3, D32, D4, Pmax, Pmin;
-  unimod m;
+
   int sl2_equiv, gl2_equiv;
+  bigint ZERO(0), ONE(1);
+  unimod m, m1(ONE,ZERO,ZERO,-ONE);
 
   bigfloat third = 1/to_bigfloat(3);
   bigfloat const1 = 2 / sqrt(to_bigfloat(27));
@@ -608,16 +608,18 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
       // seminegation is there:
       if (!sl2_equiv && gl2)
         {
-          gneg=g;
-          bigint ZERO(0), ONE(1);
-          unimod m1(ONE,ZERO,ZERO,-ONE);
-          gneg.transform(m1);
-          cout<<"g="<<g<<", m1 = "<<m1<<", gneg = "<<gneg<<", now reducing it..."<<endl;
-          if (neg)
-            gneg.jc_reduce(m1);
+          if (reduced_glist.size()==0)
+            gl2_equiv=0;
           else
-            gneg.hess_reduce(m1);
-          gl2_equiv = find(reduced_glist.begin(),reduced_glist.end(),gneg) != reduced_glist.end();
+            {
+              gneg=g;
+              gneg.transform(m1);
+              if (neg)
+                gneg.jc_reduce(m1);
+              else
+                gneg.hess_reduce(m1);
+              gl2_equiv = find(reduced_glist.begin(),reduced_glist.end(),gneg) != reduced_glist.end();
+            }
         }
       if (sl2_equiv || (gl2&&gl2_equiv))
         {
