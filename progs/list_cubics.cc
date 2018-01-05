@@ -23,6 +23,7 @@
  
 #include <eclib/marith.h>
 #include <eclib/unimod.h>
+#include <eclib/polys.h>
 #include <eclib/cubic.h>
 
 int main()
@@ -30,9 +31,13 @@ int main()
   initprimes("PRIMES");
   bigint disc, absdisc, maxdisc;
   int neg;
-  int verbose=0;
+  int verbose=0, include_reducibles=1, gl2=0;
   cerr << "Verbosity level (0, 1 or 2): ";
   cin >> verbose;
+  cerr << "Include reducible cubics? (0 or 1): ";
+  cin >> include_reducibles;
+  cerr << "Use GL(2,Z)-equivalence instead of SL(2,Z)? (0 or 1): ";
+  cin >> gl2;
 
   while(cerr << "Enter discriminant bound (positive or negative, 0 to stop): ",	cin >> maxdisc, !is_zero(maxdisc))
     {
@@ -51,15 +56,22 @@ int main()
 	    {
 	      disc=absdisc;
 	      if(neg) ::negate(disc);
-              vector<cubic> glist = reduced_cubics(disc, verbose);
+              vector<cubic> glist = reduced_cubics(disc, include_reducibles, gl2, verbose);
               if (glist.size()==0)
                 {
                   if(verbose>1)
-                    cout<< "No cubics with discriminant " << disc << endl;
+                    {
+                      cout<< "No ";
+                      if (!include_reducibles) cout << "irreducible";
+                      cout << " cubics with discriminant " << disc << endl;
+                    }
                 }
               else
                 {
-                  cout << glist.size() << " reduced cubics with discriminant " << disc;
+                  cout << glist.size();
+                  if (!include_reducibles) cout << " irreducible";
+                  cout << " reduced cubics with discriminant " << disc;
+                  cout << " (up to " << (gl2?"GL":"SL") << "(2,Z)-equivalence)";
                   if (glist.size()>0) cout<< " : " << glist;
                   cout << endl;
                 }

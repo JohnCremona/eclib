@@ -59,9 +59,13 @@ public:
   bigint det() const {return (m11*m22-m12*m21);}
   void x_shift(const bigint& a) {m12 += (a*m11); m22 += (a*m21);}
   void y_shift(const bigint& a) {m11 += (a*m12); m21 += (a*m22);}
-  unimod inverse() // return inverse matrix assuming det=1
-    {  
-      unimod ans(m22,-m12,-m21,m11); return ans;
+  void negate() {m11*=-1; m12*=-1;m21*=-1; m22*=-1;}
+  void seminegate() {m12*=-1;m22*=-1;}
+  unimod inverse() // return inverse matrix
+    {
+      unimod ans(m22,-m12,-m21,m11);
+      if (det()<0) {negate();}
+      return ans;
     }
   void invert() // multiples by [0,1; -1,0]
     {  bigint temp = -m11; m11 = m12; m12 = temp;

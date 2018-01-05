@@ -84,7 +84,9 @@ public:
   // In the next 4 functions, m already holds a unimod and is updated:
   void x_shift(const bigint& e, unimod& m);
   void y_shift(const bigint& e, unimod& m);
-  void invert(unimod& m);
+  void invert(unimod& m); // apply [0,-1;1,0]
+  void negate(unimod& m); // apply [-1,0;0,-1]
+  void seminegate(unimod& m); // apply [1,0;0,-1] (det=-1)
   void reduce(unimod& m);
 
 // Mathews quantities for use when disc<0:
@@ -116,6 +118,11 @@ public:
   void jc_reduce(unimod& m);
   // Just shifts x, returns the shift amount:
   bigint shift_reduce();
+  vector<bigrational> rational_roots() const;
+  int is_reducible() const
+  {return ((a()==0) || (rational_roots().size()>0));}
+  int is_irreducible() const
+  {return ((a()!=0) && (rational_roots().size()==0));}
 };
 
 
@@ -129,8 +136,9 @@ inline ostream& operator<<(ostream& os, const cubic& g)
 // verbose=2 also shows details of triple loop
 
 // All reduced cubics with a single discriminant (positive or negative):
-
-vector<cubic> reduced_cubics(const bigint& disc, int verbose=0);
+// Set include_reducibles=0 to omit reducible cubics and any with a=0
+// Set gl2=1 to get GL(2,Z)-inequivalent cubics (default is SL(2,Z))
+vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles=1, int gl2=0, int verbose=0);
 
 // All reduced cubics with discriminant in range (0,maxdisc] if maxdisc>0 or [maxdisc,0) if maxdisc<0
 // (not yet implemented)
