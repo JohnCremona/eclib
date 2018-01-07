@@ -522,6 +522,7 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
       i3a = 1/I2bigfloat(3*a);
       Pmax = (neg? pow(2*D32+const4*D*ra2, third): D2);
       Pmin = const2*D3*a23;
+      if(verbose>1) cout<<"bounds on P: ["<<Pmin<<","<<Pmax<<"]"<<endl;
       bmax=(3*a)/2;
       bmin=-bmax;
       if (2*bmax==3*a) bmin++;
@@ -530,14 +531,15 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
         {
           b2=b*b; b3=b*b2;
           rb2 = I2bigfloat(b2);
-          cmin =  Iceil((rb2-Pmax)*i3a);
-          cmax = Ifloor((rb2-Pmin)*i3a);
-          if(verbose>1) cout<<"(a,b)="<<a<<","<<b<<"); bounds on c: ["<<cmin<<","<<cmax<<"]"<<endl;
+          cmin =  Ifloor((rb2-Pmax)*i3a); // round down for safety
+          cmax = Iceil((rb2-Pmin)*i3a);   // round up for safety
+          if(verbose>1) cout<<"(a,b)=("<<a<<","<<b<<"); bounds on c: ["<<cmin<<","<<cmax<<"]"<<endl;
           for(c=cmin; c<=cmax; c++)
             {
               P = b2-3*a*c;
               U2 = 4*P*P*P-27*disc*a2;
               Ud = 2*b3-9*a*b*c;
+              if(verbose>1) cout<<"(a,b,c)=("<<a<<","<<b<<","<<c<<"): P="<<P<<", U^2="<<U2<<endl;
               if(isqrt(U2,absU))
                 {
                   for (sU=0; sU<2; sU++)
