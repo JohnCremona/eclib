@@ -34,23 +34,30 @@ int main()
   int verbose=0, include_reducibles=1, gl2=0;
   cerr << "Verbosity level (0, 1 or 2): ";
   cin >> verbose;
-  cerr << "Include reducible cubics? (0 or 1): ";
-  cin >> include_reducibles;
-  cerr << "Use GL(2,Z)-equivalence instead of SL(2,Z)? (0 or 1): ";
-  cin >> gl2;
 
   while(cerr << "Enter discriminant bound (positive or negative, 0 to stop): ",	cin >> maxdisc, !is_zero(maxdisc))
     {
+      cerr << "Include reducible cubics? (0 or 1): ";
+      cin >> include_reducibles;
+      cerr << "Use GL(2,Z)-equivalence instead of SL(2,Z)? (0 or 1): ";
+      cin >> gl2;
       neg=(maxdisc<0);
+      if (include_reducibles)
+        cout << "Cubics with ";
+      else
+        cout << "Irreducible cubics with ";
       if(neg)
 	{
 	  ::negate(maxdisc);
-	  cout << "Negative discriminants down to -" << maxdisc << endl;
+	  cout << "negative discriminant down to -";
 	}
       else
 	{
-	  cout << "Positive discriminants  up  to " << maxdisc << endl;
+	  cout << "positive discriminant  up  to ";
 	}
+      cout << maxdisc;
+      cout << " up to " << (gl2?"GL":"SL") << "(2,Z)-equivalence";
+      cout << endl;
 
       for(absdisc=1; absdisc<=maxdisc; absdisc++)
 	    {
@@ -69,9 +76,7 @@ int main()
               else
                 {
                   cout << glist.size();
-                  if (!include_reducibles) cout << " irreducible";
-                  cout << " reduced cubics with discriminant " << disc;
-                  cout << " (up to " << (gl2?"GL":"SL") << "(2,Z)-equivalence)";
+                  cout << " with discriminant " << disc;
                   if (glist.size()>0) cout<< " : " << glist;
                   cout << endl;
                 }
