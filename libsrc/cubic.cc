@@ -460,7 +460,8 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
 
   int sl2_equiv, gl2_equiv;
   bigint ZERO(0), ONE(1);
-  unimod m, m1(ONE,ZERO,ZERO,-ONE);
+  unimod m;
+  const unimod m1(ONE,ZERO,ZERO,-ONE);
 
   bigfloat third = 1/to_bigfloat(3);
   bigfloat const1 = 2 / sqrt(to_bigfloat(27));
@@ -617,9 +618,9 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
               gneg=g;
               gneg.transform(m1);
               if (neg)
-                gneg.jc_reduce(m1);
+                gneg.jc_reduce(m);
               else
-                gneg.hess_reduce(m1);
+                gneg.hess_reduce(m);
               gl2_equiv = find(reduced_glist.begin(),reduced_glist.end(),gneg) != reduced_glist.end();
             }
         }
