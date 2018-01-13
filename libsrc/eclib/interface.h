@@ -238,9 +238,9 @@ inline CC &operator /=(CC &a, const CC &b)
 // (default 10).  See www.shoup.net/ntl/doc/tour-ex6.html and
 // www.shoup.net/ntl/doc/RR.cpp.html.
 
-// Set internal precision to n bits and output precision to 0.3*n decimal places
+// Set internal precision to n bits and output precision to (0.3*n)-1 decimal places
 inline void set_precision(long n)
-{RR::SetPrecision(n); RR::SetOutputPrecision(long(0.3*n));}
+{RR::SetPrecision(n); RR::SetOutputPrecision(long(0.3*n)-1);}
 
 // Mostly for backward compatibility (used in saturate.cc) or for
 // temporarily changing internal precision when no output is relevant:
