@@ -123,7 +123,8 @@ int main(){
 
   cout<<"Curve "<<c<<endl;
   Cperiods cp(cd);
-  cout<<"Periods: "<<cp<<endl<<endl;
+  //cout<<"Periods: "<<cp<<endl;
+  cout<<endl;
 
   if(test1(cd,cp,P0)) cout<<"OK!\n"<<endl;
   else cout<<"WRONG!\n"<<endl;
@@ -159,7 +160,8 @@ int main(){
   cout << "Curve "<<c3<<endl;
 
   Cperiods cp3(cd3);
-  cout << "Periods: "<<cp3<<endl<<endl;
+  //cout << "Periods: "<<cp3<<endl;
+  cout<<endl;
 
   Point Q(cd3,BIGINT(-8),BIGINT(51));
   cout << "The point Q is = " << Q << endl ;
