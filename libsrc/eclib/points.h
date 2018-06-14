@@ -29,6 +29,8 @@
 
 #include "curve.h"
 
+#undef iszero
+
 //
 // class for  points on elliptic curves
 //
