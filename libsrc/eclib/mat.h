@@ -23,7 +23,6 @@
  
 // Not to be included directly by user: use matrix.h
 //
-// SCALAR_OPTION must be set to 1 or 2 by including file
 
 #ifndef LONG_MIN
 #define LONG_MIN (-LONG_MAX-1)

@@ -71,26 +71,4 @@
 #undef smat
 #undef smat_elim
 
-// SCALAR_OPTION may be set to 1 or 2 by user
-
-#if (SCALAR_OPTION==1)
-#define scalar int
-#define vec vec_i
-#define mat mat_i
-#define subspace subspace_i
-#define svec svec_i
-#define smat smat_i
-#define smat_elim smat_i_elim
-#else
-#define scalar long
-#define vec vec_l
-#define mat mat_l
-#define subspace subspace_l
-#define svec svec_l
-#define smat smat_l
-#define smat_elim smat_l_elim
-#endif
-
-// else user must use the unabbreviated names
-
 #endif

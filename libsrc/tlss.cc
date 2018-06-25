@@ -26,8 +26,7 @@
 // discrete log a la Siksek when the p-torsion in E(F_q) is cyclic,
 // else use the Tate-Lichtenbaum pairing
 
-#include <eclib/matrix.h>
-#include <eclib/subspace.h>
+#include <eclib/method.h>
 
 #include <eclib/points.h>
 #include <eclib/polys.h>

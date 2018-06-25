@@ -35,6 +35,7 @@ float ran0( int& idum );
 #define SCALAR_OPTION 2   // longs
 
 #include <eclib/smatrix_elim.h>
+#include <eclib/types.h>
 
 long starttime,stoptime;
 

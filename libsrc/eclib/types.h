@@ -1,4 +1,4 @@
-// subspace.h: manage declarations of subspace classes
+// types.h: typedefs for scalar, vector, matrix types
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -21,49 +21,30 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_SUBSPACE_H)
-#define _SUBSPACE_H      1       //flags that this file has been included
+#if     !defined(_JC_TYPES_H)
+#define _JC_TYPES_H      1       //flags that this file has been included
 
-#include "matrix.h"
 
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-#undef smat_elim
+// SCALAR_OPTION may be set to 1 or 2 by user
 
-#define scalar int
-#define vec vec_i
-#define mat mat_i
-#define subspace subspace_i
-#define svec svec_i
-#define smat smat_i
-#define smat_elim smat_i_elim
-#include "sub.h"
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-#undef smat_elim
-
-#define scalar long
-#define vec vec_l
-#define mat mat_l
-#define subspace subspace_l
-#define svec svec_l
-#define smat smat_l
-#define smat_elim smat_l_elim
-#include "sub.h"
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-#undef smat_elim
+#if (SCALAR_OPTION==1)
+typedef int scalar;
+typedef vec_i vec;
+typedef mat_i mat;
+typedef subspace_i subspace;
+typedef ssubspace_i ssubspace;
+typedef svec_i svec;
+typedef smat_i smat;
+typedef smat_i_elim smat_elim;
+#else
+typedef long scalar;
+typedef vec_l vec;
+typedef mat_l mat;
+typedef subspace_l subspace;
+typedef ssubspace_l ssubspace;
+typedef svec_l svec;
+typedef smat_l smat;
+typedef smat_l_elim smat_elim;
+#endif
 
 #endif

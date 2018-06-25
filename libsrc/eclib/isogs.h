@@ -25,6 +25,7 @@
 #define _ISOGS_H_
 
 #include "cperiods.h"  // which itself includes everything relevant
+#include "method.h"
 
 // isogeny functions:
 

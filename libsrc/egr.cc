@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <eclib/method.h>
 #include <eclib/points.h>
 #include <eclib/egr.h>
-#include <eclib/matrix.h>
 
 //#define DEBUG_EGR
 //#define DEBUG_EGR_EXTRA
@@ -800,7 +800,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
   if(np==0) return ans;
   for(j=1; j<=np; j++)
     {
-      long modulus=moduli[j-1];
+      scalar modulus=moduli[j-1];
 #ifdef DEBUG_INDEX
       cout<<"Working on column "<<j<<", modulus "<<modulus<<endl;
 #endif
@@ -809,7 +809,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
       cout<<"Column "<<j<<" = "<<m.col(j)<<endl;
 #endif
       for(i=1; (i<=npts); i++) m(i,j)=m(i,j)%modulus;
-      long g=0,gm;
+      scalar g=0,gm;
       for(i=1; (i<=npts)&&(g!=1); i++) g=gcd(g,m(i,j));
 #ifdef DEBUG_INDEX
       cout<<"Column gcd = "<<g<<endl;

@@ -22,10 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include "interface.h"
+#include "method.h"
 #include "compproc.h"
-
-#include "matrix.h"
-#include "subspace.h"
 
 #include "points.h"
 #include "polys.h"

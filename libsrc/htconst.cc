@@ -25,10 +25,9 @@
 // bounds on the difference between naive and canonical height.
 
 #include <eclib/marith.h>
+#include <eclib/method.h>
 #include <eclib/curve.h>
 #include <eclib/compproc.h>
-#include <eclib/matrix.h>
-#include <eclib/subspace.h>
 #include <eclib/cperiods.h>
 #include <eclib/points.h>
 #include <eclib/sieve_search.h>

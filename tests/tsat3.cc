@@ -23,7 +23,7 @@
 //
 
 #include <eclib/interface.h>
-#include <eclib/matrix.h>
+#include <eclib/method.h>
 #include <eclib/curve.h>
 #include <eclib/points.h>
 #include <eclib/cperiods.h>

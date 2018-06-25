@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/arith.h>
-#include <eclib/svector.h>
+#include <eclib/method.h>
 
 int main(void)
 {

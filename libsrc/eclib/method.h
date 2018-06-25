@@ -59,6 +59,8 @@
 #include "subspace.h"
 #include "smatrix_elim.h"
 
+#include "types.h"
+
 #ifdef MULTI
 typedef bigint SCALAR;
 typedef vec_m VEC;

@@ -25,7 +25,7 @@
 #include <eclib/interface.h>
 #include <eclib/timer.h>
 #include <eclib/arith.h>
-#include <eclib/matrix.h>
+#include <eclib/method.h>
 
 int main(void)
 {
