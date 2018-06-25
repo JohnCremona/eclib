@@ -27,7 +27,7 @@ bigfloat height(Point& P)
 {
   // WARNING -- no check made of validity of point on curve
   bigfloat zero(to_bigfloat(0));
-  if ( P.iszero() ) return zero;
+  if ( P.is_zero() ) return zero;
   if (P.height >= zero) return P.height;  // already calculated it
   if (order(P) > 0) {P.height = zero; return zero; } // zero height if torsion
 // N.B. So if we ever ask a point its height it will compute its order.
@@ -219,7 +219,7 @@ bigfloat height_pairing(Point& P, Point& Q)
 {
   // we avoid doing any real work, especially addition of points,
   // if we can.
-  if(P.iszero() || Q.iszero())    return to_bigfloat(0);
+  if(P.is_zero() || Q.is_zero())    return to_bigfloat(0);
   else if(P == Q)    return height(P) ;
   else
     {

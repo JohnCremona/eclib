@@ -61,7 +61,7 @@ void test3(Curvedata& CD, Cperiods& per, int m)
   unsigned int i; for(i=0; i<Qlist.size(); i++) 
     {
       Point Q = Qlist[i];
-      if((m*Q).iszero()) cout<<Q<<" OK"<<endl;
+      if((m*Q).is_zero()) cout<<Q<<" OK"<<endl;
       else  cout<<Q<<" wrong"<<endl;
     }
 }

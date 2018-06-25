@@ -35,8 +35,8 @@ LT_INIT
 #
 # NB The suffix of the library name (libec.so here) is (c-a).a.r
 
-LT_CURRENT=3
-LT_REVISION=9
+LT_CURRENT=4
+LT_REVISION=0
 LT_AGE=0
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)

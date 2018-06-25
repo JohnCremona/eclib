@@ -137,7 +137,7 @@ public:
   friend bigfloat pheight(const Point& P, const bigint& p);
 
   // useful logical tests
-  int iszero() const { return isinfinite(); }
+  int is_zero() const { return isinfinite(); }
   int isvalid() const ; // P on its curve ?
 
 }; // end of point class

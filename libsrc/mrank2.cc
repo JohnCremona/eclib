@@ -278,7 +278,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
   for(it=0; it<ntorsion; it++)
     {
       Point T = torsion[it];
-      if(T.iszero()) continue;
+      if(T.is_zero()) continue;
       d1=getX(T);
       if(d1==zero) d1=d;
 #ifdef DEBUG_ELS

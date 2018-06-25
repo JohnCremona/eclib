@@ -64,7 +64,7 @@ inline bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per,
 inline bigcomplex elliptic_logarithm(const Curvedata& E, const Cperiods& per, 
 				     const Point& P)
 {
-  if(P.iszero()) return bigcomplex(to_bigfloat(0));
+  if(P.is_zero()) return bigcomplex(to_bigfloat(0));
   bigfloat xP, yP;
   P.getrealcoordinates(xP,yP);
   return ellpointtoz(E,per,xP,yP);
