@@ -1,4 +1,4 @@
-// vector.h: ,anage declarations of integer vector classes
+// vector.h: manage declarations of integer vector classes
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona

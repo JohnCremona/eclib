@@ -60,10 +60,10 @@
 #include "smatrix_elim.h"
 
 #ifdef MULTI
-#define SCALAR bigint
-#define VEC vec_m
-#define MAT mat_m
-#define SUBSP msubspace
+typedef bigint SCALAR;
+typedef vec_m VEC;
+typedef mat_m MAT;
+typedef msubspace SUBSP;
 #include "marith.h"
 #include "mvector.h"
 #include "mmatrix.h"
@@ -73,10 +73,10 @@
 						    // a bigint
 #else
 #define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
-#define SCALAR scalar
-#define VEC vec
-#define MAT mat
-#define SUBSP subspace
+typedef scalar SCALAR;
+typedef vec VEC;
+typedef mat MAT;
+typedef subspace SUBSP;
 #endif
 
 #ifdef MODULAR
