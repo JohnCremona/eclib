@@ -74,6 +74,15 @@ bigcomplex normalize(bigcomplex& w1, bigcomplex& w2)
     w1=w1-w2*round(tau.real());
     tau=w1/w2;
    }
+   if (tau.real()==-0.5)
+     {
+       w1+=w2; tau=w1/w2;
+     }
+   else
+     if (abs(tau)==1 && tau.real()<0)
+       {
+         w3=-w1; w1=w2; w2=w3; tau=w1/w2;
+       }
    return tau;
 }
  
