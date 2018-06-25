@@ -90,7 +90,7 @@ find( int X, int* ptr, int ub, int lb = 0 ) {
 // SCALAR_OPTION may be set to 1 or 2 by user
 
 #if (SCALAR_OPTION==1)
-#define scalar int
+typedef int scalar;
 #define vec vec_i
 #define mat mat_i
 #define subspace subspace_i
@@ -99,7 +99,7 @@ find( int X, int* ptr, int ub, int lb = 0 ) {
 #define smat_elim smat_i_elim
 #define ssubspace ssubspace_i
 #else
-#define scalar long
+typedef long scalar;
 #define vec vec_l
 #define mat mat_l
 #define subspace subspace_l
