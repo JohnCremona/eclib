@@ -37,7 +37,7 @@ class galois_field {
   bigint characteristic() const {return q;}
 };
 
-#define gf_element ZZ_p
+typedef ZZ_p gf_element;
 
 #define NewGF(field,name) gf_element name
 #define GFinit(field,name) name=to_ZZ_p(0)
