@@ -21,16 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/points.h>   // from qcurves library
-#include <eclib/mwprocs.h>   // from qcurves library
-#include <eclib/mquartic.h>
-#include <eclib/mequiv.h>
-#include <eclib/msoluble.h>
-#include <eclib/qc.h>
-#define USE_BIGINTS
-#include <eclib/descent.h>
-#include <eclib/mrank1.h>
+#include <eclib/compproc.h>
 #include <eclib/twoadic.h>
+#include <eclib/mlocsol.h>
+#include <eclib/mglobsol.h>
+#include <eclib/mrank1.h>
+
+#define USE_BIGINTS
 
 #ifdef USE_BIGINTS
 //#define DEFAULT_NAUX 12

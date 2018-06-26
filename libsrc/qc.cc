@@ -21,9 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/marith.h>
-#include <eclib/points.h>   // from qcurve library
-#include <eclib/mquartic.h>
 #include <eclib/qc.h>
 
 //#define DEBUG

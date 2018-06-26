@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <eclib/moddata.h>
-#include <iostream>
+#include <eclib/arith.h>
 
 level::level(long n, long neigs)
 {

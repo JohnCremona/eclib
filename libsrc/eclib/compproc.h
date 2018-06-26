@@ -24,7 +24,7 @@
 #ifndef _COMPPROC_H_
 #define _COMPPROC_H_
 
-#include "interface.h"
+#include <eclib/interface.h>
 
 int is_small(bigfloat x);
 int is_small(const bigcomplex& z);

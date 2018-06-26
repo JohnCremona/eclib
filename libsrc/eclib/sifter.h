@@ -29,6 +29,7 @@
 #ifndef _SIFTER_
 #define _SIFTER_
 
+#include <eclib/curve.h>
 
 class sifter {
 private: 

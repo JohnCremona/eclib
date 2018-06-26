@@ -25,6 +25,8 @@
 #define _HILBERT_H      1
                            //flags that this file has been included
 
+#include <eclib/quadratic.h>
+
 // In all the functions below, the value of the Hilbert symbol is 0 or
 // 1 (as an int) rather than +1 or -1, for efficiency;  
 

@@ -21,6 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <eclib/unimod.h>
+
 // NB In both functions, the unimod m must hold the cumulative
 // transformation on entry. It will be updated to show the new
 // cumulative transformation

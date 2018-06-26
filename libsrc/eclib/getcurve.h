@@ -20,7 +20,9 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#include <eclib/curve.h>
+
 // Read in a curve as [a1,a2,a3,a4,a6] with ai integers:
 int getcurve(Curvedata& CD, int verb);
 

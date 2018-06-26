@@ -23,8 +23,6 @@
 
 #define USE_SMATS // Warning:  no longer testing without this switched on!
 
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
 #include <eclib/cusp.h>
 #include <eclib/homspace.h>
 #include <eclib/timer.h>

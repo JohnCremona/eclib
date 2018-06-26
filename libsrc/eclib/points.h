@@ -27,7 +27,8 @@
 #ifndef _PELLIPTIC_
 #define _PELLIPTIC_
 
-#include "curve.h"
+#include <eclib/p2points.h>
+#include <eclib/curve.h>
 
 //
 // class for  points on elliptic curves

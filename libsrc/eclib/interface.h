@@ -48,7 +48,7 @@
 #endif
 #include <iterator>
 using namespace std;
-#include "templates.h"
+#include <eclib/templates.h>
 #include <stdint.h>
 
 #ifndef MININT

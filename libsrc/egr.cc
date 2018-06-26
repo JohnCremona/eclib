@@ -21,7 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/method.h>
+#include <eclib/matrix.h>
+typedef mat_l mat;
+typedef long scalar;
 #include <eclib/points.h>
 #include <eclib/egr.h>
 
@@ -37,7 +39,7 @@ int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p)
           <<P
       <<" has good reduction at "<<p<<"..."<<flush;
 #endif
-  bigint Z=getZ(P);
+  bigint Z=P.getZ();
   if(is_zero(Z))  // identity is nonsingular
     {
 #ifdef DEBUG_EGR
@@ -45,8 +47,8 @@ int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p)
 #endif
       return 1;
     }
-  bigint X=getX(P);
-  bigint Y=getY(P);
+  bigint X=P.getX();
+  bigint Y=P.getY();
   if(is_zero(p)) // test whether P is not on the "egg"
     {
       if(conncomp==1) 
@@ -170,7 +172,7 @@ long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p
       <<", m="<<m<<"..."<<flush;
 #endif
   if(HasGoodReduction(P,p)) return 0;
-  bigint x=getX(P),  y=getY(P),  z=getZ(P);
+  bigint x, y, z; P.getcoordinates(x,y,z);
   bigint zroot = gcd(x,z); // = cube root of z
   long ans = val(p, 2*y + a1*x + a3*z) - 3*val(p,zroot);
 #ifdef DEBUG_EGR
@@ -225,12 +227,13 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
   cout<<"alpha1 = "<<alpha1<<", alpha2="<<alpha2<<endl;
 #endif
 
-  bigint z=getZ(P); 
+  bigint x, y, z, w1, w2;
+  P.getcoordinates(x,y,z);
   bigint zinv = invmod(z,pN);
-  bigint x=(getX(P)*zinv-x0) %pN;
-  bigint y=(getY(P)*zinv-y0) %pN;
-  bigint w1 = (y - alpha1*x) %pN;
-  bigint w2 = (y - alpha2*x) %pN;
+  x=(x*zinv-x0) %pN;
+  y=(y*zinv-y0) %pN;
+  w1 = (y - alpha1*x) %pN;
+  w2 = (y - alpha2*x) %pN;
   long e1 = val(p, w1); if(e1>N2) e1=N2;
   long e2 = val(p, w2); if(e2>N2) e2=N2;
 #ifdef DEBUG_EGR_EXTRA

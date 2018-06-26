@@ -24,7 +24,7 @@
 #if     !defined(_JC_VECTOR_H)
 #define _JC_VECTOR_H      1       //flags that this file has been included
 
-#include "interface.h"
+#include <eclib/arith.h>
 
 class vec_i; class vec_l; class vec_m;
 class mat_i; class mat_l; class mat_m;
@@ -48,7 +48,9 @@ class subspace_i; class subspace_l; class msubspace;
 #define svec svec_i
 #define smat smat_i
 #define smat_elim smat_i_elim
+
 #include "vec.h"
+
 #undef scalar
 #undef vec
 #undef mat
@@ -64,7 +66,9 @@ class subspace_i; class subspace_l; class msubspace;
 #define svec svec_l
 #define smat smat_l
 #define smat_elim smat_l_elim
+
 #include "vec.h"
+
 #undef scalar
 #undef vec
 #undef mat

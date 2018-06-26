@@ -24,6 +24,7 @@
 // Notation: g(x,z) is replaced by g(m11*x+m12*z,m21*x+m22*z)/m00^2
 //
 
+#include <eclib/unimod.h>
 
 void apply_transform(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 		     const unimod& m);

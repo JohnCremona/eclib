@@ -24,6 +24,8 @@
 #ifndef _PERIODS_H
 #define _PERIODS_H      1
 
+#include <eclib/newforms.h>
+
 #define PI Pi()
 //#ifndef TWOPI
 //#define TWOPI ((2*PI))

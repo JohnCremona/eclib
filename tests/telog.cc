@@ -31,7 +31,7 @@ int test1(Curvedata& CD, Cperiods& per, const Point& P)
 {
   bigcomplex z=elliptic_logarithm(CD,per,P);
   cout<<"Elliptic log of P is "<<z<<endl;
-  Point Q=ellztopoint(CD,per,z,getZ(P));
+  Point Q=ellztopoint(CD,per,z,P.getZ());
   cout<<"Reconstructed P = "<<Q<<endl;
   return (P==Q);
 }

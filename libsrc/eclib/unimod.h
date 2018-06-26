@@ -24,7 +24,7 @@
 #ifndef _UNIMOD_H
 #define _UNIMOD_H      1      //flags that this file has been included
 
-#include "interface.h"
+#include <eclib/interface.h>
 
 class unimod {
   friend class quadratic;

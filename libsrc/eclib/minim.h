@@ -21,6 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <eclib/unimod.h>
+
 bigint g_content(const bigint& ga, const bigint& gb, const bigint& gc, 
 		 const bigint& gd, const bigint& ge);
 // returns largest f s.t. f^2 divides all coeffs

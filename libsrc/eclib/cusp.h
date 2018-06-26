@@ -21,6 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#ifndef _CUSP_H
+#define _CUSP_H      1
+                           //flags that this file has been included
+
+#include <eclib/moddata.h>
+#include <eclib/rat.h>
+
 class cusplist {
  private:
     const moddata* N;
@@ -39,3 +46,5 @@ class cusplist {
       {for(long i=0; i<number; i++) cout<<i<<"\t"<<list[i]<<endl;}
     long count() const {return number;}
 };   
+
+#endif

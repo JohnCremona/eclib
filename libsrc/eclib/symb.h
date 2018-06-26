@@ -21,6 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#ifndef _SYMB_H
+#define _SYMB_H      1
+                           //flags that this file has been included
+
+#include <eclib/moddata.h>
+#include <eclib/rat.h>
+
 class symb {
  private:
    long c,d;
@@ -92,3 +99,4 @@ class symbdata :public moddata {
 
 modsym jumpsymb(symb s1, symb s2);
 
+#endif

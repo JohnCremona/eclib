@@ -26,7 +26,6 @@
 //
 
 #include <eclib/marith.h>
-#include <eclib/unimod.h>
 #include <eclib/transform.h>
 
 bigint g_content(const bigint& ga, const bigint& gb, const bigint& gc, 

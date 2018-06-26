@@ -23,7 +23,6 @@
  
 // Original version by Luiz Figueiredo
 
-#include <eclib/arith.h>
 #include <eclib/smatrix_elim.h>
 
 #undef scalar
@@ -43,6 +42,7 @@
 #define smat smat_i
 #define smat_elim smat_i_elim
 #define ssubspace ssubspace_i
+
 #include "smat_elim.cc"
 
 #undef scalar
@@ -62,6 +62,7 @@
 #define smat smat_l
 #define smat_elim smat_l_elim
 #define ssubspace ssubspace_l
+
 #include "smat_elim.cc"
 
 #undef scalar

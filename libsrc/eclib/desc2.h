@@ -20,7 +20,9 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#include <eclib/interface.h>
+
 int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 	  const vector<bigint>& plist, const vector<bigint>& supp, const vector<bigint>& bgens,
 	  long mask,  double hlim,

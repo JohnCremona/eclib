@@ -25,11 +25,7 @@
 #define _MQUARTIC_H
 
 #define NEW_EQUIV
-#include "compproc.h"
-#include "marith.h"
-#include "bigrat.h"
-#include "points.h"
-#include "realroots.h"
+#include <eclib/points.h>
 
 inline bigint II(const bigint& a, const bigint& b, const bigint& c, 
 	  const bigint& d, const bigint& e)

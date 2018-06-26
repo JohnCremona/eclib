@@ -41,7 +41,9 @@
 #define svec svec_i
 #define smat smat_i
 #define smat_elim smat_i_elim
+
 #include "sub.h"
+
 #undef scalar
 #undef vec
 #undef mat
@@ -57,7 +59,9 @@
 #define svec svec_l
 #define smat smat_l
 #define smat_elim smat_l_elim
+
 #include "sub.h"
+
 #undef scalar
 #undef vec
 #undef mat

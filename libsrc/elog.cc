@@ -21,10 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/compproc.h>
-#include <eclib/marith.h>
-#include <eclib/polys.h>
 #include <eclib/elog.h>
+#include <eclib/polys.h>
 
 bigfloat ssqrt(const bigfloat& x)
 {
@@ -259,7 +257,7 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
 
   bigint b2,b4,b6,b8;
   E.getbi(b2,b4,b6,b8);
-  bigint xPn=getX(P), xPd=getZ(P);
+  bigint xPn=P.getX(), xPd=P.getZ();
   bigint g = gcd(xPn,xPd); xPn/=g; xPd/=g;
   vector<bigint> q; // quartic coefficients
   q.push_back(xPd);
@@ -338,7 +336,7 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
   else 
     {
       z = elliptic_logarithm(E,per2,P);
-      den=getZ(P);
+      den=P.getZ();
     }
 #ifdef DEBUG_DIVPT
   cout<<"posdisc=  "<<posdisc<<endl;

@@ -24,7 +24,6 @@
 #ifndef _ELOG_H_
 #define _ELOG_H_
 
-#include "curve.h"
 #include "points.h"
 #include "cperiods.h"
 

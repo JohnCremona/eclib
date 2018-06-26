@@ -34,6 +34,8 @@
 
 #include <unordered_map>
 
+#include <eclib/interface.h>
+
 void init_time();
 void start_time();
 void stop_time();

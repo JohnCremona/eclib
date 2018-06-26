@@ -21,7 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/arith.h>
 #include <eclib/svector.h>
 
 #undef scalar
@@ -35,6 +34,7 @@
 #define mat mat_i
 #define subspace subspace_i
 #define svec svec_i
+
 #include "svec.cc"
 
 #undef scalar
@@ -48,6 +48,7 @@
 #define mat mat_l
 #define subspace subspace_l
 #define svec svec_l
+
 #include "svec.cc"
 
 #undef scalar

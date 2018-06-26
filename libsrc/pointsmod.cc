@@ -36,12 +36,7 @@
 // implementation is only for prime fields, but the same strategy
 // would work over arbitrary finite fields.
 
-#include <eclib/curve.h>
-#include <eclib/points.h>
-#include <eclib/polys.h>
-#include <eclib/curvemod.h>
-#include <eclib/pointsmod.h>
-#include <eclib/ffmod.h>
+#include <eclib/ffmod.h> // which includes pointsmod.h
 
 void set_order_point(pointmodq& P, const bigint& n)
 {P.set_order(n);}
@@ -250,10 +245,10 @@ pointmodq reduce_point(const Point& P,  const curvemodq& Emodq)
   //  cout<<"Reducing "<<P<<" mod q -> "<<flush;
   galois_field Fq = get_field(Emodq);
   NewGF(Fq,x);  NewGF(Fq,y);  NewGF(Fq,z);
-  GFSetZ(z,getZ(P));
+  GFSetZ(z,P.getZ());
   if(IsZero(z)) return pointmodq(Emodq);
-  GFSetZ(x,getX(P)); x/=z; 
-  GFSetZ(y,getY(P)); y/=z; 
+  GFSetZ(x,P.getX()); x/=z; 
+  GFSetZ(y,P.getY()); y/=z; 
   //  cout<<"("<<x<<","<<y<<")"<<endl;
   return pointmodq(x,y,Emodq);
 }

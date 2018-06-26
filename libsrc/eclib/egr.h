@@ -25,6 +25,8 @@
 #ifndef _EGR_H_
 #define _EGR_H_
 
+#include <eclib/curve.h>
+
 // class to handle component groups at primes of bad reduction etc
 
 class ComponentGroups : public CurveRed {

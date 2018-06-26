@@ -21,21 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/method.h>
-
-#include <eclib/points.h>
-#include <eclib/polys.h>
-#include <eclib/curvemod.h>
-#include <eclib/pointsmod.h>
-#include <eclib/ffmod.h>
-#include <eclib/divpol.h>
-#include <eclib/tlss.h>
-#include <eclib/elog.h>
-#include <eclib/sieve_search.h>
-#include <eclib/mwprocs.h>
+#include <eclib/subspace.h>
 #include <eclib/saturate.h>
-#include <eclib/egr.h>
+#include <eclib/tlss.h>
 #include <eclib/htconst.h>
+#include <eclib/divpol.h>
 
 // If point search bound is greater than this, output a warning
 // message and reduce to this value:
@@ -52,7 +42,7 @@ void saturator::reset_points(const vector<Point>& PP)
   unsigned int i;
   for(i=0; i<Plistp.size(); i++) Plistx.push_back(Plistp[i]);
   rank=Plistx.size();
-  TLimage=mat(0,rank); //  holds TL image in echelon form
+  TLimage=mat_l(0,rank); //  holds TL image in echelon form
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
@@ -76,7 +66,7 @@ int saturator::test_saturation(int pp, int ms)
       for(i=0; i<npcot; i++) Plistx.push_back(Plistp[i]);
     }
   rank=Plistx.size();
-  TLimage=mat(0,rank); //  holds TL image in echelon form
+  TLimage=mat_l(0,rank); //  holds TL image in echelon form
   TLrank=0;
   
   if(use_div_pols)
@@ -146,16 +136,16 @@ void saturator::nextq()
     }
 
   if(verbose>1) cout<<"Using q = "<<q<<endl;
-  mat TLim = sieve.map_points(Plistx);
+  mat_l TLim = sieve.map_points(Plistx);
   if(verbose>2) 
     {
       cout<<"Adding "<<ntp<<" rows to TL matrix;\n";
       cout<<TLim<<endl;
       cout<<"Now reducing to echelon form..."<<endl;
     }
-  vec pcols, npcols; // not used
+  vec_l pcols, npcols; // not used
   long newTLrank, ny;
-  mat newTLmat = echmodp(rowcat(TLimage,TLim),pcols, npcols, newTLrank, ny, p);
+  mat_l newTLmat = echmodp(rowcat(TLimage,TLim),pcols, npcols, newTLrank, ny, p);
   if(verbose>2) 
     {
       cout<<"New rank = "<<newTLrank<<endl;
@@ -178,11 +168,11 @@ void saturator::nextq()
   if(verbose>1) cout<<endl;
 }
 
-vec saturator::kernel_vector()
+vec_l saturator::kernel_vector()
 {
-  if(TLrank==rank) return vec(0); // should not be called in this case!
+  if(TLrank==rank) return vec_l(0); // should not be called in this case!
   // Now we assume that TLimage is in echelon form
-  mat ker = basis(pkernel(TLimage, p));
+  mat_l ker = basis(pkernel(TLimage, p));
   return ker.col(1);
 }
 
@@ -190,7 +180,7 @@ vec saturator::kernel_vector()
 int saturator::enlarge()
 {
   if(TLrank==rank) return 0; // no enlargement;  should not be called in this case
-  vec ker = basis(pkernel(TLimage, p)).col(1);
+  vec_l ker = basis(pkernel(TLimage, p)).col(1);
   if(verbose>0) cout<<"possible kernel vector = "<<ker<<endl;
   Point Q(E); int i, ci, keepi=-1;
   for(i=0; i<rank; i++) 
@@ -246,7 +236,7 @@ int saturator::enlarge()
   Plistx[keepi]=Q;
   log_index++;
   // reset TL matrix and q iteration
-  TLimage=mat(0,rank); //  holds TL image in echelon form
+  TLimage=mat_l(0,rank); //  holds TL image in echelon form
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;

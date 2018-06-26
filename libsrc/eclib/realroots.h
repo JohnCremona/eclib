@@ -20,7 +20,13 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#ifndef _REALROOTS_H
+#define _REALROOTS_H      1
+                           //flags that this file has been included
+
+#include <eclib/interface.h>
+
 bigfloat safe_sqrt(const bigfloat& x);
 bigfloat cube_root(const bigfloat& x);
 
@@ -35,5 +41,4 @@ vector<bigfloat> realroots( const vector<bigfloat>& coeff );
 
 vector<bigfloat> realroots11( const vector<bigfloat>& coeff );
 
-
-
+#endif

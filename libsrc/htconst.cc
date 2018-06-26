@@ -24,20 +24,7 @@
 // Here we implement (1) Silverman, (2) CPS (Cremona/Prickett/Siksek)
 // bounds on the difference between naive and canonical height.
 
-#include <eclib/marith.h>
-#include <eclib/method.h>
-#include <eclib/curve.h>
-#include <eclib/compproc.h>
-#include <eclib/cperiods.h>
-#include <eclib/points.h>
-#include <eclib/sieve_search.h>
-#include <eclib/polys.h>
-#include <eclib/curvemod.h>
-#include <eclib/pointsmod.h>
-#include <eclib/saturate.h>
-#include <eclib/mwprocs.h>
-#include <eclib/elog.h>
-#include <eclib/egr.h>
+#include <eclib/mwprocs.h> // only needed for order_real_roots
 #include <eclib/htconst.h>
 
 #include <eclib/realroots.h>

@@ -23,7 +23,6 @@
  
 // Original version by Luiz Figueiredo
 
-#include <eclib/arith.h>
 #include <eclib/smatrix.h>
 
 #undef scalar
@@ -41,7 +40,9 @@
 #define svec svec_i
 #define smat smat_i
 #define SCALAR_OPTION 1
+
 #include "smat.cc"
+
 #undef scalar
 #undef vec
 #undef mat
@@ -57,7 +58,9 @@
 #define svec svec_l
 #define smat smat_l
 #define SCALAR_OPTION 2
+
 #include "smat.cc"
+
 #undef scalar
 #undef vec
 #undef mat

@@ -198,12 +198,12 @@ int order(Point& p)
 {
   // ASSUME that point is valid; check before calling if unknown
   if (p.ord) {return p.ord;}
-  bigint eight, z=getZ(p); eight=8;
+  bigint eight, z=p.getZ(); eight=8;
   if (is_zero(z))  {p.ord = 1; return 1; }
   if (z>eight)     {p.ord =-1; return -1;}
   Point q = p;  long ord=1;
   while ( (sign(z)!=0) && (z<=eight) ) // (worst denom of a torsion point)
-    {ord++;   q+=p;  z = getZ(q); }
+    {ord++;   q+=p;  z = q.getZ(); }
   if (sign(z)!=0) ord = -1;
   p.ord = ord;
   return ord;
@@ -221,7 +221,7 @@ int order(Point& p, vector<Point>& multiples)
   multiples.push_back(p);
   Point q = p;
   bigint eight; eight=8;
-  while ( (!q.is_zero()) && (getZ(q)<=eight) 
+  while ( (!q.is_zero()) && (q.getZ()<=eight) 
 	                 && (multiples.size()<13) ) // 12 is max poss order
   { 
     q+=p;

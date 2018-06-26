@@ -20,7 +20,10 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- //
+
+#include <eclib/unimod.h>
+
+//
 // Notation: g(x,z) is replaced by g(m11*x+m12*z,m21*x+m22*z)
 //
 // Stored as bigint* arrays g of size 4 representing 

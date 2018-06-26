@@ -1,0 +1,289 @@
+Include files which include other eclib header files
+
+templates: -
+kbessel: -
+logger: -
+threadpool: -
+parifact: -
+
+interface:
+        templates
+
+compproc:
+        interface
+
+realroots:
+        interface
+
+timer:
+        interface
+
+unimod:
+        interface
+
+cubic:
+        unimod
+
+quadratic:
+        unimod
+
+hilbert:
+        quadratic
+
+legendre:
+        quadratic
+
+conic:
+        quadratic
+
+xmod:
+        interface
+
+arith:
+        xmod
+
+marith:
+        arith
+
+rat:
+        arith
+
+bigrat:
+        rat
+
+gf:
+        marith
+
+p2points:
+        bigrat
+
+polys:
+        gf
+        bigrat
+
+vector:
+        arith
+        vec
+
+matrix:
+        vector
+        mat
+
+subspace:
+        matrix
+        sub
+
+svector:
+        vector
+        svec
+
+smatrix:
+        svector
+        matrix
+        smat
+
+smatrix_elim:
+        smat_elim
+        smatrix
+        subspace
+
+mvector:
+        vector
+
+mmatrix:
+        mvector
+        matrix
+
+msubspace:
+        mmatrix
+
+illl:
+        mvector
+
+types:
+        smatrix_elim
+
+method:
+        subspace
+        types
+
+splitbase:
+        smatrix
+
+xsplit_data:
+        method
+        smatrix_elim
+
+xsplit:
+        xsplit_data
+        splitbase
+        threadpool
+
+===============================================
+
+curve:
+        marith
+        bigrat
+
+points:
+        p2points
+        curve
+
+cperiods:
+        compproc
+        curve
+
+isogs:
+        cperiods
+        matrix
+
+reader:
+        curve
+
+getcurve:
+        curve
+
+egr:
+        curve
+
+sifter:
+        curve
+
+lambda:
+        curve
+
+divpol:
+        curve
+
+elog:
+        points
+        cperiods
+
+sieve_search:
+        interface
+
+htconst:
+        egr
+        elog
+        sieve_search
+
+curvemod:
+        polys
+        curve
+
+pointsmod:
+        points
+        curvemod
+
+ffmod:
+        pointsmod
+
+saturate:
+        matrix
+        ffmod
+
+tlss:
+        matrix
+        ffmod
+
+mwprocs:
+        saturate
+        sieve_search
+
+================================
+
+GetOpt: -
+version: -
+bitspace: -
+
+options:
+        GetOpt
+
+mquartic:
+        points
+
+qc:
+        mquartic
+
+minim:
+        unimod
+
+transform:
+        unimod
+
+mlocsol:
+        mquartic
+
+mglobsol:
+        mquartic
+        sieve_search
+
+msoluble:
+        mglobsol
+
+sqfdiv:
+        marith
+
+twoadic:
+        marith
+
+reduce:
+        unimod
+
+mequiv:
+        mquartic
+
+descent:
+        mwprocs
+
+mrank2:
+        descent
+
+mrank1:
+        descent
+        mquartic
+
+desc2:
+        interface
+
+================================
+
+curvesort: -
+
+fixc6:
+        interface
+
+moddata:
+        interface
+
+pcprocs:
+        interface
+
+symb:
+        moddata
+        rat
+
+cusp:
+        moddata
+        rat
+
+homspace:
+        method
+        symb
+
+oldforms:
+        moddata
+
+newforms:
+        cperiods
+        xsplit
+        curve
+        oldforms
+        homspace
+
+periods:
+        newforms
+
+nfd:
+        msubspace
+        homspace

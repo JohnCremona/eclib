@@ -38,6 +38,12 @@
 // April 2005: added facility for fixing c4 as well as c6, but the
 // class name is unchanged
 
+#ifndef _FIXC6_H
+#define _FIXC6_H      1
+                           //flags that this file has been included
+
+#include <eclib/interface.h>
+
 class fixc6 {
 
   static map< pair<long,int>, bigint > fixc4table;
@@ -54,3 +60,4 @@ public:
 
 extern fixc6 c4c6fixer;  // the one and only instance of the class
 
+#endif

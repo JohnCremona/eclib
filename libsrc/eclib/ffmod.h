@@ -29,8 +29,6 @@
 #ifndef _FFMOD_
 #define _FFMOD_
 
-#include "curve.h"
-#include "curvemod.h"
 #include "pointsmod.h"
 
 class ffmodq{ 

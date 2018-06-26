@@ -21,9 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <fstream>
-#include "rat.h"
-#include "xsplit.h"
+#ifndef _MODDATA_H
+#define _MODDATA_H      1
+                           //flags that this file has been included
+
+#include <eclib/interface.h>
 
 class level {
   friend class symb;
@@ -78,3 +80,5 @@ string nf_filename(long n, char c);
 // variable SNF_DIR if defined), followed by a single character
 // (usually 'x') and the decimal digits of n (positive integer).
 string small_nf_filename(long n, char c);
+
+#endif

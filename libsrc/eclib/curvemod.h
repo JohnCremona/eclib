@@ -26,6 +26,8 @@
 #ifndef _CURVEMOD_
 #define _CURVEMOD_
 
+#include <eclib/polys.h>
+#include <eclib/curve.h>
 
 // Class for an elliptic curve mod q
 // 

@@ -24,7 +24,7 @@
 #if     !defined(_SVECTOR_H)
 #define _SVECTOR_H      1       //flags that this file has been included
 
-#include "vector.h"
+#include <eclib/vector.h>
 
 #undef scalar
 #undef vec

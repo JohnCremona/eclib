@@ -21,6 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <eclib/marith.h>
+
 class sqfdiv {
   vector<bigint>* primebase;  // includes all relevant primes
   bigint d;                // product of current subset

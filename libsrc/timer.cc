@@ -22,9 +22,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <iostream>
-#include <iomanip>
-#include <eclib/interface.h>
 #include <eclib/timer.h>
 
 #ifndef CLK_TCK

@@ -53,12 +53,7 @@
 #define SCALAR_OPTION 2
 #endif
 
-#include "arith.h"
-#include "vector.h"
-#include "matrix.h"
-#include "subspace.h"
-#include "smatrix_elim.h"
-
+#include <eclib/subspace.h>
 #include "types.h"
 
 #ifdef MULTI
@@ -66,10 +61,7 @@ typedef bigint SCALAR;
 typedef vec_m VEC;
 typedef mat_m MAT;
 typedef msubspace SUBSP;
-#include "marith.h"
-#include "mvector.h"
-#include "mmatrix.h"
-#include "msubspace.h"
+#include <eclib/msubspace.h>
 #define MODULUS atoI(string("6074000003").c_str())  // will convert
 						    // this string to
 						    // a bigint

@@ -54,7 +54,7 @@ int main(){
 
           cout << "Local heights:\n";
           bigfloat gh = to_bigfloat(0);
-	  bigint d = gcd(getZ(P),getX(P));
+	  bigint d = gcd(P.getZ(),P.getX());
           vector<bigint> pdivsz=pdivs(d);
 	  vector<bigint>::iterator qvar = pdivsz.begin();
 	  while(qvar!=pdivsz.end())

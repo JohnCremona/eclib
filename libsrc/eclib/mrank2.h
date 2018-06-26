@@ -20,7 +20,9 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#include <eclib/descent.h>
+
 class rank2 : public rank12 { // class to do 2-descent via 2-isogeny
 private:
   vector<bigint> badprimes, supp0, supp1;  

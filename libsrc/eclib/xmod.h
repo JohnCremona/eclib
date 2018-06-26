@@ -27,6 +27,8 @@
 #ifndef _XMOD_H
 #define _XMOD_H      1
 
+#include <eclib/interface.h>
+
 // undefine this to use int/long/longlong arithmetic only
 
 //#define USE_DMOD

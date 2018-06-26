@@ -27,7 +27,8 @@
 #ifndef _ELLIPTIC_
 #define _ELLIPTIC_
 
-#include "p2points.h"
+#include <eclib/marith.h>
+#include <eclib/bigrat.h>
 #include <map>
 
 class Curve; class Curvedata; class CurveRed;

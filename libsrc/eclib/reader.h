@@ -23,6 +23,8 @@
  
 #include <fstream>
 #include <cstring> // for gcc >= 4.3
+#include <eclib/curve.h>
+
 #define TTY "/dev/tty"
 
 class CurveReader {

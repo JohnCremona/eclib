@@ -30,6 +30,8 @@
 #ifndef _TLSS_
 #define _TLSS_
 
+#include <eclib/matrix.h>
+#include <eclib/ffmod.h>
 
 class TLSS {
 private: 
@@ -56,7 +58,7 @@ public:
   // apply map to P, result in (ntp*)[0..p-1]:
   vector<int> map1point(const Point& P) const;
   // apply map to all P in Plist, result is a (ntp*#Plist) matrix:
-  mat map_points(const vector<Point>& Plist) const;
+  mat_l map_points(const vector<Point>& Plist) const;
   // give the current p-rank
   int get_rank() const {return rank;}
 

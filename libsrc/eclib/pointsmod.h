@@ -40,6 +40,9 @@
 #ifndef _POINTSMOD_
 #define _POINTSMOD_
 
+#include <eclib/points.h>
+#include <eclib/curvemod.h>
+
 class ffmodq;
 
 // Class for points on an elliptic curve mod q

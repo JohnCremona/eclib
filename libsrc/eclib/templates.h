@@ -20,7 +20,13 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#include <iostream>
+#include <set>
+#include <vector>
+#include <iterator>
+using namespace std;
+
 template <class T >
 inline ostream& operator<<(ostream& os, const vector<T>& v)
 {

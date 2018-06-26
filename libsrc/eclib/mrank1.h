@@ -20,7 +20,10 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#include <eclib/descent.h>
+#include <eclib/mquartic.h>
+
 class rank1 : public rank12 {
 private: 
   long nquarticsa, nquarticsb, nfirstlota, nfirstlotb;

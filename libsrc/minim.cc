@@ -21,12 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/marith.h>
-#include <eclib/unimod.h>
-#include <eclib/points.h>
 #include <eclib/mquartic.h>
 #include <eclib/transform.h>
-#include <eclib/msoluble.h>
 #include <eclib/minim.h>
 
 //#define DEBUG_MINIM

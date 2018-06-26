@@ -20,7 +20,8 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#include <eclib/marith.h>
 
 // Case 1 is A=0, B=0, x=2 (mod 4)
 // Case 2 is A=1, B=2, x=1 (mod 4)

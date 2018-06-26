@@ -21,6 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#ifndef _OLDFORMS_H
+#define _OLDFORMS_H      1
+                           //flags that this file has been included
+#include <eclib/moddata.h>
+
 class oldforms {
  public:
   long noldclasses, nap, ntp;
@@ -45,4 +50,4 @@ string ecdb_filename(long N);
 string single_curve_filename(long N);
 string curve_filename(long N);
 
-
+#endif

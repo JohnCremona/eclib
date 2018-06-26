@@ -24,6 +24,8 @@
 #if     !defined(_SPLITBASE_H)
 #define _SPLITBASE_H      1       //flags that this file has been included
 
+#include <eclib/types.h>
+
 // The following class must be a base class of any class wishing to 
 // use the form_finder class; the using class must implement some or 
 // all of these virtual functions before creating a form_finder with 

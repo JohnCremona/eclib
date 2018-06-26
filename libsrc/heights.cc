@@ -39,7 +39,7 @@ bigfloat height(Point& P)
 //   and so the contribution is log(denom(x(P))) = 2*log(zroot).
 //   This avoids factorizing the denominator.
 
-  const bigint& zroot = gcd(getX(P),getZ(P));   // = cube root of Z
+  const bigint& zroot = gcd(P.getX(),P.getZ());   // = cube root of Z
   bigfloat ans = realheight(P);
   ans += 2*log(I2bigfloat(zroot));
 

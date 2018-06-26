@@ -21,6 +21,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#ifndef _NFD_H
+#define _NFD_H      1
+
+#include <eclib/msubspace.h>
+#include <eclib/homspace.h>
+
 bigint inverse(const mat_m& a, mat_m& ainv);
 void showmatrix(const mat_m& m);
 void showmatrix(const mat& m);
@@ -48,3 +54,5 @@ public:
   mat_m heckeop(long p);
   vec_m ap(long p);
 };
+
+#endif
