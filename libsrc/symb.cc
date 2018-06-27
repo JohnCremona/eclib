@@ -154,7 +154,8 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
 //N.B. dlist include d=1 at 0 and d=mod at end, which we don't want here
    for (ic=1; (ic<ndivs-1)&&(specials.count()<nsymb2); ic++)
    { c=dlist[ic];
-     dstarts[ic]=start=specials.count();
+     start=specials.count();
+     dstarts.assign(ic,start);
      for (id=1; (id<modulus-phi)&&(specials.count()<nsymb2); id++)  
      { d = noninvlist[id];
        if (::gcd(d,c)==1)
@@ -184,7 +185,8 @@ long symbdata::index2(long c, long d) const
        return   modulus-code(xmodmul(kc,d,modulus));
     else
     {
-     long start = dstarts[noninvdlist[-kc]];
+     long indx = noninvdlist[-kc];
+     long start = (indx < dstarts.size()) ? dstarts[indx] : 0;
      symb s(c,d,this);
      long ind = specials.index(s,start);
      if(ind<0) 
