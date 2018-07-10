@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 // allow for multiple includes
-#ifndef _P2POINT_
-#define _P2POINT_
+#ifndef _ECLIB_P2POINT_H
+#define _ECLIB_P2POINT_H
 
 #include "bigrat.h"
 
@@ -125,9 +125,9 @@ public:
   void getaffinecoordinates(bigrational& x, bigrational& y) const
   {x=bigrational(X,Z); y=bigrational(Y,Z); }
   void getrealcoordinates(bigfloat&x, bigfloat& y) const;
-  friend inline bigint getX(const P2Point& p) {return p.X; }
-  friend inline bigint getY(const P2Point& p) {return p.Y; }
-  friend inline bigint getZ(const P2Point& p) {return p.Z; }
+  bigint getX() const {return X; }
+  bigint getY() const {return Y; }
+  bigint getZ() const {return Z; }
   int isintegral() const { return Z==BIGINT(1); }
   int isinfinite() const { return Z==BIGINT(0); }
 

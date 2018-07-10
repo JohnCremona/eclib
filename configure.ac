@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [20171002], [john.cremona@gmail.com])
+AC_INIT([eclib], [20180625], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -35,8 +35,8 @@ LT_INIT
 #
 # NB The suffix of the library name (libec.so here) is (c-a).a.r
 
-LT_CURRENT=3
-LT_REVISION=9
+LT_CURRENT=4
+LT_REVISION=0
 LT_AGE=0
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
@@ -117,14 +117,14 @@ AC_ARG_WITH(ntl,
 case "$with_ntl" in
   ""|yes)
     NTL_LDFLAGS=""
-    NTL_CFLAGS=""
+    NTL_CFLAGS="-pthread"
     ;;
   no)
     AC_MSG_ERROR([Compiling without libntl impossible (but --without-ntl given)])
     ;;
   *)
     NTL_LDFLAGS="-L${with_ntl}/lib"
-    NTL_CFLAGS="-I${with_ntl}/include"
+    NTL_CFLAGS="-pthread -I${with_ntl}/include"
     ;;
 esac
 

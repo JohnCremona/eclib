@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _MARITH_H
-#define _MARITH_H
+#ifndef _ECLIB_MARITH_H
+#define _ECLIB_MARITH_H
 
-#include "arith.h"
+#include <eclib/arith.h>
 
 bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy);
 int divides(const bigint& a, const bigint& b, bigint& q, bigint& r);

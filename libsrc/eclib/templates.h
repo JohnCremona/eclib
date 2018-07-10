@@ -20,7 +20,17 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#ifndef _ECLIB_TEMPLATES_H
+#define _ECLIB_TEMPLATES_H      1
+                           //flags that this file has been included
+
+#include <iostream>
+#include <set>
+#include <vector>
+#include <iterator>
+using namespace std;
+
 template <class T >
 inline ostream& operator<<(ostream& os, const vector<T>& v)
 {
@@ -71,3 +81,4 @@ int startswith(const vector<T>& a, const vector<T>& b, long l, long from=0)
   return equal(a.begin()+from,a.begin()+from+l,b.begin()+from);
 }
 
+#endif

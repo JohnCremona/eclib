@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_MVECTOR_H)
-#define _MVECTOR_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_MVECTOR_H)
+#define _ECLIB_MVECTOR_H      1       //flags that this file has been included
 
 #include "vector.h"
 

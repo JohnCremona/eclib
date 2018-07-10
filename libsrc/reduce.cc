@@ -21,13 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/marith.h>
-#include <eclib/unimod.h>
-#include <eclib/points.h>
+#include <eclib/compproc.h>
 #include <eclib/mquartic.h>
 #include <eclib/transform.h>
-#include <eclib/msoluble.h>
-#include <eclib/minim.h>
 #include <eclib/reduce.h>
 
 #define REDUCE_B

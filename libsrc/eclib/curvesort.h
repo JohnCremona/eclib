@@ -21,9 +21,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _CURVESORT_H
-#define _CURVESORT_H      1
+#ifndef _ECLIB_CURVESORT_H
+#define _ECLIB_CURVESORT_H      1
                            //flags that this file has been included
+
+#include <string>
+using namespace std;
 
 #define USE_NEW_CODE_LETTERS
 

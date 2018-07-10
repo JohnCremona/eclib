@@ -21,9 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <eclib/matrix.h>
+typedef mat_l mat;
+typedef long scalar;
 #include <eclib/points.h>
 #include <eclib/egr.h>
-#include <eclib/matrix.h>
 
 //#define DEBUG_EGR
 //#define DEBUG_EGR_EXTRA
@@ -37,7 +39,7 @@ int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p)
           <<P
       <<" has good reduction at "<<p<<"..."<<flush;
 #endif
-  bigint Z=getZ(P);
+  bigint Z=P.getZ();
   if(is_zero(Z))  // identity is nonsingular
     {
 #ifdef DEBUG_EGR
@@ -45,8 +47,8 @@ int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p)
 #endif
       return 1;
     }
-  bigint X=getX(P);
-  bigint Y=getY(P);
+  bigint X=P.getX();
+  bigint Y=P.getY();
   if(is_zero(p)) // test whether P is not on the "egg"
     {
       if(conncomp==1) 
@@ -170,7 +172,7 @@ long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p
       <<", m="<<m<<"..."<<flush;
 #endif
   if(HasGoodReduction(P,p)) return 0;
-  bigint x=getX(P),  y=getY(P),  z=getZ(P);
+  bigint x, y, z; P.getcoordinates(x,y,z);
   bigint zroot = gcd(x,z); // = cube root of z
   long ans = val(p, 2*y + a1*x + a3*z) - 3*val(p,zroot);
 #ifdef DEBUG_EGR
@@ -225,12 +227,13 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
   cout<<"alpha1 = "<<alpha1<<", alpha2="<<alpha2<<endl;
 #endif
 
-  bigint z=getZ(P); 
+  bigint x, y, z, w1, w2;
+  P.getcoordinates(x,y,z);
   bigint zinv = invmod(z,pN);
-  bigint x=(getX(P)*zinv-x0) %pN;
-  bigint y=(getY(P)*zinv-y0) %pN;
-  bigint w1 = (y - alpha1*x) %pN;
-  bigint w2 = (y - alpha2*x) %pN;
+  x=(x*zinv-x0) %pN;
+  y=(y*zinv-y0) %pN;
+  w1 = (y - alpha1*x) %pN;
+  w2 = (y - alpha2*x) %pN;
   long e1 = val(p, w1); if(e1>N2) e1=N2;
   long e2 = val(p, w2); if(e2>N2) e2=N2;
 #ifdef DEBUG_EGR_EXTRA
@@ -800,7 +803,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
   if(np==0) return ans;
   for(j=1; j<=np; j++)
     {
-      long modulus=moduli[j-1];
+      scalar modulus=moduli[j-1];
 #ifdef DEBUG_INDEX
       cout<<"Working on column "<<j<<", modulus "<<modulus<<endl;
 #endif
@@ -809,7 +812,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
       cout<<"Column "<<j<<" = "<<m.col(j)<<endl;
 #endif
       for(i=1; (i<=npts); i++) m(i,j)=m(i,j)%modulus;
-      long g=0,gm;
+      scalar g=0,gm;
       for(i=1; (i<=npts)&&(g!=1); i++) g=gcd(g,m(i,j));
 #ifdef DEBUG_INDEX
       cout<<"Column gcd = "<<g<<endl;

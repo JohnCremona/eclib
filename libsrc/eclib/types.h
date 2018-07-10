@@ -1,4 +1,4 @@
-// desc2.h:  declaration of second descent (via 2-isogeny) procedure
+// types.h: typedefs for scalar, vector, matrix types
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -20,22 +20,32 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
+ 
+#if     !defined(_ECLIB_TYPES_H)
+#define _ECLIB_TYPES_H      1       //flags that this file has been included
 
-#if     !defined(_ECLIB_DESC2_H)
-#define _ECLIB_DESC2_H      1       //flags that this file has been included
+#include <eclib/smatrix_elim.h>
 
-#include <eclib/interface.h>
+// SCALAR_OPTION may be set to 1 or 2 by user
 
-int desc2(const bigint& c, const bigint& d1, const bigint& d2,
-	  const vector<bigint>& plist, const vector<bigint>& supp, const vector<bigint>& bgens,
-	  long mask,  double hlim,
-	  bigint& x, bigint& y, bigint& z, int verb, int selmer_only=0, int alldesc=0);
-// Works on homogeneous space (d1,0,c,0,d2)
-// Returns 
-//   -1 if it certainly has no points (if no ELS descendents)
-//   +1 if it has a point (coordinates returned in x, y, z)
-//    0 if undecided (ELS descendents exist but no rational points were found)
-// if alldesc==1 it does not stop when it finds one descendent with a point on it,
-// but goes on to look at all the others.
+#if (SCALAR_OPTION==1)
+typedef int scalar;
+typedef vec_i vec;
+typedef mat_i mat;
+typedef subspace_i subspace;
+typedef ssubspace_i ssubspace;
+typedef svec_i svec;
+typedef smat_i smat;
+typedef smat_i_elim smat_elim;
+#else
+typedef long scalar;
+typedef vec_l vec;
+typedef mat_l mat;
+typedef subspace_l subspace;
+typedef ssubspace_l ssubspace;
+typedef svec_l svec;
+typedef smat_l smat;
+typedef smat_l_elim smat_elim;
+#endif
 
 #endif

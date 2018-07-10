@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _CONIC_H
-#define _CONIC_H      1  //flags that this file has been included
+#ifndef _ECLIB_CONIC_H
+#define _ECLIB_CONIC_H      1  //flags that this file has been included
 
 #include "quadratic.h"
 

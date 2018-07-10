@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#include <eclib/parifact.h>
 #include <eclib/interface.h> // for getenv_with_default
 #include <pari/pari.h>
-#include <eclib/parifact.h>
 
 
 //#define DEBUG_GPFACT

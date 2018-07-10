@@ -21,7 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/arith.h>
 #include <eclib/matrix.h>
 
 #undef scalar
@@ -35,7 +34,9 @@
 #define mat mat_i
 #define subspace subspace_i
 #define SCALAR_OPTION 1
+
 #include "mat.cc"
+
 #undef scalar
 #undef vec
 #undef mat
@@ -47,7 +48,9 @@
 #define mat mat_l
 #define subspace subspace_l
 #define SCALAR_OPTION 2
+
 #include "mat.cc"
+
 #undef scalar
 #undef vec
 #undef mat

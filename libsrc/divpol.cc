@@ -25,7 +25,6 @@
 // coefficients rather than a polynomial type to simplify the
 // NTL interface
 
-#include <eclib/points.h>
 #include <eclib/polys.h>
 #include <eclib/divpol.h>
 

@@ -20,7 +20,12 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#ifndef _ECLIB_TWOADIC_H
+#define _ECLIB_TWOADIC_H      1
+                           //flags that this file has been included
+
+#include <eclib/marith.h>
 
 // Case 1 is A=0, B=0, x=2 (mod 4)
 // Case 2 is A=1, B=2, x=1 (mod 4)
@@ -60,3 +65,4 @@ long case2(long a, long b); // A=4a+1, B=4b+2
 long case1(bigint a, bigint b); // A=4a, B=4b
 long case2(bigint a, bigint b); // A=4a+1, B=4b+2
 
+#endif

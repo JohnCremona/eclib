@@ -21,8 +21,14 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#ifndef _ECLIB_PARIFACT_H
+#define _ECLIB_PARIFACT_H      1
+                           //flags that this file has been included
+
 #include <string>
 using namespace std;
 
 string factor(const string n);
 int is_prime(const string p);
+
+#endif

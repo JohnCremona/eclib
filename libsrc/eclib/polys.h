@@ -22,15 +22,14 @@
 //////////////////////////////////////////////////////////////////////////
 
 // allow for multiple includes
-#ifndef _POLYS_
-#define _POLYS_
+#ifndef _ECLIB_POLYS_H
+#define _ECLIB_POLYS_H
 
 // NB --warning!  In NTL there is a universal modulus set by a single
 // call to ZZ_p::init(q).
 
-#include "interface.h"  // scalars
-#include "gf.h"  // scalars
-#include "bigrat.h"
+#include <eclib/gf.h>  // scalars
+#include <eclib/bigrat.h>
 
 #include <NTL/ZZ_pX.h>
 #include <NTL/ZZ_pXFactoring.h>

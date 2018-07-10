@@ -22,8 +22,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _KBESSEL_H
-#define _KBESSEL_H      1
+#ifndef _ECLIB_KBESSEL_H
+#define _ECLIB_KBESSEL_H      1
                            //flags that this file has been included
 
 

@@ -1,4 +1,4 @@
-// vector.h: ,anage declarations of integer vector classes
+// vector.h: manage declarations of integer vector classes
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_JC_VECTOR_H)
-#define _JC_VECTOR_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_VECTOR_H)
+#define _ECLIB_VECTOR_H      1       //flags that this file has been included
 
-#include "interface.h"
+#include <eclib/arith.h>
 
 class vec_i; class vec_l; class vec_m;
 class mat_i; class mat_l; class mat_m;
@@ -48,7 +48,9 @@ class subspace_i; class subspace_l; class msubspace;
 #define svec svec_i
 #define smat smat_i
 #define smat_elim smat_i_elim
+
 #include "vec.h"
+
 #undef scalar
 #undef vec
 #undef mat
@@ -64,7 +66,9 @@ class subspace_i; class subspace_l; class msubspace;
 #define svec svec_l
 #define smat smat_l
 #define smat_elim smat_l_elim
+
 #include "vec.h"
+
 #undef scalar
 #undef vec
 #undef mat
@@ -72,26 +76,5 @@ class subspace_i; class subspace_l; class msubspace;
 #undef svec
 #undef smat
 #undef smat_elim
-
-
-// SCALAR_OPTION may be set to 1 or 2 by user
-
-#if (SCALAR_OPTION==1)
-#define scalar int
-#define vec vec_i
-#define mat mat_i
-#define subspace subspace_i
-#define svec svec_i
-#define smat smat_i
-#define smat_elim smat_i_elim
-#else
-#define scalar long
-#define vec vec_l
-#define mat mat_l
-#define subspace subspace_l
-#define svec svec_l
-#define smat smat_l
-#define smat_elim smat_l_elim
-#endif
 
 #endif

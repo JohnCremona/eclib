@@ -32,8 +32,8 @@
  *    ... etc ...
  */
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef _ECLIB_LOGGER_H
+#define _ECLIB_LOGGER_H
 
 // Include headers
 #include <iostream>

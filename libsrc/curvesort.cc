@@ -21,7 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/interface.h>
+#include <sstream>
+#include <algorithm> // for reverse()
 #include <eclib/curvesort.h>
 
 int BA[] = {1,0};

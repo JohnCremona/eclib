@@ -23,10 +23,6 @@
  
 #include <eclib/interface.h>
 #include <eclib/compproc.h>
-
-#include <eclib/matrix.h>
-#include <eclib/subspace.h>
-
 #include <eclib/points.h>
 #include <eclib/polys.h>
 #include <eclib/curvemod.h>

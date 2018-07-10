@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_MSUBSPACE_H)
-#define _MSUBSPACE_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_MSUBSPACE_H)
+#define _ECLIB_MSUBSPACE_H      1       //flags that this file has been included
 
 #include "mmatrix.h"
 

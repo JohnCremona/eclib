@@ -24,8 +24,8 @@
 // Include only if Boost installed
 #ifdef ECLIB_MULTITHREAD
 
-#ifndef THREADPOOL_H
-#define THREADPOOL_H
+#ifndef _ECLIB_THREADPOOL_H
+#define _ECLIB_THREADPOOL_H
 
 // Include headers based on
 // available packages on system

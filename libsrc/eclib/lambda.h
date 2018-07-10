@@ -1,4 +1,4 @@
-// lambda.h   Declarations of functions which compute Silverman's
+// lambda.h   Declarations of functions which compute Silverman's finite set Lambda_bad for a curve
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -20,8 +20,11 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- //            finite set Lambda_bad for a curve
 
+#if     !defined(_ECLIB_LAMBDA_H)
+#define _ECLIB_LAMBDA_H      1       //flags that this file has been included
+
+#include <eclib/curve.h>
 
 // N.B. (1) Uses my height normalization, double S's.
 // (3) Uses the local height normalization WITHOUT the log|Delta|
@@ -39,3 +42,4 @@ int make_point_from_x(Curvedata* CD, const bigint& a, const bigint& d, Point* P)
 int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P);
 int make_point_from_x_and_ht(Curvedata* CD, vector<bigfloat> lambdas, const bigfloat& xp, const bigfloat& ht, Point* P);
 
+#endif

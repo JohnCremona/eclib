@@ -24,8 +24,8 @@
 
 // Stored as bigint* arrays q of size 3 representing q[0]*x^2+q[1]*x+q[2]
 
-#ifndef _QUADRATIC_H
-#define _QUADRATIC_H      1 //flags that this file has been included
+#ifndef _ECLIB_QUADRATIC_H
+#define _ECLIB_QUADRATIC_H      1 //flags that this file has been included
 
 #include "unimod.h"
 

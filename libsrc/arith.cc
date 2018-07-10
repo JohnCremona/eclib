@@ -23,7 +23,6 @@
  
 #include <eclib/arith.h>
 
-
 /* Prime number procs; adapted from Pari  */
 
 // These have not been stl-ized at all since they work just fine...

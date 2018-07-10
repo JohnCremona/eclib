@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_MMATRIX_H)
-#define _MMATRIX_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_MMATRIX_H)
+#define _ECLIB_MMATRIX_H      1       //flags that this file has been included
 
 #include "mvector.h"
 #include "matrix.h"

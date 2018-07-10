@@ -20,7 +20,13 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- //
+
+#if     !defined(_ECLIB_CUBIC_H)
+#define _ECLIB_CUBIC_H      1       //flags that this file has been included
+
+#include <eclib/unimod.h>
+
+//
 // Notation: g(x,z) is replaced by g(m11*x+m12*z,m21*x+m22*z)
 //
 // Stored as bigint* arrays g of size 4 representing 
@@ -143,3 +149,5 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles=1, int g
 // All reduced cubics with discriminant in range (0,maxdisc] if maxdisc>0 or [maxdisc,0) if maxdisc<0
 // (not yet implemented)
 vector<cubic> reduced_cubics_range(const bigint& maxdisc, int verbose=0);
+
+#endif

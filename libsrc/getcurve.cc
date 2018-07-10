@@ -21,7 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/curve.h>
 #include <eclib/getcurve.h>
 
 int getcurve(Curvedata& CD, int verb)

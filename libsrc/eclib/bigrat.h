@@ -21,11 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_BIGRATIONAL_H)
-#define _BIGRATIONAL_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_BIGRATIONAL_H)
+#define _ECLIB_BIGRATIONAL_H      1       //flags that this file has been included
 
-#include "marith.h"
-#include "rat.h"
+#include <eclib/rat.h>
 
 class bigrational {
 

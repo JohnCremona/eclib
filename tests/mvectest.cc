@@ -21,6 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <eclib/method.h>
 #include <eclib/mvector.h>
 
 int main(void)
@@ -101,7 +102,7 @@ int main(void)
  makeprimitive(w);
  cout << "After makeprimitive(w), w = " << w << endl;
 
- vec_l sv = v.shorten(n);
+ vec sv = v.shorten(n);
  cout << "v shortened to a vector of longs: " << sv << endl;
 
  vec_m u(n);

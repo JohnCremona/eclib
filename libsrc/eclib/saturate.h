@@ -25,8 +25,12 @@
 // This is used for proving that points are p-saturated
 
 // allow for multiple includes
-#ifndef _SATURATE_
-#define _SATURATE_
+#ifndef _ECLIB_SATURATE_H
+#define _ECLIB_SATURATE_H
+
+#include <eclib/matrix.h>
+#include <eclib/ffmod.h>
+
 
 #ifndef MAX_REPEAT
 #define MAX_REPEAT 10
@@ -53,13 +57,13 @@ private:
   vector<curvemodqbasis>::iterator Eqptr;
   int newq;               // =1 iff we are using q not yet cahced
 
-  mat TLimage; 
+  mat_l TLimage; 
   int TLrank, stuck_counter, verbose, use_div_pols;
 
   // apply TL map (mod current q) to P, result in (ntp*)[0..p-1]:
   vector<int> TLmap1(const Point& P);
   // apply TL map (mod current q) to Plistx, result is a (ntp*rank) matrix:
-  mat TLmap();
+  mat_l TLmap();
   //
 
 public:
@@ -115,7 +119,7 @@ public:
   // get # steps since last rank increase
   long stuckfor() const {return stuck_counter;};
   // get a nonzero kernel vector (if any)
-  vec kernel_vector();
+  vec_l kernel_vector();
   // test if saturated: 
   int is_saturated() {return rank==TLrank;}
 };

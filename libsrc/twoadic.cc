@@ -21,8 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <iostream>
-#include <eclib/mlocsol.h>
 #include <eclib/twoadic.h>
 
 // The following due to Michael Stoll:

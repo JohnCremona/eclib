@@ -21,7 +21,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include "xsplit.h"   // which includes method.h
+#ifndef _ECLIB_NEWFORMS_H
+#define _ECLIB_NEWFORMS_H      1
+                           //flags that this file has been included
+
+#include <eclib/cperiods.h>
+#include <eclib/xsplit.h>   // which includes method.h
+#include <eclib/curve.h>
+#include <eclib/oldforms.h>
+#include <eclib/homspace.h>
 
 class newforms;
 class jumps;
@@ -258,3 +266,4 @@ public:
 void output_to_file_no_newforms(long n, int binflag=1, int smallflag=0);
 vector<long> eiglist(const newform& f, int oldorder=0);
 
+#endif

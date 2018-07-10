@@ -21,11 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _CPERIODS_H_
-#define _CPERIODS_H_
+#ifndef _ECLIB_CPERIODS_H_
+#define _ECLIB_CPERIODS_H_
 
-#include "compproc.h"
-#include "curve.h"
+#include <eclib/compproc.h>
+#include <eclib/curve.h>
 
 #define TWOPI 2*Pi()
 #define TWOPIEYE bigcomplex(to_bigfloat(0), TWOPI)

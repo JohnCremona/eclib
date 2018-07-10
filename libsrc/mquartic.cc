@@ -21,6 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <eclib/compproc.h>
+#include <eclib/realroots.h>
 #include <eclib/mquartic.h>
 
 // constructors

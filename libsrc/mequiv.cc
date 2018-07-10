@@ -21,6 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <eclib/compproc.h> // for is_small, is_real
 #include <eclib/mequiv.h>
 
 //#ifdef NEW_EQUIV

@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <time.h>
+#include <eclib/method.h>
 #include <eclib/mmatrix.h>
 
 int main(void)

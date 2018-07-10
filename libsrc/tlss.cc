@@ -26,14 +26,6 @@
 // discrete log a la Siksek when the p-torsion in E(F_q) is cyclic,
 // else use the Tate-Lichtenbaum pairing
 
-#include <eclib/matrix.h>
-#include <eclib/subspace.h>
-
-#include <eclib/points.h>
-#include <eclib/polys.h>
-#include <eclib/curvemod.h>
-#include <eclib/pointsmod.h>
-#include <eclib/ffmod.h>
 #include <eclib/tlss.h>
 
 void TLSS::init(int  pp, int verb)
@@ -247,10 +239,10 @@ vector<int> TLSS::map1point(const Point& P) const
 }
 
 // apply map to all P in Plist, result is a (rank*#Plist) matrix:
-mat TLSS::map_points(const vector<Point>& Plist) const
+mat_l TLSS::map_points(const vector<Point>& Plist) const
 {
   int npts = Plist.size();
-  mat TLim(rank,npts);
+  mat_l TLim(rank,npts);
   int i,j;
   for(i=0; i<npts; i++)
     {

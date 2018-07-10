@@ -21,14 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/marith.h>
-#include <eclib/compproc.h>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/oldforms.h>
-#include <eclib/homspace.h>
-#include <eclib/cperiods.h>     //from qcurves, for computing conductors
-#include <eclib/newforms.h>
 #include <eclib/periods.h>
 #include <eclib/pcprocs.h>
 

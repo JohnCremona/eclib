@@ -21,7 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/matrix.h>
 #include <eclib/isogs.h>
 #include <eclib/points.h>
 
@@ -439,9 +438,9 @@ vector<long> IsogenyClass::getmat() const
   return ans;
 }
 
-mat IsogenyClass::getmatrix() const
+mat_i IsogenyClass::getmatrix() const
 {
-  mat ans(ncurves,ncurves);
+  mat_i ans(ncurves,ncurves);
   long i,j;
   for(i=0; i<ncurves; i++)
     for(j=0; j<ncurves; j++)
@@ -468,7 +467,7 @@ vector<CurveRed> twoisog(const CurveRed& CR, int verbose)
   for(i=1; i<tt.size(); i++)
     {
       Point T = tt[i];
-      bigint x = (4*getX(T))/getZ(T);  // =4x(T)
+      bigint x = (4*T.getX())/T.getZ();  // =4x(T)
       bigint t = 3*x*x+2*b2*x+8*b4;
       if(verbose) cout<<"t = "<<t<<endl;
       bigint w = x*t;

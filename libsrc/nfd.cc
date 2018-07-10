@@ -21,12 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
 #include <eclib/marith.h>
-#include <eclib/msubspace.h>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/homspace.h>
 #include <NTL/mat_ZZ.h>
 #include <NTL/mat_poly_ZZ.h>
 #include <NTL/ZZXFactoring.h>

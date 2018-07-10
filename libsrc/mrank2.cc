@@ -22,13 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iomanip> // for setbase(), used for hex output of codes
+
 #include <eclib/bitspace.h>
-#include <eclib/compproc.h>
-#include <eclib/points.h>
-#include <eclib/mwprocs.h>
-#include <eclib/mquartic.h>
-#include <eclib/msoluble.h>
-#include <eclib/descent.h>
+#include <eclib/mlocsol.h>
+#include <eclib/mglobsol.h>
 #include <eclib/mrank2.h>
 #include <eclib/sqfdiv.h>
 #include <eclib/desc2.h>
@@ -253,7 +250,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 // the 2-torsion points which is not the multiple of T1
     {
       T2=(ntorsion/4)*T1;
-      bigint xT2=getX(T2);
+      bigint xT2=T2.getX();
       if(xT2==zero) 
 	T2.init(ee,ee2,zero); 
       else 
@@ -278,8 +275,8 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
   for(it=0; it<ntorsion; it++)
     {
       Point T = torsion[it];
-      if(T.iszero()) continue;
-      d1=getX(T);
+      if(T.is_zero()) continue;
+      d1=T.getX();
       if(d1==zero) d1=d;
 #ifdef DEBUG_ELS
       if(verbose>1) cout<<"Processing torsion d1 = " << d1 << endl;

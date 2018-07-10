@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#if     !defined(_ECLIB_MGLOBSOL_H)
+#define _ECLIB_MGLOBSOL_H      1       //flags that this file has been included
+
 #include "mquartic.h"
 #include "sieve_search.h"
 
@@ -61,3 +64,4 @@ public:
   void getpoint(bigint& x, bigint& y, bigint& z) {x=pu;y=pv;z=pw;}
 };
 
+#endif

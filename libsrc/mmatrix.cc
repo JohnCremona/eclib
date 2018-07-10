@@ -553,7 +553,10 @@ mat_m operator-(const mat_m& m1, const mat_m& m2)
 mat_m operator*(const bigint& scal, const mat_m& m)
 {mat_m ans(m); ans*=scal; return ans;}
 
-mat_m operator*(scalar scal, const mat_m& m)
+mat_m operator*(int scal, const mat_m& m)
+{mat_m ans(m); ans*=BIGINT(scal); return ans;}
+
+mat_m operator*(long scal, const mat_m& m)
 {mat_m ans(m); ans*=BIGINT(scal); return ans;}
 
 mat_m operator/(const mat_m& m, const bigint& scal)

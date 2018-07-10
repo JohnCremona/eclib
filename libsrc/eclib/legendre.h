@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _LEGENDRE_H
-#define _LEGENDRE_H      1 //flags that this file has been included
+#ifndef _ECLIB_LEGENDRE_H
+#define _ECLIB_LEGENDRE_H      1 //flags that this file has been included
 
 #include "quadratic.h"
 

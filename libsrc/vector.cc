@@ -21,7 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/arith.h>
 #include <eclib/vector.h>
 #include "random.cc"
 
@@ -34,7 +33,9 @@
 #define vec vec_i
 #define mat mat_i
 #define subspace subspace_i
+
 #include "vec.cc"
+
 #undef scalar
 #undef vec
 #undef mat
@@ -44,7 +45,9 @@
 #define vec vec_l
 #define mat mat_l
 #define subspace subspace_l
+
 #include "vec.cc"
+
 #undef scalar
 #undef vec
 #undef mat

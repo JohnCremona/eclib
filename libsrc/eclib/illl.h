@@ -29,8 +29,8 @@
 // is sum(k,b[0][k]b[i][k]*b[j][k]). 
 //
 
-#ifndef _ILLL_H
-#define _ILLL_H      1     //flags that this file has been included
+#ifndef _ECLIB_ILLL_H
+#define _ECLIB_ILLL_H      1     //flags that this file has been included
 
 #include "mvector.h"
 
