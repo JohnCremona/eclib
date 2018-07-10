@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _MQUARTIC_H
-#define _MQUARTIC_H
+#ifndef _ECLIB_MQUARTIC_H
+#define _ECLIB_MQUARTIC_H
 
 #define NEW_EQUIV
 #include <eclib/points.h>

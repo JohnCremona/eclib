@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_MATRIX_H)
-#define _MATRIX_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_MATRIX_H)
+#define _ECLIB_MATRIX_H      1       //flags that this file has been included
 
 #include <eclib/vector.h>
 #include "limits.h" // MAX_INT gcc >= 4.3

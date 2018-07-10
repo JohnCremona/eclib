@@ -21,9 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _OLDFORMS_H
-#define _OLDFORMS_H      1
+#ifndef _ECLIB_OLDFORMS_H
+#define _ECLIB_OLDFORMS_H      1
                            //flags that this file has been included
+
 #include <eclib/moddata.h>
 
 class oldforms {

@@ -28,8 +28,8 @@
 // Last change : JC, Dec 2 1999, adapted for direct use in mwrank et al.
 // Last change : JC, Aug 19 2002, adapted for stdc++ library
 
-#ifndef SIEVE_SEARCH_H
-#define SIEVE_SEARCH_H
+#ifndef _ECLIB_SIEVE_SEARCH_H
+#define _ECLIB_SIEVE_SEARCH_H
 
 #include <eclib/interface.h>
 

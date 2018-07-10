@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _ISOGS_H_
-#define _ISOGS_H_
+#ifndef _ECLIB_ISOGS_H_
+#define _ECLIB_ISOGS_H_
 
 #include "cperiods.h"  // which itself includes everything relevant
 #include "matrix.h"

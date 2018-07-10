@@ -23,8 +23,8 @@
  
 // Original version by Luiz Figueiredo
  
-#ifndef _SMATRIX_ELIM_H
-#define _SMATRIX_ELIM_H 1       //flags that this file has been included
+#ifndef _ECLIB_SMATRIX_ELIM_H
+#define _ECLIB_SMATRIX_ELIM_H 1       //flags that this file has been included
 
 #include "smatrix.h"
 #include "subspace.h"

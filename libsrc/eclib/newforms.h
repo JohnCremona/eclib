@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _NEWFORMS_H
-#define _NEWFORMS_H      1
+#ifndef _ECLIB_NEWFORMS_H
+#define _ECLIB_NEWFORMS_H      1
                            //flags that this file has been included
 
 #include <eclib/cperiods.h>

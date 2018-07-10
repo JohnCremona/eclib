@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _CUSP_H
-#define _CUSP_H      1
+#ifndef _ECLIB_CUSP_H
+#define _ECLIB_CUSP_H      1
                            //flags that this file has been included
 
 #include <eclib/moddata.h>

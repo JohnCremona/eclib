@@ -21,6 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#ifndef _ECLIB_QC_H
+#define _ECLIB_QC_H      1
+                           //flags that this file has been included
+
 // Given a quartic g with a point (x0:y0:z0) on it,
 // constructs a point P on the corresponding minimal elliptic curve.
 // This is supposed to be on the given curve E: error printed if not.
@@ -35,3 +39,5 @@ void qc(quartic& g,
 	const bigint& tr_u, const bigint& tr_r, 
 	const bigint& tr_s, const bigint& tr_t,  
 	Point& P, int verbose=0);
+
+#endif

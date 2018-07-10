@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _HOMSPACE_H
-#define _HOMSPACE_H      1
+#ifndef _ECLIB_HOMSPACE_H
+#define _ECLIB_HOMSPACE_H      1
                            //flags that this file has been included
 
 #include <eclib/method.h>

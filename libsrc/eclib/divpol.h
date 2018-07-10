@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 // allow for multiple includes
-#ifndef _DIVPOL_
-#define _DIVPOL_
+#ifndef _ECLIB_DIVPOL_
+#define _ECLIB_DIVPOL_
 
 #include <eclib/curve.h>
 

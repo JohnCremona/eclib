@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef XSPLIT_DATA_H
-#define XSPLIT_DATA_H
+#ifndef _ECLIB_XSPLIT_DATA_H
+#define _ECLIB_XSPLIT_DATA_H
 
 // Include headers
 #include <iostream>

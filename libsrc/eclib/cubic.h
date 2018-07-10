@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#if     !defined(_ECLIB_CUBIC_H)
+#define _ECLIB_CUBIC_H      1       //flags that this file has been included
+
 #include <eclib/unimod.h>
 
 //
@@ -122,3 +125,4 @@ inline ostream& operator<<(ostream& os, const cubic& g)
   return os<<"["<<g.a()<<","<<g.b()<<","<<g.c() <<","<<g.d()<<"]";
 }
 
+#endif

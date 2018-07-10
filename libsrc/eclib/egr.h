@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 // allow for multiple includes
-#ifndef _EGR_H_
-#define _EGR_H_
+#ifndef _ECLIB_EGR_H_
+#define _ECLIB_EGR_H_
 
 #include <eclib/curve.h>
 

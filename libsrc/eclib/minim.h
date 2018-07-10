@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#if     !defined(_ECLIB_MINIM_H)
+#define _ECLIB_MINIM_H      1       //flags that this file has been included
+
 #include <eclib/unimod.h>
 
 bigint g_content(const bigint& ga, const bigint& gb, const bigint& gc, 
@@ -54,3 +57,4 @@ void minim_all(bigint& ga, bigint& gb, bigint& gc, bigint& gd, bigint& ge,
 	       scaled_unimod& m,
 	       int assume_locsol, int verb=0);
 
+#endif

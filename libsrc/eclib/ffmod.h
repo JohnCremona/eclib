@@ -26,8 +26,8 @@
 // (or more precisely the affine coordinate ring Fq[x,y])
 
 // allow for multiple includes
-#ifndef _FFMOD_
-#define _FFMOD_
+#ifndef _ECLIB_FFMOD_
+#define _ECLIB_FFMOD_
 
 #include "pointsmod.h"
 

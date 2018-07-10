@@ -25,8 +25,8 @@
 // This is used for proving that points are p-saturated
 
 // allow for multiple includes
-#ifndef _SATURATE_
-#define _SATURATE_
+#ifndef _ECLIB_SATURATE_H
+#define _ECLIB_SATURATE_H
 
 #include <eclib/matrix.h>
 #include <eclib/ffmod.h>

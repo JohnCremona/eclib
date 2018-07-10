@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+// Not to be included directly by user: use svector.h which defines
+// _ECLIB_SVECTOR_H and includes this twice
+
 int eqmodp(const svec&, const svec&, const scalar& p=DEFAULT_MODULUS);
  
 class svec {

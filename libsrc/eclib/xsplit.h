@@ -22,8 +22,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_XSPLIT_H)
-#define _XSPLIT_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_XSPLIT_H)
+#define _ECLIB_XSPLIT_H      1       //flags that this file has been included
 
 // Disable multithreading
 // #undef ECLIB_MULTITHREAD

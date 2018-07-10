@@ -23,8 +23,8 @@
  
 
 // allow for multiple includes
-#ifndef _CURVEMOD_
-#define _CURVEMOD_
+#ifndef _ECLIB_CURVEMOD_
+#define _ECLIB_CURVEMOD_
 
 #include <eclib/polys.h>
 #include <eclib/curve.h>

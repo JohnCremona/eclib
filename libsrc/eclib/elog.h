@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _ELOG_H_
-#define _ELOG_H_
+#ifndef _ECLIB_ELOG_H_
+#define _ECLIB_ELOG_H_
 
 #include "points.h"
 #include "cperiods.h"

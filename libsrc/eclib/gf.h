@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 // allow for multiple includes
-#ifndef _GF_H_
-#define _GF_H_
+#ifndef _ECLIB_GF_H_
+#define _ECLIB_GF_H_
 
 #include <NTL/ZZ_p.h>
 #include <eclib/marith.h>

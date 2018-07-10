@@ -23,10 +23,7 @@
  
 // Original version by Luiz Figueiredo
 
-//#include <sys/types.h>
 #include <sys/times.h>
-//#include <sys/param.h>
-//#include <iostream>
 #include <eclib/arith.h>
 float ran0( long& idum ); 
 float ran0( int& idum ); 

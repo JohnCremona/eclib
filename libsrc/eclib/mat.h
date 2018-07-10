@@ -21,7 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-// Not to be included directly by user: use matrix.h
+// Not to be included directly by user: use matrix.h which defines
+// _ECLIB_MATRIX_H and includes this twice
 //
 
 #ifndef LONG_MIN

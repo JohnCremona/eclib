@@ -38,8 +38,8 @@
 // April 2005: added facility for fixing c4 as well as c6, but the
 // class name is unchanged
 
-#ifndef _FIXC6_H
-#define _FIXC6_H      1
+#ifndef _ECLIB_FIXC6_H
+#define _ECLIB_FIXC6_H      1
                            //flags that this file has been included
 
 #include <eclib/interface.h>

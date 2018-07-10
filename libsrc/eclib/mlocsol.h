@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#if     !defined(_ECLIB_MLOCSOL_H)
+#define _ECLIB_MLOCSOL_H      1       //flags that this file has been included
+
 #include "mquartic.h"
 
 // Checks for solublility in Qp:
@@ -61,3 +64,5 @@ int new_qpsoluble(const bigint& a, const bigint& c, const bigint& e,
 
 int new_zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,
 	      const bigint& e, const bigint& p, int verbose=0);
+
+#endif

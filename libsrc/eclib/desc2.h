@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#if     !defined(_ECLIB_DESC2_H)
+#define _ECLIB_DESC2_H      1       //flags that this file has been included
+
 #include <eclib/interface.h>
 
 int desc2(const bigint& c, const bigint& d1, const bigint& d2,
@@ -34,3 +37,5 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 //    0 if undecided (ELS descendents exist but no rational points were found)
 // if alldesc==1 it does not stop when it finds one descendent with a point on it,
 // but goes on to look at all the others.
+
+#endif

@@ -21,6 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#ifndef _ECLIB_MEQUIV_H
+#define _ECLIB_MEQUIV_H
+
 #include "mquartic.h"
 int equiv(const quartic* q1, const quartic* q2, const vector<bigint>& dlist, int info);
 int new_equiv(quartic* q1, quartic* q2, int info);
+
+#endif

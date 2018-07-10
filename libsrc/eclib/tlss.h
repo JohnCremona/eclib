@@ -27,8 +27,8 @@
 // else use the Tate-Lichtenbaum pairing
 
 // allow for multiple includes
-#ifndef _TLSS_
-#define _TLSS_
+#ifndef _ECLIB_TLSS_
+#define _ECLIB_TLSS_
 
 #include <eclib/matrix.h>
 #include <eclib/ffmod.h>

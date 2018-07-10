@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_JC_VECTOR_H)
-#define _JC_VECTOR_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_VECTOR_H)
+#define _ECLIB_VECTOR_H      1       //flags that this file has been included
 
 #include <eclib/arith.h>
 

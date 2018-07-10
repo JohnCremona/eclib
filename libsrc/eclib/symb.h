@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _SYMB_H
-#define _SYMB_H      1
+#ifndef _ECLIB_SYMB_H
+#define _ECLIB_SYMB_H      1
                            //flags that this file has been included
 
 #include <eclib/moddata.h>

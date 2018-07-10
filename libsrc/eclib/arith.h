@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _ARITH_H
-#define _ARITH_H      1
+#ifndef _ECLIB_ARITH_H
+#define _ECLIB_ARITH_H      1
                            //flags that this file has been included
 #include <eclib/interface.h>
 #include <cstring> // for memset gcc >= 4.3

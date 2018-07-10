@@ -20,6 +20,11 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- //
 //
+
+#if     !defined(_ECLIB_VERSION_H)
+#define _ECLIB_VERSION_H      1       //flags that this file has been included
+
 void show_version();
+
+#endif

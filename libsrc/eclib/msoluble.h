@@ -1,4 +1,3 @@
-#include "mlocsol.h"
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -20,7 +19,14 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- #include "mglobsol.h"
+
+#if     !defined(_ECLIB_MSOLUBLE_H)
+#define _ECLIB_MSOLUBLE_H      1       //flags that this file has been included
+
+#include "mlocsol.h"
+#include "mglobsol.h"
+
+#endif
 
 
 

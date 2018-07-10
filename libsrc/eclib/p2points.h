@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 // allow for multiple includes
-#ifndef _P2POINT_
-#define _P2POINT_
+#ifndef _ECLIB_P2POINT_H
+#define _ECLIB_P2POINT_H
 
 #include "bigrat.h"
 

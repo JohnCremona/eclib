@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_JC_TYPES_H)
-#define _JC_TYPES_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_TYPES_H)
+#define _ECLIB_TYPES_H      1       //flags that this file has been included
 
 #include <eclib/smatrix_elim.h>
 

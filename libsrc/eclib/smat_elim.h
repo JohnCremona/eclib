@@ -23,7 +23,8 @@
  
 // Original version by Luiz Figueiredo
  
-// Not to be included directly by user: use smatrix_elim.h
+// Not to be included directly by user: use smatrix_elim.h which
+// defines _ECLIB_SMATRIX_ELIM_H and includes this twice
 
 class smat_elim : public smat{
 

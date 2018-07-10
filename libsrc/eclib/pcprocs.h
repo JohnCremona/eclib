@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _PCPROCS_H
-#define _PCPROCS_H      1
+#ifndef _ECLIB_PCPROCS_H
+#define _ECLIB_PCPROCS_H      1
 
 #include <eclib/interface.h>
 

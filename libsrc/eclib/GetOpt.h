@@ -30,6 +30,9 @@ Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
    GNU application programs can use a third alternative mode in which
    they can distinguish the relative order of options and other arguments.  */
 
+#ifndef _ECLIB_GETOPT_H
+#define _ECLIB_GETOPT_H
+
 #ifndef GetOpt_h
 #ifdef __GNUG__
 #pragma interface
@@ -127,4 +130,5 @@ public:
   int operator () (void);
 };
 
+#endif
 #endif

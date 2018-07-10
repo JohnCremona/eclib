@@ -21,6 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#ifndef _ECLIB_TEMPLATES_H
+#define _ECLIB_TEMPLATES_H      1
+                           //flags that this file has been included
+
 #include <iostream>
 #include <set>
 #include <vector>
@@ -77,3 +81,4 @@ int startswith(const vector<T>& a, const vector<T>& b, long l, long from=0)
   return equal(a.begin()+from,a.begin()+from+l,b.begin()+from);
 }
 
+#endif

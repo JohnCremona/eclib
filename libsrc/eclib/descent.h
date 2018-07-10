@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _DESCENT_H_
-#define _DESCENT_H_
+#ifndef _ECLIB_DESCENT_H_
+#define _ECLIB_DESCENT_H_
  
 #include "mwprocs.h"
 

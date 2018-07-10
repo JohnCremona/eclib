@@ -26,8 +26,8 @@
 
 
 // allow for multiple includes
-#ifndef _SIFTER_
-#define _SIFTER_
+#ifndef _ECLIB_SIFTER_H
+#define _ECLIB_SIFTER_H
 
 #include <eclib/curve.h>
 

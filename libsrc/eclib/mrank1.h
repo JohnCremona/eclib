@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#if     !defined(_ECLIB_MRANK1_H)
+#define _ECLIB_MRANK1_H      1       //flags that this file has been included
+
 #include <eclib/descent.h>
 #include <eclib/mquartic.h>
 
@@ -91,4 +94,4 @@ public:
   Curvedata getEprime() const {return *the_curve;}
 };
 
-
+#endif

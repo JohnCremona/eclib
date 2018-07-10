@@ -23,8 +23,8 @@
  
 
 // allow for multiple includes
-#ifndef _MWPROCS_
-#define _MWPROCS_
+#ifndef _ECLIB_MWPROCS_
+#define _ECLIB_MWPROCS_
 
 #include "saturate.h"
 #include "sieve_search.h"

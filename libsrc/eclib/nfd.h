@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _NFD_H
-#define _NFD_H      1
+#ifndef _ECLIB_NFD_H
+#define _ECLIB_NFD_H      1
 
 #include <eclib/msubspace.h>
 #include <eclib/homspace.h>

@@ -24,8 +24,8 @@
 // originally adapted from Elliptic.h by Oisin McGuiness
 
 // allow for multiple includes
-#ifndef _PELLIPTIC_
-#define _PELLIPTIC_
+#ifndef _ECLIB_POINTS_
+#define _ECLIB_POINTS_
 
 #include <eclib/p2points.h>
 #include <eclib/curve.h>

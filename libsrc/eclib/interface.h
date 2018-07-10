@@ -26,8 +26,8 @@
 //   doubles and complex doubles (if not set) ot using NTL bigfloats
 //   (RR) and bigcomplexes (CC) (if set)
 
-#ifndef _INTERFACE_H_
-#define _INTERFACE_H_
+#ifndef _ECLIB_INTERFACE_H_
+#define _ECLIB_INTERFACE_H_
 
 #ifdef NTL_ALL
 #define MPFP

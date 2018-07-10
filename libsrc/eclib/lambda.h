@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#if     !defined(_ECLIB_LAMBDA_H)
+#define _ECLIB_LAMBDA_H      1       //flags that this file has been included
+
 #include <eclib/curve.h>
 
 // N.B. (1) Uses my height normalization, double S's.
@@ -39,3 +42,4 @@ int make_point_from_x(Curvedata* CD, const bigint& a, const bigint& d, Point* P)
 int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P);
 int make_point_from_x_and_ht(Curvedata* CD, vector<bigfloat> lambdas, const bigfloat& xp, const bigfloat& ht, Point* P);
 
+#endif

@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_SUBSPACE_H)
-#define _SUBSPACE_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_SUBSPACE_H)
+#define _ECLIB_SUBSPACE_H      1       //flags that this file has been included
 
 #include "matrix.h"
 

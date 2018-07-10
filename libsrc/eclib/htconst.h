@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 // allow for multiple includes
-#ifndef _HTCONST_H_
-#define _HTCONST_H_
+#ifndef _ECLIB_HTCONST_H_
+#define _ECLIB_HTCONST_H_
 
 #include <eclib/elog.h>
 #include <eclib/egr.h>

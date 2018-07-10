@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _MARITH_H
-#define _MARITH_H
+#ifndef _ECLIB_MARITH_H
+#define _ECLIB_MARITH_H
 
 #include <eclib/arith.h>
 

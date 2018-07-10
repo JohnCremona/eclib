@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _REALROOTS_H
-#define _REALROOTS_H      1
+#ifndef _ECLIB_REALROOTS_H
+#define _ECLIB_REALROOTS_H      1
                            //flags that this file has been included
 
 #include <eclib/interface.h>

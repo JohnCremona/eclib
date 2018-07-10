@@ -23,8 +23,8 @@
  
 // Original version by Luiz Figueiredo
  
-#if     !defined(_SMATRIX_H)
-#define _SMATRIX_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_SMATRIX_H)
+#define _ECLIB_SMATRIX_H      1       //flags that this file has been included
 
 #include "matrix.h"
 #include "svector.h"

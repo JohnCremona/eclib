@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_SPLITBASE_H)
-#define _SPLITBASE_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_SPLITBASE_H)
+#define _ECLIB_SPLITBASE_H      1       //flags that this file has been included
 
 #include <eclib/types.h>
 

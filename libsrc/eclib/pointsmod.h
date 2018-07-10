@@ -37,8 +37,8 @@
 // would work over arbitrary finite fields.
 
 // allow for multiple includes
-#ifndef _POINTSMOD_
-#define _POINTSMOD_
+#ifndef _ECLIB_POINTSMOD_H
+#define _ECLIB_POINTSMOD_H
 
 #include <eclib/points.h>
 #include <eclib/curvemod.h>

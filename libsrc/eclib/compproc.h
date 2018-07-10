@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _COMPPROC_H_
-#define _COMPPROC_H_
+#ifndef _ECLIB_COMPPROC_H_
+#define _ECLIB_COMPPROC_H_
 
 #include <eclib/interface.h>
 

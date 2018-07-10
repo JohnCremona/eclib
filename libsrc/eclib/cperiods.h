@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _CPERIODS_H_
-#define _CPERIODS_H_
+#ifndef _ECLIB_CPERIODS_H_
+#define _ECLIB_CPERIODS_H_
 
 #include <eclib/compproc.h>
 #include <eclib/curve.h>

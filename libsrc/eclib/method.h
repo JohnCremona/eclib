@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_METHOD_H)
-#define _METHOD_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_METHOD_H)
+#define _ECLIB_METHOD_H      1       //flags that this file has been included
 
 // Linear algebra options:
 

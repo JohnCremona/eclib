@@ -21,11 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-
 // All are inline functions, there's no .cc file
 
-#ifndef _XMOD_H
-#define _XMOD_H      1
+#ifndef _ECLIB_XMOD_H
+#define _ECLIB_XMOD_H      1
 
 #include <eclib/interface.h>
 

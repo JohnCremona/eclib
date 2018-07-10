@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _HILBERT_H
-#define _HILBERT_H      1
+#ifndef _ECLIB_HILBERT_H
+#define _ECLIB_HILBERT_H      1
                            //flags that this file has been included
 
 #include <eclib/quadratic.h>

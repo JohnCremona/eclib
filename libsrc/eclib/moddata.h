@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _MODDATA_H
-#define _MODDATA_H      1
+#ifndef _ECLIB_MODDATA_H
+#define _ECLIB_MODDATA_H      1
                            //flags that this file has been included
 
 #include <eclib/interface.h>
