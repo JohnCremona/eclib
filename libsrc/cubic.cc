@@ -22,9 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
  //
 
-#include <eclib/cubic.h>
 #include <eclib/realroots.h>
+#include <eclib/cubic.h>
 #include <eclib/marith.h>
+#include <eclib/polys.h>
 
 void cubic::init()
 {

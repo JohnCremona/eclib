@@ -25,6 +25,7 @@
 #define _ECLIB_CUBIC_H      1       //flags that this file has been included
 
 #include <eclib/unimod.h>
+#include <eclib/bigrat.h>
 
 //
 // Notation: g(x,z) is replaced by g(m11*x+m12*z,m21*x+m22*z)

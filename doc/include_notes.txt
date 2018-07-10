@@ -23,6 +23,7 @@ unimod:
 
 cubic:
         unimod
+        bigrat
 
 quadratic:
         unimod
