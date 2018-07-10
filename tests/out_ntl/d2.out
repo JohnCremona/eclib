@@ -13,6 +13,6 @@ Quartic has rational point (x:y:z) = (883:37002:145)
 Point on  (c,d)  curve = [-113054905:-32672766:3048625]
 height = 13.565420700285587132
 Point on (c',d') curve = [175298864692140:22290732796922058:2098872790442875]
-height = 27.130841400571174264
+height = 27.130841400571174263
 
 Enter quartic coefficients (a,0,c,0,e) or just a c e 
