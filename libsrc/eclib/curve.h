@@ -24,10 +24,11 @@
 // originally adapted from Elliptic.h by Oisin McGuiness
 
 // allow for multiple includes
-#ifndef _ELLIPTIC_
-#define _ELLIPTIC_
+#ifndef _ECLIB_ELLIPTIC_
+#define _ECLIB_ELLIPTIC_
 
-#include "p2points.h"
+#include <eclib/marith.h>
+#include <eclib/bigrat.h>
 #include <map>
 
 class Curve; class Curvedata; class CurveRed;

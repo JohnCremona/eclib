@@ -22,8 +22,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _TIMER_H
-#define _TIMER_H      1
+#ifndef _ECLIB_TIMER_H
+#define _ECLIB_TIMER_H      1
 
 // Timer header files
 #ifdef _WIN32
@@ -33,6 +33,8 @@
 #endif
 
 #include <unordered_map>
+
+#include <eclib/interface.h>
 
 void init_time();
 void start_time();

@@ -20,9 +20,10 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
+
+#ifndef _ECLIB_DESCENT_H_
+#define _ECLIB_DESCENT_H_
  
-#include "bigrat.h"
-#include "curve.h"
 #include "mwprocs.h"
 
 // rank12 is a common base for separate classes rank1 and rank2 (for
@@ -140,3 +141,4 @@ public:
   void pari_output();
 };
 
+#endif

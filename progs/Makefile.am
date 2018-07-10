@@ -20,7 +20,7 @@ check_run = echo "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(prog_input_dir)/
 
 ################ PROCS (conics & cubics programs) #################
 
-PROCS_PROGS = solve_conic solve_legendre reduce_cubics list_cubics
+PROCS_PROGS = solve_conic solve_legendre reduce_cubics list_cubics cubics
 PROCS_PROGS_SUFFIXED = $(PROCS_PROGS:=$(EXEEXT))
 procs_progs: $(PROCS_PROGS_SUFFIXED)
 
@@ -28,6 +28,7 @@ solve_conic_SOURCES=solve_conic.cc
 solve_legendre_SOURCES=solve_legendre.cc
 reduce_cubics_SOURCES=reduce_cubics.cc
 list_cubics_SOURCES=list_cubics.cc
+cubics_SOURCES=cubics.cc
 
 check_procs: procs_progs
 	@echo Checking conics and cubics programs...

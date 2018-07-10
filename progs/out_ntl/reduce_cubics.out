@@ -9,9 +9,9 @@ after transform by [1,-1;0,1]
 Enter cubic coeffs a, b, c, d: Input cubic = [11276,-159331,750302,-1177513]
 Discriminant = -104060401000
 Using Mathews reduction ...
-Mathews reduced cubic = [83,-149,294,-878]
-after transform by [14,23;3,5]
+Mathews reduced cubic = [83,149,294,878]
+after transform by [-14,-23;-3,-5]
 Using JC/Julia reduction ...
-JC/Julia reduced cubic = [83,100,245,-650]
-after transform by [14,9;3,2]
+JC/Julia reduced cubic = [83,-100,245,650]
+after transform by [-14,-9;-3,-2]
 Enter cubic coeffs a, b, c, d: 

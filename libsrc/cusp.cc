@@ -21,8 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
 #include <eclib/cusp.h>
 
 // This function tests cusps for Gamma_0(N)-equivalence, unless

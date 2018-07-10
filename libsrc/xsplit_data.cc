@@ -23,7 +23,6 @@
 
 // Include headers
 #include "eclib/logger.h"
-#include "eclib/xsplit_data.h"
 #include "eclib/xsplit.h"
 
 /**

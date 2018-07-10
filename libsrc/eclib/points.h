@@ -24,10 +24,11 @@
 // originally adapted from Elliptic.h by Oisin McGuiness
 
 // allow for multiple includes
-#ifndef _PELLIPTIC_
-#define _PELLIPTIC_
+#ifndef _ECLIB_POINTS_
+#define _ECLIB_POINTS_
 
-#include "curve.h"
+#include <eclib/p2points.h>
+#include <eclib/curve.h>
 
 //
 // class for  points on elliptic curves
@@ -137,7 +138,7 @@ public:
   friend bigfloat pheight(const Point& P, const bigint& p);
 
   // useful logical tests
-  int iszero() const { return isinfinite(); }
+  int is_zero() const { return isinfinite(); }
   int isvalid() const ; // P on its curve ?
 
 }; // end of point class

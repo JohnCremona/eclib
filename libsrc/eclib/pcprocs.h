@@ -21,6 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#ifndef _ECLIB_PCPROCS_H
+#define _ECLIB_PCPROCS_H      1
+
+#include <eclib/interface.h>
+
 int get_curve(long n, long fac, long maxnx, long maxny,
 	      const bigfloat& x0, const bigfloat& y0, 
 	      long& nx, long& ny, int& type, int detail=0);
+
+#endif

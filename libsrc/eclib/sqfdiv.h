@@ -21,6 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#ifndef _ECLIB_SQFDIV_H
+#define _ECLIB_SQFDIV_H 1       //flags that this file has been included
+
+#include <eclib/marith.h>
+
 class sqfdiv {
   vector<bigint>* primebase;  // includes all relevant primes
   bigint d;                // product of current subset
@@ -55,3 +60,5 @@ long makeindex(const vector<bigint>& supp, const bigint& n, bigint& n0);
 // (except for n=0, but it should never be called with 0)
 
 vector<bigint> support(const bigint& n);
+
+#endif

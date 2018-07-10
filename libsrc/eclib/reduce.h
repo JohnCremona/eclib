@@ -21,6 +21,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#ifndef _ECLIB_REDUCE_H
+#define _ECLIB_REDUCE_H      1
+                           //flags that this file has been included
+
+#include <eclib/unimod.h>
+
 // NB In both functions, the unimod m must hold the cumulative
 // transformation on entry. It will be updated to show the new
 // cumulative transformation
@@ -42,3 +48,5 @@ bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint
 // reduces it (whose inverse takes its root into the fundamental
 // region).
 unimod reduce_quad(const bigfloat& b, const bigfloat& c);
+
+#endif

@@ -21,8 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef _PERIODS_H
-#define _PERIODS_H      1
+#ifndef _ECLIB_PERIODS_H
+#define _ECLIB_PERIODS_H      1
+
+#include <eclib/newforms.h>
 
 #define PI Pi()
 //#ifndef TWOPI

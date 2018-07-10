@@ -22,11 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-#include <eclib/curve.h>
-#include <eclib/points.h>
-#include <eclib/polys.h>
-#include <eclib/curvemod.h>
-#include <eclib/pointsmod.h>
+#include <eclib/pointsmod.h> // which includes <eclib/curvemod.h>
 
 // constructors 
 curvemodq::curvemodq(void) 

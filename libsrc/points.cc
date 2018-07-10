@@ -43,7 +43,7 @@ Point transform(const Point& P, Curvedata* newc,
 		const bigint& r, const bigint& s, const bigint& t, 
 		int back)
 {
-  if(P.iszero()) return Point(newc);
+  if(P.is_zero()) return Point(newc);
   if(!P.isvalid())
     cout << "Attempting to trabsform the point " << P 
 	 << "which is not a valid point on its curve " << P.getcurve() << "!\n";
@@ -87,7 +87,7 @@ Point Point::operator+(const Point& Q) const // P + Q
   // NOTE: we don't do any reductions here, but rely on assignment to do it
   // check special cases first
   if(Z==0) return Q ;
-  if(Q.iszero()) return *this ;
+  if(Q.is_zero()) return *this ;
   if(eq(*this , Q))      {return Q.twice();}
   Point minusQ=-Q;
   if(eq(*this , minusQ)) {return ans;}       // zero
@@ -168,7 +168,7 @@ Point Point::operator-(void) const // -Q
 Point operator*(int n, const Point& P)
 {
   Point ans(*(P.E));
-  if(P.iszero() || n == 0) return ans;
+  if(P.is_zero() || n == 0) return ans;
   int negative = (n < 0) ;
   if(negative) n = - n ;
   if(n == 1) {
@@ -198,12 +198,12 @@ int order(Point& p)
 {
   // ASSUME that point is valid; check before calling if unknown
   if (p.ord) {return p.ord;}
-  bigint eight, z=getZ(p); eight=8;
+  bigint eight, z=p.getZ(); eight=8;
   if (is_zero(z))  {p.ord = 1; return 1; }
   if (z>eight)     {p.ord =-1; return -1;}
   Point q = p;  long ord=1;
   while ( (sign(z)!=0) && (z<=eight) ) // (worst denom of a torsion point)
-    {ord++;   q+=p;  z = getZ(q); }
+    {ord++;   q+=p;  z = q.getZ(); }
   if (sign(z)!=0) ord = -1;
   p.ord = ord;
   return ord;
@@ -217,17 +217,17 @@ int order(Point& p, vector<Point>& multiples)
   // ASSUME that point is valid; check before calling if unknown
   multiples.clear(); multiples.reserve(13);
   multiples.push_back(Point(*(p.E)));
-  if (p.iszero()) {p.ord=1; return 1; }
+  if (p.is_zero()) {p.ord=1; return 1; }
   multiples.push_back(p);
   Point q = p;
   bigint eight; eight=8;
-  while ( (!q.iszero()) && (getZ(q)<=eight) 
+  while ( (!q.is_zero()) && (q.getZ()<=eight) 
 	                 && (multiples.size()<13) ) // 12 is max poss order
   { 
     q+=p;
-    if (!q.iszero()) multiples.push_back(q);
+    if (!q.is_zero()) multiples.push_back(q);
   }
-  if (q.iszero()) 
+  if (q.is_zero()) 
     p.ord = multiples.size();
   else
     p.ord = -1;

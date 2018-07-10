@@ -29,7 +29,6 @@
 // Last change : JC, Aug 19 2002, adapted for stdc++ library
 
 #include <stdlib.h> // for qsort
-#include <eclib/interface.h>
 #include <eclib/marith.h>
 #include <eclib/sieve_search.h>
 

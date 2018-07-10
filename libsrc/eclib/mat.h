@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-// Not to be included directly by user: use matrix.h
+// Not to be included directly by user: use matrix.h which defines
+// _ECLIB_MATRIX_H and includes this twice
 //
-// SCALAR_OPTION must be set to 1 or 2 by including file
 
 #ifndef LONG_MIN
 #define LONG_MIN (-LONG_MAX-1)

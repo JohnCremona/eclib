@@ -23,6 +23,7 @@
  
 #include <eclib/marith.h>
 #include <eclib/unimod.h>
+#include <eclib/polys.h>
 #include <eclib/cubic.h>
 
 int main()

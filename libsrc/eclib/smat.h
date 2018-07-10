@@ -21,6 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+// Should not be included directly by user: include smatrix.h instead
+
+// We cannot use one macro to prevent this being included twice since
+// we want it to be included twice by smatrix.h which defined _ECLIB_SMATRIX_H
+
 // Original version by Luiz Figueiredo
 
 int eqmodp(const smat&, const smat&, const scalar& p=DEFAULT_MODULUS);

@@ -20,7 +20,14 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- //
+
+#if     !defined(_ECLIB_CUBIC_H)
+#define _ECLIB_CUBIC_H      1       //flags that this file has been included
+
+#include <eclib/unimod.h>
+#include <eclib/bigrat.h>
+
+//
 // Notation: g(x,z) is replaced by g(m11*x+m12*z,m21*x+m22*z)
 //
 // Stored as bigint* arrays g of size 4 representing 
@@ -52,6 +59,9 @@ public:
   cubic(const  cubic& q)  
     {init(); set(q);}
   void operator=(const cubic& g) {set(g);}
+  int operator==(const cubic& g)
+  {return ((coeffs[0]==g.coeffs[0]) && (coeffs[1]==g.coeffs[1]) &&
+           (coeffs[2]==g.coeffs[2]) && (coeffs[3]==g.coeffs[3]));}
   inline bigint coeff(int i) 
     {if((i>=0)&&(i<=3)) return coeffs[i]; else return coeffs[0];}
   inline bigint operator[](int i) const
@@ -68,7 +78,7 @@ public:
   inline bigint eval(const bigint& x) const
     { bigint x2=sqr(x);
       return a()*x*x2 + b()*x2 + c()*x + d();}
-  inline bigint disc() const  
+  inline bigint disc() const
     { bigint b2=sqr(b()), c2=sqr(c()), ac=a()*c(), bd=b()*d();
       return -27*sqr(a()*d()) + 18*ac*bd - 4*ac*c2 -4*bd*b2 + b2*c2;
     }
@@ -81,11 +91,13 @@ public:
   // In the next 4 functions, m already holds a unimod and is updated:
   void x_shift(const bigint& e, unimod& m);
   void y_shift(const bigint& e, unimod& m);
-  void invert(unimod& m);
+  void invert(unimod& m); // apply [0,-1;1,0]
+  void negate(unimod& m); // apply [-1,0;0,-1]
+  void seminegate(unimod& m); // apply [1,0;0,-1] (det=-1)
   void reduce(unimod& m);
 
 // Mathews quantities for use when disc<0:
-  bigint mat_c1() const 
+  bigint mat_c1() const
     { return d()*(d()-b())+a()*(c()-a());}
   bigint mat_c2() const
     {  return a()*d() - (a()+b())*(a()+b()+c());}
@@ -106,11 +118,18 @@ public:
 
   bigcomplex hess_root() const;
   bigfloat real_root() const;  // requires disc<0
+  int is_hessian_reduced(); // for positive discriminant only
   void hess_reduce(unimod& m);
   void mathews_reduce(unimod& m);
+  int is_jc_reduced(); // for negative discriminant only
   void jc_reduce(unimod& m);
   // Just shifts x, returns the shift amount:
   bigint shift_reduce();
+  vector<bigrational> rational_roots() const;
+  int is_reducible() const
+  {return ((a()==0) || (rational_roots().size()>0));}
+  int is_irreducible() const
+  {return ((a()!=0) && (rational_roots().size()==0));}
 };
 
 
@@ -119,3 +138,17 @@ inline ostream& operator<<(ostream& os, const cubic& g)
   return os<<"["<<g.a()<<","<<g.b()<<","<<g.c() <<","<<g.d()<<"]";
 }
 
+// Functions for listing all reduced cubics
+// verbose=1 shows original cubics found before final reduction and elimination of duplicates
+// verbose=2 also shows details of triple loop
+
+// All reduced cubics with a single discriminant (positive or negative):
+// Set include_reducibles=0 to omit reducible cubics and any with a=0
+// Set gl2=1 to get GL(2,Z)-inequivalent cubics (default is SL(2,Z))
+vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles=1, int gl2=0, int verbose=0);
+
+// All reduced cubics with discriminant in range (0,maxdisc] if maxdisc>0 or [maxdisc,0) if maxdisc<0
+// (not yet implemented)
+vector<cubic> reduced_cubics_range(const bigint& maxdisc, int verbose=0);
+
+#endif

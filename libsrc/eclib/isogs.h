@@ -21,10 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _ISOGS_H_
-#define _ISOGS_H_
+#ifndef _ECLIB_ISOGS_H_
+#define _ECLIB_ISOGS_H_
 
 #include "cperiods.h"  // which itself includes everything relevant
+#include "matrix.h"
 
 // isogeny functions:
 
@@ -66,7 +67,7 @@ public:
   void display(ostream& os)const {displaycurves(cout); displaymat(cout);}
   void dumpdata(ostream& os, long rank);  // output for textab to input
   vector<long> getmat() const;
-  mat getmatrix() const;
+  mat_i getmatrix() const;
   long mat_entry(long i, long j)const {return matij[i*MAXNCURVES+j];}
   vector<CurveRed> getcurves() const {return curves;}
 };

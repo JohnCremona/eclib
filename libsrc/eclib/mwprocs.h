@@ -21,26 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "interface.h"
-#include "compproc.h"
-
-#include "matrix.h"
-#include "subspace.h"
-
-#include "points.h"
-#include "polys.h"
-#include "curvemod.h"
-#include "pointsmod.h"
-#include "ffmod.h"
-#include "divpol.h"
-#include "tlss.h"
-#include "elog.h"
-#include "saturate.h"
-#include "sieve_search.h"
 
 // allow for multiple includes
-#ifndef _MWPROCS_
-#define _MWPROCS_
+#ifndef _ECLIB_MWPROCS_
+#define _ECLIB_MWPROCS_
+
+#include "saturate.h"
+#include "sieve_search.h"
 
 // global to this file -- size of height_pairing matrix, equal
 // to maximum rank of any curve likely to study

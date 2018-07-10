@@ -3,7 +3,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.65])
-AC_INIT([eclib], [20171219], [john.cremona@gmail.com])
+AC_INIT([eclib], [20180710], [john.cremona@gmail.com])
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
 AC_CONFIG_SRCDIR([libsrc])
@@ -117,14 +117,14 @@ AC_ARG_WITH(ntl,
 case "$with_ntl" in
   ""|yes)
     NTL_LDFLAGS=""
-    NTL_CFLAGS=""
+    NTL_CFLAGS="-pthread"
     ;;
   no)
     AC_MSG_ERROR([Compiling without libntl impossible (but --without-ntl given)])
     ;;
   *)
     NTL_LDFLAGS="-L${with_ntl}/lib"
-    NTL_CFLAGS="-I${with_ntl}/include"
+    NTL_CFLAGS="-pthread -I${with_ntl}/include"
     ;;
 esac
 

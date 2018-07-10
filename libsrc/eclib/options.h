@@ -21,7 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "GetOpt.h"
+#ifndef _ECLIB_OPTIONS_H
+#define _ECLIB_OPTIONS_H      1
+                           //flags that this file has been included
+
+#include <eclib/GetOpt.h>
+#include <iostream>
+using namespace std;
 
 #define DEFAULT_QUIET 0
 #define DEFAULT_VERBOSE 1
@@ -200,3 +206,5 @@ public:
   void set_second_descent(int d) {second_descent=d;}
   void set_saturation_bound(long sat) {saturation_bound=sat;}
 };
+
+#endif

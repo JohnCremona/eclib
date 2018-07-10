@@ -21,10 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_RATIONAL_H)
-#define _RATIONAL_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_RATIONAL_H)
+#define _ECLIB_RATIONAL_H      1       //flags that this file has been included
 
-#include "arith.h"
+#include <eclib/arith.h>
 
 class rational {
   friend class bigrational;

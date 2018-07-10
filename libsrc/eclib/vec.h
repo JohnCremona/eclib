@@ -21,11 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-// Should not be included directly by user: include vector.h instead
-
-// We cannot use one macro to prevent this being included twice since
-// we want it to be included twice by vector.h!  We must use two
-// different ones
+// Not to be included directly by user: use vector.h which defines
+// _ECLIB_VECTOR_H and includes this twice
+//
 
 class svec;
 class subspace;

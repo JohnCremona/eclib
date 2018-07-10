@@ -22,8 +22,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_XSPLIT_H)
-#define _XSPLIT_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_XSPLIT_H)
+#define _ECLIB_XSPLIT_H      1       //flags that this file has been included
 
 // Disable multithreading
 // #undef ECLIB_MULTITHREAD
@@ -32,11 +32,10 @@
 #include <boost/thread/mutex.hpp>
 #endif
 
-#include "method.h"  // #defines form_finder=form_finder0/1/2/3/4
-#include "splitbase.h"
-#include "xsplit_data.h"
+#include <eclib/xsplit_data.h>
+#include <eclib/splitbase.h>
 #ifdef ECLIB_MULTITHREAD
-#include "threadpool.h"
+#include <eclib/threadpool.h>
 #endif
 
 // flags set on construction:

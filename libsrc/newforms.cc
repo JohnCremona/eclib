@@ -22,13 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <iomanip>
-#include <eclib/interface.h>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/cusp.h>
-#include <eclib/homspace.h>
-#include <eclib/oldforms.h>
-#include <eclib/cperiods.h>
 #include <eclib/newforms.h>
 #include <eclib/periods.h>
 #include <eclib/curvesort.h>

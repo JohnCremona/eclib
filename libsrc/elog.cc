@@ -21,10 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/compproc.h>
-#include <eclib/marith.h>
-#include <eclib/polys.h>
 #include <eclib/elog.h>
+#include <eclib/polys.h>
 
 bigfloat ssqrt(const bigfloat& x)
 {
@@ -255,11 +253,11 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
 #ifdef DEBUG_DIVBY2
   cout<<"Trying to divide P="<<P<<" by 2..."<<endl;
 #endif
-  if(P.iszero()) return two_torsion(E);
+  if(P.is_zero()) return two_torsion(E);
 
   bigint b2,b4,b6,b8;
   E.getbi(b2,b4,b6,b8);
-  bigint xPn=getX(P), xPd=getZ(P);
+  bigint xPn=P.getX(), xPd=P.getZ();
   bigint g = gcd(xPn,xPd); xPn/=g; xPd/=g;
   vector<bigint> q; // quartic coefficients
   q.push_back(xPd);
@@ -328,7 +326,7 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 
   bigcomplex z(to_bigfloat(0)), w;
   bigint den;
-  int zero_flag = P.iszero();
+  int zero_flag = P.is_zero();
   if(zero_flag)  
     {
       den=BIGINT(1);
@@ -338,7 +336,7 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
   else 
     {
       z = elliptic_logarithm(E,per2,P);
-      den=getZ(P);
+      den=P.getZ();
     }
 #ifdef DEBUG_DIVPT
   cout<<"posdisc=  "<<posdisc<<endl;
@@ -360,7 +358,7 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 	    {
 	      w = real(z+to_bigfloat(k)*w1)/m + half_w2;
 	      Q = ellztopoint(E,per2,w,den);
-	      if(!Q.iszero()
+	      if(!Q.is_zero()
 		 &&(m*Q==P)
 		 &&(find(ans.begin(),ans.end(),Q)==ans.end()))
 		ans.push_back(Q);	      
@@ -376,7 +374,7 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 	      if((k>0)||(!zero_flag))
 		{
 		  Q = ellztopoint(E,per2,w,den);
-		  if(!Q.iszero()
+		  if(!Q.is_zero()
 		     &&(m*Q==P)
 		     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
 		    ans.push_back(Q);	      
@@ -384,7 +382,7 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 	      if(even(m))
 		{
 		  Q = ellztopoint(E,per2,w+half_w2,den);
-		  if(!Q.iszero()
+		  if(!Q.is_zero()
 		     &&(m*Q==P)
 		     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
 		    ans.push_back(Q);	      
@@ -400,7 +398,7 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 	    continue; // already have 2-torsion
 	  w = real(z+to_bigfloat(k)*w1)/m;
 	  Q = ellztopoint(E,per2,w,den);
-	  if(!Q.iszero()
+	  if(!Q.is_zero()
 	     &&(m*Q==P)
 	     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
 	    ans.push_back(Q);	      

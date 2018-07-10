@@ -24,8 +24,6 @@
 // the constructor initializes the static data member with all the
 // fixed values
 
-#include <eclib/marith.h>
-#include <map>
 #include <eclib/fixc6.h>
 
 fixc6::fixc6()

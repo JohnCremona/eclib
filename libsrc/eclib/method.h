@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_METHOD_H)
-#define _METHOD_H      1       //flags that this file has been included
+#if     !defined(_ECLIB_METHOD_H)
+#define _ECLIB_METHOD_H      1       //flags that this file has been included
 
 // Linear algebra options:
 
@@ -53,30 +53,24 @@
 #define SCALAR_OPTION 2
 #endif
 
-#include "arith.h"
-#include "vector.h"
-#include "matrix.h"
-#include "subspace.h"
-#include "smatrix_elim.h"
+#include <eclib/subspace.h>
+#include "types.h"
 
 #ifdef MULTI
-#define SCALAR bigint
-#define VEC vec_m
-#define MAT mat_m
-#define SUBSP msubspace
-#include "marith.h"
-#include "mvector.h"
-#include "mmatrix.h"
-#include "msubspace.h"
+typedef bigint SCALAR;
+typedef vec_m VEC;
+typedef mat_m MAT;
+typedef msubspace SUBSP;
+#include <eclib/msubspace.h>
 #define MODULUS atoI(string("6074000003").c_str())  // will convert
 						    // this string to
 						    // a bigint
 #else
 #define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
-#define SCALAR scalar
-#define VEC vec
-#define MAT mat
-#define SUBSP subspace
+typedef scalar SCALAR;
+typedef vec VEC;
+typedef mat MAT;
+typedef subspace SUBSP;
 #endif
 
 #ifdef MODULAR

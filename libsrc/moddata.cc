@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <eclib/moddata.h>
-#include <iostream>
+#include <eclib/arith.h>
 
 level::level(long n, long neigs)
 {
@@ -131,7 +131,7 @@ moddata::moddata(long n) :level(n)
 #endif
    }
  }
- if (ndivs>0) {dstarts.reserve(ndivs);}
+ if (ndivs>0) {dstarts.resize(ndivs);}
 }
 
 void moddata::display() const

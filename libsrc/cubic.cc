@@ -22,10 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
  //
 
-#include <eclib/marith.h>
-#include <eclib/unimod.h>
-#include <eclib/cubic.h>
 #include <eclib/realroots.h>
+#include <eclib/cubic.h>
+#include <eclib/marith.h>
+#include <eclib/polys.h>
 
 void cubic::init()
 {
@@ -44,16 +44,14 @@ void cubic::transform(const unimod& m)
   bigint m222=sqr(m(2,2)); bigint m223=m222*m(2,2);
   bigint m122=sqr(m(1,2)); bigint m123=m122*m(1,2);
 
-  coeffs[0] = m113*a() + m(2,1)*m112*b() + m212*m(1,1)*c() + m213*d();
-  coeffs[1] = m123*a() + m(2,2)*m122*b() + m222*m(1,2)*c() + m223*d();
-
-  coeffs[3] = 3*m(1,2)*m112*a() + (m(2,2)*m112 + 2*m(2,1)*m(1,2)*m(1,1))*b() 
+  bigint A = m113*a() + m(2,1)*m112*b() + m212*m(1,1)*c() + m213*d();
+  bigint B = 3*m(1,2)*m112*a() + (m(2,2)*m112 + 2*m(2,1)*m(1,2)*m(1,1))*b()
     + (2*m(2,2)*m(2,1)*m(1,1) + m212*m(1,2))*c() + 3*m(2,2)*m212*d();
-
-  coeffs[2] = 3*m122*m(1,1)*a() + (2*m(2,2)*m(1,2)*m(1,1) + m(2,1)*m122)*b() 
+  bigint C = 3*m122*m(1,1)*a() + (2*m(2,2)*m(1,2)*m(1,1) + m(2,1)*m122)*b()
     + (m222*m(1,1) + 2*m(2,2)*m(2,1)*m(1,2))*c() + 3*m222*m(2,1)*d();
-
-}
+  bigint D = m123*a() + m(2,2)*m122*b() + m222*m(1,2)*c() + m223*d();
+  set(A,B,C,D);
+  }
 
 void cubic::x_shift(const bigint& e, unimod& m)
 {
@@ -76,6 +74,20 @@ void cubic::invert(unimod& m)
   swap(coeffs[0],coeffs[3]); ::negate(coeffs[0]);
   swap(coeffs[1],coeffs[2]); ::negate(coeffs[2]);
   m.invert();
+}
+
+void cubic::negate(unimod& m)
+{
+  for (int i=0; i<4; i++)
+    ::negate(coeffs[i]);
+  m.negate();
+}
+
+void cubic::seminegate(unimod& m)
+{
+  for (int i=0; i<2; i++)
+    ::negate(coeffs[2*i+1]);
+  m.seminegate();
 }
 
 // The quantity called C_1 in the paper, = Norm(h2-h0) and should be
@@ -203,11 +215,24 @@ bigcomplex cubic::hess_root() const
   return gamma;
 }
 
+int cubic::is_hessian_reduced() // for positive discriminant only
+{
+  bigint P = p_semi();
+  bigint R = r_semi();
+  if (P>R) return 0;
+  bigint Q = q_semi();
+  if (Q>P) return 0;
+  if (P==R) return (Q>=0);
+  return (Q>-P);
+}
+
 void cubic::hess_reduce(unimod& m)
 {
   int s=1;  bigint k;
   m.reset();
-
+#ifdef DEBUG
+  cout<<"Using hess_reduce() on "<<(*this)<<endl;
+#endif
   while(s)
     {
       s=0;
@@ -237,7 +262,7 @@ void cubic::hess_reduce(unimod& m)
       cout << "Final inversion: " << (*this) << endl;
 #endif
     }
-  if(a()<0) {::negate(coeffs[0]); ::negate(coeffs[2]);}
+  if(a()<0) negate(m);
 }
 
 void cubic::mathews_reduce(unimod& m)
@@ -280,7 +305,19 @@ void cubic::mathews_reduce(unimod& m)
 #endif
 	}
     }
-  if(a()<0) {::negate(coeffs[0]); ::negate(coeffs[2]);}
+  if(a()<0) negate(m);
+}
+
+int cubic::is_jc_reduced() // for positive discriminant only
+{
+  bigint C1 =  j_c1();
+  if (C1<0) return 0;
+  bigint C2 = -j_c2(); // NB sign change from JCM paper
+  if (C2<0) return 0;
+  bigint C4 =  j_c4(); // = N(h1)/8, not in JCM paper
+  if (C1==0) return (C4>=0);
+  bigint C3 =  j_c3();
+  return (C3>0);
 }
 
 void cubic::jc_reduce(unimod& m)
@@ -348,7 +385,7 @@ void cubic::jc_reduce(unimod& m)
       cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
 #endif
     }
-  if(a()<0) {::negate(coeffs[0]); ::negate(coeffs[2]);}
+  if(a()<0) negate(m);
 }
 
   // Just shifts x:
@@ -403,4 +440,219 @@ bigfloat cubic::real_root() const
   bigfloat eta   = cube_root(eta3);
   bigfloat alpha = (eta*gamma1-gamma2)/(eta-1);
   return alpha;
+}
+
+vector<bigrational> cubic::rational_roots() const
+{
+  vector<bigint> co(coeffs, coeffs+4);
+  return roots(co);
+}
+
+
+vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2, int verbose)
+{
+  bigint a, b, c, d;
+  bigint amax, bmin, bmax, a2, b2, b3, b4, cmin, cmax, r;
+  bigint P, U, absU, U2, Ud, Db2;
+  int sU;
+  bigfloat i3a, a23, ra2, rb2, D, D2, D3, D32, D4, Pmax, Pmin;
+
+  int sl2_equiv, gl2_equiv;
+  bigint ZERO(0), ONE(1);
+  unimod m;
+  const unimod m1(ONE,ZERO,ZERO,-ONE);
+
+  bigfloat third = 1/to_bigfloat(3);
+  bigfloat const1 = 2 / sqrt(to_bigfloat(27));
+  bigfloat const2 = 3 / pow(to_bigfloat(4), third);
+  bigfloat const3 = sqrt(to_bigfloat(8)/to_bigfloat(27));
+  bigfloat const4 = to_bigfloat(27)/to_bigfloat(8);
+  bigfloat const5 = sqrt(pow(to_bigfloat(2), third));
+
+  int neg=(disc<0);
+  vector<cubic> glist; // will hold all cubics found
+  vector<cubic> reduced_glist; // will hold unique reduced cubics found
+  if(verbose>1) cout << "Discriminant = " << disc << endl;
+  D = I2bigfloat(disc);
+  D2 = sqrt(abs(D));
+  D3 = pow(abs(D),third);
+  if (neg) D3=-D3;
+  D32 = D2*D2*D2;
+  D4 = sqrt(D2);
+  // Upper bound on a:
+  amax = Ifloor((neg? const3: const1) * D4);
+  if(verbose>1) cout<<"Upper bound on a: " << amax << endl;
+  if (include_reducibles)
+    {
+      //
+      // Code for a=0:
+      //
+      bmax = (neg? Ifloor(const5*D4): Ifloor(D4));
+      for (b=1; b<=bmax; b++)
+        {
+          b2=b*b;
+          if (::divides(b2,disc,Db2,r))
+            {
+              b4 = 4*b;
+              for (c=1-b; c<=b; c++)
+                {
+                  if (::divides(c*c-Db2,b4,d,r))
+                    {
+                      if (verbose && glist.size()==0) cout<<disc<<" :\n";
+                      cubic g(a,b,c,d);
+                      glist.push_back(g);
+                      if(verbose>1)
+                        {
+                          cout<<"found "<<g;
+                          cout<<" (reducible: leading coefficient 0)\n";
+                        }
+                    }
+                }
+            }
+        }
+    } // end of a=0 code
+  //
+  // Code for a>0:
+  //
+  for(a=1; a<=amax; a++)
+    {
+      a2=a*a;
+      ra2 = I2bigfloat(a2);
+      a23 = pow(ra2, third);
+      i3a = 1/I2bigfloat(3*a);
+      Pmax = (neg? pow(2*D32+const4*D*ra2, third): D2);
+      Pmin = const2*D3*a23;
+      if(verbose>1) cout<<"bounds on P: ["<<Pmin<<","<<Pmax<<"]"<<endl;
+      bmax=(3*a)/2;
+      bmin=-bmax;
+      if (2*bmax==3*a) bmin++;
+      if(verbose>1) cout<<"a="<<a<<"; bounds on b: ["<<bmin<<","<<bmax<<"]"<<endl;
+      for(b=bmin; b<=bmax; b++)
+        {
+          b2=b*b; b3=b*b2;
+          rb2 = I2bigfloat(b2);
+          cmin =  Ifloor((rb2-Pmax)*i3a); // round down for safety
+          cmax = Iceil((rb2-Pmin)*i3a);   // round up for safety
+          if(verbose>1) cout<<"(a,b)=("<<a<<","<<b<<"); bounds on c: ["<<cmin<<","<<cmax<<"]"<<endl;
+          for(c=cmin; c<=cmax; c++)
+            {
+              P = b2-3*a*c;
+              U2 = 4*P*P*P-27*disc*a2;
+              Ud = 2*b3-9*a*b*c;
+              if(verbose>1) cout<<"(a,b,c)=("<<a<<","<<b<<","<<c<<"): P="<<P<<", U^2="<<U2<<endl;
+              if(isqrt(U2,absU))
+                {
+                  for (sU=0; sU<2; sU++)
+                    {
+                      U = (sU? -absU: absU);
+                      if(::divides(U-Ud,27*a2,d,r))
+                        {
+                          if (verbose && glist.size()==0) cout<<disc<<" :\n";
+                          cubic g(a,b,c,d);
+                          if(verbose>1) cout<<"found "<<g;
+                          int irred = g.is_irreducible();
+                          if (verbose>1)
+                            {
+                              if (irred)
+                                cout<<" (irrreducible)\n";
+                              else
+                                cout<<" (reducible)\n";
+                            }
+                          if (irred or include_reducibles)
+                              glist.push_back(g);
+                        } // d integral test
+                    }     // sign(U) loop
+                }         // U square test
+            } // c loop
+        }     // b loop
+    }         // a loop
+
+  if (verbose)
+    {
+      cout << glist.size() << " cubics found with discriminant " << disc << ".";
+      if (glist.size()>0) cout <<" Now reducing and eliminating repeats...";
+      cout<<endl;
+    }
+
+  for (vector<cubic>::const_iterator gi=glist.begin(); gi!=glist.end(); gi++)
+    {
+      cubic g = *gi, gneg;
+      if(verbose) cout<<g;
+      if (neg)
+        {
+          if (g.is_jc_reduced())
+            {
+              if(verbose) cout<<"\t (JC-reduced)";
+            }
+          else
+            {
+              if(verbose) cout<<"\t---(reduces to)--->\t";
+              g.jc_reduce(m);
+              if(verbose) cout<<g;
+            }
+        }
+      else
+        {
+          if (g.is_hessian_reduced())
+            {
+              if(verbose) cout<<"\t (Hessian-reduced)";
+            }
+          else
+            {
+              if(verbose) cout<<"\t---(reduces to)--->\t";
+              g.hess_reduce(m);
+              if(verbose) cout<<g;
+            }
+        }
+      // Check to see if this reduced cubic is already in the list:
+      sl2_equiv = find(reduced_glist.begin(),reduced_glist.end(),g) != reduced_glist.end();
+      // ...if not but we are using GL(2,Z)-equivalence check that its
+      // seminegation is there:
+      if (!sl2_equiv && gl2)
+        {
+          if (reduced_glist.size()==0)
+            gl2_equiv=0;
+          else
+            {
+              gneg=g;
+              gneg.transform(m1);
+              if (neg)
+                gneg.jc_reduce(m);
+              else
+                gneg.hess_reduce(m);
+              gl2_equiv = find(reduced_glist.begin(),reduced_glist.end(),gneg) != reduced_glist.end();
+            }
+        }
+      if (sl2_equiv || (gl2&&gl2_equiv))
+        {
+          if(verbose)
+            {
+              cout<<" -REPEAT";
+              if(sl2_equiv)
+                cout<<" (SL(2,Z)-equivalent)";
+              else
+                cout<<" (GL(2,Z)-equivalent)";
+            }
+        }
+      else
+        {
+          reduced_glist.push_back(g);
+          if(verbose)
+            {
+              cout<<" -NEW";
+              if(gl2)
+                cout<<" (not GL(2,Z)-equivalent)";
+              else
+                cout<<" (not SL(2,Z)-equivalent)";
+            }
+        }
+      if(verbose) cout<<endl;
+    }
+  if (verbose && glist.size()>0)
+    {
+      cout << reduced_glist.size();
+      cout << (gl2? " GL":" SL");
+      cout << "(2,Z)-inequivalent cubics found with discriminant " << disc << "." << endl;
+    }
+  return reduced_glist;
 }

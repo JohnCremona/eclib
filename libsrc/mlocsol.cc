@@ -26,7 +26,6 @@
 #include <NTL/ZZ_pXFactoring.h>
 
 #include <eclib/mlocsol.h>
-#include <eclib/quadratic.h>
 #include <eclib/hilbert.h>
 
 int psquare(const bigint& aa, const bigint& p);  

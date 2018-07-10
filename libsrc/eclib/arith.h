@@ -21,12 +21,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#ifndef _ARITH_H
-#define _ARITH_H      1
+#ifndef _ECLIB_ARITH_H
+#define _ECLIB_ARITH_H      1
                            //flags that this file has been included
-#include "interface.h"
+#include <eclib/interface.h>
 #include <cstring> // for memset gcc >= 4.3
-#include "xmod.h" // supercedes the macros which used to be here
+#include <eclib/xmod.h> // supercedes the macros which used to be here
 
 /* Prime number class; adapted from Pari  */
 

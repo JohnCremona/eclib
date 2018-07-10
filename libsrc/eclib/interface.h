@@ -26,8 +26,8 @@
 //   doubles and complex doubles (if not set) ot using NTL bigfloats
 //   (RR) and bigcomplexes (CC) (if set)
 
-#ifndef _INTERFACE_H_
-#define _INTERFACE_H_
+#ifndef _ECLIB_INTERFACE_H_
+#define _ECLIB_INTERFACE_H_
 
 #ifdef NTL_ALL
 #define MPFP
@@ -48,7 +48,7 @@
 #endif
 #include <iterator>
 using namespace std;
-#include "templates.h"
+#include <eclib/templates.h>
 #include <stdint.h>
 
 #ifndef MININT
@@ -72,7 +72,7 @@ using namespace std;
 #include <NTL/ZZXFactoring.h>
 using namespace NTL;
 
-#define bigint ZZ
+typedef ZZ bigint;
 
 #define BIGINT(val) to_ZZ(val)
 inline bigint atoI(const char* s) {return to_ZZ(s);}
@@ -137,7 +137,7 @@ inline bigint roundover(const bigint& a, const bigint& b)
 #ifdef NTL_ALL
 
 #include <NTL/RR.h>
-#define bigfloat RR
+typedef RR bigfloat;
 RR Pi();
 RR Euler();
 RR atan(const RR&);
@@ -186,7 +186,7 @@ inline RR fmax(const RR& x, const RR& y)
 
 #include <complex>
 typedef complex<RR> CC;
-#define bigcomplex CC
+typedef CC bigcomplex;
 
 #ifdef _LIBCPP_VERSION
 template <> inline RR std::abs(const CC &z)
@@ -281,7 +281,7 @@ inline CC pow(const CC& a, const RR& e)  {return exp(e*log(a));}
 
 // reals
 
-#define bigfloat double
+typedef double bigfloat;
 
 inline long decimal_precision() {return 15;}
 inline long bit_precision() {return 53;}
@@ -308,7 +308,7 @@ inline bigfloat I2bigfloat(const bigint& x) {return I2double(x);}
 // complexes
 
 #include <complex>
-#define bigcomplex complex<double>
+typedef complex<double> bigcomplex;
 
 inline int is_zero(const bigcomplex& z) 
  {return is_zero(z.real())&&is_zero(z.imag());}

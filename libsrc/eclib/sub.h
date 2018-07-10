@@ -21,7 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-// SCALAR_OPTION must be set to 1 or 2 by including file
+// Not to be included directly by user: use matrix.h which defines
+// _ECLIB_SUBSPACE_H and includes this twice
+//
+
 
 class subspace {
 

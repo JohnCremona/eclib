@@ -23,89 +23,64 @@
  
 #include <eclib/marith.h>
 #include <eclib/unimod.h>
+#include <eclib/polys.h>
 #include <eclib/cubic.h>
 
 int main()
 {
   initprimes("PRIMES");
-  bigint a, b, c, d, disc;
-  bigint absdisc, maxdisc;
-  bigint a0,b0,c0,d0;
-  bigint alim, blim, a2, b2, b3, cmin, cmax, r;
-  bigint P, U, U2;
-  bigfloat rdisc, ax, cx, cy;
+  bigint disc, absdisc, maxdisc;
   int neg;
-  bigfloat fac1, fac2;
-  unimod m;
+  int verbose=0, include_reducibles=1, gl2=0;
+  cerr << "Verbosity level (0, 1 or 2): ";
+  cin >> verbose;
 
-  while(cout << "Enter discriminant bound (positive or negative): ",	cin >> maxdisc, !is_zero(maxdisc))
+  while(cerr << "Enter discriminant bound (positive or negative, 0 to stop): ",	cin >> maxdisc, !is_zero(maxdisc))
     {
+      cerr << "Include reducible cubics? (0 or 1): ";
+      cin >> include_reducibles;
+      cerr << "Use GL(2,Z)-equivalence instead of SL(2,Z)? (0 or 1): ";
+      cin >> gl2;
       neg=(maxdisc<0);
-      if(neg) 
+      if (include_reducibles)
+        cout << "Cubics with ";
+      else
+        cout << "Irreducible cubics with ";
+      if(neg)
 	{
 	  ::negate(maxdisc);
-	  fac1 = sqrt((double)8)/sqrt((double)27);
-	  fac2 = 1.2599210498948731647672106072782283505;
-	  cout << "Negative discriminants down to " << maxdisc << endl;
+	  cout << "negative discriminant down to -";
 	}
       else
 	{
-	  fac1 = sqrt(to_bigfloat(8))/to_bigfloat(3);
-	  fac2 = to_bigfloat(1);
-	  cout << "Positive discriminants  up  to " << maxdisc << endl;
+	  cout << "positive discriminant  up  to ";
 	}
-      
+      cout << maxdisc;
+      cout << " up to " << (gl2?"GL":"SL") << "(2,Z)-equivalence";
+      cout << endl;
+
       for(absdisc=1; absdisc<=maxdisc; absdisc++)
 	    {
 	      disc=absdisc;
 	      if(neg) ::negate(disc);
-//	      cout << "Discriminant = " << disc << endl;
-	      rdisc = sqrt(I2bigfloat(absdisc));
-	      ax = fac1 * sqrt(rdisc);
-	      alim=Ifloor(ax);
-//	      cout<<"Bound on a = " << alim << endl;
-	      for(a=1; a<=alim; a++)
-		{
-		  a2=a*a;
-		  blim=(3*a)/2;
-//	          cout<<"a="<<a<<": bound on b = "<<blim<<endl;
-		  for(b=-blim; b<=blim; b++)
-		    {
-		      b2=b*b; b3=b*b2;
-		      bigfloat i3a = to_bigfloat(1)/I2bigfloat(3*a);
-		      cy=I2bigfloat(b2)*i3a;
-		      cx=(I2bigfloat(b2)-fac2*rdisc)*i3a;
-		      cmin=Iceil(cx);
-		      cmax=Ifloor(cy);
-//		      cout<<"a="<<a<<", b="<<b<<": bounds on c: "<<cmin<<","<<cmax<<endl;
-		      for(c=cmin; c<=cmax; c++)
-			{
-			  P = b2-3*a*c;
-			  U2 = 4*P*P*P-27*disc*a2;
-			  if(isqrt(U2,U))
-			    {
-			      if(::divides(U-2*b3+9*a*b*c,27*a2,d,r))
-				{
-				  cout<<disc<<"\t";
-				  cubic g(a,b,c,d);
-				  cout<<g;
-                                  if(disc!=g.disc())
-                                    cout<<" [WRONG DISC]";
-				  cout<<"\t---(reduces to)--->\t";
-				  if(neg)
-				    g.jc_reduce(m);
-				  else
-                                    g.hess_reduce(m);
-				  cout<<g;
-                                  if(disc!=g.disc())
-                                    cout<<" [WRONG DISC]";
-                                  cout<<endl;
-				}
-			    }
-			}
-		    }
-		}
+              vector<cubic> glist = reduced_cubics(disc, include_reducibles, gl2, verbose);
+              if (glist.size()==0)
+                {
+                  if(verbose>1)
+                    {
+                      cout<< "No ";
+                      if (!include_reducibles) cout << "irreducible";
+                      cout << " cubics with discriminant " << disc << endl;
+                    }
+                }
+              else
+                {
+                  cout << glist.size();
+                  cout << " with discriminant " << disc;
+                  if (glist.size()>0) cout<< " : " << glist;
+                  cout << endl;
+                }
 	    }
+      cout<<endl;
     }
-  cout<<endl;
 }

@@ -21,6 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#if     !defined(_ECLIB_BITSPACE_H)
+#define _ECLIB_BITSPACE_H      1       //flags that this file has been included
+
 class bitspace {
 private: 
   long maxdim;
@@ -49,3 +52,5 @@ public:
 
 inline int testbit(long a, long i) {return (a& (1<<i));}
 inline int setbit( long& a, long i) {return (a|=(1<<i));}
+
+#endif

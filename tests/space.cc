@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/arith.h>
-#include <eclib/subspace.h>
+#include <eclib/types.h>
 
 int main()
 {

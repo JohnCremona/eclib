@@ -21,6 +21,14 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#ifndef _ECLIB_HOMSPACE_H
+#define _ECLIB_HOMSPACE_H      1
+                           //flags that this file has been included
+
+#include <eclib/method.h>
+#include <eclib/symb.h>
+
+
 // If this is defined, the order of primes used for Wq and Tp
 // operators is the natural order 2, 3, 5, 7, ..., mixing good and bad
 // primes.  Otherwise the order is as in primelist (see moddata.h)
@@ -32,7 +40,6 @@
 
 class mat22;  // fully defined below
 class matop;  // fully defined below
-#include "svector.h"
 
 class homspace :public symbdata {
   //private:
@@ -229,3 +236,5 @@ inline ostream& operator<< (ostream& s, const mat22& m)
    m.show(s);
    return s;
 }  
+
+#endif

@@ -23,8 +23,8 @@
  
 // Original version by Luiz Figueiredo
  
-#ifndef _SMATRIX_ELIM_H
-#define _SMATRIX_ELIM_H 1       //flags that this file has been included
+#ifndef _ECLIB_SMATRIX_ELIM_H
+#define _ECLIB_SMATRIX_ELIM_H 1       //flags that this file has been included
 
 #include "smatrix.h"
 #include "subspace.h"
@@ -86,29 +86,5 @@ find( int X, int* ptr, int ub, int lb = 0 ) {
 #undef smat
 #undef smat_elim
 #undef ssubspace
-
-// SCALAR_OPTION may be set to 1 or 2 by user
-
-#if (SCALAR_OPTION==1)
-#define scalar int
-#define vec vec_i
-#define mat mat_i
-#define subspace subspace_i
-#define svec svec_i
-#define smat smat_i
-#define smat_elim smat_i_elim
-#define ssubspace ssubspace_i
-#else
-#define scalar long
-#define vec vec_l
-#define mat mat_l
-#define subspace subspace_l
-#define svec svec_l
-#define smat smat_l
-#define smat_elim smat_l_elim
-#define ssubspace ssubspace_l
-#endif
-
-// else user must use the unabbreviated names
 
 #endif

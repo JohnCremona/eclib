@@ -20,7 +20,13 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- 
+
+#if     !defined(_ECLIB_MRANK1_H)
+#define _ECLIB_MRANK1_H      1       //flags that this file has been included
+
+#include <eclib/descent.h>
+#include <eclib/mquartic.h>
+
 class rank1 : public rank12 {
 private: 
   long nquarticsa, nquarticsb, nfirstlota, nfirstlotb;
@@ -88,4 +94,4 @@ public:
   Curvedata getEprime() const {return *the_curve;}
 };
 
-
+#endif

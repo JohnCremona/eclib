@@ -21,8 +21,13 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#if     !defined(_ECLIB_READER_H)
+#define _ECLIB_READER_H      1       //flags that this file has been included
+
 #include <fstream>
 #include <cstring> // for gcc >= 4.3
+#include <eclib/curve.h>
+
 #define TTY "/dev/tty"
 
 class CurveReader {
@@ -68,3 +73,5 @@ public:
     return !c.isnull();
   }
 };
+
+#endif
