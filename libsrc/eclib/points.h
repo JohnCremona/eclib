@@ -30,6 +30,8 @@
 #include <eclib/p2points.h>
 #include <eclib/curve.h>
 
+#undef iszero
+
 //
 // class for  points on elliptic curves
 //
