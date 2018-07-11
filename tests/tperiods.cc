@@ -29,7 +29,9 @@
 
 int main(){
 #ifdef NTL_ALL
-  set_precision("Enter number of decimal places");
+  set_precision("Enter precision in bits");
+  long original_output_precision = RR::OutputPrecision();
+  RR::SetOutputPrecision(original_output_precision-3);
 #endif
   initprimes("PRIMES",0);
 	
@@ -50,4 +52,8 @@ int main(){
       Curve EE = cp.trans_to_curve();
       cout << "Curve from periods: " << EE << endl;
     }
+#ifdef NTL_ALL
+  RR::SetOutputPrecision(original_output_precision);
+#endif
+
 }

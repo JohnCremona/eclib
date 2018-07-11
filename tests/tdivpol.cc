@@ -29,7 +29,7 @@
 
 int main()
 {
-  //  set_precision("Enter number of decimal places");
+  //  set_precision("Enter precision in bits");
   initprimes("PRIMES",0);
 
   Curve E(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));

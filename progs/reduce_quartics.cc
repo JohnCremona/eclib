@@ -34,8 +34,8 @@ int getquartic(quartic& g);
 
 int main()
 {
-  set_precision(200);
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  set_precision(600);
+  cin.flags( cin.flags() | ios::dec );
   
   int verb=1; //0; 
   //   cout << "Verbose? "; cin >> verb;

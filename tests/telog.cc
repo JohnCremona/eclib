@@ -68,8 +68,10 @@ void test3(Curvedata& CD, Cperiods& per, int m)
 
 int main(){
 #ifdef NTL_ALL
-  //  set_precision("Enter number of decimal places");
-  set_precision(50);
+  //  set_precision("Enter precision in bits");
+  set_precision(175);
+  long original_output_precision = RR::OutputPrecision();
+  RR::SetOutputPrecision(original_output_precision-3);
 #endif
   initprimes("PRIMES",0);
 
@@ -123,7 +125,8 @@ int main(){
 
   cout<<"Curve "<<c<<endl;
   Cperiods cp(cd);
-  cout<<"Periods: "<<cp<<endl<<endl;
+  //cout<<"Periods: "<<cp<<endl;
+  cout<<endl;
 
   if(test1(cd,cp,P0)) cout<<"OK!\n"<<endl;
   else cout<<"WRONG!\n"<<endl;
@@ -159,7 +162,8 @@ int main(){
   cout << "Curve "<<c3<<endl;
 
   Cperiods cp3(cd3);
-  cout << "Periods: "<<cp3<<endl<<endl;
+  //cout << "Periods: "<<cp3<<endl;
+  cout<<endl;
 
   Point Q(cd3,BIGINT(-8),BIGINT(51));
   cout << "The point Q is = " << Q << endl ;
@@ -176,6 +180,11 @@ int main(){
   test3(cd,cp,3);cout<<endl;
   test3(cd,cp,5);cout<<endl;
   */
+
+#ifdef NTL_ALL
+  RR::SetOutputPrecision(original_output_precision);
+#endif
+
   return 0;
 } //ends main
 

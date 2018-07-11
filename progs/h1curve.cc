@@ -54,11 +54,11 @@ int checkap(const level* iN, const newform& nf, CurveRed& CR, long pmax=100);
 
 int main(void)
 {
-  int prec0 = 25;
-  int maxprec = 100;
+  int prec0 = 75;
+  int maxprec = 300;
   int prec = prec0;
+  int delta_prec = 30;
   set_precision(prec);
-  //  set_precision("Enter number of decimal places");
  int verb=0;
 #ifdef SINGLE
  verb=1;
@@ -126,12 +126,12 @@ int main(void)
      Curvedata CD;
      CurveRed CR;
      bigint nc;
-     prec = prec0-10;
+     prec = prec0-delta_prec;
      set_precision(prec);
      C = Curve();
      while (C.isnull() && (prec<maxprec))
        {
-	 prec += 10;
+	 prec += delta_prec;
 	 set_precision(prec);
 	 C = nf.getcurve(i, -1, rperiod, verb);
          if (!C.isnull())

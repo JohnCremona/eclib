@@ -30,7 +30,7 @@
 
 int main()
 {
-  set_precision(30);
+  set_precision(100);
   initprimes("PRIMES",0);
 
   int verbose = 1;

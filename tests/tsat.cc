@@ -45,8 +45,8 @@ int randint(int top)
 
 int main()
 {
-  //  set_precision("Enter number of decimal places");
-  set_precision(200);
+  //  set_precision("Enter precision in bits");
+  set_precision(600);
   initprimes("PRIMES",0);
   int verbose = 1;
   cout<<"verbose (0/1)? ";             cin >>verbose;

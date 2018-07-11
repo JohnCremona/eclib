@@ -44,10 +44,8 @@ string ccode;
 
 int main()
 {  
-//  cout<<"precision = "<<decimal_precision()<<endl;
-  set_precision(15);
-//  cout<<"precision = "<<decimal_precision()<<endl;
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  set_precision(50);
+  cin.flags( cin.flags() | ios::dec );
 
   int rank, rank2, i;
   long cond, ncurve, nclass;

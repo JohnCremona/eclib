@@ -39,7 +39,7 @@
 int main()
 {
 #ifdef NTL_ALL
-  set_precision(20);
+  set_precision(70);
 #endif
   initprimes("PRIMES",0);
 

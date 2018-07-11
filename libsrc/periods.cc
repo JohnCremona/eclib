@@ -371,14 +371,14 @@ periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
   rootmod =  sqrt(to_bigfloat(N));  
   factor1 =  exp(-(TWOPI)/ (to_bigfloat(chi1.modulus()) * rootmod));
   factor2 =  exp(-(TWOPI)/ (to_bigfloat(chi2.modulus()) * rootmod));
-  long dp = decimal_precision();
+  long bp = bit_precision();
  // MUST keep brackets around TWOPI!:
-  bigfloat rootlimit1=(dp*LOG10-log(1-factor1))*rootmod/(TWOPI) ;
-  bigfloat rootlimit2=(dp*LOG10-log(1-factor1))*rootmod/(TWOPI) ; 
+  bigfloat rootlimit1=(bp-log(1-factor1))*rootmod/(TWOPI) ;
+  bigfloat rootlimit2=(bp-log(1-factor1))*rootmod/(TWOPI) ; 
   Iasb(limit1,rootlimit1);
   Iasb(limit2,rootlimit2);
 #ifdef TRACE_USE 
-  cout << "Decimal precision = "<<dp<<endl;
+  cout << "Bit precision = "<<bp<<endl;
   cout << "Basic limits on n in sums = " << limit << endl;
 #endif
   limit1=chi1.modulus()*limit1;  
@@ -390,7 +390,7 @@ periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
 #endif
 /*
   if(primelist[primelist.size()-1]<limit)
-    cout<<"\nLARGEST PRIME "<<primelist[primelist.size()-1]<<" IS BELOW LIMIT "<< limit <<" required for decimal precision "<<dp<<endl;
+    cout<<"\nLARGEST PRIME "<<primelist[primelist.size()-1]<<" IS BELOW LIMIT "<< limit <<" required for bit precision "<<bp<<endl;
 */
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
@@ -465,9 +465,9 @@ void periods_direct::compute(void)
   b = posmod(b,d);
   c = posmod(c,d);
   factor2 = factor1 * drecip;
-  long dp = decimal_precision();
-  Iasb(limit1,(-dp*LOG10-log((1-exp(factor1))/3))/(factor1)) ;
-  Iasb(limit2,(-dp*LOG10-log((1-exp(factor2))/3))/(factor2)) ;
+  long bp = bit_precision();
+  Iasb(limit1,(-bp-log((1-exp(factor1))/3))/(factor1)) ;
+  Iasb(limit2,(-bp-log((1-exp(factor2))/3))/(factor2)) ;
 
   limit = limit2;
   rootlimit=sqrt(to_bigfloat(limit));
@@ -479,7 +479,7 @@ void periods_direct::compute(void)
 #endif
 /*
   if(primelist[primelist.size()-1]<limit)
-    cout<<"\nLARGEST PRIME "<<primelist[primelist.size()-1]<<" IS BELOW LIMIT "<< limit <<" required for decimal precision "<<dp<<endl;
+    cout<<"\nLARGEST PRIME "<<primelist[primelist.size()-1]<<" IS BELOW LIMIT "<< limit <<" required for bit precision "<<bp<<endl;
 */
 #ifdef TRACE_CACHE
   cout << "Initial an_cache = "<<an_cache<<endl;
@@ -555,8 +555,8 @@ void part_period::compute(const bigcomplex& z0)
 
 void part_period::compute()
 {
-  long dp = decimal_precision();
-  Iasb(limit,dp*LOG10/y0);
+  long bp = bit_precision();
+  Iasb(limit,bp/y0);
   limit1=limit2=limit;
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
@@ -595,7 +595,7 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
   rootmod=sqrt(to_bigfloat(N));
   factor1 = (TWOPI)/rootmod;
   long maxp = prime_number(nap);
-  limit  =  I2long(Ifloor((15+decimal_precision())*log(10)/factor1));
+  limit  =  I2long(Ifloor((30+bit_precision())/factor1));
   if(limit>maxp) limit=maxp;
   limit1 = limit;
   rootlimit=sqrt(to_bigfloat(limit));
@@ -636,8 +636,8 @@ lfchi::lfchi (const level* iN, const newform* f)
 {
   initaplist(iN, f->aplist);
   rootmod =  sqrt(to_bigfloat(N));
-  long dp = decimal_precision();
-  Iasb(limit0,dp*LOG10*rootmod/(TWOPI)) ; // brackets essential
+  long bp = bit_precision();
+  Iasb(limit0,bp*rootmod/(TWOPI)) ; // brackets essential
 }
 
 void lfchi::compute(long ell)
@@ -843,7 +843,7 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   if((abs((wR-wRC)/wRC)>0.0001))
     {
       cout<<"Real period of constructed curve does not match that"
-	  <<" of the newform (using decimal precision "<<decimal_precision()<<")"<<endl;
+	  <<" of the newform (using bit precision "<<bit_precision()<<")"<<endl;
       cout<<"Real period of C: "<<real(wRC)<<endl;
       cout<<"Real period of f: "<<real(wR)<<endl;
       cout<<"Ratio = "<<real(wR)/real(wRC)<<endl;
@@ -852,7 +852,7 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   if((abs((wRI-wRIC)/wRIC)>0.0001))
     {
       cout<<"Second period of constructed curve does not match that"
-	  <<" of the newform (using decimal precision "<<decimal_precision()<<")"<<endl;
+	  <<" of the newform (using bit precision "<< bit_precision()<<")"<<endl;
       cout<<"Imag part of second period of C: "<<real(wRIC)<<endl;
       cout<<"Imag part of second period of f: "<<real(wRI)<<endl;
       cout<<"Ratio of imaginary parts = "<<real(wRI)/real(wRIC)<<endl;
@@ -1034,7 +1034,8 @@ bigfloat G(int r, bigfloat x)  // G_r(x)
 #ifndef MPFP // Multi-Precision Floating Point
     static const  bigfloat x0 = to_bigfloat(14);
 #else
-    static const  bigfloat x0 = to_bigfloat(log(10)*decimal_precision());
+    // log(2) = 0.69314718
+    static const  bigfloat x0 = to_bigfloat(0.69314718*bit_precision());
 #endif
     //  cout<<"switch point = "<<x0<<endl;
     //  cout<<"x="<<x<<endl;
@@ -1058,7 +1059,7 @@ bigfloat ldash1::G(bigfloat x)  // G_r(x)
 }
  
 #if(0) // myg2 and myg3 were inaccurate and now replaced by general
-       // G(r,x) -- whcih also works for r>3!
+       // G(r,x) -- which also works for r>3!
 bigfloat myg2(bigfloat x)
 {
   static bigfloat zero=to_bigfloat(0);

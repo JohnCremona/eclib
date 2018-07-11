@@ -9,7 +9,7 @@ Looking for Type 2 quartics:
 Trying positive a from 1 up to 2 (square a first...)
 (1,0,-8,4,4)	--nontrivial...(x:y:z) = (1 : 1 : 0)
 Point = [1:0:1]
-	height = 0.476711659343739
+	height = 0.47671165934374
 Rank of B=im(eps) increases to 1
 Trying positive a from 1 up to 2 (...then non-square a)
 Trying negative a from -1 down to -1
@@ -18,7 +18,7 @@ Looking for Type 1 quartics:
 Trying positive a from 1 up to 3 (square a first...)
 (1,0,4,12,8)	--nontrivial...(x:y:z) = (1 : 1 : 0)
 Point = [-1:1:1]
-	height = 0.686667083305586
+	height = 0.68666708330559
 Rank of B=im(eps) increases to 2 (The previous point is on the egg)
 Exiting search for Type 1 quartics after finding one which is globally soluble.
 Mordell rank contribution from B=im(eps) = 2
@@ -34,17 +34,17 @@ Rank of S^2(E)  = 2
 
 Searching for points (bound = 8)...done:
   found points which generate a subgroup of rank 2
-  and regulator 0.152460177943144
+  and regulator 0.15246017794314
 Processing points found during 2-descent...done:
-  now regulator = 0.152460177943144
+  now regulator = 0.15246017794314
 Saturating (with bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,1,1,-2,0] back to original curve [0,1,1,-2,0]
 
-Generator 1 is [0:-1:1]; height 0.327000773651605
-Generator 2 is [-1:1:1]; height 0.686667083305586
+Generator 1 is [0:-1:1]; height 0.32700077365161
+Generator 2 is [-1:1:1]; height 0.68666708330559
 
-Regulator = 0.152460177943144
+Regulator = 0.15246017794314
 
 The rank and full Mordell-Weil basis have been determined unconditionally.
 Curve [0,0,0,0,-675/4] :	integral model = [0,0,0,0,-10800] with scale factor 2
@@ -95,7 +95,7 @@ Looking for Type 3 quartics:
 Trying positive a from 1 up to 3 (square a first...)
 (1,0,6,3,-3)	--nontrivial...(x:y:z) = (1 : 1 : 0)
 Point = [-4:3:1]
-	height = 0.962573188092379
+	height = 0.96257318809238
 Rank of B=im(eps) increases to 1
 Trying positive a from 1 up to 3 (...then non-square a)
 Trying negative a from -1 down to -2
@@ -105,7 +105,7 @@ Looking for Type 3 quartics:
 Trying positive a from 1 up to 14 (square a first...)
 (1,0,-12,72,-12)	--nontrivial...(x:y:z) = (1 : 1 : 0)
 Point = [2:9:1]
-	height = 0.923943171600397
+	height = 0.9239431716004
 Doubling global 2-adic index to 2
 global 2-adic index is equal to local index
 so we abort the search for large quartics
@@ -124,17 +124,17 @@ Rank of S^2(E)  = 2
 
 Searching for points (bound = 8)...done:
   found points which generate a subgroup of rank 2
-  and regulator 0.886543288687716
+  and regulator 0.88654328868772
 Processing points found during 2-descent...done:
-  now regulator = 0.886543288687716
+  now regulator = 0.88654328868772
 Saturating (with bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,0,0,0,73] back to original curve [0,0,0,0,73/64]
 
-Generator 1 is [-8:3:8]; height 0.962573188092379
-Generator 2 is [4:9:8]; height 0.923943171600397
+Generator 1 is [-8:3:8]; height 0.96257318809238
+Generator 2 is [4:9:8]; height 0.9239431716004
 
-Regulator = 0.886543288687716
+Regulator = 0.88654328868772
 
 The rank and full Mordell-Weil basis have been determined unconditionally.
 Curve [0,0,0,677,0] :	
@@ -170,8 +170,8 @@ This component of the rank is 0
 -------------------------------------------------------
 First stage (no second descent yet)...
 (-1,0,0,0,2708):  (x:y:z) = (502:279022:85)
-	Curve E' 	Point [-21420340:-140069044:614125], height = 12.3948826572104
-	Curve E 	Point [830499826893070:-7145241014093919:77690502163000], height = 24.7897653144207
+	Curve E' 	Point [-21420340:-140069044:614125], height = 12.39488265721
+	Curve E 	Point [830499826893070:-7145241014093919:77690502163000], height = 24.789765314421
 After first global descent, this component of the rank = 2
 
 -------------------------------------------------------
@@ -198,7 +198,7 @@ I.  Points on E mod phi(E')
 
 
 II. Points on phi(E') mod 2E
-Point [830499826893070:-7145241014093919:77690502163000], height = 24.7897653144207
+Point [830499826893070:-7145241014093919:77690502163000], height = 24.789765314421
 -------------------------------------------------------
 Computing full set of 2 coset representatives for
 2E(Q) in E(Q) (modulo torsion), and sorting into height order....done.
@@ -215,14 +215,14 @@ Searching for points (bound = 8)...done:
   found points which generate a subgroup of rank 0
   and regulator 1
 Processing points found during 2-descent...done:
-2-descent increases rank to 1,   now regulator = 24.7897653144207
+2-descent increases rank to 1,   now regulator = 24.789765314421
 Saturating (with bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,0,0,677,0] back to original curve [0,0,0,677,0]
 
-Generator 1 is [830499826893070:-7145241014093919:77690502163000]; height 24.7897653144207
+Generator 1 is [830499826893070:-7145241014093919:77690502163000]; height 24.789765314421
 
-Regulator = 24.7897653144207
+Regulator = 24.789765314421
 
 The rank and full Mordell-Weil basis have been determined unconditionally.
 Curve [0,0,0,-169,0] :	
@@ -301,7 +301,7 @@ Third step, determining E(Q)/phi(E'(Q)) and E'(Q)/phi'(E(Q))
 (c',d')=(-78,169)
 First stage (no second descent yet)...
 (-1,0,39,0,-338):  (x:y:z) = (19:102:5)
-	Curve E 	Point [-1805:-1938:125], height = 5.83251173698765
+	Curve E 	Point [-1805:-1938:125], height = 5.8325117369876
 After first global descent, this component of the rank = 3
 -------------------------------------------------------
 2. E'(Q)/phi'(E(Q))
@@ -328,7 +328,7 @@ Information on III(E'/Q):
 List of points on E = [0,0,0,-169,0]:
 
 I.  Points on E mod phi(E')
-Point [-180:-1938:125], height = 5.83251173698765
+Point [-180:-1938:125], height = 5.8325117369877
 
 II.  Points on phi(E') mod 2E
 --none (modulo torsion).
@@ -347,16 +347,16 @@ Rank of S^phi'(E) = 0
 
 Searching for points (bound = 8)...done:
   found points which generate a subgroup of rank 1
-  and regulator 5.83251173698765
+  and regulator 5.8325117369877
 Processing points found during 2-descent...done:
-  now regulator = 5.83251173698765
+  now regulator = 5.8325117369877
 Saturating (with bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,0,0,-169,0] back to original curve [0,0,0,-169,0]
 
-Generator 1 is [-180:1938:125]; height 5.83251173698765
+Generator 1 is [-180:1938:125]; height 5.8325117369877
 
-Regulator = 5.83251173698765
+Regulator = 5.8325117369877
 
 The rank and full Mordell-Weil basis have been determined unconditionally.
 

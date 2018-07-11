@@ -51,8 +51,8 @@ int getquartic(quartic& g, int verbose)
 int main()
 {
   initprimes("PRIMES",0);
-  cout.precision(15);
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  cout.precision(50);
+  cin.flags( cin.flags() | ios::dec );
   
   int verb; cout << "Verbose? "; cin >> verb;
   while (1)

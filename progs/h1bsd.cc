@@ -35,7 +35,7 @@
 
 int main(void)
 {
-  set_precision(15);
+  set_precision(50);
  int limit,n=1; 
 #ifdef AUTOLOOP
  cout<<"Enter first and last N: ";cin>>n>>limit; 

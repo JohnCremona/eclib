@@ -42,9 +42,9 @@ int getquartic(quartic& g);  // special version for a*x^4+c*x^2+e quartics
 int main()
 {
 #ifdef NTL_ALL
-  set_precision("Enter number of decimal places");
+  set_precision("Enter precision in bits");
 #endif
-  cin.flags( cin.flags() | ios::dec );  //force decimal input (bug fix)
+  cin.flags( cin.flags() | ios::dec );
   
   bigint zero; zero=0;
   int alldesc=0, verb=0, selmer_only=0; 

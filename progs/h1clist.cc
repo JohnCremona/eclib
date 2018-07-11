@@ -43,9 +43,10 @@
 
 int main(void)
 {
-  int prec0 = 25;
-  int maxprec = 100;
+  int prec0 = 75;
+  int maxprec = 300;
   int prec = prec0;
+  int delta_prec = 30;
   set_precision(prec);
  int limit,n=1;
  string code;
@@ -112,10 +113,10 @@ int main(void)
      CurveRed CR;
      bigint nc; int nt;
      bigint a1,a2,a3,a4,a6;
-     prec = prec0-10;
+     prec = prec0-delta_prec;
      while (C.isnull() && (prec<maxprec))
        {
-	 prec += 10;
+	 prec += delta_prec;
 	 set_precision(prec);
 	 C = nf.getcurve(i, -1, rperiod);
          CD = Curvedata(C,1);  // The 1 causes minimalization

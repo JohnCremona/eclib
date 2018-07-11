@@ -6,10 +6,9 @@ os:
 osx_image: xcode6.4
 dist: trusty
 
-matrix:
-  include:
-    - env: CONFIGURE_OPTS="--disable-mpfp"
-      os: linux
+env:
+    - CONFIGURE_OPTS=""
+    - CONFIGURE_OPTS="--disable-mpfp"
 
 install:
     - |

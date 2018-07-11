@@ -49,7 +49,7 @@
 int main(void)
 {
   initprimes("PRIMES",0);
-  set_precision(20);
+  set_precision(80);
  long limit,n=1; 
  int dump=1, detail; 
  long maxn, dmax=DMAX;

@@ -26,7 +26,11 @@
 
 int main(void)
 { 
-  set_precision("Enter number of decimal places");
+  set_precision("Enter precision in bits");
+#ifdef NTL_ALL
+  long original_output_precision = RR::OutputPrecision();
+  RR::SetOutputPrecision(original_output_precision-1);
+#endif
   bigfloat x=to_bigfloat(3.125), y=to_bigfloat(4.25);
 
    bigcomplex z = bigcomplex(x,y);
@@ -83,4 +87,9 @@ int main(void)
       << "] has roots:\n";
   for(iroot=0; iroot<4; iroot++) cout<<croots[iroot]<<"\n";
   cout<<endl;
+
+#ifdef NTL_ALL
+  RR::SetOutputPrecision(original_output_precision);
+#endif
+
 }

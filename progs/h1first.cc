@@ -38,7 +38,6 @@
 
 int main(void)
 {
-  long prec0=25;
   int verbose,output,curve_output,limit=210,n=130;
   cout << "Program h1first.  Using METHOD = " << METHOD << endl;
   cerr << "Verbose output? "; cin>>verbose;

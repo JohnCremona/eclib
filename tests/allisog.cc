@@ -30,7 +30,7 @@
 
 int main(){
 #ifdef NTL_ALL
-  set_precision("Enter number of decimal places");
+  set_precision("Enter precision in bits");
 #endif
   int verbose=0;
   cout << "Verbose? (0/1) " << flush;  cin >> verbose;
