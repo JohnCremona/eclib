@@ -11,8 +11,8 @@ endif
 LDFLAGS_BOOST = $(BOOST_LDFLAGS) $(BOOST_ASIO_LDFLAGS) $(BOOST_THREAD_LDFLAGS)
 BOOST_LIBS = $(BOOST_ASIO_LIB) $(BOOST_THREAD_LIB) 
 
-AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(FLINT_CFLAGS) $(NTL_CFLAGS) $(PARI_CFLAGS) $(BOOST_CPPFLAGS) $(NTL_SWITCH)
-AM_LDFLAGS         = $(FLINT_LDFLAGS) $(NTL_LDFLAGS) $(PARI_LDFLAGS) $(BOOST_LDFLAGS)
+AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(FLINT_CFLAGS) $(NTL_CFLAGS) $(PARI_CFLAGS) $(BOOST_CPPFLAGS) $(NTL_SWITCH) $(PTHREAD_CFLAGS)
+AM_LDFLAGS         = $(FLINT_LDFLAGS) $(NTL_LDFLAGS) $(PARI_LDFLAGS) $(BOOST_LDFLAGS) $(PTHREAD_CFLAGS)
 LIBS            = $(top_builddir)/libsrc/libec.la $(FLINT_LIBS) $(PARI_LIBS) $(NTL_LIBS) $(BOOST_LIBS)
 
 check_run = echo "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(prog_input_dir)/$${prog}.in > $${prog}.testout 2>/dev/null && diff $${prog}.testout $(prog_output_dir)/$${prog}.out || exit $$?
