@@ -29,7 +29,45 @@
 #include <set>
 #include <vector>
 #include <iterator>
-using namespace std;
+#include <complex>
+#include <limits>
+#include <map>
+#include <unordered_map>
+#include <algorithm>
+#include <iomanip>
+
+using std::string;
+using std::vector;
+using std::cout;
+using std::cerr;
+using std::cin;
+using std::endl;
+using std::flush;
+using std::ios;
+using std::ostream;
+using std::istream;
+using std::ifstream;
+using std::stringstream;
+using std::istringstream;
+using std::ostringstream;
+using std::ofstream;
+using std::ios_base;
+using std::numeric_limits;
+using std::ostream_iterator;
+using std::complex;
+using std::ws;
+using std::skipws;
+using std::map;
+using std::unordered_map;
+using std::min;
+using std::max;
+using std::ptr_fun;
+using std::pair;
+using std::sort;
+using std::abs;
+using std::binary_function;
+using std::setw;
+
 
 template <class T >
 inline ostream& operator<<(ostream& os, const vector<T>& v)

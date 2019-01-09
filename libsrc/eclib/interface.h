@@ -47,7 +47,7 @@
 #include <ext/numeric>
 #endif
 #include <iterator>
-using namespace std;
+
 #include <eclib/templates.h>
 #include <stdint.h>
 

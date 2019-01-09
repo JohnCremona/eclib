@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
+#include <eclib/templates.h>
 
-using namespace std;
 
 void show_version()
 {

@@ -29,7 +29,7 @@
 //#define DEBUG_GPFACT
 
 #include <iostream>
-using namespace std;
+
 
 string
 factor(const string n)

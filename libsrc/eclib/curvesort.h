@@ -26,7 +26,8 @@
                            //flags that this file has been included
 
 #include <string>
-using namespace std;
+#include <eclib/templates.h>
+
 
 #define USE_NEW_CODE_LETTERS
 

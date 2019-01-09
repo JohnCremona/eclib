@@ -27,7 +27,7 @@
 
 #include <eclib/GetOpt.h>
 #include <iostream>
-using namespace std;
+
 
 #define DEFAULT_QUIET 0
 #define DEFAULT_VERBOSE 1
