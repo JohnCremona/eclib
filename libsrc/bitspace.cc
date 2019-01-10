@@ -25,7 +25,7 @@
 #include <eclib/interface.h>
 #include <eclib/bitspace.h>
 
-using namespace std;
+
 
 bitspace::bitspace(long d)
 {
