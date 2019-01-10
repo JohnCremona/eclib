@@ -41,7 +41,7 @@ int getquartic(quartic& g);  // special version for a*x^4+c*x^2+e quartics
 
 int main()
 {
-#ifdef NTL_ALL
+#ifdef MPFP
   set_precision("Enter precision in bits");
 #endif
   cin.flags( cin.flags() | ios::dec );

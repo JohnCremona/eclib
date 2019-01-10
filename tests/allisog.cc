@@ -29,7 +29,7 @@
 #include <eclib/getcurve.h>
 
 int main(){
-#ifdef NTL_ALL
+#ifdef MPFP
   set_precision("Enter precision in bits");
 #endif
   int verbose=0;

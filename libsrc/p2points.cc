@@ -90,7 +90,7 @@ int eq(const P2Point&P, const P2Point&Q)
 void P2Point::getrealcoordinates(bigfloat&x, bigfloat& y) const
 {
   RR zp=to_RR(Z);  
-#ifdef NTL_ALL
+#ifdef MPFP
   x=to_RR(X)/zp;
   y=to_RR(Y)/zp;
 #else
@@ -101,7 +101,7 @@ void P2Point::getrealcoordinates(bigfloat&x, bigfloat& y) const
   cout<<"realifying P="<<P<<" (NTL version)"<<endl;
   cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
 #endif
-#ifndef NTL_ALL
+#ifndef MPFP
   if((abs(x)==INFINITY)||(abs(y)==INFINITY))
     {
       cout<<"After converting P to doubles, ";

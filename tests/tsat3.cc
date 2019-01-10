@@ -52,7 +52,7 @@ vector<int> input_list(istream & is);
 
 int main()
 {
-#ifdef NTL_ALL
+#ifdef MPFP
   //  set_precision("Enter precision in bits");
   set_precision(350);
 #endif

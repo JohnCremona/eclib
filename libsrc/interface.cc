@@ -66,7 +66,7 @@ long I2long(const bigint& x)
 
 // Reals and Complexes
 
-#ifdef NTL_ALL
+#ifdef MPFP
 
 RR Pi() 
 {
@@ -307,7 +307,7 @@ istream& operator>>(istream& is, CC& z)
   return is;
 }
 
-#endif // NTL_ALL
+#endif // MPFP
 
 string getenv_with_default(string env_var, string def_val)
 {

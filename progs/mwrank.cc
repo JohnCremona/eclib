@@ -40,10 +40,10 @@ int main(int argc, char **argv)
   int verbose = (opt.get_verbose());
   //opt.show();
   if(!opt.get_quiet()) {opt.banner(1);  show_version();}
-#if defined(NTL_ALL)
+#ifdef MPFP
   long bit_precision=opt.get_precision();
   set_precision(bit_precision);
-  if(verbose) cerr<<"Using NTL multiprecision floating point with "
+  if(verbose) cerr<<"Using multiprecision floating point with "
 		  << bit_precision <<" bits precision.\n";
 #else
   cout.precision(15);
