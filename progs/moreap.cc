@@ -44,7 +44,7 @@ int main(void)
  cout << "Output new eigs to screen (1/0)? "; cin>>showeigs;
  cout << "Display newforms (1/0)? "; cin>>showforms;
  cout << "Attempt curve construction (1/0)? "; cin>>findcurves;
-#ifdef NTL_ALL
+#ifdef MPFP
  if(findcurves) set_precision(60);
 #endif
 #ifdef AUTOLOOP

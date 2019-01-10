@@ -38,7 +38,7 @@
 
 int main()
 {
-#ifdef NTL_ALL
+#ifdef MPFP
   set_precision(70);
 #endif
   initprimes("PRIMES",0);

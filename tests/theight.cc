@@ -25,7 +25,7 @@
 #include <eclib/points.h>
 
 int main(){
-#ifdef NTL_ALL
+#ifdef MPFP
   set_precision(350);
 #endif
   initprimes("PRIMES",1);

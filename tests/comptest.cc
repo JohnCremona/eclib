@@ -27,12 +27,11 @@
 int main(void)
 { 
   set_precision("Enter precision in bits");
-#ifdef NTL_ALL
+#ifdef MPFP
   long original_output_precision = RR::OutputPrecision();
   RR::SetOutputPrecision(original_output_precision-1);
 #endif
-  bigfloat x=to_bigfloat(3.125), y=to_bigfloat(4.25);
-
+  bigfloat x=to_bigfloat(double(3.125)), y=to_bigfloat(4.25);
    bigcomplex z = bigcomplex(x,y);
    bigcomplex a = bigcomplex(to_bigfloat(1),to_bigfloat(1));
    bigcomplex b = bigcomplex(to_bigfloat(2),to_bigfloat(1));
@@ -88,7 +87,7 @@ int main(void)
   for(iroot=0; iroot<4; iroot++) cout<<croots[iroot]<<"\n";
   cout<<endl;
 
-#ifdef NTL_ALL
+#ifdef MPFP
   RR::SetOutputPrecision(original_output_precision);
 #endif
 

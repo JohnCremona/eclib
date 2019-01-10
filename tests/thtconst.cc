@@ -51,7 +51,7 @@ int getcurve(void)
 
 int main()
 {
-#ifdef NTL_ALL
+#ifdef MPFP
   set_precision(100);
 #endif
   initprimes("PRIMES",0);

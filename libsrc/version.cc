@@ -28,7 +28,7 @@
 void show_version()
 {
   cerr << "Version compiled on " << __DATE__ << " at " << __TIME__ << " by GCC " << __VERSION__ << "\n";
-#ifdef NTL_ALL
+#ifdef MPFP
   cerr << "using NTL bigints and NTL real and complex multiprecision floating point";
 #else
   cerr << "using NTL bigints but no multiprecision floating point";

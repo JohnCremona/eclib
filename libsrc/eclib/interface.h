@@ -1,4 +1,4 @@
-// interface.h: used to provide common interface for LiDIA or NTL
+// interface.h: used to provide common interface
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -21,15 +21,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-//  The macro NTL_ALL can optionally be set.  It controls whether most
+//  The macro NO_MPFP can optionally be set.  It controls whether most
 //   real and complex floating point functions are implemented using
-//   doubles and complex doubles (if not set) ot using NTL bigfloats
-//   (RR) and bigcomplexes (CC) (if set)
+//   doubles and complex doubles (if set) ot using NTL bigfloats
+//   (RR) and bigcomplexes (CC) (if not set, the default)
 
 #ifndef _ECLIB_INTERFACE_H_
 #define _ECLIB_INTERFACE_H_
 
-#ifdef NTL_ALL
+#ifndef NO_MPFP // the default is for this *not* to be set
 #define MPFP
 #endif
 
@@ -134,7 +134,7 @@ inline bigint roundover(const bigint& a, const bigint& b)
 
 // Reals and Complexes
 
-#ifdef NTL_ALL
+#ifdef MPFP
 
 #include <NTL/RR.h>
 typedef RR bigfloat;
@@ -316,7 +316,7 @@ inline int is_approx_zero(const bigcomplex& z)
  {return is_approx_zero(z.real())&&is_approx_zero(z.imag());}
 
 //////////////////////////////////////////////////////////////////
-#endif // NTL_ALL
+#endif // MPFP
 //////////////////////////////////////////////////////////////////
 
 #undef setbit

@@ -25,8 +25,11 @@
 #include <eclib/points.h>
 
 int main(){
-  //  set_precision("Enter precision in bits");
+#ifdef MPFP
   set_precision(100);
+#else
+  set_precision("Enter precision in bits");
+#endif
   initprimes("PRIMES",1);
 
   Curve c(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));

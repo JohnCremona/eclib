@@ -791,7 +791,7 @@ bigint chrem(const bigint& a1, const bigint& a2,
 // general functions
 //
 
-#if defined(NTL_ALL)
+#ifdef MPFP
 bigint Iround(bigfloat x) {return RoundToZZ(x);}
 bigint Ifloor(bigfloat x) {return FloorToZZ(x);}
 bigint Iceil (bigfloat x) {return CeilToZZ(x);}

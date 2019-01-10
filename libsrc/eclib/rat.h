@@ -71,7 +71,7 @@ public:
         friend long floor(const rational& r);
         friend long ceil(const rational& r);
         operator double();  // conversion operator
-#ifdef NTL_ALL
+#ifdef MPFP
         operator bigfloat();  // conversion operator
 #endif
 // Implementation
@@ -162,7 +162,7 @@ inline rational& rational::operator/=(long num_val2)
 }
 
 inline rational::operator double() {return double(n)/double(d);}
-#ifdef NTL_ALL
+#ifdef MPFP
 inline rational::operator bigfloat() {return to_bigfloat(n)/to_bigfloat(d);}
 #endif
 

@@ -67,7 +67,7 @@ void test3(Curvedata& CD, Cperiods& per, int m)
 }
 
 int main(){
-#ifdef NTL_ALL
+#ifdef MPFP
   //  set_precision("Enter precision in bits");
   set_precision(175);
   long original_output_precision = RR::OutputPrecision();
@@ -181,7 +181,7 @@ int main(){
   test3(cd,cp,5);cout<<endl;
   */
 
-#ifdef NTL_ALL
+#ifdef MPFP
   RR::SetOutputPrecision(original_output_precision);
 #endif
 

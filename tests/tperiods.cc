@@ -28,7 +28,7 @@
 #include <eclib/getcurve.h>
 
 int main(){
-#ifdef NTL_ALL
+#ifdef MPFP
   set_precision("Enter precision in bits");
   long original_output_precision = RR::OutputPrecision();
   RR::SetOutputPrecision(original_output_precision-3);
@@ -52,7 +52,7 @@ int main(){
       Curve EE = cp.trans_to_curve();
       cout << "Curve from periods: " << EE << endl;
     }
-#ifdef NTL_ALL
+#ifdef MPFP
   RR::SetOutputPrecision(original_output_precision);
 #endif
 

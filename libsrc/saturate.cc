@@ -199,7 +199,7 @@ int saturator::enlarge()
       // cout << "[attempting to divide by "<<p<<" using bit precision "
       //      <<bit_precision()<<"]"<<endl;
       Pi=division_points(*E,Q,p);
-#ifdef NTL_ALL // try again with higher precision
+#ifdef MPFP // try again with higher precision
       if(Pi.size()==0)
         {
           prec = original_prec = bit_precision();
@@ -219,7 +219,7 @@ int saturator::enlarge()
       if(verbose>0)
         {
           cout<<"...but it isn't! (this may be due to insufficient precision:";
-#ifdef NTL_ALL
+#ifdef MPFP
           cout << " bit precision " <<prec<<" was used)"<<endl;
 #else
           cout << " standard double precision was used)"<<endl;
