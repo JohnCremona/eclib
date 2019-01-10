@@ -815,7 +815,7 @@ long qsieve::sift(long b)
 		bit_array *surv;
 		long i;
 		surv = survivors; // &survivors[0];
-		if(!use_odd_nums && !b&1)
+		if(!use_odd_nums && !(b&1))
 		  for(i = range; i; i--) *surv++ = QS_HALF_MASK;
 		else
 		  for(i = range; i; i--) *surv++ = ~bit_zero;
