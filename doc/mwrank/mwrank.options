@@ -93,7 +93,7 @@ List of command line options, their meaning and default values (set in options.h
 			0: do no saturation at all
 			n: use n as upper bound for saturation primes
 			-1: allow progam to determine upper bound
-			autimatically (but that will be reduced to a
+			automatically (but that will be reduced to a
 			default maximum of 100 if it is greater)
 
 Last update: 2016-01-02

@@ -229,9 +229,9 @@ using (unless you use the quiet flag "-q").
 
 I no longer distribute binaries.
 
-It is recommended that you use the multi-precision version for curves
-with large coefficients; otherwise results may be wrong.  This is the
-default and requires no special configuration.
+It is recommended that you use the multi-precision floating point
+version for curves with large coefficients; otherwise results may be
+wrong.  This is the default and requires no special configuration.
 
 You can aid the factorization of large integers in several ways:
 

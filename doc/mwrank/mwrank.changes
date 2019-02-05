@@ -1,8 +1,7 @@
 	MWRANK MAJOR CHANGES MADE (other than bug fixes)
 
-NB This file is incomplete, as I sometimes forget to update it, but
-should log the major changes.
-
+NB This file has not been updated since 2006.  See git logs for all
+more recent changes to eclib, including mwrank itself.
 
 Oct 2006
 ========
