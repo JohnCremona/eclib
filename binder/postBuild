@@ -4,6 +4,9 @@
 # for the build below
 export PREFIX=$CONDA_DIR
 
+# For now, we need an alpha version of JupyterLab. Can be removed later.
+pip install --pre -U jupyterlab
+
 
 # Configure eclib with autotools
 export CONFIGURE_OPTS="--disable-mpfp"
@@ -17,4 +20,4 @@ chmod +x configure
 ./configure --prefix="$PREFIX" --with-ntl="$PREFIX" --with-pari="$PREFIX" --with-flint="$PREFIX" --with-boost="no" $CONFIGURE_OPTS
 
 # Build and install so Binder users have a fully installed environment
-make && make check && make install
+make -j && make check && make install
