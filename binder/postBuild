@@ -1,0 +1,2 @@
+export CONFIGURE_OPTS="--disable-mpfp"
+export PREFIX=$HOME/local
