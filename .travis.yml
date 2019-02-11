@@ -40,7 +40,7 @@ script:
     - ./autogen.sh
 
     - chmod +x configure
-    - ./configure --prefix="$PREFIX" --with-ntl="$PREFIX" --with-pari="$PREFIX" --with-flint="$PREFIX" --with-boost="no" --disable-allprogs $CONFIGURE_OPTS
+    - ./configure --prefix="$PREFIX" --with-ntl="$PREFIX" --with-pari="$PREFIX" --with-flint="$PREFIX" --with-boost="no"  $CONFIGURE_OPTS
 
     - make
     - |
