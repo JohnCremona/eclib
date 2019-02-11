@@ -20,4 +20,4 @@ chmod +x configure
 ./configure --prefix="$PREFIX" --with-ntl="$PREFIX" --with-pari="$PREFIX" --with-flint="$PREFIX" --with-boost="no" $CONFIGURE_OPTS
 
 # Build and install so Binder users have a fully installed environment
-make -j && make check && make install
+make && make check && make install
