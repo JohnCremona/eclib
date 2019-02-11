@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# We need to set the base url locally when not deployed on binder.
+BASEURL="${user/${JUPYTERHUB_USER}:-/}"
+
 # Import the workspace into JupyterLab
 jupyter lab workspaces import binder/workspace.json \
-  --NotebookApp.base_url=user/${JUPYTERHUB_USER} --name=""
+  --NotebookApp.base_url=$BASEURL --name=""
 
 exec "$@"
