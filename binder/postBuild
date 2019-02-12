@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Our conda env has the necessary dependencies, so propagate them
+# for the build below
+export PREFIX=$CONDA_DIR
+
+# For now, we need an alpha version of JupyterLab. Can be removed later.
+pip install --pre -U jupyterlab
+
+
+# Configure eclib with autotools
+export CONFIGURE_OPTS="--disable-mpfp"
+export CPPFLAGS="-I$PREFIX/include $CPPFLAGS"
+export LDFLAGS="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib $LDFLAGS"
+
+chmod +x autogen.sh
+./autogen.sh
+
+chmod +x configure
+./configure --prefix="$PREFIX" --with-ntl="$PREFIX" --with-pari="$PREFIX" --with-flint="$PREFIX" --with-boost="no" $CONFIGURE_OPTS
+
+# Build and install so Binder users have a fully installed environment
+make && make check && make install

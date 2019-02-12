@@ -1,0 +1,11 @@
+name: eclib
+channels:
+  - conda-forge
+dependencies:
+  - automake
+  - libtool
+  - gmp
+  - mpfr
+  - ntl
+  - libflint
+  - pari
