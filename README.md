@@ -1,7 +1,7 @@
 eclib
 =====
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/fperez/eclib/master?urlpath=lab)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JohnCremona/eclib/master?urlpath=lab)
 
 
 The eclib package includes mwrank (for 2-descent on elliptic curves
