@@ -42,9 +42,12 @@ string ccode;
 
 #include <eclib/curvesort.h> // for codeletter() function
 
+// Utility function for parsing input of lists of integers such as [], [2], [2,2]
+vector<int> input_list(istream & is);
+
 int main()
-{  
-  set_precision(50);
+{
+  set_precision(100);
   cin.flags( cin.flags() | ios::dec );
 
   int rank, rank2, i;
@@ -63,7 +66,7 @@ int main()
   if(!genin.is_open()) {cerr<<"Unable to open file " << genfile << "\n"; abort();}
   cerr<<endl;
 
-  while (!genin.eof())
+  while (genin>>ws, !genin.eof())
     {
       genin >> cond;
       //      cout<<"input conductor="<<cond<<endl;
@@ -86,46 +89,71 @@ int main()
       genin >> rank;
       cout << "r = "<<rank<<"\t";
       if(verbose) cout <<endl;
-      if (rank==0) {cout<<" OK\n"; continue;}
+
+      // Input the torsion structure:
+      vector<int> torsion_group = input_list(genin);
+      int trank = torsion_group.size();
+      cout<<"torsion group structure =  "<<torsion_group<<" (torsion rank "<<trank<<")."<<endl;
+
+      vector<Point> points; points.reserve(rank);
+      int j=0;
       Point P(CD);
-      plist.clear();
-      while(plist.size()<rank)
-	{
-	  genin >> P; 
-	  cout << P;
-	  if(P.isvalid()) 
-	    {
-	      plist.push_back(P);
-	      cout << " OK ";
-	    }
-	  else 
-	    {
-	      cout << " not on curve! ";  abort();
-	    }
-	}
-
-      // A test of our division-by-2 code:
-
-      for(vector<Point>::const_iterator Pi=plist.begin(); Pi!=plist.end(); Pi++)
+      int oP;
+      bigfloat htP;
+      while(j<rank)
         {
-          Point P = *Pi;
-          Point Q = 2*P;
-          vector<Point> Qhalves = division_points(CD,Q,2);
-          if(Qhalves.size()==0)
+          genin >> P;
+          if ( P.isvalid() )
             {
-              cout<<"ERROR: Q="<<Q<<"=2*P for P="<<P<<" but halving Q failed!"<<endl;
+              cout<<"P = "<<P<<" OK, order=";
+              oP = order(P);
+              if (oP<0)
+                cout<<"oo";
+              else
+                cout<<oP;
+              htP = height(P);
+              cout<<", height="<<htP<<"."<<endl;
             }
+          else
+            {
+              cout<<"point "<<P<<" not on curve.\n";
+            }
+          points.push_back(P);
+          j++;
         }
 
+  // Input the points of finite order (if any):
 
-      // Do nothing at all apart from checking points are on curve
-      // (since we have a separate program for saturation now):
+      vector<Point> tpoints; points.reserve(trank);
+      j=0;
+      while(j<trank)
+        {
+          genin >> P;
+          if ( P.isvalid() )
+            {
+              cout<<"P = "<<P<<" OK, order=";
+              oP = order(P);
+              if (oP<0)
+                cout<<"oo";
+              else
+                cout<<oP;
+              htP = height(P);
+              cout<<", height="<<htP<<"."<<endl;
+            }
+          else
+            {
+              cout<<"point "<<P<<" not on curve.\n";
+            }
+          tpoints.push_back(P);
+          j++;
+        }
+      // Do nothing apart from checking points are on curve
 
-      if(hmax<0) {cout<<endl;continue;}
+      if(hmax<0) {continue;}
 
       bigfloat ht, maxht = to_bigfloat(0);
       for (i=0; i<rank; i++)
-	{ 
+	{
 	  ht  = height(plist[i]);
 	  if(ht>maxht) maxht=ht;
 	}
@@ -166,9 +194,9 @@ int main()
       else
 	{
       reg = mwbasis.regulator();
-	
+
       if(verbose) cout<<"\nMax height = "<<maxht<<endl;
-      if(rank==1) 
+      if(rank==1)
         {
           if(r2==rank) maxht/=9;	else maxht/=4;
         }
@@ -176,18 +204,18 @@ int main()
       double ht_bound = height_constant(CD);
       if(verbose) cout << "height bound = " << ht_bound << "\n";
       bigfloat hlim = maxht+ht_bound;
-      if(verbose||(hlim>hmax)) 
+      if(verbose||(hlim>hmax))
 	{
 	  if(!verbose) cout<<"\n";
 	  cout<<"Bound on naive height of extra generators = "<<hlim<<endl;
-	}      
+	}
       if(hlim>hmax)
 	{
 	  cout<<"Only searching up to height "<<hmax<<endl;
 	  hlim=hmax;
 	}
       else if(!verbose) cout<<endl;
-      
+
       sieve s(&CD, &mwbasis, 2, 0);
       s.search(hlim);
 
@@ -223,3 +251,18 @@ int main()
 }         // end main()
 
 
+// Utility function for parsing input of lists of integers such as [], [2], [2,2]
+vector<int> input_list(istream & is)
+{
+  char c; int a; vector<int> ai;
+  is>>c;  // swallow first [
+  is>>ws>>c;
+  if (c==']') return ai;
+  is.unget();
+  while (c!=']')
+    {
+      is >> a >> c; // c is a comma or ]
+      ai.push_back(a);
+   }
+  return ai;
+}
