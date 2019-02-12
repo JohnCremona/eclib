@@ -46,7 +46,7 @@ string ccode;
 vector<int> input_list(istream & is);
 
 int main()
-{  
+{
   set_precision(100);
   cin.flags( cin.flags() | ios::dec );
 
@@ -66,7 +66,7 @@ int main()
   if(!genin.is_open()) {cerr<<"Unable to open file " << genfile << "\n"; abort();}
   cerr<<endl;
 
-  while (!(feof(genin)))
+  while (genin>>ws, !genin.eof())
     {
       genin >> cond;
       //      cout<<"input conductor="<<cond<<endl;
