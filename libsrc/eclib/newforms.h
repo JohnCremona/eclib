@@ -85,7 +85,7 @@ public:
   long rk;                 // analytic rank (-1 if not set)
   bigfloat Lvalue;         // L^(r)(f,1)/r!
   vec coordsplus, coordsminus;  // vector components of each freegen
-  long denomplus, denomminus; 
+  long denomplus, denomminus, contplus, contminus;
   int j0; long fac;
   rational optimalityfactorplus, optimalityfactorminus;
 

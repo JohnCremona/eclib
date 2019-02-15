@@ -396,9 +396,9 @@ void newform::find_coords_plus_minus()
       if(sign!=+1)
         coordsminus[i]=dotmodp(cvi,bminus,MODULUS);
     }
-  int contplus=vecgcd(coordsplus);
+  contplus=vecgcd(coordsplus);
   if (contplus>1) coordsplus/=contplus;
-  int contminus=vecgcd(coordsminus);
+  contminus=vecgcd(coordsminus);
   if (contminus>1) coordsminus/=contminus;
 
   if(sign!=+1)
@@ -980,10 +980,13 @@ void newforms::find_jlist()
       for (i=0; i<n1ds; i++) 
 	{
 	  nflist[i].j0 = j0;
-	  if(sign==-1)
-	    nflist[i].fac = nflist[i].bminus[j0];
-	  else
-	    nflist[i].fac = nflist[i].bplus[j0];
+          vec& bas = (sign==-1? nflist[i].bminus: nflist[i].bplus);
+          nflist[i].fac = bas[j0];
+          if (verbose>1)
+            {
+              cout<<"Newform #"<<(i+1)<<": bplus = "<<bas<<endl;
+              cout<<"   fac = "<<nflist[i].fac<<endl;
+            }
 	}
     }
   else
@@ -999,6 +1002,11 @@ void newforms::find_jlist()
 	  jlist.insert(j);
 	  nflist[i].j0 = j;
 	  nflist[i].fac = nflist[i].bplus[j];
+          if (verbose>1)
+            {
+              cout<<"Newform #"<<(i+1)<<": bplus = "<<bas<<endl;
+              cout<<"   fac = "<<nflist[i].fac<<endl;
+            }
 	}
       if(verbose)  cout<<"jlist="<<jlist<<endl;
     }
@@ -1871,8 +1879,8 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
     {
       imagej=vec(n1ds); // initialised to 0
       j=*jj;
-      //cout<<"Computing image of "<<j<<"'th M-symbol "<<endl;
       symb s = h1->symbol(h1->freegens[j-1]);
+      //cout<<"Computing image of "<<j<<"'th M-symbol "<<s<<endl;
       //cout<<" = "<<s<<"..."<<flush;
       long u=s.cee(),v=s.dee();
       mat& pcd = h1->projcoord;
@@ -1880,9 +1888,11 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 // Matrix [1,0;0,p]
       ind = h1->coordindex[h1->index2(u,p*v)];
       update(pcd,imagej,ind);
+      //cout<<"(1) (u1,u2)=("<<u<<","<<p*v<<") partial image index is "<<ind<<", subtotal="<<imagej<<endl;
 // Matrix [p,0;0,1]
       ind = h1->coordindex[h1->index2(p*u,v)];
       update(pcd,imagej,ind);
+      //cout<<"(2) (u1,u2)=("<<p*u<<","<<v<<") partial image index is "<<ind<<", subtotal="<<imagej<<endl;
 // Other matrices
       for(sg=0; sg<2; sg++) // signs
 	for(r=1; r<=p2; r++)
@@ -1892,6 +1902,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 	    u1=u*p; u2=v-u*b;
 	    ind = h1->coordindex[h1->index2(u1,u2)];
             update(pcd,imagej,ind);
+            //cout<<"(3) (u1,u2)=("<<u1<<","<<u2<<") partial image index is "<<ind<<", subtotal="<<imagej<<endl;
 	    while(b!=0)
 	      {
 		c=mod(a,b); q=(a-c)/b;
@@ -1899,17 +1910,23 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 		a=-b; b=c; u1=u2; u2=u3;
 		ind = h1->coordindex[h1->index2(u1,u2)];
                 update(pcd,imagej,ind);
+                //cout<<"(4) (u1,u2)=("<<u1<<","<<u2<<") partial image index is "<<ind<<", subtotal="<<imagej<<endl;
 	      }
 	  }
-      images[j]=imagej; //not /(h1->h1denom()); since coordsplus/minus have been made primitive
+      images[j]=imagej;
       //cout<<" image is "<<imagej<<endl;
     }
 
   for (i=0; i<n1ds; i++)
     {
 // recover eigenvalue:
-      apv[i]=ap=images[nflist[i].j0][i+1]/nflist[i].fac;
-// check it is in range:
+      //cout<<"Numerator =   "<< images[nflist[i].j0][i+1] <<endl;
+      //cout<<"Denominator = "<< nflist[i].fac << endl;
+      ap = images[nflist[i].j0][i+1]/nflist[i].fac;
+      ap *= (sign==-1? nflist[i].contminus: nflist[i].contplus);
+      ap /= h1->h1denom();
+      apv[i]=ap;
+      // check it is in range:
       if((ap>maxap)||(-ap>maxap))
 	{
 	  cout<<"Error:  eigenvalue "<<ap<<" for p="<<p
@@ -1925,7 +1942,6 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
 {
   if(n1ds==0) return;
   long i, j, p;
-
   j=0;
   if(verbose>1)  // output the ap already known...
     for(primevar pr(nflist[0].aplist.size()); pr.ok(); pr++, j++) 

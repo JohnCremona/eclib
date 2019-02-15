@@ -71,9 +71,9 @@ int main(void)
   nf.make_projcoord(); // needed for when we add more ap
 #endif
   if(verbose>1) nf.display();
-  else          cout << nf.n1ds << " newform(s) found."<<endl;
+  else          cout << nf.n1ds << " newform(s) found.";
   if(verbose&&nf.n1ds>0) 
-    cout<<"Computing ap for primes up to "<<prime_number(stopp)<<endl;
+    cout<<"\nComputing ap for primes up to "<<prime_number(stopp)<<endl;
   nf.addap(stopp);
   if(output)
     {
@@ -83,6 +83,6 @@ int main(void)
   //  }
 }       // end of if(n)
 }       // end of while()
-stop_time();
+stop_time(); cout<<endl;
 show_time(cerr); cerr<<endl;
 }       // end of main()
