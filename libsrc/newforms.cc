@@ -396,9 +396,9 @@ void newform::find_coords_plus_minus()
       if(sign!=+1)
         coordsminus[i]=dotmodp(cvi,bminus,MODULUS);
     }
-  int contplus=vecgcd(coordsplus);
+  contplus=vecgcd(coordsplus);
   if (contplus>1) coordsplus/=contplus;
-  int contminus=vecgcd(coordsminus);
+  contminus=vecgcd(coordsminus);
   if (contminus>1) coordsminus/=contminus;
 
   if(sign!=+1)
@@ -1913,8 +1913,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
                 //cout<<"(4) (u1,u2)=("<<u1<<","<<u2<<") partial image index is "<<ind<<", subtotal="<<imagej<<endl;
 	      }
 	  }
-      images[j]=imagej; //not /(h1->h1denom()); since coordsplus/minus have been made primitive
-      //images[j]=imagej /(h1->h1denom());
+      images[j]=imagej;
       //cout<<" image is "<<imagej<<endl;
     }
 
@@ -1923,8 +1922,11 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 // recover eigenvalue:
       //cout<<"Numerator =   "<< images[nflist[i].j0][i+1] <<endl;
       //cout<<"Denominator = "<< nflist[i].fac << endl;
-      apv[i]=ap=images[nflist[i].j0][i+1]/nflist[i].fac;
-// check it is in range:
+      ap = images[nflist[i].j0][i+1]/nflist[i].fac;
+      ap *= (sign==-1? nflist[i].contminus: nflist[i].contplus);
+      ap /= h1->h1denom();
+      apv[i]=ap;
+      // check it is in range:
       if((ap>maxap)||(-ap>maxap))
 	{
 	  cout<<"Error:  eigenvalue "<<ap<<" for p="<<p
