@@ -39,9 +39,6 @@ public:
      // constructors
 
   svec (int dim=0) :d(dim) {;}
-  svec (const svec& v)                // copy constructor
-    :d(v.d),     entries(v.entries)
-  {;  }
   svec (const vec &);                  // conversion constructor
   svec (int dim, scalar* a);          // conversion constructor
    

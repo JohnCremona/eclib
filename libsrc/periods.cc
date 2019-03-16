@@ -966,21 +966,23 @@ bigfloat Glarge(int r, bigfloat x) // Cohen's Gamma_r(x) for large x
   static const bigfloat zero = to_bigfloat(0);
   static const bigfloat one = to_bigfloat(1);
   static const bigfloat two = to_bigfloat(2);
-  bigfloat emx=exp(-x), ans=zero, term=-one/x;
+  bigfloat emx=exp(-x), ans=zero, mxinv=-one/x;
+  bigfloat term = mxinv;
   vector<bigfloat> Cv(r+1);  // indexed from 0 to r
   int j; bigfloat n=zero;
   Cv[0]=one;
   for(j=1;j<=r;j++) Cv[j]=zero;
-  //  cout<<"emx*term="<<emx*term<<endl;
-  while(!is_approx_zero(abs(emx*term)))
+  //cout<<"In Glarge with r="<<r<<", x="<<x<<": ";
+  //cout<<"emx*term="<<emx*term<<endl;
+  while((n<1000000) && !is_approx_zero(abs(emx*term/2)))
     //while(!is_approx_zero(abs(term)))
     {
       n++;
       // update C-vector, term and sum
       for(j=r;j>0;j--) Cv[j]+=(Cv[j-1]/n);
-      term*=(-n/x);
+      term*=(n*mxinv);
       ans+=(Cv[r]*term);
-      //      cout<<"term="<<term<<"; ans="<<ans<<endl;
+      //cout<<"term="<<term<<"; ans="<<ans<<endl;
     }
   return two*emx*ans;
 }

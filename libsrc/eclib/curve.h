@@ -122,7 +122,7 @@ public:
   */
   Curvedata(const vector<bigrational>& qai, bigint& scale);
   Curvedata(const Curve& c, int min_on_init = 0);
-  Curvedata(const bigint& cc4, const bigint& cc6, int min_on_init = 0);
+  Curvedata(const bigint& cc4, const bigint& cc6, int min_on_init);
   Curvedata(const Curvedata& c, int min_on_init = 0);
        // nb compiler cannot generate copy because constructor from
        // curve overrides.
@@ -246,9 +246,6 @@ public:
   Reduction_type(int opd=0, int opN=0, int opj=0, int kc=1, int cp=1, int rno=0)
     : ord_p_discr(opd), ord_p_N(opN), ord_p_j_denom(opj), Kcode(kc), c_p(cp), local_root_number(rno)
     {}
-  void operator=(const Reduction_type& r)
-    {ord_p_discr=r.ord_p_discr;ord_p_N=r.ord_p_N;ord_p_j_denom=r.ord_p_j_denom;
-     Kcode=r.Kcode;c_p=r.c_p; local_root_number=r.local_root_number;}
 };
 
 inline ostream& operator<<(ostream& os, const Reduction_type& R);

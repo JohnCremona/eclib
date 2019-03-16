@@ -332,9 +332,9 @@ void IsogenyClass::process(long i)  // process i'th curve
   if(i==0) // reset llist to good l only;
     {
       vector<long> goodllist;
-      for(long i=0; i<nell; i++) 
-	if(lworks[i]) 
-	  goodllist.push_back(llist[i]);
+      for(long ii=0; ii<nell; ii++) 
+	if(lworks[ii]) 
+	  goodllist.push_back(llist[ii]);
       nell=goodllist.size();
       llist=goodllist;
       if(verb)
