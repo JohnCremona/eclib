@@ -123,7 +123,7 @@ public:
   Curvedata(const vector<bigrational>& qai, bigint& scale);
   Curvedata(const Curve& c, int min_on_init = 0);
   Curvedata(const bigint& cc4, const bigint& cc6, int min_on_init);
-  Curvedata(const Curvedata& c, int min_on_init = 0);
+  Curvedata(const Curvedata& c, int min_on_init);
        // nb compiler cannot generate copy because constructor from
        // curve overrides.
        // But default assign, destruct suffice
