@@ -38,13 +38,16 @@
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 #define MAXNAP 20000
+#define BITPREC0 100  // initial bit precision
+#define BITPRECX  20  // step-size for increasing bit precision
+#define BITPRECMAX 300  // maximum bit precision
 
 int main(void)
 {
  init_time();
  start_time();
  long n=110, stopp, stopp0; 
- long prec0=75;
+ long prec0=BITPREC0;
  int output, verbose;
 
  cout << "Program nfhpmcurve.  Using METHOD = " << METHOD 
@@ -195,9 +198,9 @@ int main(void)
 	      nf.output_to_file(1,1);
 	    }
 #ifdef MPFP
-	  if(bit_precision()<150) 
+	  if(bit_precision()<BITPRECMAX) 
 	    {
-	      set_precision(bit_precision()+30);
+	      set_precision(bit_precision()+BITPRECX);
               cout << "Now working with bit precision "<<bit_precision()<< endl;
 	    }
 #endif
