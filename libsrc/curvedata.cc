@@ -137,6 +137,15 @@ Curvedata::Curvedata(const Curve& c, int min_on_init)
     }
 }
 
+Curvedata::Curvedata(const Curvedata& c)
+: Curve(c), b2(c.b2), b4(c.b4), b6(c.b6), b8(c.b8), c4(c.c4),
+  c6(c.c6), discr(c.discr), minimal_flag(c.minimal_flag),
+  discr_factored(c.discr_factored), conncomp(c.conncomp), 
+  ntorsion(c.ntorsion)
+{
+  if(discr_factored) the_bad_primes=c.the_bad_primes;
+}
+
 Curvedata::Curvedata(const Curvedata& c, int min_on_init)
 : Curve(c), b2(c.b2), b4(c.b4), b6(c.b6), b8(c.b8), c4(c.c4),
   c6(c.c6), discr(c.discr), minimal_flag(c.minimal_flag),
