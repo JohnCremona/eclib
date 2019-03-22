@@ -82,6 +82,7 @@ public:
 // n_aux is # sieving primes in quartic search
 // n_aux=-1 causes default to be used (depends on method)
 //
+  ~rank1() {if (num_aux>0) {clear_sieve();}}
   void sortpoints();
   void listpoints();
   void listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r, 

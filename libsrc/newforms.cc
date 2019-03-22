@@ -699,7 +699,7 @@ bigfloat newform::special_value()
 // which we compute earlier in the newforms class since that is where
 // getperiods() is implemented.
 
-void newform::find_optimality_factors(CurveRed E, int i)
+void newform::find_optimality_factors(const CurveRed& E, int i)
 {
   int verbose=(nf->verbose);
   bigcomplex w1,w2;
@@ -890,14 +890,9 @@ void newforms::createfromscratch(int s, long ntp)
        mvp=h1->maninvector(p0); 
        //       cout<<"mvp                 = "<<mvp<<endl;
        if(verbose>1) cout<<"h1 denom = "<<h1->h1denom()<<endl;
-       long totalmult=upperbound;
-       if (totalmult==0) n1ds=0;      
-       else 
-	 {
-	   form_finder ff(this,(sign!=0),maxdepth,mindepth,1,0,verbose);
-	   basisflag=0;
-	   ff.find();
-	 }
+       form_finder ff(this,(sign!=0),maxdepth,mindepth,1,0,verbose);
+       basisflag=0;
+       ff.find();
     }
   if(verbose)
     {
@@ -1165,7 +1160,7 @@ void newforms::display_modular_symbol_map(int check) const
          g = bezout(-modulus*b,d,c,a); // so g=a*d-b*N*c
        }
      j=h1->coordindex[i];
-     int sg=::sign(j); j=abs(j);
+     long sg=::sign(j); j=abs(j);
      //     cout<<"j="<<j<<"("<<sg<<")"<<endl;
      if(j==0) 
        for(k=0; k<n1ds; k++) 
@@ -1550,7 +1545,7 @@ vector<long> aqlist(vector<long> aplist, long N)
 
 // Create from a list of elliptic curves of the right conductor:
 
-void newforms::createfromcurve(int s, CurveRed C, int nap)
+void newforms::createfromcurve(int s, const CurveRed& C, int nap)
 {
   vector<CurveRed> Clist; Clist.push_back(C);
   return createfromcurves(s,Clist,nap);

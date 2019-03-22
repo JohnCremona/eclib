@@ -359,12 +359,12 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 		    {
 		      if(!qlistbflag[i]) continue;  // i'th already redundant
 		      // compute (a,h) of i'th quartic:
-		      long a = posmod(qlist[i].geta(),auxpiv);	      
+		      long aa = posmod(qlist[i].geta(),auxpiv);	      
 		      long H = posmod(qlist[i].getH(),auxpiv);
 		      if(extra2) if(i>=nfl) H=posmod(hscale*H,auxpiv);
 		      
 		      // Check if it would now be sieved out:
-		      long fl = flags[ipivot][a][H];
+		      long fl = flags[ipivot][aa][H];
 		      if(verbose>1) 
 			cout<<(i+1)<<"-th quartic in list has flag = "<<fl<<endl;
 		      qlistbflag[i] = (fl & newflag)!=0;
@@ -1968,6 +1968,7 @@ void rank1::clear_sieve()  // free memory related to sieve;
       delete[] flags[i];
       delete[] phimod[i];
     }
+  num_aux=0;
   delete[] auxs; 
   delete[] phimod; 
   delete[] squares;

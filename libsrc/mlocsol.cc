@@ -209,8 +209,8 @@ int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigi
 
   if(is_zero(b)&&is_zero(d)) // do a quick Hilbert check:
     {
-      bigint d = c*c-4*a*e;
-      if(global_hilbert(a,d,plist,badp)) return 0;
+      bigint D = c*c-4*a*e;
+      if(global_hilbert(a,D,plist,badp)) return 0;
     }
   for (vector<bigint>::const_iterator p = plist.begin(); (p!=plist.end())&&sol; p++)
    { badp = *p;

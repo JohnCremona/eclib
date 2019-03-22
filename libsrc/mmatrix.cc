@@ -951,12 +951,12 @@ mat_m echelonp(const mat_m& m1, vec_i& pcols, vec_i& npcols,
           dmat(i,pcols[j])=1;
         }
       for (j=1; j<=ny; j++)
-        {bigint n,d;
+        {bigint num, den;
          long jj = npcols[j];
-         modrat(m(i,jj),modulus,lim,n,d);
-         nmat(i,jj)=n;
-         dmat(i,jj)=d;
-         dd=(dd*d)/gcd(dd,d);
+         modrat(m(i,jj),modulus,lim,num,den);
+         nmat(i,jj)=num;
+         dmat(i,jj)=den;
+         dd=(dd*den)/gcd(dd,den);
        }
     }
   dd=abs(dd);

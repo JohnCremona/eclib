@@ -596,6 +596,8 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
   factor1 = (TWOPI)/rootmod;
   long maxp = prime_number(nap);
   limit  =  I2long(Ifloor((30+bit_precision())/factor1));
+  //cout<<"ldash1::init() with N="<<N<<", bit_precision="<<bit_precision()<<endl;
+  //cout<<"number of terms to use = "<<limit<<endl;
   if(limit>maxp) limit=maxp;
   limit1 = limit;
   rootlimit=sqrt(to_bigfloat(limit));
@@ -674,7 +676,7 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
       lx.compute(1);
       if(verbose) cout<<"L(f,1) = "<<lx.value()<<"; ";
       rational lop=nfi->loverp;
-      x = lx.value()*to_bigfloat(den(lop))/to_bigfloat(num(lop)); 
+      x = abs(lx.value())*to_bigfloat(den(lop))/to_bigfloat(num(lop)); 
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }
@@ -688,7 +690,7 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
 	     <<lplus<<"...";
       lx.compute(lplus);
       if(verbose) cout<<"L(f,chi,1) = "<<lx.scaled_value()<<"; ";
-      x = lx.scaled_value()/to_bigfloat(mplus);
+      x = abs(lx.scaled_value()/to_bigfloat(mplus));
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }
@@ -966,22 +968,25 @@ bigfloat Glarge(int r, bigfloat x) // Cohen's Gamma_r(x) for large x
   static const bigfloat zero = to_bigfloat(0);
   static const bigfloat one = to_bigfloat(1);
   static const bigfloat two = to_bigfloat(2);
-  bigfloat emx=exp(-x), ans=zero, term=-one/x;
+  bigfloat emx=exp(-x), ans=zero, mxinv=-one/x;
+  bigfloat term = mxinv;
   vector<bigfloat> Cv(r+1);  // indexed from 0 to r
   int j; bigfloat n=zero;
   Cv[0]=one;
   for(j=1;j<=r;j++) Cv[j]=zero;
-  //  cout<<"emx*term="<<emx*term<<endl;
-  while(!is_approx_zero(abs(emx*term)))
+  //cout<<"In Glarge with r="<<r<<", x="<<x<<": ";
+  //cout<<"emx*term="<<emx*term<<endl;
+  while((n<1000) && !is_approx_zero(abs(emx*term)))
     //while(!is_approx_zero(abs(term)))
     {
       n++;
       // update C-vector, term and sum
       for(j=r;j>0;j--) Cv[j]+=(Cv[j-1]/n);
-      term*=(-n/x);
+      term*=(n*mxinv);
       ans+=(Cv[r]*term);
-      //      cout<<"term="<<term<<"; ans="<<ans<<endl;
+      //cout<<"term="<<term<<"; ans="<<ans<<endl;
     }
+  //cout<<"Glarge returns "<<two*emx*ans<<" after using n="<<n<<" terms"<<endl;
   return two*emx*ans;
 }
 

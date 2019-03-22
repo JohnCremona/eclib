@@ -167,7 +167,7 @@ void vec::add_modp(long i, scalar x, scalar p)
 
 scalar operator*(const vec& v, const vec& w)
 {
- long dim=v.d, dot=0;
+ long dim=v.d; scalar dot=0;
  scalar* vi=v.entries, *wi=w.entries;
  if (dim==w.d) 
    while (dim--) dot+= (*vi++)*(*wi++);
