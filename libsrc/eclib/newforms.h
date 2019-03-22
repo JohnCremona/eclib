@@ -112,7 +112,7 @@ public:
   // To find twisting primes:
   void find_twisting_primes();
   // To find optimality factors when created from a curve:
-  void find_optimality_factors(CurveRed E, int i=0);
+  void find_optimality_factors(const CurveRed& E, int i=0);
   // To find deg(phi):
   void find_degphi();
    // To get matrix and scale factors
@@ -197,7 +197,7 @@ public:
   void find_jlist();
 
   // Create from one or a list of elliptic curves of the right conductor:
-  void createfromcurve(int s, CurveRed C, int nap=25);
+  void createfromcurve(int s, const CurveRed& C, int nap=25);
   void createfromcurves(int s, vector<CurveRed> Clist, int nap=25);
   // Lazy version which does not get the homology eigenvectors, only
   // sets the aq & ap (for use as oldforms):

@@ -86,9 +86,6 @@ public:
       FqPolySetField(h2,Fq);
     }
 
-  // assignment
-  void operator=(const ffmodq& a) {h1=a.h1; h2=a.h2;}
-
   // equality test
   int operator==(const ffmodq& b) const;
   int operator!=(const ffmodq& b) const {return !((*this)==b);}

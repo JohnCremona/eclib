@@ -59,7 +59,7 @@ int main()
 	  if(nnf==0) continue;
 
 	      // skip over extra data for each newform
-	      long ntotal = 16*nnf;
+	      int ntotal = 16*nnf;
 	      int* batch_i = new int[ntotal];
 	      datafile.read((char*)batch_i,ntotal*sizeof(int));
 	      delete[] batch_i;

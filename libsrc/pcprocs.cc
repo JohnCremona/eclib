@@ -49,6 +49,7 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 {
   int have_both=0;
   int have_rp = get_real_period(i,x0,verbose);
+  // NB The code below relies on x0 being *positive*
   int have_ip = 0;
   rp_known = have_rp;
   // have_rp is set if we know a real period; rp_known is set if we

@@ -57,7 +57,7 @@ subspace combine(const subspace& s1, const subspace& s2)
   const mat& b1=s1.basis, b2=s2.basis;
   int nr = b1.nro, nc = b2.nco;
   mat b = b1*b2;
-  scalar g=0; long n=nr*nc; scalar* bp=b.entries;
+  scalar g=0; int n=nr*nc; scalar* bp=b.entries;
   while ((n--)&&(g!=1)) g=gcd(g,*bp++);
   if(g>1)
     {

@@ -65,12 +65,14 @@ int main(void)
  long limit, n=1, hlim1=10, hlim2=15; 
  bigint nn;
  int verbose=0;
- char genfile[30];
+ int filenamesize=30;
+ char genfile[filenamesize];
 #ifndef RANK_ZERO_ONLY
  cerr << "See detail (0/1)? "; cin >> verbose;
  cerr << "Limits on naive height in point search? "; 
  cerr << "(searches up to first limit on all curves, up to second limit only if rank is deficient after that): ";
  cin>>hlim1>>hlim2;
+ cin.width(filenamesize); // prevent buffer overflow on filename input
  cerr << "filename for dumping generators? "; cin >> genfile;
  ofstream genout;
  genout.open(genfile);

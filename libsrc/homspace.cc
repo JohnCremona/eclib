@@ -998,8 +998,8 @@ mat homspace::conj_restricted(const subspace& s,
   for (long j=1; j<=d; j++) 
     {  
       long jj=pivots(s)[j];
-      symb s = symbol(freegens[jj-1]);
-      svec colj   =  coords_cd(-s.cee(),s.dee());
+      symb sy = symbol(freegens[jj-1]);
+      svec colj   =  coords_cd(-sy.cee(),sy.dee());
       m.setrow(j,colj.as_vec());
     }
   m = matmulmodp(m,basis(s),MODULUS);
@@ -1016,8 +1016,8 @@ smat homspace::s_conj_restricted(const ssubspace& s,
   for (long j=1; j<=d; j++) 
     {  
       long jj=pivots(s)[j];
-      symb s = symbol(freegens[jj-1]);
-      svec colj   =  coords_cd(-s.cee(),s.dee());
+      symb sy = symbol(freegens[jj-1]);
+      svec colj   =  coords_cd(-sy.cee(),sy.dee());
       m.setrow(j,colj);
     }
   //  cout<<"m = "<<m<<" = "<<m.as_mat()<<endl;

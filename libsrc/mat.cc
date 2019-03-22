@@ -1159,15 +1159,16 @@ mat echelonl(const mat& entries, vec& pc, vec& npc,
   while(n--) 
     {
       temp = *mij++; 
-      if ((INT_MIN<=temp)&&(temp<=INT_MAX))
+      // Now that LONGLONG is just scalar this test is pointless
+      // if ((INT_MIN<=temp)&&(temp<=INT_MAX))
 	{ 
 	  *ansij++=temp;
 	}
-      else 
-	{
-	  cout << "Problem in echelonl: entry " << temp << " too big!\n";
-	  abort();
-	}
+      // else 
+      //   {
+      //     cout << "Problem in echelonl: entry " << temp << " too big!\n";
+      //     abort();
+      //   }
     }
   
   delete[] m;

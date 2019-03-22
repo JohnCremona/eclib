@@ -41,6 +41,9 @@
 #define MAXNY 10000
 #define MAXD 10
 #define MAXNAP 20000
+#define BITPREC0 100  // initial bit precision
+#define BITPRECX  20  // step-size for increasing bit precision
+#define BITPRECMAX 300  // maximum bit precision
 
 int main(void)
 {
@@ -53,7 +56,7 @@ int main(void)
 
  cout << "Program nfhpcurve.  Using METHOD = " << METHOD 
       << " to find newforms" << endl;
- set_precision(75);
+ set_precision(BITPREC0);
 #ifdef MODULAR
  cout << "MODULUS for linear algebra = " << MODULUS << endl;
 #endif
@@ -64,6 +67,7 @@ int main(void)
  cout << "Output newforms to file? (0/1) ";  cin >> output;
  cout << "Output curves to file? (0/1) ";  cin >> curve_output;
  ofstream curve_out;
+ string curve_out_filename;
 #ifdef AUTOLOOP
  int limit;
  cout<<"Enter first and last N: ";cin>>n>>limit; n--;
@@ -74,7 +78,8 @@ int main(void)
  if (n>0)
 {
   if (curve_output)
-    curve_out.open(single_curve_filename(n).c_str());
+    curve_out_filename = single_curve_filename(n);
+    curve_out.open(curve_out_filename.c_str());
   cout << ">>>Level " << n;
   // Temporary code to skip non-square-free levels
   //
@@ -219,23 +224,25 @@ int main(void)
     }
   if (curve_output)
     {
+      cout<<"Finished finding curves.  Outputting curves to " << curve_out_filename<<endl;
       for(inf=0; inf<nnf; inf++)
 	{
 	  if (success[inf]) // output the curve
 	    {
 	      string code = codeletter(inf);
 	      curve_out<<n<<" "<<code<<" 1 ";
-
+	      if(verbose) cout<<n<<" "<<code<<" 1 ";
 	      Curve C = curves[inf];
 	      bigint a1,a2,a3,a4,a6;
 	      C.getai(a1,a2,a3,a4,a6);
 	      curve_out<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";
-
+              if(verbose) cout<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";
 	      Curvedata CD(C,1);  // The 1 causes minimalization
 	      int nt = CD.get_ntorsion();
 	      newform& nfi = nf.nflist[inf];
 	      int r = nfi.rank();
 	      curve_out << " " << r << " " << nt << " 0" << endl;
+	      if(verbose) cout << " " << r << " " << nt << " 0" << endl;
 	    }
 	}
       curve_out.close();
@@ -273,9 +280,9 @@ int main(void)
 	  cout << "Now working with maxny =  " <<maxn<< endl;
 	}
 #ifdef MPFP
-      if(bit_precision()<150) 
+      if(bit_precision()<BITPRECMAX) 
 	{
-	  set_precision(bit_precision()+30);
+	  set_precision(bit_precision()+BITPRECX);
 	  cout << "Now working with bit precision "<<bit_precision()<< endl;
 	}
 #endif
