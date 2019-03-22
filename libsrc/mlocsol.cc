@@ -119,16 +119,16 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
 
  if(result==+1)
 	{
-		if (nu<20) return -1; //Avoid infinity loop case q and g has common solution;
+		if (30<nu) return 0; // Avoid infinity loop case q and g has common solution;
 		if (s_==1)
 		{
-			if (val(p,q(x0,BIGINT(1)))<=nu) return 1;////////////////////////////val(q)<nu
+			if (val(p,q(x0,BIGINT(1)))<=nu) return 1;
 			result=0;
 			quit=1;
 		}
 		else if (s_==2)
 		{
-			if (val(p,q(BIGINT(1),x0))<=nu) return 1;///////////////////////////
+			if (val(p,q(BIGINT(1),x0))<=nu) return 1;
 			result=0;
 			quit=1;
 		}
@@ -230,7 +230,7 @@ int Rsoluble(const quartic& g, int s_, vector< vector<bigint> >& xplist, const q
   {//Need at least 3 solutions so that q!=0 in one of these solutions;
 	  int i;
 	  vector<bigfloat> realroots_;
-    vector<bigcomplex> complexroots = g.getroots();
+    bigcomplex *complexroots = g.getroots();
 	  for (i=0; i<4; i++)
 	  {
 		  if (is_real(complexroots[i]))
