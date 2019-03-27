@@ -76,6 +76,7 @@ extern extra_prime_class the_extra_primes;  // The one and only instance
 
 void initprimes(const string pfilename, int verb=0);
 
+vector<bigint> factor(const bigint& n, int proof=1);
 //
 // divisors
 //

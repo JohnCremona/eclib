@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include <NTL/ZZXFactoring.h>
 
 // We use the pari C library for factoring (via a string interface
@@ -36,7 +36,7 @@
 
 bigint show(const bigint& a) {cout<<a<<endl; return a;}
 vector<bigint> show(const vector<bigint>& a) {cout<<a<<endl; return a;}
- 
+
 bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy)
 {bigint ans; XGCD(ans,xx,yy,aa,bb); return ans;}
 int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
@@ -70,7 +70,7 @@ int sqrtq2(bigint& root, const bigint& n)
 	  rshift(r,1,r);
 	}
       else
-	{ 
+	{
 	  subx(r,a,r); rshift(r,1,r); subx(r,twok3,r);
 	  setbit(a,kminus1);
 	}
@@ -173,7 +173,7 @@ int sqrt_mod_2_power(bigint& x, const bigint& a, int e)
   if(e==2) return ((a8%4)==1);
   if(a8!=1) return 0;
   if(e==3)  return 1;
-  // Now e>=4 and a=1 (mod 8)  
+  // Now e>=4 and a=1 (mod 8)
   int k; bigint q1, q, q2; q1=4, q=8, q2=16;
   for(k=3; k<e; k++)
     {
@@ -184,7 +184,7 @@ int sqrt_mod_2_power(bigint& x, const bigint& a, int e)
   if(ndiv(q,sqr(x)-a))
     cout<<"Error in sqrt_mod_2_power with a="<<a<<", a mod 8="<<a8<<", e="<<e
 	<<": returns "<<x<<endl;
-#endif  
+#endif
   return 1;
 }
 
@@ -196,7 +196,7 @@ int sqrt_mod_p_power(bigint& x, const bigint& a, const bigint& p, int e)
   if(a1==0) return 0;  // p ndiv a only
   if(legendre(a1,p)==-1) return 0;
   if(a1<0) a1+=p;  // since sqrt_mod_p wants it between 0 and p-1
-  sqrt_mod_p(x,a1,p);  
+  sqrt_mod_p(x,a1,p);
   //  cout<<"sqrt("<<a1<<" mod "<<p<<") = "<<x<<endl;
   if(e==1) {return 1;}
   bigint s = invmod(2*x,p);
@@ -212,7 +212,7 @@ int sqrt_mod_p_power(bigint& x, const bigint& a, const bigint& p, int e)
   if(ndiv(q,sqr(x)-a))
     cout<<"Error in sqrt_mod_p_power with a="<<a<<", p="<<p<<", e="<<e
 	<<": returns "<<x<<endl;
-#endif  
+#endif
   return 1;
 }
 
@@ -224,11 +224,11 @@ int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m)
   if(is_one(a))  {x=BIGINT(1); return 1;}
 #ifdef CHECK_SQRT_MOD
   cout<<"Factorizing "<<m<<"..."<<flush;
-#endif  
+#endif
   vector<bigint> mpdivs = pdivs(m);
 #ifdef CHECK_SQRT_MOD
   cout<<"prime factors are "<<mpdivs<<endl;
-#endif  
+#endif
   return sqrt_mod_m(x,a,m,mpdivs);
 }
 
@@ -240,13 +240,13 @@ int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m, const vector<bigint>
   if(is_one(a))  {x=1; return 1;}
   bigint mm, p, xp, q; int e;
   x=0;  mm=1;
-  
+
  for(vector<bigint>::const_iterator pr = mpdivs.begin(); pr!=mpdivs.end(); pr++)
     {
       p=*pr;
       e = val(p,m);
       if(e==0) continue;
-      if(p==2) 
+      if(p==2)
 	{if(!sqrt_mod_2_power(xp,a,e)) return 0;}
       else
 	{if(!sqrt_mod_p_power(xp,a,p,e)) return 0;}
@@ -261,7 +261,7 @@ int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m, const vector<bigint>
   if(ndiv(m,sqr(x)-a))
     cout<<"Error in sqrt_mod_m with a="<<a<<", m="<<m
 	<<": returns "<<x<<endl;
-#endif  
+#endif
   return 1;
 }
 
@@ -325,7 +325,7 @@ void extra_prime_class::write_to_file(const string pfilename, int verb)
   if(the_primes.size()==0) return;
   if(verb) cout << "writing primes to file " << pfilename << endl;
   ofstream pfile(pfilename.c_str());
-  copy(the_primes.begin(),the_primes.end(), ostream_iterator<bigint>(pfile, "\n"));  
+  copy(the_primes.begin(),the_primes.end(), ostream_iterator<bigint>(pfile, "\n"));
   if(verb) cout << "finished writing primes to file " << pfilename << endl;
 }
 
@@ -335,12 +335,12 @@ void extra_prime_class::read_from_file(const string pfilename, int verb)
   if(!pfile)  // default: no primes file exists
     {
       return;
-    } 
+    }
   pfile>>ws;
   if(pfile.eof())  //  primes file exists but is empty
     {
       return;
-    } 
+    }
   if(verb) cout << "reading primes from file " << pfilename << endl;
   bigint xp;
   while(pfile>>xp>>ws, (xp!=0) )
@@ -362,11 +362,11 @@ vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_bas
 {
   vector<bigint> plist;
   if(n<2) return plist;
-  std::set<bigint>::const_iterator pri = factor_base.begin(); 
+  std::set<bigint>::const_iterator pri = factor_base.begin();
   while((n>1)&&(pri!=factor_base.end()))
     {
       bigint p=*pri++;
-      if(divide_out(n,p)) 	  
+      if(divide_out(n,p))
 	plist.push_back(p);
     }
   return plist;
@@ -381,7 +381,7 @@ vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax)
   primevar pr;
   long p=2, r; bigint mp, q; mp=2;
   while ( (n>1) && (pr.ok()) && (mp<=pmax))
-    { 
+    {
       if (::divides(n,p,q,r))   // then found a prime factor
 	{
 	  plist.push_back(mp); // add it to the list
@@ -389,11 +389,11 @@ vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax)
 	  divide_out(n,mp);     // divide it out from n
 	}
       // Now we might be able to conclude that the cofactor is prime:
-      if(n>1) if (sqr(mp)>n) 
+      if(n>1) if (sqr(mp)>n)
 	{
-	  plist.push_back(n); 
-	  the_extra_primes.add(n); 
-	  n=1; 
+	  plist.push_back(n);
+	  the_extra_primes.add(n);
+	  n=1;
 	}
       pr++; p = pr.value(); mp=p;
     }
@@ -416,15 +416,15 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
   plist = vector_union(plist,pdivs_trial_div(n));
   if(trace) cout<< "After using trial division, n= " <<n<<", plist = "<< plist << endl;
 
-  if(n>1) if(ProbPrime(n)) 
+  if(n>1) if(ProbPrime(n))
     {plist.push_back(n); the_extra_primes.add(n); n=1; }
 
-  if (n>1) // failed to factor it 
+  if (n>1) // failed to factor it
     {
       cout<<"\n***No prime factor found for composite "<<n<<" using trial division\n";
       cout<<n<<"fails primality test"<<endl;
       cout << "***Fatal situation, aborting!"<<endl;
-      abort(); 
+      abort();
     }
   if(trace) cout<< "pdivs_trial() returns " << plist << endl;
   return plist;
@@ -432,45 +432,37 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
 
 #include <eclib/parifact.h>
 
-int
-is_prime(const bigint& n)
-{
-  ostringstream oss;
-  oss<<n;
-  return is_prime(oss.str().c_str());
-}
+//vector<bigint>
+//read_vec_from_string(string vecstr)
+//{
+  ////  cout<<"parsing output string "<<vecstr<<endl;
+  //vector<bigint> plist;
+  //istringstream vecin(vecstr);
+  //bigint p;
+  //char c;
+  //vecin>>skipws>>c; // swallow leading "["
+  //while(c!=']')
+    //{
+      //vecin>>p;
+      ////      cout<<"Reading p="<<p<<" from string"<<endl;
+      //plist.push_back(p);
+      //vecin>>skipws>>c; // swallow ",", but it might turn out to be "]"
+    //}
+  ////  cout<<"Finished reading from string"<<endl;
+  //return plist;
+//}
 
-vector<bigint>
-read_vec_from_string(string vecstr)
+vector<bigint> factor(const bigint& n, int proof)
 {
-  //  cout<<"parsing output string "<<vecstr<<endl;
-  vector<bigint> plist;
-  istringstream vecin(vecstr);
-  bigint p;
-  char c;
-  vecin>>skipws>>c; // swallow leading "["
-  while(c!=']')
-    {
-      vecin>>p;
-      //      cout<<"Reading p="<<p<<" from string"<<endl;
-      plist.push_back(p);
-      vecin>>skipws>>c; // swallow ",", but it might turn out to be "]"
-    }
-  //  cout<<"Finished reading from string"<<endl;
-  return plist;
-}
-
-vector<bigint>
-factor(const bigint& n, int proof=1)
-{
-  ostringstream oss;
-  oss<<n;
-  vector<bigint> plist =  read_vec_from_string(factor(oss.str()));
+  //ostringstream oss;
+  //oss<<n;
+  //vector<bigint> plist =  read_vec_from_string(factor0(n));//###
+  vector<bigint> plist = PARI::factor(n);
   if(proof)
     for(vector<bigint>::const_iterator pi=plist.begin(); pi!=plist.end(); pi++)
       {
 	bigint p =*pi;
-	if(!is_prime(p))
+	if(!PARI::is_prime(p))
 	  {
 	    cout<<"WARNING:  pari's factor() returned p="<<p
 		<<" for which pari's isprime(p) FAILS!! Please report.";
@@ -495,19 +487,19 @@ vector<bigint> pdivs_pari(const bigint& number, int trace)
 
   // for small n just use trial division...
 
-  if(n<TRIAL_DIV_BOUND) 
+  if(n<TRIAL_DIV_BOUND)
     {
-      return pdivs_trial(n,trace); 
+      return pdivs_trial(n,trace);
     }
   if(trace) cout<<"pdivs_pari factoring "<<n<<endl;
 
   // use prime base first...
 
   plist=pdivs_use_factorbase(n,the_extra_primes.the_primes);
-  if(trace&&plist.size()>0) 
+  if(trace&&plist.size()>0)
     cout<<"after using factorbase, have factors "<<plist
 	<<", and cofactor = "<<n<< endl;
-  if(n<2) 
+  if(n<2)
     {
       sort(plist.begin(),plist.end());
       return plist;
@@ -516,11 +508,11 @@ vector<bigint> pdivs_pari(const bigint& number, int trace)
   // now use small primes...
 
   plist = vector_union(plist,pdivs_trial_div(n,TRIAL_DIV_PRIME_BOUND));
-  if(trace&&plist.size()>0) 
+  if(trace&&plist.size()>0)
     cout<<"after using trial division up to "<<TRIAL_DIV_PRIME_BOUND<<", have factors "<<plist
 	<<", and cofactor = "<<n<< endl;
 
-  if(n<2) 
+  if(n<2)
     {
       sort(plist.begin(),plist.end());
       return plist;
@@ -559,7 +551,7 @@ vector<bigint> posdivs(const bigint& number, const vector<bigint>& plist)
      nd*=(1+e);
    }
  // cout<<"In posdivs (0) : elist = "<<elist<<endl;
- vector<bigint> dlist(1,BIGINT(1)); 
+ vector<bigint> dlist(1,BIGINT(1));
  // cout<<"In posdivs (1) : dlist = "<<dlist<<endl;
  dlist.resize(nd);
  // cout<<"In posdivs (2) : dlist = "<<dlist<<endl;
@@ -637,7 +629,7 @@ vector<bigint> sqdivs(const bigint& number, const vector<bigint>& plist)
      elist.push_back(e);
      nd*=(1+e);
    }
- vector<bigint> dlist(1,BIGINT(1)); 
+ vector<bigint> dlist(1,BIGINT(1));
  dlist.resize(nd);
  nd=nu;
  pr=plist.begin();
@@ -673,7 +665,7 @@ vector<bigint> sqfreedivs(const bigint& number, const vector<bigint>& plist)
      elist.push_back(e);
      nd*=(1+e);
    }
- vector<bigint> dlist(1,BIGINT(1)); 
+ vector<bigint> dlist(1,BIGINT(1));
  dlist.resize(nd);
  nd=nu;
  pr=plist.begin();
@@ -720,10 +712,10 @@ void sqfdecomp(const bigint& a, vector<bigint>& plist, bigint& a1, bigint& a2)
   plist=aplist;
 }
 
-// Given a, b, lem3 returns m1 etc so that a=c1^2*m1*m12, b=c2^2*m2*m12 
-// with m1, m2, m12 pairwise coprime.   At all  times these equations hold, 
-// and at each step the product m1*m2*m12 is decreased by a factor d, 
-// so the process terminates when the coprimality condition is satisfied. 
+// Given a, b, lem3 returns m1 etc so that a=c1^2*m1*m12, b=c2^2*m2*m12
+// with m1, m2, m12 pairwise coprime.   At all  times these equations hold,
+// and at each step the product m1*m2*m12 is decreased by a factor d,
+// so the process terminates when the coprimality condition is satisfied.
 
 void rusin_lem3(const bigint& a, const bigint& b,
 	  bigint& m1, bigint& m2, bigint& m3, bigint& c1, bigint& c2)
@@ -752,7 +744,7 @@ void rusin_lem3(const bigint& a, const bigint& b,
 	}
     }
 #ifdef CHECK_LEM3
-  if( (a==sqr(c1)*m1*m3) && (b==sqr(c2)*m2*m3) 
+  if( (a==sqr(c1)*m1*m3) && (b==sqr(c2)*m2*m3)
       && (gcd(m1,m3)==1) && (gcd(m2,m3)==1) && (gcd(m1,m2)==1) )
     {;}
   else
@@ -764,7 +756,7 @@ void rusin_lem3(const bigint& a, const bigint& b,
 #endif
 }
 
-bigint chrem(const bigint& a1, const bigint& a2, 
+bigint chrem(const bigint& a1, const bigint& a2,
 	     const bigint& m1, const bigint& m2)
 {
   bigint u,v,q,r,ans;
@@ -781,7 +773,7 @@ bigint chrem(const bigint& a1, const bigint& a2,
       return ans;
     }
   cout<<"No solution in chrem to "<<a1<<" mod "<<m1
-      <<", "<<a2<<" mod "<<m2<<endl; 
+      <<", "<<a2<<" mod "<<m2<<endl;
   ans = 0;
   return ans;
 }
@@ -831,7 +823,7 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
 #ifdef DEBUG_IFLOOR
      cout<<", ans="<<ans;
 #endif
-     x=fmod(x,ldexp((double)1,e-1)); 
+     x=fmod(x,ldexp((double)1,e-1));
 #ifdef DEBUG_IFLOOR
      cout<<", new x="<<x<<endl;
 #endif
@@ -839,7 +831,7 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
    }
  if((x>0)&&(s<0)) ++ans;        // adjust if fractional part non-zero
  if(s<0) ans=-ans;  // adjust if negative
- return ans; 
+ return ans;
 }
 
 #endif
@@ -849,17 +841,17 @@ bigint mod(const bigint& a, const bigint& b)
   bigint bb(abs(b));
   bigint c=a%bb;
   bigint c2=c<<1;
-  if (c2>  bb) return c-bb; 
+  if (c2>  bb) return c-bb;
   if (c2<=-bb) return c+bb;
   return c;
 }
 
 long mod(const bigint& a, long b)
 {
-  long bb=abs(b);  
-  long c = bigint_mod_long(a,bb); 
+  long bb=abs(b);
+  long c = bigint_mod_long(a,bb);
   long c2=c<<1;
-  if (c2>  bb) return c-bb; 
+  if (c2>  bb) return c-bb;
   if (c2<=-bb) return c+bb;
   return c;
 }
@@ -875,7 +867,7 @@ bigint posmod(const bigint& a, const bigint& b)
 long posmod(const bigint& a, long b)
 {
   long bb = abs(b);
-  long c = bigint_mod_long(a,bb); 
+  long c = bigint_mod_long(a,bb);
   if (c<0) return c+bb;
   return c;
 }
@@ -920,7 +912,7 @@ long val(const bigint& factor, const bigint& number)
 {
  if (is_zero(number)) return VALUATION_OF_ZERO;
  bigint f = abs(factor);
- if ((f<2)) return VALUATION_OF_ZERO;  // error condition! N.B. This value 
+ if ((f<2)) return VALUATION_OF_ZERO;  // error condition! N.B. This value
  bigint n = number;                        // must be unlikely and POSITIVE.
  long e = divide_out(n,f);
  return e;
@@ -930,18 +922,18 @@ long val(long factor, const bigint& number)
 {
  if (is_zero(number)) return VALUATION_OF_ZERO;
  long f = abs(factor);
- if ((f<2)) return VALUATION_OF_ZERO;  // error condition! N.B. This value 
+ if ((f<2)) return VALUATION_OF_ZERO;  // error condition! N.B. This value
  bigint n = number;                    // must be unlikely and POSITIVE.
  long e = divide_out(n,f);
  return e;
 }
 
-int div(const bigint& factor, const bigint& number) 
+int div(const bigint& factor, const bigint& number)
 { if (is_zero(factor)) return is_zero(number);
   else return (is_zero(number%factor));
 }
 
-int div(long factor, const bigint& number) 
+int div(long factor, const bigint& number)
 { if (factor==0) return is_zero(number);
   else return is_zero(number%factor);
 }
@@ -950,7 +942,7 @@ long bezout(const bigint& aa, long bb, bigint& xx, bigint& yy)
 {bigint a,b,c,x,oldx,newx,y,oldy,newy,q;
  oldx = 1; oldy = 0; x = 0; y = 1; a = aa; b = bb;
  while (sign(b)!=0)
- { q = a/b; 
+ { q = a/b;
    c    = a    - q*b; a    = b; b = c;
    newx = oldx - q*x; oldx = x; x = newx;
    newy = oldy - q*y; oldy = y; y = newy;
@@ -959,14 +951,14 @@ long bezout(const bigint& aa, long bb, bigint& xx, bigint& yy)
  else     {xx= oldx; yy= oldy; return  I2long(a);}
 }
 
- 
+
 bigint invmod(const bigint& a, const bigint& p)
 {bigint g,x,y;
  g=bezout(a,p,x,y);
  if (!is_one(g))
    {
      x=0;
-     cout << "invmod called with " << a << " and " 
+     cout << "invmod called with " << a << " and "
 	  << p << " -- not coprime!\n";
      abort();
    }
@@ -976,10 +968,10 @@ bigint invmod(const bigint& a, const bigint& p)
 long invmod(const bigint& a, long p)
 {bigint g,x,y;
  g=bezout(a,p,x,y);
- if (!is_one(g)) 
+ if (!is_one(g))
    {
      x=0;
-     cout << "invmod called with " << a << " and " 
+     cout << "invmod called with " << a << " and "
 	  << p << " -- not coprime!\n";
      abort();
    }
@@ -990,64 +982,65 @@ long invmod(const bigint& a, long p)
 int m1pow(const bigint& a)
 { return (odd(a) ?  -1 : +1);
 }
- 
+
 static int table8[8] = {0,1,0,-1,0,-1,0,1};
 static int table4[4] = {0,1,0,-1};
 static int table44[4][4] = {{0,0,0,0}, {0,1,0,1}, {0,0,0,0}, {0,1,0,-1}};
-  
+
 int chi2(const bigint& a)
-{ 
+{
   return table8[posmod(a,8)];
 }
- 
+
 int chi4(const bigint& a)
-{ 
+{
   return table4[posmod(a,4)];
-} 
+}
 
 
 int hilbert2(const bigint& a, const bigint& b)
-{ 
+{
   return table44[posmod(a,4)][posmod(b,4)];
 }
 
 int hilbert2(const bigint& a, long b)
-{ 
+{
   return table44[posmod(a,4)][posmod(b,4)];
 }
 
 int hilbert2(long a, const bigint& b)
-{ 
+{
   return table44[posmod(a,4)][posmod(b,4)];
 }
 
 
-static int leg(const bigint& a, const bigint& b) 
+static int leg(const bigint& a, const bigint& b)
 //nb this function is not intended for public use!
-{ 
+{
   bigint aa = a;
   bigint bb = b;
 //  cout<<"leg("<<a<<","<<b<<") = "<<flush;
   bigint c;
   int ans = 1;
-  while (bb>1) 
-  {     aa = aa % bb;
-        if (sign(aa)<0)       {aa=-aa; ans*=chi4(bb);}
-        while (is_zero(aa%4)) {aa/=4;}
-        if (is_zero(aa%2))    {aa/=2; ans *= chi2(bb);}
-        ans*=hilbert2(aa,bb);
-        c=bb; bb=aa; aa=c;
+  while (bb>1)
+  {
+	  aa = aa % bb;
+      if (sign(aa)<0)       {aa=-aa; ans*=chi4(bb);}
+      while (is_zero(aa%4)) {aa/=4;}
+      if (is_zero(aa%2))    {aa/=2; ans *= chi2(bb);}
+      ans*=hilbert2(aa,bb);
+      c=bb; bb=aa; aa=c;
   }
 //  cout << ans << endl;
   return ans;
 }
- 
-static int leg(const long& a, const long& b) 
+
+static int leg(const long& a, const long& b)
 //nb this function is not intended for public use!
 { long aa = a, bb = b, c;
 //  cout<<"leg("<<a<<","<<b<<") = "<<flush;
   int ans = 1;
-  while (bb>1) 
+  while (bb>1)
   {     aa = aa % bb;
         if (aa<0)       {aa=-aa; ans*=chi4(bb);}
         while (!(aa&3)) {aa/=4;}
@@ -1058,15 +1051,15 @@ static int leg(const long& a, const long& b)
 //  cout << ans << endl;
   return ans;
 }
- 
+
 
 int legendre(const bigint& a, const bigint& b)
-{ 
+{
   return ((is_one(gcd(a,b)) && (odd(b))) ? leg(a,b) : 0);
 }
 
 int legendre(const bigint& aa, long b)
-{ 
+{
   if(!(b%2)) return 0;  // b was even
   long a=I2long(aa%BIGINT(b));
   long g=::gcd(a,b);
@@ -1075,15 +1068,15 @@ int legendre(const bigint& aa, long b)
 }
 
 int kronecker(const bigint& x, const bigint& y)
-{ 
+{
   long r; bigint x1=x,y1=y,z;
   int s=1;
 
   if (is_zero(y1)) return (abs(x1)==1);
 
-  if (is_negative(y)) 
+  if (is_negative(y))
     {
-      y1= -y1; 
+      y1= -y1;
       if (is_negative(x1)) s = -1;
     }
 
@@ -1107,30 +1100,30 @@ int kronecker(const bigint& x, const bigint& y)
   }
   return (y1==1)? s: 0;
 }
- 
+
 int kronecker(const bigint& d, long n)
-{ 
+{
   return kronecker(mod(d,n),n);
 }
- 
+
 long gcd(const bigint& a, long b)
 {
   bigint bb = BIGINT(b);
-  return I2long(gcd( a, bb )); 
+  return I2long(gcd( a, bb ));
 }
 
-int modrat(const bigint& n, const bigint& m, const bigint& lim, 
+int modrat(const bigint& n, const bigint& m, const bigint& lim,
            /* return values: */ bigint& a, bigint& b)
 {
  bigint q,r,t,qq,rr,tt,quot;
- q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1; 
- if (r<lim) 
-   { 
+ q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1;
+ if (r<lim)
+   {
 //   cout<<" = "<<a<<"/"<<b<<"\n";
      return 1;
    }
- while (sign(r)!=0) 
- { 
+ while (sign(r)!=0)
+ {
    ::divides(q,r,quot,t);
    q = r;   r = t;
    tt = qq-quot*rr; qq = rr; rr = tt;
@@ -1164,7 +1157,7 @@ vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c)
   for(int i=0; i<factors.length(); i++)
     if(deg(factors[i].a)==1) // a degree 1 factor
       iroots.push_back(-ConstTerm(factors[i].a));
-  return iroots;   
+  return iroots;
 }
 
 vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c, const bigint& d)
@@ -1182,7 +1175,7 @@ vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c
   for(int i=0; i<factors.length(); i++)
     if(deg(factors[i].a)==1) // a degree 1 factor
       iroots.push_back(-ConstTerm(factors[i].a));
-  return iroots;   
+  return iroots;
 }
 
 
@@ -1204,9 +1197,9 @@ int nrootscubic(long b, long c, long d, long p, long* roots)
   long f = c + e*r;
   long e0 = (-e*((p+1)/2))%p;
   long dd = posmod(e0*e0-f,p);
-  if(legendre(dd,p)==1) 
+  if(legendre(dd,p)==1)
     { // stupid search is good enough since we only use this for very small p!
-      for (r = 1; r<p ; r++)  
+      for (r = 1; r<p ; r++)
 	{
 	  if((r*r-dd)%p==0) break;
 	}
