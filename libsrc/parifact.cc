@@ -128,7 +128,6 @@ namespace PARI
 	{
 		// Input: List of bigint of lenght 6, that represent the coeff of x^2, x*y, x*z, y^2, y*z, z^2, respectivament;
 		// Output: integer vector of lenght 3 that is solution of quadric;
-		// Generalize for higher dimensions;
 
 		if (!avma)
 		{

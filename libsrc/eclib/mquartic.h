@@ -39,6 +39,16 @@ inline bigint JJ(const bigint& a, const bigint& b, const bigint& c,
   return (72*a*e + 9*b*d - 2*sqr(c)) * c - 27*(a*sqr(d) + sqr(b)*e);
 }
 
+inline bigint II(const vector<bigint>& v)
+{
+	return II(v[0], v[1], v[2], v[3], v[4]);
+}
+
+inline bigint JJ(const vector<bigint>& v)
+{
+	return JJ(v[0], v[1], v[2], v[3], v[4]);
+}
+
 inline bigint H_invariant(const bigint& a, const bigint& b, const bigint& c)
 {
   return 8*a*c - 3*sqr(b);
