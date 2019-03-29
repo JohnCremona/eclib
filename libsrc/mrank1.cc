@@ -1439,7 +1439,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux, 
 	if (do_CT)
 	{
 		///hom_inv(c4, c6, qelsgens1);
-		hom_CT(qelsgens1,c4, 2*c6);
+		hom_CT(c4, 2*c6, qelsgens1);
 		for (int ll=0; ll<qelsgens1.size(); ll++)
 		{
 			bigint x, y, z;

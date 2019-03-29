@@ -966,12 +966,12 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second, int
 
 				if (rank_bound==qelsgens.size() + nt2gens_2)
 				{
-					hom_CT(qelsgens, ii, jj);
+					hom_CT(ii, jj, qelsgens);
 					rank_bound = qelsgens.size() + nt2gens_2;
 				}
 				if (rank_bound>1)
 				{
-					hom_CT(qelsgens_, ii_, jj_);
+					hom_CT(ii_, jj_, qelsgens_);
 					rank_bound = min(qelsgens.size() + nt2gens_2, qelsgens_.size() + nt2gens_2);
 				}
 
