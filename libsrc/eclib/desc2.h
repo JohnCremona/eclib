@@ -29,9 +29,9 @@
 int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 	  const vector<bigint>& plist, const vector<bigint>& supp, const vector<bigint>& bgens,
 	  long mask,  double hlim,
-	  bigint& x, bigint& y, bigint& z, int verb, int selmer_only=0, int alldesc=0);
+	  bigint& x, bigint& y, bigint& z, int verb, int selmer_only=0, int do_CT=0, int alldesc=0, vector<bigint>& v=v0_);
 // Works on homogeneous space (d1,0,c,0,d2)
-// Returns 
+// Returns
 //   -1 if it certainly has no points (if no ELS descendents)
 //   +1 if it has a point (coordinates returned in x, y, z)
 //    0 if undecided (ELS descendents exist but no rational points were found)

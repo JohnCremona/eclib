@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include <eclib/mquartic.h>
 #include <eclib/hilbert.h>
 #include <eclib/conic.h>
@@ -36,10 +36,10 @@
 #define QSIEVE_OPT 0 // uses Stoll's sieve
 #endif
 
-int process_d3(const quadratic& q0, const bigint& d3, 
+int process_d3(const quadratic& q0, const bigint& d3,
 	       const vector<bigint>& plist, const vector<bigint>& factorbase, double hlim,
 	       const quadratic& q1, const quadratic& q3,
-	       bigint& x, bigint& y, bigint& z, int verb, int selmer_only=0);
+	       bigint& x, bigint& y, bigint& z, int verb, int selmer_only=0, int do_CT=0, vector<bigint>& v=v0_);
 // Processes an individual d3
 // Returns -1 if not els
 //          0 if els but no point found
@@ -54,9 +54,9 @@ int process_d3(const quadratic& q0, const bigint& d3,
 int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 	  const vector<bigint>& plist, const vector<bigint>& supp, const vector<bigint>& bgens,
 	  long mask,  double hlim,
-	  bigint& x, bigint& y, bigint& z, int verb, int selmer_only, int alldesc)
+	  bigint& x, bigint& y, bigint& z, int verb, int selmer_only, int do_CT, int alldesc, vector<bigint>& v)
 // Works on homogeneous space (d1,0,c,0,d2) (assumed ELS)
-// Returns 
+// Returns
 //   -1 if it certainly has no points (if no ELS descendents)
 //   +1 if it has a point (coordinates returned in x, y, z)
 //    0 if undecided (ELS descendents exist but no rational points were found)
@@ -75,7 +75,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 //
 {
   int xverb = (verb>1), res;
-  if(verb) 
+  if(verb)
     {
       cout<<"Using desc2("<<d1<<","<<c<<","<<d2<<")\n";
       cout<<"supp="<<supp<<"; mask="<<mask<<"; bgens="<<bgens<<endl;
@@ -84,17 +84,17 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
   bigint d = d1*d2, cdash = -2*c, ddash = sqr(c)-4*d;
   static const bigint one = BIGINT(1);
   static const bigint two = BIGINT(2);
-  int add2tosupp = (val(2,ddash)==4);  
-  if(add2tosupp) add2tosupp = (find(supp.begin(),supp.end(),two)==supp.end());  
+  int add2tosupp = (val(2,ddash)==4);
+  if(add2tosupp) add2tosupp = (find(supp.begin(),supp.end(),two)==supp.end());
 // For we are on E' and the original d was odd
 
-  // Step 1: solve the conic d1*x0^2 + c*x0*z0 + d2*z0^2 = y0^2 
+  // Step 1: solve the conic d1*x0^2 + c*x0*z0 + d2*z0^2 = y0^2
   // Step 2: with parametrization
 
   int ddash_is_square = isqrt(ddash,d0);
 
   quadratic q0(d1,c,d2), q1, q2, q3;
-  
+
   res = solve_conic_param(q0,one,plist,q1,q2,q3);
 
   if(!res) {cout<<"solve_conic failed -- should not happen!\n"; return -1;}
@@ -112,7 +112,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 
   // The quadratics q1, q3 have discriminants 4*d2, 4*d1, and resultant d'.
 
-  if(xverb) 
+  if(xverb)
     {
       cout<<"q1-coeffs: "<<q1<<"\n";
       cout<<"q3-coeffs: "<<q3<<"\n";
@@ -139,7 +139,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
       if(id3&mask) continue;
 
 // We first test whether q1=d3 and q3=d3 are soluble using Hilbert symbols:
-      hres = global_hilbert(q1,d3,factorbase,p) || 
+      hres = global_hilbert(q1,d3,factorbase,p) ||
 	     global_hilbert(q3,d3,factorbase,p);
       if(!hres)
 	{
@@ -153,18 +153,18 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 	      factorbase_enlarged=1;
    //	      cout<<"After enlarging, factorbase = "<<factorbase<<endl;
 	    }
-	  res = process_d3(q0,d3,plist,factorbase,hlim,q1,q3,x,y,z,verb,selmer_only);
+	  res = process_d3(q0,d3,plist,factorbase,hlim,q1,q3,x,y,z,verb,selmer_only,do_CT,v);
 	  if(xverb) cout<<"process_d3("<<d3<<") returns "<<res<<endl;
 	}
-      else 
+      else
 	{
-	  //	  if(xverb) 
+	  //	  if(xverb)
 	  //	    cout<<"d3= "<<d3<<" fails Hilbert symbol tests (p="<<p<<")\n";
 	  res=-1;
 	}
       if(res!=-1)  // descendent is els, lift to S^(2) exists
 	{
-	  looking=0; 
+	  looking=0;
 	  keepd3=d3;
 	}
       if(res==1)   // descendent is gls, lift to E/2E exists
@@ -176,7 +176,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 	{
 	  d3=2*d3;
 // We first test whether q1=d3 and q3=d3 are soluble using Hilbert symbols:
-  	  hres = global_hilbert(q1,d3,factorbase,p) || 
+  	  hres = global_hilbert(q1,d3,factorbase,p) ||
   	         global_hilbert(q3,d3,factorbase,p);
 	  if(!hres)
 	    {
@@ -191,34 +191,34 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 		  factorbase_enlarged=1;
   //	          cout<<"After enlarging, factorbase = "<<factorbase<<endl;
 		}
-	      res = process_d3(q0,d3,plist,factorbase,hlim,q1,q3,x,y,z,verb,selmer_only);
+	      res = process_d3(q0,d3,plist,factorbase,hlim,q1,q3,x,y,z,verb,selmer_only,do_CT,v);
 	      if(xverb) cout<<"process_d3("<<d3<<") returns "<<res<<endl;
 	    }
-	  else 
+	  else
 	    {
-	      //	      if(xverb) 
+	      //	      if(xverb)
 	      //		cout<<"d3= "<<d3<<" fails Hilbert symbol tests (p="<<p<<")\n";
 	      res=-1;
 	    }
 	  if(res!=-1)  // descendent is els, lift to S^(2) exists
 	    {
-	      looking=0; 
+	      looking=0;
 	      keepd3=d3;
 	    }
-	  if(res==1)   // descendent is gls, lift to E/2E exists 
+	  if(res==1)   // descendent is gls, lift to E/2E exists
 	    {
 	      found=1;
 	    }
 	}
     }
-  if(found) 
+  if(found)
     {
-      if(verb) 
+      if(verb)
 	cout<<"Found a descendent with a rational point so terminating second descent step.\n";
       return +1;   // Found an els descendent with a point on it
     }
   if(looking) return -1; // No els descendents exist
-  
+
   if(selmer_only) return 0;
 
   //
@@ -234,7 +234,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
       if(verb) cout<<"No further descendents.\n";
       return 0;
     }
-  if(verb) 
+  if(verb)
     cout<<"We now construct and search the "<<(ndesc-1)<<" other descendents...\n";
   for(id3=d3step; (id3<nd3); id3+=d3step)
     {
@@ -244,7 +244,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
       if(res==1)   // descendent is gls, lift to E/2E exists
 	{
 	  found=1;
-	  if(verb) 
+	  if(verb)
 	    cout<<"Found a descendent with a rational point so terminating second descent step.\n";
 	  if(!alldesc) return +1;
 	}
@@ -257,10 +257,10 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 }  // end of desc2()
 
 
-int process_d3(const quadratic& q0, const bigint& d3, 
+int process_d3(const quadratic& q0, const bigint& d3,
 	       const vector<bigint>& plist, const vector<bigint>& factorbase, double hlim,
 	       const quadratic& q1, const quadratic& q3,
-	       bigint& x, bigint& y, bigint& z, int verb, int selmer_only)
+	       bigint& x, bigint& y, bigint& z, int verb, int selmer_only, int do_CT, vector<bigint>& v)
 // Processes an individual d3
 // Returns -1 if not els
 //          0 if els but no point found
@@ -290,7 +290,7 @@ int process_d3(const quadratic& q0, const bigint& d3,
       cout<<"factorbase= "<<factorbase<<endl;
       if(verb) cout<<"q1=d3 not soluble.\n";
       return -1;
-    } 
+    }
   if(verb) cout<<"q1=d3 is soluble.\t";
 
   resd3 = solve_conic(q3,d3,factorbase,s1,u1,t1);
@@ -307,31 +307,31 @@ int process_d3(const quadratic& q0, const bigint& d3,
   if(verb) cout<<"q1=d3 and q3=d3 both soluble, forming quartic.\n";
 
   // g(x,y)=q3(Q1(x,y),Q3(x,y)):
-	      
+
   ga = q3(Q1[0],Q3[0]);
-	  
+
   gb = q3[0]*(2*Q1[0]*Q1[1]) + q3[1]*(Q1[0]*Q3[1]+Q1[1]*Q3[0]) + q3[2]*(2*Q3[0]*Q3[1]);
-	  
-  gc = q3[0]*(sqr(Q1[1]) + 2*Q1[0]*Q1[2]) 
-    + q3[1]*(Q1[0]*Q3[2] + Q1[1]*Q3[1] + Q1[2]*Q3[0]) 
+
+  gc = q3[0]*(sqr(Q1[1]) + 2*Q1[0]*Q1[2])
+    + q3[1]*(Q1[0]*Q3[2] + Q1[1]*Q3[1] + Q1[2]*Q3[0])
     + q3[2]*(sqr(Q3[1]) + 2*Q3[0]*Q3[2]);
-	  
+
   gd = q3[0]*(2*Q1[1]*Q1[2]) + q3[1]*(Q1[1]*Q3[2] + Q1[2]*Q3[1]) + q3[2]*(2*Q3[1]*Q3[2]);
-	  
+
   ge = q3(Q1[2],Q3[2]);
 
   ga*=d3; gb*=d3; gc*=d3; gd*=d3; ge*=d3;
-	  
+
   // Simplify quartic by dividing by square-part of content
   cont = g_content(ga,gb,gc,gd,ge);
-	  
+
   if(cont>1)
     {
       if(xverb) cout<<"Dividing quartic by "<<cont<<" squared\n";
       cont=sqr(cont);
       ga/=cont; gb/=cont; gc/=cont; gd/=cont; ge/=cont;
     }
-	  
+
   bigint ga0=ga, gb0=gb, gc0=gc, gd0=gd, ge0=ge;
   quartic gg(ga,gb,gc,gd,ge);
   ggI = gg.getI();
@@ -354,17 +354,17 @@ int process_d3(const quadratic& q0, const bigint& d3,
       if(extras) cout<<"extra bad primes = "<<ggextrap<<endl;
       cout<<"bad primes = "<<ggbadp<<endl;
     }
-	  
+
 // NB the full minimalization procedure ONLY works for locally soluble quartics
 //    so we have to check solubility before minimalizing.
 // But we can partially minimise anyway, which helps local solubility test
-		  
+
   scaled_unimod m;
-  
+
   if(xverb) cout << "preliminary minimalization of gg...\n";
   minim_all(ga,gb,gc,gd,ge,ggI,ggJ,ggbadp,m,0,xverb);
   gg.assign(ga,gb,gc,gd,ge);  // must reset roots before searching
-  if(xverb) 
+  if(xverb)
     {
       cout<<"transform "<<m<<"\n";
       cout<<"After preliminary minimalizing, gg = "<<gg<<endl;
@@ -375,23 +375,27 @@ int process_d3(const quadratic& q0, const bigint& d3,
       else
 	{cout<<"transform check fails!\n";}
     }
-  
   if(!locallysoluble(gg,plist,p))
     {
       if(verb) cout<<"Not locally soluble (p="<<p<<")\n";
       return -1;
     }
+  if (do_CT)
+  {
+	  minim_all(ga,gb,gc,gd,ge,ggI,ggJ,ggbadp,m,1,xverb);
+	  v={ga,gb,gc,gd,ge};
+  }
 
-  if(selmer_only) return 0;
+  if(selmer_only) { return 0;}
 
-  if(xverb) 
+  if(xverb)
     {
       cout << "Everywhere locally soluble, ";
       cout << "minimalizing gg...\n";
     }
   minim_all(ga,gb,gc,gd,ge,ggI,ggJ,ggbadp,m,1,xverb);
   gg.assign(ga,gb,gc,gd,ge);  // must reset roots before searching
-  if(xverb) 
+  if(xverb)
     {
       cout<<"transform "<<m<<"\n";
       cout<<"After minimalizing, gg = "<<gg<<endl;
@@ -418,7 +422,7 @@ int process_d3(const quadratic& q0, const bigint& d3,
 	  n.reset();
 	  oldga=ga; oldgb=gb; oldgc=gc; oldgd=gd; oldge=ge;
 	  gg.assign(ga,gb,gc,gd,ge);
-	  if(xverb) 
+	  if(xverb)
 	    {
 	      cout<<"Descendent quartic (after "<<(ired+1)
 		  <<" reductions) = "<<gg<<endl;
@@ -429,7 +433,7 @@ int process_d3(const quadratic& q0, const bigint& d3,
 	    }
 	}
     }
-  if(xverb) 
+  if(xverb)
     {
       cout<<"transform "<<m<<"\n";
       if(check_transform(ga0,gb0,gc0,gd0,ge0,m,
@@ -438,16 +442,16 @@ int process_d3(const quadratic& q0, const bigint& d3,
       else
 	{cout<<"transform check fails!\n";}
     }
-  if(verb) 
+  if(verb)
     cout<<"Descendent quartic (after reduction) = "<<gg<<endl;
-  
+
 // Step 5: We have an ELS descendent quartic;
 //         now attempt to find a rational point on it
-  
+
   quartic_sieve qs(&gg,QSIEVE_OPT,0);
-  if(verb) 
+  if(verb)
     cout << "Searching for points on gg up to height "<<hlim<<endl;
-  
+
   //	      if(qs.search(hlim,1000000))
   if(!qs.search(hlim))
     {
@@ -468,18 +472,18 @@ int process_d3(const quadratic& q0, const bigint& d3,
   bigint q1xz = Q1(x3,z3);
   bigint q3xz = Q3(x3,z3);
   fac=gcd(q1xz,q3xz); if(fac>1) {q1xz/=fac; q3xz/=fac;}
-  
+
   bigint x2 = abs(q1(q1xz,q3xz));
   bigint z2 = abs(q3(q1xz,q3xz));
   //NB These abs() are OK because x2,z2 do have the same sign
   fac=gcd(x2,z2);  if(fac>1) {x2/=fac; z2/=fac;}
   bigint y2 = q0(x2,z2);
-  
+
   if(isqrt(x2,x)&&isqrt(z2,z)&&isqrt(y2,y))
     {
-      if(verb) 
+      if(verb)
 	{
-	  cout<<"Point on original quartic is "; 
+	  cout<<"Point on original quartic is ";
 	  show_xyz(x,y,z);
 	  cout<<endl;
 	}

@@ -2,30 +2,31 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include <eclib/compproc.h>
 #include <eclib/twoadic.h>
 #include <eclib/mlocsol.h>
 #include <eclib/mglobsol.h>
 #include <eclib/mrank1.h>
+#include <eclib/ct.h>
 
 #define USE_BIGINTS
 
@@ -71,13 +72,13 @@
 #define ROUNDADJUST 0.001 // Amount add/subtracted before rounding for safety
 long roundtemp;
 inline int FITS_IN_LONG(const bigfloat& x) {return (x<=MAXLONG)&&(x>=MINLONG);}
-inline void ROUNDUP(long& a,const bigfloat& x) 
+inline void ROUNDUP(long& a,const bigfloat& x)
 {
   if(FITS_IN_LONG(x)) return Iasb(a,ceil((x)-ROUNDADJUST));
   cout<<"Attempt to round "<<x<<" to a long int fails, aborting!\n";
   abort();
 }
-inline void ROUNDDOWN(long& a,const bigfloat& x) 
+inline void ROUNDDOWN(long& a,const bigfloat& x)
 {
   if(FITS_IN_LONG(x)) return Iasb(a,floor((x)+ROUNDADJUST));
   cout<<"Attempt to round "<<x<<" to a long int fails, aborting!\n";
@@ -135,15 +136,15 @@ void rank1::show_eps_vec(long * vec)
 }
 
  // process latest quartic found
-void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c, 
+void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 		       const bigint& d, const bigint& e)
 {
-  long firsti, i, oldnumber=0, thisnumber, nfl; 
+  long firsti, i, oldnumber=0, thisnumber, nfl;
   char ab;
   int trivial=0, newone=1, gls=0, els=0;
   quartic * qlist, *thisq;;
   bigint x,y,z, badp; 	  Point Ptemp;
-  int btype = 0;    
+  int btype = 0;
   int pivtype=-1; // set to 0 for \infty, 1 for odd prime, 2 for 2
   if (type==1) // then we have an egg point, i.e. \infty is pivotal
     {btype=1; pivtype=0;}
@@ -168,7 +169,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
   // only use large quartics for pivoting when there is an odd pivotal
   // prime suitable.
 
-  if(atype) 
+  if(atype)
     {qlist=qlista; thisnumber=nquarticsa; nfl=nfirstlota; ab='A';}
   else 
     {qlist=qlistb; thisnumber=nquarticsb; nfl=nfirstlotb; ab='B';}
@@ -177,9 +178,9 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
   thisq=qlist+thisnumber;
 
   if (verbose) cout << (*thisq) << "\t";
-  if (verbose>1) 
+  if (verbose>1)
     {
-      cout << "(ipivot = "<<ipivot<<", type = "<<ab<<") \t";  
+      cout << "(ipivot = "<<ipivot<<", type = "<<ab<<") \t";
       long * vec = qeps(*thisq,extra2);
       show_eps_vec(vec);
       cout<<"\t";
@@ -201,9 +202,9 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
   thisq->set_equiv_code(eqplist);
   firsti = (extra2==1 ? nfl : 0);
   for (i=firsti; newone && (i<thisnumber); i++)
-    { 
+    {
       if((!atype)&&(!qlistbflag[i])) continue;
-      if(traceequiv) 
+      if(traceequiv)
 	cout << "\nTesting equiv with number " << ab<< i+1 << endl;
 #ifdef NEW_EQUIV
       newone = ! new_equiv(thisq,qlist+i,traceequiv);
@@ -215,147 +216,154 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 
   if(newone)      // Check local and global solubility:
     {
-      if(atype) 
-	{
-	  nquarticsa++;  
-	  if(verbose) cout<<"--new (A) #"<<nquarticsa<<"\t"<<flush;
-	}
-      // but we do not increment nquarticsb unless the quartic is
-      // els with no point, as otherwise we do not need to keep it
+		if(atype)
+		{
+			nquarticsa++;
+			if(verbose) cout<<"--new (A) #"<<nquarticsa<<"\t"<<flush;
+		}
+		// but we do not increment nquarticsb unless the quartic is
+		// els with no point, as otherwise we do not need to keep it
 
-      if(selmer_only)
-	{
-	  gls = ratpoint(*thisq,BIGINT(1),BIGINT(lim1),x,y,z);
-	  if(gls) els=1; 
-	  else els=locallysoluble(*thisq,plist,badp);
-          if(verbose) 
-	    {
-	      if(els) cout<<"locally soluble\n";
-	      else cout<<"not locally soluble (p = "<<badp<<")\n";
-	    }
-	}
-      else
-
-      if (ratpoint(*thisq,BIGINT(1),BIGINT(lim1),x,y,z))
-	{ 
-	  gls=els=1;
-	  if (verbose) cout<<"(x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
-	}
-      else
-	{
-// 	  cout<<"\nChecking "<<(*thisq)<<" for local solubility at "<<plist<<endl;
-	  if (locallysoluble(*thisq,plist,badp))
-	    { 
-	      els=1;
-	      if (verbose) cout<<"locally soluble..."<<flush;
-	      quartic_sieve qs(thisq,QSIEVE_OPT,0);
-	      if(qs.search(lim2))
-		{ 
-		  qs.getpoint(x,y,z); gls=1;
-		  if (verbose) 
-		    cout<<"(x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
-		}
-	      else 
-		if (verbose) 
-		  cout<<"no rational point found (limit "<<lim2<<")"<<flush;
-	    }
-	  else 
-	    if (verbose) 
-	      cout<<"not locally soluble (p = "<<badp<<")\n";
-	}
-
-      if(gls||(els&&selmer_only))
-	{
-	  if(!selmer_only)
-	    {
-  //cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";  
-	      qc(*thisq,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
-  //cout<<"qc() returns giving point " << Ptemp << "\n";
-	    }
-	  if(atype) // we have a quartic in A = ker(eps)
-	    {
-	      if(!selmer_only)
+		if(selmer_only||do_CT)
 		{
-		  pointlist1.push_back(Ptemp);
-		  npoints1++; 
-		  n1++; 
-		}
-	      n2++;
-	      if(verbose) 
-		{
-		  if(selmer_only) cout<<"Selmer rank increases to "<<n2<<endl;
-		  else cout<<"Size of A=ker(eps) increases to "<<n1<<endl;
-		}
-	    }
-	  else // we have a quartic in B = im(eps)
-	       // pivtype tells which type of prime is pivotal
-	    {
-	      if(!selmer_only)
-		{
-		  pointlist2.push_back(Ptemp);
-		  npoints2++; 
-		}
-	      switch(pivtype) {
-	      case 2:  // this is a large quartic
-		{
-		  global_index*=2;
-		  if(verbose)
-		    {
-		      cout<<"Doubling global 2-adic index to "<<global_index<<endl;
-		    }
-		  if(global_index==twoadic_index) 
-		    {
-		      if(verbose)
-			{
-			  cout<<"global 2-adic index is equal to local index\n";
-			  cout<<"so we abort the search for large quartics"<<endl;
-			}
-		      have_large_quartics=1;
-// now go through qlistb to see if any of them were large 
-// and now redundant, by comparing discriminants
-		      
-		      for(i=0; i<nquarticsb; i++)
-			{
-			  if(!qlistbflag[i]) continue;  
-			  // i'th is already redundant
-			  qlistbflag[i]=(qlistb[i].getdisc()!=disc);
-			  if((!qlistbflag[i])&&verbose) 
-			    cout<<"Quartic B #"<<(i+1)<<" is now redundant\n";
-			}
-		    }
-		  break;
-		} // end of case 2
-	      case 0: //  on the egg
-		{
-		  have_eggpoint=1;
-// now go through qlistb to see if any of them were Type 1
-// and now redundant
-		  for(i=0; i<nquarticsb; i++)
-		    {
-		      if(!qlistbflag[i]) continue;  
-		                   // i'th is already redundant
-		      qlistbflag[i]=(qlistb[i].gettype()!=1);
-		      if(!qlistbflag[i]) 
+			if (!do_CT) {gls = ratpoint(*thisq,BIGINT(1),BIGINT(lim1),x,y,z);}
+			if(gls) els=1;
+			else els=locallysoluble(*thisq,plist,badp);
 			if(verbose)
-			  cout<<"Quartic B #"<<(i+1)<<" is now redundant\n";
-		    }
-		  break;
-		} // end of case 0:
-	      case 1: //odd pivotal prime # ipivot
+			{
+				if(els) cout<<"locally soluble\n";
+				else cout<<"not locally soluble (p = "<<badp<<")\n";
+			}
+		}
+		else
 		{
-		  int oldflag=aux_flags[ipivot], newflag=8;
-		  if((oldflag==1)&&(pivflag==5)) newflag=2;
-		  if((oldflag==1)&&(pivflag==3)) newflag=4;
-		  if((oldflag==1)&&(pivflag==1)) newflag=4;
-		  aux_flags[ipivot]=newflag;
-		  if(verbose>1) cout<<"\nipivot = "<<ipivot
-				    <<", changing mask from "<<oldflag
-				    <<" to "<<newflag<<endl;
- // go back through qlistb to see if any of them would now be sieved out, 
- // as they are now redundant
-		  long auxpiv = auxs[ipivot];
-		  long hscale = hscalemod[ipivot];
-		  for(i=0; i<nquarticsb; i++)
+			if (ratpoint(*thisq,BIGINT(1),BIGINT(lim1),x,y,z))
+			{
+				gls=els=1;
+				if (verbose) cout<<"(x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
+			}
+			else
+			{
+				// 	  cout<<"\nChecking "<<(*thisq)<<" for local solubility at "<<plist<<endl;
+				if (locallysoluble(*thisq,plist,badp))
+				{
+					els=1;
+					if (verbose) cout<<"locally soluble..."<<flush;
+					quartic_sieve qs(thisq,QSIEVE_OPT,0);
+					if(qs.search(lim2))
+					{
+						qs.getpoint(x,y,z); gls=1;
+						if (verbose) {cout<<"(x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";}
+					}
+					else
+					{
+						if (verbose) {cout<<"no rational point found (limit "<<lim2<<")"<<flush;}
+					}
+				}
+				else
+				{
+					if (verbose) {cout<<"not locally soluble (p = "<<badp<<")\n";}
+				}
+			}
+		}
+		if(gls||(els&&selmer_only))
+		{
+			if(!selmer_only)
+			{
+				//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
+				qc(*thisq,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
+				//cout<<"qc() returns giving point " << Ptemp << "\n";
+			}
+			if(atype) // we have a quartic in A = ker(eps)
+			{
+				if(!selmer_only)
+				{
+					pointlist1.push_back(Ptemp);
+					npoints1++;
+					n1++;
+				}
+				n2++;
+				if (do_CT)
+				{
+					vector<bigint> vv={a,b,c,d,e};
+					qelsgens1.push_back(vv);
+				}
+				if(verbose)
+				{
+					if(selmer_only) cout<<"Selmer rank increases to "<<n2<<endl;
+					else cout<<"Size of A=ker(eps) increases to "<<n1<<endl;
+				}
+			}
+			else // we have a quartic in B = im(eps)
+			// pivtype tells which type of prime is pivotal
+			{
+				if(!selmer_only)
+				{
+					pointlist2.push_back(Ptemp);
+					npoints2++;
+				}
+				switch(pivtype)
+				{
+					case 2:  // this is a large quartic
+					{
+						global_index*=2;
+						if(verbose)
+						{
+							cout<<"Doubling global 2-adic index to "<<global_index<<endl;
+						}
+						if(global_index==twoadic_index)
+						{
+							if(verbose)
+							{
+								cout<<"global 2-adic index is equal to local index\n";
+								cout<<"so we abort the search for large quartics"<<endl;
+							}
+							have_large_quartics=1;
+							// now go through qlistb to see if any of them were large
+							// and now redundant, by comparing discriminants
+
+							for(i=0; i<nquarticsb; i++)
+							{
+								if(!qlistbflag[i]) continue;
+								// i'th is already redundant
+								qlistbflag[i]=(qlistb[i].getdisc()!=disc);
+								if((!qlistbflag[i])&&verbose)
+								cout<<"Quartic B #"<<(i+1)<<" is now redundant\n";
+							}
+						}
+						break;
+					} // end of case 2
+					case 0: //  on the egg
+					{
+						have_eggpoint=1;
+						// now go through qlistb to see if any of them were Type 1
+						// and now redundant
+						for(i=0; i<nquarticsb; i++)
+						{
+							if(!qlistbflag[i]) continue;
+							// i'th is already redundant
+							qlistbflag[i]=(qlistb[i].gettype()!=1);
+							if(!qlistbflag[i])
+							if(verbose)
+							cout<<"Quartic B #"<<(i+1)<<" is now redundant\n";
+						}
+						break;
+					} // end of case 0:
+					case 1: //odd pivotal prime # ipivot
+					{
+						int oldflag=aux_flags[ipivot], newflag=8;
+						if((oldflag==1)&&(pivflag==5)) newflag=2;
+						if((oldflag==1)&&(pivflag==3)) newflag=4;
+						if((oldflag==1)&&(pivflag==1)) newflag=4;
+						aux_flags[ipivot]=newflag;
+						if(verbose>1) cout<<"\nipivot = "<<ipivot
+						<<", changing mask from "<<oldflag
+						<<" to "<<newflag<<endl;
+						// go back through qlistb to see if any of them would now be sieved out,
+						// as they are now redundant
+						long auxpiv = auxs[ipivot];
+						long hscale = hscalemod[ipivot];
+						for(i=0; i<nquarticsb; i++)
 		    {
 		      if(!qlistbflag[i]) continue;  // i'th already redundant
 		      // compute (a,h) of i'th quartic:
@@ -368,58 +376,63 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 		      if(verbose>1) 
 			cout<<(i+1)<<"-th quartic in list has flag = "<<fl<<endl;
 		      qlistbflag[i] = (fl & newflag)!=0;
-		      if(!qlistbflag[i]) 
-			if(verbose)
-			  cout<<"Quartic B #"<<(i+1)<<" is now redundant\n";
-		    }
-		} // end of case 1
-	      } // end of switch between cases
-	      rank_B++; 
-	      if(verbose)
+							if(!qlistbflag[i])
+							if(verbose)
+							cout<<"Quartic B #"<<(i+1)<<" is now redundant\n";
+						}
+					} // end of case 1
+				} // end of switch between cases
+				rank_B++;
+				if (do_CT)
+				{
+					vector<bigint> vv={a,b,c,d,e};
+					qelsgens1.push_back(vv);
+				}
+				if(verbose)
+				{
+					if(selmer_only)
+					cout<<"Selmer rank increases to "<<rank_B<<endl;
+					else
+					{
+						cout<<"Rank of B=im(eps) increases to "<<rank_B;
+						if(type==1) {cout<<" (The previous point is on the egg)";}
+						else {if(verbose>1) {cout<<" (pivotal prime =" << auxs[ipivot] << ")";}}
+
+						cout<<endl;
+					}
+				}// in this case we do not need to keep the quartic,  so do not increment nquarticsb
+			} // end of B=im(eps) case
+		}  // end of gls case
+		else // no rational point was found (& we are not doing selmer_only)
 		{
-		  if(selmer_only)
-		    cout<<"Selmer rank increases to "<<rank_B<<endl;
-		  else
-		    {
-		      cout<<"Rank of B=im(eps) increases to "<<rank_B;
-		      if(type==1) 
-			cout<<" (The previous point is on the egg)";
-		      else {if(verbose>1) 
-			cout<<" (pivotal prime =" << auxs[ipivot] << ")";}
-		      cout<<endl;
-		    }
+			if(els) // have a possible "Selmer point"
+			{
+				if(atype)
+				{
+					n2++;
+					if(verbose) cout<<endl;
+				}
+				else
+				{
+					qlistbflag[nquarticsb]=1;
+					nquarticsb++;
+					if(verbose) cout<<" --new (B) #"<<nquarticsb<<endl;
+				}
+			}
+			return;
 		}
- // in this case we do not need to keep the quartic,  so do not increment nquarticsb
-	    } // end of B=im(eps) case
-	}  // end of gls case
-      else // no rational point was found (& we are not doing selmer_only)
-	if(els) // have a possible "Selmer point"
-	  {
-	    if(atype) 
-	      {
-		n2++;
-		if(verbose) cout<<endl;
-	      }
-	    else
-	      {
-		qlistbflag[nquarticsb]=1;
-		nquarticsb++;
-		if(verbose) cout<<" --new (B) #"<<nquarticsb<<endl;
-	      }
-	  }
-      return;
     }
-  else
+	else
     {
-      if (verbose) cout << "--equivalent to ("<<ab<<") #"<<oldnumber<<endl;
+		if (verbose) cout << "--equivalent to ("<<ab<<") #"<<oldnumber<<endl;
     }
 } // end of addquartic()
 
 
 void rank1::getquartics()
 {
-  nquarticsa = 0; nfirstlota = 0; 
-  nquarticsb = 0; nfirstlotb = 0; 
+  nquarticsa = 0; nfirstlota = 0;
+  nquarticsb = 0; nfirstlotb = 0;
   have_eggpoint = 0;
   have_large_quartics = 0;
   rank_B = 0;
@@ -427,7 +440,7 @@ void rank1::getquartics()
   ah_rfail = ah_dfail   = ah_efail   = ah_extra2fail = ah_pass = 0;
   ii=c4; jj=2*c6;   disc = 4*d1728;
 
-  if(div(16,ii)&&div(64,jj)) 
+  if(div(16,ii)&&div(64,jj))
     {
       ii/=16; jj/=64; disc/=4096;
       tr_u/=2; tr_r/=4; tr_s/=2; tr_t/=8;
@@ -445,7 +458,7 @@ void rank1::getquartics()
   global_index=1;  // only gets increased when large quartics are found
   twoadic_index = 2;
   if(Jmod4==0) if((Imod4==2)||(Imod4==3)) twoadic_index=4;
-  if(verbose) 
+  if(verbose)
     cout<<"2-adic index bound = "<<twoadic_index<<endl;
 
   bsd_npairs = 2;
@@ -457,9 +470,9 @@ void rank1::getquartics()
   npairs=twoadic_index=bsd_npairs;
 #else // LARGE_Q>1
   if( (Imod4==0)&&(Jmod4==0) )
-    { 
+    {
       if  (div(16,2*ii+jj)||div(16,2*ii+jj-4))
-// Case covered by Lemma 5.1(a)!	
+// Case covered by Lemma 5.1(a)!
 	{
 	  npairs=twoadic_index=1;
 	  if(verbose)
@@ -473,7 +486,7 @@ void rank1::getquartics()
 	{
 	  bigint a = -27*ii/4;
 	  bigint b = -27*jj/4;
-	  if(verbose>1) 
+	  if(verbose>1)
 	    cout<<"Case 1 with a = I/4 = "<<a<<", b = J/4 = "<<b<<endl;
 	  twoadic_index = npairs = 1 + case1(a,b);
 	  if(verbose)
@@ -487,7 +500,7 @@ void rank1::getquartics()
   if( (Imod4==1)&&(Jmod4==2) )
     {
       if  (div(16,ii+jj+5)||div(16,ii+jj+1))
-// Case covered by Lemma 5.1(b)!	
+// Case covered by Lemma 5.1(b)!
 	{
 	  npairs=twoadic_index=1;
 	  if(verbose)
@@ -512,7 +525,7 @@ void rank1::getquartics()
 	}
 #endif
     }
-  if (verbose) 
+  if (verbose)
     {
 #if LARGE_Q>2
       cout<<"2-adic index = "<<twoadic_index<<endl;
@@ -521,8 +534,8 @@ void rank1::getquartics()
       else cout<<"One (I,J) pair";
       cout<<endl;
     }
-  
-  if (verbose) 
+
+  if (verbose)
     {
       if (div(4,ii)&&div(8,jj)&&div(16,2*ii+jj)) // BSD say 1 pair
 	{
@@ -564,9 +577,9 @@ void rank1::getquartics()
   cphi = new bigcomplex[3];
   if(is_zero(ii))
     {
-      if(xjj>0) 
+      if(xjj>0)
 	cphi[2]=-exp(one_third*log(xjj));
-      else 
+      else
 	cphi[2]=exp(one_third*log(-xjj));
       cphi[1] = w*cphi[2];
       cphi[0] = conj(cphi[1]);
@@ -603,7 +616,7 @@ void rank1::getquartics()
     cout<<"Before sorting, phi = "<<cphi[0]<<","<<cphi[1]<<","<<cphi[2]<<endl;
   flag_init();
   getquartics1();
-  if (npairs==2) 
+  if (npairs==2)
     {
       nfirstlota = nquarticsa;
       nfirstlotb = nquarticsb;
@@ -618,7 +631,7 @@ void rank1::getquartics()
       getquartics1();
     }
   delete[] cphi;
-  if(verbose>1) 
+  if(verbose>1)
     {
       cout << ah_count      << "\t (a,b,c) triples in search region\n";
       cout << ah_sieve_1    << "\t failed c-divisiblity,\n";
@@ -636,9 +649,9 @@ void rank1::getquartics()
 
 void rank1::getquartics1()
 {
-  if (verbose) 
+  if (verbose)
     cout<<"Looking for quartics with I = "<< ii << ", J = " << jj << endl;
-  
+
   static bigint zero = BIGINT(0);
   IJ_curve = Curvedata(zero,zero,zero,-27*ii,-27*jj,0);  // don't minimise
 
@@ -660,7 +673,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   type=t;
   long a,astep, amin=0, amax=0, firsta, lasta;
   long b,bstep;
-  long c,cstep,cmod3;  
+  long c,cstep,cmod3;
   int a_is_odd, b_is_odd, a_div_by_4;
   int a_positive;
   bigint I48=48*ii, J64=64*jj;
@@ -672,19 +685,19 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   long efactor;
   bigcomplex c1;
   // Unnecessary initializations to keep -Wall happy:
-  bigfloat phi=zero,phi1,phi2,phi3; 
+  bigfloat phi=zero,phi1,phi2,phi3;
   bigfloat amax0=zero, amin0, amax2, amin2, amax3, amin3;
   bigfloat hmin=zero, hmax=zero, hmin0=zero, hmax0=zero, hmin2, hmax2, htemp;
   bigfloat const6=zero,const5=zero,const3=zero,const2=zero;
-  
+
 
   int extraextra2 = div(64,ii)&&div(128,jj);  // Pascale's extra condition
   cmod3 = mod(jj,3);
 
   if (verbose) cout << "Looking for Type " << t << " quartics:\n";
 
-// Set phi to be the real root in type 3, 
-// else set the phi_i to be the three real roots 
+// Set phi to be the real root in type 3,
+// else set the phi_i to be the three real roots
 //   in descending order phi1 > phi2 > phi3:
 
   switch(type) {
@@ -706,21 +719,21 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
     break;
   case 3:
     // find the real phi and make it phi[2]
-    if (is_real(cphi[1])) 
+    if (is_real(cphi[1]))
       {
 	phi=real(cphi[1]);
 	cphi[1]=cphi[2];
 	cphi[2]=phi;
       }
-    else 
+    else
       {
-	if (is_real(cphi[2])) 
+	if (is_real(cphi[2]))
 	  {
 	    phi=real(cphi[2]);
 	  }
-	else 
+	else
 	  {
-	    if (is_real(cphi[0])) 
+	    if (is_real(cphi[0]))
 	      {
 		phi=real(cphi[0]);
 		cphi[0]=cphi[2];
@@ -777,7 +790,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	  }
 	  }
 	if(amax3>amax2) amax2=amax3;  // so amax2=max of two previous
-	if(amax2>amax0) 
+	if(amax2>amax0)
 	  {
 	    amax2=amax0;              // so amax2=min of two previous
 	  }
@@ -841,14 +854,14 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 #ifdef SQUARE_A_FIRST
       int square_a_only = (a_positive==2);
 #endif
-      if (a_positive) 
+      if (a_positive)
 	{
 	  firsta=amin; if(firsta<1) firsta=1;
 	  lasta =amax;
 	  if(firsta>lasta) continue;
 	  a=firsta-1;
 	  astep=1;
-	  if(verbose) 
+	  if(verbose)
 	    {
 	      cout << "Trying positive a from " << firsta << " up to " << lasta;
 #ifdef SQUARE_A_FIRST
@@ -867,7 +880,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	  if(firsta<lasta) continue;
 	  a=firsta+1;
 	  astep=-1;
-	  if(verbose) 
+	  if(verbose)
 	    cout << "Trying negative a from " << firsta << " down to " << lasta << endl;
 	}
 
@@ -884,14 +897,14 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	}
 #endif
 
-  long iaux; 
+  long iaux;
   long *amodi, *hmodi, *auxi, *hstepmodi, *hscalemodi, *astepmodi;
 
   int ***flagsi; int **flagai;
   iaux=num_aux; amodi=amod; auxi=auxs;  astepmodi=astepmod;
-  while(iaux--) 
+  while(iaux--)
     {
-      *amodi++     = posmod(a,    *auxi); 
+      *amodi++     = posmod(a,    *auxi);
       *astepmodi++ = posmod(astep,*auxi);
       auxi++;
     }
@@ -899,12 +912,12 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   while(a!=lasta)
     {
       a+=astep;
-      for(iaux=0, amodi=amod, auxi=auxs, flagai=flaga, flagsi=flags, 
+      for(iaux=0, amodi=amod, auxi=auxs, flagai=flaga, flagsi=flags,
 	  astepmodi=astepmod;
-	  iaux<num_aux; 
-	  iaux++, amodi++, auxi++, flagai++, flagsi++, astepmodi++) 
+	  iaux<num_aux;
+	  iaux++, amodi++, auxi++, flagai++, flagsi++, astepmodi++)
 	{
-	  (*amodi)+=(*astepmodi); 
+	  (*amodi)+=(*astepmodi);
 	  if((*amodi)>=(*auxi)) (*amodi)-=(*auxi);
 	  *flagai = (*flagsi)[*amodi];
 	}
@@ -938,25 +951,25 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	  if(extra2) bstep=4; else
 	    if(b_must_be_odd) bstep=2;
 
-	  long absa=abs(a); 
+	  long absa=abs(a);
 	  long absa2=absa<<1;
 	  bigfloat xa=to_bigfloat(a);
 	  bigfloat xa4 = 4*xa, xa8=8*xa;
 	  bigfloat oneover4a = 1/xa4;
-	  
+
 // hstep does not depend on b so can be set here:
 	  long hstep = 8*a*cstep;
 	  iaux=num_aux; hstepmodi=hstepmod; auxi=auxs; hscalemodi=hscalemod;
 	  if(extra2)
-	    while(iaux--) 
+	    while(iaux--)
 	      {
-		*hstepmodi++ = posmod(hstep*(*hscalemodi),*auxi); 
+		*hstepmodi++ = posmod(hstep*(*hscalemodi),*auxi);
 		auxi++; hscalemodi++;
 	      }
 	  else
-	    while(iaux--) 
+	    while(iaux--)
 	      {
-		*hstepmodi++ = posmod(hstep,*auxi); 
+		*hstepmodi++ = posmod(hstep,*auxi);
 		auxi++;
 	      }
 
@@ -989,10 +1002,10 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	    {
 	      hmax = xa4*phi;
 	      const3 = const2*(4*const5-27*xa*xa);
-	      if(const3<0) 
+	      if(const3<0)
 		{
 		  //		  cout<<"const3 = "<<const3<<endl;
-		  const3=0; 
+		  const3=0;
 		}
 	      else const3=2*sqrt(const3)/3;
 	      //	      cout<<"const3 =  "<<const3 << endl;
@@ -1018,7 +1031,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 #endif
 	  if(a_positive)
 	    {
-	      if(hmin>hmax) 
+	      if(hmin>hmax)
 		{
 //	  cout<<"Empty H-range!  hmin = "<<hmin<<", hmax = "<<hmax<<"\n";
 		  continue;
@@ -1026,7 +1039,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	    }
 	  else
 	    {
-	      if(hmax>hmin) 
+	      if(hmax>hmin)
 		{
 //	  cout<<"Empty H-range!  hmin = "<<hmax<<", hmax = "<<hmin<<"\n";
 		  continue;
@@ -1071,9 +1084,9 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 		    cout<<"Empty c-range!  cmin = "<<cmin<<", cmax = "<<cmax<<"\n";
 		  //DEBUG: cmin = 804861;
 
-		  while(mod(cmin,3)!=cmod3) 
+		  while(mod(cmin,3)!=cmod3)
 		    cmin++; // Skip to correct residue mod 3
-		  while(cmin%cfac2)       
+		  while(cmin%cfac2)
 		    cmin+=3; // Skip to next multiple of cfac2
 
 		  if(cmin>cmax) continue;   // Skip to next b
@@ -1084,26 +1097,26 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 		  c=cmin-cstep; // So first value used is cmin
 
 		  iaux=num_aux; hmodi=hmod; auxi=auxs; hscalemodi=hscalemod;
-		  while(iaux--) 
+		  while(iaux--)
 		    {
 		      long aux=(*auxi);
 		      long  cmod  = c%aux, bmod  = b%aux;
 		      long bb3mod = (3*bmod*bmod)%aux;
-		      long h0 = (((8*a*cmod)%aux)-bb3mod)%aux; 
+		      long h0 = (((8*a*cmod)%aux)-bb3mod)%aux;
 		      if(extra2) h0=posmod((*hscalemodi)*h0,aux);
 		      else       h0=posmod(h0,aux);
 		      *hmodi++ = h0;
 		      hscalemodi++;
 		      auxi++;
 		    }
-		  
+
 		  while(c<=cmax-cstep)
 		    {
 		      ah_count++;
 		      c+=cstep;
-		      for(iaux=0, hmodi=hmod, hstepmodi=hstepmod, auxi=auxs; 
-			  iaux<num_aux; 
-			  iaux++, hmodi++, hstepmodi++, auxi++) 
+		      for(iaux=0, hmodi=hmod, hstepmodi=hstepmod, auxi=auxs;
+			  iaux<num_aux;
+			  iaux++, hmodi++, hstepmodi++, auxi++)
 			{
 			  (*hmodi) += (*hstepmodi);
 			  if((*hmodi)>=(*auxi)) (*hmodi)-=(*auxi);
@@ -1111,11 +1124,11 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 
 		      int flagok = (b_is_odd || even(c-Imod2));
 		      if(!flagok) {ah_sieve_1++; continue;}
-		      
+
 		      ipivot=-1;
 
-		      for(iaux=0, hmodi=hmod, flagai=flaga; 
-			  flagok&&(iaux<num_aux); 
+		      for(iaux=0, hmodi=hmod, flagai=flaga;
+			  flagok&&(iaux<num_aux);
 			  iaux++, hmodi++, flagai++)
 			{
 			  int thisflag = (*flagai)[*hmodi];
@@ -1161,7 +1174,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 		      bigint asq=sqr(biga);
 		      bigint cub = h*(sqr(h)-asq*I48)+biga*asq*J64;
 		      ok = ::divides(cub,m27,rsq,rem);
-		      if(!ok) 
+		      if(!ok)
 			{
 			  cout<<"cub not divisible by 27 for (a,b,c,h)=("
 			    <<a<<","<<b<<","<<c<<","<<h<<")\n";
@@ -1179,17 +1192,17 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 #endif
 #ifdef DEBUG_AH
 		      cout<<"; r = "<<r<<" "<<flush;
-#endif	      
-		       bigint bigc = BIGINT(c); 
-		       bigint bigcsq = bigc*bigc; 
-		       bigint ii_cc = ii-bigcsq;  
+#endif
+		       bigint bigc = BIGINT(c);
+		       bigint bigcsq = bigc*bigc;
+		       bigint ii_cc = ii-bigcsq;
 #ifdef USE_BIGINTS
 		       bigint temp = bigb*(bigbsq-4*biga*bigc);
 		       // must compute as bigints
 #else
 		       bigfloat xc=c, xb=b;
 		       bigfloat xcc=xc*xc, xbb=xb*xb;
-		       bigfloat temp = xb*(xbb-xa4*xc);  
+		       bigfloat temp = xb*(xbb-xa4*xc);
 		       // must compute as bigfloats
 #endif
 // Loop on  sign of b:
@@ -1231,13 +1244,13 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			 if (xxe>abceps) {ah_efail++; continue;}
 			 d = Iround(xd);
 			 e = Iround(xe);
-			 
+
 #endif
 #ifdef DEBUG_AH
-			 cout << ":\n [" << a<<","<<sb << "," << c 
-			   << "," << d << "," << e << "]"<<endl; 
+			 cout << ":\n [" << a<<","<<sb << "," << c
+			   << "," << d << "," << e << "]"<<endl;
 #endif
-// 
+//
 // Now test divisibility conditions in extra2 case:
 // (already know 4|b   since 16|h, and not(4|a))
 //
@@ -1256,8 +1269,8 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			 if ( ii != iiabcde )
 			   {
 			     cout<<"Error: constructed quartic ";
-			     
-			     cout << "[" << a<<","<<sb << "," << c << "," << d << "," << e << "]"; 
+
+			     cout << "[" << a<<","<<sb << "," << c << "," << d << "," << e << "]";
 			     cout << " has wrong I-invariant "<<iiabcde<<", not "<<ii<<endl;
 			     continue;
 			   }
@@ -1265,7 +1278,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			 if (jj != jjabcde)
 			   {
 			     cout<<"Error: constructed quartic ";
-			     cout << "[" << a<<","<<sb << "," << c << "," << d << "," << e << "]"; 
+			     cout << "[" << a<<","<<sb << "," << c << "," << d << "," << e << "]";
 			     cout << " has wrong J-invariant "<<jjabcde<<", not "<<jj<<endl;
 			     continue;
 			   }
@@ -1280,20 +1293,20 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			       if((habcde<0)&&(qabcde>0))
 				 {
 				   cout<<"Error: constructed quartic ";
-				   cout<<"[" << a<<","<<sb << "," << c << "," << d << "," << e << "]"; 
+				   cout<<"[" << a<<","<<sb << "," << c << "," << d << "," << e << "]";
 				   cout<<" has type 2, not 1!\n";
 				   cout<<"Please report"<<endl;
-				   continue;				 
+				   continue;
 				 }
 			     }
 			     else // type==2
 			       if((habcde>=0)||(qabcde<=0))
 				 {
 				   cout<<"Error: constructed quartic ";
-				   cout<<"[" << a<<","<<sb << "," << c << "," << d << "," << e << "]"; 
+				   cout<<"[" << a<<","<<sb << "," << c << "," << d << "," << e << "]";
 				   cout<<" has type 1, not 2!\n";
 				   cout<<"Please report"<<endl;
-				   continue;				 
+				   continue;
 				 }
 			   }
 // Now construct the roots of the quartic and add it to the list.
@@ -1331,17 +1344,17 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			 addquartic(biga,bigb,bigc,d,e);
 			 if((type==1)&&(have_eggpoint))
 			   {
-			     if (verbose) 
+			     if (verbose)
 			       {
 				 cout << "Exiting search for Type 1 quartics after ";
 				 cout << "finding one which is globally soluble.\n";
 			       }
 			     return;
 			   }
-#if LARGE_Q>3			 
+#if LARGE_Q>3
 			 if((extra2)&&(have_large_quartics))
 			   {
-			     if (verbose) 
+			     if (verbose)
 			       {
 				 cout << "Exiting search for large quartics after ";
 				 cout << "finding enough globally soluble ones.\n";
@@ -1360,13 +1373,13 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 }  // end of gettype()
 
 
-rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
-  : rank12(ec,verb,sel,lim1,lim2,n_aux,1)
+rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux, int CT)
+  : rank12(ec,verb,sel,lim1,lim2,n_aux,1, CT)
 {
   traceequiv=0;
   success=1; // the default!
   if(num_aux==-1) num_aux=DEFAULT_NAUX;
-  if(verbose>1) 
+  if(verbose>1)
     {
       cout << "Using (a,b,c) search with (a,h) sieve and algebraic method\n";
 #ifdef USE_BIGINTS
@@ -1375,7 +1388,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
       cout << "(with bigfloats to solve the syzygy)\n";
 #endif
     }
-  
+
   qlista = new quartic[maxnquartics];
   qlistb = new quartic[maxnquartics];
   qlistbflag = new int[maxnquartics];
@@ -1386,13 +1399,13 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   if (is_zero(d1728)) {cout<<"Curve is singular\n"; success=0; return;}
 
   // Set up the transformation [u,r,s,t] from the minimal model to the model
-  // [0,0,0,-27*c4,-54*c6]; from these we will later obtain (by simple scaling) 
+  // [0,0,0,-27*c4,-54*c6]; from these we will later obtain (by simple scaling)
   // the transformations to the IJ-curve for various I,J
-  bigint a1,a2,a3,a4,a6,b2=getb2(*the_curve); 
+  bigint a1,a2,a3,a4,a6,b2=getb2(*the_curve);
   the_curve->getai(a1,a2,a3,a4,a6);
   tr_u=6; tr_r=3*b2; tr_s=3*a1; tr_t=108*a3;
 
-  vector<bigint> ir = Introotscubic( BIGINT(0),-27*c4,-54*c6);  
+  vector<bigint> ir = Introotscubic( BIGINT(0),-27*c4,-54*c6);
   n0=ir.size()+1;
 
   long e0,e1,e2;
@@ -1423,8 +1436,32 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
 
   getquartics();
 
-  //  cout<<"LOCAL INDEX "<<twoadic_index<<" GLOBAL INDEX "<<global_index<<" BSD "<<bsd_npairs<<endl;
-
+	if (do_CT)
+	{
+		///hom_inv(c4, c6, qelsgens1);
+		hom_CT(qelsgens1,c4, 2*c6);
+		for (int ll=0; ll<qelsgens1.size(); ll++)
+		{
+			bigint x, y, z;
+			Point Ptemp;
+			quartic q0 = quartic(qelsgens1[ll][0], qelsgens1[ll][1], qelsgens1[ll][2], qelsgens1[ll][3], qelsgens1[ll][4]);
+			quartic_sieve qs(&q0,QSIEVE_OPT,0);
+			if(qs.search(lim2))
+			{
+				qs.getpoint(x,y,z);// gls=1;
+				if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+				//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
+				qc(q0,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
+				//cout<<"qc() returns giving point " << Pt
+				pointlist.push_back(Ptemp);
+			}
+			else
+			{
+				if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+			}
+		}
+	}
+	if (do_CT) selmer_only=0;
 
   // Compute rank/selmer rank from B=im(eps) first:
   // Must count the quartics in qlistb which are still needed
@@ -1443,7 +1480,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   delete [] qlistb;
   delete [] croots;
   delete [] qlistbflag;
-  
+
   if(n3>0){
     if(n2>1){
       if(n3%n2==0) {
@@ -1466,10 +1503,10 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
 
   if(verbose)
     {
-      if(!selmer_only) 
+      if(!selmer_only)
 	cout << "Mordell rank contribution from B=im(eps) = " << rank_B << endl;
       cout << "Selmer  rank contribution from B=im(eps) = " << selmer_rank_B << endl;
-      if(!selmer_only) 
+      if(!selmer_only)
 	cout << "Sha     rank contribution from B=im(eps) = " << e3 << endl;
     }
 
@@ -1493,21 +1530,33 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
 
   if(verbose)
     {
-      if(!selmer_only) 
+      if(!selmer_only)
 	cout << "Mordell rank contribution from A=ker(eps) = " << rank_A << endl;
       cout << "Selmer  rank contribution from A=ker(eps) = " << selmer_rank_A << endl;
-      if(!selmer_only) 
+      if(!selmer_only)
 	cout << "Sha     rank contribution from A=ker(eps) = " << (e2-e1) << endl;
     }
 
   n1 <<= rank_B;
   n2 <<= selmer_rank_B;
-  rank = rank_A + rank_B;
-  selmer_rank = selmer_rank_A + selmer_rank_B;
-  rank_bound = selmer_rank;
+    selmer_rank = selmer_rank_A + selmer_rank_B;
+  if (do_CT)
+  {
+	  rank_bound = qelsgens1.size();
+	  rank = pointlist.size();
+  }
+
+  else
+  {
+	  rank = rank_A + rank_B;
+	  rank_bound = selmer_rank;
+  }
+
+
   sha_rank = selmer_rank - rank;
   sha2 = (n2/n1);
-  certain = (sha_rank==0)||(selmer_only);
+  certain = (rank_bound-rank==0)||(selmer_only);
+
   int strange = odd(sha_rank);
 
   if(verbose&&strange&&(!selmer_only))
@@ -1518,7 +1567,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
       cout<<"than reported here.  Try rerunning with a higher bound for\n";
       cout<<"quartic point search.\n";
     }
-  
+
   if (verbose&&(!certain))
     {
       cout << "\nSummary of results (all should be powers of 2):\n\n";
@@ -1528,16 +1577,16 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
       cout<<"= "<<n1<<"\n";
       cout<<"n2 = #S^(2)(E/Q) = "<<n2<<"\n";
       cout<<"#III(E/Q)[2]     ";
-      if(!certain) cout << "<"; 
+      if(!certain) cout << "<";
       cout<<"= "<<sha2<<"\n\n";
 
-      if(certain) 
+      if(certain)
 	cout << "rank " << "= " << rank;
-      else 
+      else
 	cout << rank << " <= rank <= selmer-rank = " << selmer_rank;
       cout << endl << endl; ;
 
-    }  
+    }
 
   if(verbose&&selmer_only)
     cout << "Selmer rank = " << selmer_rank << endl;
@@ -1553,16 +1602,16 @@ void rank1::sortpoints()  // reorder points into increasing height order
     for(j=i+1; j<npoints1; j++)
       if(height(pointlist1[j])<height(pointlist1[i]))
 	{
-	  Point temp = pointlist1[i]; 
-	  pointlist1[i]=pointlist1[j]; 
+	  Point temp = pointlist1[i];
+	  pointlist1[i]=pointlist1[j];
 	  pointlist1[j]=temp;
 	}
   for(i=0; i<npoints2; i++)
     for(j=i+1; j<npoints2; j++)
       if(height(pointlist2[j])<height(pointlist2[i]))
 	{
-	  Point temp = pointlist2[i]; 
-	  pointlist2[i]=pointlist2[j]; 
+	  Point temp = pointlist2[i];
+	  pointlist2[i]=pointlist2[j];
 	  pointlist2[j]=temp;
 	}
 }
@@ -1575,7 +1624,7 @@ void showpoint(Point P)
   cout << "\n";
 }
 
-void showpoint(Point P, Curvedata* CD, const bigint& u, const bigint& r, 
+void showpoint(Point P, Curvedata* CD, const bigint& u, const bigint& r,
 	                               const bigint& s, const bigint& t)
 {
   showpoint(transform(P,CD,u,r,s,t,1));
@@ -1678,7 +1727,7 @@ void rank1::listpoints()
 
 vector<Point> rank1::getpoints()
 // We construct a set of coset reps for 2E(Q) in E(Q) given
-// reps for the subgroup A in pointlist1 and 
+// reps for the subgroup A in pointlist1 and
 // gens for the complementary subgroup B in pointlist2
 {
   long np = (1+npoints1) << npoints2;
@@ -1687,7 +1736,7 @@ vector<Point> rank1::getpoints()
   ans.push_back(Point(the_curve,BIGINT(0),BIGINT(1),BIGINT(0)));
   ans.insert(ans.end(),pointlist1.begin(),pointlist1.end());
   ans.resize(np);
-  for(j=0; j<npoints2; j++, ip*=2) 
+  for(j=0; j<npoints2; j++, ip*=2)
     for(k=0; k<ip; k++)
       {
 	ans[ip+k]=ans[k]+pointlist2[j];
@@ -1699,6 +1748,7 @@ vector<Point> rank1::getgens() const
 // Returns a set of generators for E(Q) mod 2E(Q)
 // (but not necessarily independent)
 {
+	if (do_CT) return pointlist;
   vector<Point> ans; ans.reserve(pointlist1.size()+pointlist2.size());
   copy(pointlist1.begin(),pointlist1.end(),back_inserter(ans));
   copy(pointlist2.begin(),pointlist2.end(),back_inserter(ans));
@@ -1729,10 +1779,10 @@ void rank1::aux_init()  // define  auxiliary moduli and squares
 
   // the rest of the auxs must be chosen carefully:  if possible they should
   // be good odd primes p, such that the resolvent cubic is not irreducible mod p.
-  // If it has a unique root phi mod p, E(Qp)/2E(Qp) has order 2 and the coset in 
+  // If it has a unique root phi mod p, E(Qp)/2E(Qp) has order 2 and the coset in
   // which the image of a quartic lies depends on whether it has 0 or 2 roots mod p.
-  // If it has 3 roots  mod p, E(Qp)/2E(Qp) has order 4 and the coset in 
-  // which the image of a quartic lies depends on whether it has 0 or 4 roots mod p; 
+  // If it has 3 roots  mod p, E(Qp)/2E(Qp) has order 4 and the coset in
+  // which the image of a quartic lies depends on whether it has 0 or 4 roots mod p;
   // if 0, then a further condition determines which non-trivial coset it belongs to
 
   primevar pr; pr++; pr++;  // skip past 2 and 3
@@ -1756,7 +1806,7 @@ void rank1::aux_init()  // define  auxiliary moduli and squares
 
   // report on which primes will be used:
 
-  if((verbose>1)&&(num_aux>0)) 
+  if((verbose>1)&&(num_aux>0))
     {
       cout<<"(a,h) sieving using " <<num_aux<<" moduli: \n";
       cout<<"p:\t";
@@ -1769,15 +1819,15 @@ void rank1::aux_init()  // define  auxiliary moduli and squares
       for(j=1; j<num_aux; j++) cout<<phimod[j][0]<<"\t";
       cout<<"\n";
       cout<<"phi2:\t\t";
-      for(j=1; j<num_aux; j++) 
+      for(j=1; j<num_aux; j++)
 	if(aux_types[j]==1) cout<<"*\t";
-	else 
+	else
 	  cout<<phimod[j][1]<<"\t";
       cout<<"\n";
       cout<<"phi3:\t\t";
-      for(j=1; j<num_aux; j++) 
+      for(j=1; j<num_aux; j++)
 	if(aux_types[j]==1) cout<<"*\t";
-	else 
+	else
 	  cout<<phimod[j][2]<<"\t";
       cout<<"\n";
     }
@@ -1798,7 +1848,7 @@ void rank1::aux_init()  // define  auxiliary moduli and squares
     } // end of aux loop
 
   // initialize scaling factors for use with large I,J pair:
-  // NB we use the same sieve for both; (a,h) passes for the larger I,J 
+  // NB we use the same sieve for both; (a,h) passes for the larger I,J
   // iff (a,h/4) passes for the standard I,J.
 
   for(i=0; i<num_aux; i++)
@@ -1825,12 +1875,12 @@ void rank1::flag_init() // set up flag array
   long * code_count = new long[5]; long icc;
 #endif
 
-  for(long i=0; i<num_aux; i++, squaresi++, flagsi++) 
+  for(long i=0; i<num_aux; i++, squaresi++, flagsi++)
     {
 #ifdef COUNT_CODES
       for(icc=0; icc<5; icc++) code_count[icc]=0;
 #endif
-      
+
       int case1 = (aux_types[i]==1);  // phi cubic has 1 root  mod p
       int case2 = !case1;             // phi cubic has 3 roots mod p
       long a, h;
@@ -1869,10 +1919,10 @@ void rank1::flag_init() // set up flag array
 		{
 		  disc = posmod(-3*disc,aux2);
 		  thisflag = (*squaresi)[disc];
-		  if(thisflag) 
+		  if(thisflag)
 		    {
 	      // look further to see how many roots mod p an (a,h) quartic
-	      // could have.  
+	      // could have.
 		      if(case1)
 			{
 		  //By choice of auxs there must be 0 or 2 roots, and
@@ -1917,7 +1967,7 @@ void rank1::flag_init() // set up flag array
 
 //(+,+,+) maps to flag 15=8+4+2+1     (+,-,-) maps to flag 5=  4 + 1
 //(-,+,-) maps to flag  3=    2+1     (-,-,+) maps to flag 1=      1
-			  
+
 			  if(eps[0]==1) thisflag=(eps[1]==1? 15: 5);
 			  else          thisflag=(eps[1]==1?  3: 1);
 			}
@@ -1950,14 +2000,14 @@ void rank1::flag_init() // set up flag array
   delete [] code_count;
 #endif
 
-  if((verbose>1)&&(num_aux>0)) 
+  if((verbose>1)&&(num_aux>0))
     cout<<"finished flag_init()"<<endl;
 
 }
 
 void rank1::clear_sieve()  // free memory related to sieve;
 {
-  for(long i=0; i<num_aux; i++) 
+  for(long i=0; i<num_aux; i++)
     {
       long aux = auxs[i];
       delete[] squares[i];

@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include <iomanip> // for setbase(), used for hex output of codes
 
 #include <eclib/bitspace.h>
@@ -29,6 +29,8 @@
 #include <eclib/mrank2.h>
 #include <eclib/sqfdiv.h>
 #include <eclib/desc2.h>
+#include <eclib/reduce.h>
+#include <eclib/ct.h>
 
 #ifndef QSIEVE_OPT
 #define QSIEVE_OPT 0 // uses Stoll's sieve
@@ -54,7 +56,7 @@ void rank2::makepoint(const bigint& c,const bigint& d1,const bigint& d2,
   if(which==0)
     {
       if(sign(z)!=0)	P.init(ee, d1*x*x*z, d1*x*y, pow(z,3));
-      if(verbose) 
+      if(verbose)
 	{
 	  cout<<"\tCurve E " /* <<(Curve)ee */ <<"\tPoint "<< P;
 	  bigfloat h = height(P);
@@ -77,17 +79,28 @@ void rank2::makepoint(const bigint& c,const bigint& d1,const bigint& d2,
 	}
       const bigint& xz=x*z, x2=x*x, z2=z*z;
       if(sign(xz)!=0) P.init(ee,2*y*y*xz,y*(d1*x2*x2-d2*z2*z2),pow(2*xz,3));
-      if(verbose) 
+      if(verbose)
 	{
 	  cout<<"\tCurve E " /* <<(Curve)ee */ <<"\tPoint "<< P;
 	  bigfloat h = height(P);
 	  cout << ", height = " << h;
 	  if(!P.isvalid()) {cout << " --warning: NOT on curve! " ;}
 	  cout << "\n";
-	  
+
 	}
     }
   if(order(P)<0)  {pointlist.push_back(P); npoints++;} // else torsion so ignore
+}
+
+void rank2::eedash_to_ee(const Point& P_dash, Point& P)
+{
+
+	bigint x0, y0, z0, ddash;
+	Point R(ee);
+	eedash.getai(x0,x0,x0,ddash,x0);
+	P_dash.getcoordinates(x0, y0, z0);
+	if ((sign(z0)!=0)&&(sign(x0)!=0)) R.init(ee, 2*y0*y0*z0, y0*(x0*x0-ddash*z0*z0), 8*x0*x0*z0);
+	P = R;
 }
 
 int rank2::testquartic(const bigint& c,const bigint& d1,const bigint& d2,int which)
@@ -104,7 +117,7 @@ int rank2::testquartic(const bigint& c,const bigint& d1,const bigint& d2,int whi
 
   // First a quick search for a small point:
   if (ratpoint(q,one,BIGINT(lim1),x,y,z))
-    { 
+    {
       makepoint(c,d1,d2,x,y,z,which);
       return 1;
     }
@@ -112,20 +125,20 @@ int rank2::testquartic(const bigint& c,const bigint& d1,const bigint& d2,int whi
   // Next a more serious search using a sieve,
   // but not too far if we are going to use second descent
   quartic_sieve qs(&q,QSIEVE_OPT,0);
-  long lim3=lim2; 
+  long lim3=lim2;
   if(do_second_descent)    // save the long search till later...
     if(lim3>FIRST_DESCENT_BOUND) lim3=FIRST_DESCENT_BOUND;
   if(qs.search(lim3, 1, 1)) // maxnpoints, pos-x-only
-    { 
+    {
       qs.getpoint(x,y,z);
       makepoint(c,d1,d2,x,y,z,which);
-      return 1;     
+      return 1;
     }
-  if (verbose) 
+  if (verbose)
     cout<<" no rational point found (hlim="<<lim3<<")\n";
   return 0;
 }  /* end of testquartic*/
- 
+
 int rank2::second_descent(const bigint& c, const bigint& d1, const bigint& d2, int which)
   // creates quartic (d1,0,c,0,d2), assumed els, and tries to find a rational point
   // by second descent (after testquartic() has failed using direct search)
@@ -155,20 +168,20 @@ int rank2::second_descent(const bigint& c, const bigint& d1, const bigint& d2, i
 	cout<<"Second descent shows that no rational point exists for d1="<<d1<<"\n\n";
       break;
     case 0: // Undecided
-      if (verbose) 
+      if (verbose)
 	cout<<"Second descent inconclusive for d1="<<d1<<": ELS descendents exist but no rational point found\n\n";
     }
   return res;
 }
 
-// First local descent: determine 
+// First local descent: determine
 // S^(phi)(E')   if which==0
 // S^(phi')(E)   if which==1
 
 void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 {
   static const bigint zero = BIGINT(0);
-  if (verbose>1) 
+  if (verbose>1)
     {
       if(which) cout<<"\n";
       cout<<"Finding els gens for E"; if(which) cout<<"'";
@@ -178,12 +191,12 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
     }
   bigint ddash = c*c-4*d;
   int posd1, istep=1;
-  if (sign(ddash)< 0) 
-    posd1=1; 
-  else 
+  if (sign(ddash)< 0)
+    posd1=1;
+  else
     posd1= (c+sqrt(ddash)< 0);
   if(posd1) istep=2;  // this will skip negative d1
-  
+
   int extra2torsion=0;
   bigint ee2, ee3;
   if(which)
@@ -202,7 +215,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 	  extra2torsion=1;
 	  ee2 = e2;
 	  ee3 = e3;
-	}      
+	}
     }
 
   bigint d1, d2, badp;
@@ -229,7 +242,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 #ifdef DEBUG_ELS
   cout<<"Number of torsion points = "<<ntorsion<<endl;
   cout<<"Torsion subgroup is ";
-  if(extra2torsion) cout<<"not "; 
+  if(extra2torsion) cout<<"not ";
   cout<<"cyclic"<<endl;
 #endif
 
@@ -237,7 +250,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 
   Point T1,T2; long orderT1=1;
   for(it=0; it<ntorsion; it++)
-    {  
+    {
       Point T = torsion[it];
       long orderT = order(T);
       if(orderT>orderT1) {T1=T; orderT1=orderT;}
@@ -245,15 +258,15 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 #ifdef DEBUG_ELS
   cout<<"Generator of maximal order = "<<T1<<" of order "<<orderT1<<endl;
 #endif
-  if(extra2torsion) 
+  if(extra2torsion)
 // then we need a second generator, for which we can take either of
 // the 2-torsion points which is not the multiple of T1
     {
       T2=(ntorsion/4)*T1;
       bigint xT2=T2.getX();
-      if(xT2==zero) 
-	T2.init(ee,ee2,zero); 
-      else 
+      if(xT2==zero)
+	T2.init(ee,ee2,zero);
+      else
 	T2.init(ee,zero,zero);
 #ifdef DEBUG_ELS
   cout<<"Second generator = "<<T2<<" of order 2"<<endl;
@@ -262,16 +275,19 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
       torsion[0]=T1;
       torsion[1]=T2;
     }
-  else 
+  else
     {
       ntorsion=1;
       torsion[0]=T1;
     }
+
 #ifdef DEBUG_ELS
-  cout<<"Processing generating torsion points"<<endl;  
+  cout<<"Processing generating torsion points"<<endl;
 #endif
-  
+
   bigint d1x;
+  vector<bigint> qgen;
+  vector<vector<bigint>> qelsgens;
   for(it=0; it<ntorsion; it++)
     {
       Point T = torsion[it];
@@ -290,7 +306,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
       if(index)
 	{
 	  elsgens.push_back(d1); nelsgens++;
-	  if(verbose>1) 
+	  if(verbose>1)
 	    cout<<"Adding (torsion) els generator #"<<nelsgens<<": d1 = " << d1;
 	  for(j=ns-1; j>=0; j--)
 //	    if(testbit(index,j)) {setbit(mask,j); break;}
@@ -313,7 +329,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
       nt2gens0=nelsgens;
     }
 
-// Now systematically go through square-free divisors d1 of d, always modulo 
+// Now systematically go through square-free divisors d1 of d, always modulo
 // the subgroup of those which we know are els
 
   int res;
@@ -328,8 +344,10 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
       res = locallysoluble(d1,c,d2,badprimes,badp);
       if(res)
 	{
+	  qgen = {d1, BIGINT(0), c, BIGINT(0), d2};
+	  qelsgens.push_back(qgen);
 	  elsgens.push_back(d1); nelsgens++;
-	  if(verbose>1) 
+	  if(verbose>1)
 	    cout<<"Adding els generator #"<<nelsgens<<": d1 = " << d1;
 	  for(j=ns-1; j>=0; j--)
 //	    if(testbit(index,j)) {setbit(mask,j); break;}
@@ -339,7 +357,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 #endif
 	  if(verbose>1) cout<<endl;
 	}
-      else 
+      else
 	{
 #ifdef DEBUG_ELS
 	  if(verbose>1) cout<<"not locally soluble at p = "<<badp<<endl;
@@ -358,30 +376,33 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
       if(nelsgens>0) cout<<"(els)gens: "<<elsgens<<endl;
       //      cout<<"mask = "<<mask<<endl;
     }
+
   if(which)
     {
+	  qelsgens11=qelsgens;
       elsgens1=elsgens; mask1=mask; els1=nelsgens;
     }
   else
     {
+	  qelsgens10=qelsgens;
       elsgens0=elsgens; mask0=mask; els0=nelsgens;
     }
 }
 
-// Second local descent: determine 
+// Second local descent: determine
 // phi'(S^2(E)) in S^(phi)(E')   if which==0
 // phi(S^2(E')) in S^(phi')(E)   if which==1
 
 void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
 {
-  if (verbose>1) 
+  if (verbose>1)
     {
       if(which) cout<<"\n";
       cout<<"Finding els2 gens for E"; if(which) cout<<"'";
       cout<<" (c"; if(which) cout<<"'";
       cout<<"= "<<c<<", d"; if(which) cout<<"'";
-      cout<<"= "<<d<<") which lift to S^2(E"; 
-      if(which) cout<<"'"; cout<<")"<<endl;
+      cout<<"= "<<d<<") which lift to S^2(E";
+      if(which) {cout<<"'";}; cout<<")"<<endl;
     }
 
   vector<bigint>& elsgens = (which? elsgens1: elsgens0);
@@ -391,7 +412,8 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
   bigint d1, d2, badp, x,y,z;
   unsigned long els2mask; long index;
   long maxn=1<<nelsgens, nels2gens=0, els2piv;
-  vector<bigint> els2gens;
+  vector<bigint> els2gens, v_;
+  vector<vector<bigint>> qelsgens2;
   bitspace els2_space(nelsgens);
 
 // first record the torsion contribution:
@@ -417,7 +439,7 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
       else
 	cout<<"Just incremented nels2gens  to "<<nels2gens<<endl;
       cout<<"now bitmask = "<<els2_space.getbitmask()<<endl;
-#endif	      
+#endif
     } // end of torsion loop
 
   int res, verb=0; if(verbose>2)verb=verbose-2;
@@ -434,27 +456,33 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
       cout<<"els2mask = "<<els2mask<<endl;
       cout<<"els2piv  = "<<els2piv <<endl;
 #endif
-      if(els2piv<0) continue; // means w're in the els2 subgp; won't happen   
+      if(els2piv<0) continue; // means w're in the els2 subgp; won't happen
       d1 = makenum(elsgens,index);
       d2 = d/d1;
 #ifdef DEBUG_ELS
       if(verbose>1) cout<<"Processing d1 = " << d1 << ":\t";
 #endif
+	  v_ = v0_;
       if(which)
-	res = 1+desc2(c,d1,d2,badprimes,supp0,elsgens0,mask0,lim2,x,y,z,verb,1);
+      {
+		  res = 1+desc2(c,d1,d2,badprimes,supp0,elsgens0,mask0,lim2,x,y,z,verb,1,do_CT,0,v_);
+	  }
       else
-	res = 1+desc2(c,d1,d2,badprimes,supp1,elsgens1,mask1,lim2,x,y,z,verb,1);
+      {
+		  res = 1+desc2(c,d1,d2,badprimes,supp1,elsgens1,mask1,lim2,x,y,z,verb,1,do_CT,0,v_);
+	  }
 #ifdef DEBUG_ELS
       if(verbose>1) cout<<"res = " << res << endl;
 #endif
       if(res)
 	{
+	  qelsgens2.push_back(v_);
 	  els2gens.push_back(d1); nels2gens++;
 	  els2_space.augment(els2mask,els2piv);
 #ifdef DEBUG_ELS
 	  cout<<"now bitmask = "<<els2_space.getbitmask()<<endl;
 #endif
-	  if(verbose>1) 
+	  if(verbose>1)
 	    cout<<"Adding els2 generator #"<<nels2gens<<": d1 = " << d1<<endl;
 	}
     }
@@ -470,15 +498,19 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
 
       if(nels2gens>0) cout<<"(els2)gens: "<<els2gens<<endl;
     }
+
   if(which)
     {
+	  qelsgens21=qelsgens2;
       els2gens1=els2gens; els21=nels2gens;
     }
   else
     {
+	  qelsgens20=qelsgens2;
       els2gens0=els2gens; els20=nels2gens;
     }
 }
+
 
 void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 {
@@ -494,7 +526,7 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
   long shortfall1, shortfall2;
   bigint d1, d2;
   int res;
-  
+
 // first record the torsion contribution:
 
   for(index=0; index<nt2gens; index++)
@@ -502,14 +534,14 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
       glsmask=(1<<index);
       d1=elsgens[index];
       glspiv=gls_space.reduce(glsmask);
-      if(glspiv<0) 
+      if(glspiv<0)
 	{
 #ifdef DEBUG_GLS
 	  cout<<"d1="<<d1<<": known gls (torsion)"<<endl;
-#endif	      
+#endif
 	  continue; // as we are certainly in the gls subgroup
 	}
-      if(verbose>1) 
+      if(verbose>1)
 	{
 	  cout<<"Adding (torsion) gls generator #"<<(nglsgens+1)
 	      <<": d1 = " << d1 <<endl;
@@ -518,14 +550,14 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
       gls_space.augment(glsmask,glspiv);
 #ifdef DEBUG_GLS
       cout<<"Just incremented nglsgens to "<<nglsgens<<endl;
-#endif	      
+#endif
     } // end of torsion loop
 
 // Next test all first descent curves for global solubility (stage 1)
 // and (optionally) do a second descent (stage 2) on unsuccessful ones.
 
-// The next lines are in case torsion accounts for everything, 
-// as then the following loop is not executed at all: 
+// The next lines are in case torsion accounts for everything,
+// as then the following loop is not executed at all:
   shortfall1 = 0;  shortfall2 = 0;
   if(which)
     {gls1=gls21=nglsgens;}
@@ -537,11 +569,11 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 
   for(stage=1; (stage<=nstages)&&(nglsgens<nelsgens); stage++)
     {
-      if(verbose&&do_second_descent) 
+      if(verbose&&do_second_descent)
 	{
-	  if(stage==1) 
+	  if(stage==1)
 	    cout << "First stage (no second descent yet)...\n";
-	  else        
+	  else
 	    cout << "Second stage (using second descent)...\n";
 	}
       for(index=1; (index<maxn)&&(nglsgens<nelsgens); index++)
@@ -554,11 +586,11 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 // First mask against gls subgroup:
 	  glsmask=index;
 	  glspiv=gls_space.reduce(glsmask);
-	  if(glspiv<0) 
+	  if(glspiv<0)
 	    {
 #ifdef DEBUG_GLS
 	      cout<<"known to be gls"<<endl;
-#endif	      
+#endif
 	      continue; // as we are certainly in the gls subgroup
 	    }
 #ifdef DEBUG_GLS
@@ -576,7 +608,7 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 	  else         res = second_descent(c,d1,d2,which);
 #ifdef DEBUG_GLS
 	  cout<<"result = "<<res<<endl;
-#endif	      
+#endif
 	  switch(res){
 	  case -1: // should not happen
 	    {
@@ -590,11 +622,11 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 	    {
 	      gls_space.augment(glsmask, glspiv);
 	      gls_gens.push_back(d1);
-	      nglsgens++; 
+	      nglsgens++;
 #ifdef DEBUG_GLS
 	      cout<<"Just incremented nglsgens to "<<nglsgens<<endl;
-#endif	      
-	      if(verbose>1) 
+#endif
+	      if(verbose>1)
 		{
 		  cout<<"Adding gls generator #"<<(nglsgens)
 		      <<": d1 = " << d1;
@@ -612,7 +644,7 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
       cout<<"At bottom of index loop\n";
       cout<<"nglsgens = "<<nglsgens<<"\tgls_gens = ";
       cout << gls_gens << endl;
-#endif   
+#endif
       if(stage==1) // finished stage 1, i.e. first descent
 	{
 	  shortfall1 = nelsgens-nglsgens;
@@ -621,8 +653,8 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 	      cout << "After first global descent, this component of the rank";
 	      if(shortfall1)
 		{
-		  cout << "\n\thas lower bound " << nglsgens-nt2gens 
-		       << "\n\tand upper bound " << nelsgens-nt2gens 
+		  cout << "\n\thas lower bound " << nglsgens-nt2gens
+		       << "\n\tand upper bound " << nelsgens-nt2gens
 		       << "\n\t(difference =   " << shortfall1 << ")\n";
 		  if(nstages==2)
 		    cout<<"Second descent will attempt to reduce this\n";
@@ -644,8 +676,8 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 	      cout << "After second global descent, this component of the rank";
 	      if(shortfall2)
 		{
-		  cout << "\n\thas lower bound " << nglsgens-nt2gens 
-		       << "\n\tand upper bound " << nelsgens-nt2gens 
+		  cout << "\n\thas lower bound " << nglsgens-nt2gens
+		       << "\n\tand upper bound " << nelsgens-nt2gens
 		       << "\n\t(difference =   " << shortfall2 << ")\n";
 		}
 	      else
@@ -659,11 +691,11 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 	}
 
     }  // end of stage loop
-   
+
   if(which)
-      glsgens1=gls_gens; 
+      glsgens1=gls_gens;
   else
-      glsgens0=gls_gens; 
+      glsgens0=gls_gens;
 
   if(verbose>1)
     {
@@ -674,7 +706,7 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
       if(nglsgens>0) cout<<"(gls)gens: "<<gls_gens<<endl;
     }
 }
- 
+
 void rank2::local_descent(const bigint& x0)
 {
   bigint c,d,cdash,ddash,disc,rootd;
@@ -687,7 +719,7 @@ void rank2::local_descent(const bigint& x0)
   disc = 2*d*ddash;
   if (is_zero(disc)) // this should have been caught by the calling program!
     {
-      cout << "Curve is singular\n"; 
+      cout << "Curve is singular\n";
       success = 0;
       return;
     }
@@ -701,7 +733,7 @@ void rank2::local_descent(const bigint& x0)
   ee     = Curvedata(zero,  c,  zero,  d,  zero);
   eedash = Curvedata(zero,cdash,zero,ddash,zero);
   Eprime = Curvedata(eedash,1); // minimal model
-  if(verbose) 
+  if(verbose)
     {
     cout<<"Using 2-isogenous curve "<<(Curve)(eedash);
     if (eedash!=Eprime)
@@ -712,7 +744,7 @@ void rank2::local_descent(const bigint& x0)
   supp1 = pdivs(ddash);
   badprimes.clear();
   set_union(supp0.begin(),supp0.end(),supp1.begin(),supp1.end(),back_inserter(badprimes));
-  if(find(badprimes.begin(),badprimes.end(),two)==badprimes.end()) 
+  if(find(badprimes.begin(),badprimes.end(),two)==badprimes.end())
     badprimes.insert(badprimes.begin(),two);
   //  cout<<"supp0="<<supp0<<", supp1="<<supp1<<endl;
   //   cout<<"badprimes="<<badprimes<<endl;
@@ -720,7 +752,7 @@ void rank2::local_descent(const bigint& x0)
   supp0.insert(supp0.begin(),minusone);
   supp1.insert(supp1.begin(),minusone);
   //   cout<<"supp0="<<supp0<<", supp1="<<supp1<<endl;
-  
+
   d_is_sq = ddash_is_sq = 0;
   if(isqrt(ddash,rootd))
   {
@@ -735,7 +767,7 @@ void rank2::local_descent(const bigint& x0)
     e3dash = c+2*rootd;
   }
 
-  if(verbose) 
+  if(verbose)
     {
       cout<<"-------------------------------------------------------\n";
       cout<<"First step, determining 1st descent Selmer groups\n";
@@ -745,11 +777,11 @@ void rank2::local_descent(const bigint& x0)
   find_elsgens(0,c,d);
   //  cout<<"Calling find_elsgens(1,...)"<<endl;
   find_elsgens(1,cdash,ddash);
-  selmer_rank_phi_Eprime = els0; 
+  selmer_rank_phi_Eprime = els0;
   selmer_rank_phiprime_E = els1;
   rank_bound = els0+els1-2;
 
-  if(verbose) 
+  if(verbose)
     {
       cout<<"After first local descent, rank bound = "<<rank_bound<<"\n";
       cout<<"rk(S^{phi}(E'))=\t"<<selmer_rank_phi_Eprime<<endl;
@@ -770,7 +802,7 @@ void rank2::local_descent(const bigint& x0)
 	    cout<<"...skipping since we already know rank=0"<<endl;
 	  else
 	    cout<<"...skipping -- no second descent requested"<<endl;
-	}      
+	}
     }
   else
     {
@@ -783,7 +815,7 @@ void rank2::local_descent(const bigint& x0)
   selmer_rank_Eprime = els0+els21-1+d_is_sq;
   if(verbose)
     {
-      if(do_second_descent) 
+      if(do_second_descent)
 	{
 	  cout<<"After second local descent, rank bound = "<<rank_bound<<"\n";
 	  cout<<"rk(phi'(S^{2}(E)))=\t"<<els20<<endl;
@@ -799,13 +831,13 @@ void rank2::local_descent(const bigint& x0)
 	  cout<<"rk(phi(S^{2}(E')))<=\t"<<els21<<endl;
 	  cout<<"rk(S^{2}(E))<=\t"<<selmer_rank<<endl;
 	  cout<<"rk(S^{2}(E'))<=\t"<<selmer_rank_Eprime<<endl;
-	  cout<<endl;	  
+	  cout<<endl;
 	}
     }
 }
 
-rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
-  : rank12(ec,verb,sel,l1,l2,0,second)
+rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second, int CT)
+  : rank12(ec,verb,sel,l1,l2,0,second, CT)
 {
   bigint a1, a2, a3, a4, a6;
   ec->getai(a1,a2,a3,a4,a6);
@@ -815,20 +847,20 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
 
   success = 1;
   int n, scaled=0;
-  if (odd(a1) || odd(a3)) 
+  if (odd(a1) || odd(a3))
     { s2= a1*a1+ 4*a2;
       s4=  8*(a1*a3+ 2*a4);
       s6= 16*(a3*a3+ 4*a6);
       scaled=1;
     }
-  else 
+  else
     { s2=a2; s4=a4; s6=a6;
     }
 
   vector<bigint> xlist = Introotscubic(s2,s4,s6);
   ntwo_torsion = xlist.size();
   if (ntwo_torsion==0)
-    { 
+    {
       success=0;
       if (verbose) cout << "No points of order 2\n";
       return;
@@ -852,229 +884,391 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
   if(verbose)cout<<endl<<endl;
 
   long mw0,mw1,sel0,sel1,sha0,sha1,sel20,sel21,sha20,sha21,lindex;
-  
+
  // we loop over the different 2-isogenies (if there are 3), doing the
  // local descent 3 times to get the best rank bound (or stopping if
- // that bound is 0).  
+ // that bound is 0).
 
   // Fudge: we have to repeat the best one if it was not the last in
   // order to get the class-global variables right for the global
-  // descent.  This should obviously be fixed.  
+  // descent.  This should obviously be fixed.
 
   // The relevant variables are:
   // ee,eedash,supp0,supp1,badprimes,d_is_sq,ddash_is_sq,
   // e2,e3,e2dash,e3dash,els20,els21,elsgens0,elsgens1
 
-  for(n=0; n<ntwo_torsion; n++) 
+  for(n=0; n<ntwo_torsion; n++)
     {
-      if(verbose&&(ntwo_torsion>1)) 
+      if(verbose&&(ntwo_torsion>1))
 	{
 	  cout<<"****************************"<<endl;
 	  cout<<"* Using 2-isogeny number "<<(n+1)<<" *"<<endl;
 	  cout<<"****************************\n"<<endl;
 	}
       local_descent(xlist[n]);
-      if((n==0)||(rank_bound<=best_rank_bound)) 
+      if((n==0)||(rank_bound<=best_rank_bound))
 	{
 	  best_rank_bound=rank_bound;
 	  best_isogeny=n;
 	}
       if(best_rank_bound==0) break;
     }
-  
+
   int rerun_needed=(rank_bound>best_rank_bound);
   rank_bound=best_rank_bound;
 
   if(verbose&&best_isogeny>0)
-    {      
+    {
       cout<<"After second local descent, combined upper bound on rank = "
 	  <<rank_bound<<"\n";
     }
 
   if(selmer_only) // Nothing more to do in this case
     {
-      rank=0;
-      certain=(rank_bound==0);
+		if (do_CT)
+		{
+			// Redo the best local descent if necessary
+			bigint x0=xlist[best_isogeny];
+			if(rerun_needed)
+			{
+				if(verbose) cout<<"Rerunning the local descent for isogeny number "
+					<<(best_isogeny+1)
+					<< ", which gave the best upper bound on the rank"
+					<<endl;
+				local_descent(x0);
+			}
+
+			bigint ii, ii_, jj, jj_;
+			vector<vector<bigint>> qelsgens, qelsgens_, vtemp;
+
+			ii = getc4(ee); jj = getc6(ee);
+			ii_ = getc4(eedash); jj_ = getc6(eedash);
+			qelsgens = qelsgens11;
+			vtemp = qelsgens20;
+			qelsgens.insert(qelsgens.end(), vtemp.begin(), vtemp.end());
+
+			qelsgens_ = qelsgens10;
+			vtemp = qelsgens21;
+			qelsgens_.insert(qelsgens_.end(), vtemp.begin(), vtemp.end());
+
+			long nt2gens_2 = nt2gens0 + nt2gens1 - 2;
+			rank_bound = min(qelsgens.size() + nt2gens_2, qelsgens_.size() + nt2gens_2);
+
+			if (!rank_bound) {rank = 0; certain = 1;}
+
+			else
+			{
+				certain = 0; rank =0;
+				hom_inv(ii, jj, qelsgens);
+				hom_inv(ii_, jj_, qelsgens_);
+				ii = II(qelsgens[0]); jj = JJ(qelsgens[0]);
+				ii_ = II(qelsgens_[0]); jj_ = JJ(qelsgens_[0]);
+
+				if (rank_bound==qelsgens.size() + nt2gens_2)
+				{
+					hom_CT(qelsgens, ii, jj);
+					rank_bound = qelsgens.size() + nt2gens_2;
+				}
+				if (rank_bound>1)
+				{
+					hom_CT(qelsgens_, ii_, jj_);
+					rank_bound = min(qelsgens.size() + nt2gens_2, qelsgens_.size() + nt2gens_2);
+				}
+
+				if (qelsgens.size() + nt2gens_2==rank_bound)
+				{
+					IJ_curve = Curvedata(BIGINT(0),BIGINT(0),BIGINT(0),-27*ii,-27*jj,0);
+					IJ_curve.minimalize(tr_u,tr_r,tr_s,tr_t);
+					for (int ll=0; ll<qelsgens.size(); ll++)
+					{
+						bigint x, y, z, oldga, oldgb, oldgc, oldgd, oldge;
+						quartic q0;
+						long better=1, ired;
+						vector<bigint> v;
+						/// minimize on 2 ???
+
+						v = {qelsgens[ll][0], qelsgens[ll][1], qelsgens[ll][2], qelsgens[ll][3], qelsgens[ll][4]};
+						better=1; ired=0;
+						oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
+						unimod n;
+						for(ired=0; (ired<5)&&better; ired++)
+						{
+							reduce(v[0], v[1], v[2], v[3], v[4],n);
+							better = (abs(v[0])<=abs(oldga))&&!((v[1]==oldgb)&&(v[2]==oldgc)&&(v[3]==oldgd)&&(v[4]==oldge));
+							if(better||(ired==0))
+							{
+								n.reset();
+								oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
+								q0.assign(v[0],v[1],v[2],v[3],v[4]);
+							}
+						}
+
+						Point Ptemp(the_curve);
+						quartic_sieve qs(&q0,QSIEVE_OPT,0);
+
+						if(qs.search(lim2))
+						{
+							qs.getpoint(x,y,z);
+							if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+							//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
+							qc(q0,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
+							//cout<<"qc() returns giving point " << Ptemp
+							pointlist.push_back(Ptemp);
+						}
+						else
+						{
+							if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+						}
+					}
+					rank = pointlist.size() + nt2gens_2;
+					certain = (rank==rank_bound);
+				}
+				if (!certain)
+				{
+					int rank_;
+					bigint tr_u0,tr_r0,tr_s0,tr_t0,tr_u1,tr_r1,tr_s1,tr_t1;
+					Curvedata IJ_curve_ = Curvedata(BIGINT(0),BIGINT(0),BIGINT(0),-27*ii_,-27*jj_,0);
+					Curvedata eedash_min_ = IJ_curve_.minimalize(tr_u,tr_r,tr_s,tr_t);
+					eedash.minimalize(tr_u0,tr_r0,tr_s0,tr_t0);
+					ee.minimalize(tr_u1,tr_r1,tr_s1,tr_t1);
+
+					for (int ll=0; ll<qelsgens_.size(); ll++)
+					{
+						bigint x, y, z, oldga, oldgb, oldgc, oldgd, oldge;
+						quartic q0;
+						long better=1, ired;
+						vector<bigint> v;
+						/// minimize on 2???
+
+						v = {qelsgens_[ll][0], qelsgens_[ll][1], qelsgens_[ll][2], qelsgens_[ll][3], qelsgens_[ll][4]};
+						better=1; ired=0;
+						oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
+						unimod n;
+						for(ired=0; (ired<5)&&better; ired++)
+						{
+							reduce(v[0], v[1], v[2], v[3], v[4],n);
+							better = (abs(v[0])<=abs(oldga))&&!((v[1]==oldgb)&&(v[2]==oldgc)&&(v[3]==oldgd)&&(v[4]==oldge));
+							if(better||(ired==0))
+							{
+								n.reset();
+								oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
+								q0.assign(v[0],v[1],v[2],v[3],v[4]);
+							}
+						}
+
+						Point Qtemp(eedash_min_), Ttemp(eedash), Rtemp(ee), Ptemp(the_curve);
+						quartic_sieve qs(&q0,QSIEVE_OPT,0);
+
+						if(qs.search(lim2))
+						{
+							qs.getpoint(x,y,z);// gls=1;
+							if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+							//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
+							qc(q0,x,y,z,&eedash_min_,&IJ_curve_,tr_u,tr_r,tr_s,tr_t, Qtemp,verbose);
+							//cout<<"qc() returns giving point " << Ptemp
+
+							Ttemp = transform(Qtemp, &eedash,tr_u0,tr_r0,tr_s0,tr_t0,1);
+							eedash_to_ee(Ttemp, Rtemp);
+							Ptemp = transform(Rtemp, the_curve, tr_u1,tr_r1,tr_s1,tr_t1);
+							pointlist.push_back(Ptemp);
+						}
+						else
+						{
+							if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+						}
+					}
+					rank_ = pointlist.size() + nt2gens_2 - rank;
+					rank = max(rank_, rank);
+					certain = (rank==rank_bound);
+				}
+				/// if (!certain)&&(qelsgens.size()+nt2gens_2>rank_bound)
+			}
+			selmer_only = 0;
+		}
+		else
+		{
+			rank=0;
+			certain=(rank_bound==0);
+		}
     }
-  else // do the global stages...
-    {
-
-      // Redo the best local descent if necessary
-      bigint x0=xlist[best_isogeny];
-      if(rerun_needed) 
+	else // do the global stages...
 	{
-	  if(verbose) cout<<"Rerunning the local descent for isogeny number "
-			  <<(best_isogeny+1) 
-			  << ", which gave the best upper bound on the rank"
-			  <<endl;
-	  local_descent(x0);
-	}
+		// Redo the best local descent if necessary
+		bigint x0=xlist[best_isogeny];
+		if(rerun_needed)
+		{
+			if(verbose) cout<<"Rerunning the local descent for isogeny number "
+				<<(best_isogeny+1)
+				<< ", which gave the best upper bound on the rank"
+				<<endl;
+			local_descent(x0);
+		}
 
-  bigint c =  3 * x0 + s2;
-  bigint d = x0*(c+s2) + s4;
-  bigint cdash = - 2 * c;
-  bigint ddash = c*c -  4*d;
-  
-  if(verbose)
-    {
-      cout<<"Third step, determining E(Q)/phi(E'(Q)) and E'(Q)/phi'(E(Q))\n";
-      cout<<"-------------------------------------------------------\n";
-      cout<<"1. E(Q)/phi(E'(Q))\n";
-      cout<<"-------------------------------------------------------\n";
-    }
-  
-  if(verbose)
-    {
-      cout<<"(c,d)  =("<<c<<","<<d<<")"<<endl;
-      cout<<"(c',d')=("<<cdash<<","<<ddash<<")"<<endl;
-    }
+		bigint c =  3 * x0 + s2;
+		bigint d = x0*(c+s2) + s4;
+		bigint cdash = - 2 * c;
+		bigint ddash = c*c -  4*d;
 
-  find_glsgens(0,c,d);
-  
-  npoints1=npoints;
-  if(verbose)
-    {
-      cout<<"-------------------------------------------------------\n";
-      cout<<"2. E'(Q)/phi'(E(Q))\n";
-      cout<<"-------------------------------------------------------\n";
-    }
-  find_glsgens(1,cdash,ddash);
+		if(verbose)
+		{
+			cout<<"Third step, determining E(Q)/phi(E'(Q)) and E'(Q)/phi'(E(Q))\n";
+			cout<<"-------------------------------------------------------\n";
+			cout<<"1. E(Q)/phi(E'(Q))\n";
+			cout<<"-------------------------------------------------------\n";
+		}
 
-//Debug only:
-/*
-cout<<"gls20 = "<<gls20<<endl;
-cout<<"gls21 = "<<gls21<<endl;
-cout<<"els0 = "<<els0<<endl;
-cout<<"els1 = "<<els1<<endl;
-cout<<"els20 = "<<els20<<endl;
-cout<<"els21 = "<<els21<<endl;
-*/
+		if(verbose)
+		{
+			cout<<"(c,d)  =("<<c<<","<<d<<")"<<endl;
+			cout<<"(c',d')=("<<cdash<<","<<ddash<<")"<<endl;
+		}
 
-  rank        = gls20+gls21-2; // lower bound for rank
-//rank_bound  = els20+els21-2; // upper bound for rank, from above
+		find_glsgens(0,c,d);
 
-  mw0 = 1<<gls20;  
-  sel0 = 1<<els0;    sha0=sel0/mw0;      
-  sel20 = 1<<els20;  sha20=sel20/mw0;
+		npoints1=npoints;
+		if(verbose)
+		{
+			cout<<"-------------------------------------------------------\n";
+			cout<<"2. E'(Q)/phi'(E(Q))\n";
+			cout<<"-------------------------------------------------------\n";
+		}
+		find_glsgens(1,cdash,ddash);
 
-// gls20  is the 2-rank of E/phi(E')                    (lower bound)
-// els0   is the 2-rank of S^(phi)(E')                  (exact)
-// els20  is the 2-rank of its subgroup phi'(S^(2)(E))  (exact if 2nd descent)
-// els0-gls20  is the 2-rank of III(E')[phi)                 (upper bound)
-// els20-gls20 is the 2-rank of its subgroup phi'(III(E)[2]) (upper bound)
+		//Debug only:
+		/*
+		cout<<"gls20 = "<<gls20<<endl;
+		cout<<"gls21 = "<<gls21<<endl;
+		cout<<"els0 = "<<els0<<endl;
+		cout<<"els1 = "<<els1<<endl;
+		cout<<"els20 = "<<els20<<endl;
+		cout<<"els21 = "<<els21<<endl;
+		*/
 
-  mw1 = 1<<gls21;  
-  sel1 = 1<<els1;  sha1=sel1/mw1;
-  sel21 = 1<<els21;  sha21=sel21/mw1;
+		rank        = gls20+gls21-2; // lower bound for rank
+		//rank_bound  = els20+els21-2; // upper bound for rank, from above
 
-// gls21   is the 2-rank of E'/phi'(E)                   (lower bound)
-// els1    is the 2-rank of S^(phi')(E)                  (exact)
-// els21   is the 2-rank of its subgroup phi(S^(2)(E'))  (exact if 2nd descent)
-// els1-gls21  is the 2-rank of III(E)[phi']                 (upper bound)
-// els21-gls21 is the 2-rank of its subgroup phi(III(E')[2]) (upper bound)
+		mw0 = 1<<gls20;
+		sel0 = 1<<els0;    sha0=sel0/mw0;
+		sel20 = 1<<els20;  sha20=sel20/mw0;
 
-  index2=mw0*mw1;
-  lindex=gls20+gls21;
-  if(!ddash_is_sq) {index2/=2; lindex-=1;}
-  
-  int certain0 = (els20==gls20); // i.e. descent was conclusive
-  int certain1 = (els21==gls21); //
-  certain = certain0&&certain1;
-  
-  if (verbose) 
-    {
-      cout<<"\n";
-      cout<<"-------------------------------------------------------\n";
-      cout<<"Summary of results:\n";
-      cout<<"-------------------------------------------------------\n";
-      
-      if(certain) cout << "\trank(E) " << "= " << rank;
-      else        cout << "\t"<<rank<< " <= rank(E) <= " << rank_bound;
-      cout<<"\n";
-      cout << "\t#E(Q)/2E(Q) ";
-      if(!certain) cout<<">";
-      cout<<"= " << index2 << "\n\n";
-      
-      long lb, ub; int lb1, eq;
+		// gls20  is the 2-rank of E/phi(E')                    (lower bound)
+		// els0   is the 2-rank of S^(phi)(E')                  (exact)
+		// els20  is the 2-rank of its subgroup phi'(S^(2)(E))  (exact if 2nd descent)
+		// els0-gls20  is the 2-rank of III(E')[phi)                 (upper bound)
+		// els20-gls20 is the 2-rank of its subgroup phi'(III(E)[2]) (upper bound)
 
-      if(do_second_descent)
-	{
-      cout<<"Information on III(E/Q):\n";
+		mw1 = 1<<gls21;
+		sel1 = 1<<els1;  sha1=sel1/mw1;
+		sel21 = 1<<els21;  sha21=sel21/mw1;
 
-      lb = 1; lb1=1; ub = sha1; eq=(lb==ub);
-      cout<<"\t#III(E/Q)[phi']    ";
-      if(eq) cout<<"= "<<ub<<"\n";
-      else
-	{
-	  if(lb1) cout<<"<= "<<ub<<"\n";
-	  else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
-	}
+		// gls21   is the 2-rank of E'/phi'(E)                   (lower bound)
+		// els1    is the 2-rank of S^(phi')(E)                  (exact)
+		// els21   is the 2-rank of its subgroup phi(S^(2)(E'))  (exact if 2nd descent)
+		// els1-gls21  is the 2-rank of III(E)[phi']                 (upper bound)
+		// els21-gls21 is the 2-rank of its subgroup phi(III(E')[2]) (upper bound)
 
-      lb = sel1/sel21; lb1=(lb==1); ub = sha1*sha20; eq=(lb==ub);
-      cout<<"\t#III(E/Q)[2]       ";
-      if(eq) cout<<"= "<<ub<<"\n";
-      else
-	{
-	  if(lb1) cout<<"<= "<<ub<<"\n";
-	  else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
-	}
-      cout<<endl;
+		index2=mw0*mw1;
+		lindex=gls20+gls21;
+		if(!ddash_is_sq) {index2/=2; lindex-=1;}
 
-      cout<<"Information on III(E'/Q):\n";
+		int certain0 = (els20==gls20); // i.e. descent was conclusive
+		int certain1 = (els21==gls21); //
+		certain = certain0&&certain1;
 
-      lb = 1; lb1=1; ub = sha20; eq = (lb==ub);
-      cout<<"\t#phi'(III(E/Q)[2]) ";
-      if(!eq) cout<<"<";
-      cout<<"= " << ub << "\n";
+		if (verbose)
+		{
+			cout<<"\n";
+			cout<<"-------------------------------------------------------\n";
+			cout<<"Summary of results:\n";
+			cout<<"-------------------------------------------------------\n";
 
-      lb = sel0/sel20; lb1=(lb==1); ub = sha0; eq=(lb==ub);
-      cout<<"\t#III(E'/Q)[phi]    ";
-      if(eq) cout<<"= "<<ub<<"\n";
-      else
-	{
-	  if(lb1) cout<<"<= "<<ub<<"\n";
-	  else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
-	}
+			if(certain) cout << "\trank(E) " << "= " << rank;
+			else        cout << "\t"<<rank<< " <= rank(E) <= " << rank_bound;
+			cout<<"\n";
+			cout << "\t#E(Q)/2E(Q) ";
+			if(!certain) cout<<">";
+			cout<<"= " << index2 << "\n\n";
 
-      lb = sel0/sel20; lb1=(lb==1); ub = sha0*sha21; eq=(lb==ub);
-      cout<<"\t#III(E'/Q)[2]      ";
-      if(eq) cout<<"= "<<ub<<"\n";
-      else
-	{
-	  if(lb1) cout<<"<= "<<ub<<"\n";
-	  else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
-	}
-      cout<<endl;
-	}  // end of do_second_descent branch
-      else
-	{
-      cout<<"Information on III(E/Q):\n";
+			long lb, ub; int lb1, eq;
 
-      ub = sha1;
-      if(ub==1) cout<<"\t III(E/Q)[phi'] is trivial\n";
-      else cout<<"\t#III(E/Q)[phi'] <= " << ub << "\n";
+			if(do_second_descent)
+			{
+				cout<<"Information on III(E/Q):\n";
 
-      ub = sha0*sha1;
-      if(ub==1) cout<<"\t III(E/Q)[2]    is trivial\n";
-      else cout<<"\t#III(E/Q)[2]    <= " << ub << "\n";
+				lb = 1; lb1=1; ub = sha1; eq=(lb==ub);
+				cout<<"\t#III(E/Q)[phi']    ";
+				if(eq) cout<<"= "<<ub<<"\n";
+				else
+				{
+					if(lb1) cout<<"<= "<<ub<<"\n";
+					else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
+				}
 
-      cout<<"Information on III(E'/Q):\n";
+				lb = sel1/sel21; lb1=(lb==1); ub = sha1*sha20; eq=(lb==ub);
+				cout<<"\t#III(E/Q)[2]       ";
+				if(eq) cout<<"= "<<ub<<"\n";
+				else
+				{
+					if(lb1) cout<<"<= "<<ub<<"\n";
+					else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
+				}
+				cout<<endl;
 
-      ub = sha0;
-      if(ub==1) cout<<"\t III(E'/Q)[phi] is trivial\n";
-      else cout<<"\t#III(E'/Q)[phi] <= " << ub << "\n";
+				cout<<"Information on III(E'/Q):\n";
 
-      ub = sha0*sha1;
-      if(ub==1) cout<<"\t III(E'/Q)[2]   is trivial\n";
-      else cout<<"\t#III(E'/Q)[2]   <= " << ub << "\n";
+				lb = 1; lb1=1; ub = sha20; eq = (lb==ub);
+				cout<<"\t#phi'(III(E/Q)[2]) ";
+				if(!eq) cout<<"<";
+				cout<<"= " << ub << "\n";
 
-      cout<<endl;
-	}  // end of no_second_descent branch
+				lb = sel0/sel20; lb1=(lb==1); ub = sha0; eq=(lb==ub);
+				cout<<"\t#III(E'/Q)[phi]    ";
+				if(eq) cout<<"= "<<ub<<"\n";
+				else
+				{
+					if(lb1) cout<<"<= "<<ub<<"\n";
+					else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
+				}
 
-    }
-  
-  if(npoints>0) makegens();
-  if(rank<=MAX_R)makepoints();
+				lb = sel0/sel20; lb1=(lb==1); ub = sha0*sha21; eq=(lb==ub);
+				cout<<"\t#III(E'/Q)[2]      ";
+				if(eq) cout<<"= "<<ub<<"\n";
+				else
+				{
+					if(lb1) cout<<"<= "<<ub<<"\n";
+					else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
+				}
+				cout<<endl;
+			}  // end of do_second_descent branch
+			else
+			{
+				cout<<"Information on III(E/Q):\n";
+
+				ub = sha1;
+				if(ub==1) cout<<"\t III(E/Q)[phi'] is trivial\n";
+				else cout<<"\t#III(E/Q)[phi'] <= " << ub << "\n";
+
+				ub = sha0*sha1;
+				if(ub==1) cout<<"\t III(E/Q)[2]    is trivial\n";
+				else cout<<"\t#III(E/Q)[2]    <= " << ub << "\n";
+
+				cout<<"Information on III(E'/Q):\n";
+
+				ub = sha0;
+				if(ub==1) cout<<"\t III(E'/Q)[phi] is trivial\n";
+				else cout<<"\t#III(E'/Q)[phi] <= " << ub << "\n";
+
+				ub = sha0*sha1;
+				if(ub==1) cout<<"\t III(E'/Q)[2]   is trivial\n";
+				else cout<<"\t#III(E'/Q)[2]   <= " << ub << "\n";
+
+				cout<<endl;
+			}  // end of no_second_descent branch
+
+		}
+
+		if(npoints>0) makegens();
+		if(rank<=MAX_R)makepoints();
     }  // end of "else" clause after if(selmer_only)
 }
 
@@ -1101,7 +1295,7 @@ void rank2::makegens()
       if(verbose||!valid) cout << "\n";
       pointlist[i]=q;
     }
-  if(verbose&&(npoints1==npoints)) 
+  if(verbose&&(npoints1==npoints))
     {
       cout<<"\nII.  Points on phi(E') mod 2E\n";
       cout << "--none (modulo torsion).\n\n";
@@ -1111,13 +1305,13 @@ void rank2::makegens()
 void rank2::listgens()
 {
   long i;
-  cout << "List of generators of E(Q)/2E(Q) for E = " 
+  cout << "List of generators of E(Q)/2E(Q) for E = "
        << (Curve)(*the_curve) << ": \n";
   for(i=0; i<npoints; i++)
     {
       Point p = pointlist[i];
       cout << "Point " <<
-	//	    "on " <<  (Curve)(*CD_orig) << ": " << 
+	//	    "on " <<  (Curve)(*CD_orig) << ": " <<
 	p;
       bigfloat h = height(p);
       cout << ", height = " << h;
@@ -1126,17 +1320,17 @@ void rank2::listgens()
     }
 }
 
-void rank2::listgens(Curvedata* CD_orig, const bigint& u, const bigint& r, 
+void rank2::listgens(Curvedata* CD_orig, const bigint& u, const bigint& r,
 		     const bigint& s, const bigint& t)
 {
   long i;
-  cout << "List of generators of E(Q)/2E(Q) (mod torsion) for E = " 
+  cout << "List of generators of E(Q)/2E(Q) (mod torsion) for E = "
        << (Curve)(*CD_orig) << ": \n";
   for(i=0; i<npoints; i++)
     {
       Point p = transform(pointlist[i],CD_orig,u,r,s,t,1);
       cout << "Point " << (i+1) <<
-	//	    "on " <<  (Curve)(*CD_orig) << 
+	//	    "on " <<  (Curve)(*CD_orig) <<
 	": " << p;
       bigfloat h = height(p);
       cout << ", height = " << h;
@@ -1177,8 +1371,8 @@ void rank2::makepoints()
     for(j=i+1; j<fullnpoints; j++)
       if(height(fullpointlist[j])<height(fullpointlist[i]))
 	{
-	  Point temp = fullpointlist[i]; 
-	  fullpointlist[i]=fullpointlist[j]; 
+	  Point temp = fullpointlist[i];
+	  fullpointlist[i]=fullpointlist[j];
 	  fullpointlist[j]=temp;
 	}
   if(verbose&&(rank>0))  cout << "done.\n" << endl;
@@ -1187,7 +1381,7 @@ void rank2::makepoints()
 void rank2::listpoints()
 {
   makepoints();
-  cout << "Points on curve E = " << (Curve)(*the_curve) 
+  cout << "Points on curve E = " << (Curve)(*the_curve)
        << " covering E(Q)/2E(Q), modulo torsion:";
   if(rank==0) cout<<" none.";
   else
@@ -1209,14 +1403,14 @@ void rank2::listpoints()
   cout<<"\n\n";
 }
 
-void rank2::listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r, 
+void rank2::listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r,
 		                           const bigint& s, const bigint& t)
 {
   makepoints();
-  cout << "Points on original curve E = " << (Curve)(*CD_orig) 
+  cout << "Points on original curve E = " << (Curve)(*CD_orig)
        << " covering E(Q)/2E(Q), modulo torsion:";
   if(rank==0) cout<<" none.";
-  else if(rank>MAX_R) 
+  else if(rank>MAX_R)
     cout << "Too many to list ("<<fullnpoints<<" mod torsion)\n";
   else
     {
@@ -1229,7 +1423,7 @@ void rank2::listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r,
 //	  cout << "\n";
 	  Point p = transform(p0,CD_orig,u,r,s,t,1);
 	  cout << "Point " <<
-	    //	    "on " <<  (Curve)(*CD_orig) << ": " << 
+	    //	    "on " <<  (Curve)(*CD_orig) << ": " <<
 	    p;
 	  bigfloat h = height(p);
 	  cout << ", height = " << h;

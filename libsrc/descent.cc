@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 
 // rank12 is a common base for separate classes rank1 and rank2 (for
 // computing rank via general 2-descent and descent via 2-isogeny
@@ -47,44 +47,48 @@
 // n_aux=-1 causes default to be used (depends on method)
 // second_descent only relevant for descent via 2-isogeny
 
-two_descent::two_descent(Curvedata* ec, 
-	      int verb, int sel, 
-	      long firstlim, long secondlim, 
-	      long n_aux, int second_descent)
-  :verbose(verb), selmer_only(sel), e_orig(*ec) 
+two_descent::two_descent(Curvedata* ec,
+	      int verb, int sel,
+	      long firstlim, long secondlim,
+	      long n_aux, int second_descent, int CT)
+  :verbose(verb), selmer_only(sel), e_orig(*ec), do_CT(CT)
   {
+	  if (selmer_only||(!second_descent)) do_CT=0;
+	  else {if (do_CT==1) {selmer_only=1;}}
     qai.resize(5);
     bigint a1,a2,a3,a4,a6;
     ec->getai(a1,a2,a3,a4,a6);
-    v=BIGINT(1); 
+    v=BIGINT(1);
     qai[0]=a1; qai[1]=a2; qai[2]=a3; qai[3]=a4; qai[4]=a6;
     do_the_descent(firstlim,secondlim,n_aux,second_descent);
   }
 
 //#define DEBUG_Q_INPUT
 
-two_descent::two_descent(vector<bigrational> ai, 
-	      int verb, int sel, 
-	      long firstlim, long secondlim, 
-	      long n_aux, int second_descent)
-  :verbose(verb), selmer_only(sel)
+two_descent::two_descent(vector<bigrational> ai,
+	      int verb, int sel,
+	      long firstlim, long secondlim,
+	      long n_aux, int second_descent, int CT)
+  :verbose(verb), selmer_only(sel), do_CT(CT)
   {
     // Construct Curvedata from rational coeffs & get the scaling
-    // factor v used 
+    // factor v used
 #ifdef DEBUG_Q_INPUT
     cout<<"two_descent constructor called with "<<ai<<endl;
 #endif
+	if (selmer_only||(!second_descent)) do_CT=0;
+	else {if (do_CT==1) {selmer_only=1;}}
     qai=ai;
     e_orig = Curvedata(ai, v);
     if(e_orig.isnull())
 	throw std::invalid_argument ("The curve is null!");
-    if(verbose&&(v!=1)) 
+    if(verbose&&(v!=1))
       cout<<"integral model = "<<(Curve)e_orig<<" with scale factor "<<v<<endl;
     // Do the work as in the previous constructor
     do_the_descent(firstlim,secondlim,n_aux,second_descent);
   }
 
-void two_descent::do_the_descent(long firstlim, long secondlim, 
+void two_descent::do_the_descent(long firstlim, long secondlim,
 				 long n_aux, int second_descent)
 {
     e_min=e_orig.minimalize(u,r,s,t);
@@ -94,10 +98,10 @@ void two_descent::do_the_descent(long firstlim, long secondlim,
 	    <<" via [u,r,s,t] = ["<<u<<","<<r<<","<<s<<","<<t<<"]\n";
       }
     two_torsion_exists = (two_torsion(e_min).size()>1) ;
-    if(two_torsion_exists) 
-      r12=new rank2(&e_min,verbose,selmer_only,firstlim,secondlim,second_descent);
+    if(two_torsion_exists)
+      r12=new rank2(&e_min,verbose,selmer_only,firstlim,secondlim,second_descent, do_CT);
     else
-      r12=new rank1(&e_min,verbose,selmer_only,firstlim,secondlim,n_aux);
+      r12=new rank1(&e_min,verbose,selmer_only,firstlim,secondlim,n_aux, do_CT);
 
     success=r12->ok();
     rank = r12->getrank();
@@ -178,7 +182,7 @@ void two_descent::saturate(long sat_bd)
   mwbasis->process(r12->getgens(),0); // no saturation yet
   if(verbose) cout <<"done:"<<endl;
   rank = mwbasis->getrank();
-  if(verbose) 
+  if(verbose)
     {
       if(rank>search_rank) cout << "2-descent increases rank to "<<rank<<", ";
       if(rank<search_rank) cout << "2-descent only finds rank lower bound of "<<rank<<", ";
@@ -209,14 +213,14 @@ void two_descent::saturate(long sat_bd)
 // Report outcome
       if(verbose)
 	{
-	  if(index>1) 
+	  if(index>1)
 	    {
 	      cout <<"  *** saturation increased group by index "<<index<<endl;
 	      cout <<"  *** regulator is now "<<mwbasis->regulator()<<endl;
 	    }
 	  else cout << "  points were already saturated."<<endl;
 	}
-      if(!sat_ok) 
+      if(!sat_ok)
 	{
 	  cout << "*** saturation possibly incomplete at primes " << unsat << "\n";
 	}
@@ -244,19 +248,19 @@ vector<Point> two_descent::getpbasis() // returns points on integral model
 
 void two_descent::show_gens()  // display points on original model
 {
-  if(verbose&&(rank>0)) 
-    cout<<"Transferring points from minimal curve "<<(Curve)e_min 
-	<<" back to original curve " 
+  if(verbose&&(rank>0))
+    cout<<"Transferring points from minimal curve "<<(Curve)e_min
+	<<" back to original curve "
 	<<"["<<qai[0]<<","<<qai[1]<<","<<qai[2]<<","<<qai[3]<<","<<qai[4]<<"]"
 	<<endl;
   cout<<endl;
   vector<Point>plist=mwbasis->getbasis();
   for (int i=0; i<rank; i++)
-    { 
+    {
       Point P = plist[i];
       bigfloat h=height(P); // must compute height on minimal model!
       P = transform(P,&e_orig,u,r,s,t,1);
-      cout << "Generator "<<(i+1)<<" is "<<scale(P,v,0)<<"; " 
+      cout << "Generator "<<(i+1)<<" is "<<scale(P,v,0)<<"; "
 	   << "height "<<h;
       if(!P.isvalid()) cout<<" --warning: NOT on curve!";
       cout<<endl;
@@ -274,7 +278,7 @@ void two_descent::show_result_status()
 	  cout << "The rank and full Mordell-Weil basis have been determined unconditionally.\n";
 	}
       else
-	{		
+	{
 	  cout << "The rank has been determined unconditionally.\n";
 	  if(rank>0)
 	    {

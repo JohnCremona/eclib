@@ -28,7 +28,8 @@
 #include <eclib/mquartic.h>
 
 class rank1 : public rank12 {
-private: 
+private:
+  vector<vector<bigint>> qelsgens1;
   long nquarticsa, nquarticsb, nfirstlota, nfirstlotb;
   long sha_rank, sha2;
   int traceequiv, posdisc, disc_is_square, npairs, extra2, threediv, type;
@@ -36,10 +37,10 @@ private:
   int * qlistbflag;
   bigcomplex* croots;
   bigcomplex* cphi;
-  vector<Point> pointlist1, pointlist2;
-  long npoints1, npoints2; 
+  vector<Point> pointlist1, pointlist2, pointlist;
+  long npoints1, npoints2;
   int have_eggpoint, have_large_quartics;
-  long twoadic_index, global_index;  
+  long twoadic_index, global_index;
   long bsd_npairs; // only for testing
              // 1, 2 or 4: local/global index of "small" quartics
   bigint c4, c6, d1728, ii, jj, disc; 
@@ -75,7 +76,7 @@ private:
 public:
   rank1(Curvedata* ec, 
         int verb=0, int sel=0, 
-        long lim1=20, long lim2=5, long n_aux=-1);
+        long lim1=20, long lim2=5, long n_aux=-1, int CT=0);
 // lim1 is bound on |x|+|z| in naive search
 // lim2 is bound on log max {|x|,|z| }, i.e. logarithmic
 // sel is selmer_only switch
