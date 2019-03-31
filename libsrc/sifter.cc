@@ -27,9 +27,18 @@
 #include <eclib/points.h>
 #include <eclib/sifter.h>
 
-void sifter::init()
+sifter::sifter(Curvedata* EE, int na, int verb)
+    :E(EE), rank(0), verbose(verb), num_aux(na)
 {
   long iaux, i, j, nr;
+
+  I = getc4(*E);
+  J = 2*getc6(*E);
+  disc = getdiscr(*E);
+  E->getai(s,r,t,r,r); // r is just a dummy here
+  r = 3*getb2(*E);     // this is its real value
+  s = 3*s;
+  t = 108*t;
 
   auxs = new long[num_aux];
   nroots = new int[num_aux];
@@ -113,10 +122,10 @@ void sifter::init()
     } // end of aux loop
 
   if((verbose>1)&&(num_aux>0)) 
-    cout<<"finished sifter::init()"<<endl;
+    cout<<"finished sifter constructor"<<endl;
 }
 
-void sifter::clear()
+sifter::~sifter()
 {
   long i;
   for(i=0; i<max_dim_im; i++) delete[]eps_mat[i];

@@ -44,25 +44,9 @@ private:
   int * pivcols;
   long * auxs; long * all_p; int * nroots;  
   long ** thetamod;  int**squares;  
-  void init();  // define  auxiliary moduli and squares
-  void clear();     // free memory
 public:
-  sifter(Curvedata* EE, int na, int verb=0)
-    :E(EE), rank(0), verbose(verb), num_aux(na)
-    {
-      I = getc4(*E);
-      J = 2*getc6(*E);
-      disc = getdiscr(*E);
-      E->getai(s,r,t,r,r); // r is just a dummy here
-      r = 3*getb2(*E);     // this is its real value
-      s = 3*s;
-      t = 108*t;
-      init();
-    }
-  ~sifter()
-    {
-      clear();
-    }
+  sifter(Curvedata* EE, int na, int verb=0);
+  ~sifter();
   int code(const bigint& x, const bigint& z2, int i);
   int * eps(const bigint& x, const bigint& z2);
   void process(const Point& P);
