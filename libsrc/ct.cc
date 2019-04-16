@@ -162,7 +162,7 @@ long loc_hil(const bigint& a, const bigint& b, const bigint& p)
 	// standart hilbert symbol;
 	if (a*b!=BIGINT(0))
 	{
-		if (local_hilbert(a,b,p)) {	return -1;}
+		if (local_hilbert(a,b,p)) { return -1;}
 		else { return 1;}
 	}
 	return 0;
@@ -171,18 +171,19 @@ long loc_hil(const bigint& a, const bigint& b, const bigint& p)
 void hom_CT(const bigint& ii, const bigint& jj, vector<vector<bigint>>& qgens)
 {
 	// retires of qelsgens quartics with non-trivial pairing CT;
-	int i=qgens.size()-1, j, rr;
-	if (i>0)
+	int lg=qgens.size();
+	if (lg>1)
 	{
+		long i, j, l;
 		vector<vector<bigint>> qelsgensl=qgens;
 		quadratic gmm;
 		vector<bigint> z10, z20, z_0, hil_bad_places;
-		bigint non;
+		bigint non=BIGINT(0);
 		vector< vector<bigint> > xplist;
-		vector<int> mask(i+1);
+		vector<vector<int>> M(lg,vector<int> (lg,0));
 		int pairing;
 
-		for (; i+1>0; i--)
+		for (i=lg-1; i+1>0; i--)
 		{
 			z10 = z_inv_mult27(ii, jj, qelsgensl[i]);
 			if (qelsgensl[i][0]==BIGINT(0)) continue;
