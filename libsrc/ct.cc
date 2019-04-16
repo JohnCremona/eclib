@@ -1,4 +1,4 @@
-// ct.cc: Functions for Cassels-Tate paring between two quartics equivariants.
+// ct.cc: Functions for Cassels-Tate paring between two quartics with same invariants.
 // Implementation based On Binary Quartics and the Cassels-Tate Pairing (Tom Fisher) //
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -7,7 +7,7 @@
 #include <eclib/hilbert.h>
 #include <eclib/transform.h>
 #include <eclib/parifact.h>
-#include <eclib/quadratic.h>
+#include <eclib/minim.h>
 
 
 void doubleup(vector<bigint>& v)
@@ -19,39 +19,35 @@ void doubleup(vector<bigint>& v)
 	//b*=2; c*=4; d*=8; e*=16; ii*=16; jj*=64; disc*=4096;
 }
 
-void hom_inv(const bigint& ii, const bigint& jj, vector<vector<bigint>>& qelsgens)
+void hom_inv(vector<vector<bigint>>& qelsgens)
 {
-	// Set ii, jj invariants of elliptic curve;
-	// doubleup for that all quartics has the same invariant
-	long i, j, all_big=0;
-	vector<bigint> v;
-	for (i=0; i<qelsgens.size(); i++)
+	// doubleup if necessary for that all quartics has the same invariant
+	if (1<qelsgens.size())
 	{
-		if (all_big)
+		long all_big=0;
+		bigint ii0=II(qelsgens[0]), jj0=JJ(qelsgens[0]), ii, jj;
+		for (long i=1; i<qelsgens.size(); i++)
 		{
-			v = qelsgens[i];
-			if (!((II(v)==ii)&&(JJ(v)==2*jj)))
+			ii = II(qelsgens[i]);
+			jj = JJ(qelsgens[i]);
+			if (!((ii==ii0)&&(jj==jj0)))
 			{
-				doubleup(v);
-				qelsgens[i] = v;
-			}
-		}
-		else
-		{
-			v = qelsgens[i];
-			if ((II(v)==ii)&&(JJ(v)==2*jj))
-			{
-				all_big = 1;
-				for (j=0; j<i; j++)
+				if (all_big) {doubleup(qelsgens[i]);}
+				else
 				{
-					v = qelsgens[j];
-					doubleup(v);
-					qelsgens[j] = v;
+					ii0 = max(abs(ii), abs(ii0))*sign(ii);
+					jj0 = max(abs(jj), abs(jj0))*sign(jj);
+					all_big = 1;
+					for (long j=0; j<=i; j++)
+					{
+						ii = II(qelsgens[j]);
+						jj = JJ(qelsgens[j]);
+						if (!((ii==ii0)&&(jj==jj0))) {doubleup(qelsgens[j]);}
+					}
 				}
 			}
 		}
 	}
-
 }
 
 bigint norm_z(const bigint& ii, const bigint& jj, const vector<bigint>& z0)
@@ -97,21 +93,41 @@ vector<bigint> z_inv_mult27(const bigint& ii, const bigint& jj, vector<bigint>& 
 	}
 }
 
-vector<bigint> z_(const bigint& ii, const bigint& jj, const vector<bigint>& z1_, const vector<bigint>& z2_)
+vector<bigint> oper_L(const bigint& ii, const bigint& jj, const vector<bigint>& z1_, const vector<bigint>& z2_)
 {
-	//return <a, b, c> that z_ = a*phi^2 + b*phi + c and z3=z1*z2*z_^2 is linear on L*/L*^2;
-	bigint z0, z1, z2;
-	z2 = z2_[0]*z1_[0];
-	z1 = z1_[0]*z2_[1]+z1_[1]*z2_[0];
-	z0 = z1_[1]*z2_[1];
+	// product (z1_*z2_) on quotient L;
+	vector<bigint> z1, z2;
 
-	vector<bigint> L, res;
-	L = {(3*ii*(z0 + 3*z2*ii) - z1*jj), 2*(3*z1*ii - z2*jj), 2*(z0 + 3*z2*ii), (z0 + 3*z2*ii), 2*z1, z2};
-	res = PARI::solve_conic(L);
-	// need check if non-null norm
-	return res;
+	if (z1_.size()==2) {z1 = {BIGINT(0), z1_[0], z1_[1]};} else {z1 = z1_;}
+	if (z2_.size()==2) {z2 = {BIGINT(0), z2_[0], z2_[1]};} else {z2 = z2_;}
+
+	return vector<bigint> { (3*ii*z1[0]*z2[0] + z1[2]*z2[0] + z1[1]*z2[1] + z1[0]*z2[2]),
+							(-jj*z1[0]*z2[0] + 3*ii*z1[1]*z2[0] + 3*ii*z1[0]*z2[1] + z1[2]*z2[1] + z1[1]*z2[2]),
+							- jj*z1[1]*z2[0] - jj*z1[0]*z2[1] + z1[2]*z2[2]};
 }
 
+vector<bigint> linearizer_z(const bigint& ii, const bigint& jj, const vector<bigint>& z)
+{
+	// return z_ that (z*z_^2) is a linear representation for z in L/L^2;
+	vector<bigint> L;
+	L = {(3*ii*(z[2] + 3*z[0]*ii) - z[1]*jj), 2*(3*z[1]*ii - z[0]*jj), 2*(z[2] + 3*z[0]*ii), (z[2] + 3*z[0]*ii), 2*z[1], z[0]};
+	return PARI::solve_conic(L);
+}
+
+vector<bigint> quartic_of_z(const bigint& ii, const bigint& jj, const vector<bigint>& z)
+{
+	bigint r;
+	if (!isqrt(norm_z(ii, jj, z), r)) {cout << "\nError: norm of z invariant not square. \n"; abort();}
+
+	vector<bigint> g={3*z[0], BIGINT(0), -18*z[1]*z[0], 24*z[0]*r, 36*ii*z[0]*z[0]*z[0]-9*z[1]*z[1]*z[0]};
+	scaled_unimod m;
+	bigint I=II(g), J=JJ(g);
+	vector<bigint> badprimes0 = factor(6*z[0]);
+
+	minim_all(g[0], g[1], g[2], g[3], g[4], I, J, badprimes0, m, 1);
+
+	return g;
+}
 quadratic gamma_(const bigint& ii, const bigint& jj, const vector<bigint>& qv1, const vector<bigint>& z2, const vector<bigint>& z_)
 {
 	// set z2 the z invariant of g2, z_ as above and qv a quartic q1 with invariants ii, jj;
@@ -175,7 +191,8 @@ void hom_CT(const bigint& ii, const bigint& jj, vector<vector<bigint>>& qgens)
 				pairing = 1;
 				z20 = z_inv_mult27(ii, jj, qelsgensl[j]);
 				if (qelsgensl[j][0]==BIGINT(0)) continue;
-				z_0 = z_(ii, jj, z10, z20);
+				z_0 = linearizer_z(ii, jj, oper_L(ii, jj, z10, z20));
+
 				gmm = gamma_(ii, jj, qelsgensl[i], z20, z_0);
 
 				hil_bad_places = hil_bad_p(gmm, qelsgensl[j][0]);
@@ -184,25 +201,68 @@ void hom_CT(const bigint& ii, const bigint& jj, vector<vector<bigint>>& qgens)
 				locallysoluble(qelsgensl[i][0], qelsgensl[i][1], qelsgensl[i][2], qelsgensl[i][3], qelsgensl[i][4], hil_bad_places, non, 1, xplist, gmm);
 
 				pairing *= loc_hil(gmm(xplist[0][0], xplist[0][1]), qelsgensl[j][0], BIGINT(0));
-				for (rr=1; rr<xplist.size(); rr++)
+
+				for (l=1; l<xplist.size(); l++)
 				{
-					pairing *= loc_hil(gmm(xplist[rr][0], xplist[rr][1]), qelsgensl[j][0], hil_bad_places[rr-1]);
+					pairing *= loc_hil(gmm(xplist[l][0], xplist[l][1]), qelsgensl[j][0], hil_bad_places[l-1]);
 				}
-				if (pairing==-1)
-				{
-					mask[i]=1;
-					mask[j]=1;
-				}
+				if (pairing==-1) { M[i][j]=M[j][i]=1;}
 			}
 		}
-		qelsgensl = v00_;
-		for (i=0; i<mask.size(); i++)
+
+		qgens=qelsgensl;
+		qelsgensl={};
+		long ngens=1<<lg, mask_S4=0;
+
+		for (i=1; i<ngens; i++)
 		{
-			if (!mask[i])
+			if (i&mask_S4) continue;
+			vector<int> vp(lg,0);
+
+			l=-1; j=i;
+			do {
+				l++;
+				if(j&1) {for (long r=0; r<lg; r++) {vp[r]^=M[l][r];}}
+			} while (j>>=1);
+
+			if (vp==vector<int> (lg,0))
 			{
-				qelsgensl.push_back(qgens[i]);
+				if (i==(1<<l)) {mask_S4|=(1<<l); qelsgensl.push_back(qgens[l]);}
+				else
+				{
+					l=-1; j=i;
+					vector<bigint> product_z={BIGINT(0), BIGINT(0), BIGINT(1)};
+					int need_complete_square=0;
+
+					do {
+						l++;
+						if(j&1)
+						{
+							vector<bigint> z_j = z_inv_mult27(ii, jj, qgens[l]);
+							need_complete_square^=1;
+							product_z = oper_L(ii, jj, product_z, z_j);
+						}
+					} while (j>>=1);
+
+					if (need_complete_square) {for (long r=0; r<3; r++) {product_z[r]*=BIGINT(3);}}
+
+					vector<bigint> lin_prod=linearizer_z(ii, jj, product_z);
+					product_z = oper_L(ii, jj, product_z, oper_L(ii, jj, lin_prod, lin_prod));
+					product_z = {product_z[1], product_z[2]}; // remove coeff of phi^2 that here is 0
+
+					qelsgensl.push_back(quartic_of_z(ii, jj, product_z));
+
+					mask_S4|=(1<<l);
+
+					for (long r=0; r<lg; r++) { M[l][r]=M[r][l]=0;}
+				}
 			}
 		}
+
+		//cout << "\n";
+		//for (i=0; i<lg; i++) { cout  << M[i] << "\n";}
+
+		hom_inv(qelsgensl);
 		qgens = qelsgensl;
 	}
 }

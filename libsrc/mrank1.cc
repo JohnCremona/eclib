@@ -27,6 +27,8 @@
 #include <eclib/mglobsol.h>
 #include <eclib/mrank1.h>
 #include <eclib/ct.h>
+#include <eclib/reduce.h>
+#include <eclib/qc.h>
 
 #define USE_BIGINTS
 
@@ -1438,26 +1440,72 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux, 
 
 	if (do_CT)
 	{
-		///hom_inv(c4, c6, qelsgens1);
-		hom_CT(c4, 2*c6, qelsgens1);
-		for (int ll=0; ll<qelsgens1.size(); ll++)
+		hom_inv(qelsgens1);
+
+		bigint ii=c4, jj=2*c6;
+		long ngens=qelsgens1.size();
+		if (ngens) {ii=II(qelsgens1[0]); jj=JJ(qelsgens1[0]);}
+
+		hom_CT(ii, jj, qelsgens1);
+		ngens=qelsgens1.size();
+
+		if (ngens)
 		{
-			bigint x, y, z;
-			Point Ptemp;
-			quartic q0 = quartic(qelsgens1[ll][0], qelsgens1[ll][1], qelsgens1[ll][2], qelsgens1[ll][3], qelsgens1[ll][4]);
-			quartic_sieve qs(&q0,QSIEVE_OPT,0);
-			if(qs.search(lim2))
+			IJ_curve = Curvedata(BIGINT(0),BIGINT(0),BIGINT(0),-27*ii,-27*jj,0);
+			IJ_curve.minimalize(tr_u,tr_r,tr_s,tr_t);
+		}
+
+		for (int ll=0; ll<ngens; ll++)
+		{
+			bigint x, y, z, oldga, oldgb, oldgc, oldgd, oldge;
+			quartic q0;
+			long better=1, ired;
+			vector<bigint> v;
+			/// minimize on 2 ???
+
+			v = {qelsgens1[ll][0], qelsgens1[ll][1], qelsgens1[ll][2], qelsgens1[ll][3], qelsgens1[ll][4]};
+
+			if(v[0]!=BIGINT(0))
 			{
-				qs.getpoint(x,y,z);// gls=1;
-				if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
-				//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
-				qc(q0,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
-				//cout<<"qc() returns giving point " << Pt
-				pointlist.push_back(Ptemp);
+				better=1; ired=0;
+				oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
+				unimod n;
+				for(ired=0; (ired<5)&&better; ired++)
+				{
+					reduce(v[0], v[1], v[2], v[3], v[4],n);
+					better = (abs(v[0])<=abs(oldga))&&!((v[1]==oldgb)&&(v[2]==oldgc)&&(v[3]==oldgd)&&(v[4]==oldge));
+					if(better||(ired==0))
+					{
+						n.reset();
+						oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
+						q0.assign(v[0],v[1],v[2],v[3],v[4]);
+					}
+				}
+
+				quartic_sieve qs(&q0,QSIEVE_OPT,0);
+
+				if(qs.search(lim2))
+				{
+					Point Ptemp(the_curve);
+					qs.getpoint(x,y,z);
+					if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+					//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
+					qc(q0,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
+					//cout<<"qc() returns giving point " << Ptemp
+					pointlist.push_back(Ptemp);
+				}
+				else
+				{
+					if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+				}
 			}
 			else
 			{
-				if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+				Point Ptemp(the_curve);
+				x=BIGINT(1); y=BIGINT(0); z=BIGINT(0);
+				if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+				qc(v,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
+				pointlist.push_back(Ptemp);
 			}
 		}
 	}

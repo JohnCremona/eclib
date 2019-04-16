@@ -31,6 +31,7 @@
 #include <eclib/desc2.h>
 #include <eclib/reduce.h>
 #include <eclib/ct.h>
+#include <eclib/qc.h>
 
 #ifndef QSIEVE_OPT
 #define QSIEVE_OPT 0 // uses Stoll's sieve
@@ -959,8 +960,8 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second, int
 			else
 			{
 				certain = 0; rank =0;
-				hom_inv(ii, jj, qelsgens);
-				hom_inv(ii_, jj_, qelsgens_);
+				hom_inv(qelsgens);
+				hom_inv(qelsgens_);
 				ii = II(qelsgens[0]); jj = JJ(qelsgens[0]);
 				ii_ = II(qelsgens_[0]); jj_ = JJ(qelsgens_[0]);
 
@@ -988,9 +989,12 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second, int
 						/// minimize on 2 ???
 
 						v = {qelsgens[ll][0], qelsgens[ll][1], qelsgens[ll][2], qelsgens[ll][3], qelsgens[ll][4]};
-						better=1; ired=0;
-						oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
-						unimod n;
+
+						if(v[0]!=BIGINT(0))
+						{
+							better=1; ired=0;
+							oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
+							unimod n;
 						for(ired=0; (ired<5)&&better; ired++)
 						{
 							reduce(v[0], v[1], v[2], v[3], v[4],n);
@@ -1000,24 +1004,33 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second, int
 								n.reset();
 								oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
 								q0.assign(v[0],v[1],v[2],v[3],v[4]);
+								}
 							}
-						}
 
-						Point Ptemp(the_curve);
-						quartic_sieve qs(&q0,QSIEVE_OPT,0);
+							quartic_sieve qs(&q0,QSIEVE_OPT,0);
 
-						if(qs.search(lim2))
-						{
-							qs.getpoint(x,y,z);
-							if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
-							//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
+							if(qs.search(lim2))
+							{
+								Point Ptemp(the_curve);
+								qs.getpoint(x,y,z);
+								if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+								//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
 							qc(q0,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
 							//cout<<"qc() returns giving point " << Ptemp
 							pointlist.push_back(Ptemp);
 						}
 						else
 						{
-							if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+								if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+							}
+						}
+						else
+						{
+							Point Ptemp(the_curve);
+							x=BIGINT(1); y=BIGINT(0); z=BIGINT(0);
+							if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+							qc(v,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
+							pointlist.push_back(Ptemp);
 						}
 					}
 					rank = pointlist.size() + nt2gens_2;
@@ -1036,15 +1049,16 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second, int
 					{
 						bigint x, y, z, oldga, oldgb, oldgc, oldgd, oldge;
 						quartic q0;
-						long better=1, ired;
 						vector<bigint> v;
 						/// minimize on 2???
 
 						v = {qelsgens_[ll][0], qelsgens_[ll][1], qelsgens_[ll][2], qelsgens_[ll][3], qelsgens_[ll][4]};
-						better=1; ired=0;
-						oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
-						unimod n;
-						for(ired=0; (ired<5)&&better; ired++)
+						if (v[0]!=BIGINT(0))
+						{
+							long better=1, ired=0;
+							oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
+							unimod n;
+							for(ired=0; (ired<5)&&better; ired++)
 						{
 							reduce(v[0], v[1], v[2], v[3], v[4],n);
 							better = (abs(v[0])<=abs(oldga))&&!((v[1]==oldgb)&&(v[2]==oldgc)&&(v[3]==oldgd)&&(v[4]==oldge));
@@ -1053,17 +1067,17 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second, int
 								n.reset();
 								oldga=v[0]; oldgb=v[1]; oldgc=v[2]; oldgd=v[3]; oldge=v[4];
 								q0.assign(v[0],v[1],v[2],v[3],v[4]);
+								}
 							}
-						}
 
-						Point Qtemp(eedash_min_), Ttemp(eedash), Rtemp(ee), Ptemp(the_curve);
-						quartic_sieve qs(&q0,QSIEVE_OPT,0);
+							quartic_sieve qs(&q0,QSIEVE_OPT,0);
 
-						if(qs.search(lim2))
-						{
-							qs.getpoint(x,y,z);// gls=1;
-							if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
-							//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
+							if(qs.search(lim2))
+							{
+								Point Qtemp(eedash_min_), Ttemp(eedash), Rtemp(ee), Ptemp(the_curve);
+								qs.getpoint(x,y,z);// gls=1;
+								if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+								//cout<<"Calling qc() with (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
 							qc(q0,x,y,z,&eedash_min_,&IJ_curve_,tr_u,tr_r,tr_s,tr_t, Qtemp,verbose);
 							//cout<<"qc() returns giving point " << Ptemp
 
@@ -1074,14 +1088,27 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second, int
 						}
 						else
 						{
-							if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+								if (verbose) {cout<<"no rational point found (limit "<<lim2<<"), in "<< q0 <<flush;}
+							}
+						}
+						else
+						{
+							Point Qtemp(eedash_min_), Ttemp(eedash), Rtemp(ee), Ptemp(the_curve);
+							x=BIGINT(1); y=BIGINT(0); z=BIGINT(0);
+							if (verbose) {cout<<"Found (x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<") in " << q0 <<  "; \n";}
+							qc(v,x,y,z,&eedash_min_,&IJ_curve_,tr_u,tr_r,tr_s,tr_t, Qtemp,verbose);
+
+							Ttemp = transform(Qtemp, &eedash,tr_u0,tr_r0,tr_s0,tr_t0,1);
+							eedash_to_ee(Ttemp, Rtemp);
+							Ptemp = transform(Rtemp, the_curve, tr_u1,tr_r1,tr_s1,tr_t1);
+							pointlist.push_back(Ptemp);
 						}
 					}
-					rank_ = pointlist.size() + nt2gens_2 - rank;
-					rank = max(rank_, rank);
+					rank_ = pointlist.size() + 2*nt2gens_2 - rank;
+					rank = max(0, max(rank_, rank));
 					certain = (rank==rank_bound);
 				}
-				/// if (!certain)&&(qelsgens.size()+nt2gens_2>rank_bound)
+				/// if (!certain)&&(qelsgens.size()+n2torsion_gens-2>rank_bound)
 			}
 			selmer_only = 0;
 		}

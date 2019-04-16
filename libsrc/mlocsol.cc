@@ -122,13 +122,13 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
 		if (30<nu) return 0; // Avoid infinity loop case q and g has common solution;
 		if (s_==1)
 		{
-			if (val(p,q(x0,BIGINT(1)))<=nu) return 1;
+			if (val(p,q(x0,BIGINT(1)))<((p==2)?(nu-2):nu)) return 1;
 			result=0;
 			quit=1;
 		}
 		else if (s_==2)
 		{
-			if (val(p,q(BIGINT(1),x0))<=nu) return 1;
+			if (val(p,q(BIGINT(1),x0))<((p==2)?(nu-2):nu)) return 1;
 			result=0;
 			quit=1;
 		}
@@ -178,7 +178,6 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
 int qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
 	      const bigint& e, const bigint& p, int s_, vector< vector<bigint> >& xplist, const quadratic& q)
 {
-//  static const bigint zero = BIGINT(0);
   if (s_) {s_=1;}
   bigint xp=BIGINT(0);
   if (zpsol(a,b,c,d,e,p,xp,0,s_,q))

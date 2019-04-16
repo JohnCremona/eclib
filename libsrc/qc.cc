@@ -2,39 +2,52 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include <eclib/qc.h>
 
 //#define DEBUG
 
 void qc(quartic& g,
         const bigint& x0,  const bigint& y0,  const bigint& z0,
-        Curvedata * E, 
-	Curvedata* IJ_curve, 
-	const bigint& tr_u, const bigint& tr_r, 
-	const bigint& tr_s, const bigint& tr_t,  
+        Curvedata * E,
+	Curvedata* IJ_curve,
+	const bigint& tr_u, const bigint& tr_r,
+	const bigint& tr_s, const bigint& tr_t,
 	Point& P, int verbose)
 {
-  bigint aa,bb,cc,dd,ee,p,q,r,t,xp,yp,zp;
-  bigint a=g.a, b=g.b, c=g.c, d=g.d, e=g.e;
+  //bigint aa,bb,cc,dd,ee,p,q,r,t,xp,yp,zp;
+  vector<bigint> v = {g.a, g.b, g.c, g.d, g.e};
+  qc(v,x0,y0,z0,E,IJ_curve,tr_u,tr_r,tr_s,tr_t,P,verbose);
+}
+
+void qc(vector<bigint>& g,
+		const bigint& x0,  const bigint& y0,  const bigint& z0,
+        Curvedata * E,
+	Curvedata* IJ_curve,
+	const bigint& tr_u, const bigint& tr_r,
+	const bigint& tr_s, const bigint& tr_t,
+	Point& P, int verbose)
+{
+	bigint aa,bb,cc,dd,ee,p,q,r,t,xp,yp,zp;
+	bigint a=g[0], b=g[1], c=g[2], d=g[3], e=g[4];
 
 #ifdef DEBUG
   cout << "In qc(...) with:\n";
@@ -45,11 +58,11 @@ void qc(quartic& g,
   cout << "Quartic = (a,b,c,d,e) = ("<<a<<", "<<b<<", "<<c<<", "<<d<<", "<<e<<")\n";
 #endif
 
-  bigint z02=sqr(z0); 
+  bigint z02=sqr(z0);
 
   if(isqrt(a,q)) {z02=1;}  // else z0=0 which sets zp=0 below
   else if(isqrt(e,q)){t=a; a=e; e=t; t=b; b=d; d=t; }
-    else 
+    else
       {
 	const bigint& z03=z0*z02;  const bigint& z04=sqr(z02);
 	const bigint& x02=sqr(x0); const bigint& x03=x0*x02;
