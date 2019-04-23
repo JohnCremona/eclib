@@ -57,8 +57,8 @@ bigint norm_z(const bigint& ii, const bigint& jj, const vector<bigint>& z0)
 	if (z0.size()==2) { L={BIGINT(0),z0[0],z0[1]};}
 	else { L=z0;}
 
-	return (pow(jj,2)*pow(L[0], 3) + 3*ii*jj*pow(L[0], 2)*L[1] + 9*pow(ii,2)*pow(L[0],2)*L[2] 
-			- jj*pow(L[1], 3) + 3*jj*L[0]*L[1]*L[2] - 3*ii*pow(L[1],2)*L[2] 
+	return (pow(jj,2)*pow(L[0], 3) + 3*ii*jj*pow(L[0], 2)*L[1] + 9*pow(ii,2)*pow(L[0],2)*L[2]
+			- jj*pow(L[1], 3) + 3*jj*L[0]*L[1]*L[2] - 3*ii*pow(L[1],2)*L[2]
 			+ 6*ii*L[0]*pow(L[2],2) + pow(L[2],3));
 }
 
@@ -91,6 +91,7 @@ vector<bigint> z_inv_mult27(const bigint& ii, const bigint& jj, vector<bigint>& 
 			return z;
 		}
 	}
+	cout << "Error: norm zero on z_inv_mult27."; abort();
 }
 
 vector<bigint> oper_L(const bigint& ii, const bigint& jj, const vector<bigint>& z1_, const vector<bigint>& z2_)
@@ -108,23 +109,59 @@ vector<bigint> oper_L(const bigint& ii, const bigint& jj, const vector<bigint>& 
 
 vector<bigint> linearizer_z(const bigint& ii, const bigint& jj, const vector<bigint>& z)
 {
-	// return z_ that (z*z_^2) is a linear representation for z in L/L^2;
-	vector<bigint> L;
+	// return z_ that (z*z_^2) is a linear representation for z in L/L^2 and norm(z_)!=0;
+	vector<bigint> L, res;
 	L = {(3*ii*(z[2] + 3*z[0]*ii) - z[1]*jj), 2*(3*z[1]*ii - z[0]*jj), 2*(z[2] + 3*z[0]*ii), (z[2] + 3*z[0]*ii), 2*z[1], z[0]};
-	return PARI::solve_conic(L);
+
+	res = PARI::solve_conic(L);
+	if (norm_z(ii, jj, res)==BIGINT(0))
+	{
+		vector<vector<bigint>> pt={{BIGINT(1),BIGINT(0)}, {BIGINT(0),BIGINT(1)},
+									{BIGINT(-1),BIGINT(1)}, {BIGINT(1),BIGINT(1)},
+									{BIGINT(2),BIGINT(1)}, {BIGINT(-2),BIGINT(1)},
+									{BIGINT(1),BIGINT(2)}, {BIGINT(-1),BIGINT(2)}},
+							   param=PARI::param_conic(L,res);
+		quadratic q1(param[0][0], param[0][1], param[0][2]),
+			      q2(param[1][0], param[1][1], param[1][2]),
+			      q3(param[2][0], param[2][1], param[2][2]);
+
+		for (int i=0; i<8; i++)
+		{
+			res={q1(pt[i][0],pt[i][1]), q2(pt[i][0],pt[i][1]), q3(pt[i][0],pt[i][1])};
+
+			if (norm_z(ii,jj,res)!=BIGINT(0)) {return res;}
+		}
+	}
+	else {return res;}
+
+	cout << "\nError: norm of linearizer is zero.\n";
+	abort();
 }
 
 vector<bigint> quartic_of_z(const bigint& ii, const bigint& jj, const vector<bigint>& z)
 {
+	// On Equivalence of Binary quartics (Cremona, Fisher): Theorem 13-(3);
+	// Computing the Rank of Elliptic Curves over Number Fields (Denis Simon): Proposition 1.7;
 	bigint r;
+	if (z.size()==3) {cout << "\nError: z not linear.\n"; abort();}
 	if (!isqrt(norm_z(ii, jj, z), r)) {cout << "\nError: norm of z invariant not square. \n"; abort();}
 
 	vector<bigint> g={3*z[0], BIGINT(0), -18*z[1]*z[0], 24*z[0]*r, 36*ii*z[0]*z[0]*z[0]-9*z[1]*z[1]*z[0]};
-	scaled_unimod m;
-	bigint I=II(g), J=JJ(g);
-	vector<bigint> badprimes0 = factor(6*z[0]);
 
-	minim_all(g[0], g[1], g[2], g[3], g[4], I, J, badprimes0, m, 1);
+	bigint f, l, a1;
+
+	f=bezout(z[1], z[0], l, a1);
+	unimod m1={z[0], l*r, BIGINT(0), f};
+
+	apply_transform(g[0],g[1],g[2],g[3],g[4],m1);
+
+	bigint den_=pow(z[0],4);
+	for (int i=0; i<5; i++) { (g[i])/=den_;}
+
+	vector<bigint> badprimes = factor(3*f);
+	bigint I=II(g), J=JJ(g);
+	scaled_unimod m;
+	minim_all(g[0], g[1], g[2], g[3], g[4], I, J, badprimes, m, 1);
 
 	return g;
 }
@@ -233,19 +270,15 @@ void hom_CT(const bigint& ii, const bigint& jj, vector<vector<bigint>>& qgens)
 				{
 					l=-1; j=i;
 					vector<bigint> product_z={BIGINT(0), BIGINT(0), BIGINT(1)};
-					int need_complete_square=0;
 
 					do {
 						l++;
 						if(j&1)
 						{
 							vector<bigint> z_j = z_inv_mult27(ii, jj, qgens[l]);
-							need_complete_square^=1;
 							product_z = oper_L(ii, jj, product_z, z_j);
 						}
 					} while (j>>=1);
-
-					if (need_complete_square) {for (long r=0; r<3; r++) {product_z[r]*=BIGINT(3);}}
 
 					vector<bigint> lin_prod=linearizer_z(ii, jj, product_z);
 					product_z = oper_L(ii, jj, product_z, oper_L(ii, jj, lin_prod, lin_prod));

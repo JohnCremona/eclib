@@ -36,6 +36,7 @@ namespace PARI
 	vector<bigint> factor(const bigint& n);
 	int is_prime(const bigint& n);
 	vector<bigint> solve_conic(const vector<bigint>& L);
+	vector<vector<bigint>> param_conic(const vector<bigint>& L, const vector<bigint>& sol);
 }
 
 #endif
