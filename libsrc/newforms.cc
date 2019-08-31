@@ -1035,38 +1035,39 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
   if(basisflag) // we already have all the data except the
                 // basis vector, so not much needs doing
     {
+      int n = nf_subset[j1ds++];
+      newform& nf = nflist[n];
       if(verbose) 
-	cout<<"Filling in data for for newform #"<<(j1ds+1)<<": bases..."<<flush;
-      nflist[j1ds].sign=sign;
+	cout<<"Filling in data for for newform #"<<(n+1)<<": bases..."<<flush;
+      nf.sign=sign;
       if(sign==+1)
-        nflist[j1ds].bplus=b1;
+        nf.bplus=b1;
       if(sign==-1)
-        nflist[j1ds].bminus=b1; // formfinder puts the basis vector in b1
+        nf.bminus=b1; // formfinder puts the basis vector in b1
       if(sign==0) 
 	{
-	  nflist[j1ds].bplus=b1;
-	  nflist[j1ds].bminus=b2;
+	  nf.bplus=b1;
+	  nf.bminus=b2;
 	}
       if(verbose) 
 	cout<<"type and cuspidal factors..."<<flush;
-      nflist[j1ds].find_cuspidal_factors();
+      nf.find_cuspidal_factors();
       if(verbose) 
 	cout<<"coords..."<<flush;
-      nflist[j1ds].find_coords_plus_minus();
+      nf.find_coords_plus_minus();
       if(sign==0)
 	{
 	  if(verbose) 
 	    cout<<"twisting primes..."<<flush;
-	  nflist[j1ds].find_twisting_primes();
+	  nf.find_twisting_primes();
 	  if(verbose) 
 	    cout<<"matrix..."<<flush;
-	  nflist[j1ds].find_matrix();
+	  nf.find_matrix();
 	}
       if(verbose) 
 	cout<<"done."<<endl;
-      j1ds++;
       if(verbose) 
-	cout<<"Finished filling in data for newform #"<<j1ds<<endl;
+        cout<<"Finished filling in data for newform #"<<(n+1)<<endl;
       return;
     }
 
@@ -1742,7 +1743,7 @@ void newforms::createfromolddata()
 }
 
 // Construct bases (homology eigenvectors) from eigenvalue lists:
-void newforms::makebases(int flag)
+void newforms::makebases(int flag, int all_nf)
 {
   if(n1ds==0) return;
   
@@ -1758,17 +1759,22 @@ void newforms::makebases(int flag)
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
   // basisflag controls what ::use() does with the nfs when found
   // j1ds counts through the newforms as they are found
-  basisflag=flag; j1ds=0;
-  vector< vector<long> > eigs(n1ds);
+  basisflag=flag;
   int i;
+  j1ds = 0; // counts through newforms as they are recovered
+  vector< vector<long> > eigs;
+
+  if (all_nf)
+    {
+      nf_subset.clear();
+      for(i=0; i<n1ds; i++)
+        nf_subset.push_back(i);
+    }
 
   unfix_eigs();
   sort();
-  for(i=0; i<n1ds; i++)
-    {
-      eigs[i] = nflist[i].aplist;
-      //      cout<<i+1<<": ";vec_out(cout,eigs[i],10); cout<<endl;
-    }
+  for(i=0; i<nf_subset.size(); i++)
+    eigs.push_back(nflist[nf_subset[i]].aplist);
 
   splitspace.recover(eigs);  // NB newforms::use() determines what is
 			     // done with each one as it is found;
@@ -1781,25 +1787,32 @@ void newforms::makebases(int flag)
   if(verbose>1) {cout<<"After sorting:\n"; display();}
 }
 
-void newforms::merge()
+void newforms::merge(int all_nf)
 {
   if(n1ds==0) return;
   if(verbose) cout << "Making homspace..."<<flush;
   makeh1(0);
   if(verbose) cout << "done." << endl;
   vec bplus, bminus;
-  j1ds = 0; basisflag = 1;
+  j1ds = 0;
+  basisflag = 1;
   mvlplusvecs.clear();
   mvlminusvecs.clear();
-  for(int inf=0; inf<n1ds; inf++)
+  if (verbose>1)
+    cout<<"merging newforms " << nf_subset << endl;
+  int inf, jnf;
+  unfix_eigs();
+  sort();
+  for(jnf=0; jnf<nf_subset.size(); jnf++)
    {
+     inf = nf_subset[jnf];
      if(verbose) cout << "Newform #"<<(inf+1)<<":"<<endl;
-     if(verbose) cout<< "-about to extend bplus,bminus..."<<flush;
+     if(verbose) cout << "-about to extend bplus,bminus..."<<flush;
      bplus.init(h1->nsymb);
      bminus.init(h1->nsymb);
      int i,j;
      for(i=1; i<=h1->nsymb; i++)
-       {      
+       {
 	 j = h1plus->coordindex[i-1];
 	 if (j==0) bplus[i] = 0;
 	 else if (j>0) bplus[i] =  nflist[inf].coordsplus[j];
@@ -1819,13 +1832,14 @@ void newforms::merge()
        {
 	 cout << " new bplus  = "<<bplus <<":"<<endl;
 	 cout << " new bminus = "<<bminus<<":"<<endl;
-       } 
+       }
      // These new dual eigenvectors are used to compute all
      // additional data needed for curve and modular symbol
      // computation (scaling and cuspidal factors and type)
      use(bplus, bminus, nflist[inf].aplist);
    }
-  
+  refix_eigs();
+  sort(int(modulus<130000)); // old order for N<130000, else new order
 }
 
 

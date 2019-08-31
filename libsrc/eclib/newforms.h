@@ -164,6 +164,7 @@ protected:
 public:
   long n1ds, j1ds;
   vector<newform> nflist;
+  vector<int> nf_subset;
   newforms(long n, int disp) 
     :level(n), verbose(disp), of(0), h1(0), h1plus(0), h1minus(0), h1full(0) {;}
   ~newforms(void);
@@ -208,10 +209,10 @@ public:
 
   // Construct bases (homology eigenvectors) from eigenvalue lists:
   // flag controls what ::use() does with the nfs when found
-  void makebases(int flag);
+  void makebases(int flag, int all_nf=1);
 
   // Construct H1 newforms, given H1+ and H1- newforms
-  void merge();
+  void merge(int all_nf=1);
 
   vector<long> apvec(long p);  // computes a[p] for each newform
   void addap(long last); // adds ap for primes up to the last'th prime

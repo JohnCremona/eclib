@@ -32,23 +32,29 @@
 #include <eclib/periods.h>
 #include <eclib/pcprocs.h>
 
+#ifndef SINGLE   // so Makefile can override
 #define AUTOLOOP
+#endif
 #define SHOWCURVES
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 int main(void)
 {
-  int verbose,output,curve_output,limit=210,n=130;
+  int verbose,output,curve_output,n=130;
   cout << "Program h1first.  Using METHOD = " << METHOD << endl;
   cerr << "Verbose output? "; cin>>verbose;
   cerr << "Output updated newform data? "; cin>>output;
   cerr << "Output updated curve file? (0/1) ";  cin >> curve_output;
   string curve_filename;
 #ifdef AUTOLOOP
+  int limit=210;
   cerr<<"Enter first and last N: ";cin>>n>>limit;  n--;
   while (n<limit) { n++;
 #else
-  while (n>0) { cout<<"\n\nEnter level: "; cin>>n;
+#ifndef SINGLE
+  while (n>0)
+#endif
+    { cout<<"\n\nEnter level: "; cin>>n;
 #endif
   if (n>0)
     {
@@ -64,7 +70,7 @@ int main(void)
           cout << "Reading newform data from file..." << flush;
         }
       nf.createfromdata(1,0,0);
-      long inf, nnf = nf.n1ds;
+      long nnf = nf.n1ds;
       if(verbose)
         {
           cout << "done: " << nnf << " newforms." << endl;
@@ -73,33 +79,72 @@ int main(void)
         {
           cout << "No newforms.\n";
           cout << "Finished level "<<n<<endl;
+#ifdef SINGLE
+          exit(0);
+#else
           continue;
+#endif
         }
 #ifdef LMFDB_ORDER
       nf.sort();
+#endif
+      int all_nf = 1; // default; means do all
+      int inf = 1;
+#ifdef SINGLE
+      all_nf = 0;
+      nf.nf_subset.clear();
+      cout << "Enter list of form numbers (between 1 and "<<nnf<<"), ending with 0: ";
+      cin>>inf;
+      while((inf>0)&&(inf<=nnf))
+        {
+          nf.nf_subset.push_back(inf-1); // actually count from 0 despite UI using 1 as base
+          cin>>inf;
+        }
+      nnf = nf.nf_subset.size();
+      cout << endl;
+      if(verbose)
+        {
+          cout << "Working on " << nnf << " newforms: " << nf.nf_subset << " ..." << endl;
+        }
 #endif
       if(verbose)
         {
           cout << "Finding +1 eigenvectors..." << flush;
         }
-      nf.makebases(1);
+      nf.makebases(1, all_nf);
       if(verbose)
         {
           cout << "done.\nNow finding -1 eigenvectors..." << flush;
         }
       nf.set_sign(-1);
-      nf.makebases(1);
+      nf.makebases(1, all_nf);
       if(verbose)
         {
           cout << "done.\nNow filling in data for newforms..."<<flush;
         }
-      nf.set_sign(0);
-      nf.merge();
+      if(verbose)
+        {
+          cout << "about to call merge" << endl;
+        }
+      nf.merge(all_nf);
 
       if(verbose)
         {
-          cout << "done.\nUpdated newforms: ";
-          nf.display();
+          cout << "done.\nUpdated newform(s): ";
+          if (all_nf)
+            {
+              nf.display();
+            }
+          else
+            {
+              cout<<"updated newforms "<<nf.nf_subset<<":"<<endl;
+              vector<int>::const_iterator nfi;
+              for(nfi = nf.nf_subset.begin(); nfi!=nf.nf_subset.end(); nfi++)
+                {
+                  cout<<"# "<<(*nfi)<<":\t"<<endl;
+                  nf.nflist[*nfi].display();
+                }
+            }
         }
       if(output)
         {
@@ -109,22 +154,38 @@ int main(void)
         }
 
 #ifdef SHOWCURVES
-      // Now we compute the curves
+      // Now we compute the curves (all, unless one_only)
       if(verbose) cout<<"Computing "<<nnf<<" curves...\n";
       vector<int> forms;
-      for(inf=0; inf<nnf; inf++) forms.push_back(inf);
+      if (all_nf)
+        {
+          for(int i=0; i<nf.n1ds; i++) forms.push_back(i);
+        }
+      else
+        {
+          for(int i=0; i<nnf; i++) forms.push_back(nf.nf_subset[i]);
+        }
       vector<int> failures = nf.showcurves(forms,0,curve_filename);
       if(failures.size()>0)
-	{
-	  cout<<"No curve found for "<<failures.size()<<" forms: "<<failures<<endl;
-	}
+        {
+          cout<<"No curve found for "<<failures.size()<<" forms: "<<failures<<endl;
+        }
       else
-	{
-	  if(verbose) cout<<"All curves found OK"<<endl;
-	}
+        {
+          if(verbose) cout<<"All curves found OK"<<endl;
+          if (!all_nf && curve_output)
+            {
+              if(verbose)
+                cout<<"Recomputing all curves and outputting to "<<curve_filename<<endl;
+              forms.clear();
+              for(int i=0; i<nf.n1ds; i++) forms.push_back(i);
+              nf.showcurves(forms,verbose,curve_filename);
+            }
+        }
+
 #endif
     }       // end of if(n)
-  }       // end of while()
+    }       // end of while()
   if(verbose) cout<<"Finished"<<endl;
   }       // end of main()
 
