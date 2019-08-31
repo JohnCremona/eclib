@@ -167,7 +167,7 @@ AC_ARG_WITH(flint,
   [  
     if test "$withval" = "no"; then
        want_flint=no
-    elif test "$withval" = "yes"; then
+    elif test "$withval" = "yes" -o "$withval" = ""; then
         want_flint=yes
         AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref],
         [FLINT_CFLAGS="-DFLINT_LEVEL=1";
