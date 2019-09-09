@@ -330,34 +330,41 @@ int longify(const bigfloat& x, long& a, int rounding)
 #else // not MPFP
 
 // return value is 1 for success, else 0
-int longify(double x, long& a, int rounding=0)
+int longify(double x, long& a, int rounding)
 // assume that direct coercion to long truncates fraction part
 // disregarding sign so rounds down if x>0, up if x<0
 {
-  if (!is_long(x)) return 0;
-  if (x>0)
+  if ((x<=MAXLONG)&&(x>=MINLONG))
     {
-      switch(rounding)
+      if (x>0)
         {
-        case 0: // round to nearest
-          a = (long)(x+0.5); return 1;
-        case 1: // round up
-          a = - (long)(-x+0.5); return 1;
-        case -1: // round down
-          a = (long)x; return 1;
+          switch(rounding)
+            {
+            case 0: // round to nearest
+              a = (long)(x+0.5); return 1;
+            case 1: // round up
+              a = - (long)(-x+0.5); return 1;
+            case -1: // round down
+              a = (long)x; return 1;
+            }
+        }
+      else
+        {
+          switch(rounding)
+            {
+            case 0: // round to nearest
+              a = - (long)(-x+0.5); return 1;
+            case 1: // round up
+              a = (long)x; return 1;
+            case -1: // round down
+              a = (long)(x-0.5); return 1;
+            }
         }
     }
   else
     {
-      switch(rounding)
-        {
-        case 0: // round to nearest
-          a = - (long)(-x+0.5); return 1;
-        case 1: // round up
-          a = (long)x; return 1;
-        case -1: // round down
-          a = (long)(x-0.5); return 1;
-        }
+      cerr<<"Attempt to convert "<<x<<" to long fails!"<<endl;
+      return 0;
     }
 }
 
