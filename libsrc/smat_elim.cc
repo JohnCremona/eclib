@@ -112,7 +112,11 @@ smat_elim::list::grow()
 {
   int growth = (maxsize==0? listsize : maxsize/2 + 1);
   type *new_array = new type [ maxsize + growth]; 
-  if( !new_array ) { cerr << "memory exhausted"; abort(); }      
+  if( !new_array )
+    {
+      cerr << "memory exhausted in elim::list::grow"<< endl;
+      return;
+    }
   type* newi = new_array;
   type *P = list_array;
   int s = maxsize;
@@ -236,7 +240,7 @@ smat_elim::ordlist::remove( type& X )
       cout<<endl;  
       cerr << "error in remove(1)\n"; 
       cerr<<"while removing "<<X<<" from "<<(*this)<<endl;
-      abort(); 
+      return;
     }
   // type *array = list_array + ind;
   // for( int s = ind + 1; s < num; s++, array++ ) *array = array[1];
@@ -267,7 +271,7 @@ smat_elim::ordlist::remove( list& L )  // L must be ordered
       cout<<endl;
       cerr << "error in remove(2)\n"; 
       cerr<<"while removing "<<L<<" from "<<(*this)<<endl;
-      abort(); 
+      return; 
     }
   type *ar = list_array + ind1;
   index = ind1+1;
@@ -279,7 +283,7 @@ smat_elim::ordlist::remove( list& L )  // L must be ordered
 	cout<<endl;
 	cerr << "error in remove(3)\n"; 
 	cerr<<"while removing "<<L<<" from "<<(*this)<<endl;
-	abort(); 
+	return; 
       }
     while( index < ind2 ) *ar++ = next();
     index++;
@@ -306,7 +310,7 @@ void smat_elim::init( )
   elim_row = new int[nro];
   int* er = elim_row;
   column = new ordlist [nco];
-  if( !column ) { cerr << "memory exhausted"; abort(); }
+  if( !column ) { cerr << "memory exhausted in smat_elim::init"<<endl; return; }
 //   else {cout<<"Successfully created column array of length "<<nco<<endl;}
   int l,r;
   for( l = 0; l < nco; l++ ) *el++ = -1;
@@ -521,7 +525,7 @@ void smat_elim::step0()
 	if( d == 2 ) L.put( i );
 	int ind = find( colr, col[i]+1, d-1 );
 	int *pos = col[i] + ind + 1;
-	if( *pos != colr ) { cerr << "error in step0!\n"; abort();}
+	if( *pos != colr ) { cerr << "error in step0!"<<endl; return;}
 	scalar *values = val[i] + ind;
 	for( n = ind+1; n < d; n++, pos++, values++ ) 
 	  { *pos = pos[1]; *values = values[1]; }
@@ -664,7 +668,7 @@ void smat_elim::step4 ( )
 		int c = *pos++ - 1;
 		if(lightness[c] == 1) { col0 = c+1; break; }
 	      }
-	      if( col0 == 0 ) {cerr << "step4: row doesn't cut light col"; abort();}
+	      if( col0 == 0 ) {cerr << "step4: row doesn't cut light col"<<endl; return;}
 	      normalize( row, col0 );
 	      list temp(0);
 	      clear_col(row,col0, temp, 0, 0, M, lightness);
@@ -741,7 +745,7 @@ void smat_elim::normalize( int row, int col0)
   int d = *col[row];
   int count = find( col0, col[row]+1, d-1 );
   if( col[row][count+1] != col0 ) 
-    { cerr << "error in normalize "; abort(); }
+    { cerr << "error in normalize "<<endl; return; }
   if( val[row][count] != 1 ) {
     scalar invValue = invmod( val[row][count], modulus);
     scalar *values = val[row];
@@ -782,8 +786,8 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
    * in/out of column */
   list *list_row_out = new list [d]; 
   list *list_row_in = new list [d];
-  if( !list_row_out ) {cerr << "memory exhausted"; abort();};
-  if( !list_row_in ) {cerr << "memory exhauted"; abort();};
+  if( !list_row_out ) {cerr << "memory exhausted in elim::clear_col"<<endl; return;};
+  if( !list_row_in ) {cerr << "memory exhauted in elim::clear_col"; return;};
   list* lri = list_row_in, *lro = list_row_out;  
   /* eliminate col from other rows cutting col */
 
@@ -796,7 +800,7 @@ smat_elim::clear_col( int row,int col0,list& L, int fr, int fc,int M,int* li )
     int *pos2 = col[row2];
     int d2 = *pos2++;
     int ind = find(col0, pos2, d2-1);
-    if( pos2[ind] != col0 ) { cerr << "error in clear_col"; abort(); }
+    if( pos2[ind] != col0 ) { cerr << "error in clear_col"<<endl; return; }
     int d2i = d2;
     scalar *oldVal = val[row2]; int *oldMat = col[row2];
     scalar *veci2 = oldVal;

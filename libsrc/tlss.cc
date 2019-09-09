@@ -135,8 +135,7 @@ vector<int> TLSS::map1point(const Point& P) const
       int check = ans[0]*P1 == Pmodq;
       if(!check)
 	{
-	  cout<<"Error: discrete log of "<<Pmodq<<" w.r.t. "<<P1<<" returns "<<ans[0]<<endl;
-	  abort();
+	  cerr<<"Error: discrete log of "<<Pmodq<<" w.r.t. "<<P1<<" returns "<<ans[0]<<endl;
 	}
 #endif
 
@@ -192,8 +191,7 @@ vector<int> TLSS::map1point(const Point& P) const
 	  }
 	if(t==0) 
 	  {
-	    cout<<"Error: both P and -P map to 0"<<endl;
-	    abort();
+	    cerr<<"Error: both P and -P map to 0"<<endl;
 	  }
 	power(mu,t,q1p);
 
@@ -223,8 +221,7 @@ vector<int> TLSS::map1point(const Point& P) const
 #endif
 	    if(dl==p) 
 	      {
-		cout<<"Error:  mu="<<mu<<" (mod "<<q<<") is not a "<<p<<"'th root of unity!"<<endl;
-		abort();
+		cerr<<"Error:  mu="<<mu<<" (mod "<<q<<") is not a "<<p<<"'th root of unity!"<<endl;
 	      }
 	    ans[i] = (sw? p-dl: dl);
 	  }

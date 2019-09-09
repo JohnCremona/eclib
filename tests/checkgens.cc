@@ -63,7 +63,7 @@ int main()
   cin >> genfile;
   ifstream genin;
   genin.open(genfile.c_str());
-  if(!genin.is_open()) {cerr<<"Unable to open file " << genfile << "\n"; abort();}
+  if(!genin.is_open()) {cerr<<"Unable to open file " << genfile << endl; exit(1);}
   cerr<<endl;
 
   while (genin>>ws, !genin.eof())

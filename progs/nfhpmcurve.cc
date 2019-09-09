@@ -184,27 +184,29 @@ int main(void)
 	  if(newstopp>MAXNAP)
 	    {
 	      cout<<"Cannot compute more ap, something must be wrong in newform data"<<endl;
-	      abort();
 	    }
-	  cout<<"Computing some more ap: from "<<stopp+1<<" to "
-	      <<newstopp<<"..."<<endl;
-	  nf.set_sign(1);
-	  nf.makeh1(1);
-	  nf.addap(newstopp);
-	  stopp=newstopp;
-	  if(output)  // output extended full nf data and small nf data
-	    {
-	      nf.output_to_file(1,0);
-	      nf.output_to_file(1,1);
-	    }
+          else
+            {
+              cout<<"Computing some more ap: from "<<stopp+1<<" to "
+                  <<newstopp<<"..."<<endl;
+              nf.set_sign(1);
+              nf.makeh1(1);
+              nf.addap(newstopp);
+              stopp=newstopp;
+              if(output)  // output extended full nf data and small nf data
+                {
+                  nf.output_to_file(1,0);
+                  nf.output_to_file(1,1);
+                }
 #ifdef MPFP
-	  if(bit_precision()<BITPRECMAX) 
-	    {
-	      set_precision(bit_precision()+BITPRECX);
-              cout << "Now working with bit precision "<<bit_precision()<< endl;
-	    }
+              if(bit_precision()<BITPRECMAX) 
+                {
+                  set_precision(bit_precision()+BITPRECX);
+                  cout << "Now working with bit precision "<<bit_precision()<< endl;
+                }
 #endif
-	} 
+            }
+        }
     }
  }       // end of if(n>0)
      }  // end of while(n>0) or while(n<limit)

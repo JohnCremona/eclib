@@ -23,6 +23,8 @@
  
 #include <eclib/points.h>  // which includes curve.h
 
+#define MAX_RANK_REG 50 // cannot ask for regulator of more than 50 points.
+
 bigfloat height(Point& P)
 {
   // WARNING -- no check made of validity of point on curve
@@ -310,8 +312,15 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
              );
      return reg;
     }
-  if ( n <= 50)
-    {bigfloat pair[50][50] ;
+  if ( n > MAX_RANK_REG)
+    {
+      //  n> 50 not yet (could fold into last case)
+      cout << "## Assuming that the regulator of more than "<<MAX_RANK_REG<<" points is 0" << endl;
+      return to_bigfloat(0) ;
+    }
+  else
+    {
+      bigfloat pair[MAX_RANK_REG][MAX_RANK_REG] ;
      // initialize the matrix of pairings
      for (i = 0; i < n; i++)
        {pair[i][i] = height(P[i]) ;
@@ -337,12 +346,6 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
      for (d = 0; d < n; d++) reg *= pair[d][d] ;
      return reg ;
     }
-  // else
-  //  n> 50 not yet (could fold into last case)
-  cout << "## If you really want the regulator of more than 50 points,\n";
-  cout << "then edit heights.cc youself!" << endl;
-  abort();
-  return to_bigfloat(1) ;
 }
 
 // end of HEIGHTS.CC

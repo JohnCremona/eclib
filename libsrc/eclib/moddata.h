@@ -56,10 +56,9 @@ public:
   long nsymb;
  moddata(long n);                                //constructor
  void display() const;
- void abort(const string mess) const
+ void out_of_memory_error(const string mess) const
   {
-    cout<<"Out of memory ("<<mess<<")\n";
-    exit(1);
+    cerr<<"Out of memory ("<<mess<<")"<<endl;
   }
  long gcd(long res) const {return gcdtable[reduce(res)];}
  long unitdiv(long res) const {return unitdivlist[reduce(res)];}

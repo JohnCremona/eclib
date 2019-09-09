@@ -30,8 +30,7 @@ int I2int(const ZZ& x)
   if(IsZero(x)) return 0;
   if(!is_int(x)) 
     {
-      cout<<"Attempt to convert "<<x<<" to int fails!"<<endl; 
-      abort();
+      cerr<<"Attempt to convert "<<x<<" to int fails!"<<endl;
       return 0;
     }
   switch(sign(x)) {
@@ -48,10 +47,9 @@ int I2int(const ZZ& x)
 long I2long(const bigint& x) 
 {
   if(IsZero(x)) return 0;
-  if(!is_long(x)) 
+  if(!is_long(x))
     {
-      cout<<"Attempt to convert "<<x<<" to long fails!"<<endl; 
-      abort();
+      cerr<<"Attempt to convert "<<x<<" to long fails!"<<endl;
       return 0;
     }
   switch(sign(x)) {
@@ -224,7 +222,7 @@ RR asin (const RR & x)
   if (sign(t)<0) 
     {
       cout<<"asin called with arguments "<<x<<" > 1"<<endl;
-      abort();
+      return to_RR(0);
     }
   return atan(x/sqrt(t));
 }
@@ -305,6 +303,62 @@ istream& operator>>(istream& is, CC& z)
       z = CC(r, to_RR(0));
     }
   return is;
+}
+
+// return value is 1 for success, else 0
+int longify(const bigfloat& x, long& a, int rounding)
+{
+  if ((x<=MAXLONG)&&(x>=MINLONG))
+    {
+      switch(rounding)
+        {
+        case 0: // round to nearest
+          a = I2long(RoundToZZ(x)); return 1;
+        case 1: // round up
+          a = I2long(CeilToZZ(x)); return 1;
+        case -1: // round down
+          a = I2long(FloorToZZ(x)); return 1;
+        }
+    }
+  else
+    {
+      cerr<<"Attempt to convert "<<x<<" to long fails!"<<endl;
+      return 0;
+    }
+}
+
+#else // not MPFP
+
+// return value is 1 for success, else 0
+int longify(double x, long& a, int rounding=0)
+// assume that direct coercion to long truncates fraction part
+// disregarding sign so rounds down if x>0, up if x<0
+{
+  if (!is_long(x)) return 0;
+  if (x>0)
+    {
+      switch(rounding)
+        {
+        case 0: // round to nearest
+          a = (long)(x+0.5); return 1;
+        case 1: // round up
+          a = - (long)(-x+0.5); return 1;
+        case -1: // round down
+          a = (long)x; return 1;
+        }
+    }
+  else
+    {
+      switch(rounding)
+        {
+        case 0: // round to nearest
+          a = - (long)(-x+0.5); return 1;
+        case 1: // round up
+          a = (long)x; return 1;
+        case -1: // round down
+          a = (long)(x-0.5); return 1;
+        }
+    }
 }
 
 #endif // MPFP

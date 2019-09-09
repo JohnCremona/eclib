@@ -102,8 +102,7 @@ int main()
       cin >> P;
       if ( !P.isvalid() ) 
 	{
-	  cout<<"point "<<P<<" not on curve.\n\n"; 
-	  abort();
+	  cout<<"point "<<P<<" not on curve.\n"<<endl; 
 	}
       points.push_back(P); 
       j++;
@@ -119,8 +118,7 @@ int main()
       cin >> P;
       if ( !P.isvalid() ) 
 	{
-	  cout<<"point "<<P<<" not on curve.\n\n"; 
-	  abort();
+	  cout<<"point "<<P<<" not on curve.\n"<<endl; 
 	}
       tpoints.push_back(P); 
       j++;

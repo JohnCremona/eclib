@@ -104,10 +104,9 @@ void P2Point::getrealcoordinates(bigfloat&x, bigfloat& y) const
 #ifndef MPFP
   if((abs(x)==INFINITY)||(abs(y)==INFINITY))
     {
-      cout<<"After converting P to doubles, ";
-      cout<<"Real point = ("<<x<<","<<y<<")"<<endl;
-      cout<<"insufficient precision to continue, aborting"<<endl;
-      abort();
+      cerr<<"After converting P to doubles, ";
+      cerr<<"Real point = ("<<x<<","<<y<<")"<<endl;
+      cerr<<"insufficient precision to continue"<<endl;
     }
 #endif
 }

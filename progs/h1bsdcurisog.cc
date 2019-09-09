@@ -76,7 +76,7 @@ int main(void)
  cerr << "filename for dumping generators? "; cin >> genfile;
  ofstream genout;
  genout.open(genfile);
- if(!genout.is_open()) {cerr<<"Unable to open file " << genfile << "\n"; abort();}
+ if(!genout.is_open()) {cerr<<"Unable to open file " << genfile << endl; exit(1);}
 #endif
 
 #ifdef AUTOLOOP

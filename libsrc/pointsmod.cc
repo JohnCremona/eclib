@@ -74,7 +74,7 @@ int pointmodq::set_x_coordinate(const gf_element& x)
 	      <<(*this)<<" is not a valid point on "<<E<<endl;
 	  cout<<"b2,b4,b6 = "<<b2<<","<<b4<<","<<b6<<" mod "<<q<<endl;
 	  cout<<"d = "<<d<<" mod "<<q<<endl;
-	  abort();
+	  return 0;
 	}
     }
   return 1;
@@ -127,8 +127,8 @@ pointmodq pointmodq::operator+(const pointmodq& Q) const // add Q to this
   ans.order=0;
   if(!(ans.on_curve())) 
     {
-      cout<<"error in pointmodq::operator+() adding "<<(*this)<<" to "<<Q<<endl;
-      abort();
+      cerr<<"error in pointmodq::operator+() adding "<<(*this)<<" to "<<Q<<endl;
+      return *this;
     }
   return ans.negate();
 }
@@ -167,8 +167,8 @@ pointmodq pointmodq::twice(void) const // doubles P
   ans.order=0;
   if(!(ans.on_curve())) 
     {
-      cout<<"\nerror in pointmodq::twice() with P = "<<(*this)<<": "<<(ans)<<" not on "<<E<<endl;
-      abort();
+      cerr<<"\nerror in pointmodq::twice() with P = "<<(*this)<<": "<<(ans)<<" not on "<<E<<endl;
+      return *this;
     }
   return ans.negate();
 }
@@ -459,15 +459,13 @@ bigint my_bg_algorithm(const pointmodq& PP,
 
   if (PP.get_curve() != QQ.get_curve())
     {
-      cout<<"bg_algorithm: Points P and Q on different curves"<<endl;
-      abort();
+      cerr<<"bg_algorithm: Points P and Q on different curves"<<endl;
       return minus_one;
     }
 
   if ((is_negative(lower)) || (upper<lower))
     {
-      cout<<"bg_algorithm: lower bound > upper bound"<<endl;
-      abort();
+      cerr<<"bg_algorithm: lower bound > upper bound"<<endl;
       return minus_one;
     }
 
@@ -643,9 +641,9 @@ bigint linear_relation( pointmodq& P,  pointmodq& Q, bigint& a)
   // debugging:
   if(m*Q!=a*P) 
     {
-      cout<<"Error in linear relation with P="<<P<<", n="<<n<<", Q="<<
+      cerr<<"Error in linear relation with P="<<P<<", n="<<n<<", Q="<<
 	Q<<": returns a="<<a<<" and m="<<m<<endl;
-      abort();
+      return zero;
     }
   return m;
 }
@@ -819,13 +817,12 @@ void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2,
   if(debug_iso_type)  cout<<"zeta = "<< zeta <<endl;
   if(IsZero(zeta))
   {
-      cout<<"Error: weil_pairing returns 0!"<<endl;
-      cout<<"n1 = "<<n1<<endl;
-      cout<<"n2 = "<<n2<<endl;
-      cout<<"n2target = "<<n2target<<endl;
-      cout<<"order((n1/n2target)*P1) = "<<Q1<<" is "<<order_point(Q1)<<endl;
-      cout<<"order(Q) =                "<<Q<<" is "<<order_point(Q2)<<endl;
-      abort();
+      cerr<<"Error: weil_pairing returns 0!"<<endl;
+      cerr<<"n1 = "<<n1<<endl;
+      cerr<<"n2 = "<<n2<<endl;
+      cerr<<"n2target = "<<n2target<<endl;
+      cerr<<"order((n1/n2target)*P1) = "<<Q1<<" is "<<order_point(Q1)<<endl;
+      cerr<<"order(Q) =                "<<Q<<" is "<<order_point(Q2)<<endl;
   }
   bigint m = order(zeta);
   if(debug_iso_type)  cout<<"order = "<< m <<endl;
@@ -1154,20 +1151,17 @@ void my_isomorphism_type_new(curvemodq& Cq,
 	{
 	  if(order_point(P1)!=n1)
 	    {
-	      cout<<"Generator P1 = "<<P1<<" has order "<<order_point(P1)
+	      cerr<<"Generator P1 = "<<P1<<" has order "<<order_point(P1)
 		  <<" and not "<<n1<<endl;
-	      abort();
 	    }
 	  if(order_point(P2)!=n2)
 	    {
-	      cout<<"Generator P2 = "<<P2<<" has order "<<order_point(P2)
+	      cerr<<"Generator P2 = "<<P2<<" has order "<<order_point(P2)
 		  <<" and not "<<n2<<endl;
-	      abort();
 	    }
 	  if(linear_relation(P1,P2,a)!=n2)
 	    {
-	      cout<<"Generators not independent!"<<endl;
-	      abort();
+	      cerr<<"Generators not independent!"<<endl;
 	    }
 	  cout<<"Generators: P1 = "<<P1<<" of order "
 	      <<n1<<", P2 = "<<P2<<" of order "<<n2<<endl;

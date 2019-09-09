@@ -76,7 +76,7 @@ int main()
     { 
       cin >> P;
       if ( P.isvalid() ) {points.push_back(P); j++;}
-      else {cout<<"point "<<P<<" not on curve.\n\n"; abort();}
+      else {cout<<"point "<<P<<" not on curve.\n"<<endl;}
     }
   cout<<npts<<" points entered:"<<points<<endl;
 

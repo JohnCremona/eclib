@@ -196,9 +196,8 @@ double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, cons
 	  if(dvd>0) htc = -log(dvd)/3;
 	  else
 	    {
-	      cout<<"Precision problem in cps_real(): dvd = "<<dvd<<" but should be >0"<<endl;
-	      cout<<"Height constant will not be correct"<<endl;
-	      abort();
+	      cerr<<"Precision problem in cps_real(): dvd = "<<dvd<<" but should be >0"<<endl;
+	      cerr<<"Height constant will not be correct"<<endl;
 	      htc=0;
 	    }
 	}
@@ -209,9 +208,8 @@ double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, cons
 	if(dv>0) htc = -log(dv)/3;
 	else
 	  {
-	    cout<<"Precision problem in cps_real(): dv = "<<dv<<" but should be >0"<<endl;
-	    cout<<"Height constant will not be correct"<<endl;
-	    abort();
+	    cerr<<"Precision problem in cps_real(): dv = "<<dv<<" but should be >0"<<endl;
+	    cerr<<"Height constant will not be correct"<<endl;
 	    htc=0;
 	  }
       }
@@ -221,9 +219,8 @@ double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, cons
 	if(mindv>0) htc = -log(mindv)/3;
 	else
 	  {
-	    cout<<"Precision problem in cps_real(): min(dv,dvd) = "<<mindv<<" but should be >0"<<endl;
-	    cout<<"Height constant will not be correct"<<endl;
-	    abort();
+	    cerr<<"Precision problem in cps_real(): min(dv,dvd) = "<<mindv<<" but should be >0"<<endl;
+	    cerr<<"Height constant will not be correct"<<endl;
 	    htc=0;
 	  }
       }
@@ -970,7 +967,7 @@ vector<bigfloat> roots11( const vector<bigfloat>& coeff )
 #ifdef DEBUG_CPS
   cout<<"coeff[2] = a = "<<a<<endl;
 #endif
-  if(a==0) {cout<<"Error in roots: degree<2"<<endl; abort();}
+  if(a==0) {cerr<<"Error in roots: degree<2"<<endl; return ans;}
   bigfloat b=coeff[3], c=coeff[4], x;
   bigfloat d=b*b-4*a*c;
   if(d>=0) 
@@ -1188,17 +1185,21 @@ long factorial(long n) // OK for n up to 12
   if(n<2) return 1;
   if(n>12) 
     {
-      cout<<"factorial(long) called with n = "<<n<<" -- too big!"<<endl;
-      abort();
+      cerr<<"factorial(long) called with n = "<<n<<" -- too big (n must be <=12 to fit in a long int)!"<<endl;
+      return 0;
     }
-  //  return n*factorial(n-1);
   return fact_tab[n];
 }
 
 bigfloat factorial(bigfloat n)
 {
   if(n<2) return to_bigfloat(1);
-  if(n<13) return to_bigfloat(fact_tab[longify(n)]);
+  if(n<13)
+    {
+      long nn;
+      int ok = longify(n,nn);
+      return to_bigfloat(fact_tab[nn]);
+    }
   return n*factorial(n-1);
 }
 
@@ -1659,8 +1660,8 @@ bigfloat CurveHeightConst::psi(const bigfloat& x)
 {
   if(x<e3) 
     {
-      cout<<"Error in CurveHeightConst::psi(): x="<<x<<" < e3 = "<<e3<<endl;  
-      abort();
+      cerr<<"Error in CurveHeightConst::psi(): x="<<x<<" < e3 = "<<e3<<endl;  
+      return to_RR(0);
     }
   //  cout<<"computing psi(x) with x = "<<x<<endl;
   //  cout<<"ordinates: "<<ordinates(x)<<endl;

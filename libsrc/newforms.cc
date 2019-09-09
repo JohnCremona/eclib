@@ -443,8 +443,7 @@ void newform::find_cuspidal_factors()
 	  if(verbose) cout<<"Lattice type = "<<type<<endl;
           if((type!=1)&&(type!=2))
             {
-              cout<<"Error: lattice type computed to be "<<type<<", should be 1 or 2!"<<endl;
-              abort();
+              cerr<<"Error: lattice type computed to be "<<type<<", should be 1 or 2!"<<endl;
             }
         }
    
@@ -1292,8 +1291,8 @@ void newforms::output_to_file(int binflag, int smallflag) const
   ofstream out(name.c_str());
   if(!out)
     {
-      cout<<"Unable to open file "<<name<<" for newform output"<<endl;
-      abort();
+      cerr<<"Unable to open file "<<name<<" for newform output"<<endl;
+      return;
     }
   // else
   //   {
@@ -1427,13 +1426,8 @@ void newforms::createfromdata(int s, long ntp,
 	  output_to_file(1,1); // short newform data (only DEFAULT_SMALL_NAP ap)
 	  if(verbose) cout << "Finished creating newform data for N = " << n << endl;
 	  if(verbose) display();
-	  return;
 	}
-      else
-	{
-	  cout<<"Quitting"<<endl;
-	  abort();
-	}
+      return;
     }
 
   int temp_int;
@@ -1633,7 +1627,6 @@ void newforms::createfromolddata()
   if(!eigsfile.is_open())
     {
       cout<<"Unable to open file "<<eigsname.str()<<" for eigs input"<<endl;
-      abort();
       return;
     }
 
@@ -1691,7 +1684,6 @@ void newforms::createfromolddata()
   if(!intdatafile.is_open())
     {
       cout<<"Unable to open data file "<<intdataname.str()<<" for data input"<<endl;
-      abort();
       return;
     }
 
@@ -1941,9 +1933,9 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 	  cout<<"Error:  eigenvalue "<<ap<<" for p="<<p
 	      <<" for form # "<<(i+1)<<" is outside valid range "
 	      <<-maxap<<"..."<<maxap<<endl;
-          abort();
+          break; // no point in trying to compute any more.
 	}
-    }  
+    }
   return apv;
 }
 

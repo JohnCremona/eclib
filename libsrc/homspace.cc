@@ -70,14 +70,31 @@ homspace::homspace(long n, int hp, int hcusp, int verbose) :symbdata(n)
    cuspidal=hcusp;
    long i,j,k;
    coordindex = new int[nsymb];  
-   if (!coordindex) abort("coordindex");
+   if (!coordindex)
+     {
+       out_of_memory_error("coordindex");
+       return;
+     }
    int* check = new int[nsymb];  
-   if (!check) abort("check");
+   if (!check)
+     {
+       out_of_memory_error("check");
+       return;
+     }
    i=nsymb; while (i--) check[i]=0;
    long ngens=0;
    int* gens = new int[nsymb+1];    // N.B. Start of gens array is at 1 not 0
-   if (!gens) abort("gens");
-   long* rel = new long[4]; if (!rel) abort("rel");
+   if (!gens)
+     {
+       out_of_memory_error("gens");
+       return;
+     }
+   long* rel = new long[4];
+   if (!rel)
+     {
+       out_of_memory_error("rel");
+       return;
+     }
 
 // 2-term relations:
 
@@ -329,7 +346,11 @@ if (verbose>1)
 	 }
      }
    freegens = new int[rk]; 
-   if (!freegens) abort("freegens");
+   if (!freegens)
+     {
+       out_of_memory_error("freegens");
+       return;
+     }
    if (rk>0)
    {
    for (i=0; i<rk; i++) freegens[i] = gens[pivs[i+1]];
@@ -434,9 +455,17 @@ if (verbose>1)
    denom3 = denom1*denom2;
 
    freemods = new modsym[rk]; 
-   if (!freemods) abort("freemods");
+   if (!freemods)
+     {
+       out_of_memory_error("freemods");
+       return;
+     }
    needed   = new int[rk];    
-   if (!needed) abort("needed");
+   if (!needed)
+     {
+       out_of_memory_error("needed");
+       return;
+     }
 
    if (dimension>0)
    {
@@ -1049,8 +1078,7 @@ mat homspace::opmat(int i, int dual, int v)
   if(i==-1) return conj(dual,v);
   if((i<0)||(i>=nap)) 
     {
-      cout<<"Error in homspace::opmat(): called with i = " << i << endl;
-      ::abort();
+      cerr<<"Error in homspace::opmat(): called with i = " << i << endl;
       return mat(dimension);  // shouldn't happen
     }
   long p = op_prime(i);
@@ -1069,8 +1097,7 @@ vec homspace::opmat_col(int i, int j, int v)
   if(i==-1) return conj_col(j,v);
   if((i<0)||(i>=nap))
     {
-      cout<<"Error in homspace::opmat_col(): called with i = " << i << endl;
-      ::abort();
+      cerr<<"Error in homspace::opmat_col(): called with i = " << i << endl;
       return vec(dimension);  // shouldn't happen
     }
   long p = op_prime(i);
@@ -1093,8 +1120,7 @@ mat homspace::opmat_cols(int i, const vec& jlist, int v)
   int d = dim(jlist);
   if((i<0)||(i>=nap))
     {
-      cout<<"Error in homspace::opmat_cols(): called with i = " << i << endl;
-      ::abort();
+      cerr<<"Error in homspace::opmat_cols(): called with i = " << i << endl;
       return mat(d,rk);  // shouldn't happen
     }
   long p = op_prime(i);
@@ -1116,8 +1142,7 @@ svec homspace::s_opmat_col(int i, int j, int v)
   if(i==-1) return s_conj_col(j,v);
   if((i<0)||(i>=nap))
     {
-      cout<<"Error in homspace::opmat_col(): called with i = " << i << endl;
-      ::abort();
+      cerr<<"Error in homspace::opmat_col(): called with i = " << i << endl;
       return svec(dimension);  // shouldn't happen
     }
   long p = op_prime(i);
@@ -1140,8 +1165,7 @@ smat homspace::s_opmat_cols(int i, const vec& jlist, int v)
   int d = dim(jlist);
   if((i<0)||(i>=nap))
     {
-      cout<<"Error in homspace::opmat_col(): called with i = " << i << endl;
-      ::abort();
+      cerr<<"Error in homspace::opmat_col(): called with i = " << i << endl;
       return smat(d,rk);  // shouldn't happen
     }
   long p = op_prime(i);
@@ -1163,8 +1187,7 @@ smat homspace::s_opmat(int i, int dual, int v)
   if(i==-1) return s_conj(dual,v);
   if((i<0)||(i>=nap)) 
     {
-      cout<<"Error in homspace::s_opmat(): called with i = " << i << endl;
-      ::abort();
+      cerr<<"Error in homspace::s_opmat(): called with i = " << i << endl;
       return smat(dimension);  // shouldn't happen
     }
   long p = op_prime(i);
@@ -1183,9 +1206,8 @@ mat homspace::opmat_restricted(int i, const subspace& s, int dual, int v)
   if(i==-1) return conj_restricted(s,dual,v);
   if((i<0)||(i>=nap)) 
     {
-      cout<<"Error in homspace::opmat_restricted(): called with i = " 
+      cerr<<"Error in homspace::opmat_restricted(): called with i = " 
 	  << i << endl;
-      ::abort();
       return mat(dim(s));  // shouldn't happen
     }
   long p = op_prime(i);
@@ -1205,9 +1227,8 @@ smat homspace::s_opmat_restricted(int i, const ssubspace& s, int dual, int v)
   if(i==-1) return s_conj_restricted(s,dual,v);
   if((i<0)||(i>=nap)) 
     {
-      cout<<"Error in homspace::s_opmat_restricted(): called with i = " 
+      cerr<<"Error in homspace::s_opmat_restricted(): called with i = " 
 	  << i << endl;
-      ::abort();
       return smat(dim(s));  // shouldn't happen
     }
   long p = op_prime(i);

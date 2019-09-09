@@ -421,10 +421,9 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
 
   if (n>1) // failed to factor it 
     {
-      cout<<"\n***No prime factor found for composite "<<n<<" using trial division\n";
-      cout<<n<<"fails primality test"<<endl;
-      cout << "***Fatal situation, aborting!"<<endl;
-      abort(); 
+      cout<<"\n***Failed to find prime factor for composite "<<n<<" using trial division factorization of "<<number<<endl;
+      cout<<"*** --appending "<<n<<" to its list of prime divisors"<<endl;
+      plist.push_back(n);
     }
   if(trace) cout<< "pdivs_trial() returns " << plist << endl;
   return plist;
@@ -966,9 +965,7 @@ bigint invmod(const bigint& a, const bigint& p)
  if (!is_one(g))
    {
      x=0;
-     cout << "invmod called with " << a << " and " 
-	  << p << " -- not coprime!\n";
-     abort();
+     cerr << "invmod called with " << a << " and " << p << " -- not coprime!" << endl;
    }
  return x;
 }
@@ -979,9 +976,7 @@ long invmod(const bigint& a, long p)
  if (!is_one(g)) 
    {
      x=0;
-     cout << "invmod called with " << a << " and " 
-	  << p << " -- not coprime!\n";
-     abort();
+     cerr << "invmod called with " << a << " and " << p << " -- not coprime!" << endl;
    }
  return I2long(x);
 }
@@ -1255,7 +1250,12 @@ void ratapprox(bigfloat x, long& a, long& b, long maxd)
   diff = 1; c=x2=y2=0;
   //cout<<"ratapprox("<<x<<") with maxd="<<maxd<<endl;
   while ( diff > eps )
-    { c = longify( xx + ( (xx>0) ? 0.5 : -0.5 ) ); // ie round(xx)
+    { int ok = longify( xx, c, 0); // ie round(xx)
+      if (!ok)
+        {
+          cerr<<"failed to round "<<x<<" to a long int in ratapprox"<<endl;
+          return;
+        }
       x2 = x0 + c*x1; x0 = x1; x1 = x2;
       y2 = y0 + c*y1; y0 = y1; y1 = y2;
       //cout<<"(x2,y2)=("<<x2<<","<<y2<<")"<<endl;

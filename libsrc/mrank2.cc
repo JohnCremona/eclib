@@ -60,7 +60,7 @@ void rank2::makepoint(const bigint& c,const bigint& d1,const bigint& d2,
 	  bigfloat h = height(P);
 	  cout << ", height = " << h;
 	  if(!P.isvalid()) {cout << " --warning: NOT on curve! " ;}
-	  cout << "\n";
+	  cout << endl;
 	}
     }
   else
@@ -73,7 +73,7 @@ void rank2::makepoint(const bigint& c,const bigint& d1,const bigint& d2,
 	  bigfloat h = height(Q);
 	  cout << ", height = " << h;
 	  if(!Q.isvalid()) {cout << " --warning: NOT on curve! " ;}
-	  cout << "\n";
+	  cout << endl;
 	}
       const bigint& xz=x*z, x2=x*x, z2=z*z;
       if(sign(xz)!=0) P.init(ee,2*y*y*xz,y*(d1*x2*x2-d2*z2*z2),pow(2*xz,3));
@@ -83,8 +83,7 @@ void rank2::makepoint(const bigint& c,const bigint& d1,const bigint& d2,
 	  bigfloat h = height(P);
 	  cout << ", height = " << h;
 	  if(!P.isvalid()) {cout << " --warning: NOT on curve! " ;}
-	  cout << "\n";
-	  
+	  cout << endl;
 	}
     }
   if(order(P)<0)  {pointlist.push_back(P); npoints++;} // else torsion so ignore
@@ -148,15 +147,15 @@ int rank2::second_descent(const bigint& c, const bigint& d1, const bigint& d2, i
     case 1: // Positive success, point found
       makepoint(c,d1,d2,x,y,z,which);
       if(verbose)
-	cout<<"Second descent successfully found rational point for d1="<<d1<<"\n\n";
+	cout<<"Second descent successfully found rational point for d1="<<d1<<"\n"<<endl;
       break;
     case -1: // Negative success, no point exists
       if(verbose)
-	cout<<"Second descent shows that no rational point exists for d1="<<d1<<"\n\n";
+	cout<<"Second descent shows that no rational point exists for d1="<<d1<<"\n"<<endl;
       break;
     case 0: // Undecided
       if (verbose) 
-	cout<<"Second descent inconclusive for d1="<<d1<<": ELS descendents exist but no rational point found\n\n";
+	cout<<"Second descent inconclusive for d1="<<d1<<": ELS descendents exist but no rational point found\n"<<endl;
     }
   return res;
 }
@@ -212,7 +211,14 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
     {
       cout<<"Support (length "<<ns<<"): "<<supp<<endl;
     }
-  if(ns>=NTL_BITS_PER_LONG) {cout<<"Too many primes dividing d!\n"; abort();}
+  if(ns>=NTL_BITS_PER_LONG)
+    {
+      cerr<<"Too many primes dividing discriminant!\n";
+      cerr<<"mwrank cannot handle supports of more than "<<NTL_BITS_PER_LONG<< "primes"<<endl;
+      cerr<<"Failure in find_elsgens"<<endl;
+      success = 0;
+      return;
+    }
 
   long mask=0, maxn=1<<ns, index, j, nelsgens=0;
   vector<bigint> elsgens;
@@ -540,9 +546,9 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
       if(verbose&&do_second_descent) 
 	{
 	  if(stage==1) 
-	    cout << "First stage (no second descent yet)...\n";
+	    cout << "First stage (no second descent yet)..."<<endl;
 	  else        
-	    cout << "Second stage (using second descent)...\n";
+	    cout << "Second stage (using second descent)..."<<endl;
 	}
       for(index=1; (index<maxn)&&(nglsgens<nelsgens); index++)
 	{
@@ -581,6 +587,8 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 	  case -1: // should not happen
 	    {
 	      cout<<"Problem in 2nd descent!" <<endl;
+              success=0;
+              return;
 	    }
 	  case 0: // no point found, nothing to do
 	    {
@@ -625,11 +633,11 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 		       << "\n\tand upper bound " << nelsgens-nt2gens 
 		       << "\n\t(difference =   " << shortfall1 << ")\n";
 		  if(nstages==2)
-		    cout<<"Second descent will attempt to reduce this\n";
+		    cout<<"Second descent will attempt to reduce this"<<endl;
 		}
 	      else
 		cout << " = " << nelsgens <<endl;
-	      if(verbose>1) cout<<"\n";
+	      if(verbose>1) cout<<endl;
 	    }
 	  if(which)
 	      gls1=gls21=nglsgens;
@@ -650,7 +658,7 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 		}
 	      else
 		cout << " = " << nelsgens <<endl;
-	      if(verbose>1) cout<<"\n";
+	      if(verbose>1) cout<<endl;
 	    }
 	  if(which)
 	    gls21=nglsgens;
@@ -687,7 +695,7 @@ void rank2::local_descent(const bigint& x0)
   disc = 2*d*ddash;
   if (is_zero(disc)) // this should have been caught by the calling program!
     {
-      cout << "Curve is singular\n"; 
+      cerr << "Curve is singular"<<endl;
       success = 0;
       return;
     }
@@ -743,8 +751,10 @@ void rank2::local_descent(const bigint& x0)
     }
   //  cout<<"Calling find_elsgens(0,...)"<<endl;
   find_elsgens(0,c,d);
+  if (!success) return;
   //  cout<<"Calling find_elsgens(1,...)"<<endl;
   find_elsgens(1,cdash,ddash);
+  if (!success) return;
   selmer_rank_phi_Eprime = els0; 
   selmer_rank_phiprime_E = els1;
   rank_bound = els0+els1-2;
@@ -830,7 +840,7 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
   if (ntwo_torsion==0)
     { 
       success=0;
-      if (verbose) cout << "No points of order 2\n";
+      if (verbose) cerr << "No points of order 2, cannot create rank2 class"<<endl;
       return;
     }
 
@@ -874,6 +884,11 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
 	  cout<<"****************************\n"<<endl;
 	}
       local_descent(xlist[n]);
+      if (!success)
+        {
+          if (verbose) cout << "Failure in local descent"<<endl;
+        return;
+        }
       if((n==0)||(rank_bound<=best_rank_bound)) 
 	{
 	  best_rank_bound=rank_bound;
@@ -930,6 +945,11 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
     }
 
   find_glsgens(0,c,d);
+  if (!success)
+    {
+      if (verbose) cout << "Failure in global descent with c,d="<<c<<","<<d<<endl;
+      return;
+    }
   
   npoints1=npoints;
   if(verbose)
@@ -939,6 +959,11 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
       cout<<"-------------------------------------------------------\n";
     }
   find_glsgens(1,cdash,ddash);
+  if (!success)
+    {
+      if (verbose) cout << "Failure in global descent with c',d'="<<cdash<<","<<ddash<<endl;
+      return;
+    }
 
 //Debug only:
 /*

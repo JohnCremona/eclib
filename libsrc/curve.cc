@@ -147,13 +147,13 @@ void Curve::input(istream& is)
 	 if(c!=',')
 	   {
 	     cout << "syntax error on curve input" << endl;
-	     abort();
+             return;
 	   }
 	 is >> c6 >> c;
 	 if(c!='}')
 	   {
 	     cout << "syntax error on curve input" << endl;
-	     abort();
+             return;
 	   }
          if (valid_invariants(c4, c6))
            {
@@ -180,31 +180,31 @@ void Curve::input(istream& is)
 	 if(c!=',')
 	   {
 	     cout << "syntax error on curve input" << endl;
-	     abort();
+             return;
 	   }
 	 is >> a2 >> c; 
 	 if(c!=',')
 	   {
 	     cout << "syntax error on curve input" << endl;
-	     abort();
+             return;
 	   }
 	 is >> a3 >> c; 
 	 if(c!=',')
 	   {
 	     cout << "syntax error on curve input" << endl;
-	     abort();
+             return;
 	   }
 	 is >> a4 >> c; 
 	 if(c!=',')
 	   {
 	     cout << "syntax error on curve input" << endl;
-	     abort();
+             return;
 	   }
 	 is >> a6 >> c; 
 	 if(c!=']')
 	   {
 	     cout << "syntax error on curve input" << endl;
-	     abort();
+             return;
 	   }
 	 //	 cout<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]"<<endl;
          break;

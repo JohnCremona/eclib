@@ -89,8 +89,7 @@ ffmodq ffmodq::operator/(const FqPoly& h) const
 ffmodq ffmodq::operator/(const ffmodq& b) const
 {
   if(Degree(b.h2)==-1) return (*this)/b.h1;
-  cout<<"ffmodq error:  division by general elements not implemented!"<<endl;
-  abort();
+  cerr<<"ffmodq error:  division by general elements not implemented!"<<endl;
   return ffmodq();
 }
 
@@ -112,10 +111,10 @@ gf_element evaluate(const FqPoly& f, const gf_element& value)
 
 gf_element ffmodq::evaluate(const pointmodq& P) const
 {
-  if(P.is_zero()) 
-    {cout<<"ffmodq error: attempt to evaluate at "<<P<<endl; abort();}
   //  cout<<"In ffmodq::operator() with this = "<<(*this)<<", P="<<P<<endl;
   gf_element x=P.get_x(), y=P.get_y();
+  if(P.is_zero()) 
+    {cerr<<"ffmodq error: attempt to evaluate at "<<P<<endl; return x;}
   //  cout<<"x="<<x<<", y="<<y<<endl;
   //  cout<<"h1(x)="<<::evaluate(h1,x)<<endl;
   //  cout<<"h2(x)="<<::evaluate(h2,x)<<endl;
@@ -221,10 +220,9 @@ ffmodq weil_pol(const pointmodq& T, int m)
     ;//	cout<<"weil_pol("<<T<<","<<m<<") = "<<h<<" checks OK"<<endl;
   else
     {
-      cout<<"Error: weil_pol("<<T<<","<<m<<") = "<<h<<" fails to check"<<endl;
-      cout<<"t = "<<t<<endl;
-      cout<<"u = "<<u<<endl;
-      abort();
+      cerr<<"Error: weil_pol("<<T<<","<<m<<") = "<<h<<" fails to check"<<endl;
+      cerr<<"t = "<<t<<endl;
+      cerr<<"u = "<<u<<endl;
     }
 #endif
   return h;
@@ -329,8 +327,16 @@ gf_element weil_pairing(const pointmodq& S, const pointmodq& T, int m)
   gf_element a = T.get_x(); // just to set the field
   GFSetZ(a,0); // for return on error condition 
   // cout<<"Evaluating Weil Pairing of order "<<m<<" on "<<S<<" and "<<T<<endl;
-  if(!(m*T).is_zero()) {cout<<"error in Weil pairing of "<<S<<" and "<<T<<" and order "<<m<<": m*T is not 0"<<endl; abort(); return a;}
-  if(!(m*S).is_zero()) {cout<<"error in Weil pairing of "<<S<<" and "<<T<<" and order "<<m<<": m*S is not 0"<<endl; abort(); return a;}
+  if(!(m*T).is_zero())
+    {
+      cerr<<"error in Weil pairing of "<<S<<" and "<<T<<" and order "<<m<<": m*T is not 0"<<endl;
+      return a;
+    }
+  if(!(m*S).is_zero())
+    {
+      cerr<<"error in Weil pairing of "<<S<<" and "<<T<<" and order "<<m<<": m*S is not 0"<<endl;
+      return a;
+    }
 
   GFSetZ(a,1); // for return if trivial
   if(T.is_zero()||S.is_zero()) return a;

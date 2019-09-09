@@ -264,7 +264,7 @@ inline RR to_bigfloat(const long& n) {return to_RR(n);}
 inline RR to_bigfloat(const double& x) {return to_RR(x);}
 inline RR I2bigfloat(const bigint& x) { return to_RR(x);}
 inline int doublify(const bigfloat& x, double& d){ d=to_double(x); return 0;}
-inline long longify(bigfloat x) {return to_long(x);}
+int longify(const bigfloat& x, long& a, int rounding=0);
 inline int is_zero(bigfloat x) {return IsZero(x);}
 inline int is_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
 inline void Iasb(bigint& a, bigfloat x) {RoundToZZ(a,x);}
@@ -293,9 +293,12 @@ inline void set_precision(long n) {cout.precision(min(15,long(0.3*n)));}
 inline void set_precision(const string prompt)  {cout.precision(15);}
 #define Pi()    3.1415926535897932384626433832795028841
 #define Euler() (0.57721566490153286060651209008240243104)
+
 inline double round(double x) {return floor(x+0.5);}
+inline double roundup(double x) {return ceil(x-0.5);}
 inline void Iasb(long& a, double x) {a = (long)x;}
-inline long longify(double x) {return (long)x;}
+// return value is 1 for success, else 0
+int longify(double x, long& a, int rounding=0);
 inline int doublify(const bigfloat& x, double& d) {d=x; return 0;}
 
 

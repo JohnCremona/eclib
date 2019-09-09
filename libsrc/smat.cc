@@ -461,8 +461,8 @@ mat smat::operator*( const mat& m )
 {
   if( nco != m.nrows() )
     {
-      cerr << "incompatible smat & mat in operator*\n";
-      abort();
+      cerr << "incompatible smat & mat in operator*"<<endl;
+      return mat();
     }
   mat product( nro, m.ncols() );
   int i, j, d, t;
@@ -491,9 +491,9 @@ svec operator* ( const smat& A, const svec& v )
 {
   if( A.nco != dim(v) ) 
     { 
-      cout << "incompatible smat*svec\n"; 
-      cout << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
-      abort();
+      cerr << "incompatible smat*svec\n"; 
+      cerr << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
+      return svec();
     }
   int n = A.nro, j; scalar s;
   svec prod(n);
@@ -508,13 +508,13 @@ svec operator* ( const smat& A, const svec& v )
 vec operator*  (smat& m, const vec& v)
 {
   int r = m.nrows(), c=m.ncols();
+  vec w(r);
   if(c!=dim(v))
     {
-      cout<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
-      abort();
+      cerr<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
     }
-  vec w(r);
-  for(int i=1; i<=r; i++) w.set(i,m.row(i)*v);
+  else
+    for(int i=1; i<=r; i++) w.set(i,m.row(i)*v);
   return w;
 }
 
@@ -522,32 +522,36 @@ vec operator*  (smat& m, const vec& v)
 
 svec operator* ( const svec& v, const smat& A )
 {
+  svec prod(A.ncols());
   if( v.d != A.nrows() ) 
     { 
-      cout << "incompatible sizes in v*A\n"; 
-      cout << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
-      abort();
+      cerr << "incompatible sizes in v*A\n"; 
+      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
     }
-  svec prod(A.ncols());
-  map<int,scalar>::const_iterator vi;
-  for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
-    prod += (vi->second)*(A.row(vi->first));
+  else
+    {
+      map<int,scalar>::const_iterator vi;
+      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
+        prod += (vi->second)*(A.row(vi->first));
+    }
   return prod;
 }
 
 #if(0)
 svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
 {
+  svec prod(A.ncols());
   if( v.d != A.nrows() ) 
     { 
-      cout << "incompatible sizes in v*A\n"; 
-      cout << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
-      abort();
+      cerr << "incompatible sizes in v*A\n"; 
+      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
     }
-  svec prod(A.ncols());
-  map<int,scalar>::const_iterator vi;
-  for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
-    prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);
+  else
+    {
+      map<int,scalar>::const_iterator vi;
+      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
+        prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);
+    }
   return prod;
 }
 
@@ -555,24 +559,26 @@ svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
 
 svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
 {
+  vec prod(A.ncols());
   if( v.d != A.nrows() )
     {
-      cout << "incompatible sizes in v*A\n";
-      cout << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
-      abort();
+      cerr << "incompatible sizes in v*A\n";
+      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
     }
-  vec prod(A.ncols());
-  map<int,scalar>::const_iterator vi;
-  for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
+  else
     {
-      // prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);
-      int i = (vi->first)-1;        // the row of A to use (from 0)
-      scalar c = vi->second;        // the coefficient tomultiply it by
-      int d = A.col[i][0];          // #nonzero entries in this row
-      int *posi = A.col[i] +1;      // pointer to array of columns
-      scalar *values = A.val[i];    // pointer to array of values
-      while (d--)
-        prod.add_modp(*posi++,xmodmul(c,*values++,p),p);
+      map<int,scalar>::const_iterator vi;
+      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
+        {
+          // prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);
+          int i = (vi->first)-1;        // the row of A to use (from 0)
+          scalar c = vi->second;        // the coefficient tomultiply it by
+          int d = A.col[i][0];          // #nonzero entries in this row
+          int *posi = A.col[i] +1;      // pointer to array of columns
+          scalar *values = A.val[i];    // pointer to array of values
+          while (d--)
+            prod.add_modp(*posi++,xmodmul(c,*values++,p),p);
+        }
     }
   return svec(prod);
 }
@@ -580,53 +586,67 @@ svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
 
 svec mult_mod_p( const smat& A, const svec& v, const scalar& p  )
 {
+  svec w(A.nrows());
   if( v.d != A.ncols() )
     {
-      cout << "incompatible sizes in A*v\n";
-      cout << "Dimensions "<<dim(A)<<" and "<<v.d<<endl;
-      abort();
+      cerr << "incompatible sizes in A*v\n";
+      cerr << "Dimensions "<<dim(A)<<" and "<<v.d<<endl;
     }
-  svec w(A.nrows());
-  int i;
-  for(i=1; i<=A.nrows(); i++)
-    w.set(i,dotmodp(A.row(i),v,p));
+  else
+    {
+      int i;
+      for(i=1; i<=A.nrows(); i++)
+        w.set(i,dotmodp(A.row(i),v,p));
+    }
   return w;
 }
 
 vec mult_mod_p( const smat& A, const vec& v, const scalar& p  )
 {
+  vec w(A.nrows());
   if( dim(v) != A.ncols() )
     {
-      cout << "incompatible sizes in A*v\n";
-      cout << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
-      abort();
+      cerr << "incompatible sizes in A*v\n";
+      cerr << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
     }
-  vec w(A.nrows());
-  int i;
-  for(i=1; i<=A.nrows(); i++)
-    w.set(i,dotmodp(A.row(i),v,p));
+  else
+    {
+      int i;
+      for(i=1; i<=A.nrows(); i++)
+        w.set(i,dotmodp(A.row(i),v,p));
+    }
   return w;
 }
 
 smat operator* ( const smat& A, const smat& B )
 {
-  if( A.nco != B.nro ) { cerr << "incompatible smats in operator *\n"; abort();}
   int nro = A.nro, nco = B.nco;
   smat prod( nro, nco );
-
-  for (int i=1; i<=nro; i++)
-    prod.setrow(i, A.row(i)*B);
+  if( A.nco != B.nro )
+    {
+      cerr << "incompatible smats in operator *"<<endl;
+    }
+  else
+    {
+      for (int i=1; i<=nro; i++)
+        prod.setrow(i, A.row(i)*B);
+    }
   return prod;
 }
 
 smat mult_mod_p ( const smat& A, const smat& B, const scalar& p )
 {
-  if( A.nco != B.nro ) { cerr << "incompatible smats in operator *\n"; abort();}
   int nro = A.nro, nco = B.nco;
   smat prod( nro, nco );
-
-  for (int i=1; i<=nro; i++)
-    prod.setrow(i, mult_mod_p(A.row(i),B,p));
+  if( A.nco != B.nro )
+    {
+      cerr << "incompatible smats in operator *"<<endl;
+    }
+  else
+    {
+      for (int i=1; i<=nro; i++)
+        prod.setrow(i, mult_mod_p(A.row(i),B,p));
+    }
   return prod;
 }
 
@@ -763,7 +783,7 @@ istream& operator >> (istream& s, smat& sm)
 	  *v++ = k;
 	  s >> k;
 	  if( k ) *p++ = k;
-	  else { cerr << "enter zero as a value!!!\n"; abort(); }
+	  else { cerr << "invalid entry value 0 in smat input"<<endl; }
 	  count++;
 	}
       
@@ -1031,8 +1051,8 @@ smat mult_mod_p_flint ( const smat& A, const smat& B, const scalar& pr )
 {
   if( A.ncols() != B.nrows() )
     {
-      cerr << "incompatible smats in operator *\n";
-      abort();
+      cerr << "incompatible smats in operator *"<<endl;
+      return smat();
     }
   mod_mat AA, BB, CC;
   mod_mat_from_smat(AA,A,pr);

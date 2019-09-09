@@ -85,8 +85,9 @@ void qc(quartic& g,
 
   valid = P.isvalid();
   if(verbose||!valid) cout<<"Point = "<<P;
-  if(!valid) {cout << " -- warning: NOT on curve " << (Curve)(*E); abort();}
-  if(verbose) cout << "\n\theight = " << height(P)<< "\n";
+  if(!valid) {cout << " -- warning: NOT on curve " << (Curve)(*E) << endl;}
+  else
+    if(verbose) cout << "\n\theight = " << height(P)<< endl;
 }
 
 

@@ -116,19 +116,6 @@ moddata::moddata(long n) :level(n)
 	x = (x+(u*mm))%modulus;
       }
     unitdivlist[i]=x;
-#if(0)
-    //Check:  
-    if(::gcd(x,modulus)!=1)
-      {
-	cout<<"Error:  unitdivlist["<<i<<"] = "<<x<<" is not coprime to "<<modulus<<endl;
-	abort();
-      }
-    if(((i*x-d)%modulus)!=0)
-      {
-	cout<<"Error:  unitdivlist["<<i<<"] = "<<x<<" is wrong"<<endl;
-	abort();
-      }
-#endif
    }
  }
  if (ndivs>0) {dstarts.resize(ndivs);}

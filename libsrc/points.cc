@@ -80,8 +80,7 @@ Point Point::operator+(const Point& Q) const // P + Q
   Point ans(E);
   // make sure that both points are on the same curve
   if(E != Q.E){
-    cout << "## Can't add points on different curves!" << "\n" ;
-    abort();
+    cerr << "## Can't add points on different curves!" << endl;
     return ans;
   }
   // NOTE: we don't do any reductions here, but rely on assignment to do it
@@ -240,8 +239,7 @@ int order(Point& p, vector<Point>& multiples)
 int Point::isvalid() const // P on its curve ?
 {
   if(E == 0){
-    cout << "## Bad point: null curve pointer!\n" ;
-    abort();
+    cerr << "## Bad point: null curve pointer!"<<endl;
     return 0 ;
   }
 // Null point, useful for terminating input:

@@ -75,8 +75,7 @@ mat_m restrict_mat(const mat_m& m, const msubspace& s)
     check = (dd*m.row(i)*sb.col(j) == sb.row(i)*ans.col(j));
   if (!check) 
     {
-      cout<<"Error in restrict_mat: msubspace not invariant!\n";
-      abort();
+      cerr<<"Error in restrict_mat: msubspace not invariant!"<<endl;
     }
 #endif
   return ans;
@@ -162,8 +161,7 @@ mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr)
   int check = (left==right);
   if (!check) 
     {
-      cout<<"Error in prestrict: msubspace not invariant!\n";
-      abort();
+      cerr<<"Error in prestrict: msubspace not invariant!"<<endl;
     }
 #endif
   return ans;

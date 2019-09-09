@@ -103,8 +103,7 @@ void symblist::add(const symb& s, long start)
     }
   else 
     {
-      cout << "Error in symblist::add: attempt to add too many symbols to list!\n"; 
-      abort();
+      cerr << "Error in symblist::add: attempt to add too many symbols to list!"<<endl;
     }
  }
 }
@@ -136,8 +135,7 @@ symb symblist::item(long n) const
 {
  if ((n>num)||(n<0)) 
    {
-     cout<<"Error in symblist::item: index out of range!\n";
-     abort();
+     cerr<<"Error in symblist::item: index out of range!"<<endl;
      return symb();
    }
  else return list[n];
@@ -165,8 +163,7 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
    if (specials.count()<nsymb2)
      { 
        cout << "Problem: makesymbols found only " << specials.count() << " symbols ";
-       cout << "out of " << nsymb2 << "\n";
-       ::abort();
+       cout << "out of " << nsymb2 << endl;
      }
    //   cout << "Special symbols: "; specials.display();
  }

@@ -271,6 +271,7 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
 
 long ComponentGroups::ImageInComponentGroup(const Point&P, const bigint& p, vector<int> grp)
 {
+  int ans=0;      // the default
 #ifdef DEBUG_EGR
   cout<<"In ImageInComponentGroup() with point "
           <<P
@@ -278,11 +279,10 @@ long ComponentGroups::ImageInComponentGroup(const Point&P, const bigint& p, vect
 #endif
   if(grp.size()==2) // C2xC2, cannot handle
     {
-      cout<<"Error in ComponentGroups::ImageInComponentGroup(): noncyclic case"<<endl;
-      abort();
+      cerr<<"Error in ComponentGroups::ImageInComponentGroup(): noncyclic case"<<endl;
+      return ans;
     }
 
-  int ans=0;      // the default
   long n=grp[0];  // the group is cyclic of order n
   switch(n) {
   case 1: {break;}
@@ -403,7 +403,7 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 	    {
 	      cout<< "Error:  order of "<<Pk
 		  <<" in the component group is not 1 or 2!"<<endl;
-	      abort();
+	      return 0;
 	    }
 
 	  if (j==1) continue; // good reduction, nothing to do
@@ -461,8 +461,8 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 			}
 		      else
 			{
-			  cout<<"Problem in non-cyclic component group case!"<<endl;
-			  abort();
+			  cerr<<"Problem in non-cyclic component group case!"<<endl;
+			  return 0;
 			}
 		      
 		    }

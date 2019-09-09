@@ -63,32 +63,32 @@ int getcurve(vector<bigrational>& ai, int verb)
       cin >> ai[0] >> c;
       if(c!=',')
 	{
-	  cout << "syntax error on curve input" << endl;
-	  abort();
+	  cerr << "syntax error on curve input" << endl;
+	  return 0;
 	}
       cin >> ai[1] >> c; 
       if(c!=',')
 	{
-	  cout << "syntax error on curve input" << endl;
-	  abort();
+	  cerr << "syntax error on curve input" << endl;
+	  return 0;
 	}
       cin >> ai[2] >> c; 
       if(c!=',')
 	{
-	  cout << "syntax error on curve input" << endl;
-	  abort();
+	  cerr << "syntax error on curve input" << endl;
+	  return 0;
 	}
       cin >> ai[3] >> c; 
       if(c!=',')
 	{
-	  cout << "syntax error on curve input" << endl;
-	  abort();
+	  cerr << "syntax error on curve input" << endl;
+	  return 0;
 	}
       cin >> ai[4] >> c; 
       if(c!=']')
 	{
-	  cout << "syntax error on curve input" << endl;
-	  abort();
+	  cerr << "syntax error on curve input" << endl;
+	  return 0;
 	}
 #ifdef DEBUG_Q_INPUT
       cout<<ai<<endl;
@@ -106,6 +106,7 @@ int getcurve(vector<bigrational>& ai, int verb)
 #endif
     }
   // test for null curve input
-  if((num(ai[0])==0)&&(num(ai[1])==0)&&(num(ai[2])==0)&&(num(ai[3])==0)&&(num(ai[4])==0))  return 0;  // quit if null curve entered
+  if((num(ai[0])==0)&&(num(ai[1])==0)&&(num(ai[2])==0)&&(num(ai[3])==0)&&(num(ai[4])==0))
+    return 0;  // quit if null curve entered
   return 1;
 }

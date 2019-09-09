@@ -57,7 +57,7 @@ void primeclass::init(long maxnum)  /* initializes variable pdiffptr */
   long k,size=(maxnum+257)>>1;
   if(pdiffptr) delete [] pdiffptr;
   byteptr p= new unsigned char[size+1];
-  if (!p) {cout<<"Out of memory in primeclass::init!"<<endl;abort();}
+  if (!p) {cerr<<"Out of memory in primeclass::init!"<<endl; return;}
   memset(p, 0, size + 1); 
   byteptr q,r,s,fin=p+size;
   for(r=q=p,k=1;r<fin;)
@@ -111,15 +111,13 @@ long primeclass::number(long n)
   if(n<p_ind) reset();
   int ok=1;
 //  cout << "Advancing to the "<<n<<"th prime...\n";
-  while((p_ind<n)&&ok) 
+  while((p_ind<n)&&ok)
     {
-      //      cout<<"ind="<<ind<<"\tval="<<val<<"\td="<<(int)(*aptr)<<endl;
       ok=advance();
     }
   if(!ok)
     {
-	cout<<"Not enough primes in primeclass.number("<<n<<") !"<<endl;
-	abort();
+      cout<<"Not enough primes in primeclass.number("<<n<<") !"<<endl;
     }
   return p_val;
 }
@@ -137,8 +135,7 @@ vector<long> primeclass::getfirst (long n)  /* returns list of first n primes */
     }
   if(!ok)
     {
-	cout<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
-	abort();
+      cout<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
     }
   return ans;
 }
@@ -318,8 +315,7 @@ long invmod(long a, long p)
  if (g==1) return x;
  else 
    {
-     cout << "invmod called with " << a << " and " << p << " -- not coprime!\n"; 
-     abort();
+     cout << "invmod called with " << a << " and " << p << " -- not coprime!"<<endl;
      return 0;
    }
 }

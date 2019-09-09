@@ -650,7 +650,6 @@ mat sparse_restrict(const mat& m, const subspace& s)
     {
       cout<<"Warning from sparse_restrict: subspace not invariant!\n";
       cout<<"Difference = \n"<<left-right<<endl;
-      abort();
     }
   }
   check=0;
@@ -658,8 +657,7 @@ mat sparse_restrict(const mat& m, const subspace& s)
     int ok = (ans.as_mat()==RESTRICT(m,s));
     if(!ok)
     {
-      cout<<"Error in sparse_restrict: sparse result differs fromnormal!\n";
-      abort();
+      cout<<"Error in sparse_restrict: sparse result differs from normal!"<<endl;
     }
   }
   return ans.as_mat();

@@ -68,22 +68,6 @@
 #define maxnquartics 2048 // OK for curves of rank 12 or less.
 #define abceps 0.001      // used in abc-test
 
-#define ROUNDADJUST 0.001 // Amount add/subtracted before rounding for safety
-long roundtemp;
-inline int FITS_IN_LONG(const bigfloat& x) {return (x<=MAXLONG)&&(x>=MINLONG);}
-inline void ROUNDUP(long& a,const bigfloat& x) 
-{
-  if(FITS_IN_LONG(x)) return Iasb(a,ceil((x)-ROUNDADJUST));
-  cout<<"Attempt to round "<<x<<" to a long int fails, aborting!\n";
-  abort();
-}
-inline void ROUNDDOWN(long& a,const bigfloat& x) 
-{
-  if(FITS_IN_LONG(x)) return Iasb(a,floor((x)+ROUNDADJUST));
-  cout<<"Attempt to round "<<x<<" to a long int fails, aborting!\n";
-  abort();
-}
-
 #define NEQPLIST 5        // Number of primes for equiv-test sieving
 
 #ifndef USE_BIGINTS
@@ -313,7 +297,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 		      have_large_quartics=1;
 // now go through qlistb to see if any of them were large 
 // and now redundant, by comparing discriminants
-		      
+
 		      for(i=0; i<nquarticsb; i++)
 			{
 			  if(!qlistbflag[i]) continue;  
@@ -726,10 +710,11 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 		cphi[0]=cphi[2];
 		cphi[2]=phi;
 	      }
-	    else // error, non are detected to be real!
+	    else // error, none are detected to be real!
 	      {
-		cout<<"ERROR: none are real, quitting"<<endl;
-		abort();
+		cout<<"2-descent error: search for type 3 quartics but no roots are real"<<endl;
+		success = 0;
+                return;
 	      }
 	  }
       }
@@ -749,16 +734,25 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   } // end of switch(type)
 
 
-// Set bounds on a loop:
+// Set bounds on a loop: this may result in a premature return with success=0 if bounds are too big
 
   switch(type) {
   case 1:
     amin = 1;
-    ROUNDDOWN(amax,(phi1-phi3) / 9);
+    success = longify((phi1-phi3) / 9, amax, -1); // -1 means round down
+    if (!success)
+      {
+        cerr<<"2-descent: upper bound "<<((phi1-phi3) / 9)<<" on a too large"<<endl;
+        return;
+      }
     break;
   case 2:
-    ROUNDUP(amin,(phi3-phi2)/9);    // negative
-    ROUNDDOWN(amax,(phi1-phi2)/9);  // positive
+    success = longify((phi3-phi2)/9, amin, +1) && longify((phi1-phi2)/9, amax, -1);
+    if (!success)
+      {
+        cerr<<"2-descent: bounds "<<((phi3-phi2) / 9)<<" and/or "<<((phi1-phi3) / 9)<<" on a too large"<<endl;
+        return;
+      }
     break;
   case 3:
     if(phi>0)
@@ -769,27 +763,39 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	  {
 	if((amax2<amax0)&&(amax0<amax3))  // then we use amax0 but old version used amax2
 	  {
-	    cout<<"a upper bound = "<<amax0<<" while old version wrongly had "<<amax2<<endl;
+	    cerr<<"a upper bound = "<<amax0<<" while old version wrongly had "<<amax2<<endl;
 	  }
 	if((amax2<amax3)&&(amax3<amax0))  // then we use amax3 but old version used amax2
 	  {
-	    cout<<"a upper bound = "<<amax3<<" while old version wrongly had "<<amax2<<endl;
+	    cerr<<"a upper bound = "<<amax3<<" while old version wrongly had "<<amax2<<endl;
 	  }
 	  }
 	if(amax3>amax2) amax2=amax3;  // so amax2=max of two previous
-	if(amax2>amax0) 
+	if(amax2>amax0)
 	  {
 	    amax2=amax0;              // so amax2=min of two previous
 	  }
-	ROUNDDOWN(amax,amax2);
+        success = longify(amax2, amax, -1); // round down
+        if (!success)
+          {
+            cerr<<"2-descent: upper bound "<<amax2<<" on a too large"<<endl;
+            return;
+          }
+        amin2= -const6/root27;
+        if(amin2<-amax0)
+          {
+            amin2=-amax0;
+            cerr<<"New a lower bound worse, not using -- should NOT happen!"<<endl;
+            success = 0;
+            return;
+          }
+        success = longify(amin2, amin, +1); // round up
+        if (!success)
+          {
+            cerr<<"2-descent: lower bound "<<amin2<<" on a too large"<<endl;
+            return;
+          }
 
-	amin2= -const6/root27;
-	if(amin2<-amax0)
-	  {
-	    amin2=-amax0;
-	    cout<<"New a lower bound worse, not using -- should NOT happen!\n";
-	  }
-	ROUNDUP(amin,amin2);
       }
     else // phi<0
       {
@@ -797,9 +803,16 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	if(amax2>amax0)
 	  {
 	    amax2=amax0;
-	    cout<<"New a upper bound worse, not using -- should NOT happen!\n";
+	    cout<<"New a upper bound worse, not using -- should NOT happen!"<<endl;
+            success = 0;
+            return;
 	  }
-	ROUNDDOWN(amax,amax2);
+        success = longify(amax2, amax, -1); // round down
+        if (!success)
+          {
+            cerr<<"2-descent: upper bound "<<amax2<<" on a too large"<<endl;
+            return;
+          }
 
 	amin0 = -amax0;         // this and the two following are all negative
 	amin2 = (phi-const6)/6;
@@ -808,11 +821,11 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	  {
 	if((amin0<amin3)&&(amin3<amin2))  // then we use amin3 but old version used amin2
 	  {
-	    cout<<"a lower bound = "<<amin3<<" while old version wrongly had "<<amin2<<endl;
+	    cerr<<"a lower bound = "<<amin3<<" while old version wrongly had "<<amin2<<endl;
 	  }
 	if((amin3<amin0)&&(amin0<amin2))  // then we use amin0 but old version used amin2
 	  {
-	    cout<<"a lower bound = "<<amin0<<" while old version wrongly had "<<amin2<<endl;
+	    cerr<<"a lower bound = "<<amin0<<" while old version wrongly had "<<amin2<<endl;
 	  }
 	  }
 	if(amin2>amin3) amin2=amin3;  // so amin2=min of two previous
@@ -820,7 +833,12 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	  {
 	    amin2=amin0;              // so amin2=max of two previous
 	  }
-	ROUNDUP(amin,amin2);
+        success = longify(amin2, amin, +1); // round up
+        if (!success)
+          {
+            cerr<<"2-descent: lower bound "<<amin2<<" on a too large"<<endl;
+            return;
+          }
       }
     if(verbose>1) cout<<"Search range for a: ("<<amin<<","<<amax<<")\n";
   } // end of switch(type)
@@ -1061,15 +1079,27 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 #ifdef SHOW_ABC_RANGES
 		  cout<<"Before rounding, cmin = "<<(((hmin+xbb3)/xa8))<<endl;
 #endif
-		  long cmin; ROUNDUP(cmin,((hmin + xbb3)/xa8));
+		  long cmin;
+                  success = longify(((hmin + xbb3)/xa8), cmin, +1); // round up
+                  if (!success)
+                    {
+                      cerr<<"2-descent: lower bound "<<(((hmin + xbb3)/xa8))<<" on c too large"<<endl;
+                      return;
+                    }
+
 #ifdef SHOW_ABC_RANGES
 		  cout<<"Before rounding, cmax = "<<(((hmax+xbb3)/xa8))<<endl;
 #endif
-		  long cmax; ROUNDDOWN(cmax,((hmax + xbb3)/xa8));
+		  long cmax;
+                  success = longify(((hmax + xbb3)/xa8), cmax, -1); // round down
+                  if (!success)
+                    {
+                      cerr<<"2-descent: upper bound "<<(((hmin + xbb3)/xa8))<<" on c too large"<<endl;
+                      return;
+                    }
 
 		  if(cmin>cmax+1)
 		    cout<<"Empty c-range!  cmin = "<<cmin<<", cmax = "<<cmax<<"\n";
-		  //DEBUG: cmin = 804861;
 
 		  while(mod(cmin,3)!=cmod3) 
 		    cmin++; // Skip to correct residue mod 3
@@ -1096,7 +1126,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 		      hscalemodi++;
 		      auxi++;
 		    }
-		  
+
 		  while(c<=cmax-cstep)
 		    {
 		      ah_count++;
@@ -1111,7 +1141,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 
 		      int flagok = (b_is_odd || even(c-Imod2));
 		      if(!flagok) {ah_sieve_1++; continue;}
-		      
+
 		      ipivot=-1;
 
 		      for(iaux=0, hmodi=hmod, flagai=flaga; 
@@ -1399,8 +1429,8 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   if(!intlog2(n0,e0,0))
     {
       success=0;
-      cout<<"\n\n!!! Fatal error in mwrank: n0=#E[2]="<<n0<<" is not a power of 2\n";
-      cout<<"This is a bug: please report!\n";
+      cerr<<"\n\n!!! Fatal error in mwrank: n0=#E[2]="<<n0<<" is not a power of 2\n";
+      cerr<<"This is a bug: please report!"<<endl;
       return;
     }
 
@@ -1459,8 +1489,9 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   if (!intlog2(n3,e3,1))
     {
       success=0;
-      cout<<"\n\n!!! Fatal error in mwrank: n3 ="<<keep_n3<<" not a power of 2\n";
-      cout<<"This is a bug: please report!\n";
+      cerr<<"\n\n!!! Fatal error in mwrank: n3 ="<<keep_n3<<" not a power of 2\n";
+      cerr<<"This is a bug: please report!"<<endl;
+      return;
     }
   long selmer_rank_B = rank_B + e3;
 
@@ -1485,8 +1516,9 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   if (!intlog2(n2,e2,0))
     {
       success=0;
-      cout<<"\n\n!!! Fatal error in eclib: n2 = "<<keep_n2<<" not a power of 2\n";
-      cout<<"This is a bug: please report!\n";
+      cerr<<"\n\n!!! Fatal error in eclib: n2 = "<<keep_n2<<" not a power of 2\n";
+      cerr<<"This is a bug: please report!"<<endl;
+      return;
     }
 
   long rank_A = e1-e0,  selmer_rank_A = e2-e0;
@@ -1569,10 +1601,9 @@ void rank1::sortpoints()  // reorder points into increasing height order
 
 void showpoint(Point P)
 {
+  if(!P.isvalid()) {cerr << "P = "<<P<<" not on curve!"<<endl; return;}
   bigfloat h = height(P);
-  cout << P << ", height = " << h;
-  if(!P.isvalid()) {cout << " --warning: NOT on curve!\n"; abort();}
-  cout << "\n";
+  cout << P << ", height = " << h << endl;
 }
 
 void showpoint(Point P, Curvedata* CD, const bigint& u, const bigint& r, 
