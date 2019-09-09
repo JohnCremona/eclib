@@ -23,7 +23,7 @@
  
 //  The macro NO_MPFP can optionally be set.  It controls whether most
 //   real and complex floating point functions are implemented using
-//   doubles and complex doubles (if set) ot using NTL bigfloats
+//   doubles and complex doubles (if set) or using NTL bigfloats
 //   (RR) and bigcomplexes (CC) (if not set, the default)
 
 #ifndef _ECLIB_INTERFACE_H_

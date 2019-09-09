@@ -587,7 +587,12 @@ void rank1::getquartics()
     cout<<"Before sorting, phi = "<<cphi[0]<<","<<cphi[1]<<","<<cphi[2]<<endl;
   flag_init();
   getquartics1();
-  if (npairs==2) 
+  if (!success)
+    {
+      delete[] cphi;
+      return;
+    }
+  if (npairs==2)
     {
       nfirstlota = nquarticsa;
       nfirstlotb = nquarticsb;
@@ -600,6 +605,11 @@ void rank1::getquartics()
       bigfloat four = to_bigfloat(4);
       cphi[0]*=four; cphi[1]*=four; cphi[2]*=four;
       getquartics1();
+      if (!success)
+        {
+          delete[] cphi;
+          return;
+        }
     }
   delete[] cphi;
   if(verbose>1) 
@@ -629,12 +639,20 @@ void rank1::getquartics1()
   if (posdisc)
     {
       gettype(2);  // get type 2s first as they are a subgroup of index 1 or 2
+      if (!success)
+        return;
       if(!(have_eggpoint || have_large_quartics))
-	gettype(1);
+        {
+          gettype(1);
+          if (!success)
+            return;
+        }
     }
   else
     {
       gettype(3);
+      if (!success)
+        return;
     }
 }  //  of getquartics1()
 
@@ -1452,8 +1470,14 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
 #endif
 
   getquartics();
-
-  //  cout<<"LOCAL INDEX "<<twoadic_index<<" GLOBAL INDEX "<<global_index<<" BSD "<<bsd_npairs<<endl;
+  if (!success)
+  {
+    delete [] qlista;
+    delete [] qlistb;
+    delete [] croots;
+    delete [] qlistbflag;
+    return;
+  }
 
 
   // Compute rank/selmer rank from B=im(eps) first:

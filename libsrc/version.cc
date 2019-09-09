@@ -28,10 +28,10 @@
 void show_version()
 {
   cerr << "Version compiled on " << __DATE__ << " at " << __TIME__ << " by GCC " << __VERSION__ << "\n";
-#ifdef MPFP
-  cerr << "using NTL bigints and NTL real and complex multiprecision floating point";
-#else
+#ifdef NO_MPFP
   cerr << "using NTL bigints but no multiprecision floating point";
+#else
+  cerr << "using NTL bigints and NTL real and complex multiprecision floating point";
 #endif
   cerr<<endl;
 }
