@@ -1661,7 +1661,7 @@ bigfloat CurveHeightConst::psi(const bigfloat& x)
   if(x<e3) 
     {
       cerr<<"Error in CurveHeightConst::psi(): x="<<x<<" < e3 = "<<e3<<endl;  
-      return to_RR(0);
+      return to_bigfloat(0);
     }
   //  cout<<"computing psi(x) with x = "<<x<<endl;
   //  cout<<"ordinates: "<<ordinates(x)<<endl;
