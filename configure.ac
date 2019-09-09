@@ -238,5 +238,6 @@ AC_CONFIG_FILES([
   doc/Makefile
   man/Makefile
   Makefile
+  eclib.pc
 ])
 AC_OUTPUT
