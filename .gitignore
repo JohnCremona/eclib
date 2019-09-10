@@ -6,6 +6,7 @@ syntax: glob
 configure
 Makefile
 Makefile.in
+eclib.pc
 */Makefile
 */Makefile.in
 autom4te.cache
