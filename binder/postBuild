@@ -2,16 +2,22 @@
 
 # Our conda env has the necessary dependencies, so propagate them
 # for the build below
-export PREFIX=$CONDA_DIR
+export PREFIX="$CONDA_DEFAULT_ENV"
 
 # For now, we need an alpha version of JupyterLab. Can be removed later.
 pip install --pre -U jupyterlab
 
+echo "configuring eclib with PREFIX=$PREFIX"
 
 # Configure eclib with autotools
 export CONFIGURE_OPTS="--disable-mpfp"
 export CPPFLAGS="-I$PREFIX/include $CPPFLAGS"
 export LDFLAGS="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib $LDFLAGS"
+
+echo "environment"
+echo "==========="
+env | sort
+echo
 
 chmod +x autogen.sh
 ./autogen.sh
