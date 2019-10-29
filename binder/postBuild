@@ -14,6 +14,11 @@ export CONFIGURE_OPTS="--disable-mpfp"
 export CPPFLAGS="-I$PREFIX/include $CPPFLAGS"
 export LDFLAGS="-L$PREFIX/lib -Wl,-rpath,$PREFIX/lib $LDFLAGS"
 
+echo "environment"
+echo "==========="
+env | sort
+echo
+
 chmod +x autogen.sh
 ./autogen.sh
 
