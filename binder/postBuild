@@ -2,7 +2,7 @@
 
 # Our conda env has the necessary dependencies, so propagate them
 # for the build below
-export PREFIX=$CONDA_DIR
+export PREFIX="$CONDA_DEFAULT_ENV"
 
 # For now, we need an alpha version of JupyterLab. Can be removed later.
 pip install --pre -U jupyterlab
