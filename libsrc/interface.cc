@@ -313,6 +313,7 @@ int longify(const bigfloat& x, long& a, int rounding)
       switch(rounding)
         {
         case 0: // round to nearest
+        default:
           a = I2long(RoundToZZ(x)); return 1;
         case 1: // round up
           a = I2long(CeilToZZ(x)); return 1;
