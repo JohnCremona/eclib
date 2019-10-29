@@ -7,6 +7,7 @@ export PREFIX=$CONDA_DIR
 # For now, we need an alpha version of JupyterLab. Can be removed later.
 pip install --pre -U jupyterlab
 
+echo "configuring eclib with PREFIX=$PREFIX"
 
 # Configure eclib with autotools
 export CONFIGURE_OPTS="--disable-mpfp"
