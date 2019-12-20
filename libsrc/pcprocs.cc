@@ -243,19 +243,28 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 	    else {w1=bigcomplex(2*x1,zero); w2=bigcomplex(x1,y1);}
 	    bigcomplex tau=normalize(w1,w2);
 	    getc4c6(w1,w2,c4,c6);
-            // cout<<"w1 = "<<w1<<endl;
-            // cout<<"w2 = "<<w2<<endl;
-            // cout<<"c4 = "<<c4<<endl;
-            // cout<<"c6 = "<<c6<<endl;
+            if (detail>1)
+              {
+                cout<<"w1 = "<<w1<<endl;
+                cout<<"w2 = "<<w2<<endl;
+                cout<<"type = "<<type<<endl;
+                cout<<"c4 = "<<c4<<endl;
+                cout<<"c6 = "<<c6<<endl;
+              }
 	    bigint ic4 = fac*Iround(real(c4)/fac);
 	    bigint ic6 = fac6*Iround(real(c6)/fac6);
+            if (detail>1)
+              {
+                cout<<"ic4 = "<<ic4<<endl;
+                cout<<"ic6 = "<<ic6<<endl;
+              }
             c4err = abs(I2bigfloat(ic4)-real(c4));
             c6err = abs(I2bigfloat(ic6)-real(c6));
             c4c6err = max(c4err, c6err);
 	    int close = (c4c6err<0.001);
 	    int validc4c6 = 0;
             validc4c6 = valid_invariants(ic4,ic6);
-            if((validc4c6&&close)&&detail)
+            if((validc4c6)&&detail)
 	      {
 		cout << "type = " << type << ", nx = " << nx << ", ny = " << ny << "\n"; 
                 //                cout << "x = " << x1 << ", y = " << y1 << "\n";
@@ -263,12 +272,16 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 		cout << "c4 = " << real(c4) << ", c6 = " << real(c6) << "\n";
 		cout << "ic4 = " << ic4 << ", ic6 = " << ic6 << "\n";
 	      }
+            else
+              {
+                if (detail>1) cout << "Invalid c-invariants" << endl;
+              }
             // We relax the closeness criterion here, but do not
             // ignore it completely since there have been cases where
             // c4,c6 were valid & give the right conductor but are not
             // actually correct.
 	    close = (c4c6err<0.01);
-	    if(validc4c6&&close) // if(validc4c6)
+	    if(validc4c6)
 	      {
 		Curve C(ic4,ic6);
 		Curvedata CD(C,1);

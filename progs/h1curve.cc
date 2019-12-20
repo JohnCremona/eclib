@@ -54,10 +54,10 @@ int checkap(const level* iN, const newform& nf, CurveRed& CR, long pmax=100);
 
 int main(void)
 {
-  int prec0 = 75;
-  int maxprec = 300;
+  int prec0 = 100;
+  int maxprec = 500;
   int prec = prec0;
-  int delta_prec = 30;
+  int delta_prec = 50;
   set_precision(prec);
  int verb=0;
 #ifdef SINGLE

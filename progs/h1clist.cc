@@ -43,10 +43,10 @@
 
 int main(void)
 {
-  int prec0 = 75;
+  int prec0 = 100;
   int maxprec = 300;
   int prec = prec0;
-  int delta_prec = 30;
+  int delta_prec = 50;
   set_precision(prec);
  int limit,n=1;
  string code;
