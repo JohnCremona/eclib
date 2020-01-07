@@ -342,6 +342,7 @@ int longify(double x, long& a, int rounding)
           switch(rounding)
             {
             case 0: // round to nearest
+            default:
               a = (long)(x+0.5); return 1;
             case 1: // round up
               a = - (long)(-x+0.5); return 1;
@@ -354,6 +355,7 @@ int longify(double x, long& a, int rounding)
           switch(rounding)
             {
             case 0: // round to nearest
+            default:
               a = - (long)(-x+0.5); return 1;
             case 1: // round up
               a = (long)x; return 1;
