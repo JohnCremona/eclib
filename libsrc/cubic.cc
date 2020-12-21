@@ -26,6 +26,7 @@
 #include <eclib/cubic.h>
 #include <eclib/marith.h>
 #include <eclib/polys.h>
+#include <cassert>
 
 void cubic::init()
 {
@@ -194,8 +195,10 @@ bigint cubic::j_c4() const
   bigint a2=a*a;
   bigint c2=c*c;
   bigint c3=c*c2;
+  bigint c4=c2*c2;
+  bigint d2=d*d;
 
-  return 27*d*c3*a2 + (27*d^2*b3 - 54*d*c2*b2 + 9*c^4*b)*a + 9*d*c*b4 - 2*c3*b3;
+  return 27*d*c3*a2 + (27*d2*b3 - 54*d*c2*b2 + 9*c4*b)*a + 9*d*c*b4 - 2*c3*b3;
 }
 
 //#define DEBUG
@@ -308,7 +311,7 @@ void cubic::mathews_reduce(unimod& m)
   if(a()<0) negate(m);
 }
 
-int cubic::is_jc_reduced() // for positive discriminant only
+int cubic::is_jc_reduced() // for negative discriminant only
 {
   bigint C1 =  j_c1();
   if (C1<0) return 0;
@@ -324,38 +327,98 @@ void cubic::jc_reduce(unimod& m)
 {
   int s=1;   bigint k, jc2, jc3;
   bigint plus1, minus1;  plus1=1; minus1=-1;
+
+  bigfloat alpha, ra, rb, rc, rd, h0, h1, h2;
+
   m.reset();
+#ifdef DEBUG
+      cout << "\nJC-reducing " << (*this) << "...\n";
+      cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+      alpha = real_root();
+      cout<<"alpha = "<<alpha<<endl;
+      ra = I2bigfloat(a());
+      rb = I2bigfloat(b());
+      rc = I2bigfloat(c());
+      rd = I2bigfloat(d());
+      h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+      h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
+      h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+      cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
+#endif
+
+  if (a()==0)
+    {
+      bigint bb=b(), cc=c(), q,r;
+      if (bb<0)
+        {
+          bb = -bb;
+          cc = -cc;
+          m.negate();
+        }
+      ::divides(-cc,2*bb,q,r);
+      x_shift(r,m);
+#ifdef DEBUG
+      cout << "shift by "<<r<< " to get " << (*this) << endl;
+#endif
+      return;
+    }
 
   while(s)
     {
       s=0;
+      if (a()==0)
+        {
+          jc_reduce(m);
+          return;
+        }
       if(j_c1()<0)
 	{
 	  s=1;  invert(m);
 #ifdef DEBUG
-	  cout << "invert: " << (*this) << endl;
+	  cout << "inverting --> " << (*this) << endl;
+          cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+          alpha = real_root();
+          cout<<"alpha = "<<alpha<<endl;
+          ra = I2bigfloat(a());
+          rb = I2bigfloat(b());
+          rc = I2bigfloat(c());
+          rd = I2bigfloat(d());
+          h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+          h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
+          h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+          cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
 	}
       if ((j_c2()>0) || (j_c3()<0))
         {
           s=1;
-          bigfloat alpha = real_root();
-          bigfloat ra = I2bigfloat(a());
-          bigfloat rb = I2bigfloat(b());
-          bigfloat rc = I2bigfloat(c());
-          bigfloat h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
-          bigfloat h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc; 
+          alpha = real_root();
 #ifdef DEBUG
-          cout << "h0 = "<<h0<<endl;
-          cout << "h1 = "<<h1<<endl;
-          cout << "-h1/(2*h0) = "<<(-h1/(2*h0))<<endl;
+          cout<<"alpha = "<<alpha<<endl;
 #endif
+          ra = I2bigfloat(a());
+          rb = I2bigfloat(b());
+          rc = I2bigfloat(c());
+          h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+          h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
+          h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
           k = Iround(-h1/(2*h0));
           if (k!=0)
             {
               x_shift(k,m);
 #ifdef DEBUG
-              cout << "Initial shift by "<<k<<": "<<(*this)<<endl;
+              cout << "Shift by "<<k<<"--> "<<(*this)<<endl;
+              cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+              alpha = real_root();
+              cout<<"alpha = "<<alpha<<endl;
+              ra = I2bigfloat(a());
+              rb = I2bigfloat(b());
+              rc = I2bigfloat(c());
+              rd = I2bigfloat(d());
+              h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+              h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
+              h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+              cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
             }
           // Two loops to guard against rounding error in computing k:
@@ -363,14 +426,14 @@ void cubic::jc_reduce(unimod& m)
             {
               x_shift(minus1,m);
 #ifdef DEBUG
-              cout << "Shift by -1: "<<(*this)<<endl;
+              cout << "Shift by -1 --> "<<(*this)<<endl;
 #endif
             }
           while(j_c3()<0)
             {
               x_shift(plus1,m);
 #ifdef DEBUG
-              cout << "Shift by +1: "<<(*this)<<endl;
+              cout << "Shift by +1--> "<<(*this)<<endl;
 #endif
             }
         }
@@ -378,11 +441,32 @@ void cubic::jc_reduce(unimod& m)
         {
           s=1;  invert(m);
 #ifdef DEBUG
-          cout << "invert: " << (*this) << endl;
+          cout << "final inversion--> " << (*this) << endl;
+          cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+          alpha = real_root();
+          cout<<"alpha = "<<alpha<<endl;
+          ra = I2bigfloat(a());
+          rb = I2bigfloat(b());
+          rc = I2bigfloat(c());
+          rd = I2bigfloat(d());
+          h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+          h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
+          h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+          cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
         }
 #ifdef DEBUG
-      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+      cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+      alpha = real_root();
+      cout<<"alpha = "<<alpha<<endl;
+      ra = I2bigfloat(a());
+      rb = I2bigfloat(b());
+      rc = I2bigfloat(c());
+      rd = I2bigfloat(d());
+      h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+      h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
+      h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+      cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
     }
   if(a()<0) negate(m);
@@ -421,6 +505,11 @@ bigfloat cubic::real_root() const
   bigfloat P = I2bigfloat(p_semi());
   bigfloat Q = I2bigfloat(q_semi());
   bigfloat A = I2bigfloat(a());
+
+  if(is_zero(A)) 
+    {
+      return A;
+    }
 
   if(is_zero(P)) 
     {
@@ -488,18 +577,20 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
       // Code for a=0:
       //
       bmax = (neg? Ifloor(const5*D4): Ifloor(D4));
+      if(verbose>1) cout<<"a=0, b<="<<bmax<<endl;
       for (b=1; b<=bmax; b++)
         {
           b2=b*b;
-          if (::divides(b2,disc,Db2,r))
+          if (::divides(disc,b2,Db2,r))
             {
               b4 = 4*b;
               for (c=1-b; c<=b; c++)
                 {
                   if (::divides(c*c-Db2,b4,d,r))
                     {
-                      if (verbose && glist.size()==0) cout<<disc<<" :\n";
+                      if ((verbose>1) && glist.size()==0) cout<<disc<<" :\n";
                       cubic g(a,b,c,d);
+                      assert(g.disc()==disc);
                       glist.push_back(g);
                       if(verbose>1)
                         {
@@ -547,8 +638,9 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
                       U = (sU? -absU: absU);
                       if(::divides(U-Ud,27*a2,d,r))
                         {
-                          if (verbose && glist.size()==0) cout<<disc<<" :\n";
+                          if (verbose>1 && glist.size()==0) cout<<disc<<" :\n";
                           cubic g(a,b,c,d);
+                          assert(g.disc()==disc);
                           if(verbose>1) cout<<"found "<<g;
                           int irred = g.is_irreducible();
                           if (verbose>1)
@@ -570,7 +662,7 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
   if (verbose)
     {
       cout << glist.size() << " cubics found with discriminant " << disc << ".";
-      if (glist.size()>0) cout <<" Now reducing and eliminating repeats...";
+      if (glist.size()>0) cout << glist << "\n Now reducing and eliminating repeats...";
       cout<<endl;
     }
 
@@ -580,6 +672,7 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
       if(verbose) cout<<g;
       if (neg)
         {
+          if (verbose>1) cout<<": testing JC-reduction..."<<endl;
           if (g.is_jc_reduced())
             {
               if(verbose) cout<<"\t (JC-reduced)";
