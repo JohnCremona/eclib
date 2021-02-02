@@ -5,7 +5,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 11:
 p0=2
-#ap=	300
+#ap=	500
 1:	aplist = [ -2 -1 1 -2 1 4 -2 0 -1 0 7 3 -8 -6 8 -6 5 12 -7 -3 ...]
 aq = [ -1 ]
 ap0 = -2, dp0 = 2, np0 = 5, pdot = -10
@@ -51,7 +51,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 11:
 p0=2
-#ap=	300
+#ap=	500
 1:	aplist = [ -2 -1 1 -2 1 4 -2 0 -1 0 7 3 -8 -6 8 -6 5 12 -7 -3 ...]
 aq = [ -1 ]
 ap0 = -2, dp0 = 2, np0 = 5, pdot = -10
@@ -96,7 +96,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 11:
 p0=2
-#ap=	300
+#ap=	500
 1:	aplist = [ -2 -1 1 -2 1 4 -2 0 -1 0 7 3 -8 -6 8 -6 5 12 -7 -3 ...]
 aq = [ -1 ]
 ap0 = -2, dp0 = 2, np0 = 5, pdot = -10
@@ -142,7 +142,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 11:
 p0=2
-#ap=	300
+#ap=	500
 1:	aplist = [ -2 -1 1 -2 1 4 -2 0 -1 0 7 3 -8 -6 8 -6 5 12 -7 -3 ...]
 aq = [ -1 ]
 ap0 = -2, dp0 = 2, np0 = 5, pdot = -10
@@ -187,7 +187,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 11:
 p0=2
-#ap=	300
+#ap=	500
 1:	aplist = [ -2 -1 1 -2 1 4 -2 0 -1 0 7 3 -8 -6 8 -6 5 12 -7 -3 ...]
 aq = [ -1 ]
 ap0 = -2, dp0 = 2, np0 = 5, pdot = -10
@@ -233,7 +233,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 11:
 p0=2
-#ap=	300
+#ap=	500
 1:	aplist = [ -2 -1 1 -2 1 4 -2 0 -1 0 7 3 -8 -6 8 -6 5 12 -7 -3 ...]
 aq = [ -1 ]
 ap0 = -2, dp0 = 2, np0 = 5, pdot = -10
@@ -279,7 +279,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 37:
 p0=2
-#ap=	300
+#ap=	608
 1:	aplist = [ -2 -3 -2 -1 -5 -2 0 0 2 6 -4 -1 -9 2 -9 1 8 -8 8 9 ...]
 aq = [ 1 ]
 ap0 = -2, dp0 = 0, np0 = 5
@@ -341,7 +341,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 37:
 p0=2
-#ap=	300
+#ap=	608
 1:	aplist = [ -2 -3 -2 -1 -5 -2 0 0 2 6 -4 -1 -9 2 -9 1 8 -8 8 9 ...]
 aq = [ 1 ]
 ap0 = -2, dp0 = 0, np0 = 5
@@ -402,7 +402,7 @@ Enter sign (1,-1,0 for both):Newform information:
 
 1 newform(s) at level 389:
 p0=2
-#ap=	300
+#ap=	1972
 1:	aplist = [ -2 -2 -3 -5 -4 -3 -6 5 -4 -6 4 -8 -3 12 -2 -6 3 -8 -5 -10 ...]
 aq = [ -1 ]
 ap0 = -2, dp0 = 0, np0 = 5
