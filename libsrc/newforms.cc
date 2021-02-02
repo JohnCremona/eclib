@@ -1554,8 +1554,16 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
   if(verbose) cout << "Making homspace..."<<flush;
   makeh1(sign);
   if(verbose) cout << "done." << endl;
-  mvp=h1->maninvector(p0); 
-  if (nap<300) nap=300;
+  mvp=h1->maninvector(p0);
+  long nap_default = long(100*sqrt(modulus));
+  if (nap<nap_default)
+    {
+      if(verbose)
+        {
+          cout << "--increasing nap from "<< nap << " to " << nap_default << endl;
+        }
+      nap=nap_default;
+    }
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
   form_finder splitspace(this, (sign!=0), nap, 0, 1, 0, verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;

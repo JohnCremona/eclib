@@ -198,8 +198,8 @@ public:
   void find_jlist();
 
   // Create from one or a list of elliptic curves of the right conductor:
-  void createfromcurve(int s, const CurveRed& C, int nap=25);
-  void createfromcurves(int s, vector<CurveRed> Clist, int nap=25);
+  void createfromcurve(int s, const CurveRed& C, int nap=500);
+  void createfromcurves(int s, vector<CurveRed> Clist, int nap=500);
   // Lazy version which does not get the homology eigenvectors, only
   // sets the aq & ap (for use as oldforms):
   void createfromcurves_mini(vector<CurveRed> Clist, int nap=25);
