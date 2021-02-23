@@ -113,7 +113,7 @@ void saturator::nextq()
 	    cout<<"Continuing with q="<<q<<endl;
 	}
       while(div(q,disc)) {qvar++; q=qvar; }
-      if(verbose>1) cout<<"Trying q="<<q<<endl;
+      if(verbose>2) cout<<"Trying q="<<q<<endl;
       if(newq||(Eqptr==Eqlist.end()))
 	{
 	  newq=1;
@@ -277,13 +277,22 @@ int saturator::do_saturation(int pp, int maxntries)
     }
 }
 
-int saturator::do_saturation_upto(int maxp, int maxntries)
+int saturator::do_saturation_upto(int maxp, int maxntries, int minp)
 {
   int pi, p, index=1;
   primevar pvar;  p=pvar;
+  // We need to detect when the stored primes list is enlarged as then
+  // this primevar will be invalid and we need to reset it.
+  int max_stored_prime = maxprime();
+
+  while(p<=minp)
+    {
+      pvar++;
+      p=pvar;
+    }
   while(p<=maxp)
     {
-      if(verbose) cout<<"Checking "<<p<<"-saturation "<<endl;
+      if(verbose) cout<<"Checking "<<p<<"-saturation..."<<endl;
       pi = do_saturation(p,maxntries);
       if(verbose&&(pi>=0))
 	{
@@ -292,8 +301,17 @@ int saturator::do_saturation_upto(int maxp, int maxntries)
 	  if(pi>0) cout<<"Index gain = "<<p<<"^"<<pi<<endl;
 	}
       if(pi>0) while(pi--) index *= p;
+      if (maxprime() > max_stored_prime)
+        {
+          if (verbose)
+            cout << "-- we have enlarged the stored primes array: resetting p iterator"<<endl;
+          max_stored_prime = maxprime();
+          pvar.init();
+          while (pvar<=p) {pvar++;}
+        }
       pvar++;
       p=pvar;
+      if (verbose>1) cout<<"incrementing p to "<<p<<endl;
     }
   return index; 
 }
@@ -364,16 +382,16 @@ int saturator::do_saturation(vector<int> plist,
   return success;
 }
 
-int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd, 
-			int egr, int maxntries, int odd_primes_only)
+int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
+			int egr, int maxntries, long sat_low_bd)
 {
   // Determine the primes at which saturation is necessary: all those
   // up to index bound (but truncated at sat_bd unless this is -1),
   // and also the "Tamagawa primes" if the egr option is set
 
   vector<long> satprimes;
-  primevar pr; 
-  if(odd_primes_only) pr++;  // useful after a 2-descent
+  primevar pr;
+  while(pr.value()<=sat_low_bd) pr++;
   int p=pr.value();
   bigint ib = index_bound(E,Plist,egr,(verbose>1));
   bigint ib0=ib;
@@ -393,10 +411,10 @@ int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
   while(p<=ib)
     {
       satprimes.push_back(p);
-      pr++; p=pr.value(); 
+      pr++; p=pr.value();
     }
   // In principle we should add these primes to unsat list, but in
-  // practice we will not as there are likely to be too many!
+  // practice we will not as there may be too many!
 #if(0)
   if(bound_too_big)
     while(p<=ib0)

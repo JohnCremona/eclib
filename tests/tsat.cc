@@ -87,11 +87,11 @@ int main()
     }
   cout<<npts<<" points entered.\n";
 
-  int pmax;
+  int pmin, pmax;
 
-  cout<<"prime p to saturate at? ", cin>>pmax;
+  cout<<"min and max prime p to saturate at? ", cin>>pmin>>pmax;
   pmax = NextPrime(pmax);
-  cout<<"\nSaturating at prime "<<pmax<<endl;
+  cout<<"\nSaturating at primes from " <<pmin <<" up to "<<pmax<<endl;
 
   //  if(npts==1) points[0]=randint(10)*points[0];
   /*
@@ -110,12 +110,24 @@ int main()
   //  bigfloat reg = regulator(points);
   //  cout<<"Regulator = "<<reg<<endl;
 
+  int index = sieve.do_saturation_upto(pmax, 10, pmin-1);
+  cout<<"Finished p-saturation for p from " <<pmin <<" up to "<<pmax;
+  if(index>1)
+    {
+      cout<<", index gain = "<<index<<endl;
+      vector<Point> newpoints = sieve.getgens();
+      cout<<"New generators:\n"<<newpoints<<endl;
+    //  bigfloat newreg = regulator(newpoints);
+    //  cout<<"New regulator = "<<newreg<<endl;
+    //  cout<<"Ratio = "<<(reg/newreg)<<endl;
+    }
+  else
+    {
+      cout<<", points were saturated"<<endl;
+    }
   /*
-  int index = sieve.do_saturation_upto(pmax);
-  cout<<"Finished p-saturation for p up to "<<pmax;
-  */
   int log_index = sieve.do_saturation(pmax);
-  cout<<"Finished p-saturation for p =  "<<pmax;
+  cout<<"Finished p-saturation for p = " <<pmax;
   if(log_index>0) 
     {
       cout<<", index gain = "<<pmax<<"^"<<log_index<<endl;
@@ -129,6 +141,7 @@ int main()
     {
       cout<<", points were saturated"<<endl;
     }
+  */
 }
 
 //end of file tsat.cc

@@ -58,7 +58,7 @@ int main()
 #endif
   initprimes("PRIMES",0);
   int verbose = 0;
-  //  cout<<"verbose (0/1)? ";             cin >>verbose;
+  cerr<<"verbose (0/1)? ";             cin >>verbose;
   int j, npts;
 
   long N, ncurve, nclass;

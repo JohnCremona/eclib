@@ -135,7 +135,8 @@ public:
   vector<P2Point> getbasis(); // returns points on original model
   vector<Point> getpbasis();  // returns points on integral model
   void report_rank() const;
-  void saturate(long sat_bd); // =0 for none
+ // sat_bd=0 for none; assume saturated at p<=sat_low_bd
+  void saturate(long sat_bd, long sat_low_bd=2);
   void show_gens(); // display points on original model
   void show_result_status();
   void pari_output();

@@ -157,7 +157,7 @@ void two_descent::report_rank() const
     }
 }
 
-void two_descent::saturate(long sat_bd)
+void two_descent::saturate(long sat_bd, long sat_low_bd)
 {
 
 // Do a quick search for points on the curve before processing points
@@ -202,8 +202,8 @@ void two_descent::saturate(long sat_bd)
 //  Saturate
       if(verbose) cout <<"Saturating (with bound = "<<sat_bd<<")..." << flush;
       bigint index; vector<long> unsat;
-      int sat_ok = mwbasis->saturate(index,unsat,sat_bd,1);
-      // The last parameter 1 says not to bother with 2-saturation!
+      int sat_ok = mwbasis->saturate(index,unsat,sat_bd,sat_low_bd);
+      // no need to check p-saturation for p<=sat_low_bd (default 2)
       if(verbose) cout <<"done:"<<endl;
 
 // Report outcome

@@ -572,7 +572,7 @@ int mw::process(const Point& PP, int sat)
   return 0; // rank did not increase
 } // end of function mw::process(Point)
 
-int mw::saturate(bigint& index, vector<long>& unsat, long sat_bd, int odd_primes_only)
+int mw::saturate(bigint& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
 {
   if (verbose) cout<<"saturating basis..."<<flush;
 
@@ -602,7 +602,7 @@ int mw::saturate(bigint& index, vector<long>& unsat, long sat_bd, int odd_primes
 #endif
   satsieve.set_points(basis);
   int ok = 1;
-  if(rank>0) ok=satsieve.saturate(unsat,index,sat_bd,1,10,odd_primes_only);
+  if(rank>0) ok=satsieve.saturate(unsat,index,sat_bd,1,10, sat_low_bd);
   if(verbose) cout<<"done"<<endl;
   if(!ok)
     cout<<"Failed to saturate MW basis at primes "<<unsat<<endl;

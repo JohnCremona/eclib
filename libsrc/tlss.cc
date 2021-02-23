@@ -118,22 +118,12 @@ vector<int> TLSS::map1point(const Point& P) const
 
 #ifdef debugTL
       cout<<"after multiplying by "<<I2long(n1/p)<<", get "<<Pmodq<<endl;
-      cout<<"finding discrete log of "<<Pmodq<<" w.r.t. "<<P1<<endl;
+      cout<<"finding discrete log (mod "<<p<<") of "<<Pmodq<<" w.r.t. "<<P1<<endl;
 #endif
-      pointmodq Q(Emodq);
-      pointmodq minusPmodq=-Pmodq;
-      for(i=0; i<p; i++) 
-	{
-	  if(Q==Pmodq) {ans[0]=i; return ans;}
-	  if(i) if(Q==minusPmodq) {ans[0]=p-i; return ans;}
-	  Q+=P1;
-	}
-
-      // Optional check:      
-
+      ans[0] = I2long(my_bg_algorithm(P1, Pmodq, BIGINT(0), BIGINT(p)));
 #ifdef debugTL
-      int check = ans[0]*P1 == Pmodq;
-      if(!check)
+      cout << "...done: dlog = " << ans[0] << endl;
+      if(ans[0]*P1 != Pmodq)
 	{
 	  cerr<<"Error: discrete log of "<<Pmodq<<" w.r.t. "<<P1<<" returns "<<ans[0]<<endl;
 	}
@@ -149,7 +139,7 @@ vector<int> TLSS::map1point(const Point& P) const
   gf_element lambda, mu, t;
   gf_element a1,a2,a3,a4,a6;
   Emodq.get_ai(a1,a2,a3,a4,a6);
-  gf_element b2 = a1*a1 + 4*a2; 
+  gf_element b2 = a1*a1 + 4*a2;
   gf_element b4 = 2*a4 + a1*a3;
 
   for(i=0; i<rank; i++)

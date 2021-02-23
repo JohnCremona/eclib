@@ -89,8 +89,8 @@ public:
   // repeat testing saturation and enlarging until done:
   // returns log_p of index
   int do_saturation(int pp, int maxntries=10);
-  // As above but for all primes up to p, returns index
-  int do_saturation_upto(int maxp, int maxntries=10);
+  // As above but for all primes <= maxp and >minp; returns index
+  int do_saturation_upto(int maxp, int maxntries=10, int minp=0);
   // As above but for all primes in plist, returns success flag, sets
   // index and unsat = list of primes in plist at which
   // saturation failed
@@ -99,7 +99,9 @@ public:
   int do_saturation(vector<long> plist, 
 		    bigint& index, vector<long>& unsat, int maxntries=10);
   // auto-saturate, after finding an upper bound on saturation index
-  int saturate(vector<long>& unsat, bigint& index, long sat_bd=-1, int egr=1, int maxntries=10, int odd_primes_only=0);
+  // if sat_low_bd>0 then we assume saturation known up to this:
+  // e.g. set to 2 if we already know 2-saturaton
+  int saturate(vector<long>& unsat, bigint& index, long sat_bd=-1, int egr=1, int maxntries=10, long sat_low_bd=0);
 
   // replace the generating points & reset matrices and ranks
   // (then can use test_saturation_extra())
