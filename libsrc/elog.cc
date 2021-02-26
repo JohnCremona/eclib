@@ -342,6 +342,7 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
   cout<<"posdisc=  "<<posdisc<<endl;
   cout<<"zero_flag="<<zero_flag<<endl;
   cout<<"den=      "<<den<<endl;
+  cout<<"z=        "<<z<<endl;
 #endif
 
   if(posdisc)
@@ -371,21 +372,30 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 	      if(zero_flag&&((k==0)||(2*k==m))) 
 		continue; // already have 2-torsion
 	      w = real(z+to_bigfloat(k)*w1)/m;
+#ifdef DEBUG_DIVPT
+              cout<<"k="<<k<<", w=        "<<w<<endl;
+#endif
 	      if((k>0)||(!zero_flag))
 		{
 		  Q = ellztopoint(E,per2,w,den);
+#ifdef DEBUG_DIVPT
+                  cout<<"candidate Q = "<<Q<<endl;
+#endif
 		  if(!Q.is_zero()
 		     &&(m*Q==P)
 		     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
-		    ans.push_back(Q);	      
+		    ans.push_back(Q);
 		}
 	      if(even(m))
 		{
 		  Q = ellztopoint(E,per2,w+half_w2,den);
+#ifdef DEBUG_DIVPT
+                  cout<<"candidate Q = "<<Q<<endl;
+#endif
 		  if(!Q.is_zero()
 		     &&(m*Q==P)
 		     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
-		    ans.push_back(Q);	      
+		    ans.push_back(Q);
 		}
 	    }
 	}
@@ -394,15 +404,21 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
     {
       for(k=0; k<m; k++)
 	{
-	  if(zero_flag&&((k==0)||(2*k==m))) 
+	  if(zero_flag&&((k==0)||(2*k==m)))
 	    continue; // already have 2-torsion
 	  w = real(z+to_bigfloat(k)*w1)/m;
+#ifdef DEBUG_DIVPT
+          cout<<"k="<<k<<", w=        "<<w<<endl;
+#endif
 	  Q = ellztopoint(E,per2,w,den);
+#ifdef DEBUG_DIVPT
+                  cout<<"candidate Q = "<<Q<<endl;
+#endif
 	  if(!Q.is_zero()
 	     &&(m*Q==P)
 	     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
-	    ans.push_back(Q);	      
-	}      
+	    ans.push_back(Q);
+	}
     }
   return ans;
 }
@@ -428,7 +444,7 @@ void boundedratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxden)
 {
   //  cout<<"bounded ratapprox of "<<x<<" (maxden = "<<maxden<<")"<<endl;
   bigint c, x0, x1, x2, y0, y1, y2;
-  bigfloat rc, xx, diff, eps = to_bigfloat(1.0e-6);
+  bigfloat rc, xx, diff, eps = to_bigfloat(1.0)/I2bigfloat(maxden);
   xx = x; x0 = 0; x1 = 1; y0 = 1; y1 = 0;
   diff = 1; c=x2=y2=0;
   while ((abs(y2)<maxden)&&!is_approx_zero(diff)) // ( diff > eps )
