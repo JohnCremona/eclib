@@ -108,7 +108,7 @@ bigcomplex* solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bi
 //Returns an array of 3 complex roots.
 {
 #ifdef DEBUG_CUBIC
-cout << "In solve_nonsingular_cubic with c1 = "<<c1<<", c2 = "<<c2<<", c3 = "<<c3<<"\n";
+  cout << "In solve_nonsingular_cubic with c1 = "<<c1<<", c2 = "<<c2<<", c3 = "<<c3<<"\n";
 #endif
   bigfloat rc1=I2bigfloat(c1);
   bigfloat rc2=I2bigfloat(c2);

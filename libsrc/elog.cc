@@ -103,8 +103,8 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
 	  cout<<" ("<<xP<<","<<yP<<")"<<endl;
 #endif
 	}
-      c = sqrt(xP-re3);    
-      
+      c = sqrt(xP-re3);
+
       while(!is_approx_zero((a-b)/a))
 	{
 	  a1=(a+b)/2;
@@ -120,7 +120,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
 #ifdef DEBUG_ELOG
       cout<<"Basic z = "<<z<<endl;
 #endif
-      if((2*yP+ra1*xP+ra3)>0) 
+      if((2*yP+ra1*xP+ra3)>0)
 	{
 	  z = w1-z;
 #ifdef DEBUG_ELOG
@@ -142,7 +142,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
       cout<<"negative discriminant"<<endl;
       cout<<"Real root = " <<re1<<endl;
 #endif
-      // Here we use formulae equivalent to those in COhen, but better
+      // Here we use formulae equivalent to those in Cohen, but better
       // behaved when roots are close together!
       bigcomplex zz = sqrt(e1-e2);
       bigfloat beta = abs(e1-e2);
@@ -210,7 +210,7 @@ vector<bigcomplex> ellztopoint(Curvedata& E,  Cperiods& per, const bigcomplex& z
   cout<<"In ellztopoint() with E = "<<(Curve)E<<endl;
   cout<<"periods = "<<per2<<endl;
   cout<<"z       = "<<z<<endl;
-  cout<<"point = ("<<cx<<","<<cy<<")"<<endl;
+  cout<<"complex point = ("<<cx<<","<<cy<<")"<<endl;
 #endif
   vector<bigcomplex> ans;
   ans.push_back(cx);
@@ -225,24 +225,59 @@ vector<bigcomplex> ellztopoint(Curvedata& E,  Cperiods& per, const bigcomplex& z
 Point ellztopoint(Curvedata& E, Cperiods& per, const bigcomplex& z, const bigint& den)
 {
   if(is_zero(z)) {return Point(E);}
+#ifdef DEBUG_EZP
+  cout<<"In ellztopoint() with z = "<<z<<endl;
+#endif
   vector<bigcomplex> CP = ellztopoint(E,per,z);
+  Point P(E);
   bigcomplex cx=CP[0],cy=CP[1];
   bigint nx,ny,dx,dy;
   boundedratapprox(real(cx),nx,dx,den);
-  boundedratapprox(real(cy),ny,dy,den);
 #ifdef DEBUG_EZP
   cout<<"Rounded x = "<<nx<<"/"<<dx<<endl;
-  cout<<"Rounded y = "<<ny<<"/"<<dy<<endl;
 #endif
-  Point P(E, nx*dy, ny*dx, dx*dy);
-  if(P.isvalid()) 
+  bigrational xP(nx,dx);
+  vector<Point> Plist = points_from_x(E, xP);
+#ifdef DEBUG_EZP
+  cout<<"Candidates = "<<Plist<<endl;
+#endif
+  if (Plist.size() > 0)
     {
+      P = Plist[0];
+      if (Plist.size()==2) // check we don't need -P instead
+        {
+          bigfloat wR = per.get_real_period().real();
+          bigfloat zPreal = elliptic_logarithm(E, per, P).real();
+          bigfloat d1 = (zPreal-z.real())/wR;
+          bigfloat d2 = (-zPreal-z.real())/wR;
+          d1 = abs(d1-round(d1));
+          d2 = abs(d2-round(d2));
+#ifdef DEBUG_EZP
+          cout << "ellztopoint finds two rational points from\nz = "<< z<<endl;
+          cout << "P = " << P << "\n with real elog " << zPreal << endl;
+          cout << " relative distance to nearest integral period = " << d1 << endl;
+          cout << "-P = " << -P << "\n with real elog " << -zPreal << endl;
+          cout << " relative distance to nearest integral period = " << d2 << endl;
+#endif
+          if (d2 < d1)
+            {
+#ifdef DEBUG_EZP
+              cout << "replacing P by -P" <<endl;
+#endif
+              P = -P;
+            }
+        }
 #ifdef DEBUG_EZP
       cout<<"ellztopoint returning valid point "<<P<<endl; 
 #endif
-      return P;
     }
-  return Point(E);
+#ifdef DEBUG_EZP
+  else
+    {
+      cout<<"ellztopoint failed to construct a valid rational point"<<endl; 
+    }
+#endif
+  return P;
 }
 
 // Given P, returns a (possibly empty) vector of solutions Q to 2*Q=P
@@ -298,9 +333,36 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
 
 vector<Point> division_points(Curvedata& E,  const Point& P, int m)
 {
-  if(m==2) return division_points_by2(E,P);
+  if(m==2)
+    {
+      return division_points_by2(E,P);
+    }
+  int zero_flag = P.is_zero();
+  long original_prec, new_prec;
+  if (!zero_flag)
+    {
+      bigint den = P.getZ();
+      long nbits = I2long(Iceil(log(I2bigfloat(den))/log(to_bigfloat(2.0))));
+#ifdef DEBUG_DIVPT
+      cout<<"den=      "<<den<<" with "<<nbits<<" bits"<<endl;
+#endif
+      original_prec = bit_precision();
+      new_prec = max(long(floor(1.5*nbits)), original_prec);
+      set_precision(new_prec);
+#ifdef DEBUG_DIVPT
+      cout<<"setting bit precision to "<<new_prec<<endl;
+#endif
+    }
   Cperiods cp(E);
-  return division_points(E,cp,P,m);
+  vector<Point> ans = division_points(E,cp,P,m);
+  if (!zero_flag)
+    {
+      set_bit_precision(original_prec);
+#ifdef DEBUG_DIVPT
+      cout<<"resetting bit precision back to "<<original_prec<<endl;
+#endif
+    }
+  return ans;
 }
 
 vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int m)
@@ -327,21 +389,20 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
   bigcomplex z(to_bigfloat(0)), w;
   bigint den;
   int zero_flag = P.is_zero();
-  if(zero_flag)  
+  if(zero_flag)
     {
       den=BIGINT(1);
       if(even(m)) ans=two_torsion(E); // computed algebraically
       else        ans.push_back(P);   // (more robust)
     }
-  else 
+  else
     {
       z = elliptic_logarithm(E,per2,P);
-      den=P.getZ();
+      den = P.getZ();
     }
 #ifdef DEBUG_DIVPT
   cout<<"posdisc=  "<<posdisc<<endl;
   cout<<"zero_flag="<<zero_flag<<endl;
-  cout<<"den=      "<<den<<endl;
   cout<<"z=        "<<z<<endl;
 #endif
 
@@ -354,22 +415,33 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 #endif
       if(egg)  // P is on the "egg"
 	{
-	  if(even(m)) return ans;  // no solutions!
+	  if(even(m))  // no solutions! ans is the empty list
+            {
+              return ans;
+            }
 	  for(k=0; k<m; k++)       // now m is odd, Q on egg too
 	    {
 	      w = real(z+to_bigfloat(k)*w1)/m + half_w2;
 	      Q = ellztopoint(E,per2,w,den);
+#ifdef DEBUG_DIVPT
+              cout<<"candidate Q = "<<Q<<endl;
+#endif
 	      if(!Q.is_zero()
 		 &&(m*Q==P)
 		 &&(find(ans.begin(),ans.end(),Q)==ans.end()))
-		ans.push_back(Q);	      
+                {
+                  ans.push_back(Q);
+#ifdef DEBUG_DIVPT
+                  cout<<"--solution found!"<<endl;
+#endif
+                }
 	    }
 	}
       else //  P is on the connected component
 	{
 	  for(k=0; k<m; k++)
 	    {
-	      if(zero_flag&&((k==0)||(2*k==m))) 
+	      if(zero_flag&&((k==0)||(2*k==m)))
 		continue; // already have 2-torsion
 	      w = real(z+to_bigfloat(k)*w1)/m;
 #ifdef DEBUG_DIVPT
@@ -384,7 +456,12 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 		  if(!Q.is_zero()
 		     &&(m*Q==P)
 		     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
-		    ans.push_back(Q);
+                    {
+                      ans.push_back(Q);
+#ifdef DEBUG_DIVPT
+                      cout<<"--solution found!"<<endl;
+#endif
+                    }
 		}
 	      if(even(m))
 		{
@@ -395,7 +472,12 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 		  if(!Q.is_zero()
 		     &&(m*Q==P)
 		     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
-		    ans.push_back(Q);
+                    {
+                      ans.push_back(Q);
+#ifdef DEBUG_DIVPT
+                      cout<<"--solution found!"<<endl;
+#endif
+                    }
 		}
 	    }
 	}
@@ -417,7 +499,12 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 	  if(!Q.is_zero()
 	     &&(m*Q==P)
 	     &&(find(ans.begin(),ans.end(),Q)==ans.end()))
-	    ans.push_back(Q);
+            {
+              ans.push_back(Q);
+#ifdef DEBUG_DIVPT
+              cout<<"--solution found!"<<endl;
+#endif
+            }
 	}
     }
   return ans;
@@ -442,7 +529,9 @@ vector<Point> torsion_points(Curvedata& E,  Cperiods& per, int m)
 
 void boundedratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxden)
 {
-  //  cout<<"bounded ratapprox of "<<x<<" (maxden = "<<maxden<<")"<<endl;
+#ifdef DEBUG_EZP
+  cout<<"bounded ratapprox of "<<x<<" (maxden = "<<maxden<<", x*maxden = "<<(x*I2bigfloat(maxden))<<")"<<endl;
+#endif
   bigint c, x0, x1, x2, y0, y1, y2;
   bigfloat rc, xx, diff, eps = to_bigfloat(1.0)/I2bigfloat(maxden);
   xx = x; x0 = 0; x1 = 1; y0 = 1; y1 = 0;
@@ -459,5 +548,8 @@ void boundedratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxden)
   a = x2; b = y2;
   if ( b < 0 )
     {::negate(a); ::negate(b); }
+#ifdef DEBUG_EZP
+  cout<<"bounded ratapprox gives a/b where\na = "<<a<<"\nb = "<<b<<endl;
+#endif
 }
 
