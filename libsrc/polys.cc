@@ -64,25 +64,24 @@ vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint q)
 }
 
 //#define TRACE_ROOTS
-vector<bigrational> roots(const vector<bigint>& coeffs)
+vector<bigrational> roots(const ZPoly& f)
 {
 #ifdef TRACE_ROOTS
-  cout<<"Finding rational roots of polynomial f with coefficients "<<coeffs<<endl;
+  cout<<"Finding rational roots of polynomial f =  "<<f<<endl;
 #endif
-  ZZX f,g; ZZ c;
+
   vector<bigrational> ans;
-  int i, d = coeffs.size()-1;  // degree
-  if(d<1) return ans;
-  for(i=0; i<=d; i++)
-    SetCoeff(f,d-i,coeffs[i]);
-#ifdef TRACE_ROOTS
-  cout<<"f = "<<f<<endl;
-#endif
+  int i;
+  ZPoly g;
+  bigrational root;
+  ZZ c;
   vec_pair_ZZX_long factors;
   factor(c,factors,f);
+
 #ifdef TRACE_ROOTS
-  cout<<"f has "<<factors.length()<<" factors"<<endl;
+  cout<<"f has " << factors.length() << " factors" << endl;
 #endif
+
   for(i=0; i<factors.length(); i++)
     {
       g = factors[i].a;
@@ -91,7 +90,7 @@ vector<bigrational> roots(const vector<bigint>& coeffs)
 #endif
       if(deg(g)==1)
         {
-          bigrational root = bigrational(-coeff(g,0),coeff(g,1));
+          root = bigrational(-coeff(g,0),coeff(g,1));
 #ifdef TRACE_ROOTS
           cout<<"root "<<root<<endl;
 #endif
@@ -99,6 +98,28 @@ vector<bigrational> roots(const vector<bigint>& coeffs)
         }
     }
   sort(ans.begin(), ans.end());
+  return ans;
+}
+
+vector<bigrational> roots(const vector<bigint>& coeffs)
+{
+#ifdef TRACE_ROOTS
+  cout<<"Finding rational roots of polynomial f with coefficients "<<coeffs<<endl;
+#endif
+  ZZX f;
+  vector<bigrational> ans;
+  int i, d = coeffs.size()-1;  // degree
+  if(d<1)
+    return ans;
+  for(i=0; i<=d; i++)
+    SetCoeff(f,d-i,coeffs[i]);
+#ifdef TRACE_ROOTS
+  cout<<"f = "<<f<<endl;
+#endif
+  ans = roots(f);
+#ifdef TRACE_ROOTS
+  cout<<"roots of f: "<< ans << endl;
+#endif
   return ans;
 }
 

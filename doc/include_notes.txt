@@ -128,7 +128,8 @@ curve:
 
 points:
         p2points
-        curve
+        polys
+        divpol
 
 cperiods:
         compproc

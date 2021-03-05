@@ -352,15 +352,15 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p)
   return get_pbasis_from_roots(p,xi);
 }
 
-vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p, const vector<bigint>& pdivpol)
+vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p, const ZPoly& pdivpol)
 {
   vector<pointmodq> ans;
   if((n%p)!=0) return ans;
   galois_field Fq = get_field(*this);
   NewFqPoly(Fq,pdivpolmodq);
-  long i, deg = pdivpol.size()-1;
-  SetDegree(pdivpolmodq,deg);
-  for (i=0; i<=deg; i++) SetCoeff(pdivpolmodq,i,ZtoGF(Fq,pdivpol[i]));
+  long i, d = deg(pdivpol);
+  SetDegree(pdivpolmodq,d);
+  for (i=0; i<=d; i++) SetCoeff(pdivpolmodq,i,ZtoGF(Fq,coeff(pdivpol,i)));
 #ifdef DEBUG_PBASIS  
   cout<<p<<"-division poly mod "<<get_modulus()<<" = "<<pdivpolmodq<<endl;
 #endif

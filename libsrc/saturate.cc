@@ -71,7 +71,7 @@ int saturator::test_saturation(int pp, int ms)
   
   if(use_div_pols)
     {
-      pdivpol = makepdivpol(E,p);
+      pdivpol = division_polynomial(E,p);
       //cout<<p<<"-division poly = "<<pdivpol<<endl;
     }
 
@@ -193,7 +193,22 @@ int saturator::enlarge()
     }
   if(verbose>0) cout<<"This point may be in "<<p<<"E(Q): "<<Q<<endl;
 
-  flag = (!Q.is_torsion()) && divide_point(*E, Q, p, newQ);
+  flag = !Q.is_torsion();
+  if (flag)
+    {
+      // this uses elog method:
+      //divide_point(*E, Q, p, newQ);
+      // this uses division polynomials (exact):
+      vector<Point> newQlist = Q.division_points(p);
+      if (newQlist.size()>0)
+        {
+          newQ = newQlist[0];
+        }
+      else
+        {
+          flag = 0;
+        }
+    }
 
   if(!flag)
     {

@@ -54,6 +54,7 @@
 vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint p);
 vector<gf_element> roots(const FqPoly& f);
 vector<bigrational> roots(const vector<bigint>& coeffs);
+vector<bigrational> roots(const ZPoly& f);
 
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
 int nrootscubic(const bigint& bb, const bigint& cc, const bigint& dd, const bigint& p);

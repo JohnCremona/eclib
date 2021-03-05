@@ -36,10 +36,34 @@
 
 // The poly itself is found recursively
 
-vector<bigint> div_pol_odd(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
-			   const bigint& a6,int n); 
+// Despite the name, for even n this returns a correct n-division
+// polynomial without the 2-torsion factor, i.e. the polynomial whoe
+// roots are the x-coordinates of the points P satisfying nP=0, 2P!=0.
 
+ZPoly div_pol_odd(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
+                  const bigint& a6,int n);
 
-vector<bigint> makepdivpol(Curvedata* EE, int p);
+ZPoly div_pol_2(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
+                const bigint& a6);
+
+ZPoly div_pol(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
+              const bigint& a6,int n);
+
+ZPoly division_polynomial(Curvedata* EE, int p);
+
+// Numerator and denominator of the multiplication-by-n map on the x-coordinate
+
+ZPoly mul_by_n_num(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
+                   const bigint& a6, int n);
+
+ZPoly mul_by_n_den(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
+                   const bigint& a6, int n);
+
+// Polynomial whose roots are x(Q) for Q satisfying n*Q=P, where x(P)=xP/zP
+
+ZPoly division_points_X_pol(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
+                            const bigint& a6,
+                            int n,
+                            const bigint& xP, const bigint& zP);
 
 #endif // #define _DIVPOL_

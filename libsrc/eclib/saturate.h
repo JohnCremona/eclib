@@ -47,7 +47,7 @@ private:
   vector<Point> Plistp;  // the p-cotorsion
   vector<Point> Plistx;  // the points plus p-cotorsion
   vector<Point> AllTorsion; // all torsion on E
-  vector<bigint> pdivpol; // coefficients of p-division poly (not always used)
+  ZPoly pdivpol;            // p-division poly (not always used)
   int rank;             // = #Plistx
   bigint disc;          // discriminant of E
   int p;                // current prime to saturate at

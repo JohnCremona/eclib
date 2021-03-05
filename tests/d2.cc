@@ -35,8 +35,6 @@
 #include <eclib/sqfdiv.h>
 #include <eclib/desc2.h>
 
-
-bigcomplex roots[4];
 int getquartic(quartic& g);  // special version for a*x^4+c*x^2+e quartics
 
 int main()

@@ -192,7 +192,7 @@ class curvemodqbasis : public curvemodq {
   vector<pointmodq> get_pbasis(int p);
   vector<pointmodq> get_pbasis_from_roots(int p,  const vector<gf_element>& xi);
   vector<pointmodq> get_pbasis_via_divpol(int p);
-  vector<pointmodq> get_pbasis_via_divpol(int p, const vector<bigint>& pdivpol);
+  vector<pointmodq> get_pbasis_via_divpol(int p, const ZPoly& pdivpol);
 
   friend class TLSS;
 };

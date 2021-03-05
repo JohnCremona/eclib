@@ -300,11 +300,6 @@ vector<Point> points_from_x(Curvedata &E, const bigrational& x)
   return ans;
 }
 
-
-// find all the torsion points on a curve (Curvedata member function)
-
-vector<Point> old_torsion_points(Curvedata& E);  // code is below
-
 long Curvedata::get_ntorsion()
 {
   if(ntorsion==0)
@@ -581,60 +576,51 @@ vector<Point> torsion_points(Curvedata& E)  // After Darrin Doud, adapted by JC
   return points;
 }
 
-vector<Point> old_torsion_points(Curvedata& E)
+//#define DEBUG_DIVISION_POINTS 1
+vector<Point> Point::division_points(int m) // list of Q s.t. n*Q=this
 {
-  if ( E.isnull() ) return vector<Point>(0);
-  bigint a1,a2,a3,a4,a6,sa2,sa4,sa6, d, x, y ;
-  E.getai(a1,a2,a3,a4,a6);
-  long i,nroots;  int scaled_flag;
-  vector<Point> points;
-  points.push_back(Point(E)) ;     // zero point
-  if ( (sign(a1)==0) && (sign(a3)==0) )
-    {sa2=a2; sa4=a4; sa6=a6; scaled_flag=0; }
-  else
-    {sa2 = a1*a1 + 4*a2;
-     sa4 = 8*a1*a3 + 16*a4;
-     sa6 = 16*a3*a3 + 64*a6;
-     scaled_flag=1;
-    }
-  d = sa2*sa2*(sa4*sa4 - 4*sa2*sa6) + 18*sa2*sa4*sa6
-                    - 4*sa4*sa4*sa4 - 27*sa6*sa6;
-  Point p;
-
-// First test y=0 for points of order 2:
-
-  vector<bigint> xlist = Introotscubic(sa2, sa4, sa6);
-  nroots = xlist.size();
-  for (i=0; i<nroots; i++)
+  vector<Point> ans;
+  vector<Point> Qs;
+  Point Q;
+  if (is_torsion())
     {
-      x = xlist[i];
-      if (scaled_flag) p.init(E, 2*x, - a1*x - 4*a3, BIGINT(8));
-      else p.init(E, x, BIGINT(0));
-      points.push_back(p);
-    }
-
-// Now test y such that y^2 divides d:
-
-  vector<bigint> possible_y( sqdivs(d) );
-  vector<bigint>::iterator yvar=possible_y.begin();
-  while( yvar!=possible_y.end())
-  {
-    y = *yvar++;
-    xlist = Introotscubic(sa2, sa4, sa6-y*y);
-    nroots = xlist.size();
-    for (i=0; i<nroots; i++)
-    {
-      x = xlist[i];
-      if (scaled_flag) p.init(E, 2*x, y - a1*x - 4*a3, BIGINT(8));
-      else p.init(E, x, y);
-      if (order(p) > 0)
+      Qs = torsion_points(*E);
+      for (vector<Point>::iterator Qi = Qs.begin(); Qi!=Qs.end(); Qi++)
         {
-          points.push_back(p);
-          points.push_back(-p); // N.B. order>2 here!
+          Q = *Qi;
+          if (m * Q == *this)
+            ans.push_back(Q);
+        }
+      return ans;
+    }
+  ZPoly pol = division_points_X_pol(E->a1,E->a2,E->a3,E->a4,E->a6, m, X, Z);
+#ifdef DEBUG_DIVISION_POINTS
+  cout << "division poly = " << pol << endl;
+#endif
+
+  vector<bigrational> xQs = roots(pol);
+#ifdef DEBUG_DIVISION_POINTS
+  cout << " with roots " << xQs << endl;
+#endif
+  for(vector<bigrational>::iterator xQi = xQs.begin(); xQi!=xQs.end(); xQi++)
+    {
+      Qs = points_from_x(*E, *xQi);
+      // will have length 0 or 2 since non-torsion, and we only want
+      // exctly one when there two so, must check which works
+      if (Qs.size()>0)
+        {
+          Q = Qs[0];
+          if (m*Q == *this)
+            {
+              ans.push_back(Q);
+            }
+          else
+            {
+              ans.push_back(-Q);
+            }
         }
     }
-  }
-  return points;
+  return ans;
 }
 
 // end of file: points.cc

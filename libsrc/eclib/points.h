@@ -27,8 +27,9 @@
 #ifndef _ECLIB_POINTS_
 #define _ECLIB_POINTS_
 
+#include <eclib/polys.h>
 #include <eclib/p2points.h>
-#include <eclib/curve.h>
+#include <eclib/divpol.h>
 
 //
 // class for  points on elliptic curves
@@ -77,7 +78,7 @@ public:
     : P2Point(Q), E(Q.E), ord(Q.ord), height(Q.height)
     { ; }
   ~Point(void) {;}
-                
+
   // input and output are inherited from P2Point class but the input
   // function must initialize the ord and height fields too
   friend istream& operator>>(istream & is, Point& P)
@@ -127,7 +128,7 @@ public:
   Point operator-(void) const ; // -P
   Point twice(void) const ; // doubles P
   friend Point operator*(int, const Point&) ; // n*P
-                
+
   // access functions
   Curve getcurve() const {return *E;}
   friend int order(Point& p);       // calculate and set if not set
@@ -136,6 +137,8 @@ public:
   friend bigfloat height(Point& P);    //calculate and set if not set
   friend bigfloat realheight(const Point& P);
   friend bigfloat pheight(const Point& P, const bigint& p);
+
+  vector<Point> division_points(int m); // list of Q s.t. n*Q=this
 
   // useful logical tests
   int is_zero() const { return isinfinite(); }
