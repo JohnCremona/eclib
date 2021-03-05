@@ -91,9 +91,15 @@ Point ellztopoint(Curvedata& E,  Cperiods& per, const bigcomplex& z,
 
 // First version will compute the Cperiods itself, so best to use the
 // second one if more than one call is to be made for the same curve
+//
+// Set only_one=1 if at most one solution required (but more may be returned)
 
-vector<Point> division_points(Curvedata& E,  const Point& P, int m);
-vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int m);
+vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one=0);
+vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int m, int only_one=0);
+
+// Set Q to a solution of m*Q=P and return 1 if a solution exists, else return 0
+
+int divide_point(Curvedata& E,  const Point& P, int m, Point& Q);
 
 // Returns a vector of solutions to m*Q=0 (including Q=0)
 

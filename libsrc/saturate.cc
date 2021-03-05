@@ -182,7 +182,7 @@ int saturator::enlarge()
   if(TLrank==rank) return 0; // no enlargement;  should not be called in this case
   vec_l ker = basis(pkernel(TLimage, p)).col(1);
   if(verbose>0) cout<<"possible kernel vector = "<<ker<<endl;
-  Point Q(E); int i, ci, keepi=-1;
+  Point Q(E), newQ(E); int flag, i, ci, keepi=-1;
   for(i=0; i<rank; i++) 
     {
       if((ci = mod(ker[i+1],p))) 
@@ -192,48 +192,22 @@ int saturator::enlarge()
 	}
     }
   if(verbose>0) cout<<"This point may be in "<<p<<"E(Q): "<<Q<<endl;
-  vector<Point> Pi;
-  long prec, original_prec;
-  if(order(Q)==-1) // non-torsion point
-    {
-      // cout << "[attempting to divide by "<<p<<" using bit precision "
-      //      <<bit_precision()<<"]"<<endl;
-      Pi=division_points(*E,Q,p);
-#ifdef MPFP // try again with higher precision
-      if(Pi.size()==0)
-        {
-          prec = original_prec = bit_precision();
-          //cout << "Saving bit precision "<<prec<<endl;
-          prec *= 2;
-          set_bit_precision(prec);
-          // cout << "[attempting to divide by "<<p<<" using bit precision "
-          //      <<prec<<"]"<<endl;
-          Pi=division_points(*E,Q,p);
-          set_bit_precision(original_prec);
-          //cout << "Restoring bit precision "<<bit_precision()<<endl;
-        }
-#endif
-    }
-  if(Pi.size()==0)
+
+  flag = (!Q.is_torsion()) && divide_point(*E, Q, p, newQ);
+
+  if(!flag)
     {
       if(verbose>0)
         {
-          cout<<"...but it isn't! (this may be due to insufficient precision:";
-#ifdef MPFP
-          cout << " bit precision " <<prec<<" was used)"<<endl;
-#else
-          cout << " standard double precision was used)"<<endl;
-#endif
+          cout<<"...but it isn't! (this may be due to insufficient precision)";
         }
       return 0;
     }
   if(verbose>0) cout<<"...and it is! "<<endl;
-  //  cout<<Pi<<endl;
-  Q=Pi[0];
   if(verbose>0) cout<<"Replacing old generator #"<<(keepi+1)
-		  <<" with new generator "<<Q<<endl;
-  Plist[keepi]=Q;
-  Plistx[keepi]=Q;
+		  <<" with new generator "<<newQ<<endl;
+  Plist[keepi]=newQ;
+  Plistx[keepi]=newQ;
   log_index++;
   // reset TL matrix and q iteration
   TLimage=mat_l(0,rank); //  holds TL image in echelon form

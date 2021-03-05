@@ -331,7 +331,7 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
 
 // Returns a (possibly empty) vector of solutions to m*Q=P
 
-vector<Point> division_points(Curvedata& E,  const Point& P, int m)
+vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one)
 {
   if(m==2)
     {
@@ -348,13 +348,13 @@ vector<Point> division_points(Curvedata& E,  const Point& P, int m)
 #endif
       original_prec = bit_precision();
       new_prec = max(long(floor(1.5*nbits)), original_prec);
-      set_precision(new_prec);
+      set_bit_precision(new_prec); // does not change output precision
 #ifdef DEBUG_DIVPT
       cout<<"setting bit precision to "<<new_prec<<endl;
 #endif
     }
   Cperiods cp(E);
-  vector<Point> ans = division_points(E,cp,P,m);
+  vector<Point> ans = division_points(E,cp,P,m, only_one);
   if (!zero_flag)
     {
       set_bit_precision(original_prec);
@@ -365,7 +365,7 @@ vector<Point> division_points(Curvedata& E,  const Point& P, int m)
   return ans;
 }
 
-vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int m)
+vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int m, int only_one)
 {
 #ifdef DEBUG_DIVPT
   cout<<"division_points("<<(Curve)E<<","<<P<<","<<m<<")"<<endl;  
@@ -400,6 +400,12 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
       z = elliptic_logarithm(E,per2,P);
       den = P.getZ();
     }
+
+  if (only_one and ans.size()>0)
+    {
+      return ans;
+    }
+
 #ifdef DEBUG_DIVPT
   cout<<"posdisc=  "<<posdisc<<endl;
   cout<<"zero_flag="<<zero_flag<<endl;
@@ -434,6 +440,10 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 #ifdef DEBUG_DIVPT
                   cout<<"--solution found!"<<endl;
 #endif
+                  if (only_one)
+                    {
+                      return ans;
+                    }
                 }
 	    }
 	}
@@ -461,6 +471,10 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 #ifdef DEBUG_DIVPT
                       cout<<"--solution found!"<<endl;
 #endif
+                      if (only_one)
+                        {
+                          return ans;
+                        }
                     }
 		}
 	      if(even(m))
@@ -477,6 +491,10 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 #ifdef DEBUG_DIVPT
                       cout<<"--solution found!"<<endl;
 #endif
+                      if (only_one)
+                        {
+                          return ans;
+                        }
                     }
 		}
 	    }
@@ -504,10 +522,30 @@ vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int 
 #ifdef DEBUG_DIVPT
               cout<<"--solution found!"<<endl;
 #endif
+              if (only_one)
+                {
+                  return ans;
+                }
             }
 	}
     }
   return ans;
+}
+
+// Set Q to a solution of m*Q=P and return 1 if a solution exists, else return 0
+
+int divide_point(Curvedata& E,  const Point& P, int m, Point& Q)
+{
+  vector<Point> Qlist = division_points(E, P, m, 1);
+  if (Qlist.size() == 0)
+    {
+      return 0;
+    }
+  else
+    {
+      Q = Qlist[0];
+      return 1;
+    }
 }
 
 // Returns a vector of solutions to m*Q=0 (including Q=0)

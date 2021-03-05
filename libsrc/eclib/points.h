@@ -140,6 +140,7 @@ public:
   // useful logical tests
   int is_zero() const { return isinfinite(); }
   int isvalid() const ; // P on its curve ?
+  int is_torsion() { return order(*this)>0; } // will compute and set the order if needed
 
 }; // end of point class
 
