@@ -331,12 +331,18 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
 
 // Returns a (possibly empty) vector of solutions to m*Q=P
 
+// With the MPFP option we set the bit precision to a high enough
+// value. otherwise we cannot: this method will not work at all well
+// for large examples unless MPFP is used.
+
 vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one)
 {
   if(m==2)
     {
       return division_points_by2(E,P);
     }
+
+#ifdef MPFP // Multi-Precision Floating Point
   int zero_flag = P.is_zero();
   long original_prec, new_prec;
   if (!zero_flag)
@@ -353,8 +359,12 @@ vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one
       cout<<"setting bit precision to "<<new_prec<<endl;
 #endif
     }
+#endif // MPFP
+
   Cperiods cp(E);
   vector<Point> ans = division_points(E,cp,P,m, only_one);
+
+#ifdef MPFP
   if (!zero_flag)
     {
       set_bit_precision(original_prec);
@@ -362,6 +372,8 @@ vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one
       cout<<"resetting bit precision back to "<<original_prec<<endl;
 #endif
     }
+#endif // MPFP
+
   return ans;
 }
 
