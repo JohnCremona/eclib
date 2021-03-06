@@ -1140,47 +1140,6 @@ int modrat(const bigint& n, const bigint& m, const bigint& lim,
  return 0;
 }
 
-
-// root-finding functions for monic integer cubics and quartics
-//
-// With NTL we factor the polynomial in Z[X] and pick out degree 1 factors
-
-vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c)
-{
-  ZZX f; vec_pair_ZZX_long factors; bigint cont;
-  SetCoeff(f,3);   // sets it to 1
-  SetCoeff(f,2,a);
-  SetCoeff(f,1,b);
-  SetCoeff(f,0,c);
-//cout<<"About to factor the monic cubic "<<f<<endl;
-  factor(cont,factors,f);
-//cout<<"Factorization: "<<factors<<endl;
-  vector<bigint> iroots;
-  for(int i=0; i<factors.length(); i++)
-    if(deg(factors[i].a)==1) // a degree 1 factor
-      iroots.push_back(-ConstTerm(factors[i].a));
-  return iroots;   
-}
-
-vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c, const bigint& d)
-{
-  ZZX f; vec_pair_ZZX_long factors; bigint cont;
-  SetCoeff(f,4);   // sets it to 1
-  SetCoeff(f,3,a);
-  SetCoeff(f,2,b);
-  SetCoeff(f,1,c);
-  SetCoeff(f,0,d);
-  //    cout<<"About to factor the monic quartic "<<f<<endl;
-  factor(cont,factors,f);
-  //    cout<<"Factorization: "<<factors<<endl;
-  vector<bigint> iroots;
-  for(int i=0; i<factors.length(); i++)
-    if(deg(factors[i].a)==1) // a degree 1 factor
-      iroots.push_back(-ConstTerm(factors[i].a));
-  return iroots;   
-}
-
-
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
 // roots are put in r which should be allocated of size 3
 int nrootscubic(long b, long c, long d, long p, long* roots)

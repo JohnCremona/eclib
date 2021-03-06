@@ -69,7 +69,6 @@ vector<bigrational> roots(const ZPoly& f)
 #ifdef TRACE_ROOTS
   cout<<"Finding rational roots of polynomial f =  "<<f<<endl;
 #endif
-
   vector<bigrational> ans;
   int i;
   ZPoly g;
@@ -101,6 +100,27 @@ vector<bigrational> roots(const ZPoly& f)
   return ans;
 }
 
+// Return the list of *integral* roots of an integral polynomial.
+// Intended for monic polys, but that is not a requirement
+vector<bigint> introots(const ZPoly& f)
+{
+#ifdef TRACE_ROOTS
+  cout<<"Finding integer roots of polynomial f =  "<<f<<endl;
+#endif
+  vector<bigrational> ratroots = roots(f);
+  vector<bigint> ans;
+  if (ratroots.size()==0)
+    return ans;
+  for(vector<bigrational>::iterator ri=ratroots.begin(); ri!=ratroots.end(); ri++)
+    {
+      bigrational r = *ri;
+      if (den(r)==1)
+        ans.push_back(num(r));
+    }
+  sort(ans.begin(), ans.end());
+  return ans;
+}
+
 vector<bigrational> roots(const vector<bigint>& coeffs)
 {
 #ifdef TRACE_ROOTS
@@ -121,6 +141,33 @@ vector<bigrational> roots(const vector<bigint>& coeffs)
   cout<<"roots of f: "<< ans << endl;
 #endif
   return ans;
+}
+
+
+
+// root-finding functions for monic integer cubics and quartics
+//
+// With NTL we factor the polynomial in Z[X] and pick out degree 1 factors
+
+vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c)
+{
+  ZZX f;
+  SetCoeff(f,3);   // sets it to 1
+  SetCoeff(f,2,a);
+  SetCoeff(f,1,b);
+  SetCoeff(f,0,c);
+  return introots(f);
+}
+
+vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c, const bigint& d)
+{
+  ZZX f; vec_pair_ZZX_long factors; bigint cont;
+  SetCoeff(f,4);   // sets it to 1
+  SetCoeff(f,3,a);
+  SetCoeff(f,2,b);
+  SetCoeff(f,1,c);
+  SetCoeff(f,0,d);
+  return introots(f);
 }
 
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)

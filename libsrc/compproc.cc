@@ -472,27 +472,4 @@ void quadsolve(const bigfloat& p, const bigfloat& q,
   root1 = ( rootdisc-p)/ two;
   root2 = (-rootdisc-p)/ two;
 }
- 
-vector<long> introotscubic(long a, long b, long c, int& nr)
-{ bigcomplex za(to_bigfloat(a)), zb(to_bigfloat(b)), zc(to_bigfloat(c));
-  vector<bigcomplex> croots =  solvecubic(za,zb,zc);
-  vector<long> iroots;
-  int i; long x,cx;
-  for (i=0; i<3; i++)
-    {
-      cout << "Complex root = " << croots[i] << endl;
-      bigfloat xx = croots[i].real();
-      Iasb(x,xx);
-      cout << "Rounds to " << x << endl;
-      if (x==0) {if (c==0) iroots.push_back(x);}
-      else
-        {
-	  cx = c/x;
-	  if (x*cx==c)
-            if (((x+a)*x+b+cx) ==  0)
-	      iroots.push_back(x);
-        }
-     }
-  return iroots;  
-}
 

@@ -41,7 +41,6 @@ vector<bigcomplex> solvecubic(const bigcomplex& c1, const bigcomplex& c2, const 
 vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const bigcomplex& c, const bigcomplex& d);
 vector<bigcomplex> solverealquartic(const bigfloat& a, const bigfloat& b, const bigfloat& c, const bigfloat& d, const bigfloat& e);
 
-vector<long> introotscubic(long a, long b, long c, int& nr);
 void quadsolve(const bigfloat& p, const bigfloat& q, bigcomplex& root1,bigcomplex& root2);
 
 #endif

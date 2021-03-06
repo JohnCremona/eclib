@@ -172,10 +172,6 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x);
 
 // root-finding functions:
 
-vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c);
-vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c,
-                            const bigint& d);
-
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
 // roots are put in r which should be allocated of size 3
 int nrootscubic(long b, long c, long d, long p, long* roots);

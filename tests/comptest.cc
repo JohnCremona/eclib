@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/compproc.h>
-#include <eclib/marith.h>
+#include <eclib/polys.h>
 
 int main(void)
 { 
