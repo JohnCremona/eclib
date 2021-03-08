@@ -25,6 +25,7 @@
 #include <eclib/interface.h>
 #include <eclib/method.h>
 #include <eclib/curve.h>
+#include <eclib/getcurve.h>
 #include <eclib/points.h>
 #include <eclib/cperiods.h>
 #include <eclib/polys.h>
@@ -49,101 +50,97 @@ int main()
   set_precision(600);
   initprimes("PRIMES",0);
   int verbose = 1;
-  cout<<"verbose (0/1)? ";             cin >>verbose;
+  cerr<<"verbose (0/1)? ";             cin >>verbose;
   int j, npts;
 
-  /* test curve
-  Curve E(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
+  // Curve E;
+  // cout<<"\nInput a curve: ";      cin >> E;
+  // Curvedata C(E);
+  // cout << "Curve " << E << endl;
 
-  Curvedata C(E);
-  cout << "Curve " << E << endl;
-  
-  vector<Point> PP;
-  Point P1(C,2,0,1);  
-  Point P2(C,-1,3,1); 
-  Point P3(C,4,6,1);  
-  PP.push_back(P1); 
-  PP.push_back(3*P2+P1); 
-  PP.push_back(P3);
-  cout << "Points " << PP << endl;
-  */
+  Curvedata C;
+  while (getcurve(C, verbose))
+    {
 
-  Curve E;
-  cout<<"\nInput a curve: ";      cin >> E;
-  Curvedata C(E);
-  cout << "Curve " << E << endl;
-  saturator sieve(&C,verbose);
+      cout << "======================================================\n\n";
+      cout << "E = " << (Curve)C <<endl;
+      saturator sieve(&C,verbose);
 
   Point P(C);
-  cout<<"enter number of points: ";      cin >> npts;
+  cerr<<"enter number of points: ";      cin >> npts;
   vector<Point> points; points.reserve(npts);
   j=0; 
   while(j<npts)
     { 
-      cout<<"\n  enter point "<<(j+1)<<" : ";
+      cerr<<"\n  enter point "<<(j+1)<<" : ";
       cin >> P;
       if ( P.isvalid() ) {points.push_back(P); j++;}
-      else {cout<<"point "<<P<<" not on curve.\n\n"; }
+      else {cerr<<"point "<<P<<" not on curve.\n\n"; }
     }
   cout<<npts<<" points entered.\n";
 
   int pmin, pmax;
 
-  cout<<"min and max prime p to saturate at? ", cin>>pmin>>pmax;
-  pmax = NextPrime(pmax);
-  cout<<"\nSaturating at primes from " <<pmin <<" up to "<<pmax<<endl;
-
-  //  if(npts==1) points[0]=randint(10)*points[0];
-  /*
-  if(npts>1) 
+  cerr<<"minimum prime p to saturate at (or 0)? ", cin>>pmin;
+  cerr<<"maximum prime p to saturate at (or -1 for automatic)? ", cin>>pmax;
+  if (pmax>0)
     {
-      int a=randint(10),b=randint(10),c=randint(10),d=randint(10);
-      cout<<"a,b,c,d="<<a<<","<<b<<","<<c<<","<<d<<endl;
-      cout<<"det = "<<(a*d-b*c)<<endl;
-      Point Q = a*points[0]+b*points[1];
-      points[0]=c*points[0]+d*points[1];
-      points[1]=Q;
+      pmax = NextPrime(pmax);
+      cout<<"\nSaturating at primes from " <<pmin <<" up to "<<pmax<<endl;
     }
-  */
+  else
+    {
+      cout<<"\nSaturating at all primes";
+      if (pmin>2) cout << " from " <<pmin;
+      cout<<endl;
+    }
+
   sieve.set_points(points);
   cout<<"Original generators:\n"<<points<<endl;
   //  bigfloat reg = regulator(points);
   //  cout<<"Regulator = "<<reg<<endl;
 
-  int index = sieve.do_saturation_upto(pmax, 10, pmin-1);
-  cout<<"Finished p-saturation for p from " <<pmin <<" up to "<<pmax;
-  if(index>1)
+  bigint index;
+  vector<long> unsat;
+  int ok = sieve.saturate(unsat, index, pmax, 1, 10, pmin-1);
+
+  //  int index = sieve.do_saturation_upto(pmax, 10, pmin-1);
+
+  cout<<"Finished saturation" << endl;
+  if (ok || pmax>0)
     {
-      cout<<", index gain = "<<index<<endl;
-      vector<Point> newpoints = sieve.getgens();
-      cout<<"New generators:\n"<<newpoints<<endl;
-    //  bigfloat newreg = regulator(newpoints);
-    //  cout<<"New regulator = "<<newreg<<endl;
-    //  cout<<"Ratio = "<<(reg/newreg)<<endl;
+      cout << "Saturation was successful: ";
+        if(index>1)
+          {
+            cout<<" index gain = "<<index<<"."<<endl;
+            vector<Point> newpoints = sieve.getgens();
+            cout<<"New generators:\n"<<newpoints<<endl;
+            //  bigfloat newreg = regulator(newpoints);
+            //  cout<<"New regulator = "<<newreg<<endl;
+            //  cout<<"Ratio = "<<(reg/newreg)<<endl;
+          }
+        else
+          {
+            cout<<"points were saturated."<<endl;
+          }
     }
   else
     {
-      cout<<", points were saturated"<<endl;
+      cout << "Saturation not successful: ";
+      if (unsat.size()==0)
+        {
+          cout << " the index bound was too large.\n";
+        }
+      else
+        {
+          cout << " for the following primes p, we both failed to prove p-saturation ";
+          cout << "and failed to enlarge by index p" << endl;
+          cout << unsat << endl;
+        }
     }
   if (verbose)
     sieve.show_q_tally();
-  /*
-  int log_index = sieve.do_saturation(pmax);
-  cout<<"Finished p-saturation for p = " <<pmax;
-  if(log_index>0) 
-    {
-      cout<<", index gain = "<<pmax<<"^"<<log_index<<endl;
-      vector<Point> newpoints = sieve.getgens();
-      cout<<"New generators:\n"<<newpoints<<endl;
-    //  bigfloat newreg = regulator(newpoints);
-    //  cout<<"New regulator = "<<newreg<<endl;
-    //  cout<<"Ratio = "<<(reg/newreg)<<endl;
     }
-  else
-    {
-      cout<<", points were saturated"<<endl;
-    }
-  */
 }
 
 //end of file tsat.cc
