@@ -1,32 +1,62 @@
-verbose (0/1)? 
-Input a curve: Curve [0,0,1,-7,36]
-enter number of points: 
-  enter point 1 : 
-  enter point 2 : 
-  enter point 3 : 
-  enter point 4 : 4 points entered.
-min and max prime p to saturate at? 
-Saturating at primes from 3 up to 31
+Enter curve: 
+======================================================
+
+E = [0,0,1,-7,36]
+4 points entered.
+
+Saturating at primes from 3 up to 101
 Original generators:
 [ [1:-6:1] [-30:21:8] [-3:5:1] [-2:6:1] ]
-Checking 3-saturation...
-Points have successfully been 3-saturated (max q used = 83)
-Checking 5-saturation...
-Points have successfully been 5-saturated (max q used = 103)
-Checking 7-saturation...
-Points have successfully been 7-saturated (max q used = 233)
-Checking 11-saturation...
-Points have successfully been 11-saturated (max q used = 313)
-Checking 13-saturation...
-Points have successfully been 13-saturated (max q used = 67)
-Checking 17-saturation...
-Points have successfully been 17-saturated (max q used = 277)
-Checking 19-saturation...
-Points have successfully been 19-saturated (max q used = 557)
-Checking 23-saturation...
-Points have successfully been 23-saturated (max q used = 1229)
-Checking 29-saturation...
-Points have successfully been 29-saturated (max q used = 239)
-Checking 31-saturation...
-Points have successfully been 31-saturated (max q used = 557)
-Finished p-saturation for p from 3 up to 31, points were saturated
+Saturation index bound = 86
+Reducing saturation bound from given value 101 to computed index bound 86
+Checking saturation at [ 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 ]
+Checking 3-saturation 
+Points were proved 3-saturated (max q used = 83)
+Checking 5-saturation 
+Points were proved 5-saturated (max q used = 103)
+Checking 7-saturation 
+Points were proved 7-saturated (max q used = 233)
+Checking 11-saturation 
+Points were proved 11-saturated (max q used = 313)
+Checking 13-saturation 
+Points were proved 13-saturated (max q used = 67)
+Checking 17-saturation 
+Points were proved 17-saturated (max q used = 277)
+Checking 19-saturation 
+Points were proved 19-saturated (max q used = 557)
+Checking 23-saturation 
+Points were proved 23-saturated (max q used = 1229)
+Checking 29-saturation 
+Points were proved 29-saturated (max q used = 239)
+Checking 31-saturation 
+Points were proved 31-saturated (max q used = 557)
+Checking 37-saturation 
+Points were proved 37-saturated (max q used = 367)
+Checking 41-saturation 
+Points were proved 41-saturated (max q used = 467)
+Checking 43-saturation 
+Points were proved 43-saturated (max q used = 761)
+Checking 47-saturation 
+Points were proved 47-saturated (max q used = 1439)
+Checking 53-saturation 
+Points were proved 53-saturated (max q used = 2083)
+Checking 59-saturation 
+Points were proved 59-saturated (max q used = 1061)
+Checking 61-saturation 
+Points were proved 61-saturated (max q used = 1597)
+Checking 67-saturation 
+Points were proved 67-saturated (max q used = 331)
+Checking 71-saturation 
+Points were proved 71-saturated (max q used = 3301)
+Checking 73-saturation 
+Points were proved 73-saturated (max q used = 2749)
+Checking 79-saturation 
+Points were proved 79-saturated (max q used = 977)
+Checking 83-saturation 
+Points were proved 83-saturated (max q used = 2311)
+Finished saturation
+Saturation was successful: points were saturated.
+Summary of auxiliary primes used
+Number of q used: 85
+Maximum   q used: 3301 (used for p=71)
+Enter curve: 
