@@ -55,9 +55,11 @@ private:
   primevar qvar;          // loops over possible sieving primes q
   vector<curvemodqbasis> Eqlist;   // E mod q for q=3,5,... (good reduction)
   vector<curvemodqbasis>::iterator Eqptr;
-  int newq;               // =1 iff we are using q not yet cahced
+  int newq;                // =1 iff we are using q not yet cached
+  map<bigint,int> q_tally;   // key=q, value = count of number of times q used
+  bigint maxq;               // largest q used
 
-  mat_l TLimage; 
+  mat_l TLimage;
   int TLrank, stuck_counter, verbose, use_div_pols;
 
   // apply TL map (mod current q) to P, result in (ntp*)[0..p-1]:
@@ -73,6 +75,7 @@ public:
       use_div_pols=0;
       disc = getdiscr(*E);
       AllTorsion = torsion_points(*EE);
+      maxq = 0;
     }
   ~saturator() {; }
   
@@ -124,6 +127,7 @@ public:
   vec_l kernel_vector();
   // test if saturated: 
   int is_saturated() {return rank==TLrank;}
+  void show_q_tally(); // display list of q used with multiplicity.
 };
 
 // auxiliary functions, not part of the saturator class:

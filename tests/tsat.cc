@@ -125,6 +125,8 @@ int main()
     {
       cout<<", points were saturated"<<endl;
     }
+  if (verbose)
+    sieve.show_q_tally();
   /*
   int log_index = sieve.do_saturation(pmax);
   cout<<"Finished p-saturation for p = " <<pmax;

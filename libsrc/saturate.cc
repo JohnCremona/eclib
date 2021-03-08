@@ -121,6 +121,7 @@ void saturator::nextq()
 	  curvemodqbasis Eq(*E,q);  //,(p>10));
 	  Eqlist.push_back(Eq);
 	  sieve.assign(Eq);
+          q_tally[q] = 0;
 	}
       else
 	{
@@ -136,6 +137,8 @@ void saturator::nextq()
     }
 
   if(verbose>1) cout<<"Using q = "<<q<<endl;
+  q_tally[q] += 1;
+  if (q>maxq) maxq=q;
   mat_l TLim = sieve.map_points(Plistx);
   if(verbose>2) 
     {
@@ -421,6 +424,30 @@ int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
   return (!bound_too_big) && sat_ok;
 }
 
+void saturator::show_q_tally()
+{
+  cout << "Summary of auxiliary primes used" <<endl;
+  int num_q_used = 0;
+  map<bigint,int>::iterator qcount;
+  for (qcount = q_tally.begin(); qcount!=q_tally.end(); qcount++)
+    {
+      if (qcount->second > 0) num_q_used++;
+    }
+  cout << "Number of q: " << q_tally.size() << " of which " << num_q_used << " were actually used"<<endl;
+  cout << "Maximum   q: " << maxq << endl;
+  cout << "Counts of how many times each q was used:" << endl;
+  bigint q;
+  int c;
+  for (qcount = q_tally.begin(); qcount!=q_tally.end(); qcount++)
+    {
+      q = qcount->first;
+      c = qcount->second;
+      if (c)
+        cout << q << "\t" << c <<endl;
+    }
+}
+
+
 // This function returns a list of 0,1 or 2 points which generate 
 // torsion modulo p*torsion:  
 //
@@ -478,6 +505,8 @@ int saturate_points(Curvedata& C, vector<Point>& points,
   sieve.set_points(points);
   int ans = sieve.saturate(unsat, index, sat_bd, egr, (verbose));
   points = sieve.getgens();
+  if (verbose>0)
+    sieve.show_q_tally();
   return ans;
 }
 
