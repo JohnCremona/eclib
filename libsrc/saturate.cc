@@ -46,8 +46,6 @@ void saturator::reset_points(const vector<Point>& PP)
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
-  Eqptr=Eqlist.begin();
-  newq=0;
 }
 
 int saturator::test_saturation(int pp, int ms)
@@ -78,8 +76,6 @@ int saturator::test_saturation(int pp, int ms)
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
   log_index=0;
-  Eqptr=Eqlist.begin();
-  newq=0;
   while((TLrank<rank)&&(stuck_counter<ms)) nextq();
   return rank==TLrank;
 }
@@ -113,24 +109,70 @@ void saturator::nextq()
 	    cout<<"Continuing with q="<<q<<endl;
 	}
       while(div(q,disc)) {qvar++; q=qvar; }
+      if(q==p) continue;
+
       if(verbose>2) cout<<"Trying q="<<q<<endl;
-      if(newq||(Eqptr==Eqlist.end()))
+
+      // First just check the order of E mod q, skip this q if not a multiple of p
+
+      map<bigint,bigint>::iterator Eqoi = Emodq_order.find(q);
+      bigint order_mod_q;
+      if(Eqoi==Emodq_order.end())
 	{
-	  newq=1;
+	  if(verbose>2) cout<<"Computing order mod q =  "<<q<<": "<<endl;
+          curvemodq Eq(*E,q);
+          if(0) // use orders of some random points as a proxy
+            {
+              bigint upper, lower; // bounds on group order
+              set_hasse_bounds(q,lower,upper);
+              pointmodq P1 = Eq.random_point();
+              bigint n1 = my_order_point(P1,lower,upper);
+              if (verbose>2)
+                cout<<"q="<<q<<"\tn1 = "<<n1<<endl;
+              order_mod_q = n1;
+            }
+          else
+            {
+              order_mod_q = Eq.group_order();
+            }
+
+          Emodq_order[q] = order_mod_q;
+          if (verbose>2)
+            cout<<"Setting order mod "<<q<<" to "<<order_mod_q<<endl;
+	}
+      else
+	{
+          order_mod_q = Eqoi->second;
+          if (verbose>2)
+            cout<<"reusing order mod "<<q<<" as "<<order_mod_q<<endl;
+	}
+      if ((order_mod_q%p)!=0)
+        {
+          if (verbose>2)
+            cout<<"Order mod "<<q<<" is "<<order_mod_q<<", not a multiple of p="<<p<<endl;
+          continue;
+        }
+      else
+        {
+          if (verbose>1)
+            cout<<"*** using q="<<q<<" with order "<<order_mod_q<<" a multiple of p="<<p<<endl;
+        }
+      // next compute the structure of q if not yet known
+
+      map<bigint,curvemodqbasis>::iterator Eqi = Emodq.find(q);
+      if(Eqi==Emodq.end())
+	{
 	  if(verbose>2) cout<<"Initializing q =  "<<q<<": "<<endl;
 	  curvemodqbasis Eq(*E,q);  //,(p>10));
-	  Eqlist.push_back(Eq);
+	  Emodq[q] = Eq;
 	  sieve.assign(Eq);
           q_tally[q] = 0;
 	}
       else
 	{
-	  sieve.assign(*Eqptr);
-	  Eqptr++;
-	  newq=(Eqptr==Eqlist.end());
-	  //	  cout<<"Using stored reduced curve mod "<<q<<": "<<Eq<<endl;
+	  sieve.assign(Eqi->second);
+	  //	  cout<<"Using stored reduced curve mod "<<q<<endl;
 	}
-      if(q==p) continue;
       if(use_div_pols) sieve.init(p,pdivpol,verbose);
       else sieve.init(p,verbose);
       ntp=sieve.get_rank();
@@ -138,7 +180,11 @@ void saturator::nextq()
 
   if(verbose>1) cout<<"Using q = "<<q<<endl;
   q_tally[q] += 1;
-  if (q>maxq) maxq=q;
+  if (q>maxq)
+    {
+      maxq=q;
+      maxp=p;
+    }
   mat_l TLim = sieve.map_points(Plistx);
   if(verbose>2) 
     {
@@ -232,8 +278,6 @@ int saturator::enlarge()
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
-  Eqptr=Eqlist.begin();
-  newq=0;
   return 1;
 }
 
@@ -386,41 +430,52 @@ int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
   while(pr.value()<=sat_low_bd) pr++;
   int p=pr.value();
   bigint ib = index_bound(E,Plist,egr,(verbose>1));
-  bigint ib0=ib;
-  if(sat_bd==-1) sat_bd=SAT_MAX_PRIME;
-  int bound_too_big = (ib>sat_bd);
+  int sat_ok, bound_too_big = 0;
   if(verbose)
     cout<<"Saturation index bound = "<<ib<<endl;
-  if(bound_too_big)
+
+  if (sat_bd==-1) // no bound was specified, but we warn if the computed bound is large
     {
-      if(!verbose) cout<<"Saturation index bound = "<<ib<<endl;
-      cout<<"WARNING: saturation at primes p > "<<sat_bd
-	  <<" will not be done;  \n"
-	  <<"points may be unsaturated at primes between "<<sat_bd
-	  <<" and index bound"<<endl;
-      ib = sat_bd;
+      if ((ib>SAT_MAX_PRIME) && verbose)
+        {
+          cout<<"Saturation index bound = "<<ib<<" is large, ";
+          cout<<"and saturation will take a long time."<<endl;
+        }
+    }
+  else // a bound was specified
+    {
+      if (ib<sat_bd) // we can reduce the specified bound as it was larger than necessary
+        {
+          if (verbose)
+            {
+              cout << "Reducing saturation bound from given value " << sat_bd;
+              cout << " to computed index bound " << ib << endl;
+            }
+        }
+      else // we'll use the specified bound, so cannot guarantee saturation
+        {
+          if (verbose)
+            {
+              cout << "Only p-saturating for p up to given value " << sat_bd << ".\n";
+              cout << "The resulting points may not be p-saturated for p between this ";
+              cout << "and the computed index bound" << ib << endl;
+            }
+          ib = sat_bd;
+          bound_too_big = 1;
+        }
     }
   while(p<=ib)
     {
       satprimes.push_back(p);
       pr++; p=pr.value();
     }
-  // In principle we should add these primes to unsat list, but in
-  // practice we will not as there may be too many!
-#if(0)
-  if(bound_too_big)
-    while(p<=ib0)
-      {
-	unsat.push_back(p);
-	pr++; p=pr.value(); 
-      }
-#endif
+
   if(egr)
     satprimes=vector_union(satprimes,tamagawa_primes(*E));
 
   // do the saturation:
 
-  int sat_ok = do_saturation(satprimes, index, unsat);
+  sat_ok = do_saturation(satprimes, index, unsat);
   return (!bound_too_big) && sat_ok;
 }
 
@@ -429,12 +484,10 @@ void saturator::show_q_tally()
   cout << "Summary of auxiliary primes used" <<endl;
   int num_q_used = 0;
   map<bigint,int>::iterator qcount;
-  for (qcount = q_tally.begin(); qcount!=q_tally.end(); qcount++)
-    {
-      if (qcount->second > 0) num_q_used++;
-    }
-  cout << "Number of q: " << q_tally.size() << " of which " << num_q_used << " were actually used"<<endl;
-  cout << "Maximum   q: " << maxq << endl;
+  cout << "Number of q used: " << q_tally.size() << endl;
+  cout << "Maximum   q used: " << maxq << " (used for p="<<maxp<<")"<<endl;
+  if (verbose<2)
+    return;
   cout << "Counts of how many times each q was used:" << endl;
   bigint q;
   int c;

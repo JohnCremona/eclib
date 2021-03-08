@@ -53,11 +53,12 @@ private:
   int p;                // current prime to saturate at
   int log_index;         // current points have index p^log_index in original
   primevar qvar;          // loops over possible sieving primes q
-  vector<curvemodqbasis> Eqlist;   // E mod q for q=3,5,... (good reduction)
-  vector<curvemodqbasis>::iterator Eqptr;
+  map<bigint, curvemodqbasis> Emodq;
+  map<bigint, bigint> Emodq_order;
   int newq;                // =1 iff we are using q not yet cached
   map<bigint,int> q_tally;   // key=q, value = count of number of times q used
   bigint maxq;               // largest q used
+  int maxp;                  // p for which largest q used
 
   mat_l TLimage;
   int TLrank, stuck_counter, verbose, use_div_pols;
