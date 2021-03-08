@@ -33,7 +33,7 @@
 #define DEFAULT_PARI_SIZE 1000000000
 #define DEFAULT_PARI_MAX_PRIME 1000000
 
-void eclib_pari_init(long pari_size=DEFAULT_PARI_SIZE, long max_prime=DEFAULT_PARI_MAX_PRIME)
+void eclib_pari_init(long max_prime=DEFAULT_PARI_MAX_PRIME)
 {
   if (!avma) {
     long pari_size = strtol(getenv_with_default("PARI_SIZE", "DEFAULT_PARI_SIZE").c_str(), NULL, 0);
