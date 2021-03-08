@@ -28,7 +28,7 @@ int main(void)
 {
   set_precision(30);
   initprimes("PRIMES",0);
-        
+  //the_primes.init(25000000);
   Curve E;
   
   cout << "\nEnter a curve: " << endl ;
@@ -74,13 +74,21 @@ int main(void)
   cdr.display(cout);
   
   cout <<"Traces of Frobenius:\n";
+  long p;
+  bigint ap;
   for(primevar pr(25); pr.ok(); pr++)
     {
-      long p=pr;
-      cout<<"p="<<p<<": ap="<<Trace_Frob(cdr,BIGINT(p));
+      p = pr;
+      ap = Trace_Frob(cdr,BIGINT(p));
+      cout<<"p="<<p<<": ap="<<ap;
       if(div(p,getdiscr(cdr))) cout<<" (bad reduction)";
       cout<<endl;
     }
+  // for(primevar pr(1270000); pr.ok(); pr++)
+  //   {
+  //     p=pr;
+  //     ap = Trace_Frob(cdr,BIGINT(p));
+  //   }
 
   cout <<"Testing construction from a non-integral model:\n";
   bigint a1,a2,a3,a4,a6;

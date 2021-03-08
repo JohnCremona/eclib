@@ -30,5 +30,6 @@
 
 string factor(const string n);
 int is_prime(const string p);
+long ellap(long a1, long a2, long a3, long a4, long a6, long p);
 
 #endif
