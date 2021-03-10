@@ -79,33 +79,42 @@ public:
       maxq = 0;
     }
   ~saturator() {; }
-  
+
   // initialize point list
   void set_points(const vector<Point>& PP) {Plist = PP;}
+
   // find next usable q and use it
   void nextq();
-  // keep on using q until saturated or stuck:
+
+  // test p-saturation by using q until saturated (return 1) or stuck
+  // (return 0):
   int test_saturation(int pp, int ms=MAX_REPEAT);
+
   // try harder with same p (no initialization, but same point set)
   int test_saturation_extra(int pp, int ms=MAX_REPEAT);
+
   // enlarge basis if dim(kernel)>0:
   int enlarge();
-  // repeat testing saturation and enlarging until done:
-  // returns log_p of index
+
+  // repeat testing p-saturation and enlarging until done: returns
+  // log_p of index, or -1 if failed
   int do_saturation(int pp, int maxntries=10);
-  // As above but for all primes <= maxp and >minp; returns index
-  int do_saturation_upto(int maxp, int maxntries=10, int minp=0);
+
   // As above but for all primes in plist, returns success flag, sets
-  // index and unsat = list of primes in plist at which
-  // saturation failed
-  int do_saturation(vector<int> plist, 
-		    bigint& index, vector<int>& unsat, int maxntries=10);
-  int do_saturation(vector<long> plist, 
-		    bigint& index, vector<long>& unsat, int maxntries=10);
-  // auto-saturate, after finding an upper bound on saturation index
-  // if sat_low_bd>0 then we assume saturation known up to this:
-  // e.g. set to 2 if we already know 2-saturaton
-  int saturate(vector<long>& unsat, bigint& index, long sat_bd=-1, int egr=1, int maxntries=10, long sat_low_bd=0);
+  // index and unsat = list of primes in plist at which saturation
+  // failed = empty iff success flag=0
+  int do_saturation(vector<int> plist,
+		    long& index, vector<int>& unsat, int maxntries=10);
+  int do_saturation(vector<long> plist,
+                    long& index, vector<long>& unsat, int maxntries=10);
+
+  // Either (when sat_bd=-1) auto-saturate, finding an upper bound ib
+  // on saturation index, or (when sat_bd>0) saturate only for primes
+  // up to min(ib,sat_bd).  If sat_low_bd>0 then we do no p-saturation
+  // for p<sat_low_bd: e.g. set to 3 if we already know 2-saturaton.
+  int saturate(vector<long>& unsat, long& index,
+               long sat_bd=-1, long sat_low_bd=2,
+               int egr=1, int maxntries=10);
 
   // replace the generating points & reset matrices and ranks
   // (then can use test_saturation_extra())
@@ -146,11 +155,13 @@ inline vector<Point> pCoTorsion(Curvedata* EE, int p)
 // Returns success flag and index, and (if success==0) a list of
 // primes at which saturation failed.  The array points will be
 // changed (if necessary) into a basis for the saturation.
-// If sat_bd>-1 it is used to truncate the upper bound
+// If sat_bd>-1 it is used to truncate the upper bound.
+// No p-saturation is done for p<sat_low_bd.
 
-int saturate_points(Curvedata& C, vector<Point>& points, 
-		    bigint& index, vector<long>& unsat,  
-		    long sat_bd=-1, int egr=1, int verbose=0);
+int saturate_points(Curvedata& C, vector<Point>& points,
+		    long& index, vector<long>& unsat,
+		    long sat_bd=-1, long sat_low_bd=2,
+                    int egr=1, int verbose=0);
 
 
 // Bound for the index of saturation for the given set of points If

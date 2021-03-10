@@ -313,45 +313,6 @@ int saturator::do_saturation(int pp, int maxntries)
     }
 }
 
-int saturator::do_saturation_upto(int maxp, int maxntries, int minp)
-{
-  int pi, p, index=1;
-  primevar pvar;  p=pvar;
-  // We need to detect when the stored primes list is enlarged as then
-  // this primevar will be invalid and we need to reset it.
-  int max_stored_prime = maxprime();
-
-  while(p<=minp)
-    {
-      pvar++;
-      p=pvar;
-    }
-  while(p<=maxp)
-    {
-      if(verbose) cout<<"Checking "<<p<<"-saturation..."<<endl;
-      pi = do_saturation(p,maxntries);
-      if(verbose&&(pi>=0))
-	{
-	  cout<<"Points have successfully been "<<p
-	      <<"-saturated (max q used = "<<get_q()<<")"<<endl;
-	  if(pi>0) cout<<"Index gain = "<<p<<"^"<<pi<<endl;
-	}
-      if(pi>0) while(pi--) index *= p;
-      if (maxprime() > max_stored_prime)
-        {
-          if (verbose)
-            cout << "-- we have enlarged the stored primes array: resetting p iterator"<<endl;
-          max_stored_prime = maxprime();
-          pvar.init();
-          while (pvar<=p) {pvar++;}
-        }
-      pvar++;
-      p=pvar;
-      if (verbose>1) cout<<"incrementing p to "<<p<<endl;
-    }
-  return index; 
-}
-
 int l2i(long i) {return (int)i;}
 vector<int> lv2iv(const vector<long>& v)
 {
@@ -368,7 +329,7 @@ vector<long> iv2lv(const vector<int>& v)
 }
 
 int saturator::do_saturation(vector<long> plist, 
-			     bigint& index, vector<long>& unsat, 
+			     long& index, vector<long>& unsat, 
 			     int maxntries)
 {
   vector<int>iplist = lv2iv(plist), iunsat;
@@ -378,7 +339,7 @@ int saturator::do_saturation(vector<long> plist,
 }
 
 int saturator::do_saturation(vector<int> plist, 
-			     bigint& index, vector<int>& unsat, 
+			     long& index, vector<int>& unsat, 
 			     int maxntries)
 {
   unsigned int i; int pi, p;
@@ -418,8 +379,9 @@ int saturator::do_saturation(vector<int> plist,
   return success;
 }
 
-int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
-			int egr, int maxntries, long sat_low_bd)
+int saturator::saturate(vector<long>& unsat, long& index,
+                        long sat_bd, long sat_low_bd,
+			int egr, int maxntries)
 {
   // Determine the primes at which saturation is necessary: all those
   // up to index bound (but truncated at sat_bd unless this is -1),
@@ -427,10 +389,9 @@ int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
 
   vector<long> satprimes;
   primevar pr;
-  while(pr.value()<=sat_low_bd) pr++;
+  while(pr.value()<sat_low_bd) pr++;
   int p=pr.value();
   bigint ib = index_bound(E,Plist,egr,(verbose>1));
-  int sat_ok, bound_too_big = 0;
   if(verbose)
     cout<<"Saturation index bound = "<<ib<<endl;
 
@@ -461,7 +422,6 @@ int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
               cout << "and the computed index bound" << ib << endl;
             }
           ib = sat_bd;
-          bound_too_big = 1;
         }
     }
   while(p<=ib)
@@ -473,10 +433,11 @@ int saturator::saturate(vector<long>& unsat, bigint& index, long sat_bd,
   if(egr)
     satprimes=vector_union(satprimes,tamagawa_primes(*E));
 
-  // do the saturation:
+  // do the saturation.  Will return ok iff we succeeded in saturating
+  // at all p in satprimes, otherwise the failures will be in unsat.
 
-  sat_ok = do_saturation(satprimes, index, unsat);
-  return (!bound_too_big) && sat_ok;
+  int sat_ok = do_saturation(satprimes, index, unsat, maxntries);
+  return sat_ok;
 }
 
 void saturator::show_q_tally()
@@ -550,13 +511,14 @@ vector<Point> pCoTorsion(const vector<Point>& AllTorsion, int p)
   return ans; // not necessary except to keep -Wall happy
 }
 
-int saturate_points(Curvedata& C, vector<Point>& points, 
-		    bigint& index, vector<long>& unsat,  
-		    long sat_bd, int egr, int verbose)
+int saturate_points(Curvedata& C, vector<Point>& points,
+		    long& index, vector<long>& unsat,
+		    long sat_bd, long sat_low_bd,
+                    int egr, int verbose)
 {
   saturator sieve(&C,verbose);
   sieve.set_points(points);
-  int ans = sieve.saturate(unsat, index, sat_bd, egr, (verbose));
+  int ans = sieve.saturate(unsat, index, sat_bd, sat_low_bd, egr);
   points = sieve.getgens();
   if (verbose>0)
     sieve.show_q_tally();

@@ -81,9 +81,11 @@ int main()
   cout<<npts<<" points entered:"<<points<<endl;
 
   int pmax=PMAX;
+  long index;
+  vector<long> unsat;
 
   sieve.set_points(points);
-  int index = sieve.do_saturation_upto(pmax);
+  int ok = sieve.saturate(unsat, index, pmax);
 
   cout<<"Finished p-saturation for p up to "<<pmax;
   if(index>1) 

@@ -201,7 +201,7 @@ void two_descent::saturate(long sat_bd, long sat_low_bd)
     {
 //  Saturate
       if(verbose) cout <<"Saturating (with bound = "<<sat_bd<<")..." << flush;
-      bigint index; vector<long> unsat;
+      long index; vector<long> unsat;
       int sat_ok = mwbasis->saturate(index,unsat,sat_bd,sat_low_bd);
       // no need to check p-saturation for p<=sat_low_bd (default 2)
       if(verbose) cout <<"done:"<<endl;

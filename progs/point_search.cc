@@ -114,7 +114,7 @@ int main()
       
       if(pp)
 	{
-	  bigint index;
+	  long index;
 	  vector<long> unsat;
 	  if(verbose) 
 	    {

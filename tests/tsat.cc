@@ -100,7 +100,7 @@ int main()
   //  bigfloat reg = regulator(points);
   //  cout<<"Regulator = "<<reg<<endl;
 
-  bigint index;
+  long index;
   vector<long> unsat;
   int ok = sieve.saturate(unsat, index, pmax, 1, 10, pmin-1);
 

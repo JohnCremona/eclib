@@ -125,7 +125,7 @@ int main()
     }
   cout<<"Input torsion points: "<<tpoints<<endl;
 
-  bigint index = BIGINT(1);
+  long index = 1;
   vector<long> unsatprimes;
   int success = 1;
 

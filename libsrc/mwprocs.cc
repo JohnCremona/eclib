@@ -259,8 +259,18 @@ int mw::process(const vector<Point>& Plist, int sat)
     {
       if (verbose) cout<<"saturating up to "<<sat<<"..."<<flush;
       satsieve.set_points(basis);
-      int index = satsieve.do_saturation_upto(sat);
-      if(verbose) cout<<"done"<<endl;
+      long index;
+      vector<long> unsat;
+      int sat_ok = satsieve.saturate(unsat, index, sat);
+      if(verbose)
+        {
+          cout<<"done";
+          if (!sat_ok)
+            {
+              cout<<" (saturation failed for "<<unsat<<")";
+            }
+          cout<<endl;
+        }
       if(index>1)
 	{
 	  basis = satsieve.getgens();
@@ -278,7 +288,7 @@ int mw::process(const vector<Point>& Plist, int sat)
 		= mat_entry(j,i) 
 		= height_pairing(basis[i], basis[j]); 
 	    }
-	}	  
+	}
       reg = det(height_pairs,rank);
       if(verbose) 
 	cout<<"Regulator =  "<<reg<<endl;
@@ -337,17 +347,27 @@ int mw::process(const Point& PP, int sat)
 #endif  
       if(sat>0)
 	{
-      satsieve.set_points(basis);
-      if (verbose) cout<<"saturating up to "<<sat<<"..."<<flush;
-      int index = satsieve.do_saturation_upto(sat);
-      if(verbose) cout<<"done"<<endl;
-      if(index>1)
-	{
-	  basis = satsieve.getgens();
-	  if(verbose) cout<<"Gained index "<<index<<", new generator = "<<basis[0]<<endl;
-	  reg = height(basis[0]);
-	  mat_entry(0,0) = reg;
-	}
+          satsieve.set_points(basis);
+          if (verbose) cout<<"saturating up to "<<sat<<"..."<<flush;
+          long index;
+          vector<long> unsat;
+          int sat_ok = satsieve.saturate(unsat, index, sat);
+          if(verbose)
+            {
+              cout<<"done";
+              if (!sat_ok)
+                {
+                  cout<<" (saturation failed for "<<unsat<<")";
+                }
+              cout<<endl;
+            }
+          if(index>1)
+            {
+              basis = satsieve.getgens();
+              if(verbose) cout<<"Gained index "<<index<<", new generator = "<<basis[0]<<endl;
+              reg = height(basis[0]);
+              mat_entry(0,0) = reg;
+            }
 	}
       return (maxrank<2); // 1 if max reached
     }
@@ -408,27 +428,37 @@ int mw::process(const Point& PP, int sat)
       if (verbose) cout<<"  is generator number "<<rank<<endl;
       if(sat>0)
 	{
-      satsieve.reset_points(basis);
-      if (verbose) cout<<"saturating up to "<<sat<<"..."<<flush;
-      int index = satsieve.do_saturation_upto(sat);
-      if(verbose) cout<<"done (index = "<<index<<")."<<endl;
-      if(index>1)
-	{
-	  basis = satsieve.getgens();
-	  if(verbose) cout<<"Gained index "<<index<<", new generators = "<<basis<<endl;
-  // completely recompute the height pairing matrix
-	  for (i=0; i < rank; i++)
-	    { 
-	      mat_entry(i,i) = height(basis[i]);
-	      for (j=0; j < i; j++)
-		{
-		  mat_entry(i,j) 
-		    = mat_entry(j,i) 
-		    = height_pairing(basis[i], basis[j]); 
-		}
-	    }	  
-	  reg /= (index*index);
-	}
+          satsieve.reset_points(basis);
+          if (verbose) cout<<"saturating up to "<<sat<<"..."<<flush;
+          long index;
+          vector<long> unsat;
+          int sat_ok = satsieve.saturate(unsat, index, sat);
+          if(verbose)
+            {
+              cout<<"done, index = "<<index<<".";
+              if (!sat_ok)
+                {
+                  cout<<" (saturation failed for "<<unsat<<")";
+                }
+              cout<<endl;
+            }
+          if(index>1)
+            {
+              basis = satsieve.getgens();
+              if(verbose) cout<<"Gained index "<<index<<", new generators = "<<basis<<endl;
+              // completely recompute the height pairing matrix
+              for (i=0; i < rank; i++)
+                { 
+                  mat_entry(i,i) = height(basis[i]);
+                  for (j=0; j < i; j++)
+                    {
+                      mat_entry(i,j) 
+                        = mat_entry(j,i) 
+                        = height_pairing(basis[i], basis[j]); 
+                    }
+                }
+              reg /= (index*index);
+            }
 	}
 #ifdef DEBUG
       cout << "about to return, rank = "<<rank<<", maxrank = "<<maxrank<<": returning "<<(maxrank==rank)<<endl;
@@ -572,7 +602,7 @@ int mw::process(const Point& PP, int sat)
   return 0; // rank did not increase
 } // end of function mw::process(Point)
 
-int mw::saturate(bigint& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
+int mw::saturate(long& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
 {
   if (verbose) cout<<"saturating basis..."<<flush;
 
@@ -619,18 +649,14 @@ int mw::saturate(bigint& index, vector<long>& unsat, long sat_bd, long sat_low_b
 		= mat_entry(j,i) 
 		= height_pairing(basis[i], basis[j]); 
 	    }
-	}	  
-      long ind = I2long(index);
-      reg /= (ind*ind);
-      if(verbose) 
+	}
+      reg /= (index*index);
+      if(verbose)
 	{
 	  cout<<"Gained index "<<index<<endl;
 	  cout<<"New regulator =  "<<reg<<endl;
 	}
     }
-#if(0)
-  index *=ind;
-#endif
   return ok;
 }
 

@@ -59,7 +59,7 @@ public:
   int process(const Point& P, int sat=MAXSATPRIME);
   int process(const vector<Point>& Plist, int sat=MAXSATPRIME);
   // saturate the current basis:
-  int saturate(bigint& index, vector<long>& unsat, long sat_bd=-1, long sat_low_bd=0);
+  int saturate(long& index, vector<long>& unsat, long sat_bd=-1, long sat_low_bd=0);
   void search(bigfloat h_lim, int moduli_option=0, int verb=0);
   void search_range(bigfloat xmin, bigfloat xmax, bigfloat h_lim, 
 		    int moduli_option=2, int verb=0);

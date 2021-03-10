@@ -270,7 +270,7 @@ int main(void)
 		   mwr = mwbasis.getrank();
 		 }
        
-	       bigint index; vector<long> unsat;
+	       long index; vector<long> unsat;
 	       int sat_ok = mwbasis.saturate(index,unsat);
 	       if(!sat_ok) 
 		 {
