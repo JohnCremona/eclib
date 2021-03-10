@@ -476,7 +476,7 @@ int saturator::saturate(vector<long>& unsat, long& index,
             {
               cout << "Only p-saturating for p up to given value " << sat_bd << ".\n";
               cout << "The resulting points may not be p-saturated for p between this ";
-              cout << "and the computed index bound" << ib << endl;
+              cout << "and the computed index bound " << ib << endl;
             }
           ib = sat_bd;
         }
