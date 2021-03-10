@@ -37,7 +37,7 @@
 #include <eclib/curvesort.h>
 
 #define PMIN 2
-#define PMAX 100
+#define PMAX -1
 
 int main()
 {
@@ -85,10 +85,13 @@ int main()
   vector<long> unsat;
 
   sieve.set_points(points);
-  int ok = sieve.saturate(unsat, index, pmax);
+  int ok = sieve.saturate(unsat, index, pmax, 2, 1);
 
-  cout<<"Finished p-saturation for p up to "<<pmax;
-  if(index>1) 
+  cout<<"Finished p-saturation";
+  if (pmax!=-1)
+    cout << "for p up to "<<pmax;
+
+  if(index>1)
     {
       cout<<", index gain = "<<index<<endl;
       vector<Point> newpoints = sieve.getgens();

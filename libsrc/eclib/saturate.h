@@ -40,6 +40,24 @@
 // unless overridden by the sat_bd parameter:
 const long SAT_MAX_PRIME = 100000;
 
+
+// Bound for the index of saturation for the given set of points If
+// egr is set it determines the egr subgroup of the group the points
+// generate and only searches for points with egr, This might be
+// faster in some cases.
+
+// The points parameter is not const, since the heights of the points
+// may be computed and set.
+
+// We can recover the curve from the points, unless the list is empty
+// in which case the bound is 1.
+
+long index_bound(vector<Point>& points, int egr=1, int verbose=0);
+
+// Tamagawa primes: primes dividing any Tamagawa number
+vector<long> tamagawa_primes(const Curvedata& C);
+
+
 class saturator {
 private: 
   Curvedata *E;         // the curve 
@@ -48,6 +66,8 @@ private:
   vector<Point> Plistx;  // the points plus p-cotorsion
   vector<Point> AllTorsion; // all torsion on E
   ZPoly pdivpol;            // p-division poly (not always used)
+  long the_index_bound;     // set initially, but may get reduced
+  vector<long> tam_primes;  // primes dividing any Tamagawa index
   int rank;             // = #Plistx
   bigint disc;          // discriminant of E
   int p;                // current prime to saturate at
@@ -76,12 +96,23 @@ public:
       use_div_pols=0;
       disc = getdiscr(*E);
       AllTorsion = torsion_points(*EE);
+      tam_primes = tamagawa_primes(*E);
       maxq = 0;
+      the_index_bound = 0; // means not set
     }
   ~saturator() {; }
 
   // initialize point list
   void set_points(const vector<Point>& PP) {Plist = PP;}
+
+  // initialize index bound
+  void set_index_bound(int egr=1);
+
+  // return current index bound (compute if necessary)
+  long get_index_bound(int egr=1);
+
+  // test whether p is greater than the saturation index and not a Tamagawa prime
+  int trivially_saturated(long p);
 
   // find next usable q and use it
   void nextq();
@@ -135,7 +166,7 @@ public:
   long stuckfor() const {return stuck_counter;};
   // get a nonzero kernel vector (if any)
   vec_l kernel_vector();
-  // test if saturated: 
+  // test if saturated:
   int is_saturated() {return rank==TLrank;}
   void show_q_tally(); // display list of q used with multiplicity.
 };
@@ -162,16 +193,5 @@ int saturate_points(Curvedata& C, vector<Point>& points,
 		    long& index, vector<long>& unsat,
 		    long sat_bd=-1, long sat_low_bd=2,
                     int egr=1, int verbose=0);
-
-
-// Bound for the index of saturation for the given set of points If
-// egr is set it determines the egr subgroup of the group the points
-// generate and only searches for points with egr, This might be faster
-// in some cases...
-bigint index_bound(Curvedata* C,  vector<Point>& points, 
-		   int egr=1, int verbose=0);
-
-// Tamagawa primes: primes dividing any Tamagawa number
-vector<long> tamagawa_primes(const Curvedata& C);
 
 #endif

@@ -102,9 +102,7 @@ int main()
 
   long index;
   vector<long> unsat;
-  int ok = sieve.saturate(unsat, index, pmax, 1, 10, pmin-1);
-
-  //  int index = sieve.do_saturation_upto(pmax, 10, pmin-1);
+  int ok = sieve.saturate(unsat, index, pmax, 1, 10, pmin);
 
   cout<<"Finished saturation" << endl;
   if (ok || pmax>0)

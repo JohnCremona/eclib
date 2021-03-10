@@ -37,7 +37,7 @@
 #include <eclib/curvesort.h>
 
 #define USE_EGR
-#define SAT_BND 100000 // saturation bound:  use -1 for global default
+#define SAT_BND -1 // saturation bound, or 1 for automatic
 
 #ifdef USE_EGR
 const int use_egr=1;
@@ -131,7 +131,7 @@ int main()
 
   if (npts)
     {
-      success = saturate_points(C, points, index, unsatprimes, SAT_BND, use_egr, (verbose));
+      success = saturate_points(C, points, index, unsatprimes, SAT_BND, 2, use_egr, (verbose));
     }
 
   if(success)

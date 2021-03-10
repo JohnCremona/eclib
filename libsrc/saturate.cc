@@ -48,9 +48,40 @@ void saturator::reset_points(const vector<Point>& PP)
   stuck_counter=0;
 }
 
+// initialize index bound
+void saturator::set_index_bound(int egr)
+{
+  the_index_bound = index_bound(Plist,egr,(verbose>1));
+}
+
+// return current index bound (compute if necessary)
+long saturator::get_index_bound(int egr)
+{
+  if (the_index_bound==0)
+    set_index_bound(egr);
+  return the_index_bound;
+}
+
+// test whether p is less than the saturation index, or a Tamagawa prime
+int saturator::trivially_saturated(long p)
+{
+  int t = ((p>the_index_bound)
+          &&
+          (find(tam_primes.begin(), tam_primes.end(), p) == tam_primes.end()));
+  // if (t)
+  //   {
+  //     cout << "No need to saturate at " << p
+  //          << ", as it is greater than the current index bound " << the_index_bound
+  //          << " and not a Tamagawa prime." << endl;
+  //   }
+  return t;
+}
+
 int saturator::test_saturation(int pp, int ms)
-{      
+{
   p=pp;
+  if (trivially_saturated(p))
+    return 1; // success
   // We add a basis for the torsion/p to the given points:
   Plistx=Plist;
   Plistp = pCoTorsion(AllTorsion,p);
@@ -245,7 +276,7 @@ int saturator::enlarge()
   flag = !Q.is_torsion();
   if (flag)
     {
-      // this uses elog method:
+      // this used elog method:
       //divide_point(*E, Q, p, newQ);
       // this uses division polynomials (exact):
       vector<Point> newQlist = Q.division_points(p);
@@ -273,6 +304,22 @@ int saturator::enlarge()
   Plist[keepi]=newQ;
   Plistx[keepi]=newQ;
   log_index++;
+
+  // Now the points we have have a regulator which is reduced by a
+  // factor of p^2, the saturation in dex bound can be reduced by a
+  // factor of p.  Note that the_index_bound is the floor of some real
+  // bound b, so if we divide it by p (rounding down) we do get the
+  // floor of b/p.
+  //
+  // For example, if the bound was 16 and we enlarge by p=3, the new
+  // bound will be 5, so we no longer need to saturate at primes
+  // 7,11,13 (unless they are Tamagawa primes).
+  //
+  // This is handled by the method trivially_saturated().
+
+  if(verbose>0) cout<<"Reducing index bound from " << the_index_bound;
+  the_index_bound /= p;
+  if(verbose>0) cout<<" to " << the_index_bound << endl;
   // reset TL matrix and q iteration
   TLimage=mat_l(0,rank); //  holds TL image in echelon form
   TLrank=0;
@@ -286,10 +333,13 @@ int saturator::enlarge()
 int saturator::do_saturation(int pp, int maxntries)
 {
   p=pp;
-  if(verbose>1) 
+  if(verbose>1)
     cout<<"Testing "<<p<<"-saturation..."<<endl;
-  if(test_saturation(p,n_aux_stuck)) return 0;
-  if(verbose>1) 
+  if (trivially_saturated(p))
+    return 0;  // index=1, log=0
+  if(test_saturation(p,n_aux_stuck))
+    return 0;
+  if(verbose>1)
     cout<<"Points not (yet) proved to be "<<p
 	<<"-saturated, attempting enlargement..."<<endl;
   int n=0;
@@ -349,6 +399,8 @@ int saturator::do_saturation(vector<int> plist,
   for(i=0; i<plist.size(); i++)
     {
       p = plist[i];
+      if (trivially_saturated(p))
+        continue; // to the next prime in the list
       if(verbose) cout<<"Checking "<<p<<"-saturation "<<endl;
       pi = do_saturation(p,maxntries); // = log_index if >=0, -1 if failed
       if(pi<0) 
@@ -391,9 +443,14 @@ int saturator::saturate(vector<long>& unsat, long& index,
   primevar pr;
   while(pr.value()<sat_low_bd) pr++;
   int p=pr.value();
-  bigint ib = index_bound(E,Plist,egr,(verbose>1));
+
+  long ib = get_index_bound(egr);
   if(verbose)
-    cout<<"Saturation index bound = "<<ib<<endl;
+    {
+      cout<<"Saturation index bound ";
+      if (egr) cout << "(for points of good reduction) ";
+      cout<< " = "<<ib<<endl;
+    }
 
   if (sat_bd==-1) // no bound was specified, but we warn if the computed bound is large
     {
@@ -426,12 +483,32 @@ int saturator::saturate(vector<long>& unsat, long& index,
     }
   while(p<=ib)
     {
+      //cout<<"adding p="<<p<<" to saturation list"<<endl;
       satprimes.push_back(p);
       pr++; p=pr.value();
     }
 
-  if(egr)
-    satprimes=vector_union(satprimes,tamagawa_primes(*E));
+  // under the egr option, the computed bound is on the saturation
+  // index of the egr points (of everywhere good reduction) and we
+  // must also be sure to saturate at any primes dividing any Tamagawa
+  // number.  If an upper bound sat_bd has been specified manually we
+  // do not add these primes (some may be under the given bound
+  // anyway).  Before this step, satprimes contains all primes between
+  // sat_low_bd and ib, so we just add any Tamagawa primes greater
+  // than ib.
+
+  if(egr && (sat_bd==-1))
+    {
+      if (verbose)
+        cout << "Tamagawa index primes are " << tam_primes << endl;
+      for (vector<long>::iterator pi = tam_primes.begin(); pi!=tam_primes.end(); pi++)
+        if (*pi > ib)
+          {
+            if (verbose)
+              cout << "adding Tamagawa index prime " << *pi << " to saturation list" << endl;
+            satprimes.push_back(*pi);
+          }
+    }
 
   // do the saturation.  Will return ok iff we succeeded in saturating
   // at all p in satprimes, otherwise the failures will be in unsat.
@@ -543,15 +620,19 @@ int saturate_points(Curvedata& C, vector<Point>& points,
 // points
 //
 
-bigint index_bound(Curvedata* C, vector<Point>& points, 
+long index_bound(vector<Point>& points,
 		   int egr, int verbose)
 {
-  if(verbose) 
-    cout<<"Entering index_bound("<<(Curve)(*C)<<")"<<endl;
   int npts = points.size();
+  if (npts==0)
+    return 1;
+
+  Curvedata C = points[0].getcurve();
+  if(verbose)
+    cout<<"Entering index_bound("<<(Curve)(C)<<")"<<endl;
 
   bigfloat reg = regulator(points);
-  if(verbose) 
+  if(verbose)
     cout<<"Regulator of input points = "<<reg<<endl;
 
   bigfloat gamma=lattice_const(npts);
@@ -576,23 +657,25 @@ bigint index_bound(Curvedata* C, vector<Point>& points,
   bigfloat lambda=index_bound(C,points,egr,verbose);
   if(verbose) cout<<"lambda (via search) = "<<lambda<<endl;
 #else // use ANTS7 strategy instead to get lower bound for egr height
-  CurveHeightConst CHC(*C);
+  CurveHeightConst CHC(C);
   CHC.compute();
   bigfloat lambda=CHC.get_value();
   if(verbose) cout<<"lambda (via ANTS7) = "<<lambda<<endl;
 #endif
   if(!egr) 
     {
-      bigfloat tam = I2bigfloat(Tamagawa_exponent(*C));
+      bigfloat tam = I2bigfloat(Tamagawa_exponent(C));
       lambda/=(tam*tam);
     }
   bigfloat ib = index*sqrt(reg*pow(gamma/lambda,npts));
   if(verbose) 
     cout<<"raw index bound = "<<ib <<endl;
-  bigint ans = Ifloor(ib+0.1);  // be careful about rounding errors!
+  long ans = I2long(Ifloor(ib+0.1));  // be careful about rounding errors!
   if(ans<2) ans=1;  // In case 0.9999 has rounded down to 0
   if(verbose) 
-    cout<<"Saturation index bound = "<<ans <<endl;
+    {
+      cout<<"Saturation index bound = "<<ans;
+    }
   return ans;
 }  // end of index_bound()
 
