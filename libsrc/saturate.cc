@@ -46,6 +46,7 @@ void saturator::reset_points(const vector<Point>& PP)
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
+  the_index_bound = 0;
 }
 
 // initialize index bound

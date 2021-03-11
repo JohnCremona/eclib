@@ -103,7 +103,10 @@ public:
   ~saturator() {; }
 
   // initialize point list
-  void set_points(const vector<Point>& PP) {Plist = PP;}
+  void set_points(const vector<Point>& PP) {
+    Plist = PP;
+    the_index_bound = 0;
+  }
 
   // initialize index bound
   void set_index_bound(int egr=1);
