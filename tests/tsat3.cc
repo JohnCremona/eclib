@@ -54,7 +54,7 @@ int main()
 {
 #ifdef MPFP
   //  set_precision("Enter precision in bits");
-  set_precision(350);
+  set_precision(100);
 #endif
   initprimes("PRIMES",0);
   int verbose = 0;

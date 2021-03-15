@@ -87,7 +87,6 @@ double silverman_bound(const Curvedata& CD)
 
 //#define DEBUG_CPS
 //#define TEST_CPS
-
 double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, const bigfloat& b8);
 
 double egr_height_constant(const Curvedata& CD)
@@ -170,8 +169,34 @@ bigfloat old_calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat&
 
 double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, const bigfloat& b8)
 {
-  bigfloat dv=calc_dv_inf(b2,b4,b6,b8);     
-  bigfloat dvd=calc_dvd_inf(b2,b4,b6,b8); 
+  bigfloat dv=to_bigfloat(0);
+  bigfloat dvd=to_bigfloat(0);
+  long original_prec, prec;
+  prec = original_prec = bit_precision();
+  while (dv==0 || dvd==0)
+    {
+      dv=calc_dv_inf(b2,b4,b6,b8);
+      dvd=calc_dvd_inf(b2,b4,b6,b8);
+      if (dv==0 || dvd==0)
+        {
+#ifdef DEBUG_CPS
+          cout << "In cps_real(), with bit precision " << prec << " we have dv="<<dv<<", dvd="<<dvd << endl;
+#endif
+          prec *=2;
+          set_bit_precision(prec); // does not change output precision
+#ifdef DEBUG_CPS
+          cout << " -- doubling bit precision to " << prec << endl;
+#endif
+        }
+    }
+  if (prec!=original_prec)
+    {
+      set_bit_precision(original_prec); // does not change output precision
+#ifdef DEBUG_CPS
+      cout << " --resetting bit precision back to " << original_prec << endl;
+#endif
+    }
+
 #ifdef TEST_CPS
   bigfloat del = -b2*b2*b8-8*b4*b4*b4-27*b6*b6+9*b2*b4*b6;
   bigfloat dv2=old_calc_dv_inf(b2,b4,b6,b8,del);

@@ -41,7 +41,7 @@
 
 int main()
 {
-  set_precision(300);
+  set_precision(100);
   initprimes("PRIMES",0);
   int verbose = 1;
   //  cout<<"verbose (0/1)? ";             cin >>verbose;

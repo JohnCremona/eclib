@@ -47,7 +47,7 @@ int randint(int top)
 int main()
 {
   //  set_precision("Enter precision in bits");
-  set_precision(600);
+  set_precision(100);
   initprimes("PRIMES",0);
   int verbose = 1;
   cerr<<"verbose (0/1)? ";             cin >>verbose;
