@@ -33,10 +33,10 @@ string eclib_version()
 vector<int> eclib_date()
 {
   vector<int> date;
-  string v = eclib_version(); // 9 chars long, starting with 'v'
-  date.push_back(atoi(v.substr(1,4).c_str())); // chars 1-5
-  date.push_back(atoi(v.substr(5,2).c_str())); // chars 6-7
-  date.push_back(atoi(v.substr(7,2).c_str())); // chars 8-9
+  string v = eclib_version(); // 8 chars long, yyyymmdd
+  date.push_back(atoi(v.substr(0,4).c_str())); // chars 0-4
+  date.push_back(atoi(v.substr(4,2).c_str())); // chars 5-6
+  date.push_back(atoi(v.substr(6,2).c_str())); // chars 7-8
   return date;
 }
 

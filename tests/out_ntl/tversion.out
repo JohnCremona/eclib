@@ -1,12 +1,12 @@
-This eclib version is v20210317
-[ year month day ] = [ 2021 3 17 ]
+This eclib version is 20210318
+[ year month day ] = [ 2021 3 18 ]
 
 Configure options and compilation date:
 
-eclib version v20210317, using NTL bigints and NTL real and complex multiprecision floating point
+eclib version 20210318, using NTL bigints and NTL real and complex multiprecision floating point
 
 Testing comparison of version date and various (year, month, day) date triples:
 
-Date 20200101 is before the version date 20210317
-Date 20300611 is after the version date 20210317
-Date 20210317 is the same as the version date 20210317
+Date 20200101 is before the version date 20210318
+Date 20300611 is after the version date 20210318
+Date 20210317 is before the version date 20210318
