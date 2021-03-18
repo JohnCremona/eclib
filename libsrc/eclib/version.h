@@ -1,4 +1,4 @@
-// version.h: declaration of function show_version()
+// version.h: declaration of functions show_version(), eclib_version()
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -25,6 +25,25 @@
 #if     !defined(_ECLIB_VERSION_H)
 #define _ECLIB_VERSION_H      1       //flags that this file has been included
 
-void show_version();
+#include <string>
+#include <eclib/templates.h>
+
+// Return the current eclib version as a string, e.g. 'v20210317'
+
+string eclib_version();
+
+// Return the current eclib version as a triple [y,m,d], e.g. string, e.g. [2021,3,17]
+
+vector<int> eclib_date();
+
+// Display the current eclib version and compilation information
+
+void show_version(ostream& os = cout);
+
+// compare current eclib version date with a triple (y,m,d), returning
+// +1 if the current version is later (more recent) than (y,m,d), 0 if
+// equal and -1 if earlier (older).
+
+int compare_eclib_version(int y, int m, int d);
 
 #endif

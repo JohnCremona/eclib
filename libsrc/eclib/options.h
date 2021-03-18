@@ -26,6 +26,7 @@
                            //flags that this file has been included
 
 #include <eclib/GetOpt.h>
+#include <eclib/version.h>
 #include <iostream>
 
 
@@ -87,6 +88,7 @@ public:
       while ((option_char = getopt ()) != EOF)
 	switch (option_char)
 	  {
+          case 'V': cout << eclib_version() <<endl; exit(0); break;
 	  case 'h': help();  exit(0); break;
 	  case 'q': quiet = 1; break;
 	  case 'p': precision = atoi (getopt.optarg); break;
@@ -114,7 +116,7 @@ public:
 
   void set(int argc, char **argv)
     { 
-      GetOpt getopt (argc, argv, "hqp:v:b:x:ltosdc:S:");
+      GetOpt getopt (argc, argv, "Vhqp:v:b:x:ltosdc:S:");
       set(getopt);
     }
 
@@ -122,6 +124,7 @@ public:
     {	    
       cerr << "mwrank command line options (can be in any order):\n\n";
       cerr << "-h\t""help""\t\tprints this info and quits\n";
+      cerr << "-V\t""help""\t\tprints eclib version and quits\n";
       cerr << "-q\t""quiet""\t\tturns OFF banner display\n";
       cerr << "-v n\t""verbosity""\tsets verbosity to n (default="<<DEFAULT_VERBOSE<<")\n";
       cerr << "-o\t""PARI/GP output""\tturns ON extra PARI/GP short output (default is OFF)\n";
@@ -139,16 +142,14 @@ public:
       cerr << endl;
     }
   
-  void banner(int which) // 0 for mrank, 1 for mwrank
-    {	    
-      if(which) {cerr << "Program mwrank: ";}
-      else      {cerr << "Program mrank: ";}
+  void banner(ostream& os = cout)
+    {
+      cerr << "Program mwrank: ";
 
-      cerr << "uses 2-descent (via 2-isogeny if possible) to\n"; 
-      cerr << "determine the rank of an elliptic curve E over Q, and list a\n"; 
-      cerr << "set of points which generate E(Q) modulo 2E(Q).\n";		    
-      if(which)
-	cerr << "and finally saturate to obtain generating points on the curve.\n";
+      cerr << "uses 2-descent (via 2-isogeny if possible) to\n";
+      cerr << "determine the rank of an elliptic curve E over Q, and list a\n";
+      cerr << "set of points that generate E(Q) modulo 2E(Q).\n";
+      cerr << "and finally saturate to obtain generating points on the curve.\n";
 
       cerr << "For more details see the mwrank documentation.\n";
       cerr << "For details of algorithms see the author's book.\n\n";

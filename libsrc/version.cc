@@ -1,4 +1,4 @@
-// version.cc: implementation of function show_version()
+// version.cc: implementation of functions show_version(), eclib_version()
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2012 John Cremona
@@ -24,15 +24,47 @@
 #include <iostream>
 #include <eclib/templates.h>
 
-
-void show_version()
+string eclib_version()
 {
-  cerr << "Version compiled on " << __DATE__ << " at " << __TIME__ << " by GCC " << __VERSION__ << "\n";
-#ifdef NO_MPFP
-  cerr << "using NTL bigints but no multiprecision floating point";
-#else
-  cerr << "using NTL bigints and NTL real and complex multiprecision floating point";
-#endif
-  cerr<<endl;
+  string v = VERSION; // defined by autotools, of the form v<yyyy><mm><dd>
+  return v;
 }
 
+vector<int> eclib_date()
+{
+  vector<int> date;
+  string v = eclib_version(); // 9 chars long, starting with 'v'
+  date.push_back(atoi(v.substr(1,4).c_str())); // chars 1-5
+  date.push_back(atoi(v.substr(5,2).c_str())); // chars 6-7
+  date.push_back(atoi(v.substr(7,2).c_str())); // chars 8-9
+  return date;
+}
+
+void show_version(ostream& os)
+{
+  os << "eclib version " << VERSION << ", ";
+#ifdef NO_MPFP
+  os << "using NTL bigints but no multiprecision floating point";
+#else
+  os << "using NTL bigints and NTL real and complex multiprecision floating point";
+#endif
+  os << endl;
+}
+
+int sgn(int a)   {return (a==0? 0: (a>0? 1: -1));}
+
+int compare_eclib_version(int y, int m, int d)
+{
+  vector<int> date = eclib_date();
+  int s;
+  // compare years
+  s = sgn(date[0] - y);
+  if (s!=0) // different years, OK if y is smaller
+    return s;
+  // same year, compare months
+  s = sgn(date[1] - m);
+  if (s!=0) // different months, OK if m is smaller
+    return s;
+  // same year and month, compare days
+  return sgn(date[2] - d);
+}

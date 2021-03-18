@@ -51,7 +51,7 @@ int getquartic(quartic& g)
 
 int main()
 {
-  show_version();
+  show_version(cerr);
   cout.precision(10);
   cin.flags( cin.flags() | ios::dec );
   

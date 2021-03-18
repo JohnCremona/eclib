@@ -21,7 +21,7 @@ check_run = echo "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_dir)/
 
 ################ PROCS #############################################
 
-PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert timing threading
+PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert timing threading tversion
 PROCS_TESTS_SUFFIXED = $(PROCS_TESTS:=$(EXEEXT))
 procs_tests: $(PROCS_TESTS_SUFFIXED)
 
@@ -58,6 +58,7 @@ tcon2_SOURCES=tcon2.cc
 tlegcert_SOURCES=tlegcert.cc
 timing_SOURCES=timing.cc
 threading_SOURCES=threading.cc
+tversion_SOURCES=tversion.cc
 
 check_procs: procs_tests
 	@echo Running procs checks...

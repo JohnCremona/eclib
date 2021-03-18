@@ -39,7 +39,7 @@ int main(int argc, char **argv)
   opt.set(argc, argv);
   int verbose = (opt.get_verbose());
   //opt.show();
-  if(!opt.get_quiet()) {opt.banner(1);  show_version();}
+  if(!opt.get_quiet()) {opt.banner(cerr);  show_version(cerr);}
 #ifdef MPFP
   long bit_precision=opt.get_precision();
   set_precision(bit_precision);

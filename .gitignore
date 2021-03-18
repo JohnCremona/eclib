@@ -127,6 +127,7 @@ tests/tpoints
 tests/tsat
 tests/tsat2
 tests/tsat3
+tests/tversion
 tests/twist
 tests/vectest1
 tests/vectest2

@@ -47,7 +47,7 @@ int getcurve(void)
 
 int main()
 {
-  show_version();
+  show_version(cerr);
   set_precision(50);
 #ifdef TIMINGS
   init_time();
