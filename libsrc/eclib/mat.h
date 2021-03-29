@@ -110,6 +110,10 @@ public:
                                   long& rk, long& ny, scalar pr);
         friend mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
                                  long& rk, long& ny, scalar pr);
+        friend mat ref_via_ntl(const mat& M, vec& pcols, vec& npcols,
+                                 long& rk, long& ny, scalar pr);
+        friend long rank_via_ntl(const mat& M, scalar pr);
+        friend long det_via_ntl(const mat& M, scalar pr);
 	friend subspace combine(const subspace& s1, const subspace& s2);
         friend mat restrict_mat(const mat& m, const subspace& s, int cr);
         friend int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace);
@@ -144,3 +148,10 @@ mat echelon(const mat& m, vec& pcols, vec& npcols,
                           long& rk, long& ny, scalar& d, int method=0);  // default method 0: scalars
 mat addscalar(const mat&, scalar);
 vec apply(const mat&, const vec&);
+
+// Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
+mat_zz_p mat_zz_p_from_mat(const mat& M, scalar pr);
+
+// Construct a mat (scalar type same as pr) from an NTL mat_lzz_p
+
+mat mat_from_mat_zz_p(const mat_zz_p& A, scalar pr); // type of scalar fixes return type

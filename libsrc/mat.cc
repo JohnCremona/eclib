@@ -1446,6 +1446,167 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
  return m.slice(rk,nc);
 }
 
+//#define TRACE_NTL_REF
+
+#include <NTL/mat_lzz_p.h>
+#ifdef TRACE_NTL_REF
+#include <eclib/timer.h>
+#endif
+
+// Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
+
+mat_zz_p mat_zz_p_from_mat(const mat& M, scalar pr)
+{
+  long nr=M.nrows(), nc=M.ncols();
+  long i, j;
+
+#ifdef TRACE_NTL_REF
+  cout<<"Creating an NTL mat_zz_p from a matrix with " << nr <<" rows and "<<nc<<" columns, mod "<<pr<<endl;
+#endif
+  // create NTL matrix copy of M:
+  zz_pPush push(pr);
+  mat_zz_p A(INIT_SIZE, nr, nc);
+  for(i=0; i<nr; i++)
+    for(j=0; j<nc; j++)
+      {
+        A.put(i,j, conv<zz_p>(M(i+1,j+1)));
+      }
+#ifdef TRACE_NTL_REF
+  cout<<"--done."<<endl;
+#endif
+  return A;
+}
+
+// Construct a mat (scalar type same as pr) from an NTL mat_lzz_p
+
+mat mat_from_mat_zz_p(const mat_zz_p& A, scalar pr) // type of scalar fixes return type
+{
+ long nr = A.NumRows(), nc = A.NumCols();
+ long i, j;
+
+#ifdef TRACE_NTL_REF
+  cout<<"Creating a mat from an NTL mat_zz_p with " << nr <<" rows and "<<nc<<" columns, mod "<<pr<<endl;
+#endif
+ // create matrix copy of A:
+ mat M(nr, nc);
+ for(i=0; i<nr; i++)
+   for(j=0; j<nc; j++)
+     M(i+1,j+1) = mod(conv<scalar>(A.get(i,j)), pr);
+#ifdef TRACE_NTL_REF
+  cout<<"--done."<<endl;
+#endif
+ return M;
+}
+
+// compute ref of M mod pr via NTL, setting rk=rank, ny=nullity,
+// pivotal columns pcols, non-pivotal columns npcols
+
+mat ref_via_ntl(const mat& M, vec& pcols, vec& npcols,
+                long& rk, long& ny, scalar pr)
+{
+ long nr=M.nrows(), nc=M.ncols();
+ long i, j, k;
+#ifdef TRACE_NTL_REF
+ timer ntl_timer;
+ ntl_timer.start();
+#endif
+ zz_pPush push(pr);
+ mat_zz_p A = mat_zz_p_from_mat(M, pr);
+
+#ifdef TRACE_NTL_REF
+ cout<<"--calling NTL's gauss()..."<<flush;
+#endif
+ rk = gauss(A); // reduce to echelon form in place; rk is the rank
+#ifdef TRACE_NTL_REF
+ cout<<"done." << endl;
+#endif
+ ny = nc-rk;
+#ifdef TRACE_NTL_REF
+ cout<<"Rank = " << rk <<", nullity = "<<ny<<endl;
+#endif
+
+ // Find pivots, rescale rows so pivots are 1
+
+ pcols.init(rk);
+ npcols.init(ny);
+ zz_p zero = conv<zz_p>(0);
+ zz_p one = conv<zz_p>(1);
+ zz_p piv, inv_piv;
+
+ for (i = j = k = 0; i < rk; i++)
+   {
+     while (A.get(i,j) == zero)
+       {
+         npcols[k+1] = j+1;
+         k++;
+         j++;
+       }
+     piv = A.get(i,j);
+     pcols[i+1] = j+1;
+     j++;
+     if (piv != one)
+       {
+         inv(inv_piv, piv);
+         A[i] = inv_piv*A[i];
+       }
+   }
+ while (k < ny)
+   {
+     npcols[k+1] = j+1;
+     k++;
+     j++;
+   }
+
+ // copy back to a new matrix for return:
+ mat ans = mat_from_mat_zz_p(A, pr).slice(rk,nc);
+#ifdef TRACE_NTL_REF
+ ntl_timer.start();
+ ntl_timer.show();
+ cout<<endl;
+#endif
+ return ans;
+
+}
+
+long rank_via_ntl(const mat& M, scalar pr)
+{
+#ifdef TRACE_NTL_REF
+  cout << "Computing rank mod "<<pr<<" of a matrix of size ("<<M.nrows()<<", "<<M.ncols()<<")..."<<flush;
+  timer ntl_timer;
+ ntl_timer.start();
+#endif
+ zz_pPush push(pr);
+ mat_zz_p A = mat_zz_p_from_mat(M, pr);
+ long rk = gauss(A); // reduce to echelon form in place; rk is the rank
+#ifdef TRACE_NTL_REF
+ cout << "done: "<<flush;
+ ntl_timer.start();
+ ntl_timer.show();
+ cout<<endl;
+#endif
+ return rk;
+}
+
+long det_via_ntl(const mat& M, scalar pr)
+{
+#ifdef TRACE_NTL_REF
+  cout << "Computing determinant mod "<<pr<<" of a matrix of size ("<<M.nrows()<<", "<<M.ncols()<<")..."<<flush;
+  timer ntl_timer;
+ ntl_timer.start();
+#endif
+ zz_pPush push(pr);
+ mat_zz_p A = mat_zz_p_from_mat(M, pr);
+ zz_p det = determinant(A);
+#ifdef TRACE_NTL_REF
+ cout << "done: "<<flush;
+ ntl_timer.start();
+ ntl_timer.show();
+ cout<<endl;
+#endif
+ return mod(conv<scalar>(det), pr);
+}
+
+
 // Possible FLINT_LEVEL values are as follows.
 //
 // 0: no FLINT support (or a version <2.3)
