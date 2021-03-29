@@ -481,6 +481,19 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
   cout << "non-pivotal columns: "<<npc<<endl;
 #endif
 
+  /* compute the semi-inverse of elim_row, which is an injective map
+     from permutation of 0...rank-1 to 0...nro-1: */
+
+  int *elim_row_inv = new int[nro];
+  for (i=0; i<nro; i++)
+    {
+      elim_row_inv[i] = -1;
+    }
+  for (i=0; i<rank; i++)
+    {
+      elim_row_inv[elim_row[i]] = i;
+    }
+
 #if TRACE_ELIM
   // density of the non-upper-triangular part:
   dense = 0;
@@ -545,33 +558,59 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
   /* set the other entries in order */
 
   // array to hold the rank*nullity dense entries
-  // block[i] has length nullity for 0<=i<rank, and holds the entries
+  // B[i] has length nullity for 0<=i<rank, and holds the entries
   // in row position(elim_row[i])-1 of basis
 
-  scalar **block = new scalar*[rank];
-  scalar **b = block;
+  scalar **B = new scalar*[rank];
+  scalar **b = B;
   i = rank;
   while(i--)
     *b++ = new scalar[nullity];
 
-  for(i=rank-1; i>=0; i--) // set block[i]
+  scalar *bi;
+  scalar *R = new scalar[rank];
+  scalar *Rt;
+  scalar **Bt;
+  scalar rr, ss;
+
+  for(i=rank-1; i>=0; i--) // set B[i]
     {
-      scalar *bi = block[i];
+      bi = B[i];
       ir = elim_row[i];
-      svec rowi = row(ir+1);
       int nv=0; // counts # non-zero v
-      for(j=0; j<nullity; j++) // set block[i][j]
+
+      // go along row ir>=0 of the matrix; skip column c>=0 if
+      // elim_col[c]==-1.  Otherwise let t =
+      // elim_row_inv[elim_col[c]].
+
+
+      for(t=0; t<rank; t++)
+        R[t] = elem(ir+1, position[elim_row[t]]);
+
+      for(j=0; j<nullity; j++) // set B[i][j], using B[t][j] for t>i
         {
-          v = mod(-rowi.elem(npc[j+1]), modulus);
-          for(t=rank-1; t>i; t--)
+          v = -elem(ir+1, npc[j+1]);
+          Rt = R + rank-1;
+          Bt = B + rank-1;
+          t = rank-1-i;
+          while(t--)
             {
-              v -= xmodmul(rowi.elem(position[elim_row[t]]), block[t][j], modulus);
-              v = mod(v, modulus);
+              rr = *Rt--;
+              if (rr)
+                {
+                  ss = (*Bt)[j];
+                  if (ss)
+                    {
+                      v = mod(v - xmodmul(rr, ss, modulus), modulus);
+                    }
+                }
+              Bt--; // must ne outside the if(rr)
             }
-          if (v) nv++;
+          if (v)
+            nv++;
           bi[j] = v;
         }
-      // the i'th row of block holds the position[elim_row[i]]-1 row of the basis
+      // the i'th row of B holds the position[elim_row[i]]-1 row of the basis
 #if TRACE_ELIM
       cout<<" setting row "<< position[ir]-1 <<" (from 0) of basis: "<< nv <<" non-zero entries out of "<<nullity<<endl;
 #endif
@@ -604,12 +643,15 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
   cout<<" basis = "<<basis.as_mat()<<endl;
 #endif
 
-  b = block;
+  /* release memory dynamically allocated in this function using new */
+
+  b = B;
   i = rank;
   while(i--)
     delete [] *b++;
-  delete [] block;
-
+  delete [] B;
+  delete [] elim_row_inv;
+  delete [] R;
 
   return basis;
 }
