@@ -98,6 +98,8 @@ public:
   void standard( );
   void back_sub( );
   void sparse_elimination( );
+  smat old_kernel( vec&, vec& );
+  smat new_kernel( vec&, vec& );
   smat kernel( vec&, vec& );
   void normalize( int, int );
   void eliminate( int&, int& );

@@ -476,12 +476,31 @@ int main(void)
 	  cout << "standard : A * ker_mat is : ";
 	  if( (A*ker_mat) == smat(nro)) cout << "0";
 	  else cout << "problem in standard!!!";*****/
-	smat ker = A.kernel(pc,npc);
+
+	smat kern = A.kernel(pc,npc);
 	cout << "rank is:" << dim( pc ) << endl;
-	display_population(ker);
-	smat result = mult_mod_p(sm,ker,DEFAULT_MODULUS);
+	display_population(kern);
+
+        // smat_elim A2( sm );
+        // smat oldkern = A2.old_kernel(pc, npc);
+        // cerr << "old version ";
+	// cout << "rank is:" << dim( pc ) << endl;
+	// display_population(oldkern);
+        // cerr << "old kernel basis:\n" << oldkern.as_mat() <<endl;
+        // cerr << "new kernel basis:\n" << kern.as_mat() <<endl;
+        // if (kern-oldkern != smat(nro))
+        //   {
+        //     cerr << "old and new kernels differ"<<endl;
+        //   }
+        // else
+        //   {
+        //     cerr << "old and new kernels agree!"<<endl;
+        //   }
+
+
+        smat result = mult_mod_p(sm,kern,DEFAULT_MODULUS);
 	// cout << "sm  is:\n" << sm.as_mat() << endl;
-	// cout << "ker is:\n" << ker.as_mat() << endl;
+	// cout << "kern is:\n" << kern.as_mat() << endl;
 	// cout << "result is:\n" << result.as_mat() << endl;
 	if( result == smat(nro) ) cout << "kernel correct\n";
 	else cout << "PROBLEM : kernel not correct!\n";

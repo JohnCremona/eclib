@@ -39,7 +39,7 @@ protected:
          int nco;            // number of columns
          int nro;            // number of rows
 	 int **col;          // holds cols of entries
-	 scalar **val;          // holds values of entries
+	 scalar **val;       // holds values of entries
 
 public:
      // constructors
@@ -48,7 +48,7 @@ public:
      smat (const smat&);                  // copy constructor
      smat (const mat &);                  // conversion constructor
      ~smat();                             // destructor
-   
+
      // member functions & operators
 
      mat as_mat( ) const;
@@ -69,6 +69,7 @@ public:
      void set_row ( int, int, int*, scalar* );
      smat select_rows(const vec& rows) const;
      void setrow ( int i, const svec& v); // i counts from 1
+     void setrow ( int i, const vec& v); // i counts from 1
      svec row(int) const; // extract row i as an svec
      int nrows() const {return nro;}
      int ncols() const {return nco;}

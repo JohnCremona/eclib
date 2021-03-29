@@ -126,37 +126,106 @@ smat::~smat()
 
 // member functions and operators
 
-void smat::set_row( int i, int d, int* pos, scalar* values)
+void smat::set_row( int i, int d, int* pos, scalar* values) // i counts from 0
 {
-  if( col[i][0] != d ) {
-    delete [] col[i]; delete [] val[i]; 
-    col[i] = new int [d+1];
-    val[i] = new scalar [d];
-    col[i][0] = d;
+  scalar *vali = val[i];
+  int *coli = col[i];
+  // allocate space for d entries, but only set the non-zero ones
+  if( coli[0] != d ) {
+    delete [] coli; delete [] vali;
+    coli = col[i] = new int [d+1];
+    vali = val[i] = new scalar [d];
   }
-  for( int j = 0; j < d; j++ ) {
-    col[i][j+1] = *pos++;
-    val[i][j] = *values++;
+  coli++;
+  int j=d, c; scalar v;
+  while(j--) {
+    v = *values++;
+    c = *pos++;
+    if (v)
+      {
+        *coli++ = c;
+        *vali++ = v;
+      }
   }
+  col[i][0] = (coli - col[i]) - 1; // difference of pointers
+}
+
+void smat::setrow ( int i, const vec& v) // i counts from 1
+{
+  int j, m, n;
+  scalar *vi, *vali, e;
+  int *coli;
+
+  // count nonzero entries of v:
+  vi = v.entries;
+  j = v.d;
+  n = 0;
+  while(j--)
+    if (*vi++)
+      n++;
+
+  // (re)allocate position and value arrays
+  i--; // so it starts from 0
+  coli = col[i];
+  vali = val[i];
+  if( coli[0] != n ) {
+    delete [] coli; delete [] vali;
+    coli = col[i] = new int [n+1];
+    vali = val[i] = new scalar [n];
+    *coli++ = n;
+  }
+
+  // copy nonzero entries
+  coli++;
+  vi = v.entries;
+  for(m=1; m<=v.d; m++)
+    {
+      e = *vi++;
+      if (e)
+        {
+          *coli++ = m;
+          *vali++ = e;
+        }
+    }
+
+  // check
+  // if (row(i+1).as_vec() != v)
+  //   {
+  //     cerr << "error in smat::setrow(int, vec):";
+  //     cerr << "v = "<<v<<endl;
+  //     cerr << "row was set to "<< row(i+1).as_vec()<<endl;
+  //   }
 }
 
 void smat::setrow ( int i, const svec& v) // i counts from 1
 {
-  int j, d=v.entries.size();
+  int d=v.entries.size(); // = #non-zero entries
   i--;
-  if( col[i][0] != d ) {
-    delete [] col[i]; delete [] val[i]; 
-    col[i] = new int [d+1];
-    val[i] = new scalar [d];
-    col[i][0] = d;
+  scalar *vali = val[i];
+  int *coli = col[i];
+  if( coli[0] != d ) {
+    delete [] coli;
+    delete [] vali;
+    coli = col[i] = new int [d+1];
+    vali = val[i] = new scalar [d];
+    coli[0] = d;
   }
-  map<int,scalar>::const_iterator vi;
-  for(vi=v.entries.begin(), j=0;
-      vi!=v.entries.end(); vi++, j++)
+
+  coli++;
+  for(map<int,scalar>::const_iterator vi=v.entries.begin();
+      vi!=v.entries.end(); vi++)
     {
-      col[i][j+1] = vi->first;
-      val[i][j] = vi->second;
+      *coli++ = vi->first;
+      *vali++ = vi->second;
     }
+
+  // check
+  // if (row(i+1) != v)
+  //   {
+  //     cerr << "error in smat::setrow(int, svec):";
+  //     cerr << "v = "<<v.as_vec()<<endl;
+  //     cerr << "row was set to "<< row(i+1)<<endl;
+  //   }
 }
 
 smat smat::select_rows(const vec& rows) const
@@ -202,7 +271,7 @@ svec smat::row(int i) const // extract row i as an svec, i counts from 1
 scalar smat::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
         				  * can only be used as a rvalue  */
 {
- if( (0<i) && (i<=nro) && (0<j) && (j<=nco) )           
+ if( (0<i) && (i<=nro) && (0<j) && (j<=nco) )
    {
      int d = *col[i-1];
      int *posi = col[i-1] + 1;
@@ -216,7 +285,8 @@ scalar smat::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
    }
  else 
    {
-     cerr << "Bad indices in smat::operator ()\n"; 
+     cerr << "Bad indices ("<<i<<","<<j<<") in smat::operator ()! (nro,nco)=("<<nro<<","<<nco<<")\n";
+     exit(1);
      return 0;
    }
 }

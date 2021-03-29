@@ -24,6 +24,9 @@
 //  implements structured modular elimination
 //  original written by Luiz Figueiredo
 
+#include <eclib/timer.h>
+
+
 inline scalar xmm(scalar a, scalar b, scalar m)
 {
   if (a==1) return b;
@@ -334,8 +337,8 @@ smat_elim::~smat_elim()
   delete [] column;
 }
 
-#define TRACE_ELIM 0
-#define TRACE_DENSE 0
+//#define TRACE_ELIM 1
+//#define TRACE_DENSE 1
 
 void smat_elim::sparse_elimination( )
 {
@@ -359,31 +362,25 @@ void smat_elim::sparse_elimination( )
 #endif
   step1();
 #if TRACE_ELIM
-  cout<<"finished\n";
+  cout<<"finished step 1\n";
   report();
   cout<<"Starting step 2..."<<flush;
 #endif
   step2();
 #if TRACE_ELIM
-  cout<<"finished\n";
+  cout<<"finished step 2\n";
   report();
   cout<<"Starting step 3..."<<flush;
 #endif
   step3();
 #if TRACE_ELIM
-  cout<<"finished\n";
+  cout<<"finished step 3\n";
   report();
   cout<<"Starting step 4..."<<flush;
 #endif
   step4();
 #if TRACE_ELIM
-  cout<<"finished\n";
-  report();
-  cout<<"Starting step 4..."<<flush;
-#endif
-  step4();
-#if TRACE_ELIM
-  cout<<"finished\n";
+  cout<<"finished step 4\n";
   report();
 #endif
 #if(0)  // use dense method for final elimination
@@ -401,13 +398,225 @@ void smat_elim::sparse_elimination( )
 #endif
      standard( );
 #if TRACE_ELIM
-  cout<<"finished, ";
+  cout<<"finished step 5 ";
   report();
 #endif
 #endif
 }
 
 smat smat_elim::kernel( vec& pc, vec& npc)
+{
+  return old_kernel(pc, npc);
+}
+
+// New version of kernel, not using back_sub() but constructing the
+// kernel directly fro the "upper triangular" result of elim().
+
+#define TRACE_ELIM 0
+
+smat smat_elim::new_kernel( vec& pc, vec& npc)
+{
+  int i,ic,ir, j, jj, ip, t,tt, n, r, c;
+  scalar v, w;
+
+#if TRACE_ELIM
+  cout<<"Starting sparse_elimination()..."<<flush;
+#endif
+  sparse_elimination( );
+#if TRACE_ELIM
+  cout<<"finished sparse_elimination()"<<endl;
+#endif
+
+  int nullity = nco - rank;
+
+  /* pc and npc hold the pivotal and non-pivotal column numbers, each
+     is a vec, so indexed from 1, and the values are indexed from 1.
+
+     The pivotal positions *in the order of elimination* are
+
+     (elim_row[i]+1, position[elim_row[i]])  for 0<=i<rank
+
+     where these row/col indices start at 1.
+  */
+
+  pc.init( rank );
+  npc.init( nullity );
+
+#if TRACE_ELIM
+  cout<<"rank =    "<<rank<<endl;
+  cout<<"nullity = "<<nullity<<endl;
+
+  float dense = get_population(*this);
+  dense /= (nro*nco);
+  cout<<"density = "<<dense<<endl;
+#endif
+
+  /* set-up vecs pc & npc */
+#if TRACE_ELIM
+  cout<<"Finding pivotal and non-pivotal columns..."<<endl;
+#endif
+
+  /* ny is just a dummy index; after the loop it will equal nullity
+     and k will equal rank: */
+  int ny = 0, k = 0;
+
+  /* find the pivotal and non-pivotal columns and the pivotal rows.
+
+  */
+  for( c = 1; c <= nco; c++ )  // loop through all columns
+    {
+      r = elim_col[c-1]+1;
+      if( r > 0 )            // this is a pivotal column for row r
+        {
+          k++;               // the k'th pivot is (r,c)
+          pc[k] = c;         // pc[k] is its column, c
+        }
+      else                     // non-pivotal column
+        {
+          npc[++ny] = c;       // record c as a non-pivotal column
+        }
+    }
+#if TRACE_ELIM
+  cout << "pivotal columns: "<<pc<<endl;
+  cout << "non-pivotal columns: "<<npc<<endl;
+#endif
+
+#if TRACE_ELIM
+  // density of the non-upper-triangular part:
+  dense = 0;
+  for (i=0; i<rank; i++)
+    for (j=0; j<nullity; j++)
+      if (elem(elim_row[i]+1, npc[j+1]))
+        dense += 1;
+  dense /= (rank*nullity);
+  cout<<"density of block = "<<dense<<endl;
+#endif
+
+  start_time();
+
+  /* We construct the basis matrix by rows for efficiency; the j'th
+     column is the j'th basis vector. */
+#if TRACE_ELIM
+  cout<<"Constructing basis for kernel..."<<endl;
+#endif
+
+  /* There is a nullity x nullity identity matrix in rows indexed by
+     npc, and the remaining entries, in rows position[elim_row[i]] for
+     0<=i<rank, are given as follows, in column j for 1<=j<=nullity:
+
+     set jj = npc[j];
+     for i from rank-1 down to 0
+         let i' = elim_row[i], i" = i'+1
+         set
+
+         basis[position[i'], j] =
+
+         -M[i",jj] - sum_{t=i+1}^{rank-1} M[i",position[elim_row[t]]*basis[position[elim_row[t]], j]
+
+   */
+
+  smat basis( nco, nullity );
+
+  /* First set the identity block */
+
+  int *co;
+  scalar *va;
+
+  for(j=1; j<=nullity; j++)
+    {
+      jj = npc[j]-1;
+#if TRACE_ELIM
+      //      cout<<" setting row "<<jj<<" (from 0) of basis"<<endl;
+#endif
+      delete [] basis.col[jj];
+      delete [] basis.val[jj];
+      co = basis.col[jj] = new int[2];
+      va = basis.val[jj] = new scalar[1];
+      co[0] = 1; // 1 entry in this row
+      co[1] = j; // in column 1
+      va[0] = 1; // with value 1
+    }
+
+#if TRACE_ELIM
+  cout<<"after setting identity block, basis = ";
+  cout<<basis.as_mat()<<endl;
+#endif
+
+  /* set the other entries in order */
+
+  // array to hold the rank*nullity dense entries
+  // block[i] has length nullity for 0<=i<rank, and holds the entries
+  // in row position(elim_row[i])-1 of basis
+
+  scalar **block = new scalar*[rank];
+  scalar **b = block;
+  i = rank;
+  while(i--)
+    *b++ = new scalar[nullity];
+
+  for(i=rank-1; i>=0; i--) // set block[i]
+    {
+      scalar *bi = block[i];
+      ir = elim_row[i];
+      svec rowi = row(ir+1);
+      int nv=0; // counts # non-zero v
+      for(j=0; j<nullity; j++) // set block[i][j]
+        {
+          v = mod(-rowi.elem(npc[j+1]), modulus);
+          for(t=rank-1; t>i; t--)
+            {
+              v -= xmodmul(rowi.elem(position[elim_row[t]]), block[t][j], modulus);
+              v = mod(v, modulus);
+            }
+          if (v) nv++;
+          bi[j] = v;
+        }
+      // the i'th row of block holds the position[elim_row[i]]-1 row of the basis
+#if TRACE_ELIM
+      cout<<" setting row "<< position[ir]-1 <<" (from 0) of basis: "<< nv <<" non-zero entries out of "<<nullity<<endl;
+#endif
+      ir = position[ir]-1;
+      delete [] basis.col[ir];
+      delete [] basis.val[ir];
+      co = basis.col[ir] = new int[nv+1];
+      va = basis.val[ir] = new scalar[nv];
+      *co++ = nv;
+      for(j=0; j<nullity; j++)
+        {
+          if (bi[j])
+            {
+              *co++ = j+1;
+              *va++ = bi[j];
+            }
+        }
+#if TRACE_ELIM
+      cout<<" finished setting row "<< ir << endl;
+#endif
+    }
+
+#if TRACE_ELIM
+  stop_time();
+  cout<<"time for computing basis: ";
+  show_time();
+  cout<<endl;
+
+  cout<<"Finished constructing basis for kernel"<<endl;
+  cout<<" basis = "<<basis.as_mat()<<endl;
+#endif
+
+  b = block;
+  i = rank;
+  while(i--)
+    delete [] *b++;
+  delete [] block;
+
+
+  return basis;
+}
+
+// old version of kernel which uses back_sub()
+
+smat smat_elim::old_kernel( vec& pc, vec& npc)
 {
   int i,n,r,denom = 1;
 #if TRACE_ELIM
@@ -443,8 +652,15 @@ smat smat_elim::kernel( vec& pc, vec& npc)
   long *new_row = new long [ rank ];
   for( i = 1; i <= nco; i++ )
     {
-      if( elim_col[i-1] > -1 ) { pc[++k] = i; new_row[k-1] = elim_col[i-1]; }
-      else npc[++ny] = i;
+      if( elim_col[i-1] > -1 )
+        {
+          pc[++k] = i;
+          new_row[k-1] = elim_col[i-1];
+        }
+      else
+        {
+          npc[++ny] = i;
+        }
     }
 
   /* write basis for kernel */
@@ -494,7 +710,7 @@ smat smat_elim::kernel( vec& pc, vec& npc)
   delete[]aux_col;
 #if TRACE_ELIM
   cout<<"Finished constructing basis for kernel"<<endl;
-  //  cout<<"Basis = "<<basis<<endl;
+  cout<<"Basis = "<<basis.as_mat()<<endl;
 #endif
   return basis;
 }
@@ -626,17 +842,20 @@ void smat_elim::step4 ( )
       wt = (column+i)->num;
       if( maxcolwt < wt) maxcolwt=wt;
     }
+  int M0 = maxcolwt; // max(20, int(maxcolwt/10)); // 20;
   int Mstep = int(maxcolwt/100);
+  float Mscale = 0.9;
   if (Mstep==0) Mstep=1;
 #if TRACE_ELIM
   cout<<"Step 4, max column weight = "<<maxcolwt<<endl;  
 #endif
-  
-  //  for( M = 20; M >= 4; M--)
-  for( M = maxcolwt; M >= 3; M-=Mstep)
+
+  //for( M = M0; M >= 4; M--)
+  //for( M = M0; M >= 3; M*=Mscale)
+  for( M = M0; M >= 3; M-=Mstep)
     {
 #if TRACE_ELIM
-  cout<<"Step 4, M = "<<M;  
+  cout<<"Step 4, M = "<<M;
 #endif
       /* divides columns in `light' and `heavy' */
       int nlight=0;
@@ -652,6 +871,7 @@ void smat_elim::step4 ( )
 #endif
   if (nlight==0) break; // from the loop over M
   if (nlight<(nco/2)) break; // from the loop over M
+  //if (nlight<=(nco/4)) break; // from the loop over M
       while(1)
 	{
 	  /* eliminates rows with weight 1 */
@@ -687,14 +907,19 @@ void smat_elim::standard ( ){
   // remaining elimination
 
   int i, col0, row, wt, mincolwt;
-  double density_threshhold = 0.04; // 0.15; // 0.2; // 0.1;
+  double density_threshold = 0.2; // 0.25; // 0.5; // 0.75; // 0.9; // 0.7; // 0.5; // 0.2; // 0.04; // 0.15; // 0.2; // 0.1;
 
- // this threshhold can be changed: the code here works fine when the
+ // this threshold can be changed: the code here works fine when the
  // density is low, but when it is higher it's best to switch to using
  // a dense structure for the remaining elimination.  It might also be
  // better not to recompute the density after every single step.
 
-  while(active_density() < density_threshhold)
+
+#if TRACE_ELIM
+  report();
+  cout << "Continuing elimination in sparse structure until density goes above " << density_threshold <<endl;
+#endif
+  while(active_density() < density_threshold)
     {
   // Find minimum positive column weight
       mincolwt=nro+1; col0=-1;
@@ -713,10 +938,11 @@ void smat_elim::standard ( ){
       clear_col( row, col0, temp );
       eliminate( row, col0 );
       free_space( col0 );
-#if TRACE_ELIM
-      report();
-#endif
     }
+#if TRACE_ELIM
+  cout << "Finished elimination in sparse structure, density is now " << active_density() <<endl;
+  report();
+#endif
   step5dense();
 }
 
@@ -755,7 +981,7 @@ void smat_elim::normalize( int row, int col0)
 
 void smat_elim::eliminate( int& row, int& col0 ) //1<=col0<=nco;
 {
-  //  cout<<"Eliminating (r,c)=("<<row<<","<<col0<<")"<<endl;
+  //cout<<"Eliminating (r,c)=("<<row<<","<<col0-1<<")"<<endl;
   elim_col[ col0 - 1 ] = row;
   position[ row ] = col0;
   elim_row[ rank++ ] = row;
@@ -1010,9 +1236,9 @@ void smat_elim::step5dense()
       remaining_cols.push_back(j+1);
   int nrc = remaining_cols.size();
 #if TRACE_DENSE
-    cout<<nrr<<" remaining rows, " <<nrc<<" remaining cols"<<endl;
-    //    cout<<" remaining rows: " << remaining_rows<<endl;
-    //    cout<<" remaining cols: " << remaining_cols<<endl;
+  cout<<nrr<<" remaining rows, " <<nrc<<" remaining cols"<<endl;
+  //    cout<<" remaining rows: " << remaining_rows<<endl;
+  //    cout<<" remaining cols: " << remaining_cols<<endl;
 #endif
   if(nrr*nrc==0) //(nrr*nrc<10000) // avoid overheads of switching to dense if
                     // there's not a lot left to do
@@ -1038,18 +1264,20 @@ void smat_elim::step5dense()
   // (2) reduce this to echelon form
 
 #if TRACE_DENSE
-    cout<<"Constructed dense matrix" <<endl;
+  cout<<"Constructed dense matrix, starting dense elimination step..." <<endl;
 #endif
-    vec pc,npc; long rk,ny;
+  vec pc,npc; long rk,ny;
+
 #if FLINT_LEVEL==0
-    dmat = echmodp_uptri(dmat,pc,npc,rk,ny,modulus);
+    //    dmat = echmodp_uptri(dmat,pc,npc,rk,ny,modulus);
+    dmat = ref_via_ntl(dmat,pc,npc,rk,ny,modulus);
 #else
     dmat = ref_via_flint(dmat,pc,npc,rk,ny,modulus);
 #endif
-#if TRACE_DENSE
-    cout<<"...finished elmination, rank = "<<rk;
+    #if TRACE_DENSE
+    cout<<"...finished dense elimination, rank = "<<rk;
     cout<<", nullity = "<<ny<<endl;
-    // cout<<"Pivotal columns:    "<<pc<<endl;
+    //cout<<"Pivotal columns:    "<<pc<<endl;
     // cout<<"Nonpivotal columns: "<<npc<<endl;
 #endif
 
@@ -1095,8 +1323,7 @@ void smat_elim::step5dense()
 long smat::rank(scalar mod)
 {
   smat_elim sme(*this,mod);
-  vec pivs, npivs;
-  (void) sme.kernel(npivs,pivs);
+  (void) sme.sparse_elimination();
   return sme.get_rank();
 }
 
