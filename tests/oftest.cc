@@ -39,7 +39,7 @@ int main(void)
      while (n<limit) 
        { n++;
 #else
-     while (cout<<"Enter level: ", cin>>n, n>0) 
+     while (cout<<"Enter level: ", cin>>n, n>1) 
        {
 #endif
 	 cout << ">>>Level " << n << "\t";

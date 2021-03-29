@@ -65,9 +65,9 @@ int main(void)
  n--; cout<<"\n";
  while (n<limit) { n++;
 #else
- while (n>0) { cout<<"Enter level: "; cin>>n;
+ while (n>1) { cout<<"Enter level: "; cin>>n;
 #endif
- if (n>0)
+ if (n>1)
 {
   cout << "N = " << n << endl;
 

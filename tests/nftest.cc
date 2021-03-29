@@ -36,7 +36,7 @@
 
 int main(void)
 {
-  int limit,firstn,n=1,count=0; 
+  int limit,firstn,n=2,count=0; 
   int verbose=1;
 #ifdef AUTOLOOP
   cerr<<"Enter first and last N: ";cin>>firstn>>limit; 
@@ -44,9 +44,9 @@ int main(void)
   while (n<limit) { n++;
 #else
   verbose=1;
-  while (n>0) { cerr<<"Enter level: "; cin>>n;
+  while (n>1) { cerr<<"Enter level: "; cin>>n;
 #endif
- if (n>0)
+ if (n>1)
 {
  cout << ">>> Level " << n << " <<<\t";
  newforms nf(n,verbose);

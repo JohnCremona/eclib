@@ -42,9 +42,9 @@ int main(void)
  n--; cout<<endl;
  while (n<limit) { n++;
 #else
- while (n>0) { cout<<"Enter level: "; cin>>n;
+ while (n>1) { cout<<"Enter level: "; cin>>n;
 #endif
- if (n>0)
+ if (n>1)
 {
  newforms nf(n,0);
  int noldap=25;

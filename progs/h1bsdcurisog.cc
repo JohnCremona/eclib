@@ -62,7 +62,7 @@ int main(void)
 {
   set_precision(35);
  
- long limit, n=1, hlim1=10, hlim2=15; 
+ long limit, n=2, hlim1=10, hlim2=15; 
  bigint nn;
  int verbose=0;
  int filenamesize=30;
@@ -84,9 +84,9 @@ int main(void)
  n--; cerr<<endl;
  while (n<limit) { n++;
 #else
- while (n>0) { cerr<<"Enter level: "; cin>>n;
+ while (n>1) { cerr<<"Enter level: "; cin>>n;
 #endif
- if (n>0)
+ if (n>1)
 {
  nn=n;
  // Temporary code: check that n is square-free

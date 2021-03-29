@@ -49,7 +49,7 @@ int main(void)
 {
  init_time();
  start_time();
- long n=1, stopp; // have a dud (but positive) value of n here to avoid mishaps
+ long n=2, stopp; // have a dud (but positive) value of n here to avoid mishaps
  int output, curve_output, verbose;
  long maxn = MAXNY;
  long dmax = MAXD;
@@ -73,9 +73,9 @@ int main(void)
  cout<<"Enter first and last N: ";cin>>n>>limit; n--;
  while (n<limit) { n++;
 #else
-   while (n>0) { cout<<"Enter level: "; cin>>n; cout<<"\n";
+   while (n>1) { cout<<"Enter level: "; cin>>n; cout<<"\n";
 #endif
- if (n>0)
+ if (n>1)
 {
   if (curve_output)
     curve_out_filename = single_curve_filename(n);
@@ -293,7 +293,7 @@ int main(void)
   delete[]success;
   delete[]curves;
   
-}       // end of if(n>0)
-     }  // end of while(n>0) or while(n<limit)
+}       // end of if(n>1)
+     }  // end of while(n>1) or while(n<limit)
  }       // end of main()
 

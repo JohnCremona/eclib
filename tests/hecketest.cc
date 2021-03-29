@@ -63,7 +63,7 @@ int main(void)
 #endif
  init_time();
  start_time();
- int n=1; 
+ int n=2; 
  int plus=1;
  int verbose=0;
  cout << "See the hecke matrices (0/1)? "; cin >> verbose;
@@ -73,9 +73,9 @@ int main(void)
      cout<<"Enter limit on level: ";cin>>limit;
      while (n<limit) { n++;
 #else
-     while (n>0) { cout<<"Enter level: "; cin>>n;
+     while (n>1) { cout<<"Enter level: "; cin>>n;
 #endif
- if (n>0)
+ if (n>1)
 {
  cout << ">>>Level " << n << "\t";
  homspace hplus(n,plus,0,0);
@@ -373,7 +373,7 @@ int main(void)
    delete[] wqlist; delete[] tplist;
    }      // end of if(genus>0)
  }       // end of if(n)
-     }       // end of while(n>0) or while(n<limit)
+     }       // end of while(n>1) or while(n<limit)
  cout<<endl;
 exit(0);
      }       // end of main()

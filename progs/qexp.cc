@@ -53,9 +53,9 @@ int main(void)
   n=firstn-1;
   while (n<limit) { n++;
 #else
-  while (n>0) { cerr<<"Enter level: "; cin>>n;
+  while (n>1) { cerr<<"Enter level: "; cin>>n;
 #endif
- if (n>0)
+ if (n>1)
 {
  newforms nf(n,verbose);
  nf.createfromdata(1,25);

@@ -51,7 +51,7 @@ int main()
  int one_p=0;
  cout << "Verbose output? (0/1) "; cin >> verbose;
  // cout << "Plus space (0/1)? "; cin >> plus;
- while (cout<<"Enter level: ", cin>>n, n>0)
+ while (cout<<"Enter level: ", cin>>n, n>1)
    {
      cout << ">>>Level " << n << "\t";
      homspace hplus(n,plus,0,0);

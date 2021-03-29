@@ -53,7 +53,7 @@ int main(void)
  cout<<"Enter first and last N: ";cin>>n>>lastn; n--;
  while (n<lastn) { n++;
 #else
- while (cout<<"Enter level: ", cin>>n, n>0) { 
+ while (cout<<"Enter level: ", cin>>n, n>1) { 
  cout << "How many primes for Hecke eigenvalues? ";
  cin  >> stopp; cout << endl;
 #endif

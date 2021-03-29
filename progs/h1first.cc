@@ -52,11 +52,11 @@ int main(void)
   while (n<limit) { n++;
 #else
 #ifndef SINGLE
-  while (n>0)
+  while (n>1)
 #endif
     { cout<<"\n\nEnter level: "; cin>>n;
 #endif
-  if (n>0)
+  if (n>1)
     {
       if (curve_output)
         curve_filename=single_curve_filename(n);

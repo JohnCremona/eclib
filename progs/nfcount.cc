@@ -33,7 +33,7 @@ int main(void)
   cout<<"Enter first and last N: ";cin>>firstn>>limit; 
   n=firstn-1; cout<<endl;
   while (n<limit) { n++;
-  if (n>0)
+  if (n>1)
 {
   if(verbose) cout << ">>> Level " << n << " <<< ";
   int num=0, nap=0, naq=0;
