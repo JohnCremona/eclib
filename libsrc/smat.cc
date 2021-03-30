@@ -32,18 +32,6 @@ void showrow(int*pos, scalar*val) // for debugging
   int* posi=pos; posi++;
   scalar* vali=(scalar*)val;
   while(d--) cout<<"("<<(*posi++)<<","<<(*vali++)<<")";
-  /*
-  if(sizeof(scalar)==sizeof(int)) 
-    {
-      int* vali=(int*)val;
-      while(d--) cout<<"("<<(*posi++)<<","<<(*vali++)<<")";
-    }
-  else 
-    {
-      long* vali=(long*)val;
-      while(d--) cout<<"("<<(*posi++)<<","<<(*vali++)<<")";
-    }
-  */
   cout<<"]";
 }
 
@@ -274,16 +262,15 @@ scalar smat::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
  if( (0<i) && (i<=nro) && (0<j) && (j<=nco) )
    {
      int d = *col[i-1];
-     int *posi = col[i-1] + 1;
-     scalar *veci = val[i-1]; 
-     while( d-- )
-       { 
-	 if( j == *posi++ ) return *veci;
-	 veci++;
-       }
-     return 0;
+     if (d==0) return 0;
+     int *first = col[i-1]+1;
+     int *last = col[i-1]+1+d;
+     int *p = std::lower_bound(first, last, j);
+     if ((p==last) || (*p!=j))
+       return 0;
+     return val[i-1][p-first];
    }
- else 
+ else
    {
      cerr << "Bad indices ("<<i<<","<<j<<") in smat::operator ()! (nro,nco)=("<<nro<<","<<nco<<")\n";
      exit(1);
@@ -298,7 +285,7 @@ smat& smat::operator=(const smat& sm)
  nco = sm.nco;
  int i, n = sm.nro; 
  if (nro != n) // delete old space and replace with new.
-   {            
+   {
      for( i = 0; i < nro; i++ ) { delete [] col[i]; delete [] val[i]; }
 #ifdef DEBUG_MEM
   cout<<"in smat.=, destroying old smat with col="<<col<<", val="<<val<<endl;

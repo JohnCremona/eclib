@@ -479,22 +479,7 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
 #if TRACE_ELIM
   cout << "pivotal columns: "<<pc<<endl;
   cout << "non-pivotal columns: "<<npc<<endl;
-#endif
 
-  /* compute the semi-inverse of elim_row, which is an injective map
-     from permutation of 0...rank-1 to 0...nro-1: */
-
-  int *elim_row_inv = new int[nro];
-  for (i=0; i<nro; i++)
-    {
-      elim_row_inv[i] = -1;
-    }
-  for (i=0; i<rank; i++)
-    {
-      elim_row_inv[elim_row[i]] = i;
-    }
-
-#if TRACE_ELIM
   // density of the non-upper-triangular part:
   dense = 0;
   for (i=0; i<rank; i++)
@@ -503,15 +488,16 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
         dense += 1;
   dense /= (rank*nullity);
   cout<<"density of block = "<<dense<<endl;
+  start_time();
 #endif
 
-  start_time();
 
-  /* We construct the basis matrix by rows for efficiency; the j'th
-     column is the j'th basis vector. */
 #if TRACE_ELIM
   cout<<"Constructing basis for kernel..."<<endl;
 #endif
+
+  /* We construct the basis matrix by rows for efficiency; the j'th
+     column is the j'th basis vector. */
 
   /* There is a nullity x nullity identity matrix in rows indexed by
      npc, and the remaining entries, in rows position[elim_row[i]] for
@@ -519,12 +505,13 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
 
      set jj = npc[j];
      for i from rank-1 down to 0
-         let i' = elim_row[i], i" = i'+1
-         set
+         let ir = elim_row[i] and set
 
-         basis[position[i'], j] =
+         basis[position[ir], j] =
 
-         -M[i",jj] - sum_{t=i+1}^{rank-1} M[i",position[elim_row[t]]*basis[position[elim_row[t]], j]
+         -M[ir+1,jj] - sum_{t=i+1}^{rank-1} M[ir+1,position[elim_row[t]]*basis[position[elim_row[t]], j]
+
+     For fixed ir we put the entries M[ir+1,position[elim_row[t]] into array R.
 
    */
 
@@ -537,23 +524,11 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
 
   for(j=1; j<=nullity; j++)
     {
-      jj = npc[j]-1;
-#if TRACE_ELIM
-      //      cout<<" setting row "<<jj<<" (from 0) of basis"<<endl;
-#endif
-      delete [] basis.col[jj];
-      delete [] basis.val[jj];
-      co = basis.col[jj] = new int[2];
-      va = basis.val[jj] = new scalar[1];
-      co[0] = 1; // 1 entry in this row
-      co[1] = j; // in column 1
-      va[0] = 1; // with value 1
+      jj = npc[j]-1;  // NB constructor gives this much
+      basis.col[jj][0] = 1; // 1 entry in this row
+      basis.col[jj][1] = j; // in column 1
+      basis.val[jj][0] = 1; // with value 1
     }
-
-#if TRACE_ELIM
-  cout<<"after setting identity block, basis = ";
-  cout<<basis.as_mat()<<endl;
-#endif
 
   /* set the other entries in order */
 
@@ -567,25 +542,26 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
   while(i--)
     *b++ = new scalar[nullity];
 
-  scalar *bi;
+  scalar *bi, *bij, *bij_nz;
+  scalar *bi_nz = new scalar[nullity];
   scalar *R = new scalar[rank];
   scalar *Rt;
   scalar **Bt;
   scalar rr, ss;
+  int *ij_nz;
+  int *i_nz = new int[nullity];
 
   for(i=rank-1; i>=0; i--) // set B[i]
     {
-      bi = B[i];
+      bij = bi = B[i];
+      bij_nz = bi_nz;
+      ij_nz = i_nz;
+
       ir = elim_row[i];
       int nv=0; // counts # non-zero v
 
-      // go along row ir>=0 of the matrix; skip column c>=0 if
-      // elim_col[c]==-1.  Otherwise let t =
-      // elim_row_inv[elim_col[c]].
-
-
       for(t=0; t<rank; t++)
-        R[t] = elem(ir+1, position[elim_row[t]]);
+        R[t] = (t<i?0:elem(ir+1, position[elim_row[t]]));
 
       for(j=0; j<nullity; j++) // set B[i][j], using B[t][j] for t>i
         {
@@ -604,36 +580,54 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
                       v = mod(v - xmodmul(rr, ss, modulus), modulus);
                     }
                 }
-              Bt--; // must ne outside the if(rr)
+              Bt--; // must be outside the if(rr)
             }
+          *bij++ = v;
           if (v)
-            nv++;
-          bi[j] = v;
+            {
+              nv++;
+              *bij_nz++ = v;
+              *ij_nz++ = j+1;
+            }
         }
-      // the i'th row of B holds the position[elim_row[i]]-1 row of the basis
 #if TRACE_ELIM
       cout<<" setting row "<< position[ir]-1 <<" (from 0) of basis: "<< nv <<" non-zero entries out of "<<nullity<<endl;
 #endif
       ir = position[ir]-1;
-      delete [] basis.col[ir];
-      delete [] basis.val[ir];
-      co = basis.col[ir] = new int[nv+1];
-      va = basis.val[ir] = new scalar[nv];
-      *co++ = nv;
-      for(j=0; j<nullity; j++)
+      co = basis.col[ir];
+      va = basis.val[ir];
+      if (nv > co[0]) // there are more entries in this row than the
+                      // constructor gave us
         {
-          if (bi[j])
-            {
-              *co++ = j+1;
-              *va++ = bi[j];
-            }
+          delete [] co;
+          delete [] va;
+          co = basis.col[ir] = new int[nv+1];
+          va = basis.val[ir] = new scalar[nv];
         }
+      *co++ = nv;
+      size_t nbytes = nv*sizeof(int);
+      memmove(co,i_nz,nbytes);
+      nbytes = nv*sizeof(scalar);
+      memmove(va,bi_nz,nbytes);
+
 #if TRACE_ELIM
       cout<<" finished setting row "<< ir << endl;
 #endif
     }
 
-#if TRACE_ELIM
+  /* release memory dynamically allocated in this function using new */
+
+  b = B;
+  i = rank;
+  while(i--)
+    delete [] *b++;
+  delete [] B;
+  //  delete [] elim_row_inv;
+  delete [] R;
+  delete [] bi_nz;
+  delete [] i_nz;
+
+  #if TRACE_ELIM
   stop_time();
   cout<<"time for computing basis: ";
   show_time();
@@ -643,16 +637,6 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
   cout<<" basis = "<<basis.as_mat()<<endl;
 #endif
 
-  /* release memory dynamically allocated in this function using new */
-
-  b = B;
-  i = rank;
-  while(i--)
-    delete [] *b++;
-  delete [] B;
-  delete [] elim_row_inv;
-  delete [] R;
-
   return basis;
 }
 
@@ -660,7 +644,7 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
 
 smat smat_elim::old_kernel( vec& pc, vec& npc)
 {
-  int i,n,r,denom = 1;
+  int i,n,r;
 #if TRACE_ELIM
   cout<<"Starting sparse_elimination()..."<<flush;
 #endif
@@ -712,9 +696,9 @@ smat smat_elim::old_kernel( vec& pc, vec& npc)
   for( n = 1; n <= nullity; n++ )
     { 
       int i = npc[n]-1;
-      basis.col[i][0] = 1;      //this much storage was granted in the 
+      basis.col[i][0] = 1;      //this much storage was granted in the
       basis.col[i][1] = n;      // in the constructor.
-      basis.val[i][0] = denom;
+      basis.val[i][0] = 1;
     }
 
   scalar *aux_val = new scalar [nco];
