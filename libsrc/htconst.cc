@@ -1115,7 +1115,7 @@ bigfloat lower_height_bound(const Curvedata& CD, int egr)
   bigfloat lambda=CHC.get_value(); // assumes egr
   if (!egr)
     {
-      long c = I2long(CR.Tamagawa_exponent());
+      long c = I2long(global_Tamagawa_exponent(CR, 1)); // 1 means include R
       lambda /= (c*c);
     }
   return lambda;
@@ -1502,49 +1502,47 @@ Interval01 operator+(const Interval01& I, const bigfloat& shift)
 //
 ////////////////////////////
 
-// returns the exponent of the reduction of CD mod p (i.e. of E^0(Qp)/E^1(Qp))
+// returns the exponent of the reduction of CD mod p (i.e. of
+// E^0(Qp)/E^1(Qp), or of E^ns(F_p))
 //
 // NB for good reduction and p>3 we can use the curvemodqbasis class,
-// but that is not implemented yet for p=2, 3.  We also need special
-// code for bad reduction.
+// but that is not implemented for p=2, 3.  We also need special code
+// for bad reduction.
 
 long exponent(CurveRed& CR, long p)
 {
   bigint pp = BIGINT(p);
   int ord_p_N = getord_p_N(CR, pp);
-  long np;
-  if (ord_p_N>1) // additive
+
+  if (ord_p_N>1)
+    // additive reduction, cyclic of order p
     {
       return p;
     }
-  if (ord_p_N==1) // multiplicative
+
+  if (ord_p_N==1)
+    // multiplicative reduction, cyclic:
+    // order p-1 if split, i.e. root number -1
+    // order p+1 if split, i.e. root number +1
     {
-      if (p>2)
-        {
-          return p - legendre(getb2(CR), p);
-        }
-      else
-        {
-          bigint a1, a2, a3, a4, a6;
-          CR.getai(a1, a2, a3, a4, a6);
-          return (I2long(a1*a2) % 2 == 0? 3: 1);
-        }
+      return p + LocalRootNumber(CR, pp);
     }
+
   // good reduction
-  if (p<5)
+  if (p>3)
     {
-      np = 1 + p - I2long(Trace_Frob(CR,pp));
-      if (p==2 || np!=4)
-        return np; // exponent=order
-      // now p==3, and order=4, test whether we have full 2-torsion
-      long b2 = I2long(getb2(CR))%3,
-        b4 = posmod(I2long(getb2(CR)),3),
-        b6 = I2long(getb2(CR))%3;
-      return (((b2==0) && (b4==1) && (b6==0))? 2 : 4);
+      curvemodqbasis Emodq(CR,pp);
+      return I2long(Emodq.get_exponent());
     }
-  // now p>=5, good reduction
-  curvemodqbasis Emodq(CR,pp);
-  return I2long(Emodq.get_exponent());
+  // now p=2 or 3
+  int np = 1 + p - I2long(Trace_Frob(CR,pp));
+  if (p==2 || np!=4)
+    return np; // exponent=order
+  // Now p==3, and order=4, test whether we have full 2-torsion
+  // The b-invariants are (0, 2, _, 2) for C4 and (0,1,0,2) for
+  // C2xC2; so looking at b4 suffices:
+  long b4 = I2long(getb4(CR))%3;
+  return ((b4==1)? 2 : 4);
 }
 
 ///////////////////////////////////////////////////////////////////////

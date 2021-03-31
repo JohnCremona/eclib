@@ -27,6 +27,7 @@
 #include <eclib/points.h>
 #include <eclib/sieve_search.h>
 #include <eclib/cperiods.h>
+#include <eclib/curve.h>
 #include <eclib/elog.h>
 #include <eclib/egr.h>
 #include <eclib/htconst.h>
@@ -46,6 +47,7 @@ int main()
   cin >> nclass >> ncurve;
   cin >> E;
   Curvedata C(E);
+  CurveRed CR(C);
   cout<<endl;
   cout<<"==============================================================="<<endl;
   cout<<endl;
@@ -64,7 +66,7 @@ int main()
   //  bigfloat reg = regulator(points);
   //  cout<<"Regulator = "<<reg<<endl;
 
-  bigint tam = Tamagawa_exponent(C);
+  bigint tam = global_Tamagawa_exponent(CR, 1); // 1 means real too
   cout<<"Tamagawa exponent = "<<tam<<endl;
 
   vector<Point> egr_points=points;

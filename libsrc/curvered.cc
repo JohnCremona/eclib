@@ -333,27 +333,41 @@ CurveRed::CurveRed(const Curvedata& E)
   return;
 }     // end of Tate's algorithm
 
-// returns m = the lcm of the exponents of the component groups at all
-// bad primes (including infinity if real_too is 1), which is the lcm
-// of the Tamagawa numbers (except: 2 when component group is of type
-// 2,2).  So with no further knowledge of the MW group we know that
-// m*P is in the good-reduction subgroup for all P
+// The local Tamagawa exponent -- same as Tamagawa number unless the
+// component group is (2,2).  Use p=0 for reals
+bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p)
+{
+  if (is_zero(p)) return BIGINT(c.conncomp);
+  map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.find(p);
+  if (ri == c.reduct_array.end())
+    return BIGINT(1);
+  Reduction_type info = ri->second;
+  int cp = info.c_p;
+  if (cp!=4)
+    return BIGINT(cp);
+  // see if we have C4 or C2xC2
+  int code = info.Kcode.code;
+  return BIGINT(code%20==1? 2: 4); // Type I*m, m even: [2,2], else 4
+}
 
-bigint CurveRed::Tamagawa_exponent(int real_too)
+// The global Tamagawa exponent, i.e. the lcm of the exponents of
+// the component groups at all bad primes (including infinity if
+// real_too is 1), which is the lcm of the local Tamagawa exponents.
+// So (with no further knowledge of the MW group) we know that m*P
+// is in the good-reduction subgroup for all P, with this m.
+
+bigint global_Tamagawa_exponent(CurveRed& c, int real_too)
 {
   const bigint one = BIGINT(1);
   const bigint two = BIGINT(2);
-  bigint ans = one;
-  if(real_too && (conncomp==2)) ans = two;
+  bigint ans = ((real_too && (c.conncomp==2))? two: one);
 
-  map<bigint,Reduction_type>::const_iterator ri = reduct_array.begin();
-  for( ; ri!=reduct_array.end(); ri++)
+  for(map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.begin(); ri!=c.reduct_array.end(); ri++)
     {
-      int code=(ri->second).Kcode.code;
-      if((code%10==1)&&even((code-1)/10)) // Type I*m, m even: [2,2]
-	ans=lcm(ans,two);
-      else
-	ans=lcm(ans,BIGINT((ri->second).c_p));
+      Reduction_type info = ri->second;
+      int code = info.Kcode.code;
+      int ep = (code%20==1? 2: info.c_p); // Type I*m, m even: [2,2]
+      ans = lcm(ans,BIGINT(ep));
     }
   return ans;
 }
@@ -404,6 +418,18 @@ int prodcp(const CurveRed& c)
       ans *= (ri->second).c_p;
     }
   return ans;
+}
+
+// The local Tamagawa number.  Use p=0 for reals
+bigint local_Tamagawa_number(CurveRed& c, const bigint& p)
+{
+  return BIGINT(is_zero(p)? c.conncomp: getc_p(c,p));
+}
+
+// The global Tamagawa number, = product of local ones.
+bigint global_Tamagawa_number(CurveRed& c, int real_too)
+{
+  return BIGINT(prodcp(c) * (real_too ? c.conncomp : 1));
 }
 
 Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p)

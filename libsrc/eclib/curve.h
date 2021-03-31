@@ -293,12 +293,22 @@ public:
     // the returned value casts as a character array; to use coded as int,
     // say declared Kodaira_code Kc, just use public member Kc.code
   friend bigint Trace_Frob(CurveRed& c, const bigint& p);
-// returns m = the lcm of the exponents of the component groups at all
-// bad primes (including infinity if real_too is 1), which is the lcm
-// of the Tamagawa numbers (except: 2 when component group is of type
-// 2,2).  So with no further knowledge of the MW group we know that
-// m*P is in the good-reduction subgroup for all P
-  bigint Tamagawa_exponent(int real_too=1);
+
+  // The local Tamagawa number.  Use p=0 for reals
+  friend bigint local_Tamagawa_number(CurveRed& c, const bigint& p);
+  // The global Tamagawa number, = product of local ones.
+  friend bigint global_Tamagawa_number(CurveRed& c, int real_too);
+
+  // The local Tamagawa exponent -- same as Tamagawa number unless the
+  // component group is (2,2).  Use p=0 for reals
+  friend bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p);
+
+  // The global Tamagawa exponent, i.e. the lcm of the exponents of
+  // the component groups at all bad primes (including infinity if
+  // real_too is 1), which is the lcm of the local Tamagawa exponents.
+  // So (with no further knowledge of the MW group) we know that m*P
+  // is in the good-reduction subgroup for all P, with this m.
+  friend bigint global_Tamagawa_exponent(CurveRed& c, int real_too);
 };
 
 

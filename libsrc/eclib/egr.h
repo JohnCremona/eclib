@@ -108,14 +108,4 @@ bigint egr_index(const vector<Point>& Plist, int real_too=1);
 
 vector<vector<int> >  MapPointsToComponentGroup(const CurveRed& CR, const vector<Point>& Plist,  const bigint& p);  
 
-// returns m = the lcm of the exponents of the component groups at all
-// bad primes (including infinity if real_too is 1), which is the lcm
-// of the Tamagawa numbers (except: 2 when component group is of type
-// 2,2).  So with no further knowledge of the MW group we know that
-// m*P is in the good-reduction subgroup for all P
-inline bigint Tamagawa_exponent(const CurveRed& CR, int real_too=1)
-{
-  return ComponentGroups(CR).Tamagawa_exponent(real_too);
-}
-
 #endif
