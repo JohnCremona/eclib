@@ -1,62 +1,54 @@
-
 ======================================================
 
 E = [0,0,1,-7,36]
 4 points entered.
 
-Saturating at primes from 3 up to 101
+Saturating at primes from 3 up to 31
 Original generators:
 [ [1:-6:1] [-30:21:8] [-3:5:1] [-2:6:1] ]
-Saturation index bound (for points of good reduction)  = 82
-Reducing saturation bound from given value 101 to computed index bound 82
-Checking saturation at [ 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 ]
-Checking 2-saturation 
-Points were proved 2-saturated (max q used = 19)
-Checking 3-saturation 
-Points were proved 3-saturated (max q used = 83)
-Checking 5-saturation 
-Points were proved 5-saturated (max q used = 103)
-Checking 7-saturation 
-Points were proved 7-saturated (max q used = 233)
-Checking 11-saturation 
-Points were proved 11-saturated (max q used = 313)
-Checking 13-saturation 
-Points were proved 13-saturated (max q used = 67)
-Checking 17-saturation 
-Points were proved 17-saturated (max q used = 277)
-Checking 19-saturation 
-Points were proved 19-saturated (max q used = 557)
-Checking 23-saturation 
-Points were proved 23-saturated (max q used = 1229)
-Checking 29-saturation 
-Points were proved 29-saturated (max q used = 239)
-Checking 31-saturation 
-Points were proved 31-saturated (max q used = 557)
-Checking 37-saturation 
-Points were proved 37-saturated (max q used = 367)
-Checking 41-saturation 
-Points were proved 41-saturated (max q used = 467)
-Checking 43-saturation 
-Points were proved 43-saturated (max q used = 761)
-Checking 47-saturation 
-Points were proved 47-saturated (max q used = 1439)
-Checking 53-saturation 
-Points were proved 53-saturated (max q used = 2083)
-Checking 59-saturation 
-Points were proved 59-saturated (max q used = 1061)
-Checking 61-saturation 
-Points were proved 61-saturated (max q used = 1597)
-Checking 67-saturation 
-Points were proved 67-saturated (max q used = 331)
-Checking 71-saturation 
-Points were proved 71-saturated (max q used = 3301)
-Checking 73-saturation 
-Points were proved 73-saturated (max q used = 2749)
-Checking 79-saturation 
-Points were proved 79-saturated (max q used = 977)
 Finished saturation
 Saturation was successful: points were saturated.
-Summary of auxiliary primes used
-Number of q used: 83
-Maximum   q used: 3301 (used for p=71)
+======================================================
 
+E = [1,1,1,-218325338,-1241755642969]
+1 points entered.
+
+Saturating at all primes
+Original generators:
+[ [52725:11541787:1] ]
+Finished saturation
+Saturation was successful: points were saturated.
+======================================================
+
+E = [0,0,1,-23737,960366]
+8 points entered.
+
+Saturating at all primes
+Original generators:
+[ [36:390:1] [-87:1538:1] [181:1610:1] [-159:845:1] [-29:1274:1] [-11005:192282:125] [-3021:40175:27] [10532:78629:64] ]
+Finished saturation
+Saturation was successful:  index gain = 5.
+New generators:
+[ [36:390:1] [-87:1538:1] [181:1610:1] [7046:-2067064:2197] [-29:1274:1] [-11005:192282:125] [-3021:40175:27] [10532:78629:64] ]
+======================================================
+
+E = [0,1,0,-3532341,2671895459]
+1 points entered.
+
+Saturating at primes from 3 up to 3
+Original generators:
+[ [-70530065697753731555722521380451694847027684946481619207066358883190994719487509574998052510855059423334984274230836976431876403642:200898144915891992877832706966832248880788948705776913304828657795482993310179952832361429299128720575547455788810135494156109029455:32383162777362251978562757665550366176161600539636371030636031896984923251479838151766462063041425141567992375986724367103348073] ]
+Finished saturation
+Saturation was successful:  index gain = 3.
+New generators:
+[ [2039080769383242:43530702836852015:1260762051627] ]
+======================================================
+
+E = [0,1,1,-9872,374262]
+4 points entered.
+
+Saturating at primes from 1 up to 211
+Original generators:
+[ [57:0:1] [56:13:1] [458:19:8] [36:-259:1] ]
+Finished saturation
+Saturation was successful: points were saturated.
