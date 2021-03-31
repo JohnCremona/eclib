@@ -1,4 +1,4 @@
-Enter curve: 
+
 ======================================================
 
 E = [0,0,1,-7,36]
@@ -7,9 +7,9 @@ E = [0,0,1,-7,36]
 Saturating at primes from 3 up to 101
 Original generators:
 [ [1:-6:1] [-30:21:8] [-3:5:1] [-2:6:1] ]
-Saturation index bound (for points of good reduction)  = 86
-Reducing saturation bound from given value 101 to computed index bound 86
-Checking saturation at [ 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 ]
+Saturation index bound (for points of good reduction)  = 82
+Reducing saturation bound from given value 101 to computed index bound 82
+Checking saturation at [ 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 ]
 Checking 2-saturation 
 Points were proved 2-saturated (max q used = 19)
 Checking 3-saturation 
@@ -54,11 +54,9 @@ Checking 73-saturation
 Points were proved 73-saturated (max q used = 2749)
 Checking 79-saturation 
 Points were proved 79-saturated (max q used = 977)
-Checking 83-saturation 
-Points were proved 83-saturated (max q used = 2311)
 Finished saturation
 Saturation was successful: points were saturated.
 Summary of auxiliary primes used
-Number of q used: 87
+Number of q used: 83
 Maximum   q used: 3301 (used for p=71)
-Enter curve: 
+
