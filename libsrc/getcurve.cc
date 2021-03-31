@@ -26,7 +26,7 @@
 int getcurve(Curvedata& CD, int verb)
 {
   Curve C0;
-  if(verb) cout  << "Enter curve: ";
+  if(verb) cerr  << "Enter curve: ";
   cin>>ws;  if(cin.eof()) return 0; // quit if EOF reached
   cin >> C0;
   if (verb) cout << endl;

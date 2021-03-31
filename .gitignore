@@ -124,6 +124,7 @@ tests/torsion
 tests/tp2points
 tests/tperiods
 tests/tpoints
+tests/tsatbnd
 tests/tsat
 tests/tsat2
 tests/tsat3

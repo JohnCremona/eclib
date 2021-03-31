@@ -43,9 +43,9 @@ bigfloat lower_height_bound_alt(const Curvedata& CD);
 bigfloat lower_height_bound_search(const Curvedata& CD, const bigfloat& reg);
 bigfloat lattice_const(int r);
 
-// returns lower bound for height of non-torsion points of good
-// reduction, following Cremona & Siksek in ANTS7
-bigfloat egr_lower_height_bound(const Curvedata& CD);
+// returns lower bound for height of non-torsion points, following
+// Cremona & Siksek in ANTS7
+bigfloat lower_height_bound(const Curvedata& CD, int egr);
 
 // Class to find point of minimal height by searching.
 

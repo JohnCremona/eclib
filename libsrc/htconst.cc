@@ -1102,6 +1102,25 @@ inline int in_fund_region(const bigcomplex& z)
 
 //#define HTB_DEBUG
 
+
+// returns lower bound for height of non-torsion points, following
+// Cremona & Siksek in ANTS7.  If egr==1, return a lower bound for the
+// height of nontorsion pints with everywhere good reduction.
+
+bigfloat lower_height_bound(const Curvedata& CD, int egr)
+{
+  CurveRed CR(CD);
+  CurveHeightConst CHC(CR);
+  CHC.compute();
+  bigfloat lambda=CHC.get_value(); // assumes egr
+  if (!egr)
+    {
+      long c = I2long(CR.Tamagawa_exponent());
+      lambda /= (c*c);
+    }
+  return lambda;
+}
+
 // This gives a lower bound on non-torsion points; experimental, not
 // very good (and not always positive?!!
 

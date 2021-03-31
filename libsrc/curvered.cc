@@ -333,6 +333,30 @@ CurveRed::CurveRed(const Curvedata& E)
   return;
 }     // end of Tate's algorithm
 
+// returns m = the lcm of the exponents of the component groups at all
+// bad primes (including infinity if real_too is 1), which is the lcm
+// of the Tamagawa numbers (except: 2 when component group is of type
+// 2,2).  So with no further knowledge of the MW group we know that
+// m*P is in the good-reduction subgroup for all P
+
+bigint CurveRed::Tamagawa_exponent(int real_too)
+{
+  const bigint one = BIGINT(1);
+  const bigint two = BIGINT(2);
+  bigint ans = one;
+  if(real_too && (conncomp==2)) ans = two;
+
+  map<bigint,Reduction_type>::const_iterator ri = reduct_array.begin();
+  for( ; ri!=reduct_array.end(); ri++)
+    {
+      int code=(ri->second).Kcode.code;
+      if((code%10==1)&&even((code-1)/10)) // Type I*m, m even: [2,2]
+	ans=lcm(ans,two);
+      else
+	ans=lcm(ans,BIGINT((ri->second).c_p));
+    }
+  return ans;
+}
 
 // CurveRed member access friend functions:
 

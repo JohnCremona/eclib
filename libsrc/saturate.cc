@@ -630,7 +630,7 @@ long index_bound(vector<Point>& points,
 
   Curvedata C = points[0].getcurve();
   if(verbose)
-    cout<<"Entering index_bound("<<(Curve)(C)<<")"<<endl;
+    cout<<"Entering index_bound("<<(Curve)(C)<<", egr="<<egr<<")"<<endl;
 
   bigfloat reg = regulator(points);
   if(verbose)
@@ -658,26 +658,15 @@ long index_bound(vector<Point>& points,
   bigfloat lambda=index_bound(C,points,egr,verbose);
   if(verbose) cout<<"lambda (via search) = "<<lambda<<endl;
 #else // use ANTS7 strategy instead to get lower bound for egr height
-  CurveRed CR(C);
-  CurveHeightConst CHC(CR);
-  CHC.compute();
-  bigfloat lambda=CHC.get_value();
+  bigfloat lambda = lower_height_bound(C, egr);
   if(verbose) cout<<"lambda (via ANTS7) = "<<lambda<<endl;
 #endif
-  if(!egr) 
-    {
-      bigfloat tam = I2bigfloat(Tamagawa_exponent(C));
-      lambda/=(tam*tam);
-    }
+  // no need to use egr_reg in next line since we multiply by index
   bigfloat ib = index*sqrt(reg*pow(gamma/lambda,npts));
-  if(verbose) 
-    cout<<"raw index bound = "<<ib <<endl;
   long ans = I2long(Ifloor(ib+0.1));  // be careful about rounding errors!
   if(ans<2) ans=1;  // In case 0.9999 has rounded down to 0
-  if(verbose) 
-    {
-      cout<<"Saturation index bound = "<<ans<<endl;
-    }
+  if(verbose)
+    cout<<"Saturation index bound " << ib << ", rounds down to "<<ans<<endl;
   return ans;
 }  // end of index_bound()
 
