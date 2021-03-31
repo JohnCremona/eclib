@@ -658,7 +658,8 @@ long index_bound(vector<Point>& points,
   bigfloat lambda=index_bound(C,points,egr,verbose);
   if(verbose) cout<<"lambda (via search) = "<<lambda<<endl;
 #else // use ANTS7 strategy instead to get lower bound for egr height
-  CurveHeightConst CHC(C);
+  CurveRed CR(C);
+  CurveHeightConst CHC(CR);
   CHC.compute();
   bigfloat lambda=CHC.get_value();
   if(verbose) cout<<"lambda (via ANTS7) = "<<lambda<<endl;
@@ -675,7 +676,7 @@ long index_bound(vector<Point>& points,
   if(ans<2) ans=1;  // In case 0.9999 has rounded down to 0
   if(verbose) 
     {
-      cout<<"Saturation index bound = "<<ans;
+      cout<<"Saturation index bound = "<<ans<<endl;
     }
   return ans;
 }  // end of index_bound()

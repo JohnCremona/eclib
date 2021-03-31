@@ -1477,46 +1477,116 @@ Interval01 operator+(const Interval01& I, const bigfloat& shift)
   return Interval01(I.lh+shift,I.rh+shift);
 }
 
+////////////////////////////
+//
+// Local exponent function
+//
+////////////////////////////
+
+// returns the exponent of the reduction of CD mod p (i.e. of E^0(Qp)/E^1(Qp))
+//
+// NB for good reduction and p>3 we can use the curvemodqbasis class,
+// but that is not implemented yet for p=2, 3.  We also need special
+// code for bad reduction.
+
+long exponent(CurveRed& CR, long p)
+{
+  bigint pp = BIGINT(p);
+  int ord_p_N = getord_p_N(CR, pp);
+  long np;
+  if (ord_p_N>1) // additive
+    {
+      return p;
+    }
+  if (ord_p_N==1) // multiplicative
+    {
+      if (p>2)
+        {
+          return p - legendre(getb2(CR), p);
+        }
+      else
+        {
+          bigint a1, a2, a3, a4, a6;
+          CR.getai(a1, a2, a3, a4, a6);
+          return (I2long(a1*a2) % 2 == 0? 3: 1);
+        }
+    }
+  // good reduction
+  if (p<5)
+    {
+      np = 1 + p - I2long(Trace_Frob(CR,pp));
+      if (p==2 || np!=4)
+        return np; // exponent=order
+      // now p==3, and order=4, test whether we have full 2-torsion
+      long b2 = I2long(getb2(CR))%3,
+        b4 = posmod(I2long(getb2(CR)),3),
+        b6 = I2long(getb2(CR))%3;
+      return (((b2==0) && (b4==1) && (b6==0))? 2 : 4);
+    }
+  // now p>=5, good reduction
+  curvemodqbasis Emodq(CR,pp);
+  return I2long(Emodq.get_exponent());
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Implementation of class CurveHeightConst
 //
 ///////////////////////////////////////////////////////////////////////
 
-CurveHeightConst::CurveHeightConst(const Curvedata& CD)
-  : Curvedata(CD), Cperiods(CD)
+CurveHeightConst::CurveHeightConst(CurveRed& CR)
+  : CurveRed(CR), Cperiods(CR)
 {
   c = to_bigfloat(egr_height_constant(*this)); // =-log(alpha) in ANTS7
   e3 = get_e3();
   n_max=10;
-  n_ann=25; // i.e. all p<100
-  ann = annihilators(*this,n_ann);
 #ifdef debugLB
   cout<<"e3 = "<<e3<<endl;
   cout<<"archContrib = log(epsilon)/3 = "<<c<<endl;
-  cout<<"annihilators = "<<ann<<endl;
   cout<<"n_max = "<<n_max<<endl;
 #endif
 }
 
-bigfloat CurveHeightConst::D(const long n) const // "denomContrib"
+long CurveHeightConst::e_p(long p)
 {
-  bigfloat denomContrib = to_bigfloat(0);  // = D_E(n) in the paper
-  primevar pr; 
-  long pmax=(n+1)*(n+1), p=pr;
-  for(int i=0; (i<n_ann)&&(p<pmax); i++, pr++)       
-    if(n%ann[i]==0) 
-      {
-#if(0)
-//#ifdef debugLB
-	cout<<"i="<<i<<", p="<<p
-	    <<", ann[i]="<<ann[i]<<"; adding "<<(2*log(p))
-	    <<" to denomContrib"<<endl;
+  map<long, long>::iterator pe = ann.find(p);
+  if (pe!=ann.end())
+    {
+      return pe->second;
+    }
+  long e = exponent(*this,p);
+  ann[p] = e;
+  return e;
+}
+
+bigfloat CurveHeightConst::D(long n) // D_E(n) in the paper
+{
+  map<long, bigfloat>::iterator DEn = DE.find(n);
+  if (DEn!=DE.end())
+    {
+#ifdef debugLB
+      cout << "stored D("<<n<<") = "<< DEn->second <<endl;
 #endif
-	denomContrib+=2*log((double)p);
-	pr++; p=(long)pr;
-      }  
-  return denomContrib;
+      return DEn->second;
+    }
+  // else compute and store it:
+  bigfloat ans = to_bigfloat(0);
+  primevar pr;
+  long p, e, pmax = (n+1)*(n+1);
+  for (p=pr.value(); p<pmax; pr++, p=pr.value())
+    {
+      e = e_p(p);
+#ifdef debugLB
+      //      cout << " p="<<p<<", e_p="<<e<<endl;
+#endif
+      if(divides(e, n))
+        ans+=2*(1+val(p,n/e))*log(p);
+    }
+#ifdef debugLB
+  cout << "D("<<n<<") = "<< ans<<endl;
+#endif
+  DE[n] = ans;
+  return ans;
 }
 
 void CurveHeightConst::compute_phase1()
@@ -1707,25 +1777,6 @@ bigfloat CurveHeightConst::psi(const bigfloat& x)
   bigcomplex z = pointtoz(x,y);
   //  cout<<"z = "<<z<<endl;
   return real(z/get_real_period()); // in [0.5,1]
-}
-
-// returns the order of the reduction of CD mod p (i.e. of E^0(Qp)/E^1(Qp))
-long annihilator(CurveRed& CR, long p)
-{
-  bigint pp = BIGINT(p);
-  bigint tr = Trace_Frob(CR,pp);
-  long ans = p-I2long(tr);
-  if(getord_p_N(CR,pp)==0) ans++; 
-  return ans;
-}
-
-vector<long> annihilators(const Curvedata& CD, long n)
-{
-  vector<long> ans;
-  primevar pr;
-  CurveRed CR(CD);
-  while(n--) {ans.push_back(annihilator(CR,(long)pr)); pr++;}
-  return ans;
 }
 
 #if(0) // old code using x-intervals instead of [0,1]-intervals

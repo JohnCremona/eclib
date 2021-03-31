@@ -132,20 +132,19 @@ inline Interval01 intersect(const Interval01& I, const Interval01& J)
 vector<Interval01> intersect(const vector<Interval01>& L1, 
 			     const vector<Interval01>& L2);
 
-vector<long> annihilators(const Curvedata& CD, long n);
-
 // Class to compute lower bound for height of non-torsion points of good
 // reduction, following Cremona & Siksek in ANTS7
 
-class CurveHeightConst : public Curvedata, Cperiods {
+class CurveHeightConst : public CurveRed, Cperiods {
   bigfloat c;    // archimidean constribution
   bigfloat e3;   // largest (or only) real root
   bigfloat lower, upper;
-  int n_max; 
-  int n_ann;
-  vector<long> ann;  // indices of E0/E1 for first few primes
-  bigfloat D(const long n) const;  // "denomContrib"
-  bigfloat Bnmu(const long n, const bigfloat& mu) const // = B_n(mu) 
+  int n_max;
+  long e_p(long p); // fetch /compute exponent at p
+  map<long,long> ann;  // stored exponents of E0/E1 for first few primes
+  bigfloat D(long n);  // fetch /compute denomContrib at n
+  map<long,bigfloat> DE; // stored D_E(n) values
+  bigfloat Bnmu(long n, const bigfloat& mu) // = B_n(mu)
   { return exp(n*n*mu+c-D(n));  }
   int test_target(const bigfloat& target, long k);
   vector<Interval> canonicalHeightInterval(const bigfloat& target, long k);
@@ -165,7 +164,7 @@ class CurveHeightConst : public Curvedata, Cperiods {
   bigcomplex pointtoz(const bigfloat& x, const bigfloat& y)
   {return ellpointtoz(*this,*this,x,y);}
 public:
-  CurveHeightConst(const Curvedata& CD);
+  CurveHeightConst(CurveRed& CR);
   void compute() {compute_phase1(); compute_phase2(); }
   bigfloat get_value() const {return lower;} 
 };

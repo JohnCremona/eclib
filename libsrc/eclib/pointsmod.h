@@ -187,6 +187,7 @@ class curvemodqbasis : public curvemodq {
   //  ~curvemodqbasis(void) {;}
 
   bigint get_order() {return n;}
+  bigint get_exponent() {return n1;}
   pointmodq get_gen(int i);
 
   vector<pointmodq> get_pbasis(int p);
