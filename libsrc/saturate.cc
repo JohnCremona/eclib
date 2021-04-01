@@ -46,7 +46,7 @@ void saturator::reset_points(const vector<Point>& PP)
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
-  the_index_bound = 0;
+  the_index_bound = BIGINT(0);
 }
 
 // initialize index bound
@@ -56,9 +56,9 @@ void saturator::set_index_bound(int egr)
 }
 
 // return current index bound (compute if necessary)
-long saturator::get_index_bound(int egr)
+bigint saturator::get_index_bound(int egr)
 {
-  if (the_index_bound==0)
+  if (is_zero(the_index_bound))
     set_index_bound(egr);
   return the_index_bound;
 }
@@ -445,7 +445,7 @@ int saturator::saturate(vector<long>& unsat, long& index,
   while(pr.value()<sat_low_bd) pr++;
   int p=pr.value();
 
-  long ib = get_index_bound(egr);
+  bigint ib = get_index_bound(egr);
   if(verbose)
     {
       cout<<"Saturation index bound ";
@@ -621,12 +621,12 @@ int saturate_points(Curvedata& C, vector<Point>& points,
 // points
 //
 
-long index_bound(vector<Point>& points,
+bigint index_bound(vector<Point>& points,
 		   int egr, int verbose)
 {
   int npts = points.size();
   if (npts==0)
-    return 1;
+    return BIGINT(1);
 
   Curvedata C = points[0].getcurve();
   if(verbose)
@@ -663,8 +663,8 @@ long index_bound(vector<Point>& points,
 #endif
   // no need to use egr_reg in next line since we multiply by index
   bigfloat ib = index*sqrt(reg*pow(gamma/lambda,npts));
-  long ans = I2long(Ifloor(ib+0.1));  // be careful about rounding errors!
-  if(ans<2) ans=1;  // In case 0.9999 has rounded down to 0
+  bigint ans = Ifloor(ib+0.1);  // be careful about rounding errors!
+  if(ans<2) ans=BIGINT(1);  // In case 0.9999 has rounded down to 0
   if(verbose)
     cout<<"Saturation index bound " << ib << ", rounds down to "<<ans<<endl;
   return ans;

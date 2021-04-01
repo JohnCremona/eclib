@@ -2,34 +2,34 @@
 
 E = [0,0,1,-7,36]
 lower height bound (egr points): 0.210224103813429
-lower height bound (all points): 0.210224103813429
 bound on saturation index (egr points): 82
+lower height bound (all points): 0.210224103813429
 bound on saturation index (all points): 82
 ======================================================
 
 E = [1,1,1,-218325338,-1241755642969]
 lower height bound (egr points): 0.942172089516167
-lower height bound (all points): 0.00654286173275116
 bound on saturation index (egr points): 16
+lower height bound (all points): 0.00654286173275116
 bound on saturation index (all points): 33
 ======================================================
 
 E = [0,0,1,-23737,960366]
 lower height bound (egr points): 4.84538508610588
-lower height bound (all points): 1.21134627152647
 bound on saturation index (egr points): 29
+lower height bound (all points): 1.21134627152647
 bound on saturation index (all points): 3793
 ======================================================
 
 E = [0,1,0,-3532341,2671895459]
 lower height bound (egr points): 1.46686324452063
-lower height bound (all points): 0.366715811130157
 bound on saturation index (egr points): 23
+lower height bound (all points): 0.366715811130157
 bound on saturation index (all points): 23
 ======================================================
 
 E = [0,1,1,-9872,374262]
 lower height bound (egr points): 0.0251639114367071
-lower height bound (all points): 0.0251639114367071
 bound on saturation index (egr points): 11816
+lower height bound (all points): 0.0251639114367071
 bound on saturation index (all points): 11816

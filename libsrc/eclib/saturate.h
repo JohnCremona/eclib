@@ -52,7 +52,7 @@ const long SAT_MAX_PRIME = 100000;
 // We can recover the curve from the points, unless the list is empty
 // in which case the bound is 1.
 
-long index_bound(vector<Point>& points, int egr=1, int verbose=0);
+bigint index_bound(vector<Point>& points, int egr=1, int verbose=0);
 
 // Tamagawa primes: primes dividing any Tamagawa number
 vector<long> tamagawa_primes(const Curvedata& C);
@@ -66,7 +66,7 @@ private:
   vector<Point> Plistx;  // the points plus p-cotorsion
   vector<Point> AllTorsion; // all torsion on E
   ZPoly pdivpol;            // p-division poly (not always used)
-  long the_index_bound;     // set initially, but may get reduced
+  bigint the_index_bound;     // set initially, but may get reduced
   vector<long> tam_primes;  // primes dividing any Tamagawa index
   int rank;             // = #Plistx
   bigint disc;          // discriminant of E
@@ -98,21 +98,21 @@ public:
       AllTorsion = torsion_points(*EE);
       tam_primes = tamagawa_primes(*E);
       maxq = 0;
-      the_index_bound = 0; // means not set
+      the_index_bound = BIGINT(0); // means not set
     }
   ~saturator() {; }
 
   // initialize point list
   void set_points(const vector<Point>& PP) {
     Plist = PP;
-    the_index_bound = 0;
+    the_index_bound = BIGINT(0);
   }
 
   // initialize index bound
   void set_index_bound(int egr=1);
 
   // return current index bound (compute if necessary)
-  long get_index_bound(int egr=1);
+  bigint get_index_bound(int egr=1);
 
   // test whether p is greater than the saturation index and not a Tamagawa prime
   int trivially_saturated(long p);

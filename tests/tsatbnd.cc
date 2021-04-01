@@ -55,12 +55,6 @@ int main()
       cout << "======================================================\n\n";
       cout << "E = " << (Curve)C <<endl;
 
-      Curvedata CD(C);
-      bigfloat lambda_egr = lower_height_bound(CD, 1);
-      cout << "lower height bound (egr points): "<< lambda_egr <<endl;
-      bigfloat lambda_all = lower_height_bound(CD, 0);
-      cout << "lower height bound (all points): "<< lambda_all <<endl;
-
       Point P(C);
       cerr<<"enter number of points: ";      cin >> npts;
       vector<Point> points; points.reserve(npts);
@@ -74,9 +68,15 @@ int main()
         }
       cerr<<npts<<" points entered.\n";
 
-      long egr_bound = index_bound(points, 1, verbose);
+      Curvedata CD(C);
+      bigfloat lambda_egr = lower_height_bound(CD, 1);
+      cout << "lower height bound (egr points): "<< lambda_egr <<endl;
+      bigint egr_bound = index_bound(points, 1, verbose);
       cout << "bound on saturation index (egr points): "<< egr_bound <<endl;
-      long all_bound = index_bound(points, 0, verbose);
+
+      bigfloat lambda_all = lower_height_bound(CD, 0);
+      cout << "lower height bound (all points): "<< lambda_all <<endl;
+      bigint all_bound = index_bound(points, 0, verbose);
       cout << "bound on saturation index (all points): "<< all_bound <<endl;
     }
 }
