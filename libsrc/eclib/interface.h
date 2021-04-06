@@ -238,9 +238,11 @@ inline CC &operator /=(CC &a, const CC &b)
 // (default 10).  See www.shoup.net/ntl/doc/tour-ex6.html and
 // www.shoup.net/ntl/doc/RR.cpp.html.
 
-// Set internal precision to n bits and output precision to (0.3*n)-1 decimal places
+const double LOG_10_2=0.30102999566398114L;
+
+// Set internal precision to n bits and output precision to (log_10(2)*n)-1 decimal places
 inline void set_precision(long n)
-{RR::SetPrecision(n); RR::SetOutputPrecision(long(0.3*n)-1);}
+{RR::SetPrecision(n); RR::SetOutputPrecision(long(LOG_10_2*n)-1);}
 
 // Mostly for backward compatibility (used in saturate.cc) or for
 // temporarily changing internal precision when no output is relevant:
@@ -252,7 +254,7 @@ inline void set_precision(const string prompt)
   {long n; cerr<<prompt<<": "; cin>>n; set_precision(n);}
 
 // read current precision converted to decimal (approximately)
-inline long decimal_precision() {return long(RR::precision()*0.3);}
+inline long decimal_precision() {return long(RR::precision()*LOG_10_2);}
 
 // read current bit precision
 inline long bit_precision() {return RR::precision();}
@@ -289,10 +291,10 @@ inline int is_zero(double x) {return fabs(x)<1e-15;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
 
 // We cannot set internal bit precision in this mode, so we just set the output decimal precision
-inline void set_precision(long n) {cout.precision(min(15,long(0.3*n)));}
+inline void set_precision(long n) {cout.precision(min(15,long(LOG_10_2*n)));}
 inline void set_precision(const string prompt)  {cout.precision(15);}
-#define Pi()    3.1415926535897932384626433832795028841
-#define Euler() (0.57721566490153286060651209008240243104)
+#define Pi()    (3.1415926535897932384626433832795028841L)
+#define Euler() (0.57721566490153286060651209008240243104L)
 
 inline double round(double x) {return floor(x+0.5);}
 inline double roundup(double x) {return ceil(x-0.5);}
