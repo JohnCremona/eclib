@@ -64,6 +64,8 @@
 #define MAXLONG numeric_limits<long>::max()
 #endif
 
+const double LOG_10_2=0.30102999566398114L;
+
 // integers and rationals
 
 // Some of the following were defined for compatibility with LiDIA, which is no longer supported
@@ -237,8 +239,6 @@ inline CC &operator /=(CC &a, const CC &b)
 // RR:SetOutputPrecision(d) sets the output to d decimal places
 // (default 10).  See www.shoup.net/ntl/doc/tour-ex6.html and
 // www.shoup.net/ntl/doc/RR.cpp.html.
-
-const double LOG_10_2=0.30102999566398114L;
 
 // Set internal precision to n bits and output precision to (log_10(2)*n)-1 decimal places
 inline void set_precision(long n)
