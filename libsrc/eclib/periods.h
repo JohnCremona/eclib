@@ -27,12 +27,6 @@
 #include <eclib/newforms.h>
 
 #define PI Pi()
-//#ifndef TWOPI
-//#define TWOPI ((2*PI))
-//#endif
-//#ifndef LOG10
-#define LOG10 log(10)
-//#endif
 const bigfloat eps = to_bigfloat(1.0e-16);   // ?? mindouble;
 #define EULERGAMMA Euler()
  
