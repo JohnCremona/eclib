@@ -293,8 +293,8 @@ inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
 // We cannot set internal bit precision in this mode, so we just set the output decimal precision
 inline void set_precision(long n) {cout.precision(min(15,long(LOG_10_2*n)));}
 inline void set_precision(const string prompt)  {cout.precision(15);}
-#define Pi()    (3.1415926535897932384626433832795028841L)
-#define Euler() (0.57721566490153286060651209008240243104L)
+#define Pi()    (double)(3.1415926535897932384626433832795028841)
+#define Euler() (double)(0.57721566490153286060651209008240243104)
 
 inline double round(double x) {return floor(x+0.5);}
 inline double roundup(double x) {return ceil(x-0.5);}
