@@ -56,16 +56,16 @@ int main(void)
  //#ifdef SINGLE
  detail=2;
  //#else
- cout << "See details? "; cin>>detail;
+ cerr << "See details? "; cin>>detail;
  //#endif
- cout << "Enter max d: ";  cin>>dmax;
- cout << "Enter max scaling factor for periods: "; cin>>maxn;
+ cerr << "Enter max d: ";  cin>>dmax;
+ cerr << "Enter max scaling factor for periods: "; cin>>maxn;
 #ifdef AUTOLOOP
- cout<<"Enter first and last N: ";cin>>n>>limit; 
+ cerr<<"Enter first and last N: ";cin>>n>>limit; 
  n--; cout<<"\n";
  while (n<limit) { n++;
 #else
- while (n>1) { cout<<"Enter level: "; cin>>n;
+ while (n>1) { cerr<<"Enter level: "; cin>>n;
 #endif
  if (n>1)
 {
@@ -175,7 +175,7 @@ int main(void)
    }       // end of forms loop
  if (anyfound)
    {
-     cout<<"Store newform data? "; cin>>dump;
+     cerr<<"Store newform data? "; cin>>dump;
      if(dump) // dump complete data file into (S)NF_DIR/x$N.
        {
          nf.output_to_file(1,0);
