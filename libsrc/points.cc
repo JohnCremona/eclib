@@ -300,6 +300,27 @@ vector<Point> points_from_x(Curvedata &E, const bigrational& x)
   return ans;
 }
 
+// comparison function for sorting torsion points (on the same curve)
+// We sort by (1) order of point, (2) denominator, (3) X-coordinate,
+// (4) y-coordinate
+
+struct Point_cmp : public binary_function<Point, Point, bool> {
+  bool operator()(Point& P, Point& Q)
+  {
+    int s = order(P)-order(Q);
+    if(s) return (s<0); // true if P has smaller order
+    bigint t = P.getZ()-Q.getZ();
+    if(!is_zero(t)) return (t<0); // true if P has smaller Z (denominator)
+    t = P.getX()-Q.getX();
+    if(!is_zero(t)) return (t<0); // true if P has smaller X
+    t = P.getY()-Q.getY();
+    return (t<0); // true if P has smaller Y
+  }
+};
+
+// Now to sort a list Plist of points in place, do
+// ::sort(Plist.begin(), Plist.end(), Point_cmp());
+
 long Curvedata::get_ntorsion()
 {
   if(ntorsion==0)
@@ -379,6 +400,7 @@ vector<Point> two_torsion(Curvedata& E)
       else 
 	two_tors.push_back(Point(E,ei,BIGINT(0),BIGINT(1)));
     }
+  ::sort(two_tors.begin(), two_tors.end(), Point_cmp());
 #ifdef DEBUG_TORSION
   cout<<"\ntwo_torsion() returning "<<two_tors<<"\n";
 #endif
@@ -441,6 +463,7 @@ vector<Point> three_torsion(Curvedata& E)
 	    }
 	}
     }
+  ::sort(three_tors.begin(), three_tors.end(), Point_cmp());
 #ifdef DEBUG_TORSION
   cout<<"\nthree_torsion() returning "<<three_tors<<"\n";
 #endif
@@ -573,7 +596,8 @@ vector<Point> torsion_points(Curvedata& E)  // After Darrin Doud, adapted by JC
 #endif
 	}
     }
-  return points;
+  ::sort(points.begin(), points.end(), Point_cmp());
+ return points;
 }
 
 //#define DEBUG_DIVISION_POINTS 1
