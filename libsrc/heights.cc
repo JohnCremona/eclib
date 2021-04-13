@@ -380,7 +380,6 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
   bigfloat reg = to_bigfloat(1) ;
   for (d = 0; d < n; d++) reg *= pair[d][d] ;
   return reg ;
-}
 #endif
 }
 
