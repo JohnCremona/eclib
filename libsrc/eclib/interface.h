@@ -302,7 +302,10 @@ inline void Iasb(long& a, double x) {a = (long)x;}
 // return value is 1 for success, else 0
 int longify(double x, long& a, int rounding=0);
 inline int doublify(const bigfloat& x, double& d) {d=x; return 0;}
-
+inline double inv(double x) {return 1/x;}
+inline double sqr(double x) {return x*x;}
+inline double power2_RR(long e) {return 1<<e;}
+inline double power(double x, long n) {return pow(x,n);}
 
 inline double to_bigfloat(const int& n) {return double(n);}
 inline double to_bigfloat(const long& n) {return double(n);}

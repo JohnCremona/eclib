@@ -66,7 +66,7 @@ check_procs: procs_tests
 
 ################ QCURVES #############################################
 
-QCURVES_TESTS = tcurve tpoints theight thtconst tegr telog tdivpol tperiods tsatbnd tsat tsat2 tsat3 conductor tate torsion twist allisog checkgens
+QCURVES_TESTS = tcurve tpoints theight thtconst tlatconst tegr telog tdivpol tperiods tsatbnd tsat tsat2 tsat3 conductor tate torsion twist allisog checkgens
 QCURVES_TESTS_SUFFIXED = $(QCURVES_TESTS:=$(EXEEXT))
 qcurves_tests: $(QCURVES_TESTS_SUFFIXED)
 
@@ -74,6 +74,7 @@ tcurve_SOURCES=tcurve.cc
 tpoints_SOURCES=tpoints.cc
 theight_SOURCES=theight.cc
 thtconst_SOURCES=thtconst.cc
+tlatconst_SOURCES=tlatconst.cc
 tegr_SOURCES=tegr.cc
 telog_SOURCES=telog.cc
 tdivpol_SOURCES=tdivpol.cc

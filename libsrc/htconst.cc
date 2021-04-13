@@ -1236,71 +1236,58 @@ bigfloat lower_height_bound_search(const Curvedata& CD, const bigfloat& reg)
 
 static long fact_tab[13] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600};
 
-long factorial(long n) // OK for n up to 12
+bigfloat factorial(long n)
 {
-  if(n<2) return 1;
-  if(n>12) 
-    {
-      cerr<<"factorial(long) called with n = "<<n<<" -- too big (n must be <=12 to fit in a long int)!"<<endl;
-      return 0;
-    }
-  return fact_tab[n];
-}
-
-bigfloat factorial(bigfloat n)
-{
-  if(n<2) return to_bigfloat(1);
+  if(n<2)
+    return to_bigfloat(1);
   if(n<13)
-    {
-      long nn;
-      int ok = longify(n,nn);
-      return to_bigfloat(fact_tab[nn]);
-    }
+    return to_bigfloat(fact_tab[n]);
   return n*factorial(n-1);
 }
 
-bigfloat lattice_const(int r)
+bigfloat Gamma_n(long n) // Gamma(n) = (n-1)!
 {
-  static bigfloat one   = to_bigfloat(1);
-  static bigfloat two   = to_bigfloat(2);
-  static bigfloat three = to_bigfloat(3);
-  static bigfloat four  = to_bigfloat(4);
-  static bigfloat five  = to_bigfloat(5);
-  static bigfloat six   = to_bigfloat(6);
-  static bigfloat seven = to_bigfloat(7);
-  static bigfloat c1 = one;
-  static bigfloat c2 = sqrt(four/three);
-  static bigfloat c3 = pow(two,one/three);
-  static bigfloat c4 = sqrt(two);
-  static bigfloat c5 = pow(two,three/five);
-  static bigfloat c6 = two/pow(three,one/six);
-  static bigfloat c7 = pow(two,six/seven);
-  static bigfloat c8 = two;
-  bigfloat xr, cr, rootpi = sqrt(Pi());
-  switch(r) {
-  case 0: return c1;
-  case 1: return c1;
-  case 2: return c2;
-  case 3: return c3;
-  case 4: return c4;
-  case 5: return c5;
-  case 6: return c6;
-  case 7: return c7;
-  case 8: return c8;
-  default:
+  return factorial(n-1);
+}
+
+bigfloat Gamma_n_plus_half(long n) // Gamma(n+1/2) = (2n)!sqrt(pi) / (4^n*n!)
+{
+  // cout<<"n = "<<n<<endl;
+  // cout<<"factorial(n) = "<< factorial(n) <<endl;
+  // cout<<"factorial(2*n) = "<< factorial(2*n) <<endl;
+  // cout<<"2^(2*n) = "<< power2_RR(2*n) <<endl;
+  // cout<<"sqrt(pi) = "<< sqrt(Pi()) <<endl;
+  return sqrt(Pi()) * factorial(2*n) / (power2_RR(2*n) * factorial(n));
+}
+
+static long gam_tab[9] = {1, 1, 4, 2, 4, 8, 64, 64, 256};
+
+bigfloat lattice_const(int r)
+// Return gamma_r such that for a lattice of rank r and determinant D,
+// the shortest nonzero vector has length at most gamma_r*D^(1/r).
+//
+// for   r    = 1  2  3 4 5 6     7   8
+//  we have
+//  gamma_r^r = 1 4/3 2 4 8 64/3 64 256
+//
+// while for larger r we use Blichfeld's bound
+// (2/pi)*Gamma(2+r/2)^(2/r) (see Wikipedia
+// https://en.wikipedia.org/wiki/Hermite_constant)
+//
+//
+{
+  if (r<=8)
     {
-      xr = to_bigfloat(r);
-      if(r%2) // r is odd
-	{
-	  cr = pow(rootpi, one-xr) * factorial(xr) / (factorial((xr-1)/2));
-	}
-      else // r is even
-	{
-	  cr = pow(two/rootpi, xr) * factorial(xr/2);
-	}
-      return pow(cr, one/xr);
+      bigfloat gam = to_bigfloat(gam_tab[r]);
+      if (r%4==2)
+        gam /= to_bigfloat(3);
+      return pow(gam, inv(to_bigfloat(r)));
     }
-  }
+  else
+    {
+      bigfloat gam = (r%2? Gamma_n_plus_half((r+3)/2): Gamma_n(2+r/2));
+      return 2 * inv(Pi()) * pow(sqr(gam), inv(to_bigfloat(r)));
+    }
 }
 
 point_min_height_finder::point_min_height_finder(Curvedata* EE, int egr, int verb)
