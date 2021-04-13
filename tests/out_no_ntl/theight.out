@@ -1,12 +1,6 @@
 Computed 78519 primes, largest is 1000253
 Extra primes in list: 
-Input a curve: Curve [1,0,0,-9632000,11505156432]
-b2 = 1	 b4 = -19264000	 b6 = 46020625728	 b8 = -92763918843568
-c4 = 462336001		c6 = -9941148661249
-disc = 1806000	(# real components = 2)
-#torsion not yet computed
-
-Input a point on curve, [0] to finish:
+Curve [1,0,0,-9632000,11505156432]
 Point [1794:-732:1] has infinite order
 Local heights:
 Sum so far =	0
@@ -21,8 +15,41 @@ R:		2.68536
 
 Sum of local heights: 1.09254
 global height of [1794:-732:1] is 1.09254
-Input a point on curve, [0] to finish:
-Input a curve: 
+Curve [0,1,0,-19357973048906456166239827272707359553313344,21187731957757821187375878909257489490487412099497964528006317056]
+Input curve is not minimal at [ 2 ]
+Heights will be computed after mapping points to the minimal model [1,0,0,-1209873315556653510389989204544209972082084,331058311839965956052748107957148273288865814054655695750098704]
+Point [11376724821019368394185473144824:531128848935479591898724774494856605576120:2212245127] has infinite order
+Local heights:
+1303:		14.3448
+Sum so far =	14.3448
+log(den(x(P))) = 14.3448
+2:		-0.649825
+3:		-3.20429
+7:		-1.94591
+13:		-2.56495
+29:		-1.68365
+31:		-2.57549
+43:		-1.8806
+73:		0
+79:		-3.27709
+83:		0
+89:		0
+151:		0
+199:		-2.64665
+239:		0
+263:		0
+601:		-6.39859
+617:		0
+1433:		0
+3449:		-4.07292
+6199:		-4.36607
+1607849:		-7.1452
+Sum so far =	-28.0664
+R:		48.7913
+
+Sum of local heights: 20.725
+global height of [11376724821019368394185473144824:531128848935479591898724774494856605576120:2212245127] is 20.725
+
 
 Testing points on the curve [0,0,1,-7,6]
 The points are P0 = [0:2:1], P1 = [1:0:1], and P2 = [2:0:1]
