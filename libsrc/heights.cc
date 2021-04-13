@@ -22,8 +22,11 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/points.h>  // which includes curve.h
-
+#ifdef MPFP  // use NTL to compute the determinant
+#include <NTL/mat_RR.h>
+#else
 #define MAX_RANK_REG 50 // cannot ask for regulator of more than 50 points.
+#endif
 
 bigfloat height(Point& P)
 {
@@ -138,6 +141,15 @@ bigfloat realheight(const Point& P)
 
 bigfloat realheight(const bigfloat& x, const Curvedata* E)
 {
+
+#ifdef MPFP // Multi-Precision Floating Point
+  long original_prec, new_prec;
+  original_prec = bit_precision();
+  new_prec = original_prec + 100;
+  //  cout<<"Setting bit precision to "<<new_prec<<endl;
+  set_bit_precision(new_prec); // does not change output precision
+#endif
+
   bigint bb2,bb4,bb6,bb8;
   E->getbi(bb2,bb4,bb6,bb8);
   bigfloat b2 = I2bigfloat(bb2), b4 = I2bigfloat(bb4), 
@@ -158,6 +170,7 @@ bigfloat realheight(const bigfloat& x, const Curvedata* E)
   t=2*abs(b4); if(t>H) H=t;
   t=2*abs(b6); if(t>H) H=t;
   t=abs(b8);   if(t>H) H=t;
+
   // NB We use decimal precision here since the formula for nlim (from
   // Silverman) is given in terms of decimal places required.
   long precision = decimal_precision();
@@ -165,6 +178,7 @@ bigfloat realheight(const bigfloat& x, const Curvedata* E)
   cout<<"decimal precision = "<<precision<<endl;
 #endif
   long nlim=I2long(Iround(ceil( (5.0/3.0)*precision + 0.5 + 0.75*log( 7.0 + (4.0/3.0)*log(H) ))));
+  nlim *=2;
 #ifdef DEBUG_HEIGHT
   cout<<"H = "<<H<<"; log(H) = "<<log(H)<<"; using "<<nlim<<" terms in the sum.\n";
 #endif
@@ -215,6 +229,11 @@ bigfloat realheight(const bigfloat& x, const Curvedata* E)
 cout << "returning real height = " << mu << endl;
 #endif
 
+
+#ifdef MPFP // Multi-Precision Floating Point
+//  cout<<"Setting bit precision back to "<<original_prec<<endl;
+ set_bit_precision(original_prec); // does not change output precision
+#endif
   return mu;
 }
 #undef DEBUG_HEIGHT
@@ -249,30 +268,43 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
   if(n == 1) return height(P[0]) ;
   if(n == 2 )
     {
-     bigfloat pair00 = height(P[0]) ;
-     bigfloat pair01 = height_pairing(P[0], P[1]);  // nb this will set height
-     bigfloat pair11 = height(P[1]);                // of P[1]; is efficient
-     bigfloat reg = pair00 * pair11 - pair01 * pair01;
-     return  reg; 
+     bigfloat pair00 = height(P[0]);
+     bigfloat pair11 = height(P[1]);
+     Point Q = P[0] + P[1];
+     bigfloat h = height(Q);
+     bigfloat pair01 = (h-pair00-pair11)/2;
+     return pair00 * pair11 - pair01 * pair01;
     }
+#ifdef MPFP  // use NTL to compute the determinant
+  // initialize the matrix of pairings
+  mat_RR height_matrix;
+  height_matrix.SetDims(n,n);
+  for (i = 0; i < n; i++)
+    {
+      height_matrix[i][i] = height(P[i]) ;
+    }
+  for (i = 0; i < n; i++)
+    {
+      for (j = i + 1; j < n; j++)
+          {
+            Point Q = P[i] + P[j];
+            bigfloat h = (height(Q) - height_matrix[i][i] - height_matrix[j][j])/2 ;
+            height_matrix[j][i] = h;
+            height_matrix[i][j] = h;
+          }
+    }
+  return determinant(height_matrix);
+
+#else // use a naive determinant method
+
   if (n == 3)
     {
-#ifdef DEBUG_REG
-      cout<<"n=3, computing height pairing matrix..."<<flush;
-#endif
      bigfloat pair[3][3] ;
      for (i = 0; i < 3; i++)
        {pair[i][i] = height(P[i]) ;
         for (j = i + 1; j < 3; j++)
           {pair[i][j] = pair[j][i] = height_pairing(P[i], P[j]) ; }
        }
-#ifdef DEBUG_REG
-      cout<<"done.  Matrix = " << endl;
-      for (i = 0; i < 3; i++)
-        {for (j = 0; j < 3; j++) cout << pair[i][j] << "\t";
-         cout << endl;
-       }
-#endif
      bigfloat reg = (pair[0][0] * ( pair[1][1] * pair[2][2] - pair[1][2] * pair[1][2] )
                  - pair[0][1] * ( pair[0][1] * pair[2][2] - pair[1][2] * pair[0][2] )
                  + pair[0][2] * ( pair[0][1] * pair[1][2] - pair[1][1] * pair[0][2] )
@@ -318,34 +350,38 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
       cout << "## Assuming that the regulator of more than "<<MAX_RANK_REG<<" points is 0" << endl;
       return to_bigfloat(0) ;
     }
-  else
+  bigfloat pair[MAX_RANK_REG][MAX_RANK_REG] ;
+  // initialize the matrix of pairings
+  for (i = 0; i < n; i++)
     {
-      bigfloat pair[MAX_RANK_REG][MAX_RANK_REG] ;
-     // initialize the matrix of pairings
-     for (i = 0; i < n; i++)
-       {pair[i][i] = height(P[i]) ;
-        for (j = i + 1; j < n; j++)
-          {pair[j][i] = pair[i][j] = height_pairing(P[i], P[j]) ; }
-       }
-     // Gaussian elimination 
-     // for the first n - 1 rows
-     for (j = 0 ; j < n - 1; j ++)
-       {// use row j to pivot with
-         bigfloat pivot = pair[j][j] ;
-         // kill off rows below row j
-         for (i = j + 1; i < n ; i ++)
-           {bigfloat multiplier = pair[i][j] / pivot ;
-            // subtract multiplier * row j from row i 
-            //noting the beginning of row i is already zeroed
-            for (k = j ; k < n; k++)
-              {pair[i][k] -= multiplier * pair[j][k] ; }
-           }
-       }
-     // now reg is the product of the diagonal entries
-     bigfloat reg = to_bigfloat(1) ;
-     for (d = 0; d < n; d++) reg *= pair[d][d] ;
-     return reg ;
+      pair[i][i] = height(P[i]) ;
+      for (j = i + 1; j < n; j++)
+        {
+          pair[j][i] = pair[i][j] = height_pairing(P[i], P[j]) ;
+        }
     }
+  // Gaussian elimination
+  // for the first n - 1 rows
+  for (j = 0 ; j < n - 1; j ++)
+    {// use row j to pivot with
+      bigfloat pivot = pair[j][j] ;
+      // kill off rows below row j
+      for (i = j + 1; i < n ; i ++)
+        {bigfloat multiplier = pair[i][j] / pivot ;
+          // subtract multiplier * row j from row i
+          //noting the beginning of row i is already zeroed
+          for (k = j ; k < n; k++)
+            {
+              pair[i][k] -= multiplier * pair[j][k] ;
+            }
+        }
+    }
+  // now reg is the product of the diagonal entries
+  bigfloat reg = to_bigfloat(1) ;
+  for (d = 0; d < n; d++) reg *= pair[d][d] ;
+  return reg ;
+}
+#endif
 }
 
 // end of HEIGHTS.CC

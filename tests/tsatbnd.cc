@@ -68,13 +68,18 @@ int main()
         }
       cerr<<npts<<" points entered.\n";
 
-      Curvedata CD(C);
-      bigfloat lambda_egr = lower_height_bound(CD, 1);
+      CurveRed CR(C);
+      bigint tam_prod = global_Tamagawa_number(CR, 1); // include real place
+      bigint tam_exp = global_Tamagawa_exponent(CR, 1); //
+      cout << "Global Tamagawa number:   " << tam_prod <<endl;
+      cout << "Global Tamagawa exponent: " << tam_exp <<endl;
+
+      bigfloat lambda_egr = lower_height_bound(CR, 1);
       cout << "lower height bound (egr points): "<< lambda_egr <<endl;
       bigint egr_bound = index_bound(points, 1, verbose);
       cout << "bound on saturation index (egr points): "<< egr_bound <<endl;
 
-      bigfloat lambda_all = lower_height_bound(CD, 0);
+      bigfloat lambda_all = lower_height_bound(CR, 0);
       cout << "lower height bound (all points): "<< lambda_all <<endl;
       bigint all_bound = index_bound(points, 0, verbose);
       cout << "bound on saturation index (all points): "<< all_bound <<endl;

@@ -286,7 +286,7 @@ public:
   friend int getord_p_N(const CurveRed& c, const bigint& p);
   friend int getord_p_j_denom(const CurveRed& c, const bigint& p);
   friend int getc_p(const CurveRed& c, const bigint& p);
-  friend int prodcp(const CurveRed& c);
+  friend bigint prodcp(const CurveRed& c);
   friend int LocalRootNumber(CurveRed& c, const bigint& p);
   friend int GlobalRootNumber(CurveRed& c);
   friend Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p);

@@ -3,7 +3,7 @@ Rank of points found is 3
 Generator 1 is [1:-1:1]; height 0.66820516565192793503
 Generator 2 is [-2:3:1]; height 1.3685725053539301121
 Generator 3 is [-14:25:8]; height 2.7173593928122930897
-Regulator =  0.41714355875838396981
+Regulator =  0.41714355875838396982
 Points have been successfully saturated
 
 [[1,-1],[-2,3],[-7/4,25/8]]

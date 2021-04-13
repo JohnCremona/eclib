@@ -1,5 +1,5 @@
 268605a1	[0,0,1,1032,2673]:	r = 1	torsion group structure =  [ ] (torsion rank 0).
-P = [41:337:1] OK, order=oo, height=0.59990651734770452119201067744.
+P = [41:337:1] OK, order=oo, height=0.59990651734770452119201067743.
 268605b1	[0,0,1,14802,-4767741]:	r = 1	torsion group structure =  [ ] (torsion rank 0).
 P = [52199:344443:343] OK, order=oo, height=4.8009119417025658580313798627.
 268605c1	[1,-1,0,-450,2781]:	r = 2	torsion group structure =  [ ] (torsion rank 0).
@@ -19,18 +19,18 @@ P = [134:-67:8] OK, order=2, height=0.
 P = [-64232978894:39611125679:622835864] OK, order=oo, height=17.062131548620909930450508847.
 P = [-826:413:8] OK, order=2, height=0.
 268605e1	[1,-1,0,8256,753083]:	r = 1	torsion group structure =  [ 2 ] (torsion rank 1).
-P = [395144:10859243:512] OK, order=oo, height=8.5829151366781123251964064487.
+P = [395144:10859243:512] OK, order=oo, height=8.5829151366781123251964064488.
 P = [-62:31:1] OK, order=2, height=0.
 268605e2	[1,-1,0,-91149,9441080]:	r = 1	torsion group structure =  [ 2 2 ] (torsion rank 2).
 P = [317636:-1639318:1331] OK, order=oo, height=4.2914575683390561625982032244.
 P = [998:-499:8] OK, order=2, height=0.
 P = [220:-110:1] OK, order=2, height=0.
 268605e3	[1,-1,0,-1413024,646849205]:	r = 1	torsion group structure =  [ 2 ] (torsion rank 1).
-P = [7372618:-6306479:10648] OK, order=oo, height=8.5829151366781123251964064501.
+P = [7372618:-6306479:10648] OK, order=oo, height=8.5829151366781123251964064488.
 P = [5510:-2755:8] OK, order=2, height=0.
 268605e4	[1,-1,0,-359754,-73128097]:	r = 1	torsion group structure =  [ 2 ] (torsion rank 1).
-P = [265770428:14415192911:85184] OK, order=oo, height=8.5829151366781123251964064487.
+P = [265770428:14415192911:85184] OK, order=oo, height=8.5829151366781123251964064488.
 P = [-3514:1757:8] OK, order=2, height=0.
 268605f1	[0,0,1,-110937,14226165]:	r = 1	torsion group structure =  [ ] (torsion rank 0).
-P = [1554:631:8] OK, order=oo, height=1.9389206422900754768913015598.
+P = [1554:631:8] OK, order=oo, height=1.9389206422900754768913015595.
 268605g1	[0,0,1,-747,8255]:	r = 0	torsion group structure =  [ ] (torsion rank 0).

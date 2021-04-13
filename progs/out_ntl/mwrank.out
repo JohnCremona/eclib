@@ -41,7 +41,7 @@ Saturating (with bound = 1000)...done:
   points were already saturated.
 Transferring points from minimal curve [0,1,1,-2,0] back to original curve [0,1,1,-2,0]
 
-Generator 1 is [0:-1:1]; height 0.32700077365161
+Generator 1 is [0:-1:1]; height 0.3270007736516
 Generator 2 is [-1:1:1]; height 0.68666708330559
 
 Regulator = 0.15246017794314
@@ -301,7 +301,7 @@ Third step, determining E(Q)/phi(E'(Q)) and E'(Q)/phi'(E(Q))
 (c',d')=(-78,169)
 First stage (no second descent yet)...
 (-1,0,39,0,-338):  (x:y:z) = (19:102:5)
-	Curve E 	Point [-1805:-1938:125], height = 5.8325117369876
+	Curve E 	Point [-1805:-1938:125], height = 5.8325117369877
 After first global descent, this component of the rank = 3
 -------------------------------------------------------
 2. E'(Q)/phi'(E(Q))

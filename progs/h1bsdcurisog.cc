@@ -171,7 +171,7 @@ int main(void)
 	 cout<<endl;
 	 CR.display(cout);
 #endif
-	 long pcp = prodcp(CR);
+	 long pcp = I2long(prodcp(CR));
 #ifdef DEBUG_BSD
 	 cout<<"\nProduct of cp: ";
 #endif

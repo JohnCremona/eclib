@@ -1276,6 +1276,7 @@ bigfloat lattice_const(int r)
   static bigfloat c6 = two/pow(three,one/six);
   static bigfloat c7 = pow(two,six/seven);
   static bigfloat c8 = two;
+  bigfloat xr, cr, rootpi = sqrt(Pi());
   switch(r) {
   case 0: return c1;
   case 1: return c1;
@@ -1286,17 +1287,18 @@ bigfloat lattice_const(int r)
   case 6: return c6;
   case 7: return c7;
   case 8: return c8;
-  default: 
+  default:
     {
-      bigfloat xr = to_bigfloat(r);
-      if(r%2)
+      xr = to_bigfloat(r);
+      if(r%2) // r is odd
 	{
-	  return factorial(xr)*sqrt(Pi())/(factorial((xr-1)/2)*(1<<r));
+	  cr = pow(rootpi, one-xr) * factorial(xr) / (factorial((xr-1)/2));
 	}
       else // r is even
 	{
-	  return factorial(xr/2);
+	  cr = pow(two/rootpi, xr) * factorial(xr/2);
 	}
+      return pow(cr, one/xr);
     }
   }
 }

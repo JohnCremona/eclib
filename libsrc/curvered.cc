@@ -409,9 +409,9 @@ int getc_p(const CurveRed& c, const bigint& p)
   return (ri->second).c_p;
 }
 
-int prodcp(const CurveRed& c)
+bigint prodcp(const CurveRed& c)
 {
-  int ans=1;
+  bigint ans = BIGINT(1);
   map<bigint,Reduction_type>::const_iterator ri; 
   for(ri = c.reduct_array.begin(); ri!=c.reduct_array.end(); ri++)
     {
