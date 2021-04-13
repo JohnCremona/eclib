@@ -30,38 +30,48 @@ int main(){
 #endif
   initprimes("PRIMES",1);
   Curve E;
+  bigint u, r, s, t;
 
-  while (cout<<"Input a curve: ", cin>>E, !E.isnull())
+  while (cerr<<"Input a curve: ", cin>>E, !E.isnull())
   {
     Curvedata C(E, 0);
-    cout<<"Curve "<< C <<endl;
+    cout<<"Curve "<< E <<endl;
     vector<bigint> badp = getbad_primes(C);
 
+    Curvedata Emin = C.minimalize(u,r,s,t);
+    int is_min = is_one(abs(u)); // then E was already minimal, no adjustments needed
+    if(!is_min)
+      {
+        cout<<"Input curve is not minimal at "<<pdivs(u)<<endl;
+        cout<<"Heights will be computed after mapping points to the minimal model "<<(Curve)Emin<<endl;
+      }
     Point P(C);
 
-    while 
+    while
       (
-       cout<<"Input a point on curve, [0] to finish:\n",
+       cerr<<"Input a point on curve, [0] to finish:\n",
        cin >> P,
        !(!cin)&& P.isvalid()
        )
-        {       
+        {
           cout << "Point " << P;
-          int ord = order(P); 
-          if(ord>0)cout<< " has order " << ord; 
+          int ord = order(P);
+          if(ord>0)cout<< " has order " << ord;
           else     cout<< " has infinite order";
           cout << endl;
 
+          Point Pmin = (is_min? P: transform(P, &Emin, u, r, s, t));
+
           cout << "Local heights:\n";
           bigfloat gh = to_bigfloat(0);
-	  bigint d = gcd(P.getZ(),P.getX());
+	  bigint d = gcd(Pmin.getZ(),Pmin.getX());
           vector<bigint> pdivsz=pdivs(d);
 	  vector<bigint>::iterator qvar = pdivsz.begin();
 	  while(qvar!=pdivsz.end())
             {
               bigint q = *qvar++;
 	      cout << q << ":\t\t"  << flush;
-	      bigfloat ph = pheight(P,q);
+	      bigfloat ph = pheight(Pmin,q);
 	      gh+=ph;
 	      cout << ph << endl;
             }
@@ -74,22 +84,27 @@ int main(){
               bigint pr = *pvar++;
 	      if(div(pr,d)) continue;
               cout << pr << ":\t\t"  << flush;
-              bigfloat  ph = pheight(P,pr);
+              bigfloat  ph = pheight(Pmin,pr);
               gh+=ph;
               cout << ph << endl;
             }
 	  cout << "Sum so far =\t" << gh << endl;
-          bigfloat rh = realheight(P);
+          bigfloat rh = realheight(Pmin);
           cout << "R:\t\t" << rh << endl;
 	  gh += rh;
           cout << "\nSum of local heights: " << gh << endl;
-//
-// N.B. The call to height() calls realheight() and pheight() again,
-//      since as height() was not called earlier, P's height field was 
-//      not set.
-//
+
+          //
+          // N.B. The call to height() calls realheight() and pheight() again,
+          //      since as height() was not called earlier, P's height field was 
+          //      not set.
+          //
+          // N.B. Computing the global height automatically handles
+          // the move to a minimal model, so height(P) and
+          // height(Pmin) are the same
           cout<<"global height of "<<P<<" is "<<height(P)<<endl;
-//
+          //          cout<<"global height of "<<Pmin<<" is "<<height(Pmin)<<endl;
+
         } // end point loop
   }       // end curve loop
   //  exit(0);
@@ -107,7 +122,7 @@ int main(){
   if (!P2.isvalid()) cout << "P2 is not on the curve!\n";
   cout << "Their negatives are -P0 = " << -P0 << 
     ", -P1 = " << -P1 << ", and -P2 = " << -P2 << endl;
-        
+
   cout << "Computing their heights:\n";
   bigfloat ht0 = height(P0);
   bigfloat ht1 = height(P1);

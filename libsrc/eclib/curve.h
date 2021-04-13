@@ -157,6 +157,9 @@ public:
       if(!c.discr_factored) c.factor_discr();
       return c.the_bad_primes; 
     }
+  // NB the is_minimal function returns 0 when minimization has not
+  // been done; the curve may still be minimal
+  friend int is_minimal(const Curvedata& c) {return c.minimal_flag;}
 protected:
   bigint b2 ;
   bigint b4 ;

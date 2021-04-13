@@ -63,11 +63,22 @@ int main()
         {
           cerr<<"\n  enter point "<<(j+1)<<" : ";
           cin >> P;
-          if ( P.isvalid() ) {points.push_back(P); j++;}
-          else {cerr<<"point "<<P<<" not on curve.\n\n"; }
+          if ( P.isvalid() )
+            {
+              points.push_back(P);
+              j++;
+            }
+          else
+            {
+              cerr<<"point "<<P<<" not on curve.\n\n";
+            }
         }
-      cerr<<npts<<" points entered.\n";
-
+      cout<<npts<<" points entered:\n";
+      for (vector<Point>::iterator Pi=points.begin(); Pi!=points.end(); Pi++)
+        {
+          P = *Pi;
+          cout << P << " (height "<<height(P)<<")"<<endl;
+        }
       CurveRed CR(C);
       bigint tam_prod = global_Tamagawa_number(CR, 1); // include real place
       bigint tam_exp = global_Tamagawa_exponent(CR, 1); //

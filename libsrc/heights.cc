@@ -30,38 +30,63 @@
 
 bigfloat height(Point& P)
 {
-  // WARNING -- no check made of validity of point on curve
   bigfloat zero(to_bigfloat(0));
   if ( P.is_zero() ) return zero;
   if (P.height >= zero) return P.height;  // already calculated it
   if (order(P) > 0) {P.height = zero; return zero; } // zero height if torsion
-// N.B. So if we ever ask a point its height it will compute its order.
-// otherwise need to calculate it
 
-// Add local heights at finite primes dividing discr(E) OR denom(P).
-// The components for primes dividing denom(P) add to log(denom(x(P)));
-//   since P=(XZ:Y:Z^3), denom(P)=Z=gcd(XZ,Z^3), called "zroot" here,
-//   and so the contribution is log(denom(x(P))) = 2*log(zroot).
-//   This avoids factorizing the denominator.
+  // N.B. So if we ever ask a point its height it will compute its order.
+  // otherwise need to calculate it
 
-  const bigint& zroot = gcd(P.getX(),P.getZ());   // = cube root of Z
-  bigfloat ans = realheight(P);
-  ans += 2*log(I2bigfloat(zroot));
+  // The local height at p will only be correctly computed by
+  // pheight() if the curve is minimal at p
 
-  const vector<bigint>& bad_p = getbad_primes( *(P.E) );
-  vector<bigint>::const_iterator pr = bad_p.begin();
-  while(pr!=bad_p.end())
+  Curvedata* E = P.E;
+  int is_min = is_minimal(*E);
+  bigint u, r, s, t;
+  Curvedata Emin;
+  Point Pmin = P;
+  if (!is_min)
     {
-      const bigint& p = *pr++;
-      if(ndiv(p,zroot)) ans += pheight(P,p);
+      Emin = E->minimalize(u,r,s,t);
+      is_min = is_one(abs(u)); // then E was already minimal, no adjustments needed
     }
-  P.height = ans;
-  return ans;
+  if (!is_min)
+    {
+      Pmin = transform(P, &Emin, u, r, s, t);
+    }
+
+  // Add local heights at finite primes dividing discr(E) OR denom(P).
+  // The components for primes dividing denom(P) add to log(denom(x(P)));
+  //   since P=(XZ:Y:Z^3), denom(P)=Z=gcd(XZ,Z^3), called "zroot" here,
+  //   and so the contribution is log(denom(x(P))) = 2*log(zroot).
+  //   This avoids factorizing the denominator.
+
+  const bigint& zroot = gcd(Pmin.getX(),Pmin.getZ());   // = cube root of Z
+  bigfloat h = realheight(Pmin);
+
+  // contribution from primes dividing the denoinator:
+  h += 2*log(I2bigfloat(zroot));
+
+  vector<bigint> bad_p = getbad_primes(Emin);
+  vector<bigint>::iterator pr = bad_p.begin();
+  for (pr = bad_p.begin(); pr!=bad_p.end(); pr++)
+    {
+      bigint p = *pr;
+      // we already have included the local height at p for primes p
+      // dividing the denominator
+      if(ndiv(p,zroot))
+        h += pheight(Pmin,p);
+    }
+  P.height = h;
+  return h;
 }
 
 //#define DEBUG_HEIGHT
 
 bigfloat pheight(const Point& P, const bigint& pr)
+// NB The local height at p will only be correctly computed by
+// pheight() if the curve is minimal at p
 {
 #ifdef DEBUG_HEIGHT
 cout<<"In pheight with P = "<<P<<" and pr = "<<pr<<endl;
@@ -119,11 +144,11 @@ cout<<"c = " << c << endl;
   else 
      lambda = -c / to_bigfloat(4);
   
-  bigfloat ans = lambda * log( I2bigfloat(pr) );
+  bigfloat h = lambda * log( I2bigfloat(pr) );
 #ifdef DEBUG_HEIGHT
-cout<<"...returning lambda = " << lambda << ", pheight = "<<ans<<endl;
+cout<<"...returning lambda = " << lambda << ", pheight = "<<h<<endl;
 #endif
-  return ans;
+  return h;
 }
 
 #undef DEBUG_HEIGHT
@@ -248,10 +273,8 @@ bigfloat height_pairing(Point& P, Point& Q)
     {
       bigfloat hP = height(P);
       bigfloat hQ = height(Q);
-      Point PQ = P+Q;
-      bigfloat hPQ = height(PQ);
-      bigfloat ans =  (hPQ - hP - hQ)/2;
-      return ans;
+      Point PQ = P + Q;
+      return (height(PQ) - hP - hQ)/2;
     }
 }
 
