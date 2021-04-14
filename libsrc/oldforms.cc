@@ -105,7 +105,7 @@ vector<CurveRed> get_curves(string filename, long N)
   while ((iN==N)&&!infile.eof())
     {
       infile >> code >> dum >> C;
-      CurveRed CR(C);
+      CurveRed CR(Curvedata(C,0));
       if (getconductor(CR)!=N)
 	cerr<<"Wrong conductor "<<getconductor(CR)<<" for "<<C<<": should be "<<N<<endl;
       curves.push_back(CR);

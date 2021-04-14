@@ -46,7 +46,7 @@ int main()
     cin >> N; if(N==0) exit(0);
   cin >> nclass >> ncurve;
   cin >> E;
-  Curvedata C(E);
+  Curvedata C(E, 0);
   CurveRed CR(C);
   cout<<endl;
   cout<<"==============================================================="<<endl;

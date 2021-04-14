@@ -34,7 +34,7 @@ int main()
 
   Curve E(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
 
-  Curvedata C(E);
+  Curvedata C(E, 0);
   cout << "Curve " << E << endl;
 
   int i;

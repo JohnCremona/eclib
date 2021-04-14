@@ -706,8 +706,8 @@ void rank2::local_descent(const bigint& x0)
       cout<<"(c',d')=("<<cdash<<","<<ddash<<")"<<endl;
     }
 
-  ee     = Curvedata(zero,  c,  zero,  d,  zero);
-  eedash = Curvedata(zero,cdash,zero,ddash,zero);
+  ee     = Curvedata(zero,  c,  zero,  d,  zero, 0);
+  eedash = Curvedata(zero,cdash,zero,ddash,zero, 0);
   Eprime = Curvedata(eedash,1); // minimal model
   if(verbose) 
     {

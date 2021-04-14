@@ -628,7 +628,7 @@ bigint index_bound(vector<Point>& points,
   if (npts==0)
     return BIGINT(1);
 
-  Curvedata C = points[0].getcurve();
+  Curvedata C = Curvedata(points[0].getcurve(), 0);
   if(verbose)
     cout<<"Entering index_bound("<<(Curve)(C)<<", egr="<<egr<<")"<<endl;
 

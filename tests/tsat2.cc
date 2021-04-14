@@ -61,7 +61,7 @@ int main()
   cin >> E;
   curvecount++;
 
-  Curvedata C(E);
+  Curvedata C(E, 0);
   saturator sieve(&C,verbose);
 
   cout<<endl;

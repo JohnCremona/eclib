@@ -71,9 +71,9 @@ int main()
 
       long mask=0;
 
-      Curvedata E_cd(zero,c,zero,d,zero);
+      Curvedata E_cd(zero,c,zero,d,zero, 0);
       cout << "cd-curve       (nearer):\t" << (Curve)E_cd << endl;
-      Curvedata E_cd_dash(zero,cdash,zero,ddash,zero);
+      Curvedata E_cd_dash(zero,cdash,zero,ddash,zero, 0);
       cout << "cd-dash-curve (further):\t" << (Curve)E_cd_dash << endl;
       Point P(&E_cd);
       Point Q(&E_cd_dash);

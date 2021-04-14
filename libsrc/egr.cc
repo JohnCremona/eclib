@@ -32,7 +32,7 @@ typedef long scalar;
 
 // return 1 if P mod p is nonsingular:
 
-int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p)
+int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p) const
 {
 #ifdef DEBUG_EGR
   cout<<"Testing whether point "
@@ -47,8 +47,10 @@ int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p)
 #endif
       return 1;
     }
+
   bigint X=P.getX();
   bigint Y=P.getY();
+
   if(is_zero(p)) // test whether P is not on the "egg"
     {
       if(conncomp==1) 
@@ -58,19 +60,23 @@ int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p)
 #endif
 	  return 1;
 	}
+
       bigint fd = 6*X*X+b2*X*Z+b4*Z*Z;
-      if(sign(fd)<0) 
+
+      if(sign(fd)<0)
 	{
 #ifdef DEBUG_EGR
-	  cout<<"no (real f' condition)"<<endl; 
+	  cout<<"no (real f' condition, f'="<<fd<<")"<<endl; 
 #endif
 	  return 0;
 	}
+
       bigint fdd = 12*X+b2*Z;
+
       if(sign(fdd)<0) // assumes Z>0
 	{
 #ifdef DEBUG_EGR
-	  cout<<"no (real f\" condition)"<<endl; 
+	  cout<<"no (real f\" condition, f\"="<<fdd<<")"<<endl; 
 #endif
 	  return 0;
 	}
@@ -117,7 +123,7 @@ int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p)
 // return 1 if P mod p is nonsingular for all p in plist; else return
 // 0 and put the first prime of bad reduction into p0:
 
-int ComponentGroups::HasGoodReduction(const Point& P, const vector<bigint>& plist, bigint& p0)
+int ComponentGroups::HasGoodReduction(const Point& P, const vector<bigint>& plist, bigint& p0) const
 {
   for(unsigned int i=0; i<plist.size(); i++)
     {p0=plist[i]; if(!HasGoodReduction(P,p0)) return 0;}
@@ -126,7 +132,7 @@ int ComponentGroups::HasGoodReduction(const Point& P, const vector<bigint>& plis
 
 // return 1 iff P mod p is nonsingular for all p (including infinity);
 // else return 0 and put the first prime of bad reduction into p0:
-int ComponentGroups::HasGoodReduction(const Point& P, bigint& p0)
+int ComponentGroups::HasGoodReduction(const Point& P, bigint& p0) const
 {
   if(!HasGoodReduction(P,BIGINT(0))) {p0=BIGINT(0); return 0;}
   return HasGoodReduction(P,the_bad_primes,p0);
@@ -134,7 +140,7 @@ int ComponentGroups::HasGoodReduction(const Point& P, bigint& p0)
 
 // Returns [m] for cyclic of order m, [2,2] for 2*2 (type I*m, m even)
 
-vector<int> ComponentGroups::ComponentGroup(const bigint& p)
+vector<int> ComponentGroups::ComponentGroup(const bigint& p) const
 {
   vector<int> ans(1);
   if(p==0) ans[0]=conncomp; // 1 or 2
@@ -153,7 +159,7 @@ vector<int> ComponentGroups::ComponentGroup(const bigint& p)
 
 // Returns 1 iff P and Q have same image in the component group at p:
 //
-int ComponentGroups::InSameComponent(const Point& P, const Point& Q, const bigint& p)
+int ComponentGroups::InSameComponent(const Point& P, const Point& Q, const bigint& p) const
 {
   if(P==Q) return 1;
   return HasGoodReduction(P-Q,p);
@@ -164,7 +170,7 @@ int ComponentGroups::InSameComponent(const Point& P, const Point& Q, const bigin
 // Returns a such that P mod pr maps to +a or -a mod m in the
 // component group
 
-long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p, int m)
+long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p, int m) const
 {
 #ifdef DEBUG_EGR
   cout<<"In ImageInComponentGroup_Im_pm() with point "
@@ -189,7 +195,7 @@ long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p
 // group is cyclic of order m, using full Tate curve formula.
 // Returns a such that P mod pr maps to a mod m in the component group
 
-long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, int m)
+long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, int m) const
 {
 #ifdef DEBUG_EGR
   cout<<"In ImageInComponentGroup_Im() with point "
@@ -269,7 +275,7 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
   return ans;
 }
 
-long ComponentGroups::ImageInComponentGroup(const Point&P, const bigint& p, vector<int> grp)
+long ComponentGroups::ImageInComponentGroup(const Point&P, const bigint& p, vector<int> grp) const
 {
   int ans=0;      // the default
 #ifdef DEBUG_EGR
@@ -601,21 +607,62 @@ bigint comp_map_image(const vector<int> moduli, const mat& image);
 bigint egr_index(const vector<Point>& Plist, int real_too)
 {
   if(Plist.size()==0) return BIGINT(1);
-  ComponentGroups CGS(Plist[0].getcurve());
+
+  // Compute minimal model and map points to it if necessary
+
+  Curvedata E_orig = Curvedata(Plist[0].getcurve(), 0);
+  int is_min = 0;//is_minimal(E_orig);
+  bigint u, r, s, t;
+  Curvedata Emin;
+
+#ifdef DEBUG_EGR
+  cout<<"In egr_index("<<(Curve)E_orig<<")"<<endl;
+#endif
+
+  if (is_min)
+    {
+      Emin = E_orig;
+      u = BIGINT(1);
+    }
+  else
+    {
+      Emin = E_orig.minimalize(u,r,s,t);
+      is_min = is_one(abs(u)); // then E was already minimal, no adjustments needed
+    }
+
+  vector<Point> Plist_min;
+  if (is_min)
+    {
+      Plist_min = Plist;
+    }
+  else
+    {
+      for (vector<Point>::const_iterator Pi = Plist.begin(); Pi!=Plist.end(); Pi++)
+        Plist_min.push_back(transform(*Pi, &Emin, u, r, s, t));
+    }
+
+  // Construct the ComponentGroups class from the minimal model
+
+  ComponentGroups CGS(Emin);
   vector<bigint> plist = getbad_primes(CGS);
   if(real_too && (getconncomp(CGS)==2)) plist.push_back(BIGINT(0));
 #ifdef DEBUG_EGR
   cout<<"Using primes "<<plist<<endl;
 #endif
+
   vector<vector<vector<int> > > imagematrix;
-  vector<int> moduli; 
+  vector<int> moduli;
   int n=0;
+
+  // Loop through bad primes (possibly including infinity), computing
+  // the image in the local component group
+
   for(vector<bigint>::const_iterator pi=plist.begin(); pi!=plist.end(); pi++)
     {
 #ifdef DEBUG_EGR
       cout<<"p = "<<(*pi)<<endl; 
 #endif
-      vector<vector<int> > im=MapPointsToComponentGroup(CGS,Plist,*pi);
+      vector<vector<int> > im=MapPointsToComponentGroup(CGS,Plist_min,*pi);
 #ifdef DEBUG_EGR
       cout<<"image = ";
       for(unsigned int j=0; j<im.size(); j++) cout << im[j] << " ";
@@ -626,6 +673,9 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
       for(unsigned int ni=0; ni<CG.size(); ni++, n++)
 	moduli.push_back(CG[ni]);
     }
+
+  // Compute the kernel
+
   mat m(Plist.size(),n);
   unsigned int j=0, j1, j2, i;
   bigint imageorder=BIGINT(1);
@@ -660,16 +710,14 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
 // least one P_i is not in the connected component)
 //
 
-vector<vector<int> >  MapPointsToComponentGroup(const CurveRed& CR, const vector<Point>& Plist,  const bigint& p)
+vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const vector<Point>& Plist,  const bigint& p)
 {
   int i,j,k,n=Plist.size();
   vector<vector<int> > images;
   images.resize(n);
   if (n==0) return images;
-  
-  ComponentGroups CG(CR);
 
-  // Construct the component group and find its structure:
+  // Construct the local component group and find its structure:
 
   vector<int> G=CG.ComponentGroup(p);
 #ifdef DEBUG_EGR

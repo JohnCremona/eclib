@@ -29,28 +29,33 @@
 
 // class to handle component groups at primes of bad reduction etc
 
+// NB all of the internal methods assume that the curve is a global
+// minimal model.  The normal use of the class will be via the
+// function egr_index() which handles computation of a minimal model
+// and transferring the points to the minimal model where necessary,
+
 class ComponentGroups : public CurveRed {
 public:
   ComponentGroups(const Curvedata& CD) : CurveRed(CD) {;}
   ComponentGroups(const CurveRed& CR) : CurveRed(CR) {;}
-  ComponentGroups(const Curve& C) : CurveRed(C) {;}
+  //  ComponentGroups(const Curve& C) : CurveRed(C) {;}
   ComponentGroups() : CurveRed() {;}
 
 // return 1 iff P mod p is nonsingular:
-  int HasGoodReduction(const Point& P, const bigint& p);
+  int HasGoodReduction(const Point& P, const bigint& p) const;
 
 // return 1 iff P mod p is nonsingular for all p in plist; else return
 // 0 and put the first prime of bad reduction into p0:
-  int HasGoodReduction(const Point& P, const vector<bigint>& plist, bigint& p0);
+  int HasGoodReduction(const Point& P, const vector<bigint>& plist, bigint& p0) const;
 // return 1 iff P mod p is nonsingular for all p (including infinity);
 // else return 0 and put the first prime of bad reduction into p0:
-  int HasGoodReduction(const Point& P, bigint& p0);
+  int HasGoodReduction(const Point& P, bigint& p0) const;
 
 // Returns [m] for cyclic of order m, [2,2] for 2*2 (type I*m, m even)
-  vector<int> ComponentGroup(const bigint& p);
+  vector<int> ComponentGroup(const bigint& p) const;
 
 // Returns 1 iff P and Q have same image in the component group at p:
-  int InSameComponent(const Point& P, const Point& Q, const bigint& p);
+  int InSameComponent(const Point& P, const Point& Q, const bigint& p) const;
 
 // For reduction type Im, multiplicative reduction where component
 // group is cyclic of order m, returns a such that P mod p maps to a
@@ -61,9 +66,9 @@ public:
 
 // N.B.2 The case of noncyclic component group is not handled here.
 
-  long ImageInComponentGroup(const Point&P, const bigint& p, vector<int> grp);
-  long ImageInComponentGroup_Im(const Point&P, const bigint& p, int m);
-  long ImageInComponentGroup_Im_pm(const Point&P, const bigint& p, int m);
+  long ImageInComponentGroup(const Point&P, const bigint& p, vector<int> grp) const;
+  long ImageInComponentGroup_Im(const Point&P, const bigint& p, int m) const;
+  long ImageInComponentGroup_Im_pm(const Point&P, const bigint& p, int m) const;
 
 // Return least j>0 such that j*P has good reduction at p, i.e. the
 // order of the image of P in the component group at p; the component
@@ -106,6 +111,6 @@ bigint egr_index(const vector<Point>& Plist, int real_too=1);
 // least one P_i is not in the connected component)
 //
 
-vector<vector<int> >  MapPointsToComponentGroup(const CurveRed& CR, const vector<Point>& Plist,  const bigint& p);  
+vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const vector<Point>& Plist,  const bigint& p);
 
 #endif

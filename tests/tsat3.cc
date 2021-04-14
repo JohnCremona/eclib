@@ -78,7 +78,7 @@ int main()
 #endif
   cin >> ncurve;
   cin >> E;
-  Curvedata C(E);
+  Curvedata C(E, 0);
   cout<<endl;
   cout << N<<code<<ncurve<<" = "<< E << endl;
 

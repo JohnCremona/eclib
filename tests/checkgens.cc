@@ -84,7 +84,7 @@ int main()
       //      cout<<"After input, C="<<C<<endl;
       cout << cond<<ccode<<ncurve<<"\t";
       cout << C << ":\t";
-      CD = Curvedata(C);
+      CD = Curvedata(C, 0);
       if(verbose) cout <<endl;
       genin >> rank;
       cout << "r = "<<rank<<"\t";

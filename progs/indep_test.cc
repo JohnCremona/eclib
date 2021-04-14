@@ -46,7 +46,7 @@ int main()
       cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
       cin >> E;
       if ( E.isnull() ) exit(0);
-      Curvedata C(E);
+      Curvedata C(E, 0);
       cout << "Curve " << (Curve)C << endl;
       Point P(C);
       cout<<"enter number of points: ";      

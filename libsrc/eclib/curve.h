@@ -114,14 +114,14 @@ friend class IsogenyClass;
 public:
   Curvedata() {discr_factored=0;}
   Curvedata(const bigint& aa1, const bigint& aa2, const bigint& aa3,
-        const bigint& aa4, const bigint& aa6, int min_on_init = 0);
+        const bigint& aa4, const bigint& aa6, int min_on_init);
   /*
   Curvedata(const bigrational& qa1, const bigrational& qa2, 
 	    const bigrational& qa3, const bigrational& qa4, 
 	    const bigrational& qa6, bigint& scale);
   */
   Curvedata(const vector<bigrational>& qai, bigint& scale);
-  Curvedata(const Curve& c, int min_on_init = 0);
+  Curvedata(const Curve& c, int min_on_init);
   Curvedata(const bigint& cc4, const bigint& cc6, int min_on_init);
   Curvedata(const Curvedata& c);
   Curvedata(const Curvedata& c, int min_on_init);
