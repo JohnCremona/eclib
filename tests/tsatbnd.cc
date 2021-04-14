@@ -79,7 +79,41 @@ int main()
           P = *Pi;
           cout << P << " (height "<<height(P)<<")"<<endl;
         }
-      CurveRed CR(C);
+
+      bigfloat reg = regulator(points);
+      cout << "Regulator of input points: " << reg << endl;
+      bigint egri = egr_index(points);
+      cout << "Subgroup of EGR points has index " << egri << endl;
+
+      cout<< "\n Images of points in component groups at bad primes and R\n\n";
+      cout<< "p   Group   Image(s)" <<endl;
+      bigint u, r, s, t;
+      Curvedata Cmin = C.minimalize(u,r,s,t);
+      vector<Point> points_min;
+      for (vector<Point>::const_iterator Pi = points.begin(); Pi!=points.end(); Pi++)
+        points_min.push_back(transform(*Pi, &Cmin, u, r, s, t));
+
+      CurveRed CR(Cmin);
+      vector<bigint> plist = getbad_primes(CR);
+      ComponentGroups CG(CR);
+      vector<vector<int> >  ims;
+      bigint p;
+      for(vector<bigint>::iterator pi=plist.begin(); pi!=plist.end(); pi++)
+        {
+          p=*pi;
+          cout<<p<<"  "<<CG.ComponentGroup(p)<<"  ";
+          ims = MapPointsToComponentGroup(CR, points_min,  p);
+          for(vector<vector<int> >::iterator im=ims.begin(); im!=ims.end(); im++)
+            cout<<(*im);
+          cout<<endl;
+        }
+      p = BIGINT(0);
+      cout<<"R "<< CG.ComponentGroup(p)<<"  ";
+      ims = MapPointsToComponentGroup(CR, points_min,  p);
+      for(vector<vector<int> >::iterator im=ims.begin(); im!=ims.end(); im++)
+        cout<<(*im);
+      cout<<endl<<endl;
+
       bigint tam_prod = global_Tamagawa_number(CR, 1); // include real place
       bigint tam_exp = global_Tamagawa_exponent(CR, 1); //
       cout << "Global Tamagawa number:   " << tam_prod <<endl;
