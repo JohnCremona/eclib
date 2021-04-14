@@ -116,6 +116,7 @@ tests/thtconst
 tests/tilll
 tests/timing
 tests/tlegcert
+tests/tlatconst
 tests/tmanin
 tests/tmanin_prof
 tests/tmrank
