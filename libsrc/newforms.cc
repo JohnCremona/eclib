@@ -58,21 +58,31 @@ int less_apvec(const vector<long>& v, const vector<long>& w, int old)
   return 0;
 }
 
-struct less_newform_old : public binary_function<newform, newform, bool> { 
-  bool operator()(const newform& f, const newform& g) 
+// Old newform sorting comparison function: first by aq, then by ap,
+// each lexicographically, with individual eigs compared first by
+// absolute value, then positive first:
+
+struct old_newform_comparer {
+  bool operator()(const newform& f, const newform& g)
   {
     int s = less_apvec(f.aqlist,g.aqlist,1);
     if(s==0) s = less_apvec(f.aplist,g.aplist,1);
     return (s==1);
   }
-};
+}
+  less_newform_old;
 
-struct less_apvec_function : public binary_function<const vector<long>&, const vector<long>&, bool> { 
-  bool operator()(const vector<long>& f, const vector<long>& g) 
+// New newform sorting comparison function: only ap,
+// lexicographically, with individual eigs compared by
+// numerical value:
+
+struct new_newform_comparer {
+  bool operator()(const newform& f, const newform& g)
   {
-    return 1==less_apvec(f,g);
+    return less_apvec(f.aplist,g.aplist,0)==1;
   }
-};
+}
+  less_newform_new;
 
 vector<long> eiglist(const newform& f, int oldorder)
 {
@@ -116,14 +126,6 @@ vector<long> eiglist(const newform& f, int oldorder)
   */
   return eigs;
 }
-
-struct less_newform_new : public binary_function<newform, newform, bool> { 
-  bool operator()(const newform& f, const newform& g) 
-  {
-    //    return less_apvec(eiglist(f),eiglist(g),0)==1;    
-    return less_apvec(f.aplist,g.aplist,0)==1;    
-  }
-};
 
 // Newform constructor given the ap and aq lists and extra data (but
 // no homology basis), e.g. after reading from newforms file
@@ -1093,11 +1095,11 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
 void newforms::sort(int oldorder)
 {
   if(oldorder)
-    ::sort(nflist.begin(),nflist.end(),less_newform_old());
+    ::sort(nflist.begin(),nflist.end(),less_newform_old);
   else
-    ::sort(nflist.begin(),nflist.end(),less_newform_new());
+    ::sort(nflist.begin(),nflist.end(),less_newform_new);
 }
-  
+
 // Before recovering eigenbases, we need to put back the aq into the
 // aplist (and resort, for efficiency).
 void newforms::unfix_eigs()

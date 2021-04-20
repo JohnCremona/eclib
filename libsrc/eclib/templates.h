@@ -65,7 +65,6 @@ using std::ptr_fun;
 using std::pair;
 using std::sort;
 using std::abs;
-using std::binary_function;
 using std::setw;
 
 
