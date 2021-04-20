@@ -156,14 +156,15 @@ AC_SUBST(NTL_LIBS)
 AC_SUBST(NTL_CFLAGS)
 AC_SUBST(NTL_LDFLAGS)
 
+AC_ARG_VAR(FLINT_LEVEL, "FLINT level parameter (default 1 if FLINT enabled)")
+
 dnl Find the FLINT Library and determine if it has the nmod_mat module
 dnl (in FLINT from version 2.3)
 dnl
 dnl NB If your version of FLINT includes the optional hmod_mat module,
-dnl then compile with FLINT_LEVEL=2 by either using configure as usual
-dnl and then doing "make CXXFLAGS='-DFLINT_LEVEL=2'", or adding
-dnl CXXFLAGS='-DFLINT_LEVEL=2' to the ./configure command.  In either
-dnl case, ignore the warnings about FLINT_LEVEL being redfined.
+dnl then configure with FLINT_LEVEL=2 by either setting the
+dnl environment variable FLINT_LEVEL to 2, or adding FLINT_LEVEL=2 to
+dnl the configure invocation.
 dnl
 dnl First set defaults for when no suitable FLINT is found
 dnl
@@ -175,14 +176,14 @@ AC_ARG_WITH(flint,
     elif test "$withval" = "yes" -o "$withval" = ""; then
         want_flint=yes
         AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref],
-        [FLINT_CFLAGS="-DFLINT_LEVEL=1";
+        [FLINT_CFLAGS="-DFLINT_LEVEL=${FLINT_LEVEL:=1}";
          FLINT_LIBS="-lflint";
          AC_MSG_NOTICE([Building with FLINT support from system install])],
         [AC_MSG_NOTICE([No suitable FLINT Library (version >=2.3) found])],
         [])
     else
         want_flint=yes
-        FLINT_CFLAGS="-DFLINT_LEVEL=1 -I$withval/include"
+        FLINT_CFLAGS="-DFLINT_LEVEL=${FLINT_LEVEL:=1} -I$withval/include"
 	FLINT_LDFLAGS="-L$withval/lib";
         FLINT_LIBS="-lflint"
     fi
