@@ -45,7 +45,7 @@ script:
     - make
     - |
       if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-          make -k check;
+          make check;
       else
           make check;
       fi
