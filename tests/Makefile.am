@@ -17,7 +17,7 @@ AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(FLINT_CFLAGS) $(NTL_CFLAGS) $(PARI_CF
 AM_LDFLAGS         = $(FLINT_LDFLAGS) $(NTL_LDFLAGS) $(PARI_LDFLAGS) $(LDFLAGS_BOOST) $(PTHREAD_CFLAGS) $(PTHREAD_LDFLAGS)
 LIBS            = $(top_builddir)/libsrc/libec.la $(FLINT_LIBS) $(PARI_LIBS) $(NTL_LIBS) $(BOOST_LIBS) $(PTHREAD_LIBS)
 
-check_run = echo "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_dir)/$${prog}.in > $${prog}.testout 2>/dev/null && diff $${prog}.testout $(test_output_dir)/$${prog}.out || exit $$?
+check_run = echo -n "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_dir)/$${prog}.in > $${prog}.testout 2>/dev/null && echo "$${prog} completed" && diff $${prog}.testout $(test_output_dir)/$${prog}.out || exit $$?
 
 ################ PROCS #############################################
 
