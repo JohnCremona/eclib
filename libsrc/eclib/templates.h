@@ -72,7 +72,7 @@ template <class T >
 inline ostream& operator<<(ostream& os, const vector<T>& v)
 {
   os <<"[ ";
-  copy(v.begin(),v.end(), ostream_iterator<T>(cout, " "));
+  copy(v.begin(),v.end(), ostream_iterator<T>(os, " "));
   os << "]";
   return os;
 }
@@ -83,7 +83,7 @@ inline void vec_out(ostream& os, const vector<T>& v, unsigned int n=0)
   unsigned int m=v.size();  bool trunc=0;
   if((n>0)&&(m>n)) {m=n; trunc=1;}
   os <<"[ ";
-  copy(v.begin(),v.begin()+m, ostream_iterator<T>(cout, " "));
+  copy(v.begin(),v.begin()+m, ostream_iterator<T>(os, " "));
   if(trunc) os << "...";
   os << "]";
 }
@@ -92,7 +92,7 @@ template <class T >
 inline ostream& operator<<(ostream& os, const std::set<T>& v)
 {
   os <<"{ ";
-  copy(v.begin(),v.end(), ostream_iterator<T>(cout, " "));
+  copy(v.begin(),v.end(), ostream_iterator<T>(os, " "));
   os << "}";
   return os;
 }
@@ -102,10 +102,8 @@ inline ostream& operator<<(ostream& os, const std::set<T>& v)
 template <class T >
 vector<T> vector_union(const vector<T>& a, const vector<T>& b)
 {
-  //    cout<<"merging "<<a<<" and "<<b<<" using set_union"<<endl;
   vector<T> c;
   set_union(a.begin(),a.end(),b.begin(),b.end(),inserter(c,c.end()));
-  //    cout<<"result is "<<c<<endl;
   return c;
 }
 
