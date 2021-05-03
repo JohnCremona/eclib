@@ -30,7 +30,7 @@
 
 #include <iostream>
 
-#define DEFAULT_PARI_SIZE 1000000000
+#define DEFAULT_PARI_SIZE 100000000
 #define DEFAULT_PARI_MAX_PRIME 1000000
 
 void eclib_pari_init(long max_prime=DEFAULT_PARI_MAX_PRIME)
