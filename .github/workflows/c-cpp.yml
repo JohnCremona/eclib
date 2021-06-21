@@ -1,0 +1,24 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: configure
+      run: |
+        sudo apt-get install libpari-dev pari-gp2c libntl-dev libflint-dev
+        ./autogen.sh
+        ./configure --with-boost="no" --disable-allprogs
+    - name: make
+      run: make
+    - name: make check
+      run: make check
