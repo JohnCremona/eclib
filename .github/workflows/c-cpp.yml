@@ -10,6 +10,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    strategy:
+    matrix:
+      cc: [gcc, clang]
 
     steps:
     - uses: actions/checkout@v2
@@ -18,6 +22,8 @@ jobs:
         sudo apt-get install libpari-dev pari-gp2c libntl-dev libflint-dev
         ./autogen.sh
         ./configure --with-boost="no" --disable-allprogs
+      env:
+        CC: ${{ matrix.cc }}
     - name: make
       run: make
     - name: make check
