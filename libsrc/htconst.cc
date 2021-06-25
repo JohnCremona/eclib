@@ -1530,8 +1530,7 @@ long exponent(CurveRed& CR, long p)
   // Now p==3, and order=4, test whether we have full 2-torsion
   // The b-invariants are (0, 2, _, 2) for C4 and (0,1,0,2) for
   // C2xC2; so looking at b4 suffices:
-  long b4 = I2long(getb4(CR))%3;
-  return ((b4==1)? 2 : 4);
+  return ((posmod(getb4(CR),3)==1)? 2 : 4);
 }
 
 ///////////////////////////////////////////////////////////////////////
