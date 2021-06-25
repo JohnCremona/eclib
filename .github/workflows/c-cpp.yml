@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         cc: [gcc, clang]
+        mpfp: [enable, disable]
 
     steps:
     - uses: actions/checkout@v2
@@ -21,7 +22,7 @@ jobs:
       run: |
         sudo apt-get install libpari-dev pari-gp2c libntl-dev libflint-dev
         ./autogen.sh
-        ./configure --with-boost="no" --disable-allprogs
+        ./configure --with-boost="no" --with-flint --disable-allprogs --${{ matrix.mpfp }}-mpfp
       env:
         CC: ${{ matrix.cc }}
     - name: make
