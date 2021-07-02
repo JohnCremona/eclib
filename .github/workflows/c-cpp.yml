@@ -10,11 +10,11 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         cc: [gcc, clang]
-        mpfp: [enable, disable]
+        mpfp: [enable-mpfp, disable-mpfp]
 
     steps:
     - uses: actions/checkout@v2
@@ -22,7 +22,7 @@ jobs:
       run: |
         sudo apt-get install libpari-dev pari-gp2c libntl-dev libflint-dev
         ./autogen.sh
-        ./configure --with-boost="no" --with-flint --disable-allprogs --${{ matrix.mpfp }}-mpfp
+        ./configure --with-boost="no" --with-flint --disable-allprogs --${{ matrix.mpfp }}
       env:
         CC: ${{ matrix.cc }}
     - name: make
