@@ -124,7 +124,7 @@ public:
     {	    
       cerr << "mwrank command line options (can be in any order):\n\n";
       cerr << "-h\t""help""\t\tprints this info and quits\n";
-      cerr << "-V\t""help""\t\tprints eclib version and quits\n";
+      cerr << "-V\t""version""\t\tprints eclib version and quits\n";
       cerr << "-q\t""quiet""\t\tturns OFF banner display\n";
       cerr << "-v n\t""verbosity""\tsets verbosity to n (default="<<DEFAULT_VERBOSE<<")\n";
       cerr << "-o\t""PARI/GP output""\tturns ON extra PARI/GP short output (default is OFF)\n";
