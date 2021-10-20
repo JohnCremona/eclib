@@ -58,7 +58,7 @@ bigint root_p(const bigint& a, const bigint& b, const bigint& c,
     {
       if(div(p,a)) // fourth root is at infinity
 	{
-	  return mod(c*invmod(3*b,p),p);
+	  return mod(-c*invmod(3*b,p),p);
 	}
       bigint t=invmod(4*a*p_seminv,p);
       bigint r_seminv = b*b2+8*sqr(a)*d-4*ac*b;
