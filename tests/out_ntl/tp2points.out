@@ -1,7 +1,7 @@
 Test program for P2Point class
 Point input formats are [x:y:z], [x,y], [x/z,y/z] with any type of brackets
 Enter a point P: P=[78:1292:221]
-output_pari(P) = [6/17,1292/221]
+output_pari(P) = [6/17,76/13]
 P==P? 1
 After P=P2Point(2,4,-6), P=[-1:-2:3]
 After Q=P, Q=[-1:-2:3]

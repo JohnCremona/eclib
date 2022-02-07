@@ -75,18 +75,25 @@ public:
     :X(Q.X), Y(Q.Y), Z(Q.Z)
     { ; }
   ~P2Point(void) {;}
-                
+
   // input and output
   friend inline ostream& operator<<(ostream & os, const P2Point& P)
     {return os << "[" << P.X << ":" << P.Y << ":" << P.Z << "]" ;}
 
   friend inline void output_pari(ostream&os, const P2Point& P)
     {
-      bigint xp=P.X, yp=P.Y, zp=P.Z;
-      if(is_zero(zp)) {os<<"[0]"; return;}
-      if(is_one(zp)) {os<<"["<<xp<<","<<yp<<"]"; return;}
-      bigint z=gcd(xp,zp);
-      os<<"["<<(xp/z)<<"/"<<(zp/z)<<","<<yp<<"/"<<zp<<"]";
+      os<<"[";
+      if(is_zero(P.Z))
+        {
+          os<<"0";
+        }
+      else
+        {
+          bigrational x, y;
+          P.getaffinecoordinates(x, y);
+          os<<x<<","<<y;
+        }
+      os<<"]";
     }
 
 // P2Point input: 3 formats allowed are 
