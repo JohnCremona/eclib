@@ -64,3 +64,15 @@ Original generators:
 [ [57:0:1] [56:13:1] [458:19:8] [36:-259:1] ]
 Finished saturation
 Saturation was successful: points were saturated.
+======================================================
+
+E = [0,0,0,-17607,-889490]
+1 points entered.
+
+Saturating at primes from 1 up to 101
+Original generators:
+[ [46596:-1234751:64] ]
+Finished saturation
+Saturation was successful:  index gain = 2.
+New generators:
+[ [-82:54:1] ]

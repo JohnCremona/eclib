@@ -26,7 +26,7 @@ the nmod_mat module) it will be used.  If in addition you have the
 optional FLINT module hmod_mat (which does modular matrix operations
 using 32-bit data types) this can be activated by setting the
 environment valriable FLINT_LEVEL to 2 before running configure, or
-adding "FLINT_LEVEL=2" to the end of the configure invocation.  Bother
+adding "FLINT_LEVEL=2" to the end of the configure invocation.  Both
 of these have the effect of adding the compiler flag
 "-DFLINT_LEVEL=2$.  The advantage of this is that the modular symbol
 code will require less RAM to run.

@@ -498,12 +498,12 @@ int saturator::saturate(vector<long>& unsat, long& index,
   // sat_low_bd and ib, so we just add any Tamagawa primes greater
   // than ib.
 
-  if(egr && (sat_bd==-1))
+  if(egr)
     {
       if (verbose)
         cout << "Tamagawa index primes are " << tam_primes << endl;
       for (vector<long>::iterator pi = tam_primes.begin(); pi!=tam_primes.end(); pi++)
-        if (*pi > ib)
+        if ((*pi > ib) && ((sat_bd==-1) || (*pi <= sat_bd)))
           {
             if (verbose)
               cout << "adding Tamagawa index prime " << *pi << " to saturation list" << endl;
