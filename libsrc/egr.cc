@@ -30,114 +30,6 @@ typedef long scalar;
 //#define DEBUG_EGR
 //#define DEBUG_EGR_EXTRA
 
-// return 1 if P mod p is nonsingular:
-
-int ComponentGroups::HasGoodReduction(const Point& P, const bigint& p) const
-{
-#ifdef DEBUG_EGR
-  cout<<"Testing whether point "
-          <<P
-      <<" has good reduction at "<<p<<"..."<<flush;
-#endif
-  bigint Z=P.getZ();
-  if(is_zero(Z))  // identity is nonsingular
-    {
-#ifdef DEBUG_EGR
-      cout<<"yes (P=identity)"<<endl; 
-#endif
-      return 1;
-    }
-
-  bigint X=P.getX();
-  bigint Y=P.getY();
-
-  if(is_zero(p)) // test whether P is not on the "egg"
-    {
-      if(conncomp==1) 
-	{
-#ifdef DEBUG_EGR
-	  cout<<"yes (only one component)"<<endl; 
-#endif
-	  return 1;
-	}
-
-      bigint fd = 6*X*X+b2*X*Z+b4*Z*Z;
-
-      if(sign(fd)<0)
-	{
-#ifdef DEBUG_EGR
-	  cout<<"no (real f' condition, f'="<<fd<<")"<<endl; 
-#endif
-	  return 0;
-	}
-
-      bigint fdd = 12*X+b2*Z;
-
-      if(sign(fdd)<0) // assumes Z>0
-	{
-#ifdef DEBUG_EGR
-	  cout<<"no (real f\" condition, f\"="<<fdd<<")"<<endl; 
-#endif
-	  return 0;
-	}
-#ifdef DEBUG_EGR
-      cout<<"yes (real, on identity component)"<<endl; 
-#endif
-      return 1;
-    }
-  X=mod(X,p);  Y=mod(Y,p);  Z=mod(Z,p);
-  if(is_zero(Z))  // identity is nonsingular
-	{
-#ifdef DEBUG_EGR
-	  cout<<"yes (identity mod p)"<<endl; 
-#endif
-	  return 1;
-	}
-  if(ndiv(p,-3*X*X - 2*a2*X*Z + a1*Y*Z - a4*Z*Z)) 
-	{
-#ifdef DEBUG_EGR
-	  cout<<"yes (FX nonzero mod p)"<<endl; 
-#endif
-	  return 1;
-	}
-  if(ndiv(p,a1*X + 2*Y + a3*Z)) 
-	{
-#ifdef DEBUG_EGR
-	  cout<<"yes (FY nonzero mod p)"<<endl; 
-#endif
-	  return 1;
-	}
-  if(ndiv(p,-a2*X*X + a1*X*Y - 2*a4*X*Z + Y*Y + 2*a3*Y*Z - 3*a6*Z*Z)) 
-	{
-#ifdef DEBUG_EGR
-	  cout<<"yes (FZ nonzero mod p)"<<endl; 
-#endif
-	  return 1;
-	}
-#ifdef DEBUG_EGR
-  cout<<"no"<<endl; 
-#endif
-  return 0;
-}
-
-// return 1 if P mod p is nonsingular for all p in plist; else return
-// 0 and put the first prime of bad reduction into p0:
-
-int ComponentGroups::HasGoodReduction(const Point& P, const vector<bigint>& plist, bigint& p0) const
-{
-  for(unsigned int i=0; i<plist.size(); i++)
-    {p0=plist[i]; if(!HasGoodReduction(P,p0)) return 0;}
-  return 1;
-}
-
-// return 1 iff P mod p is nonsingular for all p (including infinity);
-// else return 0 and put the first prime of bad reduction into p0:
-int ComponentGroups::HasGoodReduction(const Point& P, bigint& p0) const
-{
-  if(!HasGoodReduction(P,BIGINT(0))) {p0=BIGINT(0); return 0;}
-  return HasGoodReduction(P,the_bad_primes,p0);
-}
-
 // Returns [m] for cyclic of order m, [2,2] for 2*2 (type I*m, m even)
 
 vector<int> ComponentGroups::ComponentGroup(const bigint& p) const
@@ -162,7 +54,7 @@ vector<int> ComponentGroups::ComponentGroup(const bigint& p) const
 int ComponentGroups::InSameComponent(const Point& P, const Point& Q, const bigint& p) const
 {
   if(P==Q) return 1;
-  return HasGoodReduction(P-Q,p);
+  return (P-Q).has_good_reduction(p);
 }
 
 // For reduction type Im, multiplicative reduction where component
@@ -177,7 +69,7 @@ long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p
           <<P
       <<", m="<<m<<"..."<<flush;
 #endif
-  if(HasGoodReduction(P,p)) return 0;
+  if(P.has_good_reduction(p)) return 0;
   bigint x, y, z; P.getcoordinates(x,y,z);
   bigint zroot = gcd(x,z); // = cube root of z
   long ans = val(p, 2*y + a1*x + a3*z) - 3*val(p,zroot);
@@ -202,7 +94,7 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
           <<P
       <<", m="<<m<<"..."<<flush;
 #endif
-  if(HasGoodReduction(P,p)) return 0;
+  if(P.has_good_reduction(p)) return 0;
   // The following is independent of P
   long N = m;  // to match the write-up
   //  long N2=(N+1)/2;  // =N/2 rounded up
@@ -292,23 +184,12 @@ long ComponentGroups::ImageInComponentGroup(const Point&P, const bigint& p, vect
   long n=grp[0];  // the group is cyclic of order n
   switch(n) {
   case 1: {break;}
-  case 2: {
-    if(!HasGoodReduction(P,p)) 
-      {ans=1; }
-    break;} 
-  case 3: {
-    if(!HasGoodReduction(P,p)) 
-      {ans=1; }
-    break;} 
+  case 2: case 3: {
+    ans = (P.has_good_reduction(p)? 0 : 1);
+    break;}
   case 4: {
-    if(!HasGoodReduction(P,p)) 
-      {
-	if(HasGoodReduction(2*P,p)) 
-	  {ans=2; }
-	else
-	  {ans=1; }
-      }
-    break;} 
+    ans = (P.has_good_reduction(p)? 0 : ((2*P).has_good_reduction(p)? 2: 1));
+    break;}
   default:
     // Now we are in the case of I_n
     {
@@ -350,7 +231,7 @@ int ComponentGroups::OrderInComponentGroup(const Point& P, const bigint& p, vect
 
   if(grp.size()==2) // C2xC2
     {
-      if(!HasGoodReduction(P,p)) ans=2;
+      if(!P.has_good_reduction(p)) ans=2;
     }
   else // cyclic of order n
     {
@@ -358,7 +239,7 @@ int ComponentGroups::OrderInComponentGroup(const Point& P, const bigint& p, vect
     }
 #ifdef DEBUG_EGR
   cout<<"OrderInComponentGroup() returns "<<ans<<endl;
-#endif 
+#endif
   return ans;
 }
 
@@ -520,7 +401,7 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 
       if((n0%n1)==0) // P1 is a multiple of P0 in CG...
 	{
-	  while((!HasGoodReduction(P1,p))) {P1=P1-P0;}
+	  while((!P1.has_good_reduction(p))) {P1=P1-P0;}
 #ifdef DEBUG_EGR
 	  cout<<"P1 replaced by  "<<P1<<" with good reduction"<<endl;
 	  cout<<"index is now "<<m<<endl;
@@ -611,7 +492,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
   // Compute minimal model and map points to it if necessary
 
   Curvedata E_orig = Curvedata(Plist[0].getcurve(), 0);
-  int is_min = 0;//is_minimal(E_orig);
+  int is_min = 0;
   bigint u, r, s, t;
   Curvedata Emin;
 
@@ -627,7 +508,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
   else
     {
       Emin = E_orig.minimalize(u,r,s,t);
-      is_min = is_one(abs(u)); // then E was already minimal, no adjustments needed
+      is_min = is_one(u) && is_zero(r) && is_zero(s) && is_zero(t); // then E was already reduced and minimal, no adjustments needed
     }
 
   vector<Point> Plist_min;
@@ -780,7 +661,7 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
 #ifdef DEBUG_EGR
 	  cout<< "processing point#"<<k<<": "<<Pk<<endl;
 #endif
-	  if(CG.HasGoodReduction(Pk,p)) continue;
+	  if(Pk.has_good_reduction(p)) continue;
 	  int coset=-1;
 	  for(unsigned int j=0; (j<PointReps.size())&&(coset==-1); j++)
 	    if(CG.InSameComponent(Pk,PointReps[j],p)) 

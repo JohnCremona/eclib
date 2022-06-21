@@ -31,10 +31,6 @@
 // message and reduce to this value:
 const int max_search_bound = 18;
 
-// How many auxiliary primes to use without the image increasing in
-// rank before attempting to enlarge the subgroup:
-const int n_aux_stuck = 20;
-
 void saturator::reset_points(const vector<Point>& PP)
 {
   Plist=PP;
@@ -50,32 +46,25 @@ void saturator::reset_points(const vector<Point>& PP)
 }
 
 // initialize index bound
-void saturator::set_index_bound(int egr)
+void saturator::set_index_bound()
 {
-  the_index_bound = index_bound(Plist,egr,(verbose>1));
+  the_index_bound = index_bound(Plist, egr_flag, (verbose>1));
 }
 
 // return current index bound (compute if necessary)
-bigint saturator::get_index_bound(int egr)
+bigint saturator::get_index_bound()
 {
   if (is_zero(the_index_bound))
-    set_index_bound(egr);
+    set_index_bound();
   return the_index_bound;
 }
 
 // test whether p is less than the saturation index, or a Tamagawa prime
 int saturator::trivially_saturated(long p)
 {
-  int t = ((p>the_index_bound)
+  return ((p>the_index_bound)
           &&
           (find(tam_primes.begin(), tam_primes.end(), p) == tam_primes.end()));
-  // if (t)
-  //   {
-  //     cout << "No need to saturate at " << p
-  //          << ", as it is greater than the current index bound " << the_index_bound
-  //          << " and not a Tamagawa prime." << endl;
-  //   }
-  return t;
 }
 
 int saturator::test_saturation(int pp, int ms)
@@ -307,20 +296,18 @@ int saturator::enlarge()
   log_index++;
 
   // Now the points we have have a regulator which is reduced by a
-  // factor of p^2, the saturation in dex bound can be reduced by a
-  // factor of p.  Note that the_index_bound is the floor of some real
-  // bound b, so if we divide it by p (rounding down) we do get the
-  // floor of b/p.
-  //
-  // For example, if the bound was 16 and we enlarge by p=3, the new
-  // bound will be 5, so we no longer need to saturate at primes
-  // 7,11,13 (unless they are Tamagawa primes).
-  //
-  // This is handled by the method trivially_saturated().
+  // factor of p^2, the saturation index bound can often be reduced by
+  // a factor of p, but not necessarily so.  For simplicity we just
+  // recompute the index bound.
 
-  if(verbose>0) cout<<"Reducing index bound from " << the_index_bound;
-  the_index_bound /= p;
-  if(verbose>0) cout<<" to " << the_index_bound << endl;
+  bigint old_index_bound = the_index_bound;
+  set_index_bound();
+  if(verbose)
+    if (the_index_bound < old_index_bound)
+      cout << "Reducing index bound from " << old_index_bound <<" to " << the_index_bound << endl;
+    else
+      cout << "The index bound " << the_index_bound << " has not changed"<<endl;
+
   // reset TL matrix and q iteration
   TLimage=mat_l(0,rank); //  holds TL image in echelon form
   TLrank=0;
@@ -338,7 +325,7 @@ int saturator::do_saturation(int pp, int maxntries)
     cout<<"Testing "<<p<<"-saturation..."<<endl;
   if (trivially_saturated(p))
     return 0;  // index=1, log=0
-  if(test_saturation(p,n_aux_stuck))
+  if(test_saturation(p, maxntries))
     return 0;
   if(verbose>1)
     cout<<"Points not (yet) proved to be "<<p
@@ -358,7 +345,7 @@ int saturator::do_saturation(int pp, int maxntries)
 	      return -1;
 	    }
 	}
-      if(test_saturation_extra(p,n_aux_stuck)) return log_index;
+      if(test_saturation_extra(p, maxntries)) return log_index;
       if(verbose>1) cout<<"Points not (yet) proved to be "<<p
 	  <<"-saturated, attempting enlargement..."<<endl;
     }
@@ -434,7 +421,7 @@ int saturator::do_saturation(vector<int> plist,
 
 int saturator::saturate(vector<long>& unsat, long& index,
                         long sat_bd, long sat_low_bd,
-			int egr, int maxntries)
+			int maxntries)
 {
   // Determine the primes at which saturation is necessary: all those
   // up to index bound (but truncated at sat_bd unless this is -1),
@@ -445,11 +432,11 @@ int saturator::saturate(vector<long>& unsat, long& index,
   while(pr.value()<sat_low_bd) pr++;
   int p=pr.value();
 
-  bigint ib = get_index_bound(egr);
+  bigint ib = get_index_bound();
   if(verbose)
     {
       cout<<"Saturation index bound ";
-      if (egr) cout << "(for points of good reduction) ";
+      if (egr_flag) cout << "(for points of good reduction) ";
       cout<< " = "<<ib<<endl;
     }
 
@@ -498,17 +485,20 @@ int saturator::saturate(vector<long>& unsat, long& index,
   // sat_low_bd and ib, so we just add any Tamagawa primes greater
   // than ib.
 
-  if(egr)
+  if(egr_flag)
     {
       if (verbose)
         cout << "Tamagawa index primes are " << tam_primes << endl;
       for (vector<long>::iterator pi = tam_primes.begin(); pi!=tam_primes.end(); pi++)
-        if ((*pi > ib) && ((sat_bd==-1) || (*pi <= sat_bd)))
-          {
-            if (verbose)
-              cout << "adding Tamagawa index prime " << *pi << " to saturation list" << endl;
-            satprimes.push_back(*pi);
-          }
+        {
+          p = *pi;
+          if ((p > ib) && ((sat_bd==-1) || (p <= sat_bd)))
+            {
+              if (verbose)
+                cout << "adding Tamagawa index prime " << p << " to saturation list" << endl;
+              satprimes.push_back(p);
+            }
+        }
     }
 
   // do the saturation.  Will return ok iff we succeeded in saturating
@@ -594,9 +584,9 @@ int saturate_points(Curvedata& C, vector<Point>& points,
 		    long sat_bd, long sat_low_bd,
                     int egr, int verbose)
 {
-  saturator sieve(&C,verbose);
+  saturator sieve(&C, egr, verbose);
   sieve.set_points(points);
-  int ans = sieve.saturate(unsat, index, sat_bd, sat_low_bd, egr);
+  int ans = sieve.saturate(unsat, index, sat_bd, sat_low_bd);
   points = sieve.getgens();
   if (verbose>0)
     sieve.show_q_tally();
@@ -669,20 +659,6 @@ bigint index_bound(vector<Point>& points,
     cout<<"Saturation index bound " << ib << ", rounds down to "<<ans<<endl;
   return ans;
 }  // end of index_bound()
-
-// Tamagawa primes: primes dividing any Tamagawa number
-vector<long> tamagawa_primes(const Curvedata& C)
-{
-  CurveRed CR(C);
-  vector<bigint> badp = getbad_primes(CR);
-  vector<long> tp;
-  for(unsigned int i=0; i<badp.size(); i++)
-    {
-      tp = vector_union(tp,  pdivs(getc_p(CR,badp[i])));
-    }
-  return tp;
-}
-
 
 //end of file saturate.cc
 

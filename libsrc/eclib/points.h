@@ -144,6 +144,13 @@ public:
   int is_zero() const { return isinfinite(); }
   int isvalid() const ; // P on its curve ?
   int is_torsion() { return order(*this)>0; } // will compute and set the order if needed
+  int is_on_real_identity_component() const;
+  int is_on_egg() const {return !is_on_real_identity_component();}
+// return 1 if P mod p is nonsingular (or for p=0 if it is on the real identity component):
+  int has_good_reduction(long p) const;
+  int has_good_reduction(const bigint& p) const;
+  // return 1 if P has good reduction at all p in list, if not then p0 holds first bad prime
+  int has_good_reduction(const vector<bigint>& plist, bigint& p0, int check_real=0) const;
 
 }; // end of point class
 

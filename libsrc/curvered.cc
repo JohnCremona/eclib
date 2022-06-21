@@ -372,6 +372,16 @@ bigint global_Tamagawa_exponent(CurveRed& c, int real_too)
   return ans;
 }
 
+// Tamagawa primes: primes dividing any Tamagawa number
+vector<long> tamagawa_primes(CurveRed& C, int real_too)
+{
+  vector<bigint> T = pdivs(global_Tamagawa_exponent(C, real_too));
+  vector<long> t;
+  for(vector<bigint>::const_iterator ti = T.begin(); ti!=T.end(); ++ti)
+    t.push_back(I2long(*ti));
+  return t;
+}
+
 // CurveRed member access friend functions:
 
 // NB If p is not a bad prime this will not cause an error, but will
@@ -423,13 +433,13 @@ bigint prodcp(const CurveRed& c)
 // The local Tamagawa number.  Use p=0 for reals
 bigint local_Tamagawa_number(CurveRed& c, const bigint& p)
 {
-  return BIGINT(is_zero(p)? c.conncomp: getc_p(c,p));
+  return BIGINT(is_zero(p)? getconncomp(c): getc_p(c,p));
 }
 
 // The global Tamagawa number, = product of local ones.
 bigint global_Tamagawa_number(CurveRed& c, int real_too)
 {
-  return BIGINT(prodcp(c) * (real_too ? c.conncomp : 1));
+  return BIGINT(prodcp(c) * (real_too ? getconncomp(c) : 1));
 }
 
 Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p)

@@ -296,16 +296,11 @@ public:
     // the returned value casts as a character array; to use coded as int,
     // say declared Kodaira_code Kc, just use public member Kc.code
   friend bigint Trace_Frob(CurveRed& c, const bigint& p);
-
   // The local Tamagawa number.  Use p=0 for reals
   friend bigint local_Tamagawa_number(CurveRed& c, const bigint& p);
-  // The global Tamagawa number, = product of local ones.
-  friend bigint global_Tamagawa_number(CurveRed& c, int real_too);
-
   // The local Tamagawa exponent -- same as Tamagawa number unless the
   // component group is (2,2).  Use p=0 for reals
   friend bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p);
-
   // The global Tamagawa exponent, i.e. the lcm of the exponents of
   // the component groups at all bad primes (including infinity if
   // real_too is 1), which is the lcm of the local Tamagawa exponents.
@@ -314,6 +309,11 @@ public:
   friend bigint global_Tamagawa_exponent(CurveRed& c, int real_too);
 };
 
+// The global Tamagawa number, = product of local ones.
+bigint global_Tamagawa_number(CurveRed& c, int real_too);
+
+// Tamagawa primes: primes dividing any Tamagawa number
+vector<long> tamagawa_primes(CurveRed& C, int real_too);
 
 inline ostream& operator<<(ostream& os, const Curve& c)
 {

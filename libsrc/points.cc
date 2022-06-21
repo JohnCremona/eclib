@@ -649,4 +649,81 @@ vector<Point> Point::division_points(int m) // list of Q s.t. n*Q=this
   return ans;
 }
 
+int Point::is_on_real_identity_component() const
+{
+  if(is_zero())          // the identity is nonsingular
+    return 1;
+  if(getconncomp(*E)==1) // there is only one component
+    return 1;
+  bigint b2 = getb2(*E), b4 = getb4(*E);
+  bigint FD = 6*X*X + b2*X*Z + b4*Z*Z;
+  if (sign(FD)<0)
+    return 0;
+  bigint FDD = 12*X + b2*Z;
+  if (sign(FDD)<0)  // assumes Z>0
+    return 0;
+  return 1;
+}
+
+// return 1 if P mod p is nonsingular (or for p=0 if it is on the real identity component):
+
+int Point::has_good_reduction(long p) const
+{
+  if(is_zero())  // identity is nonsingular
+    return 1;
+
+  if(p==0)
+    return is_on_real_identity_component();
+
+  bigint pp(p);
+  return has_good_reduction(pp);
+}
+
+int Point::has_good_reduction(const bigint& p) const
+{
+  if(div(p, Z))  // identity is nonsingular
+    return 1;
+  if(::is_zero(p))
+    return is_on_real_identity_component();
+  bigint a1,a2,a3,a4,a6;
+  E->getai(a1,a2,a3,a4,a6);
+  bigint FY = 2*Y + a1*X + a3*Z; // no need for factor of Z
+  int ok = ndiv(p, FY);
+  if (!ok)
+    {
+      bigint FX = a1*Y*Z - (3*X*X + 2*a2*X*Z + a4*Z*Z);
+      ok = ndiv(p, FX);
+      if (!ok)
+        {
+          bigint FZ = Y*(Y + a1*X + 2*a3*Z) - (a2*X*X + 2*a4*X*Z + 3*a6*Z*Z);
+          ok = ndiv(p, FZ);
+        }
+    }
+  //  cout << "P = "<<(*this)<<" has "<<(ok?"good":"bad")<<" reduction at p="<<p<<endl;
+  return ok;
+}
+
+// return 1 if P mod p is nonsingular for all p in plist (and is in
+// the identity component over the reals if check_real=1); else return
+// 0 and put the first prime of bad reduction into p0.
+
+int Point::has_good_reduction(const vector<bigint>& plist, bigint& p0, int check_real) const
+{
+  if (check_real)
+    if (!is_on_real_identity_component())
+      {
+        p0 = BIGINT(0);
+        return 0;
+      }
+  for(vector<bigint>::const_iterator pi = plist.begin(); pi!=plist.end(); ++pi)
+    {
+      if(!has_good_reduction(*pi))
+        {
+          p0 = *pi;
+          return 0;
+        }
+    }
+  return 1;
+}
+
 // end of file: points.cc

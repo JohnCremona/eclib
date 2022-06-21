@@ -41,15 +41,12 @@ public:
   //  ComponentGroups(const Curve& C) : CurveRed(C) {;}
   ComponentGroups() : CurveRed() {;}
 
-// return 1 iff P mod p is nonsingular:
-  int HasGoodReduction(const Point& P, const bigint& p) const;
-
-// return 1 iff P mod p is nonsingular for all p in plist; else return
-// 0 and put the first prime of bad reduction into p0:
-  int HasGoodReduction(const Point& P, const vector<bigint>& plist, bigint& p0) const;
 // return 1 iff P mod p is nonsingular for all p (including infinity);
 // else return 0 and put the first prime of bad reduction into p0:
-  int HasGoodReduction(const Point& P, bigint& p0) const;
+  int HasGoodReduction(const Point& P, bigint& p0) const
+  {
+    return P.has_good_reduction(the_bad_primes, p0, 1);
+  }
 
 // Returns [m] for cyclic of order m, [2,2] for 2*2 (type I*m, m even)
   vector<int> ComponentGroup(const bigint& p) const;

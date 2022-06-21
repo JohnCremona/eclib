@@ -54,13 +54,9 @@ const long SAT_MAX_PRIME = 100000;
 
 bigint index_bound(vector<Point>& points, int egr=1, int verbose=0);
 
-// Tamagawa primes: primes dividing any Tamagawa number
-vector<long> tamagawa_primes(const Curvedata& C);
-
-
 class saturator {
-private: 
-  Curvedata *E;         // the curve 
+private:
+  Curvedata *E;         // the curve
   vector<Point> Plist;  // the points
   vector<Point> Plistp;  // the p-cotorsion
   vector<Point> Plistx;  // the points plus p-cotorsion
@@ -70,6 +66,7 @@ private:
   vector<long> tam_primes;  // primes dividing any Tamagawa index
   int rank;             // = #Plistx
   bigint disc;          // discriminant of E
+  vector<bigint> badp;  // E's bad primes
   int p;                // current prime to saturate at
   int log_index;         // current points have index p^log_index in original
   primevar qvar;          // loops over possible sieving primes q
@@ -79,6 +76,7 @@ private:
   map<bigint,int> q_tally;   // key=q, value = count of number of times q used
   bigint maxq;               // largest q used
   int maxp;                  // p for which largest q used
+  int egr_flag;              // 1 if we are using the EGR subgroup
 
   mat_l TLimage;
   int TLrank, stuck_counter, verbose, use_div_pols;
@@ -90,13 +88,15 @@ private:
   //
 
 public:
-  saturator(Curvedata* EE, int verb=0)
-    :E(EE), verbose(verb)
+  saturator(Curvedata* EE, int egr=1, int verb=0)
+    :E(EE), egr_flag(egr), verbose(verb)
     {
       use_div_pols=0;
       disc = getdiscr(*E);
       AllTorsion = torsion_points(*EE);
-      tam_primes = tamagawa_primes(*E);
+      CurveRed C(*E);
+      tam_primes = tamagawa_primes(C, 1); // 1 means include 2 if E(R) has 2 components
+      badp = getbad_primes(*E);
       maxq = 0;
       the_index_bound = BIGINT(0); // means not set
     }
@@ -109,10 +109,10 @@ public:
   }
 
   // initialize index bound
-  void set_index_bound(int egr=1);
+  void set_index_bound();
 
   // return current index bound (compute if necessary)
-  bigint get_index_bound(int egr=1);
+  bigint get_index_bound();
 
   // test whether p is greater than the saturation index and not a Tamagawa prime
   int trivially_saturated(long p);
@@ -148,7 +148,7 @@ public:
   // for p<sat_low_bd: e.g. set to 3 if we already know 2-saturaton.
   int saturate(vector<long>& unsat, long& index,
                long sat_bd=-1, long sat_low_bd=2,
-               int egr=1, int maxntries=10);
+               int maxntries=10);
 
   // replace the generating points & reset matrices and ranks
   // (then can use test_saturation_extra())

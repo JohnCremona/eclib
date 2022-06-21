@@ -64,7 +64,7 @@ int main()
 
       cout << "======================================================\n\n";
       cout << "E = " << (Curve)C <<endl;
-      saturator sieve(&C,verbose);
+      saturator sieve(&C,1, verbose);
 
   Point P(C);
   cerr<<"enter number of points: ";      cin >> npts;
@@ -102,7 +102,7 @@ int main()
 
   long index;
   vector<long> unsat;
-  int ok = sieve.saturate(unsat, index, pmax, 1, 10, pmin);
+  int ok = sieve.saturate(unsat, index, pmax, pmin, 10);
 
   cout<<"Finished saturation" << endl;
   if (ok || pmax>0)

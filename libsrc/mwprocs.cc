@@ -196,8 +196,8 @@ vector<long> cleardenoms(vector<bigfloat> alpha)
   return nlist;
 }
 
-mw::mw(Curvedata *EE, int verb, int pp, int maxr) 
-  :E(EE), rank(0), maxrank(maxr), reg(to_bigfloat(1)), verbose(verb), process_points(pp), satsieve(EE,verb) 
+mw::mw(Curvedata *EE, int verb, int pp, int maxr)
+  :E(EE), rank(0), maxrank(maxr), reg(to_bigfloat(1)), verbose(verb), process_points(pp), satsieve(EE,1,verb)
 {
 #ifdef DEBUG
   verbose=1;
@@ -632,7 +632,9 @@ int mw::saturate(long& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
 #endif
   satsieve.set_points(basis);
   int ok = 1;
-  if(rank>0) ok=satsieve.saturate(unsat,index,sat_bd,1,10, sat_low_bd);
+  if(rank>0) ok=satsieve.saturate(unsat,index,
+                                  sat_bd, sat_low_bd,
+                                  10);  // maxntries before dividing
   if(verbose) cout<<"done"<<endl;
   if(!ok)
     cout<<"Failed to saturate MW basis at primes "<<unsat<<endl;

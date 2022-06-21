@@ -62,7 +62,7 @@ int main()
   curvecount++;
 
   Curvedata C(E, 0);
-  saturator sieve(&C,verbose);
+  saturator sieve(&C,1,verbose);
 
   cout<<endl;
   cout<<"==============================================================="<<endl;
@@ -85,7 +85,7 @@ int main()
   vector<long> unsat;
 
   sieve.set_points(points);
-  int ok = sieve.saturate(unsat, index, pmax, 2, 1);
+  int ok = sieve.saturate(unsat, index, pmax, 2, 10);
 
   cout<<"Finished p-saturation";
   if (pmax!=-1)
