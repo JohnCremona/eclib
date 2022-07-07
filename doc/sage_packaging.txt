@@ -1,0 +1,35 @@
+Notes on how to package a new version of eclib for Sage
+
+After making a new eclib release VERSION:
+
+1. make dist-bzip2
+   This creates the file eclib-<VERSION>.tar.bz2
+   Copy it to ~/sage/upstream
+
+2. In ~/sage, checkout the development branch, update it from trac and
+   run "make".
+
+3. Make a new sage branch, say
+   git checkout -b eclib-<VERSION>
+
+4. In ~/sage/build/pkgs/eclib, update the version number in
+   package-version.txt and spkg-configure.m4
+
+5. Run (using this sage)
+   sage --package fix-checksum eclib
+
+6. Build this new eclib in sage, with checks:
+   sage -i -c eclib
+
+   [Doing 'make eclib' is also OK, bu does not run eclib's checks.]
+
+7. Test sage to see if any doctests need changing.  Start with:
+   sage -t --long src/sage/libs/eclib
+   sage -t --long src/sage/schemes/elliptic_curves
+
+8. Make a github release and upload eclib-<VERSION>.tar.bz2 to it.
+
+9. Commit the changes to sage, upload the branch to the trac ticket
+   and call for review.
+
+
