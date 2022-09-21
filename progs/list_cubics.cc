@@ -1,7 +1,7 @@
-// list_cubics.cc: Program for listing integer cubics with given discriminant bound
+// list_cubics.cc: Program for listing integer cubics with given or bounded discriminant
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2022 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -26,61 +26,83 @@
 #include <eclib/polys.h>
 #include <eclib/cubic.h>
 
+void output_cubics(const bigint& disc, int include_reducibles=1, int gl2=0, int verbose=0)
+{
+  vector<cubic> glist = reduced_cubics(disc, include_reducibles, gl2, verbose);
+  if (glist.size()==0)
+    {
+      if(verbose>1)
+        {
+          cout<< "No ";
+          if (!include_reducibles) cout << "irreducible";
+          cout << " cubics with discriminant " << disc << endl;
+        }
+    }
+  else
+    {
+      cout << glist.size();
+      cout << " with discriminant " << disc;
+      if (glist.size()>0) cout<< " : " << glist;
+      cout << endl;
+    }
+}
+
 int main()
 {
   initprimes("PRIMES");
   bigint disc, absdisc, maxdisc;
-  int neg;
-  int verbose=0, include_reducibles=1, gl2=0;
+  int neg, verbose=0, include_reducibles=1, gl2=0, single=0;
+
   cerr << "Verbosity level (0, 1 or 2): ";
   cin >> verbose;
 
-  while(cerr << "Enter discriminant bound (positive or negative, 0 to stop): ",	cin >> maxdisc, !is_zero(maxdisc))
+  cerr << "Single discriminants (1) or a range (0)? ";
+  cin >> single;
+
+  if (single)
     {
       cerr << "Include reducible cubics? (0 or 1): ";
       cin >> include_reducibles;
+
       cerr << "Use GL(2,Z)-equivalence instead of SL(2,Z)? (0 or 1): ";
       cin >> gl2;
-      neg=(maxdisc<0);
-      if (include_reducibles)
-        cout << "Cubics with ";
-      else
-        cout << "Irreducible cubics with ";
-      if(neg)
-	{
-	  ::negate(maxdisc);
-	  cout << "negative discriminant down to -";
-	}
-      else
-	{
-	  cout << "positive discriminant  up  to ";
-	}
-      cout << maxdisc;
-      cout << " up to " << (gl2?"GL":"SL") << "(2,Z)-equivalence";
-      cout << endl;
 
-      for(absdisc=1; absdisc<=maxdisc; absdisc++)
+      while(cerr << "Enter discriminant (positive or negative, 0 to stop): ",	cin >> disc, !is_zero(disc))
+        {
+          cout << (include_reducibles? "Cubics": "Irreducible cubics") << " with discriminant ";
+          cout << disc;
+          cout << " up to " << (gl2?"GL":"SL") << "(2,Z)-equivalence";
+          cout << endl;
+          output_cubics(disc, include_reducibles, gl2, verbose);
+        }
+    }
+  else
+    {
+      while(cerr << "Enter discriminant bound (positive or negative, 0 to stop): ",	cin >> maxdisc, !is_zero(maxdisc))
+        {
+          cerr << "Include reducible cubics? (0 or 1): ";
+          cin >> include_reducibles;
+
+          cerr << "Use GL(2,Z)-equivalence instead of SL(2,Z)? (0 or 1): ";
+          cin >> gl2;
+
+          neg=(maxdisc<0);
+
+          cout << (include_reducibles? "Cubics with ": "Irreducible cubics with ");
+          cout << (neg? "negative discriminant down to ": "positive discriminant  up  to ");
+          cout << maxdisc;
+          cout << " up to " << (gl2? "GL": "SL") << "(2,Z)-equivalence";
+          cout << endl;
+
+          if (neg)
+            ::negate(maxdisc);
+          for(absdisc=1; absdisc<=maxdisc; absdisc++)
 	    {
 	      disc=absdisc;
 	      if(neg) ::negate(disc);
-              vector<cubic> glist = reduced_cubics(disc, include_reducibles, gl2, verbose);
-              if (glist.size()==0)
-                {
-                  if(verbose>1)
-                    {
-                      cout<< "No ";
-                      if (!include_reducibles) cout << "irreducible";
-                      cout << " cubics with discriminant " << disc << endl;
-                    }
-                }
-              else
-                {
-                  cout << glist.size();
-                  cout << " with discriminant " << disc;
-                  if (glist.size()>0) cout<< " : " << glist;
-                  cout << endl;
-                }
+              output_cubics(disc, include_reducibles, gl2, verbose);
 	    }
-      cout<<endl;
+          cout<<endl;
+        }
     }
 }
