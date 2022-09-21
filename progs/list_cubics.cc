@@ -40,10 +40,9 @@ void output_cubics(const bigint& disc, int include_reducibles=1, int gl2=0, int 
     }
   else
     {
-      cout << glist.size();
-      cout << " with discriminant " << disc;
-      if (glist.size()>0) cout<< " : " << glist;
-      cout << endl;
+      if (verbose)
+        cout << glist.size() << " with discriminant ";
+      cout << disc << " " << glist << endl;
     }
 }
 
@@ -69,10 +68,13 @@ int main()
 
       while(cerr << "Enter discriminant (positive or negative, 0 to stop): ",	cin >> disc, !is_zero(disc))
         {
-          cout << (include_reducibles? "Cubics": "Irreducible cubics") << " with discriminant ";
-          cout << disc;
-          cout << " up to " << (gl2?"GL":"SL") << "(2,Z)-equivalence";
-          cout << endl;
+          if (verbose)
+            {
+              cout << (include_reducibles? "Cubics": "Irreducible cubics") << " with discriminant ";
+              cout << disc;
+              cout << " up to " << (gl2?"GL":"SL") << "(2,Z)-equivalence";
+              cout << endl;
+            }
           output_cubics(disc, include_reducibles, gl2, verbose);
         }
     }
@@ -89,9 +91,9 @@ int main()
           neg=(maxdisc<0);
 
           cout << (include_reducibles? "Cubics with ": "Irreducible cubics with ");
-          cout << (neg? "negative discriminant down to ": "positive discriminant  up  to ");
+          cout << (neg? "negative discriminant down to ": "positive discriminant up to ");
           cout << maxdisc;
-          cout << " up to " << (gl2? "GL": "SL") << "(2,Z)-equivalence";
+          cout << ", up to " << (gl2? "GL": "SL") << "(2,Z)-equivalence";
           cout << endl;
 
           if (neg)
