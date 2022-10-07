@@ -28,31 +28,38 @@
 #include <eclib/polys.h>
 #include <cassert>
 
-void cubic::init()
-{
-  coeffs = new bigint[4];
-}
-
-cubic::~cubic()
-{
-  delete [] coeffs;
-}
-
-void cubic::transform(const unimod& m)
+vector<bigint> transform_helper(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
+                                const unimod& m)
 {
   bigint m112=sqr(m(1,1)); bigint m113=m112*m(1,1);
   bigint m212=sqr(m(2,1)); bigint m213=m212*m(2,1);
   bigint m222=sqr(m(2,2)); bigint m223=m222*m(2,2);
   bigint m122=sqr(m(1,2)); bigint m123=m122*m(1,2);
 
-  bigint A = m113*a() + m(2,1)*m112*b() + m212*m(1,1)*c() + m213*d();
-  bigint B = 3*m(1,2)*m112*a() + (m(2,2)*m112 + 2*m(2,1)*m(1,2)*m(1,1))*b()
-    + (2*m(2,2)*m(2,1)*m(1,1) + m212*m(1,2))*c() + 3*m(2,2)*m212*d();
-  bigint C = 3*m122*m(1,1)*a() + (2*m(2,2)*m(1,2)*m(1,1) + m(2,1)*m122)*b()
-    + (m222*m(1,1) + 2*m(2,2)*m(2,1)*m(1,2))*c() + 3*m222*m(2,1)*d();
-  bigint D = m123*a() + m(2,2)*m122*b() + m222*m(1,2)*c() + m223*d();
-  set(A,B,C,D);
-  }
+  bigint A = m113*a + m(2,1)*m112*b + m212*m(1,1)*c + m213*d;
+  bigint B = 3*m(1,2)*m112*a + (m(2,2)*m112 + 2*m(2,1)*m(1,2)*m(1,1))*b
+    + (2*m(2,2)*m(2,1)*m(1,1) + m212*m(1,2))*c + 3*m(2,2)*m212*d;
+  bigint C = 3*m122*m(1,1)*a + (2*m(2,2)*m(1,2)*m(1,1) + m(2,1)*m122)*b
+    + (m222*m(1,1) + 2*m(2,2)*m(2,1)*m(1,2))*c + 3*m222*m(2,1)*d;
+  bigint D = m123*a + m(2,2)*m122*b + m222*m(1,2)*c + m223*d;
+
+  return {A,B,C,D};
+}
+
+vector<bigint> transform_helper(const vector<bigint>& abcd, const unimod& m)
+{
+  return transform_helper(abcd[0],abcd[1],abcd[2],abcd[3],m);
+}
+
+void cubic::transform(const unimod& m)
+{
+  coeffs = transform_helper(coeffs, m);
+}
+
+cubic transform(const cubic& F, const unimod& m)
+{
+  return cubic(transform_helper(F.coeffs, m));
+}
 
 void cubic::x_shift(const bigint& e, unimod& m)
 {
@@ -258,12 +265,40 @@ void cubic::hess_reduce(unimod& m)
 	}
     }
   // Now we have -P <= Q < P <= R and test for boundary condition
-  if((p_semi()==r_semi()) && (q_semi()<0))
+  if(p_semi()==r_semi())
     {
-      invert(m);
+      if(q_semi()<0)
+        {
+          invert(m);
 #ifdef DEBUG
-      cout << "Final inversion: " << (*this) << endl;
+          cout << "Final inversion: " << (*this) << endl;
 #endif
+        }
+      /*
+      // now 0 <= Q <= P = R, and we have to test for the extra
+      // automorphism cases Q=0 and Q=P:
+      if(q_semi()==0) // Hessian fixed by [0,-1; 1,0] of order 4
+        {
+          unimod S(0,-1,1,0);
+          cubic F2(*this); F2.transform(S);
+          cubic F3(F2); F3.transform(S);
+          cubic F4(F3); F4.transform(S);
+
+          if (std::lexicographical_compare(F2.begin(),F2.end(), coeffs,coeffs+4))
+            {
+              invert(m);
+            }
+        }
+      if(q_semi()==r_semi()) // Hessian fixed by [1,-1; 1,0] of order 6
+        {
+          vector<bigint> F2 = {a()+b()+c()+d(), -(3*a()+2*b()+c()), 3*a()+b(), -a()};
+          vector<bigint> F3 = {d(), -(c()+3*d()), b()+2*c()+3*d(), -(a()+b()+c()+d())};
+          if (std::lexicographical_compare(F2.begin(),F2.end(), coeffs,coeffs+4))
+            {
+              *this = F2;
+            }
+        }
+      */
     }
   if(a()<0) negate(m);
 }
@@ -533,8 +568,7 @@ bigfloat cubic::real_root() const
 
 vector<bigrational> cubic::rational_roots() const
 {
-  vector<bigint> co(coeffs, coeffs+4);
-  return roots(co);
+  return roots(coeffs);
 }
 
 

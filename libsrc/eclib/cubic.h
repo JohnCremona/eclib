@@ -37,35 +37,33 @@ class unimod;
 
 class cubic {
   friend class unimod;
-private: 
-  bigint * coeffs;  // will always have length 4
-  // init just allocates memory
-  void init();
+private:
+  vector<bigint> coeffs;  // will always have length 4
 public:
-  void set(long a, long b, long c, long d) 
-    {coeffs[0]=a; coeffs[1]=b; coeffs[2]=c; coeffs[3]=d;}
-  void set(const  bigint& a, const bigint& b, const bigint& c, const bigint& d) 
-    {coeffs[0]=a; coeffs[1]=b; coeffs[2]=c; coeffs[3]=d;}
-  void set(const  cubic& q)
-    {coeffs[0]=q.coeffs[0]; coeffs[1]=q.coeffs[1]; 
-     coeffs[2]=q.coeffs[2]; coeffs[3]=q.coeffs[3];}
-  cubic() 
-    {init(); set(0,0,0,0);}
-  ~cubic();
+  // void set(long a, long b, long c, long d)
+  // {coeffs = {BIGINT(a),BIGINT(b),BIGINT(c),BIGINT(d)};}
+  // void set(const  bigint& a, const bigint& b, const bigint& c, const bigint& d)
+  // {coeffs = {a,b,c,d};}
+  // void set(const vector<bigint>& abcd)
+  // {std::copy(abcd.begin(), abcd.end(), coeffs.begin());}
+  // void set(const  cubic& q)
+  // {std::copy(q.coeffs.begin(), q.coeffs.end(), coeffs.begin());}
+  cubic()
+  {coeffs.resize(4, BIGINT(0));}
   cubic(const  bigint& a, const bigint& b, const bigint& c, const bigint& d) 
-    {init(); set(a,b,c,d);}
+  {coeffs = {a,b,c,d};}
   cubic(long a, long b, long c, long d) 
-    {init(); set(a,b,c,d);}
-  cubic(const  cubic& q)  
-    {init(); set(q);}
-  void operator=(const cubic& g) {set(g);}
+  {coeffs = {BIGINT(a),BIGINT(b),BIGINT(c),BIGINT(d)};}
+  cubic(const vector<bigint>& abcd)
+  {coeffs = abcd;}
+  cubic(const  cubic& q)
+  {coeffs = q.coeffs;}
   int operator==(const cubic& g)
-  {return ((coeffs[0]==g.coeffs[0]) && (coeffs[1]==g.coeffs[1]) &&
-           (coeffs[2]==g.coeffs[2]) && (coeffs[3]==g.coeffs[3]));}
-  inline bigint coeff(int i) 
-    {if((i>=0)&&(i<=3)) return coeffs[i]; else return coeffs[0];}
+  {return (coeffs==g.coeffs);}
+  inline bigint coeff(int i)
+  {if((i>=0)&&(i<=3)) return coeffs[i]; else return coeffs[0];}
   inline bigint operator[](int i) const
-    {if((i>=0)&&(i<=3)) return coeffs[i]; else return coeffs[0];}
+  {if((i>=0)&&(i<=3)) return coeffs[i]; else return coeffs[0];}
   inline bigint a(void) const {return coeffs[0];}
   inline bigint b(void) const {return coeffs[1];}
   inline bigint c(void) const {return coeffs[2];}
@@ -87,7 +85,10 @@ public:
       os<<"["<<a()<<","<<b()<<","<<c()<<","<<d()<<"]";
     }
   friend inline ostream& operator<<(ostream& os, const cubic& g);
+  // transform self by m in place
   void transform(const unimod& m);
+  // return transform of F by m
+  friend cubic transform(const cubic& F, const unimod& m);
   // In the next 4 functions, m already holds a unimod and is updated:
   void x_shift(const bigint& e, unimod& m);
   void y_shift(const bigint& e, unimod& m);
