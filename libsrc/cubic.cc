@@ -522,10 +522,15 @@ void cubic::jc_reduce(unimod& m)
           m.negate();
         }
       ::divides(-cc,2*bb,q,r);
-      x_shift(r,m);
+      if (r>=bb)
+        q+=1;
 #ifdef DEBUG_REDUCE
-      cout << "shift by "<<r<< " to get " << (*this) << endl;
-      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+      cout << "[a=0] shift "<< (*this);
+#endif
+      x_shift(q,m);
+#ifdef DEBUG_REDUCE
+      cout << " by "<<q<< " to get " << (*this) << endl;
+      cout<<"b="<<b()<<", c="<<c()<<", d="<<d()<<endl;
 #endif
       // assert (is_jc_reduced());
       return;
