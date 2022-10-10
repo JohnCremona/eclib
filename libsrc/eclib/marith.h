@@ -179,5 +179,9 @@ int nrootscubic(long b, long c, long d, long p, long* roots);
 void ratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxd=BIGINT(0));
 void ratapprox(bigfloat x, long& a, long& b, long maxd=0);
 
+int is_nth_power(const bigint& x, int n);
+bigint prime_to_S_part(const bigint& x,  const vector<bigint>& S);
+int is_S_unit(const bigint& x,  const vector<bigint>& S);
+
 #endif
 // end of file marith.h

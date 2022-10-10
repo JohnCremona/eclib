@@ -82,6 +82,7 @@ public:
   Curve(const Curve& c)
     : a1(c.a1), a2(c.a2), a3(c.a3), a4(c.a4), a6(c.a6)
       {}
+  Curve(const bigrational& j); // one curve with this j-invariant
   void operator=(const Curve& c)
     { a1=c.a1; a2=c.a2; a3=c.a3; a4=c.a4; a6=c.a6; }
 // no destructor is needed
@@ -307,6 +308,11 @@ public:
   // So (with no further knowledge of the MW group) we know that m*P
   // is in the good-reduction subgroup for all P, with this m.
   friend bigint global_Tamagawa_exponent(CurveRed& c, int real_too);
+
+  int has_good_reduction_outside_S(const vector<bigint>& S)
+  {
+    return is_S_unit(N, S);
+  }
 };
 
 // The global Tamagawa number, = product of local ones.

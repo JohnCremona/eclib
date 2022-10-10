@@ -127,6 +127,27 @@ Curve::Curve(const bigint& c4, const bigint& c6)
     }
 }
 
+Curve::Curve(const bigrational& j) // one curve with this j-invariant
+{
+  if (is_zero(num(j)))
+    {
+      a1=0; a2=0; a3=1; a4=0; a6=0; // 27a3
+    }
+  else
+    if (num(j)==1728*den(j))
+      {
+        a1=0; a2=0; a3=0; a4=-1; a6=0; // 32a2
+      }
+  else
+    {
+      a1=0; a2=0; a3=0;
+      bigint n = num(j);
+      bigint m = n-1728*den(j);
+      a4 = -3*n*m;
+      a6 = -2*n*m*m;
+    }
+}
+
 void Curve::input(istream& is)
 {
   char c;  // to eat commas and detect [ from {;

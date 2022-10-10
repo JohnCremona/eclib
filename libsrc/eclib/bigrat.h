@@ -25,6 +25,7 @@
 #define _ECLIB_BIGRATIONAL_H      1       //flags that this file has been included
 
 #include <eclib/rat.h>
+#include <eclib/marith.h>
 
 class bigrational {
 
@@ -307,5 +308,23 @@ inline bigint ceil(const bigrational& r)
   if(r.d==BIGINT(1)) return r.n;
   return BIGINT(1) + (r.n-(r.n%r.d))/r.d;
 }
+
+// int is_S_integral(const bigrational& x,  const vector<bigint>& S)
+// {
+//   return is_S_unit(den(x), S);
+// }
+
+// int is_S_unit(const bigrational& x,  const vector<bigint>& S)
+// {
+//   return is_S_unit(den(x), S) && is_S_unit(num(x), S);
+// }
+
+// bigrational prime_to_S_part(const bigrational& x,  const vector<bigint>& S)
+// {
+//   return bigrational(prime_to_S_part(num(x), S), prime_to_S_part(den(x), S));
+// }
+
+
+
 
 #endif
