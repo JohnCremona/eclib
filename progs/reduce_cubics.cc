@@ -44,7 +44,7 @@ int main()
       if(disc>0)
 	{
 	  cout << "Using Hessian to reduce...\n";
-          g.hess_reduce(m);
+          g.hess_reduce(m, 1); // 1 means use GL(2,Z)
 	  cout << "Hessian reduced cubic = "<<g<<endl;
 	  cout << "after transform by "<<m<<endl;
 	  cout << "Root of Hessian = " << g.hess_root() << endl;

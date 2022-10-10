@@ -28,6 +28,14 @@
 #include <eclib/polys.h>
 #include <cassert>
 
+bigint zero(0), one(1);
+
+// comparison operator for sorting
+int operator<(const cubic& F1, const cubic& F2)
+{
+  return std::lexicographical_compare(F1.coeffs.begin(), F1.coeffs.end(), F2.coeffs.begin(), F2.coeffs.end());
+}
+
 vector<bigint> transform_helper(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
                                 const unimod& m)
 {
@@ -59,6 +67,138 @@ void cubic::transform(const unimod& m)
 cubic transform(const cubic& F, const unimod& m)
 {
   return cubic(transform_helper(F.coeffs, m));
+}
+
+void cubic::sl2_reduce(unimod& m)
+{
+  if (disc()<0)
+    jc_reduce(m);
+  else
+    hess_reduce(m, 0);
+}
+
+//#define DEBUG_NORMALISE
+
+// for an sl2-reduced cubic, normalise w.r.t. <-I> (default) or <S> or <TS>
+void cubic::normalise()
+{
+  int nautos = 2;
+
+#ifdef DEBUG_NORMALISE
+  cout<<"Normalising "<<(*this)<<endl;
+#endif
+
+  if (disc()<zero)
+    {
+      // Coeffs of covariant are [h0,h1,h2].  We have extra autos if
+      // h0=h2, i.e. C1=0.  The covariant is const*(X^2+Y^2) if also
+      // h1=0, i.e. C4=0, or const*(X^2+XY+Y^2) if also h1=h0,
+      // i.e. C2=0.
+      bigint C1=j_c1(), C2=j_c2(), C4=j_c4();
+      nautos = (C1==0? (C4==0? 4: (C2==0? 6: 2)): 2);
+#ifdef DEBUG_NORMALISE
+      cout<<"Covariant quantities are C1="<<C1<<", C2="<<C2<<", C3="<<j_c3()<<", C4="<<C4<<endl;
+#endif
+    }
+  else
+    {
+      // Coeffs of covariant are [P,Q,R].  We have extra autos if P=R.
+      // The covariant is const*(X^2+Y^2) if also Q=0, or
+      // const*(X^2+XY+Y^2) if also Q=R.
+      bigint P=p_semi(), Q=q_semi(), R=r_semi();
+      nautos = (P==R? (Q==0? 4: (Q==R? 6: 2)): 2);
+#ifdef DEBUG_NORMALISE
+      cout<<"Hessian coefficients are P="<<P<<", Q="<<Q<<", R="<<R<<endl;
+      cout<<"Hessian root is "<<hess_root()<<endl;
+#endif
+    }
+
+#ifdef DEBUG_NORMALISE
+      cout<<"Number of automorphisms = "<<nautos<<endl;
+#endif
+
+  vector<cubic> Flist; // will hold the candidates
+  cubic F1 = *this;
+  Flist.push_back(F1);
+  unimod auto2(-one,zero,zero,-one), auto4(zero,-one,one,zero), auto6(one,one,-one,zero);
+  unimod aut = (nautos==4? auto4: (nautos==6? auto6: auto2));
+  for(int i=1; i<nautos; i++)
+    {
+      F1.transform(aut);
+      Flist.push_back(F1);
+    }
+
+#ifdef DEBUG_NORMALISE
+  cout<<"Comparing "<<Flist.size()<<" candidates for the reduced representative of "<<(*this)<<": "<<Flist<<endl;
+#endif
+  std::sort(Flist.begin(), Flist.end());
+  coeffs = Flist.back().coeffs;
+#ifdef DEBUG_NORMALISE
+  cout<<"Last one after sorting is "<<(*this)<<endl;
+#endif
+  return;
+}
+
+// Tests for sl2/gl2-equivalence:
+int cubic::sl2_equivalent(const cubic& G) const
+{
+  unimod m; // not used but the reduction functions need one
+  cubic F1(*this), G1(G);
+  if (F1==G1)
+    return 1;
+  F1.negate(m);
+  if (F1==G1)
+    return 1;
+  if (F1.disc()!=G1.disc())
+    return 0;
+  F1.sl2_reduce(m);
+  G1.sl2_reduce(m);
+  if (F1==G1)
+    return 1;
+  F1.normalise();
+  G1.normalise();
+  return F1==G1;
+}
+
+int cubic::gl2_equivalent(const cubic& G) const
+{
+  unimod m(-one,zero,zero,one);
+  return (sl2_equivalent(G) || sl2_equivalent(::transform(G,m)));
+}
+
+// Test for sl2/gl2-equivalence to one in a list:
+int cubic::sl2_equivalent_in_list(const vector<cubic>& Glist) const
+{
+  for (auto Gi=Glist.begin(); Gi!=Glist.end(); ++Gi)
+    if (sl2_equivalent(*Gi))
+      return 1;
+  return 0;
+}
+
+int cubic::gl2_equivalent_in_list(const vector<cubic>& Glist) const
+{
+  for (auto Gi=Glist.begin(); Gi!=Glist.end(); ++Gi)
+    if (gl2_equivalent(*Gi))
+      return 1;
+  return 0;
+}
+
+// affine roots of F mod q.
+// NB rootsmod requires a non-constant polynomial
+
+// affine roots of F mod q, assuming leading coefficient a() is nonzero:
+vector<bigint> cubic::roots_mod(const bigint& q) const
+{
+  bigint aq(a()%q), bq(b()%q), cq(c()%q), dq(d()%q);
+  if (is_zero(aq) && is_zero(bq) && is_zero(cq))
+    return {};
+  return rootsmod({dq,cq,bq,aq}, q);
+}
+
+// Return 1 iff F has a projective root mod q:
+int cubic::has_roots_mod(const bigint& q) const
+{
+  return div(q,a()) || (roots_mod(q).size() > 0);
 }
 
 void cubic::x_shift(const bigint& e, unimod& m)
@@ -103,61 +243,63 @@ void cubic::seminegate(unimod& m)
 
 bigint cubic::j_c1() const
 {
-  bigint b2=sqr(b());
-  bigint b3=b()*b2;
-  bigint b4=b()*b3;
-  bigint b5=b()*b4;
-  bigint b6=b()*b5;
-  bigint a2=sqr(a());
-  bigint a3=a()*a2;
-  bigint a4=a()*a3;
-  bigint c2=sqr(c());
-  bigint c3=c()*c2;
-  bigint c4=c()*c3;
-  bigint c5=c()*c4;
-  bigint c6=c()*c5;
-  bigint d2=sqr(d());
-  bigint d3=d()*d2;
-  bigint d4=d()*d3;
-  bigint ac=a()*c(), bd=b()*d();
-  return - 108*b3*a2*d() - 3*b4*c2 + 54*a2*c4 + 18*b5*d() + 243*a2*d2*b2 -
-    54*b3*ac*d() - 162*bd*c2*a2 - 54*a3*c3 + 486*a3*bd*c() + 3*c4*b2 -
-      18*c5*a() + 54*c3*a()*bd - 243*d2*a2*c2 + 162*d2*ac*b2 + 2*c6 -
+  bigint a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
+  bigint b2=sqr(b);
+  bigint b3=b*b2;
+  bigint b4=b*b3;
+  bigint b5=b*b4;
+  bigint b6=b*b5;
+  bigint a2=sqr(a);
+  bigint a3=a*a2;
+  bigint a4=a*a3;
+  bigint c2=sqr(c);
+  bigint c3=c*c2;
+  bigint c4=c*c3;
+  bigint c5=c*c4;
+  bigint c6=c*c5;
+  bigint d2=sqr(d);
+  bigint d3=d*d2;
+  bigint d4=d*d3;
+  bigint ac=a*c, bd=b*d;
+  return - 108*b3*a2*d - 3*b4*c2 + 54*a2*c4 + 18*b5*d + 243*a2*d2*b2 -
+    54*b3*ac*d - 162*bd*c2*a2 - 54*a3*c3 + 486*a3*bd*c + 3*c4*b2 -
+      18*c5*a + 54*c3*a*bd - 243*d2*a2*c2 + 162*d2*ac*b2 + 2*c6 -
 	729*a4*d2 - 2*b6 + 18*b4*ac - 27*a2*b2*c2 + 729*d4*a2 + 54*b3*d3 +
-	  108*c3*d2*a() - 18*c4*bd + 27*d2*c2*b2 - 486*d3*ac*b() - 54*d2*b4;
+	  108*c3*d2*a - 18*c4*bd + 27*d2*c2*b2 - 486*d3*ac*b - 54*d2*b4;
 
 }
 
-// MINUS the quantity called C_2 in the paper, = -Norm(h0-h1) and should be
-// NON-POSITIVE for a reduced form:
+// The quantity called C_2 in the paper, = Norm(h0-h1) and should be
+// NON-NEGATIVE for a reduced form:
 
 bigint cubic::j_c2() const
 {
-  bigint b2=sqr(b());
-  bigint b3=b()*b2;
-  bigint b4=b()*b3;
-  bigint b5=b()*b4;
-  bigint b6=b()*b5;
-  bigint a2=sqr(a());
-  bigint a3=a()*a2;
-  bigint a4=a()*a3;
-  bigint c2=sqr(c());
-  bigint c3=c()*c2;
-  bigint c4=c()*c3;
-  bigint c5=c()*c4;
-  bigint c6=c()*c5;
-  bigint d2=sqr(d());
-  bigint d3=d()*d2;
-  bigint d4=d()*d3;
-  bigint ac=a()*c(), bd=b()*d();
+  bigint a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
+  bigint b2=sqr(b);
+  bigint b3=b*b2;
+  bigint b4=b*b3;
+  bigint b5=b*b4;
+  bigint b6=b*b5;
+  bigint a2=sqr(a);
+  bigint a3=a*a2;
+  bigint a4=a*a3;
+  bigint c2=sqr(c);
+  bigint c3=c*c2;
+  bigint c4=c*c3;
+  bigint c5=c*c4;
+  bigint c6=c*c5;
+  bigint d2=sqr(d);
+  bigint d3=d*d2;
+  bigint d4=d*d3;
+  bigint ac=a*c, bd=b*d;
 
-  return - 108*b3*a2*d() + 12*b4*c2 - 216*a2*c4 - 72*b5*d() - 486*a3*c2*d()
-    + 270*a2*c3*b() - 90*b3*c2*a() - 972*a2*d2*b2 + 216*b3*ac*d() +
-      648*bd*c2*a2 - 54*a3*c3 + 486*a3*bd*c() - 16*c3*b3 + 216*d2*b3*a() +
-	72*d()*b4*c() + 72*c4*b()*a() + 216*d()*c3*a2 - 432*d()*b2*a()*c2 
-    - 729*a4*d2 - 2*b6
-	  + 18*b4*ac - 27*a2*b2*c2 + 6*b5*c() - 648*b2*c()*a2*d() 
-    + 162*a()*d()*b4 +  1458*a3*d2*b();
+  return 108*b3*a2*d - 12*b4*c2 + 216*a2*c4 + 72*b5*d + 486*a3*c2*d
+    - 270*a2*c3*b + 90*b3*c2*a + 972*a2*d2*b2 - 216*b3*ac*d -
+      648*bd*c2*a2 + 54*a3*c3 - 486*a3*bd*c + 16*c3*b3 - 216*d2*b3*a -
+	72*d*b4*c - 72*c4*b*a - 216*d*c3*a2 + 432*d*b2*a*c2 
+    + 729*a4*d2 + 2*b6
+	  - 18*b4*ac + 27*a2*b2*c2 - 6*b5*c + 648*b2*c*a2*d 
+    - 162*a*d*b4 -  1458*a3*d2*b;
 }
 
 // The quantity called C_3 in the paper, = Norm(h0+h1) and should be
@@ -208,7 +350,7 @@ bigint cubic::j_c4() const
   return 27*d*c3*a2 + (27*d2*b3 - 54*d*c2*b2 + 9*c4*b)*a + 9*d*c*b4 - 2*c3*b3;
 }
 
-//#define DEBUG
+//#define DEBUG_REDUCE
 
 bigcomplex cubic::hess_root() const
 {
@@ -225,22 +367,26 @@ bigcomplex cubic::hess_root() const
   return gamma;
 }
 
-int cubic::is_hessian_reduced() // for positive discriminant only
+int cubic::is_hessian_reduced()
+// for positive discriminant only
+// The condition is -P < Q <= P < R or 0 <= Q <= P=R.
 {
   bigint P = p_semi();
   bigint R = r_semi();
   if (P>R) return 0;
+  // now P<=R
   bigint Q = q_semi();
   if (Q>P) return 0;
+  // now Q<=P<=R
   if (P==R) return (Q>=0);
   return (Q>-P);
 }
 
-void cubic::hess_reduce(unimod& m)
+void cubic::hess_reduce(unimod& m, int gl2)
 {
   int s=1;  bigint k;
   m.reset();
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
   cout<<"Using hess_reduce() on "<<(*this)<<endl;
 #endif
   while(s)
@@ -252,53 +398,25 @@ void cubic::hess_reduce(unimod& m)
       if(!is_zero(k))
 	{
 	  s=1;	  x_shift(k,m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
 	  cout << "Shift by " << k << ": " << (*this) << endl;
 #endif
 	}
       if(p_semi()>r_semi())
 	{
 	  s=1;	  invert(m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
 	  cout << "invert: " << (*this) << endl;
 #endif
 	}
     }
   // Now we have -P <= Q < P <= R and test for boundary condition
-  if(p_semi()==r_semi())
+  if ((p_semi()==r_semi()) && (q_semi()<0))
     {
-      if(q_semi()<0)
-        {
-          invert(m);
-#ifdef DEBUG
-          cout << "Final inversion: " << (*this) << endl;
+      invert(m);
+#ifdef DEBUG_REDUCE
+      cout << "Final inversion: " << (*this) << endl;
 #endif
-        }
-      /*
-      // now 0 <= Q <= P = R, and we have to test for the extra
-      // automorphism cases Q=0 and Q=P:
-      if(q_semi()==0) // Hessian fixed by [0,-1; 1,0] of order 4
-        {
-          unimod S(0,-1,1,0);
-          cubic F2(*this); F2.transform(S);
-          cubic F3(F2); F3.transform(S);
-          cubic F4(F3); F4.transform(S);
-
-          if (std::lexicographical_compare(F2.begin(),F2.end(), coeffs,coeffs+4))
-            {
-              invert(m);
-            }
-        }
-      if(q_semi()==r_semi()) // Hessian fixed by [1,-1; 1,0] of order 6
-        {
-          vector<bigint> F2 = {a()+b()+c()+d(), -(3*a()+2*b()+c()), 3*a()+b(), -a()};
-          vector<bigint> F3 = {d(), -(c()+3*d()), b()+2*c()+3*d(), -(a()+b()+c()+d())};
-          if (std::lexicographical_compare(F2.begin(),F2.end(), coeffs,coeffs+4))
-            {
-              *this = F2;
-            }
-        }
-      */
     }
   if(a()<0) negate(m);
 }
@@ -313,7 +431,7 @@ void cubic::mathews_reduce(unimod& m)
       if(mat_c1()<0)
 	{
 	  s=1; invert(m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
 	  cout << "invert: " << (*this) << endl;
 #endif
 	}
@@ -323,7 +441,7 @@ void cubic::mathews_reduce(unimod& m)
         {
           s=1;
           x_shift(k,m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
       cout << "Shift by "<<k<<": "<<(*this)<<endl;
 #endif
         }
@@ -331,14 +449,14 @@ void cubic::mathews_reduce(unimod& m)
       while(mat_c2()>0)
 	{
 	  s=1; x_shift(plus1,m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
 	  cout << "Shift by +1: "<<(*this)<<endl;
 #endif
 	}
       while(mat_c3()<0)
 	{
 	  s=1; x_shift(minus1,m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
 	  cout << "Shift by -1: "<<(*this)<<endl;
 #endif
 	}
@@ -348,27 +466,40 @@ void cubic::mathews_reduce(unimod& m)
 
 int cubic::is_jc_reduced() // for negative discriminant only
 {
+  if (is_zero(a())) // we want the quadratic form (b,c,d) to be reduced
+    {
+      bigint b(coeffs[1]), c(coeffs[2]), d(coeffs[3]);
+      if (b==d)
+        return ((0<=c) && (c<=b));
+      else
+        return ((-b<c) && (c<=b) && (b<d));
+    }
   bigint C1 =  j_c1();
   if (C1<0) return 0;
-  bigint C2 = -j_c2(); // NB sign change from JCM paper
+  // now C1>=0, i.e. h0<=h2
+  bigint C2 = j_c2();
   if (C2<0) return 0;
-  bigint C4 =  j_c4(); // = N(h1)/8, not in JCM paper
-  if (C1==0) return (C4>=0);
+  // now C1, C2 >=0, i.e. h1<=h0<=h2
+  if (is_zero(C1)) // i.e. h0=h2
+    {
+      bigint C4 =  j_c4(); // = N(h1)/8, not in JCM paper
+      return (C4>=0); // i.e. h1 >= 0
+    }
   bigint C3 =  j_c3();
-  return (C3>0);
+  return (C3>0); // i.e. h1 > -h0
 }
 
 void cubic::jc_reduce(unimod& m)
 {
   int s=1;   bigint k, jc2, jc3;
-  bigint plus1, minus1;  plus1=1; minus1=-1;
+  bigint plus1(one), minus1(-one);
 
   bigfloat alpha, ra, rb, rc, rd, h0, h1, h2;
 
   m.reset();
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
       cout << "\nJC-reducing " << (*this) << "...\n";
-      cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
       alpha = real_root();
       cout<<"alpha = "<<alpha<<endl;
       ra = I2bigfloat(a());
@@ -381,7 +512,7 @@ void cubic::jc_reduce(unimod& m)
       cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
 
-  if (a()==0)
+      if (is_zero(a()))
     {
       bigint bb=b(), cc=c(), q,r;
       if (bb<0)
@@ -392,26 +523,28 @@ void cubic::jc_reduce(unimod& m)
         }
       ::divides(-cc,2*bb,q,r);
       x_shift(r,m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
       cout << "shift by "<<r<< " to get " << (*this) << endl;
+      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
 #endif
+      // assert (is_jc_reduced());
       return;
     }
 
   while(s)
     {
       s=0;
-      if (a()==0)
+      if (is_zero(a()))
         {
           jc_reduce(m);
           return;
         }
-      if(j_c1()<0)
+      if(j_c1()<0) // then h0 <= h2 fails, so invert:
 	{
 	  s=1;  invert(m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
 	  cout << "inverting --> " << (*this) << endl;
-          cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+          cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
           alpha = real_root();
           cout<<"alpha = "<<alpha<<endl;
           ra = I2bigfloat(a());
@@ -424,11 +557,11 @@ void cubic::jc_reduce(unimod& m)
           cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
 	}
-      if ((j_c2()>0) || (j_c3()<0))
+      if ((j_c2()<0) || (j_c3()<=0)) // then -h0 < h1 <= h0 fails, so shift:
         {
           s=1;
           alpha = real_root();
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
           cout<<"alpha = "<<alpha<<endl;
 #endif
           ra = I2bigfloat(a());
@@ -437,13 +570,13 @@ void cubic::jc_reduce(unimod& m)
           h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
           h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
           h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
-          k = Iround(-h1/(2*h0));
+          k = Iround(-h1/(2*h0)); // this is the amount to shift by
           if (k!=0)
             {
               x_shift(k,m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
               cout << "Shift by "<<k<<"--> "<<(*this)<<endl;
-              cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+              cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
               alpha = real_root();
               cout<<"alpha = "<<alpha<<endl;
               ra = I2bigfloat(a());
@@ -457,27 +590,27 @@ void cubic::jc_reduce(unimod& m)
 #endif
             }
           // Two loops to guard against rounding error in computing k:
-          while(j_c2()>0)
+          while(j_c2()<0) // h1>h0 so shift by -1
             {
               x_shift(minus1,m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
               cout << "Shift by -1 --> "<<(*this)<<endl;
 #endif
             }
-          while(j_c3()<0)
+          while(j_c3()<=0) // h1<=-h0 so shift by +1
             {
               x_shift(plus1,m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
               cout << "Shift by +1--> "<<(*this)<<endl;
 #endif
             }
         }
-      if ((j_c1()==0) && (j_c4()<0))
+      if (is_zero(j_c1()) && (j_c4()<0)) // h0=h2 and h1<0, so invert
         {
           s=1;  invert(m);
-#ifdef DEBUG
+#ifdef DEBUG_REDUCE
           cout << "final inversion--> " << (*this) << endl;
-          cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+          cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
           alpha = real_root();
           cout<<"alpha = "<<alpha<<endl;
           ra = I2bigfloat(a());
@@ -490,8 +623,8 @@ void cubic::jc_reduce(unimod& m)
           cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
         }
-#ifdef DEBUG
-      cout<<"C1="<<j_c1()<<", C2="<<-j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+#ifdef DEBUG_REDUCE
+      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
       alpha = real_root();
       cout<<"alpha = "<<alpha<<endl;
       ra = I2bigfloat(a());
@@ -505,6 +638,7 @@ void cubic::jc_reduce(unimod& m)
 #endif
     }
   if(a()<0) negate(m);
+  assert (is_jc_reduced());
 }
 
   // Just shifts x:
@@ -580,10 +714,7 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
   int sU;
   bigfloat i3a, a23, ra2, rb2, D, D2, D3, D32, D4, Pmax, Pmin;
 
-  int sl2_equiv, gl2_equiv;
-  bigint ZERO(0), ONE(1);
   unimod m;
-  const unimod m1(ONE,ZERO,ZERO,-ONE);
 
   bigfloat third = 1/to_bigfloat(3);
   bigfloat const1 = 2 / sqrt(to_bigfloat(27));
@@ -625,6 +756,8 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
                       if ((verbose>1) && glist.size()==0) cout<<disc<<" :\n";
                       cubic g(a,b,c,d);
                       assert(g.disc()==disc);
+                      g.sl2_reduce(m);
+                      g.normalise();
                       glist.push_back(g);
                       if(verbose>1)
                         {
@@ -675,6 +808,8 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
                           if (verbose>1 && glist.size()==0) cout<<disc<<" :\n";
                           cubic g(a,b,c,d);
                           assert(g.disc()==disc);
+                          g.sl2_reduce(m);
+                          g.normalise();
                           if(verbose>1) cout<<"found "<<g;
                           int irred = g.is_irreducible();
                           if (verbose>1)
@@ -700,9 +835,9 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
       cout<<endl;
     }
 
-  for (vector<cubic>::const_iterator gi=glist.begin(); gi!=glist.end(); gi++)
+  for (auto gi=glist.begin(); gi!=glist.end(); gi++)
     {
-      cubic g = *gi, gneg;
+      cubic g = *gi;
       if(verbose) cout<<g;
       if (neg)
         {
@@ -715,6 +850,7 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
             {
               if(verbose) cout<<"\t---(reduces to)--->\t";
               g.jc_reduce(m);
+              g.normalise();
               if(verbose) cout<<g;
             }
         }
@@ -727,38 +863,27 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
           else
             {
               if(verbose) cout<<"\t---(reduces to)--->\t";
-              g.hess_reduce(m);
+              g.hess_reduce(m, gl2);
+              g.normalise();
               if(verbose) cout<<g;
             }
         }
+
       // Check to see if this reduced cubic is already in the list:
-      sl2_equiv = find(reduced_glist.begin(),reduced_glist.end(),g) != reduced_glist.end();
-      // ...if not but we are using GL(2,Z)-equivalence check that its
-      // seminegation is there:
-      if (!sl2_equiv && gl2)
-        {
-          if (reduced_glist.size()==0)
-            gl2_equiv=0;
-          else
-            {
-              gneg=g;
-              gneg.transform(m1);
-              if (neg)
-                gneg.jc_reduce(m);
-              else
-                gneg.hess_reduce(m);
-              gl2_equiv = find(reduced_glist.begin(),reduced_glist.end(),gneg) != reduced_glist.end();
-            }
-        }
-      if (sl2_equiv || (gl2&&gl2_equiv))
+      int equiv;
+      if (gl2)
+        equiv = g.gl2_equivalent_in_list(reduced_glist);
+      else
+        equiv = g.sl2_equivalent_in_list(reduced_glist);
+      if (equiv)
         {
           if(verbose)
             {
               cout<<" -REPEAT";
-              if(sl2_equiv)
-                cout<<" (SL(2,Z)-equivalent)";
-              else
+              if(gl2)
                 cout<<" (GL(2,Z)-equivalent)";
+              else
+                cout<<" (SL(2,Z)-equivalent)";
             }
         }
       else
