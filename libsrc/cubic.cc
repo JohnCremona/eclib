@@ -74,13 +74,14 @@ void cubic::sl2_reduce(unimod& m)
   if (disc()<0)
     jc_reduce(m);
   else
-    hess_reduce(m, 0);
+    hess_reduce(m);
 }
 
 //#define DEBUG_NORMALISE
 
-// for an sl2-reduced cubic, normalise w.r.t. <-I> (default) or <S> or <TS>
-void cubic::normalise()
+// - for an sl2-reduced cubic, normalise w.r.t. <-I> (default) or <S> or <TS>
+// - updates m by multiplying by normalising transformation
+void cubic::normalise(unimod& m)
 {
   int nautos = 2;
 
@@ -118,24 +119,31 @@ void cubic::normalise()
 #endif
 
   vector<cubic> Flist; // will hold the candidates
+  vector<unimod> transforms; // will hold the transformations taking original cubic to candidates
   cubic F1 = *this;
   Flist.push_back(F1);
+  unimod autpower; // initialised to identity
+  transforms.push_back(autpower);
   unimod auto2(-one,zero,zero,-one), auto4(zero,-one,one,zero), auto6(one,one,-one,zero);
   unimod aut = (nautos==4? auto4: (nautos==6? auto6: auto2));
   for(int i=1; i<nautos; i++)
     {
       F1.transform(aut);
       Flist.push_back(F1);
+      autpower*=aut;
+      transforms.push_back(autpower);
     }
 
 #ifdef DEBUG_NORMALISE
   cout<<"Comparing "<<Flist.size()<<" candidates for the reduced representative of "<<(*this)<<": "<<Flist<<endl;
 #endif
-  std::sort(Flist.begin(), Flist.end());
-  coeffs = Flist.back().coeffs;
+  auto biggest = std::max_element(Flist.begin(),Flist.end());
+  coeffs = biggest->coeffs;
+  autpower = *(transforms.begin() + (biggest-Flist.begin()));
 #ifdef DEBUG_NORMALISE
-  cout<<"Last one after sorting is "<<(*this)<<endl;
+  cout<<"Largest one after sorting is "<<(*this)<<", the transform by "<<autpower<<endl;
 #endif
+  m *= autpower;
   return;
 }
 
@@ -153,10 +161,6 @@ int cubic::sl2_equivalent(const cubic& G) const
     return 0;
   F1.sl2_reduce(m);
   G1.sl2_reduce(m);
-  if (F1==G1)
-    return 1;
-  F1.normalise();
-  G1.normalise();
   return F1==G1;
 }
 
@@ -382,7 +386,7 @@ int cubic::is_hessian_reduced()
   return (Q>-P);
 }
 
-void cubic::hess_reduce(unimod& m, int gl2)
+void cubic::hess_reduce(unimod& m)
 {
   int s=1;  bigint k;
   m.reset();
@@ -418,7 +422,7 @@ void cubic::hess_reduce(unimod& m, int gl2)
       cout << "Final inversion: " << (*this) << endl;
 #endif
     }
-  if(a()<0) negate(m);
+  normalise(m);
 }
 
 void cubic::mathews_reduce(unimod& m)
@@ -533,6 +537,7 @@ void cubic::jc_reduce(unimod& m)
       cout<<"b="<<b()<<", c="<<c()<<", d="<<d()<<endl;
 #endif
       // assert (is_jc_reduced());
+      normalise(m);
       return;
     }
 
@@ -642,7 +647,7 @@ void cubic::jc_reduce(unimod& m)
       cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
     }
-  if(a()<0) negate(m);
+  normalise(m);
   assert (is_jc_reduced());
 }
 
@@ -762,7 +767,6 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
                       cubic g(a,b,c,d);
                       assert(g.disc()==disc);
                       g.sl2_reduce(m);
-                      g.normalise();
                       glist.push_back(g);
                       if(verbose>1)
                         {
@@ -814,7 +818,6 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
                           cubic g(a,b,c,d);
                           assert(g.disc()==disc);
                           g.sl2_reduce(m);
-                          g.normalise();
                           if(verbose>1) cout<<"found "<<g;
                           int irred = g.is_irreducible();
                           if (verbose>1)
@@ -855,7 +858,6 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
             {
               if(verbose) cout<<"\t---(reduces to)--->\t";
               g.jc_reduce(m);
-              g.normalise();
               if(verbose) cout<<g;
             }
         }
@@ -868,8 +870,7 @@ vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2
           else
             {
               if(verbose) cout<<"\t---(reduces to)--->\t";
-              g.hess_reduce(m, gl2);
-              g.normalise();
+              g.hess_reduce(m);
               if(verbose) cout<<g;
             }
         }

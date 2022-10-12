@@ -110,7 +110,7 @@ public:
   // for an sl2-reduced cubic, normalise w.r.t. <-I> (default) or <S>
   // or <TS>.  Two reduced and normalised forms are SL(2,Z)-equivalent
   // iff they are equal
-  void normalise();
+  void normalise(unimod& m);
 
   // Test for sl2/gl2-equivalence:
   int sl2_equivalent(const cubic& G) const;
@@ -163,7 +163,7 @@ public:
   bigcomplex hess_root() const;
   bigfloat real_root() const;  // requires disc<0
   int is_hessian_reduced(); // for positive discriminant only
-  void hess_reduce(unimod& m, int gl2);
+  void hess_reduce(unimod& m);
   void mathews_reduce(unimod& m);
   int is_jc_reduced(); // for negative discriminant only
   void jc_reduce(unimod& m);

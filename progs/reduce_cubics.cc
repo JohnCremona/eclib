@@ -25,12 +25,14 @@
 #include <eclib/unimod.h>
 #include <eclib/polys.h>
 #include <eclib/cubic.h>
+#include <cassert>
 
 int main()
 {
   initprimes("PRIMES");
   bigint a, b, c, d, disc;
   unimod m;
+
   while(cout << "Enter cubic coeffs a, b, c, d: ",
 	cin >> a >> b >> c >> d,
 	!(is_zero(a)&&is_zero(b)&&is_zero(c)&&is_zero(d)))
@@ -44,7 +46,9 @@ int main()
       if(disc>0)
 	{
 	  cout << "Using Hessian to reduce...\n";
-          g.hess_reduce(m, 1); // 1 means use GL(2,Z)
+          m.reset();
+          g.hess_reduce(m);
+          assert (transform(g0,m)==g);
 	  cout << "Hessian reduced cubic = "<<g<<endl;
 	  cout << "after transform by "<<m<<endl;
 	  cout << "Root of Hessian = " << g.hess_root() << endl;
@@ -58,16 +62,20 @@ int main()
 	  //cout << "g(alpha) = " << ga << endl;
 // First use Mathews reduction
 	  cout << "Using Mathews reduction ...\n";
+          m.reset();
           g.mathews_reduce(m);
 	  cout << "Mathews reduced cubic = "<<g<<endl;
 	  cout << "after transform by "<<m<<endl;
+          assert (transform(g0,m)==g);
 
 // Now use JC/Julia reduction
 	  cout << "Using JC/Julia reduction ...\n";
 	  g=g0;
+          m.reset();
           g.jc_reduce(m);
 	  cout << "JC/Julia reduced cubic = "<<g<<endl;
 	  cout << "after transform by "<<m<<endl;
+          assert (transform(g0,m)==g);
 	}
     }
   cout<<endl;
