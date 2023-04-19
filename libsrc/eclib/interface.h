@@ -203,6 +203,11 @@ template <> inline CC std::exp(const CC &z)
   RR e = exp(z.real());
   return CC(e * cos(im), e * sin(im));
 }
+template <> inline CC std::log(const CC &z)
+{
+  RR arg = atan2(z.imag(), z.real());
+  return CC(log(std::abs(z)), arg);
+}
 inline CC operator/(const CC &a, const CC &b)
 {
   RR are = a.real();
