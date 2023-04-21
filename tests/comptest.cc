@@ -40,7 +40,7 @@ int main(void)
    cout << " has real part = " << real(z) << "\n";
    cout << " and imaginary part = " << imag(z) << "i\n";
    cout << "z has complex conjugate = " << conj(z) << "\n";
-   c = cagm(z,to_bigfloat(1));
+   c = cagm(z,bigcomplex(to_bigfloat(1)));
    cout << "AGM(" << z << "," << bigcomplex(to_bigfloat(1)) << ") = ";
    cout << c << "\n\n";
    cout << "AGM(" << a << "," << b << ") = "<<flush;
