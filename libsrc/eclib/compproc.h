@@ -38,7 +38,13 @@ void getc4c6(const bigcomplex& w1, const bigcomplex& w2, bigcomplex& c4, bigcomp
 bigcomplex discriminant(const bigcomplex& b, const bigcomplex& c, const bigcomplex& d);
 
 vector<bigcomplex> solvecubic(const bigcomplex& c1, const bigcomplex& c2, const bigcomplex& c3);
+vector<bigcomplex> solvecubic(const bigfloat& c1, const bigfloat& c2, const bigfloat& c3)
+{return solvecubic(bigcomplex(c1), bigcomplex(c2), bigcomplex(c3));}
+
 vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const bigcomplex& c, const bigcomplex& d);
+vector<bigcomplex> solvequartic(const bigfloat& a, const bigfloat& b, const bigfloat& c, const bigfloat& d)
+{return solvequartic(bigcomplex(a), bigcomplex(b), bigcomplex(c), bigcomplex(d));}
+
 vector<bigcomplex> solverealquartic(const bigfloat& a, const bigfloat& b, const bigfloat& c, const bigfloat& d, const bigfloat& e);
 
 void quadsolve(const bigfloat& p, const bigfloat& q, bigcomplex& root1,bigcomplex& root2);
