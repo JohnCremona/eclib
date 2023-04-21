@@ -1111,20 +1111,20 @@ smat mult_mod_p_flint ( const smat& A, const smat& B, const scalar& pr )
       cerr << "incompatible smats in operator *"<<endl;
       return smat();
     }
-  mod_mat AA, BB, CC;
-  mod_mat_from_smat(AA,A,pr);
-  mod_mat_from_smat(BB,B,pr);
-  mod_mat_init(CC, A.nrows(), B.ncols(), pr);
+  mod_mat A1, B1, C1;
+  mod_mat_from_smat(A1,A,pr);
+  mod_mat_from_smat(B1,B,pr);
+  mod_mat_init(C1, A.nrows(), B.ncols(), pr);
   // timer T;
   // T.start();
-  // mod_mat_mul(CC,AA,BB);
+  // mod_mat_mul(C1,A1,B1);
   // T.stop();
   // cout<<"mult_mod_p_flint time (size "<<dim(A)<<"x"<<dim(B)<<"): ";
   // T.show();
-  smat C = smat_from_mod_mat(CC, pr);
-  mod_mat_clear(AA);
-  mod_mat_clear(BB);
-  mod_mat_clear(CC);
+  smat C = smat_from_mod_mat(C1, pr);
+  mod_mat_clear(A1);
+  mod_mat_clear(B1);
+  mod_mat_clear(C1);
   return C;
 }
 

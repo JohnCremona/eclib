@@ -24,7 +24,7 @@
 //  The macro NO_MPFP can optionally be set.  It controls whether most
 //   real and complex floating point functions are implemented using
 //   doubles and complex doubles (if set) or using NTL bigfloats
-//   (RR) and bigcomplexes (CC) (if not set, the default)
+//   (RR) and bigcomplexes (if not set, the default)
 
 #ifndef _ECLIB_INTERFACE_H_
 #define _ECLIB_INTERFACE_H_
@@ -187,28 +187,27 @@ inline RR fmax(const RR& x, const RR& y)
 #endif
 
 #include <complex>
-typedef complex<RR> CC;
-typedef CC bigcomplex;
+typedef complex<RR> bigcomplex;
 
 #ifdef _LIBCPP_VERSION
-template <> inline RR std::abs(const CC &z)
+template <> inline RR std::abs(const bigcomplex &z)
 {
   RR re = z.real();
   RR im = z.imag();
   return sqrt(re*re + im*im);
 }
-template <> inline CC std::exp(const CC &z)
+template <> inline bigcomplex std::exp(const bigcomplex &z)
 {
   RR im = z.imag();
   RR e = exp(z.real());
-  return CC(e * cos(im), e * sin(im));
+  return bigcomplex(e * cos(im), e * sin(im));
 }
-template <> inline CC std::log(const CC &z)
+template <> inline bigcomplex std::log(const bigcomplex &z)
 {
   RR arg = atan2(z.imag(), z.real());
-  return CC(log(std::abs(z)), arg);
+  return bigcomplex(log(std::abs(z)), arg);
 }
-inline CC operator/(const CC &a, const CC &b)
+inline bigcomplex operator/(const bigcomplex &a, const bigcomplex &b)
 {
   RR are = a.real();
   RR aim = a.imag();
@@ -217,19 +216,19 @@ inline CC operator/(const CC &a, const CC &b)
   if (abs(bre) <= abs(bim)) {
     RR r = bre / bim;
     RR den = bim + r*bre;
-    return CC((are*r + aim)/den, (aim*r - are)/den);
+    return bigcomplex((are*r + aim)/den, (aim*r - are)/den);
   } else {
     RR r = bim / bre;
     RR den = bre + r*bim;
-    return CC((are + aim*r)/den, (aim - are*r)/den);
+    return bigcomplex((are + aim*r)/den, (aim - are*r)/den);
   }
 }
-inline CC operator /(const RR &a, const CC &b)
+inline bigcomplex operator /(const RR &a, const bigcomplex &b)
 {
-  CC r(a);
+  bigcomplex r(a);
   return r/b;
 }
-inline CC &operator /=(CC &a, const CC &b)
+inline bigcomplex &operator /=(bigcomplex &a, const bigcomplex &b)
 {
   a = a/b;
   return a;
@@ -276,10 +275,10 @@ inline int is_zero(bigfloat x) {return IsZero(x);}
 inline int is_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
 inline void Iasb(bigint& a, bigfloat x) {RoundToZZ(a,x);}
 inline void Iasb(long& a, bigfloat x) {ZZ n; RoundToZZ(n,x); a=I2long(n);}
-istream& operator>>(istream& is, CC& z);
-inline CC pow(const CC& a, int e)  {return exp(to_RR(e)*log(a));}
-inline CC pow(const CC& a, long e)  {return exp(to_RR(e)*log(a));}
-inline CC pow(const CC& a, const RR& e)  {return exp(e*log(a));}
+istream& operator>>(istream& is, bigcomplex& z);
+inline bigcomplex pow(const bigcomplex& a, int e)  {return exp(to_RR(e)*log(a));}
+inline bigcomplex pow(const bigcomplex& a, long e)  {return exp(to_RR(e)*log(a));}
+inline bigcomplex pow(const bigcomplex& a, const RR& e)  {return exp(e*log(a));}
 
 
 //////////////////////////////////////////////////////////////////

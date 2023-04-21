@@ -59,8 +59,6 @@ cout << "Using A.output_pretty(cout): \n";  a.output_pretty(cout);
  
  cout << "Enter any number "; cin >> i;
 
-//  The following should work, doesn't in TURBO C++, but DOES with GCC!!
-
 {
 cout << "Creating an array of 3 matrices\n";
 mat* matlist = new mat[3];

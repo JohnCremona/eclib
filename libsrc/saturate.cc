@@ -303,10 +303,12 @@ int saturator::enlarge()
   bigint old_index_bound = the_index_bound;
   set_index_bound();
   if(verbose)
-    if (the_index_bound < old_index_bound)
-      cout << "Reducing index bound from " << old_index_bound <<" to " << the_index_bound << endl;
-    else
-      cout << "The index bound " << the_index_bound << " has not changed"<<endl;
+    {
+      if (the_index_bound < old_index_bound)
+        cout << "Reducing index bound from " << old_index_bound <<" to " << the_index_bound << endl;
+      else
+        cout << "The index bound " << the_index_bound << " has not changed"<<endl;
+    }
 
   // reset TL matrix and q iteration
   TLimage=mat_l(0,rank); //  holds TL image in echelon form
