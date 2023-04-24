@@ -59,9 +59,9 @@ vector<bigcomplex> roots_of_cubic(const Curve& E)
            ra4=I2bigfloat(a4),
            ra6=I2bigfloat(a6);
 
-  bigcomplex c1 = ra2 + ra1*(ra1/4) ;
-  bigcomplex c2 = ra4 + ra1*(ra3/2) ;
-  bigcomplex c3 = ra6 + ra3*(ra3/4) ;
+  bigfloat c1 = ra2 + ra1*(ra1/4);
+  bigfloat c2 = ra4 + ra1*(ra3/2);
+  bigfloat c3 = ra6 + ra3*(ra3/4);
   return solvecubic(c1,c2,c3);
 }
 

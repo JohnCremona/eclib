@@ -362,7 +362,7 @@ bigcomplex cubic::hess_root() const
   if(!is_positive(disc()))
     {
       cout<<"Error: hess_root called with negative dicriminant!\n";
-      return to_bigfloat(0);
+      return bigcomplex(); // 0
     }
   bigfloat P = I2bigfloat(p_semi());
   bigfloat Q = I2bigfloat(q_semi());

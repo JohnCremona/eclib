@@ -275,7 +275,7 @@ RR atan2 (const RR & y, const RR & x)
 // The template version requires an automatic conversion from 0 to an
 // RR, so cannot be used as is.  We have manually instantiated it
 // here.
-istream& operator>>(istream& is, CC& z)
+istream& operator>>(istream& is, bigcomplex& z)
 {
   RR r, i;
   char c;
@@ -287,12 +287,12 @@ istream& operator>>(istream& is, CC& z)
 	{
 	  is >> i >> c;
 	  if (c == ')') 
-	    z = CC(r, i);
+	    z = bigcomplex(r, i);
 	  else
 	    is.setstate(ios_base::failbit);
 	}
       else if (c == ')') 
-	z = CC(r, to_RR(0));
+	z = bigcomplex(r, to_RR(0));
       else
 	is.setstate(ios_base::failbit);
     }
@@ -300,7 +300,7 @@ istream& operator>>(istream& is, CC& z)
     {
       is.putback(c);
       is >> r;
-      z = CC(r, to_RR(0));
+      z = bigcomplex(r, to_RR(0));
     }
   return is;
 }
@@ -308,24 +308,14 @@ istream& operator>>(istream& is, CC& z)
 // return value is 1 for success, else 0
 int longify(const bigfloat& x, long& a, int rounding)
 {
-  if ((x<=MAXLONG)&&(x>=MINLONG))
-    {
-      switch(rounding)
-        {
-        case 0: // round to nearest
-        default:
-          a = I2long(RoundToZZ(x)); return 1;
-        case 1: // round up
-          a = I2long(CeilToZZ(x)); return 1;
-        case -1: // round down
-          a = I2long(FloorToZZ(x)); return 1;
-        }
-    }
-  else
+  bigint z = (rounding==0? RoundToZZ(x): (rounding==1? CeilToZZ(x): FloorToZZ(x)));
+  if(!is_long(z))
     {
       cerr<<"Attempt to convert "<<x<<" to long fails!"<<endl;
       return 0;
     }
+  a = I2long(z);
+  return 1;
 }
 
 #else // not MPFP

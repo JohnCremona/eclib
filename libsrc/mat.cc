@@ -439,13 +439,6 @@ void mat::output_pretty(ostream& s) const
   delete[]colwidths;
 }
 
-//binary file I/O
-
-// Not supported by libstdc++-v3, it seems
-
-//#ifdef THIS_USED_TO_WORK_WITH_GCC_2_95
-#if(1)
-
 void mat::dump_to_file(string filename) const
 {
   ofstream fout(filename.c_str(),ofstream::binary);
@@ -465,32 +458,6 @@ void mat::read_from_file(string filename)
   fin.read((char*)entries,nro*nco*sizeof(scalar));
   fin.close();
 }
-
-#else
-
-void mat::dump_to_file(string filename) const
-{
-  ofstream fout(filename.c_str());
-  fout<<nro<<" "<<nco<<" ";
-  long size=nro*nco; 
-  scalar* m=entries;
-  while(size--) fout<<*m++<<" ";
-  fout.close();
-}
-
-void mat::read_from_file(string filename)
-{
-  ifstream fin(filename.c_str());
-  fin>>nro>>nco;
-  long size=nro*nco; 
-  delete[] entries;
-  entries = new scalar[size]; 
-  scalar* m=entries;
-  while(size--) fin>>*m++;
-  fin.close();
-}
-
-#endif
 
 istream& operator>>(istream& s, mat& m)
 {

@@ -163,9 +163,9 @@ class CurveHeightConst : public CurveRed, Cperiods {
   bigfloat psi(const bigfloat& x);
   vector<bigfloat> ordinates(const bigfloat& x);
   vector<bigcomplex> ztopoint(const bigcomplex& z)
-  {return ellztopoint(z,I2bigfloat(a1),I2bigfloat(a2),I2bigfloat(a3));}
+  {return ellztopoint(z, bigcomplex(I2bigfloat(a1)), bigcomplex(I2bigfloat(a2)), bigcomplex(I2bigfloat(a3)));}
   bigcomplex pointtoz(const bigfloat& x, const bigfloat& y)
-  {return ellpointtoz(*this,*this,x,y);}
+  {return ellpointtoz(*this, *this, x, y);}
 public:
   CurveHeightConst(CurveRed& CR);
   void compute() {compute_phase1(); compute_phase2(); }
