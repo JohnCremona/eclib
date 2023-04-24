@@ -36,25 +36,13 @@ public:
   RR imag() const {return im;};
   RR norm() const {return sqr(re)+sqr(im);};
   RR arg() const { return atan2(im, re);};
-  RR abs2() const {return sqr(re)+sqr(im);};
-  RR abs() const {return ::NTL::sqrt(abs2());};
+  RR abs() const {return ::NTL::sqrt(norm());};
   bigcomplex conj() const {return bigcomplex(re,-im);};
   bigcomplex timesI() const {return bigcomplex(-im,re);};
   int IsReal() const {return ::NTL::IsZero(im);}
   int IsImaginary() const {return ::NTL::IsZero(re);}
   int IsZero() const {return ::NTL::IsZero(re) && ::NTL::IsZero(im);}
 
-  // same again, as functions
-  friend RR real(const bigcomplex& z) {return z.re;};
-  friend RR imag(const bigcomplex& z) {return z.im;};
-  friend RR norm(const bigcomplex& z) {return sqr(z.re)+sqr(z.im);};
-  friend RR arg(const bigcomplex& z) { return atan2(z.im, z.re);};
-  friend RR abs2(const bigcomplex& z) {return sqr(z.re)+sqr(z.im);};
-  friend RR abs(const bigcomplex& z) {return ::NTL::sqrt(z.abs2());};
-  friend bigcomplex conj(const bigcomplex& z) {return bigcomplex(z.re,-z.im);};
-  int IsReal(const bigcomplex& z) {return z.IsReal();}
-  int IsImaginary(const bigcomplex& z) {return z.IsImaginary();}
-  int IsZero(const bigcomplex& z) {return z.IsZero();}
 
   bigcomplex operator= (const RR& r) {re=r; im=RR(); return *this;}
   bigcomplex operator+=(const RR& r) {re+=r; return *this;};
@@ -68,21 +56,15 @@ public:
 
   bigcomplex operator=(const bigcomplex& z) {re=z.re; im=z.im; return *this;};
   bigcomplex operator+=(const bigcomplex& z) {re+=z.re; im+=z.im; return *this;};
-  bigcomplex operator+(const bigcomplex& z) const {bigcomplex w(*this); w+=z; return w;};
+  bigcomplex operator+(const bigcomplex& z) const {return bigcomplex(re+z.re, im+z.im);};
   bigcomplex operator+() {return *this;};
   bigcomplex operator-=(const bigcomplex& z) {re-=z.re; im-=z.im; return *this;};
-  bigcomplex operator-(const bigcomplex& z) const {bigcomplex w(*this); w-=z; return w;};
+  bigcomplex operator-(const bigcomplex& z) const {return bigcomplex(re-z.re, im-z.im);};
   bigcomplex operator-() const {return bigcomplex(-re,-im);};
-  bigcomplex operator*=(const bigcomplex& z) {RR x = re; re=x*z.re-im*z.re; im = x*z.im+im*z.re; return *this;};
+  bigcomplex operator*=(const bigcomplex& z) {RR x = re; re=x*z.re-im*z.im; im = x*z.im+im*z.re; return *this;};
   bigcomplex operator*(const bigcomplex& z) const {bigcomplex w(*this); w*=z; return w;};
-  bigcomplex operator/=(const bigcomplex& z) {RR r=z.abs2(), x = re; re=(x*z.re+im*z.re)/r; im = (-x*z.im+im*z.re)/r; return *this;};
+  bigcomplex operator/=(const bigcomplex& z) {RR r=z.norm(), x = re; re=(x*z.re+im*z.im)/r; im = (-x*z.im+im*z.re)/r; return *this;};
   bigcomplex operator/(const bigcomplex& z) const {bigcomplex w(*this); w/=z; return w;};
-
-  // operators with left operand RR
-  friend bigcomplex operator+(const RR& r, const bigcomplex& z) {return bigcomplex(r)+z;};
-  friend bigcomplex operator-(const RR& r, const bigcomplex& z) {return bigcomplex(r)-z;};
-  friend bigcomplex operator*(const RR& r, const bigcomplex& z) {return bigcomplex(r)*z;};
-  friend bigcomplex operator/(const RR& r, const bigcomplex& z) {return bigcomplex(r)/z;};
 
   // standard functions as class methods:
   bigcomplex sqrt() const {RR r = abs(); RR u = ::NTL::sqrt((r+re)/2), v=::NTL::sqrt((r-re)/2); if (im<0) v=-v; return bigcomplex(u,v);};
@@ -91,14 +73,15 @@ public:
   bigcomplex exp() const {RR e = ::NTL::exp(re);  return bigcomplex(e * ::NTL::cos(im), e * ::NTL::sin(im));};
   bigcomplex log() const {return bigcomplex(::NTL::log(abs()), arg());}
 
-  // standard functions as functions:
-  friend bigcomplex sqrt(const bigcomplex& z) {bigcomplex w(z); return w.sqrt();};
-  friend bigcomplex cos(const bigcomplex& z) {bigcomplex w(z); return w.cos();};
-  friend bigcomplex sin(const bigcomplex& z) {bigcomplex w(z); return w.sin();};
-  friend bigcomplex exp(const bigcomplex& z) {bigcomplex w(z); return w.exp();};
-  friend bigcomplex log(const bigcomplex& z) {bigcomplex w(z); return w.log();};
 
   operator string() const
+  {
+    ostringstream s;
+    s << "(" << re << "," << im << ")";
+    return s.str();
+  }
+
+  string pretty_string() const
   {
     ostringstream s;
     if (IsReal())
@@ -132,7 +115,7 @@ public:
 
   friend ostream& operator<<(ostream& s, const bigcomplex& z)
   {
-    s << (string)z;
+    s << string(z);
     return s;
   }
 
@@ -141,9 +124,32 @@ private:
   RR re, im;
 };
 
-inline void swap(bigcomplex& z1, bigcomplex& z2)
-{
-  bigcomplex z3(z1); z1=z2; z2=z3;
-}
+
+// inline functions
+inline RR real(const bigcomplex& z) {return z.real();};
+inline RR imag(const bigcomplex& z) {return z.imag();};
+inline RR norm(const bigcomplex& z) {return z.norm();};
+inline RR arg(const bigcomplex& z) { return z.arg();};
+inline RR abs(const bigcomplex& z) {return z.abs();};
+inline bigcomplex conj(const bigcomplex& z) {return z.conj();};
+inline int IsReal(const bigcomplex& z) {return z.IsReal();}
+inline int IsImaginary(const bigcomplex& z) {return z.IsImaginary();}
+inline int IsZero(const bigcomplex& z) {return z.IsZero();}
+
+// operators with left operand RR
+inline bigcomplex operator+(const RR& r, const bigcomplex& z) {return bigcomplex(r)+z;};
+inline bigcomplex operator-(const RR& r, const bigcomplex& z) {return bigcomplex(r)-z;};
+inline bigcomplex operator*(const RR& r, const bigcomplex& z) {return bigcomplex(r)*z;};
+inline bigcomplex operator/(const RR& r, const bigcomplex& z) {return bigcomplex(r)/z;};
+
+// standard method functions as functions:
+inline bigcomplex sqrt(const bigcomplex& z) {bigcomplex w(z); return w.sqrt();};
+inline bigcomplex cos(const bigcomplex& z) {bigcomplex w(z); return w.cos();};
+inline bigcomplex sin(const bigcomplex& z) {bigcomplex w(z); return w.sin();};
+inline bigcomplex exp(const bigcomplex& z) {bigcomplex w(z); return w.exp();};
+inline bigcomplex log(const bigcomplex& z) {bigcomplex w(z); return w.log();};
+
+
+inline void swap(bigcomplex& z1, bigcomplex& z2) {bigcomplex z3(z1); z1=z2; z2=z3;}
 
 #endif
