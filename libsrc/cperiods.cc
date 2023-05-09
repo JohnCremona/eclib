@@ -329,7 +329,7 @@ void Cperiods::store_sums()
     }
   w1squared = w1*w1;
   w1cubed   = w1*w1squared;
-  bigcomplex term = one, qtm = qtau;
+  bigcomplex term(one), qtm(qtau);
   sum3=to_bigfloat(0);
   for (bigfloat m=to_bigfloat(1); ! SMALL(term); m+=1)
     { 

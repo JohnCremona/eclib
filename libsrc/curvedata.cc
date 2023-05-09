@@ -321,9 +321,9 @@ Curvedata opt_x_shift(const Curvedata& C, bigint& k)
   C.getbi(b2,b4,b6,b8);
   cubic b_cubic(four,b2,2*b4,b6);
   k = b_cubic.shift_reduce();
-  Curvedata CC(C);
-  CC.transform(k,zero,zero);
-  return CC;
+  Curvedata CD(C);
+  CD.transform(k,zero,zero);
+  return CD;
 }
 
 #if(0)

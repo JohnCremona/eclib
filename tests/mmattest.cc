@@ -42,8 +42,6 @@ int main(void)
       cout << "A = " << a;
     }
 
-//  The following should work, doesn't in TURBO C++, but DOES with GCC!!
-
 {
 cout << "Creating an array of 3 matrices\n";
 mat_m* matlist = new mat_m[3];
