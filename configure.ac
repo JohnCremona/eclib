@@ -2,12 +2,12 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.65])
+AC_PREREQ([2.71])
 
 # The version is the concatenation of 'v' and the year, month, date: vyyyymmdd
 # To access this as a string or integer triple, see libsrc/eclib/version.h
 
-AC_INIT([eclib], [20230424], [john.cremona@gmail.com])
+AC_INIT([eclib],[20231110],[john.cremona@gmail.com])
 
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
@@ -40,9 +40,9 @@ LT_INIT
 #
 # NB The suffix of the library name (libec.so here) is (c-a).a.r
 
-LT_CURRENT=12
+LT_CURRENT=13
 LT_REVISION=0
-LT_AGE=2
+LT_AGE=3
 
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
@@ -52,7 +52,7 @@ AC_SUBST(LT_AGE)
 AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_INSTALL
-AC_PROG_LIBTOOL
+LT_INIT
 
 # Checks for system features and libraries, via macros defined in m4/ directory
 # Note that unordered_map is standard since c++11
@@ -162,30 +162,30 @@ AC_ARG_VAR(FLINT_LEVEL, "FLINT level parameter (default 1 if FLINT enabled)")
 dnl Find the FLINT Library and determine if it has the nmod_mat module
 dnl (in FLINT from version 2.3)
 dnl
-dnl NB If your version of FLINT includes the optional hmod_mat module,
-dnl then configure with FLINT_LEVEL=2 by either setting the
-dnl environment variable FLINT_LEVEL to 2, or adding FLINT_LEVEL=2 to
+dnl NB By default we set FLINT_LEVEL=2, which requires FLINT version at least 3.0.0;
+dnl for earlier version you must either set the
+dnl environment variable FLINT_LEVEL to 1, or adding FLINT_LEVEL=1 to
 dnl the configure invocation.
 dnl
 dnl First set defaults for when no suitable FLINT is found
 dnl
 AC_ARG_WITH(flint,
   [AS_HELP_STRING([--with-flint=<path>],[prefix of FLINT installation.])],
-  [  
+  [
     if test "$withval" = "no"; then
        want_flint=no
     elif test "$withval" = "yes" -o "$withval" = ""; then
         want_flint=yes
         AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref],
-        [FLINT_CFLAGS="-DFLINT_LEVEL=${FLINT_LEVEL:=1}";
+        [FLINT_CFLAGS="-DFLINT_LEVEL=${FLINT_LEVEL:=2}";
          FLINT_LIBS="-lflint";
          AC_MSG_NOTICE([Building with FLINT support from system install])],
         [AC_MSG_NOTICE([No suitable FLINT Library (version >=2.3) found])],
         [])
     else
         want_flint=yes
-        FLINT_CFLAGS="-DFLINT_LEVEL=${FLINT_LEVEL:=1} -I$withval/include"
-	FLINT_LDFLAGS="-L$withval/lib";
+        FLINT_CFLAGS="-DFLINT_LEVEL=${FLINT_LEVEL:=2} -I$withval/include"
+	FLINT_LDFLAGS="-L$withval/lib -Wl,-rpath -Wl,$withval/lib";
         FLINT_LIBS="-lflint"
     fi
     ],

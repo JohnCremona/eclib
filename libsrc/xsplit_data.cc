@@ -1,7 +1,7 @@
 // FILE xsplit_data.cc : Implementation of member functions for class ff_data
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 Marcus Mo
+// Copyright 1990-2023 Marcus Mo
 // 
 // This file is part of the eclib package.
 // 

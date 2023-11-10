@@ -1,7 +1,7 @@
 // timer.cc:  implementations of timer functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 //                     Marcus Mo     (timer class)
 // 
 // This file is part of the eclib package.
@@ -131,7 +131,7 @@ void timer::add( string name ) {
          << "Erasing, and starting again." << endl;
 
     // Clear timer
-    times_[name].empty();
+    times_[name].clear();
   }
 }
 

@@ -1,7 +1,7 @@
 // tlss.cc: implementation of class TLSS for sieving E(Q)/pE(Q) at one prime q
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

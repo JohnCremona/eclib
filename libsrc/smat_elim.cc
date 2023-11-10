@@ -1,7 +1,7 @@
 // smat_elim.cc: implementation of class smat_elim
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -1294,13 +1294,10 @@ void smat_elim::step5dense()
 #endif
   vec pc,npc; long rk,ny;
 
-#if FLINT_LEVEL==0
-    //    dmat = echmodp_uptri(dmat,pc,npc,rk,ny,modulus);
-    dmat = ref_via_ntl(dmat,pc,npc,rk,ny,modulus);
-#else
-    dmat = ref_via_flint(dmat,pc,npc,rk,ny,modulus);
-#endif
-    #if TRACE_DENSE
+  // this will call ref_via_ntl() if FLINT_LEVEL=0, else ref_via_flint()
+  dmat = rref(dmat,pc,npc,rk,ny,modulus);
+
+#if TRACE_DENSE
     cout<<"...finished dense elimination, rank = "<<rk;
     cout<<", nullity = "<<ny<<endl;
     //cout<<"Pivotal columns:    "<<pc<<endl;

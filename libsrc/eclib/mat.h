@@ -1,7 +1,7 @@
 // mat.h: declarations for integer matrix classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -24,6 +24,8 @@
 // Not to be included directly by user: use matrix.h which defines
 // _ECLIB_MATRIX_H and includes this twice
 //
+
+#include "eclib/flinterface.h"
 
 #ifndef LONG_MIN
 #define LONG_MIN (-LONG_MAX-1)
@@ -112,6 +114,15 @@ public:
                                  long& rk, long& ny, scalar pr);
         friend mat ref_via_ntl(const mat& M, vec& pcols, vec& npcols,
                                  long& rk, long& ny, scalar pr);
+        friend mat rref(const mat& M, vec& pcols, vec& npcols,
+                                 long& rk, long& ny, scalar pr)
+  {
+#if FLINT_LEVEL==0
+    return ref_via_ntl(M, pcols, npcols, rk, ny, pr);
+#else
+    return ref_via_flint(M, pcols, npcols, rk, ny, pr);
+#endif
+  }
         friend long rank_via_ntl(const mat& M, scalar pr);
         friend long det_via_ntl(const mat& M, scalar pr);
 	friend subspace combine(const subspace& s1, const subspace& s2);

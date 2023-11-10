@@ -1,7 +1,7 @@
 // matrix.h:  manage declarations of integer matrix classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -68,3 +68,4 @@
 #undef smat_elim
 
 #endif
+

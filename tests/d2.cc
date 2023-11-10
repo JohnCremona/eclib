@@ -1,7 +1,7 @@
 // d2.cc:  program for 2nd descent from a phi-descent homogeneous space
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

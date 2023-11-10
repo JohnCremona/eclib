@@ -1,7 +1,7 @@
 // smat.cc: implementation of sparse integer matrix class smat
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -1008,61 +1008,7 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
   return 1;
 }
 
-// Possible FLINT_LEVEL values are as follows.
-//
-// 0: no FLINT support (or a version <2.3)
-// 1: support for 64-bit nmod_mat (standard from version 2.3)
-// 2: support for 32-bit hmod_mat (non-standard, from version 2.3)
-//
-// The configure script should have detected whether the functions
-// nmod_mat_rref and/or hmod_mat_rref are available to be used here.
-//
 #if FLINT_LEVEL!=0
-//#define TRACE_FLINT_RREF
-#include "flint/fmpz.h"
-#if (SCALAR_OPTION==1)&&(FLINT_LEVEL==2)
-#include "flint/hmod_mat.h"
-#undef uscalar
-#undef mod_mat
-#undef mod_mat_init
-#undef mod_mat_clear
-#undef mod_mat_entry
-#undef mod_mat_nrows
-#undef mod_mat_ncols
-#undef mod_mat_rref
-#undef mod_mat_mul
-#define uscalar hlimb_t // unsigned int
-#define mod_mat hmod_mat_t // uses unsigned ints
-#define mod_mat_init hmod_mat_init
-#define mod_mat_clear hmod_mat_clear
-#define mod_mat_entry hmod_mat_entry
-#define mod_mat_nrows hmod_mat_nrows
-#define mod_mat_ncols hmod_mat_ncols
-#define mod_mat_rref hmod_mat_rref
-#define mod_mat_mul hmod_mat_mul
-#else
-#include "flint/nmod_mat.h"
-#undef uscalar
-#undef mod_mat
-#undef mod_mat_init
-#undef mod_mat_clear
-#undef mod_mat_entry
-#undef mod_mat_nrows
-#undef mod_mat_ncols
-#undef mod_mat_rref
-#undef mod_mat_mul
-#define uscalar mp_limb_t // unsigned long
-#define mod_mat nmod_mat_t // uses unsigned longs
-#define mod_mat_init nmod_mat_init
-#define mod_mat_clear nmod_mat_clear
-#define mod_mat_entry nmod_mat_entry
-#define mod_mat_nrows nmod_mat_nrows
-#define mod_mat_ncols nmod_mat_ncols
-#define mod_mat_rref nmod_mat_rref
-#define mod_mat_mul nmod_mat_mul
-#endif
-#include "flint/profiler.h"
-#include "eclib/timer.h"
 
 // FLINT has two types for modular matrices: standard in FLINT-2.3 has
 // nmod_mat_t with entries of type mp_limb_t (unsigned long);
@@ -1117,7 +1063,7 @@ smat mult_mod_p_flint ( const smat& A, const smat& B, const scalar& pr )
   mod_mat_init(C1, A.nrows(), B.ncols(), pr);
   // timer T;
   // T.start();
-  // mod_mat_mul(C1,A1,B1);
+  mod_mat_mul(C1,A1,B1);
   // T.stop();
   // cout<<"mult_mod_p_flint time (size "<<dim(A)<<"x"<<dim(B)<<"): ";
   // T.show();

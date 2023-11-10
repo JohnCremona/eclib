@@ -1,7 +1,7 @@
 // smat.h: declarations for sparse integer matrix class smat
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -22,6 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 // Should not be included directly by user: include smatrix.h instead
+
+#include "eclib/flinterface.h"
 
 // We cannot use one macro to prevent this being included twice since
 // we want it to be included twice by smatrix.h which defined _ECLIB_SMATRIX_H

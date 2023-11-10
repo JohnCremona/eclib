@@ -1,7 +1,7 @@
 // mat.cc: implementation of integer matrix classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -1573,57 +1573,7 @@ long det_via_ntl(const mat& M, scalar pr)
  return mod(conv<scalar>(det), pr);
 }
 
-
-// Possible FLINT_LEVEL values are as follows.
-//
-// 0: no FLINT support (or a version <2.3)
-// 1: support for 64-bit nmod_mat (standard from version 2.3)
-// 2: support for 32-bit hmod_mat (non-standard, from version 2.3)
-//
-// The configure script should have detected whether the functions
-// nmod_mat_rref and/or hmod_mat_rref are available to be used here.
-//
 #if FLINT_LEVEL!=0
-//#define TRACE_FLINT_RREF
-#include "flint/fmpz.h"
-#if (SCALAR_OPTION==1)&&(FLINT_LEVEL==2)
-#include "flint/hmod_mat.h"
-#undef uscalar
-#undef mod_mat
-#undef mod_mat_init
-#undef mod_mat_clear
-#undef mod_mat_entry
-#undef mod_mat_nrows
-#undef mod_mat_ncols
-#undef mod_mat_rref
-#define uscalar hlimb_t // unsigned int
-#define mod_mat hmod_mat_t // uses unsigned ints
-#define mod_mat_init hmod_mat_init
-#define mod_mat_clear hmod_mat_clear
-#define mod_mat_entry hmod_mat_entry
-#define mod_mat_nrows hmod_mat_nrows
-#define mod_mat_ncols hmod_mat_ncols
-#define mod_mat_rref hmod_mat_rref
-#else
-#include "flint/nmod_mat.h"
-#undef uscalar
-#undef mod_mat
-#undef mod_mat_init
-#undef mod_mat_clear
-#undef mod_mat_entry
-#undef mod_mat_nrows
-#undef mod_mat_ncols
-#undef mod_mat_rref
-#define uscalar mp_limb_t // unsigned long
-#define mod_mat nmod_mat_t // uses unsigned longs
-#define mod_mat_init nmod_mat_init
-#define mod_mat_clear nmod_mat_clear
-#define mod_mat_entry nmod_mat_entry
-#define mod_mat_nrows nmod_mat_nrows
-#define mod_mat_ncols nmod_mat_ncols
-#define mod_mat_rref nmod_mat_rref
-#endif
-#include "flint/profiler.h"
 
 // FLINT has two types for modular matrices: standard in FLINT-2.3 has
 // nmod_mat_t with entries of type mp_limb_t (unsigned long);
@@ -1893,3 +1843,50 @@ double sparsity(const mat& m)
     while(i--) {if(*matij++) count+=1;}
     return count/n;
 }
+
+#if (FLINT_LEVEL==2)&&(__FLINT_VERSION>2)&&(SCALAR_OPTION==1)
+
+// Implementation of wrapper functions declared in flinterface.h
+// written by Fredrik Johansson
+
+#include "flint/gr.h"
+#include "flint/gr_mat.h"
+
+void
+hmod_mat_init(hmod_mat_t mat, slong rows, slong cols, hlimb_t n)
+{
+    gr_ctx_t ctx;
+    gr_ctx_init_nmod32(ctx, n);
+    gr_mat_init((gr_mat_struct *) mat, rows, cols, ctx);
+    nmod_init(&(mat->mod), n);
+}
+
+void
+hmod_mat_clear(hmod_mat_t mat)
+{
+    if (mat->entries)
+    {
+        flint_free(mat->entries);
+        flint_free(mat->rows);
+    }
+}
+
+void
+hmod_mat_mul(hmod_mat_t C, const hmod_mat_t A, const hmod_mat_t B)
+{
+    gr_ctx_t ctx;
+    gr_ctx_init_nmod32(ctx, C->mod.n);
+    GR_MUST_SUCCEED(gr_mat_mul((gr_mat_struct *) C, (gr_mat_struct *) A, (gr_mat_struct *) B, ctx));
+}
+
+slong
+hmod_mat_rref(hmod_mat_t mat)
+{
+    slong rank;
+    gr_ctx_t ctx;
+    gr_ctx_init_nmod32(ctx, mat->mod.n);
+    GR_MUST_SUCCEED(gr_mat_rref_lu(&rank, (gr_mat_struct *) mat, (gr_mat_struct *) mat, ctx));
+    return rank;
+}
+
+#endif

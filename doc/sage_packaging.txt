@@ -6,7 +6,7 @@ After making a new eclib release VERSION:
    This creates the file eclib-<VERSION>.tar.bz2
    Copy it to ~/sage/upstream
 
-2. In ~/sage, checkout the development branch, update it from trac and
+2. In ~/sage, checkout the development branch, update it from github and
    run "make".
 
 3. Make a new sage branch, say
@@ -21,7 +21,7 @@ After making a new eclib release VERSION:
 6. Build this new eclib in sage, with checks:
    sage -i -c eclib
 
-   [Doing 'make eclib' is also OK, bu does not run eclib's checks.]
+   [Doing 'make eclib' is also OK, but does not run eclib's checks.]
 
 7. Test sage to see if any doctests need changing.  Start with:
    sage -t --long src/sage/libs/eclib
@@ -29,7 +29,7 @@ After making a new eclib release VERSION:
 
 8. Make a github release and upload eclib-<VERSION>.tar.bz2 to it.
 
-9. Commit the changes to sage, upload the branch to the trac ticket
-   and call for review.
+9. Commit the changes to sage, upload the branch to github and create
+   a Pull Request.
 
 

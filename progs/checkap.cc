@@ -1,7 +1,7 @@
 // FILE CHECKAP.CC: program for checking ap are in valid range
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

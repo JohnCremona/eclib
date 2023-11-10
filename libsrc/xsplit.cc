@@ -1,7 +1,7 @@
 // xsplit.cc: implementation of class form_finder
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 //                     Marcus Mo     (parallel code)
 // 
 // This file is part of the eclib package.

@@ -1,7 +1,7 @@
 // mvector.h: declarations of multiprecision integer vector class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

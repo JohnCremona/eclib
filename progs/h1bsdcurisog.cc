@@ -1,7 +1,7 @@
 // FILE H1BSDCURISOG.CC: program to compute isogenous curves & BSD data
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -212,7 +212,7 @@ int main(void)
 // N.B. The following code does give some errors!  The "algebraic"
 // code for L/P has a bug which has not been fixed, so we use the
 // analytic value which is ok.
-// 19/4/2012:  I have no idea if the previous comment is still true
+// 19/4/2023:  I have no idea if the previous comment is still true
 	       if(ic==0) 
 		 {
 		   bigfloat diff = I2bigfloat(dloverp)*loverp_i-I2bigfloat(nloverp);

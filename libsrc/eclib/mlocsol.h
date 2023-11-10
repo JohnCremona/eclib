@@ -1,7 +1,7 @@
 // mlocsol.h: declaration of functions for local solubility of quartics 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

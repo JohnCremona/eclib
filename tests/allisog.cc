@@ -1,7 +1,7 @@
 // allisog.cc: program to find curves isogenous to input curves
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

@@ -1,7 +1,7 @@
 // FILE timing.cc : Simple test program for cross-platform timing (timer.cc)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 Marcus Mo
+// Copyright 1990-2023 Marcus Mo
 // 
 // This file is part of the eclib package.
 // 

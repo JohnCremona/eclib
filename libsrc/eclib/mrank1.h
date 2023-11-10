@@ -1,7 +1,7 @@
 // mrank1.h -- declaration of class rank1 for general 2-descent
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

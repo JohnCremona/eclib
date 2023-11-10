@@ -1,7 +1,7 @@
 // FILE nfhpcurve.cc main newform- and curve-finding program
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

@@ -1,7 +1,7 @@
 // point_search.cc:  program to find points up to given naive height
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
