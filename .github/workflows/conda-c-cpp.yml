@@ -1,0 +1,39 @@
+name: conda C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: ${{ matrix.os }} with ${{ matrix.mpfp }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["macos-latest"]
+        mpfp: [enable-mpfp, disable-mpfp]
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniforge-version: latest
+        mamba-version: "*"
+        activate-environment: eclib-deps
+
+    - name: configure
+      shell: bash -el {0}
+      run: |
+        mamba install pari ntl libflint compilers automake autoconf m4 libtool
+        conda activate eclib-deps
+        echo PATH=$PATH
+        ./autogen.sh
+        ./configure --with-boost="no" --with-flint --disable-allprogs --${{ matrix.mpfp }}
+    - name: make
+      shell: bash -el {0}
+      run: make
+    - name: make check
+      shell: bash -el {0}
+      run: make check
