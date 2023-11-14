@@ -23,30 +23,32 @@
 
 // This interface was written with help from Fredrik Johansson
 
-#ifndef _ECLIB_FLINTERFACE_H_
-#define _ECLIB_FLINTERFACE_H_      1       //flags that this file has been included
+// This file will be included either with SCALAR_OPTION=1 or with SCALAR_OPTION=1
 
-#if FLINT_LEVEL!=0
+#if FLINT
 
-// Possible FLINT_LEVEL values are as follows.
+// Possible FLINT support is governed by the macros FLINT and __FLINT_VERSION:
 //
-// 0: no FLINT support (or a version <2.3)
-// 1: support for 64-bit nmod_mat (standard from version 2.3)
-// 2: support for 32-bit hmod_mat via Fredrik Stromberg's mini interface to gr_mat, from version 3.0.0)
-//
+// FLINT==0: no FLINT support (or a version <2.3)
+// FLINT==1: FLINT support using 64-bit nmod_mat (if __FLINT_VERSION<3)
+//                     for both SCALAR_OPTION=1 (scalar=in) and 2 (scalar=long)
+//                 support using 32-bit hmod_mat (if __FLINT_VERSION>=3) when scalar=int
+//                         via Fredrik Stromberg's mini interface to gr_mat
 
 //#define TRACE_FLINT_RREF
 
+#include <flint/flint.h> // must include this first to set __FLINT_VERSION
+
 #if (__FLINT_VERSION>2)
-#include "flint/gr.h"
-#include "flint/gr_mat.h"
+#include <flint/gr.h>
+#include <flint/gr_mat.h>
+#include <flint/nmod.h>
 #endif
 
-#include "flint/nmod.h"
-#include "flint/nmod_mat.h"
-#include "flint/profiler.h"
+#include <flint/nmod_mat.h>
+#include <flint/profiler.h>
 
-#if (FLINT_LEVEL==2)
+#if (__FLINT_VERSION>2)&&(SCALAR_OPTION==1) // using 32-bit int scalars
 
 typedef unsigned int hlimb_t;
 
@@ -97,7 +99,7 @@ hmod_mat_rref(hmod_mat_t mat);
 #define mod_mat_rref hmod_mat_rref
 #define mod_mat_mul hmod_mat_mul
 
-#else // FLINT_LEVEL=1
+#else // __FLINT_VERSION<3 or SCALAR_OPTION=2 -- using 64-bit int scalars
 
 #undef uscalar
 #undef mod_mat
@@ -118,8 +120,6 @@ hmod_mat_rref(hmod_mat_t mat);
 #define mod_mat_rref nmod_mat_rref
 #define mod_mat_mul nmod_mat_mul
 
-#endif // FLINT_LEVEL 1 or 2
+#endif // __FLINT_VERSION >=3 or <3
 
-#endif // FLINT_LEVEL > 0
-
-#endif // #define _FLINTERFACE_H_
+#endif // FLINT

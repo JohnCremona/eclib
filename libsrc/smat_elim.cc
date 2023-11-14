@@ -1294,7 +1294,7 @@ void smat_elim::step5dense()
 #endif
   vec pc,npc; long rk,ny;
 
-  // this will call ref_via_ntl() if FLINT_LEVEL=0, else ref_via_flint()
+  // this will call ref_via_ntl() if FLINT, else ref_via_flint()
   dmat = rref(dmat,pc,npc,rk,ny,modulus);
 
 #if TRACE_DENSE

@@ -23,8 +23,6 @@
  
 // Should not be included directly by user: include smatrix.h instead
 
-#include "eclib/flinterface.h"
-
 // We cannot use one macro to prevent this being included twice since
 // we want it to be included twice by smatrix.h which defined _ECLIB_SMATRIX_H
 

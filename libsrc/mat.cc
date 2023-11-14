@@ -1573,15 +1573,17 @@ long det_via_ntl(const mat& M, scalar pr)
  return mod(conv<scalar>(det), pr);
 }
 
-#if FLINT_LEVEL!=0
+#if FLINT
 
-// FLINT has two types for modular matrices: standard in FLINT-2.3 has
-// nmod_mat_t with entries of type mp_limb_t (unsigned long);
-// non-standard (in an optional branch) is hmod_mat_t, with entries
-// hlimb_t (unsigned int).  We use the former when scalar=long and the
-// latter when scalar=int, provided that the optional functions are
-// present, which should have been determined by the configure script.
-// The unsigned scalar types are #define'd as uscalar.
+#include "eclib/flinterface.h"
+
+// FLINT has more than one type for modular matrices: standard in
+// FLINT-2.3..2.9 was nmod_mat_t with entries of type mp_limb_t
+// (unsigned long) while non-standard was hmod_mat_t, with entries
+// hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
+// wrapper.  We use the former when scalar=long and the latter when
+// scalar=int and the FLINT versin is at least 3.  The unsigned
+// scalar types are #define'd as uscalar.
 
 void mod_mat_from_mat(mod_mat& A, const mat& M, scalar pr)
 {
@@ -1705,7 +1707,7 @@ mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
   mod_mat_clear(A);
   return ans;
 }
-#endif // FLINT_LEVEL
+#endif // FLINT
 
 // The following function computes the upper-triangular echelon form
 // of m modulo the prime pr.
@@ -1844,13 +1846,13 @@ double sparsity(const mat& m)
     return count/n;
 }
 
-#if (FLINT_LEVEL==2)&&(__FLINT_VERSION>2)&&(SCALAR_OPTION==1)
+#if (FLINT==1)&&(__FLINT_VERSION>2)&&(SCALAR_OPTION==1)
 
 // Implementation of wrapper functions declared in flinterface.h
 // written by Fredrik Johansson
 
-#include "flint/gr.h"
-#include "flint/gr_mat.h"
+#include <flint/gr.h>
+#include <flint/gr_mat.h>
 
 void
 hmod_mat_init(hmod_mat_t mat, slong rows, slong cols, hlimb_t n)

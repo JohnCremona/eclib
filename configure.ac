@@ -7,7 +7,7 @@ AC_PREREQ([2.71])
 # The version is the concatenation of 'v' and the year, month, date: vyyyymmdd
 # To access this as a string or integer triple, see libsrc/eclib/version.h
 
-AC_INIT([eclib],[20231110],[john.cremona@gmail.com])
+AC_INIT([eclib],[20231114],[john.cremona@gmail.com])
 
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
@@ -157,8 +157,6 @@ AC_SUBST(NTL_LIBS)
 AC_SUBST(NTL_CFLAGS)
 AC_SUBST(NTL_LDFLAGS)
 
-AC_ARG_VAR(FLINT_LEVEL, "FLINT level parameter (default 1 if FLINT enabled)")
-
 dnl Find the FLINT Library and determine if it has the nmod_mat module
 dnl (in FLINT from version 2.3)
 dnl
@@ -177,15 +175,15 @@ AC_ARG_WITH(flint,
     elif test "$withval" = "yes" -o "$withval" = ""; then
         want_flint=yes
         AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref],
-        [FLINT_CFLAGS="-DFLINT_LEVEL=${FLINT_LEVEL:=2}";
+        [FLINT_CFLAGS="-DFLINT=1";
          FLINT_LIBS="-lflint";
          AC_MSG_NOTICE([Building with FLINT support from system install])],
         [AC_MSG_NOTICE([No suitable FLINT Library (version >=2.3) found])],
         [])
     else
         want_flint=yes
-        FLINT_CFLAGS="-DFLINT_LEVEL=${FLINT_LEVEL:=2} -I$withval/include"
-	FLINT_LDFLAGS="-L$withval/lib -Wl,-rpath -Wl,$withval/lib";
+        FLINT_CFLAGS="-DFLINT=1 -I$withval/include"
+	FLINT_LDFLAGS="-L$withval/lib";
         FLINT_LIBS="-lflint"
     fi
     ],
@@ -193,7 +191,7 @@ AC_ARG_WITH(flint,
 )
 
 if test "x$want_flint" = "xno"; then
-       FLINT_CFLAGS="-DFLINT_LEVEL=0"
+       FLINT_CFLAGS="-DFLINT=0"
        FLINT_LDFLAGS=""
        FLINT_LIBS=""
 fi

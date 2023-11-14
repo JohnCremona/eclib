@@ -1008,15 +1008,17 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
   return 1;
 }
 
-#if FLINT_LEVEL!=0
+#if FLINT
 
-// FLINT has two types for modular matrices: standard in FLINT-2.3 has
-// nmod_mat_t with entries of type mp_limb_t (unsigned long);
-// non-standard (in an optional branch) is hmod_mat_t, with entries
-// hlimb_t (unsigned int).  We use the former when scalar=long and the
-// latter when scalar=int, provided that the optional functions are
-// present, which should have been determined by the configure script.
-// The unsigned scalar types are #define'd as uscalar.
+#include "eclib/flinterface.h"
+
+// FLINT has more than one type for modular matrices: standard in
+// FLINT-2.3..2.9 was nmod_mat_t with entries of type mp_limb_t
+// (unsigned long) while non-standard was hmod_mat_t, with entries
+// hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
+// wrapper.  We use the former when scalar=long and the latter when
+// scalar=int and the FLINT versin is at least 3.  The unsigned
+// scalar types are #define'd as uscalar.
 
 void mod_mat_from_smat(mod_mat& A, const smat& M, scalar pr)
 {

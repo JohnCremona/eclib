@@ -25,8 +25,6 @@
 // _ECLIB_MATRIX_H and includes this twice
 //
 
-#include "eclib/flinterface.h"
-
 #ifndef LONG_MIN
 #define LONG_MIN (-LONG_MAX-1)
 #endif
@@ -117,10 +115,10 @@ public:
         friend mat rref(const mat& M, vec& pcols, vec& npcols,
                                  long& rk, long& ny, scalar pr)
   {
-#if FLINT_LEVEL==0
-    return ref_via_ntl(M, pcols, npcols, rk, ny, pr);
-#else
+#if FLINT
     return ref_via_flint(M, pcols, npcols, rk, ny, pr);
+#else
+    return ref_via_ntl(M, pcols, npcols, rk, ny, pr);
 #endif
   }
         friend long rank_via_ntl(const mat& M, scalar pr);
