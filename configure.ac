@@ -2,7 +2,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.69])
 
 # The version is the concatenation of 'v' and the year, month, date: vyyyymmdd
 # To access this as a string or integer triple, see libsrc/eclib/version.h
