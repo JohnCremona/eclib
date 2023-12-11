@@ -153,4 +153,3 @@ ZPoly division_points_X_pol(const bigint& a1,const bigint& a2,const bigint& a3,c
   //cout << "denpoly = " << numpoly << endl;
   return zP * numpoly - xP * denpoly;
 }
-

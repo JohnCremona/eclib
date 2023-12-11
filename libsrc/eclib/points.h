@@ -165,17 +165,23 @@ bigfloat realheight(const bigfloat& x, const Curvedata* E);
 
 
 // the height pairing of two points
-bigfloat height_pairing(Point& P, Point& Q);  
+bigfloat height_pairing(Point& P, Point& Q);
 
 // regulator of a list of n points
 bigfloat regulator(vector<Point>& points);  // not a const array; heights get set.
 
-// torsion functions
+// torsion functions returning
+// (exact==0) list of points in E[m] for m=2, m=3 and general m
+// (exact==1) list of points of exact order m for m=2, m=3 and general m
+
 // N.B. Don't make the params const here
 
-vector<Point> two_torsion(Curvedata& E);
+vector<Point> two_torsion(Curvedata& E, int exact=0);
 vector<bigint> three_torsion_x(Curvedata& E);
-vector<Point> three_torsion(Curvedata& E);
+vector<Point> three_torsion(Curvedata& E, int exact=0);
+
+// List m-torsion points, i.e. points in E[m], or points of exact order m if exact==1
+vector<Point> m_torsion(Curvedata& E, long m, int exact=0);
 vector<Point> torsion_points(Curvedata& E);
 
 inline long ntorsion(Curvedata& E)

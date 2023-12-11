@@ -105,8 +105,9 @@ int divide_point(Curvedata& E,  const Point& P, int m, Point& Q);
 
 // First version will compute the Cperiods itself, so best to use the
 // second one if more than one call is to be made for the same curve
+// For a version using no floating point, see m_torsion(E) in points.h
 
-vector<Point> torsion_points(Curvedata& E,int m);
+vector<Point> torsion_points(Curvedata& E, int m);
 vector<Point> torsion_points(Curvedata& E,  Cperiods& per, int m);
 
 #endif
