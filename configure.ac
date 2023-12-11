@@ -7,7 +7,7 @@ AC_PREREQ([2.69])
 # The version is the concatenation of 'v' and the year, month, date: vyyyymmdd
 # To access this as a string or integer triple, see libsrc/eclib/version.h
 
-AC_INIT([eclib],[20231211],[john.cremona@gmail.com])
+AC_INIT([eclib], [20231211], [john.cremona@gmail.com])
 
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
@@ -159,11 +159,6 @@ AC_SUBST(NTL_LDFLAGS)
 
 dnl Find the FLINT Library and determine if it has the nmod_mat module
 dnl (in FLINT from version 2.3)
-dnl
-dnl NB By default we set FLINT_LEVEL=2, which requires FLINT version at least 3.0.0;
-dnl for earlier version you must either set the
-dnl environment variable FLINT_LEVEL to 1, or adding FLINT_LEVEL=1 to
-dnl the configure invocation.
 dnl
 dnl First set defaults for when no suitable FLINT is found
 dnl
