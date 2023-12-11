@@ -493,9 +493,7 @@ vector<Point> m_torsion(Curvedata& E, long m, int exact)
 
   // Now m is at least 3, m-torsion points are integral.
   // Compute the integer roots of the m-division polynomial
-  bigint a1, a2, a3, a4, a6;
-  E.getai(a1,a2,a3,a4,a6);
-  vector<bigint> xs = introots(div_pol(a1, a2, a3, a4, a6, m));
+  vector<bigint> xs = introots(division_polynomial(&E, m));
 #ifdef DEBUG_TORSION
   cout<<" integer roots of m-division polynomial: "<<xs<<"\n";
 #endif
