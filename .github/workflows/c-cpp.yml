@@ -17,7 +17,7 @@ jobs:
         mpfp: [enable-mpfp, disable-mpfp]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: configure
       run: |
         sudo apt-get install libpari-dev pari-gp2c libntl-dev libflint-dev
