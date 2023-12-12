@@ -356,15 +356,15 @@ int saturator::do_saturation(int pp, int maxntries)
 int l2i(long i) {return (int)i;}
 vector<int> lv2iv(const vector<long>& v)
 {
-  vector<int> ans;
-  transform(v.begin(),v.end(),inserter(ans,ans.end()),ptr_fun(l2i));
+  vector<int> ans(v.size());
+  transform(v.begin(),v.end(),ans.begin(), l2i);
   return ans;
 }
 int i2l(int i) {return (long)i;}
 vector<long> iv2lv(const vector<int>& v)
 {
-  vector<long> ans;
-  transform(v.begin(),v.end(),inserter(ans,ans.end()),ptr_fun(i2l));
+  vector<long> ans(v.size());
+  transform(v.begin(),v.end(),ans.begin(),i2l);
   return ans;
 }
 

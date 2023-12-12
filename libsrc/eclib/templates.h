@@ -61,7 +61,6 @@ using std::map;
 using std::unordered_map;
 using std::min;
 using std::max;
-using std::ptr_fun;
 using std::pair;
 using std::sort;
 using std::abs;

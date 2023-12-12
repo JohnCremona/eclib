@@ -48,10 +48,13 @@ int main()
 
  n=2310*210*64*17;
  cout<<"n = "<<n<<endl;
- vector<long> exps;
 
- transform(plist.begin(),plist.end(),inserter(exps,exps.end()),
-	   bind2nd(ptr_fun(val),n));
+ vector<long> exps(plist.size());
+ transform(plist.begin(),plist.end(),
+           exps.begin(),
+           [n](long p) {return val(p,n);}
+           );
+
  cout<<"exps = "<<exps<<endl;
 
  vector<long> plist1=primes(10);
