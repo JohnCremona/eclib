@@ -336,15 +336,15 @@ int mw::process(const Point& PP, int sat)
     }
 
   if (rank==0)  // first non-torsion point
-    { 
+    {
       reg = height(P);
       mat_entry(0,0) = reg;  // ie height_pairs[0][0] = reg
       basis.push_back(P); rank=1;
       if (verbose) cout<<"  is generator number 1\n";
 #ifdef DEBUG
-      cout << "first non-torsion point, reg so far = "<<reg<<"\n";
+      cout << "first non-torsion point P = "<<P<<", reg so far = h(P) = "<<reg<<"\n";
       //      cout << "returning "<<(maxrank<2)<<endl;
-#endif  
+#endif
       if(sat>0)
 	{
           satsieve.set_points(basis);
@@ -371,21 +371,21 @@ int mw::process(const Point& PP, int sat)
 	}
       return (maxrank<2); // 1 if max reached
     }
-  
+
   // otherwise general procedure:
 
 #ifdef DEBUG
   cout<<"additional non-torsion point..."<<endl;
 #endif
   //  update the height pairing matrix (at least for now)
-  // but don't add point yet 
+  // but don't add point yet
   mat_entry(rank,rank) = height(P); // also sets height in P
   for (i=0; i < rank; i++)
-    { 
+    {
       Point Q = basis[i];
-      bigfloat hp = height_pairing(Q, P); 
+      bigfloat hp = height_pairing(Q, P);
       mat_entry(i,rank) = hp;
-      mat_entry(rank,i) = hp;     
+      mat_entry(rank,i) = hp;
     }
   
   // compute cofactors of new last column
@@ -604,6 +604,7 @@ int mw::process(const Point& PP, int sat)
 
 int mw::saturate(long& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
 {
+  if (verbose) cout<<"saturating basis (reg="<<reg<<")..."<<flush;
   if (verbose) cout<<"saturating basis..."<<flush;
 
   // This code does a dummy call to index_bound() in order to get

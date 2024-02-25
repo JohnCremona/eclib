@@ -61,8 +61,8 @@
 int main(void)
 {
   set_precision(35);
- 
- long limit, n=2, hlim1=10, hlim2=15; 
+
+ long n=2, hlim1=10, hlim2=15;
  bigint nn;
  int verbose=0;
  int filenamesize=30;
@@ -97,8 +97,7 @@ int main(void)
  if(!sqfree) continue;
 #endif
 
- int plus=1, cuspidal=0;
- newforms nf(n,0); 
+ newforms nf(n,0);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
 #ifdef LMFDB_ORDER
@@ -243,6 +242,8 @@ int main(void)
 	       mw mwbasis(&CDi,verbose,1,r); // stop when rank r is reached
 	       mwbasis.search(to_bigfloat(hlim1));
 	       long mwr = mwbasis.getrank();
+               if (verbose)
+                 cout<<"After first search, rank="<<mwr<<" and regulator="<< mwbasis.regulator()<<endl;
 //	       if((mwr<r) && (((nt%2)==0)||(r>1)) ) // 2-descent for rank 2
 	       if((mwr<r) && (((nt%2)==0)) ) // no 2-descent for rank 2
 		 {
@@ -268,10 +269,14 @@ int main(void)
 		     }
 		   mwbasis.search(to_bigfloat(hlim2));
 		   mwr = mwbasis.getrank();
+                   if (verbose)
+                     cout<<"After second search, rank="<<mwr<<" and regulator="<< mwbasis.regulator()<<endl;
 		 }
        
 	       long index; vector<long> unsat;
 	       int sat_ok = mwbasis.saturate(index,unsat);
+               if (verbose)
+                 cout<<"After saturation, rank="<<mwr<<" and regulator="<< mwbasis.regulator()<<endl;
 	       if(!sat_ok) 
 		 {
 		   cout << "saturation possibly incomplete at primes " << unsat << "\n";

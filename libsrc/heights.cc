@@ -28,11 +28,17 @@
 #define MAX_RANK_REG 50 // cannot ask for regulator of more than 50 points.
 #endif
 
+//#define DEBUG_HEIGHT
+
 bigfloat height(Point& P)
 {
+#ifdef DEBUG_HEIGHT
+  cout<<"Computing height of P = "<<P<<endl;
+  cout<<"(current height attribute is "<<P.height<<")\n";
+#endif
   bigfloat zero(to_bigfloat(0));
-  if ( P.is_zero() ) return zero;
   if (P.height >= zero) return P.height;  // already calculated it
+  if (P.is_zero())  {P.height = zero; return zero; } // zero height if torsion
   if (order(P) > 0) {P.height = zero; return zero; } // zero height if torsion
 
   // N.B. So if we ever ask a point its height it will compute its order.
@@ -41,19 +47,16 @@ bigfloat height(Point& P)
   // The local height at p will only be correctly computed by
   // pheight() if the curve is minimal at p
 
-  Curvedata* E = P.E;
-  int is_min = is_minimal(*E);
-  bigint u, r, s, t;
-  Curvedata Emin;
+  Curvedata E = *(P.E), Emin;
   Point Pmin = P;
-  if (!is_min)
+  vector<bigint> bad_p = getbad_primes(E);
+  if (!is_minimal(E))
     {
-      Emin = E->minimalize(u,r,s,t);
-      is_min = is_one(abs(u)); // then E was already minimal, no adjustments needed
-    }
-  if (!is_min)
-    {
+      bigint u, r, s, t;
+      Emin = E.minimalize(u,r,s,t);
       Pmin = transform(P, &Emin, u, r, s, t);
+      E = Emin;
+      bad_p = getbad_primes(E);
     }
 
   // Add local heights at finite primes dividing discr(E) OR denom(P).
@@ -64,25 +67,49 @@ bigfloat height(Point& P)
 
   const bigint& zroot = gcd(Pmin.getX(),Pmin.getZ());   // = cube root of Z
   bigfloat h = realheight(Pmin);
+#ifdef DEBUG_HEIGHT
+  cout<<" - real height = "<<h<<"\n";
+#endif
 
   // contribution from primes dividing the denoinator:
   h += 2*log(I2bigfloat(zroot));
+#ifdef DEBUG_HEIGHT
+  cout<<" - after adding log(denom), height = "<<h<<"\n";
+#endif
 
-  vector<bigint> bad_p = getbad_primes(Emin);
+#ifdef DEBUG_HEIGHT
+  cout<<" - E (min) = "<<(Curve)E<<" with bad primes "<<bad_p<<"\n";
+#endif
   vector<bigint>::iterator pr = bad_p.begin();
   for (pr = bad_p.begin(); pr!=bad_p.end(); pr++)
     {
       bigint p = *pr;
+#ifdef DEBUG_HEIGHT
+      cout<<" - bad prime p = "<<p<<"\n";
+#endif
       // we already have included the local height at p for primes p
       // dividing the denominator
       if(ndiv(p,zroot))
-        h += pheight(Pmin,p);
+        {
+          bigfloat pht = pheight(Pmin,p);
+#ifdef DEBUG_HEIGHT
+          cout<<" - local height at p is "<<pht<<"\n";
+#endif
+            h += pht;
+        }
+#ifdef DEBUG_HEIGHT
+      else
+        cout<<" - p divides denominator (zroot="<<zroot<<"), so ignoring\n";
+#endif
     }
   P.height = h;
+#ifdef DEBUG_HEIGHT
+  cout << "height(P) returns "<<h<<endl;
+#endif
   return h;
 }
 
-//#define DEBUG_HEIGHT
+#undef DEBUG_HEIGHT
 
 bigfloat pheight(const Point& P, const bigint& pr)
 // NB The local height at p will only be correctly computed by
