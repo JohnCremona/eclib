@@ -45,7 +45,7 @@ Point transform(const Point& P, Curvedata* newc,
 {
   if(P.is_zero()) return Point(newc);
   if(!P.isvalid())
-    cout << "Attempting to trabsform the point " << P 
+    cout << "Attempting to transform the point " << P 
 	 << "which is not a valid point on its curve " << P.getcurve() << "!\n";
   Point Q(newc,transform(P,u,r,s,t,back));
   if(!Q.isvalid())

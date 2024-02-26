@@ -34,8 +34,15 @@ bigfloat height(Point& P)
 {
 #ifdef DEBUG_HEIGHT
   cout<<"Computing height of P = "<<P<<endl;
+  cout<<"(P.E = "<<P.E<<")\n";
+  cout<<"(E = "<<(Curve)*(P.E)<<")\n";
   cout<<"(current height attribute is "<<P.height<<")\n";
 #endif
+  if (!(P.isvalid()))
+    {
+      cerr<<"Run-time error: point "<<P<<" is not valid on its curve "<<(Curve)(P.getcurve())<<endl;
+      exit(1);
+    }
   bigfloat zero(to_bigfloat(0));
   if (P.height >= zero) return P.height;  // already calculated it
   if (P.is_zero())  {P.height = zero; return zero; } // zero height if torsion
@@ -47,18 +54,23 @@ bigfloat height(Point& P)
   // The local height at p will only be correctly computed by
   // pheight() if the curve is minimal at p
 
-  Curvedata E = *(P.E), Emin;
-  Point Pmin = P;
-  vector<bigint> bad_p = getbad_primes(E);
-  if (!is_minimal(E))
+  Curvedata* E = P.E;
+  vector<bigint> bad_p = getbad_primes(*E);
+  Curvedata Emin;
+  Point Pmin(Emin); // assigns Pmin.E to a pointer to Emin
+  // NB the is_minimal function returns 0 when minimization has not
+  // been done; the curve may still be minimal
+  if (!is_minimal(*E))
     {
       bigint u, r, s, t;
-      Emin = E.minimalize(u,r,s,t);
+      Emin = E->minimalize(u,r,s,t);
       Pmin = transform(P, &Emin, u, r, s, t);
-      E = Emin;
-      bad_p = getbad_primes(E);
+      bad_p = getbad_primes(Emin);
     }
-
+  else
+    {
+      Pmin = P;
+    }
   // Add local heights at finite primes dividing discr(E) OR denom(P).
   // The components for primes dividing denom(P) add to log(denom(x(P)));
   //   since P=(XZ:Y:Z^3), denom(P)=Z=gcd(XZ,Z^3), called "zroot" here,
@@ -78,12 +90,11 @@ bigfloat height(Point& P)
 #endif
 
 #ifdef DEBUG_HEIGHT
-  cout<<" - E (min) = "<<(Curve)E<<" with bad primes "<<bad_p<<"\n";
+  cout<<" - E (min) = "<<(Curve)Emin<<" with bad primes "<<bad_p<<"\n";
 #endif
-  vector<bigint>::iterator pr = bad_p.begin();
-  for (pr = bad_p.begin(); pr!=bad_p.end(); pr++)
+
+  for ( const auto& p : bad_p)
     {
-      bigint p = *pr;
 #ifdef DEBUG_HEIGHT
       cout<<" - bad prime p = "<<p<<"\n";
 #endif

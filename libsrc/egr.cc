@@ -39,7 +39,7 @@ vector<int> ComponentGroups::ComponentGroup(const bigint& p) const
   else
     {
       ans[0]=1;
-      map<bigint,Reduction_type>::const_iterator ri = reduct_array.find(p);
+      auto ri = reduct_array.find(p);
       if(ri==reduct_array.end()) return ans; // p has good reduction    
       ans[0] = (ri->second).c_p;      // usual case: cyclic of order cp
       int code=(ri->second).Kcode.code;
@@ -458,11 +458,11 @@ int ComponentGroups::grprimes(vector<Point>& Plist, const vector<bigint>& plist)
 #ifdef DEBUG_EGR
   cout<<"in grprimes with plist="<<plist<<endl;
 #endif
+  if(Plist.empty())
+    return 0;
   int m=1;
-  int n=Plist.size();
-  if(n>0)
-    for(vector<bigint>::const_iterator pj=plist.begin(); pj!=plist.end(); pj++)
-      m*=gr1prime(Plist,*pj);
+  for( const auto& p : plist)
+    m *= gr1prime(Plist,p);
 #ifdef DEBUG_EGR
   cout<<" grprimes returns index "<<m<<endl;
 #endif
@@ -485,31 +485,33 @@ int ComponentGroups::egr_subgroup(vector<Point>& Plist, int real_too)
 
 bigint comp_map_image(const vector<int> moduli, const mat& image);
 
+//#undef DEBUG_EGR
+//#define DEBUG_EGR
+
 bigint egr_index(const vector<Point>& Plist, int real_too)
 {
   if(Plist.size()==0) return BIGINT(1);
 
   // Compute minimal model and map points to it if necessary
 
-  Curvedata E_orig = Curvedata(Plist[0].getcurve(), 0);
-  int is_min = 0;
+#ifdef DEBUG_EGR
+  cout<<"Plist = "<<Plist<<" (size "<<Plist.size()<<")\n";
+#endif
+  Point P0 = Plist[0];
+  Curve E = P0.getcurve();
+  Curvedata E_orig = Curvedata(E, 0); // don't minimise yet
   bigint u, r, s, t;
-  Curvedata Emin;
+  Curvedata Emin = E_orig.minimalize(u,r,s,t);
+  int is_min = is_one(u) && is_zero(r) && is_zero(s) && is_zero(t);
+  // then E was already reduced and minimal, no adjustments needed
 
 #ifdef DEBUG_EGR
-  cout<<"In egr_index("<<(Curve)E_orig<<")"<<endl;
-#endif
-
+  cout<<"In egr_index("<<E<<"): ";
   if (is_min)
-    {
-      Emin = E_orig;
-      u = BIGINT(1);
-    }
+    cout << "already minimal and reduced\n";
   else
-    {
-      Emin = E_orig.minimalize(u,r,s,t);
-      is_min = is_one(u) && is_zero(r) && is_zero(s) && is_zero(t); // then E was already reduced and minimal, no adjustments needed
-    }
+    cout << " minimal reduced curve is " << (Curve)Emin <<"\n";
+#endif
 
   vector<Point> Plist_min;
   if (is_min)
@@ -518,8 +520,8 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
     }
   else
     {
-      for (vector<Point>::const_iterator Pi = Plist.begin(); Pi!=Plist.end(); Pi++)
-        Plist_min.push_back(transform(*Pi, &Emin, u, r, s, t));
+      for ( const auto& P : Plist)
+        Plist_min.push_back(transform(P, &Emin, u, r, s, t));
     }
 
   // Construct the ComponentGroups class from the minimal model
@@ -538,19 +540,19 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
   // Loop through bad primes (possibly including infinity), computing
   // the image in the local component group
 
-  for(vector<bigint>::const_iterator pi=plist.begin(); pi!=plist.end(); pi++)
+  for( const auto& p : plist)
     {
 #ifdef DEBUG_EGR
-      cout<<"p = "<<(*pi)<<endl; 
+      cout<<"p = "<<p<<endl;
 #endif
-      vector<vector<int> > im=MapPointsToComponentGroup(CGS,Plist_min,*pi);
+      vector<vector<int> > im=MapPointsToComponentGroup(CGS,Plist_min,p);
 #ifdef DEBUG_EGR
       cout<<"image = ";
       for(unsigned int j=0; j<im.size(); j++) cout << im[j] << " ";
       cout<<endl;
 #endif
       imagematrix.push_back(im);
-      vector<int> CG=CGS.ComponentGroup(*pi);
+      vector<int> CG=CGS.ComponentGroup(p);
       for(unsigned int ni=0; ni<CG.size(); ni++, n++)
 	moduli.push_back(CG[ni]);
     }

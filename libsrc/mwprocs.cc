@@ -130,17 +130,6 @@ bigfloat det(bigfloat *m, long m_size)
     return matentry(m,0,0)*matentry(m,1,1) - matentry(m,1,0)*matentry(m,0,1);
     break;
   default:
-    // use recursion
-/*  // Old naive minor-expansion method:
-    bigfloat ans = 0;
-    long sign = 1, j;
-    for (j=0; j<m_size; j++)
-      { ans += sign * matentry(m,0,j) * det_minor(m, m_size, 0, j);
-	sign *= -1;
-      }
-    return ans;
-*/
-// New Gaussian method (20/1/95)
     long i,j,i0; 
     bigfloat ans=to_bigfloat(1), pivot=matentry(m,0,0), piv, temp, 
       eps=to_bigfloat(1.0e-6);
@@ -235,9 +224,9 @@ int mw::process(const bigint& x, const bigint& y, const bigint& z, int sat)
   if(P.isvalid()) return process(P,sat);
 
   // error:
-  cout<<"Raw point       x,y,z = "<<x<<", "<<y<<", "<<z<<endl;
-  cout<<"converted point x,y,z = "<<x1<<", "<<y1<<", "<<z1<<"\t";
-  cout<<"--not on curve!"<<endl;
+  cerr<<"Raw point       x,y,z = "<<x<<", "<<y<<", "<<z<<endl;
+  cerr<<"converted point x,y,z = "<<x1<<", "<<y1<<", "<<z1<<"\t";
+  cerr<<"--not on curve!"<<endl;
  return 0;
 }
 
@@ -247,10 +236,14 @@ int mw::process(const vector<Point>& Plist, int sat)
 
   if(verbose) 
     cout<<"Processing "<<Plist.size()<<" points ..."<<endl;
-
-  int flag=0;
-  for(vector<Point>::const_iterator P=Plist.begin(); P!=Plist.end(); P++)  
-    flag = (process(*P,0));
+  // cout<<"mw::E is "<<E<<endl;
+  int flag=0; // flags whether rank has increased
+  for( const auto& P : Plist)
+    {
+      // ensure all P are processed whatever the flag values
+      int flag1 = process(P,0);
+      flag = flag || flag1;
+    }
 
   if(verbose) 
     cout<<"Finished processing the points (which had rank "<<rank<<")"<<endl;
@@ -301,7 +294,9 @@ int mw::process(const Point& PP, int sat)
 #ifdef DEBUG
   cout<<"mw::process with P = "<< PP <<endl;
 #endif  
-  Point P = PP;  // so we can process const points
+  Point P(E, PP);  // (1) copy so we can process const points
+                   // (2) make sure P's curve is on this mw's curve
+  if(!P.isvalid()) cerr << "###Runtime error### P="<<P<<" not on curve "<<(Curve)(*E)<< " in mw::process()\n";
   long ord = order(P);
   long i, j, rank1=rank+1;
 #ifdef DEBUG
@@ -318,7 +313,6 @@ int mw::process(const Point& PP, int sat)
     cout << "\t" << flush;
 #ifdef DEBUG
     cout << "\n";
-    if(!P.isvalid()) cout << "###Warning### Not on curve!\n";
 #endif  
     }
   
@@ -816,33 +810,8 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
       for (j = 0; j < aux; j++)      squares[i][j]=0;
       for (j = 0; j < half_aux; j++) squares[i][(j*j)%aux]=1;
       xgood_mod_aux[i] = new int[aux];
-
-//       x1good_mod_aux[i] = new int[aux];
-// 
-//     // set the flag matrix for c=1:
-// 
-//       long pd1 = posmod(a1, aux);
-//       long pd2 = posmod(a2, aux);
-//       long pd3 = posmod(a3, aux);
-//       long pd4 = posmod(a4, aux);
-//       long pd6 = posmod(a6, aux);
-//       
-//       long disc, temp, temp2, x=0;
-//       
-//       long dddf= posmod(24,aux);
-//       long ddf = posmod(2*(pd1*pd1)%aux + 8*pd2+24 , aux);
-//       long df  = posmod(pd1*(pd1+2*pd3)%aux + 4*(pd4+pd2+1) , aux);
-//       long f   = posmod(((pd3*pd3)%aux+4*pd6) , aux);
-// 
-//       while(x<aux)
-// 	{
-// 	  x1good_mod_aux[i][x] = squares[i][f];
-// 	  x++;
-// 	  f   +=  df; if(f  >=aux) f  -=aux;
-// 	  df  += ddf; if(df >=aux) df -=aux;
-// 	  ddf +=dddf; if(ddf>=aux) ddf-=aux;
-// 	}
     }  // end of aux loop
+
 #ifdef DEBUG_SIEVE
   if(verbose) 
     {
@@ -862,17 +831,6 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
   ascore=0; npoints=0;
   for(i=0; i<num_aux; i++) modhits[i]=0;
 
-//   if(verbose) 
-//     {
-//       cout << "Finished constructing sieve, using ";
-//       switch(moduli_option)
-// 	{
-// 	case 1: cout << "ten primes 3..31"; break;
-// 	      case 2: cout << "Gebel's three moduli"; break;
-// 	      case 3: cout << "prime powers"; break;
-// 	      }
-//       cout << endl;
-//     }
 }
 
 sieve::~sieve()
