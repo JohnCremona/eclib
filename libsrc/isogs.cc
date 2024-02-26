@@ -56,12 +56,8 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
   bigint conductor = getconductor(CR);
   bigcomplex w1, w2;  cp.getwi(w1, w2);
   int type = cp.getwRI(w1,w2);
-  long subgroup, nsubgroups;
-  if (ell==2)
-    { if (type==1) nsubgroups = 1; else nsubgroups = 3; }
-  else nsubgroups = 2;
-  // Now nsubgroups is the number of subgroups of C/L of index ell 
-  // defined over R
+  long subgroup, nsubgroups = 2;
+  // nsubgroups is the number of subgroups of C/L of index ell (>2) defined over R
   vector<CurveRed> ans;
 
   // other loop variables:
@@ -83,14 +79,7 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
 
   for (subgroup = 1; subgroup <= nsubgroups; subgroup++)
   {
-    if (ell==2)
-      { if (subgroup==1) z = w1/two;
-	else if (subgroup==2) z = w2/two;
-	else z = (w1 + w2)/two; }
-    else
-      { if (subgroup==1) z = w1/xell;
-	else if (type==1) z = (w1 - w2 - w2)/xell;
-	else z = w2/xell; }
+    z = (subgroup==1? w1 : (type==1? w1-w2-w2 : w2)) / xell;
     t =  w = to_bigfloat(0);
     if (verbose>1) cout<<"Subgroup: "<<subgroup<<": z = "<<z<<endl;
 
