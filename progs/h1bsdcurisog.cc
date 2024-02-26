@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 //
 #include <fstream>
@@ -60,7 +60,7 @@
 
 int main(void)
 {
-  set_precision(35);
+  set_precision(100);
 
  long n=2, hlim1=10, hlim2=15;
  bigint nn;
@@ -69,7 +69,7 @@ int main(void)
  char genfile[filenamesize];
 #ifndef RANK_ZERO_ONLY
  cerr << "See detail (0/1)? "; cin >> verbose;
- cerr << "Limits on naive height in point search? "; 
+ cerr << "Limits on naive height in point search? ";
  cerr << "(searches up to first limit on all curves, up to second limit only if rank is deficient after that): ";
  cin>>hlim1>>hlim2;
  cin.width(filenamesize); // prevent buffer overflow on filename input
@@ -80,7 +80,8 @@ int main(void)
 #endif
 
 #ifdef AUTOLOOP
- cerr<<"Enter first and last N: ";cin>>n>>limit; 
+ long limit;
+ cerr<<"Enter first and last N: ";cin>>n>>limit;
  n--; cerr<<endl;
  while (n<limit) { n++;
 #else
@@ -112,6 +113,8 @@ int main(void)
      long r = nfi.rank();
      int type = nfi.type;
      rational loverp = nfi.loverp;
+     // loverp = L(f,1)/x where the period lattice is [x,yi] or [2x,x+yi], so in BSD we want L(f,1)/2x
+     loverp /= 2;
      bigint nloverp; nloverp=abs(num(loverp));
      bigint dloverp; dloverp=abs(den(loverp));
      bigfloat lf1 = nfi.special_value();
@@ -119,12 +122,12 @@ int main(void)
 	 cout<<"\nL^{(r)}(f,1)/r!: " << lf1 << "\n";
 #endif
      /*
-     switch(r) 
+     switch(r)
        {
-       case 2: lf1/=2; break; 
-       case 3: lf1/=6; break; 
-       case 4: lf1/=24; break; 
-       case 5: lf1/=120; break; 
+       case 2: lf1/=2; break;
+       case 3: lf1/=6; break;
+       case 4: lf1/=24; break;
+       case 5: lf1/=120; break;
        }
      */
 
@@ -137,13 +140,13 @@ int main(void)
 #ifdef RANK_ZERO_ONLY
      if(r!=0) continue;    // skip this newform/curve
 #endif
-     if(verbose) cout << "Class " << n << code << ": " << "r = " << r << "\n"; 
+     if(verbose) cout << "Class " << n << code << ": " << "r = " << r << "\n";
 
      bigfloat rperiod;
      Curve C = nf.getcurve(i, -1, rperiod);
      rperiod = abs(rperiod*(type));
 
-     Curvedata CD(C,1);  // The 1 causes minimalization; else we get 
+     Curvedata CD(C,1);  // The 1 causes minimalization; else we get
                          // [0,0,0,-27c4,-54c6]
 
      IsogenyClass icl(CD,verbose);
@@ -166,10 +169,6 @@ int main(void)
 	 cout << "\t" << r << "\t" << nt << "\t";
 
 	 CurveRed CR(CDi);
-#ifdef DEBUG_BSD
-	 cout<<endl;
-	 CR.display(cout);
-#endif
 	 long pcp = I2long(prodcp(CR));
 #ifdef DEBUG_BSD
 	 cout<<"\nProduct of cp: ";
@@ -207,38 +206,51 @@ int main(void)
 	 else {
 	   if(r==0)
 	     {
-#ifdef DEBUG_BSD
-// N.B. The following code does give some errors!  The "algebraic"
-// code for L/P has a bug which has not been fixed, so we use the
-// analytic value which is ok.
-// 19/4/2023:  I have no idea if the previous comment is still true
-	       if(ic==0) 
+	       cout << "1\t";               // regulator
+               // check that the analytic L/P matches the exact modular symbol value
+	       if(ic==0)
 		 {
+                   rational SS = (loverp * nt*nt) / pcp;
+                   long S = num(SS);
+                   cout << S;
+                   if (den(SS)!=1)
+                     {
+                       cout<<" ***!!!*** analytic Sha not integral: " << SS;
+                     }
+                   bigint xS(S), rS;
+                   if (!isqrt(xS, rS))
+                     {
+                       cout<< " ***!!!*** analytic Sha not a square: " << SS;
+                     }
 		   bigfloat diff = I2bigfloat(dloverp)*loverp_i-I2bigfloat(nloverp);
 		   if(abs(diff)>0.01)
 		     {
-		       cout<<"analytic  L/P = "<<loverp_i<<endl;
-		       cout<<"algebraic L/P = "<<loverp<<endl;
+                       cout<<" ***!!!*** mismatch in L/P values: ";
+		       cout<<"analytic  L/P = "<<loverp_i<<", ";
+		       cout<<"algebraic L/P = "<<loverp;
 		     }
 		 }
-#endif
-	       cout << "1\t";               // regulator
-	       bigfloat S = RS;
-	       long roundS = I2long(Iround(S));
-	       if(abs(S-roundS)>0.1) cout << S <<  " ***!!!***";
-	       else
-		 {
-		   cout << roundS;
-		   long rootS=(long)(sqrt((double)roundS)+0.1);
-		   int squareS=(roundS==rootS*rootS);
-		   if(!squareS) cout << " ***!!!***";
-		 }
+               else
+                 // We could compute S exactly here if we knew the
+                 // period ratio as an exact rational
+                 {
+                   bigfloat S = RS;
+                   long roundS = I2long(Iround(S));
+                   if(abs(S-roundS)>0.1) cout << S <<  " ***!!!***";
+                   else
+                     {
+                       cout << roundS;
+                       long rootS=(long)(sqrt((double)roundS)+0.1);
+                       int squareS=(roundS==rootS*rootS);
+                       if(!squareS) cout << " ***!!!***";
+                     }
+                 }
 	       cout << endl;
 	     }
 	   else
 	     {
 	       if(verbose) cout << "\nRS = " << RS << endl;
-	       
+
 	       mw mwbasis(&CDi,verbose,1,r); // stop when rank r is reached
 	       mwbasis.search(to_bigfloat(hlim1));
 	       long mwr = mwbasis.getrank();
@@ -264,29 +276,26 @@ int main(void)
 	       if(mwr<r)
 		 {
 		   if(verbose)
-		     {
-		       cout<<"Shortfall in rank ("<<mwr<<"<"<<r<<"), doing second search..."<<endl;
-		     }
+                     cout<<"Shortfall in rank ("<<mwr<<"<"<<r<<"), doing second search..."<<endl;
 		   mwbasis.search(to_bigfloat(hlim2));
 		   mwr = mwbasis.getrank();
                    if (verbose)
                      cout<<"After second search, rank="<<mwr<<" and regulator="<< mwbasis.regulator()<<endl;
 		 }
-       
+
 	       long index; vector<long> unsat;
 	       int sat_ok = mwbasis.saturate(index,unsat);
                if (verbose)
                  cout<<"After saturation, rank="<<mwr<<" and regulator="<< mwbasis.regulator()<<endl;
-	       if(!sat_ok) 
-		 {
-		   cout << "saturation possibly incomplete at primes " << unsat << "\n";
-		 }
+	       if(!sat_ok)
+                 cout << "saturation possibly incomplete at primes " << unsat << "\n";
+
 	       bigfloat reg = mwbasis.regulator();
 	       vector<Point> gens = mwbasis.getbasis();
 	       if(r!=mwr)
 		 {
 		   cout << "RS = " << RS <<"\t";
-		   cout<<"Warning: points found have rank " << mwr 
+		   cout<<"Warning: points found have rank " << mwr
 		       << ", not " << r << ", with hlim2="<<hlim2<<endl;
 		 }
 	       else {
@@ -323,5 +332,5 @@ int main(void)
 }       // end of while()
 #ifndef RANK_ZERO_ONLY
 genout.close();
-#endif 
+#endif
 }       // end of main()
