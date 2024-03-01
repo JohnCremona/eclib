@@ -38,14 +38,13 @@
 #endif
 
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 // If this is defined, the fisc6 output is placed in subdirectory
 // fixc6 in file fixc6/fixc6.N (one per level); otherwise it is all
 // put in ./fixc6.extra
 //#define FIXC6_OUTPUT_TO_SUBDIR
 
-#define BOOKORDER       // if defined, sorts newforms/curves into order
-                        // in the Book (relevant up to 500 only)
 #include <eclib/curvesort.h>
 
 vector<pair<int,int> > bad_ones; // holds bad (n,i) list
@@ -70,11 +69,10 @@ int main(void)
  cout<<"Enter first and last N: ";cin>>n>>limit;
  n--; cout<<endl;
  cout<<endl<<"Table of curves computed from newforms via periods"<<endl;
-#ifdef BOOKORDER
- cout<<"(reordered to agree with Book for levels up to 1000)"<<endl;
-#endif
 #ifdef LMFDB_ORDER
- cout<<"(reordered to agree with LMFDB for levels over 1000)"<<endl;
+ cout<<"(in LMFDB order)"<<endl;
+#else
+ cout<<"(in Cremona order)"<<endl;
 #endif
  if(!verb)
    {
@@ -91,9 +89,11 @@ int main(void)
  newforms nf(n,verb);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
- #ifdef LMFDB_ORDER
- nf.sort();
- #endif
+#ifdef LMFDB_ORDER
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
+#endif
  int nnf = nf.n1ds;
  int inf = 1;
 #ifndef SINGLE
@@ -112,9 +112,6 @@ int main(void)
 
  for(int xi=inf-1; xi<nnf; xi++)
    { int i = xi;
-#ifdef BOOKORDER
-     i=booknumber0(n,i);
-#endif
      if(verb) cout << "\nForm number " << i+1 << ": " << endl;
      else     cout << n << "\t" << codeletter(xi) << "\t";
      //#ifdef SINGLE

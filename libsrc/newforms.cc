@@ -1091,13 +1091,38 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
     cout<<"Finished constructing newform #"<<n1ds<<" with sign = "<<sign<<endl;
 }
 
-// Sort newforms 
+// Sort newforms
 void newforms::sort(int oldorder)
 {
   if(oldorder)
     ::sort(nflist.begin(),nflist.end(),less_newform_old);
   else
     ::sort(nflist.begin(),nflist.end(),less_newform_new);
+}
+
+void newforms::sort_into_Cremona_label_order()
+{
+  int sort_system = level_range(modulus);
+  switch (sort_system)
+    {
+    case 0: case 1:
+      sort(1);
+      break;
+    case 2: default:
+      sort(0);
+      break;
+    case 3:
+      unfix_eigs();
+      sort(0);
+      refix_eigs();
+    }
+  if (sort_system>0)
+    return;
+  // apply the permutation defined in curvesort.cc
+  vector<newform> sorted_nflist(n1ds);
+  for (int i=0; i<n1ds; i++)
+    sorted_nflist[i] = nflist[booknumber0(modulus,i)];
+  nflist = sorted_nflist;
 }
 
 // Before recovering eigenbases, we need to put back the aq into the

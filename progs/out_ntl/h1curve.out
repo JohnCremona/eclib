@@ -1,8 +1,7 @@
 See detail? Enter first and last N: 
 
 Table of curves computed from newforms via periods
-(reordered to agree with Book for levels up to 1000)
-(reordered to agree with LMFDB for levels over 1000)
+(in LMFDB order)
 
 N 	# 	[a1,a2,a3,a4,a6]		Conductor
 90	a	[1,-1,0,6,0]	N = 90

@@ -36,16 +36,18 @@
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
 #define NAP 25      // number of ap to output
-#define SEPCHAR "," // char to separate ap in output 
+#define SEPCHAR "," // char to separate ap in output
 
 int main(void)
 {
   cerr<<"q-expansions of rational newforms";
 #ifdef LMFDB_ORDER
   cerr<<" in LMFDB order (simple lexicographic)";
+#else
+  cerr<<" in Cremona order";
 #endif
   cerr<<endl;
-  int limit,firstn,n=1; 
+  int limit,firstn,n=1;
   int verbose=0;
   unsigned int nap;
 #ifdef AUTOLOOP
@@ -68,8 +70,11 @@ int main(void)
      cout << ">>> Level " << n << " <<<\t";
      cout << num << " newform(s) "<<endl;
    }
- nf.sort();
- // cout<<"After sort():"<<endl;
+#ifdef LMFDB_ORDER
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
+#endif
  for (i=0; i<num; i++)
    {
      cout<<n<<codeletter(i)<<": ";

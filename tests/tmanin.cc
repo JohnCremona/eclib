@@ -67,9 +67,11 @@ int main(void)
   int noldap=25;
   nf.createfromscratch(sign,noldap);
 #ifdef LMFDB_ORDER
-  nf.sort();
-  nf.make_projcoord(); // needed for when we add more ap
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
 #endif
+  nf.make_projcoord(); // needed for when we add more ap
   if(verbose>1) nf.display();
   else          cout << nf.n1ds << " newform(s) found.";
   if(verbose&&nf.n1ds>0) 

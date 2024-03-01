@@ -55,16 +55,10 @@ int main(void)
  int num = nf.n1ds; count+=num;
  cout << num << " newform(s), "<<nf.nap<<" eigs on file." << endl;
 #ifdef LMFDB_ORDER
- nf.sort();
+ nf.sort_into_LMFDB_label_order();
+#else
+ nf.sort_into_Cremona_label_order();
 #endif
- // nf.makebases();
- /*
- nf.sort();
- cout<<"After sort():"<<endl;
- nf.display();
- nf.sort(1);
- cout<<"After sort(1):"<<endl;
- */
  nf.display();
 }       // end of if(n)
 }       // end of while()

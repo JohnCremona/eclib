@@ -33,10 +33,10 @@
 #include <eclib/points.h>
 
 #define AUTOLOOP
-//#define BOOKORDER       // if defined, sorts newforms/curves into order
-                         // in the Book (relevant up to 500 only)
+
 #include <eclib/curvesort.h>
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 #define CURVE_IS_ONE_FIELD // outputs      [a1,a2,a3,a4,a6]
                            // else outputs a1 a2 a3 a4 a6
@@ -84,7 +84,9 @@ int main(void)
       //     cout<<endl;
       //   }
 #ifdef LMFDB_ORDER
-      nf.sort();
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
 #endif
       // cout<<"****************************"<<endl;
       // cout<<"N="<<n<<" after  sorting: "<<endl;
@@ -101,9 +103,6 @@ int main(void)
  for(int xi=0; xi<nnf; xi++)
    { int i=xi;
      code = codeletter(xi);
-#ifdef BOOKORDER
-     i=booknumber0(n,i);
-#endif
      newform& nfi = nf.nflist[i];
      int degphi = nfi.degphi;
      bigfloat rperiod;

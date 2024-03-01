@@ -37,6 +37,7 @@
 #endif
 #define SHOWCURVES
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 int main(void)
 {
@@ -86,7 +87,9 @@ int main(void)
 #endif
         }
 #ifdef LMFDB_ORDER
-      nf.sort();
+      nf.sort_into_LMFDB_label_order();
+#else
+      nf.sort_into_Cremona_label_order();
 #endif
       int all_nf = 1; // default; means do all
       int inf = 1;

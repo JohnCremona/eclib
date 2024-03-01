@@ -37,6 +37,7 @@
 
 //#define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 #define MAXNY 10000
 #define MAXD 10
@@ -104,9 +105,11 @@ int main(void)
   int noldap=25;
   nf.createfromscratch(plus,noldap);
 #ifdef LMFDB_ORDER
-  nf.sort();
-  nf.make_projcoord(); // needed for when we add more ap
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
 #endif
+  nf.make_projcoord(); // needed for when we add more ap
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   nf.addap(stopp);

@@ -36,6 +36,7 @@
 
 #define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 #define MAXNAP 20000
 #define BITPREC0 100  // initial bit precision
@@ -92,9 +93,11 @@ int main(void)
   if (stopp0<noldap) stopp0=noldap;
   nf.createfromscratch(1,noldap);
 #ifdef LMFDB_ORDER
-  nf.sort();
-  nf.make_projcoord(); // needed for when we add more ap
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
 #endif
+  nf.make_projcoord(); // needed for when we add more ap
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   stopp=stopp0;

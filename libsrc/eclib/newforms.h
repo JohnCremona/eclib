@@ -98,11 +98,31 @@ public:
   void display(void) const;
   // Testing function
   int check_expand_contract();
-  // To fix eigenvalues lists after finding a newform
+
+  // Explanation of the following three utilities: after newform
+  // searching, each newform's aplist contains eigenvalues not Fourier
+  // coefficients: these are the same for good primes p but for bad
+  // primes q the eigenvalue is for thw AL-operator W_q.  Before
+  // sorting and outputting this needs "fixing up" as in fixup_eigs().
+  // After reading in from file (e.g. to compute more ap) we need to
+  // go back to the eigenvalue list using unfix_eigs() before
+  // recreating eigenspaces and then reverse this afterwards using
+  // refix_eigs().  Each of these functions has a version in the
+  // newforms class too, which applies the operation to every newform.
+
+  // To fix eigenvalues lists after finding a newform: use when aplist
+  // contains AL-eigenvalues w_q for bad primes q.  This extracts
+  // those into the list aqlist and replaces them with the Fourier
+  // coefficients a_q (=0 if q^2|N else -w_q).
   void fixup_eigs();
-  // To fix eigenvalues lists before/after recovering bases
+  // To fix eigenvalues lists before/after recovering bases: use when
+  // aplist contains Fourier coefficients for bad primes q.  This
+  // replaces those with AL-eigenvalues from aqlist.
   void unfix_eigs();
+  // Same as fixup_eigs except that aqlist is not (re)created. It
+  // replaces AL-eigenvalues in aplist with Fourier coefficients.
   void refix_eigs();
+
   // To find BSD ratio:
   void find_bsd_ratio();
   // To find projected coords:
@@ -217,12 +237,17 @@ public:
   vector<long> apvec(long p);  // computes a[p] for each newform
   void addap(long last); // adds ap for primes up to the last'th prime
 
-  // Sort newforms 
+  // Sort newforms
   void sort(int oldorder=0);
-  // To fix eigenvalues lists before/after recovering bases
+  void sort_into_Cremona_label_order();
+  void sort_into_LMFDB_label_order() {sort(0);}
+
+  // To fix eigenvalues lists before/after recovering bases.  See
+  // comments for the same named methods in the newform class for
+  // details.
   void unfix_eigs();
   void refix_eigs();
-  
+
   // for the i'th newform return the value of the modular symbol {0,r} (default) or {oo,r}
   rational plus_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
   rational minus_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
@@ -266,5 +291,68 @@ public:
 
 void output_to_file_no_newforms(long n, int binflag=1, int smallflag=0);
 vector<long> eiglist(const newform& f, int oldorder=0);
+
+/******************************************************************************
+ To sort the newforms of level N from the order in which they are
+ stored in newforms/x<N> into the correct order to match the "Cremona
+ labels" of isogeny classes, we apply one of the following
+ procedures. Note that to sort into LMFDB order, sort(0) suffices.
+
+0: nf.sort(1) and then permute according to booknumber(N,i)
+1: nf.sort(1)
+2: nf.sort(0)
+3: nf.unfix_eigs(); nf.sort(0); nf.refix_eigs();
+
+Here:
+
+ -  unfix_eigs() replaces the coefficient aq in aplist for q|N with the AL-eigenvalue wq;
+ -  refix_eigs() reverse this;
+ -  sort(1) sorts first by lexicographically sorting aqlist (AL-eigenvalues) in order +1,-1,
+                  next  by lexicographically sorting aplist in order 0, +1, -1, +2, -2, ...;
+ -  sort(0) sorts by lexicographically sorting aplist in order ...,-2,-1,0,1,2,...
+
+The difference between cases 0 and 1 is that for N<=450 the order of
+the newform files is essentially random, being the order in which the
+newforms were found at a time when the strategy used in the code was
+evolving steadily -- this was in the late 1980s, running batch jobs on
+a remote mainframe, so rerunning those levels was not an easy option.
+Instead, for N<=450 we have hard-wired the permutation taking the
+order produced by sort(1) -- which is correct without further
+adjustment for 450<N<130000 -- to the published order.
+
+The required permutation is defined in eclib/libsrc/curvesort.cc and
+accessed via the function i -> booknumber0(N,i), which is not the
+identity for exactly 146 levels N between 56 and 450 inclusive.  The
+correct i'th newform is number booknumber(N,i) in the stored list.
+
+The difference between cases 2 and 3 is that in case 2, aplist contains
+the p'th coefficient for all p, while in case 3 the q'th coefficient
+for q|N is replaced by the AL-eigenvale wq.
+
+Case 2 is the LMFDB ordering and is correct for all N>230000, as well
+as some (but not all!) N between 130100 and 130200.  It should have
+been used for all N>130000 but was not (my mistake): case 3 is
+actually the order in which the newforms are found using the strategy
+in place since level 130000, but the line sort(0) was omitted for the
+code in error.
+
+*******************************************************************************/
+
+// utility to determine which sort method should be used, depending on
+// the level, to recreate the "Cremona label" order of newforms.
+
+inline int level_range(long N)
+{
+  if (N<=450)
+    return 0;
+  if (N<130000)
+    return 1;
+  if (N>230000)
+    return 2;
+  if ((N>130100)&&(N<130200)&&(N!=130144)&&(N!=130146)&&(N!=130150)&&(N!=130190)&&(N!=130192))
+    return 2;
+  return 3;
+}
+
 
 #endif

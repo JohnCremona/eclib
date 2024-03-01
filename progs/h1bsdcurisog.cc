@@ -54,9 +54,9 @@
 
 //#define DEBUG_BSD
 
-#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
-
 #include <eclib/curvesort.h>
+#define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 int main(void)
 {
@@ -102,13 +102,14 @@ int main(void)
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
 #ifdef LMFDB_ORDER
- nf.sort();
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
 #endif
  long nclasses = nf.n1ds;
  for(int xi=0; xi<nclasses; xi++)
    { int i=xi;
      string code = codeletter(xi);
-     i=booknumber0(n,i);
      newform& nfi = nf.nflist[i];
      long r = nfi.rank();
      int type = nfi.type;
