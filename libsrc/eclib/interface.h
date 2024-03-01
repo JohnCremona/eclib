@@ -218,14 +218,14 @@ inline bigcomplex pow(const bigcomplex& a, const RR& e)  {return (e*a.log()).exp
 
 typedef double bigfloat;
 
-inline long decimal_precision() {return 15;}
-inline long bit_precision() {return 53;}
-inline int is_zero(double x) {return fabs(x)<1e-15;}
+inline long decimal_precision() {return 14;}
+inline long bit_precision() {return 52;}
+inline int is_zero(double x) {return fabs(x)<1e-14;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
 
 // We cannot set internal bit precision in this mode, so we just set the output decimal precision
-inline void set_precision(long n) {cout.precision(min(15,long(LOG_10_2*n)));}
-inline void set_precision(const string prompt)  {cout.precision(15);}
+inline void set_precision(long n) {cout.precision(min(14,long(LOG_10_2*n)));}
+inline void set_precision(const string prompt)  {cout.precision(14);}
 #define Pi()    (double)(3.1415926535897932384626433832795028841)
 #define Euler() (double)(0.57721566490153286060651209008240243104)
 
