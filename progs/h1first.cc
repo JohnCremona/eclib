@@ -141,11 +141,10 @@ int main(void)
           else
             {
               cout<<"updated newforms "<<nf.nf_subset<<":"<<endl;
-              vector<int>::const_iterator nfi;
-              for(nfi = nf.nf_subset.begin(); nfi!=nf.nf_subset.end(); nfi++)
+              for( const auto& nfi : nf.nf_subset)
                 {
-                  cout<<"# "<<(*nfi)<<":\t"<<endl;
-                  nf.nflist[*nfi].display();
+                  cout<<"# "<<nfi<<":\t"<<endl;
+                  nf.nflist[nfi].display();
                 }
             }
         }

@@ -74,7 +74,7 @@ int main()
             }
         }
       cout<<npts<<" points entered:\n";
-      for ( const auto& P : points)
+      for ( auto& P : points)
         cout << P << " (height "<<height(P)<<")"<<endl;
 
       bigfloat reg = regulator(points);

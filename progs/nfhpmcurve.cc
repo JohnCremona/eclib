@@ -174,13 +174,13 @@ int main(void)
 	    }
 	}
       else
-	{      
+	{
 	  cout<<forms.size()<<" curve(s) missing: ";
-	  for(vector<int>::const_iterator inf=forms.begin(); inf!=forms.end(); inf++)
-	    cout<<(*inf+1)<<" ";
+	  for( int inf : forms)
+	    cout<<inf+1<<" ";
 	  cout<<endl;
 	  int newstopp;
-	  if(stopp<500) 
+	  if(stopp<500)
 	    newstopp=2*stopp;
 	  else
 	    newstopp=stopp+500;
@@ -202,7 +202,7 @@ int main(void)
                   nf.output_to_file(1,1);
                 }
 #ifdef MPFP
-              if(bit_precision()<BITPRECMAX) 
+              if(bit_precision()<BITPRECMAX)
                 {
                   set_precision(bit_precision()+BITPRECX);
                   cout << "Now working with bit precision "<<bit_precision()<< endl;
