@@ -38,7 +38,7 @@ int main()
  cout << plist << endl;
 
  cout<<"Enter a number to see if it is that list: "; cin>>p;
- vector<long>::iterator pi=find(plist.begin(),plist.end(),p);
+ auto pi=find(plist.begin(),plist.end(),p);
  if(pi==plist.end()) cout<<"NOT in the list"<<endl;
  else    cout<<p<<" is list item "<<(pi-plist.begin())<<" (counting from 0)"<<endl;
 
@@ -68,7 +68,7 @@ int main()
  cout<<"How many primes do you want to see (one by one)? ";  cin >> n;
  for(primevar pr(n); pr.ok(); pr++)
    cout << "Prime number " << pr.index() << " = " << pr << endl;
- 
+
  long m;
  while (cout << "\nEnter an integer m (0 to stop): ", cin >> m, m!=0) 
    {
@@ -76,8 +76,8 @@ int main()
      plist=pdivs(m);
      cout << "m has " << plist.size() << " prime divisors: " << plist << endl;
      cout << "with exponents: "; 
-     for(vector<long>::const_iterator pr = plist.begin(); pr!=plist.end(); pr++)
-       cout << *pr <<":"<<val(*pr,m) << "\t";
+     for( const auto& p : plist)
+       cout << p <<":"<<val(p,m) << "\t";
      cout<<endl;
 
      vector<long> dlist=alldivs(m,plist);

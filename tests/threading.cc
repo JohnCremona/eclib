@@ -125,7 +125,7 @@ int main( int argc, char **argv ) {
   for( int i = 0; i < tasks.size(); i++ ) {
     if( tasks[i] -> isPrime() ) {
       std::cout << std::setw(10) << tasks[i] -> n() << " ";
-      
+
       count++;
       if( (count % 10) == 0 ) std::cout << std::endl;
     }
@@ -138,9 +138,8 @@ int main( int argc, char **argv ) {
   if( v ) profile.show( 1 );
 
   // Delete tasks
-   for( std::vector< isprime* >::const_iterator it = tasks.begin();  it!=tasks.end(); it++ ) {
-     delete *it;
-   }
+  for( auto it : tasks)
+     delete it;
 
   exit( EXIT_SUCCESS );
 

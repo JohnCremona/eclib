@@ -72,8 +72,7 @@ int main()
   cout<<"irary(7) is "<<irary[7]<<"\tirary[3] is "<<irary[3]<<endl;
 
   cout<<"testing find function\n";
-  vector<bigint>::iterator vi;
-  vi = find(irary.begin(),irary.end(),35);
+  auto vi = find(irary.begin(),irary.end(),35);
   if(vi==irary.end()) cout<<"35 is not there\n";
   else cout<<"35 is there:  "<<*vi<<" is item number "<<(vi-irary.begin())<<endl;
   vi = find(irary.begin(),irary.end(),13);
@@ -126,8 +125,8 @@ int main()
      vector<bigint> plist=pdivs(m);
      cout << "m has " << plist.size() << " prime divisors: " << plist << endl;
      cout << "with exponents: "; 
-     for(vector<bigint>::const_iterator pr = plist.begin(); pr!=plist.end(); pr++)
-       cout << *pr <<":"<<val(*pr,m) << "\t";
+     for( const auto& p : plist)
+       cout << p <<":"<<val(p,m) << "\t";
      cout<<endl;
 
      vector<bigint> dlist=alldivs(m,plist);

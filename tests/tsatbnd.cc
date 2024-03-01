@@ -74,11 +74,8 @@ int main()
             }
         }
       cout<<npts<<" points entered:\n";
-      for (vector<Point>::iterator Pi=points.begin(); Pi!=points.end(); Pi++)
-        {
-          P = *Pi;
-          cout << P << " (height "<<height(P)<<")"<<endl;
-        }
+      for ( const auto& P : points)
+        cout << P << " (height "<<height(P)<<")"<<endl;
 
       bigfloat reg = regulator(points);
       cout << "Regulator of input points: " << reg << endl;
@@ -90,28 +87,26 @@ int main()
       bigint u, r, s, t;
       Curvedata Cmin = C.minimalize(u,r,s,t);
       vector<Point> points_min;
-      for (vector<Point>::const_iterator Pi = points.begin(); Pi!=points.end(); Pi++)
-        points_min.push_back(transform(*Pi, &Cmin, u, r, s, t));
+      for ( const auto& P : points)
+        points_min.push_back(transform(P, &Cmin, u, r, s, t));
 
       CurveRed CR(Cmin);
       vector<bigint> plist = getbad_primes(CR);
       ComponentGroups CG(CR);
       vector<vector<int> >  ims;
-      bigint p;
-      for(vector<bigint>::iterator pi=plist.begin(); pi!=plist.end(); pi++)
+      for( const auto& p : plist)
         {
-          p=*pi;
           cout<<p<<"  "<<CG.ComponentGroup(p)<<"  ";
           ims = MapPointsToComponentGroup(CR, points_min,  p);
-          for(vector<vector<int> >::iterator im=ims.begin(); im!=ims.end(); im++)
-            cout<<(*im);
+          for( const auto& im : ims)
+            cout<<im;
           cout<<endl;
         }
-      p = BIGINT(0);
+      bigint p = BIGINT(0);
       cout<<"R "<< CG.ComponentGroup(p)<<"  ";
       ims = MapPointsToComponentGroup(CR, points_min,  p);
-      for(vector<vector<int> >::iterator im=ims.begin(); im!=ims.end(); im++)
-        cout<<(*im);
+      for( const auto&  im : ims)
+        cout<<im;
       cout<<endl<<endl;
 
       bigint tam_prod = global_Tamagawa_number(CR, 1); // include real place

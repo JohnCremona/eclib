@@ -58,9 +58,9 @@ int main()
     checkres = checkres^resp;
 
     vector<bigint> plist = vector_union(pdivs(a),pdivs(b));
-    for (vector<bigint>::iterator pr = plist.begin(); pr!=plist.end(); pr++)
+    for ( const auto& p : plist)
       {
-	p=*pr; if(p==2) continue;
+	if(p==2) continue;
 	resp=local_hilbert(a,b,p);
 	cout << p << "\t" << resp << endl;
 	res = res|resp;

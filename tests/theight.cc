@@ -66,10 +66,8 @@ int main(){
           bigfloat gh = to_bigfloat(0);
 	  bigint d = gcd(Pmin.getZ(),Pmin.getX());
           vector<bigint> pdivsz=pdivs(d);
-	  vector<bigint>::iterator qvar = pdivsz.begin();
-	  while(qvar!=pdivsz.end())
+	  for ( const auto& q : pdivsz)
             {
-              bigint q = *qvar++;
 	      cout << q << ":\t\t"  << flush;
 	      bigfloat ph = pheight(Pmin,q);
 	      gh+=ph;
@@ -78,10 +76,8 @@ int main(){
 	  cout << "Sum so far =\t" << gh << endl;
 	  bigfloat lxd = 2*log(I2bigfloat(d));
 	  cout << "log(den(x(P))) = " << lxd << endl;
-	  vector<bigint>::iterator pvar = badp.begin();
-	  while(pvar!=badp.end())
+	  for ( const auto& pr : badp)
             {
-              bigint pr = *pvar++;
 	      if(div(pr,d)) continue;
               cout << pr << ":\t\t"  << flush;
               bigfloat  ph = pheight(Pmin,pr);
