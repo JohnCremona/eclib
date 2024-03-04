@@ -107,22 +107,21 @@ double cps_bound(const Curvedata& CD)
 #endif
   CurveRed CR(CD);
   vector<bigint> plist = getbad_primes((Curvedata&)CD);
-  for(unsigned int i=0; i<plist.size(); i++)
+  for( const auto& q : plist)
     {
-      bigint q=plist[i];
-      if(getc_p(CR,q)==1) 
+      if(getc_p(CR,q)==1)
 	{
 #ifdef DEBUG_CPS
       cout<<"q = "<<q<<", alpha = 0 since c_q=0"<<endl;
       cout<<"sum so far = "<<bd<<endl;
 #endif
-	  continue;      
+	  continue;
 	}
       double alpha =0;
       int m, Kc = getKodaira_code(CR,q).code;
       switch (Kc%10){
       case 0: // Im
-	m = Kc/10; 
+	m = Kc/10;
 	alpha = (m%2 ? double(m*m-1)/double(4*m) : double(m)/4);
 	break;
       case 1: // I*m
@@ -396,10 +395,8 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
   // Samir 25/07/04
 
   int first=1;
-  std::set<bigfloat>::const_iterator xi = F_roots.begin();
-  while(xi!=F_roots.end())
+  for (const auto& x : F_roots)
     {
-      x=*xi++;
       x2=x*x;
       Gx=abs(1-b4*x2-2.0*b6*x*x2-b8*x2*x2);
 #ifdef DEBUG_CPS
@@ -411,10 +408,8 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
       cout<<"dvd so far ="<<dvd<<endl;
 #endif
     }
-  xi = crit_pts.begin();
-  while(xi!=crit_pts.end())
-    { 
-      x=*xi++;
+  for (const auto& x : crit_pts)
+    {
       x2=x*x;
       Fx=(4.0*x+b2*x2+2.0*b4*x*x2+b6*x2*x2);
 #ifdef DEBUG_CPS
@@ -526,10 +521,8 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
   // Samir 25/07/04
 
   int first=1;
-  std::set<bigfloat>::const_iterator xi = f_roots.begin();
-  while(xi!=f_roots.end())
+  for( const auto& x : f_roots)
     {
-      x=*xi++;
       x2=x*x;
       gx=abs(x2*x2-b4*x2-2.0*b6*x-b8);
 #ifdef DEBUG_CPS
@@ -541,10 +534,8 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
       cout<<"dv so far ="<<dv<<endl;
 #endif
     }
-  xi = crit_pts.begin();
-  while(xi!=crit_pts.end())
-    { 
-      x=*xi++;
+  for( const auto& x : crit_pts)
+    {
       x2=x*x;
       fx=(4.0*x*x2+b2*x2+2.0*b4*x+b6);
 #ifdef DEBUG_CPS
@@ -1021,28 +1012,22 @@ vector<bigfloat> roots11( const vector<bigfloat>& coeff )
 vector<bigfloat> reals_in ( vector<bigcomplex>& v)
 {
   vector<bigfloat> vr;
-  vector<bigcomplex>::iterator vi = v.begin();
-  while(vi!=v.end()) 
-    {
-      if(is_real(*vi)) vr.push_back((*vi).real());
-      vi++;
-    }
+  for (const auto& vi : v)
+    if(is_real(vi))
+      vr.push_back(vi.real());
   return vr;
 }
 
 vector<bigfloat> reals_in_11 ( vector<bigcomplex>& v)
 {
   vector<bigfloat> vr;
-  vector<bigcomplex>::iterator vi = v.begin();
-  while(vi!=v.end()) 
-    {
-      if(is_real(*vi)) 
-	{
-	  bigfloat x = (*vi).real();
-	  if((x<=1)&&(x>=-1)) vr.push_back(x);
-	}
-      vi++;
-    }
+  for (const auto& vi : v)
+    if(is_real(vi))
+      {
+        bigfloat x = vi.real();
+        if((x<=1)&&(x>=-1))
+          vr.push_back(x);
+      }
   return vr;
 }
 
@@ -1053,10 +1038,10 @@ int interval_test(const bigfloat& x, const vector<bigfloat> rts, int debug)
   if(x>1) {if(debug) cout<<"\t returns 0\n"; return 0;}
   if(x<-1) {if(debug) cout<<"\t returns 0\n";  return 0;}
   int ans;
-  if(rts.size()==1) 
+  if(rts.size()==1)
     ans = (x>=rts[0]);
-  else 
-    ans =  ((x>=rts[0]) && (x<=rts[1])) || (x>=rts[2]); 
+  else
+    ans =  ((x>=rts[0]) && (x<=rts[1])) || (x>=rts[2]);
   if(debug) cout<<"\t returns "<<ans<<"\n";
   return ans;
 }
@@ -1064,17 +1049,14 @@ int interval_test(const bigfloat& x, const vector<bigfloat> rts, int debug)
 vector<bigfloat> reals_in_interval ( vector<bigcomplex>& v, const vector<bigfloat> rts)
 {
   vector<bigfloat> vr;
-  vector<bigcomplex>::iterator vi = v.begin();
   bigfloat x;
-  while(vi!=v.end()) 
-    {
-      if(is_real(*vi)) 
-	{
-	  x=(*vi).real();
-	  if(interval_test(x,rts,1)) vr.push_back(x);
-	}
-      vi++;
-    }
+  for( const auto& vi : v)
+    if(is_real(vi))
+      {
+        bigfloat x=vi.real();
+        if(interval_test(x,rts,1))
+          vr.push_back(x);
+      }
   return vr;
 }
 
@@ -1083,15 +1065,13 @@ vector<bigfloat> reals_in_interval ( vector<bigcomplex>& v, const vector<bigfloa
 void include_real_11(std::set<bigfloat>& S, const vector<bigcomplex>& C)
 {
   bigfloat x;
-  vector<bigcomplex>::const_iterator Ci = C.begin();
-  while(Ci!=C.end())
+  for (const auto& Ci : C)
     {
-      if(is_real(*Ci))
+      if(is_real(Ci))
 	{
-	  x = (*Ci).real();
+	  x = Ci.real();
 	  if((x<=1)&&(x>=-1)) S.insert(x);
 	}
-      Ci++;
     }
 }
 
@@ -1423,12 +1403,12 @@ void Interval::intersect(const Interval& I)
 vector<Interval> intersect(const vector<Interval>& L1, const vector<Interval>& L2)
 {
   vector<Interval> ans;
-  vector<Interval>::const_iterator I, J;
-  for(I=L1.begin(); I!=L1.end(); I++)
-    for(J=L2.begin(); J!=L2.end(); J++)
+  for( const auto& I : L1)
+    for( const auto& J : L2)
       {
-	Interval K = intersect(*I,*J);
-	if(!K.is_empty()) ans.push_back(K);
+	Interval K = intersect(I,J);
+	if(!K.is_empty())
+          ans.push_back(K);
       }
   return ans;
 }
@@ -1459,15 +1439,14 @@ void Interval01::intersect(const Interval01& I)
   empty=(lh>rh);
 }
 
-vector<Interval01> intersect(const vector<Interval01>& L1, 
+vector<Interval01> intersect(const vector<Interval01>& L1,
 			     const vector<Interval01>& L2)
 {
   vector<Interval01> ans;
-  vector<Interval01>::const_iterator I, J;
-  for(I=L1.begin(); I!=L1.end(); I++)
-    for(J=L2.begin(); J!=L2.end(); J++)
+  for( const auto& I : L1)
+    for( const auto& J : L2)
       {
-	Interval01 K = intersect(*I,*J);
+	Interval01 K = intersect(I,J);
 	if(!K.is_empty()) ans.push_back(K);
       }
   return ans;
@@ -1554,11 +1533,9 @@ CurveHeightConst::CurveHeightConst(CurveRed& CR)
 
 long CurveHeightConst::e_p(long p)
 {
-  map<long, long>::iterator pe = ann.find(p);
+  auto pe = ann.find(p);
   if (pe!=ann.end())
-    {
-      return pe->second;
-    }
+    return pe->second;
   long e = exponent(*this,p);
   ann[p] = e;
   return e;
@@ -1566,7 +1543,7 @@ long CurveHeightConst::e_p(long p)
 
 bigfloat CurveHeightConst::D(long n) // D_E(n) in the paper
 {
-  map<long, bigfloat>::iterator DEn = DE.find(n);
+  auto DEn = DE.find(n);
   if (DEn!=DE.end())
     {
 #ifdef debugLB
@@ -1832,12 +1809,12 @@ vector<Interval> CurveHeightConst::solveLEQ(long n, const bigfloat& B)
       ans.push_back(Interval(e3,xlist[0]));
       for(int i=1; i<n; i+=2)
 	ans.push_back(Interval(xlist[i],xlist[i+1]));
-    }	
+    }
   else // n is even
     {
       for(int i=0; i<n; i+=2)
-	ans.push_back(Interval(xlist[i],xlist[i+1]));      
-    }  
+	ans.push_back(Interval(xlist[i],xlist[i+1]));
+    }
   return ans;
 }
 
@@ -1846,7 +1823,7 @@ vector<Interval> CurveHeightConst::solveLEQ(long n, const bigfloat& B)
 vector<Interval> CurveHeightConst::solveGEQ(long n, const bigfloat& B)
 {
   vector<Interval> ans;
-  if(B <= e3) 
+  if(B <= e3)
     {
       ans.push_back(Interval(e3)); // i.e.[e3,infty]
       return ans;
@@ -1858,14 +1835,14 @@ vector<Interval> CurveHeightConst::solveGEQ(long n, const bigfloat& B)
       for(i=1; i<n; i+=2)
 	ans.push_back(Interval(xlist[i-1],xlist[i]));
       ans.push_back(Interval(xlist[n-1]));
-    }	
+    }
   else // n is even
     {
       ans.push_back(Interval(e3,xlist[0]));
       for(i=2; i<n; i+=2)
-	ans.push_back(Interval(xlist[i-1],xlist[i]));      
+	ans.push_back(Interval(xlist[i-1],xlist[i]));
       ans.push_back(Interval(xlist[n-1]));
-    }  
+    }
   return ans;
 }
 

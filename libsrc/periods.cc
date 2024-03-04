@@ -80,7 +80,7 @@ vector<long> resort_aplist(const level* iN,
   long i, j, p, ip = iN->npdivs;
   for(i=0; i<nap; i++)
     { p = primelist[i];
-    vector<long>::const_iterator pi = find(iN->plist.begin(),iN->plist.end(),p);
+    auto pi = find(iN->plist.begin(),iN->plist.end(),p);
     if(pi==iN->plist.end()) // then p is good
       {
 	aplist.push_back( apl[ip++]);
@@ -180,9 +180,9 @@ void summer::use2357(long n, long an)
 		{
 		  am2357=am235*a7p_cache[i7];
 		  use(m2357,am2357);
-		}      	      
-	    }      
-	}      
+		}
+	    }
+	}
     }
 }
 

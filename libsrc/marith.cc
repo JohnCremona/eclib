@@ -241,17 +241,16 @@ int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m, const vector<bigint>
   bigint mm, p, xp, q; int e;
   x=0;  mm=1;
   
- for(vector<bigint>::const_iterator pr = mpdivs.begin(); pr!=mpdivs.end(); pr++)
+  for( const auto& p : mpdivs)
     {
-      p=*pr;
       e = val(p,m);
       if(e==0) continue;
-      if(p==2) 
+      if(p==2)
 	{if(!sqrt_mod_2_power(xp,a,e)) return 0;}
       else
 	{if(!sqrt_mod_p_power(xp,a,p,e)) return 0;}
       q=pow(p,e);
-      if(pr==mpdivs.begin())
+      if(p==mpdivs.front())
 	x=xp;
       else
 	x=chrem(x,xp,mm,q);
@@ -270,10 +269,9 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x)
 {
   // Assumes b square-free, primes factors in bplist
   bigint u, v, p, amodp, xmodp, m;
-  int res=1;  x=0; m=1;
-  for(vector<bigint>::const_iterator pr = bplist.begin(); res&&(pr!=bplist.end()); pr++)
+  x=0; m=1;
+  for( const auto& p : bplist)
     {
-      p=*pr;
       if(p==2)
 	{
 	  xmodp=odd(a);
@@ -362,11 +360,10 @@ vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_bas
 {
   vector<bigint> plist;
   if(n<2) return plist;
-  std::set<bigint>::const_iterator pri = factor_base.begin(); 
-  while((n>1)&&(pri!=factor_base.end()))
+  for (const auto& p : factor_base)
     {
-      bigint p=*pri++;
-      if(divide_out(n,p)) 	  
+      if (n==1) break;
+      if(divide_out(n,p))
 	plist.push_back(p);
     }
   return plist;
@@ -466,9 +463,8 @@ factor(const bigint& n, int proof=1)
   oss<<n;
   vector<bigint> plist =  read_vec_from_string(factor(oss.str()));
   if(proof)
-    for(vector<bigint>::const_iterator pi=plist.begin(); pi!=plist.end(); pi++)
+    for( const auto& p : plist)
       {
-	bigint p =*pi;
 	if(!is_prime(p))
 	  {
 	    cout<<"WARNING:  pari's factor() returned p="<<p
@@ -550,10 +546,9 @@ vector<bigint> posdivs(const bigint& number, const vector<bigint>& plist)
  int e, nu = 1; int nd=nu;
  vector<int> elist;
  elist.reserve(np);
- vector<bigint>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     e=val(*pr++,number);
+     e=val(p,number);
      elist.push_back(e);
      nd*=(1+e);
    }
@@ -562,12 +557,10 @@ vector<bigint> posdivs(const bigint& number, const vector<bigint>& plist)
  // cout<<"In posdivs (1) : dlist = "<<dlist<<endl;
  dlist.resize(nd);
  // cout<<"In posdivs (2) : dlist = "<<dlist<<endl;
- pr=plist.begin();
- vector<int>::iterator ei = elist.begin();
+ auto ei = elist.begin();
  nd=nu;
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     bigint p=*pr++;
      e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
@@ -592,10 +585,9 @@ vector<bigint> alldivs(const bigint& number, const vector<bigint>& plist)
  int e, nu = 2; int nd=nu;
  vector<int> elist;
  elist.reserve(np);
- vector<bigint>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     e=val(*pr++,number);
+     e=val(p,number);
      elist.push_back(e);
      nd*=(1+e);
    }
@@ -603,11 +595,9 @@ vector<bigint> alldivs(const bigint& number, const vector<bigint>& plist)
  dlist.push_back(BIGINT(-1));
  dlist.resize(nd);
  nd=nu;
- pr=plist.begin();
- vector<int>::iterator ei = elist.begin();
- while(pr!=plist.end())
+ auto ei = elist.begin();
+ for (const auto& p : plist)
    {
-     bigint p=*pr++;
      e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
@@ -629,21 +619,18 @@ vector<bigint> sqdivs(const bigint& number, const vector<bigint>& plist)
  int e, nu = 1; int nd=nu;
  vector<int> elist;
  elist.reserve(np);
- vector<bigint>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     e=val(*pr++,number)/2;
+     e=val(p,number)/2;
      elist.push_back(e);
      nd*=(1+e);
    }
  vector<bigint> dlist(1,BIGINT(1)); 
  dlist.resize(nd);
  nd=nu;
- pr=plist.begin();
- vector<int>::iterator ei = elist.begin();
- while(pr!=plist.end())
+ auto ei = elist.begin();
+ for (const auto& p : plist)
    {
-     bigint p=*pr++;
      e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
@@ -662,24 +649,14 @@ vector<bigint> sqfreedivs(const bigint& number)
 vector<bigint> sqfreedivs(const bigint& number, const vector<bigint>& plist)
 {
  int np = plist.size();
- int e, nu = 1; int nd=nu;
- vector<int> elist;
- elist.reserve(np);
- vector<bigint>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
-   {
-     e=1; pr++;
-     elist.push_back(e);
-     nd*=(1+e);
-   }
- vector<bigint> dlist(1,BIGINT(1)); 
+ int e = 1, nu = 1, nd=pow(2,np);
+ vector<int> elist(np,1);
+ vector<bigint> dlist(1,BIGINT(1));
  dlist.resize(nd);
  nd=nu;
- pr=plist.begin();
- vector<int>::iterator ei=elist.begin();
- while(pr!=plist.end())
+ auto ei=elist.begin();
+ for (const auto& p : plist)
    {
-     bigint p=*pr++;
      e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
@@ -705,10 +682,8 @@ void sqfdecomp(const bigint& a, vector<bigint>& plist, bigint& a1, bigint& a2)
   long j;
   vector<bigint> aplist;
   a1=1;  a2=1;
-  vector<bigint>::const_iterator pr = plist.begin();
-  while(pr!=plist.end())
+ for (const auto& p : plist)
     {
-      bigint p = *pr++;
       long e = val(p,a);
       if(e==0) continue;
       if(e&1) {a1*=p; aplist.push_back(p);}

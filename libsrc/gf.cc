@@ -26,17 +26,17 @@
 map<ZZ,ZZ_pContext> ZZ_pContextCache;
 
 galois_field::galois_field(void)  //dummy
- :q(to_ZZ(2))  
+ :q(to_ZZ(2))
 {
   //  cout<<"In galois_field constructor, calling default ZZ_p::init(2)"<<endl;
   ZZ_p::init(q);
 }
 
-galois_field::galois_field(const ZZ& qq) 
- :q(qq) 
+galois_field::galois_field(const ZZ& qq)
+ :q(qq)
 {
   //  cout<<"In galois_field constructor with q="<<qq<<endl;
-  map<ZZ,ZZ_pContext>::iterator t = ZZ_pContextCache.find(q);
+  auto t = ZZ_pContextCache.find(q);
   if(t==ZZ_pContextCache.end())
     {
       //      cout<<"Calling ZZ_p::init("<<q<<")"<<endl;

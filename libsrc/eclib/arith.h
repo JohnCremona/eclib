@@ -97,7 +97,7 @@ public:
    for(pr.init(n); pr.ok(); pr++) {p=pr; ... ;}  // iff pr is existing primevar
 
 ---To loop through all primes:
-   
+
    primevar pr; //or for existing primevar, pr.init();
    long p;
    while(pr.ok()) {p=pr; pr=++; ...;}
@@ -110,29 +110,25 @@ vector<long> pdivs(long);      /* list of prime divisors */
 vector<long> posdivs(long, const vector<long>& plist);  // all positive divisors
 inline vector<long> posdivs(long n)
 {
-  const vector<long>& plist = pdivs(n);
-  return posdivs(n,plist);
+  return posdivs(n, pdivs(n));
 }
 
 vector<long> alldivs(long, const vector<long>& plist);  // absolutely all divisors
 inline vector<long> alldivs(long n)
 {
-  const vector<long>& plist = pdivs(n);
-  return alldivs(n,plist);
+  return alldivs(n, pdivs(n));
 }
 
 vector<long> sqdivs(long, const vector<long>& plist);   //  divisors whose square divides
 inline vector<long> sqdivs(long n)
 {
-  const vector<long>& plist = pdivs(n);
-  return sqdivs(n,plist);
+  return sqdivs(n, pdivs(n));
 }
 
 vector<long> sqfreedivs(long, const vector<long>& plist); // square-free divisors
 inline vector<long> sqfreedivs(long n)
 {
-  const vector<long>& plist = pdivs(n);
-  return sqfreedivs(n,plist);
+  return sqfreedivs(n, pdivs(n));
 }
 
 

@@ -49,10 +49,10 @@ int less_ap(long a, long b, int old=0)
 int less_apvec(const vector<long>& v, const vector<long>& w, int old=0); 
 int less_apvec(const vector<long>& v, const vector<long>& w, int old) 
 {
-  vector<long>::const_iterator vi=v.begin(), wi=w.begin();
-  while(vi!=v.end())
+  auto wi=w.begin();
+  for ( const auto& vi : v)
     {
-      int s = less_ap(*vi++,*wi++,old); 
+      int s = less_ap(vi,*wi++,old);
       if(s) return s;
     }
   return 0;
@@ -94,25 +94,24 @@ vector<long> eiglist(const newform& f, int oldorder)
   vector<long> eigs;
   primevar pr;
   long N = (f.nf)->modulus;
-  vector<long>::const_iterator aqi=f.aqlist.begin();
-  vector<long>::const_iterator api=f.aplist.begin();
-  vector<long>::iterator eigsi;
+  auto aqi=f.aqlist.begin();
+  auto api=f.aplist.begin();
   if(oldorder)
     {
       eigs.resize(f.aplist.size());
-      eigsi=eigs.begin();
-      while(aqi!=f.aqlist.end()) 
+      auto eigsi=eigs.begin();
+      while(aqi!=f.aqlist.end())
 	*eigsi++ = *aqi++;
       while(api!=f.aplist.end())
 	{
-	  if(ndivides(pr,N)) *eigsi++ = *api;     
+	  if(ndivides(pr,N)) *eigsi++ = *api;
 	  api++; pr++;
 	}
     }
   else
     {
       eigs=f.aplist; // copy; now adjust the aq:
-      eigsi=eigs.begin();
+      auto eigsi=eigs.begin();
       while((aqi!=f.aqlist.end())&&(eigsi!=eigs.end()))
 	{
 	  if(::divides(pr.value(),N)) *eigsi = (*aqi++);
@@ -254,16 +253,17 @@ void newform::fixup_eigs()
 { 
   long denom = nf->h1->h1denom();
   aqlist.resize(nf->npdivs);
-  vector<long>::iterator api=aplist.begin(), pi=nf->plist.begin();
-  vector<long>::iterator aqi=aqlist.begin();
+  auto api=aplist.begin();
+  auto pi=nf->plist.begin();
+  auto aqi=aqlist.begin();
   primevar pr;   long q, i;
   long n = nf->modulus;
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
       q=pr.value(); pr++;
-      if(::divides(q,n)) 
+      if(::divides(q,n))
 	{
-	  *aqi++=*api; 
+	  *aqi++=*api;
 	  *api=(::divides(q*q,n)? 0: -*api);
 	  pi++;
 	}
@@ -274,9 +274,9 @@ void newform::fixup_eigs()
       long piv;
       ssubspace espace;
       if(sign==-1)
-        espace=make1d(bminus,piv); 
+        espace=make1d(bminus,piv);
       else
-        espace=make1d(bplus,piv); 
+        espace=make1d(bplus,piv);
       piv*=denom;
       while(aqi!=aqlist.end()) // compute missing aq
 	{
@@ -289,7 +289,7 @@ void newform::fixup_eigs()
 	}
     }
   if(nf->verbose) cout<<"aqlist = "<<aqlist<<endl;
-  
+
   //Compute sfe:
 
   sfe=-1;
@@ -300,14 +300,14 @@ void newform::fixup_eigs()
 // Before recovering eigenbases, we need to put back the aq into the
 // aplist (and resort, for efficiency).
 void newform::unfix_eigs()
-{ 
-  vector<long>::iterator api=aplist.begin();
-  vector<long>::iterator aqi=aqlist.begin();
+{
+  auto api=aplist.begin();
+  auto aqi=aqlist.begin();
   primevar pr;
   long n = nf->modulus;
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
-      if(::divides(pr.value(),n)) *api=*aqi++; 
+      if(::divides(pr.value(),n)) *api=*aqi++;
       api++;
       pr++;
     }
@@ -315,14 +315,14 @@ void newform::unfix_eigs()
 
 // After recovering eigenbases, we need to replace the ap for bad p
 void newform::refix_eigs()
-{ 
-  vector<long>::iterator api=aplist.begin();
+{
+  auto api=aplist.begin();
   primevar pr;
   long n = nf->modulus, np = nf->npdivs, ip=0, q;
   while((api!=aplist.end())&&(ip<np))
     {
       q=pr.value();
-      if(::divides(q,n)) 
+      if(::divides(q,n))
 	{
 	  *api=(::divides(q*q,n)? 0: -*api);
 	  ip++;
@@ -336,8 +336,8 @@ void newform::find_bsd_ratio()
 {
   // get ap for p=p0:
 
-  primevar pr; 
-  vector<long>::const_iterator api=aplist.begin();
+  primevar pr;
+  auto api = aplist.begin();
   while(pr.value()!=nf->p0) {pr++; api++;}
   ap0=*api;
   np0 = 1 + (nf->p0) - ap0;
@@ -364,13 +364,13 @@ void newform::find_bsd_ratio()
       if(denomplus>1)
 	{
 	  if(::divides(denomplus,dp0))  dp0/=denomplus;
-	  else 
+	  else
 	    cout<<"newform constructor error: dp0 not divisible by denomplus!"
-		<<endl; 
+		<<endl;
 	}
     }
-  loverp = rational(dp0,np0);   
-  if(nf->verbose) 
+  loverp = rational(dp0,np0);
+  if(nf->verbose)
     {
       cout<<"pdot = "<<pdot<<endl;
       cout<<"dp0 = "<<dp0<<endl;
@@ -494,15 +494,15 @@ void newform::find_twisting_primes()
           mplus =0;
         }
     }
-  if(sign!=+1) 
+  if(sign!=+1)
     {
       lminus=0;
       mminus=0;
-    }  
+    }
   if(nf->squarelevel) return;
 
   long n = nf->modulus;
-  for (primevar lvar; lvar.ok() && 
+  for (primevar lvar; lvar.ok() &&
 	 (((sign!=-1)&&(mplus==0)) ||
 	  ((sign!=+1)&&(mminus==0))); lvar++)
     {
@@ -515,9 +515,9 @@ void newform::find_twisting_primes()
 
       if((sign!=-1)&&(mplus==0)&&(l%4==1))
 	{
-	  lplus = l;   
+	  lplus = l;
 	  //cout << "Trying lplus = " << l << "\n";
-	  map<long,vec>::const_iterator vi = nf->mvlplusvecs.find(l);
+	  auto  vi = nf->mvlplusvecs.find(l);
 	  if(vi==nf->mvlplusvecs.end())
 	    mplus = (nf->mvlplusvecs[l]=nf->h1->manintwist(l))*bplus;
 	  else
@@ -535,16 +535,16 @@ void newform::find_twisting_primes()
 	  if((denomplus>1)&&(mplus!=0))
 	    {
 	      if(::divides(denomplus,mplus))  mplus/=denomplus;
-	      else 
+	      else
 		cout<<"Warning in newform constructor: mplus not divisible by denomplus!"
-		    <<endl; 
+		    <<endl;
 	    }
 	}
       if((sign!=+1)&&(mminus==0)&&(l%4==3))
 	{
-	  lminus = l;   
+	  lminus = l;
 	  //cout << "Trying lminus = " << l << "\n";
-	  map<long,vec>::const_iterator vi = nf->mvlminusvecs.find(l);
+	  auto vi = nf->mvlminusvecs.find(l);
 	  if(vi==nf->mvlminusvecs.end())
 	    mminus = (nf->mvlminusvecs[l]=nf->h1->manintwist(l))*bminus;
 	  else
@@ -1550,7 +1550,7 @@ vector<long> aqlist(vector<long> aplist, long N)
 {
   long iq=0, p, naq = pdivs(N).size();
   //cout << "Setting aq of size "<<naq<<endl;
-  vector<long>::const_iterator api = aplist.begin();
+  auto api = aplist.begin();
   vector<long> aq(naq);
   for(primevar pr; (iq<naq)&&pr.ok(); pr++)
     {
@@ -1911,10 +1911,9 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   //cout<<"Computing images of M-symbols"<<endl<<flush;
   //cout<<"jlist = "<<jlist<<endl;
 
-  for(std::set<long>::const_iterator jj=jlist.begin(); jj!=jlist.end(); jj++)
+  for( const auto& j : jlist)
     {
       imagej=vec(n1ds); // initialised to 0
-      j=*jj;
       symb s = h1->symbol(h1->freegens[j-1]);
       //cout<<"Computing image of "<<j<<"'th M-symbol "<<s<<endl;
       //cout<<" = "<<s<<"..."<<flush;
@@ -2075,18 +2074,17 @@ vector<int> newforms::showcurves(vector<int> forms, int verbose, string filename
   bigfloat rperiod;
   bigint a1,a2,a3,a4,a6, N;
   vector<int> badcurves; // will hold the indices of forms for which we fail to find a curve
-  vector<int>::const_iterator inf; // will iterate through the forms to be used
 
-  for(inf=forms.begin(); inf!=forms.end(); inf++)
+  for( const auto& inf : forms)
    {
      if(verbose)
-       cout<<"\n"<<"Form number "<<*inf+1<<"\n";
-     else cout<<(*inf+1)<<" ";
+       cout<<"\n"<<"Form number "<<inf+1<<"\n";
+     else cout<<(inf+1)<<" ";
 
      if (output_curves)
-       curve_out << modulus << " "<< codeletter(*inf) << " 1 ";
+       curve_out << modulus << " "<< codeletter(inf) << " 1 ";
 
-     Curve C = getcurve(*inf,-1,rperiod,verbose);
+     Curve C = getcurve(inf,-1,rperiod,verbose);
      Curvedata CD(C,1);  // The 1 causes minimalization
      if(verbose) cout << "\nCurve = \t";
      cout << (Curve)CD << "\t";
@@ -2098,7 +2096,7 @@ vector<int> newforms::showcurves(vector<int> forms, int verbose, string filename
      if(N!=modulus)
        {
 	 cout<<"No curve found"<<endl;
-	 badcurves.push_back(*inf);
+	 badcurves.push_back(inf);
          if (output_curves)
            curve_out<<endl;
        }
@@ -2108,7 +2106,7 @@ vector<int> newforms::showcurves(vector<int> forms, int verbose, string filename
            C.getai(a1,a2,a3,a4,a6);
            curve_out<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";
            int nt = CD.get_ntorsion();
-           int r = nflist[*inf].rank(); // analytic rank
+           int r = nflist[inf].rank(); // analytic rank
            curve_out<<" "<<r<<" "<<nt<<" 0"<<endl;
          }
    }

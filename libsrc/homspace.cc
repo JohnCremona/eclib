@@ -366,19 +366,16 @@ if (verbose>1)
 
    // Compute the number of cusps
    long maxncusps =0, dd, pp, nc;
-   vector<long>::const_iterator d,p;
-   for(d=(dlist).begin();d!=(dlist).end();d++)
+   for( const auto& d : dlist)
      {
-       dd = *d;
-       nc = ::gcd(dd,modulus/dd);
-       for(p=plist.begin();p!=plist.end();p++) // computing phi(dd)
+       nc = ::gcd(dd,modulus/d);
+       for( const auto& p : plist) // computing phi(dd)
          {
-           pp = *p;
-           if ((nc%pp)==0) 
-             nc = nc*(pp-1)/pp;
+           if ((nc%p)==0)
+             nc = nc*(p-1)/p;
          }
        maxncusps += nc;
-     }  
+     }
    if (verbose) cout << "Number of cusps is "<<maxncusps<<endl;
 
    cusplist cusps(maxncusps, this);
@@ -507,7 +504,7 @@ vec homspace::extend_coords(const vec& v)
   vec ans(nsymb);
   int i,j;
   for(i=1; i<=nsymb; i++)
-    {      
+    {
       j = coordindex[i-1];
       if (j==0) ans[i] = 0;
       else if (j>0) ans[i] =  v*coord_vecs[j];

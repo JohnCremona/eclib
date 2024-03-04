@@ -111,12 +111,9 @@ vector<bigint> introots(const ZPoly& f)
   vector<bigint> ans;
   if (ratroots.size()==0)
     return ans;
-  for(vector<bigrational>::iterator ri=ratroots.begin(); ri!=ratroots.end(); ri++)
-    {
-      bigrational r = *ri;
-      if (den(r)==1)
-        ans.push_back(num(r));
-    }
+  for( const auto& r : ratroots)
+    if (den(r)==1)
+      ans.push_back(num(r));
   sort(ans.begin(), ans.end());
   return ans;
 }

@@ -24,8 +24,6 @@
 #include <eclib/compproc.h> // for is_small, is_real
 #include <eclib/mequiv.h>
 
-//#ifdef NEW_EQUIV
-
 int new_equiv(quartic* q1, quartic* q2, int info)
 {
   if(info)
@@ -85,56 +83,6 @@ int new_equiv(quartic* q1, quartic* q2, int info)
 }
 
 
-#if(0) // Old code: compute the complex roots and test for integrality
-
-  // The roots are sqrt(z1*w1)+sqrt(z2*w2)+sqrt(z3*w3) with some choice of signs,
-  // where the wi are the z-values of the second quartic.  We compute the zi
-  // from the roots of the first, then to ensure that conjugates are matched
-  // we compute the wi from the zi (via, invisibly, the phi_i).
-
-  bigcomplex* roots1 = q1->getroots();
-  bigfloat xa1=I2bigfloat(a1), xa2=3*I2bigfloat(a2);
-  bigcomplex rz1=xa1*(roots1[0]+roots1[1]-roots1[2]-roots1[3]);
-  bigcomplex rz2=xa1*(roots1[0]-roots1[1]+roots1[2]-roots1[3]);
-  bigcomplex rz3=xa1*(roots1[0]-roots1[1]-roots1[2]+roots1[3]);
-  bigcomplex t = I2bigfloat(a1*p2-a2*p1), tt=1/I2bigfloat(3*a1);
-  bigcomplex rzw1 = rz1*sqrt((xa2*rz1*rz1+t)*tt);
-  bigcomplex rzw2 = rz2*sqrt((xa2*rz2*rz2+t)*tt);
-  bigcomplex rzw3 = rz3*sqrt((xa2*rz3*rz3+t)*tt);
-
-  bigcomplex u;
-
-  for(long k=0; k<4; k++)
-    {
-      switch(k) {
-      case 0:  u=rzw1+rzw2+rzw3; break;
-      case 1:  u=rzw1+rzw2-rzw3; break;
-      case 2:  u=rzw1-rzw2+rzw3; break;
-      case 3:  u=rzw1-rzw2-rzw3; break;
-      }
-      if(is_approx_zero(imag(u)))
-	{
-	  bigint uu = Iround(real(u));
-	  bigint uu2=uu*uu;
-	  bigint fuu1 = (uu2-2*p)*uu2+s;
-	  bigint fuu2 = 8*r*uu;
-	  if(fuu1==fuu2) 
-	    {
-	      if(info) cout<<"Root u = "<<uu<<endl;
-	      return 1;
-	    }
-	  if(fuu1==-fuu2) 
-	    {
-	      if(info) cout<<"Root u = "<<-uu<<endl;
-	      return 1;
-	    }
-	}
-    }
-
-#endif
-
-//#else // not using new_equiv so no need to compile this stuff
-
 int testd(const bigint& a, const bigint& b, const bigint& c, 
 	  const bigint& d, const bigint& e, const bigint& as, 
 	  const bigint& bs, const bigint& cs, const bigint& ds, 
@@ -193,7 +141,7 @@ bigcomplex crossratio(const bigcomplex& x1,const bigcomplex& x2,const bigcomplex
 }
 
 int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>& dlist, int info)
-{  int ans=0;
+{
    bigcomplex *x = q1->getroots();
    bigcomplex *y = q2->getroots();
    bigcomplex x1=x[0], x2=x[1], x3=x[2], x4=x[3];
@@ -247,18 +195,15 @@ int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>
           delta = real(cdelta);
    bigfloat det = alpha*delta-beta*gamma;
 
-   if (info) 
+   if (info)
      {
        cout << "Real transformation has alpha, beta, gamam, delta = ";
        cout <<alpha<<" "<<beta<<" "<<gamma<<" "<<delta<<endl;
        cout << "Testing divisors of "<<q1->getdisc()<<":\n";
 //       cout << dlist << endl;
      }
-   bigint d;
-   vector<bigint>::const_iterator dvar;
-   for (dvar=dlist.begin(); dvar!=dlist.end() && (!ans); dvar++)
+   for ( const auto& d : dlist)
      {
-       d = *dvar;
        bigfloat rscale = sqrt(abs(I2bigfloat(d)/det));
        bigfloat rscaler = floor(rscale+0.5);
        if(abs(rscale-rscaler)<0.001)
@@ -275,16 +220,17 @@ int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>
 		  cout<<"rscale = "<<rscale<<endl;
 		  cout << "al,be,ga,de = "<<al<<" "<<be<<" "<<ga<<" "<<de<<endl;
 		}
-	       ans=testd(q1->geta(),q1->getb(),q1->getcc(),q1->getd(),q1->gete(),
+	       if (testd(q1->geta(),q1->getb(),q1->getcc(),q1->getd(),q1->gete(),
 			 q2->geta(),q2->getb(),q2->getcc(),q2->getd(),q2->gete(),
-			 d,al,be,ga,de,info);
+			 d,al,be,ga,de,info))
+                 return 1;
 	     }
 	 }
      }
-   return ans ;
+   return 0;
  }    // of rootsequiv()
- 
- 
+
+
 int equiv(const quartic* q1, const quartic* q2, const vector<bigint>& dlist, int info)
 {
    bigint iiq1 = q1->getI(), jjq1 = q1->getJ(), discq1 = q1->getdisc();
@@ -307,8 +253,8 @@ int equiv(const quartic* q1, const quartic* q2, const vector<bigint>& dlist, int
        if(info) {if(!ans) cout << "Not "; cout<<"equiv\n";}
        return ans;
      }
-   else 
-     { 
+   else
+     {
        if (info) {cout << "equiv failed on first test!\n";
                   cout << "First  has I="<<iiq1<<", J="<<jjq1<<",";
                   cout << " disc="<<discq1<<", type="<<typeq1<<endl;
@@ -318,6 +264,3 @@ int equiv(const quartic* q1, const quartic* q2, const vector<bigint>& dlist, int
        return 0;
      }
  }  // of equiv()
-
-
-//#endif

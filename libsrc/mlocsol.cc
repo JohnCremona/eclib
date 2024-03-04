@@ -125,7 +125,7 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
        {
 	 if(p==2) if(lemma7(a,b,c,d,e,p,nu+1, x)==+1) return 1;
 	 if(lemma6(a,b,c,d,e,p,nu+1, x)==+1) return 1;
-       }    
+       }
    }
 
  for(i=0; i<p; ++i, x+=pnu)
@@ -212,8 +212,8 @@ int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigi
       bigint D = c*c-4*a*e;
       if(global_hilbert(a,D,plist,badp)) return 0;
     }
-  for (vector<bigint>::const_iterator p = plist.begin(); (p!=plist.end())&&sol; p++)
-   { badp = *p;
+  for ( const auto& badp : plist)
+   {
      sol = new_qpsoluble(a,b,c,d,e,badp,0);
 #ifdef CHECK_LOC_SOL
      cout<<"Checking solubility with old method (p="<<p<<")...\t";
@@ -226,6 +226,7 @@ int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigi
        }
      else cout << "...OK.\n";
 #endif
+     if (!sol) break;
    }
    return sol;
 }  /* end of locallysoluble */

@@ -174,11 +174,10 @@ int* sifter::eps(const bigint& x, const bigint& z2)
 
 void sifter::process(const vector<Point>& Plist) 
 {
-  vector<Point>::const_iterator P=Plist.begin();
-  while(P!=Plist.end()) 
+  for ( const auto& P : Plist)
     {
-      if(verbose) cout<<"Processing point "<<*P<<endl;
-      process(*P++);
+      if(verbose) cout<<"Processing point "<<P<<endl;
+      process(P);
     }
 }
 

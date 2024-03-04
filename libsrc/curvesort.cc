@@ -267,9 +267,8 @@ int booknumber(int level, int form)  // permutes numbers starting from 1
 int codeletter_to_int(string code)  // i counts from 0!
 {
   int n=0;
-  string::iterator c;
-  for (c=code.begin(); c<code.end(); c++)
-    n = 26*n + ((*c)-'a');
+  for ( const auto& c : code)
+    n = 26*n + (c-'a');
   return n;
   // int b = code[0]-'a';
   // if(code[1]=='\0')  return b;

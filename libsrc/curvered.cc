@@ -115,7 +115,7 @@ void CurveRed::operator=(const CurveRed& E)
   conncomp=E.conncomp;
   ntorsion=E.ntorsion;
   reduct_array = E.reduct_array;
-  N=E.N; 
+  N=E.N;
 }
 
 CurveRed::CurveRed(const Curvedata& E)
@@ -136,10 +136,9 @@ CurveRed::CurveRed(const Curvedata& E)
   // Because the curve is minimal, Tate's algorithm reduce-loop is not needed
 
 //cout<<"Running Tate's algorithm"<<endl;
-  vector<bigint>::const_iterator pi= the_bad_primes.begin();
-  while(pi!=the_bad_primes.end())
+
+  for (const auto& p : the_bad_primes)
     {
-    p = *pi++;
     ord_p_discr = val(p,discr);
     ord_p_j = ord_p_discr - 3*val(p,c4);
     if (ord_p_j < 0) ord_p_j = 0;
@@ -166,7 +165,7 @@ CurveRed::CurveRed(const Curvedata& E)
     r = mod(r,p);
     t = mod(t,p);
     C.transform(r,zero,t);
-    
+
     // test for Types In, II, III, IV
     if ( ndiv(p,c4) )
       {temp=-C.a2;
@@ -301,7 +300,7 @@ CurveRed::CurveRed(const Curvedata& E)
 	  reduct_array[p] = Reduction_type
 	    (ord_p_discr, ord_p_discr - 6, ord_p_j, 5, c_p);
 	  break; }
-      
+
       // change coords so that p^3|C.a3, p^5|C.a6
       if ( pdiv2 ) t = -p*p*root(a6t,2,p);
       else t = p*p*mod(-a3t*halfmodp, p);
@@ -325,11 +324,8 @@ CurveRed::CurveRed(const Curvedata& E)
     };  // end switch
   }     // end primes for-loop
   N = BIGINT(1);
-  map<bigint,Reduction_type>::const_iterator ri; 
-  for(ri = reduct_array.begin(); ri!=reduct_array.end(); ri++)
-    {
-      N *= pow((ri->first), (ri->second).ord_p_N);
-    }
+  for( const auto& ri : reduct_array)
+    N *= pow((ri.first), (ri.second).ord_p_N);
   return;
 }     // end of Tate's algorithm
 
@@ -338,7 +334,7 @@ CurveRed::CurveRed(const Curvedata& E)
 bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p)
 {
   if (is_zero(p)) return BIGINT(c.conncomp);
-  map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.find(p);
+  auto ri = c.reduct_array.find(p);
   if (ri == c.reduct_array.end())
     return BIGINT(1);
   Reduction_type info = ri->second;
@@ -362,9 +358,9 @@ bigint global_Tamagawa_exponent(CurveRed& c, int real_too)
   const bigint two = BIGINT(2);
   bigint ans = ((real_too && (c.conncomp==2))? two: one);
 
-  for(map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.begin(); ri!=c.reduct_array.end(); ri++)
+  for( const auto&  ri : c.reduct_array)
     {
-      Reduction_type info = ri->second;
+      Reduction_type info = ri.second;
       int code = info.Kcode.code;
       int ep = (code%20==1? 2: info.c_p); // Type I*m, m even: [2,2]
       ans = lcm(ans,BIGINT(ep));
@@ -377,8 +373,8 @@ vector<long> tamagawa_primes(CurveRed& C, int real_too)
 {
   vector<bigint> T = pdivs(global_Tamagawa_exponent(C, real_too));
   vector<long> t;
-  for(vector<bigint>::const_iterator ti = T.begin(); ti!=T.end(); ++ti)
-    t.push_back(I2long(*ti));
+  for( const auto&  ti : T)
+    t.push_back(I2long(ti));
   return t;
 }
 
@@ -393,28 +389,28 @@ vector<long> tamagawa_primes(CurveRed& C, int real_too)
 
 int getord_p_discr(const CurveRed& c, const bigint& p)
 {
-  map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.find(p);
+  auto ri = c.reduct_array.find(p);
   if(ri==c.reduct_array.end()) return 0;
   return (ri->second).ord_p_discr;
 }
 
 int getord_p_N(const CurveRed& c, const bigint& p)
 {
-  map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.find(p);
+  auto ri = c.reduct_array.find(p);
   if(ri==c.reduct_array.end()) return 0;
   return (ri->second).ord_p_N;
 }
 
 int getord_p_j_denom(const CurveRed& c, const bigint& p)
 {
-  map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.find(p);
+  auto ri = c.reduct_array.find(p);
   if(ri==c.reduct_array.end()) return 0;
   return (ri->second).ord_p_j_denom;
 }
 
 int getc_p(const CurveRed& c, const bigint& p)
 {
-  map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.find(p);
+  auto ri = c.reduct_array.find(p);
   if(ri==c.reduct_array.end()) return 1;
   return (ri->second).c_p;
 }
@@ -422,11 +418,8 @@ int getc_p(const CurveRed& c, const bigint& p)
 bigint prodcp(const CurveRed& c)
 {
   bigint ans = BIGINT(1);
-  map<bigint,Reduction_type>::const_iterator ri; 
-  for(ri = c.reduct_array.begin(); ri!=c.reduct_array.end(); ri++)
-    {
-      ans *= (ri->second).c_p;
-    }
+  for( const auto& ri : c.reduct_array)
+    ans *= (ri.second).c_p;
   return ans;
 }
 
@@ -444,7 +437,7 @@ bigint global_Tamagawa_number(CurveRed& c, int real_too)
 
 Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p)
 {
-  map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.find(p);
+  auto ri = c.reduct_array.find(p);
   if(ri==c.reduct_array.end()) return Kodaira_code();
   return (ri->second).Kcode;
 }
@@ -474,12 +467,11 @@ void CurveRed::display(ostream& os)
   os << "Global Root Number = " << GlobalRootNumber(*this) << endl;
   os << "Reduction type at bad primes:\n";
   os <<"p\tord(d)\tord(N)\tord(j)\tKodaira\tc_p\troot_number\n";
-  map<bigint,Reduction_type>::const_iterator ri;  
-  for(ri = reduct_array.begin(); ri!=reduct_array.end(); ri++)
+  for( const auto& ri : reduct_array)
     {
-      if((ri->second).local_root_number==0) 
-	setLocalRootNumber(ri->first);     
-      os << (ri->first) << "\t" << (ri->second) << endl;
+      if((ri.second).local_root_number==0)
+	setLocalRootNumber(ri.first);
+      os << (ri.first) << "\t" << (ri.second) << endl;
     }
 }
 
@@ -503,9 +495,9 @@ void CurveRed::display(ostream& os)
 int LocalRootNumber(CurveRed& c, const bigint& p)
 {
   if(is_zero(p)) return -1;  // the infinite prime
-  map<bigint,Reduction_type>::const_iterator ri = c.reduct_array.find(p);
+  auto ri = c.reduct_array.find(p);
   if(ri==c.reduct_array.end()) return 1; // good reduction case
-  if((ri->second).local_root_number==0) 
+  if((ri->second).local_root_number==0)
     c.setLocalRootNumber(p);
   return (ri->second).local_root_number;
 }
@@ -513,12 +505,11 @@ int LocalRootNumber(CurveRed& c, const bigint& p)
 int GlobalRootNumber(CurveRed& c)
 {
   int ans=-1;
-  map<bigint,Reduction_type>::const_iterator ri; 
-  for(ri = c.reduct_array.begin(); ri!=c.reduct_array.end(); ri++)
+  for( const auto& ri : c.reduct_array)
     {
-      if((ri->second).local_root_number==0)  
-	c.setLocalRootNumber(ri->first);
-      ans *= (ri->second).local_root_number;
+      if((ri.second).local_root_number==0)
+	c.setLocalRootNumber(ri.first);
+      ans *= (ri.second).local_root_number;
     }
   return ans;
 }
@@ -537,7 +528,7 @@ int kro_3(long x); // kronecker(x,3)
 void CurveRed::setLocalRootNumber2()
 {
   static const bigint two = BIGINT(2);
-  map<bigint,Reduction_type>::iterator ri = reduct_array.find(two);
+  auto ri = reduct_array.find(two);
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   int kod = PariKodairaCode(info.Kcode);
@@ -734,7 +725,7 @@ void CurveRed::setLocalRootNumber2()
 void CurveRed::setLocalRootNumber3()
 {
   static const bigint three = BIGINT(3);
-  map<bigint,Reduction_type>::iterator ri = reduct_array.find(three);
+  auto ri = reduct_array.find(three);
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   int kod = PariKodairaCode(info.Kcode);
@@ -841,7 +832,7 @@ void CurveRed::setLocalRootNumber3()
 
 void CurveRed::setLocalRootNumber_not_2_or_3(const bigint& p)
 {
-  map<bigint,Reduction_type>::iterator ri = reduct_array.find(p);
+  auto ri = reduct_array.find(p);
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   if (info.ord_p_N == 1) 

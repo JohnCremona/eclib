@@ -57,11 +57,11 @@ fixc6::fixc6()
 void fixc6::operator()(long N, int i, bigint& c4, bigint& c6)
 {
   pair<long,int> key(N,i+1);
-  map<pair<long,int>,bigint>::const_iterator j = fixc6table.find(key); 
+  auto j = fixc6table.find(key);
   if(j!=fixc6table.end()) c6=j->second;
-  j = fixc4table.find(key); 
+  j = fixc4table.find(key);
   if(j!=fixc4table.end()) c4=j->second;
-  return; 
+  return;
 }
 
 map< pair<long,int>, bigint > fixc6::fixc6table;

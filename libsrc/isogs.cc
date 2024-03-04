@@ -175,9 +175,8 @@ int semistable(const CurveRed& CR)
 {
   int ans=1;
   vector<bigint> plist = getbad_primes(CR);
-  vector<bigint>::iterator pvar = plist.begin();
-  while(pvar!=plist.end())
-    if(getord_p_N(CR,*pvar++)>1) return 0;
+  for (const auto& p : plist)
+    if(getord_p_N(CR,p)>1) return 0;
   return ans;
 }
 
@@ -271,33 +270,29 @@ void IsogenyClass::process(long i)  // process i'th curve
   CurveRed thisc = curves[i];
   if (verb) cout << "Working on curve " << i+1 << ": " << (Curve)thisc << endl;
   Cperiods pers(thisc);
-  vector<long>::iterator lvar=llist.begin();
-  long il=0, ell, n;
-  while(lvar!=llist.end())
+  long il=0, n;
+  for (const auto& ell : llist)
     {
-      ell = *lvar++;
       if (verb) cout << "trying l = " << ell << "..." << flush;
 
       vector<CurveRed> lisogcurves = lisog(thisc,pers,ell,verb);
 
       if (verb) cout << lisogcurves.size() << " isogenous curves found." << endl;
-      if(i==0) 
+      if(i==0)
 	{
 // 	  cout<<"setting lworks["<<il<<"] to "<< !lisogcurves.empty() << endl;
 // 	  cout<<"where llist["<<il<<"] = "<<llist[il]<<endl;
 	  lworks[il++] = !lisogcurves.empty();
 	}
-      vector<CurveRed>::iterator Ci=lisogcurves.begin();
       n=0;
-      while(Ci!=lisogcurves.end())
-	{ 
-	  CurveRed newc = *Ci++; n++;
+      for (const auto& newc : lisogcurves)
+	{
+	  n++;
 	  if (verb) cout << "\t"<<n<<": "<<(Curve)newc<<"\t: ";
 	  int j=0, isnew = 1;
-	  vector<CurveRed>::iterator oldCi=curves.begin();
-	  while(oldCi!=curves.end())
-	    {	      
-	      if ((Curve)newc==(Curve)(*oldCi++))
+          for (const auto& oldCi : curves)
+	    {
+	      if ((Curve)newc==(Curve)(oldCi))
 		{
 		  isnew=0;
 		  matset(i,j,ell);
@@ -305,7 +300,7 @@ void IsogenyClass::process(long i)  // process i'th curve
 		}
 	      j++;
 	    }
-	  if (isnew) 
+	  if (isnew)
 	    {
 	      curves.push_back(newc);
 	      fromlist.push_back(i);
@@ -351,12 +346,14 @@ void IsogenyClass::displaycurves(ostream& os)const
 {
   os << endl << ncurves << " curve(s) in the isogeny class"<<endl<<endl;
   if(ncurves==0) return;
-  long i;
-  for (i=0; i<ncurves; i++)
-    { Curve ci = (Curve)curves[i];
-      os << (i+1) << ": " << ci;
-      if (i>0) os << "  is "<< isoglist[i]<<"-isogenous to curve "<<fromlist[i]+1;
+  long i=1;
+  for ( const auto& C : curves)
+    {
+      os << i << ": " << (Curve)C;
+      if (i>1)
+        os << "  is "<< isoglist[i-1]<<"-isogenous to curve "<<fromlist[i-1]+1;
       os<<endl;
+      i++;
     }
   os<<endl;
 }
@@ -366,10 +363,14 @@ void IsogenyClass::displaymat(ostream& os)const
   if(ncurves==0) return;
   long i,j;
   os << "Isogeny matrix:\n";
-  os << "\t"; for(j=0; j<ncurves; j++) os<<(j+1)<<"\t";  os<<"\n";
+  os << "\t";
+  for(j=0; j<ncurves; j++)
+    os<<(j+1)<<"\t";  os<<"\n";
   for(i=0; i<ncurves; i++)
     {
-      os<<(i+1)<<"\t"; for(j=0; j<ncurves; j++) os<<mat_entry(i,j)<<"\t";  os<<"\n";
+      os<<(i+1)<<"\t";
+      for(j=0; j<ncurves; j++)
+        os<<mat_entry(i,j)<<"\t";  os<<"\n";
     }
   os<<endl;
 }
@@ -391,8 +392,7 @@ void IsogenyClass::dumpdata(ostream& os, long rank)
 //cout << "After C.get_ntorsion(), C.ntorsion = " << C.ntorsion << endl;
       if(sign(C.discr)>0) os << "+1" <<sep;
       else  os << "-1" <<sep;
-      vector<bigint>::const_iterator pi;
-      pi=C.the_bad_primes.begin();
+      auto pi=C.the_bad_primes.begin();
       while(pi!=C.the_bad_primes.end()) os << C.reduct_array[*pi++].ord_p_discr << sep;
       pi=C.the_bad_primes.begin();
       while(pi!=C.the_bad_primes.end()) os << C.reduct_array[*pi++].ord_p_j_denom << sep;

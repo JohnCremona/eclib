@@ -60,19 +60,8 @@ int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint&
                 bigint& x, bigint& y, bigint& z, int method)
 {
   vector<bigint> factorbase = pdivs(2*d);
-  //  cout<<"factorbase(1) = "<<factorbase<<endl;
-  if(is_zero(b))
-    {
-      factorbase=vector_union(factorbase,pdivs(a));
-      factorbase=vector_union(factorbase,pdivs(c));
-    }
-  else
-    {
-      bigint disc = b*b-4*a*c;
-      factorbase=vector_union(factorbase,pdivs(a));
-      factorbase=vector_union(factorbase,pdivs(disc));
-    }
-  //  cout<<"factorbase(2) = "<<factorbase<<endl;
+  factorbase=vector_union(factorbase,pdivs(a));
+  factorbase=vector_union(factorbase,pdivs((is_zero(b)? c : b*b-4*a*c)));
   return solve_conic(a,b,c,d,factorbase,x,y,z,method);
 }
 
@@ -112,7 +101,7 @@ int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint&
       vector<bigint> aplist, bplist, cplist, dplist;
 
       int nondiag=!is_zero(b);
-      bb=a*d;  
+      bb=a*d;
       aa=-a*c; if(nondiag) aa=sqr(b)-4*aa;
       aplist=factorbase;
       bplist=factorbase;
@@ -123,7 +112,7 @@ int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint&
       if(solve_conic_diag(a1,aplist,b1,bplist,x,y,z,method))
 	{
 	  conic_diag_reduce(a1,b1,x,y,z,verb);
-	  x*=(a2*b2); y*=a2; z*=b2; 
+	  x*=(a2*b2); y*=a2; z*=b2;
 	  if(nondiag) x-=b*z;
 	  y *= a;
 	  z *= a; if(nondiag) zz<<=1;
@@ -138,7 +127,7 @@ int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint&
 	}
     }
 }
-  
+
 int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
 			     const bigint& b, const vector<bigint>& bplist,
 			     bigint& x, bigint& y, bigint& z,
@@ -529,56 +518,22 @@ int testlocsol(const bigint& a, const vector<bigint>& alist,
 // coprime and square-free, their prime factors being in alist etc.
 {
   int as=sign(a), bs=sign(b), cs=sign(c);
-  if((as==bs)&&(bs==cs)) 
-    {
-      //      cout<<"testlocsol("<<a<<","<<b<<","<<c<<") returning 0 because of signs\n";
-      return 0;
-    }  
-  bigint p, two; two=2;
-  bigint mab=-a*b; 
-  vector<bigint>::const_iterator pr;
-  pr=clist.begin(); 
-  while(pr!=clist.end())
-    {
-      p=*pr++;
-      if(p==two) continue;
-      if(legendre(mab,p)!=1) 
-	{
-// 	  cout<<"testlocsol fails legendre(mab,p) with "
-// 	      <<"(a,b,p)=("<<a<<","<<b<<","<<p<<")\n"; 
-	  return 0;
-	}
-    }
-  bigint mbc=-b*c; 
-  pr=alist.begin();
-  while(pr!=alist.end())
-    {
-      p=*pr++;
-      if(p==two) continue;
-      if(legendre(mbc,p)!=1)
-	{
-// 	  cout<<"testlocsol fails legendre(mbc,p) with "
-// 	      <<"(b,c,p)=("<<b<<","<<c<<","<<p<<")\n"; 
-	  return 0;
-	}
-    }
-  bigint mca=-c*a;
-  pr=blist.begin();
-  while(pr!=blist.end())
-    {
-      p=*pr++;
-      if(p==two) continue;
-      if(legendre(mca,p)!=1)
-	{
-// 	  cout<<"testlocsol fails legendre(mca,p) with "
-// 	      <<"(c,a,p)=("<<c<<","<<a<<","<<p<<")\n"; 
-	  return 0;
-	}
-    }
+  if((as==bs)&&(bs==cs))
+    return 0;
+  auto test = [](const vector<bigint>& plist, const bigint& m)
+              {
+                return !std::any_of(plist.begin(), plist.end(),
+                                    [m](const auto& p)
+                                    {
+                                      return (p>2) && (legendre(m,p)!=1);
+                                    }
+                                    );
+              };
+  return test(clist, -a*b) && test(alist, -b*c) && test(blist, -a*c);
   return 1;
-} 
+}
 
-int testlocsol(const bigint& a, const vector<bigint>& alist, 
+int testlocsol(const bigint& a, const vector<bigint>& alist,
 	       const bigint& b, const vector<bigint>& blist)
 // tests if ax^2+by^2=z^2 is soluble, where a, b are
 // square-free, their prime factors being in alist and blist.
@@ -589,20 +544,17 @@ int testlocsol(const bigint& a, const vector<bigint>& alist,
   vector<bigint> a0list, b0list, clist;
 
   long sa=sign(a), sb=sign(b);
-  if((sa<0)&&(sb<0)) 
+  if((sa<0)&&(sb<0))
     {
 //       cout<<"testlocsol("<<a<<","<<b<<") returning 0 because of signs\n";
       return 0;  // nothing more to do as no real solution
     }
   if(sa<0) ::negate(a0);
   if(sb<0) ::negate(b0);
-  
-  vector<bigint>::const_iterator pr;
-  pr=alist.begin(); 
-  while(pr!=alist.end())
+
+  for (const auto& p : alist)
     {
-      p=*pr++;
-      if(div(p,b)) 
+      if(div(p,b))
 	{
 	  c*=p; clist.push_back(p);
 	}
@@ -611,26 +563,16 @@ int testlocsol(const bigint& a, const vector<bigint>& alist,
 	  a0*=p; a0list.push_back(p);
 	}
     }
-  pr=blist.begin(); 
-  while(pr!=blist.end())
+  for (const auto& p : blist)
     {
-      p=*pr++;
-      if(!div(p,c)) {b0*=p; b0list.push_back(p);}
-    }  
-  
-#if(0)
-  if((a!=-a0*c)||(b!=-b0*c)||(abs(c)!=gcd(a,b)))
-    {
-      cout<<"Error: (a,b)=("<<a<<","<<b<<") gives a0="<<a0<<", b0="<<b0<<", c="<<c<<endl;
+      if(!div(p,c))
+        {
+          b0*=p; b0list.push_back(p);
+        }
     }
-  //  cout<<"Calling testlocsol(a,b,c) with a,b,c="<<a0<<","<<b0<<","<<c<<"\n";
-  //  cout<<"alist="<<a0list<<endl;
-  //  cout<<"blist="<<b0list<<endl;
-  //  cout<<"clist="<<clist<<endl;
-#endif
 
   // Now a=a0*c, b=b0*c, c=gcd(a,b), and a0list, b0list, clist hold their primes
-  
+
   return testlocsol(a0,a0list,b0,b0list,c,clist);
 
 }

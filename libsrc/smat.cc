@@ -200,11 +200,10 @@ void smat::setrow ( int i, const svec& v) // i counts from 1
   }
 
   coli++;
-  for(map<int,scalar>::const_iterator vi=v.entries.begin();
-      vi!=v.entries.end(); vi++)
+  for( const auto& vi : v.entries)
     {
-      *coli++ = vi->first;
-      *vali++ = vi->second;
+      *coli++ = vi.first;
+      *vali++ = vi.second;
     }
 
   // check
@@ -580,56 +579,34 @@ vec operator*  (smat& m, const vec& v)
 svec operator* ( const svec& v, const smat& A )
 {
   svec prod(A.ncols());
-  if( v.d != A.nrows() ) 
-    { 
-      cerr << "incompatible sizes in v*A\n"; 
-      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
+  if( v.d != A.nrows() )
+    {
+      cerr << "incompatible sizes in v*A\n"
+           << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
     }
   else
     {
-      map<int,scalar>::const_iterator vi;
-      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
-        prod += (vi->second)*(A.row(vi->first));
+      for( const auto& vi : v.entries)
+        prod += (vi.second)*(A.row(vi.first));
     }
   return prod;
 }
-
-#if(0)
-svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
-{
-  svec prod(A.ncols());
-  if( v.d != A.nrows() ) 
-    { 
-      cerr << "incompatible sizes in v*A\n"; 
-      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
-    }
-  else
-    {
-      map<int,scalar>::const_iterator vi;
-      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
-        prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);
-    }
-  return prod;
-}
-
-#else
 
 svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
 {
   vec prod(A.ncols());
   if( v.d != A.nrows() )
     {
-      cerr << "incompatible sizes in v*A\n";
-      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
+      cerr << "incompatible sizes in v*A\n"
+           << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
     }
   else
     {
-      map<int,scalar>::const_iterator vi;
-      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
+      for( const auto& vi : v.entries)
         {
           // prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);
-          int i = (vi->first)-1;        // the row of A to use (from 0)
-          scalar c = vi->second;        // the coefficient tomultiply it by
+          int i = (vi.first)-1;         // the row of A to use (from 0)
+          scalar c = vi.second;         // the coefficient to multiply it by
           int d = A.col[i][0];          // #nonzero entries in this row
           int *posi = A.col[i] +1;      // pointer to array of columns
           scalar *values = A.val[i];    // pointer to array of values
@@ -639,7 +616,7 @@ svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
     }
   return svec(prod);
 }
-#endif
+
 
 svec mult_mod_p( const smat& A, const svec& v, const scalar& p  )
 {

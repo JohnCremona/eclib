@@ -136,27 +136,13 @@ void saturator::nextq()
 
       // First just check the order of E mod q, skip this q if not a multiple of p
 
-      map<bigint,bigint>::iterator Eqoi = Emodq_order.find(q);
       bigint order_mod_q;
+      auto Eqoi = Emodq_order.find(q);
       if(Eqoi==Emodq_order.end())
 	{
 	  if(verbose>2) cout<<"Computing order mod q =  "<<q<<": "<<endl;
           curvemodq Eq(*E,q);
-          if(0) // use orders of some random points as a proxy
-            {
-              bigint upper, lower; // bounds on group order
-              set_hasse_bounds(q,lower,upper);
-              pointmodq P1 = Eq.random_point();
-              bigint n1 = my_order_point(P1,lower,upper);
-              if (verbose>2)
-                cout<<"q="<<q<<"\tn1 = "<<n1<<endl;
-              order_mod_q = n1;
-            }
-          else
-            {
-              order_mod_q = Eq.group_order();
-            }
-
+          order_mod_q = Eq.group_order();
           Emodq_order[q] = order_mod_q;
           if (verbose>2)
             cout<<"Setting order mod "<<q<<" to "<<order_mod_q<<endl;
@@ -180,7 +166,7 @@ void saturator::nextq()
         }
       // next compute the structure of q if not yet known
 
-      map<bigint,curvemodqbasis>::iterator Eqi = Emodq.find(q);
+      auto Eqi = Emodq.find(q);
       if(Eqi==Emodq.end())
 	{
 	  if(verbose>2) cout<<"Initializing q =  "<<q<<": "<<endl;
@@ -491,9 +477,8 @@ int saturator::saturate(vector<long>& unsat, long& index,
     {
       if (verbose)
         cout << "Tamagawa index primes are " << tam_primes << endl;
-      for (vector<long>::iterator pi = tam_primes.begin(); pi!=tam_primes.end(); pi++)
+      for ( const auto& p : tam_primes)
         {
-          p = *pi;
           if ((p > ib) && ((sat_bd==-1) || (p <= sat_bd)))
             {
               if (verbose)
@@ -513,22 +498,14 @@ int saturator::saturate(vector<long>& unsat, long& index,
 void saturator::show_q_tally()
 {
   cout << "Summary of auxiliary primes used" <<endl;
-  int num_q_used = 0;
-  map<bigint,int>::iterator qcount;
   cout << "Number of q used: " << q_tally.size() << endl;
   cout << "Maximum   q used: " << maxq << " (used for p="<<maxp<<")"<<endl;
   if (verbose<2)
     return;
   cout << "Counts of how many times each q was used:" << endl;
-  bigint q;
-  int c;
-  for (qcount = q_tally.begin(); qcount!=q_tally.end(); qcount++)
-    {
-      q = qcount->first;
-      c = qcount->second;
-      if (c)
-        cout << q << "\t" << c <<endl;
-    }
+  for ( const auto& qcount : q_tally)
+    if (qcount.second)
+      cout << qcount.first << "\t" << qcount.second <<endl;
 }
 
 

@@ -1273,17 +1273,14 @@ void smat_elim::step5dense()
       return;
     }
   mat dmat(nrr, nrc);
-  map<int,scalar>::const_iterator vi;
-  vector<int>::const_iterator rci;
   for (i=0; i<nrr; i++)
     {
       svec v = row(remaining_rows[i]);
       j=0;
-      for(vi=v.entries.begin();
-          vi!=v.entries.end(); vi++)
+      for( const auto& vi : v.entries)
         {
-          while (remaining_cols[j]<(vi->first)) j++;
-          dmat.set(i+1,j+1,vi->second);
+          while (remaining_cols[j]<(vi.first)) j++;
+          dmat.set(i+1,j+1,vi.second);
         }
     }
 

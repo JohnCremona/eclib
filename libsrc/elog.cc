@@ -308,13 +308,11 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
   cout<<"Possible x-coordinates:"<<xans<<endl;
 #endif
   vector<Point> ans;
-  for(vector<bigrational>::const_iterator x=xans.begin(); x!=xans.end(); x++)
+  for( const auto & x : xans)
     {
-      vector<Point> x_points = points_from_x(E,*x);
-      for(vector<Point>::const_iterator Qi=x_points.begin(); 
-          Qi!=x_points.end(); Qi++)
+      vector<Point> x_points = points_from_x(E,x);
+      for( const auto& Q : x_points)
         {
-          Point Q = *Qi;
           if(2*Q==P) // as it might = -P
             {
 #ifdef DEBUG_DIVBY2

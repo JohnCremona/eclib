@@ -79,10 +79,8 @@ int global_hilbert(const bigint& a, const bigint& b, const vector<bigint>& plist
 #ifdef DEBUG_HILBERT
   cout<<"Passed local condition at infinity..."<<endl;
 #endif
-  vector<bigint>::const_iterator pr = plist.begin();
-  while(pr!=plist.end())
+  for (const auto& badp : plist)
     {
-      badp=*pr++;
 #ifdef DEBUG_HILBERT
       cout<<"Testing local condition at "<<badp<<"..."<<endl;
 #endif

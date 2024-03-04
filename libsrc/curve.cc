@@ -29,7 +29,7 @@
 
 int valid_invariants(const bigint& c4, const bigint& c6)  
 {
-  bigint disc = c4*c4*c4; disc -= c6*c6;
+  bigint disc = c4*c4*c4 - c6*c6;
   if (sign(disc)==0) return 0;
   if (ndiv(1728,disc)) return 0;  // need c4^3-c6^2=1728D, with D|=0
   long x6= mod(c6,27);
@@ -83,10 +83,8 @@ void minimise_c4c6(const bigint& c4, const bigint& c6, const bigint& discr,
   g = gcd( c62, newdiscr );  if(is_one(g)) return;
   const vector<bigint>& p_list = pdivs(g);
 //  cout<<"g = "<<g<<endl;
-  vector<bigint>::const_iterator pr = p_list.begin();
-  while ( pr!=p_list.end() )
+  for (const auto& p : p_list)
   {
-    p = *pr++;
     d = (long)floor(val(p,g)/12.0);
 //    cout<<"With p="<<p<<", initial d="<<d<<endl;
     if (p==2)
@@ -268,40 +266,3 @@ void Curve::tex_print(ostream &os) const
 
 
 // end of file: curve.cc
-
-//
-// The following functions from OM's code are never used
-//
-// /* number of solutions to y^2+ay=b mod p */
-// long quadroots(const bigint& a, const bigint& b, long p ) 
-// {
-//         if (p == 2) { 
-//            if (!odd(a))  return(1) ; 
-//            if (!odd(b))  return(2) ;
-//            return(0) ;
-//                 } 
-//         else {
-//          long d = I2long((a*a+4*b)%p);
-//          if (d==0) return 1;
-//          if (legendre(d,p)==1) return 2; 
-//          return 0;
-//               }
-// }
-
-// // for finding number of points mod 2 and 3
-// long pointsmod(long p, const Curve& E)
-// {
-//   bigint a1,a2,a3,a4,a6;
-//   E.getai(a1,a2,a3,a4,a6);
-//   if (p == 2)
-//     return( 1 + quadroots(a3, a6, 2) +
-//            quadroots(a1 + a3, 1 + a2 + a4 + a6, 2)) ;
-//   if (p ==3)
-//     return( 1 + quadroots(a3, a6, 3) +
-//            quadroots(a1 + a3, 1 + a2 + a4 + a6, 3)
-//            + quadroots(-a1 + a3, -1 + a2 - a4 + a6, 3)) ;
-//  // Now p>3
-//   long count=0;
-//   for (long x=0;x<p;x++) count+=quadroots(x*a1+a3,x*(x*(x+a2)+a4)+a6, p);
-//   return  count;
-// }

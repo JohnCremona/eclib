@@ -117,7 +117,7 @@ long primeclass::number(long n)
     }
   if(!ok)
     {
-      cout<<"Not enough primes in primeclass.number("<<n<<") !"<<endl;
+      cerr<<"Not enough primes in primeclass.number("<<n<<") !"<<endl;
     }
   return p_val;
 }
@@ -135,7 +135,7 @@ vector<long> primeclass::getfirst (long n)  /* returns list of first n primes */
     }
   if(!ok)
     {
-      cout<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
+      cerr<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
     }
   return ans;
 }
@@ -194,16 +194,15 @@ vector<long> posdivs(long a, const vector<long>& plist)
 // cout << plist.size() << " primes: " <<endl; cout << plist << endl;
  long j,k,p,e,nd = 1;
  vector<long> dlist(1,1);  // cout << "Divisor 0 = 1" << endl;
- vector<long>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     p=*pr++; e = val(p,a);
+     e = val(p,a);
      dlist.resize((e+1)*dlist.size());
      for (j=0; j<e; j++)
        for (k=0; k<nd; k++)
 	 dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
      nd*=(e+1);
-   } 
+   }
  return dlist;
 }
 
@@ -213,10 +212,9 @@ vector<long> alldivs(long a, const vector<long>& plist)
  long j,k,p,e,nd = 2;
  vector<long> dlist(1,1);  // cout << "Divisor 0 =  1" << endl;
  dlist.push_back(-1);      // cout << "Divisor 1 = -1" << endl;
- vector<long>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
  {
-   p = *pr++; e = val(p,a);
+   e = val(p,a);
    dlist.resize((e+1)*dlist.size());
    for (j=0; j<e; j++)
      for (k=0; k<nd; k++)
@@ -230,10 +228,9 @@ vector<long> sqdivs(long a, const vector<long>& plist)
 {
  long j,k,p,e,nd = 1;
  vector<long> dlist(1,1);
- vector<long>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     p = *pr++; e = val(p,a)/2;
+     e = val(p,a)/2;
      dlist.resize((e+1)*dlist.size());
      for (j=0; j<e; j++)
        for (k=0; k<nd; k++)
@@ -247,10 +244,9 @@ vector<long> sqfreedivs(long a, const vector<long>& plist)
 {
  long j,k,p,e,nd = 1;
  vector<long> dlist(1,1);
- vector<long>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
  {
-  p = *pr++; e = 1;
+  e = 1;
   dlist.resize((e+1)*dlist.size());
   for (j=0; j<e; j++)
     for (k=0; k<nd; k++)
@@ -507,40 +503,26 @@ int is_squarefree(long n)
   if(n%9==0) return 0;
   if(n%25==0) return 0;
   if(n%49==0) return 0;
-  vector<long>plist = pdivs(n);
-  for(unsigned int i=0; i<plist.size(); i++) 
-    if(val(plist[i],n)>1) return 0;
+  auto plist = pdivs(n);
+  for( const auto p : plist)
+    if (val(p,n)>1)
+      return 0;
   return 1;
 }
 
 int is_valid_conductor(long n)
 {
-  long m=n, p, e;
+  if (n<11) return 0;
+  long m=n, e;
   e=0; while(!(m&1)) {e++; m>>=1;}  if(e>8) return 0;
   e=0; while(!(m%3)) {e++; m/=3;}   if(e>5) return 0;
-  vector<long>plist = pdivs(m);
-  for(unsigned int i=0; i<plist.size(); i++) 
+  auto plist = pdivs(m);
+  for( const auto& p : plist)
     {
-      p = plist[i]; 
-      e=0; while(!(m%p)) {e++; m/=p;} if(e>2) return 0;
+      if (val(p,m)>2)
+        return 0;
     }
-  return 1;
-}
-
-
-
-
-// The following is no longer used
-
-long old_kronecker(long d, long n)
-{ long ans=0; long m=n, d4=d%4; if(d4<0)d4+=4;
-  if ((gcd(d,n)==1) && ((d4==0)||(d4==1)))
-  { ans=1;
-    while (!(m%4)) m/=4;
-    if (!(m%2)) {m/=2; ans*=((d-1)%8 ? -1 : 1);}
-    ans *= legendre(d,m);
-  }
-  return ans;
+      return 1;
 }
 
 /* END OF FILE */

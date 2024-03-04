@@ -108,23 +108,13 @@ void symblist::add(const symb& s, long start)
  }
 }
 
-/*
-long symblist::index(const symb& s, long start) const
-{
- long i,ans;
- for (i=start,ans=-1; ((i<num)&&(ans==-1)); i++) if (list[i]==s) ans=i;
- return ans;
-}
-*/
-
 long symblist::index(const symb& s, long start) const
 {
   //  cout<<"index of "<<s;
  symb ss = s.normalize();
- long c = ss.cee(), d=ss.dee(); 
- map<pair<long,long>,long>::const_iterator 
-   j = hashtable.find(pair<long,long>(c,d)); 
- if(j==hashtable.end()) 
+ long c = ss.cee(), d=ss.dee();
+ auto j = hashtable.find(pair<long,long>(c,d));
+ if(j==hashtable.end())
    return -1;
  // cout<<" is "<<j->second<<endl;
  return j->second;

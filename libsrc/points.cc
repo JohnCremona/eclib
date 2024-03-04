@@ -246,27 +246,13 @@ int Point::isvalid() const // P on its curve ?
   if((sign(X)==0)&&(sign(Y)==0)&&(sign(Z)==0)) return 0;   
 // Point at infinity is on a curve
   if((sign(X)==0)&&(sign(Z)==0)) return 1 ;
-  else{
-    // should calculate 
-    //                       y^2 +a1 x y + a3 y 
-    //  and
-    //                       x^3 + a2 x^2 + a4 x + a6
-    // where 
-    //          x = X/Z, y = Y/Z
-    // and verify equality.
-    //
-    // In homogeneous coordinates:
-    //
-    // Lhs = Y^2 Z + a1 XYZ + a3 YZ^2 = (YZ) *(Y + a1 X + a3 Z)
-    //
-    //
-    // Rhs = X^3 +a2 X^2 Z + a4 X Z^2 + a6 Z^3
-    //
-    bigint A1,A2,A3,A4,A6;    E->getai(A1,A2,A3,A4,A6);
-    const bigint& Lhs = Y*Z*(Y + A1*X + A3*Z) ;
-    const bigint& Rhs = A6*pow(Z,3) + X*(A4*Z*Z + X*(A2*Z + X)) ;
-    return Lhs == Rhs ;
-  }
+  else
+    {
+      bigint A1,A2,A3,A4,A6;    E->getai(A1,A2,A3,A4,A6);
+      const bigint& Lhs = Y*Z*(Y + A1*X + A3*Z) ;
+      const bigint& Rhs = A6*pow(Z,3) + X*(A4*Z*Z + X*(A2*Z + X)) ;
+      return Lhs == Rhs ;
+    }
 }
 
 // Find all points with a given rational x-coordinate:
@@ -387,17 +373,11 @@ vector<Point> two_torsion(Curvedata& E, int exact)
       b2=a2; b4=a4; b6=a6;
     }
   vector<bigint> xlist = Introotscubic(b2,b4,b6);
-  int n, n2tors = xlist.size();
-
-  // If there are 3 points of order 2, we order them for consistency:
-  if(n2tors==3)  sort(xlist.begin(),xlist.end());
-
   vector<Point> two_tors;
   if (!exact)
     two_tors.push_back(Point(E)) ;     // zero point
-  for(n=0; n<n2tors; n++)
+  for( const auto& ei : xlist)
     {
-      bigint ei = xlist[n];
       if(scaled)
 	two_tors.push_back(Point(E,2*ei,-a1*ei-4*a3,BIGINT(8)));
       else
@@ -452,9 +432,8 @@ vector<Point> three_torsion(Curvedata& E, int exact)
   vector<Point> three_tors;
   if (!exact)
     three_tors.push_back(Point(E)) ;     // zero point
-  for(unsigned int n=0; n<xlist.size(); n++)
+  for( auto& xi : xlist)
     {
-      xi = xlist[n];
       if(xi%3==0) // 3-torsion must be integral
 	{
 	  xi/=3;
@@ -499,15 +478,14 @@ vector<Point> m_torsion(Curvedata& E, long m, int exact)
 #endif
 
   // accumulate the points with each x-coorindate:
-  for(auto xi = xs.begin(); xi!=xs.end(); ++xi)
+  for( const auto& xi : xs)
     {
-      vector<Point> Ps = points_from_x(E, *xi);
+      vector<Point> Ps = points_from_x(E, xi);
 #ifdef DEBUG_TORSION
-      cout<<" x = "<<(*xi)<< " gives points "<<Ps<<" of order dividing "<<m<<": "<<Ps<<"\n";
+      cout<<" x = "<<xi<< " gives points "<<Ps<<" of order dividing "<<m<<": "<<Ps<<"\n";
 #endif
-      for (auto Pi=Ps.begin(); Pi!=Ps.end(); ++Pi)
+      for (auto P : Ps)
         {
-          Point P = *Pi;
           if ((!exact)||(order(P)==m))
             m_tors.push_back(P);
         }
@@ -592,18 +570,13 @@ vector<Point> torsion_points(Curvedata& E)
   // Now we have structure C2xCn for n = 4, 6, or 8
 
   // Find a point of order 2 not in the second factor and add it in
-  Point T1 = cycle[exponent/2], T2 = two_tors[0];
-  for( auto Ti=two_tors.begin()+1; Ti!=two_tors.end(); ++Ti)
-    {
-      T2 = *Ti;
-      if (T2 != T1)
-        break;
-    }
+  Point T1 = cycle[exponent/2];
+  auto Ti = std::find_if_not(two_tors.begin()+1, two_tors.end(), [T1]( const auto& T ){return T==T1;});
+  Point T2 = *Ti;
   vector<Point> all_torsion = cycle;
-  for( auto Pi=cycle.begin(); Pi!=cycle.end(); ++Pi)
-    {
-      all_torsion.push_back(T2+*Pi);
-    }
+  for( auto P : cycle)
+    all_torsion.push_back(T2+P);
+
   ::sort(all_torsion.begin(), all_torsion.end(), Point_cmp);
  return all_torsion;
 }
@@ -616,16 +589,14 @@ vector<Point> Point::division_points(int m) // list of Q s.t. n*Q=this
 #endif
   vector<Point> ans;
   vector<Point> Qs;
-  Point Q;
   if (is_torsion())
     {
       Qs = torsion_points(*E);
 #ifdef DEBUG_DIVISION_POINTS
       cout << "Testing all torsion points " << Qs << endl;
 #endif
-      for (vector<Point>::iterator Qi = Qs.begin(); Qi!=Qs.end(); Qi++)
+      for ( const auto& Q : Qs)
         {
-          Q = *Qi;
 #ifdef DEBUG_DIVISION_POINTS
           cout << "   Q = "<<Q<<", "<<m<<"*Q="<<m*Q<<endl;
 #endif
@@ -642,23 +613,25 @@ vector<Point> Point::division_points(int m) // list of Q s.t. n*Q=this
 #endif
       return ans;
     }
+
+  // Now in the non-torsion case
+
   ZPoly pol = division_points_X_pol(E->a1,E->a2,E->a3,E->a4,E->a6, m, X, Z);
 #ifdef DEBUG_DIVISION_POINTS
   cout << "division poly = " << pol << endl;
 #endif
-
   vector<bigrational> xQs = roots(pol);
 #ifdef DEBUG_DIVISION_POINTS
   cout << " with roots " << xQs << endl;
 #endif
-  for(vector<bigrational>::iterator xQi = xQs.begin(); xQi!=xQs.end(); xQi++)
+  for( const auto& xQ : xQs)
     {
-      Qs = points_from_x(*E, *xQi);
+      Qs = points_from_x(*E, xQ);
       // will have length 0 or 2 since non-torsion, and we only want
       // exctly one when there two so, must check which works
       if (Qs.size()>0)
         {
-          Q = Qs[0];
+          Point Q = Qs[0];
           if (m*Q == *this)
             {
               ans.push_back(Q);
@@ -738,11 +711,11 @@ int Point::has_good_reduction(const vector<bigint>& plist, bigint& p0, int check
         p0 = BIGINT(0);
         return 0;
       }
-  for(vector<bigint>::const_iterator pi = plist.begin(); pi!=plist.end(); ++pi)
+  for( const auto& p : plist)
     {
-      if(!has_good_reduction(*pi))
+      if(!has_good_reduction(p))
         {
-          p0 = *pi;
+          p0 = p;
           return 0;
         }
     }

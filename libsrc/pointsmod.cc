@@ -558,7 +558,7 @@ bigint my_bg_algorithm(const pointmodq& PP,
       
       // look in table to see if H2= i*P for a suitable i
 
-      map<bigint,long>::iterator HTi = HT.find(LiftGF(H2.get_x()));
+      auto HTi = HT.find(LiftGF(H2.get_x()));
       if(HTi!=HT.end())
 	{
 	  i = HTi->second;
@@ -580,12 +580,11 @@ bigint my_bg_algorithm(const pointmodq& PP,
 bigint my_order_point(const pointmodq& P, const bigint& mult)
 {
   vector<bigint> plist = pdivs(mult);
-  unsigned int i; bigint m, p, ans = BIGINT(1);
+  bigint ans = BIGINT(1);
   if(P.is_zero()) return ans;
-  for(i=0; i<plist.size(); i++)
+  for( const auto& p : plist)
     {
-      p = plist[i];
-      m = mult;  
+      bigint m = mult;
       divide_out(m,p);
       pointmodq Q = m*P;
       while(!Q.is_zero()) {Q=p*Q; ans*=p;}

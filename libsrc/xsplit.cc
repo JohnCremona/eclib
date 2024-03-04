@@ -552,7 +552,7 @@ void form_finder::find( ff_data &data ) {
 
   // The recursive part:
   vector<long> t_eigs = h->eigrange(depth);
-  vector<long>::const_iterator apvar = t_eigs.begin();
+  auto apvar = t_eigs.begin();
 
   stringstream t_eigs_ss;
   std::copy(t_eigs.begin(),t_eigs.end(),ostream_iterator<long>(t_eigs_ss," "));

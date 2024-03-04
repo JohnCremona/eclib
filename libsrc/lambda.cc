@@ -80,10 +80,8 @@ vector<bigfloat> lambda_bad(const CurveRed& C, long& nlambda, int verbose)
   bigint discr = getdiscr(C);
   vector<bigint> plist = getbad_primes(C);
   long i, j, nl, nnl;
-  vector<bigint>::const_iterator pr=plist.begin();
-  while(pr!=plist.end())
+  for (const auto& p : plist)
     {
-      bigint p = *pr++;
       if (ndiv(p*p,discr))
 	{
 	  if(verbose)
@@ -167,10 +165,9 @@ int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P)
 int make_point_from_x_and_ht(Curvedata* CD, vector<bigfloat> lambdas, const bigfloat& xp, const bigfloat& ht, Point* P)
 {
   bigfloat rh = realheight(xp,CD);
-  vector<bigfloat>::const_iterator lam = lambdas.begin();
-  while(lam!=lambdas.end())
+  for (const auto& lam : lambdas)
     {
-      bigfloat logd = (ht-rh-(*lam++))/2;
+      bigfloat logd = (ht-rh-(lam))/2;
       bigfloat approxd = exp(logd);
       bigint xa, xd2, xd = Iround(approxd);
       if(xd>0) 
