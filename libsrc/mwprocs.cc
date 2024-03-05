@@ -79,7 +79,7 @@ bigfloat min_real(vector<bigcomplex> array)
 //cout<<"minr finally " << minr << "\n";
   return minr;
 }
-  
+
 int order_real_roots(vector<double>& bnd, vector<bigcomplex> roots);
 //checks (and returns) how many roots are actually real, and puts those in 
 //bnd, in increasing order, by calling set_the_bound
@@ -89,76 +89,70 @@ int set_the_bounds(vector<double>& bnd, bigfloat x0, bigfloat x1, bigfloat x2);
 //is on [x0,infty].  The function returns 3 in the first case, 1 in the second.
 //If x0 overflows, it returns 0.  A warning is printed out.
 
-#define matentry(m,i,j) *((m)+((i)*MAXRANK)+(j))
-
-bigfloat det(bigfloat *m, long m_size);
+bigfloat det(vector<vector<bigfloat>>& m, long m_size);
    // fwd declaration: det and detminor jointly recursive
 
-bigfloat* get_minor(bigfloat *m, long m_size, long i0, long j0)
+vector<vector<bigfloat>> get_minor(vector<vector<bigfloat>>& m, long m_size, long i0, long j0)
 {
   long i, j, ii, jj;
-  bigfloat *minor = new bigfloat[MAXRANK*MAXRANK];
+  vector<vector<bigfloat>> minor(MAXRANK, vector<bigfloat>(MAXRANK));
   for (i=0; i<m_size-1; i++)
-    { 
+    {
       ii=i; if(i>=i0)ii++;
       for (j=0; j<m_size-1; j++)
       {
 	jj=j; if(j>=j0) jj++;
-	matentry(minor,i,j) = matentry(m,ii,jj);
+	minor[i][j] = m[ii][jj];
       }
     }
   return minor;
 }
 
 
-bigfloat det_minor(bigfloat *m, long m_size, long i0, long j0)
+bigfloat det_minor(vector<vector<bigfloat>>& m, long m_size, long i0, long j0)
 {
-  bigfloat *minor = get_minor(m,m_size,i0,j0);
-  bigfloat det_return = det(minor, m_size-1);
-  delete [] minor;
-  return det_return;
+  vector<vector<bigfloat>> minor = get_minor(m,m_size,i0,j0);
+  return det(minor, m_size-1);
 }
 
-bigfloat det(bigfloat *m, long m_size)
+bigfloat det(vector<vector<bigfloat>>& m, long m_size)
 {
+  bigfloat one = to_bigfloat(1);
   switch (m_size) {
-  case 0: 
-    return to_bigfloat(1); break;  
+  case 0:
+    return one; break;
   case 1:
-    return matentry(m,0,0); break;
+    return m[0][0]; break;
   case 2:
-    return matentry(m,0,0)*matentry(m,1,1) - matentry(m,1,0)*matentry(m,0,1);
+    return m[0][0]*m[1][1] - m[0][1]*m[1][0];
     break;
   default:
-    long i,j,i0; 
-    bigfloat ans=to_bigfloat(1), pivot=matentry(m,0,0), piv, temp, 
-      eps=to_bigfloat(1.0e-6);
-    for(i0=0; i0<m_size && abs(pivot)<eps; i0++) pivot=matentry(m,i0,0);
+    int negate = 0;
+    long i,j,i0;
+    bigfloat pivot=m[0][0], piv, temp, eps=to_bigfloat(1.0e-6);
+    for(i0=0; i0<m_size && abs(pivot)<eps; i0++) pivot=m[i0][0];
     if(i0==m_size) return to_bigfloat(0); // first column all 0
     if(i0>0)  // swap rows 0, i0:
       {
-	ans=to_bigfloat(-1);
+	negate = 1;
 	for(j=0; j<m_size; j++)
 	  {
-	    temp=matentry(m,i0,j); 
-	    matentry(m,i0,j)=matentry(m,0,j);
-	    matentry(m,0,j)=temp;
+	    temp=m[i0][j]; m[i0][j]=m[0][j]; m[0][j]=temp;
 	  }
       }
     // eliminate first column
-    pivot=matentry(m,0,0);
+    pivot=m[0][0];
     for(i=1; i<m_size; i++)
       {
-	piv=matentry(m,i,0)/pivot;
+	piv=m[i][0]/pivot;
 	for(j=0; j<m_size; j++)
-	  matentry(m,i,j) = matentry(m,i,j)-matentry(m,0,j)*piv;
+	  m[i][j] -= m[0][j]*piv;
       }
-    return ans*pivot*det_minor(m,m_size,0,0);
-    break;
+    if (negate) pivot = -pivot;
+    return pivot*det_minor(m,m_size,0,0);
   }
-  return to_bigfloat(1);  // shouldn't get here in fact
+  return one;  // shouldn't get here
 }
-  
 
 //#define DEBUG 1
 
@@ -191,12 +185,7 @@ mw::mw(Curvedata *EE, int verb, int pp, int maxr)
 #ifdef DEBUG
   verbose=1;
 #endif
-  height_pairs = new bigfloat[MAXRANK*MAXRANK];
-}
-
-mw::~mw() 
-{
-   delete [] height_pairs;
+  height_pairs.resize(MAXRANK, vector<bigfloat>(MAXRANK));
 }
 
 // NB We cannot use the default parameter mechanism as this must fit
@@ -332,7 +321,7 @@ int mw::process(const Point& PP, int sat)
   if (rank==0)  // first non-torsion point
     {
       reg = height(P);
-      mat_entry(0,0) = reg;  // ie height_pairs[0][0] = reg
+      height_pairs[0][0] = reg;
       basis.push_back(P); rank=1;
       if (verbose) cout<<"  is generator number 1\n";
 #ifdef DEBUG

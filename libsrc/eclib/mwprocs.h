@@ -40,7 +40,7 @@ private:
   Curvedata *E;
   vector<Point> basis;
   int rank, maxrank;
-  bigfloat *height_pairs;
+  vector<vector<bigfloat>> height_pairs;
   bigfloat reg;
   int verbose, process_points;
   bigfloat& mat_entry(int i, int j);
@@ -49,7 +49,6 @@ private:
   saturator satsieve;
 public:
   mw(Curvedata*, int verb=0, int pp=1, int maxr=999);
-  ~mw();
 
  // processing of new points, with saturation at primes up to sat 
  // (default MAXSATPRIME,  none if sat==0)
@@ -70,7 +69,7 @@ public:
 
 inline bigfloat& mw::mat_entry(int i, int j)
 {
-  return *(height_pairs + (i*MAXRANK) + j);
+  return height_pairs[i][j];
 }
 
 class sieve {
