@@ -60,15 +60,14 @@ cout << "Using A.output_pretty(cout): \n";  a.output_pretty(cout);
  cout << "Enter any number "; cin >> i;
 
 {
-cout << "Creating an array of 3 matrices\n";
-mat* matlist = new mat[3];
-matlist[0] = a;
-matlist[1] = 2*a;
-matlist[2] = 3*a;
-cout << " A=" << matlist[0];
-cout << "2A=" << matlist[1];
-cout << "3A=" << matlist[2];
-delete[] matlist;
+  cout << "Creating an array of 3 matrices\n";
+ vector<mat> matlist(3);
+ matlist[0] = a;
+ matlist[1] = 2*a;
+ matlist[2] = 3*a;
+ cout << " A=" << matlist[0];
+ cout << "2A=" << matlist[1];
+ cout << "3A=" << matlist[2];
 }
 
 {

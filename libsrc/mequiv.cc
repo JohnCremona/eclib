@@ -24,40 +24,40 @@
 #include <eclib/compproc.h> // for is_small, is_real
 #include <eclib/mequiv.h>
 
-int new_equiv(quartic* q1, quartic* q2, int info)
+int new_equiv( quartic& q1, quartic& q2, int info)
 {
   if(info)
     {
-      cout<<"Checking equivalence of " << *q1 << " and " << *q2 << "\n";
+      cout<<"Checking equivalence of " << q1 << " and " << q2 << "\n";
     }
-  bigint& ii=q1->ii;
-  bigint& jj=q1->jj;
-  if (!(ii==q2->ii && jj==q2->jj && q1->disc==q2->disc && q1->type== q2->type))
+  const bigint& ii=q1.ii;
+  const bigint& jj=q1.jj;
+  if (!(ii==q2.ii && jj==q2.jj && q1.disc==q2.disc && q1.type== q2.type))
     { 
       if (info) 
 	{
 	  cout << "equiv failed on first test!\n";
-	  cout << "First  has I="<<q1->ii<<", J="<<q1->jj<<",";
-	  cout << " disc="<<q1->disc<<", type="<<q1->type<<endl;
-	  cout << "Second has I="<<q2->ii<<", J="<<q2->jj<<",";
-	  cout << " disc="<<q2->disc<<", type="<<q2->type<<endl;
+	  cout << "First  has I="<<q1.ii<<", J="<<q1.jj<<",";
+	  cout << " disc="<<q1.disc<<", type="<<q1.type<<endl;
+	  cout << "Second has I="<<q2.ii<<", J="<<q2.jj<<",";
+	  cout << " disc="<<q2.disc<<", type="<<q2.type<<endl;
 	}
       return 0;
     }
 
-  if(q1->equiv_code!=q2->equiv_code)
+  if(q1.equiv_code!=q2.equiv_code)
     {
       if(info) cout << "--equiv_codes not equal\n";
       return 0;
     }
 
-  q1->make_zpol();
-  q2->make_zpol();
-  bigint& p1=q1->p;      bigint& p2=q2->p;
-  bigint& r1=q1->r;      bigint& r2=q2->r;
-  bigint& p1sq=q1->psq;  bigint& p2sq=q2->psq;
-  bigint& a1=q1->a;      bigint& a2=q2->a;
-  bigint& a1sq=q1->asq;  bigint& a2sq=q2->asq;
+  q1.make_zpol();
+  q2.make_zpol();
+  bigint& p1=q1.p;      bigint& p2=q2.p;
+  bigint& r1=q1.r;      bigint& r2=q2.r;
+  bigint& p1sq=q1.psq;  bigint& p2sq=q2.psq;
+  bigint& a1=q1.a;      bigint& a2=q2.a;
+  bigint& a1sq=q1.asq;  bigint& a2sq=q2.asq;
   const bigint& a1a2=a1*a2;
   const bigint& p1p2=p1*p2;
   const bigint& p = (32*a1a2*ii + p1p2)/3;

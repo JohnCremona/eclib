@@ -42,17 +42,16 @@ int main(void)
       cout << "A = " << a;
     }
 
-{
-cout << "Creating an array of 3 matrices\n";
-mat_m* matlist = new mat_m[3];
-matlist[0] = a;
-matlist[1] = BIGINT(2)*a;
-matlist[2] = BIGINT(3)*a;
-cout << " A=" << matlist[0];
-cout << "2A=" << matlist[1];
-cout << "3A=" << matlist[2];
-delete[] matlist;
-}
+    {
+      cout << "Creating an array of 3 matrices\n";
+      vector<mat_m> matlist(3);
+      matlist[0] = a;
+      matlist[1] = BIGINT(2)*a;
+      matlist[2] = BIGINT(3)*a;
+      cout << " A=" << matlist[0];
+      cout << "2A=" << matlist[1];
+      cout << "3A=" << matlist[2];
+    }
 
 {
 for (i=1; i<=r; i++)

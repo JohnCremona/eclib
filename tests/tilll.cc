@@ -29,7 +29,7 @@ int main()
 {
   int i, j, k, n;
   cout<<"Enter size n: "; cin>>n;
-  vec_m* b = new vec_m[n+1];
+  vector<vec_m> b(n+1);
   b[0]=vec_m(n);
   for(i=1; i<=n; i++)
     {
@@ -76,6 +76,4 @@ int main()
       if(better)
 	cout<<"-- shorter than b[1]!"<<endl;
     }
-
-  delete[] b;
 }

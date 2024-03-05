@@ -95,7 +95,7 @@ public:
         int trivial() const;     // Checks for a rational root
 	long nrootsmod(long p) const;
         friend ostream& operator<<(ostream& s, const quartic& q);
-	friend int new_equiv(quartic* q1, quartic* q2, int info);
+	friend int new_equiv( quartic& q1, quartic& q2, int info);
 	friend void qc(quartic& g,
 		       const bigint& x0,  const bigint& y0,  const bigint& z0,
 		       Curvedata * E, Curvedata* IJ_curve, 

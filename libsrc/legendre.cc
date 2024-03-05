@@ -744,20 +744,19 @@ void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c,
   beta  = (u*adash*b*k3) % bc;
   gamma = (v*adash*c*k2) % bc;
 
-  vec_m * vecs = new vec_m[4];
-  for(i=0; i<=3; i++) vecs[i] = vec_m(3);
-  vecs[0][1] = abs(a); vecs[0][2] = abs(b); vecs[0][3] = abs(c);
-  vecs[1][1] = bc;               vecs[1][2] = 0;      vecs[1][3] = 0; 
-  vecs[2][1] = a*beta;           vecs[2][2] = a;      vecs[2][3] = 0; 
-  vecs[3][1] = alpha*beta+gamma; vecs[3][2] = alpha;  vecs[3][3] = 1; 
-  
+  vector<vec_m> vecs(4, vec_m(3));
+  vecs[0][1] = abs(a);           vecs[0][2] = abs(b); vecs[0][3] = abs(c);
+  vecs[1][1] = bc;               vecs[1][2] = 0;      vecs[1][3] = 0;
+  vecs[2][1] = a*beta;           vecs[2][2] = a;      vecs[2][3] = 0;
+  vecs[3][1] = alpha*beta+gamma; vecs[3][2] = alpha;  vecs[3][3] = 1;
+
 #ifdef DEBUG_LLL
   cout<<"Basis for lattice L:\n";
   cout<<vecs[1]<<"\n";
   cout<<vecs[2]<<"\n";
   cout<<vecs[3]<<"\n";
 #endif // DEBUG_LLL
-  
+
   // Now cut down to the sublattice of index 2:
   int oddn1 = odd(bc);
   int oddn2 = odd((sqr(a*beta)+a*b)/bc);
@@ -780,8 +779,7 @@ void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c,
       vecs[3] *= two;
     }
   else cout<<"Problem in legendre_via_lll: all vectors are even!\n";
-  
-  
+
 #ifdef DEBUG_LLL
   cout<<"Basis for lattice L0 before reduction:\n";
   cout<<vecs[1]<<"\n";
@@ -795,8 +793,8 @@ void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c,
   cout<<vecs[2]<<"\n";
   cout<<vecs[3]<<"\n";
 #endif // DEBUG_LLL
-  
-  vec_m xyz, b1=vecs[1], b2=vecs[2], b3=vecs[3]; 
+
+  vec_m xyz, b1=vecs[1], b2=vecs[2], b3=vecs[3];
   for(i=0; i<13; i++)
     {
       switch(i) {
@@ -816,9 +814,9 @@ void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c,
       }
       x=xyz[1]; y=xyz[2]; z=xyz[3];
       bigint fxyz = a*sqr(x)+b*sqr(y)+c*sqr(z);
-      if(fxyz==0) 
+      if(fxyz==0)
 	{
-	  if(i) 
+	  if(i)
 	    {
 	      cout<<"Message from legendre_via_lll: \nsolution does "
 		  <<"not come from first vector but from case "
@@ -827,11 +825,9 @@ void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c,
 	      cout<<b1<<"\n"<<b2<<"\n"<<b3<<"\n";
 	      cout<<"weights: "<<vecs[0]<<endl;
 	    }
-	  delete [] vecs;
 	  return;
-	} 
+	}
     }
-  delete [] vecs;
   cout<<"Problem in legendre_via_lll: no vector gives a solution!"<<endl;
   x=0; y=0; z=0;
 }

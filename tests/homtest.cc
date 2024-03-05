@@ -37,8 +37,7 @@ int main(void)
  int plus=1;
  int verbose=0;
  int cuspidal=0;
- long *dims = new long[3];
- long *cdims = new long[3];
+ vector<long> dims(3), cdims(3);
  // cout << "Verbose? "; cin >> verbose;
  // cout << "Plus space, minus space or full space (+1,-1,0)? "; cin >> plus;
  int s,limit; 
@@ -98,6 +97,4 @@ int main(void)
   //  show_time();
 }       // end of if(n)
 }       // end of while()
-  delete[] dims;
-  delete[] cdims;
 }       // end of main()

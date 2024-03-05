@@ -47,7 +47,7 @@ double sparsity(const mat& m);
 vector<long> eigrange(long p)
 {
   long aplim=3, four_p=p<<2;
-  while (aplim*aplim<=four_p) aplim++; 
+  while (aplim*aplim<=four_p) aplim++;
   aplim--;
   vector<long> ans(1+2*aplim);
   iota(ans.begin(),ans.end(),-aplim);
@@ -90,7 +90,7 @@ int main(void)
    {
    mat_m id = idmat(genus);
    mat_m id2 = den2*id;
-   mat_m* wqlist = new mat_m[nq];
+   vector<mat_m> wqlist(nq);
    cout << "Computing conjmat...  " << flush;
    smat conjmat = hplus.s_conj(1);
    cout<<" done."<<endl;
@@ -149,7 +149,7 @@ int main(void)
 
    int np=5,ip=0; 
    cout<<"How many T_p? "; cin>>np;
-   mat_m* tplist = new mat_m[np];
+   vector<mat_m> tplist(np);
    for (primevar pr(np+nq); pr.ok()&&ip<np; pr++, ip++)
      {while (n%pr==0) pr++;
       int p=pr;
@@ -261,13 +261,13 @@ int main(void)
 	  cout<<"done, denom(ker)="<<denker; show_time(cerr); cout<<endl;
 	  if(nulty<21) 
 	    cout<<"Restriction of Tp to relevant subspace = \n" << MTR << endl;
-	  
+
 	  mat_ZZ Msub;
 	  Msub.SetDims(nulty,nulty);
 	  for(i=1; i<=nulty; i++) 
 	    for(j=1; j<=nulty; j++) 
 	      Msub(i,j)=MTR(i,j);
-	  
+
 	  ZZX cptp; ZZ cont;
 	  cout<<"computing char poly..."<<flush;
 	  start_time();
@@ -370,7 +370,6 @@ int main(void)
 	}
 #endif //CHECK_COMMUTE
      } // loop on p
-   delete[] wqlist; delete[] tplist;
    }      // end of if(genus>0)
  }       // end of if(n)
      }       // end of while(n>1) or while(n<limit)

@@ -125,9 +125,9 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
   long firsti, i, oldnumber=0, thisnumber, nfl; 
   char ab;
   int trivial=0, newone=1, gls=0, els=0;
-  quartic * qlist, *thisq;;
+  quartic *qlist, *thisq;;
   bigint x,y,z, badp; 	  Point Ptemp;
-  int btype = 0;    
+  int btype = 0;
   int pivtype=-1; // set to 0 for \infty, 1 for odd prime, 2 for 2
   if (type==1) // then we have an egg point, i.e. \infty is pivotal
     {btype=1; pivtype=0;}
@@ -160,7 +160,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
   qlist[thisnumber].assign(a,b,c,d,e,croots,type,ii,jj,disc);
   thisq=qlist+thisnumber;
 
-  if (verbose) cout << (*thisq) << "\t";
+  if (verbose) cout << *thisq << "\t";
   if (verbose>1) 
     {
       cout << "(ipivot = "<<ipivot<<", type = "<<ab<<") \t";  
@@ -190,9 +190,9 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
       if(traceequiv) 
 	cout << "\nTesting equiv with number " << ab<< i+1 << endl;
 #ifdef NEW_EQUIV
-      newone = ! new_equiv(thisq,qlist+i,traceequiv);
+      newone = ! new_equiv(*thisq,qlist[i],traceequiv);
 #else
-      newone = !     equiv(thisq,qlist+i,dlist,traceequiv);
+      newone = !     equiv(*thisq,qlist[i],dlist,traceequiv);
 #endif
       if (!newone) oldnumber=i+1;
     }
@@ -227,7 +227,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 	}
       else
 	{
-// 	  cout<<"\nChecking "<<(*thisq)<<" for local solubility at "<<plist<<endl;
+// 	  cout<<"\nChecking "<<*thisq<<" for local solubility at "<<plist<<endl;
 	  if (locallysoluble(*thisq,plist,badp))
 	    { 
 	      els=1;
