@@ -33,9 +33,8 @@ private:
   long sha_rank, sha2;
   int traceequiv, posdisc, disc_is_square, npairs, extra2, threediv, type;
   quartic *qlista, *qlistb;
-  int * qlistbflag;
-  bigcomplex* croots;
-  bigcomplex* cphi;
+  vector<int> qlistbflag;
+  vector<bigcomplex> croots, cphi;
   vector<Point> pointlist1, pointlist2;
   long npoints1, npoints2; 
   int have_eggpoint, have_large_quartics;
@@ -54,7 +53,7 @@ private:
   int ipivot, pivflag;  
   long * auxs; long ** phimod; int * aux_flags; int * aux_types; 
 
-  int**squares;  
+  int **squares;  
   int ***flags;
   int **flaga;  int *flagah;
   long *amod, *astepmod, *ascalemod, *hmod, *hstepmod, *hscalemod;
@@ -63,8 +62,8 @@ private:
   void aux_init();  // define  auxiliary moduli and squares
   void flag_init(); // set up flag array
   void clear_sieve();  // free memory related to sieve;
-  long* qeps(const quartic&, int x2); //computes eps of quartic
-  void show_eps_vec(long * vec);
+  vector<long> qeps(const quartic&, int x2); //computes eps of quartic
+  void show_eps_vec(const vector<long>& vec);
 
   // process latest quartic found
   void addquartic(const bigint& a, const bigint& b, const bigint& c, 

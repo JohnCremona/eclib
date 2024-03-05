@@ -79,9 +79,9 @@ int xsqrt(bigfloat a, bigfloat &b)
 }
 #endif
 
-long * rank1::qeps(const quartic& q, int x2)
+vector<long> rank1::qeps(const quartic& q, int x2)
 {
-  long* vec = new long[num_aux];  // position 0 is not used
+  vector<long> vec(num_aux);  // position 0 is not used
   long i; vec[0]=0;
   for(i=1; i<num_aux; i++)
     {
@@ -93,7 +93,7 @@ long * rank1::qeps(const quartic& q, int x2)
   return vec;
 }
 
-void rank1::show_eps_vec(long * vec)
+void rank1::show_eps_vec(const vector<long>& vec)
 {
   long i;
   cout<<"(";
@@ -164,10 +164,8 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
   if (verbose>1) 
     {
       cout << "(ipivot = "<<ipivot<<", type = "<<ab<<") \t";  
-      long * vec = qeps(*thisq,extra2);
-      show_eps_vec(vec);
+      show_eps_vec(qeps(*thisq,extra2));
       cout<<"\t";
-      delete[] vec;
     }
 
   // Check triviality
@@ -346,7 +344,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 		      long aa = posmod(qlist[i].geta(),auxpiv);	      
 		      long H = posmod(qlist[i].getH(),auxpiv);
 		      if(extra2) if(i>=nfl) H=posmod(hscale*H,auxpiv);
-		      
+
 		      // Check if it would now be sieved out:
 		      long fl = flags[ipivot][aa][H];
 		      if(verbose>1) 
@@ -541,11 +539,9 @@ void rank1::getquartics()
   aux_init();
   extra2=0;
 
-  //  bigcomplex c1(0), c2(-3*xii), c3(xjj);
-  //  cphi = solvecubic( c1, c2, c3);
   bigcomplex w =  bigcomplex(to_bigfloat(-1), sqrt(to_bigfloat(3)))/to_bigfloat(2);
   bigfloat one_third = to_bigfloat(1)/to_bigfloat(3);
-  cphi = new bigcomplex[3];
+  cphi.resize(3);
   if(is_zero(ii))
     {
       if(xjj>0) 
@@ -589,7 +585,6 @@ void rank1::getquartics()
   getquartics1();
   if (!success)
     {
-      delete[] cphi;
       return;
     }
   if (npairs==2)
@@ -607,11 +602,9 @@ void rank1::getquartics()
       getquartics1();
       if (!success)
         {
-          delete[] cphi;
           return;
         }
     }
-  delete[] cphi;
   if(verbose>1) 
     {
       cout << ah_count      << "\t (a,b,c) triples in search region\n";
@@ -1426,8 +1419,8 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   
   qlista = new quartic[maxnquartics];
   qlistb = new quartic[maxnquartics];
-  qlistbflag = new int[maxnquartics];
-  croots = new bigcomplex[4];
+  qlistbflag.resize(maxnquartics);
+  croots.resize(4);
 
   the_curve->getci(c4,c6);
   d1728 = c4*c4*c4-c6*c6;
@@ -1474,8 +1467,6 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   {
     delete [] qlista;
     delete [] qlistb;
-    delete [] croots;
-    delete [] qlistbflag;
     return;
   }
 
@@ -1495,8 +1486,6 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
     }
   delete [] qlista;
   delete [] qlistb;
-  delete [] croots;
-  delete [] qlistbflag;
   
   if(n3>0){
     if(n2>1){

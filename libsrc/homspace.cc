@@ -68,59 +68,14 @@ homspace::homspace(long n, int hp, int hcusp, int verbose) :symbdata(n)
   init_time();
    plusflag=hp;
    cuspidal=hcusp;
-   long i,j,k;
-   coordindex = new int[nsymb];  
-   if (!coordindex)
-     {
-       out_of_memory_error("coordindex");
-       return;
-     }
-   int* check = new int[nsymb];  
-   if (!check)
-     {
-       out_of_memory_error("check");
-       return;
-     }
-   i=nsymb; while (i--) check[i]=0;
-   long ngens=0;
-   int* gens = new int[nsymb+1];    // N.B. Start of gens array is at 1 not 0
-   if (!gens)
-     {
-       out_of_memory_error("gens");
-       return;
-     }
-   long* rel = new long[4];
-   if (!rel)
-     {
-       out_of_memory_error("rel");
-       return;
-     }
+   long i,j,k, ngens=0;
+   coordindex.resize(nsymb);
+   vector<int> check(nsymb, 0);
+   vector<int> gens(nsymb+1);    // N.B. Start of gens array is at 1 not 0
+   vector<long> rel(4);
 
 // 2-term relations:
 
-// if (plusflag==1)
-//   for (j=0; j<nsymb; j++)
-//   {if (check[j]==0)
-//    { rel[0]=j;
-//      rel[1]=rsof(j);
-//      rel[2]=sof(j);
-//      rel[3]=sof(rel[1]);
-//      if (verbose>1)
-//        cout << "Relation: " << rel[0]<<" "<<rel[1]<<" "<<rel[2]<<" "<<rel[3]<<endl;
-//      for (k=0; k<4; k++) check[rel[k]]=1;
-//      if ( (j==rel[2]) || (j==rel[3]) )
-//          for (k=0; k<4; k++) coordindex[rel[k]]=0;
-//      else
-//      {   ngens++;
-//          gens[ngens] = j;
-//          if (verbose>1)  cout << "gens["<<ngens<<"]="<<j<<endl;
-//          coordindex[rel[0]] =  ngens;
-//          coordindex[rel[1]] =  ngens;
-//          coordindex[rel[2]] = -ngens;
-//          coordindex[rel[3]] = -ngens;
-//      }
-//      }
-//    }
 if (plusflag!=0)
   for (j=0; j<nsymb; j++)
   {if (check[j]==0)
@@ -184,9 +139,7 @@ if (verbose>1)
  cout << "gens = ";
  for (i=1; i<=ngens; i++) cout << gens[i] << " ";
  cout << "\n";
- cout << "coordindex = ";
- for (i=0; i<nsymb; i++) cout << coordindex[i] << " ";
- cout << "\n";
+ cout << "coordindex = " << coordindex << "\n";
 }}
 //
 // 3-term relations
@@ -212,8 +165,8 @@ if (verbose>1)
    int numrel = 0;
    long ij; int fix;
 
-   for (i=0; i<nsymb; i++) check[i]=0;
-   for (k=0; k<nsymb; k++) 
+   std::fill(check.begin(), check.end(), 0);
+   for (k=0; k<nsymb; k++)
      {
      if (check[k]==0)
    {
@@ -345,22 +298,13 @@ if (verbose>1)
 	   cout << "pivots = " << pivs <<endl;
 	 }
      }
-   freegens = new int[rk]; 
-   if (!freegens)
-     {
-       out_of_memory_error("freegens");
-       return;
-     }
+   freegens.resize(rk);
    if (rk>0)
    {
-   for (i=0; i<rk; i++) freegens[i] = gens[pivs[i+1]];
-   if (verbose>1)
-    { cout << "freegens: ";
-      for (i=0; i<rk; i++) cout << freegens[i] << " ";
-      cout << "\n";
-    }
+     for (i=0; i<rk; i++) freegens[i] = gens[pivs[i+1]];
+     if (verbose>1)
+       cout << "freegens: " << freegens << "\n";
    }
-  delete[] check; delete[] gens; delete[] rel; 
   pivs.init();  npivs.init();
    }
 
@@ -451,28 +395,18 @@ if (verbose>1)
    //   denom2 = 1;
    denom3 = denom1*denom2;
 
-   freemods = new modsym[rk]; 
-   if (!freemods)
-     {
-       out_of_memory_error("freemods");
-       return;
-     }
-   needed   = new int[rk];    
-   if (!needed)
-     {
-       out_of_memory_error("needed");
-       return;
-     }
+   freemods.resize(rk);
+   needed.resize(rk);
 
    if (dimension>0)
    {
         if (verbose>1)  cout << "Freemods:\n";
         for (i=0; i<rk; i++)
-	  {  
+	  {
 	    freemods[i] = modsym(symbol(freegens[i])) ;
-	    needed[i]   =  (cuspidal? ! trivial(kern.bas().row(i+1).as_vec()) 
+	    needed[i]   =  (cuspidal? ! trivial(kern.bas().row(i+1).as_vec())
 			              : 1);
-	    if (verbose>1) 
+	    if (verbose>1)
 	      {
 		cout << i << ": " << freemods[i];
 		if (!needed[i]) cout << " (not needed)";
@@ -489,15 +423,7 @@ if (verbose>1)
    if (verbose) cout << "Finished constructing homspace." << endl;
 }
 
-homspace::~homspace()
-{ 
-  if (coordindex) delete[] coordindex; 
-  if (needed) delete[] needed; 
-  if (freegens) delete[] freegens; 
-  if (freemods) delete[] freemods;  
-}
-
-  // Extend a dual vector of length rk to one of length nsymb:
+// Extend a dual vector of length rk to one of length nsymb:
 vec homspace::extend_coords(const vec& v)
 {
   //  cout<<"Extending vector "<<v<<endl;

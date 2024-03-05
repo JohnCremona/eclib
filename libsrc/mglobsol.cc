@@ -249,7 +249,7 @@ long quartic_sieve::search(double h_lim, long maxnpts, int posxonly)
     cout << "quartic_sieve::search: trying u,w up to "<<ulim<<endl;
 
   int type = g->gettype();
-  bigcomplex * roots = g->getroots();
+  vector<bigcomplex> roots = g->getroots();
   bigfloat x1, x2, x3, x4,t, zero=to_bigfloat(0);
   switch (type) {
   case 0:  default: // no roots info known
@@ -318,7 +318,7 @@ long quartic_sieve::stoll_search(double h_lim, int posxonly)
   // Find and set search intervals
 
   int type = g->gettype(), lb_flag;
-  bigcomplex * roots = g->getroots();
+  vector<bigcomplex> roots = g->getroots();
   vector<double> real_roots(4); int nrr=0;
   bigfloat x1, x2, x3, x4, t;
   switch (type) {
@@ -421,7 +421,6 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
     {
       if(!odd(wstart)) wstart++;
     }
-  int* wflag = new int[10000];
 
   int odd_u_only=0;
   if(nwprimes>0) if(uprimes[0]==2) odd_u_only=1;
@@ -470,6 +469,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
       int use_gcd_table = use_w_sieve&&(w<10000)&&((last_u-first_u)>(w/2));
       long umodw=0; 
       int w_vars_set = 0;
+      vector<int> wflag(w);
 
       if(use_w_sieve)
 	{
@@ -576,7 +576,6 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 	} // ends u-loop
     } // ends w- loop
 
-  delete[] wflag;
   return npoints;
 
 } // end of quartic_sieve::search_range()

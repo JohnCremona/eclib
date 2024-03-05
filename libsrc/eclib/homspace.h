@@ -44,11 +44,11 @@ class matop;  // fully defined below
 class homspace :public symbdata {
   //private:
 public:
-  int *coordindex,*needed,*freegens;
+  vector<int> coordindex, needed, freegens;
   long rk,denom1,denom2;
   ssubspace kern; // kernel(delta) basis
   smat tkernbas; // transpose of kernel(delta) basis
-  modsym *freemods;
+  vector<modsym> freemods;
 public:
   vector<svec> coord_vecs;
   mat projcoord; // # cols = # newforms after they are found
@@ -63,7 +63,6 @@ public:
 	               //	     1 : basic short output
 	               //            2 : lots of detail)
 	   );
-  ~homspace();
   long h1cuspdim() const {return dim(kern);}
   long h1dim() const {return dimension;}  // No confusion with subspace::dim
   long h1denom() const {return denom1;}

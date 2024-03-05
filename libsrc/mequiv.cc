@@ -142,8 +142,8 @@ bigcomplex crossratio(const bigcomplex& x1,const bigcomplex& x2,const bigcomplex
 
 int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>& dlist, int info)
 {
-   bigcomplex *x = q1->getroots();
-   bigcomplex *y = q2->getroots();
+   vector<bigcomplex> x = q1->getroots();
+   vector<bigcomplex> y = q2->getroots();
    bigcomplex x1=x[0], x2=x[1], x3=x[2], x4=x[3];
    bigcomplex y1=y[allperms[i][0]],y2=y[allperms[i][1]],
            y3=y[allperms[i][2]],y4=y[allperms[i][3]];
