@@ -41,22 +41,19 @@ private:
   int verbose, easy, use_stoll;
   long ulim;
   int num_aux;
-  long* auxs;
-  int** xgood_mod_aux;
-  int** squares;
-  long* umod;
-  long nwprimes; long* wprimes;  long* uprimes;
+  vector<long> auxs, umod, wprimes, uprimes;
+  vector<vector<int>> xgood_mod_aux, squares;
+  long nwprimes;
   long npoints, maxnpoints;
   int process(const bigint& x, const bigint& y, const bigint& z)
-  {pu=x; pv=y; pw=z; npoints++; 
-  //cout<<"[x,y,z]=["<<x<<","<<y<<","<<z<<"]\n"; 
+  {pu=x; pv=y; pw=z; npoints++;
+  //cout<<"[x,y,z]=["<<x<<","<<y<<","<<z<<"]\n";
   return (npoints>=maxnpoints);
   }
  // (x,y,z) as returned by ms's sieve; the point is (x/z,y/z^2)
 public:
   quartic_sieve(void) {;}
   quartic_sieve(quartic * gg, int moduli_option=2, int verb=0); 
-  ~quartic_sieve();
   long search(double h_lim, long maxnpts=1, int posxonly=0);
   long stoll_search(double h_lim, int posxonly=0);
   long search_range(int lower, bigfloat lower_bound, 

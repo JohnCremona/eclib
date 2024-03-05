@@ -104,7 +104,7 @@ void eiperiods(bigcomplex e1, bigcomplex e2, bigcomplex e3,
 
 //#define DEBUG_CUBIC
 
-bigcomplex* solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bigint& c3) 
+vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bigint& c3) 
 //Returns an array of 3 complex roots.
 {
 #ifdef DEBUG_CUBIC
@@ -120,7 +120,7 @@ bigcomplex* solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bi
   bigint p3=  3*c2 - c1*c1;
   bigint q = c1*(2*sqr(c1)-9*c2)+27*c3;
   bigfloat rq=I2bigfloat(q), rp3=I2bigfloat(p3);
-  bigcomplex *roots = new bigcomplex[3];
+  vector<bigcomplex> roots(3);
   long i;
  
 #ifdef DEBUG_CUBIC
@@ -233,7 +233,7 @@ void getei(const Curvedata& E, bigcomplex& e1, bigcomplex& e2, bigcomplex& e3)
 #ifdef DEBUG
   cout<<"Solving monic cubic with coeffs "<<b2<<","<<(8*b4)<<","<<16*b6<<endl;
 #endif
-  bigcomplex* ei = solve_nonsingular_cubic(b2,8*b4,16*b6);
+  vector<bigcomplex> ei = solve_nonsingular_cubic(b2,8*b4,16*b6);
 #ifdef DEBUG
   cout<<"ei = "<<ei[0]<<","<<ei[1]<<","<<ei[2]<<endl;
 #endif
@@ -243,7 +243,6 @@ void getei(const Curvedata& E, bigcomplex& e1, bigcomplex& e2, bigcomplex& e3)
   cout<<"After rescaling,\n";
   cout<<"ei = "<<e1<<","<<e2<<","<<e3<<endl;
 #endif
-  delete [] ei;
 }
 
 Cperiods::Cperiods(const Curvedata& E)

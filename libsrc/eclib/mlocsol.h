@@ -52,7 +52,7 @@ int locallysoluble(const bigint& a, const bigint& c, const bigint& e,
 
 /* Samir Siksek's Local Solubility Test for odd p */
 
-int local_sol(const bigint& p,bigint *c, int verbose=0);
+int local_sol(const bigint& p, vector<bigint> c, int verbose=0);
 
  // Checks for solublility in Qp 
 int new_qpsoluble(const quartic& g, const bigint& p, int verbose=0);

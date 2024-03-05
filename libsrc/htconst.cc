@@ -68,14 +68,14 @@ double silverman_bound(const Curvedata& CD)
   double realjay;
   double hjay = hj(CD,realjay);
 
-// NB the constant 1.922 = 2*0.961 below is from Bremner's correction 
+// NB the constant 1.922 = 2*0.961 below is from Bremner's correction
 // to Silverman's paper; Silverman has 0.973 givin 2*0.973 = 1.946.
 
   double mu = 1.922  + hjay/12
                      + log(fabs(I2double(delta)))/6
                      + logplus(realjay)/6
 	             + logplus(I2double(b2)/12);
-  
+
   if(b2!=0) mu += log2;
 
   return mu;
@@ -168,9 +168,8 @@ bigfloat old_calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat&
 
 double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, const bigfloat& b8)
 {
-  bigfloat htc=to_bigfloat(0);
-  bigfloat dv=to_bigfloat(0);
-  bigfloat dvd=to_bigfloat(0);
+  bigfloat zero=to_bigfloat(0);
+  bigfloat htc=zero, dv=zero, dvd=zero;
   long original_prec, prec;
 #ifdef MPFP
   prec = original_prec = bit_precision();
@@ -209,17 +208,6 @@ double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, cons
     }
 #endif
 
-#ifdef TEST_CPS
-  bigfloat del = -b2*b2*b8-8*b4*b4*b4-27*b6*b6+9*b2*b4*b6;
-  bigfloat dv2=old_calc_dv_inf(b2,b4,b6,b8,del);
-  bigfloat dvd2=old_calc_dvd_inf(b2,b4,b6,b8,del); 
-  bigfloat diff = dv-dv2;
-  if(!is_zero(diff)) 
-    cout<<"old_calc_dv gives "<<dv2<<"\nwhile new gives "<<dv<<endl<<"diff = "<<diff<<endl;
-  diff = dvd-dvd2;
-  if(!is_zero(diff)) 
-    cout<<"old_calc_dvd gives "<<dvd2<<"\nwhile new gives "<<dvd<<endl<<"diff = "<<diff<<endl;
-#endif
 #ifdef DEBUG_CPS
   cout << "dv=" << dv << endl;
   cout << "dvd=" << dvd << endl;
@@ -280,22 +268,19 @@ vector<bigfloat> roots11( const vector<bigfloat>& coeff );
 
 inline vector<bigfloat> set_coeff(const bigfloat& c0, const bigfloat& c1, const bigfloat& c2, const bigfloat& c3, const bigfloat& c4)
 {
-  vector<bigfloat> coeff(5);
-  coeff[0]=c0;  coeff[1]=c1;  coeff[2]=c2;  coeff[3]=c3;  coeff[4]=c4;
+  vector<bigfloat> coeff = {c0,c1,c2,c3,c4};
   return coeff;
 }
 
 inline vector<bigfloat> set_coeff(const bigfloat& c0, const bigfloat& c1, const bigfloat& c2, const bigfloat& c3)
 {
-  vector<bigfloat> coeff(4);
-  coeff[0]=c0;  coeff[1]=c1;  coeff[2]=c2;  coeff[3]=c3;
+  vector<bigfloat> coeff = {c0,c1,c2,c3};
   return coeff;
 }
 
 inline vector<bigfloat> set_coeff(const bigfloat& c0, const bigfloat& c1, const bigfloat& c2)
 {
-  vector<bigfloat> coeff(3);
-  coeff[0]=c0;  coeff[1]=c1;  coeff[2]=c2;
+  vector<bigfloat> coeff = {c0,c1,c2};
   return coeff;
 }
 
@@ -310,9 +295,10 @@ vector<bigfloat> reals_in_11 ( vector<bigcomplex>& v);
 //  Procedure to calculate dv' for the infinite prime
 
 bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, const bigfloat& b8)
-{ 
+{
+  bigfloat zero=to_bigfloat(0), one=to_bigfloat(1), two=to_bigfloat(2), three=to_bigfloat(3), four=to_bigfloat(4);
   bigfloat rx;
-  bigfloat dvd=to_bigfloat(0),x,x2,Fx,Gx;
+  bigfloat dvd=zero,x,x2,Fx,Gx;
 
 #ifdef DEBUG_CPS
   cout<<"\nIn calc_dvd_inf"<<endl;
@@ -323,9 +309,9 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
   std::set<bigfloat> crit_pts; // use a set, so we don't get any duplicates
   std::set<bigfloat> F_roots;
 
-  crit_pts.insert(to_bigfloat(1));
-  crit_pts.insert(to_bigfloat(-1));
-  
+  crit_pts.insert(one);
+  crit_pts.insert(-one);
+
 #ifdef DEBUG_CPS
   cout<<"crit_pts = "<<crit_pts<<endl;
 #endif
@@ -334,8 +320,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
   // Keep the roots of F separate (see comment below)
 
   // Roots of F
-  //  rts=roots11(set_reverse_coeff(to_bigfloat(0),to_bigfloat(1),b2/4.0,b4/2.0,b6/4.0));
-  rts=realroots11(set_coeff(b6,2*b4,b2,to_bigfloat(4),to_bigfloat(0)));
+  rts=realroots11(set_coeff(b6,2*b4,b2, four,zero));
   F_roots.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of F: "<<rts<<endl;
@@ -343,8 +328,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
 #endif
 
   // Roots of G
-  //  rts=roots11(set_reverse_coeff(to_bigfloat(1),to_bigfloat(0),-b4,-2*b6,-b8));
-  rts=realroots11(set_coeff(-b8,-2*b6,-b4,to_bigfloat(0),to_bigfloat(1)));
+  rts=realroots11(set_coeff(-b8,-two*b6,-b4,zero,one));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of G: "<<rts<<endl;
@@ -352,8 +336,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
 #endif
 
   // Roots of F+G
-  //  rts=roots11(set_reverse_coeff(to_bigfloat(1),to_bigfloat(4),b2-b4,2.0*(b4-b6),b6-b8));
-  rts=realroots11(set_coeff(b6-b8,2.0*(b4-b6),b2-b4,to_bigfloat(4),to_bigfloat(1)));
+  rts=realroots11(set_coeff(b6-b8,two*(b4-b6),b2-b4, four,one));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of F+G: "<<rts<<endl;
@@ -361,8 +344,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
 #endif
 
   // Roots of G-F // Change from NPS
-  //  rts=roots11(set_reverse_coeff(to_bigfloat(1),to_bigfloat(-4),-(b2+b4),-2.0*(b4+b6),-(b6+b8)));
-  rts=realroots11(set_coeff(-(b6+b8),-2.0*(b4+b6),-(b2+b4),to_bigfloat(-4),to_bigfloat(1)));
+  rts=realroots11(set_coeff(-(b6+b8),-two*(b4+b6),-(b2+b4), -four,one));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of F-G: "<<rts<<endl;
@@ -370,8 +352,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
 #endif
 
   // Roots of G'
-  //  rts=roots11(set_coeff(to_bigfloat(0),-2*b8,-3*b6,-b4,to_bigfloat(0)));
-  rts=realroots11(set_coeff(-2*b8,-3*b6,-b4,to_bigfloat(0)));
+  rts=realroots11(set_coeff(-two*b8,-three*b6,-b4, zero));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of G': "<<rts<<endl;
@@ -379,8 +360,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
 #endif
 
   // Roots of F'
-  //  rts=roots11(set_coeff(to_bigfloat(0),2*b6,3*b4,b2,to_bigfloat(2)));
-  rts=realroots11(set_coeff(2*b6,3*b4,b2,to_bigfloat(2)));
+  rts=realroots11(set_coeff(two*b6,three*b4,b2,two));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of F': "<<rts<<endl;
@@ -398,7 +378,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
   for (const auto& x : F_roots)
     {
       x2=x*x;
-      Gx=abs(1-b4*x2-2.0*b6*x*x2-b8*x2*x2);
+      Gx=abs(1-b4*x2-two*b6*x*x2-b8*x2*x2);
 #ifdef DEBUG_CPS
       cout<<"x="<<x<<", Gx="<<Gx<<endl;
 #endif
@@ -411,12 +391,12 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
   for (const auto& x : crit_pts)
     {
       x2=x*x;
-      Fx=(4.0*x+b2*x2+2.0*b4*x*x2+b6*x2*x2);
+      Fx=(four*x+b2*x2+two*b4*x*x2+b6*x2*x2);
 #ifdef DEBUG_CPS
       cout<<"x="<<x<<", Fx="<<Fx<<endl;
 #endif
       if(Fx<0) continue;
-      Gx=abs(1-b4*x2-2.0*b6*x*x2-b8*x2*x2);
+      Gx=abs(one-b4*x2-two*b6*x*x2-b8*x2*x2);
 #ifdef DEBUG_CPS
       cout<<"x="<<x<<", Gx="<<Gx<<endl;
 #endif
@@ -427,7 +407,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
       cout<<"dvd so far ="<<dvd<<endl;
 #endif
     }
-  if(first) return to_bigfloat(-1);
+  if(first) return to_bigfloat(-one);
 
   return dvd;
 
@@ -437,8 +417,9 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
 
 bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, const bigfloat& b8)
 {
+  bigfloat zero=to_bigfloat(0), one=to_bigfloat(1), two=to_bigfloat(2), six=to_bigfloat(6), four=to_bigfloat(4);
   bigfloat rx;
-  bigfloat dv=to_bigfloat(0),x,x2,fx,gx;
+  bigfloat dv=zero,x,x2,fx,gx;
 
 #ifdef DEBUG_CPS
   cout<<"\nIn calc_dv_inf"<<endl;
@@ -449,8 +430,8 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
   std::set<bigfloat> crit_pts; // use a set, so we don't get any duplicates
   std::set<bigfloat> f_roots;
 
-  crit_pts.insert(to_bigfloat(1));
-  crit_pts.insert(to_bigfloat(-1));
+  crit_pts.insert(to_bigfloat(one));
+  crit_pts.insert(to_bigfloat(-one));
   
 #ifdef DEBUG_CPS
   cout<<"crit_pts = "<<crit_pts<<endl;
@@ -460,8 +441,7 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
   // Keep the roots of f separate (see comment below)
 
   // Roots of f
-  //  rts=roots11(set_coeff(to_bigfloat(0),to_bigfloat(1),b2/4.0,b4/2.0,b6/4.0));
-  rts=realroots11(set_coeff(to_bigfloat(4),b2,2*b4,b6));
+  rts=realroots11(set_coeff(four,b2,two*b4,b6));
   f_roots.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of f: "<<rts<<endl;
@@ -469,8 +449,7 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
 #endif
 
   // Roots of g
-  //  rts=roots11(set_coeff(to_bigfloat(1),to_bigfloat(0),-b4,-2*b6,-b8));
-  rts=realroots11(set_coeff(to_bigfloat(1),to_bigfloat(0),-b4,-2*b6,-b8));
+  rts=realroots11(set_coeff(one, zero,-b4,-two*b6,-b8));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of g: "<<rts<<endl;
@@ -478,8 +457,7 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
 #endif
 
   // Roots of f+g
-  //  rts=roots11(set_coeff(to_bigfloat(1),to_bigfloat(4),b2-b4,2.0*(b4-b6),b6-b8));
-  rts=realroots11(set_coeff(to_bigfloat(1),to_bigfloat(4),b2-b4,2.0*(b4-b6),b6-b8));
+  rts=realroots11(set_coeff(one, four, b2-b4,two*(b4-b6),b6-b8));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of f+g: "<<rts<<endl;
@@ -487,8 +465,7 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
 #endif
 
   // Roots of g-f // Change from NPS
-  //  rts=roots11(set_coeff(to_bigfloat(1),to_bigfloat(-4),-(b2+b4),-2.0*(b4+b6),-(b6+b8)));
-  rts=realroots11(set_coeff(to_bigfloat(1),to_bigfloat(-4),-(b2+b4),-2.0*(b4+b6),-(b6+b8)));
+  rts=realroots11(set_coeff(one,-four,-(b2+b4),-two*(b4+b6),-(b6+b8)));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of f-g: "<<rts<<endl;
@@ -496,8 +473,7 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
 #endif
 
   // Roots of g'
-  //  rts=roots11(set_coeff(to_bigfloat(0),to_bigfloat(1),to_bigfloat(0),-b4/2.0,-b6/2.0));
-  rts=realroots11(set_coeff(to_bigfloat(2),to_bigfloat(0),-b4,-b6));
+  rts=realroots11(set_coeff(two,zero,-b4,-b6));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of g': "<<rts<<endl;
@@ -505,8 +481,7 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
 #endif
 
   // Roots of f'
-  //  rts=roots11(set_coeff(to_bigfloat(0),to_bigfloat(0),to_bigfloat(1),b2/6,b4/6));
-  rts=realroots11(set_coeff(to_bigfloat(6),b2,b4));
+  rts=realroots11(set_coeff(six,b2,b4));
   crit_pts.insert(rts.begin(),rts.end());
 #ifdef DEBUG_CPS
   cout<<"relevant roots of f': "<<rts<<endl;
@@ -557,531 +532,7 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
   return dv;
 }
 
-
-// PAST THIS POINT the Smart method is implemented
-
-int interval_test(const bigfloat& x, const vector<bigfloat> rts, int debug=0);
-
-vector<bigfloat> reals_in_interval ( vector<bigcomplex>& v, const vector<bigfloat> rts);
-
-// Inserts from C in to S the elements which are real and between -1
-// and +1
-void include_real_11(std::set<bigfloat>& S, const vector<bigcomplex>& C);
-
-
-// test if rr lies in one of the first numint intervals out of [i1l.i1r],[i2l.i2r]
-
-int is_in_int(const bigfloat rr,const bigfloat i1l,const bigfloat i1r,
-              const bigfloat i2l,const bigfloat i2r,const long numint)
-{
-if (numint>0)
-  { if (rr<=i1r && rr>=i1l) { return 1; }
-    if (numint==2 && rr<=i2r && rr>=i2l) { return 1; }
-  }
-return 0;
-}
-
-// test if rr lies in one of the numint intervals  [intervals[i][0],intervals[i][1]]
-
-int is_in_int2(const bigfloat rr,bigfloat** intervals,const long numint)
-{
-  long i;
-  for (i=0; i<numint; i++)
-    { if ((rr>=intervals[i][0]) && (rr<=intervals[i][1]))
-	{ return 1; }
-    }
-  return 0;
-}
-
-bigfloat old_calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, const bigfloat& b8, const bigfloat& del)
-{
-  bigfloat rr=to_bigfloat(0),rx,rn;
-
-#ifdef DEBUG_CPS
-  cout<<"\nIn old_calc_dv_inf"<<endl;
-  cout<<"b2="<<b2<<"\nb4="<<b4<<"\nb6="<<b6<<"\nb8="<<b8<<endl;
-#endif
-  vector<bigcomplex> rt = solvecubic(b2/4,b4/2,b6/4);
-
-  bigfloat i1l,i1u,i2l=to_bigfloat(0),i2u=to_bigfloat(0);  // Bounds on Intervals
-  long i,numint;
-  if (del<0)
-    { for (i=0; i<3; i++)
-	{ if (is_approx_zero(rt[i].imag()))
-	     { rr=rt[i].real(); i=3; }
-	}
-      numint=0; 
-      if (rr<=1.0)
-	{ numint=1;  
-          i1l=rr;  i1u=1.0;
-	  if (rr<-1.0) { i1l=-1.0; }
-	}
-    }
-  else
-    { rn=rt[0].real();
-      rx=rt[1].real();
-	// Want rn<rr<rx
-      if (rn>rx) { rr=rx; rx=rn; rn=rr; }
-      rr=rt[2].real();
-      if (rr<rn)
-        { rr=rn; rn=rt[2].real(); }
-      else if (rx<rr)
-        { rr=rx; rx=rt[2].real(); }
-
-      numint=2;
-      i1l=rn; i1u=rr; i2l=rx; i2u=1.0;
-	// Deal With Right Most Interval
-      if (i2l>i2u) { numint=1; }
-      if (i2l<-1.0) 
-	{ numint=1;
-	  i1l=-1.0; i1u=i2u;
-        }
-	// Now Deal With Left Most Interval
-      if (i1u>1.0)  { i1u=1.0; }
-      if (i1l<-1.0) { i1l=-1.0; }
-      if (i1l>i1u) 
-	{ numint=numint-1;
-	  i1l=-1.0; i1u=i2u;
-	}
-    }
-
-  if(numint==0) return to_bigfloat(-1);  // code for "infinity"
-
-  bigfloat* te = new bigfloat[36];
-  long tec=2*numint;
-  if (numint>0)
-    { te[0]=i1l; te[1]=i1u;
-      if (numint==2)
-        { te[2]=i2l; te[3]=i2u; }
-    }
-
-  if (numint!=0)
-    { // Roots of g
-      rt=solvequartic(to_bigfloat(0),-b4,-2.0*b6,-b8);
-      for (i=0; i<4; i++)
-        { if (is_approx_zero(rt[i].imag()))
-	    { rr=rt[i].real();
-              if (is_in_int(rr,i1l,i1u,i2l,i2u,numint))
-		{ te[tec]=rr; tec=tec+1; }
-            }
-        }
-
-      // Roots of f (again!)
-      rt=solvecubic(b2/4.0,b4/2.0,b6/4.0);
-      for (i=0; i<3; i++)
-        { if (is_approx_zero(rt[i].imag()))
-            { rr=rt[i].real();
-              if (is_in_int(rr,i1l,i1u,i2l,i2u,numint))
-                { te[tec]=rr; tec=tec+1; }
-            }
-        }
-
-      // Roots of f+g
-      rt=solvequartic(to_bigfloat(4),b2-b4,2.0*(b4-b6),b6-b8);
-      for (i=0; i<4; i++)
-        { if (is_approx_zero(rt[i].imag()))
-            { rr=rt[i].real();
-              if (is_in_int(rr,i1l,i1u,i2l,i2u,numint))
-                { te[tec]=rr; tec=tec+1; }
-            }
-        }
-
-      // Roots of g-f // Change from NPS
-      rt=solvequartic(to_bigfloat(-4),-(b2+b4),-2.0*(b4+b6),-(b6+b8));
-      for (i=0; i<4; i++)
-        { if (is_approx_zero(rt[i].imag()))
-            { rr=rt[i].real();
-              if (is_in_int(rr,i1l,i1u,i2l,i2u,numint))
-                { te[tec]=rr; tec=tec+1; }
-            }
-        }
-
-      // Roots of f'
-      if (-24.0*b4+b2*b2>=0.0)
-        { rn=sqrt(-24.0*b4+b2*b2);
-	  rr=(-b2+rn)/12.0;
-	  if (is_in_int(rr,i1l,i1u,i2l,i2u,numint))
-                { te[tec]=rr; tec=tec+1; }
-	  rr=(-b2-rn)/12.0;
-	  if (is_in_int(rr,i1l,i1u,i2l,i2u,numint))
-                { te[tec]=rr; tec=tec+1; }
-	}
-
-      // Roots of g'
-      rt=solvecubic(to_bigfloat(0),-b4/2.0,-b6/2.0);
-      for (i=0; i<3; i++)
-        { if (is_approx_zero(rt[i].imag()))
-            { rr=rt[i].real();
-              if (is_in_int(rr,i1l,i1u,i2l,i2u,numint))
-                { te[tec]=rr; tec=tec+1; }
-            }
-        }
-
-    }
-
-  bigfloat dv=to_bigfloat(0);
-  // Evaluate |f|, |g| at each of the tec(>0) x-values in array te:
-  for (i=0; i<tec; i++)
-    { rr=te[i]*te[i];
-      rn=4.0*rr*te[i]+b2*rr+2.0*b4*te[i]+b6;
-#ifdef DEBUG_CPS
-      cout<<"x="<<te[i]<<", fx="<<rn<<endl;
-#endif
-      rn=abs(rn);
-      rx=rr*rr-b4*rr-2.0*b6*te[i]-b8;
-      rx=abs(rx);
-#ifdef DEBUG_CPS
-      cout<<"x="<<te[i]<<", gx="<<rx<<endl;
-#endif
-      if (rn>rx) { rx=rn; }
-      if (i==0)  { dv=rx; }
-      else if (dv>rx) { dv=rx; }
-#ifdef DEBUG_CPS
-      cout<<"dv so far ="<<dv<<endl;
-#endif
-    }
-  delete[] te;
-
-  return dv;
-}
-
-bigfloat old_calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, const bigfloat& b8, const bigfloat& del)
-{ 
-  bigfloat rr=to_bigfloat(0),rn;
-
-#ifdef DEBUG_CPS
-  cout<<"\nIn old_calc_dvd_inf"<<endl;
-  cout<<"b2="<<b2<<"\nb4="<<b4<<"\nb6="<<b6<<"\nb8="<<b8<<endl;
-#endif
-  vector<bigcomplex> rt = solvecubic(b2/4,b4/2,b6/4);
-  long i,j,numrt;
-  bigfloat rrt[4];
-  rrt[0]=to_bigfloat(0);
-  if (del<0)
-    { for (i=0; i<3; i++)
-        { if (is_approx_zero(rt[i].imag()))
-             { rr=rt[i].real(); i=3; }
-        }
-      if (is_approx_zero(rr)) { numrt=1; }
-      else                     { rrt[1]=1.0/rr; numrt=2; }
-    }
-  else
-    { numrt=1;
-      for (i=0; i<3; i++)
-	{ if (!is_approx_zero(rt[i].real()))
-	    { rrt[numrt]=1.0/rt[i].real(); 
-	      numrt++;
-            }
-	}
-    }
- 
-  // Sort the real roots 
-  long fl=0;
-  while (fl==0)
-    { fl=1;
-      for (i=0; i<numrt-1; i++)
-        { if (rrt[i]>rrt[i+1])
-	    { rr=rrt[i+1];
-	      rrt[i+1]=rrt[i];
-	      rrt[i]=rr;
-	      fl=0;
-	    }
-        }
-    }
-
-  // Make Intervals
-  bigfloat **intervals=new bigfloat*[3];
-  for (i=0; i<3; i++)
-    { intervals[i]=new bigfloat[2]; }
-
-  long numint=0;
-  if (b6<0.0)
-    { for (i=0; i<numrt; i=i+2)
-	{ intervals[numint][1]=rrt[numrt-i-1];
-	  intervals[numint][0]=rrt[numrt-i-2];
-	  numint=numint+1;
-	}
-    }
-  else
-    { intervals[numint][1]=rrt[numrt-1]+2;
-      intervals[numint][0]=rrt[numrt-1];
-      numint=numint+1;
-      for (i=1; i<numrt; i=i+2)
-        { intervals[numint][1]=rrt[numrt-i-1];
-	  if (numrt-i-2>0) 
-	    { intervals[numint][0]=rrt[numrt-i-2]; }
-	  else
-	    { intervals[numint][0]=-1.0; }
-          numint=numint+1;
-        }
-    }
-  for (i=0; i<numint; i++)
-    { if (intervals[i][1]>1.0)  { intervals[i][1]=1.0; }
-      if (intervals[i][0]<-1.0) { intervals[i][0]=-1.0; }
-    }
-  i=0;
-  while (i<numint)
-    { fl=0;
-      while (fl==0 && i<numint)
-	{ fl=1;
-          if (intervals[i][0]>intervals[i][1])
-             { fl=0; 
-	       for (j=i; j<numint-1; j++)
-		  { intervals[j][0]=intervals[j+1][0];
-		    intervals[j][1]=intervals[j+1][1];
-		  }
-	       numint=numint-1;
-	     }
-	}
-      i=i+1;
-    }
-
-  bigfloat *te=new bigfloat[36];
-  long tec=2*numint;
-  for (i=0; i<numint; i++)
-     { te[2*i]=intervals[i][0];
-       te[2*i+1]=intervals[i][1];
-     }
-
-  if (numint!=0)
-    { // Roots of g
-      rt=solvequartic(to_bigfloat(0),-b4,-2.0*b6,-b8);
-      for (i=0; i<4; i++)
-	{ if (!is_approx_zero(rt[i]))
-	    { rt[i]=to_bigfloat(1)/rt[i];
-              if (is_approx_zero(rt[i].imag()))
-                 { rr=rt[i].real();
-                   if (is_in_int2(rr,intervals,numint))
-                     { te[tec]=rr; tec=tec+1; }
-		 }
-            }
-        }
-
-      // Roots of f
-      rr=0.0;
-      if (is_in_int2(rr,intervals,numint))
-                     { te[tec]=rr; tec=tec+1; }
-      rt=solvecubic(b2/4.0,b4/2.0,b6/4.0);
-      for (i=0; i<3; i++)
-        { if (!is_approx_zero(rt[i]))
-            { rt[i]=to_bigfloat(1)/rt[i];
-              if (is_approx_zero(rt[i].imag()))
-                 { rr=rt[i].real();
-                   if (is_in_int2(rr,intervals,numint))
-                     { te[tec]=rr; tec=tec+1; }
-                 }
-            }
-        }
-
-      // Roots of f+g
-      rt=solvequartic(to_bigfloat(4),b2-b4,2.0*(b4-b6),b6-b8);
-      for (i=0; i<4; i++)
-        { if (!is_approx_zero(rt[i]))
-            { rt[i]=to_bigfloat(1)/rt[i];
-              if (is_approx_zero(rt[i].imag()))
-                 { rr=rt[i].real();
-                   if (is_in_int2(rr,intervals,numint))
-                     { te[tec]=rr; tec=tec+1; }
-		 }
-            }
-        }
-
-      // Roots of f-g
-      rt=solvequartic(to_bigfloat(-4),-b2-b4,2.0*(-b4-b6),-b6-b8);
-      for (i=0; i<4; i++)
-        { if (!is_approx_zero(rt[i]))
-            { rt[i]=to_bigfloat(1)/rt[i];
-	      if (is_approx_zero(rt[i].imag()))
-                 { rr=rt[i].real();
-                   if (is_in_int2(rr,intervals,numint))
-                     { te[tec]=rr; tec=tec+1; }
-		 }
-            }
-        }
-
-      // Roots of f'
-      rt=solvecubic(b2/2.0,3.0*b4/2.0,b6);
-      for (i=0; i<3; i++)
-        { if (!is_approx_zero(rt[i]))
-            { if (is_approx_zero(rt[i].imag()))
-                { rr=rt[i].real();
-                  if (is_in_int2(rr,intervals,numint))
-                    { te[tec]=rr; tec=tec+1; }
-		}
-            }
-        }
-
-      // Roots of g'
-      rr=0.0;
-      if (is_in_int2(rr,intervals,numint))
-          { te[tec]=rr; tec=tec+1; }
-      bigfloat dr=9.0*b6*b6-8.0*b8*b4;
-      if (dr>=0.0)
-	{ dr=sqrt(dr);
-	  rr=(3.0*b6+dr)/(-4.0*b8);
-	  if (is_in_int2(rr,intervals,numint))
-                { te[tec]=rr; tec=tec+1; }
-	  rr=(3.0*b6-dr)/(-4.0*b8);
-          if (is_in_int2(rr,intervals,numint))
-                { te[tec]=rr; tec=tec+1; }
-	}
-    }
-
-  bigfloat dvd=to_bigfloat(0);
-  bigfloat f,g;
-  for (i=0; i<tec; i++)
-    { rr=te[i];
-#ifdef DEBUG_CPS
-      cout<<"x="<<te[i]<<", fx="<<rr<<endl;
-#endif
-      f=(((b6*rr+2.0*b4)*rr+b2)*rr+4.0)*rr;
-      g=(((-b8*rr-2.0*b6)*rr-b4)*rr)*rr+1.0;
-      f=abs(f); g=abs(g);
-      rn=f;
-#ifdef DEBUG_CPS
-      cout<<"x="<<te[i]<<", gx="<<rn<<endl;
-#endif
-      if (g>f) { rn=g; }
-      if (i==0)  { dvd=rn; }
-      else if (dvd>rn) { dvd=rn; }
-#ifdef DEBUG_CPS
-      cout<<"dvd so far ="<<dvd<<endl;
-#endif
-    }
-  delete[] te;
-  for (i=0; i<3; i++)
-    { delete[] intervals[i]; }
-  delete[] intervals;
-
-  return dvd;
-
-}
-
-// coeff has length 5 but may start with leading zeros
-// returns real roots in [-1,1]
-vector<bigfloat> roots11( const vector<bigfloat>& coeff )
-{
-#ifdef DEBUG_CPS
-  cout<<"In roots11() with coeff =  "<<coeff<<endl;
-#endif
-  bigfloat a=coeff[0], a1;
-#ifdef DEBUG_CPS
-  cout<<"coeff[0] = a = "<<a<<endl;
-#endif
-  if(a!=0) 
-    {
-#ifdef DEBUG_CPS
-      cout<<"inverting nonzero a ="<<a<<endl;
-#endif
-      a1=1/a;
-      vector<bigcomplex> cr = solvequartic(a1*coeff[1],a1*coeff[2],a1*coeff[3],a1*coeff[4]);
-      return reals_in_11(cr);
-    }
-  a=coeff[1];
-#ifdef DEBUG_CPS
-  cout<<"coeff[1] = a = "<<a<<endl;
-#endif
-  if(a!=0) 
-    {
-#ifdef DEBUG_CPS
-      cout<<"inverting nonzero a ="<<a<<endl;
-#endif
-      a1=1/a;
-      vector<bigcomplex> cr = solvecubic(a1*coeff[2],a1*coeff[3],a1*coeff[4]);
-      return reals_in_11(cr);
-    }
-  vector<bigfloat> ans; // zero length
-  a=coeff[2];
-#ifdef DEBUG_CPS
-  cout<<"coeff[2] = a = "<<a<<endl;
-#endif
-  if(a==0) {cerr<<"Error in roots: degree<2"<<endl; return ans;}
-  bigfloat b=coeff[3], c=coeff[4], x;
-  bigfloat d=b*b-4*a*c;
-  if(d>=0) 
-    {
-      d=sqrt(d);  a1=1/(2*a);
-      x=a1*(-b+d);
-      if((x<=1)&&(x>=-1)) ans.push_back(x);
-      x=a1*(-b-d);
-      if((x<=1)&&(x>=-1)) ans.push_back(x);
-    }
-  return ans;
-}
-
-vector<bigfloat> reals_in ( vector<bigcomplex>& v)
-{
-  vector<bigfloat> vr;
-  for (const auto& vi : v)
-    if(is_real(vi))
-      vr.push_back(vi.real());
-  return vr;
-}
-
-vector<bigfloat> reals_in_11 ( vector<bigcomplex>& v)
-{
-  vector<bigfloat> vr;
-  for (const auto& vi : v)
-    if(is_real(vi))
-      {
-        bigfloat x = vi.real();
-        if((x<=1)&&(x>=-1))
-          vr.push_back(x);
-      }
-  return vr;
-}
-
-int interval_test(const bigfloat& x, const vector<bigfloat> rts, int debug)
-{
-// rts will have size 1 or 3, and be ordered
-  if(debug) cout<<"Interval test("<<x<<"), rts="<<rts<<endl;
-  if(x>1) {if(debug) cout<<"\t returns 0\n"; return 0;}
-  if(x<-1) {if(debug) cout<<"\t returns 0\n";  return 0;}
-  int ans;
-  if(rts.size()==1)
-    ans = (x>=rts[0]);
-  else
-    ans =  ((x>=rts[0]) && (x<=rts[1])) || (x>=rts[2]);
-  if(debug) cout<<"\t returns "<<ans<<"\n";
-  return ans;
-}
-
-vector<bigfloat> reals_in_interval ( vector<bigcomplex>& v, const vector<bigfloat> rts)
-{
-  vector<bigfloat> vr;
-  bigfloat x;
-  for( const auto& vi : v)
-    if(is_real(vi))
-      {
-        bigfloat x=vi.real();
-        if(interval_test(x,rts,1))
-          vr.push_back(x);
-      }
-  return vr;
-}
-
-// Inserts from C in to S the elements which are real and between -1
-// and +1
-void include_real_11(std::set<bigfloat>& S, const vector<bigcomplex>& C)
-{
-  bigfloat x;
-  for (const auto& Ci : C)
-    {
-      if(is_real(Ci))
-	{
-	  x = Ci.real();
-	  if((x<=1)&&(x>=-1)) S.insert(x);
-	}
-    }
-}
-
-inline int in_fund_region(const bigcomplex& z)
-{
-  return (imag(z)>0)&&(abs(z)>0.999)&&(abs(2*real(z))<1.001);
-}
-
 //#define HTB_DEBUG
-
 
 // returns lower bound for height of non-torsion points, following
 // Cremona & Siksek in ANTS7.  If egr==1, return a lower bound for the
@@ -1099,61 +550,6 @@ bigfloat lower_height_bound(const Curvedata& CD, int egr)
       lambda /= (c*c);
     }
   return lambda;
-}
-
-// This gives a lower bound on non-torsion points; experimental, not
-// very good (and not always positive?!!
-
-bigfloat lower_height_bound_alt(const Curvedata& CD)
-{
-  static bigfloat log2 = log(to_bigfloat(2));
-  bigcomplex w1, w2;
-  Cperiods pers(CD);
-  bigcomplex tau = gettau(pers);
-#ifdef HTB_DEBUG
-  cout<<"\nAfter normalizing, periods are: "<<pers<<endl;
-  if(!in_fund_region(tau)) 
-    cout<<"tau is not in the fundamental region!"<<endl;
-#endif  
-  bigfloat aq = abs(q(tau));
-  pers.getwi(w1,w2);  //NB w1 is the minimal period here, not necessarily the real period!
-  int realcase = abs(imag(w1))<0.0001;
-#ifdef HTB_DEBUG
-  cout<<"q  = "<<q(tau)<<endl;
-  cout<<"aq = "<<aq<<endl;
-  cout<<"w1 = "<< w1 << endl;
-  cout<<"w2 = "<< w2 << endl;
-  cout<<"real case?  ";if(realcase)cout<<"yes";else cout<<"no"; cout<<endl;
-#endif  
-
-  // Either (when w1 is real):
-  // (1/6)log|Delta| - 2log2 - (1/6)log|q| - 4(|q|)/(1-|q|)
-
-  // Or (when w1 is not real):
-  // (1/6)log|Delta| - 2log2 + (1/12)log|q| - 2(1+|q|^2)/(1-|q|)
-
-  bigfloat term1 = log(abs(I2bigfloat(getdiscr(CD))))/6;
-  bigfloat term2 = - 2*log2;
-  bigfloat term3, term4;
-
-  if(realcase) 
-    {
-      term3 = -log(aq)/6;
-      term4 = -4*(aq)/(1-aq);
-    }
-  else
-    {
-      term3 = log(aq)/12;
-      term4 = -2*(1+aq*aq)/(1-aq);
-    }
-  bigfloat bound = term1 + term2 + term3 + term4;
-#ifdef HTB_DEBUG
-  cout<<"term 1 = "<<term1<<endl;
-  cout<<"term 2 = "<<term2<<endl;
-  cout<<"term 3 = "<<term3<<endl;
-  cout<<"term 4 = "<<term4<<endl;
-#endif
-  return bound;
 }
 
 // This gives a lower bound on non-torsion points, by searching, given
@@ -1639,7 +1035,6 @@ int CurveHeightConst::test_target(const bigfloat& target, long k)
   return canonicalHeightInterval01(target,k).size()==0;
 }
 
-
 vector<Interval01> CurveHeightConst::canonicalHeightInterval01(const bigfloat& target, long k)
 {
   vector<Interval01> solution;
@@ -1760,124 +1155,3 @@ bigfloat CurveHeightConst::psi(const bigfloat& x)
   //  cout<<"z = "<<z<<endl;
   return real(z/get_real_period()); // in [0.5,1]
 }
-
-#if(0) // old code using x-intervals instead of [0,1]-intervals
-
-vector<Interval> CurveHeightConst::canonicalHeightInterval(const bigfloat& target, long k)
-{
-  vector<Interval> solution;
-  solution.push_back(Interval(e3)); // i.e. [e3,+infty]
-#ifdef debugLB
-  cout<<"testing target bound "<<target<<" with k = "<<k<<endl;
-  cout<<"Starting interval: "<<solution<<endl;
-#endif
-  for(int n=1; n<=k; n++)
-    {
-     bigfloat B=Bnmu(n,target);      // = B_n(target) in the paper
-#ifdef debugLB
-     cout<<"n = "<<n<<endl;
-     cout<<"B_"<<n<<"("<<target<<") = "<<B<<endl;
-#endif
-     if(B > 1.0e100) break;
-     vector<Interval> t=solveLEQ(n,B);
-     solution=intersect(solution,t);
-#ifdef debugLB
-     cout<<"intervals from solveLEQ: "<<t<<endl;
-     cout<<"intervals now: "<<solution<<endl;
-#endif
-     if(solution.size()==0) return solution;
-     t=solveGEQ(n,-B);
-     solution=intersect(solution,t);
-#ifdef debugLB
-     cout<<"intervals from solveGEQ: "<<t<<endl;
-     cout<<"intervals now: "<<solution<<endl;
-#endif
-     if(solution.size()==0) return solution;
-   }
- return  solution;
-}
-
-// Returns a list of intervals containing those x(P) for which x(nP) <= B
-
-vector<Interval> CurveHeightConst::solveLEQ(long n, const bigfloat& B)
-{
-  vector<Interval> ans;
-  if(B < e3) return ans;
-  vector<bigfloat> xlist=solveEllNPower(n,B);
-  if(n%2) // n is odd
-    {
-      ans.push_back(Interval(e3,xlist[0]));
-      for(int i=1; i<n; i+=2)
-	ans.push_back(Interval(xlist[i],xlist[i+1]));
-    }
-  else // n is even
-    {
-      for(int i=0; i<n; i+=2)
-	ans.push_back(Interval(xlist[i],xlist[i+1]));
-    }
-  return ans;
-}
-
-// Returns a list of intervals containing those x(P) for which x(nP) >= B
-
-vector<Interval> CurveHeightConst::solveGEQ(long n, const bigfloat& B)
-{
-  vector<Interval> ans;
-  if(B <= e3)
-    {
-      ans.push_back(Interval(e3)); // i.e.[e3,infty]
-      return ans;
-    }
-  vector<bigfloat> xlist=solveEllNPower(n,B);
-  int i;
-  if(n%2) // n is odd
-    {
-      for(i=1; i<n; i+=2)
-	ans.push_back(Interval(xlist[i-1],xlist[i]));
-      ans.push_back(Interval(xlist[n-1]));
-    }
-  else // n is even
-    {
-      ans.push_back(Interval(e3,xlist[0]));
-      for(i=2; i<n; i+=2)
-	ans.push_back(Interval(xlist[i-1],xlist[i]));
-      ans.push_back(Interval(xlist[n-1]));
-    }
-  return ans;
-}
-
-// solves x(nP)=x1 on $E_0$; returns vector of n reals in [0,1)
-// (elliptic logs of solutions)
-
-vector<bigfloat> CurveHeightConst::solveEllNPower01(long n, const bigfloat& x1)
-{
-  vector<bigfloat> ans;
-  if(x1<e3)  return ans; // empty
-  bigfloat z=psi(x1);
-#ifdef debugLB
-  cout<<"psi("<<x1<<") = "<<z<<endl;
-#endif
-  bigfloat oneovern = to_bigfloat(1)/to_bigfloat(n);
-  z*=oneovern;
-  for(int i=0; i<n; i++, z+=oneovern) ans.push_back(z);
-#ifdef debugLB
-  cout<<"solveEllNPower01("<<n<<","<<x1<<") returns "<<ans<<endl;
-#endif
-  return ans;
-}
-
-// solves x(nP)=x1 on $E_0$; returns vector of n reals
-
-vector<bigfloat> CurveHeightConst::solveEllNPower(long n, const bigfloat& x1)
-{
-  vector<bigfloat> ans=solveEllNPower01(n,x1);
-  bigfloat om=real(get_real_period());
-  for(int i=0; i<n; i++) ans[i]=real(ztopoint(om*ans[i])[0]);
-  sort(ans.begin(), ans.end());
-#ifdef debugLB
-  cout<<"solveEllNPower("<<n<<","<<x1<<") returns "<<ans<<endl;
-#endif
-  return ans;
-}
-
-#endif

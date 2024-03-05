@@ -585,10 +585,9 @@ void testmodsqrt()
   cout << "Enter a modulus m: ";
   cin >> m; mm=m;
   vector<bigint> plist=pdivs(mm);
-  int* flag = new int[m];
-  for(i=0; i<m; i++) flag[i]=0;
+  vector<int> flag(m,0);
   for(i=0; i<=m/2; i++) flag[(i*i)%m]=1;
-  for(i=0; i<m; i++) 
+  for(i=0; i<m; i++)
     {
       a=i; //      cout<<"a = "<<a;
 
@@ -600,12 +599,12 @@ void testmodsqrt()
 	  if((x*x-a)%mm==0) cout<<" --checks.";
 	  else cout << "--WRONG!";
 	}
-      else 
+      else
 	{
 	  cout << "\tNo solution";
 	}
 #endif
-      if(res!=flag[i]) 
+      if(res!=flag[i])
 	{
 	  cout << "WRONG ANSWER for a="<<a<<endl;
 	  ok=0;

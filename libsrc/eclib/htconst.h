@@ -39,7 +39,6 @@ inline double height_constant(const Curvedata& CD)
 }
 double egr_height_constant(const Curvedata& CD);
 
-bigfloat lower_height_bound_alt(const Curvedata& CD);
 bigfloat lower_height_bound_search(const Curvedata& CD, const bigfloat& reg);
 bigfloat Gamma_n(long n); // Gamma(n) = (n-1)!
 bigfloat Gamma_n_plus_half(long n); // Gamma(n+1/2) = (2n)!sqrt(pi) / (4^n*n!)

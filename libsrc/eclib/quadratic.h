@@ -31,26 +31,16 @@
 
 class quadratic {
   friend class unimod;
-private: 
-  bigint * coeffs;  // will always have length 3
-  // init just allocates memory
-  void init();
+private:
+  vector<bigint> coeffs;
 public:
-  void set(long a, long b, long c) 
-    {coeffs[0]=a; coeffs[1]=b; coeffs[2]=c;}
-  void set(const  bigint& a, const bigint& b, const bigint& c) 
-    {coeffs[0]=a; coeffs[1]=b; coeffs[2]=c;}
-  void set(const  bigint* q)
-    {coeffs[0]=q[0]; coeffs[1]=q[1]; coeffs[2]=q[2];}
-  void set(const  quadratic& q)
-    {coeffs[0]=q.coeffs[0]; coeffs[1]=q.coeffs[1]; coeffs[2]=q.coeffs[2];}
-  quadratic() {init(); set(0,0,0);}
-  ~quadratic();
-  quadratic(const  bigint& a, const bigint& b, const bigint& c) {init(); set(a,b,c);}
-  quadratic(long a, long b, long c) {init(); set(a,b,c);}
-  quadratic(const  bigint* q) {init(); set(q);}
-  quadratic(const  quadratic& q) {init(); set(q);}
-  void operator=(const quadratic& q) {set(q);}
+  void set(const  bigint& a, const bigint& b, const bigint& c) {coeffs = {a, b, c};}
+  quadratic() { bigint zero(0); coeffs={zero,zero,zero};}
+  quadratic(const  bigint& a, const bigint& b, const bigint& c) {coeffs = {a, b, c};}
+  quadratic(long a, long b, long c)  {coeffs = {BIGINT(a), BIGINT(b), BIGINT(c)};}
+  quadratic(const  bigint* q) {coeffs = {q[0], q[1], q[2]};}
+  quadratic(const  quadratic& q) {coeffs = q.coeffs;}
+  void operator=(const quadratic& q)  {coeffs = q.coeffs;}
   bigint eval(const bigint& x, const bigint& z) const
     {return coeffs[0]*sqr(x) + coeffs[1]*x*z + coeffs[2]*sqr(z);}
   bigint operator()(const bigint& x, const bigint& z) const
@@ -59,10 +49,9 @@ public:
     {return coeffs[0]*sqr(x) + coeffs[1]*x + coeffs[2];}
   bigint operator()(const bigint& x) const
     {return coeffs[0]*sqr(x) + coeffs[1]*x + coeffs[2];}
-  bigint coeff(int i); 
-  bigint operator[](int i) const;
-  void set_coeff(int i, const bigint& a)
-    {if((i>=0)&&(i<=2)) coeffs[i]=a;}
+  bigint coeff(int i) const {return coeffs[i];}
+  bigint operator[](int i) const  {return coeffs[i];}
+  void set_coeff(int i, const bigint& a) {if((i>=0)&&(i<=2)) coeffs[i]=a;}
   friend bigint resultant(const quadratic& q1, const quadratic& q2);
   bigint disc() const  {return sqr(coeffs[1])-4*coeffs[0]*coeffs[2];}
   void output(ostream& os=cout) const
