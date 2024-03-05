@@ -407,10 +407,10 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
       cout<<"dvd so far ="<<dvd<<endl;
 #endif
     }
-  if(first) return to_bigfloat(-one);
-
-  return dvd;
-
+  if(first)
+    return -one;
+  else
+    return dvd;
 }
 
 // Procedure to calculate dv for the infinite prime
@@ -430,8 +430,8 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
   std::set<bigfloat> crit_pts; // use a set, so we don't get any duplicates
   std::set<bigfloat> f_roots;
 
-  crit_pts.insert(to_bigfloat(one));
-  crit_pts.insert(to_bigfloat(-one));
+  crit_pts.insert(one);
+  crit_pts.insert(-one);
   
 #ifdef DEBUG_CPS
   cout<<"crit_pts = "<<crit_pts<<endl;
@@ -528,8 +528,10 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
       cout<<"dv so far ="<<dv<<endl;
 #endif
     }
-  if(first) return to_bigfloat(-1);
-  return dv;
+  if(first)
+    return -one;
+  else
+    return dv;
 }
 
 //#define HTB_DEBUG
