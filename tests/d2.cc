@@ -81,17 +81,21 @@ int main()
       cout << "Minimal model for Jacobian: " << (Curve)E << endl;
 
       cout << "Checking local solublity at primes " << plist << ":\n";
-      int i, els, els1; bigint two; two=2;
+      int els, els1;
+      bigint two(2);
       els = els1 = qpsoluble(g,two);
       if(!els1) cout << "Not locally soluble at p = 2\n";
-      for (i=1; i<plist.size(); i++)
+      for (const auto& p : plist)
 	{
-	  els1=new_qpsoluble(g,plist[i]);
-	  if(!els1) cout << "Not locally soluble at p = "<<plist[i]<<"\n";
-	  els = els&els1;
+          if (p>2)
+            {
+              els1=new_qpsoluble(g,p);
+              if(!els1) cout << "Not locally soluble at p = "<<p<<"\n";
+              els = els&els1;
+            }
 	}
       if(!els) continue;
-      
+
       cout << "Everywhere locally soluble.\n";
       cout<<"------------------------------------------\n";
 

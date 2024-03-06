@@ -68,8 +68,8 @@ int main(void)
  int verbose=0;
  cout << "See the hecke matrices (0/1)? "; cin >> verbose;
  cout << "Plus space (0/1)? "; cin >> plus;
- int limit; 
 #ifdef AUTOLOOP
+     int limit; 
      cout<<"Enter limit on level: ";cin>>limit;
      while (n<limit) { n++;
 #else

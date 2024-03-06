@@ -122,10 +122,9 @@ int main( int argc, char **argv ) {
 
   // Print out results
   std::cout << "Primes up to " << N << std::endl;
-  for( int i = 0; i < tasks.size(); i++ ) {
-    if( tasks[i] -> isPrime() ) {
-      std::cout << std::setw(10) << tasks[i] -> n() << " ";
-
+  for (const auto& t : tasks) {
+    if( t -> isPrime() ) {
+      std::cout << std::setw(10) << t -> n() << " ";
       count++;
       if( (count % 10) == 0 ) std::cout << std::endl;
     }

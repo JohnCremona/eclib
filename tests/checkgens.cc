@@ -51,7 +51,7 @@ int main()
   cin.flags( cin.flags() | ios::dec );
 
   int rank, rank2, i;
-  long cond, ncurve, nclass;
+  long cond, ncurve;
   bigfloat reg, hmax;;
   cerr<<"verbose (0/1)? ";             cin >>verbose;
   verbose=0;
@@ -74,6 +74,7 @@ int main()
 #ifdef INPUT_CLASS_IS_LETTER
       genin >> ccode;
 #else
+      int nclass;
       genin >> nclass;
       ccode = codeletter(nclass-1);
       //      cout<<"After input, nclass="<<nclass<<endl;

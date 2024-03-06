@@ -85,7 +85,7 @@ int main()
   vector<long> unsat;
 
   sieve.set_points(points);
-  int ok = sieve.saturate(unsat, index, pmax, 2, 10);
+  sieve.saturate(unsat, index, pmax, 2, 10);
 
   cout<<"Finished p-saturation";
   if (pmax!=-1)

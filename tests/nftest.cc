@@ -36,9 +36,10 @@
 
 int main(void)
 {
-  int limit,firstn,n=2,count=0; 
+  int n=2,count=0;
   int verbose=1;
 #ifdef AUTOLOOP
+  int firstn, limit;
   cerr<<"Enter first and last N: ";cin>>firstn>>limit; 
   n=firstn-1; cout<<endl;
   while (n<limit) { n++;

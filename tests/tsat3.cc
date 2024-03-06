@@ -61,7 +61,7 @@ int main()
   cerr<<"verbose (0/1)? ";             cin >>verbose;
   int j, npts;
 
-  long N, ncurve, nclass;
+  long N, ncurve;
   string code;
   Curve E;
 
@@ -73,7 +73,8 @@ int main()
 #ifdef INPUT_CLASS_IS_LETTER
   cin >> code;
 #else
-  cin >> nclass; 
+  int nclass;
+  cin >> nclass;
   code = codeletter(nclass-1);
 #endif
   cin >> ncurve;
