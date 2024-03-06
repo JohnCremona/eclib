@@ -21,11 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <iostream>
 #include <eclib/interface.h>
 #include <eclib/bitspace.h>
-
-
 
 bitspace::bitspace(long d)
 {
@@ -43,16 +40,10 @@ bitspace::bitspace(long d)
       d=NTL_BITS_PER_LONG;
     }
   maxdim=d;
-  pivs = new long[maxdim];
-  gens = new unsigned long[maxdim];
+  pivs.resize(maxdim);
+  gens.resize(maxdim);
   dim=0;
   bitmask=0;
-}
-
-bitspace::~bitspace()
-{
-  delete[]pivs;
-  delete[]gens;
 }
 
 long bitspace::reduce(unsigned long& v, long start) const

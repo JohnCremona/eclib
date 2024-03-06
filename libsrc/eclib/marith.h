@@ -173,8 +173,8 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x);
 // root-finding functions:
 
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
-// roots are put in r which should be allocated of size 3
-int nrootscubic(long b, long c, long d, long p, long* roots);
+// and assign roots to a list of these
+int nrootscubic(long b, long c, long d, long p, vector<long>& roots);
 
 void ratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxd=BIGINT(0));
 void ratapprox(bigfloat x, long& a, long& b, long maxd=0);

@@ -50,13 +50,14 @@ private:
 //
 //
 // Sieving stuff:
-  int ipivot, pivflag;  
-  long * auxs; long ** phimod; int * aux_flags; int * aux_types; 
+  int ipivot, pivflag;
+  vector<long> auxs, amod, astepmod, hmod, hstepmod, hscalemod;
+  vector<vector<long>> phimod;
+  vector<int> aux_flags, aux_types;
 
-  int **squares;  
+  int **squares;
   int ***flags;
-  int **flaga;  int *flagah;
-  long *amod, *astepmod, *ascalemod, *hmod, *hstepmod, *hscalemod;
+  int **flaga;
   long ah_count, ah_sieve_0, ah_sieve_1, ah_sieve_2;
   long ah_rfail, ah_dfail, ah_efail, ah_extra2fail, ah_pass;
   void aux_init();  // define  auxiliary moduli and squares

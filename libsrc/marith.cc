@@ -1115,32 +1115,28 @@ int modrat(const bigint& n, const bigint& m, const bigint& lim,
  return 0;
 }
 
-// find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
-// roots are put in r which should be allocated of size 3
-int nrootscubic(long b, long c, long d, long p, long* roots)
+// Find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p) and
+// assign roots to a list of these. A stupid search is good enough
+// since we only use this for very small p! Also it is tacitly assumed
+// that the roots are distinct.
+int nrootscubic(long b, long c, long d, long p, vector<long>& roots)
 {
-  long r, nr=0;
-  int found = 0;
-  for (r = 0; (r<p)&&!found ; r++)
+  int nr=0;
+  long r=0;
+  roots.clear();
+  for (r = 0; r<p; r++)
     {
-      found = (((((r+b)*r+c)*r+d)%p)==0 );
-    }
-  if (!found) return 0;
-
-  r--;  // because it was incremented one extra time in the loop!
-  roots[nr++]=r;
-  long e = b + r;
-  long f = c + e*r;
-  long e0 = (-e*((p+1)/2))%p;
-  long dd = posmod(e0*e0-f,p);
-  if(legendre(dd,p)==1) 
-    { // stupid search is good enough since we only use this for very small p!
-      for (r = 1; r<p ; r++)  
-	{
-	  if((r*r-dd)%p==0) break;
-	}
-      roots[nr++] = (e0+r)%p;
-      roots[nr++] = (e0-r)%p;
+      if (((((r+b)*r+c)*r+d)%p)==0)
+        {
+          roots.push_back(r);
+          nr++;
+          if (nr==2) // find 3rd root the easy way
+            {
+              roots.push_back(posmod(-b-roots[0]-roots[1],p));
+              std::sort(roots.begin(), roots.end());
+              return 3;
+            }
+        }
     }
   return nr;
 }

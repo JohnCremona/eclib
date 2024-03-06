@@ -43,7 +43,7 @@ private:
   int ** eps_mat;
   int * pivcols;
   long * auxs; long * all_p; int * nroots;  
-  long ** thetamod;  int**squares;  
+  vector<vector<long>> thetamod;  int**squares;  
 public:
   sifter(Curvedata* EE, int na, int verb=0);
   ~sifter();

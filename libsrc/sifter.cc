@@ -42,11 +42,10 @@ sifter::sifter(Curvedata* EE, int na, int verb)
 
   auxs = new long[num_aux];
   nroots = new int[num_aux];
-  thetamod = new long*[num_aux];
+  thetamod.resize(num_aux, vector<long>(3));
   squares = new int*[num_aux];
   all_p = new long[2*num_aux];
 
-  for(i=0; i<num_aux; i++) thetamod[i] = new long[3];
   iaux=0;
   max_dim_im=0;
 
@@ -130,8 +129,6 @@ sifter::~sifter()
   long i;
   for(i=0; i<max_dim_im; i++) delete[]eps_mat[i];
   delete[]eps_mat;
-  for(i=0; i<num_aux; i++) delete[]thetamod[i];
-  delete[]thetamod;
   for(i=0; i<num_aux; i++) delete[]squares[i];
   delete[]squares;
   delete[]auxs;

@@ -341,7 +341,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 		    {
 		      if(!qlistbflag[i]) continue;  // i'th already redundant
 		      // compute (a,h) of i'th quartic:
-		      long aa = posmod(qlist[i].geta(),auxpiv);	      
+		      long aa = posmod(qlist[i].geta(),auxpiv);
 		      long H = posmod(qlist[i].getH(),auxpiv);
 		      if(extra2) if(i>=nfl) H=posmod(hscale*H,auxpiv);
 
@@ -913,14 +913,17 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	}
 #endif
 
-  long iaux; 
-  long *amodi, *hmodi, *auxi, *hstepmodi, *hscalemodi, *astepmodi;
-
+  long iaux=num_aux;
   int ***flagsi; int **flagai;
-  iaux=num_aux; amodi=amod; auxi=auxs;  astepmodi=astepmod;
-  while(iaux--) 
+  auto auxi=auxs.begin();
+  auto amodi=amod.begin();
+  auto hmodi=hmod.begin();
+  auto astepmodi=astepmod.begin();
+  auto hstepmodi=hstepmod.begin();
+  auto hscalemodi=hscalemod.begin();
+  while(iaux--)
     {
-      *amodi++     = posmod(a,    *auxi); 
+      *amodi++     = posmod(a,    *auxi);
       *astepmodi++ = posmod(astep,*auxi);
       auxi++;
     }
@@ -928,12 +931,11 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   while(a!=lasta)
     {
       a+=astep;
-      for(iaux=0, amodi=amod, auxi=auxs, flagai=flaga, flagsi=flags, 
-	  astepmodi=astepmod;
-	  iaux<num_aux; 
-	  iaux++, amodi++, auxi++, flagai++, flagsi++, astepmodi++) 
+      for(iaux=0, amodi=amod.begin(), auxi=auxs.begin(), flagai=flaga, flagsi=flags, astepmodi=astepmod.begin();
+	  iaux<num_aux;
+	  iaux++, amodi++, auxi++, flagai++, flagsi++, astepmodi++)
 	{
-	  (*amodi)+=(*astepmodi); 
+	  (*amodi)+=(*astepmodi);
 	  if((*amodi)>=(*auxi)) (*amodi)-=(*auxi);
 	  *flagai = (*flagsi)[*amodi];
 	}
@@ -972,10 +974,13 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 	  bigfloat xa=to_bigfloat(a);
 	  bigfloat xa4 = 4*xa, xa8=8*xa;
 	  bigfloat oneover4a = 1/xa4;
-	  
+
 // hstep does not depend on b so can be set here:
 	  long hstep = 8*a*cstep;
-	  iaux=num_aux; hstepmodi=hstepmod; auxi=auxs; hscalemodi=hscalemod;
+	  iaux=num_aux;
+          auxi=auxs.begin();
+          hstepmodi=hstepmod.begin();
+          hscalemodi=hscalemod.begin();
 	  if(extra2)
 	    while(iaux--) 
 	      {
@@ -1124,8 +1129,9 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 
 		  c=cmin-cstep; // So first value used is cmin
 
-		  iaux=num_aux; hmodi=hmod; auxi=auxs; hscalemodi=hscalemod;
-		  while(iaux--) 
+		  iaux=num_aux;
+                  hmodi=hmod.begin(); auxi=auxs.begin(); hscalemodi=hscalemod.begin();
+		  while(iaux--)
 		    {
 		      long aux=(*auxi);
 		      long  cmod  = c%aux, bmod  = b%aux;
@@ -1142,9 +1148,9 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 		    {
 		      ah_count++;
 		      c+=cstep;
-		      for(iaux=0, hmodi=hmod, hstepmodi=hstepmod, auxi=auxs; 
-			  iaux<num_aux; 
-			  iaux++, hmodi++, hstepmodi++, auxi++) 
+		      for(iaux=0, hmodi=hmod.begin(), hstepmodi=hstepmod.begin(), auxi=auxs.begin();
+			  iaux<num_aux;
+			  iaux++, hmodi++, hstepmodi++, auxi++)
 			{
 			  (*hmodi) += (*hstepmodi);
 			  if((*hmodi)>=(*auxi)) (*hmodi)-=(*auxi);
@@ -1155,7 +1161,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 
 		      ipivot=-1;
 
-		      for(iaux=0, hmodi=hmod, flagai=flaga; 
+		      for(iaux=0, hmodi=hmod.begin(), flagai=flaga; 
 			  flagok&&(iaux<num_aux); 
 			  iaux++, hmodi++, flagai++)
 			{
@@ -1272,7 +1278,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			 if (xxe>abceps) {ah_efail++; continue;}
 			 d = Iround(xd);
 			 e = Iround(xe);
-			 
+
 #endif
 #ifdef DEBUG_AH
 			 cout << ":\n [" << a<<","<<sb << "," << c 
@@ -1753,22 +1759,22 @@ void rank1::aux_init()  // define  auxiliary moduli and squares
 {
   long i, j, a;
 
-  auxs = new long[num_aux];
-  phimod = new long*[num_aux];
-  aux_flags = new int[num_aux];
-  aux_types = new int[num_aux];
+  auxs.resize(num_aux);
+  aux_flags.resize(num_aux);
+  aux_types.resize(num_aux);
+  phimod.resize(num_aux, vector<long>(3));
   squares = new int*[num_aux];
   flags = new int**[num_aux];
   flaga = new int*[num_aux];
-  amod = new long[num_aux];
-  hmod = new long[num_aux];
-  hstepmod = new long[num_aux];
-  astepmod = new long[num_aux];
-  hscalemod = new long[num_aux];
+  amod.resize(num_aux);
+  hmod.resize(num_aux);
+  hstepmod.resize(num_aux);
+  astepmod.resize(num_aux);
+  hscalemod.resize(num_aux);
 
   auxs[0]=9;  // treated specially
-  aux_flags[0]=1;  aux_types[0]=0;
-  for(i=0; i<num_aux; i++) phimod[i] = new long[3];
+  aux_flags[0]=1;
+  aux_types[0]=0;
   i=1;
 
   // the rest of the auxs must be chosen carefully:  if possible they should
@@ -1862,19 +1868,14 @@ void rank1::flag_init() // set up flag array
   int thisflag;
   int ***flagsi=flags;
   int **squaresi=squares;
-  long * a4phi= new long[3];
-  long * eps  = new long[3];
-
+  vector<long> a4phi(3);
+  vector<long> eps(3);
 #ifdef COUNT_CODES
-  long * code_count = new long[5]; long icc;
+  vector<long> code_count(5, 0);
 #endif
 
-  for(long i=0; i<num_aux; i++, squaresi++, flagsi++) 
+  for(long i=0; i<num_aux; i++, squaresi++, flagsi++)
     {
-#ifdef COUNT_CODES
-      for(icc=0; icc<5; icc++) code_count[icc]=0;
-#endif
-      
       int case1 = (aux_types[i]==1);  // phi cubic has 1 root  mod p
       int case2 = !case1;             // phi cubic has 3 roots mod p
       long a, h;
@@ -1961,7 +1962,7 @@ void rank1::flag_init() // set up flag array
 
 //(+,+,+) maps to flag 15=8+4+2+1     (+,-,-) maps to flag 5=  4 + 1
 //(-,+,-) maps to flag  3=    2+1     (-,-,+) maps to flag 1=      1
-			  
+
 			  if(eps[0]==1) thisflag=(eps[1]==1? 15: 5);
 			  else          thisflag=(eps[1]==1?  3: 1);
 			}
@@ -1982,17 +1983,14 @@ void rank1::flag_init() // set up flag array
 	{
 	  cout << "Code count for p = " << aux << ":\n";
 	  cout << 0 << "\t"<< 15 << "\t"<< 5 << "\t"<< 3 << "\t"<< 1 << "\n";
-	  for(icc=0; icc<5; icc++) cout<<code_count[icc]<<"\t";
+          for (const auto& cc : code_count)
+            cout<<cc<<"\t";
 	  cout<<endl;
 	  double ratio = ((double)(code_count[0]))/(aux*aux);
 	  cout<<"Percentage of (a,H) pairs failing sieve = "<<100*ratio<<endl;
 	}
 #endif
     }
-  delete [] a4phi; delete [] eps;
-#ifdef COUNT_CODES
-  delete [] code_count;
-#endif
 
   if((verbose>1)&&(num_aux>0)) 
     cout<<"finished flag_init()"<<endl;
@@ -2010,14 +2008,8 @@ void rank1::clear_sieve()  // free memory related to sieve;
 	  delete[] flags[i][a];
 	}
       delete[] flags[i];
-      delete[] phimod[i];
     }
   num_aux=0;
-  delete[] auxs; 
-  delete[] phimod; 
   delete[] squares;
-  delete[] aux_flags;  delete[] aux_types;
   delete[] flags;  delete[] flaga;
-  delete[] amod; delete[] hstepmod; delete[] hscalemod;
-  delete[] hmod; delete[] astepmod;
 }
