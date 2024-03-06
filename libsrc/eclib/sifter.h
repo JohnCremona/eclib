@@ -40,20 +40,18 @@ private:
   int verbose;
 
   int num_aux, max_dim_im;
-  int ** eps_mat;
-  int * pivcols;
-  long * auxs; long * all_p; int * nroots;  
-  vector<vector<long>> thetamod;  int**squares;  
+  vector<vector<int>> eps_mat, squares;
+  vector<int> pivcols, nroots;
+  vector<long> auxs, all_p;
+  vector<vector<long>> thetamod;
 public:
   sifter(Curvedata* EE, int na, int verb=0);
-  ~sifter();
   int code(const bigint& x, const bigint& z2, int i);
-  int * eps(const bigint& x, const bigint& z2);
+  vector<int> eps(const bigint& x, const bigint& z2);
   void process(const Point& P);
   void process(const vector<Point>& Plist);
   int getrank() {return rank;}
-  void vecout(int* v);
+  void vecout(const vector<int>& v);
 };
-
 
 #endif
