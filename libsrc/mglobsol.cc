@@ -101,7 +101,6 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
     {
       nwprimes=25;
       wprimes.reserve(nwprimes);
-      long nwp=0;
       long a8=mod(a,8); long b8=mod(2*b,8); long c8=mod(4*c,8);
       long e8=mod(e,8); long d8=mod(2*d,8);
       long z0, t, tt, x, p;
@@ -117,7 +116,7 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 	}
       if(!two_is_ok) wprimes.push_back(2);
       primevar pr; pr++; // to start at 3
-      while(wprimes.size()<nwprimes)
+      while((long)wprimes.size()<nwprimes)
 	{
 	  p=pr; pr++;
 	  if(legendre(a,p)==-1) wprimes.push_back(p);
@@ -127,7 +126,6 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 
 // repeat for u-primes:
       uprimes.reserve(nwprimes);
-      nwp=0;
       two_is_ok = 0;
       for(z0=0; (z0<4) && !two_is_ok; z0++)
 	{
@@ -140,7 +138,7 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 	}
       if(!two_is_ok) uprimes.push_back(2);
       pr.init(); pr++; // to start at 3
-      while(uprimes.size()<nwprimes)
+      while((long)uprimes.size()<nwprimes)
 	{
 	  p=pr; pr++;
 	  if(legendre(e,p)==-1) uprimes.push_back(p);
@@ -175,7 +173,7 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
   squares.resize(num_aux);
   umod.resize(num_aux);
 
-  long i,j;
+  long i=0,j;
   for ( const auto& aux : auxs)
     {
       long half_aux = ((aux + 1) / 2);
@@ -183,6 +181,7 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
       for (j = 0; j < aux; j++)      squares[i][j]=0;
       for (j = 0; j < half_aux; j++) squares[i][posmod( j*j, aux )]=1;
       xgood_mod_aux[i].resize(aux);
+      i++;
     }  // end of aux loop
 
   if(verbose>1)

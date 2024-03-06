@@ -79,7 +79,8 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 
   for(d=nf_d; (d<dmax)||(!have_both); d++)
     {
-      if(gcd(modulus,d)!=1) continue; long d2=d/2;
+      if(gcd(modulus,d)!=1) continue;
+      long d2=d/2;
       b1 = 1;
       if(d==nf_d) b1=nf_b;
       //      for(b=b1; (b<=d2)&&(!have_both); b++)
@@ -261,7 +262,6 @@ int get_curve(long n, long fac, long maxnx, long maxny,
             c4err = abs(I2bigfloat(ic4)-real(c4));
             c6err = abs(I2bigfloat(ic6)-real(c6));
             c4c6err = max(c4err, c6err);
-	    int close = (c4c6err<0.001);
 	    int validc4c6 = 0;
             validc4c6 = valid_invariants(ic4,ic6);
             if((validc4c6)&&detail)
@@ -276,11 +276,7 @@ int get_curve(long n, long fac, long maxnx, long maxny,
               {
                 if (detail>1) cout << "Invalid c-invariants" << endl;
               }
-            // We relax the closeness criterion here, but do not
-            // ignore it completely since there have been cases where
-            // c4,c6 were valid & give the right conductor but are not
-            // actually correct.
-	    close = (c4c6err<0.01);
+
 	    if(validc4c6)
 	      {
 		Curve C(ic4,ic6);

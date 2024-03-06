@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include <eclib/curve.h>
 #include <eclib/polys.h> // for nrootscubic
 #include <eclib/curvemod.h> // for point counting to get ap
@@ -57,9 +57,9 @@ ostream& operator<<(ostream& os, const Kodaira_code& c)
 //
 // subroutines -- not general purpose (.cc only)
 
-bigint root(const bigint& aa, int e, const bigint & p)  
+bigint root(const bigint& aa, int e, const bigint & p)
 // the e'th root of aa, mod p
-{  
+{
   bigint i, ans, temp; int found=0;
   const bigint& a = mod(aa, p);
   for (i = 1; (! found); ++i)
@@ -95,12 +95,12 @@ int rootsexist(const bigint& bb, const bigint& cc, const bigint& p)
   return rootsexist(one,bb,cc,p);
 }
 
-CurveRed::~CurveRed() 
+CurveRed::~CurveRed()
 {
 }
 
 CurveRed::CurveRed(const CurveRed& E)    : Curvedata(E), N(E.N)
-{ 
+{
   factor_discr(); // will only do anything if not already factored
   reduct_array = E.reduct_array;
 }
@@ -190,7 +190,7 @@ CurveRed::CurveRed(const Curvedata& E)
       reduct_array[p] = Reduction_type
 	(ord_p_discr, ord_p_discr - 2, ord_p_j, 4, c_p);
       continue; } // Type IV
-    
+
     // else change coords so that p|C.a1,C.a2, p^2|C.a3,C.a4, p^3|C.a6
     if ( pdiv2 )
       { s = root(C.a2,2,p);
@@ -212,11 +212,11 @@ CurveRed::CurveRed(const Curvedata& E)
     bb=b*b; cc=c*c; bc=b*c;
     w = 27*d*d - bb*cc + 4*b*bb*d - 18*bc*d + 4*c*cc;
     x = 3*c - bb;
-       
+
     if ( div(p,w) )
       {if ( div(p,x) ) sw = 3; else sw = 2; }
     else sw = 1;
-  
+
 //cout << "Analysing roots of cubic; case " << sw << endl;
 
     switch ( sw ) {
@@ -243,7 +243,7 @@ CurveRed::CurveRed(const Curvedata& E)
         a3t = C.a3/my;
         a4t = (C.a4/p)/mx;
         a6t = (C.a6/mx)/my;
-	temp = a3t*a3t + 4*a6t; 
+	temp = a3t*a3t + 4*a6t;
         if ( div(p,temp ) )
           {if ( pdiv2 ) t = my*root(a6t,2,p);
            else t = my*mod(-a3t*halfmodp, p);
@@ -277,7 +277,7 @@ CurveRed::CurveRed(const Curvedata& E)
         (ord_p_discr, ord_p_discr - ix - iy + 1, ord_p_j,
          10 * (ix + iy) - 49, c_p );
       break;  // Type I*m
-    
+
     case 3:
       // Triple root
       // change coords so that T=0 mod p
@@ -532,7 +532,7 @@ void CurveRed::setLocalRootNumber2()
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   int kod = PariKodairaCode(info.Kcode);
-  int n2  = neron(2,kod); 
+  int n2  = neron(2,kod);
 
 #ifdef DEBUG_ESIGN
   cout<<"\nIn LocalRootNumber2(), n2 = "<<n2<<"..."<<endl;
@@ -552,13 +552,13 @@ void CurveRed::setLocalRootNumber2()
   cout<<"c6="<<c6<<", v6="<<v6<<", v="<<v<<endl;
 #endif
 
-  if (kod > 4)  
+  if (kod > 4)
     {
       info.local_root_number = div(2,a2+a3)? -1: 1;
       return;
     }
 
-  if (kod < -9) 
+  if (kod < -9)
     {
       info.local_root_number = (n2==2)? -kro_m1(v) : -1;
       return;
@@ -572,7 +572,7 @@ void CurveRed::setLocalRootNumber2()
 
   switch(kod)
   {
-  case 1: info.local_root_number = 1; 
+  case 1: info.local_root_number = 1;
     return;
   case 2:
     switch(n2)
@@ -580,142 +580,142 @@ void CurveRed::setLocalRootNumber2()
       case 1:
 	switch(v4)
 	  {
-	  case 4: info.local_root_number = kro_m1(u); 
+	  case 4: info.local_root_number = kro_m1(u);
 	    return;
-	  case 5: info.local_root_number =  1; 
+	  case 5: info.local_root_number =  1;
 	    return;
-	  default: info.local_root_number =  -1; 
+	  default: info.local_root_number =  -1;
 	    return;
 	  }
-      case 2: info.local_root_number = (v6==7) ? 1 : -1; 
+      case 2: info.local_root_number = (v6==7) ? 1 : -1;
 	return;
-      case 3: info.local_root_number = (v%8==5 || (u*v)%8==5) ? 1 : -1; 
+      case 3: info.local_root_number = (v%8==5 || (u*v)%8==5) ? 1 : -1;
 	return;
-      case 4: if (v4>5) 
+      case 4: if (v4>5)
 	{
-	  info.local_root_number = kro_m1(v);    
+	  info.local_root_number = kro_m1(v);
 	  return;
 	}
-      else 
+      else
 	{
-	  info.local_root_number = (v4==5) ? -kro_m1(u) : -1; 
+	  info.local_root_number = (v4==5) ? -kro_m1(u) : -1;
 	  return;
 	}
       }
   case 3:
     switch(n2)
       {
-      case 1: info.local_root_number = -kro_p2(u*v); 
+      case 1: info.local_root_number = -kro_p2(u*v);
 	return;
-      case 2: info.local_root_number = -kro_p2(v); 
+      case 2: info.local_root_number = -kro_p2(v);
 	return;
       case 3: y1=posmod((u-(c6 >> 5)) , 16);
 	info.local_root_number = (y1==7 || y1==11) ? 1 : -1;
 	return;
-      case 4: info.local_root_number = (v%8==3 || (2*u+v)%8==7) ? 1 : -1; 
+      case 4: info.local_root_number = (v%8==3 || (2*u+v)%8==7) ? 1 : -1;
 	return;
-      case 5: info.local_root_number = v6==8 ? kro_p2(x1) : kro_m2(u); 
+      case 5: info.local_root_number = v6==8 ? kro_p2(x1) : kro_m2(u);
 	return;
       }
   case -1:
     switch(n2)
       {
-      case 1: info.local_root_number = -kro_p2(x1); 
+      case 1: info.local_root_number = -kro_p2(x1);
 	return;
-      case 2: info.local_root_number = (v%8==7) || (x1%32==11) ? 1 : -1; 
+      case 2: info.local_root_number = (v%8==7) || (x1%32==11) ? 1 : -1;
 	return;
-      case 3: info.local_root_number = v4==6 ? 1 : -1; 
+      case 3: info.local_root_number = v4==6 ? 1 : -1;
 	return;
-      case 4: if (v4>6) 
+      case 4: if (v4>6)
 	{
-	  info.local_root_number = kro_m1(v); 
+	  info.local_root_number = kro_m1(v);
 	  return;
 	}
-      else 
+      else
 	{
-	  info.local_root_number = v4==6 ? -kro_m1(u*v) : -1; 
+	  info.local_root_number = v4==6 ? -kro_m1(u*v) : -1;
 	  return;
 	}
       }
-  case -2: info.local_root_number = n2==1 ? kro_m2(v) : kro_m1(v); 
+  case -2: info.local_root_number = n2==1 ? kro_m2(v) : kro_m1(v);
     return;
   case -3:
     switch(n2)
       {
       case 1: y1=posmod((u-2*v),64);
-	info.local_root_number = (y1==3) || (y1==19) ? 1 : -1; 
+	info.local_root_number = (y1==3) || (y1==19) ? 1 : -1;
 	return;
-      case 2: 
-	if(kro_m1(u)==1) 
+      case 2:
+	if(kro_m1(u)==1)
 	  {
-	    info.local_root_number = kro_p2(v);  
+	    info.local_root_number = kro_p2(v);
 	    return;
 	  }
-	else 
+	else
 	  {
-	    info.local_root_number = kro_m2(v); 
+	    info.local_root_number = kro_m2(v);
 	    return;
 	  }
-      case 3: 
-	if(kro_m1(u)==1) 
+      case 3:
+	if(kro_m1(u)==1)
 	  {
-	    info.local_root_number = -kro_m2(u*v);  
+	    info.local_root_number = -kro_m2(u*v);
 	    return;
 	  }
-	else 
+	else
 	  {
-	    info.local_root_number = kro_p2(u*v); 
+	    info.local_root_number = kro_p2(u*v);
 	    return;
 	  }
-      case 4: info.local_root_number = v6==11 ? kro_m2(x1) : -kro_m2(u); 
+      case 4: info.local_root_number = v6==11 ? kro_m2(x1) : -kro_m2(u);
 	return;
       }
   case -5:
-    if (n2==1) 
+    if (n2==1)
       {
-	info.local_root_number = x1%32==23 ? 1 : -1; 
+	info.local_root_number = x1%32==23 ? 1 : -1;
 	return;
       }
-    else 
+    else
       {
-	info.local_root_number = -kro_p2(2*u+v); 
+	info.local_root_number = -kro_p2(2*u+v);
 	return;
       }
   case -6:
     switch(n2)
       {
-      case 1: info.local_root_number = 1; 
+      case 1: info.local_root_number = 1;
 	return;
-      case 2: info.local_root_number = v6==10 ? 1 : -1; 
+      case 2: info.local_root_number = v6==10 ? 1 : -1;
 	return;
-      case 3: info.local_root_number = (u%16==11) || ((u+4*v)%16==3) ? 1 : -1; 
+      case 3: info.local_root_number = (u%16==11) || ((u+4*v)%16==3) ? 1 : -1;
 	return;
       }
   case -7:
-    if (n2==1) 
+    if (n2==1)
       {
-	info.local_root_number = 1; 
+	info.local_root_number = 1;
 	return;
       }
     else
       {
         y1= posmod((u+(c6 >> 8)) , 16);
-	if (v6==10) 
+	if (v6==10)
 	  {
-	    info.local_root_number = (y1==9) || (y1==13) ? 1 : -1; 
+	    info.local_root_number = (y1==9) || (y1==13) ? 1 : -1;
 	    return;
 	  }
-	else 
+	else
 	  {
-	    info.local_root_number = (y1==9) || (y1==5) ? 1 : -1; 
+	    info.local_root_number = (y1==9) || (y1==5) ? 1 : -1;
 	    return;
 	  }
       }
-  case -8: info.local_root_number = n2==2 ? kro_m1(v*d1) : -1; 
+  case -8: info.local_root_number = n2==2 ? kro_m1(v*d1) : -1;
     return;
-  case -9: info.local_root_number = n2==2 ? -kro_m1(d1) : -1; 
+  case -9: info.local_root_number = n2==2 ? -kro_m1(d1) : -1;
     return;
-  default: info.local_root_number = -1; 
+  default: info.local_root_number = -1;
     return;
   }
 }
@@ -729,22 +729,35 @@ void CurveRed::setLocalRootNumber3()
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   int kod = PariKodairaCode(info.Kcode);
-  int n2  = neron(3,kod); 
+  int n2  = neron(3,kod);
 
 #ifdef DEBUG_ESIGN
   cout<<"\nIn LocalRootNumber3()..."<<endl;
 #endif
-  bigint mu,mv; long u,v; int v4,v6;
+  bigint mu,mv; long u,v; int v4;
 
-  if (is_zero(c4)) { v4=12; u=0;}
-  else {mu=c4; v4=divide_out(mu,three); u = posmod(mu,81);}
+  if (is_zero(c4)) {
+    v4=12;
+    u=0;
+  }
+  else {
+    mu=c4;
+    v4=divide_out(mu,three);
+    u = posmod(mu,81);
+  }
 
 #ifdef DEBUG_ESIGN
   cout<<"c4="<<c4<<", v4="<<v4<<", u="<<u<<endl;
 #endif
 
-  if (is_zero(c6)) { v=0;}
-  else {mv=c6; v6=divide_out(mv,three); v = posmod(mv,81);}
+  if (is_zero(c6)) {
+    v=0;
+  }
+  else {
+    mv=c6;
+    divide_out(mv,three);
+    v = posmod(mv,81);
+  }
 
 #ifdef DEBUG_ESIGN
   cout<<"c6="<<c6<<", v6="<<v6<<", v="<<v<<endl;
@@ -766,65 +779,65 @@ void CurveRed::setLocalRootNumber3()
   cout<<"K6="<<K6<<endl;
 #endif
 
-  if (kod > 4) 
-    { 
-      info.local_root_number = K6; 
-      return; 
+  if (kod > 4)
+    {
+      info.local_root_number = K6;
+      return;
     }
-  
+
   switch(kod)
     {
-    case 1: case 3: case -3: info.local_root_number = 1; 
-      return; 
+    case 1: case 3: case -3: info.local_root_number = 1;
+      return;
     case 2:
       switch(n2)
 	{
-	case 1: info.local_root_number = (r6==4 || r6>6) ? 1 : -1; 
-	  return; 
-	case 2: info.local_root_number = -K4*K6; 
-	  return; 
-	case 3: info.local_root_number = 1; 
-	  return; 
-	case 4: info.local_root_number = -K6; 
-	  return; 
+	case 1: info.local_root_number = (r6==4 || r6>6) ? 1 : -1;
+	  return;
+	case 2: info.local_root_number = -K4*K6;
+	  return;
+	case 3: info.local_root_number = 1;
+	  return;
+	case 4: info.local_root_number = -K6;
+	  return;
 	}
     case 4:
       switch(n2)
 	{
-	case 1: info.local_root_number = K6*kro_3(d1); 
-	  return; 
-	case 2: info.local_root_number = -K4; 
-	  return; 
-	case 3: info.local_root_number = -K6; 
-	  return; 
+	case 1: info.local_root_number = K6*kro_3(d1);
+	  return;
+	case 2: info.local_root_number = -K4;
+	  return;
+	case 3: info.local_root_number = -K6;
+	  return;
 	}
-    case -2: info.local_root_number = n2==2 ? 1 : K6; 
-      return; 
+    case -2: info.local_root_number = n2==2 ? 1 : K6;
+      return;
     case -4:
       switch(n2)
 	{
 	case 1:
-	  if (v4==4) 
+	  if (v4==4)
 	    {
-	      info.local_root_number = (r6==4 || r6==8) ? 1 : -1; 
-	      return; 
+	      info.local_root_number = (r6==4 || r6==8) ? 1 : -1;
+	      return;
 	    }
-	  else 
+	  else
 	    {
-	      info.local_root_number = (r6==1 || r6==2) ? 1 : -1; 
-	      return; 
+	      info.local_root_number = (r6==1 || r6==2) ? 1 : -1;
+	      return;
 	    }
-	case 2: info.local_root_number = -K6; 
-	  return; 
-	case 3: info.local_root_number = (r6==2 || r6==7) ? 1 : -1; 
-	  return; 
-	case 4: info.local_root_number = K6; 
-	  return; 
+	case 2: info.local_root_number = -K6;
+	  return;
+	case 3: info.local_root_number = (r6==2 || r6==7) ? 1 : -1;
+	  return;
+	case 4: info.local_root_number = K6;
+	  return;
 	}
-    default: info.local_root_number = -1; 
-      return; 
+    default: info.local_root_number = -1;
+      return;
     }
-}  
+}
 
 // Given a prime p not 2 or 3, sets to +1 or -1, the "local root
 // number" or local factor in the sign of the functional equation of
@@ -835,47 +848,47 @@ void CurveRed::setLocalRootNumber_not_2_or_3(const bigint& p)
   auto ri = reduct_array.find(p);
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
-  if (info.ord_p_N == 1) 
+  if (info.ord_p_N == 1)
     {
       info.local_root_number = -kro(-c6,p);
       return;
     }
-  
+
   long sp=posmod(p,24);
-  if (info.ord_p_j_denom >0)  
+  if (info.ord_p_j_denom >0)
     {
-      info.local_root_number = kro_m1(sp); 
+      info.local_root_number = kro_m1(sp);
       return;
     }
-  
+
   long ep=12 / gcd(12,info.ord_p_discr);
-  if(ep==4) 
+  if(ep==4)
     {
       info.local_root_number =  kro_m2(sp);
       return;
     }
-  if(odd(ep)) 
+  if(odd(ep))
     {
-      info.local_root_number =  kro_3(sp); 
+      info.local_root_number =  kro_3(sp);
       return;
     }
-  info.local_root_number =  kro_m1(sp); 
+  info.local_root_number =  kro_m1(sp);
 }
 
 
 // Given a prime p, sets to +1 or -1, the "local root number" or local
 // factor in the sign of the functional equation of L(E,s).
 //
-// This function just delegates to subsidiary ones for the cases 
+// This function just delegates to subsidiary ones for the cases
 // p=2, p=3, and p>=5.
 //
 
 void CurveRed::setLocalRootNumber(const bigint& p)
 {
   if (is_zero(p)) return;
-  if (p==2) setLocalRootNumber2(); 
-  else if (p==3) setLocalRootNumber3(); 
-  else  setLocalRootNumber_not_2_or_3(p);  
+  if (p==2) setLocalRootNumber2();
+  else if (p==3) setLocalRootNumber3();
+  else  setLocalRootNumber_not_2_or_3(p);
 }
 
 
@@ -919,8 +932,8 @@ int kro_m1(long x) // kronecker(-1,x) with x>0 odd
 {
   static int kro_m1_tab[4] = {0,1,0,-1};
 #ifdef DEBUG_ESIGN
-  if (!((x>0)&&(odd(x))))  
-    { 
+  if (!((x>0)&&(odd(x))))
+    {
       cout<<"kro_m1() called with x="<<x<<endl;
       return 0;
     }
@@ -932,7 +945,7 @@ int kro_p2(long x) // kronecker(2,x) with x>0 odd
 {
   static int kro_p2_tab[8] = {0,1,0,-1,0,-1,0,1};
 #ifdef DEBUG_ESIGN
-  if (!((x>0)&&(odd(x))))  
+  if (!((x>0)&&(odd(x))))
     {
       cout<<"kro_p2() called with x="<<x<<endl;
       return 0;
@@ -945,7 +958,7 @@ int kro_m2(long x) // kronecker(-2,x) with x>0 odd
 {
   static int kro_m2_tab[8] = {0,1,0,1,0,-1,0,-1};
 #ifdef DEBUG_ESIGN
-  if (!((x>0)&&(odd(x))))  
+  if (!((x>0)&&(odd(x))))
     {
       cout<<"kro_m2() called with x="<<x<<endl;
       return 0;
@@ -958,7 +971,7 @@ int kro_3(long x) // kronecker(x,3)
 {
   static int kro_3_tab[3] = {0,1,-1};
 #ifdef DEBUG_ESIGN
-  if (!(x>0))  
+  if (!(x>0))
     {
       cout<<"kro_3() called with x="<<x<<endl;
       return 0;
@@ -1102,45 +1115,44 @@ bigint Trace_Frob(CurveRed& c, const bigint& p)
   if(f==1)  return BIGINT(-LocalRootNumber(c,p));
 
   int x,a,b,d;
-  bigint n=zero; 
-  if(p==two) // curvemodq class only in characteristic > 3 
+  bigint n=zero;
+  if(p==two) // curvemodq class only in characteristic > 3
     {
       // Count points naively
       // y^2+(a1*x+a3)*y-(x^3+a2*x^2+a4*x+a6) = y^2+ay+b
-      int a1=bigint_mod_long(c.a1,2), a2=bigint_mod_long(c.a2,2), 
-	a3=bigint_mod_long(c.a3,2),  a4=bigint_mod_long(c.a4,2), 
-	a6=bigint_mod_long(c.a6,2);   
+      int a1=bigint_mod_long(c.a1,2), a2=bigint_mod_long(c.a2,2),
+	a3=bigint_mod_long(c.a3,2),  a4=bigint_mod_long(c.a4,2),
+	a6=bigint_mod_long(c.a6,2);
       // x=0:
       a = odd(a3);        // 1 if odd else 0
-      b = odd(a6);               
+      b = odd(a6);
       n += (a?(b?0:2):1);
       // x=1:
-      a = odd(a1+a3); 
-      b = odd(1+a2+a4+a6); 
+      a = odd(a1+a3);
+      b = odd(1+a2+a4+a6);
       n += (a?(b?0:2):1);
       return two-n;
     }
-  if(p==three) // curvemodq class only in characteristic > 3 
+  if(p==three) // curvemodq class only in characteristic > 3
     {
       // Count points naively
       // y^2+(a1*x+a3)*y-(x^3+a2*x^2+a4*x+a6) = y^2+ay+b
-      int a1=bigint_mod_long(c.a1,3), a2=bigint_mod_long(c.a2,3), 
-	a3=bigint_mod_long(c.a3,3),  a4=bigint_mod_long(c.a4,3), 
-	a6=bigint_mod_long(c.a6,3);   
+      int a1=bigint_mod_long(c.a1,3), a2=bigint_mod_long(c.a2,3),
+	a3=bigint_mod_long(c.a3,3),  a4=bigint_mod_long(c.a4,3),
+	a6=bigint_mod_long(c.a6,3);
       for(x=-1; x<2; x++)
 	{
 	  a = (((x+a2)*x+a4)*x+a6)%3;
 	  b = (a1*x+a3)%3;
-	  d = (b*b+a)%3;  
+	  d = (b*b+a)%3;
 	  if(d==2)d=-1;
 	  if(d==-2)d=1;
 	  n += (d+1);
 	}
       return three-n;
     }
-  curvemodq Cq = reduce_curve(c,p); 
+  curvemodq Cq = reduce_curve(c,p);
   n = Cq.group_order();
   bigint ans = one+p-n;
   return ans;
 }
-

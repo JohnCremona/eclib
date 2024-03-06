@@ -79,8 +79,10 @@ int main(void)
  if (n>1)
 {
   if (curve_output)
-    curve_out_filename = single_curve_filename(n);
-    curve_out.open(curve_out_filename.c_str());
+    {
+      curve_out_filename = single_curve_filename(n);
+      curve_out.open(curve_out_filename.c_str());
+    }
   cout << ">>>Level " << n;
   // Temporary code to skip non-square-free levels
   //
@@ -100,7 +102,7 @@ int main(void)
       cout << "Finished level "<<n<<endl;
       continue;
     }
-  int plus=1, cuspidal=0;
+  int plus=1;
   newforms nf(n,verbose); 
   int noldap=25;
   nf.createfromscratch(plus,noldap);

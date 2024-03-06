@@ -82,7 +82,7 @@ private:
   int verbose, posdisc, firstnl;
   bigfloat xmin,x1,x2,x3;
   int num_aux;
-  long* auxs;
+  vector<long> auxs;
   int** xgood_mod_aux;
   int** x1good_mod_aux;
   int** squares;

@@ -416,8 +416,8 @@ smat smat_elim::kernel( vec& pc, vec& npc)
 
 smat smat_elim::new_kernel( vec& pc, vec& npc)
 {
-  int i,ic,ir, j, jj, ip, t,tt, n, r, c;
-  scalar v, w;
+  int i,ir, j, jj, t, r, c;
+  scalar v;
 
 #if TRACE_ELIM
   cout<<"Starting sparse_elimination()..."<<flush;
@@ -870,12 +870,12 @@ void smat_elim::step4 ( )
     }
   int M0 = maxcolwt; // max(20, int(maxcolwt/10)); // 20;
   int Mstep = int(maxcolwt/100);
-  float Mscale = 0.9;
   if (Mstep==0) Mstep=1;
 #if TRACE_ELIM
   cout<<"Step 4, max column weight = "<<maxcolwt<<endl;  
 #endif
 
+  //float Mscale = 0.9;
   //for( M = M0; M >= 4; M--)
   //for( M = M0; M >= 3; M*=Mscale)
   for( M = M0; M >= 3; M-=Mstep)

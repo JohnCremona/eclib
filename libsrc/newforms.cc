@@ -1154,8 +1154,6 @@ void newforms::display(void) const
   }
 }
 
-#define DEBUG_SCALING
-
 void newforms::display_modular_symbol_map(int check) const
 {
  long i,j,k;
@@ -1787,21 +1785,19 @@ void newforms::makebases(int flag, int all_nf)
   // basisflag controls what ::use() does with the nfs when found
   // j1ds counts through the newforms as they are found
   basisflag=flag;
-  int i;
   j1ds = 0; // counts through newforms as they are recovered
   vector< vector<long> > eigs;
 
   if (all_nf)
     {
-      nf_subset.clear();
-      for(i=0; i<n1ds; i++)
-        nf_subset.push_back(i);
+      nf_subset.resize(n1ds);
+      std::iota(nf_subset.begin(), nf_subset.end(), 0);
     }
 
   unfix_eigs();
   sort();
-  for(i=0; i<nf_subset.size(); i++)
-    eigs.push_back(nflist[nf_subset[i]].aplist);
+  for (const auto nfi : nf_subset)
+    eigs.push_back(nflist[nfi].aplist);
 
   splitspace.recover(eigs);  // NB newforms::use() determines what is
 			     // done with each one as it is found;
@@ -1827,12 +1823,11 @@ void newforms::merge(int all_nf)
   mvlminusvecs.clear();
   if (verbose>1)
     cout<<"merging newforms " << nf_subset << endl;
-  int inf, jnf;
   unfix_eigs();
   sort();
-  for(jnf=0; jnf<nf_subset.size(); jnf++)
+  for (const auto nfi : nf_subset)
    {
-     inf = nf_subset[jnf];
+     int inf = nf_subset[nfi];
      if(verbose) cout << "Newform #"<<(inf+1)<<":"<<endl;
      if(verbose) cout << "-about to extend bplus,bminus..."<<flush;
      bplus.init(h1->nsymb);
@@ -1882,9 +1877,9 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   //cout<<"In apvec with p = "<<p<<endl;
   vector<long> apv(n1ds);
   vec v;
-  long i,j,iq,ap; 
+  long i,iq,ap;
   if(::divides(p,modulus)) // we already have all the aq
-    { 
+    {
       if(::divides(p*p,modulus))
 	for (i=0; i<n1ds; i++) apv[i] = 0;
       else
@@ -1894,7 +1889,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 	}
       return apv;
     }
-  
+
   // now p is a good prime
 
   long maxap=(long)(2*sqrt((double)p)); // for validity check

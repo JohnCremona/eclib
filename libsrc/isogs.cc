@@ -365,12 +365,14 @@ void IsogenyClass::displaymat(ostream& os)const
   os << "Isogeny matrix:\n";
   os << "\t";
   for(j=0; j<ncurves; j++)
-    os<<(j+1)<<"\t";  os<<"\n";
+    os<<(j+1)<<"\t";
+  os<<"\n";
   for(i=0; i<ncurves; i++)
     {
       os<<(i+1)<<"\t";
       for(j=0; j<ncurves; j++)
-        os<<mat_entry(i,j)<<"\t";  os<<"\n";
+        os<<mat_entry(i,j)<<"\t";
+      os<<"\n";
     }
   os<<endl;
 }

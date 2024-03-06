@@ -87,7 +87,6 @@ int main(void)
       cout << "Finished level "<<n<<endl;
       continue;
     }
-  int plus=1, cuspidal=0;
   newforms nf(n,verbose); 
   int noldap=25; // stopp0 must be at least this big!
   if (stopp0<noldap) stopp0=noldap;

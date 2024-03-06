@@ -35,7 +35,7 @@ int main()
   cout<<"Enter output filename: ";
   cin>>filename;
   ofstream output(filename.c_str());
-  int n1,n2; short temp;
+  int n1,n2;
   cout<<"Enter first and last values of n: ";
   cin>>n1>>n2;
   for (int n=n1; n<=n2; n++)
@@ -45,17 +45,15 @@ int main()
       if (!datafile) cout<<"No file "<<data<<" exists!"<<endl;
       else
         {
-          int i,ic,xic,ip,jp,p,iq,nnf,naq,nap,nx;
+          int i,ic,xic,ip,jp,p,iq,nnf,naq;
 	  int nbigprimes = 5;  // max no. of primes over 100
 
-	  short temp_short;
 	  int temp_int;
 	  datafile.read((char*)&temp_int,sizeof(int));   // = number of newforms
 	  nnf=temp_int;
 	  datafile.read((char*)&temp_int,sizeof(int));   // = number of bad primes
 	  naq=temp_int;
 	  datafile.read((char*)&temp_int,sizeof(int));   // = number of eigs
-	  nap=temp_int;
 	  if(nnf==0) continue;
 
 	      // skip over extra data for each newform
@@ -139,7 +137,7 @@ int main()
 		      else output<<setw(3)<<ap;
 		    }
                 }
-	      for(i=0; i<bigptable.size(); i++)
+	      for(i=0; i<(int)bigptable.size(); i++)
                 {
                   if (aqtable[ic][iq++]==1) output<<" +"; else output<<" -";
                   output<<"("<<bigptable[i]<<")";

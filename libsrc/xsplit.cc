@@ -117,7 +117,6 @@ smat form_finder::make_nested_submat(long ip, ff_data &data)
   long depth = data.depth_;  // current depth
   long subdim = data.subdim_;  // current dimension
   ff_data *d = &data; // Pointer to nodes
-  int i, j, level;
 
   ECLOG(1) << "Computing operator of size " << subdim
            << " at depth " << depth << "..." << flush;
@@ -126,7 +125,7 @@ smat form_finder::make_nested_submat(long ip, ff_data &data)
 
   vec jlist = iota((scalar)subdim);
   smat b = d->rel_space_->bas();
-  level = depth;
+  int level = depth;
   while (level--)
     {
       ECLOG(2) << "["<<level<<"]" << flush;
@@ -273,20 +272,16 @@ void form_finder::make_basis( ff_data &data ) {
     return;
   }
 
-  ssubspace* s;
-  if( bigmats ) {
-    s = data.abs_space_;  // only used when depth>0
-  }
-  ssubspace *spm_rel, *spm_abs;
+  ssubspace *spm_rel; //, *spm_abs;
   SCALAR eig = denom1;
-  // if(depth) eig*=denom(*s);
   smat subconjmat;            // only used when depth>0
   if( bigmats ) {
+    ssubspace* s;
+    s = data.abs_space_;  // only used when depth>0
     subconjmat = (depth) ? restrict_mat(data.conjmat_, *s) : data.conjmat_;
     // will only be a 2x2 in this case (genus 1 only!)
   }
   else {
-    //subconjmat = h->s_opmat_restricted(-1,*s,1,verbose);
     subconjmat = make_nested_submat(-1,data);
   }
 

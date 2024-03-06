@@ -70,7 +70,7 @@ int main(void)
   int noldap=25;
   nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
   int nnf = nf.n1ds;
-  int inf = 1;
+  //  int inf = 1;
   if(nnf>0)
     {
       // cout<<"****************************"<<endl;

@@ -176,7 +176,7 @@ void oldforms::getoldclasses(long d, int verbose)
 	}
       if(verbose>1) cout<<"betas: "<<betalist<<endl;
       vector<long> nextoldformap(nap);
-      primevar pr; long iform, c, ip, p, aq; int bit;
+      primevar pr; long iform, c, ip, aq; int bit;
       for(iform=0; iform<nforms; iform++)
 	{
 	  vector<long>& aqlist=olddata.nflist[iform].aqlist;

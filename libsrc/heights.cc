@@ -323,7 +323,6 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
 #ifdef DEBUG_REG
   cout<<"In regulator with PointArray = " << P << endl;
 #endif
-  int i,j,k,d;
   int n = P.size();
   if( n <= 0) return to_bigfloat(1);
   if(n == 1) return height(P[0]) ;
@@ -340,13 +339,13 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
   // initialize the matrix of pairings
   mat_RR height_matrix;
   height_matrix.SetDims(n,n);
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     {
       height_matrix[i][i] = height(P[i]) ;
     }
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     {
-      for (j = i + 1; j < n; j++)
+      for (int j = i + 1; j < n; j++)
           {
             Point Q = P[i] + P[j];
             bigfloat h = (height(Q) - height_matrix[i][i] - height_matrix[j][j])/2 ;
@@ -361,9 +360,9 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
   if (n == 3)
     {
      bigfloat pair[3][3] ;
-     for (i = 0; i < 3; i++)
+     for (int i = 0; i < 3; i++)
        {pair[i][i] = height(P[i]) ;
-        for (j = i + 1; j < 3; j++)
+        for (int j = i + 1; j < 3; j++)
           {pair[i][j] = pair[j][i] = height_pairing(P[i], P[j]) ; }
        }
      bigfloat reg = (pair[0][0] * ( pair[1][1] * pair[2][2] - pair[1][2] * pair[1][2] )
@@ -378,9 +377,9 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
   if (n == 4)
     {
      bigfloat pair[4][4] ;
-     for (i = 0; i < 4; i++)
+     for (int i = 0; i < 4; i++)
        {pair[i][i] = height(P[i]) ;
-        for (j = i + 1; j < 4; j++)
+        for (int j = i + 1; j < 4; j++)
           {pair[i][j] = height_pairing(P[i], P[j]) ; }
        }
      //
@@ -413,25 +412,25 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
     }
   bigfloat pair[MAX_RANK_REG][MAX_RANK_REG] ;
   // initialize the matrix of pairings
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     {
       pair[i][i] = height(P[i]) ;
-      for (j = i + 1; j < n; j++)
+      for (int j = i + 1; j < n; j++)
         {
           pair[j][i] = pair[i][j] = height_pairing(P[i], P[j]) ;
         }
     }
   // Gaussian elimination
   // for the first n - 1 rows
-  for (j = 0 ; j < n - 1; j ++)
+  for (int j = 0 ; j < n - 1; j ++)
     {// use row j to pivot with
       bigfloat pivot = pair[j][j] ;
       // kill off rows below row j
-      for (i = j + 1; i < n ; i ++)
+      for (int i = j + 1; i < n ; i ++)
         {bigfloat multiplier = pair[i][j] / pivot ;
           // subtract multiplier * row j from row i
           //noting the beginning of row i is already zeroed
-          for (k = j ; k < n; k++)
+          for (int k = j ; k < n; k++)
             {
               pair[i][k] -= multiplier * pair[j][k] ;
             }
@@ -439,7 +438,7 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
     }
   // now reg is the product of the diagonal entries
   bigfloat reg = to_bigfloat(1) ;
-  for (d = 0; d < n; d++) reg *= pair[d][d] ;
+  for (int d = 0; d < n; d++) reg *= pair[d][d] ;
   return reg ;
 #endif
 }

@@ -96,9 +96,6 @@ int main(void)
 // flags to say that we have real/imag period 
 //          and that we have a cycle giving both together
      int rp_known=0, have_both=0;
-     long lplus=nfi->lplus, mplus=nfi->mplus;
-     long s = nfi->sfe;
-     //nfi->dotplus=1;     
      nfi->dotminus=1;  // In case wrong values were on the file!
 
 // STEP 1: find the real period using L(f,1) is L/P nonzero,

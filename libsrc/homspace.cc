@@ -309,11 +309,11 @@ if (verbose>1)
    }
 
    // Compute the number of cusps
-   long maxncusps =0, dd, pp, nc;
+   long maxncusps =0, nc;
    for( const auto& d : dlist)
      {
-       nc = ::gcd(dd,modulus/d);
-       for( const auto& p : plist) // computing phi(dd)
+       nc = ::gcd(d,modulus/d);
+       for( const auto& p : plist) // computing phi(d)
          {
            if ((nc%p)==0)
              nc = nc*(p-1)/p;

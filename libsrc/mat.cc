@@ -1471,7 +1471,7 @@ mat mat_from_mat_zz_p(const mat_zz_p& A, scalar pr) // type of scalar fixes retu
 mat ref_via_ntl(const mat& M, vec& pcols, vec& npcols,
                 long& rk, long& ny, scalar pr)
 {
- long nr=M.nrows(), nc=M.ncols();
+ long nc=M.ncols();
  long i, j, k;
 #ifdef TRACE_NTL_REF
  timer ntl_timer;
@@ -1532,7 +1532,6 @@ mat ref_via_ntl(const mat& M, vec& pcols, vec& npcols,
  cout<<endl;
 #endif
  return ans;
-
 }
 
 long rank_via_ntl(const mat& M, scalar pr)
@@ -1602,7 +1601,7 @@ void mod_mat_from_mat(mod_mat& A, const mat& M, scalar pr)
 
 mat mat_from_mod_mat(const mod_mat& A, scalar a) // scalar just to fix return type
 {
-  long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
+ long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
 
   // create matrix copy of A:
   mat M(nr, nc);
@@ -1615,9 +1614,6 @@ mat mat_from_mod_mat(const mod_mat& A, scalar a) // scalar just to fix return ty
 
 mat ref_via_flint(const mat& M, scalar pr)
 {
-  long nr=M.nrows(), nc=M.ncols();
-  long i, j;
-
   // create flint matrix copy of M:
   mod_mat A;
   mod_mat_from_mat(A,M,pr);
@@ -1626,6 +1622,7 @@ mat ref_via_flint(const mat& M, scalar pr)
 #ifdef TRACE_FLINT_RREF
   timeit_t t;
   timeit_start(t);
+  long nc=M.ncols(), nr=mod_mat_nrows(A);
   cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
 #endif
   mod_mat_rref(A);
@@ -1648,7 +1645,7 @@ mat ref_via_flint(const mat& M, scalar pr)
 mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
                                   long& rk, long& ny, scalar pr)
 {
-  long nr=M.nrows(), nc=M.ncols();
+  long nc=M.ncols();
   long i, j, k;
 
 #ifdef TRACE_FLINT_RREF
@@ -1668,6 +1665,7 @@ mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
 #ifdef TRACE_FLINT_RREF
   timeit_t t;
   timeit_start(t);
+  long nr=M.nrows();
   cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
 #endif
 

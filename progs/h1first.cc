@@ -92,11 +92,11 @@ int main(void)
       nf.sort_into_Cremona_label_order();
 #endif
       int all_nf = 1; // default; means do all
-      int inf = 1;
 #ifdef SINGLE
       all_nf = 0;
       nf.nf_subset.clear();
       cout << "Enter list of form numbers (between 1 and "<<nnf<<"), ending with 0: ";
+      int inf = 1;
       cin>>inf;
       while((inf>0)&&(inf<=nnf))
         {

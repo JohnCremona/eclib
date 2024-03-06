@@ -192,7 +192,7 @@ vector<long> posdivs(long a, const vector<long>& plist)
 {
 // cout << "In posdivs with a = " << a << endl;
 // cout << plist.size() << " primes: " <<endl; cout << plist << endl;
- long j,k,p,e,nd = 1;
+ long j,k,e,nd = 1;
  vector<long> dlist(1,1);  // cout << "Divisor 0 = 1" << endl;
  for (const auto& p : plist)
    {
@@ -209,7 +209,7 @@ vector<long> posdivs(long a, const vector<long>& plist)
 vector<long> alldivs(long a, const vector<long>& plist)
 {//cout << "In alldivs with a = " << a << endl;
 // cout << plist.size() << " primes: " <<endl; cout << plist << endl;
- long j,k,p,e,nd = 2;
+ long j,k,e,nd = 2;
  vector<long> dlist(1,1);  // cout << "Divisor 0 =  1" << endl;
  dlist.push_back(-1);      // cout << "Divisor 1 = -1" << endl;
  for (const auto& p : plist)
@@ -226,7 +226,7 @@ vector<long> alldivs(long a, const vector<long>& plist)
 
 vector<long> sqdivs(long a, const vector<long>& plist)
 {
- long j,k,p,e,nd = 1;
+ long j,k,e,nd = 1;
  vector<long> dlist(1,1);
  for (const auto& p : plist)
    {
@@ -242,7 +242,7 @@ vector<long> sqdivs(long a, const vector<long>& plist)
 
 vector<long> sqfreedivs(long a, const vector<long>& plist)
 {
- long j,k,p,e,nd = 1;
+ long j,k,e,nd = 1;
  vector<long> dlist(1,1);
  for (const auto& p : plist)
  {

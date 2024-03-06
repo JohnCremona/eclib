@@ -380,14 +380,18 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 
 void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
 {
-  if (verbose>1) 
+  if (verbose>1)
     {
       if(which) cout<<"\n";
-      cout<<"Finding els2 gens for E"; if(which) cout<<"'";
-      cout<<" (c"; if(which) cout<<"'";
-      cout<<"= "<<c<<", d"; if(which) cout<<"'";
-      cout<<"= "<<d<<") which lift to S^2(E"; 
-      if(which) cout<<"'"; cout<<")"<<endl;
+      cout<<"Finding els2 gens for E";
+      if(which) cout<<"'";
+      cout<<" (c";
+      if(which) cout<<"'";
+      cout<<"= "<<c<<", d";
+      if(which) cout<<"'";
+      cout<<"= "<<d<<") which lift to S^2(E";
+      if(which) cout<<"'";
+      cout<<")"<<endl;
     }
 
   vector<bigint>& elsgens = (which? elsgens1: elsgens0);
@@ -423,7 +427,7 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
       else
 	cout<<"Just incremented nels2gens  to "<<nels2gens<<endl;
       cout<<"now bitmask = "<<els2_space.getbitmask()<<endl;
-#endif	      
+#endif
     } // end of torsion loop
 
   int res, verb=0; if(verbose>2)verb=verbose-2;

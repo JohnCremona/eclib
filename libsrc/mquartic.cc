@@ -69,17 +69,17 @@ void quartic::set_roots_and_type()
   if(is_zero(diff)) cout<<"Syzygy satisfied.\n";
   else cout<<"Syzygy NOT satisfied.\n";
 #endif
-  int nrr;
-  if(disc<0) 
-    {type=3; nrr=2;}       // 2 real roots
-  else 
+  if(disc<0)
+    {type=3;}       // 2 real roots
+  else
     {
       if((sign(H)<0)&&(sign(Q)>0)) 
-	{type=2; nrr=4;}   // 4 real roots
-      else 
-	{type=1; nrr=0;}   // 0 real roots
+	{type=2;}   // 4 real roots
+      else
+	{type=1;}   // 0 real roots
     }
 #ifdef DEBUG_ROOTS
+  int nrr = (type==3? 2 : (type==2? 4 : 0));
   cout<<"Type = " << type << " ("<<nrr<<" real roots)\n";
 #endif
   bigcomplex c1(to_bigfloat(0)), c2(-3*I2bigfloat(ii)), c3(I2bigfloat(jj));

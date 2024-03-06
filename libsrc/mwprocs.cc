@@ -739,51 +739,25 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
 
   switch(moduli_option) {
   case 1:
-    num_aux = 10; 
-    auxs = new long[num_aux];
-    auxs[0]=3;
-    auxs[1]=5;
-    auxs[2]=7;
-    auxs[3]=11;
-    auxs[4]=13;
-    auxs[5]=17;
-    auxs[6]=19;
-    auxs[7]=23;
-    auxs[8]=29;
-    auxs[9]=31;
+    num_aux = 10;
+    auxs = {3, 5, 7, 11, 13, 17, 19, 23, 29, 31};
     break;
 
   case 2:// the following taken from Gebel's scheme
-    num_aux = 3; 
-    auxs = new long[num_aux];
-    auxs[0]=5184;  // = (2^6)*(3^4)   // old: 6624; //  = (2^5)*(3^2)*23
-    auxs[1]=5929;  // = (7^2)*(11^2)  // old: 8075; //  = (5^2)*17*19
-    auxs[2]=4225;  // = (5^2)*(13^2)  // old: 7007; //  = (7^2)*11*13
+    num_aux = 3;
+    auxs = {5184, 5929, 4225}; // 5184 = (2^6)*(3^4), 5929 = (7^2)*(11^2), 4225 = (5^2)*(13^2)
     break;
 
   case 3:
   default:
     num_aux = 9;
-    auxs = new long[num_aux];
-    auxs[0]=32;
-    auxs[1]= 9;
-    auxs[2]=25;
-    auxs[3]=49;
-    auxs[4]=11;
-    auxs[5]=13;
-    auxs[6]=17;
-    auxs[7]=19;
-    auxs[8]=23;
+    auxs = {32, 9, 25, 49, 11, 13, 17, 19, 23};
     break;
   }
 
 #ifdef DEBUG_SIEVE
-  if(verbose) 
-    {
-      cout<<"Using "<<num_aux<<" sieving moduli:\n";
-      for(i=0; i<num_aux; i++) cout << auxs[i]<<"\t";
-      cout<<endl;
-    }
+  if(verbose)
+    cout<<"Using "<<num_aux<<" sieving moduli:\n" << auxs <<endl;
 #endif
 
   xgood_mod_aux = new int*[num_aux];
@@ -805,7 +779,7 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
   if(verbose) 
     {
       cout<<"squares lists:\n";
-      for(i=0; i<num_aux; i++) 
+      for(i=0; i<num_aux; i++)
 	{
 	  cout << auxs[i]<<":\t";
 	  for(j=0; j<auxs[i]; j++) if(squares[i][j]) cout<<j<<"\t";
@@ -824,7 +798,6 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
 
 sieve::~sieve()
 {
-  delete [] auxs;
   for(long i=0; i<num_aux; i++) 
     {
       delete [] xgood_mod_aux[i];
@@ -913,69 +886,42 @@ void sieve::search(bigfloat h_lim)
       for (long index = 0; index < num_aux; index++)
 	{
 	  aux = auxs[index];
+          {
+            pd1 = posmod(d1 , aux);
+            pd2 = posmod(d2 , aux);
+            pd3 = posmod(d3 , aux);
+            pd4 = posmod(d4 , aux);
+            pd6 = posmod(d6 , aux);
 
-// 	  if(gcd(c,aux)==1)  // the easy case
-// 	    {
-// 	      long xcc=0, csqm=csq%aux;;
-// 	      int* flag = xgood_mod_aux[index];
-// 	      int* flag1 = x1good_mod_aux[index];
-// 	      x=aux; 
-// 	      while(x--)
-// 		{
-// 		  *flag = *flag1++;
-// 		  xcc+=csqm; flag+=csqm; 
-// 		  if(xcc>=aux) {xcc-=aux; flag-=aux;}
-// 		}
-// 	    }
-// 	  else  // c, aux have common factor
-// 	    {
-// 	      if(odd(aux)&&((csq%aux)==0))
-// 		{
-// 		  int* flag = xgood_mod_aux[index];
-// 		  int* sqs = squares[index];
-// 		  x=aux; 
-// 		  while(x--) *flag++ = *sqs++;
-// 		}  // end of if(odd(aux))
-// 		else  //default: full recomputation
-		  {
-		    pd1 = posmod(d1 , aux);
-		    pd2 = posmod(d2 , aux);
-		    pd3 = posmod(d3 , aux);
-		    pd4 = posmod(d4 , aux);
-		    pd6 = posmod(d6 , aux);
-		    
-		    long dddf= 24%aux;
-		    long ddf = posmod(2*(pd1*pd1)%aux + 8*pd2+24 , aux);
-		    long df  = posmod(pd1*(pd1+2*pd3)%aux + 4*(pd4+pd2+1) , aux);
-		    long f   = posmod(((pd3*pd3)%aux+4*pd6) , aux);
-		    
-		    int* flag = xgood_mod_aux[index];
-		    int* sqs = squares[index];
-		    long x=aux;
-#ifdef DEBUG_SIEVE
-  if(verbose) 
-    {
-      cout<<"aux = "<< aux <<"\n ";
-      cout<<"pd1,...,pd6 = "<<pd1<<", "<<pd2<<", "<<pd3<<", "<<pd4<<", "<<pd6<<"\n";
-    }
-#endif
-		    while(x--)
-		      {
-			*flag++ = sqs[f];
-#ifdef DEBUG_SIEVE
-  if(verbose) 
-    {
-      cout<<"x = "<< aux-x-1 <<", f(x) = "<<f<<": flag = "<<sqs[f]<<"\n";
-    }
-#endif
-			f   +=  df; if(f  >=aux) f  -=aux;
-			df  += ddf; if(df >=aux) df -=aux;
-			ddf +=dddf; if(ddf>=aux) ddf-=aux;
-		      }
-		    
-		  }  // end of default case
+            long dddf= 24%aux;
+            long ddf = posmod(2*(pd1*pd1)%aux + 8*pd2+24 , aux);
+            long df  = posmod(pd1*(pd1+2*pd3)%aux + 4*(pd4+pd2+1) , aux);
+            long f   = posmod(((pd3*pd3)%aux+4*pd6) , aux);
 
-// 	    }  // end of non-coprime case
+            int* flag = xgood_mod_aux[index];
+            int* sqs = squares[index];
+            long x=aux;
+#ifdef DEBUG_SIEVE
+            if(verbose) 
+              {
+                cout<<"aux = "<< aux <<"\n ";
+                cout<<"pd1,...,pd6 = "<<pd1<<", "<<pd2<<", "<<pd3<<", "<<pd4<<", "<<pd6<<"\n";
+              }
+#endif
+            while(x--)
+              {
+                *flag++ = sqs[f];
+#ifdef DEBUG_SIEVE
+                if(verbose)
+                  {
+                    cout<<"x = "<< aux-x-1 <<", f(x) = "<<f<<": flag = "<<sqs[f]<<"\n";
+                  }
+#endif
+                f   +=  df; if(f  >=aux) f  -=aux;
+                df  += ddf; if(df >=aux) df -=aux;
+                ddf +=dddf; if(ddf>=aux) ddf-=aux;
+              }
+          }  // end of default case
  	}  // end of aux loop
 #ifdef DEBUG_SIEVE
   if(verbose) 
@@ -1100,13 +1046,13 @@ cout<<"amin = " << amin << ", amax = " << amax <<  endl;
 	      pd3 = posmod(d3 , aux);
 	      pd4 = posmod(d4 , aux);
 	      pd6 = posmod(d6 , aux);
-	    
+
 	      long dddf= 24%aux;
 	      long ddf = posmod(2*(pd1*pd1)%aux + 8*pd2+24 , aux);
 	      long df  = posmod(pd1*(pd1+2*pd3)%aux + 4*(pd4+pd2+1) , aux);
 	      long f   = posmod(((pd3*pd3)%aux+4*pd6) , aux);
-	    
-	      int* flag = xgood_mod_aux[index];
+
+              int* flag = xgood_mod_aux[index];
 	      int* sqs = squares[index];
 	      long x=aux;
 	      while(x--)
@@ -1130,18 +1076,18 @@ void sieve::a_search(const long& amin, const long& amax)
   a--;
   if (verbose) cout<<"sieve::search: trying c = "<<c<<"\t"
                    <<"("<<amin<<" <= a <= "<<amax<<")"<<endl;
-  
+
   for (i=0; i < num_aux; i++)  amod[i] = posmod(a, auxs[i]);
   amodc = posmod(a,c);
 #ifdef DEBUG_SIEVE
-  if(verbose) 
+  if(verbose)
     {
       cout<<"Initial a =  "<<a<<" modulo moduli = \t";
       for(i=0; i<num_aux; i++) cout << amod[i]<<"\t";
       cout<<endl;
     }
 #endif
-      
+
   while (a < amax)
     {
       a++;
@@ -1155,9 +1101,8 @@ void sieve::a_search(const long& amin, const long& amax)
 	{
 	  ascore++;
 	}
-      // DON'T add "else continue; (with next a) 
-      // as the amod[i] are not yet updated!	  
-//    for ( i=0; (i<num_aux); i++)
+      // DON'T add "else continue; (with next a)
+      // as the amod[i] are not yet updated!
       for ( i=num_aux-1; (i>=0); i--)
 	{ long& amodi = amod[i];
 	  amodi++;
