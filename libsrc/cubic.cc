@@ -498,25 +498,26 @@ void cubic::jc_reduce(unimod& m)
   int s=1;   bigint k, jc2, jc3;
   bigint plus1(one), minus1(-one);
 
-  bigfloat alpha, ra, rb, rc, rd, h0, h1, h2;
+  bigfloat alpha, ra, rb, rc, h0, h1;
 
   m.reset();
 #ifdef DEBUG_REDUCE
-      cout << "\nJC-reducing " << (*this) << "...\n";
-      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
-      alpha = real_root();
-      cout<<"alpha = "<<alpha<<endl;
-      ra = I2bigfloat(a());
-      rb = I2bigfloat(b());
-      rc = I2bigfloat(c());
-      rd = I2bigfloat(d());
-      h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
-      h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
-      h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
-      cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
+  bigfloat rd, h2;
+  cout << "\nJC-reducing " << (*this) << "...\n";
+  cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+  alpha = real_root();
+  cout<<"alpha = "<<alpha<<endl;
+  ra = I2bigfloat(a());
+  rb = I2bigfloat(b());
+  rc = I2bigfloat(c());
+  rd = I2bigfloat(d());
+  h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+  h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
+  h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+  cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
 
-      if (is_zero(a()))
+  if (is_zero(a()))
     {
       bigint bb=b(), cc=c(), q,r;
       if (bb<0)
@@ -579,7 +580,7 @@ void cubic::jc_reduce(unimod& m)
           rc = I2bigfloat(c());
           h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
           h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
-          h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+          //h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
           k = Iround(-h1/(2*h0)); // this is the amount to shift by
           if (k!=0)
             {

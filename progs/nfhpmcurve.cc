@@ -155,7 +155,6 @@ int main(void)
 
   stopp = stopp0; // will be increased if necessary
   set_precision(prec0);
-  bigfloat rperiod;
   vector<int> forms;
   for(inf=0; inf<nnf; inf++) forms.push_back(inf);
 

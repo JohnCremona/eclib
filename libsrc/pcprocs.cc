@@ -232,7 +232,6 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 
   bigcomplex w1, w2; bigcomplex c4, c6;
   bigfloat x1=x0, y1=y0;
-  bigfloat c4err, c6err, c4c6err;
   for(nx=1; (nx<=maxnx); nx++)
     {x1=x0/to_bigfloat(nx);
     for(ny=1; (ny<=maxny); ny++)
@@ -242,7 +241,7 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 	  {
 	    if(type==2){w1=bigcomplex(x1,zero); w2=bigcomplex(zero,y1);}
 	    else {w1=bigcomplex(2*x1,zero); w2=bigcomplex(x1,y1);}
-	    bigcomplex tau=normalize(w1,w2);
+	    normalize(w1,w2);
 	    getc4c6(w1,w2,c4,c6);
             if (detail>1)
               {
@@ -259,9 +258,6 @@ int get_curve(long n, long fac, long maxnx, long maxny,
                 cout<<"ic4 = "<<ic4<<endl;
                 cout<<"ic6 = "<<ic6<<endl;
               }
-            c4err = abs(I2bigfloat(ic4)-real(c4));
-            c6err = abs(I2bigfloat(ic6)-real(c6));
-            c4c6err = max(c4err, c6err);
 	    int validc4c6 = 0;
             validc4c6 = valid_invariants(ic4,ic6);
             if((validc4c6)&&detail)

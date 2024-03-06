@@ -170,8 +170,8 @@ double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, cons
 {
   bigfloat zero=to_bigfloat(0);
   bigfloat htc=zero, dv=zero, dvd=zero;
-  long original_prec, prec;
 #ifdef MPFP
+  long original_prec, prec;
   prec = original_prec = bit_precision();
   while (dv==0 || dvd==0)
     {
@@ -298,7 +298,7 @@ bigfloat calc_dvd_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6
 {
   bigfloat zero=to_bigfloat(0), one=to_bigfloat(1), two=to_bigfloat(2), three=to_bigfloat(3), four=to_bigfloat(4);
   bigfloat rx;
-  bigfloat dvd=zero,x,x2,Fx,Gx;
+  bigfloat dvd=zero,x2,Fx,Gx;
 
 #ifdef DEBUG_CPS
   cout<<"\nIn calc_dvd_inf"<<endl;
@@ -419,7 +419,7 @@ bigfloat calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6,
 {
   bigfloat zero=to_bigfloat(0), one=to_bigfloat(1), two=to_bigfloat(2), six=to_bigfloat(6), four=to_bigfloat(4);
   bigfloat rx;
-  bigfloat dv=zero,x,x2,fx,gx;
+  bigfloat dv=zero,x2,fx,gx;
 
 #ifdef DEBUG_CPS
   cout<<"\nIn calc_dv_inf"<<endl;

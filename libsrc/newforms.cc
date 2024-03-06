@@ -1177,7 +1177,8 @@ void newforms::display_modular_symbol_map(int check) const
      modsym ms = modsym(s);
      cout<<s<<" = "<<ms<<" -> ";
      rational alpha = ms.alpha(), beta = ms.beta();
-     long a, b, c, d, g=0;
+     long a=0, b=0, c=0, d=0, g=0;
+     // intialise all, otherwise the compiler worries
      if (num(alpha)==0)
        {
          b = num(beta);
@@ -1198,6 +1199,8 @@ void newforms::display_modular_symbol_map(int check) const
          {
            if (check && (g==1))
              {
+               // NB g==1 implies that a,b,c,d are defined and define
+               // a matrix in SL(2,Z)
                periods_direct integrator(this,&(nflist[k]));
                integrator.compute(a,b,c,d);
                x0 = integrator.rper();

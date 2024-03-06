@@ -230,7 +230,7 @@ Point ellztopoint(Curvedata& E, Cperiods& per, const bigcomplex& z, const bigint
 #endif
   vector<bigcomplex> CP = ellztopoint(E,per,z);
   Point P(E);
-  bigcomplex cx=CP[0],cy=CP[1];
+  bigcomplex cx=CP[0];
   bigint nx,ny,dx,dy;
   boundedratapprox(real(cx),nx,dx,den);
 #ifdef DEBUG_EZP

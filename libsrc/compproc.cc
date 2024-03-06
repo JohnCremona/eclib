@@ -95,7 +95,6 @@ void getc4c6(const bigcomplex& w1, const bigcomplex& w2,
   bigfloat x = two*pi*tau.real();
   bigfloat y = two*pi*tau.imag();
   bigfloat nx = x, ny=y;
-  bigcomplex q = exp(-y) *  bigcomplex(cos(x),sin(x));
   bigcomplex f = two*pi/w2;
   bigcomplex f2 = f*f;
   bigcomplex f4=f2*f2;

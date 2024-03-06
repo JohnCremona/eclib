@@ -783,7 +783,7 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
   if(x<0) {x=-x; s=-1;}
 //#define DEBUG_IFLOOR
  int e;
- double y = frexp(x,&e);
+ frexp(x,&e);
 #ifdef DEBUG_IFLOOR
  cout<<"x="<<x<<", e="<<e<<endl;
 #endif
@@ -809,7 +809,7 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
 #ifdef DEBUG_IFLOOR
      cout<<", new x="<<x<<endl;
 #endif
-     y = frexp(x,&e);
+     frexp(x,&e);
    }
  if((x>0)&&(s<0)) ++ans;        // adjust if fractional part non-zero
  if(s<0) ans=-ans;  // adjust if negative

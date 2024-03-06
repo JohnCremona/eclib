@@ -92,7 +92,7 @@ int main(void)
      else cout<<(i+1)<<" ";
      newform* nfi = &((nf.nflist)[i]);
      if(detail>1) {cout<<"\n Newform details:\n";nfi->display();cout<<endl;}
-     bigfloat x0=to_bigfloat(10), y0=to_bigfloat(10), ratio;
+     bigfloat x0=to_bigfloat(10), y0=to_bigfloat(10);
 // flags to say that we have real/imag period 
 //          and that we have a cycle giving both together
      int rp_known=0, have_both=0;

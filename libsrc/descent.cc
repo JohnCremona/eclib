@@ -162,7 +162,7 @@ void two_descent::saturate(long sat_bd, long sat_low_bd)
 
 // Do a quick search for points on the curve before processing points
   bigfloat hlim=to_bigfloat(PRE_SATURATION_SEARCH_LIMIT);
-  bigfloat oldreg=mwbasis->regulator(), newreg=to_bigfloat(1);
+  bigfloat newreg=to_bigfloat(1);
   long search_rank=0;
   if ((r12->getrank()>0) || !(r12->getcertain()))
     {
