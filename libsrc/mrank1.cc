@@ -125,7 +125,6 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
   long firsti, i, oldnumber=0, thisnumber, nfl;
   char ab;
   int trivial=0, newone=1, gls=0, els=0;
-  quartic *qlist, *thisq;;
   bigint x,y,z, badp; 	  Point Ptemp;
   int btype = 0;
   int pivtype=-1; // set to 0 for \infty, 1 for odd prime, 2 for 2
@@ -152,25 +151,26 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
   // only use large quartics for pivoting when there is an odd pivotal
   // prime suitable.
 
+  vector<quartic>& qlist = (atype? qlista : qlistb);
   if(atype)
-    {qlist=qlista; thisnumber=nquarticsa; nfl=nfirstlota; ab='A';}
+    {thisnumber=nquarticsa; nfl=nfirstlota; ab='A';}
   else
-    {qlist=qlistb; thisnumber=nquarticsb; nfl=nfirstlotb; ab='B';}
+    {thisnumber=nquarticsb; nfl=nfirstlotb; ab='B';}
 
   qlist[thisnumber].assign(a,b,c,d,e,croots,type,ii,jj,disc);
-  thisq=qlist+thisnumber;
+  quartic& thisq = qlist[thisnumber];
 
-  if (verbose) cout << *thisq << "\t";
+  if (verbose) cout << thisq << "\t";
   if (verbose>1)
     {
       cout << "(ipivot = "<<ipivot<<", type = "<<ab<<") \t";
-      show_eps_vec(qeps(*thisq,extra2));
+      show_eps_vec(qeps(thisq,extra2));
       cout<<"\t";
     }
 
   // Check triviality
 
-  if(atype) trivial = thisq->trivial(); // else certainly nontrivial
+  if(atype) trivial = thisq.trivial(); // else certainly nontrivial
   if (trivial)
     {
       if (verbose) cout << "--trivial"<<endl;
@@ -180,7 +180,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 
   // Check current is inequivalent to previous
 
-  thisq->set_equiv_code(eqplist);
+  thisq.set_equiv_code(eqplist);
   firsti = (extra2==1 ? nfl : 0);
   for (i=firsti; newone && (i<thisnumber); i++)
     {
@@ -188,9 +188,9 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
       if(traceequiv)
 	cout << "\nTesting equiv with number " << ab<< i+1 << endl;
 #ifdef NEW_EQUIV
-      newone = ! new_equiv(*thisq,qlist[i],traceequiv);
+      newone = ! new_equiv(thisq,qlist[i],traceequiv);
 #else
-      newone = !     equiv(*thisq,qlist[i],dlist,traceequiv);
+      newone = !     equiv(thisq,qlist[i],dlist,traceequiv);
 #endif
       if (!newone) oldnumber=i+1;
     }
@@ -207,9 +207,9 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 
       if(selmer_only)
 	{
-	  gls = ratpoint(*thisq,BIGINT(1),BIGINT(lim1),x,y,z);
+	  gls = ratpoint(thisq,BIGINT(1),BIGINT(lim1),x,y,z);
 	  if(gls) els=1;
-	  else els=locallysoluble(*thisq,plist,badp);
+	  else els=locallysoluble(thisq,plist,badp);
           if(verbose)
 	    {
 	      if(els) cout<<"locally soluble\n";
@@ -218,19 +218,19 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 	}
       else
 
-      if (ratpoint(*thisq,BIGINT(1),BIGINT(lim1),x,y,z))
+      if (ratpoint(thisq,BIGINT(1),BIGINT(lim1),x,y,z))
 	{
 	  gls=els=1;
 	  if (verbose) cout<<"(x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
 	}
       else
 	{
-// 	  cout<<"\nChecking "<<*thisq<<" for local solubility at "<<plist<<endl;
-	  if (locallysoluble(*thisq,plist,badp))
+// 	  cout<<"\nChecking "<<thisq<<" for local solubility at "<<plist<<endl;
+	  if (locallysoluble(thisq,plist,badp))
 	    {
 	      els=1;
 	      if (verbose) cout<<"locally soluble..."<<flush;
-	      quartic_sieve qs(thisq,QSIEVE_OPT,0);
+	      quartic_sieve qs(&thisq,QSIEVE_OPT,0);
 	      if(qs.search(lim2))
 		{
 		  qs.getpoint(x,y,z); gls=1;
@@ -250,7 +250,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 	{
 	  if(!selmer_only)
 	    {
-	      qc(*thisq,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
+	      qc(thisq,x,y,z,the_curve,&IJ_curve,tr_u,tr_r,tr_s,tr_t, Ptemp,verbose);
 	    }
 	  if(atype) // we have a quartic in A = ker(eps)
 	    {
@@ -1419,8 +1419,8 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
 #endif
     }
 
-  qlista = new quartic[maxnquartics];
-  qlistb = new quartic[maxnquartics];
+  qlista.resize(maxnquartics);
+  qlistb.resize(maxnquartics);
   qlistbflag.resize(maxnquartics);
   croots.resize(4);
 
@@ -1467,8 +1467,6 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   getquartics();
   if (!success)
   {
-    delete [] qlista;
-    delete [] qlistb;
     return;
   }
 
@@ -1486,8 +1484,6 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
       cout<<"n3 = "<<n3<<endl;
       cout<<"B-rank = "<<rank_B<<endl;
     }
-  delete [] qlista;
-  delete [] qlistb;
 
   if(n3>0){
     if(n2>1){

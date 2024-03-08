@@ -32,7 +32,7 @@ private:
   long nquarticsa, nquarticsb, nfirstlota, nfirstlotb;
   long sha_rank, sha2;
   int traceequiv, posdisc, disc_is_square, npairs, extra2, threediv, type;
-  quartic *qlista, *qlistb;
+  vector<quartic> qlista, qlistb;
   vector<int> qlistbflag;
   vector<bigcomplex> croots, cphi;
   vector<Point> pointlist1, pointlist2;
