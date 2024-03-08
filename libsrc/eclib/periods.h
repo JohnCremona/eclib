@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #ifndef _ECLIB_PERIODS_H
@@ -29,7 +29,7 @@
 #define PI Pi()
 const bigfloat eps = to_bigfloat(1.0e-16);   // ?? mindouble;
 #define EULERGAMMA Euler()
- 
+
 bigfloat myg0(bigfloat x);
 bigfloat myg1(bigfloat x);
 bigfloat myg2(bigfloat x);
@@ -38,11 +38,10 @@ bigfloat myg3(bigfloat x);
 class character {
 private:
   long modul;
-  int *chartable;
+  vector<int> chartable;
   void init();
 public:
   character(long m=1);
-  ~character();
   void reset(long m);
   long modulus(void) {return modul;}
   int operator()(long n) {return chartable[n%modul];}
@@ -52,7 +51,7 @@ class summer {
 protected:
   bigfloat sum1, sum2;  // sum2 not necessarily used
   long limit, limit1, limit2;
-  bigfloat rootlimit, rootmod, factor, factor1, factor2, rp, ip; 
+  bigfloat rootlimit, rootmod, factor, factor1, factor2, rp, ip;
   long type;
   long N, nap;  vector<long> aplist;  vector<long> primelist;
   vector<long> an_cache;  // holds a_n for n up to rootlimit
@@ -87,7 +86,7 @@ private:
   bigfloat func1(long n) { return to_bigfloat(chi1(n)) * pow(factor1,to_bigfloat(n)); }
   bigfloat func2(long n) { return to_bigfloat(chi2(n)) * pow(factor2,to_bigfloat(n)); }
 public:
-  periods_via_lfchi (const level* iN, const newform* f); 
+  periods_via_lfchi (const level* iN, const newform* f);
   void compute(void);
 };
 
@@ -99,22 +98,22 @@ private:
   void use(long n, long an);
 
 public:
-  periods_direct (const level* iN, const newform* f); 
+  periods_direct (const level* iN, const newform* f);
   void compute(void);
-  void compute(long ta, long tb, long tc, long td);  
+  void compute(long ta, long tb, long tc, long td);
                                // period of (a,b;Nc,d) in Gamma_0(N)
 };
 
 class part_period :public summer {
 private:
   bigfloat efactor,x0,y0,xn;
-  bigfloat func1(long n) { xn=to_bigfloat(n); efactor = exp(-xn*y0); 
+  bigfloat func1(long n) { xn=to_bigfloat(n); efactor = exp(-xn*y0);
 			   return efactor*cos(xn*x0); }
   bigfloat func2(long n) { return efactor*sin(xn*x0); }
   void use(long n, long an) {use2(n,an);}
 
 public:
-  part_period (const level* iN, const newform* f); 
+  part_period (const level* iN, const newform* f);
   ~part_period () {;}
   void compute(const bigcomplex& z0);
   void compute();
@@ -133,7 +132,7 @@ private:
   void use(long n, long an) {use1(n,an);}
   bigfloat func1(long n) { return -G(factor1*to_bigfloat(n)); }
 public:
-  ldash1 (const level* iN, const newform* f); 
+  ldash1 (const level* iN, const newform* f);
   ldash1 (const newforms* nf, long i);  // the i'th newform
   void compute(void);
   long rank() {compute(); return r;}
@@ -158,8 +157,8 @@ public:
   bigfloat scaled_value(void) {return sqrt(to_bigfloat(chi.modulus()))*val;}
 };
 
-vector<long> resort_aplist(const level* iN, 
-			   const vector<long>& primelist, 
+vector<long> resort_aplist(const level* iN,
+			   const vector<long>& primelist,
 			   const vector<long>& apl);
 
 

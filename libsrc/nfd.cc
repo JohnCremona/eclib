@@ -326,13 +326,12 @@ vec_m nfd::ap(long p)
 {
   mat K = basis(h1->kern).as_mat();
   long rk = K.nrows();
-  matop *matlist;
   long k,l,n = h1->modulus, dims=dim(S);
   vec_m apvec(dims);
   int bad = ::divides(p,n);
   if(bad) return apvec; // temporary fix!
-  if(bad) matlist=new matop(p,n);
-  else    matlist=new matop(p);
+  matop matlist(p);
+  if(bad) matlist=matop(p,n);
 
   for(k=0; k<rk; k++)
     {
@@ -343,20 +342,15 @@ vec_m nfd::ap(long p)
 	  if(bad)
 	    {
               continue;  // not yet implemented
-	      // modsym s = h1->freemods[k];
-	      //	      for(l=0; l<matlist->size(); l++)
-	      //		apvec += mKkj*(*matlist)[l](s,h1,projcoord);
-	      //  apvec += mKkj*h1->applyop(*matlist,s,projcoord);
 	    }
 	  else
 	    {
 	      symb s = h1->symbol(h1->freegens[k]);
-	      for(l=0; l<matlist->size(); l++)
-		apvec += mKkj*(*matlist)[l](s,h1,projcoord);
+	      for(l=0; l<matlist.size(); l++)
+		apvec += mKkj*matlist[l](s,h1,projcoord);
 	    }
 	}
     }
-  delete matlist;
   return apvec;
 }
 
@@ -369,18 +363,17 @@ mat_m nfd::heckeop(long p)
 {
   mat K = basis(h1->kern).as_mat();
   long rk = K.nrows();
-  matop *matlist;
   long j,k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
   int bad = ::divides(p,n);
-  if(bad) 
+  matop matlist(p);
+  if(bad)
     {
       cout<<"q = "<<p<<"\t";
-      matlist=new matop(p,n);
+      matlist=matop(p,n);
     }
   else
     {
       cout<<"p = "<<p<<"\t";
-      matlist=new matop(p);
     }
   mat_m TE(dimh,dims);
   vec_m colj(dimh);
@@ -395,16 +388,16 @@ mat_m nfd::heckeop(long p)
 	      bigint mKkj; mKkj = Kkj;
 	      if(bad)
 		{
-		  vec vt = (h1->applyop(*matlist,h1->freemods[k])).as_vec();
+		  vec vt = (h1->applyop(matlist,h1->freemods[k])).as_vec();
 		  if(h1->cuspidal) vt=h1->cuspidalpart(vt);
 		  colj += (mKkj*vt);
 		}
 	      else
 		{
 		  symb s = h1->symbol(h1->freegens[k]);
-		  for(l=0; l<matlist->size(); l++)
+		  for(l=0; l<matlist.size(); l++)
 		    {
-		      vec vt = ((*matlist)[l](s,h1)).as_vec();
+		      vec vt = (matlist[l](s,h1)).as_vec();
 		      if(h1->cuspidal) vt=h1->cuspidalpart(vt);
 		      colj += mKkj*vt;
 		    }
@@ -413,7 +406,6 @@ mat_m nfd::heckeop(long p)
 	}
       TE.setcol(j+1,colj);
     }
-  delete matlist;
   return transpose(V*TE);
 }
 

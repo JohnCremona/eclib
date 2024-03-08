@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #include <iomanip>
@@ -36,8 +36,8 @@
 
 // less_ap(a,b) returns +1,0,-1 according to whether a is
 // before/equal/after b in the above ordering
-int less_ap(long a, long b, int old=0) 
-{ 
+int less_ap(long a, long b, int old=0)
+{
   if(!old) return sign(b-a); // the simple new ordering!
   if(a==b) return 0;
   int s = sign(abs(b)-abs(a));
@@ -46,8 +46,8 @@ int less_ap(long a, long b, int old=0)
 }
 
 // Compare two ap-vectors lexicographically, using less_ap(.,.,old):
-int less_apvec(const vector<long>& v, const vector<long>& w, int old=0); 
-int less_apvec(const vector<long>& v, const vector<long>& w, int old) 
+int less_apvec(const vector<long>& v, const vector<long>& w, int old=0);
+int less_apvec(const vector<long>& v, const vector<long>& w, int old)
 {
   auto wi=w.begin();
   for ( const auto& vi : v)
@@ -163,11 +163,11 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
 {
   int verbose=(nf->verbose);
 
-  if(verbose) 
+  if(verbose)
     {
-      cout<<"Creating H1"; 
-      if(sign==+1) cout<<"+"; 
-      if(sign==-1) cout<<"-"; 
+      cout<<"Creating H1";
+      if(sign==+1) cout<<"+";
+      if(sign==-1) cout<<"-";
       cout<<" newform from aplist..."<<endl;
       if(verbose>2)
         {
@@ -175,12 +175,12 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
           if(sign!=+1) cout<<"bminus = "<<bminus<<endl;
         }
     }
-  
+
   // check_expand_contract();
 
   // Fixing the eigenvalue lists: ap is indexed by primes in natural
   // order we need to extract aq (computing any not yet there).
-  
+
   // At the same time we change the entries in aplist for bad primes q
   // from the Wq-eigenvalue to the newform coefficient.
   fixup_eigs();
@@ -193,11 +193,11 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
   // Compute coordsplus/minus and denomplus/minus
 
   find_coords_plus_minus();
-  
+
   // Compute pdot, dp0, loverp (unless sign is -1)
 
   find_bsd_ratio();
-  
+
   // Find deg(phi) (only if sign is 0)
   degphi = 0;
   find_degphi();
@@ -224,7 +224,7 @@ int newform::check_expand_contract()
   int success=1;
   long denom = nf->h1->h1denom();
   vec bplusx, bminusx, tvec;
-  if (sign!=-1) 
+  if (sign!=-1)
     {
       bplusx= nf->h1->extend_coords(bplus);
       tvec = nf->h1->contract_coords(bplusx);
@@ -235,7 +235,7 @@ int newform::check_expand_contract()
 	  cout<<"! bplus ="<<bplus<<" extends to "<<bplusx<<" which contracts to "<<tvec<<endl;
 	}
     }
-  if (sign!=+1) 
+  if (sign!=+1)
     {
       bminusx= nf->h1->extend_coords(bminus);
       tvec = nf->h1->contract_coords(bminusx);
@@ -250,7 +250,7 @@ int newform::check_expand_contract()
 }
 
 void newform::fixup_eigs()
-{ 
+{
   long denom = nf->h1->h1denom();
   aqlist.resize(nf->npdivs);
   auto api=aplist.begin();
@@ -433,7 +433,7 @@ void newform::find_cuspidal_factors()
           cuspidalfactorplus = vecgcd(bplusc);
           bplusc /= cuspidalfactorplus;
         }
-      if(sign!=+1) // do this if sign = 0,-1 
+      if(sign!=+1) // do this if sign = 0,-1
 	{
 	  bminusc=(nf->h1->tkernbas)*bminus;
 	  cuspidalfactorminus = vecgcd(bminusc);
@@ -448,23 +448,23 @@ void newform::find_cuspidal_factors()
               cerr<<"Error: lattice type computed to be "<<type<<", should be 1 or 2!"<<endl;
             }
         }
-   
+
       if(verbose&&(cuspidalfactorplus*cuspidalfactorminus>1))
 	{
           if(sign!=-1)
             {
-              cout<<"cuspidalfactorplus  = "<<cuspidalfactorplus<<endl; 
+              cout<<"cuspidalfactorplus  = "<<cuspidalfactorplus<<endl;
               if(verbose>2) cout<<"bplusc = "<<bplusc<<endl;
             }
-	  if(sign!=+1) 
+	  if(sign!=+1)
             {
               cout<<"cuspidalfactorminus = "<<cuspidalfactorminus<<endl;
               if(verbose>2) cout<<"bminusc = "<<bminusc<<endl;
             }
 	}
-    } 
+    }
 }
-  
+
 void newform::find_degphi()
 {
   if(sign!=0) return;
@@ -562,14 +562,14 @@ void newform::find_twisting_primes()
 	  if((denomminus>1)&&(mminus!=0))
 	    {
 	      if(::divides(denomminus,mminus))  mminus/=denomminus;
-	      else 
+	      else
 		cout<<"Warning in newform constructor: mminus="<<mminus<<" is not divisible by denomminus="<<denomminus<<"!"
-		    <<endl; 
+		    <<endl;
 	    }
 	}
     }
 
-  if(verbose) 
+  if(verbose)
     {
       cout<<"done..."<<flush;
       cout<<"lplus = "<<lplus<<endl;
@@ -600,18 +600,18 @@ void newform::find_matrix()
                   if(sign!=-1)
                     {
                       dotplus=v*bplus;
-                      if(::divides(denomplus,dotplus))  
+                      if(::divides(denomplus,dotplus))
                         dotplus/=denomplus;
-                      else 
-                        cout<<"Warning in find_matrix: dotplus not divisible by denomplus!"<<endl; 
+                      else
+                        cout<<"Warning in find_matrix: dotplus not divisible by denomplus!"<<endl;
                     }
                   if(sign!=+1)
                     {
                       dotminus=v*bminus;
-                      if(::divides(denomminus,dotminus))  
+                      if(::divides(denomminus,dotminus))
                         dotminus/=denomminus;
-                      else 
-                        cout<<"Warning in find_matrix: dotminus not divisible by denomminus!"<<endl; 
+                      else
+                        cout<<"Warning in find_matrix: dotminus not divisible by denomminus!"<<endl;
                     }
                   found=(((dotplus!=0)||(sign==-1))&&
                          ((dotminus!=0)||(sign==+1)));
@@ -647,13 +647,13 @@ void newform::add_more_ap(int nap)
       p=pr;
       if(::divides(p,nf->modulus))
 	{
-	  if(::divides(p*p,nf->modulus)) 
-	    ap=0; 
+	  if(::divides(p*p,nf->modulus))
+	    ap=0;
 	  else
 	    ap=-aqlist[find(nf->plist.begin(),nf->plist.end(),p)-nf->plist.begin()];
 	}
       else
-	{	  
+	{
 	  if(verbose>1) cout<<"Computing Tp for p="<<p<<endl;
 	  if(!have_espace)
 	    {
@@ -877,7 +877,7 @@ void newforms::createfromscratch(int s, long ntp)
 {
   sign = s;
   makeh1(s);
-  //  cout<<"Constructing oldforms with sign="<<sign<<endl; 
+  //  cout<<"Constructing oldforms with sign="<<sign<<endl;
   of = new oldforms(ntp,h1,(verbose>1),sign); // h1 provides the level*
   if(verbose>1) of->display();
   maxdepth = of->nap;
@@ -887,8 +887,8 @@ void newforms::createfromscratch(int s, long ntp)
   n1ds = 0;
   int upperbound = h1->dimension-(of->totalolddim);
   if(upperbound>0)  // Else no newforms certainly so do no work!
-    {  
-       mvp=h1->maninvector(p0); 
+    {
+       mvp=h1->maninvector(p0);
        //       cout<<"mvp                 = "<<mvp<<endl;
        if(verbose>1) cout<<"h1 denom = "<<h1->h1denom()<<endl;
        form_finder ff(this,(sign!=0),maxdepth,mindepth,1,0,verbose);
@@ -973,7 +973,7 @@ void newforms::find_jlist()
     {
       if(verbose>1)  cout<<"j0="<<j0<<endl;
       jlist.insert(j0);
-      for (i=0; i<n1ds; i++) 
+      for (i=0; i<n1ds; i++)
 	{
 	  nflist[i].j0 = j0;
           vec& bas = (sign==-1? nflist[i].bminus: nflist[i].bplus);
@@ -987,7 +987,7 @@ void newforms::find_jlist()
     }
   else
     {
-      if(verbose) 
+      if(verbose)
 	cout<<"Failed to find j0 such that nflist[i].bplus/bminus[j0]!=0 for all i"
 	    <<endl;
       // Find out which pivots we'll be using:
@@ -1023,7 +1023,7 @@ void newforms::make_projcoord()
       h1->projcoord.setcol(j, nflist[j-1].coordsplus);
 }
 
-long newforms::dimoldpart(const vector<long> l) 
+long newforms::dimoldpart(const vector<long> l)
 {
   return of->dimoldpart(l);
 }
@@ -1038,36 +1038,36 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
     {
       int n = nf_subset[j1ds++];
       newform& nf = nflist[n];
-      if(verbose) 
+      if(verbose)
 	cout<<"Filling in data for for newform #"<<(n+1)<<": bases..."<<flush;
       nf.sign=sign;
       if(sign==+1)
         nf.bplus=b1;
       if(sign==-1)
         nf.bminus=b1; // formfinder puts the basis vector in b1
-      if(sign==0) 
+      if(sign==0)
 	{
 	  nf.bplus=b1;
 	  nf.bminus=b2;
 	}
-      if(verbose) 
+      if(verbose)
 	cout<<"type and cuspidal factors..."<<flush;
       nf.find_cuspidal_factors();
-      if(verbose) 
+      if(verbose)
 	cout<<"coords..."<<flush;
       nf.find_coords_plus_minus();
       if(sign==0)
 	{
-	  if(verbose) 
+	  if(verbose)
 	    cout<<"twisting primes..."<<flush;
 	  nf.find_twisting_primes();
-	  if(verbose) 
+	  if(verbose)
 	    cout<<"matrix..."<<flush;
 	  nf.find_matrix();
 	}
-      if(verbose) 
+      if(verbose)
 	cout<<"done."<<endl;
-      if(verbose) 
+      if(verbose)
         cout<<"Finished filling in data for newform #"<<(n+1)<<endl;
       return;
     }
@@ -1077,7 +1077,7 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
   // We use the newform constructor to do all the work, given the basis vector(s) and aplist:
 
   n1ds++;
-  if(verbose) 
+  if(verbose)
     {
       cout<<"Constructing newform #"<<n1ds<<" with eigs ";
       vec_out(cout,aplist,10);
@@ -1087,7 +1087,7 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
     nflist.push_back(newform(b1,b1,aplist,this)); // only 2nd vector used
   else
     nflist.push_back(newform(b1,b2,aplist,this));
-  if(verbose) 
+  if(verbose)
     cout<<"Finished constructing newform #"<<n1ds<<" with sign = "<<sign<<endl;
 }
 
@@ -1188,14 +1188,14 @@ void newforms::display_modular_symbol_map(int check) const
      j=h1->coordindex[i];
      long sg=::sign(j); j=abs(j);
      //     cout<<"j="<<j<<"("<<sg<<")"<<endl;
-     if(j==0) 
-       for(k=0; k<n1ds; k++) 
-	 if(sign!=0) 
-	   cout<<"0 "; 
-	 else 
+     if(j==0)
+       for(k=0; k<n1ds; k++)
+	 if(sign!=0)
+	   cout<<"0 ";
+	 else
 	   cout<<"(0,0) ";
-     else 
-       for(k=0; k<n1ds; k++) 
+     else
+       for(k=0; k<n1ds; k++)
          {
            if (check && (g==1))
              {
@@ -1244,9 +1244,9 @@ void newforms::display_modular_symbol_map(int check) const
                  }
                rminus *= nflist[k].optimalityfactorminus;
              }
-           if(sign==+1) 
+           if(sign==+1)
              cout<<rplus<<" ";
-           else if(sign==-1) 
+           else if(sign==-1)
              cout<<rminus<<" ";
            else
              cout<<"("<<rplus<<","<<rminus<<") ";
@@ -1257,7 +1257,7 @@ void newforms::display_modular_symbol_map(int check) const
 
 void newform::display(void) const
 {
-  cout << "aplist = ";  
+  cout << "aplist = ";
   vec_out(cout,aplist,20);  // outputs at most 20 eigs.
   cout<< endl;
   //  cout << "basis = " << bplus << endl;
@@ -1270,18 +1270,18 @@ void newform::display(void) const
   cout << "SFE = " << sfe << ",\tL/P = " << loverp << endl;
   if(lplus>0) cout << "lplus = " << lplus << ", mplus = " << mplus << endl;
   if(lminus>0) cout << "lminus = " << lminus << ", mminus = " << mminus << endl;
-  if(a!=0) 
+  if(a!=0)
     {
       cout << "[(" <<a<<","<<b<<";"<<c
            <<","<<d<<"),"<<dotplus<<","<<dotminus
            <<";";
-      if(type) 
+      if(type)
         cout<<type;
-      else 
+      else
         cout<<"?";
       cout<<"]"<<endl;
     }
-    
+
   if(index!=-1)cout << "Splitting index = " << index << endl;
 }
 
@@ -1306,7 +1306,7 @@ void putout(ofstream& of, long a, int binflag)
   else
     of<<setw(15)<<a;
 }
-void nl(ofstream& of, int binflag) 
+void nl(ofstream& of, int binflag)
 {if(!binflag) of<<"\n";}
 
 void newforms::output_to_file(int binflag, int smallflag) const
@@ -1329,14 +1329,14 @@ void newforms::output_to_file(int binflag, int smallflag) const
   //   }
 
   if(n1ds==0)
-    {  
+    {
       putout(out,(int)0,binflag);
       putout(out,(int)0,binflag);
       putout(out,(int)0,binflag);
-      out.close(); 
+      out.close();
       return;
     }
-    
+
   // Line 1:  #newforms, #aq, #ap
   int nap = nflist[0].aplist.size();
   if (smallflag)
@@ -1355,74 +1355,74 @@ void newforms::output_to_file(int binflag, int smallflag) const
   // Line 2:  blank line
   nl(out,binflag);
   // Line 3:  sign of f.e. for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].sfe,binflag); 
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].sfe,binflag);
   nl(out,binflag);
   // Line 4:  ap0 for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].ap0,binflag); 
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].ap0,binflag);
   nl(out,binflag);
   // Line 5:  np0 for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].np0,binflag); 
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].np0,binflag);
   nl(out,binflag);
   // Line 6:  dp0 for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].dp0,binflag); 
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].dp0,binflag);
   nl(out,binflag);
   // Line 7:  lplus for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].lplus,binflag);	    
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].lplus,binflag);
   nl(out,binflag);
   // Line 8:  mplus each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].mplus,binflag);	
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].mplus,binflag);
   nl(out,binflag);
   // Line 9:  lminus each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].lminus,binflag);	
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].lminus,binflag);
   nl(out,binflag);
   // Line 10:  mminus for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].mminus,binflag);	
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].mminus,binflag);
   nl(out,binflag);
   // Line 11:  matrix entry a for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].a,binflag); 
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].a,binflag);
   nl(out,binflag);
   // Line 12:  matrix entry b for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].b,binflag);	
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].b,binflag);
   nl(out,binflag);
   // Line 13:  matrix entry c for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].c,binflag);	
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].c,binflag);
   nl(out,binflag);
   // Line 14:  matrix entry d for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].d,binflag);	
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].d,binflag);
   nl(out,binflag);
   // Line 15:  dotplus for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].dotplus,binflag); 
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].dotplus,binflag);
   nl(out,binflag);
   // Line 16:  dotminus for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].dotminus,binflag); 
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].dotminus,binflag);
   nl(out,binflag);
   // Line 17:  lattice type for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].type,binflag); 
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].type,binflag);
   nl(out,binflag);
   // Line 18:  deg(phi) for each newform
-  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].degphi,binflag);	
+  for(i=0; i<n1ds; i++) putout(out,(int)nflist[i].degphi,binflag);
   nl(out,binflag);
   // Line 19:  blank line
   nl(out,binflag);
-  
+
   // Lines 20-(20+#aq):  aq for each newform;  then blank line
   for(j=0; j<int(nflist[0].aqlist.size()); j++)
     {
-      for(i=0; i<n1ds; i++) putout(out,(short)nflist[i].aqlist[j],binflag); 
+      for(i=0; i<n1ds; i++) putout(out,(short)nflist[i].aqlist[j],binflag);
       nl(out,binflag);
     }
   nl(out,binflag);
-  
+
   // Lines (21+#aq)-(20+#aq+#ap):  ap for each newform
   for(j=0; j<nap; j++)
     {
-      for(i=0; i<n1ds; i++) putout(out,(short)nflist[i].aplist[j],binflag); 
+      for(i=0; i<n1ds; i++) putout(out,(short)nflist[i].aplist[j],binflag);
       nl(out,binflag);
     }
   out.close();
 }
 
-// Read in newform data from file NF_DIR/xN 
+// Read in newform data from file NF_DIR/xN
 
 void newforms::createfromdata(int s, long ntp,
 			      int create_from_scratch_if_absent,
@@ -1464,49 +1464,46 @@ void newforms::createfromdata(int s, long ntp,
   datafile.read((char*)&temp_int,sizeof(int));   // = number of bad primes
   datafile.read((char*)&temp_int,sizeof(int));   // = number of eigs
   nap=temp_int;
-  if(n1ds==0) 
+  if(n1ds==0)
     {
       if(verbose) cout << "No newforms at level " << n << endl;
       datafile.close();
       return;
     }
 
-  vector<int> * data = new vector<int>[n1ds];
-  vector<long> * aq = new vector<long>[n1ds];
-  vector<long> * ap = new vector<long>[n1ds];
+  vector<vector<int>> data(n1ds, vector<int>(16));
+  vector<vector<long>> aq(n1ds, vector<long>(npdivs));
+  vector<vector<long>> ap(n1ds, vector<long>(nap));
 
-  // read extra data for each newform
-  for(i=0; i<n1ds; i++) data[i].resize(16);
+  // read extra data for each newform (16 ints each)
   long ntotal = 16*n1ds;
   int* batch_i = new int[ntotal];
   datafile.read((char*)batch_i,ntotal*sizeof(int));
   int *batch_i_ptr = batch_i;
-  for(j=0; j<16; j++) 
-    for(i=0; i<n1ds; i++) 
+  for(j=0; j<16; j++)
+    for(i=0; i<n1ds; i++)
       data[i][j]=*batch_i_ptr++;
   delete[] batch_i;
   //  cout<<"Raw  data:\n";  for(i=0; i<n1ds; i++) cout<<data[i]<<endl;
 
-  // read aq for each newform
-  for(i=0; i<n1ds; i++) aq[i].resize(npdivs);
+  // read aq for each newform (npdivs longs each)
   ntotal = npdivs*n1ds;
   short* batch = new short[ntotal];
   datafile.read((char*)batch,ntotal*sizeof(short));
   short *batchptr = batch;
-  for(j=0; j<npdivs; j++) 
-    for(i=0; i<n1ds; i++) 
+  for(j=0; j<npdivs; j++)
+    for(i=0; i<n1ds; i++)
       aq[i][j]=*batchptr++;
   //  cout<<"Raw  aq:\n";  for(i=0; i<n1ds; i++) cout<<aq[i]<<endl;
 
-  // read ap for each newform
-  for(i=0; i<n1ds; i++) ap[i].resize(nap);
+  // read ap for each newform (nap longs each)
   ntotal = nap*n1ds;
   delete[] batch;
   batch = new short[ntotal];
   datafile.read((char*)batch,ntotal*sizeof(short));
   batchptr = batch;
-  for(j=0; j<nap; j++) 
-    for(i=0; i<n1ds; i++) 
+  for(j=0; j<nap; j++)
+    for(i=0; i<n1ds; i++)
       ap[i][j]=*batchptr++;
   //  cout<<"Raw  ap:\n";  for(i=0; i<n1ds; i++) cout<<ap[i]<<endl;
   delete[] batch;
@@ -1514,12 +1511,10 @@ void newforms::createfromdata(int s, long ntp,
 
   // construct the newforms from this data
   nflist.reserve(n1ds);
-  for(i=0; i<n1ds; i++) 
+  for(i=0; i<n1ds; i++)
     nflist.push_back(newform(data[i],aq[i],ap[i],this));
 
-  delete[] ap; delete[] aq; delete[] data;
-
-  if(verbose) 
+  if(verbose)
     {
       cout << "Finished reading newform data for N = " << n << endl;
       if(verbose>1) display();
@@ -1600,7 +1595,7 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
   vector< vector<long> > eigs(ncurves);
   int i;
 
-  for(i=0; i<ncurves; i++) 
+  for(i=0; i<ncurves; i++)
     eigs[i]=eiglist(Clist[i],nap);
   n1ds=0; nflist.resize(0);
   splitspace.recover(eigs);  // NB newforms::use() determines what is
@@ -1653,7 +1648,7 @@ void newforms::createfromcurves_mini(vector<CurveRed> Clist, int nap)
 void newforms::createfromolddata()
 {
   long i, j, n = modulus;
-  if(verbose) 
+  if(verbose)
     cout << "Retrieving old-style newform data for N = " << n << endl;
 
   stringstream eigsname;
@@ -1672,7 +1667,7 @@ void newforms::createfromolddata()
   eigsfile.read((char*)&temp,sizeof(short));   // # irrational newforms
   eigsfile.read((char*)&temp,sizeof(short));   // # ap
   nap=temp;
-  if(n1ds==0) 
+  if(n1ds==0)
     {
       if(verbose) cout << "No newforms at level " << n << endl;
       eigsfile.close();
@@ -1687,8 +1682,8 @@ void newforms::createfromolddata()
   eigsfile.read((char*)batch,ntotal*sizeof(short));
   eigsfile.close();
   short* batchptr = batch;
-  for(j=0; j<nap; j++) 
-    for(i=0; i<n1ds; i++) 
+  for(j=0; j<nap; j++)
+    for(i=0; i<n1ds; i++)
       ap[i][j]=*batchptr++;
   //  cout<<"Raw  ap:\n";  for(i=0; i<n1ds; i++) cout<<ap[i]<<endl;
   delete[] batch;
@@ -1752,18 +1747,18 @@ void newforms::createfromolddata()
       intdatafile >> data[i][11]; // d
       intdatafile >> data[i][12]; // dotplus
       intdatafile >> data[i][13]; // dotminus
-    }  
+    }
   intdatafile.close();
   //  cout<<"Raw  data:\n";  for(i=0; i<n1ds; i++) cout<<data[i]<<endl;
 
 
   // construct the newforms from this data
   nflist.reserve(n1ds);
-  for(i=0; i<n1ds; i++) 
+  for(i=0; i<n1ds; i++)
     nflist.push_back(newform(data[i],aq[i],ap[i],this));
   //  delete ap; delete aq; delete data;
 
-  if(verbose) 
+  if(verbose)
     {
       cout << "Finished reading oldstyle newform data for N = " << n << endl;
       display();
@@ -1774,14 +1769,14 @@ void newforms::createfromolddata()
 void newforms::makebases(int flag, int all_nf)
 {
   if(n1ds==0) return;
-  
-  if(((sign==-1)||(dim(nflist[0].bplus)>0)) && 
-     ((sign==+1)||(dim(nflist[0].bminus)>0))) 
+
+  if(((sign==-1)||(dim(nflist[0].bplus)>0)) &&
+     ((sign==+1)||(dim(nflist[0].bminus)>0)))
     return;
   if(verbose) cout << "Making homspace..."<<flush;
   makeh1(sign);
   if(verbose) cout << "done." << endl;
-  mvp=h1->maninvector(p0); 
+  mvp=h1->maninvector(p0);
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
   form_finder splitspace(this, (sign!=0), nap, 0, 1, 0, verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
@@ -1904,7 +1899,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   long sg, a, b, c, q, r;
   long u1,u2,u3;
   long ind;
-  
+
   // Compute the image of the necessary M-symbols (hopefully only one)
   //cout<<"Computing images of M-symbols"<<endl<<flush;
   //cout<<"jlist = "<<jlist<<endl;
@@ -1977,10 +1972,10 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
   long i, j, p;
   j=0;
   if(verbose>1)  // output the ap already known...
-    for(primevar pr(nflist[0].aplist.size()); pr.ok(); pr++, j++) 
+    for(primevar pr(nflist[0].aplist.size()); pr.ok(); pr++, j++)
       {
 	p=(long)pr;
-	if(ndivides(p,modulus)) cout<<"p="; else cout<<"q="; 
+	if(ndivides(p,modulus)) cout<<"p="; else cout<<"q=";
 	cout<<p<<":\t";
 	{
 	  for (i=0; i<n1ds; i++) cout<<nflist[i].aplist[j]<<"\t";
@@ -1988,13 +1983,13 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
 	}
       }
   // Now compute and output the rest of the ap...
-  for(primevar pr(last,1+nflist[0].aplist.size()); pr.ok(); pr++) 
+  for(primevar pr(last,1+nflist[0].aplist.size()); pr.ok(); pr++)
     {
-      p=(long)pr;   
+      p=(long)pr;
       vector<long> apv=apvec(p);
-      if(verbose>1) 
+      if(verbose>1)
 	{
-	  if(ndivides(p,modulus)) cout<<"p="; else cout<<"q="; 
+	  if(ndivides(p,modulus)) cout<<"p="; else cout<<"q=";
 	  cout<<p<<":\t";
 	  for (i=0; i<n1ds; i++) cout<<apv[i]<<"\t";
 	  cout<<endl;

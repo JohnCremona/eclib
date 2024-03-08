@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #include <eclib/symb.h>
@@ -28,7 +28,7 @@ ostream& operator<< (ostream& s, const symb& sy)
 {
    s << "(" << sy.c << ":" << sy.d << ")";
    return s;
-}  
+}
 
 //#define DEBUG_NORMALIZE
 symb symb::normalize() const
@@ -47,7 +47,7 @@ symb symb::normalize() const
   cout<<"new c =  "<<cc<<endl;
   cout<<"new d =  "<<dd<<endl;
 #endif
- symb ans(cc,dd,N); 
+ symb ans(cc,dd,N);
 #ifdef DEBUG_NORMALIZE
   cout<<"Returning normalized symbol "<<ans;
   int ok = (ans==(*this)) && ::div(ans.cee(),n);
@@ -72,36 +72,30 @@ ostream& operator<< (ostream& s, const modsym& m)
 {
    s << "{" << (m.a) << "," << (m.b) << "}";
    return s;
-}  
- 
+}
+
 //Members of class symblist:
 
-symblist::symblist(long n) 
+symblist::symblist(long n)
 {
-  maxnum=n; 
-  num=0; 
-  list=new symb[n];
+  maxnum=n;
+  num=0;
+  list.resize(n);
 }
-
-symblist::~symblist()
-{
-  delete[] list;
-}
-
 
 void symblist::add(const symb& s, long start)
 {
- if (index(s,start)==-1) 
+ if (index(s,start)==-1)
  {
-  if (num<maxnum) 
+  if (num<maxnum)
     {
-      list[num]=s; 
-      long c = s.cee(), d=posmod(s.dee(),s.modulus()/c); 
+      list[num]=s;
+      long c = s.cee(), d=posmod(s.dee(),s.modulus()/c);
       hashtable[pair<long,long>(c,d)]=num;
       num++;
       //      cout<<"Adding symbol "<<s<<" as special number "<<num<<endl;
     }
-  else 
+  else
     {
       cerr << "Error in symblist::add: attempt to add too many symbols to list!"<<endl;
     }
@@ -123,7 +117,7 @@ long symblist::index(const symb& s, long start) const
 
 symb symblist::item(long n) const
 {
- if ((n>num)||(n<0)) 
+ if ((n>num)||(n<0))
    {
      cerr<<"Error in symblist::item: index out of range!"<<endl;
      return symb();
@@ -142,7 +136,7 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
    for (ic=1; (ic<ndivs-1)&&(specials.count()<nsymb2); ic++)
    { c=dlist[ic];
      dstarts[ic]=start=specials.count();
-     for (id=1; (id<modulus-phi)&&(specials.count()<nsymb2); id++)  
+     for (id=1; (id<modulus-phi)&&(specials.count()<nsymb2); id++)
      { d = noninvlist[id];
        if (::gcd(d,c)==1)
        {  s = symb(c,d,this);
@@ -151,14 +145,14 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
      }     // end of d loop
     }      // end of c loop
    if (specials.count()<nsymb2)
-     { 
+     {
        cout << "Problem: makesymbols found only " << specials.count() << " symbols ";
        cout << "out of " << nsymb2 << endl;
      }
    //   cout << "Special symbols: "; specials.display();
  }
 }
- 
+
 long symbdata::index2(long c, long d) const
 { long kd = code(d);
 // cout<<"index2("<<c<<":"<<d<<"):"<<endl;
@@ -173,7 +167,7 @@ long symbdata::index2(long c, long d) const
      long start = dstarts[noninvdlist[-kc]];
      symb s(c,d,this);
      long ind = specials.index(s,start);
-     if(ind<0) 
+     if(ind<0)
        {
 	 cout<<"error in index(): symbol "<<s<<" not in list!"<<endl;
        }
@@ -198,7 +192,7 @@ void symbdata::check(void) const
 {long i,j; int ok=1; symb s;
  for (i=0; i<nsymb; i++)
  {j = index(s=symbol(i));
-  if (i!=j) 
+  if (i!=j)
     {
       cout << i << "-->" << s << "-->" << j << "\n";
       ok=0;
@@ -214,4 +208,3 @@ modsym jumpsymb(symb s1, symb s2)
   long c1=s1.cee(), c2=s2.cee(), d1=s1.dee(), d2=s2.dee();
   return modsym(rational(-invmod(c1,d1),d1),rational(-invmod(c2,d2),d2));
 }
-

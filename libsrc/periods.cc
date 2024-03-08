@@ -39,13 +39,8 @@
 character::character(long m)
 {
   modul=m;
-  chartable = new int[m];
+  chartable.resize(m);
   init();
-}
-
-character::~character()
-{
-  delete [] chartable;
 }
 
 void character::init()
@@ -56,9 +51,8 @@ void character::init()
 
 void character::reset(long m)
 {
-  delete [] chartable;
   modul=m;
-  chartable = new int[m];
+  chartable.resize(m);
   init();
 }
 
@@ -141,25 +135,25 @@ void summer::use2(long n, long an)
  cout<<"use2("<<n<<","<<an<<")"<<endl;
  cout<<"(n,an,can)=("<<n<<","<<an<<","<<can<<"):\t";
 #endif
-  if (n<rootlimit) {an_cache[n]=an;  
+  if (n<rootlimit) {an_cache[n]=an;
 #ifdef TRACE_CACHE
   cout<<"Caching an["<<n<<"]="<<an<<endl;
 #endif
   }
-  if (n<limit1) { bigfloat term=func1(n) * can; sum1 += term; 
-#ifdef TRACE_USE 
+  if (n<limit1) { bigfloat term=func1(n) * can; sum1 += term;
+#ifdef TRACE_USE
   cout<<"term="<<term<<",\tsum1="<<sum1<<"\n";
 #endif
   }
   if (n<limit2) { bigfloat term = func2(n) * can; sum2+=term;
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<term<<",\t"<<sum2<<"\n";
 #endif
   }
 }
-  
+
 // This calls use(m,am) for all m=n*2^a*3^b*5^c*7^d<limit
-void summer::use2357(long n, long an)  
+void summer::use2357(long n, long an)
 {
   long m2=n,m23,m235,m2357;
   long am2,am23,am235,am2357;
@@ -187,8 +181,8 @@ void summer::use2357(long n, long an)
 }
 
 void summer::add(long n, long pindex, long y, long z)
-{ 
-  // y = a[n], z=a[n/p] 
+{
+  // y = a[n], z=a[n/p]
   // where p is the pindex'th prime, which is the largest prime dividing n
 
   //    cout<<"In add() with n="<<n<<",\tpindex="<<pindex<<",\ty="<<y
@@ -201,9 +195,9 @@ void summer::add(long n, long pindex, long y, long z)
   ip=istart;
   p=primelist[ip];
   if(triv&&(p>rootlimit)) return;
-  
+
   for(pn=n*p; (ip<=pindex) && (pn<=limit); ip++)
-    { 
+    {
       p=primelist[ip];
       pn=p*n;
       if(pn<=limit)
@@ -216,11 +210,11 @@ void summer::add(long n, long pindex, long y, long z)
 }
 
 void summer::add2357(long n, long pindex, long y, long z)
-{ 
-  // y = a[n], z=a[n/p] 
+{
+  // y = a[n], z=a[n/p]
   // where p is the pindex'th prime, which is the largest prime dividing n
 
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"In add() with n="<<n<<",\tpindex="<<pindex<<",\ty="<<y
       <<",\tz="<<z<<endl;
 #endif
@@ -232,9 +226,9 @@ void summer::add2357(long n, long pindex, long y, long z)
   ip=istart;
   p=primelist[ip];
   if(triv&&(p>rootlimit)) return;
-  
+
   for(pn=n*p; (ip<=pindex) && (pn<=limit); ip++)
-    { 
+    {
       p=primelist[ip];
       pn=p*n;
       if(pn<=limit)
@@ -253,7 +247,7 @@ void summer::sumit()
   static double log5 = log(5.0);
   static double log7 = log(7.0);
   double loglimit = log((double)limit);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"In sumit(), limit="<<limit<<", rootlimit="<<rootlimit<<endl;
 #endif
   sum1=sum2=to_bigfloat(0);
@@ -314,30 +308,30 @@ void summer::sumit()
 
   use2357(1,1);
   unsigned long ip=4; long p=11,ap;
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"Using primes with indices "<<ip<<" to "<<primelist.size()
       <<" and less than "<<rootlimit<<endl;
 #endif
   while( (ip+1<primelist.size()) && (p<rootlimit)  )
-  { 
+  {
     ap=aplist[ip];
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
     cout<<"Using prime("<<ip<<") = "<<p<<", ap = "<<ap<<endl;
 #endif
     add2357(p,ip,ap,1);
     p=primelist[++ip];
   }
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<endl;
 #endif
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"Using primes with indices "<<ip<<" to "<<primelist.size()
       <<" and less than "<<limit<<endl;
 #endif
   while( (ip+1<primelist.size()) && (p<=limit)  )
-  { 
+  {
     ap=aplist[ip];
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
     cout<<"Using prime("<<ip<<") = "<<p<<", ap = "<<ap<<endl;
 #endif
     if(ap!=0)
@@ -353,14 +347,14 @@ void summer::sumit()
 	    m++; n+=p;
 	  }
       }
-    p=primelist[++ip];  
+    p=primelist[++ip];
   }
 }
 
 /////////////////////////////////////////////
 //  functions for periods_via_lfchi class  //
 /////////////////////////////////////////////
- 
+
 periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
 : chi1(f->lplus), chi2(f->lminus)
 {
@@ -368,23 +362,23 @@ periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
   dp0=f->dp0, mplus=f->mplus, mminus=f->mminus;
   if(f->lplus==1) mplus=f->np0; // L/P = dp0/np0 so now P=L*mplus/dp0
   initaplist(iN,f->aplist);
-  rootmod =  sqrt(to_bigfloat(N));  
+  rootmod =  sqrt(to_bigfloat(N));
   factor1 =  exp(-(TWOPI)/ (to_bigfloat(chi1.modulus()) * rootmod));
   factor2 =  exp(-(TWOPI)/ (to_bigfloat(chi2.modulus()) * rootmod));
   long bp = bit_precision();
  // MUST keep brackets around TWOPI!:
   bigfloat rootlimit1=(bp-log(1-factor1))*rootmod/(TWOPI) ;
-  bigfloat rootlimit2=(bp-log(1-factor1))*rootmod/(TWOPI) ; 
+  bigfloat rootlimit2=(bp-log(1-factor1))*rootmod/(TWOPI) ;
   Iasb(limit1,rootlimit1);
   Iasb(limit2,rootlimit2);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout << "Bit precision = "<<bp<<endl;
   cout << "Basic limits on n in sums = " << limit << endl;
 #endif
-  limit1=chi1.modulus()*limit1;  
+  limit1=chi1.modulus()*limit1;
   limit2=chi2.modulus()*limit2;
   limit = ( limit2 > limit1 ? limit2 : limit1);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   //  cout<<"periods_via_lfchi.limit = "<<limit<<endl;
   //  cout<<"Largest prime = "<<primelist[primelist.size()-1]<<endl;
 #endif
@@ -394,7 +388,7 @@ periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
 */
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout << "factor1 = "<<factor1<<", factor2 = "<<factor2<<endl;
   cout << "Limits on n in sums = " << limit1 <<", "<<limit2 << endl;
 #endif
@@ -402,7 +396,7 @@ periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
   cout << "Initial an_cache = "<<an_cache<<endl;
 #endif
 }
- 
+
 void periods_via_lfchi::compute(void)
 {
   sumit();
@@ -416,7 +410,7 @@ void periods_via_lfchi::compute(void)
 //////////////////////////////////////////
 //  functions for periods_direct class  //
 //////////////////////////////////////////
- 
+
 periods_direct::periods_direct(const level* iN, const newform*f)
 {
   eps_N = -(f->sfe);
@@ -434,7 +428,7 @@ void periods_direct::compute(long ta, long tb, long tc, long td)
 
 void periods_direct::compute(void)
 {
-  if(d==0) 
+  if(d==0)
    {
     cout<<"Problem: cannot compute periods for matrix with d=0!"<<endl;
     rp=ip=0;
@@ -471,7 +465,7 @@ void periods_direct::compute(void)
   limit = limit2;
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout << "Limits on n in sums = " << limit1 <<", "<<limit2 << endl;
   cout<<"periods_direct.limit = "<<limit<<endl;
   cout<<"Largest prime = "<<primelist[primelist.size()-1]<<endl;
@@ -495,16 +489,16 @@ void periods_direct::compute(void)
   rp = sum1;
   ip = sum2;
 }
- 
-void periods_direct::use(long n, long an)  
+
+void periods_direct::use(long n, long an)
 // specially defined, as does not fit simply into prototype provided by
 // summer class
-{ 
+{
   if(n>limit) return;
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"periods_direct::use("<<n<<","<<an<<")"<<endl;
 #endif
-  if (n<rootlimit) {an_cache[n]=an; 
+  if (n<rootlimit) {an_cache[n]=an;
 #ifdef TRACE_CACHE
   cout<<"Caching an["<<n<<"]="<<an<<endl;
 #endif
@@ -513,15 +507,15 @@ void periods_direct::use(long n, long an)
   bigfloat coeff = to_bigfloat(an)/dn;
   bigfloat ef2 = coeff * exp(dn*factor2);
   int nbd = (n*b)%d, ncd = (n*c)%d;
-  if(eps_N==-1) 
+  if(eps_N==-1)
     {
       if(n<limit1)
 	{
 	  bigfloat ef1 = coeff * exp(dn*factor1);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
 	  cout<<"n="<<n<<", ef1="<<ef1<<", ef2="<<ef2<<"\n";
 #endif
-	  sum1 -= (2*ef1); 
+	  sum1 -= (2*ef1);
 	}
       sum1 += ef2*(ctab[nbd]+ctab[ncd]);
       sum2 += ef2*(stab[nbd]+stab[ncd]);
@@ -531,15 +525,15 @@ void periods_direct::use(long n, long an)
       sum1 += ef2*(ctab[nbd]-ctab[ncd]);
       sum2 += ef2*(stab[nbd]-stab[ncd]);
     }
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"done: sum1 = "<<sum1<<", sum2 = "<<sum2<<endl;
 #endif
 }
- 
+
 ///////////////////////////////////////
 //  functions for part_period class  //
 ///////////////////////////////////////
- 
+
 part_period::part_period(const level* iN, const newform*f)
 {
   initaplist(iN, f->aplist);
@@ -559,7 +553,7 @@ void part_period::compute()
   limit1=limit2=limit;
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"Using limit = "<<limit<<endl;
 #endif
 #ifdef TRACE_CACHE
@@ -570,12 +564,12 @@ void part_period::compute()
   rp = sum1;
   ip = sum2;
 }
- 
- 
+
+
 //////////////////////////////////
 //  functions for ldash1 class  //
 //////////////////////////////////
- 
+
 ldash1::ldash1(const level* iN, const newform* f)
 {
   init(iN, f->aplist, f->sfe, f->loverp);
@@ -612,7 +606,7 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
   else if(f_loverp==0) {r=2; }
 }
 
-void ldash1::compute(void) 
+void ldash1::compute(void)
 {
   static const bigfloat two=to_bigfloat(2);
   if(computed) return;
@@ -622,7 +616,7 @@ void ldash1::compute(void)
   while(abs(ld1)<0.0001) // ?? What's a sensible value??
     {
       //      cout<<"L^(r)(1) small for r="<<r<<", increasing to ";
-      r+=2;  
+      r+=2;
       //      cout<<r<<endl;
       sumit(); ld1=two*sum1;
     }
@@ -632,7 +626,7 @@ void ldash1::compute(void)
 /////////////////////////////////
 //  functions for lfchi class  //
 /////////////////////////////////
- 
+
 lfchi::lfchi (const level* iN, const newform* f)
 {
   initaplist(iN, f->aplist);
@@ -648,7 +642,7 @@ void lfchi::compute(long ell)
   factor1 =  exp(-(TWOPI)/ (to_bigfloat(ell) * rootmod));
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"lfchi.factor1 = "<<factor1<<" for ell="<<ell<<endl;
   cout<<"lfchi.limit = "<<limit<<" for ell="<<ell<<endl;
 #endif
@@ -659,32 +653,32 @@ void lfchi::compute(long ell)
 
   val = -2*sum1; // - since sumit() uses -a_n
 }
- 
+
 ////////////////////////////////////////////////////////
- 
+
 int newforms::get_real_period(long i, bigfloat& x, int verbose) const
 {
   const newform* nfi = &(nflist[i]);
   int rank0 = (num(nfi->loverp)!=0);
   lfchi lx(this,nfi);
-  
-  if(rank0) 
+
+  if(rank0)
     {
-      if(verbose) 
+      if(verbose)
 	cout << "Computing real period via L(f,1): ";
       lx.compute(1);
       if(verbose) cout<<"L(f,1) = "<<lx.value()<<"; ";
       rational lop=nfi->loverp;
-      x = abs(lx.value())*to_bigfloat(den(lop))/to_bigfloat(num(lop)); 
+      x = abs(lx.value())*to_bigfloat(den(lop))/to_bigfloat(num(lop));
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }
-  
+
   long lplus=nfi->lplus;
   long mplus=nfi->mplus;
   if(mplus!=0)
     {
-      if(verbose) 
+      if(verbose)
 	cout << "Computing real period via L(f,chi,1) with chi mod "
 	     <<lplus<<"...";
       lx.compute(lplus);
@@ -693,8 +687,8 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }
-  
-  // we only reach here if sfe=-1 and level is square  
+
+  // we only reach here if sfe=-1 and level is square
 
   periods_direct pd(this,nfi);
   if(verbose) cout<<"...computing directly...";
@@ -710,13 +704,13 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
 int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
 {
   const newform* nfi = &(nflist[i]);
-  lfchi lx(this,nfi); 
-  
+  lfchi lx(this,nfi);
+
   long lminus=(nfi->lminus);
   long mminus=(nfi->mminus);
   if(mminus!=0)
     {
-      if(verbose) 
+      if(verbose)
 	cout << "Computing imaginary period via L(f,chi,1) with chi mod "
 	     <<lminus<<"...";
       lx.compute(lminus);
@@ -729,7 +723,7 @@ int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
 }
 
 ////////////////////////////////////////////////////////
- 
+
 Cperiods newforms::getperiods(long i, int method, int verbose)
   // method=1 to use periods_direct
   // method=0 to use periods_via_lfchi
@@ -751,12 +745,12 @@ Cperiods newforms::getperiods(long i, int method, int verbose)
   //  method=1;
   if(method==1)
        {
-         if(verbose) 
+         if(verbose)
 	   {
 	     cout<<"Finding periods -- direct method "<<endl;
 	     cout << "using matrix ("<<nfi->a<<","<<nfi->b<<";"<<nfi->c
 		  <<","<<nfi->d<<"), dotplus="<<nfi->dotplus
-		  <<", dotminus="<<nfi->dotminus<<"; type="<<nfi->type<<endl; 
+		  <<", dotminus="<<nfi->dotminus<<"; type="<<nfi->type<<endl;
 	   }
          periods_direct per(this,nfi);
          per.compute();
@@ -766,7 +760,7 @@ Cperiods newforms::getperiods(long i, int method, int verbose)
        }
      else
        {
-         if(verbose) 
+         if(verbose)
 	   cout<<"Finding periods -- via L(f_chi) using twists by "
 	       <<nfi->lplus<<" and "<<nfi->lminus<<endl;
          periods_via_lfchi per(this,nfi);
@@ -784,7 +778,7 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   long fac6=(odd(fac)?fac:2*fac);
 //  if(fac>1) cout<<"factor = "<<fac<<endl;
 //
-// p^2 | n => p | c4, c6 so we take advantage of the fact that c4, c6 
+// p^2 | n => p | c4, c6 so we take advantage of the fact that c4, c6
 // must be multiples of fac when rounding.
 //
   bigcomplex wR, wRI, w1, w2, c4, c6;
@@ -799,7 +793,7 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   bigint ic4 = fac*Iround(rc4/fac);
   bigint ic6 = fac6*Iround(rc6/fac6);
   if(verbose) cout << "After rounding";
-  if(verbose&&(fac>1)) 
+  if(verbose&&(fac>1))
     cout << ", using factors " << fac << " for c4 and " << fac6 << " for c6";
   if(verbose) cout<<":\n";
   if(verbose) cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
@@ -878,7 +872,7 @@ bigfloat myg0(bigfloat x)
 bigfloat myg1(bigfloat x)
 {
 #ifndef MPFP // Multi-Precision Floating Point
-  if(x>708) return to_bigfloat(0); 
+  if(x>708) return to_bigfloat(0);
 #endif
   if(x<2)
     {
@@ -931,7 +925,7 @@ bigfloat myg1(bigfloat x)
 #ifdef TRACEG1
       cout<<"   k="<<k<<": approx = " << newans << endl;
 #endif
-      if (is_approx_zero(ans-newans)) 
+      if (is_approx_zero(ans-newans))
 	{
 //	  cout << "returning g1 = " << newans << endl;
 	  return newans;
@@ -955,7 +949,7 @@ bigfloat CG(int r, bigfloat x) // Cohen's G_r(x)
     {
       n++;
       // update A-vector, term and sum
-      for(j=1;j<=r;j++) Av[j]+=(Av[j-1]/n); 
+      for(j=1;j<=r;j++) Av[j]+=(Av[j-1]/n);
       term*=(x/n);
       ans+=(Av[r]*term);
     }
@@ -1043,12 +1037,12 @@ bigfloat G(int r, bigfloat x)  // G_r(x)
 #endif
     //  cout<<"switch point = "<<x0<<endl;
     //  cout<<"x="<<x<<endl;
-  if(x<x0) 
+  if(x<x0)
     {
       return Gsmall(r,x);
     }
   else
-    {  
+    {
       return Glarge(r,x);
     }
 }
@@ -1061,7 +1055,7 @@ bigfloat ldash1::G(bigfloat x)  // G_r(x)
   default: return ::G(r,x);
   }
 }
- 
+
 #if(0) // myg2 and myg3 were inaccurate and now replaced by general
        // G(r,x) -- which also works for r>3!
 bigfloat myg2(bigfloat x)
@@ -1096,7 +1090,7 @@ bigfloat myg2(bigfloat x)
 #endif
    return ans;
 }
- 
+
 bigfloat myg3(bigfloat x)
 {
   static bigfloat zero=to_bigfloat(0);
@@ -1127,4 +1121,3 @@ bigfloat myg3(bigfloat x)
    return ans;
 }
 #endif
-

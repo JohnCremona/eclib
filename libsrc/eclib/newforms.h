@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #ifndef _ECLIB_NEWFORMS_H
@@ -48,9 +48,9 @@ Items 1-18 are "int" while the ap and aq are "short"
 9.  lminus : prime =3 (mod 4) with L(f,lminus,1) nonzero
 10. mminus : L(f,lminus,1)*sqrt(-l)=mminus*yi
 11-14. a, b, c, d : entries of a matrix M=[a,b;N*c,d] in Gamma_0(N) s.t.
-15. dotplus       : the integral of f over {0,M(0)} is 
+15. dotplus       : the integral of f over {0,M(0)} is
 16. dotminus      : dotplus*x+dotminus*yi
-17. type : type 1 if period lattice = [2x,x+yi], type 2 if [x,yi] 
+17. type : type 1 if period lattice = [2x,x+yi], type 2 if [x,yi]
 18. degphi : degree of modular parametrization
 aq : list of Wq-eigenvalues at bad primes
 ap : list of Tp- & Wq-eigenvalues at all primes
@@ -62,14 +62,14 @@ public:
   newforms *nf;  // the "parent"
   int sign;   // 1/-1 for old-style newform, 0 for old-style h1newform
   vec bplus,bminus; // DUAL eigenvectors
-  scalar type;            // 2 for rectangular, 1 for triangular 
+  scalar type;            // 2 for rectangular, 1 for triangular
 			  //  period lattice
   long index;  // splitting index, -1 if not known
-  vector<long> aplist, aqlist; 
+  vector<long> aplist, aqlist;
   long ap0;     // Eigenvalue of first "good" p
   long sfe;     // sign of functional equation
   long cuspidalfactorplus, cuspidalfactorminus;  // pdot =cuspidalfactor*np0
-  long pdot,np0,dp0;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus, 
+  long pdot,np0,dp0;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus,
                       //                    = cuspidalfactor*dp0
 
   rational loverp;  // L(f,1)/x where x = least real part of a period
@@ -154,23 +154,23 @@ private:
   int verbose; long maxdepth, cuspidal, sign;
   int basisflag;  // is set, then use() only sets bases for newforms
 		  // already defined.
-  mat opmat(int i, int d, int v=0) 
+  mat opmat(int i, int d, int v=0)
   {return h1->opmat(i,d,v);}
   vec opmat_col(int i, int j, int v=0)
   {return h1->opmat_col(i,j,v);}
   mat opmat_cols(int i, const vec& jlist, int v=0)
   {return h1->opmat_cols(i,jlist,v);}
-  mat opmat_restricted(int i, const subspace& s, int d, int v=0) 
+  mat opmat_restricted(int i, const subspace& s, int d, int v=0)
   {return h1->opmat_restricted(i,s,d,v);}
-  smat s_opmat(int i, int d, int v=0) 
+  smat s_opmat(int i, int d, int v=0)
   {return h1->s_opmat(i,d,v);}
   svec s_opmat_col(int i, int j, int v=0)
   {return h1->s_opmat_col(i,j,v);}
   smat s_opmat_cols(int i, const vec& jlist, int v=0)
   {return h1->s_opmat_cols(i,jlist,v);}
-  smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0) 
+  smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0)
   {return h1->s_opmat_restricted(i,s,d,v);}
-  long matdim(void)  {return h1->dimension;} 
+  long matdim(void)  {return h1->dimension;}
   long matden(void)  {return h1->denom1;}
   vector<long> eigrange(int i) {return h1->eigrange(i);}
   long dimoldpart(const vector<long> l);
@@ -185,7 +185,7 @@ public:
   long n1ds, j1ds;
   vector<newform> nflist;
   vector<int> nf_subset;
-  newforms(long n, int disp) 
+  newforms(long n, int disp)
     :level(n), verbose(disp), of(0), h1(0), h1plus(0), h1minus(0), h1full(0) {;}
   ~newforms(void);
   void display(void) const;
@@ -195,7 +195,7 @@ public:
   int  get_sign() {return sign;}
   void makeh1(int s);
 // add newform with basis b1, eiglist l to current list (b2 not used):
-  void use(const vec& b1, const vec& b2, const vector<long> l); 
+  void use(const vec& b1, const vec& b2, const vector<long> l);
 
   // find newforms using homology; ntp is number of eigenvalues to use
   // for oldforms, *not* the number computed via homology (use addap()

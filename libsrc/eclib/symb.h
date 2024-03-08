@@ -67,12 +67,11 @@ class modsym {
 
 class symblist {
  private:
-    symb *list;
+    vector<symb> list;
     map<pair<long,long>,long> hashtable;
     long num,maxnum;
  public:
-  symblist(long n=0);
-  ~symblist();
+    symblist(long n=0);
     void add(const symb& s, long start=0);
     long index(const symb& s, long start=0) const;
     symb operator[](long n) const {return list[n];}

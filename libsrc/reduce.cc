@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include <eclib/compproc.h>
 #include <eclib/mquartic.h>
 #include <eclib/transform.h>
@@ -46,30 +46,31 @@ void reduce_b(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 
 bigfloat show(bigfloat x) {cout<<x<<endl; return x;}
 
-bigfloat* types12_covar(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
-			const bigfloat& xH, const bigfloat& phi)
+vector<bigfloat> types12_covar(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
+                               const bigfloat& xH, const bigfloat& phi)
 {
-  // The following covariant quadratic is the unique real quadratic factor 
+  // The following covariant quadratic is the unique real quadratic factor
   // of g6 which is positive definite
   bigfloat xa=I2bigfloat(a), xb=I2bigfloat(b), xc=I2bigfloat(c);
-  bigfloat* ans = new bigfloat[3];
-  ans[0] = 3*(4*xa*phi-xH);
-  ans[1] = 6*(xb*phi+I2bigfloat(b*c-6*a*d));
-  ans[2] = 2*phi*(xc-phi)+I2bigfloat(4*c*c-9*b*d);
+  bigfloat
+    a0 = 3*(4*xa*phi-xH),
+    a1 = 6*(xb*phi+I2bigfloat(b*c-6*a*d)),
+    a2 = 2*phi*(xc-phi)+I2bigfloat(4*c*c-9*b*d);
 #ifdef DEBUG_REDUCE
   cout<<"Before scaling, quadratic has coefficients: "
-      <<ans[0]<<", "<<ans[1]<<", "<<ans[2]<<endl;
+      <<a0<<", "<<a1<<", "<<a2<<endl;
 #endif
-  ans[1]/=ans[0];
-  ans[2]/=ans[0];
-  ans[0]=1;
+  a1/=a0;
+  a2/=a0;
+  a0=1;
+  vector<bigfloat> ans = {a0, a1, a2};
   return ans;
 }
 
-bigfloat* type3_covar(const bigfloat& xa, const bigfloat& xb, const bigfloat& xH, 
-		      const bigfloat& rphi, const bigcomplex& cphi, int Risneg)
+vector<bigfloat> type3_covar(const bigfloat& xa, const bigfloat& xb, const bigfloat& xH,
+                             const bigfloat& rphi, const bigcomplex& cphi, int Risneg)
 {
-  bigfloat* ans = new bigfloat[3];
+  bigfloat a0, a1, a2;
   bigfloat a4=4*xa;
   static bigfloat three(to_bigfloat(3));
   bigcomplex r1 = sqrt((a4*cphi-xH)/three);
@@ -95,38 +96,34 @@ bigfloat* type3_covar(const bigfloat& xa, const bigfloat& xb, const bigfloat& xH
   cout<<"p = "<<p<<", q = "<<q<<endl;
   cout << "lambda = " << lambda << endl;
 #endif
-#ifdef USE_OLD_BSD
-  // B&SD's covariant:
-  ans[0]=1; ans[1] = p; ans[2] = q;
-#else
-  //
-  // Julia's covariant:
-  bigfloat ar = abs(r1+r3);
-  bigfloat br = abs(r1-r3);
-  bigfloat t1sq = ir1*ar*ar;
-  bigfloat t2sq = ir1*br*br;
-  bigfloat usq  = rr1*ar*br;
-  
-  ans[0] = t1sq + t2sq + 2*usq;
-  ans[1] = -2*alpha_1*t1sq -2*alpha_2*t2sq + 2*p*usq;
-  ans[2] = alpha_1*alpha_1*t1sq + alpha_2*alpha_2*t2sq + 2*q*usq;
+#ifdef USE_OLD_BSD  // B&SD covariant:
+  a0 = 1;
+  a1 = p;
+  a2 = q;
+#else  // Julia covariant:
+  bigfloat ar = abs(r1+r3), br = abs(r1-r3);
+  bigfloat t1sq = ir1*ar*ar, t2sq = ir1*br*br, usq  = rr1*ar*br;
+  a0 = t1sq + t2sq + 2*usq;
+  a1 = -2*alpha_1*t1sq -2*alpha_2*t2sq + 2*p*usq;
+  a2 = alpha_1*alpha_1*t1sq + alpha_2*alpha_2*t2sq + 2*q*usq;
 
 #ifdef DEBUG_REDUCE
-  cout << "quadratic has coefficients "<<ans[0]<<", "<<ans[1]<<", "<<ans[2]<<endl;
-  cout << "-disc = 4*q0*q2-q1^2 = " << (4*ans[0]*ans[2]-ans[1]*ans[1]) 
+  cout << "quadratic has coefficients "<<a0<<", "<<a1<<", "<<a2<<endl;
+  cout << "-disc = 4*q0*q2-q1^2 = " << (4*a0*a2-a1*a1)
        << " (should be positive!)\n";
 #endif
 #endif
-      
-  ans[1] /= ans[0];
-  ans[2] /= ans[0];
-  ans[0] = 1;
-  
+
+  a1 /= a0;
+  a2 /= a0;
+  a0 = 1;
+
+  vector<bigfloat> ans = {a0,a1,a2};
   return ans;
 }
 
 // Compute the quadratic covariant of a real quartic:
-bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e)
+vector<bigfloat> quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e)
 {
   bigint ii = II(a,b,c,d,e);
   bigint jj = JJ(a,b,c,d,e);
@@ -139,7 +136,7 @@ bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint
 #ifdef DEBUG_REDUCE
       cout<<"Three roots phi are initially "<<cphi<<"\n";
 #endif
-  bigfloat * hcoeffs; // will hold coeffs of covariant quadratic
+  vector<bigfloat> hcoeffs; // will hold coeffs of covariant quadratic
   bigfloat realphi, phi;       // will hold specific real roots
 
   if(is_positive(disc))
@@ -148,22 +145,22 @@ bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint
       bigfloat phi1 = real(cphi[0]);
       bigfloat phi2 = real(cphi[1]);
       bigfloat phi3 = real(cphi[2]);
-      if(is_positive(a))      orderreal(phi1,phi2,phi3); 
-      else                    orderreal(phi3,phi2,phi1); 
+      if(is_positive(a))      orderreal(phi1,phi2,phi3);
+      else                    orderreal(phi3,phi2,phi1);
 #ifdef DEBUG_REDUCE
       cout<<"Three real phi are "<<phi1<<", "<<phi2<<", "<<phi3<<"\n";
 #endif
       // So now a*phi1>a*phi2>a*phi3
-      
-      if((is_negative(H))&&(H*H>16*a*a*ii)) 
-	{ 
+
+      if((is_negative(H))&&(H*H>16*a*a*ii))
+	{
 	  realphi = phi2; phi = phi2;
 #ifdef DEBUG_REDUCE
 	  cout<<"Type = 2, phi = "<<phi<<"\n";
 #endif
 	}
       else
-	{ 
+	{
 	  realphi = phi1; phi = phi3;
 #ifdef DEBUG_REDUCE
 	  cout<<"Type = 1, phi = "<<phi<<"\n";
@@ -176,18 +173,18 @@ bigfloat* quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint
 #ifdef DEBUG_REDUCE
       cout<<"Type = 3, ";
 #endif
-      if (is_real(cphi[1])) 
+      if (is_real(cphi[1]))
 	{
 	  realphi=real(cphi[1]);
 	  cphi[1]=cphi[2];
 	  cphi[2]=realphi;
 	}
-      else 
-	if (is_real(cphi[2])) 
+      else
+	if (is_real(cphi[2]))
 	  {
 	    realphi=real(cphi[2]);
 	  }
-	else 
+	else
 	  {
 	    realphi=real(cphi[0]);
 	    cphi[0]=cphi[2];
@@ -207,9 +204,8 @@ void reduce(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 	    unimod& m)
      // Construct a covariant quadratic, and reduce this
 {
-  bigfloat* hcoeffs = quadratic_covariant(a,b,c,d,e);
+  vector<bigfloat> hcoeffs = quadratic_covariant(a,b,c,d,e);
   unimod m1 = reduce_quad(hcoeffs[1],hcoeffs[2]);
-  delete [] hcoeffs;
   // m1 contains the transform to reduce the quadratic;
   // now update the input transform and quartic:
   m*=m1;
@@ -231,19 +227,19 @@ void reduce(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
       xshift(alpha,a,b,c,d,e,m);
 #ifdef DEBUG_REDUCE
       newg.assign(a,b,c,d,e);
-      cout << "after reducing b (shifting by "<<alpha<<"), reduced quartic has coefficients " 
+      cout << "after reducing b (shifting by "<<alpha<<"), reduced quartic has coefficients "
 	   << newg << endl;
 #endif
     }
 #endif
 }
 
-// Finds a good unimodular matrix (a,b;c,d) 
+// Finds a good unimodular matrix (a,b;c,d)
 // which raises z=x0+i*y0 when y0 is small
 int first_step(const bigfloat& x0, const bigfloat& y0,
 	       bigint& a, bigint& b, bigint& c, bigint& d);
 
-// Finds a unimodular matrix (a,b;c,d) 
+// Finds a unimodular matrix (a,b;c,d)
 // which raises z=x0+i*y0 so im(z)>h
 int one_step(const bigfloat& x0, const bigfloat& y0, const bigfloat& h,
 	     bigint& a, bigint& b, bigint& c, bigint& d);
@@ -267,7 +263,7 @@ unimod reduce_quad_1(const bigfloat& bb, const bigfloat& cc)
   bigfloat yz = sqrt(abs(dz))/2;
 #ifdef DEBUG_REDUCE_QUAD
   bigfloat az = c;
-  cout << "Before any reduction:\n"; 
+  cout << "Before any reduction:\n";
   cout << "Covariant quadratic has coefficients 1, "<<b<<", "<<c<<endl;
   cout << "-disc = " << dz << " (should be positive!)\n";
   cout << "Root has real part = " << xz << endl;
@@ -285,7 +281,7 @@ unimod reduce_quad_1(const bigfloat& bb, const bigfloat& cc)
 #ifdef DEBUG_REDUCE_QUAD
   cout<<"one_step returns [a,b;c,d] = ["<<ma<<","<<mb<<";"<<mc<<","<<md<<"]\n";
 #endif
-  bigfloat xd=I2bigfloat(ma), xb=-I2bigfloat(mb), 
+  bigfloat xd=I2bigfloat(ma), xb=-I2bigfloat(mb),
            xc=-I2bigfloat(mc), xa=I2bigfloat(md);
   bigfloat a1=(xa*xa+(b*xa+c*xc)*xc);
   bigfloat b1=2*(xa*xb+c*xc*xd)+b*(xa*xd+xb*xc);
@@ -299,7 +295,7 @@ unimod reduce_quad_1(const bigfloat& bb, const bigfloat& cc)
   xz = -b1/(2*a1);
   yz = sqrt(abs(dz))/(2*a1);
   az = c1/a1;
-  cout << "After first step of reduction:\n"; 
+  cout << "After first step of reduction:\n";
   cout << "Covariant quadratic has coefficients "<<a1<<", "<<b1<<", "<<c1<<endl;
   cout << "-disc = " << dz << " (should be positive!)\n";
   cout << "Root has real part = " << xz << endl;
@@ -310,22 +306,22 @@ unimod reduce_quad_1(const bigfloat& bb, const bigfloat& cc)
   bigint s = Iround(xz);
   bigfloat xk=I2bigfloat(s);
   m1.x_shift(s);
- 
+
   c+=xk*(xk+b);  b+=2*xk;  xz-=xk;
 
   int reduced = (c>0.99999);
 #ifdef DEBUG_REDUCE_QUAD
   dz = 4*c-b*b;  // should be positive!
-  cout << "After preliminary shift by "<<s<<":\n"; 
+  cout << "After preliminary shift by "<<s<<":\n";
   cout << "Covariant quadratic has coefficients 1, "<<b<<", "<<c<<endl;
   cout << "-disc = = " << dz << " (should be positive!)\n";
   cout << "Root has real part = " << xz << endl;
   cout << "imaginary part     = " << yz << endl;
   cout << "modulus^2          = " << c << endl;
 #endif
-  while(!reduced) 
+  while(!reduced)
     {
-      // invert:      
+      // invert:
       c=1/c; b*=(-c);
       m1.invert();
 
@@ -340,7 +336,7 @@ unimod reduce_quad_1(const bigfloat& bb, const bigfloat& cc)
       //recompute root:
       dz = 4*c-b*b;  // should be positive!
       yz = sqrt(abs(dz))/2;
-      cout << "After inversion and shift by "<<s<<":\n"; 
+      cout << "After inversion and shift by "<<s<<":\n";
       cout << "Covariant quadratic has coefficients "<<a<<", "<<b<<", "<<c<<endl;
       cout << "-disc = = " << dz << " (should be positive!)\n";
       cout << "Root has real part = " << xz << endl;
@@ -360,7 +356,7 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
   bigcomplex z(xz,yz);
 #ifdef DEBUG_REDUCE_QUAD
   bigcomplex z0=z;
-  cout << "Before any reduction:\n"; 
+  cout << "Before any reduction:\n";
   cout << "Covariant quadratic has coefficients 1, "<<b<<", "<<c<<endl;
   cout << "-disc = " << dz << " (should be positive!)\n";
   cout << "Root = " << z << " with modulus^2 = " << az << endl;
@@ -385,7 +381,7 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
   z = bigcomplex(xz,yz);
   int reduced = (az>0.999);
 #ifdef DEBUG_REDUCE_QUAD
-  cout << "After preliminary shift:\n"; 
+  cout << "After preliminary shift:\n";
   cout << "Covariant quadratic has coefficients 1, "<<b1<<", "<<c1<<endl;
   cout << "-disc = = " << dz << " (should be positive!)\n";
   cout << "Root = " << z << " with modulus^2 = " << az << endl;
@@ -401,19 +397,19 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
   first_step(xz, yz, m11, m12, m21, m22);
   while(changed)
     {
-      a11=I2bigfloat(m11); a12=I2bigfloat(m12); 
+      a11=I2bigfloat(m11); a12=I2bigfloat(m12);
       a21=I2bigfloat(m21); a22=I2bigfloat(m22);
       z = (a11*z+a12) / (a21*z+a22);
       xz=real(z); yz=imag(z);
       az  = xz*xz + yz*yz;
-      
+
       unimod n(Iround(a22),Iround(-a12),
 	       Iround(-a21),Iround(a11));  // rounding the inverse matrix
       m1 *= n;
 #ifdef DEBUG_REDUCE_QUAD
       cout << "z = "<<z<<endl;
-      cout << "one matrix  = "<<n<<"\n"; 
-      cout << "cumulative transform matrix = "<<m1<<"\n"; 
+      cout << "one matrix  = "<<n<<"\n";
+      cout << "cumulative transform matrix = "<<m1<<"\n";
 #endif
       changed=first_step(xz, yz, m11, m12, m21, m22);
     }
@@ -439,9 +435,9 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
       cout << "|z|^2 = "<<az<<endl;
 #endif
       reduced = (az>0.999);
-      if(!reduced) 
+      if(!reduced)
 	{
-	  z=-one/z;      
+	  z=-one/z;
 	  xz=real(z); yz=imag(z);
 #ifdef DEBUG_REDUCE_QUAD
 	  cout << "After inverting, "<<endl;
@@ -461,11 +457,11 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
   xz -= xs;
   az  = xz*xz + yz*yz;
   z = bigcomplex(xz,yz);
-  cout << "After reduction, root = " << z << " with modulus^2 = " 
+  cout << "After reduction, root = " << z << " with modulus^2 = "
        << az << endl;
   cout<<"Transform matrix = "<<m1<<endl;
   cout<<"This (inverted) applied to original root z0 = "<<z0<<endl;
-  a11=I2bigfloat(m1(1,1)); a12=I2bigfloat(m1(1,2));  
+  a11=I2bigfloat(m1(1,1)); a12=I2bigfloat(m1(1,2));
   a21=I2bigfloat(m1(2,1)); a22=I2bigfloat(m1(2,2));
   bigcomplex z1=(a22*z0-a12) / (-a21*z0+a11);
   cout<<" gives z = "<<z1<<endl;
@@ -475,7 +471,7 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
 
 int first_step(const bigfloat& x0, const bigfloat& y0,
 	       bigint& a, bigint& b, bigint& c, bigint& d)
-// Finds a good unimodular matrix (a,b;c,d) 
+// Finds a good unimodular matrix (a,b;c,d)
 // which raises z=x0+i*y0 when y0 is small
 {
 #ifdef DEBUG_FIRSTSTEP
@@ -487,12 +483,12 @@ int first_step(const bigfloat& x0, const bigfloat& y0,
   c=Ifloor(xc);
   if(c<10) // return without doing anything
     {
-      c=0; 
+      c=0;
 #ifdef DEBUG_FIRSTSTEP
       cout<<"first_step returns with no change"<<endl;
 #endif
       return 0;
-    } 
+    }
   d=-Iround(xc*x0);
   bigint g = bezout(-c,d,b,a); // a*d-b*c=g, may be >1
   if(g>1) {c/=g; d/=g;}
@@ -500,11 +496,11 @@ int first_step(const bigfloat& x0, const bigfloat& y0,
   cout<<"first_step returns (a,b;c,d) = ("<<a<<","<<b<<";"<<c<<","<<d<<")"<<endl;
 #endif
   return 1;
-} 
+}
 
 int one_step(const bigfloat& x0, const bigfloat& y0, const bigfloat& h,
 	     bigint& a, bigint& b, bigint& c, bigint& d)
-// Finds a good unimodular matrix (a,b;c,d) 
+// Finds a good unimodular matrix (a,b;c,d)
 // which raises z=x0+i*y0
 {
 #ifdef DEBUG_ONESTEP
@@ -546,5 +542,4 @@ int one_step(const bigfloat& x0, const bigfloat& y0, const bigfloat& h,
       ans=1;
     }
   return ans;
-} 
-
+}
