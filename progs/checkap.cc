@@ -33,11 +33,11 @@ const long MAXNAP = 100000;
 int main(void)
 {
   long firstn, lastn, n, nnf, naq, nap, i, j, p;
-  int ok, allok=1;
+  int allok=1;
   cout<<"Enter first and last N: "; cin>>firstn>>lastn;
   for(n=firstn; n<=lastn; n++)
     {
-      ok=1;
+      int ok=1;
       string name = nf_filename(n,'x');
       ifstream datafile(name.c_str());
       if(!datafile.is_open())

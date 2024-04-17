@@ -86,7 +86,7 @@ int main(void)
     }
   if(findcurves)
     {
-      int inf, nnf = nf.n1ds;
+      int inf;
       // Now we compute the curves
       cout<<"Computing "<<nnf<<" curves...\n";
       vector<int> forms;

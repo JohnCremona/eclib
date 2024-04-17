@@ -174,8 +174,8 @@ int main(void)
       else
 	{
 	  cout<<forms.size()<<" curve(s) missing: ";
-	  for( int inf : forms)
-	    cout<<inf+1<<" ";
+	  for( int i : forms)
+	    cout<<i+1<<" ";
 	  cout<<endl;
 	  int newstopp;
 	  if(stopp<500)

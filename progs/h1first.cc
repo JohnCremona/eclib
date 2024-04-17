@@ -105,13 +105,10 @@ int main(void)
         }
       nnf = nf.nf_subset.size();
       cout << endl;
-      if(verbose)
-        {
-          cout << "Working on " << nnf << " newforms: " << nf.nf_subset << " ..." << endl;
-        }
 #endif
       if(verbose)
         {
+          cout << "Working on " << nnf << " newforms: " << nf.nf_subset << " ..." << endl;
           cout << "Finding +1 eigenvectors..." << flush;
         }
       nf.makebases(1, all_nf);
@@ -124,9 +121,6 @@ int main(void)
       if(verbose)
         {
           cout << "done.\nNow filling in data for newforms..."<<flush;
-        }
-      if(verbose)
-        {
           cout << "about to call merge" << endl;
         }
       nf.merge(all_nf);

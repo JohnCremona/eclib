@@ -91,10 +91,10 @@ int main()
 	      ip=25; // index into aptable
 	      jp=26; // current prime being considered
 	      p=prime_number(jp);
-	      for (ip=0; ip<25; ip++)
+	      for (int kp=0; kp<25; kp++)
 		{
-		  int p = prime_number(ip+1);
-		  while (nn%p==0) nn/=p;
+		  int pk = prime_number(kp+1);
+		  while (nn%pk==0) nn/=pk;
 		}
 	      while (nn>1)     // then there are primes>100 dividing n
 		{
@@ -122,18 +122,18 @@ int main()
 	      ic=booknumber0(n,ic);
 #endif
 	      iq=0;
-              for (int jp=0; jp<25; jp++)
-                { int p = prime_number(jp+1);
-		  int ap = aptable[ic][jp];
-                  if (n%p==0) // W_q-eig
+              for (int kp=0; kp<25; kp++)
+                { int pk = prime_number(kp+1);
+		  int ap = aptable[ic][kp];
+                  if (n%pk==0) // W_q-eig
 		    {
 		      ap=aqtable[ic][iq++];
-		      if(jp>8)  output<<" ";
+		      if(kp>8)  output<<" ";
 		      if(ap==1) output<<"  +"; else output<<"  -";
 		    }
                   else        // T_p-eig
 		    {
-		      if (jp>8) output<<setw(4)<<ap;
+		      if (kp>8) output<<setw(4)<<ap;
 		      else output<<setw(3)<<ap;
 		    }
                 }

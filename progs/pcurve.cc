@@ -50,7 +50,7 @@ int main(void)
 {
   initprimes("PRIMES",0);
   set_precision(80);
- long limit,n=1; 
+ long n=1;
  int dump=1, detail; 
  long maxn, dmax=DMAX;
  //#ifdef SINGLE
@@ -61,6 +61,7 @@ int main(void)
  cerr << "Enter max d: ";  cin>>dmax;
  cerr << "Enter max scaling factor for periods: "; cin>>maxn;
 #ifdef AUTOLOOP
+ long limit;
  cerr<<"Enter first and last N: ";cin>>n>>limit; 
  n--; cout<<"\n";
  while (n<limit) { n++;
@@ -76,17 +77,20 @@ int main(void)
   nf.createfromdata(1,noldap);
   int squarelevel=nf.squarelevel;
   long fac=nf.sqfac;
-  long nnf = nf.n1ds; 
-  long inf = 1; 
+  long nnf, inf;
 #ifdef SINGLE
   cout << "Enter form number: "; cin>>inf;
   nnf=inf;
+  inf--;
+#else
+  nnf = nf.n1ds;
+  inf = 0;
 #endif
   primevar pr; long p0;                  // First "good" prime
-  while (p0=(long)pr, ::divides(p0,n)) pr++; 
-  
+  while (p0=(long)pr, ::divides(p0,n)) pr++;
+
   int anyfound=0;
- for(long i=inf-1; i<nnf; i++)
+ for(long i=inf; i<nnf; i++)
    {
      if(detail) cout<<"\n"<<"Form number "<<i+1<<"\n";
      else cout<<(i+1)<<" ";

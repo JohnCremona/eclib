@@ -65,17 +65,15 @@ int main(void)
  long n=2, hlim1=10, hlim2=15;
  bigint nn;
  int verbose=0;
- int filenamesize=30;
- char genfile[filenamesize];
 #ifndef RANK_ZERO_ONLY
  cerr << "See detail (0/1)? "; cin >> verbose;
  cerr << "Limits on naive height in point search? ";
  cerr << "(searches up to first limit on all curves, up to second limit only if rank is deficient after that): ";
  cin>>hlim1>>hlim2;
- cin.width(filenamesize); // prevent buffer overflow on filename input
+ string genfile;
  cerr << "filename for dumping generators? "; cin >> genfile;
  ofstream genout;
- genout.open(genfile);
+ genout.open(genfile.c_str());
  if(!genout.is_open()) {cerr<<"Unable to open file " << genfile << endl; exit(1);}
 #endif
 
@@ -93,8 +91,8 @@ int main(void)
  // Temporary code: check that n is square-free
 #ifdef SQUAREFREE_ONLY
  longlist plist=pdivs(n);
- int sqfree=1; long i;
- for(i=0; (i<plist.length)&&sqfree; i++) sqfree=(val(plist(i),n)==1);
+ int sqfree=1;
+ for(int i=0; (i<plist.length)&&sqfree; i++) sqfree=(val(plist(i),n)==1);
  if(!sqfree) continue;
 #endif
 

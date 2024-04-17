@@ -64,8 +64,9 @@ int main(void)
 #else
  cout<<"See detail? "; cin>>verb;
 #endif
- int limit,n=1;
+ long n=1;
 #ifdef AUTOLOOP
+ int limit;
  cout<<"Enter first and last N: ";cin>>n>>limit;
  n--; cout<<endl;
  cout<<endl<<"Table of curves computed from newforms via periods"<<endl;
@@ -95,7 +96,7 @@ int main(void)
   nf.sort_into_Cremona_label_order();
 #endif
  int nnf = nf.n1ds;
- int inf = 1;
+ int inf = 0;
 #ifndef SINGLE
  if(verb>1) nf.display();
 #else
@@ -106,11 +107,15 @@ int main(void)
        {
 	 cout << "Not in range!\n"; inf=1; nnf=0;
        }
-     else nnf=inf;
+     else
+       {
+         nnf=inf;
+         inf--;
+       }
    }
 #endif
 
- for(int xi=inf-1; xi<nnf; xi++)
+ for(int xi=inf; xi<nnf; xi++)
    { int i = xi;
      if(verb) cout << "\nForm number " << i+1 << ": " << endl;
      else     cout << n << "\t" << codeletter(xi) << "\t";
@@ -202,12 +207,12 @@ int checkap(const level* iN, const newform& nf, CurveRed& CR, long pmax)
   vector<long> primelist = primes(aplist.size());
   unsigned int i;
   bigint ap, p=BIGINT(0);
-  int ok=1, ok1;
+  int ok=1;
   for(i=0; (i<aplist.size())&&(p<=pmax); i++)
     {
       p=primelist[i];
       ap=Trace_Frob(CR,p);
-      ok1 =  (ap==BIGINT(aplist[i]));
+      int ok1 =  (ap==BIGINT(aplist[i]));
       if(!ok1) cout<<"p="<<p<<": ap(E)="<<ap<<" but ap(f)="<<aplist[i]<<endl;
       ok = ok && ok1;
     }
