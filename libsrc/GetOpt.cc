@@ -58,7 +58,7 @@ GetOpt::GetOpt (int argc, char **argv, const char *optstring)
 }
 
 void
-GetOpt::exchange (char **argv)
+GetOpt::exchange (char **argv) const
 {
   int nonopts_size
     = (last_nonopt - first_nonopt) * sizeof (char *);

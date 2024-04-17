@@ -55,12 +55,12 @@ class modsym {
  private:
     rational a,b;
  public:
-    modsym()                                {a=rational(0); b=rational(0);}
-    modsym(const rational& ra, const rational& rb) {a=ra; b=rb;}
-    modsym(const symb&);                        //conversion
-    rational alpha() const {return a;}
-    rational beta() const {return b;}
-    friend ostream& operator<< (ostream& s, const modsym& m);
+  modsym() :a(0), b(0) {}
+  modsym(const rational& ra, const rational& rb) :a(ra), b(rb) {}
+  explicit modsym(const symb&);                        //conversion
+  rational alpha() const {return a;}
+  rational beta() const {return b;}
+  friend ostream& operator<< (ostream& s, const modsym& m);
 };
 
 #include <map>
@@ -84,7 +84,7 @@ class symbdata :public moddata {
  private:
     symblist specials;         // The list of "special" symbols
  public:
-    symbdata(long);             // The constructor
+    explicit symbdata(long);             // The constructor
     long index2(long c, long d) const;
     long index(const symb& s) const {return index2(s.cee(),s.dee());}
     symb symbol(long i) const;

@@ -41,16 +41,15 @@ P2Point transform(const P2Point& P,
 			   const bigint& r, const bigint& s, const bigint& t, 
 			   int back=0); 
 
-class P2Point{ 
+class P2Point{
   friend class Point;
   bigint X ; // homogeneous coordinates
   bigint Y ;
   bigint Z ;
   void reduce(); //divide out coordinate gcd
 public:
-  // constructors 
-  P2Point(void)       // not a real point
-    { X=0; Y=0; Z=0;} 
+  // constructors
+  P2Point(void) :X(0), Y(0), Z(0) {}      // not a real point
   P2Point(const bigint& x, const bigint& y, const bigint& z)
     : X(x), Y(y), Z(z)
     { reduce(); }

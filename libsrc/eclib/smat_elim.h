@@ -38,7 +38,7 @@ class smat_elim : public smat{
     type *list_array;
     int num;
     int index;
-    void put( type& X) { 
+    void put( const type& X) { 
       if( num >= maxsize ) 
 	{
 // 	  cout<<"About to grow list from size "<<maxsize<<endl;
@@ -107,7 +107,7 @@ public:
   void free_space( int col );
   void elim( int row1, int row2, scalar v2 );
   // constructor:
-  smat_elim( const smat& sm, scalar mod=DEFAULT_MODULUS) : smat( sm ), modulus(mod) { init(); };
+  explicit smat_elim( const smat& sm, scalar mod=DEFAULT_MODULUS) : smat( sm ), modulus(mod) { init(); };
   smat_elim( int r = 0,int c = 0 );
   // destructor:
   ~smat_elim();

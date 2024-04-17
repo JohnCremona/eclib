@@ -273,11 +273,11 @@ inline ostream& operator<<(ostream& s, const rational& q)
 
 inline istream& operator>> (istream& is, rational& r)
 {
-  char c;
   long n,d=1;
   is>>n;
   if(!is.eof()) 
     {
+      char c;
       is.get(c);
       if(c=='/')
 	{

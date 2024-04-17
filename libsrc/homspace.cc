@@ -370,12 +370,13 @@ if (verbose>1)
 	 cout<<"deltamat = "<<deltamat<<endl;
        cout << "About to compute kernel of delta"<<endl;
      }
-   
-   kern=kernel(smat(deltamat));
+
+   smat sdeltamat(deltamat);
+   kern=kernel(sdeltamat);
    vec pivs, npivs;
    int d2;
    smat sk;
-   int ok = liftmat(smat_elim(deltamat).kernel(npivs,pivs),MODULUS,sk,d2);
+   int ok = liftmat(smat_elim(sdeltamat).kernel(npivs,pivs),MODULUS,sk,d2);
    if (!ok)
      cout << "**!!!** failed to lift modular kernel of delta matrix\n" << endl;
    denom2=d2;

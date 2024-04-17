@@ -46,7 +46,7 @@ public:
 
      smat (int nr=0, int nc = 0);
      smat (const smat&);                  // copy constructor
-     smat (const mat &);                  // conversion constructor
+     explicit smat (const mat &);                  // conversion constructor
      ~smat();                             // destructor
 
      // member functions & operators

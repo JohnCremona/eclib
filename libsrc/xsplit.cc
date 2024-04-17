@@ -619,7 +619,7 @@ subspace sparse_combine(const subspace& s1, const subspace& s2)
 {
   // we assume s1, s2 are subspace mod DEFAULT_MODULUS
    scalar d=denom(s1)*denom(s2);
-   const smat& sm1(basis(s1)), sm2(basis(s2));
+   smat sm1(basis(s1)), sm2(basis(s2));
    const mat&  b = (sm1*sm2).as_mat(); 
    const vec&  p = pivots(s1)[pivots(s2)];
    return subspace(b,p,d);

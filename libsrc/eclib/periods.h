@@ -82,12 +82,12 @@ class periods_via_lfchi :public summer {
 private:
   character chi1, chi2;
   long mplus, mminus, dp0;
-  void use(long n, long an) {use2(n,an);}
-  bigfloat func1(long n) { return to_bigfloat(chi1(n)) * pow(factor1,to_bigfloat(n)); }
-  bigfloat func2(long n) { return to_bigfloat(chi2(n)) * pow(factor2,to_bigfloat(n)); }
+  void use(long n, long an) override {use2(n,an);}
+  bigfloat func1(long n) override { return to_bigfloat(chi1(n)) * pow(factor1,to_bigfloat(n)); }
+  bigfloat func2(long n) override { return to_bigfloat(chi2(n)) * pow(factor2,to_bigfloat(n)); }
 public:
   periods_via_lfchi (const level* iN, const newform* f);
-  void compute(void);
+  void compute(void) override;
 };
 
 class periods_direct :public summer {
@@ -95,11 +95,11 @@ private:
   long eps_N, a, b, c, d;
   bigfloat theta1,theta2;
   vector<bigfloat> ctab, stab;  // array of cos(j*2*pi/d), sin(j*2*pi/d), for j mod d
-  void use(long n, long an);
+  void use(long n, long an) override;
 
 public:
   periods_direct (const level* iN, const newform* f);
-  void compute(void);
+  void compute(void) override;
   void compute(long ta, long tb, long tc, long td);
                                // period of (a,b;Nc,d) in Gamma_0(N)
 };
@@ -107,16 +107,19 @@ public:
 class part_period :public summer {
 private:
   bigfloat efactor,x0,y0,xn;
-  bigfloat func1(long n) { xn=to_bigfloat(n); efactor = exp(-xn*y0);
-			   return efactor*cos(xn*x0); }
-  bigfloat func2(long n) { return efactor*sin(xn*x0); }
-  void use(long n, long an) {use2(n,an);}
+  bigfloat func1(long n)  override
+  { xn=to_bigfloat(n); efactor = exp(-xn*y0);
+    return efactor*cos(xn*x0); }
+  bigfloat func2(long n)  override
+  { return efactor*sin(xn*x0); }
+  void use(long n, long an) override
+  { use2(n,an);}
 
 public:
   part_period (const level* iN, const newform* f);
   ~part_period () {;}
   void compute(const bigcomplex& z0);
-  void compute();
+  void compute() override;
   bigcomplex getperiod() {return bigcomplex(rp,ip);}
 };
 
@@ -129,12 +132,13 @@ private:
   bigfloat ld1;
   bigfloat G(bigfloat x);  // G_r(x)
   void init(const level* N, const vector<long>& f_aplist, long f_sfe, const rational& f_loverp);
-  void use(long n, long an) {use1(n,an);}
-  bigfloat func1(long n) { return -G(factor1*to_bigfloat(n)); }
+  void use(long n, long an) override {use1(n,an);}
+  bigfloat func1(long n) override
+  { return -G(factor1*to_bigfloat(n)); }
 public:
   ldash1 (const level* iN, const newform* f);
   ldash1 (const newforms* nf, long i);  // the i'th newform
-  void compute(void);
+  void compute(void) override;
   long rank() {compute(); return r;}
   bigfloat value() {compute(); return ld1;}
 //
@@ -147,12 +151,14 @@ private:
   long limit0;
   bigfloat val;
   character chi;
-  bigfloat func1(long n) { return chi(n)*pow(factor1,to_bigfloat(n));}
-  void use(long n, long an) {use1(n,an);}
+  bigfloat func1(long n) override
+  { return chi(n)*pow(factor1,to_bigfloat(n));}
+  void use(long n, long an) override
+  {use1(n,an);}
 public:
   lfchi (const level* iN, const newform* f);
   void compute(long ell);
-  void compute(void) {;} // not called but has to exist;
+  void compute(void) override {} // not called but has to exist;
   bigfloat value(void) {return val;}
   bigfloat scaled_value(void) {return sqrt(to_bigfloat(chi.modulus()))*val;}
 };

@@ -82,7 +82,7 @@ public:
      ptl(pl), traceequiv(teq),  output_pari(o), selmer_only(sel), 
      second_descent(d2), saturation_bound(sat) {;}
 
-  void set(GetOpt& getopt)
+  void set( GetOpt& getopt) // parameter cannot be const despite what cppcheck says
     {
       int option_char;
       while ((option_char = getopt ()) != EOF)
