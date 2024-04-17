@@ -240,9 +240,9 @@ int main()
 
 	  vector<Point> b = mwbasis.getbasis();
 	  for (i=0; i<rank; i++)
-	    { Point P = b[i];
-	      cout << "\nGenerator "<<(i+1)<<" is "<<P<<"; ";
-	      cout << "height "<<height(P);
+	    { Point bi = b[i];
+	      cout << "\nGenerator "<<(i+1)<<" is "<<bi<<"; ";
+	      cout << "height "<<height(bi);
 	    }
 	  cout<<"\nNew regulator is "<<reg2<<" (old was "<<reg<<")"<<endl<<endl;
 	}

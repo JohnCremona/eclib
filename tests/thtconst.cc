@@ -96,7 +96,7 @@ int main()
       cout << "Shift by "<<(k-1)<<" (down by 1): "<< (Curve)CDdown <<":\t";
       cout << "CPS bound = " << cpsdown << "\n";
       
-      long kk=0, kd=0;
+      long kd=0;
       if(cpsup<cps2-margin) 
 	{cout<<"Up looks better\n";  kd=+1;}
       else
@@ -112,13 +112,12 @@ int main()
 	}
       else
 	{
-	  double cpsk, lastcps=cps2;
-	  for(kk=kd; ; kk+=kd)
+	  double lastcps=cps2;
+	  for(long kk=kd; ; kk+=kd)
 	    {
 	      Curvedata CDk=CD2;
 	      CDk.transform(BIGINT(kk),BIGINT(0),BIGINT(0));
-	      cpsk = cps_bound(CDk);
-	      
+	      double cpsk = cps_bound(CDk);
 	      cout << "Shift by "<<(k+kk)<<" (relative "<<kk<<"): "<< (Curve)CDk <<":\t";
 	      cout << "CPS bound = " << cpsk << "\n";
 	      if(lastcps<cpsk+margin)

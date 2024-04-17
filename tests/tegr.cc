@@ -37,7 +37,6 @@ int main()
 {
   //  set_precision("Enter precision in bits");
   initprimes("PRIMES",0);
-  int j, npts;
 
   long N, nclass, ncurve;
   Curve E;
@@ -53,9 +52,9 @@ int main()
   cout<<endl;
   cout << N<<codeletter(nclass-1)<<ncurve<<" = "<< E << endl;
   Point P(C);
+  int j=0, npts;
   cin >> npts;
   vector<Point> points; points.reserve(npts);
-  j=0; 
   while(j<npts)
     { 
       cin >> P;

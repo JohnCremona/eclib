@@ -35,7 +35,7 @@
 // Primality testing task class
 class isprime {
   public:
-    isprime( unsigned int n )
+    explicit isprime( unsigned int n )
       : n_( n ), prime_( 1 ) {}
     isprime( unsigned int min, unsigned int max )
       : min_( min ), max_( max ) {}
@@ -75,14 +75,14 @@ int main( int argc, char **argv ) {
 
   // Variables (with default values)
   unsigned int N = 10000;                 // Number of tasks
-  unsigned int t = 1;                     // Number of threads
+  unsigned int nt = 1;                    // Number of threads
   unsigned int v = 0;                     // Verbosity
   std::vector< isprime* > tasks;          // Array to hold tasks
   int count = 0;                          // Counter
 
   // Read in command line arguments
-  if( argc > 1 ) N = atoi( argv[1] );     // Read in number of tasks
-  if( argc > 2 ) t = atoi( argv[2] );     // Read in number of threads
+  if( argc > 1 )  N = atoi( argv[1] );     // Read in number of tasks
+  if( argc > 2 ) nt = atoi( argv[2] );     // Read in number of threads
 
   // Initiate timer
   timer profile;
@@ -92,7 +92,7 @@ int main( int argc, char **argv ) {
 
 #ifdef MULTITHREAD
   // Initiate threadpool/job queue with verbose output
-  threadpool pool( t, v );
+  threadpool pool( nt, v );
 #endif
 
   // Create tasks and add to array for later reference
@@ -132,7 +132,7 @@ int main( int argc, char **argv ) {
   std::cout << std::endl;
 
   // Print out run time
-  std::cout << "Running with " << t << " threads" << std::endl;
+  std::cout << "Running with " << nt << " threads" << std::endl;
   std::cout << "There are " << count << " primes up to " << N << std::endl;
   if( v ) profile.show( 1 );
 

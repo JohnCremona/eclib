@@ -117,10 +117,11 @@ int main(void)
 	}
       if(w_eigs) {
       smat swq(wq);
-      int e; long mult;
+      int e;
       for(e=1; e>-2; e-=2)
 	{
-	  /*
+          long mult;
+          /*
 	  cout<<"Using modular matrix code..."<<flush;
 	  start_time();
 	  mult=dim(peigenspace(wq,e*den,MODULUS));
@@ -182,7 +183,7 @@ int main(void)
 #ifdef TEST_EIGS
       vector<long> eigs = eigrange(p); // hplus.eigrange(nq+ip);
       cout<<"\nChecking for eigenvalues from "<<eigs<<endl;
-      long i,j,k,n=genus,r;
+      long i,j,k;
       long nulty, nulty1, totalmult=0;
       SCALAR dummy;
       mat m = tplist[ip].shorten(dummy);
@@ -219,9 +220,9 @@ int main(void)
 	}
 
       mat_ZZ M;
-      M.SetDims(n,n);
-      for(i=1; i<=n; i++) 
-	for(j=1; j<=n; j++) 
+      M.SetDims(genus,genus);
+      for(i=1; i<=genus; i++) 
+	for(j=1; j<=genus; j++) 
 	  M(i,j)=m(i,j);
       //      cout<<"NTL matrix = "<<M<<endl;
 

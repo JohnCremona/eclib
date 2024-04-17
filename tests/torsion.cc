@@ -35,7 +35,6 @@ int main(){
   int showpoints; cin >> showpoints;
   initprimes("PRIMES",0);
   vector<bigrational> ai(5);
-  vector<Point> tor; int ntor, n2;
   bigint u, r, s, t, v;
   int verb=1;
 
@@ -44,12 +43,12 @@ int main(){
       Curvedata E0(ai,v);
       Curvedata E1 = E0.minimalize(u,r,s,t);
       cout<<"Curve ["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"]"<<flush;
-      tor = torsion_points(E1); 
-      ntor = tor.size();
-      n2=0;
+      vector<Point> tor = torsion_points(E1); 
+      int ntor = tor.size();
       cout<<" \t has " << ntor << " torsion point(s)\n";
       if(showpoints)
 	{
+          int n2 = 0; // counts 2-torsion
 	  for(int i=0; i<ntor; i++)
 	    {
 	      Point P = transform(tor[i],&E0,u,r,s,t,1);

@@ -76,8 +76,8 @@ int main()
      plist=pdivs(m);
      cout << "m has " << plist.size() << " prime divisors: " << plist << endl;
      cout << "with exponents: "; 
-     for( const auto& p : plist)
-       cout << p <<":"<<val(p,m) << "\t";
+     for( const auto& pri : plist)
+       cout << pri <<":"<<val(pri,m) << "\t";
      cout<<endl;
 
      vector<long> dlist=alldivs(m,plist);

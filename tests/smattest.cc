@@ -86,7 +86,7 @@ int main(void)
   cout << "enter 5 to kernel test \n" << "enter> "<<endl;
   cout << "enter 6 to multiply smat by smat \n" << "enter> "<<endl;
   cout << "enter 7 to find eigenspaces \n" << "enter> "<<endl;
-  int t,i;
+  int t,i,d;
   cin >> t;
   
   while( t != 0 ) {
@@ -153,7 +153,6 @@ int main(void)
 	// *** testing set_row *** //
 	cout << "testing set_row" << endl;
 	cout << "enter new row : which row ? (starting from zero)" << endl;
-	int i, d;
 	cin >> i;
 	cout << "number of non-zero elements ?" << endl;
 	cin >> d;
@@ -163,6 +162,7 @@ int main(void)
 	cout << "values ? " << endl;
 	while( n-- ) cin >> *val++;
 	cout << " positions ? " << endl;
+        for (int ii=0; ii<d; ii++) pos[ii]=0;
 	n = d;
 	while( n-- ) cin >> *pos++;
 	pos -= d; val -= d;
@@ -408,9 +408,9 @@ int main(void)
       {
 	cout << "test of kernel function" << endl;
 	cout << "enter size of matrix for elimination (row,col) "<< endl;
-	int nro,nc;
-	cin >> nro; cin >> nc;
-	smat sm(nro,nc);
+	int nro,nco;
+	cin >> nro; cin >> nco;
+	smat sm(nro,nco);
 	int rand;
 	cout << "Do you want to input the matrix for elimination or do you want\n";
 	cout << "a matrix with random entries? (1 for random and zero otherwise\n";
@@ -443,10 +443,10 @@ int main(void)
 	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
 	  cout << " rank using echmodp : " << rk;
 	  int pop = 0;
-	  int nro = ker_mat.nrows();
-	  int nco = ker_mat.ncols();
-	  for( int r = 1; r <= nro; r++ ) {
-	    for( int c = 1; c <= nco; c++ ) {
+	  int nr = ker_mat.nrows();
+	  int nc = ker_mat.ncols();
+	  for( int r = 1; r <= nr; r++ ) {
+	    for( int c = 1; c <= nc; c++ ) {
 	      pop += ( ker_mat( r, c ) != 0 );
 	    }
 	  }

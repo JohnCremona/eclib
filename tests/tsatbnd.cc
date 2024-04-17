@@ -45,7 +45,6 @@ int main()
   initprimes("PRIMES",0);
   int verbose = 1;
   cerr<<"verbose (0/1)? ";             cin >>verbose;
-  int j, npts;
 
   Curvedata C;
 
@@ -56,9 +55,10 @@ int main()
       cout << "E = " << (Curve)C <<endl;
 
       Point P(C);
+      int j=0, npts;
       cerr<<"enter number of points: ";      cin >> npts;
       vector<Point> points; points.reserve(npts);
-      j=0;
+
       while(j<npts)
         {
           cerr<<"\n  enter point "<<(j+1)<<" : ";
@@ -74,8 +74,8 @@ int main()
             }
         }
       cout<<npts<<" points entered:\n";
-      for ( auto& P : points)
-        cout << P << " (height "<<height(P)<<")"<<endl;
+      for ( auto& Pi : points)
+        cout << Pi << " (height "<<height(Pi)<<")"<<endl;
 
       bigfloat reg = regulator(points);
       cout << "Regulator of input points: " << reg << endl;
@@ -86,10 +86,9 @@ int main()
       cout<< "p   Group   Image(s)" <<endl;
       bigint u, r, s, t;
       Curvedata Cmin = C.minimalize(u,r,s,t);
-      vector<Point> points_min;
-      for ( const auto& P : points)
-        points_min.push_back(transform(P, &Cmin, u, r, s, t));
-
+      vector<Point> points_min(points.size());
+      std::transform(points.begin(), points.end(), points_min.begin(),
+                     [&Cmin, u, r, s, t] (const Point& Pi) {return transform(Pi, &Cmin, u, r, s, t);});
       CurveRed CR(Cmin);
       vector<bigint> plist = getbad_primes(CR);
       ComponentGroups CG(CR);

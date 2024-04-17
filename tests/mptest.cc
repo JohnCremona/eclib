@@ -81,10 +81,10 @@ int main()
 
   cout<<"\n\nTest of sqrt and isqrt\n";
   bigint astop; astop=999;
-  bigint aaa,roota; int res; 
+  bigint aaa,roota;
   while (cout << "\nEnter a positive bigint a (999 to stop): ", cin >> aaa, aaa!=astop) 
    {
-     res = sign(aaa);
+     int res = sign(aaa);
      cout << "a = " << aaa << ", sign(a) = " << res << "\n";
      roota = sqrt(aaa);
      cout << "a = " << aaa << ", sqrt(a) = " << roota << " (rounded down)\n";
@@ -125,8 +125,8 @@ int main()
      vector<bigint> plist=pdivs(m);
      cout << "m has " << plist.size() << " prime divisors: " << plist << endl;
      cout << "with exponents: "; 
-     for( const auto& p : plist)
-       cout << p <<":"<<val(p,m) << "\t";
+     for( const auto& pi : plist)
+       cout << pi <<":"<<val(pi,m) << "\t";
      cout<<endl;
 
      vector<bigint> dlist=alldivs(m,plist);

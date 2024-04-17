@@ -31,7 +31,7 @@ int main(void)
   time(&starttime);
   cout << "\nMultiprecision matrix package test program.\n\n";
   {
-    long i,j; 
+    long i;
     scalar r;
     mat_m a,aug,ref;
     vec_l pc(1),npc(1); vec_m poly(1);
@@ -57,7 +57,7 @@ int main(void)
 for (i=1; i<=r; i++)
  cout << "row(A,"<<i<<") = " << a.row(i) << endl;
 cout << "A = " << a;
-for (j=1; j<=r; j++)
+for (int j=1; j<=r; j++)
  cout << "col(A,"<<j<<") = " << a.col(j) << endl;
 cout << "A = " << a;
 cout << "directsum(A,A) = " << directsum(a,a);

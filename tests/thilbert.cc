@@ -30,7 +30,7 @@
 
 int main()
 {
-  bigint a,b,p,x0,y0,z0; int resp, res, checkres;
+  bigint a,b,x0,y0,z0; int resp, res, checkres;
   bigint zero, one;  zero=0; one=1;
 #ifdef AUTO
   long la,lb,abmax;
@@ -69,6 +69,7 @@ int main()
     cout<<"\nGlobal symbol = " << res << endl;
     cout<<"Check (should be 0) = " << checkres << endl;
 
+    bigint p;
     int gres = global_hilbert(a,b,plist,p);
     if(res==gres)
       cout<<"--agrees with single call to global_hilbert()\n";

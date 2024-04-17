@@ -69,13 +69,14 @@ int main()
      if(dims==0) continue;
 
      bigint den=form.dHS;
-     int i, ip, nap=5, bad;
+     int i, ip, nap=5;
      cout<<"Number of ap? ";  cin>>nap;
-     primevar pr; long p;
+     primevar pr;
      //     start_time();
      for(ip=0; ip<nap; ip++, pr++)
        {
-	 p=pr; bad = ::divides(p,n);
+	 long p=pr;
+         int bad = ::divides(p,n);
 	 if(verbose)
 	   {
 	     mat_m tp = form.oldheckeop(p);
@@ -99,7 +100,7 @@ int main()
 
 	 if(bad) cout<<"w_"; else cout<<"a_";
 	 cout<<p<<" = ";
-	 
+
 	 if(dims==1)
 	   {
 	     cout<<apvec[1]<<endl; 

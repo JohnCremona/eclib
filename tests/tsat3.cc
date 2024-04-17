@@ -152,7 +152,7 @@ int main()
 
   for (int i=0; i<npts; i++)
     { 
-      Point P = points[i];
+      P = points[i];
       cout << "Generator "<<(i+1)<<" is "<<P<<"; ";
       cout << "height "<<height(P);
       if(!P.isvalid()) cout<<" --warning: NOT on curve!";

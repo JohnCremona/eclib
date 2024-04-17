@@ -39,28 +39,37 @@ int main(void)
       long p2 = (p-1)/2;
       int nmats=0;
       cout << "p = " << p << ";\t"; 
-      if(seemats) cout << "\n";
-      if(seemats) outmat(nmats,1,0,0,p);
+      if(seemats)
+        {
+          cout << "\n";
+          outmat(nmats,1,0,0,p);
+        }
       nmats++;
-      if(seemats) outmat(nmats,p,0,0,1);
+      if(seemats)
+        outmat(nmats,p,0,0,1);
       nmats++;
       for(int s=1; s>-2; s-=2)
       for(long r=1; r<=p2; r++)
 	{
 //	  cout<<"r = " << s*r << ":" << endl;
-	  long x1=p, x2=-s*r, y1=0, y2=1, a=-p, b=s*r, c, q, x3, y3;
-	  if(seemats) outmat(nmats,x1,x2,y1,y2);
+	  long x1=p, x2=-s*r, y1=0, y2=1, a=-p, b=s*r;
+	  if(seemats)
+            outmat(nmats,x1,x2,y1,y2);
 	  nmats++;
 	  while(b!=0)
 	    {
-	      c=mod(a,b); q=(a-c)/b;
-	      x3=q*x2-x1; y3=q*y2-y1;
+	      long c=mod(a,b);
+              long q=(a-c)/b;
+	      long x3=q*x2-x1;
+              long y3=q*y2-y1;
 	      a=-b; b=c; x1=x2; x2=x3; y1=y2; y2=y3;
-	      if(seemats) outmat(nmats,x1,x2,y1,y2);
+	      if(seemats)
+                outmat(nmats,x1,x2,y1,y2);
 	      nmats++;
 	    }
 	}
-      if(seemats)cout<<"\n";
+      if(seemats)
+        cout<<"\n";
       cout << "nmats = " << nmats << ";" << endl;
     }
 }

@@ -74,12 +74,10 @@ int main(void)
   cdr.display(cout);
   
   cout <<"Traces of Frobenius:\n";
-  long p;
-  bigint ap;
   for(primevar pr(25); pr.ok(); pr++)
     {
-      p = pr;
-      ap = Trace_Frob(cdr,BIGINT(p));
+      long p = pr;
+      bigint ap = Trace_Frob(cdr,BIGINT(p));
       cout<<"p="<<p<<": ap="<<ap;
       if(div(p,getdiscr(cdr))) cout<<" (bad reduction)";
       cout<<endl;
