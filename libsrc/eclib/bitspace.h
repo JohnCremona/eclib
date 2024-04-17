@@ -34,7 +34,7 @@ private:
   vector<unsigned long> gens; // holds the ith basis element
   unsigned long bitmask;      // holds the bits of the pivs
 public:
-  bitspace(long d);
+  explicit bitspace(long d);
   unsigned long getbitmask() {return bitmask;}
   long reduce(unsigned long& v, long start=0) const; 
   // reduces v mod this, returns minimal i such that the reduced v has 

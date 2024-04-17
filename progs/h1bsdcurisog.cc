@@ -148,7 +148,7 @@ int main(void)
      Curvedata CD(C,1);  // The 1 causes minimalization; else we get
                          // [0,0,0,-27c4,-54c6]
 
-     IsogenyClass icl(CD,verbose);
+     IsogenyClass icl(CurveRed(CD),verbose);
      icl.grow();
      if(verbose) icl.displaycurves(cout);
      vector<CurveRed> clist = icl.getcurves();

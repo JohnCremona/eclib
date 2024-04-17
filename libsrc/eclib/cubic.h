@@ -51,13 +51,13 @@ public:
   cubic()
   {coeffs.resize(4, BIGINT(0));}
   cubic(const  bigint& a, const bigint& b, const bigint& c, const bigint& d) 
-  {coeffs = {a,b,c,d};}
+    :coeffs({a,b,c,d}) {;}
   cubic(long a, long b, long c, long d) 
-  {coeffs = {BIGINT(a),BIGINT(b),BIGINT(c),BIGINT(d)};}
-  cubic(const vector<bigint>& abcd)
-  {coeffs = abcd;}
+    :coeffs({BIGINT(a),BIGINT(b),BIGINT(c),BIGINT(d)}) {;}
+  explicit cubic(const vector<bigint>& abcd)
+    :coeffs(abcd) {;}
   cubic(const  cubic& q)
-  {coeffs = q.coeffs;}
+    :coeffs(q.coeffs) {;}
   int operator==(const cubic& g) const
   {return (coeffs==g.coeffs);}
   inline bigint coeff(int i)

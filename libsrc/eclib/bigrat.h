@@ -32,7 +32,7 @@ public:
         // constructors
         bigrational(bigint num_val=BIGINT(0), bigint den_val=BIGINT(1));
         bigrational(const bigrational& q);
-        bigrational(const rational& q);
+        explicit bigrational(const rational& q);
         void operator=(const bigrational& q);
         void operator=(const rational& q);
 
@@ -92,8 +92,8 @@ inline void bigrational::cancel()                     // cancel *this in situ
 }
 
 inline bigrational::bigrational(bigint num_val, bigint den_val)
+  : n(num_val), d(den_val)
 {
-  n=num_val; d=den_val;
   (*this).cancel(); 
 }
 
@@ -277,11 +277,11 @@ inline ostream& operator<<(ostream& s, const bigrational& q)
 
 inline istream& operator>> (istream& is, bigrational& r)
 {
-  char c=0;
   bigint n,d=BIGINT(1);
   is>>n;
-  if(!is.eof()) 
+  if(!is.eof())
     {
+      char c;
       is.get(c);
       if(c=='/')
 	{

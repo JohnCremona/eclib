@@ -34,13 +34,9 @@
 int main()
 {
   initprimes("PRIMES",VERBOSITY);
-
-  bigint a,b,c,d,x0,y0,z0,disc;
-  bigint q[3];
-
+  bigint a,b,c,d,x0,y0,z0;
   cin >> a >> b >> c >> d;
-  q[0]=a; q[1]=b; q[2]=c;
-  int res = solve_conic(q,d,x0,y0,z0,CONIC_METHOD);
+  int res = solve_conic(a,b,c,d,x0,y0,z0,CONIC_METHOD);
   if(!res) {x0=y0=z0=0;}
   cout<<x0<<" "<<y0<<" "<<z0<<endl;
 }

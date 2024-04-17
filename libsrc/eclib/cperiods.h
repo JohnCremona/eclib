@@ -79,7 +79,7 @@ public:
     tau = normalize(w2,w1);  // NB reverse params;  from compproc.h
     store_sums();
   }
-  Cperiods(const Curvedata& E); 
+  explicit Cperiods(const Curvedata& E); 
 
   // copying:
   Cperiods(const Cperiods& cp)

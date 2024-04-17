@@ -71,13 +71,12 @@ public:
   // puts out TeX-ed equation of curve; never been used
 
 // constructors 
-  Curve(void) //  :a1(0),a2(0),a3(0),a4(0),a6(0) 
-    {a1=0;a2=0;a3=0;a4=0;a6=0;}
+  Curve(void)  :a1(0),a2(0),a3(0),a4(0),a6(0)  {;}
   Curve(const bigint& c4, const bigint& c6); //init by invariants
                                  //check valid for elliptic curve
                                  //if not create null curve
   Curve(const bigint& aa1, const bigint& aa2, const bigint& aa3,
-        const bigint& aa4, const bigint& aa6) 
+        const bigint& aa4, const bigint& aa6)
     :a1(aa1),a2(aa2),a3(aa3),a4(aa4),a6(aa6) {}
   Curve(const Curve& c)
     : a1(c.a1), a2(c.a2), a3(c.a3), a4(c.a4), a6(c.a6)
@@ -261,8 +260,8 @@ protected:
   map<bigint,Reduction_type> reduct_array;  // maps p -> its reduction type
   bigint N;                      //the conductor
 public:
-  CurveRed() : Curvedata() {N=0;}
-  CurveRed(const Curvedata& E);  // construct by Tate's algorithm
+  CurveRed() : Curvedata(), N(0) {}
+  explicit CurveRed(const Curvedata& E);  // construct by Tate's algorithm
              // arg E need not be minimal, but the reduced form will be
   ~CurveRed();
   CurveRed(const CurveRed& E);

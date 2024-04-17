@@ -40,20 +40,20 @@ int cusplist::cuspeq(const rational& c1, const rational& c2, int plusflag) const
   int ans = ((s1-s2)%q3==0);       // 1 iff [c1]=[c2]
   //  cout << "ans = "<<ans<<endl;
   if (ans || (plusflag!=+1)) return ans;
-  ans = ((s1+s2)%q3==0);         // 1 iff [c1]=[-c2]  
+  ans = ((s1+s2)%q3==0);         // 1 iff [c1]=[-c2]
   //  cout << "ans = "<<ans<<endl;
   return ans;
 }
- 
+
 long cusplist::index(const rational& c)
 {  // adds c to list if not there already, and return index (offset by 1)
-   for (long i=0; i<number; i++) 
-     if (cuspeq(c,list[i], N->plusflag)) 
-       return (i+1);  // note offset
-   list[number]=c; 
-   number++;
-   //   cout<<"Adding c="<<c<<" as cusp number "<<number<<endl;
-   return number;
+  auto it = std::find_if(list.begin(), list.end(),
+                         [c, this] (const rational& d) { return cuspeq(c,d, N->plusflag);});
+  if (it!=list.end())
+    return 1 + std::distance(list.begin(), it);  // note offset
+  list.push_back(c);
+  //   cout<<"Adding c="<<c<<" as cusp number "<<number<<endl;
+  return list.size();
 }
 
 long cusplist::index_1(const rational& c)
@@ -61,25 +61,31 @@ long cusplist::index_1(const rational& c)
   // For use with minus space; only one of [c],[-c] is stored and the
   // index returned is negative if [-c] is the one listed and 0 if
   // [c]=[-c] (which are not listed)
-  if (cuspeq(c,-c,0)) {return 0;}
-  for (long i=0; i<number; i++) 
+  if (cuspeq(c,-c,0))
+    return 0;
+
+  int j = 0;
+  for (unsigned int i=0; i<list.size() && j==0; i++)
     {
-      if (cuspeq(c,list[i], 0)) return (i+1);  // note offset
-      if (cuspeq(-c,list[i], 0)) return -(i+1);
+      if (cuspeq(c,list[i], 0))
+        j = (i+1);  // note offset
+      else
+        if (cuspeq(-c,list[i], 0))
+          j = -int(i+1);
     }
-  list[number]=c; 
-  number++;
-  return number;
+  if (j)
+    return j;
+  list.push_back(c);
+  return list.size();
 }
 
 long cusplist::index_2(const rational& c)
 { // adds c to list if not there already, and return index (offset by 1)
   // For use with minus space; only store [c] if [c]=[-c]
   if (!cuspeq(c,-c,0)) {return 0;}
-   for (long i=0; i<number; i++) 
-     if (cuspeq(c,list[i], 0)) 
-       return (i+1);  // note offset
-   list[number]=c; 
-   number++;
-   return number;
+  for (unsigned int i=0; i<list.size(); i++)
+    if (cuspeq(c,list[i], 0))
+      return (i+1);  // note offset
+  list.push_back(c);
+  return list.size();
 }

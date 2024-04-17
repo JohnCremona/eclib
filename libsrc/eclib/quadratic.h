@@ -36,10 +36,10 @@ private:
 public:
   void set(const  bigint& a, const bigint& b, const bigint& c) {coeffs = {a, b, c};}
   quadratic() { bigint zero(0); coeffs={zero,zero,zero};}
-  quadratic(const  bigint& a, const bigint& b, const bigint& c) {coeffs = {a, b, c};}
-  quadratic(long a, long b, long c)  {coeffs = {BIGINT(a), BIGINT(b), BIGINT(c)};}
-  quadratic(const  bigint* q) {coeffs = {q[0], q[1], q[2]};}
-  quadratic(const  quadratic& q) {coeffs = q.coeffs;}
+  quadratic(const  bigint& a, const bigint& b, const bigint& c) :coeffs({a, b, c}) {;}
+  quadratic(long a, long b, long c)  :coeffs({BIGINT(a), BIGINT(b), BIGINT(c)}) {;}
+  explicit quadratic(const  bigint* q) :coeffs({q[0], q[1], q[2]}) {;}
+  quadratic(const  quadratic& q) :coeffs(q.coeffs) {;}
   void operator=(const quadratic& q)  {coeffs = q.coeffs;}
   bigint eval(const bigint& x, const bigint& z) const
     {return coeffs[0]*sqr(x) + coeffs[1]*x*z + coeffs[2]*sqr(z);}

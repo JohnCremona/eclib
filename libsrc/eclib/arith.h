@@ -46,7 +46,7 @@ class primeclass {
 
 public:
   primeclass();  // will use 10^6 as default or read from file
-  primeclass(long maxnum);
+  explicit primeclass(long maxnum);
   ~primeclass();
   void init(long maxnum); // called in constructor, or to make more primes
   long number(long n) ; // returns n'th prime (n=1 gives p=2)
