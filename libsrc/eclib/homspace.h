@@ -218,7 +218,7 @@ class matop {  // formal sum of 2x2 matrices
 private: vector<mat22> mats;
 public: 
   matop(long p, long n);   // constructor for hecke ops
-  matop(long p);           // constructor for heilbronn matrices
+  explicit matop(long p);  // constructor for heilbronn matrices
   matop(long a, long b, long c, long d);  // constructor for a single matrix
   long size() const {return mats.size();}
   mat22 operator[](long i) const {return mats[i];}

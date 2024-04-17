@@ -88,7 +88,7 @@ private:
   //
 
 public:
-  saturator(Curvedata* EE, int egr=1, int verb=0)
+  explicit saturator(Curvedata* EE, int egr=1, int verb=0)
     :E(EE), egr_flag(egr), verbose(verb)
     {
       use_div_pols=0;

@@ -34,9 +34,9 @@ public:
         vec_m(long n=0);
         vec_m(long n, bigint* array);
         vec_m(const vec_m&);                      // copy constructor
-        vec_m(const vec_i&);                   // copy constructor
-        vec_m(const vec_l&);                  // copy constructor
-        ~vec_m();                                   // destructor
+        explicit vec_m(const vec_i&);             // copy constructor
+        explicit vec_m(const vec_l&);             // copy constructor
+        ~vec_m();                                 // destructor
      // member functions & operators
         void init(long n=0);                 // (re)-initializes 
         vec_m& operator=(const vec_m&);         // assignment

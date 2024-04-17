@@ -36,8 +36,8 @@
 
 class ComponentGroups : public CurveRed {
 public:
-  ComponentGroups(const Curvedata& CD) : CurveRed(CD) {;}
-  ComponentGroups(const CurveRed& CR) : CurveRed(CR) {;}
+  explicit ComponentGroups(const Curvedata& CD) : CurveRed(CD) {;}
+  explicit ComponentGroups(const CurveRed& CR) : CurveRed(CR) {;}
   //  ComponentGroups(const Curve& C) : CurveRed(C) {;}
   ComponentGroups() : CurveRed() {;}
 

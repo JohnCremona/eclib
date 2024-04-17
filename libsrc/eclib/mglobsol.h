@@ -45,7 +45,7 @@ private:
   vector<vector<int>> xgood_mod_aux, squares;
   long nwprimes;
   long npoints, maxnpoints;
-  int process(const bigint& x, const bigint& y, const bigint& z)
+  int process(const bigint& x, const bigint& y, const bigint& z) override
   {pu=x; pv=y; pw=z; npoints++;
   //cout<<"[x,y,z]=["<<x<<","<<y<<","<<z<<"]\n";
   return (npoints>=maxnpoints);
@@ -53,7 +53,7 @@ private:
  // (x,y,z) as returned by ms's sieve; the point is (x/z,y/z^2)
 public:
   quartic_sieve(void) {;}
-  quartic_sieve(quartic * gg, int moduli_option=2, int verb=0); 
+  explicit quartic_sieve(quartic * gg, int moduli_option=2, int verb=0); 
   long search(double h_lim, long maxnpts=1, int posxonly=0);
   long stoll_search(double h_lim, int posxonly=0);
   long search_range(int lower, bigfloat lower_bound, 

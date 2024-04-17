@@ -88,7 +88,7 @@ int main(void)
  int nq = badprimes.size(); int firstq=0;  // =0 for all W's
  if (genus>0)
    {
-   mat_m id = idmat(genus);
+   mat_m id = midmat(genus);
    mat_m id2 = den2*id;
    vector<mat_m> wqlist(nq);
    cout << "Computing conjmat...  " << flush;
@@ -137,7 +137,7 @@ int main(void)
 	  cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;
 	}
       }
-      wqlist[i]=wq;
+      wqlist[i]=mat_m(wq);
 #ifdef CHECK_COMMUTE
       if (mult_mod_p(swq,swq,MODULUS)==den*den*sidmat(genus)) 
 	cout << "Involution!" << "\n";
@@ -158,12 +158,12 @@ int main(void)
 #ifdef COMPARE_OLD
       cout<<endl;
       start_time();
-      mat_m temp = hplus.heckeop(p,verbose);
+      mat_m temp = mat_m(hplus.heckeop(p,verbose));
       stop_time();
       cout<<"Time for old method: "; show_time(cerr); cerr<<endl;
 #endif // COMPARE_OLD
       start_time();
-      mat tp = hplus.newheckeop(p,verbose);
+      mat_m tp = mat_m(hplus.newheckeop(p,verbose));
       if(verbose)
 	{
 	  cout<<"Computed matrix "; 

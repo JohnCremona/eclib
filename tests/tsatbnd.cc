@@ -96,14 +96,14 @@ int main()
       for( const auto& p : plist)
         {
           cout<<p<<"  "<<CG.ComponentGroup(p)<<"  ";
-          ims = MapPointsToComponentGroup(CR, points_min,  p);
+          ims = MapPointsToComponentGroup(CG, points_min,  p);
           for( const auto& im : ims)
             cout<<im;
           cout<<endl;
         }
       bigint p = BIGINT(0);
       cout<<"R "<< CG.ComponentGroup(p)<<"  ";
-      ims = MapPointsToComponentGroup(CR, points_min,  p);
+      ims = MapPointsToComponentGroup(CG, points_min,  p);
       for( const auto&  im : ims)
         cout<<im;
       cout<<endl<<endl;

@@ -44,7 +44,7 @@ public:
   //  constructors
   
   //  special one to initialize the curve and field only:
-  ffmodq(const curvemodq& EE);
+  explicit ffmodq(const curvemodq& EE);
 
   //  normal ones:
   ffmodq(void) 
@@ -54,34 +54,34 @@ public:
       FqPolyAssign0(h2);
     }
 
-  ffmodq(const gf_element& c) 
+  explicit ffmodq(const gf_element& c) 
     {
       init_h1h2();
       FqPolyAssignGF(h1,c);
       FqPolyAssign0(h2);
     }
 
-  ffmodq(const bigint& c) 
+  explicit ffmodq(const bigint& c) 
     {
       init_h1h2();
       FqPolyAssignZ(h1,c);
       FqPolyAssign0(h2);
     }
 
-  ffmodq(const FqPoly& hh1) 
+  explicit ffmodq(const FqPoly& hh1) 
     {
       init_h1h2();
       h1=hh1; 
       FqPolyAssign0(h2);
     }
 
-  ffmodq(const FqPoly& hh1, const FqPoly& hh2) {h1=hh1; h2=hh2;}
+  ffmodq(const FqPoly& hh1, const FqPoly& hh2) :h1(hh1), h2(hh2) {}
 
   //  initialization
   void init_f1f2(void);
 
-  void init_h1h2(void) 
-    {    
+  void init_h1h2(void)
+    {
       FqPolySetField(h1,Fq);
       FqPolySetField(h2,Fq);
     }

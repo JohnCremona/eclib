@@ -50,10 +50,10 @@ public:
   Point(void)
     : P2Point(), E(0), ord(0), height(to_bigfloat(-1.0))
     { ; } 
-  Point(Curvedata &EE)      // set to point at infinity
+  explicit Point(Curvedata &EE)      // set to point at infinity
     : P2Point(0,1,0), E(&EE), ord(1), height(to_bigfloat(0.0))
     { ; }      
-  Point(Curvedata *EE)      // set to point at infinity
+  explicit Point(Curvedata *EE)      // set to point at infinity
     : P2Point(0,1,0), E(EE), ord(1), height(to_bigfloat(0.0))
     { ; }      
   Point(Curvedata &EE, const bigint& x, const bigint& y, const bigint& z)

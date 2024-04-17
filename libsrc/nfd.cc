@@ -37,7 +37,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   long denh = h1->h1denom(); dH=denh;
   vector<long> badprimes = h1->plist;
   mat K = basis(h1->kern).as_mat();
-  mat_m tp, tp1; mat_m m;
+  mat_m tp, tp1, m;
   long d, i,j, p;
   bigint ap1;
 
@@ -50,10 +50,10 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   if(one_p) // Compute one Tp:
     {
       primevar pr;
-      while (n%pr==0) pr++; 
+      while (n%pr==0) pr++;
       p=pr;
       cout << "Computing T_p for p = " << p << "..." << flush;
-      tp = transpose(h1->newheckeop(p,0));
+      tp = mat_m(transpose(h1->newheckeop(p,0)));
       cout<<"done."<<endl;
     }
   else
@@ -71,7 +71,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	  else
 	    {
 	      cout << "Computing T_p for p = " << p << "..." << flush;
-	      tp1 = transpose(h1->newheckeop(p,0));
+	      tp1 = mat_m(transpose(h1->newheckeop(p,0)));
 	      cout<<"done."<<endl;
 	      cout<<"coefficient of T_"<<p<<": "; cin>>ap1;
 	      if(ap1!=1) tp1*=ap1;
@@ -95,8 +95,8 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	  cout<<"Enter eigenvalue of W("<<q<<"): ";
 	  cin>>eq;
 	  eq *=dH;
-	  mat_m wq = transpose(h1->heckeop(q,0));
-	  if(dimsw<dimh) 
+	  mat_m wq = mat_m(transpose(h1->heckeop(q,0)));
+	  if(dimsw<dimh)
 	    {
 	      SW=subeigenspace(wq,eq,SW);
 	    }
@@ -147,7 +147,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
       SquareFreeDecomp(factors,ntl_cptp);
       if(verbose)  cout<<"NTL char poly square-free factors = "<<factors<<endl;
-      
+
       if(factors[0].b>1)
 	{
 	  cout<<"No factors of multiplicity 1"<<endl;
@@ -216,7 +216,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   //    if(verbose) 
       cout<<"finished constructing S, now restricting T_p to S"<<endl;
 
-  tp0 = restrict_mat(tp,S);
+      tp0 = mat_m(restrict_mat(tp,S));
 
   //  if(verbose) 
       cout<<"done.  now combining S and SW"<<endl;
@@ -283,12 +283,12 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   long ncoord = h1->coord_vecs.size()-1;
   projcoord.init(ncoord,dims);
   coord_fac=0;
-  vec_m mrowi(dims);
-  vec rowi(dims), coordi(dimh);
+  vec_m mrowi(dims), coordi(dimh);
+  vec rowi(dims);
   for (i=1; i<=ncoord; i++)
     { 
-      coordi = (h1->coord_vecs[i]).as_vec();
-      if(h1->cuspidal) coordi = h1->cuspidalpart(coordi);
+      coordi = vec_m((h1->coord_vecs[i]).as_vec());
+      if(h1->cuspidal) coordi = vec_m(h1->cuspidalpart(coordi.shorten(0)));
       mrowi = V*coordi;
       rowi=mrowi.shorten((int)i);
       projcoord.setrow(i,rowi);
@@ -347,7 +347,7 @@ vec_m nfd::ap(long p)
 	    {
 	      symb s = h1->symbol(h1->freegens[k]);
 	      for(l=0; l<matlist.size(); l++)
-		apvec += mKkj*matlist[l](s,h1,projcoord);
+                apvec += mKkj*vec_m(matlist[l](s,h1,projcoord));
 	    }
 	}
     }
@@ -356,7 +356,7 @@ vec_m nfd::ap(long p)
 
 mat_m nfd::oldheckeop(long p)
 {
-  return restrict_mat(transpose(h1->newheckeop(p,0)),S);
+  return restrict_mat(transpose(mat_m(h1->newheckeop(p,0))),S);
 }
 
 mat_m nfd::heckeop(long p)
@@ -390,7 +390,7 @@ mat_m nfd::heckeop(long p)
 		{
 		  vec vt = (h1->applyop(matlist,h1->freemods[k])).as_vec();
 		  if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		  colj += (mKkj*vt);
+		  colj += (mKkj*vec_m(vt));
 		}
 	      else
 		{
@@ -399,7 +399,7 @@ mat_m nfd::heckeop(long p)
 		    {
 		      vec vt = (matlist[l](s,h1)).as_vec();
 		      if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		      colj += mKkj*vt;
+		      colj += mKkj*vec_m(vt);
 		    }
 		}
 	    }

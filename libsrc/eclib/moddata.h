@@ -44,7 +44,7 @@ public:     // got tired of making everything friends...
  long npdivs,ndivs,sqfac,nap;
  long reduce(long res)const {res%=modulus; return (res<0)?modulus+res:res;}
 public:
- level(long n, long neigs=20);
+ explicit level(long n, long neigs=20);
 };
 
 class moddata :public level {
@@ -54,7 +54,7 @@ protected:
  long code(long res) const {return invlist[reduce(res)];}
 public:
   long nsymb;
- moddata(long n);                                //constructor
+ explicit moddata(long n);                                //constructor
  void display() const;
  void out_of_memory_error(const string mess) const
   {

@@ -71,9 +71,9 @@ private:
   void getquartics1();
   void gettype(int t);
 public:
-  rank1(Curvedata* ec,
-        int verb=0, int sel=0,
-        long lim1=20, long lim2=5, long n_aux=-1);
+  explicit rank1(Curvedata* ec,
+                 int verb=0, int sel=0,
+                 long lim1=20, long lim2=5, long n_aux=-1);
 // lim1 is bound on |x|+|z| in naive search
 // lim2 is bound on log max {|x|,|z| }, i.e. logarithmic
 // sel is selmer_only switch

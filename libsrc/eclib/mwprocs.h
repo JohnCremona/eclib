@@ -48,11 +48,11 @@ private:
   int iso;
   saturator satsieve;
 public:
-  mw(Curvedata*, int verb=0, int pp=1, int maxr=999);
+  explicit mw(Curvedata*, int verb=0, int pp=1, int maxr=999);
 
  // processing of new points, with saturation at primes up to sat
  // (default MAXSATPRIME,  none if sat==0)
-  int process(const bigint& x, const bigint& y, const bigint& z);
+  int process(const bigint& x, const bigint& y, const bigint& z) override;
   int process(const bigint& x, const bigint& y, const bigint& z, int sat);
  // as returned by ms's sieve; the point is (x/z,y/z^(3/2)) and z is square
   int process(const Point& P, int sat=MAXSATPRIME);

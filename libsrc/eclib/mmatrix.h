@@ -35,8 +35,8 @@ public:
      // constructors
         mat_m(long nr=0, long nc=0);
         mat_m(const mat_m&);                    // copy constructor
-        mat_m(const mat_i&);
-        mat_m(const mat_l&);
+        explicit mat_m(const mat_i&);
+        explicit mat_m(const mat_l&);
      // destructor
         ~mat_m();
 

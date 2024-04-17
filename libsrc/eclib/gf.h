@@ -34,7 +34,7 @@ class galois_field {
   ZZ q;
  public:
   galois_field(void);
-  galois_field(const ZZ& qq);
+  explicit galois_field(const ZZ& qq);
   bigint characteristic() const {return q;}
 };
 
@@ -95,7 +95,7 @@ inline gf_element root_of_unity(const galois_field& F, int n)
 
 inline bigint order(const gf_element& z)
 {
-  gf_element one=z/z;
+  gf_element one=to_ZZ_p(1);
   gf_element zn=z;  bigint n=BIGINT(1);
   while (zn!=one) {zn*=z; n+=1;}
   return n;
@@ -106,7 +106,7 @@ inline vector<gf_element> roots_of_unity(const galois_field& Fq, int p)
   gf_element mu = root_of_unity(Fq,p); // =0 if p ndiv q-1
   vector<gf_element>mu_p;
   mu_p.resize(p);
-  GFinit(Fq,mu_p[0]);
+  // GFinit(Fq,mu_p[0]);
   GFSetZ(mu_p[0],1);
   for(int i=1; i<p; i++) mu_p[i]=mu_p[i-1]*mu;
   return mu_p;
