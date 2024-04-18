@@ -56,7 +56,7 @@ enum childstatus { NOT_COMPLETE, COMPLETE, DESTROYED };
 class ff_data {
   public:
     // Constructor, destructor.
-    ff_data( form_finder* ff );
+    explicit ff_data( form_finder* ff );
     ~ff_data();
 
 #ifdef ECLIB_MULTITHREAD

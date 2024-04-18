@@ -61,9 +61,9 @@ class form_finder {
     void splitoff(const vector<long>& eigs);
     void store(vec bp, vec bm, vector<long> eigs);
     
-    vec  getbasis( ff_data &data ) const {return data.bplus_;}
-    vec  getbasisplus( ff_data &data ) const {return data.bplus_;}
-    vec  getbasisminus( ff_data &data ) const {return data.bminus_;}
+    vec  getbasis( const ff_data &data ) const {return data.bplus_;}
+    vec  getbasisplus( const ff_data &data ) const {return data.bplus_;}
+    vec  getbasisminus( const ff_data &data ) const {return data.bminus_;}
 
     friend class ff_data; 
   

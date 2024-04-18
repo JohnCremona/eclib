@@ -227,11 +227,11 @@ inline long invmod0(long aa)
   if ((ma>0)&&(ma<20)) return table_invs[ma];
 
  // General code, use Euclidean Algorithm:
- long x=0,oldx=1,newx,b=BIGPRIME,c,q;
+ long x=0,oldx=1,b=BIGPRIME;
  while (b!=0)
- { q = a/b; 
-   c    = a    - q*b; a    = b; b = c;
-   newx = oldx - q*x; oldx = x; x = newx;
+ { long q = a/b;
+   long c    = a    - q*b; a    = b; b = c;
+   long newx = oldx - q*x; oldx = x; x = newx;
   }
  if (a==1)  {return oldx;}
  if (a==-1) {return -oldx;}
@@ -255,11 +255,11 @@ inline int invmod0(int aa)
   if ((ma>0)&&(ma<20)) return table_invs[ma];
 
  // General code, use Euclidean Algorithm:
- int x=0,oldx=1,newx,b=BIGPRIME,c,q;
+ int x=0,oldx=1,b=BIGPRIME;
  while (b!=0)
- { q = a/b; 
-   c    = a    - q*b; a    = b; b = c;
-   newx = oldx - q*x; oldx = x; x = newx;
+ { int q = a/b;
+   int c    = a    - q*b; a    = b; b = c;
+   int newx = oldx - q*x; oldx = x; x = newx;
   }
  if (a==1)  {return oldx;}
  if (a==-1) {return -oldx;}

@@ -39,7 +39,7 @@ public:
      // constructors
 
   svec (int dim=0) :d(dim) {;}
-  svec (const vec &);                  // conversion constructor
+  explicit svec (const vec &);                  // conversion constructor
   svec (int dim, scalar* a);          // conversion constructor
    
   // member functions & operators
@@ -89,8 +89,10 @@ public:
   friend ostream& operator<< (ostream&s, const svec&);
   friend scalar operator*(const svec&, const svec&); //dot product
   friend scalar operator*(const svec&, const vec&);
+  friend scalar operator*(const vec& v, const svec& sv) {return sv*v;}
   friend scalar dotmodp(const svec&, const svec&, scalar pr);
   friend scalar dotmodp(const svec&, const vec&, scalar pr);
+  friend scalar dotmodp(const vec& v, const svec& sv, scalar pr) {return dotmodp(sv,v,pr);}
   friend inline svec operator+(const svec& v1, const svec& v2);
   friend inline svec operator-(const svec& v1, const svec& v2);
   friend inline int operator==(const svec& v1, const svec& v2);

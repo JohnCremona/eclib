@@ -30,11 +30,10 @@
 #include "subspace.h"
 
 inline int
-find( int X, int* ptr, int ub, int lb = 0 ) {
-  int i;
+find( int X, const int* ptr, int ub, int lb = 0 ) {
   if( ptr[ub] < X ) return ub;
   while( ptr[lb] < X ) {
-    i = (ub + lb)/2;
+    int i = (ub + lb)/2;
     ptr[i] < X ? (lb = i+1) : (ub = i);
   }
   return lb;

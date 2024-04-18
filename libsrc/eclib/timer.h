@@ -45,7 +45,7 @@ void show_time(ostream& s = cout);
 class timer {
   public:
     timer();
-    timer( string filename );
+    explicit timer( string filename );
     ~timer();                   
 
     void    stream( string filename = "" );
