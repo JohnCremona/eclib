@@ -200,23 +200,24 @@ void two_descent::saturate(long sat_bd, long sat_low_bd)
   else
     {
 //  Saturate
-      if(verbose) cout <<"Saturating (with bound = "<<sat_bd<<")..." << flush;
+      if(verbose)
+        cout <<"Saturating (with bound = "<<sat_bd<<")..." << flush;
       long index; vector<long> unsat;
       int sat_ok = mwbasis->saturate(index,unsat,sat_bd,sat_low_bd);
       // no need to check p-saturation for p<=sat_low_bd (default 2)
-      if(verbose) cout <<"done:"<<endl;
 
-// Report outcome
       if(verbose)
 	{
-	  if(index>1) 
+          cout <<"done:"<<endl;
+// Report outcome
+	  if(index>1)
 	    {
 	      cout <<"  *** saturation increased group by index "<<index<<endl;
 	      cout <<"  *** regulator is now "<<mwbasis->regulator()<<endl;
 	    }
 	  else cout << "  points were already saturated."<<endl;
 	}
-      if(!sat_ok) 
+      if(!sat_ok)
 	{
 	  cout << "*** saturation possibly incomplete at primes " << unsat << "\n";
 	}

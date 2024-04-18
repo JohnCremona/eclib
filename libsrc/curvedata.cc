@@ -28,11 +28,13 @@
 Curvedata::Curvedata(const bigint& aa1, const bigint& aa2, 
 		     const bigint& aa3, const bigint& aa4, 
 		     const bigint& aa6, int min_on_init)
-  : Curve(aa1,aa2,aa3,aa4,aa6),  minimal_flag(0), ntorsion(0)
+  : Curve(aa1,aa2,aa3,aa4,aa6),
+    b2(a1*a1 + 4*a2), b4(2*a4 + a1*a3), b6(a3*a3 + 4*a6),
+    minimal_flag(0), ntorsion(0)
 {
-  b2 = a1*a1 + 4*a2; b4 = 2*a4 + a1*a3;
-  b6 = a3*a3 + 4*a6; b8 =  (b2*b6 - b4*b4) / 4;
-  c4 = b2*b2 - 24*b4; c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
+  b8 =  (b2*b6 - b4*b4) / 4;
+  c4 = b2*b2 - 24*b4;
+  c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
   discr = (c4*c4*c4 - c6*c6) / 1728;
   discr_factored=0;
   if(sign(discr)==0)  // singular curve, replace by null
@@ -115,11 +117,13 @@ Curvedata::Curvedata(const vector<bigrational>& qai, bigint& scale)
 }
 
 Curvedata::Curvedata(const Curve& c, int min_on_init)
-: Curve(c), minimal_flag(0), ntorsion(0)
+: Curve(c),
+  b2(a1*a1 + 4*a2), b4(2*a4 + a1*a3), b6(a3*a3 + 4*a6),
+  minimal_flag(0), ntorsion(0)
 {
-  b2 = a1*a1 + 4*a2; b4 = 2*a4 + a1*a3;
-  b6 = a3*a3 + 4*a6; b8 =  (b2*b6 - b4*b4) / 4;
-  c4 = b2*b2 - 24*b4; c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
+  b8 =  (b2*b6 - b4*b4) / 4;
+  c4 = b2*b2 - 24*b4;
+  c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
   discr = (c4*c4*c4 - c6*c6) / 1728;
   discr_factored=0;
   if(sign(discr)==0)  // singular curve, replace by null
@@ -189,7 +193,7 @@ Curvedata::Curvedata(const bigint& cc4, const bigint& cc6, int min_on_init)
 
 void Curvedata::operator=(const Curvedata& c)
 {
-  a1 = c.a1, a2 = c.a2, a3 = c.a3, a4 = c.a4, a6 = c.a6; 
+  a1 = c.a1, a2 = c.a2, a3 = c.a3, a4 = c.a4, a6 = c.a6;
   b2 = c.b2, b4 = c.b4, b6 = c.b6, b8 = c.b8;
   c4 = c.c4, c6 = c.c6, discr = c.discr;
   minimal_flag = c.minimal_flag;
@@ -222,7 +226,6 @@ void Curvedata::minimalize()
     { 
       if(u>1) // trim list of bad primes
 	{
-	  bigint p;
 	  vector<bigint> new_bad_primes;
           for (const auto& p : the_bad_primes)
 	    {

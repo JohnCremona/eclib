@@ -530,7 +530,6 @@ int testlocsol(const bigint& a, const vector<bigint>& alist,
                                     );
               };
   return test(clist, -a*b) && test(alist, -b*c) && test(blist, -a*c);
-  return 1;
 }
 
 int testlocsol(const bigint& a, const vector<bigint>& alist,
@@ -539,10 +538,8 @@ int testlocsol(const bigint& a, const vector<bigint>& alist,
 // square-free, their prime factors being in alist and blist.
 {
   // Avoid any factorization and gcd computation using the primes given
-  bigint p, a0, b0, c;
-  a0=1; b0=1; c=-1;
+  bigint a0(1), b0(1), c(-1);
   vector<bigint> a0list, b0list, clist;
-
   long sa=sign(a), sb=sign(b);
   if((sa<0)&&(sb<0))
     {
@@ -570,11 +567,8 @@ int testlocsol(const bigint& a, const vector<bigint>& alist,
           b0*=p; b0list.push_back(p);
         }
     }
-
   // Now a=a0*c, b=b0*c, c=gcd(a,b), and a0list, b0list, clist hold their primes
-
   return testlocsol(a0,a0list,b0,b0list,c,clist);
-
 }
 
 void testmodsqrt()
@@ -976,7 +970,7 @@ void conic_mordell_reduce(const bigint& a, const bigint& b, const bigint& c, big
     {
       cout<<steps<<" reduction steps were needed.\n";
       cout<<"Reduced solution = (" <<x0<<":"<<y0<<":"<<z0<<")\n";
-      if(verb) testsol(a,zero,b,-c,x0,z0,y0,verb);
+      testsol(a,zero,b,-c,x0,z0,y0,verb);
       cout<<"Holzer's conditions are satisfied\n";
     }
 }
@@ -1082,9 +1076,9 @@ void show_eqn_cert(const bigint& a, const bigint& b, const bigint& c,
   show_eqn(a,b,c);cout<<endl;
   show_cert(p,q,r);cout<<endl;
 }
-void show_all(const bigint& a, const bigint& b, const bigint& c, 
-	      const bigint& p, const bigint& q, const bigint& r, 
-	      bigint& x, bigint& y, bigint& z)
+void show_all(const bigint& a, const bigint& b, const bigint& c,
+	      const bigint& p, const bigint& q, const bigint& r,
+	      const bigint& x, const bigint& y, const bigint& z)
 {
   show_eqn(a,b,c);cout<<endl;
   show_cert(p,q,r);cout<<endl;

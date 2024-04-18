@@ -162,10 +162,10 @@ public:
 
   bigcomplex hess_root() const;
   bigfloat real_root() const;  // requires disc<0
-  int is_hessian_reduced(); // for positive discriminant only
+  int is_hessian_reduced() const; // for positive discriminant only
   void hess_reduce(unimod& m);
   void mathews_reduce(unimod& m);
-  int is_jc_reduced(); // for negative discriminant only
+  int is_jc_reduced() const; // for negative discriminant only
   void jc_reduce(unimod& m);
   // Just shifts x, returns the shift amount:
   bigint shift_reduce();

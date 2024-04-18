@@ -53,11 +53,11 @@ void boundedratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxden);
 
 bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& x, const bigfloat& y)
 {
-  bigint a1,a2,a3,a4,a6;
-  E.getai(a1,a2,a3,a4,a6);
-  bigfloat ra1=I2bigfloat(a1);
-  bigfloat ra2=I2bigfloat(a2);
-  bigfloat ra3=I2bigfloat(a3);
+  bigint za1,za2,za3,za4,za6;
+  E.getai(za1,za2,za3,za4,za6);
+  bigfloat ra1=I2bigfloat(za1);
+  bigfloat ra2=I2bigfloat(za2);
+  bigfloat ra3=I2bigfloat(za3);
   bigfloat xP(x), yP(y);
   int posdisc = (sign(getdiscr(E))>0);
   
@@ -194,7 +194,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
 //
 // First function:  returns x,y as complex numbers
 
-vector<bigcomplex> ellztopoint(Curvedata& E,  Cperiods& per, const bigcomplex& z)
+vector<bigcomplex> ellztopoint(Curvedata& E,  const Cperiods& per, const bigcomplex& z)
 {
   bigint a1,a2,a3,a4,a6;
   E.getai(a1,a2,a3,a4,a6);
@@ -222,7 +222,7 @@ vector<bigcomplex> ellztopoint(Curvedata& E,  Cperiods& per, const bigcomplex& z
 // User supplies a denominator for the point; if it doesn't work, the
 // Point returned is 0 on the curve
 
-Point ellztopoint(Curvedata& E, Cperiods& per, const bigcomplex& z, const bigint& den)
+Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const bigint& den)
 {
   if(is_zero(z)) {return Point(E);}
 #ifdef DEBUG_EZP
@@ -294,12 +294,8 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
   E.getbi(b2,b4,b6,b8);
   bigint xPn=P.getX(), xPd=P.getZ();
   bigint g = gcd(xPn,xPd); xPn/=g; xPd/=g;
-  vector<bigint> q; // quartic coefficients
-  q.push_back(xPd);
-  q.push_back(-4*xPn);
-  q.push_back(-(b4*xPd+b2*xPn));
-  q.push_back(-2*(b6*xPd+b4*xPn));
-  q.push_back(-(b8*xPd+b6*xPn));
+  // quartic coefficients:
+  vector<bigint> q = {xPd, -4*xPn, -(b4*xPd+b2*xPn), -2*(b6*xPd+b4*xPn), -(b8*xPd+b6*xPn)};
 #ifdef DEBUG_DIVBY2
   cout<<"Looking for rational roots of "<<q<<endl;
 #endif
@@ -307,20 +303,12 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
 #ifdef DEBUG_DIVBY2
   cout<<"Possible x-coordinates:"<<xans<<endl;
 #endif
-  vector<Point> ans;
+  vector<Point> ans; ans.reserve(4); // will be truncated later
   for( const auto & x : xans)
     {
       vector<Point> x_points = points_from_x(E,x);
-      for( const auto& Q : x_points)
-        {
-          if(2*Q==P) // as it might = -P
-            {
-#ifdef DEBUG_DIVBY2
-              cout << "Solution found: " << Q << endl;
-#endif
-              ans.push_back(Q);
-            }
-        }
+      std::copy_if(x_points.begin(), x_points.end(), std::back_inserter(ans),
+                   [P] (const Point& Q) {return 2*Q==P;});
     }
   return ans;
 }
@@ -375,7 +363,7 @@ vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one
   return ans;
 }
 
-vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int m, int only_one)
+vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P, int m, int only_one)
 {
 #ifdef DEBUG_DIVPT
   cout<<"division_points("<<(Curve)E<<","<<P<<","<<m<<")"<<endl;  
@@ -569,7 +557,7 @@ vector<Point> torsion_points(Curvedata& E,int m)
   return torsion_points(E,cp,m);
 }
 
-vector<Point> torsion_points(Curvedata& E,  Cperiods& per, int m)
+vector<Point> torsion_points(Curvedata& E, const Cperiods& per, int m)
 {
   Point P(E);
   return division_points(E,per,P,m);

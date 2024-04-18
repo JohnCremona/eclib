@@ -81,7 +81,7 @@ void primeclass::init(long maxnum)  /* initializes variable pdiffptr */
   //    for(k=0; k<NPRIMES+1; k++) cout<<(int)p[k]<<" "; cout<<endl;
 //  cout<<"BIGGESTPRIME = "<< BIGGESTPRIME << endl;
   pdiffptr = new unsigned char[NPRIMES+1];
-  q=p; r=pdiffptr; k=NPRIMES+1;  
+  q=p; r=pdiffptr; k=NPRIMES+1;
   while(k--) {*r = *q; r++; q++;}
   delete [] p;
   reset();
@@ -97,14 +97,14 @@ primeclass::~primeclass()
 
 void primeclass::reset(void) {p_ind=0; p_val=0; p_aptr=pdiffptr;}
 int primeclass::at_end(void) {return *p_aptr==0;}
-int primeclass::advance(void) 
+int primeclass::advance(void)
 {
     unsigned char d=*p_aptr;
     if(d) {p_ind++; p_val+=d; p_aptr++; return 1;}
     else  {return 0;}
 }
 
-long primeclass::number(long n)  
+long primeclass::number(long n)
 // returns n'th prime from list, starting at n=1 for p=2
 {
 //  cout << "In primeclass::number("<<n<<")"<<endl;
@@ -145,7 +145,7 @@ long prime_pi(long p)
 {
   primevar pr;
   int ip=0;
-  while ((long)pr<p) {pr++; ip++;}
+  while ((long)pr<p) {++pr; ip++;}
   return ip;
 }
 
@@ -153,14 +153,15 @@ long prime_pi(long p)
 long primdiv(long aa)
 {
  primevar pr;
- long p=0,q;
+ long p=0;
  long a = labs(aa);
  while (pr.ok() && p==0)
-   {q=pr; pr++;
-    if (a%q==0) p = q;
-    else if (q*q>a) p=a;   // N.B. this causes a=1 to return 1.  Beware!
+   {
+     long q=pr; ++pr;
+     if (a%q==0) p = q;
+     else if (q*q>a) p=a;   // N.B. this causes a=1 to return 1.  Beware!
    }
- if (p==0) {p=a; 
+ if (p==0) {p=a;
             cout<<"No prime divisor found for "<<aa<<" so assuming prime!\n";
            }
  return p;
@@ -169,9 +170,10 @@ long primdiv(long aa)
 
 vector<long> pdivs(long aa)
 {vector<long> plist;
- primevar pr; long a = abs(aa);long p;
+ primevar pr;
+ long a = abs(aa);
  while ( (a>1) && (pr.ok()))
- { p = pr; pr++;
+ { long p = pr; ++pr;
  if (a%p==0) 
    {
      plist.push_back(p);
@@ -192,14 +194,14 @@ vector<long> posdivs(long a, const vector<long>& plist)
 {
 // cout << "In posdivs with a = " << a << endl;
 // cout << plist.size() << " primes: " <<endl; cout << plist << endl;
- long j,k,e,nd = 1;
+ long nd = 1;
  vector<long> dlist(1,1);  // cout << "Divisor 0 = 1" << endl;
  for (const auto& p : plist)
    {
-     e = val(p,a);
+     long e = val(p,a);
      dlist.resize((e+1)*dlist.size());
-     for (j=0; j<e; j++)
-       for (k=0; k<nd; k++)
+     for (long j=0; j<e; j++)
+       for (long k=0; k<nd; k++)
 	 dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
      nd*=(e+1);
    }
@@ -209,15 +211,15 @@ vector<long> posdivs(long a, const vector<long>& plist)
 vector<long> alldivs(long a, const vector<long>& plist)
 {//cout << "In alldivs with a = " << a << endl;
 // cout << plist.size() << " primes: " <<endl; cout << plist << endl;
- long j,k,e,nd = 2;
+ long nd = 2;
  vector<long> dlist(1,1);  // cout << "Divisor 0 =  1" << endl;
  dlist.push_back(-1);      // cout << "Divisor 1 = -1" << endl;
  for (const auto& p : plist)
  {
-   e = val(p,a);
+   long e = val(p,a);
    dlist.resize((e+1)*dlist.size());
-   for (j=0; j<e; j++)
-     for (k=0; k<nd; k++)
+   for (long j=0; j<e; j++)
+     for (long k=0; k<nd; k++)
        dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
    nd*=(e+1);
  }
@@ -226,14 +228,14 @@ vector<long> alldivs(long a, const vector<long>& plist)
 
 vector<long> sqdivs(long a, const vector<long>& plist)
 {
- long j,k,e,nd = 1;
+ long nd = 1;
  vector<long> dlist(1,1);
  for (const auto& p : plist)
    {
-     e = val(p,a)/2;
+     long e = val(p,a)/2;
      dlist.resize((e+1)*dlist.size());
-     for (j=0; j<e; j++)
-       for (k=0; k<nd; k++)
+     for (long j=0; j<e; j++)
+       for (long k=0; k<nd; k++)
 	 dlist[nd*(j+1)+k] =  p*dlist[nd*j+k];
      nd*=(e+1);
    }
@@ -242,14 +244,14 @@ vector<long> sqdivs(long a, const vector<long>& plist)
 
 vector<long> sqfreedivs(long a, const vector<long>& plist)
 {
- long j,k,e,nd = 1;
+ long nd = 1;
  vector<long> dlist(1,1);
  for (const auto& p : plist)
  {
-  e = 1;
+  long e = 1;
   dlist.resize((e+1)*dlist.size());
-  for (j=0; j<e; j++)
-    for (k=0; k<nd; k++)
+  for (long j=0; j<e; j++)
+    for (long k=0; k<nd; k++)
       dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
   nd*=(e+1);
  }
@@ -266,22 +268,20 @@ long mod(long a, long b)
 
 long posmod(long a, long b)
 {
-  long c=a%b;  
+  long c=a%b;
   if (c<0) return(c+b);
   return(c);
 }
 
 long gcd(long a, long b)
 {
-  long c;
-  while (b!=0) {c=a%b; a=b; b=c;}
+  while (b!=0) {long c=a%b; a=b; b=c;}
   return abs(a);
 }
 
 int gcd(int a, int b)
 {
-  int c;
-  while (b!=0) {c=a%b; a=b; b=c;}
+  while (b!=0) {int c=a%b; a=b; b=c;}
   return abs(a);
 }
 
@@ -293,13 +293,12 @@ long lcm(long a, long b)
 }
 
 long bezout(long aa, long bb, long& xx, long& yy)
-{long a,b,c,x,oldx,newx,y,oldy,newy,q;
- oldx = 1; oldy = 0; x = 0; y = 1; a = aa; b = bb;
+{long a = aa, b = bb, x = 0, oldx = 1, y = 1, oldy = 0;
  while (b!=0)
- { q = a/b; 
-   c    = a    - q*b; a    = b; b = c;
-   newx = oldx - q*x; oldx = x; x = newx;
-   newy = oldy - q*y; oldy = y; y = newy;
+ { long q = a/b;
+   long c    = a    - q*b; a    = b; b = c;
+   long newx = oldx - q*x; oldx = x; x = newx;
+   long newy = oldy - q*y; oldy = y; y = newy;
   }
  if (a<0) {xx=-oldx; yy=-oldy; return(-a);}
  else     {xx= oldx; yy= oldy; return( a);}
@@ -327,31 +326,32 @@ int modrat(int n, int m, float lim, int& a, int& b)
 //#define DEBUG_MODRAT
 
 int modrat(long n, long m, float lim, long& a, long& b)
-{long q,r,t,qq,rr,tt,quot;
+{
 #ifdef DEBUG_MODRAT
- cout<<"modrat("<<n<<","<<m<<")\n";
+  cout<<"modrat("<<n<<","<<m<<")\n";
 #endif
- q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1; 
- if (r<lim) 
-   { 
+  long q = m, qq = 0, rr = 1, r=posmod(n,m);
+  a = r; b = 1;
+  if (r<lim)
+   {
 #ifdef DEBUG_MODRAT
      cout<<" = "<<a<<"/"<<b<<"\n";
 #endif
      return 1;
    }
- while (r!=0) 
- { 
-   quot = q/r;
+ while (r!=0)
+ {
+   long quot = q/r;
+   long t  =  q-quot*r;   q = r;   r = t;
+   long tt = qq-quot*rr; qq = rr; rr = tt;
 #ifdef DEBUG_MODRAT
    cout<<"q,r,t = "<<q<<" "<<r<<" "<<t<<"\n";
 #endif
-   t  =  q-quot*r;   q = r;   r = t;
-   tt = qq-quot*rr; qq = rr; rr = tt;
    if (r<lim)
      {
-       if (abs(rr)<lim) 
+       if (abs(rr)<lim)
          {
-           a=r; b=rr; 
+           a=r; b=rr;
 #ifdef DEBUG_MODRAT
            cout<<" success:  "<<a<<"/"<<b<<"\n";
 #endif
@@ -380,25 +380,24 @@ long val(long factor, long number)
 }
 
 int intbezout(int aa, int bb, int& xx, int& yy)
-{int a,b,c,x,oldx,newx,y,oldy,newy,q;
- oldx = 1; oldy = 0; x = 0; y = 1; a = aa; b = bb;
+{int a = aa, b = bb, x = 0, oldx = 1, y = 1, oldy = 0;
  while (b!=0)
- { q = a/b; 
-   c    = a    - q*b; a    = b; b = c;
-   newx = oldx - q*x; oldx = x; x = newx;
-   newy = oldy - q*y; oldy = y; y = newy;
+ { long q = a/b;
+   long c    = a    - q*b; a    = b; b = c;
+   long newx = oldx - q*x; oldx = x; x = newx;
+   long newy = oldy - q*y; oldy = y; y = newy;
   }
  if (a<0) {xx=-oldx; yy=-oldy; return(-a);}
  else     {xx= oldx; yy= oldy; return( a);}
 }
 
 long chi2(long a)
-{ static long table8[8] = {0,1,0,-1,0,-1,0,1};
+{ static const long table8[8] = {0,1,0,-1,0,-1,0,1};
   return table8[posmod(a,8)];
 }
  
 long chi4(long a)
-{ static long table4[4] = {0,1,0,-1};
+{ static const long table4[4] = {0,1,0,-1};
   return table4[posmod(a,4)];
 } 
 
@@ -458,7 +457,7 @@ long val2(unsigned long z);
 
 long kronecker(long x, long y)
 {
-  long r,s=1,x1,z;
+  long r,s=1,x1;
 
   if (y<=0)
   {
@@ -485,7 +484,7 @@ long kronecker(long x, long y)
       x1>>=r;
     }
     if (y&2 && x1&2) s= -s;
-    z=y%x1; y=x1; x1=z;
+    long z=y%x1; y=x1; x1=z;
   }
   return (y==1)? s: 0;
 }
@@ -504,10 +503,7 @@ int is_squarefree(long n)
   if(n%25==0) return 0;
   if(n%49==0) return 0;
   auto plist = pdivs(n);
-  for( const auto p : plist)
-    if (val(p,n)>1)
-      return 0;
-  return 1;
+  return std::all_of(plist.begin(), plist.end(), [n] (const long& p) {return val(p,n)==1;});
 }
 
 int is_valid_conductor(long n)
@@ -517,12 +513,7 @@ int is_valid_conductor(long n)
   e=0; while(!(m&1)) {e++; m>>=1;}  if(e>8) return 0;
   e=0; while(!(m%3)) {e++; m/=3;}   if(e>5) return 0;
   auto plist = pdivs(m);
-  for( const auto& p : plist)
-    {
-      if (val(p,m)>2)
-        return 0;
-    }
-      return 1;
+  return std::all_of(plist.begin(), plist.end(), [m] (const long& p) {return val(p,m)<=2;});
 }
 
 /* END OF FILE */

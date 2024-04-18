@@ -31,7 +31,7 @@
 #define TWOPIEYE bigcomplex(to_bigfloat(0), TWOPI)
 
 
-inline bigcomplex q(const bigcomplex& z) // q(z) = exp(2*pi*i * z)
+inline bigcomplex e2pi(const bigcomplex& z) // q(z) = exp(2*pi*i * z)
 {
   bigfloat twopix = TWOPI * real(z);
   return exp(-TWOPI * imag(z)) *

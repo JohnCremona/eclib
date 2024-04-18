@@ -119,18 +119,18 @@ void CurveRed::operator=(const CurveRed& E)
 }
 
 CurveRed::CurveRed(const Curvedata& E)
-: Curvedata(E, 1) //minimalize in constructor
+  : Curvedata(E, 1), //minimalize in constructor
+    N(1)
 {
   // constructor stuff
-  N=1;
   if (discr==0) {N = 0; return; }
   factor_discr(); // will only do anything if not already factored
 
   // local variables
   Curvedata C(*this);
-  bigint p, halfmodp, temp, r, s, t, b, c, bb, cc, bc, d, w, x, mx, my,
+  bigint temp, r, s, t, b, c, bb, cc, bc, d, w, x, mx, my,
           a2t, a3t, a4t, a6t, zero;
-  int ord_p_discr, ord_p_j, c_p=1, pdiv2, pdiv3, sw, loop, ix, iy;
+  int c_p=1, sw, loop, ix, iy;
   zero=0;
   // main loop - for each of the prime divisors of the discriminant.
   // Because the curve is minimal, Tate's algorithm reduce-loop is not needed
@@ -139,12 +139,12 @@ CurveRed::CurveRed(const Curvedata& E)
 
   for (const auto& p : the_bad_primes)
     {
-    ord_p_discr = val(p,discr);
-    ord_p_j = ord_p_discr - 3*val(p,c4);
+    int ord_p_discr = val(p,discr);
+    int ord_p_j = ord_p_discr - 3*val(p,c4);
     if (ord_p_j < 0) ord_p_j = 0;
-    halfmodp = (p+1) >>1;
-    pdiv2 = even(p);
-    pdiv3 = (p==3);
+    bigint halfmodp = (p+1) >>1;
+    int pdiv2 = even(p);
+    int pdiv3 = (p==3);
 
     //change coords so that p|C.a3,C.a4,C.a6
     if ( pdiv2 )
@@ -352,7 +352,7 @@ bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p)
 // So (with no further knowledge of the MW group) we know that m*P
 // is in the good-reduction subgroup for all P, with this m.
 
-bigint global_Tamagawa_exponent(CurveRed& c, int real_too)
+bigint global_Tamagawa_exponent(const CurveRed& c, int real_too)
 {
   const bigint one = BIGINT(1);
   const bigint two = BIGINT(2);
@@ -369,12 +369,11 @@ bigint global_Tamagawa_exponent(CurveRed& c, int real_too)
 }
 
 // Tamagawa primes: primes dividing any Tamagawa number
-vector<long> tamagawa_primes(CurveRed& C, int real_too)
+vector<long> tamagawa_primes(const CurveRed& C, int real_too)
 {
   vector<bigint> T = pdivs(global_Tamagawa_exponent(C, real_too));
-  vector<long> t;
-  for( const auto&  ti : T)
-    t.push_back(I2long(ti));
+  vector<long> t(T.size());
+  std::transform(T.begin(), T.end(), t.begin(), I2long);
   return t;
 }
 
@@ -415,12 +414,19 @@ int getc_p(const CurveRed& c, const bigint& p)
   return (ri->second).c_p;
 }
 
+vector<bigint> all_cp(const CurveRed& c)
+{
+  vector<bigint> ans(c.reduct_array.size());
+  std::transform(c.reduct_array.begin(), c.reduct_array.end(), ans.begin(),
+                 [] (const pair<bigint,Reduction_type>& x) {return BIGINT(x.second.c_p);});
+  return ans;
+}
+
 bigint prodcp(const CurveRed& c)
 {
-  bigint ans = BIGINT(1);
-  for( const auto& ri : c.reduct_array)
-    ans *= (ri.second).c_p;
-  return ans;
+  vector<bigint> allcp = all_cp(c);
+  return std::accumulate(allcp.begin(), allcp.end(), BIGINT(1),
+                         [](const bigint& c1, const bigint& c2) {return c1*c2;});
 }
 
 // The local Tamagawa number.  Use p=0 for reals
@@ -930,7 +936,7 @@ int kro(long d, long n)
 
 int kro_m1(long x) // kronecker(-1,x) with x>0 odd
 {
-  static int kro_m1_tab[4] = {0,1,0,-1};
+  static const int kro_m1_tab[4] = {0,1,0,-1};
 #ifdef DEBUG_ESIGN
   if (!((x>0)&&(odd(x))))
     {
@@ -943,7 +949,7 @@ int kro_m1(long x) // kronecker(-1,x) with x>0 odd
 
 int kro_p2(long x) // kronecker(2,x) with x>0 odd
 {
-  static int kro_p2_tab[8] = {0,1,0,-1,0,-1,0,1};
+  static const int kro_p2_tab[8] = {0,1,0,-1,0,-1,0,1};
 #ifdef DEBUG_ESIGN
   if (!((x>0)&&(odd(x))))
     {
@@ -956,7 +962,7 @@ int kro_p2(long x) // kronecker(2,x) with x>0 odd
 
 int kro_m2(long x) // kronecker(-2,x) with x>0 odd
 {
-  static int kro_m2_tab[8] = {0,1,0,1,0,-1,0,-1};
+  static const int kro_m2_tab[8] = {0,1,0,1,0,-1,0,-1};
 #ifdef DEBUG_ESIGN
   if (!((x>0)&&(odd(x))))
     {
@@ -969,7 +975,7 @@ int kro_m2(long x) // kronecker(-2,x) with x>0 odd
 
 int kro_3(long x) // kronecker(x,3)
 {
-  static int kro_3_tab[3] = {0,1,-1};
+  static const int kro_3_tab[3] = {0,1,-1};
 #ifdef DEBUG_ESIGN
   if (!(x>0))
     {
@@ -1114,7 +1120,6 @@ bigint Trace_Frob(CurveRed& c, const bigint& p)
   if(f>=2)  return zero;
   if(f==1)  return BIGINT(-LocalRootNumber(c,p));
 
-  int x,a,b,d;
   bigint n=zero;
   if(p==two) // curvemodq class only in characteristic > 3
     {
@@ -1124,8 +1129,8 @@ bigint Trace_Frob(CurveRed& c, const bigint& p)
 	a3=bigint_mod_long(c.a3,2),  a4=bigint_mod_long(c.a4,2),
 	a6=bigint_mod_long(c.a6,2);
       // x=0:
-      a = odd(a3);        // 1 if odd else 0
-      b = odd(a6);
+      int a = odd(a3);        // 1 if odd else 0
+      int b = odd(a6);
       n += (a?(b?0:2):1);
       // x=1:
       a = odd(a1+a3);
@@ -1140,11 +1145,11 @@ bigint Trace_Frob(CurveRed& c, const bigint& p)
       int a1=bigint_mod_long(c.a1,3), a2=bigint_mod_long(c.a2,3),
 	a3=bigint_mod_long(c.a3,3),  a4=bigint_mod_long(c.a4,3),
 	a6=bigint_mod_long(c.a6,3);
-      for(x=-1; x<2; x++)
+      for(int x=-1; x<2; x++)
 	{
-	  a = (((x+a2)*x+a4)*x+a6)%3;
-	  b = (a1*x+a3)%3;
-	  d = (b*b+a)%3;
+	  int a = (((x+a2)*x+a4)*x+a6)%3;
+	  int b = (a1*x+a3)%3;
+	  int d = (b*b+a)%3;
 	  if(d==2)d=-1;
 	  if(d==-2)d=1;
 	  n += (d+1);

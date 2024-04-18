@@ -371,7 +371,7 @@ bigcomplex cubic::hess_root() const
   return gamma;
 }
 
-int cubic::is_hessian_reduced()
+int cubic::is_hessian_reduced() const
 // for positive discriminant only
 // The condition is -P < Q <= P < R or 0 <= Q <= P=R.
 {
@@ -468,7 +468,7 @@ void cubic::mathews_reduce(unimod& m)
   if(a()<0) negate(m);
 }
 
-int cubic::is_jc_reduced() // for negative discriminant only
+int cubic::is_jc_reduced() const // for negative discriminant only
 {
   if (is_zero(a())) // we want the quadratic form (b,c,d) to be reduced
     {
@@ -677,23 +677,22 @@ bigint cubic::shift_reduce()
 bigfloat cubic::real_root() const
 {
   bigfloat discr = I2bigfloat(disc());
-  if(discr>=0) 
+  if(discr>=0)
     {
       cout<<"Error: real_root called with positive dicriminant!\n";
       return to_bigfloat(0);
     }
-  bigfloat P = I2bigfloat(p_semi());
-  bigfloat Q = I2bigfloat(q_semi());
-  bigfloat A = I2bigfloat(a());
 
-  if(is_zero(A)) 
+  bigfloat A = I2bigfloat(a());
+  if(is_zero(A))
     {
       return A;
     }
 
-  if(is_zero(P)) 
+  bigfloat P = I2bigfloat(p_semi());
+  bigfloat Q = I2bigfloat(q_semi());
+  if(is_zero(P))
     {
-      bigfloat Q = I2bigfloat(q_semi());
       bigfloat R = I2bigfloat(r_semi())/Q;
       bigfloat eta3  = I2bigfloat(d())/A - (I2bigfloat(c())*R)/(3*A);
       bigfloat eta   = cube_root(eta3);

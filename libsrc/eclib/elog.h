@@ -60,8 +60,7 @@ inline bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per,
 
 // Third function:  P=rational point; maps to z mod lattice
 
-inline bigcomplex elliptic_logarithm(const Curvedata& E, const Cperiods& per, 
-				     const Point& P)
+inline bigcomplex elliptic_logarithm(const Curvedata& E, const Cperiods& per, const Point& P)
 {
   if(P.is_zero()) return bigcomplex(to_bigfloat(0));
   bigfloat xP, yP;
@@ -77,15 +76,13 @@ inline bigcomplex elliptic_logarithm(const Curvedata& E, const Cperiods& per,
 //
 // First function:  given z mod L, returns complex vector [x,y]
 
-vector<bigcomplex> ellztopoint(Curvedata& E,  Cperiods& per, 
-			       const bigcomplex& z);
+vector<bigcomplex> ellztopoint(Curvedata& E,  const Cperiods& per, const bigcomplex& z);
 
 // Second function, expects to return a rational point.
 // User supplies a denominator for the point; if it doesn't work, the
 // Point returned is 0 on the curve
 
-Point ellztopoint(Curvedata& E,  Cperiods& per, const bigcomplex& z, 
-		  const bigint& den);
+Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const bigint& den);
 
 // Returns a (possibly empty) vector of solutions to m*Q=P
 
@@ -95,7 +92,7 @@ Point ellztopoint(Curvedata& E,  Cperiods& per, const bigcomplex& z,
 // Set only_one=1 if at most one solution required (but more may be returned)
 
 vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one=0);
-vector<Point> division_points(Curvedata& E,  Cperiods& per, const Point& P, int m, int only_one=0);
+vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P, int m, int only_one=0);
 
 // Set Q to a solution of m*Q=P and return 1 if a solution exists, else return 0
 
@@ -108,6 +105,6 @@ int divide_point(Curvedata& E,  const Point& P, int m, Point& Q);
 // For a version using no floating point, see m_torsion(E) in points.h
 
 vector<Point> torsion_points(Curvedata& E, int m);
-vector<Point> torsion_points(Curvedata& E,  Cperiods& per, int m);
+vector<Point> torsion_points(Curvedata& E, const Cperiods& per, int m);
 
 #endif

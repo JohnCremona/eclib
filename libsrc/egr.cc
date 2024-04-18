@@ -458,11 +458,8 @@ int ComponentGroups::grprimes(vector<Point>& Plist, const vector<bigint>& plist)
 #ifdef DEBUG_EGR
   cout<<"in grprimes with plist="<<plist<<endl;
 #endif
-  if(Plist.empty())
-    return 0;
-  int m=1;
-  for( const auto& p : plist)
-    m *= gr1prime(Plist,p);
+  int m = std::accumulate(plist.begin(), plist.end(), 1,
+                          [this, &Plist] (int m, const bigint& p) {return m*gr1prime(Plist,p);});
 #ifdef DEBUG_EGR
   cout<<" grprimes returns index "<<m<<endl;
 #endif
@@ -513,16 +510,10 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
     cout << " minimal reduced curve is " << (Curve)Emin <<"\n";
 #endif
 
-  vector<Point> Plist_min;
-  if (is_min)
-    {
-      Plist_min = Plist;
-    }
-  else
-    {
-      for ( const auto& P : Plist)
-        Plist_min.push_back(transform(P, &Emin, u, r, s, t));
-    }
+  vector<Point> Plist_min = Plist;
+  if (!is_min)
+    std::transform(Plist.begin(), Plist.end(), Plist_min.begin(),
+                   [&Emin, u, r, s, t] ( const Point& P ) {return transform(P, &Emin, u, r, s, t);});
 
   // Construct the ComponentGroups class from the minimal model
 
@@ -595,9 +586,8 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
 
 vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const vector<Point>& Plist,  const bigint& p)
 {
-  int i,j,k,n=Plist.size();
+  int n=Plist.size();
   vector<vector<int> > images;
-  images.resize(n);
   if (n==0) return images;
 
   // Construct the local component group and find its structure:
@@ -610,13 +600,10 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
   int cyclic = (m==1);
   int orderG = (cyclic? G[0]: 4);
 
-  // Initialize the image to 0:
+  // Initialize the images to 0:
 
-  for(i=0; i<n; i++)  
-    {
-      images[i].resize(G.size());
-      for(j=0; j<m; j++) images[i][j]=0;
-    }
+  images.resize(n, vector<int>(m,0));
+
   if (orderG==1) return images;
 
   if (cyclic) // Now G is cyclic and nontrivial
@@ -624,25 +611,31 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
 #ifdef DEBUG_EGR
       cout<< "cyclic case (order "<<orderG<<")"<<endl;
 #endif
-      for(i=0; i<n; i++)  
-	{
-	  images[i][0]=CG.ImageInComponentGroup(Plist[i],p,G);
-	}
+      for(int i=0; i<n; i++)
+        images[i][0]=CG.ImageInComponentGroup(Plist[i],p,G);
+
       // if order =3 or =4, check for compatibility since our map is
       // only then defined up to sign....
       if((m==3)||(m==4))
 	{
 	  // Find a point with image +1, if any:
 	  int i0=-1;
-	  for(i=0; i<n; i++) {if(images[i][0]==1) {i0=i;break;}}
+	  for(int i=0; i<n; i++)
+            {
+              if(images[i][0]==1)
+                {
+                  i0=i;
+                  break;
+                }
+            }
 	  if(i0!=-1) // else nothing to do
 	    {
-	      Point P0=Plist[i0];     
-	      for(i=i0+1; i<n; i++) 
-		if(images[i][0]==1) 
-		  if(!CG.InSameComponent(P0,Plist[i],p)) 
+	      Point P0=Plist[i0];
+	      for(int i=i0+1; i<n; i++)
+		if(images[i][0]==1)
+		  if(!CG.InSameComponent(P0,Plist[i],p))
 		    images[i][0]=-1;
-	    }	  
+	    }
 	}  // end of special treatment for m=3,4
     } // end of cyclic case
   else
@@ -657,7 +650,7 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
       ims[0]=vector<int>(2); ims[0][0]=1; ims[0][1]=0;
       ims[1]=vector<int>(2); ims[1][0]=0; ims[1][1]=1;
       ims[2]=vector<int>(2); ims[2][0]=1; ims[2][1]=1;
-      for (k=0; k<n; k++)
+      for (int k=0; k<n; k++)
 	{
 	  Point Pk=Plist[k];
 #ifdef DEBUG_EGR
@@ -666,23 +659,23 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
 	  if(Pk.has_good_reduction(p)) continue;
 	  int coset=-1;
 	  for(unsigned int j=0; (j<PointReps.size())&&(coset==-1); j++)
-	    if(CG.InSameComponent(Pk,PointReps[j],p)) 
-	      coset=j; 
+	    if(CG.InSameComponent(Pk,PointReps[j],p))
+	      coset=j;
 	  if(coset==-1) // Pk is in a new coset...
 	    {
 #ifdef DEBUG_EGR
 	      cout<<"Pk is in a new coset"<<endl;
 #endif
-	      coset=PointReps.size(); 
+	      coset=PointReps.size();
 	      PointReps.push_back(Pk);
-	    }	
-	  images[k]=ims[coset];	  
+	    }
+	  images[k]=ims[coset];
 #ifdef DEBUG_EGR
 	  cout<<"Pk is in coset #"<<(coset+1)<<", image = "<<images[k]<<endl;
 #endif
 	}  // loop on points
     } // else ... noncyclic case
-  return images; 
+  return images;
 }
 
 // class Kodaira_code just holds an int which "codes" the type as follows:

@@ -74,18 +74,18 @@ void c4c6_to_ai(const bigint& c4, const bigint& c6,
 void minimise_c4c6(const bigint& c4, const bigint& c6, const bigint& discr, 
                    bigint& newc4, bigint& newc6, bigint& newdiscr, bigint& u)
 {
-  bigint p,g; long a,b,d;
+  long a,b;
   u = 1; int u_is_1 = 1;
   newc4=c4; newc6=c6;
   const bigint& c62 = sqr(c6);
   newdiscr = (sqr(c4)*c4-c62)/1728; // this must be set before returning
-  g=gcd(c4,c6); if(is_one(g)) return;
+  bigint g=gcd(c4,c6); if(is_one(g)) return;
   g = gcd( c62, newdiscr );  if(is_one(g)) return;
   const vector<bigint>& p_list = pdivs(g);
 //  cout<<"g = "<<g<<endl;
   for (const auto& p : p_list)
   {
-    d = (long)floor(val(p,g)/12.0);
+    long d = (long)floor(val(p,g)/12.0);
 //    cout<<"With p="<<p<<", initial d="<<d<<endl;
     if (p==2)
       {

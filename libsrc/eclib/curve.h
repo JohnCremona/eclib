@@ -288,6 +288,7 @@ public:
   friend int getord_p_N(const CurveRed& c, const bigint& p);
   friend int getord_p_j_denom(const CurveRed& c, const bigint& p);
   friend int getc_p(const CurveRed& c, const bigint& p);
+  friend vector<bigint> all_cp(const CurveRed& c);
   friend bigint prodcp(const CurveRed& c);
   friend int LocalRootNumber(CurveRed& c, const bigint& p);
   friend int GlobalRootNumber(CurveRed& c);
@@ -305,14 +306,14 @@ public:
   // real_too is 1), which is the lcm of the local Tamagawa exponents.
   // So (with no further knowledge of the MW group) we know that m*P
   // is in the good-reduction subgroup for all P, with this m.
-  friend bigint global_Tamagawa_exponent(CurveRed& c, int real_too);
+  friend bigint global_Tamagawa_exponent(const CurveRed& c, int real_too);
 };
 
 // The global Tamagawa number, = product of local ones.
 bigint global_Tamagawa_number(CurveRed& c, int real_too);
 
 // Tamagawa primes: primes dividing any Tamagawa number
-vector<long> tamagawa_primes(CurveRed& C, int real_too);
+vector<long> tamagawa_primes(const CurveRed& C, int real_too);
 
 inline ostream& operator<<(ostream& os, const Curve& c)
 {

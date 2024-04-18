@@ -239,7 +239,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
   for(id3=d3step; (id3<nd3); id3+=d3step)
     {
       d3 = sqfmul(keepd3,makenum(bgens,id3));
-      int res = process_d3(q0,d3,plist,factorbase,hlim,q1,q3,x,y,z,verb);
+      res = process_d3(q0,d3,plist,factorbase,hlim,q1,q3,x,y,z,verb);
       if(xverb) cout<<"process_d3("<<d3<<") returns "<<res<<endl;
       if(res==1)   // descendent is gls, lift to E/2E exists
 	{

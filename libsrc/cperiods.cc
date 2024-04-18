@@ -320,7 +320,7 @@ Cperiods::Cperiods(const Curvedata& E)
 void Cperiods::store_sums()
 {
   static bigfloat one(to_bigfloat(1));
-  qtau = q(tau);
+  qtau = e2pi(tau);
   if(abs(qtau)>0.99)
     {
       cout << "Warning from Cperiods::store_sums: qtau = " 
@@ -443,7 +443,7 @@ void Cperiods::XY_coords(bigcomplex& X, bigcomplex& Y, const bigcomplex& z)
   z1-=wR*floor(real(z1)/real(wR));
   z1-=wI*floor(imag(z1)/imag(wI));
   z1/=w1;
-  bigcomplex qz = q(z1);
+  bigcomplex qz = e2pi(z1);
   //  while(abs(qz)>0.9) qz*=qtau;
   //  while(abs(qz)>1.1) qz*=qtau;
 #ifdef DEBUG_XY

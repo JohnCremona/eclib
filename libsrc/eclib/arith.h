@@ -36,10 +36,6 @@ class primeclass {
   friend class primevar;
   byteptr pdiffptr;
   long NPRIMES, BIGGESTPRIME;
-
-  void reset(void);
-  int at_end(void);
-  int advance(void); 
   byteptr p_aptr;  // points to "current" prime
   long p_ind;      // index  of "current" prime
   long p_val;      // value  of "current" prime
@@ -51,6 +47,9 @@ public:
   void init(long maxnum); // called in constructor, or to make more primes
   long number(long n) ; // returns n'th prime (n=1 gives p=2)
   vector<long> getfirst(long n); // return primes 2..p_n as vector<long>
+  void reset(void);
+  int at_end(void);
+  int advance(void);
   friend long nprimes(void);
   friend long maxprime(void);
 };
@@ -58,7 +57,7 @@ public:
 extern primeclass the_primes;  // The one and only instance
 
 inline long prime_number (long n)   /* returns n'th prime from global list */
-  {return the_primes.number(n);}                              
+  {return the_primes.number(n);}
 inline vector<long> primes (long n)  /* returns list of first n primes */
   {return the_primes.getfirst(n);}
 inline long nprimes(void) {return the_primes.NPRIMES;}

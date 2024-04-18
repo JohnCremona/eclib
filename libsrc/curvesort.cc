@@ -263,17 +263,11 @@ int booknumber(int level, int form)  // permutes numbers starting from 1
 // digits a=0, b=1, ..., z=25
 
 // Function to convert new code to integer (from 0) for any length of code.
-// NB N=176400 has 516 < 26^2 newforms, with codes from a to vt!
 int codeletter_to_int(string code)  // i counts from 0!
 {
   int n=0;
-  for ( const auto& c : code)
-    n = 26*n + (c-'a');
+  std::for_each(code.begin(), code.end(), [&n] ( const char& c ) { n*=26; n+=(c-'a');});
   return n;
-  // int b = code[0]-'a';
-  // if(code[1]=='\0')  return b;
-  // int a = code[1]-'a';
-  // return 26*b+a;
 }
 
 // Function to convert integer (from 0) to new code
@@ -283,20 +277,15 @@ string new_codeletter(int i)  // i counts from 0!
   if (i==0) return string("a"); // special case -- otherwise leading
                                 // a's are omitted
   stringstream code;
-  int n = i, r;
+  int n = i;
   while (n)
   {
-    r = n%26;
-    code << alphabet[r];
-    n = (n-r)/26;
+    std::div_t x = div(n,26);
+    code << alphabet[x.rem];
+    n = x.quot;
   }
   string res = code.str();
   reverse(res.begin(),res.end());
   return res;
-  /*
-  int j = codeletter_to_int(code.str());
-  if(i==j) return;
-  cout<<i<<" -> "<<code<<" -> "<<j<<endl;
-  */
 }
 
