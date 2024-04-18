@@ -359,14 +359,14 @@ int legendre_solve(const bigint& a, const bigint& b, const bigint& c,
 #ifdef DEBUG_LEGENDRE  
       level=0;
 #endif // DEBUG_LEGENDRE
-      int res = legendre_solve_cert_1(a2,b2,c2,n,p,q,x,y,z,u);
+      int res1 = legendre_solve_cert_1(a2,b2,c2,n,p,q,x,y,z,u);
 #ifdef DEBUG_LEGENDRE
-      cout<<"Result code from level "<<(level+1)<<" = "<<res<<endl;
+      cout<<"Result code from level "<<(level+1)<<" = "<<res1<<endl;
 #endif
-      if(res)
+      if(res1)
 	{
 	  cout<<"Problem: at top level, legendre_solve_cert returns ";
-	  cout<<"nonzero code "<<res<<" and u = "<<u<<endl;
+	  cout<<"nonzero code "<<res1<<" and u = "<<u<<endl;
 	}
 #ifdef HOLZER_MEASURES
       cout<<"Before reduction of solution "; 
@@ -593,7 +593,7 @@ int checkin(const bigint& a,const bigint& b,const bigint& c,
 
 // Check that purported solution is OK
 int check_leg(const bigint& a, const bigint& b, const bigint& c,
-	      bigint& x, bigint& y, bigint& z)
+	      const bigint& x, const bigint& y, const bigint& z)
 {
 #ifdef DEBUG_LEGENDRE  
   cout<<"Checking solution "; show_xyz(x,y,z); 
@@ -621,7 +621,7 @@ int check_leg(const bigint& a, const bigint& b, const bigint& c,
 // Check that purported solution is OK & in correct lattice
 int check_leg(const bigint& a, const bigint& b, const bigint& c,
 	      const bigint& n, const bigint& p, const bigint& q, 
-	      bigint& x, bigint& y, bigint& z)
+	      const bigint& x, const bigint& y, const bigint& z)
 {
   if(check_leg(a,b,c,x,y,z))
     {
@@ -859,7 +859,7 @@ void legendre_param(const bigint& a, const bigint& b, const bigint& c,
     cout<<"Correct parametrization (1):\n"
 	<<qx<<"\n"<<qy<<"\n"<<qz<<"\n";
 #endif // DEBUG_LEGENDRE_PARAM
-  e=bezout(y1,z12,u,v);
+  bezout(y1,z12,u,v);
   e=(u*x0)%z12;
   unimod m;  // the mij are not used here...
 

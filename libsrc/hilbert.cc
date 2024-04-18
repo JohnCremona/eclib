@@ -74,22 +74,16 @@ int global_hilbert(const bigint& a, const bigint& b, const vector<bigint>& plist
 #ifdef DEBUG_HILBERT
   cout<<"In global_hilbert("<<a<<","<<b<<"), plist = "<<plist<<endl;
 #endif
-  badp=0;
-  if(local_hilbert(a,b,0)) return 1;
+  if(local_hilbert(a,b,0))
+    {
+      badp=0;
+      return 1;
+    }
 #ifdef DEBUG_HILBERT
   cout<<"Passed local condition at infinity..."<<endl;
 #endif
-  for (const auto& badp : plist)
-    {
-#ifdef DEBUG_HILBERT
-      cout<<"Testing local condition at "<<badp<<"..."<<endl;
-#endif
-      if(local_hilbert(a,b,badp)) return 1;
-#ifdef DEBUG_HILBERT
-      cout<<"Passed local condition at "<<badp<<"..."<<endl;
-#endif
-    }
-  return 0;
+  return std::any_of(plist.begin(), plist.end(),
+                     [a,b,&badp] (const bigint& p) {badp=p;return local_hilbert(a,b,p);});
 }
 
 int global_hilbert(const bigint& a, const bigint& b, bigint& badp)

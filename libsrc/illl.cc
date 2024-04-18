@@ -61,7 +61,7 @@ void show(const int n, const vector<vec_m>& b, const vector<vector<bigint>>& lam
 }
 
 void redi(const int n, const int k, const int l,
-          vector<vec_m>& b, vector<vector<bigint>>& lambda, vector<bigint>& d)
+          vector<vec_m>& b, vector<vector<bigint>>& lambda, const vector<bigint>& d)
 {
 #ifdef TRACE_LLL
   cout<<"R"<<k;

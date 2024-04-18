@@ -84,8 +84,8 @@ public:
         void read_from_file(string filename);     // binary input
 
      // non-member (friend) functions and operators
-        friend void add_row_to_vec(vec& v, const mat& m, long i);
-        friend void sub_row_to_vec(vec& v, const mat& m, long i);
+        friend void add_row_to_vec(const vec& v, const mat& m, long i);
+        friend void sub_row_to_vec(const vec& v, const mat& m, long i);
         friend mat operator*(const mat&, const mat&);
 	friend vec operator*(const mat&, const vec&);
         friend int operator==(const mat&, const mat&);

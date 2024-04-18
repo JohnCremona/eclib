@@ -238,7 +238,7 @@ int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m, const vector<bigint>
   if(is_one(m))  {x=0; return 1;}
   if(is_zero(a)) {x=0; return 1;}
   if(is_one(a))  {x=1; return 1;}
-  bigint mm, p, xp, q; int e;
+  bigint mm, xp, q; int e;
   x=0;  mm=1;
   
   for( const auto& p : mpdivs)
@@ -268,7 +268,7 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x)
      // Solves x^2=a mod b, returns success/fail
 {
   // Assumes b square-free, primes factors in bplist
-  bigint u, v, p, amodp, xmodp, m;
+  bigint u, v, amodp, xmodp, m;
   x=0; m=1;
   for( const auto& p : bplist)
     {
@@ -351,12 +351,9 @@ void extra_prime_class::read_from_file(const string pfilename, int verb)
 }
 
 
-vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_base);
-vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax=BIGINT(maxprime()));
-
 // n>0 will be changed;  returns prime factors from factor base and divides out from n
 
-vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_base)
+vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint>& factor_base)
 {
   vector<bigint> plist;
   if(n<2) return plist;
@@ -371,7 +368,8 @@ vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_bas
 
 // n>0 will be changed;  returns prime factors p<pmax and divides out from n
 
-vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax)
+vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax=BIGINT(maxprime()))
+//vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax)
 {
   vector<bigint> plist;
   if(n<2) return plist;
@@ -649,7 +647,7 @@ vector<bigint> sqfreedivs(const bigint& number)
 vector<bigint> sqfreedivs(const bigint& number, const vector<bigint>& plist)
 {
  int np = plist.size();
- int e = 1, nu = 1, nd=pow(2,np);
+ int nu = 1, nd=pow(2,np);
  vector<int> elist(np,1);
  vector<bigint> dlist(1,BIGINT(1));
  dlist.resize(nd);
@@ -657,7 +655,7 @@ vector<bigint> sqfreedivs(const bigint& number, const vector<bigint>& plist)
  auto ei=elist.begin();
  for (const auto& p : plist)
    {
-     e=*ei++;
+     int e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
          dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
@@ -1014,7 +1012,7 @@ static int leg(const bigint& a, const bigint& b)
  
 static int leg(const long& a, const long& b) 
 //nb this function is not intended for public use!
-{ long aa = a, bb = b, c;
+{ long aa = a, bb = b;
 //  cout<<"leg("<<a<<","<<b<<") = "<<flush;
   int ans = 1;
   while (bb>1) 
@@ -1023,7 +1021,7 @@ static int leg(const long& a, const long& b)
         while (!(aa&3)) {aa/=4;}
         if    (!(aa&1)) {aa/=2; ans *= chi2(bb);}
         ans*=hilbert2(aa,bb);
-        c=bb; bb=aa; aa=c;
+        long c=bb; bb=aa; aa=c;
   }
 //  cout << ans << endl;
   return ans;

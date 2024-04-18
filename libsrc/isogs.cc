@@ -242,9 +242,8 @@ vector<long> getelllist(const CurveRed& CR)
 }
 
 IsogenyClass::IsogenyClass(const CurveRed& C, int verbose)
+  : verb(verbose), cp(Cperiods(C))
 {
-  verb=verbose;
-  cp = Cperiods(C);
   if(verb)
     {
       cout << endl;
@@ -270,7 +269,7 @@ void IsogenyClass::process(long i)  // process i'th curve
   CurveRed thisc = curves[i];
   if (verb) cout << "Working on curve " << i+1 << ": " << (Curve)thisc << endl;
   Cperiods pers(thisc);
-  long il=0, n;
+  long il=0;
   for (const auto& ell : llist)
     {
       if (verb) cout << "trying l = " << ell << "..." << flush;
@@ -284,7 +283,7 @@ void IsogenyClass::process(long i)  // process i'th curve
 // 	  cout<<"where llist["<<il<<"] = "<<llist[il]<<endl;
 	  lworks[il++] = !lisogcurves.empty();
 	}
-      n=0;
+      long n=0;
       for (const auto& newc : lisogcurves)
 	{
 	  n++;

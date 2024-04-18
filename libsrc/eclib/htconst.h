@@ -66,7 +66,7 @@ class point_min_height_finder : public point_processor {
  public:
   explicit point_min_height_finder(Curvedata* EE, int egr=0, int verb=0);
   ~point_min_height_finder() {};
-  int process(const bigint& x, const bigint& y, const bigint& z);
+  int process(const bigint& x, const bigint& y, const bigint& z) override;
   void search(bigfloat h_lim);
   bigfloat get_min_ht() const {return min_ht;}
   Point get_min_ht_point() const {return Pmin;}

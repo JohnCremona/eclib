@@ -40,37 +40,39 @@
 
 double kbessel(double nu, double gx, int debug)
 {
-  double  x,y,p1,p2,zf,zz,s,t,q,r,u,v,e,f,c,d,ak;
-  double  nu2,w;
-  long    k,k2,n2,n,ex;
-
   if(debug) {
     cout << "\nCalled kbessel("<<nu<<","<<gx<<").\n";
   }
 
-  k=0;x=gx; 
-  nu2=-4*nu*nu;
-  n=(long)(32*LOG2+PI*nu/2);
-  n2=(n<<1);
+  double x=gx, nu2=-4*nu*nu, y;
+  long n=(long)(32*LOG2+PI*nu/2);
+  long n2=(n<<1);
+
   if (x<n)
     {
       if(debug) {
         cout << "In the x<n case.\n";
       }
-      zf=sqrt(PI/n2);
-      zz=1.0/(n2<<2);
-      s=1.0;t=0.0;k2=2*n2+1;
-      for (k=n2;k>0;--k)
+      double
+        zf=sqrt(PI/n2),
+        zz=1.0/(n2<<2),
+        s=1.0,
+        t=0.0;
+      long k2=2*n2+1, ex;
+      for (long k=n2;k>0;--k)
         {
           k2-=2;
-          p1=k2*k2+nu2;
-          ak=-p1*zz/k;  
+          double p1=k2*k2+nu2;
+          double ak=-p1*zz/k;
           s=1+ak*s;
           t=k2+ak*t;
         }
-      u=s*zf;  t/=2.0;
-      v=-(t*zf+u*nu)/n2;
-      q=n2;     r=x+x;
+      t/=2.0;
+      double u=s*zf;
+      double
+        v=-(t*zf+u*nu)/n2,
+        q=n2,
+        r=x+x;
 
       if(debug) {
         cout << "Finished k loop.  lbin = "<<lbin<<endl;
@@ -79,21 +81,27 @@ double kbessel(double nu, double gx, int debug)
 
       do
         {
-          p1=5.0/q;
+          double p1=5.0/q;
           if (expo(p1)>= -1) p1=0.5;
-          p2=1.0-r/q;   if (p1>p2) p1=p2;
-          c=-p1; k=1; d=1; e=u; f=v; 
+          double p2=1.0-r/q;
+          if (p1>p2) p1=p2;
+          double
+            c=-p1,
+            d=1,
+            e=u,
+            f=v;
+          long k=1;
           if(debug) {
             cout << "...outer loop: p1 = "<<p1<<", expo(p1) = "<<expo(p1)<<endl;
           }
           do
             {
-              w=(((k-0.5)*u)+((q-k)*v));
+              double w=(((k-0.5)*u)+((q-k)*v));
               w+=nu*(u-(v+v));
               u=q*v/k;
               v=w/k;
               d*=c;
-              e+=d*u; 
+              e+=d*u;
               f+=(p1=(d*v));
               k++;
               ex=expo(p1)-expo(f);
@@ -117,20 +125,22 @@ double kbessel(double nu, double gx, int debug)
       while(ex>lbin);
       y=u*pow((x/n),nu);
     }
-  else
+  else // x>=n
     {
       if(debug) {
         cout << "In the x>=n case.\n";
       }
-      p2=2*x;
-      zf=sqrt(PI/p2);
-      zz=1.0/(4*p2);
-      s=1.0; k2=2*n2+1;
-      for (k=n2;k>0;--k)
+      double p2=2*x;
+      double
+        zf=sqrt(PI/p2),
+        zz=1.0/(4*p2),
+        s=1.0;
+      long k2=2*n2+1;
+      for (long k=n2;k>0;--k)
         {
           k2-=2;
-          p1=k2*k2+nu2;
-          ak=(p1*zz)/k;
+          double p1=k2*k2+nu2;
+          double ak=(p1*zz)/k;
           s=1.0-(ak*s);
         }
       y=s*zf;

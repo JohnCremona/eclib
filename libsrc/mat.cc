@@ -214,8 +214,8 @@ void mat::swaprows(long r1, long r2)
     {
       scalar *mr1 = entries + (r1-1)*nco;
       scalar *mr2 = entries + (r2-1)*nco;
-      long nc=nco, a;
-      while(nc--) {a = *mr1; *mr1++ = *mr2; *mr2++ = a; }
+      long nc=nco;
+      while(nc--) {long a = *mr1; *mr1++ = *mr2; *mr2++ = a; }
     }
   else
     {
@@ -313,13 +313,13 @@ mat& mat::operator/=(scalar scal)
 // Definitions of non-member, friend operators and functions
 
 // add/sub row i of mat to v (implemented in mat.cc)
-void add_row_to_vec(vec& v, const mat& m, long i)
+void add_row_to_vec(const vec& v, const mat& m, long i)
 {
   scalar* vi=v.entries, *mij=m.entries+(i-1)*m.nco; long j=v.d;
   while(j--)(*vi++)+=(*mij++);
 }
 
-void sub_row_to_vec(vec& v, const mat& m, long i)
+void sub_row_to_vec(const vec& v, const mat& m, long i)
 {
   scalar* vi=v.entries, *mij=m.entries+(i-1)*m.nco; long j=v.d;
   while(j--)(*vi++)-=(*mij++);
@@ -327,17 +327,19 @@ void sub_row_to_vec(vec& v, const mat& m, long i)
 
 mat operator*(const mat& m1, const mat& m2)
 {
- long j,k, m=m1.nro, n=m1.nco, p=m2.nco;
- mat m3(m,p); 
- scalar *a=m1.entries, *b=m2.entries, *c=m3.entries, *bp, *cp;
+ long m=m1.nro, n=m1.nco, p=m2.nco;
+ mat m3(m,p);
+ scalar *a=m1.entries, *b=m2.entries, *c=m3.entries;
  if (n==m2.nro)  // algorithm from Dr Dobb's Journal August 1993
    {
      while(m--)
        {
-	 bp=b; k=n;
+	 scalar *bp=b;
+         long k=n;
 	 while(k--)
 	   {
-	     cp=c; j=p;
+	     scalar *cp=c;
+             long j=p;
 	     while(j--)
 	       {
 		 *cp++ += *a * *bp++;
@@ -368,10 +370,10 @@ void mat::output(ostream& s) const
 {
   scalar* mij=entries;
   s << "\n[";
-  long nc,nr=nro;
+  long nr=nro;
   while(nr--)
     {
-      nc=nco;
+      long nc=nco;
       s<<"[";
       while(nc--) {s<<(*mij++); if(nc) s<<",";}
       s<<"]"; if(nr) s<<",\n";
@@ -383,10 +385,10 @@ void mat::output_pari(ostream& s) const
 {
   scalar* mij=entries;
   s << "\n[";
-  long nc,nr=nro;
+  long nr=nro;
   while(nr--)
     {
-      nc=nco;
+      long nc=nco;
       while(nc--) {s<<(*mij++); if(nc) s<<",";}
       if(nr) s<<";";
     }
@@ -406,12 +408,10 @@ void mat::output_pretty(ostream& s) const
 {
   long i,j; scalar* mij;
   long nc=nco,nr=nro;
-  scalar ma, mi;
   int* colwidths = new int[nc];
   for(j=0; j<nco; j++)
     {
-      ma=mi=0;
-      mij = entries+j;
+      scalar ma=0, mi=0;
       for(i=0, mij=entries+j; i<nro; i++, mij+=nc)
 	{
 	  if (*mij>ma) ma=*mij;
@@ -454,7 +454,7 @@ void mat::read_from_file(string filename)
   fin.read((char*)&nro,sizeof(nro));
   fin.read((char*)&nco,sizeof(nco));
   delete[] entries;
-  entries = new scalar[nro*nco]; 
+  entries = new scalar[nro*nco];
   fin.read((char*)entries,nro*nco*sizeof(scalar));
   fin.close();
 }
@@ -469,14 +469,16 @@ istream& operator>>(istream& s, mat& m)
 
 mat colcat(const mat& a, const mat& b)
 {
- long nc, nr = a.nro, nca = a.nco, ncb = b.nco;
+ long nr = a.nro, nca = a.nco, ncb = b.nco;
  mat ans(nr,nca+ncb);
  scalar *ansij=ans.entries, *aij=a.entries, *bij=b.entries;
  if (nr==b.nro)
    while(nr--)
      {
-       nc=nca; while(nc--) *ansij++ = *aij++;
-       nc=ncb; while(nc--) *ansij++ = *bij++;
+       long nc=nca;
+       while(nc--) *ansij++ = *aij++;
+       nc=ncb;
+       while(nc--) *ansij++ = *bij++;
      }
  else
    {
@@ -487,13 +489,15 @@ mat colcat(const mat& a, const mat& b)
 
 mat rowcat(const mat& a, const mat& b)
 {
- long n, nra = a.nro, nc = a.nco, nrb = b.nro;
+ long nra = a.nro, nc = a.nco, nrb = b.nro;
  mat ans(nra+nrb,nc);
  scalar *ansij=ans.entries, *aij=a.entries, *bij=b.entries;
  if (nc==b.nco)
  {
-   n = nra*nc; while(n--) *ansij++ = *aij++;
-   n = nrb*nc; while(n--) *ansij++ = *bij++;
+   long n = nra*nc;
+   while(n--) *ansij++ = *aij++;
+   n = nrb*nc;
+   while(n--) *ansij++ = *bij++;
  }
  else
    {
@@ -524,15 +528,15 @@ mat directsum(const mat& a, const mat& b)
 
 void elimrows(mat& m, long r1, long r2, long pos)   //plain elimination, no clearing
 {
- long nc=m.nco;
- scalar *mr1 = m.entries + (r1-1)*nc,
-      *mr2 = m.entries + (r2-1)*nc;
- scalar p = mr1[pos-1], q=mr2[pos-1];
- while(nc--)
-   {
-     (*mr2)= (p*(*mr2))-(q*(*mr1));
-     mr1++; mr2++;
-   }
+  long nc=m.nco;
+  scalar *mr1 = m.entries + (r1-1)*nc,
+    *mr2 = m.entries + (r2-1)*nc;
+  scalar p = mr1[pos-1], q=mr2[pos-1];
+  while(nc--)
+    {
+      (*mr2)= (p*(*mr2))-(q*(*mr1));
+      mr1++; mr2++;
+    }
 }
 
 void elimrows1(mat& m, long r1, long r2, long pos)      //elimination + clearing
@@ -581,24 +585,26 @@ mat operator/(const mat& m, scalar scal)
 
 int operator!=(const mat& m1, const mat& m2)
 {
-        return !(m1==m2);
+  return !(m1==m2);
 }
 
 vec operator*(const mat& m, const vec& v)
 {
- long r=m.nro, c=m.nco; scalar *mp,*vp,*wp;
+ long r=m.nro, c=m.nco;
  vec w(r);
  if (c==v.d)
    {
-     mp=m.entries; wp=w.entries;
+     scalar *mp=m.entries, *wp=w.entries;
      while(r--)
        {
-	 vp=v.entries; c=m.nco;
-	 while(c--) *wp += (*mp++)*(*vp++);
+	 scalar *vp=v.entries;
+         c=m.nco;
+	 while(c--)
+           *wp += (*mp++)*(*vp++);
 	 wp++;
        }
    }
- else 
+ else
    {
      cerr << "Incompatible sizes in *(mat,vec)"<<endl;
    }
@@ -899,14 +905,13 @@ x cout<<": pivot = "<<mi1[pcols[r]]<<endl;
 
 long mat::rank() const
 {
- long rk,nr,nc,r,c,r2,r3,rmin;
- long min, mr2c,lastpivot;
- rk=0; r=1; lastpivot=1;
+ long rk=0, nr,nc,r=1,c,r2,r3;
+ long mr2c,lastpivot=1;
  mat m(*this);
  nc=m.ncols(); nr=m.nrows();
  for (c=1; (c<=nc)&&(r<=nr); c++)
- { min = abs(m(r,c));
-   rmin = r;
+ { long min = abs(m(r,c));
+   long rmin = r;
    for (r2=r+1; (r2<=nr)&&(min!=1); r2++)
    { mr2c = abs(m(r2,c));
      if ((0<mr2c) && ((mr2c<min) || (min==0))) { min=mr2c; rmin=r2 ;}
@@ -1006,9 +1011,8 @@ LONGLONG abs(LONGLONG a)
 */
 
 LONGLONG lgcd(LONGLONG aa, LONGLONG bb)
-{LONGLONG a,b,c;
- a=aa; b=bb;
- while (b!=0) {c=a%b; a=b; b=c;}
+{LONGLONG a=aa,b=bb;
+ while (b!=0) {LONGLONG c=a%b; a=b; b=c;}
  return ((a<0) ? -a : a);
 }
 
@@ -1045,10 +1049,8 @@ void lclear(LONGLONG* row, long nc)
 mat echelonl(const mat& entries, vec& pc, vec& npc,
                 long& rk, long& ny, scalar& d)
 {
-  long nr, nc, r,c,r2,r3,rmin,i;
-  long min, mr2c,lastpivot;
-  rk=0; ny=0; r=0; lastpivot=1;
-  nc=entries.nco; nr=entries.nro;
+  rk=0; ny=0;
+  long nr=entries.nro, nc=entries.nco, r=0, c,r2,r3,i, mr2c,lastpivot=1;
   LONGLONG *m, *mi1, *mi2, *mij; LONGLONG temp;
   m = new LONGLONG[nr*nc];
   long n=nr*nc; mij=m; mi1=entries.entries;
@@ -1059,7 +1061,8 @@ mat echelonl(const mat& entries, vec& pc, vec& npc,
   for (c=0; (c<nc)&&(r<nr); c++)
     {
       mij=m+r*nc+c;  // points to column c in row r
-      min = abs(*mij);  rmin = r;
+      long min = abs(*mij);
+      long rmin = r;
       for (r2=r+1, mij+=nc; (r2<nr)&&(min!=1); r2++, mij+=nc)
        { mr2c = abs(*mij);
          if ((0<mr2c) && ((mr2c<min) || (min==0))) { min=mr2c; rmin=r2 ;}
@@ -1301,25 +1304,21 @@ mat echelonp(const mat& entries, vec& pcols, vec& npcols,
      cout << "rk = " << rk << "\n";
      cout << "ny = " << ny << "\n";
 #endif /* TRACE */
- long i,j;
- for (i=1; i<=rk; i++) 
- {  
-    for (j=1; j<=rk; j++) 
+ for (long i=1; i<=rk; i++)
+ {
+   for (long j=1; j<=rk; j++)
      {
-//    nmat.set(i,pcols[j],(i==j));
-      nmat(i,pcols[j])=(i==j);
-//    dmat.set(i,pcols[j],1);
-      dmat(i,pcols[j])=1;
+       nmat(i,pcols[j])=(i==j);
+       dmat(i,pcols[j])=1;
      }
-    for (j=1; j<=ny; j++)
-    {scalar n,d;
-     long jj = npcols[j];
-     modrat(m(i,jj),modulus,lim,n,d);
-//   nmat.set(i,jj,n);
-     nmat(i,jj)=n;
-//   dmat.set(i,jj,d);
-     dmat(i,jj)=d;
-     dd=(dd*d)/gcd(dd,d);
+   for (long j=1; j<=ny; j++)
+    {
+      scalar n1,d1;
+      long jj = npcols[j];
+      modrat(m(i,jj),modulus,lim,n1,d1);
+      nmat(i,jj)=n1;
+      dmat(i,jj)=d1;
+      dd=(dd*d1)/gcd(dd,d1);
     }
  }
  dd=abs(dd);
@@ -1328,24 +1327,20 @@ mat echelonp(const mat& entries, vec& pcols, vec& npcols,
       cout << "Denominator mat = " << dmat;
       cout << "Common denominator = " << dd << "\n";
 #endif /* TRACE */
- for (i=1; i<=rk; i++)
- {
-  for (j=1; j<=nc; j++) m(i,j)=(dd*nmat(i,j))/dmat(i,j);
- }
+      for (long i=1; i<=rk; i++)
+        for (long j=1; j<=nc; j++)
+          m(i,j)=(dd*nmat(i,j))/dmat(i,j);
  d=dd;
- return m; 
+ return m;
 }
 
 
 // The following function computes the echelon form of m modulo the prime pr.
 
-mat echmodp(const mat& entries, vec& pcols, vec& npcols,
-                                  long& rk, long& ny, scalar pr)
+mat echmodp(const mat& entries, vec& pcols, vec& npcols, long& rk, long& ny, scalar pr)
 {
 // cout << "In echmodp with entries = " << entries;
- long nc,nr,r,c,r2,r3,rmin;
- scalar min, mr2c;
- nr=entries.nro, nc=entries.nco;
+ long r,c,r2,r3, nr=entries.nro, nc=entries.nco;
  mat m(nr,nc);
  scalar *mij=m.entries, *entriesij=entries.entries;
  long n=nr*nc;
@@ -1356,30 +1351,39 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols,
  for (c=1; (c<=nc)&&(r<=nr); c++)
    {
      mij=m.entries+(r-1)*nc+c-1;
-     min = *mij;   rmin = r;
+     scalar min = *mij;
+     long rmin = r;
      for (r2=r+1, mij+=nc; (r2<=nr)&&(min==0); r2++, mij+=nc)
-       { 
-	 mr2c = *mij;
+       {
+	 scalar mr2c = *mij;
 	 if (0!=mr2c) { min=mr2c; rmin=r2 ;}
        }
      if (min==0) npcols[++ny] = c;
-     else       
+     else
        {
 	 pcols[++rk] = c;
 	 if (rmin>r) m.swaprows(r,rmin);
 	 entriesij = m.entries+(r-1)*nc;
-         scalar fac;
          if (min!=1)
            {
              if(min==-1)
                {
-                 n=nc; while(n--) {*entriesij = - (*entriesij); entriesij++;}
+                 n=nc;
+                 while(n--)
+                   {
+                     *entriesij = - (*entriesij);
+                     entriesij++;
+                   }
                }
              else
                {
-                 //                 cout<<"pivot = "<<min<<endl;
-                 fac = xmod(invmod(min,pr),pr);
-                 n=nc; while(n--) {*entriesij = xmodmul(fac , *entriesij, pr); entriesij++;}
+                 scalar fac = xmod(invmod(min,pr),pr);
+                 n=nc;
+                 while(n--)
+                   {
+                     *entriesij = xmodmul(fac , *entriesij, pr);
+                     entriesij++;
+                   }
                }
            }
 	 for (r3 = r+1 ; r3<=nr; r3++) elimp1(m,r,r3,c,pr);
@@ -1714,7 +1718,7 @@ mat echmodp_uptri(const mat& entries, vec& pcols, vec& npcols,
                                   long& rk, long& ny, scalar pr)
 {
 // cout << "In echmodp_uptri with matrix = " << entries; 
-long nc,nr,r,c,r2,r3,rmin;
+long nc,nr,r,c,r2,r3;
  scalar min, mr2c;
  nr=entries.nro, nc=entries.nco;
  mat m(nr,nc);
@@ -1727,7 +1731,8 @@ long nc,nr,r,c,r2,r3,rmin;
  for (c=1; (c<=nc)&&(r<=nr); c++)
    {
      mij=m.entries+(r-1)*nc+c-1;
-     min = *mij;   rmin = r;
+     min = *mij;
+     long rmin = r;
      for (r2=r+1, mij+=nc; (r2<=nr)&&(min==0); r2++, mij+=nc)
        {
 	 mr2c = *mij;
@@ -1766,17 +1771,19 @@ long nc,nr,r,c,r2,r3,rmin;
 
 mat matmulmodp(const mat& m1, const mat& m2, scalar pr)
 {
- long j,k, m=m1.nro, n=m1.nco, p=m2.nco;
- mat m3(m,p); 
- scalar *a=m1.entries, *b=m2.entries, *c=m3.entries, *bp, *cp;
+ long m=m1.nro, n=m1.nco, p=m2.nco;
+ mat m3(m,p);
+ scalar *a=m1.entries, *b=m2.entries, *c=m3.entries;
  if (n==m2.nro)  // algorithm from Dr Dobb's Journal August 1993
    {
      while(m--)
        {
-	 bp=b; k=n;
+	 scalar *bp=b;
+         long k=n;
 	 while(k--)
 	   {
-	     cp=c; j=p;
+	     scalar *cp=c;
+             long j=p;
 	     while(j--)
 	       {
 		 *cp += xmodmul(*a , *bp++, pr);
@@ -1788,7 +1795,7 @@ mat matmulmodp(const mat& m1, const mat& m2, scalar pr)
 	 c += p;
        }
    }
- else 
+ else
    {
      cerr << "Incompatible sizes in mat product"<<endl;
    }
@@ -1798,7 +1805,7 @@ mat matmulmodp(const mat& m1, const mat& m2, scalar pr)
 int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace)
 {
   scalar modulus=pr,n,d; long nr,nc,nrc; dd=1;
-  int succ,success=1;
+  int success=1;
   float lim=floor(sqrt(pr/2.0));
   m = mm; scalar *mp;
   if(trace)
@@ -1810,12 +1817,12 @@ int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace)
     }
   nr = m.nro; nc = m.nco;  nrc = nr*nc; mp=m.entries;
   while(nrc--)
-    {  
-      succ = modrat(*mp++,modulus,lim,n,d);
+    {
+      int succ = modrat(*mp++,modulus,lim,n,d);
       success = success && succ;
       dd=lcm(d,dd);
     }
-  if(!success) 
+  if(!success)
     {
       //cout << "Problems encountered with modrat lifting of mat." << endl;
       return 0;
@@ -1825,7 +1832,7 @@ int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace)
   nrc=nr*nc; mp=m.entries;
   while(nrc--)
       {
-	*mp=mod(xmodmul(dd,(*mp),pr),pr); 
+	*mp=mod(xmodmul(dd,(*mp),pr),pr);
 	mp++;
       }
   return 1;

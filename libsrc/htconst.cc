@@ -169,10 +169,12 @@ bigfloat old_calc_dv_inf(const bigfloat& b2, const bigfloat& b4, const bigfloat&
 double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, const bigfloat& b8)
 {
   bigfloat zero=to_bigfloat(0);
-  bigfloat htc=zero, dv=zero, dvd=zero;
+  bigfloat htc, dv, dvd;
 #ifdef MPFP
   long original_prec, prec;
   prec = original_prec = bit_precision();
+  dv = zero;
+  dvd = zero;
   while (dv==0 || dvd==0)
     {
       dv=calc_dv_inf(b2,b4,b6,b8);
@@ -204,7 +206,7 @@ double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, cons
     {
       cout << "In cps_real(), using C doubles we have dv="<<dv<<", dvd="<<dvd << endl;
       cout << "Unable to compute height constant." << endl;
-      return htc;
+      return zero;
     }
 #endif
 
@@ -214,30 +216,32 @@ double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, cons
 #endif
   if(dv==-1)
     {
-      if(dvd==-1) htc = to_bigfloat(0);
-      else 
+      if(dvd==-1)
+        htc = zero;
+      else
 	{
 	  if(dvd>0) htc = -log(dvd)/3;
 	  else
 	    {
 	      cerr<<"Precision problem in cps_real(): dvd = "<<dvd<<" but should be >0"<<endl;
 	      cerr<<"Height constant will not be correct"<<endl;
-	      htc=0;
+	      htc=zero;
 	    }
 	}
     }
   else
-    if(dvd==-1) 
+    if(dvd==-1)
       {
-	if(dv>0) htc = -log(dv)/3;
+	if(dv>0)
+          htc = -log(dv)/3;
 	else
 	  {
 	    cerr<<"Precision problem in cps_real(): dv = "<<dv<<" but should be >0"<<endl;
 	    cerr<<"Height constant will not be correct"<<endl;
-	    htc=0;
+	    htc=zero;
 	  }
       }
-    else 
+    else
       {
 	bigfloat mindv=min(dv,dvd);
 	if(mindv>0) htc = -log(mindv)/3;
@@ -245,10 +249,10 @@ double cps_real(const bigfloat& b2, const bigfloat& b4, const bigfloat& b6, cons
 	  {
 	    cerr<<"Precision problem in cps_real(): min(dv,dvd) = "<<mindv<<" but should be >0"<<endl;
 	    cerr<<"Height constant will not be correct"<<endl;
-	    htc=0;
+	    htc=zero;
 	  }
       }
-  
+
 #ifdef DEBUG_CPS
   cout<<"cps_real() returns -log(min(dv,dvd))/3 = "<<htc<<endl;
 #endif
@@ -669,9 +673,8 @@ bigfloat lattice_const(int r)
 }
 
 point_min_height_finder::point_min_height_finder(Curvedata* EE, int egr, int verb)
-  :E(EE), egr_flag(egr), verbose(verb) 
+  :E(EE), egr_flag(egr), verbose(verb),  min_ht(to_bigfloat(0))
 {
-  min_ht=to_bigfloat(0);
   Pmin=Point(E);
   E -> getai(a1,a2,a3,a4,a6);
   if(egr_flag) CG=ComponentGroups(*E);

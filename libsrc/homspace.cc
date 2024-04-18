@@ -217,29 +217,12 @@ if (verbose>1)
 #endif
     }
      }
-   if (verbose) 
+   if (verbose)
      {
        cout << "Finished 3-term relations: numrel = "<<numrel<<" ( maxnumrel = "<<maxnumrel<<")"<<endl;
-       // Compare with predicted value (for full H_1 only):
-       /*
-       if(!plusflag)
-	 {
-	   int nu3=(::divides((long)9,modulus)?0:1);
-	   static int nu3table[3] = {1,2,0};
-	   for(i=0; nu3&&(i<npdivs); i++)  nu3 *= nu3table[plist[i]%3];
-	   int ntriangles=(nsymb+2*nu3)/3;
-	   cout<<"predicted value of ntriangles = "<<ntriangles;
-	   if(ntriangles!=numrel) cout<<" --WRONG!";
-	   cout<<endl;
-	 }
-       */
-     }
-
 
 // end of 3-term relations
 
-   if(verbose) 
-     {
 #ifdef USE_SMATS
        cout << "relmat has "<< get_population(relmat)<<" nonzero entries (density = "<<density(relmat)<<")"<<endl;
 #endif
@@ -248,6 +231,7 @@ if (verbose>1)
          cout << "relmat = " << relmat.as_mat().slice(numrel,ngens) << endl;
        cout << "Computing kernel..."<<endl;
      }
+
    vec pivs, npivs;
 #ifdef USE_SMATS
    smat_elim sme(relmat);
@@ -309,17 +293,15 @@ if (verbose>1)
    }
 
    // Compute the number of cusps
-   long maxncusps =0, nc;
-   for( const auto& d : dlist)
-     {
-       nc = ::gcd(d,modulus/d);
-       for( const auto& p : plist) // computing phi(d)
-         {
-           if ((nc%p)==0)
-             nc = nc*(p-1)/p;
-         }
-       maxncusps += nc;
-     }
+   long maxncusps = 0;
+   std::for_each(dlist.begin(), dlist.end(),
+                 [&maxncusps, this] (const long& d)
+                 {
+                   long dd = ::gcd(d,modulus/d); // compute phi(dd):
+                   std::for_each(plist.begin(), plist.end(),
+                                 [&dd] (const long& p) {if ((dd%p)==0) dd=dd*(p-1)/p;});
+                   maxncusps += dd;
+                 });
    if (verbose) cout << "Number of cusps is "<<maxncusps<<endl;
 
    cusplist cusps(maxncusps, this);
@@ -332,19 +314,18 @@ if (verbose>1)
 	   rational c = (j==1 ? m.beta() : m.alpha());
            if (plusflag==-1)
 	     k = cusps.index_1(c);   //adds automatically if new, ignores if [c]=[-c]
-           else 
+           else
              k = cusps.index(c);   //adds automatically if new
 	 }
      }
    ncusps=cusps.count();
 
-   if(verbose) 
+   if(verbose)
      {
        cout << "ncusps = " << ncusps << endl;
        if(verbose>1) {cusps.display(); cout<<endl;}
+       cout << "About to compute matrix of delta"<<endl;
      }
-
-   if (verbose) cout << "About to compute matrix of delta"<<endl;
    mat deltamat=mat(ncusps,rk);  // should make this sparse
 
    for (i=0; i<rk; i++)
@@ -355,7 +336,7 @@ if (verbose>1)
 	   rational c = (j==1 ? m.beta() : m.alpha());
            if (plusflag==-1)
              k = cusps.index_1(c);
-           else 
+           else
              k = cusps.index(c);
            if (k>0)
              deltamat(k,i+1) += j;
@@ -383,9 +364,7 @@ if (verbose>1)
    tkernbas = transpose(kern.bas());         // dim(kern) x rank
    deltamat.init(0); // clear space.
    if(verbose>1)
-     {
-       cout<<"tkernbas = "<<tkernbas.as_mat()<<endl;
-     }
+      cout<<"tkernbas = "<<tkernbas.as_mat()<<endl;
 
    if (verbose) cout << "done "<<endl;
 
@@ -429,10 +408,9 @@ vec homspace::extend_coords(const vec& v)
 {
   //  cout<<"Extending vector "<<v<<endl;
   vec ans(nsymb);
-  int i,j;
-  for(i=1; i<=nsymb; i++)
+  for(int i=1; i<=nsymb; i++)
     {
-      j = coordindex[i-1];
+      int j = coordindex[i-1];
       if (j==0) ans[i] = 0;
       else if (j>0) ans[i] =  v*coord_vecs[j];
       else if (j<0) ans[i] = -v*coord_vecs[-j];
@@ -551,11 +529,11 @@ void homspace::add_coords(svec& vv, const modsym& m) const
   // now m = M{0,infinity} = U.{nu/de,infinity} where U=[a,-v;c,u], so
   // we find the CF expansion of nu/de.
   //
-  long C=c, D=u, r=nu, s=de, q, t, e;
+  long C=c, D=u, r=nu, s=de;
   while (s)
     {
-      t=s; s=mod(r,s); q=(r-s)/t;  r=-t;
-      e=D; D=-C; C= q*C+e;
+      long t=s; s=mod(r,s); long q=(r-s)/t;  r=-t;
+      long e=D; D=-C; C= q*C+e;
       add_coords_cd(vv, -D, C);
    }
 }
@@ -578,11 +556,11 @@ long homspace::nfproj_coords(long nn, long dd, const vec& bas) const
 void homspace::add_coords(svec& v, long nn, long dd) const
 {
    add_coords_cd(v,0,1);
-   long c=0, d=1, e, a=nn, b=dd, q, f;
+   long c=0, d=1, a=nn, b=dd;
    while (b)
      {
-       f=b; b=mod(a,b); q=(a-b)/f; a= -f;
-       e=d; d=-c; c=q*c+e;
+       long f=b; b=mod(a,b); long q=(a-b)/f; a= -f;
+       long e=d; d=-c; c=q*c+e;
        add_coords_cd(v,c,d);
      }
 }
@@ -590,11 +568,11 @@ void homspace::add_coords(svec& v, long nn, long dd) const
 void homspace::add_proj_coords(vec& v, long nn, long dd, const mat& m) const
 {
    add_proj_coords_cd(v,0,1,m);
-   long c=0, d=1, e, a=nn, b=dd, q, f;
+   long c=0, d=1, a=nn, b=dd;
    while (b)
    {
-     f=b; b=mod(a,b); q=(a-b)/f; a= -f;
-     e=d; d=-c; c=q*c+e;
+     long f=b; b=mod(a,b); long q=(a-b)/f; a= -f;
+     long e=d; d=-c; c=q*c+e;
      add_proj_coords_cd(v,c,d,m);
    }
 }
@@ -602,11 +580,11 @@ void homspace::add_proj_coords(vec& v, long nn, long dd, const mat& m) const
 void homspace::add_nfproj_coords(long& aa, long nn, long dd, const vec& bas) const
 {
    add_nfproj_coords_cd(aa,0,1,bas);
-   long c=0, d=1, e, a=nn, b=dd, q, f;
+   long c=0, d=1, a=nn, b=dd;
    while (b)
    {
-     f=b; b=mod(a,b); q=(a-b)/f; a= -f;
-     e=d; d=-c; c=q*c+e;
+     long f=b; b=mod(a,b); long q=(a-b)/f; a= -f;
+     long e=d; d=-c; c=q*c+e;
      add_nfproj_coords_cd(aa,c,d,bas);
    }
 }
@@ -1210,25 +1188,24 @@ vector<long> homspace::eigrange(long i)
 
 vec homspace::maninvector(long p) const
 {
-  long i,p2;
   svec tvec = coords(0,p);             // =0, but sets the right length.
-  if (plusflag!=-1) 
+  if (plusflag!=-1)
     {
-      if (p==2) 
-	add_coords(tvec,1,2); 
+      if (p==2)
+	add_coords(tvec,1,2);
       else
-	{ 
-	  p2=(p-1)>>1;
-	  for (i=1; i<=p2; i++) { add_coords(tvec,i,p); }
-	  if(plusflag)   
+	{
+	  long p2=(p-1)>>1;
+	  for (int i=1; i<=p2; i++) { add_coords(tvec,i,p); }
+	  if(plusflag)
 	    tvec *=2;
 	  else
-	    for (i=1; i<=p2; i++) { add_coords(tvec,-i,p); }
+	    for (int i=1; i<=p2; i++) { add_coords(tvec,-i,p); }
 	}
     }
-  if(cuspidal) 
-    return cuspidalpart(tvec.as_vec()); 
-  else 
+  if(cuspidal)
+    return cuspidalpart(tvec.as_vec());
+  else
     return tvec.as_vec();
 }
 

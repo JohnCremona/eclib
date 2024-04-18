@@ -73,8 +73,8 @@ public:
         friend int operator!=(const vec&, const vec&);
         friend int trivial(const vec&);                  // v==zerovec?
   // add/sub row i of mat to v (implemented in mat.cc)
-        friend void add_row_to_vec(vec& v, const mat& m, long i);
-        friend void sub_row_to_vec(vec& v, const mat& m, long i);
+        friend void add_row_to_vec(const vec& v, const mat& m, long i);
+        friend void sub_row_to_vec(const vec& v, const mat& m, long i);
         friend ostream& operator<< (ostream&s, const vec&);
         friend istream& operator>> (istream&s, vec&);
         friend vec iota(scalar n);                      // (1,2,...,n)
