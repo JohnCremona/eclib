@@ -1719,7 +1719,6 @@ mat echmodp_uptri(const mat& entries, vec& pcols, vec& npcols,
 {
 // cout << "In echmodp_uptri with matrix = " << entries; 
 long nc,nr,r,c,r2,r3;
- scalar min, mr2c;
  nr=entries.nro, nc=entries.nco;
  mat m(nr,nc);
  scalar *mij=m.entries, *entriesij=entries.entries;
@@ -1731,11 +1730,11 @@ long nc,nr,r,c,r2,r3;
  for (c=1; (c<=nc)&&(r<=nr); c++)
    {
      mij=m.entries+(r-1)*nc+c-1;
-     min = *mij;
+     scalar min = *mij;
      long rmin = r;
      for (r2=r+1, mij+=nc; (r2<=nr)&&(min==0); r2++, mij+=nc)
        {
-	 mr2c = *mij;
+	 scalar mr2c = *mij;
 	 if (0!=mr2c) { min=mr2c; rmin=r2 ;}
        }
      if (min==0) npcols[++ny] = c;
@@ -1744,18 +1743,26 @@ long nc,nr,r,c,r2,r3;
 	 pcols[++rk] = c;
 	 if (rmin>r) m.swaprows(r,rmin);
 	 entriesij = m.entries+(r-1)*nc;
-         scalar fac;
          if (min!=1)
            {
              if(min==-1)
                {
-                 n=nc; while(n--) {*entriesij = - (*entriesij); entriesij++;}
+                 n=nc;
+                 while(n--)
+                   {
+                     *entriesij = - (*entriesij);
+                     entriesij++;
+                   }
                }
              else
                {
-                 //                 cout<<"pivot = "<<min<<endl;
-                 fac = xmod(invmod(min,pr),pr);
-                 n=nc; while(n--) {*entriesij = xmodmul(fac , *entriesij, pr); entriesij++;}
+                 scalar fac = xmod(invmod(min,pr),pr);
+                 n=nc;
+                 while(n--)
+                   {
+                     *entriesij = xmodmul(fac , *entriesij, pr);
+                     entriesij++;
+                   }
                }
            }
 	 for (r3 = r+1 ; r3<=nr; r3++) elimp1(m,r,r3,c,pr);

@@ -53,11 +53,11 @@ int new_equiv( quartic& q1, quartic& q2, int info)
 
   q1.make_zpol();
   q2.make_zpol();
-  bigint& p1=q1.p;      bigint& p2=q2.p;
-  bigint& r1=q1.r;      bigint& r2=q2.r;
-  bigint& p1sq=q1.psq;  bigint& p2sq=q2.psq;
-  bigint& a1=q1.a;      bigint& a2=q2.a;
-  bigint& a1sq=q1.asq;  bigint& a2sq=q2.asq;
+  const bigint& p1=q1.p;      const bigint& p2=q2.p;
+  const bigint& r1=q1.r;      const bigint& r2=q2.r;
+  const bigint& p1sq=q1.psq;  const bigint& p2sq=q2.psq;
+  const bigint& a1=q1.a;      const bigint& a2=q2.a;
+  const bigint& a1sq=q1.asq;  const bigint& a2sq=q2.asq;
   const bigint& a1a2=a1*a2;
   const bigint& p1p2=p1*p2;
   const bigint& p = (32*a1a2*ii + p1p2)/3;

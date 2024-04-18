@@ -307,30 +307,31 @@ void minim_all(bigint& ga, bigint& gb, bigint& gc, bigint& gd, bigint& ge,
       long smallp=1;            // these save testing a (possibly big) p 
       if (p==2) smallp=2;       // all the time
       else if (p==3) smallp=3;
-	  
+
       long vpi=1000; if(!is_zero(I)) vpi=val(p,I);
       long vpj=1000; if(!is_zero(J)) vpj=val(p,J);
       long vpd=0;
-      int nonmin, success;
       if(smallp==3) vpd = val(p,4*I*sqr(I)-sqr(J));
-      nonmin = is_nonmin(smallp,vpi,vpj,vpd, assume_locsol);
-      if(!nonmin) 
+      int nonmin = is_nonmin(smallp,vpi,vpj,vpd, assume_locsol);
+      if(!nonmin)
 	{
 	  if(verb) cout<<"p="<<p<<": minimal already\n";
 	  continue;
 	}
-      if(verb) 
+      if(verb)
 	{
 	  cout<<"p="<<p<<": ";
 	  if(smallp==2) cout<<"(possibly) ";
 	  cout<<"non-minimal (vp(I)="<<vpi<<", vp(J)="<<vpj<<")";
+
+          // Now nonminimal so do something
+
+          cout<<" minimalizing at "<<p<<"....\n";
 	}
 
-      // Now nonminimal so do something
-      if(verb) cout<<" minimalizing at "<<p<<"....\n";
       while(nonmin)
 	{
-	  success=minim_p(ga,gb,gc,gd,ge,p,m);
+	  int success=minim_p(ga,gb,gc,gd,ge,p,m);
 	  if(success) // can only fail for p=2
 	    {
 	      vpi-=4; vpj-=6; 

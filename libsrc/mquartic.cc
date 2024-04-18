@@ -37,18 +37,17 @@ quartic::quartic(const bigint& qa, const bigint& qb, const bigint& qc,
 		 const bigint& qd, const bigint& qe, 
 		 const vector<bigcomplex>& qr,	 int qt,
 		 const bigint& qi,const bigint& qj,const bigint& qdisc)
-:a(qa),b(qb),c(qc),d(qd),e(qe),type(qt),ii(qi),jj(qj),disc(qdisc)
-{ 
-  have_zpol=0; equiv_code=0;
-  roots=qr;
+:a(qa),b(qb),c(qc),d(qd),e(qe),
+ roots(qr), type(qt),ii(qi),jj(qj),disc(qdisc),
+ have_zpol(0), equiv_code(0)
+{
   //cout<<"Quartic constructor #2: " << this << ", roots="<<roots<< endl;
 }
 
 quartic::quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
 		 const bigint& qd, const bigint& qe)
-:a(qa),b(qb),c(qc),d(qd),e(qe)
+  :a(qa),b(qb),c(qc),d(qd),e(qe), have_zpol(0), equiv_code(0)
 {
-  have_zpol=0; equiv_code=0;
   roots.resize(4);
   set_roots_and_type();
 }
@@ -192,14 +191,14 @@ void quartic::set_roots_and_type()
 #ifdef DEBUG_ROOTS
   cout << "finished setting roots of quartic.\n";
   dump(cout);
-#endif  
+#endif
 }
 
 quartic::quartic(const quartic& q)
-:a(q.a),b(q.b),c(q.c),d(q.d),e(q.e),type(q.type),ii(q.ii),jj(q.jj),disc(q.disc)
-{ 
-  have_zpol=0; equiv_code=q.equiv_code;
-  roots = q.roots;
+:a(q.a),b(q.b),c(q.c),d(q.d),e(q.e),
+ roots(q.roots),type(q.type),ii(q.ii),jj(q.jj),disc(q.disc),
+ have_zpol(0), equiv_code(q.equiv_code)
+{
   //cout<<"Quartic constructor #3: " << this << endl;
 }
 

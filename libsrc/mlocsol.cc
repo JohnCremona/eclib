@@ -194,41 +194,21 @@ int locallysoluble(const bigint& a, const bigint& c, const bigint& e,
   return locallysoluble(a,zero,c,zero,e,plist,badp);
 }
 
-int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
+int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
 		   const bigint& e, const vector<bigint>& plist, bigint& badp)
 {
-  //  cout<<"("<<a<<","<<b<<","<<c<<","<<d<<","<<e<<")\n";
-
   // First check R-solubility
   if (!Rsoluble(a,b,c,d,e))
     {
       badp = BIGINT(0);
       return 0;
     }
-  int sol = 1;
-
   if(is_zero(b)&&is_zero(d)) // do a quick Hilbert check:
-    {
-      bigint D = c*c-4*a*e;
-      if(global_hilbert(a,D,plist,badp)) return 0;
-    }
-  for ( const auto& badp : plist)
-   {
-     sol = new_qpsoluble(a,b,c,d,e,badp,0);
-#ifdef CHECK_LOC_SOL
-     cout<<"Checking solubility with old method (p="<<p<<")...\t";
-     if(sol != qpsoluble(a,b,c,d,e,badp))
-       {
-	 cout<<"\nProblem with local solubility of ("<<a<<","<<b<<","<<c<<","<<d<<","
-	     <<e<<") mod "<<badp<<"!\n";
-	 cout<<"New method returns "<<sol<<", old method disagrees!\n";
-	 sol=!sol;
-       }
-     else cout << "...OK.\n";
-#endif
-     if (!sol) break;
-   }
-   return sol;
+    if(global_hilbert(a,c*c-4*a*e,plist,badp))
+      return 0;
+
+  return std::all_of(plist.begin(), plist.end(),
+                     [&badp, a,b,c,d,e] (const bigint& p) {badp=p; return new_qpsoluble(a,b,c,d,e,p,0);});
 }  /* end of locallysoluble */
 
 /* Samir Siksek's Local Solubility Test for odd p */
@@ -257,9 +237,11 @@ int new_qpsoluble_ace(const bigint& a, const bigint& c, const bigint& e,
 int new_qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
 			const bigint& e, const bigint& p, int verbose)
 {
-  int verb=verbose;
+  int verb;
 #ifdef DEBUG_NEW_LOCSOL
   verb=1;
+#else
+  verb=verbose;
 #endif
   if(p<CROSS_OVER_P) 
     {
@@ -313,7 +295,7 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
     }
 
   bigint r[2],t;
-  long e,fl,i;
+  long fl,i;
   bigint p2=sqr(p);
   Term term;
   Poly F;
@@ -338,7 +320,7 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
       for (i=0; i<fact_f.length(); i++)
         { term=fact_f[i];
 	  F=term.a;
-	  e=term.b;
+	  long e=term.b;
           if ((deg(F)==1) && (e==1))
 	    { if (verbose)
 	      cout << "Non-Repeated Root " << -ConstTerm(F)
@@ -355,17 +337,17 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
       for (i=0; i<fact_f.length() && (!fl); i++)
         { term=fact_f[i];
           F=term.a;
-          e=term.b;
+          long e=term.b;
           if ((deg(F)==1) && (e!=1))
-            { bigint r=-rep(ConstTerm(F));
+            { bigint rt=-rep(ConstTerm(F));
               if (verbose)
-		cout << "Repeated Root=" << r << ", recursing"<<endl;
+		cout << "Repeated Root=" << rt << ", recursing"<<endl;
  // Using f(pX+r)/p^2
               d[4]=dd[4]*p2*p;
-              d[3]=p2*(dd[3]+4*dd[4]*r);
-              d[2]=p*(dd[2]+6*dd[4]*r*r+3*dd[3]*r);
-              d[1]=(2*dd[2]*r+4*dd[4]*r*r*r+3*dd[3]*r*r+dd[1]);
-              d[0]=((((dd[4]*r+dd[3])*r+dd[2])*r+dd[1])*r+dd[0])/p;
+              d[3]=p2*(dd[3]+4*dd[4]*rt);
+              d[2]=p*(dd[2]+6*dd[4]*rt*rt+3*dd[3]*rt);
+              d[1]=(2*dd[2]*rt+4*dd[4]*rt*rt*rt+3*dd[3]*rt*rt+dd[1]);
+              d[0]=((((dd[4]*rt+dd[3])*rt+dd[2])*rt+dd[1])*rt+dd[0])/p;
               fl=local_sol(p,d,verbose);
             }
         }

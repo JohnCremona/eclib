@@ -402,17 +402,19 @@ mat_l mat_m::shorten(long x) const
 
 mat_m operator*(const mat_m& m1, const mat_m& m2)
 {
- long j,k, m=m1.nro, n=m1.nco, p=m2.nco;
- mat_m m3(m,p); 
- bigint *a=m1.entries, *b=m2.entries, *c=m3.entries, *bp, *cp;
+ long m=m1.nro, n=m1.nco, p=m2.nco;
+ mat_m m3(m,p);
+ bigint *a=m1.entries, *b=m2.entries, *c=m3.entries;
  if (n==m2.nro)  // algorithm from Dr Dobb's Journal August 1993
    {
      while(m--)
        {
-         bp=b; k=n;
+         bigint *bp=b;
+         long k=n;
          while(k--)
            {
-             cp=c; j=p;
+             bigint *cp=c;
+             long j=p;
              while(j--)
                {
                  *cp++ += *a * *bp++;
@@ -443,10 +445,10 @@ ostream& operator<<(ostream& s, const mat_m& m)
 {
   bigint* mij=m.entries;
   s << "\n[";
-  long nc,nr=m.nro;
+  long nr=m.nro;
   while(nr--)
     {
-      nc=m.nco;
+      long nc=m.nco;
       s<<"[";
       while(nc--) {s<<(*mij++); if(nc) s<<",";}
       s<<"]"; if(nr) s<<",\n";
@@ -465,14 +467,18 @@ istream& operator>>(istream& s, mat_m& m)
 
 mat_m colcat(const mat_m& a, const mat_m& b)
 {
- long nc, nr = a.nro, nca = a.nco, ncb = b.nco;
+ long nr = a.nro, nca = a.nco, ncb = b.nco;
  mat_m ans(nr,nca+ncb);
  bigint *ansij=ans.entries, *aij=a.entries, *bij=b.entries;
  if (nr==b.nro)
    while(nr--)
      {
-       nc=nca; while(nc--) *ansij++ = *aij++;
-       nc=ncb; while(nc--) *ansij++ = *bij++;
+       long nc=nca;
+       while(nc--)
+         *ansij++ = *aij++;
+       nc=ncb;
+       while(nc--)
+         *ansij++ = *bij++;
      }
  else
    {
@@ -483,13 +489,17 @@ mat_m colcat(const mat_m& a, const mat_m& b)
 
 mat_m rowcat(const mat_m& a, const mat_m& b)
 {
- long n, nra = a.nro, nc = a.nco, nrb = b.nro;
+ long nra = a.nro, nc = a.nco, nrb = b.nro;
  mat_m ans(nra+nrb,nc);
  bigint *ansij=ans.entries, *aij=a.entries, *bij=b.entries;
  if (nc==b.nco)
  {
-   n = nra*nc; while(n--) *ansij++ = *aij++;
-   n = nrb*nc; while(n--) *ansij++ = *bij++;
+   long n = nra*nc;
+   while(n--)
+     *ansij++ = *aij++;
+   n = nrb*nc;
+   while(n--)
+     *ansij++ = *bij++;
  }
  else
    {
@@ -577,15 +587,17 @@ int operator!=(const mat_m& m1, const mat_m& m2)
 
 vec_m operator*(const mat_m& m, const vec_m& v)
 {
- long r=m.nro, c=m.nco; bigint *mp,*vp,*wp;
+ long r=m.nro, c=m.nco;
  vec_m w(r);
  if (c==v.d)
    {
-     mp=m.entries; wp=w.entries;
+     bigint *mp=m.entries, *wp=w.entries;
      while(r--)
        {
-         vp=v.entries; c=m.nco;
-         while(c--) *wp += (*mp++)*(*vp++);
+         bigint *vp=v.entries;
+         c=m.nco;
+         while(c--)
+           *wp += (*mp++)*(*vp++);
          wp++;
        }
    }
@@ -674,21 +686,24 @@ void clear(bigint* row, long nc)
 mat_m echelon0(const mat_m& m1, vec_i& pc, vec_i& npc,
                 long& rk, long& ny, bigint& d)
 {
-  long nr, nc, r,c,r2,r3,rmin,i;
-  bigint min, mr2c,lastpivot;
+  long nr, nc, r,c,r2,r3,i;
+  bigint mr2c,lastpivot, *m, *mi2, temp;
   rk=0; ny=0; r=0; lastpivot=1;
   nc=m1.nco; nr=m1.nro;
-  bigint *m, *mi1, *mi2, *mij; bigint temp;
   m = new bigint[nr*nc];
-  long n=nr*nc; mij=m; mi1=m1.entries;
-  while(n--) *mij++ = *mi1++;
+  long n=nr*nc;
+  bigint *mij=m;
+  bigint *mi1=m1.entries;
+  while(n--)
+    *mij++ = *mi1++;
 
   int *pcols = new int[nc];
   int *npcols = new int[nc];
   for (c=0; (c<nc)&&(r<nr); c++)
     {
       mij=m+r*nc+c;  // points to column c in row r
-      min = abs(*mij);  rmin = r;
+      bigint min = abs(*mij);
+      long rmin = r;
       for (r2=r+1, mij+=nc; (r2<nr)&&(!is_one(min)); r2++, mij+=nc)
 	{ mr2c = abs(*mij);
 	  if ((sign(mr2c)>0) && ((mr2c<min) || (sign(min)==0))) 
@@ -758,19 +773,19 @@ mat_m echelon0(const mat_m& m1, vec_i& pc, vec_i& npc,
 
 long mat_m::rank() const
 {
- long rk,nr,nc,r,c,r2,r3,rmin;
- bigint min, mr2c,lastpivot;
+ long rk,nr,nc,r,c,r2,r3;
+ bigint mr2c,lastpivot;
  rk=0; r=1; lastpivot=1;
  mat_m m(*this);
  nc=m.ncols(); nr=m.nrows();
  for (c=1; (c<=nc)&&(r<=nr); c++)
- { min = abs(m(r,c));
-   rmin = r;
+ { bigint min = abs(m(r,c));
+   long rmin = r;
    for (r2=r+1; (r2<=nr)&&(!is_one(min)); r2++)
-   { mr2c = m(r2,c); mr2c=abs(mr2c);
-     if ((sign(mr2c)>0) && ((mr2c<min) || (sign(min)==0))) 
-       { 
-	 min=mr2c; 
+   { mr2c=abs(m(r2,c));
+     if ((sign(mr2c)>0) && ((mr2c<min) || (sign(min)==0)))
+       {
+	 min=mr2c;
 	 rmin=r2 ;
        }
    }
@@ -876,17 +891,12 @@ mat_m echelonp(const mat_m& m1, vec_i& pcols, vec_i& npcols,
   cout << "In echelonp\n";
 #endif /* TRACE */
  long nc,nr,r,c,r2,r3,rmin;
- bigint min, mr2c,lastpivot, temp;
+ bigint min, mr2c,lastpivot;
  nr=m1.nrows(), nc=m1.ncols();
  mat_m m(nr,nc);
- for (c=1; c<=nc; c++) 
-   for (r=1; r<=nr; r++) m(r,c)=mod(m1(r,c),pr); 
-//     {
-//       temp=m1(r,c); 
-//       temp=mod(temp,pr); 
-//       m(r,c)=temp;
-//     }  
-// don't simplify else memory leaks
+ for (c=1; c<=nc; c++)
+   for (r=1; r<=nr; r++)
+     m(r,c)=mod(m1(r,c),pr);
  pcols.init(nc);
  npcols.init(nc);
  rk=0; ny=0; r=1; lastpivot=1;
@@ -898,7 +908,7 @@ mat_m echelonp(const mat_m& m1, vec_i& pcols, vec_i& npcols,
      if (0!=sign(mr2c)) { min=mr2c; rmin=r2 ;}
    }
    if (sign(min)==0) npcols[++ny] = c;
-   else       
+   else
      {
       pcols[++rk] = c;
       if (rmin>r) m.swaprows(r,rmin);
@@ -987,8 +997,7 @@ mat_m echmodp(const mat_m& m1, vec_i& pcols, vec_i& npcols,
                 long& rk, long& ny, const bigint& pr)
 {
 // cout << "In echmodp with mat = " << m1;
- long nc,nr,r,c,r2,r3,rmin;
- bigint min, mr2c;
+ long nc,nr,r,c,r2,r3;
  nr=m1.nro, nc=m1.nco;
  mat_m m(nr,nc);
  bigint *mij=m.entries, *matij=m1.entries;
@@ -1000,14 +1009,15 @@ mat_m echmodp(const mat_m& m1, vec_i& pcols, vec_i& npcols,
  for (c=1; (c<=nc)&&(r<=nr); c++)
    {
      mij=m.entries+(r-1)*nc+c-1;
-     min = *mij;   rmin = r;
+     bigint min = *mij;
+     long rmin = r;
      for (r2=r+1, mij+=nc; (r2<=nr)&&(sign(min)==0); r2++, mij+=nc)
-       { 
-         mr2c = *mij;
+       {
+         bigint mr2c = *mij;
          if (!is_zero(mr2c)) { min=mr2c; rmin=r2 ;}
        }
      if (sign(min)==0) npcols[++ny] = c;
-     else       
+     else
        {
          pcols[++rk] = c;
          if (rmin>r) m.swaprows(r,rmin);
@@ -1043,17 +1053,19 @@ mat_m echmodp(const mat_m& m1, vec_i& pcols, vec_i& npcols,
 
 mat_m matmulmodp(const mat_m& m1, const mat_m& m2, const bigint& pr)
 {
- long j,k, m=m1.nro, n=m1.nco, p=m2.nco;
- mat_m m3(m,p); 
- bigint *a=m1.entries, *b=m2.entries, *c=m3.entries, *bp, *cp;
+ long m=m1.nro, n=m1.nco, p=m2.nco;
+ mat_m m3(m,p);
+ bigint *a=m1.entries, *b=m2.entries, *c=m3.entries;
  if (n==m2.nro)  // algorithm from Dr Dobb's Journal August 1993
    {
      while(m--)
        {
-         bp=b; k=n;
+         bigint *bp=b;
+         long k=n;
          while(k--)
            {
-             cp=c; j=p;
+             bigint *cp=c;
+             long j=p;
              while(j--)
                {
                  *cp += mod(*a * *bp++, pr);

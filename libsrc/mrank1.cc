@@ -1,4 +1,4 @@
-// mrank1.h -- implementation of class rank1 for general 2-descent
+// mrank1.cc -- implementation of class rank1 for general 2-descent
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
@@ -500,10 +500,7 @@ void rank1::getquartics()
       if(npairs==2) cout<<"Two (I,J) pairs";
       else cout<<"One (I,J) pair";
       cout<<endl;
-    }
 
-  if (verbose)
-    {
       if (div(4,ii)&&div(8,jj)&&div(16,2*ii+jj)) // BSD say 1 pair
 	{
 	  if(npairs==2) // then the new result is worse -- should not happen
@@ -542,7 +539,8 @@ void rank1::getquartics()
   cphi.resize(3);
   if(is_zero(ii))
     {
-      if(xjj>0)
+      // NB I and J cannot both be zero, so xjj had absolute value at least 1 here
+      if(is_positive(jj))
 	cphi[2]=-exp(one_third*log(xjj));
       else
 	cphi[2]=exp(one_third*log(-xjj));
@@ -563,10 +561,11 @@ void rank1::getquartics()
 	{
 	  bigfloat t3 = sqrt(xmdisc)-xjj;
 	  t3 /= to_bigfloat(2);
-	  if(t3>0)
-	    t  = to_bigfloat(3)*exp(one_third*log(t3));
-	  else
-	    t  = -to_bigfloat(3)*exp(one_third*log(-t3));
+          t = sign(t3)*to_bigfloat(3)*exp(one_third*log(abs(t3)));
+	  // if(t3>0)
+	  //   t  = to_bigfloat(3)*exp(one_third*log(t3));
+	  // else
+	  //   t  = -to_bigfloat(3)*exp(one_third*log(-t3));
 	}
       cphi[2] = (t+9*xii/t)*one_third; // real when disc<0
       t*=w;
@@ -1749,8 +1748,6 @@ vector<Point> rank1::getgens() const
 
 void rank1::aux_init()  // define  auxiliary moduli and squares
 {
-  long i, j, a;
-
   auxs.resize(num_aux);
   aux_flags.resize(num_aux);
   aux_types.resize(num_aux);
@@ -1767,7 +1764,7 @@ void rank1::aux_init()  // define  auxiliary moduli and squares
   auxs[0]=9;  // treated specially
   aux_flags[0]=1;
   aux_types[0]=0;
-  i=1;
+  long i=1, j;
 
   // the rest of the auxs must be chosen carefully:  if possible they should
   // be good odd primes p, such that the resolvent cubic is not irreducible mod p.
@@ -1864,8 +1861,8 @@ void rank1::flag_init() // set up flag array
 
   for(long i=0; i<num_aux; i++, squaresi++, flagsi++)
     {
-      int case1 = (aux_types[i]==1);  // phi cubic has 1 root  mod p
-      int case2 = !case1;             // phi cubic has 3 roots mod p
+      int case_1 = (aux_types[i]==1);  // phi cubic has 1 root  mod p
+      int case_2 = !case_1;            // phi cubic has 3 roots mod p
       long a, h;
       long aux = auxs[i];
       long aux2 = (i==0 ? 27 : aux);
@@ -1881,7 +1878,7 @@ void rank1::flag_init() // set up flag array
 	  if(i>0)
 	    {
 	      a4phi[0] = (4*a*phimod[i][0])%aux2;
-	      if(case2)
+	      if(case_2)
 		{
 		  a4phi[1] = (4*a*phimod[i][1])%aux2;
 		  a4phi[2] = (4*a*phimod[i][2])%aux2;
@@ -1905,7 +1902,7 @@ void rank1::flag_init() // set up flag array
 		    {
 	      // look further to see how many roots mod p an (a,h) quartic
 	      // could have.
-		      if(case1)
+		      if(case_1)
 			{
 		  //By choice of auxs there must be 0 or 2 roots, and
 		  // the flag is set to 15 if there are 2 roots, else 5
@@ -1927,10 +1924,9 @@ void rank1::flag_init() // set up flag array
 		  // the flag is set to 15 if there are 4 roots, else to
 		  // one of 5, 3, 1 depending on which element of
 		  // E(Qp)/2E(Qp) the quartic maps to:
-			  long iz, z;
-			  for(iz=0; iz<3; iz++)
+			  for(long iz=0; iz<3; iz++)
 			    {
-			      z = posmod(3*(a4phi[iz]-h),aux2);
+			      long z = posmod(3*(a4phi[iz]-h),aux2);
 			      eps[iz] = 2*((*squaresi)[z])-(z==0)-1;
 			      // = -1, 0, +1
 			    }

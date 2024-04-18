@@ -372,7 +372,7 @@ long quartic_sieve::stoll_search(double h_lim, int posxonly)
 
 }
 
-long quartic_sieve::search_range(int lower, bigfloat lower_bound, 
+long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 				int upper, bigfloat upper_bound, int posxonly)
 {
 // Adjust bounds so exact roots are not missed by rounding error
@@ -404,7 +404,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 // declare other loop variables
   bigint w2,w3,w4, aw,bw,cw,dw,ew;
   long i, paw,pbw,pcw,pdw,pew, u, w, aux;
-  bigint vsq, v, f;
+  bigint vsq, v;
 
 //
 // MAIN LOOP on w (denominator)
@@ -560,8 +560,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 	      aw = a; bw = b*w; cw = c*w2; dw = d*w3; ew = e*w4;
 	      w_vars_set=1;
 	    }
-	  f=aw; f*=u; f+=bw; f*=u; f+=cw; f*=u; f+=dw; f*=u; f+=ew;
-//        f = ew+u*(dw+u*(cw+u*(bw+u*aw))); 
+	  bigint f=aw; f*=u; f+=bw; f*=u; f+=cw; f*=u; f+=dw; f*=u; f+=ew;
 	  if(isqrt(f,v))
 	    {
 #ifdef DEBUG_RANGES
