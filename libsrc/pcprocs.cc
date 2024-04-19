@@ -121,7 +121,6 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 		 if(d<lplus) 
 		   {
 		     x0=x*to_bigfloat(drx)/to_bigfloat(nrx);
-		     rp_fixed=1;
 		     if(verbose>1)
 		       cout<<"replacing original x0 by "<<x0
 			   <<" (which is more accurate since "<<d<<" < "<<lplus
@@ -156,10 +155,10 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 	  if(!have_both && (x>0.001) && (y>0.001) && trust_denom(dry))
 	    {
 	      have_both=1;
-	      if(trust_denom(drx)) {nrx0=nrx; drx0=drx;} 
+	      if(trust_denom(drx)) {nrx0=nrx; drx0=drx;}
 	      nry0=nry; dry0=dry;
-             //              cout<<"nrx0="<<nrx0<<endl;	      
-             //              cout<<"drx0="<<drx0<<endl;	      
+             //              cout<<"nrx0="<<nrx0<<endl;
+             //              cout<<"drx0="<<drx0<<endl;
 	      nflist[i].a=a;
 	      nflist[i].b=b;
 	      nflist[i].c=c;
@@ -187,7 +186,7 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
     cout<<"dotplus  ="<<dotplus<<endl;
     cout<<"dotminus ="<<dotminus<<endl;
   }
-  if(!have_both) {a=d=1; b=c=0; dotplus=dotminus=0;}
+  // if(!have_both) {a=d=1; b=c=0; dotplus=dotminus=0;}
   return have_both;
 }
 
@@ -351,12 +350,12 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 
 int newforms::find_lminus(long i, long lmax, const bigfloat& y1)
 {
-  long nry, dry, ell;
+  long nry, dry;
   lfchi lx(this,&(nflist[i]));
   long mm=0;
   for(primevar l; ((l<lmax)||(lmax==0))&&(mm==0); l++)
     {
-      ell = l; 
+      long ell = l;
       if(ell%4!=3) continue;
       if(legendre(-modulus,ell)!=nflist[i].sfe) continue;  // skip this l
       lx.compute(ell);

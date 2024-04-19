@@ -86,7 +86,6 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   int dimsw=dimh;
   if(w_split)
     {
-      vector<long> badprimes = h1->plist;
       int nq = badprimes.size();
       for(i=0; (i<nq)&&(dimsw>0); i++)
 	{
@@ -331,7 +330,8 @@ vec_m nfd::ap(long p)
   int bad = ::divides(p,n);
   if(bad) return apvec; // temporary fix!
   matop matlist(p);
-  if(bad) matlist=matop(p,n);
+  // if(bad)
+  //   matlist=matop(p,n);
 
   for(k=0; k<rk; k++)
     {
@@ -339,11 +339,11 @@ vec_m nfd::ap(long p)
       if(Kkj!=0)
 	{
 	  bigint mKkj; mKkj = Kkj;
-	  if(bad)
-	    {
-              continue;  // not yet implemented
-	    }
-	  else
+	  // if(bad)
+	  //   {
+          //     continue;  // not yet implemented
+	  //   }
+	  // else
 	    {
 	      symb s = h1->symbol(h1->freegens[k]);
 	      for(l=0; l<matlist.size(); l++)

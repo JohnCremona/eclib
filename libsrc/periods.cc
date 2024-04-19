@@ -356,10 +356,9 @@ void summer::sumit()
 /////////////////////////////////////////////
 
 periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
-: chi1(f->lplus), chi2(f->lminus)
+  : chi1(f->lplus), chi2(f->lminus)
 {
-  type = f->type;
-  dp0=f->dp0, mplus=f->mplus, mminus=f->mminus;
+  type = f->type; dp0 = f->dp0; mplus = f->mplus; mminus = f->mminus;
   if(f->lplus==1) mplus=f->np0; // L/P = dp0/np0 so now P=L*mplus/dp0
   initaplist(iN,f->aplist);
   rootmod =  sqrt(to_bigfloat(N));
