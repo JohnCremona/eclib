@@ -457,7 +457,7 @@ ostream& operator<<(ostream& s, const mat_m& m)
   return s;
 }
 
-istream& operator>>(istream& s, mat_m& m)
+istream& operator>>(istream& s, mat_m& m) // m cannot be const
 {
  long n=m.nro*m.nco;
  bigint* mij=m.entries;
@@ -528,7 +528,7 @@ mat_m directsum(const mat_m& a, const mat_m& b)
   return ans;
 }
 
-void elimrows(mat_m& m, long r1, long r2, long pos)   
+void elimrows(mat_m& m, long r1, long r2, long pos)  // m cannot be const
 //plain elimination, no clearing
 {
  long nc=m.nco;

@@ -318,10 +318,10 @@ void newform::refix_eigs()
 {
   auto api=aplist.begin();
   primevar pr;
-  long n = nf->modulus, np = nf->npdivs, ip=0, q;
+  long n = nf->modulus, np = nf->npdivs, ip=0;
   while((api!=aplist.end())&&(ip<np))
     {
-      q=pr.value();
+      long q=pr.value();
       if(::divides(q,n))
 	{
 	  *api=(::divides(q*q,n)? 0: -*api);
@@ -635,16 +635,16 @@ void newform::add_more_ap(int nap)
 {
   if((int)aplist.size()>=nap) return;
   int verbose=(nf->verbose);
-  long piv, p, ap;
   // Do not make the espace right away, as it is possible that the
   // only ap we are missing are aq which we already have...
   ssubspace espace;
   int have_espace=0;
+  long piv;
 
   primevar pr(nap,aplist.size()+1);
   while((int)aplist.size()<nap)
     {
-      p=pr;
+      long p=pr, ap;
       if(::divides(p,nf->modulus))
 	{
 	  if(::divides(p*p,nf->modulus))
@@ -905,8 +905,6 @@ void newforms::createfromscratch(int s, long ntp)
 
   if(n1ds==0) return;
 
-  int i,nap,maxnap=0;
-
   if((n1ds>1)&&(modulus<130000)) // reorder into old order
     {
       if(verbose) cout<<"Reordering newforms into old order as N<130000"<<endl;
@@ -917,15 +915,18 @@ void newforms::createfromscratch(int s, long ntp)
   // At this point the newforms may contain different numbers of ap,
   // so we need to even these up, which we do by computing more ap for
   // those which need it.
-if(n1ds>0)
+  if(n1ds>0)
     {
-      for(i=0; i<n1ds; i++)
-	if((nap=nflist[i].aplist.size())>maxnap) maxnap=nap;
+      int nap, maxnap=0;
+      for(int i=0; i<n1ds; i++)
+	if((nap=nflist[i].aplist.size())>maxnap)
+          maxnap=nap;
       if(verbose)
 	cout<<"Max number of ap in newforms so far is "<<maxnap
 	    <<", increasing to " << DEFAULT_SMALL_NAP << endl;
-      if (maxnap < DEFAULT_SMALL_NAP) maxnap = DEFAULT_SMALL_NAP;
-      for(i=0; i<n1ds; i++)
+      if (maxnap < DEFAULT_SMALL_NAP)
+        maxnap = DEFAULT_SMALL_NAP;
+      for(int i=0; i<n1ds; i++)
         {
           if((nap=nflist[i].aplist.size())<maxnap)
             {
@@ -1156,13 +1157,12 @@ void newforms::display(void) const
 
 void newforms::display_modular_symbol_map(int check) const
 {
- long i,j,k;
  rational rplus, rminus;
  vector<bigfloat> x0s;
  vector<bigfloat> y0s;
  bigfloat x0,y0;
  if (check)
-   for(k=0; k<n1ds; k++)
+   for(long k=0; k<n1ds; k++)
      {
        cout<<"getting period(s) for newform # "<<(k+1)<<endl;
        get_both_periods(k,x0,y0);
@@ -1171,7 +1171,7 @@ void newforms::display_modular_symbol_map(int check) const
        y0s.push_back(y0);
      }
 
- for(i=0; i<h1->nsymb; i++)
+ for(long i=0; i<h1->nsymb; i++)
    {
      symb s = h1->symbol(i);
      modsym ms = modsym(s);
@@ -1185,17 +1185,17 @@ void newforms::display_modular_symbol_map(int check) const
          d = den(beta);
          g = bezout(-modulus*b,d,c,a); // so g=a*d-b*N*c
        }
-     j=h1->coordindex[i];
+     long j=h1->coordindex[i];
      long sg=::sign(j); j=abs(j);
      //     cout<<"j="<<j<<"("<<sg<<")"<<endl;
      if(j==0)
-       for(k=0; k<n1ds; k++)
+       for(long k=0; k<n1ds; k++)
 	 if(sign!=0)
 	   cout<<"0 ";
 	 else
 	   cout<<"(0,0) ";
      else
-       for(k=0; k<n1ds; k++)
+       for(long k=0; k<n1ds; k++)
          {
            if (check && (g==1))
              {
@@ -1527,11 +1527,10 @@ void newforms::createfromdata(int s, long ntp,
 vector<long> eiglist(CurveRed& C, int nap)
 {
   long N = I2long(getconductor(C));
-  long p; bigint pp;
   vector<long> ans;
   for(primevar pr(nap); pr.ok(); pr++)
     {
-      p=pr; pp=BIGINT(p);
+      long p=pr; bigint pp=BIGINT(p);
       if(N%p==0)
 	ans.push_back(LocalRootNumber(C,pp));
       else
@@ -1544,13 +1543,13 @@ vector<long> eiglist(CurveRed& C, int nap)
 // extract the eigenvalues for bad primes
 vector<long> aqlist(vector<long> aplist, long N)
 {
-  long iq=0, p, naq = pdivs(N).size();
+  long iq=0, naq = pdivs(N).size();
   //cout << "Setting aq of size "<<naq<<endl;
   auto api = aplist.begin();
   vector<long> aq(naq);
   for(primevar pr; (iq<naq)&&pr.ok(); pr++)
     {
-      p=pr;
+      long p=pr;
       if (N%p==0)
 	{
 	  //cout << "Setting aq["<<p<<"] = "<<*api<<endl;
@@ -1618,14 +1617,13 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
 void newforms::createfromcurves_mini(vector<CurveRed> Clist, int nap)
 {
   if(verbose) cout << "In newforms::createfromcurves_mini()..."<<endl;
-  int i; long N;
   n1ds = Clist.size();
   nflist.reserve(n1ds);
 
   if (n1ds>0) // construct the ap and aq vectors from the curves
     {
-      N = I2long(getconductor(Clist[0]));
-      for(i=0; i<n1ds; i++)
+      long N = I2long(getconductor(Clist[0]));
+      for(long i=0; i<n1ds; i++)
 	{
 	  vector<long> ap=eiglist(Clist[i],nap);
 	  vector<long> aq=aqlist(ap,N);
@@ -1691,10 +1689,10 @@ void newforms::createfromolddata()
   // extract aq for each newform
   vector<long> * aq = new vector<long>[n1ds];
   for(i=0; i<n1ds; i++) aq[i].resize(npdivs);
-  primevar pr; long q, k, a;
+  primevar pr; long k, a;
   for(k=0, j=0; j<int(plist.size()); j++)
     {
-      q = plist[j];
+      long q = plist[j];
       int q2divN = ::divides(q*q,modulus);
       while((long)pr!=q) {pr++; k++;}
       for(i=0; i<n1ds; i++)
@@ -1784,7 +1782,6 @@ void newforms::makebases(int flag, int all_nf)
   // j1ds counts through the newforms as they are found
   basisflag=flag;
   j1ds = 0; // counts through newforms as they are recovered
-  vector< vector<long> > eigs;
 
   if (all_nf)
     {
@@ -1794,8 +1791,9 @@ void newforms::makebases(int flag, int all_nf)
 
   unfix_eigs();
   sort();
-  for (const auto nfi : nf_subset)
-    eigs.push_back(nflist[nfi].aplist);
+  vector< vector<long> > eigs(nf_subset.size());
+  std::transform(nf_subset.begin(), nf_subset.end(), eigs.begin(),
+                 [this](const int& nfi) {return nflist[nfi].aplist;});
 
   splitspace.recover(eigs);  // NB newforms::use() determines what is
 			     // done with each one as it is found;
@@ -1830,10 +1828,9 @@ void newforms::merge(int all_nf)
      if(verbose) cout << "-about to extend bplus,bminus..."<<flush;
      bplus.init(h1->nsymb);
      bminus.init(h1->nsymb);
-     int i,j;
-     for(i=1; i<=h1->nsymb; i++)
+     for(int i=1; i<=h1->nsymb; i++)
        {
-	 j = h1plus->coordindex[i-1];
+	 int j = h1plus->coordindex[i-1];
 	 if (j==0) bplus[i] = 0;
 	 else if (j>0) bplus[i] =  nflist[inf].coordsplus[j];
 	 else if (j<0) bplus[i] = -nflist[inf].coordsplus[-j];
@@ -1874,16 +1871,16 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 {
   //cout<<"In apvec with p = "<<p<<endl;
   vector<long> apv(n1ds);
-  vec v;
-  long i,iq,ap;
   if(::divides(p,modulus)) // we already have all the aq
     {
       if(::divides(p*p,modulus))
-	for (i=0; i<n1ds; i++) apv[i] = 0;
+	for (long i=0; i<n1ds; i++)
+          apv[i] = 0;
       else
 	{
-	  iq = find(plist.begin(),plist.end(),p)-plist.begin();
-	  for (i=0; i<n1ds; i++) apv[i] = -nflist[i].aqlist[iq];
+	  long iq = find(plist.begin(),plist.end(),p)-plist.begin();
+	  for (long i=0; i<n1ds; i++)
+            apv[i] = -nflist[i].aqlist[iq];
 	}
       return apv;
     }
@@ -1898,7 +1895,6 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
   long p2=(p-1)>>1; // (p-1)/2
   long sg, a, b, c, q, r;
   long u1,u2,u3;
-  long ind;
 
   // Compute the image of the necessary M-symbols (hopefully only one)
   //cout<<"Computing images of M-symbols"<<endl<<flush;
@@ -1914,7 +1910,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
       mat& pcd = h1->projcoord;
       //cout<<"projcoord = "<<pcd;
 // Matrix [1,0;0,p]
-      ind = h1->coordindex[h1->index2(u,p*v)];
+      long ind = h1->coordindex[h1->index2(u,p*v)];
       update(pcd,imagej,ind);
       //cout<<"(1) (u1,u2)=("<<u<<","<<p*v<<") partial image index is "<<ind<<", subtotal="<<imagej<<endl;
 // Matrix [p,0;0,1]
@@ -1945,12 +1941,12 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
       //cout<<" image is "<<imagej<<endl;
     }
 
-  for (i=0; i<n1ds; i++)
+  for (long i=0; i<n1ds; i++)
     {
 // recover eigenvalue:
       //cout<<"Numerator =   "<< images[nflist[i].j0][i+1] <<endl;
       //cout<<"Denominator = "<< nflist[i].fac << endl;
-      ap = images[nflist[i].j0][i+1]/nflist[i].fac;
+      long ap = images[nflist[i].j0][i+1]/nflist[i].fac;
       ap *= (sign==-1? nflist[i].contminus: nflist[i].contplus);
       ap /= h1->h1denom();
       apv[i]=ap;
@@ -1969,29 +1965,30 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 void newforms::addap(long last) // adds ap for primes up to the last'th prime
 {
   if(n1ds==0) return;
-  long i, j, p;
-  j=0;
   if(verbose>1)  // output the ap already known...
-    for(primevar pr(nflist[0].aplist.size()); pr.ok(); pr++, j++)
-      {
-	p=(long)pr;
-	if(ndivides(p,modulus)) cout<<"p="; else cout<<"q=";
-	cout<<p<<":\t";
-	{
-	  for (i=0; i<n1ds; i++) cout<<nflist[i].aplist[j]<<"\t";
-	  cout<<endl;
-	}
-      }
+    {
+      long j=0;
+      for(primevar pr(nflist[0].aplist.size()); pr.ok(); pr++, j++)
+        {
+          long p = pr;
+          if(ndivides(p,modulus)) cout<<"p="; else cout<<"q=";
+          cout<<p<<":\t";
+          {
+            for (long i=0; i<n1ds; i++) cout<<nflist[i].aplist[j]<<"\t";
+            cout<<endl;
+          }
+        }
+    }
   // Now compute and output the rest of the ap...
   for(primevar pr(last,1+nflist[0].aplist.size()); pr.ok(); pr++)
     {
-      p=(long)pr;
+      long p = pr;
       vector<long> apv=apvec(p);
       if(verbose>1)
 	{
 	  if(ndivides(p,modulus)) cout<<"p="; else cout<<"q=";
 	  cout<<p<<":\t";
-	  for (i=0; i<n1ds; i++) cout<<apv[i]<<"\t";
+	  for (long i=0; i<n1ds; i++) cout<<apv[i]<<"\t";
 	  cout<<endl;
 	}
       for (long i=0; i<n1ds; i++) nflist[i].aplist.push_back(apv[i]);

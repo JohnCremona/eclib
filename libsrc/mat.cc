@@ -459,7 +459,7 @@ void mat::read_from_file(string filename)
   fin.close();
 }
 
-istream& operator>>(istream& s, mat& m)
+istream& operator>>(istream& s, mat& m) // m cannot be const
 {
  long n=m.nro*m.nco;
  scalar* mij=m.entries;
@@ -526,7 +526,8 @@ mat directsum(const mat& a, const mat& b)
   return ans;
 }
 
-void elimrows(mat& m, long r1, long r2, long pos)   //plain elimination, no clearing
+//plain elimination, no clearing
+void elimrows(mat& m, long r1, long r2, long pos) // m cannot be const
 {
   long nc=m.nco;
   scalar *mr1 = m.entries + (r1-1)*nc,
@@ -539,13 +540,15 @@ void elimrows(mat& m, long r1, long r2, long pos)   //plain elimination, no clea
     }
 }
 
-void elimrows1(mat& m, long r1, long r2, long pos)      //elimination + clearing
+//elimination + clearing
+void elimrows1(mat& m, long r1, long r2, long pos)
 {
   elimrows(m,r1,r2,pos);
   m.clearrow(r2);
 }
 
-void elimrows2(mat& m, long r1, long r2, long pos, scalar last) //elimination + divide by last pivot
+//elimination + divide by last pivot
+void elimrows2(mat& m, long r1, long r2, long pos, scalar last)
 {
   elimrows(m,r1,r2,pos);
   m.divrow(r2,last);

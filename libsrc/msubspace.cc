@@ -83,21 +83,23 @@ mat_m restrict_mat(const mat_m& m, const msubspace& s)
  
 msubspace kernel(const mat_m& mat, int method)
 {
-   long rank, nullity, n, r, i, j;
-   bigint d, zero; zero=0;
+   long rank, nullity;
+   bigint d;
    vec_i pcols,npcols;
    mat_m m = echelon(mat,pcols,npcols, rank, nullity, d, method);
-   long dim = m.ncols();
-   mat_m basis(dim,nullity);
-   for (n=1; n<=nullity; n++) basis.set(npcols[n],n,d);
-   for (r=1; r<=rank; r++)
-   { i = pcols[r];
-     for (j=1; j<=nullity; j++) basis.set(i,j, -m(r,npcols[j]));
-   }
+   mat_m basis(m.ncols(),nullity);
+   for (int n=1; n<=nullity; n++)
+     basis.set(npcols[n],n,d);
+   for (int r=1; r<=rank; r++)
+     {
+       int i = pcols[r];
+       for (int j=1; j<=nullity; j++)
+         basis.set(i,j, -m(r,npcols[j]));
+     }
    msubspace ans(basis, npcols, d);
    return ans;
 }
- 
+
 msubspace image(const mat_m& mat, int method)
 {
   vec_i p,np;
@@ -169,16 +171,18 @@ mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr)
  
 msubspace pkernel(const mat_m& mat, const bigint& pr)
 {
-   long rank, nullity, n, r, i, j;
+   long rank, nullity;
    vec_i pcols,npcols;
    mat_m m = echmodp(mat,pcols,npcols, rank, nullity, pr);
-   long dim = m.ncols();
-   mat_m basis(dim,nullity);
+   mat_m basis(m.ncols(),nullity);
    bigint one; one=1;
-   for (n=1; n<=nullity; n++) basis.set(npcols[n],n,one);
-   for (r=1; r<=rank; r++)
-   { i = pcols[r];
-     for (j=1; j<=nullity; j++) basis.set(i,j, -m(r,npcols[j]));
+   for (int n=1; n<=nullity; n++)
+     basis.set(npcols[n],n,one);
+   for (int r=1; r<=rank; r++)
+   {
+     int i = pcols[r];
+     for (int j=1; j<=nullity; j++)
+       basis.set(i,j, -m(r,npcols[j]));
    }
    msubspace ans(basis, npcols, one);
    return ans;
@@ -215,7 +219,7 @@ msubspace psubeigenspace(const mat_m& mat, const bigint& l, const msubspace& s, 
 msubspace lift(const msubspace& s, const bigint& pr, int trace)
 {
   bigint modulus=pr,dd,n,d; long nr,nc,nrc;
-  int succ,success=1;
+  int success=1;
   bigint lim=sqrt(pr>>1);
   mat_m m = s.basis; bigint *mp;
   if(trace)
@@ -228,12 +232,12 @@ msubspace lift(const msubspace& s, const bigint& pr, int trace)
   nr = m.nro; nc = m.nco;  nrc = nr*nc; mp=m.entries;
   dd=1;
   while(nrc--)
-    {  
-      succ = modrat(*mp++,modulus,lim,n,d);
+    {
+      int succ = modrat(*mp++,modulus,lim,n,d);
       success = success && succ;
       dd=lcm(d,dd);
     }
-  if(!success) 
+  if(!success)
     cout << "Problems encountered with modrat lifting of msubspace." << endl;
   dd=abs(dd);
   if(trace) cout << "Common denominator = " << dd << "\n";

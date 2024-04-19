@@ -89,33 +89,33 @@ int set_the_bounds(vector<double>& bnd, bigfloat x0, bigfloat x1, bigfloat x2);
 //is on [x0,infty].  The function returns 3 in the first case, 1 in the second.
 //If x0 overflows, it returns 0.  A warning is printed out.
 
-bigfloat det(vector<vector<bigfloat>>& m, long m_size);
+bigfloat det(const vector<vector<bigfloat>>& m, long m_size);
    // fwd declaration: det and detminor jointly recursive
 
-vector<vector<bigfloat>> get_minor(vector<vector<bigfloat>>& m, long m_size, long i0, long j0)
+vector<vector<bigfloat>> get_minor(const vector<vector<bigfloat>>& m, long m_size, long i0, long j0)
 {
-  long i, j, ii, jj;
   vector<vector<bigfloat>> minor(MAXRANK, vector<bigfloat>(MAXRANK));
-  for (i=0; i<m_size-1; i++)
+  for (long i=0; i<m_size-1; i++)
     {
-      ii=i; if(i>=i0)ii++;
-      for (j=0; j<m_size-1; j++)
+      long ii=i;
+      if(i>=i0) ii++;
+      for (long j=0; j<m_size-1; j++)
       {
-	jj=j; if(j>=j0) jj++;
+	long jj=j;
+        if(j>=j0) jj++;
 	minor[i][j] = m[ii][jj];
       }
     }
   return minor;
 }
 
-
-bigfloat det_minor(vector<vector<bigfloat>>& m, long m_size, long i0, long j0)
+bigfloat det_minor(const vector<vector<bigfloat>>& m, long m_size, long i0, long j0)
 {
-  vector<vector<bigfloat>> minor = get_minor(m,m_size,i0,j0);
+  const vector<vector<bigfloat>>& minor = get_minor(m,m_size,i0,j0);
   return det(minor, m_size-1);
 }
 
-bigfloat det(vector<vector<bigfloat>>& m, long m_size)
+bigfloat det(const vector<vector<bigfloat>>& m, long m_size)
 {
   bigfloat one = to_bigfloat(1);
   switch (m_size) {
@@ -127,29 +127,33 @@ bigfloat det(vector<vector<bigfloat>>& m, long m_size)
     return m[0][0]*m[1][1] - m[0][1]*m[1][0];
     break;
   default:
-    int negate = 0;
+    // Make a copy since we will change m before recursing
+    vector<vector<bigfloat>> m1 = m;
+    int neg = 0;
     long i,j,i0;
-    bigfloat pivot=m[0][0], piv, temp, eps=to_bigfloat(1.0e-6);
-    for(i0=0; i0<m_size && abs(pivot)<eps; i0++) pivot=m[i0][0];
-    if(i0==m_size) return to_bigfloat(0); // first column all 0
+    bigfloat pivot=m1[0][0], piv, temp, eps=to_bigfloat(1.0e-6);
+    for(i0=0; i0<m_size && abs(pivot)<eps; i0++)
+      pivot=m1[i0][0];
+    if(i0==m_size)
+      return to_bigfloat(0); // first column all 0
     if(i0>0)  // swap rows 0, i0:
       {
-	negate = 1;
+	neg = 1;
 	for(j=0; j<m_size; j++)
 	  {
-	    temp=m[i0][j]; m[i0][j]=m[0][j]; m[0][j]=temp;
+	    temp=m1[i0][j]; m1[i0][j]=m1[0][j]; m1[0][j]=temp;
 	  }
       }
     // eliminate first column
-    pivot=m[0][0];
+    pivot=m1[0][0];
     for(i=1; i<m_size; i++)
       {
-	piv=m[i][0]/pivot;
+	piv=m1[i][0]/pivot;
 	for(j=0; j<m_size; j++)
-	  m[i][j] -= m[0][j]*piv;
+	  m1[i][j] -= m1[0][j]*piv;
       }
-    if (negate) pivot = -pivot;
-    return pivot*det_minor(m,m_size,0,0);
+    if (neg) pivot = -pivot;
+    return pivot*det_minor(m1,m_size,0,0);
   }
   return one;  // shouldn't get here
 }
@@ -679,14 +683,14 @@ void mw::search(bigfloat h_lim, int moduli_option, int verb)
       bigcomplex c1(I2bigfloat(c[2])),
                  c2(I2bigfloat(c[1])),
                  c3(I2bigfloat(c[0]));
-      vector<bigcomplex> roots=solvecubic(c1,c2,c3);
+      vector<bigcomplex> rts=solvecubic(c1,c2,c3);
       vector<double> bnd(3);
-      int nrr=order_real_roots(bnd,roots);
+      int nrr=order_real_roots(bnd,rts);
 #ifdef DEBUG_QSIEVE
       cout<<endl;
       cout<<"cubic "<<c[0]<<" "<<c[1]<<" "<<c[2]<<" "<<c[3]<<endl;
       cout<<"coeff "<<c1<<" "<<c2<<" "<<c3<<endl;
-      cout<<"roots "<<roots<<endl;
+      cout<<"roots "<<rts<<endl;
       cout<<"bnd "<<bnd<<endl;
       cout<<"smallest "<<bnd[0]<<endl;
 #endif
@@ -714,17 +718,17 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
 
 // find pt of order two in E(R) with minimal x-coord
 
-  vector<bigcomplex> roots = roots_of_cubic(*E);
+  vector<bigcomplex> rts = roots_of_cubic(*E);
   if(posdisc)
     {
-      x1=real(roots[0]);
-      x2=real(roots[1]);
-      x3=real(roots[2]);
+      x1=real(rts[0]);
+      x2=real(rts[1]);
+      x3=real(rts[2]);
       orderreal(x3,x2,x1);  // so x1<x2<x3
       xmin=x1;
     }
   else
-    x3=xmin = min_real(roots);
+    x3=xmin = min_real(rts);
 
   if (verbose)
     {
@@ -800,24 +804,23 @@ void sieve::search(bigfloat h_lim)
   // set initial bounds for point coefficients
   alim = I2long(Ifloor(exp(h_lim)));
   clim = clim1 = clim2 = clim0 = I2long(Ifloor(exp(h_lim / 2)));
-  long temp;
 
   if(posdisc)
     {
       if(x2<-1)
 	{
-	  temp = I2long(Ifloor(sqrt(alim/(-x2))));
+	  long temp = I2long(Ifloor(sqrt(alim/(-x2))));
 	  if(clim1>temp) clim1=temp;
 	}
       if(x1>1)
 	{
-	  temp = I2long(Ifloor(sqrt(alim/x1)));
+	  long temp = I2long(Ifloor(sqrt(alim/x1)));
 	  if(clim1>temp) clim1=temp;
 	}
     }
   if (x3>1)
     {
-      temp = I2long(Ifloor(sqrt(alim/x3)));
+      long temp = I2long(Ifloor(sqrt(alim/x3)));
       if(clim2>temp) clim2=temp;
     }
   clim=clim2;
@@ -993,7 +996,7 @@ void sieve::search_range(bigfloat xmin, bigfloat xmax, bigfloat h_lim)
       d1 = a1*c; d2 = a2*c2; d3 = a3*c3; d4 = a4*c4; d6 = a6*c6;
 
       long amin = -alim, amax = alim;
-      long temp = I2long(Iceil(csq*xmin));
+      temp = I2long(Iceil(csq*xmin));
       if(temp>amin) amin=temp;
       temp = I2long(Ifloor(csq*xmax));
       if(temp<amax) amax=temp;

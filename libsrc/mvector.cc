@@ -262,24 +262,22 @@ vec_i vec_m::shorten(int x) const  //converts to a vector of ints
 
 bigint operator*(const vec_m& v, const vec_m& w)
 {
- long dim=v.d; bigint dot;
- bigint* vi=v.entries, *wi=w.entries;
- if (dim==w.d) 
-   while (dim--) dot+= (*vi++)*(*wi++);
- else 
-   {
-     cerr << "Unequal dimensions in dot product"<<endl;
-   }
+ long d=v.d;
+ bigint dot, *vi=v.entries, *wi=w.entries;
+ if (d==w.d)
+   while (d--) dot+= (*vi++)*(*wi++);
+ else
+   cerr << "Unequal dimensions in dot product"<<endl;
  return dot;
 }
 
 int operator==(const vec_m& v, const vec_m& w)
 {
-   long dim=v.d;
-   long equal = (dim==w.d);
-   bigint* vi=v.entries, *wi=w.entries;
-   while ((dim--) && equal) equal = ((*vi++)==(*wi++));
-   return equal;
+  long d=v.d;
+  long equal = (d==w.d);
+  bigint* vi=v.entries, *wi=w.entries;
+  while ((d--) && equal) equal = ((*vi++)==(*wi++));
+  return equal;
 }
 
 int trivial(const vec_m& v)
@@ -298,7 +296,7 @@ ostream& operator<<(ostream& s, const vec_m& v)
    return s;
 }
 
-istream& operator>>(istream& s, vec_m& v)
+istream& operator>>(istream& s, vec_m& v) // v cannot be const
 {
  long i = v.d;
  bigint* vi = v.entries;
@@ -368,24 +366,28 @@ vec_m lift(const vec_m& v, const bigint& pr)
 
 int liftok(vec_m& v, const bigint& pr)
 {
- long i, d = dim(v); bigint g, nu, de; int success=1, succ;
- bigint lim = sqrt(pr>>1);
- for (i=1, g=1; i<=d; i++) 
+ long i, d = dim(v);
+ bigint g, nu, de, lim = sqrt(pr>>1);
+ int success=1;
+ for (i=1, g=1; i<=d; i++)
    {
-     bigint& vi=v[i]; succ=modrat(vi,pr,lim,nu,de);
+     bigint& vi=v[i];
+     int succ=modrat(vi,pr,lim,nu,de);
      success = success && succ;
 // Can't say success=success&&modrat(...) as then after first fail it does
-// not call modrat at all due to clever compiler!
+// not call modrat at all due to compiler optimisation
      g=lcm(g,de);
    }
- for (i=1; i<=d; i++) v[i] = mod(g*v[i],pr);
+ for (i=1; i<=d; i++)
+   v[i] = mod(g*v[i],pr);
  return success;
 }
 
 bigint dotmodp(const vec_m& v1, const vec_m& v2, const bigint& pr)
 {
   bigint ans;
-  for(long i=1; i<=dim(v1); i++) ans=mod(ans+mod(v1[i]*v2[i],pr),pr);
+  for(long i=1; i<=dim(v1); i++)
+    ans=mod(ans+mod(v1[i]*v2[i],pr),pr);
   return ans;
 }
 
