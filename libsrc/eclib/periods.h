@@ -53,7 +53,7 @@ protected:
   long limit, limit1, limit2;
   bigfloat rootlimit, rootmod, factor, factor1, factor2, rp, ip;
   long type;
-  long N, nap;  vector<long> aplist;  vector<long> primelist;
+  long N;  vector<long> aplist;  vector<long> primelist;
   vector<long> an_cache;  // holds a_n for n up to rootlimit
   vector<long> a2p_cache;  // holds a_n for n=2^e up to rootlimit
   vector<long> a3p_cache;  // holds a_n for n=3^e up to rootlimit

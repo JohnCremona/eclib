@@ -42,7 +42,7 @@ void reduce_b(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 	      unimod& m);
 
 // Compute the quadratic covariant of a real quartic:
-vector<bigfloat> quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e);
+vector<bigfloat> quadratic_covariant(const bigint& a, const bigint& b, const bigint& c, const bigint& d, const bigint& e);
 
 // Given a pos. def. quadratic x^2+b*x+c, returns a unimod which
 // reduces it (whose inverse takes its root into the fundamental

@@ -71,9 +71,9 @@ vector<long> resort_aplist(const level* iN,
   //  cout<<"resort_aplist(), using "<<nap<<" primes"<<endl;
   vector<long> aplist;
   aplist.reserve(nap);
-  long i, j, p, ip = iN->npdivs;
-  for(i=0; i<nap; i++)
-    { p = primelist[i];
+  long ip = iN->npdivs;
+  for(long i=0; i<nap; i++)
+    { long p = primelist[i];
     auto pi = find(iN->plist.begin(),iN->plist.end(),p);
     if(pi==iN->plist.end()) // then p is good
       {
@@ -89,7 +89,7 @@ vector<long> resort_aplist(const level* iN,
 	  }
 	else
 	  {
-	    j = pi-(iN->plist.begin());  // p is j'th bad prime
+	    long j = pi-(iN->plist.begin());  // p is j'th bad prime
 	    aplist.push_back(- apl[j]);
 // 	    cout << "i = "<<i<<",\tp = " << p << "\ta_p = " << aplist[i] << endl;
 	  }
@@ -103,8 +103,7 @@ vector<long> resort_aplist(const level* iN,
 void summer::initaplist(const level* iN, const vector<long>& apl)
 {
   N = iN->modulus;
-  nap = apl.size();
-  primelist = primes(nap);   //First nap primes, indexed from 0
+  primelist = primes(apl.size());   //First #apl primes, indexed from 0
 #ifdef NEW_OP_ORDER
   aplist=apl;
 #else
@@ -155,24 +154,22 @@ void summer::use2(long n, long an)
 // This calls use(m,am) for all m=n*2^a*3^b*5^c*7^d<limit
 void summer::use2357(long n, long an)
 {
-  long m2=n,m23,m235,m2357;
-  long am2,am23,am235,am2357;
-  long i2,i3,i5,i7;
-  for(i2=0; (i2<=n2p)&&(m2<limit); i2++, m2*=2)
+  long m2=n;
+  for(long i2=0; (i2<=n2p)&&(m2<limit); i2++, m2*=2)
     {
-      am2=an*a2p_cache[i2];
-      m23=m2;
-      for(i3=0; (i3<=n3p)&&(m23<limit); i3++, m23*=3)
+      long am2=an*a2p_cache[i2];
+      long m23=m2;
+      for(long i3=0; (i3<=n3p)&&(m23<limit); i3++, m23*=3)
 	{
-	  am23=am2*a3p_cache[i3];
-	  m235=m23;
-	  for(i5=0; (i5<=n5p)&&(m235<limit); i5++, m235*=5)
+	  long am23=am2*a3p_cache[i3];
+	  long m235=m23;
+	  for(long i5=0; (i5<=n5p)&&(m235<limit); i5++, m235*=5)
 	    {
-	      am235=am23*a5p_cache[i5];
-	      m2357=m235;
-	      for(i7=0; (i7<=n7p)&&(m2357<limit); i7++, m2357*=7)
+	      long am235=am23*a5p_cache[i5];
+	      long m2357=m235;
+	      for(long i7=0; (i7<=n7p)&&(m2357<limit); i7++, m2357*=7)
 		{
-		  am2357=am235*a7p_cache[i7];
+		  long am2357=am235*a7p_cache[i7];
 		  use(m2357,am2357);
 		}
 	    }
@@ -586,7 +583,7 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
 
   rootmod=sqrt(to_bigfloat(N));
   factor1 = (TWOPI)/rootmod;
-  long maxp = prime_number(nap);
+  long maxp = prime_number(aplist.size());
   limit  =  I2long(Ifloor((30+bit_precision())/factor1));
   //cout<<"ldash1::init() with N="<<N<<", bit_precision="<<bit_precision()<<endl;
   //cout<<"number of terms to use = "<<limit<<endl;
@@ -782,28 +779,36 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
 //
   bigcomplex wR, wRI, w1, w2, c4, c6;
   Cperiods cp = getperiods(i, method, verbose);
-  if(verbose) cout<<cp<<endl;
+  if(verbose)
+    cout<<cp<<endl;
   cp.getwRI(wR, wRI);
   rperiod = real(wR);
   cp.getwi(w1, w2);
   getc4c6(w2,w1,c4,c6);  // from compproc.h
   bigfloat rc4 = real(c4), rc6 = real(c6);
-  if(verbose) cout << "c4 = " << rc4 << "\nc6 = " << rc6 << endl;
+  if(verbose)
+    cout << "c4 = " << rc4 << "\nc6 = " << rc6 << endl;
   bigint ic4 = fac*Iround(rc4/fac);
   bigint ic6 = fac6*Iround(rc6/fac6);
-  if(verbose) cout << "After rounding";
-  if(verbose&&(fac>1))
-    cout << ", using factors " << fac << " for c4 and " << fac6 << " for c6";
-  if(verbose) cout<<":\n";
-  if(verbose) cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
+  if(verbose)
+    {
+      cout << "After rounding";
+      if(fac>1)
+        cout << ", using factors " << fac << " for c4 and " << fac6 << " for c6";
+      cout<<":\n";
+      cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
+    }
   // To fix the c4 or c6 values insert data in files fixc4.data and
   // fixc6.data; NB the index here (i) starts at 0, but class fixc6
   // adjusts so in the data files, start at 1
 
 #ifndef MPFP // Multi-Precision Floating Point
   c4c6fixer(n,i,ic4,ic6);
-  if(verbose) cout << "After fixing: \n";
-  if(verbose) cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
+  if(verbose)
+    {
+      cout << "After fixing: \n";
+      cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
+    }
 #endif
   Curve C(ic4,ic6);
   if(C.isnull()) return C;

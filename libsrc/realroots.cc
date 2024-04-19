@@ -34,22 +34,12 @@ bigfloat safe_sqrt(const bigfloat& x)
 
 bigfloat cube_root(const bigfloat& x)
 {
-  if(is_zero(x)) return x;
-  if(x<0) return -exp(log(-x)/3);
-  return exp(log(x)/3);
+  return is_zero(x)? x : sign(x)*exp(log(abs(x))/3);
 }
-/*
-bigfloat cube_root(const bigfloat& x)
-{
-  static bigfloat third = to_bigfloat(1)/to_bigfloat(3);
-  if(x<0) return -pow(-x, third);
-  else    return  pow( x, third);
-}
-*/
 
 // coeff contains deg+1 reals starting with the leading coefficient
 // which must be nonzero
-// 
+//
 // we assume the roots are distinct
 
 //#define DEBUG_REALROOTS
@@ -167,7 +157,8 @@ vector<bigfloat> realroots( const vector<bigfloat>& coeff )
       else // all roots real
 	{
 	  vector<bigcomplex> croots = solvecubic(b/a,c/a,d/a);
-	  for(int i=0; i<3; i++) ans.push_back(real(croots[i]));
+          ans.resize(3);
+          std::transform(croots.begin(), croots.end(), ans.begin(), [](const bigcomplex& z) {return real(z);});
 	  return ans;
 	}
     }

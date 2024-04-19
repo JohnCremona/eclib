@@ -123,7 +123,7 @@ vector<bigfloat> type3_covar(const bigfloat& xa, const bigfloat& xb, const bigfl
 }
 
 // Compute the quadratic covariant of a real quartic:
-vector<bigfloat> quadratic_covariant(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e)
+vector<bigfloat> quadratic_covariant(const bigint& a, const bigint& b, const bigint& c, const bigint& d, const bigint& e)
 {
   bigint ii = II(a,b,c,d,e);
   bigint jj = JJ(a,b,c,d,e);
@@ -349,9 +349,10 @@ unimod reduce_quad_1(const bigfloat& bb, const bigfloat& cc)
 
 unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
 {
-  bigfloat xz = -b/2;
-  bigfloat dz = 4*c-b*b;  // should be positive!
-  bigfloat az = c;
+  bigfloat
+    xz = -b/2,
+    dz = 4*c-b*b,  // should be positive!
+    az;
   bigfloat yz = sqrt(abs(dz))/2;
   bigcomplex z(xz,yz);
 #ifdef DEBUG_REDUCE_QUAD
@@ -401,7 +402,6 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
       a21=I2bigfloat(m21); a22=I2bigfloat(m22);
       z = (a11*z+a12) / (a21*z+a22);
       xz=real(z); yz=imag(z);
-      az  = xz*xz + yz*yz;
 
       unimod n(Iround(a22),Iround(-a12),
 	       Iround(-a21),Iround(a11));  // rounding the inverse matrix

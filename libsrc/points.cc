@@ -425,7 +425,7 @@ vector<Point> three_torsion(Curvedata& E, int exact)
 #ifdef DEBUG_TORSION
   cout<<"\nIn three_torsion() with curve "<<(Curve)E<<"\n";
 #endif
-  bigint a1, a2, a3, a4, a6, b2, b4, b6, b8, xi, d, rd;
+  bigint a1, a2, a3, a4, a6, b2, b4, b6, b8, d, rd;
   E.getai(a1,a2,a3,a4,a6);
   E.getbi(b2,b4,b6,b8);
   vector<bigint> xlist = three_torsion_x(E);
@@ -573,9 +573,10 @@ vector<Point> torsion_points(Curvedata& E)
   Point T1 = cycle[exponent/2];
   auto Ti = std::find_if_not(two_tors.begin()+1, two_tors.end(), [T1]( const auto& T ){return T==T1;});
   Point T2 = *Ti;
-  vector<Point> all_torsion = cycle;
-  for( auto P : cycle)
-    all_torsion.push_back(T2+P);
+  vector<Point> all_torsion = cycle, coset(cycle.size());
+  std::transform(cycle.begin(), cycle.end(), coset.begin(),
+                 [T2] (const Point& P) {return T2+P;});
+  all_torsion.insert(all_torsion.end(), coset.begin(), coset.end());
 
   ::sort(all_torsion.begin(), all_torsion.end(), Point_cmp);
  return all_torsion;
@@ -589,28 +590,12 @@ vector<Point> Point::division_points(int m) // list of Q s.t. n*Q=this
 #endif
   vector<Point> ans;
   vector<Point> Qs;
+  auto test = [this, m] (const Point& Q) {return m*Q==*this;};
+
   if (is_torsion())
     {
       Qs = torsion_points(*E);
-#ifdef DEBUG_DIVISION_POINTS
-      cout << "Testing all torsion points " << Qs << endl;
-#endif
-      for ( const auto& Q : Qs)
-        {
-#ifdef DEBUG_DIVISION_POINTS
-          cout << "   Q = "<<Q<<", "<<m<<"*Q="<<m*Q<<endl;
-#endif
-          if (m * Q == *this)
-            {
-#ifdef DEBUG_DIVISION_POINTS
-              cout << " - success! "<<endl;
-#endif
-              ans.push_back(Q);
-            }
-        }
-#ifdef DEBUG_DIVISION_POINTS
-      cout << " - returning "<<ans<<endl;
-#endif
+      std::copy_if(Qs.begin(), Qs.end(), std::back_inserter(ans), test);
       return ans;
     }
 
@@ -626,21 +611,11 @@ vector<Point> Point::division_points(int m) // list of Q s.t. n*Q=this
 #endif
   for( const auto& xQ : xQs)
     {
-      Qs = points_from_x(*E, xQ);
-      // will have length 0 or 2 since non-torsion, and we only want
-      // exctly one when there two so, must check which works
-      if (Qs.size()>0)
-        {
-          Point Q = Qs[0];
-          if (m*Q == *this)
-            {
-              ans.push_back(Q);
-            }
-          else
-            {
-              ans.push_back(-Q);
-            }
-        }
+      Qs = points_from_x(*E, xQ); // will have length 0 or 2 since non-torsion; only one works
+      if (Qs.empty())
+        continue;
+      Point Q = Qs.front();
+      ans.push_back(test(Q)?Q:-Q);
     }
   return ans;
 }
@@ -711,15 +686,14 @@ int Point::has_good_reduction(const vector<bigint>& plist, bigint& p0, int check
         p0 = BIGINT(0);
         return 0;
       }
-  for( const auto& p : plist)
+  auto it = std::find_if(plist.begin(), plist.end(), [this](const bigint& p) {return !has_good_reduction(p);});
+  if (it==plist.end())
+    return 1;
+  else
     {
-      if(!has_good_reduction(p))
-        {
-          p0 = p;
-          return 0;
-        }
+      p0 = *it;
+      return 0;
     }
-  return 1;
 }
 
 // end of file: points.cc
