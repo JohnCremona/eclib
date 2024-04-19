@@ -238,12 +238,14 @@ int saturator::enlarge()
   if(TLrank==rank) return 0; // no enlargement;  should not be called in this case
   vec_l ker = basis(pkernel(TLimage, p)).col(1);
   if(verbose>0) cout<<"possible kernel vector = "<<ker<<endl;
-  Point Q(E), newQ(E); int flag, i, ci, keepi=-1;
-  for(i=0; i<rank; i++) 
+  Point Q(E), newQ(E); int flag, keepi=-1;
+  for(int i=0; i<rank; i++)
     {
-      if((ci = mod(ker[i+1],p))) 
+      int ci = mod(ker[i+1],p);
+      if(ci)
 	{
-	  if((keepi<0)&&(abs(ci)==1)) keepi=i;
+	  if((keepi<0)&&(abs(ci)==1))
+            keepi=i;
 	  Q+=ci*Plistx[i];
 	}
     }
@@ -368,18 +370,16 @@ int saturator::do_saturation(vector<int> plist,
 			     long& index, vector<int>& unsat, 
 			     int maxntries)
 {
-  unsigned int i; int pi, p;
   int success=1;
   index=1;
   if(verbose) cout<<"Checking saturation at "<<plist<<endl;
-  for(i=0; i<plist.size(); i++)
+  for( const int& p : plist)
     {
-      p = plist[i];
       if (trivially_saturated(p))
         continue; // to the next prime in the list
       if(verbose) cout<<"Checking "<<p<<"-saturation "<<endl;
-      pi = do_saturation(p,maxntries); // = log_index if >=0, -1 if failed
-      if(pi<0) 
+      int pi = do_saturation(p,maxntries); // = log_index if >=0, -1 if failed
+      if(pi<0)
 	{
 	  cout<<p<<"-saturation failed!"<<endl;
 	  unsat.push_back(p);
@@ -389,13 +389,13 @@ int saturator::do_saturation(vector<int> plist,
 	{
 	  if(verbose)
 	    {
-	      if(pi>0) 
+	      if(pi>0)
 		{
 		  cout<<"Points have successfully been "<<p
 		      <<"-saturated (max q used = "<<get_q()<<")"<<endl;
 		  cout<<"Index gain = "<<p<<"^"<<pi<<endl;
 		}
-	      if(pi==0) 
+	      if(pi==0)
 		{
 		  cout<<"Points were proved "<<p
 		      <<"-saturated (max q used = "<<get_q()<<")"<<endl;
@@ -477,15 +477,10 @@ int saturator::saturate(vector<long>& unsat, long& index,
     {
       if (verbose)
         cout << "Tamagawa index primes are " << tam_primes << endl;
-      for ( const auto& p : tam_primes)
-        {
-          if ((p > ib) && ((sat_bd==-1) || (p <= sat_bd)))
-            {
-              if (verbose)
-                cout << "adding Tamagawa index prime " << p << " to saturation list" << endl;
-              satprimes.push_back(p);
-            }
-        }
+      std::copy_if(tam_primes.begin(), tam_primes.end(), std::back_inserter(satprimes),
+                   [ib, sat_bd] (const long& tp) {return ((tp > ib) && ((sat_bd==-1) || (tp <= sat_bd)));});
+      if (verbose)
+        cout << "Saturation primes are now" << satprimes << endl;
     }
 
   // do the saturation.  Will return ok iff we succeeded in saturating

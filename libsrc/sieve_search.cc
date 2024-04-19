@@ -162,10 +162,9 @@ void qsieve::init_all()
       //      if (verbose)
       //	cout<<"Init squares"<<endl;
       long a, pn;
-      long p;
       for(pn = 0; pn < QS_NUM_PRIMES; pn++)
 	{
-	  p = prime[pn];
+	  long p = prime[pn];
 	  for(a = 0 ; a < p ; a++) squares[pn][a] = 0;
 	  for(a = 0 ; a < p; a += 2) squares[pn][(a*a)%p] = 1;
 	  // if p==2 then this does not work! 
@@ -337,7 +336,7 @@ void qsieve::init_f()
 
   //init is_f_square
   {
-    long n, fdc = 0;
+    long fdc = 0;
     forbidden[fdc]=0;
     if(!(degree&1))
       {// check if we can exclude even numerators
@@ -437,42 +436,36 @@ void qsieve::init_f()
 	  }
       }
 #ifdef DEBUG_FORBIDDEN
-    int i;
 	cout<<"Forbidden divisors of the denominator (7): fdc="<<fdc<<endl;
-	for (i=0;forbidden[i];i++)
+	for (int i=0;forbidden[i];i++)
 	  cout<<forbidden[i]<<", ";
 	cout<<endl;
 #endif
-    
-    long pn;  
-    for (pn=0;pn<QS_NUM_PRIMES; pn++)
+
+    for (long pn=0;pn<QS_NUM_PRIMES; pn++)
       {
 	long p=prime[pn];
-	
+
 	//compute coefficients mod p
-	long n, t;
-	for(n=0; n<=degree; n++) 
-	  {
-	    t=posmod(c[n],p);
-	    coeffs_mod_p[pn][n]=t;
-	  } 
+	for(long n=0; n<=degree; n++)
+          coeffs_mod_p[pn][n]=posmod(c[n],p);
+
 	long np=squares[pn][coeffs_mod_p[pn][0]];
 	is_f_square[pn][0]=np;
-	long a;
-	for(a = 1 ; a < p; a++) 
+	for(long a = 1 ; a < p; a++)
 	  {
 	    //compute f(a) mod p with Horner method
 	    long s = coeffs_mod_p[pn][degree];
-	    for(n = degree - 1 ; n >= 0 ; n--)
+	    for(long n = degree - 1 ; n >= 0 ; n--)
 	      {
 		s *= a;
 		s += coeffs_mod_p[pn][n];
 		s %= p;
 	      }
-	    if((is_f_square[pn][a]=squares[pn][s])) 
+	    if((is_f_square[pn][a]=squares[pn][s]))
 	      np++; //np is the number of a / f(a) is a square mod p
 	  }
-	// Fill array with info for p 
+	// Fill array with info for p
 	prec[pn].p = p;
 	prec[pn].n = pn;
 	if(degree&1 || squares[pn][coeffs_mod_p[pn][degree]])
@@ -513,7 +506,7 @@ void qsieve::init_f()
 	if(ratio2*(1.0 - prec[n].r) < 1.0) break;
       sieve_primes2 = n;
       }
-    for(n = 0; n < sieve_primes2; n++)
+    for(long n = 0; n < sieve_primes2; n++)
       { pnn[n] = prec[n].n;
       sieves[n].p = prime[pnn[n]];
       }
@@ -527,7 +520,7 @@ void qsieve::init_f()
 	if (sieve_primes2>0)
 	  {
 	    cout<<"Sieving primes:\n First stage: ";
-	    long i;
+            int i;
 	    for(i = 0; i < sieve_primes1; i++)
 	      cout<<prime[pnn[i]]<<", ";
 	    cout<<endl<<" Second stage: ";
@@ -550,13 +543,12 @@ void qsieve::init_f()
       }
     if (verbose)
       {
-	long i;
 	cout<<"Forbidden divisors of the denominator:"<<endl;
-	for (i=0;forbidden[i];i++)
+	for (int i=0;forbidden[i];i++)
 	  cout<<forbidden[i]<<", ";
 	cout<<endl<<endl;
       }
-    
+
   }//end of init is_f_square
 
 
@@ -569,13 +561,13 @@ void qsieve::init_f()
 
     sieve= new bit_array**[sieve_primes2];
     sieve2= new bit_array**[sieve_primes2];
-    
+
     //  cout<<"Entering init_sieve"<<endl;
-    long a, b, i, pn; 
-    long p, kp, bb, aa;
+    long a, b, i, pn;
+    long kp;
     for(pn = 0; pn < sieve_primes2; pn++)
       {
-	p = prime[pnn[pn]];
+	long p = prime[pnn[pn]];
 	sieve[pn]=new bit_array*[p+1];
 	sieve2[pn]=new bit_array*[p+1];
 	//kp = k*p such that k = 1 if p > tech and k*p maximal <= tech otherwise 
@@ -585,14 +577,14 @@ void qsieve::init_f()
 	  kp = (tech/p) * p;
 	kpa[pn] = kp;
 	//determine which quotients a/b are excluded mod p
-	bb = (b_high >= p) ? p : b_high + 1;
+	long bb = (b_high >= p) ? p : b_high + 1;
 	for (b=0;b<p+1;b++)
 	  {
 	    sieve[pn][b]=new bit_array[p+1];
 	    sieve2[pn][b]= new bit_array[p+1];
 	  }
 
-	aa = p>>QS_LONG_SHIFT;
+	long aa = p>>QS_LONG_SHIFT;
 	if(aa == 0) aa = 1;
 	if(!odd_nums)
 	  {
@@ -607,7 +599,6 @@ void qsieve::init_f()
 		    for(b = 1; b < bb; b++)
 		      { 
 			long ab = (a * b) % p;
-			long i;
 			for(i = 0; i <= (long)QS_LONG_LENGTH/p; i++) //repeat the pattern
 			  {
 			    help[b][ab>>QS_LONG_SHIFT] |= bits[ab & QS_LONG_MASK];
@@ -859,7 +850,6 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
       if(p_high < p_low)
 	{ 
 	  bit_array *siv1;
-	  long i;
 	  siv1 = &sieve_n[w_low - kp * p_high];
 	  for(i = range; i ; i--) 
 	    *surv++ &= *siv1++;
@@ -872,7 +862,6 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
 	  siv1 = &sieve_n[kp-j];
 	  if(j)
 	    { 
-	      long i;
 	      for(i = j; i; i--) 
 		*surv++ &= *siv1++;
 	    }
@@ -886,7 +875,6 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
 	  j = w_high - kp * p_high;
 	  if(j)
 	    {
-	      long i;
 	      siv1 -= kp;
 	      for(i = j; i; i--) 
 		*surv++ &= *siv1++;
@@ -896,10 +884,10 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
   //Check the points that have survived the sieve if they really are points 
   { 
     bit_array *surv0 = survivors; // &survivors[0];
-    bit_array nums=0;
     for(i = w_low; i < w_high; i++)
       {
-	if((nums = *surv0++))
+        bit_array nums = *surv0++;
+	if(nums)
 	  {
 	    check_point(nums, b, i, &total, use_odd_nums);
 #if DEBUG_QS>0
@@ -1022,12 +1010,10 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
 
 void qsieve::dealloc_sieves()
 {
-  long i,j;
-  long p;
-  for (i=0;i<sieve_primes2;i++)
+  for (int i=0;i<sieve_primes2;i++)
     {
-      p=prime[pnn[i]];
-      for (j=0;j<p+1;j++)
+      long p=prime[pnn[i]];
+      for (int j=0;j<p+1;j++)
 	{
 	  delete[] sieve[i][j];
 	  delete[] sieve2[i][j];

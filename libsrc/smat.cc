@@ -125,10 +125,10 @@ void smat::set_row( int i, int d, int* pos, scalar* values) // i counts from 0
     vali = val[i] = new scalar [d];
   }
   coli++;
-  int j=d, c; scalar v;
+  int j=d;
   while(j--) {
-    v = *values++;
-    c = *pos++;
+    scalar v = *values++;
+    int c = *pos++;
     if (v)
       {
         *coli++ = c;
@@ -216,16 +216,16 @@ void smat::setrow ( int i, const svec& v) // i counts from 1
 }
 
 smat smat::select_rows(const vec& rows) const
-  {
-    int i,r, n=dim(rows);
-    smat ans(n,nco);
-    for(i=0; i<n; i++)
-      {
-	r=rows[i+1]-1;
-	ans.set_row(i,col[r][0],col[r]+1,val[r]);
-      }
-    return ans;
-  }
+{
+  int n=dim(rows);
+  smat ans(n,nco);
+  for(int i=0; i<n; i++)
+    {
+      int r=rows[i+1]-1;
+      ans.set_row(i,col[r][0],col[r]+1,val[r]);
+    }
+  return ans;
+}
 
 mat smat::as_mat( ) const
 {
@@ -419,10 +419,10 @@ smat& smat::operator-=(const smat& mat2)
 smat& smat::operator+= (const scalar& scal) // adds scalar*identity
 {
   if(scal==0) return *this;
-  int i, d, k;
-  for(i = 0; i < nro; i++ )
+
+  for(int i = 0; i < nro; i++ )
     {
-      d = *col[i];                      // length of old row
+      int d = *col[i];                      // length of old row
       int *pos1 = col[i] + 1;           // pointer to run along position vector
       scalar *val1 = val[i];            // pointer to run along value vector
       int *P = new int [ d + 2 ];       //  new position vector
@@ -430,9 +430,9 @@ smat& smat::operator+= (const scalar& scal) // adds scalar*identity
       int* Pi=P+1;
       scalar* Vi=V;
       scalar newval;
-      k = 0;           // k will be # of non-zero entries of new row
+      int k = 0;           // k will be # of non-zero entries of new row
       while((d)&&(*pos1<(i+1)))  // just copy entries
-	{ 
+	{
 	  *Pi++ = *pos1++; *Vi++ = *val1++; k++; d--;
 	}
       if(d&&(*pos1==(i+1)))     // add the scalar, see if it's zero
@@ -477,11 +477,10 @@ void smat::reduce_mod_p(const scalar& p)
 smat& smat::operator*=(scalar scal)
 {
   if(scal==0) cerr<<"Attempt to multiply smat by 0\n"<<endl;
-  int i, d; scalar *veci;
-  for( i = 0; i < nro; i++)
+  for( int i = 0; i < nro; i++)
     {
-      d = *col[i];
-      veci = val[i];
+      int d = *col[i];
+      scalar *veci = val[i];
       while(d--) (*veci++) *= scal;
     }
   return *this;
@@ -490,11 +489,10 @@ smat& smat::operator*=(scalar scal)
 smat& smat::mult_by_scalar_mod_p (scalar scal, const scalar& p)
 {
   if(xmod(scal,p)==0) cerr<<"Attempt to multiply smat by 0\n"<<endl;
-  int i, d; scalar *veci;
-  for( i = 0; i < nro; i++)
+  for(int i = 0; i < nro; i++)
     {
-      d = *col[i];
-      veci = val[i];
+      int d = *col[i];
+      scalar *veci = val[i];
       while(d--) {(*veci) = xmodmul(*veci,scal,p); veci++;}
     }
   return *this;
@@ -503,11 +501,10 @@ smat& smat::mult_by_scalar_mod_p (scalar scal, const scalar& p)
 smat& smat::operator/=(scalar scal)
 {
   if(scal==0) cerr<<"Attempt to divide smat by 0\n"<<endl;
-  int i, d; scalar *veci;
-   for(  i = 0; i < nro; i++)
+  for(int i = 0; i < nro; i++)
     {
-      d = *col[i];
-      veci = val[i];
+      int d = *col[i];
+      scalar *veci = val[i];
       while(d--) (*veci++) /= scal;
     }
   return *this;
@@ -521,15 +518,14 @@ mat smat::operator*( const mat& m )
       return mat();
     }
   mat product( nro, m.ncols() );
-  int i, j, d, t;
   scalar ans;
-  for( i = 1; i <= nro; i++ ) 
+  for(int i = 1; i <= nro; i++ )
     {
-      d = col[i-1][0];
-      for( j = 1; j <= m.ncols(); j++ ) 
+      int d = col[i-1][0];
+      for(int j = 1; j <= m.ncols(); j++ ) 
 	{
 	  ans = 0;
-	  for( t = 0; t < d; t++ ) ans += val[i-1][t]*m(col[i-1][t+1],j);
+	  for(int t = 0; t < d; t++ ) ans += val[i-1][t]*m(col[i-1][t+1],j);
 	  product(i,j) = ans;
 	}
     }
@@ -688,9 +684,8 @@ smat transpose ( const smat& A )
 {
   // 1. Count the number of entries in each column (as in operator*() below):
   int *colwts = new int[A.nco];
-  int i, r;
-  for(i=0; i<A.nco; i++) colwts[i]=0;
-  for( r = 0; r <A.nro; r++ ) // counts # of elements in each col
+  for( int i=0; i<A.nco; i++) colwts[i]=0;
+  for( int r=0; r <A.nro; r++ ) // counts # of elements in each col
     {
       int d = *A.col[r];
       int *p = A.col[r] + 1;
@@ -706,7 +701,7 @@ smat transpose ( const smat& A )
   // Remove the default entries in B:
   for( int i = 0; i < B.nro; i++ ) { delete [] B.col[i]; delete [] B.val[i]; }
   // Replace with the correct sizes:
-  for( i = 0; i < B.nro; i++ )
+  for( int i = 0; i < B.nro; i++ )
     {
       int d = colwts[i];
       B.col[i] = new int[ d+1 ];  
@@ -718,8 +713,8 @@ smat transpose ( const smat& A )
   //   put into row i of the transpose
   int * aux = new int [B.nro];
   int *a=aux;
-  for( r = 0; r < B.nro; r++ ) *a++ = 0;
-  for( r = 0; r < A.nro; r++ ) {
+  for( int r = 0; r < B.nro; r++ ) *a++ = 0;
+  for( int r = 0; r < A.nro; r++ ) {
     int d = *A.col[r];
     //    cout<<"row "<<r<<" of A has "<<d<<" entries\n";
     scalar *v = A.val[r];
@@ -732,7 +727,7 @@ smat transpose ( const smat& A )
     }
 #if(0)
     cout<<"After processing that row, aux = \n";
-    for(i=0; i<A.nco; i++) cout<<aux[i]<<" ";
+    for(int i=0; i<A.nco; i++) cout<<aux[i]<<" ";
     cout<<endl;
 #endif
   }
@@ -878,10 +873,10 @@ int operator!=(const smat& sm1, const smat& sm2)
 
 int get_population(const smat& m )
 {
-  int r,d,count = 0;
-  for( r = 0; r < m.nro; r++ ) 
+  int count = 0;
+  for(int r = 0; r < m.nro; r++ )
     {
-      d = *(m.col[r]);
+      int d = *(m.col[r]);
       if(d==0) continue;
       int *pos = m.col[r] + 1;
       while( d-- ) { count += ( *pos++ != 0 );}
@@ -904,7 +899,7 @@ smat sidmat(scalar n)  // identity matrix
 int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace)
 {
   scalar modulus=pr,n,d; long nr,nc; dd=1;
-  int succ=0,success=1;
+  int success=1;
   float lim=floor(sqrt(pr/2.0));
   m = mm;
   if(trace)
@@ -917,7 +912,7 @@ int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace)
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
       {
-	succ = modrat(m.val[nr][nc],modulus,lim,n,d);
+	int succ = modrat(m.val[nr][nc],modulus,lim,n,d);
 	success = success && succ;
 	dd=lcm(d,dd);
       }
