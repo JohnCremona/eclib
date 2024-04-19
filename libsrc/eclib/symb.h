@@ -96,6 +96,6 @@ class symbdata :public moddata {
     long tof(long i) const {symb s=symbol(i); long c=s.cee(), d=s.dee(); return index2(c-d, c);} 
 };
 
-modsym jumpsymb(symb s1, symb s2);
+modsym jumpsymb(const symb& s1, const symb& s2);
 
 #endif

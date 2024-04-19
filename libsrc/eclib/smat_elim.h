@@ -47,7 +47,7 @@ class smat_elim : public smat{
 	}
       list_array[ num++ ] = X; 
     }
-    int find( type& X, int ub, int lb = 0 );
+    int find( const type& X, int ub, int lb = 0 );
     void grow ();
     type next() { 
       if( index < num ) return( list_array[index++] ); else return(-1); 
@@ -79,8 +79,8 @@ class smat_elim : public smat{
   void clear_col(int,int,list&, int fr = 0, int fc = 0,int M = 0,int *li =0);
   void check_col( int col, list& L );
   void check_row (int d2, int row2, list& L ); 
-  int get_weight( int, int* ); 
-  int has_weight_one( int, int* ); 
+  int get_weight( int, const int* ); 
+  int has_weight_one( int, const int* ); 
   int n_active_cols(); // number of active columns
   int n_active_rows(); // number of active rows
   long n_active_entries(); // number of active entries
@@ -102,7 +102,7 @@ public:
   smat new_kernel( vec&, vec& );
   smat kernel( vec&, vec& );
   void normalize( int, int );
-  void eliminate( int&, int& );
+  void eliminate( const int&, const int& );
   void step5dense();
   void free_space( int col );
   void elim( int row1, int row2, scalar v2 );

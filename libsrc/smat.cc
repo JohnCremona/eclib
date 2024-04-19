@@ -141,7 +141,7 @@ void smat::set_row( int i, int d, int* pos, scalar* values) // i counts from 0
 void smat::setrow ( int i, const vec& v) // i counts from 1
 {
   int j, m, n;
-  scalar *vi, *vali, e;
+  scalar *vi, *vali;
   int *coli;
 
   // count nonzero entries of v:
@@ -168,7 +168,7 @@ void smat::setrow ( int i, const vec& v) // i counts from 1
   vi = v.entries;
   for(m=1; m<=v.d; m++)
     {
-      e = *vi++;
+      scalar e = *vi++;
       if (e)
         {
           *coli++ = m;
@@ -429,7 +429,6 @@ smat& smat::operator+= (const scalar& scal) // adds scalar*identity
       scalar *V = new scalar [ d + 1 ]; //  new value vector
       int* Pi=P+1;
       scalar* Vi=V;
-      scalar newval;
       int k = 0;           // k will be # of non-zero entries of new row
       while((d)&&(*pos1<(i+1)))  // just copy entries
 	{
@@ -437,7 +436,7 @@ smat& smat::operator+= (const scalar& scal) // adds scalar*identity
 	}
       if(d&&(*pos1==(i+1)))     // add the scalar, see if it's zero
 	{
-	  newval = (*val1)+scal;
+	  scalar newval = (*val1)+scal;
 	  if( newval!=0) { *Vi++ = newval; *Pi++=*pos1; k++; }
 	  pos1++; val1++; d--;
 	}
@@ -547,24 +546,22 @@ svec operator* ( const smat& A, const svec& v )
       cerr << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
       return svec();
     }
-  int n = A.nro, j; scalar s;
+  int n = A.nro;
   svec prod(n);
-  for(j = 1; j<=n; j++)  
+  for(int j = 1; j<=n; j++)
     {
-      s = (A.row(j))*v;
+      scalar s = (A.row(j))*v;
       if(s) prod.entries[j]=s;
     }
   return prod;
 }
 
-vec operator*  (smat& m, const vec& v)
+vec operator* (const smat& m, const vec& v)
 {
   int r = m.nrows(), c=m.ncols();
   vec w(r);
   if(c!=dim(v))
-    {
-      cerr<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
-    }
+    cerr<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
   else
     for(int i=1; i<=r; i++) w.set(i,m.row(i)*v);
   return w;

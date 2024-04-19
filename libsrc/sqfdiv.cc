@@ -27,9 +27,8 @@
 //#define DEBUG
 
 sqfdiv::sqfdiv(const bigint& dd, int posd, vector<bigint>* plist)
-:primebase(plist), np(0), positive(posd), factor(0)
+  :primebase(plist), d(1), np(0), positive(posd), factor(0)
 {
-  d=1;
   bigint p;
   for(unsigned long i=0; i<plist->size(); i++)
     if(p=(*primebase)[i],div(p,dd)) {d*=p; np++;}

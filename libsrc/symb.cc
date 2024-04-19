@@ -131,11 +131,12 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
   //   cout << "In constructor symbdata::symbdata.\n";
   //   cout << "nsymb2 = " << nsymb2 << "\n";
  if (nsymb2>0)
- { long ic,id,c,d,start; symb s;
+ { long ic,id,d; symb s;
 //N.B. dlist include d=1 at 0 and d=mod at end, which we don't want here
    for (ic=1; (ic<ndivs-1)&&(specials.count()<nsymb2); ic++)
-   { c=dlist[ic];
-     dstarts[ic]=start=specials.count();
+   { long c=dlist[ic];
+     long start=specials.count();
+     dstarts[ic]=start;
      for (id=1; (id<modulus-phi)&&(specials.count()<nsymb2); id++)
      { d = noninvlist[id];
        if (::gcd(d,c)==1)
@@ -189,20 +190,22 @@ void symbdata::display() const
 }
 
 void symbdata::check(void) const
-{long i,j; int ok=1; symb s;
- for (i=0; i<nsymb; i++)
- {j = index(s=symbol(i));
-  if (i!=j)
+{
+  int ok=1; symb s;
+  for (long i=0; i<nsymb; i++)
     {
-      cout << i << "-->" << s << "-->" << j << "\n";
-      ok=0;
+      long j = index(s=symbol(i));
+      if (i!=j)
+        {
+          cout << i << "-->" << s << "-->" << j << "\n";
+          ok=0;
+        }
     }
- }
- if (ok) cout << "symbols check OK!\n";
- else cout << "symbols check found errors!\n";
+  if (ok) cout << "symbols check OK!\n";
+  else cout << "symbols check found errors!\n";
 }
 
-modsym jumpsymb(symb s1, symb s2)
+modsym jumpsymb(const symb& s1, const symb& s2)
 {
   //Assuming s1==s2, returns closed modular symbol {g1(0),g2(0)} where gi<->si
   long c1=s1.cee(), c2=s2.cee(), d1=s1.dee(), d2=s2.dee();
