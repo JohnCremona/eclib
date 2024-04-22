@@ -194,10 +194,11 @@ void vec::add_modp(long i, scalar x, scalar p)
 
 scalar operator*(const vec& v, const vec& w)
 {
- long dim=v.d; scalar dot=0;
+ scalar dot=0;
  scalar* vi=v.entries, *wi=w.entries;
- if (dim==w.d)
-   while (dim--) dot+= (*vi++)*(*wi++);
+ long d = v.d;
+ if (d==w.d)
+   while (d--) dot+= (*vi++)*(*wi++);
  else
    {
      cerr << "Unequal dimensions in dot product"<<endl;
@@ -207,10 +208,10 @@ scalar operator*(const vec& v, const vec& w)
 
 int operator==(const vec& v, const vec& w)
 {
-   long dim=v.d;
-   long equal = (dim==w.d);
+   long d=v.d;
+   long equal = (d==w.d);
    scalar* vi=v.entries, *wi=w.entries;
-   while ((dim--) && equal) equal = ((*vi++)==(*wi++));
+   while ((d--) && equal) equal = ((*vi++)==(*wi++));
    return equal;
 }
 
@@ -257,7 +258,7 @@ scalar vecgcd(const vec& v)
 }
 
 void swapvec(vec& v, vec& w)
-{scalar *temp; 
+{scalar *temp;
  if (v.d==w.d) {temp=v.entries; v.entries=w.entries; w.entries=temp;}
  else
    {
@@ -270,16 +271,16 @@ int member(scalar a, const vec& v)
  while (i--&&!ans) ans=(a==(*vi++));
  return ans;
 }
- 
+
 // Definition of non-friend operators and functions
 
-vec reverse(vec& order)
-{ long i,n = dim(order);
+vec reverse(const vec& order)
+{ long n = dim(order);
   vec ans(n);
-  for (i=1; i<=n; i++) ans.set(order[i],i);
+  for (int i=1; i<=n; i++) ans.set(order[i],i);
   return ans;
 }
- 
+
 vec express(const vec& v, const vec& v1, const vec& v2)
 {
    vec ans(3);

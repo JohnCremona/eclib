@@ -26,20 +26,23 @@
 // Definitions of member operators and functions:
 
 svec::svec(const vec& v)
+  :d(dim(v))
 {
-  d = dim(v); scalar vi;
   for(int i = 1; i <= d; i++ )
-    if((vi=v[i])) // assignment not equality!
-      entries[i]=vi;
+    {
+      scalar vi = v[i];
+      if(vi) // assignment not equality!
+        entries[i]=vi;
+    }
 }
 
 svec::svec (int dim, scalar* a)     // conversion constructor
   :d(dim)
 {
-  int i=0; scalar* ai=a;
-  for( ; i<d; i++, ai++)
-    if(*ai) 
-      entries[i]=*ai; 
+  scalar* ai=a;
+  for(int i=0 ; i<d; i++)
+    if(*ai++)
+      entries[i+1]=*ai;
 }
 
 vec svec::as_vec( ) const
@@ -269,11 +272,10 @@ svec& svec::operator*=(scalar scal)
 
 void svec::reduce_mod_p(const scalar& p)
 {
-  scalar a;
   auto vi = entries.begin();
   while( vi != entries.end() )
     {
-      a = mod(vi->second,p);
+      scalar a = mod(vi->second,p);
       if(a)
         {
           (vi->second)=a;
@@ -480,11 +482,13 @@ svec& svec::operator/=(scalar scal)
 int eqmodp(const svec& v1, const svec& v2, const scalar& p)
 {
   if(v1.d!=v2.d) return 0;
-  for( const auto& vi : v1.entries)
-    if(xmod((vi.second)-(v2.elem(vi.first)),p)!=0) return 0;
-  for( const auto& vi : v2.entries)
-    if(xmod((vi.second)-(v1.elem(vi.first)),p)!=0) return 0;
-  return true;
+  if (std::any_of(v1.entries.begin(), v1.entries.end(),
+                  [v2,p] (const pair<int,scalar>& vi) {return xmod((vi.second)-(v2.elem(vi.first)),p)!=0;}))
+    return 0;
+  if (std::any_of(v2.entries.begin(), v2.entries.end(),
+                  [v1,p] (const pair<int,scalar>& vi) {return xmod((vi.second)-(v1.elem(vi.first)),p)!=0;}))
+    return 0;
+  return 1;
 }
 
 int operator==(const svec& v1, const vec& v2)

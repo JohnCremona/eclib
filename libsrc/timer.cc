@@ -276,10 +276,11 @@ int timer::count( string name ) {
  * Return total time of a given timer.
  */
 double timer::total( string name ) {
-  double total = 0;
-  for ( const auto& t : times_[name])
-    total += t;
-  return total;
+  return std::accumulate(times_[name].begin(), times_[name].end(), 0);
+  // double total = 0;
+  // for ( const auto& t : times_[name])
+  //   total += t;
+  // return total;
 }
 
 /**

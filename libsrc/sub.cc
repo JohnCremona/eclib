@@ -78,18 +78,21 @@ mat expressvectors(const mat& m, const subspace& s)
  
 //This one is used a LOT
 mat restrict_mat(const mat& m, const subspace& s, int cr)
-{ long i,j,k,d = dim(s), n=m.nro;
+{ long d = dim(s), n=m.nro;
   if(d==n) return m; // trivial special case, s is whole space
   scalar dd = s.denom;
   mat ans(d,d);
   const mat& sb = s.basis;
-  scalar *ap, *a=m.entries, *b=sb.entries, *bp, *c=ans.entries, *cp, *pv=s.pivots.entries;
-  for(i=0; i<d; i++)
+  scalar *a=m.entries, *b=sb.entries, *c=ans.entries, *cp, *pv=s.pivots.entries;
+  for(int i=0; i<d; i++)
     {
-      bp=b; k=n; ap=a+n*(pv[i]-1);
+      scalar *ap=a+n*(pv[i]-1);
+      scalar *bp=b;
+      int k=n;
       while(k--)
 	{
-	  cp=c; j=d;
+	  cp=c;
+          int j=d;
 	  while(j--)
 	    {
 	      *cp++ += *ap * *bp++;
@@ -113,24 +116,26 @@ mat restrict_mat(const mat& m, const subspace& s, int cr)
   }
   return ans;
 }
- 
+
 subspace kernel(const mat& m1, int method)
 {
-   long rank, nullity, n, r, i, j;
+   long rank, nullity;
    scalar d;
    vec pcols,npcols;
    mat m = echelon(m1,pcols,npcols, rank, nullity, d, method);
-   int dim = m.ncols();
-   mat basis(dim,nullity);
-   for (n=1; n<=nullity; n++) basis.set(npcols[n],n,d);
-   for (r=1; r<=rank; r++)
-   { i = pcols[r];
-     for (j=1; j<=nullity; j++) basis.set(i,j, -m(r,npcols[j]));
+   mat basis(m.ncols(),nullity);
+   for (int n=1; n<=nullity; n++)
+     basis.set(npcols[n],n,d);
+   for (int r=1; r<=rank; r++)
+   {
+     int i = pcols[r];
+     for (int j=1; j<=nullity; j++)
+       basis.set(i,j, -m(r,npcols[j]));
    }
    subspace ans(basis, npcols, d);
    return ans;
 }
- 
+
 subspace image(const mat& m, int method)
 {
   vec p,np;
@@ -166,18 +171,20 @@ subspace pcombine(const subspace& s1, const subspace& s2, scalar pr)
 }
 
 mat prestrict(const mat& m, const subspace& s, scalar pr, int cr)
-{ int i,j,k,d = dim(s), n=m.nro;
+{ int d = dim(s), n=m.nro;
   if(d==n) return m; // trivial special case, s is whole space
   scalar dd = s.denom;  // will be 1 if s is a mod-p subspace
   mat ans(d,d);
   const mat& sb = s.basis;
-  scalar *ap, *a=m.entries, *b=sb.entries, *bp, *c=ans.entries, *cp, *pv=s.pivots.entries;
-  for(i=0; i<d; i++)
+  scalar *a=m.entries, *b=sb.entries, *c=ans.entries, *pv=s.pivots.entries;
+  for(int i=0; i<d; i++)
     {
-      bp=b; k=n; ap=a+n*(pv[i]-1);
+      scalar *ap=a+n*(pv[i]-1), *bp=b, *cp;
+      int j, k=n;
       while(k--)
 	{
-	  cp=c; j=d;
+	  cp=c;
+          j=d;
 	  while(j--)
 	    {
 	      *cp += xmodmul(*ap , *bp++, pr);
@@ -186,7 +193,8 @@ mat prestrict(const mat& m, const subspace& s, scalar pr, int cr)
 	    }
 	  ap++;
 	}
-      cp=c; j=d;
+      cp=c;
+      j=d;
       while(j--)
 	{
 	  *cp = mod(*cp,pr);
@@ -198,25 +206,27 @@ mat prestrict(const mat& m, const subspace& s, scalar pr, int cr)
     const mat& left = dd*matmulmodp(m,sb,pr);
     const mat& right = matmulmodp(sb,ans,pr);
     int check = (left==right);
-    if (!check) 
+    if (!check)
       {
 	cout<<"Error in prestrict: subspace not invariant!\n";
       }
   }
   return ans;
 }
- 
+
 subspace oldpkernel(const mat& m1, scalar pr)   // using full echmodp
 {
-   long rank, nullity, n, r, i, j;
+   long rank, nullity;
    vec pcols,npcols;
    mat m = echmodp(m1,pcols,npcols, rank, nullity, pr);
-   int dim = m.ncols();
-   mat basis(dim,nullity);
-   for (n=1; n<=nullity; n++) basis.set(npcols[n],n,1);
-   for (r=1; r<=rank; r++)
-   { i = pcols[r];
-     for (j=1; j<=nullity; j++) basis.set(i,j, mod(-m(r,npcols[j]),pr));
+   mat basis(m.ncols(),nullity);
+   for (int n=1; n<=nullity; n++)
+     basis.set(npcols[n],n,1);
+   for (int r=1; r<=rank; r++)
+   {
+     int i = pcols[r];
+     for (int j=1; j<=nullity; j++)
+       basis.set(i,j, mod(-m(r,npcols[j]),pr));
    }
    subspace ans(basis, npcols, 1);
    return ans;
@@ -225,21 +235,20 @@ subspace oldpkernel(const mat& m1, scalar pr)   // using full echmodp
 // using echmodp_uptri, with no back-substitution
 subspace pkernel(const mat& m1, scalar pr)
 {
-  long rank, nullity, i, j, jj, t, tt;
+  long rank, nullity;
   vec pcols,npcols;
   mat m = echmodp_uptri(m1,pcols,npcols, rank, nullity, pr);
-  int dim = m.ncols();
-  mat basis(dim,nullity);
-  for(j=nullity; j>0; j--)
+  mat basis(m.ncols(),nullity);
+  for(int j=nullity; j>0; j--)
     {
-      jj = npcols[j];
+      int jj = npcols[j];
       basis(jj,j) = 1;
-      for(i=rank; i>0; i--)
+      for(int i=rank; i>0; i--)
         {
           scalar temp = -m(i,jj);
-          for(t=rank; t>i; t--)
+          for(int t=rank; t>i; t--)
             {
-              tt=pcols[t];
+              int tt=pcols[t];
               temp -= xmodmul(m(i,tt),basis(tt,j),pr);
               temp = xmod(temp,pr);
             }
@@ -249,7 +258,7 @@ subspace pkernel(const mat& m1, scalar pr)
   subspace ans(basis, npcols, 1);
   return ans;
 }
- 
+
 subspace pimage(const mat& m, scalar pr)
 {
   vec p,np;
@@ -258,7 +267,7 @@ subspace pimage(const mat& m, scalar pr)
   subspace ans(b,p,1);
   return ans;
 }
- 
+
 subspace peigenspace(const mat& m1, scalar lambda, scalar pr)
 {
   const mat& m = addscalar(m1,-lambda);

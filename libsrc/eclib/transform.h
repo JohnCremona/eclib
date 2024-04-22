@@ -49,11 +49,11 @@ int check_transform(const bigint& a, const bigint& b, const bigint& c,
 		    const bigint& xd, const bigint& xe);
 
 void xshift(const bigint& alpha,
-	    bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+	    const bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 	    unimod& m);
 
 void zshift(const bigint& gamma,
-	    bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+	    bigint& a, bigint& b, bigint& c, bigint& d, const bigint& e,
 	    unimod& m);
 
 void m_invert(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,

@@ -106,7 +106,7 @@ void makeprimitive(vec& v);
 void elim(const vec& a, vec& b, long pos);
 void elim1(const vec& a, vec& b, long pos);
 void elim2(const vec& a, vec& b, long pos, scalar lastpivot);
-vec reverse(vec& order);
+vec reverse(const vec& order);
 vec express(const vec& v, const vec& v1, const vec& v2);
 int lift(const vec& v, scalar pr, vec& ans);  //lifts a mod-p vector to a rational
                                    //and scales to a primitive vec in Z. Returns success flag

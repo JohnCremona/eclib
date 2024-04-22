@@ -36,7 +36,6 @@ FqPoly ffmodq::f2;
 ffmodq::ffmodq(const curvemodq& EE)
 {
   E=EE; Fq=get_field(EE);
-  //  cout<<"In ffmodq constructor"<<endl;
   init_f1f2();
 }
 
@@ -48,10 +47,10 @@ void ffmodq::init_f1f2(void)
   NewGF(Fq,a4);  NewGF(Fq,a6);
   E.get_ai(a1,a2,a3,a4,a6);
   // set f1, f2:
-  NewFqPoly(Fq,X); 
+  NewFqPoly(Fq,X);
   FqPolyAssignX(X);
   f1 = X*(X*(X+a2)+a4)+a6;
-  f2 = a1*X+a3;     
+  f2 = a1*X+a3;
 }
 
 int ffmodq::operator==(const ffmodq& b) const
@@ -101,7 +100,7 @@ gf_element evaluate(const FqPoly& f, const gf_element& value)
 
   NewGF(GetField(f),result);
   GFSetZ(result,0);
-	
+
   if (d < 0) return result;
 
   result = PolyCoeff(f,d);
