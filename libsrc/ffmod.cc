@@ -32,19 +32,11 @@ curvemodq ffmodq::E;
 FqPoly ffmodq::f1;
 FqPoly ffmodq::f2;
 
-//  special constructor to initialize the curve and field only:
-ffmodq::ffmodq(const curvemodq& EE)
+void ffmodq::init(const curvemodq& EE)
 {
-  E=EE; Fq=get_field(EE);
-  init_f1f2();
-}
-
-void ffmodq::init_f1f2(void)
-{
-  //  cout<<"In ffmodq::init_f1f1()"<<endl;
-
-  NewGF(Fq,a1);  NewGF(Fq,a2);  NewGF(Fq,a3);
-  NewGF(Fq,a4);  NewGF(Fq,a6);
+  E = EE;
+  Fq = get_field(EE);
+  NewGF(Fq,a1);  NewGF(Fq,a2);  NewGF(Fq,a3);  NewGF(Fq,a4);  NewGF(Fq,a6);
   E.get_ai(a1,a2,a3,a4,a6);
   // set f1, f2:
   NewFqPoly(Fq,X);

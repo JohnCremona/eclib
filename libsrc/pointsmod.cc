@@ -257,7 +257,7 @@ pointmodq reduce_point(const Point& P,  const curvemodq& Emodq)
 
 void curvemodqbasis::set_basis() 
 {
-  ffmodq(*this); // to initialize the class: sets global ffmodq::E, Fq, f1, f2
+  ffmodq::init(*this); // to initialize the class: sets global ffmodq::E, Fq, f1, f2
   P1=pointmodq(*this);
   P2=P1;
   if(lazy_flag)
@@ -965,7 +965,7 @@ void my_isomorphism_type(curvemodq& Cq,
       cout<<"Assuming that P does have maximal order,\n";
       cout<<"group structure is "<<ordP<<"*"<<quot<<"="<<(quot*ordP)<<endl;
     }
-  ffmodq dummy(Cq);  // to initialize the function field's static data
+  ffmodq::init(Cq);  // to initialize the function field's static data
   if(debug_iso_type)
     cout<<"Looking for a second generator of order "<<quot<<endl;
 

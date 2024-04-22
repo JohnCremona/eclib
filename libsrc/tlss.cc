@@ -82,7 +82,7 @@ void TLSS::init_tlpolys()
     }
 
   // initialize the ffmodq class
-  ffmodq dummy((const curvemodq)Emodq);
+  ffmodq::init((const curvemodq)Emodq);
   // initialize the TL-functions
   TLpolys.resize(0);
   int i;
