@@ -104,7 +104,7 @@ void Compute_Euler(RR& y)
   l = RR::precision();
   RR::SetPrecision(l+20);
 
-  x = 1 + static_cast<long>((0.25 * (l - 3)) * (NTL_BITS_PER_LONG * LOG2));
+  x = 1 + static_cast<long>(0.25 * (l - 3));
   n = 1 + static_cast<long>(3.591 * x);
 
   a=x;
@@ -125,8 +125,8 @@ void Compute_Euler(RR& y)
     add(u, u, a);
     add(v, v, b);
   }
-  div(y, u, v);
   RR::SetPrecision(l);
+  div(y, u, v);
 }
 
 long prec() {return RR::precision();}
