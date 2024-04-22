@@ -152,7 +152,6 @@ inline RR sinh(const RR& x) {return (exp(x)-exp(-x))/2;}
 inline RR tan(const RR& x) {return sin(x)/cos(x);}
 RR atan2(const RR&, const RR&);
 inline int is_approx_zero(const RR& x)
-//  {return abs(x)<power2_RR(2-RR::precision());}
 {
   if (IsZero(x)) return 1;
   long n = x.exponent()+RR::precision()-1;
@@ -221,7 +220,7 @@ typedef double bigfloat;
 inline long decimal_precision() {return 14;}
 inline long bit_precision() {return 52;}
 inline int is_zero(double x) {return fabs(x)<1e-14;}
-inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
+inline int is_approx_zero(double x) {return fabs(x)<1e-11;}
 inline int sign(double x) {return (double(0) < x) - (x < double(0));}
 
 // We cannot set internal bit precision in this mode, so we just set the output decimal precision

@@ -102,6 +102,7 @@ void Compute_Euler(RR& y)
   bigfloat u, v, a, b, c;
 
   l = RR::precision();
+  RR::SetPrecision(l+20);
 
   x = 1 + static_cast<long>((0.25 * (l - 3)) * (NTL_BITS_PER_LONG * LOG2));
   n = 1 + static_cast<long>(3.591 * x);
@@ -111,7 +112,7 @@ void Compute_Euler(RR& y)
   if (sign(u) > 0)  u=-u;
   a=u;
   v=b=to_bigfloat(1);
-  
+
   for (k = 1; k <= n; k++) {
     mul(b, b, x);
     mul(b, b, x);
@@ -125,6 +126,7 @@ void Compute_Euler(RR& y)
     add(v, v, b);
   }
   div(y, u, v);
+  RR::SetPrecision(l);
 }
 
 long prec() {return RR::precision();}

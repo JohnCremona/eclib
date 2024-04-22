@@ -26,15 +26,6 @@
 
 #include <eclib/newforms.h>
 
-#define PI Pi()
-const bigfloat eps = to_bigfloat(1.0e-16);   // ?? mindouble;
-#define EULERGAMMA Euler()
-
-bigfloat myg0(bigfloat x);
-bigfloat myg1(bigfloat x);
-bigfloat myg2(bigfloat x);
-bigfloat myg3(bigfloat x);
-
 class character {
 private:
   long modul;
@@ -123,8 +114,6 @@ public:
   bigcomplex getperiod() {return bigcomplex(rp,ip);}
 };
 
-bigfloat G(int r, bigfloat x);  // G_r(x)
-
 class ldash1 : public summer {
 private:
   long r;
@@ -133,8 +122,7 @@ private:
   bigfloat G(bigfloat x);  // G_r(x)
   void init(const level* N, const vector<long>& f_aplist, long f_sfe, const rational& f_loverp);
   void use(long n, long an) override {use1(n,an);}
-  bigfloat func1(long n) override
-  { return -G(factor1*to_bigfloat(n)); }
+  bigfloat func1(long n) override;
 public:
   ldash1 (const level* iN, const newform* f);
   ldash1 (const newforms* nf, long i);  // the i'th newform
@@ -167,5 +155,6 @@ vector<long> resort_aplist(const level* iN,
 			   const vector<long>& primelist,
 			   const vector<long>& apl);
 
+bigfloat myg1(bigfloat x);
 
 #endif

@@ -3,7 +3,7 @@ Enter first and last N:
 50 b	Rank = 0	L^(r)(f,1)/r! = 0.95681122658762796 	L(f,1)/period = 1/5
 51 a	Rank = 0	L^(r)(f,1)/r! = 0.86005901612713837 	L(f,1)/period = 1/3
 52 a	Rank = 0	L^(r)(f,1)/r! = 0.84548320864564628 	L(f,1)/period = 1/2
-53 a	Rank = 1	L^(r)(f,1)/r! = 0.43586382417785719 	L(f,1)/period = 0
+53 a	Rank = 1	L^(r)(f,1)/r! = 0.43586382417785716 	L(f,1)/period = 0
 54 a	Rank = 0	L^(r)(f,1)/r! = 0.70157482532401025 	L(f,1)/period = 1/3
 54 b	Rank = 0	L^(r)(f,1)/r! = 1.0305218497010025 	L(f,1)/period = 1/3
 55 a	Rank = 0	L^(r)(f,1)/r! = 1.0286698561781891 	L(f,1)/period = 1/4
@@ -12,5 +12,5 @@ Enter first and last N:
 57 a	Rank = 1	L^(r)(f,1)/r! = 0.41749163967630964 	L(f,1)/period = 0
 57 b	Rank = 0	L^(r)(f,1)/r! = 0.58650959165656799 	L(f,1)/period = 2/5
 57 c	Rank = 0	L^(r)(f,1)/r! = 1.0853022722676732 	L(f,1)/period = 1/4
-58 a	Rank = 1	L^(r)(f,1)/r! = 0.46370416478825061 	L(f,1)/period = 0
+58 a	Rank = 1	L^(r)(f,1)/r! = 0.46370416478825058 	L(f,1)/period = 0
 58 b	Rank = 0	L^(r)(f,1)/r! = 1.033207509365107 	L(f,1)/period = 2/5

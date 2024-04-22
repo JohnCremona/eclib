@@ -618,6 +618,18 @@ void ldash1::compute(void)
     }
 }
 
+bigfloat ldash1::func1(long n)
+{
+#ifdef MPFP
+  long l = bit_precision();
+  set_precision(l+20);
+#endif
+  bigfloat ans = -G(factor1*to_bigfloat(n));
+#ifdef MPFP
+  set_precision(l);
+#endif
+  return ans;
+}
 
 /////////////////////////////////
 //  functions for lfchi class  //
@@ -861,26 +873,142 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   return C;
 }
 
-// avoid underflow: log(MINDOUBLE)=-708.396
+bigfloat CG(int r, bigfloat x) // Cohen's G_r(x)
+{
+  // cout<<"CG("<<r<<","<<x<<") = ..."<<flush;
+  static const bigfloat one = to_bigfloat(1);
+  bigfloat n=one, emx=exp(-x), ans=x, term=x, y;
+  vector<bigfloat> Av(r+1, one);  // indexed from 0 to r
+  while(!is_approx_zero(emx*term*Av[r]))
+    {
+      n++;
+      // update A-vector, term and sum
+      for(int j=1;j<=r;j++)
+        Av[j]+=(Av[j-1]/n);
+      term*=x;
+      term/=n;
+      y = Av[r]*term;
+      ans+=y;
+      // cout<<"\n"<<y<<"\t"<<ans<<"\t"<<emx*ans;
+      if (is_approx_zero(y/ans)) break;
+    }
+  // cout<<"\n"<<emx*ans<<" (using "<<n<<" terms)"<<endl;
+  return emx*ans;
+}
 
-bigfloat myg0(bigfloat x)
+bigfloat Glarge(int r, bigfloat x) // Cohen's Gamma_r(x) for large x
+{
+  static const bigfloat zero = to_bigfloat(0);
+  static const bigfloat one = to_bigfloat(1);
+  static const bigfloat two = to_bigfloat(2);
+  bigfloat emx2=2*exp(-x), ans=zero, mxinv=-one/x;
+  bigfloat y, term = mxinv, n=zero;
+  if (is_approx_zero(abs(emx2*term)))
+    return zero;
+  // cout<<"Glarge("<<r<<","<<x<<") = ..."<<flush;
+  vector<bigfloat> Cv(r+1, zero);  // indexed from 0 to r
+  Cv[0]=one;
+  while((n<1000) && !is_approx_zero(abs(emx2*term)))
+    {
+      n++;
+      // update C-vector, term and sum
+      for(int j=r;j>0;j--) Cv[j]+=(Cv[j-1]/n);
+      term*=n;
+      term*=mxinv;
+      y = Cv[r]*term;
+      ans+=y;
+      // cout<<"\n"<<y<<"\t"<<ans<<"\t"<<emx2*ans;
+      if (is_approx_zero(y/ans)) break;
+    }
+  // cout<<"\n"<<emx2*ans<<" (using "<<n<<" terms)"<<endl;
+  return emx2*ans;
+}
+
+bigfloat Q(int r, bigfloat x)  // Q_r(x) polynomial from AMEC p.44
+{
+#ifdef MPFP // Multi-Precision Floating Point
+  static const bigint nz2=atoI("3772654005711327105320428325461179161744295822071095339706353540767904529098322739007189721774317982928833");
+  bigfloat zeta2; MakeRR(zeta2,nz2,-350);
+  static const bigint nz3=atoI("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
+  bigfloat zeta3; MakeRR(zeta3,nz3,-350);
+  static const bigint nz4=atoI("2482306838570394152367457601777793352247775704274910416102594171643891396599068147834147756326957412925856");
+  bigfloat zeta4; MakeRR(zeta4,nz4,-350);
+#else
+ static const bigfloat zeta2 = 1.6449340668482264364724151666460251892189499;
+ static const bigfloat zeta3 = 1.20205690315959428539973816151144999076498629;
+ static const bigfloat zeta4 = 1.08232323371113819151600369654116790277475095;
+#endif
+ static const bigfloat two = to_bigfloat(2);
+ static const bigfloat three = to_bigfloat(3);
+ static const bigfloat four = to_bigfloat(4);
+ static const bigfloat nine = to_bigfloat(9);
+ static const bigfloat sixteen = to_bigfloat(16);
+ static const bigfloat twentyfour = to_bigfloat(24);
+ static const bigfloat const1 = nine*zeta4/sixteen;
+ static const bigfloat const2 = zeta3/three;
+ static const bigfloat const3 = zeta4/four;
+ static const bigfloat half = to_bigfloat(1)/two;
+ static const bigfloat third = to_bigfloat(1)/three;
+ static const bigfloat twenty4th = to_bigfloat(1)/twentyfour;
+  switch(r) {
+  case 1: default: return x;
+  case 2: return (x*x+zeta2)*half;
+  case 3: return x*(x*x*third+zeta2)*half-const2;
+  case 4: return const1 +x*(-const2+x*(const3+x*x*twenty4th));
+  }
+}
+
+bigfloat P(int r, bigfloat x)  // P_r(x) polynomial from AMEC p.44
+{
+  static bigfloat gamma=Euler();
+  return Q(r,x-gamma);
+}
+
+bigfloat Gsmall(int r, bigfloat x) // Cohen's Gamma_r(x) for small x
+{
+  bigfloat a=P(r,-log(x)), b = CG(r,x);
+  return (r%2? a+b : a-b);
+}
+
+bigfloat G(int r, bigfloat x)  // G_r(x)
 {
 #ifndef MPFP // Multi-Precision Floating Point
-  if(x>708) return to_bigfloat(0);
+  static const  bigfloat x0 = to_bigfloat(14);
+#else
+  // log(2) = 0.693147180599..
+  // this value only determines whether to use Gsmall or Glarge:
+  static const  bigfloat x0 = to_bigfloat(0.693147*bit_precision());
 #endif
-  return exp(-x);
+  //  cout<<"switch point = "<<x0<<endl;
+  //  cout<<"x="<<x<<endl;
+
+  return x<x0? Gsmall(r,x) : Glarge(r,x);
 }
+
+bigfloat ldash1::G(bigfloat x)  // G_r(x)
+{
+#ifndef MPFP // if without Multi-Precision Floating Point, avoid underflow: log(MINDOUBLE)=-708.396
+  if((r<2) && (x>708))
+    return to_bigfloat(0);
+  if(r==1)
+    return myg1(x);
+#endif
+  return r==0? exp(-x) : ::G(r,x);
+}
+
+// myg1(x) is the same as G_1(x) = G(1,x)
 
 //#define TRACEG1
 
 bigfloat myg1(bigfloat x)
 {
+  static bigfloat gamma=Euler();
 #ifndef MPFP // Multi-Precision Floating Point
   if(x>708) return to_bigfloat(0);
 #endif
   if(x<2)
     {
-      bigfloat ans = -log(x) - Euler();
+      bigfloat ans = -log(x) - gamma;
       bigfloat p = to_bigfloat(-1);
 #ifdef TRACEG1
       cout<<"Computing myg1 for x = "<<x<<" using series"<<endl;
@@ -940,188 +1068,3 @@ bigfloat myg1(bigfloat x)
   ans=0;
   return ans;
 }
-
-bigfloat CG(int r, bigfloat x) // Cohen's G_r(x)
-{
-  static const bigfloat one = to_bigfloat(1);
-  bigfloat emx=exp(-x), ans=x, term=x;
-  vector<bigfloat> Av(r+1);  // indexed from 0 to r
-  int j; bigfloat n=one;
-  for(j=0;j<=r;j++) Av[j]=one;
-  while(!is_approx_zero(emx*term*Av[r]))
-    //while(!is_approx_zero(term*Av[r]))
-    {
-      n++;
-      // update A-vector, term and sum
-      for(j=1;j<=r;j++) Av[j]+=(Av[j-1]/n);
-      term*=(x/n);
-      ans+=(Av[r]*term);
-    }
-  return emx*ans;
-}
-
-bigfloat Glarge(int r, bigfloat x) // Cohen's Gamma_r(x) for large x
-{
-  static const bigfloat zero = to_bigfloat(0);
-  static const bigfloat one = to_bigfloat(1);
-  static const bigfloat two = to_bigfloat(2);
-  bigfloat emx=exp(-x), ans=zero, mxinv=-one/x;
-  bigfloat term = mxinv;
-  vector<bigfloat> Cv(r+1);  // indexed from 0 to r
-  int j; bigfloat n=zero;
-  Cv[0]=one;
-  for(j=1;j<=r;j++) Cv[j]=zero;
-  //cout<<"In Glarge with r="<<r<<", x="<<x<<": ";
-  //cout<<"emx*term="<<emx*term<<endl;
-  while((n<1000) && !is_approx_zero(abs(emx*term)))
-    //while(!is_approx_zero(abs(term)))
-    {
-      n++;
-      // update C-vector, term and sum
-      for(j=r;j>0;j--) Cv[j]+=(Cv[j-1]/n);
-      term*=(n*mxinv);
-      ans+=(Cv[r]*term);
-      //cout<<"term="<<term<<"; ans="<<ans<<endl;
-    }
-  //cout<<"Glarge returns "<<two*emx*ans<<" after using n="<<n<<" terms"<<endl;
-  return two*emx*ans;
-}
-
-bigfloat Q(int r, bigfloat x)  // Q_r(x) polynomial from AMEC p.44
-{
-#ifdef MPFP // Multi-Precision Floating Point
-  static const bigint nz2=atoI("3772654005711327105320428325461179161744295822071095339706353540767904529098322739007189721774317982928833");
-  bigfloat zeta2; MakeRR(zeta2,nz2,-350);
-  static const bigint nz3=atoI("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
-  bigfloat zeta3; MakeRR(zeta3,nz3,-350);
-  static const bigint nz4=atoI("2482306838570394152367457601777793352247775704274910416102594171643891396599068147834147756326957412925856");
-  bigfloat zeta4; MakeRR(zeta4,nz4,-350);
-#else
- static const bigfloat zeta2 = 1.6449340668482264364724151666460251892189499;
- static const bigfloat zeta3 = 1.20205690315959428539973816151144999076498629;
- static const bigfloat zeta4 = 1.08232323371113819151600369654116790277475095;
-#endif
- static const bigfloat two = to_bigfloat(2);
- static const bigfloat three = to_bigfloat(3);
- static const bigfloat four = to_bigfloat(4);
- static const bigfloat nine = to_bigfloat(9);
- static const bigfloat sixteen = to_bigfloat(16);
- static const bigfloat twentyfour = to_bigfloat(24);
- static const bigfloat const1 = nine*zeta4/sixteen;
- static const bigfloat const2 = zeta3/three;
- static const bigfloat const3 = zeta4/four;
- static const bigfloat half = to_bigfloat(1)/two;
- static const bigfloat third = to_bigfloat(1)/three;
- static const bigfloat twenty4th = to_bigfloat(1)/twentyfour;
-  switch(r) {
-  case 1: default: return x;
-  case 2: return (x*x+zeta2)*half;
-  case 3: return x*(x*x*third+zeta2)*half-const2;
-  case 4: return const1 +x*(-const2+x*(const3+x*x*twenty4th));
-  }
-}
-bigfloat P(int r, bigfloat x)  // P_r(x) polynomial from AMEC p.44
-{
-  static bigfloat gamma=Euler();
-  return Q(r,x-gamma);
-}
-bigfloat Gsmall(int r, bigfloat x) // Cohen's Gamma_r(x) for small x
-{
-  bigfloat a=P(r,-log(x)), b = CG(r,x);
-  return (r%2? a+b : a-b);
-}
-
-bigfloat G(int r, bigfloat x)  // G_r(x)
-{
-#ifndef MPFP // Multi-Precision Floating Point
-    static const  bigfloat x0 = to_bigfloat(14);
-#else
-    // log(2) = 0.69314718
-    static const  bigfloat x0 = to_bigfloat(0.69314718*bit_precision());
-#endif
-    //  cout<<"switch point = "<<x0<<endl;
-    //  cout<<"x="<<x<<endl;
-  if(x<x0)
-    {
-      return Gsmall(r,x);
-    }
-  else
-    {
-      return Glarge(r,x);
-    }
-}
-
-bigfloat ldash1::G(bigfloat x)  // G_r(x)
-{
-  switch(r) {
-  case 0: return myg0(x);
-  case 1: return myg1(x);
-  default: return ::G(r,x);
-  }
-}
-
-#if(0) // myg2 and myg3 were inaccurate and now replaced by general
-       // G(r,x) -- which also works for r>3!
-bigfloat myg2(bigfloat x)
-{
-  static bigfloat zero=to_bigfloat(0);
-  static bigfloat one=to_bigfloat(1);
-  static bigfloat two=to_bigfloat(2);
-  static bigfloat twelve=to_bigfloat(12);
-  static bigfloat gamma=Euler();
-  if (x>20) return zero;
-//#define TRACEG2
-  bigfloat ans = -log(x) - gamma;
-#ifdef TRACEG2
-  cout<<"Computing myg2 for x = "<<x<<endl;
-#endif
-  ans=ans*ans/two + PI*PI/twelve;
-  bigfloat p = one;
-  int ok=0;
-  bigfloat term;
-  for (long n=1; (n<500) && !ok; n++)
-    {
-      p /=n;  p*= -x;
-      term = (p/n)/n;
-      ans += term;
-      ok=is_approx_zero(term/ans);
-#ifdef TRACEG2
-      // cout<<"\tn="<<n<<" \tans = "<<ans<<endl;
-#endif
-    }
-#ifdef TRACEG2
-  cout<<"...returning ans = "<<ans<<endl;
-#endif
-   return ans;
-}
-
-bigfloat myg3(bigfloat x)
-{
-  static bigfloat zero=to_bigfloat(0);
-  static bigfloat one=to_bigfloat(1);
-  static bigfloat three=to_bigfloat(3);
-  static bigfloat twelve=to_bigfloat(12);
-#ifdef MPFP // Multi-Precision Floating Point
-  static const bigint nz3=atoI("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
-  bigfloat zeta3; MakeRR(zeta3,nz3,-350);
-#else
- const bigfloat zeta3 = 1.20205690315959428539973816151144999076498629;
-#endif
-  if (x>20) return zero;
-  bigfloat ans = -log(x) - Euler();
-//cout<<"Computing myg3 for x = "<<x<<endl;
-  ans = (PI*PI + 2*ans*ans) * ans/twelve - zeta3/three;
-  bigfloat p = -one;
-  bigfloat term;
-  int ok = 0;
-  for (long n=1; (n<500) && !ok; n++)
-    {
-      p *= -x/n;
-      term = ((p/n)/n)/n;
-      ans += term;
-      ok=is_approx_zero(term/ans);
-      //cout<<"   N="<<n<<" ans = "<<ans<<endl;
-    }
-   return ans;
-}
-#endif
