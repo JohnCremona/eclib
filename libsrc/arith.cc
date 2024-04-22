@@ -258,6 +258,18 @@ vector<long> sqfreedivs(long a, const vector<long>& plist)
  return dlist;
 }
 
+// gcc division truncates towards 0, while we need rounding, with a
+// consistent behaviour for halves (they go up here).
+//
+// For b>0, rounded_division(a,b) = q such that a/b = q + r/b with -1/2 <= r/b < 1/2
+long rounded_division(long a, long b)
+{
+  std::ldiv_t qr = ldiv(a, b);
+  long r = qr.rem, q = qr.quot;
+  long r2 = r<<1;
+  return (r2<-b? q-1: (r2>=b? q+1: q));
+}
+
 long mod(long a, long b)
 {long c;
  if (b<0) b=-b;
@@ -395,11 +407,34 @@ long chi2(long a)
 { static const long table8[8] = {0,1,0,-1,0,-1,0,1};
   return table8[posmod(a,8)];
 }
- 
+
+// set root to rounded sqrt(a) if a>=0, return 1 iff exact
+int isqrt(long a, long& root)
+{
+  if (a<0) {return 0;}
+  root = round(sqrt(a));
+  return a==root*root;
+}
+
+// return rounded sqrt(a) (undefined for a<0)
+long isqrt(const long a)
+{
+  long r;
+  isqrt(a,r);
+  return r;
+}
+
+long squarefree_part(long d)
+{
+  if (d==0) return d;
+  long maxd = sqdivs(d).back();
+  return (d/maxd)/maxd;
+}
+
 long chi4(long a)
 { static const long table4[4] = {0,1,0,-1};
   return table4[posmod(a,4)];
-} 
+}
 
 long hilbert2(long a, long b)
 { static long table44[4][4] = {{0,0,0,0},
@@ -514,6 +549,33 @@ int is_valid_conductor(long n)
   e=0; while(!(m%3)) {e++; m/=3;}   if(e>5) return 0;
   auto plist = pdivs(m);
   return std::all_of(plist.begin(), plist.end(), [m] (const long& p) {return val(p,m)<=2;});
+}
+
+
+// a=b*q+r, return 1 iff r==0
+int divrem(long a, long b, long& q, long& r)
+{
+  std::ldiv_t qr = ldiv(a, b);
+  r = qr.rem;
+  q = qr.quot;
+  return (r==0);
+}
+
+// a=b*q+r, return 1 iff r==0
+int divrem(int a, int b, int& q, int& r)
+{
+  std::div_t qr = div(a, b);
+  r = qr.rem;
+  q = qr.quot;
+  return (r==0);
+}
+
+// return list of integers from first to last inclusive
+vector<long> range(long first, long last)
+{
+  vector<long> ans(last-first+1);
+  std::iota(ans.begin(), ans.end(), first);
+  return ans;
 }
 
 /* END OF FILE */

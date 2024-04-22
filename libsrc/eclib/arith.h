@@ -130,9 +130,18 @@ inline vector<long> sqfreedivs(long n)
   return sqfreedivs(n, pdivs(n));
 }
 
-
 long mod(long a, long modb); /* modulus in range plus or minus half mod */
 long posmod(long a, long modb); /* ordinary modulus, but definitely positive */
+
+// gcc division truncates towards 0, while we need rounding, with a
+// consistent behaviour for halves (they go up here).
+//
+// For b>0, rounded_division(a,b) = q such that a/b = q + r/b with -1/2 <= r/b < 1/2
+
+// The bigint version of a similar function roundover(a,b) is in
+// marith.h implmented as {bigint a0=(a%b); bigint c = (a-a0)/b;
+// if(2*a0>b) c+=1; return c;} which is not quite the same
+long rounded_division(long a, long b);
 
 long gcd(long, long);
 int gcd(int, int);
@@ -149,19 +158,26 @@ inline int is_zero(long n) {return n==0;}
 long val(long factor, long number); // order of factor in number
 
 inline int divides(long factor,long number) 
-{ 
+{
   return (factor==0) ? (number==0) : (number%factor==0);
 }
 
-inline int ndivides(long factor,long number) 
+inline int ndivides(long factor,long number)
 {
   return (factor==0) ? (number!=0) : (number%factor!=0);
-  //  return !::divides(factor,number);
 }
 
+// a=b*q+r, return 1 iff r==0
+int divrem(long a, long b, long& q, long& r);
+int divrem(int a, int b, int& q, int& r);
+
 inline long m1pow(long a) {return (a%2 ?  -1 : +1);}
-inline int sign(long a)   {return (a==0? 0: (a>0? 1: -1));} 
-inline int sign(double a) {return (a==0? 0: (a>0? 1: -1));} 
+inline int sign(long a)   {return (a==0? 0: (a>0? 1: -1));}
+
+// set root to rounded sqrt(a) if a>=0, return 1 iff exact
+int isqrt(long a, long& root);
+// return rounded sqrt(a) (undefined for a<0)
+long isqrt(const long a);
 
 long chi2(long a);
 long chi4(long a);
@@ -173,5 +189,9 @@ int intlog2(long& n, long& e, int roundup);
 int is_squarefree(long n);
 int is_valid_conductor(long n);
 
+long squarefree_part(long d);
+
+// return list of integers from first to last inclusive
+vector<long> range(long first, long last);
 
 #endif

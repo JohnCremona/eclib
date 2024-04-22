@@ -158,6 +158,8 @@ mat echelon(const mat& m, vec& pcols, vec& npcols,
 mat addscalar(const mat&, scalar);
 vec apply(const mat&, const vec&);
 
+mat reduce_modp(const mat& m, const scalar& p);
+
 // Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
 mat_zz_p mat_zz_p_from_mat(const mat& M, scalar pr);
 

@@ -127,6 +127,8 @@ inline vec operator+(const vec& v1, const vec& v2)
 inline vec addmodp(const vec& v1, const vec& v2, scalar pr)
 { vec ans(v1); ans.addmodp(v2,pr); return ans;}
 
+vec reduce_modp(const vec& v, const scalar& p);
+
 inline vec operator-(const vec& v1, const vec& v2)
 { vec ans(v1); ans-=v2; return ans;}
 

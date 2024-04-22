@@ -114,6 +114,16 @@ void vec::addmodp(const vec& w, scalar pr)
     cerr << "Incompatible vecs in vec::addmodp"<<endl;
 }
 
+vec reduce_modp(const vec& v, const scalar& p)
+{
+  if (p==0) return v;
+  long d=dim(v);
+  vec ans(d);
+  for(long i=1; i<=d; i++)
+    ans[i] = mod(v[i], p);
+  return ans;
+}
+
 vec& vec::operator-=(const vec& q2)
 {
   scalar* vi=entries; scalar* wi=q2.entries; long i=d;

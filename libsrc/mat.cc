@@ -1131,6 +1131,16 @@ mat echelonl(const mat& entries, vec& pc, vec& npc,
   return ans;
 }
 
+mat reduce_modp(const mat& m, const scalar& p)
+{
+  if (p==0) return m;
+  long nr=m.nrows(), nc=m.ncols();
+  mat ans(nr,nc);
+  for(long i=1; i<=nr; i++)
+    for(long j=1; j<=nc; j++)
+      ans(i,j) = mod(m(i,j),p);
+  return ans;
+}
 
 void elimp(const mat& m, long r1, long r2, long pos, scalar pr)
 {
