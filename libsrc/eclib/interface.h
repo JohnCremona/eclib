@@ -222,6 +222,7 @@ inline long decimal_precision() {return 14;}
 inline long bit_precision() {return 52;}
 inline int is_zero(double x) {return fabs(x)<1e-14;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
+inline int sign(double x) {return (double(0) < x) - (x < double(0));}
 
 // We cannot set internal bit precision in this mode, so we just set the output decimal precision
 inline void set_precision(long n) {cout.precision(min(14,long(LOG_10_2*n)));}

@@ -34,7 +34,7 @@ bigfloat safe_sqrt(const bigfloat& x)
 
 bigfloat cube_root(const bigfloat& x)
 {
-  return is_zero(x)? x : sign(x)*exp(log(abs(x))/3);
+  return is_zero(x)? x : sign(x)*exp(log(fabs(x))/3);
 }
 
 // coeff contains deg+1 reals starting with the leading coefficient
