@@ -97,8 +97,6 @@ private:
 
 vec iota(scalar n);                      // (1,2,...,n)
 scalar content(const vec&);
-inline scalar vecgcd(const vec& v) {return content(v);}
-
 vec operator+(const vec&);                   // unary
 vec operator-(const vec&);                   // unary
 vec operator+(const vec&, const vec&);
@@ -140,7 +138,7 @@ inline vec operator/(const vec& v, scalar scal)
 { vec ans(v); ans/=scal; return ans;}
 
 inline void makeprimitive(vec& v)
-{ scalar g=vecgcd(v); if (g>1) v/=g;}
+{ scalar g=content(v); if (g>1) v/=g;}
 
 inline void elim(const vec& a, vec& b, long pos)
 { (b*=a[pos])-=(b[pos]*a);}

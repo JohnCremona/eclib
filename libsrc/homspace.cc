@@ -207,7 +207,7 @@ if (verbose>1)
        }
 #else
      if (verbose>1)  cout << newrel << "\n";
-     long h = vecgcd(newrel);
+     long h = content(newrel);
      if (h!=0)
      {  if (h>1) newrel/=h;
 	if(numrel<maxnumrel)

@@ -98,7 +98,7 @@ int main(void)
  cout << "General slice; beginning, end? "; cin >> j >> k;
  cout << "Slice = " << v.slice(j,k) << endl;
  cout << "Now v = " << v << endl;
- cout << "w = " << w << "; mvecgcd(w) = " << mvecgcd(w) << endl;
+ cout << "w = " << w << "; content(w) = " << content(w) << endl;
  makeprimitive(w);
  cout << "After makeprimitive(w), w = " << w << endl;
 

@@ -398,9 +398,9 @@ void newform::find_coords_plus_minus()
       if(sign!=+1)
         coordsminus[i]=dotmodp(cvi,bminus,MODULUS);
     }
-  contplus=vecgcd(coordsplus);
+  contplus=content(coordsplus);
   if (contplus>1) coordsplus/=contplus;
-  contminus=vecgcd(coordsminus);
+  contminus=content(coordsminus);
   if (contminus>1) coordsminus/=contminus;
 
   if(sign!=+1)
@@ -430,18 +430,18 @@ void newform::find_cuspidal_factors()
       if(sign!=-1) // do this if sign = 0,1
         {
           bplusc=(nf->h1->tkernbas)*bplus;
-          cuspidalfactorplus = vecgcd(bplusc);
+          cuspidalfactorplus = content(bplusc);
           bplusc /= cuspidalfactorplus;
         }
       if(sign!=+1) // do this if sign = 0,-1
 	{
 	  bminusc=(nf->h1->tkernbas)*bminus;
-	  cuspidalfactorminus = vecgcd(bminusc);
+	  cuspidalfactorminus = content(bminusc);
 	  bminusc/= cuspidalfactorminus;
         }
       if(sign==0)  // do this only if sign = 0
         {
-	  type=3-vecgcd(bplusc-bminusc);
+	  type=3-content(bplusc-bminusc);
 	  if(verbose) cout<<"Lattice type = "<<type<<endl;
           if((type!=1)&&(type!=2))
             {
@@ -1841,9 +1841,9 @@ void newforms::merge(int all_nf)
        }
      if(verbose) cout<< "done, about to contract bplus,bminus..."<<flush;
      bplus = h1->contract_coords(bplus);
-     bplus /= vecgcd(bplus);
+     bplus /= content(bplus);
      bminus = h1->contract_coords(bminus);
-     bminus /= vecgcd(bminus);
+     bminus /= content(bminus);
      if(verbose) cout<< "done."<<endl;
      if(verbose>1)
        {

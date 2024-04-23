@@ -291,7 +291,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
       mrowi = V*coordi;
       rowi=mrowi.shorten((int)i);
       projcoord.setrow(i,rowi);
-      coord_fac=gcd(coord_fac,(long)vecgcd(rowi));
+      coord_fac=gcd(coord_fac,(long)content(rowi));
     }
   if(verbose>1) cout<<"content of projccord = "<<coord_fac<<endl;
   if(coord_fac>1)  projcoord /= coord_fac;
@@ -300,11 +300,11 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   Wdetnum*=dHS;
 
   Winv_scaled=Winv;
-  bigint g; g=mvecgcd(Winv_scaled.row(1));
+  bigint g; g=content(Winv_scaled.row(1));
   for(i=2; i<=dims; i++)
     {
       Winv_scaled.multrow(i,Hscales[i-1]*Sscales[i-1]);
-      g=gcd(g,mvecgcd(Winv_scaled.row(i)));
+      g=gcd(g,content(Winv_scaled.row(i)));
     }
   // now g is the content of Winv_scaled
   Winv_scaled/=g;

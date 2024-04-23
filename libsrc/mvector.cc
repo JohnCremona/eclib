@@ -26,233 +26,133 @@
 
 // Definitions of member operators and functions:
 
-vec_m::~vec_m()
-{
-  delete[] entries;
-}
-
 vec_m::vec_m(long n)
 {
- d=n;
- entries=new bigint[n]; 
- if (!entries)
-   cerr<<"Out of memory in vec_m constructor"<<endl;
- else
-   {
-     bigint *v=entries;
-     while(n--) *v++=0;
-   }
-}
-
-vec_m::vec_m(long n, bigint* array)   //array must have at least n elements!
-{
- d=n;
- entries=new bigint[n];  
- if (!entries)
-   {
-     cerr<<"Out of memory in vec_m constructor"<<endl;
-   }
- else
-   {
-     bigint *v=entries;
-     while(n--) *v++=*array++;
-   }
-}
-
-vec_m::vec_m(const vec_m& v)                       // copy constructor
-{
-  d=v.d;
-  entries=new bigint[d];  
-  if (!entries)
-    {
-      cerr<<"Out of memory in vec_m constructor"<<endl;
-    }
-  else
-    {
-      bigint *v1=entries, *v2=v.entries; long n=d;
-      while(n--) *v1++=*v2++;
-    }
+  static const bigint zero(0);
+  entries.resize(n, zero);
 }
 
 vec_m::vec_m(const vec_i& v)
 {
-  d=dim(v);
-  entries=new bigint[d];  
-  if (!entries)
-    {
-      cerr<<"Out of memory in vec_m constructor"<<endl;
-    }
-  else
-    {
-      bigint *v1=entries; auto v2=v.entries.begin(); long n=d;
-      while(n--) *v1++=*v2++;
-    }
+  entries.resize(v.entries.size());
+  std::transform(v.entries.begin(), v.entries.end(), entries.begin(), [](const int& vi) {return bigint(vi);});
 }
 
 vec_m::vec_m(const vec_l& v)
 {
-  d=dim(v);
-  entries=new bigint[d];
-  if (!entries)
-    {
-      cerr<<"Out of memory in vec_m constructor"<<endl;
-    }
-  else
-    {
-      bigint *v1=entries; auto v2=v.entries.begin(); long n=d;
-      while(n--) *v1++=*v2++;
-    }
+  entries.resize(v.entries.size());
+  std::transform(v.entries.begin(), v.entries.end(), entries.begin(), [](const long& vi) {return bigint(vi);});
 }
 
-void vec_m::init(long n)                 // (re)-initializes 
+void vec_m::init(long n)                 // (re)-initializes
 {
- if (d!=n) // no point in deleting if same size
-   {
-     delete[] entries;
-     d = n;
-     entries=new bigint[d];  
-     if (!entries)
-       {
-         cerr<<"Out of memory in vec_m init"<<endl;
-         return;
-       }
-   }
- bigint *v=entries; while(n--) *v++=0;
+  static const bigint zero(0);
+  entries.resize(n, zero);
 }
 
 vec_m& vec_m::operator=(const vec_m& v)                    // assignment
 {
  if (this==&v) return *this;
- if (d!=v.d) // no point in deleting if new is same size
-   {
-     delete[] entries;
-     d = v.d;
-     entries=new bigint[d];  
-     if (!entries)
-       {
-         cerr<<"Out of memory i nvec_m assignment"<<endl;
-         return *this;
-       }
-   }
- bigint *v1=entries, *v2=v.entries; long n=d; 
- while(n--) *v1++=*v2++;
+ entries = v.entries;
  return *this;
 }
 
-bigint& vec_m::operator[](long i) const
+bigint vec_m::operator[](long i) const
 {
- if ((i>0) && (i<=d)) return entries[i-1];
- else {cerr << "bad subscript in vec_m::operator[]"<<endl; return entries[0];}
+  return entries.at(i-1);
 }
 
-vec_m& vec_m::operator+=(const vec_m& q2)
+bigint& vec_m::operator[](long i)
 {
-  bigint* vi=entries, *wi=q2.entries; long i=d;
-  if (d==q2.d) {while(i--)(*vi++)+=(*wi++);}
-  else {cerr << "Incompatible vec_ms in vec_m::operator+="<<endl;}
+  return entries.at(i-1);
+}
+
+vec_m& vec_m::operator+=(const vec_m& w)
+{
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [](const bigint& wi, const bigint& vi) { return vi + wi;});
   return *this;
 }
 
 void vec_m::addmodp(const vec_m& w, const bigint& pr)
 {
-  bigint* vi=entries, *wi=w.entries; long i=d;
-  if (d==w.d) {while(i--) {*vi = mod((*wi++)+(*vi),pr);vi++;}}
-  else {cerr << "Incompatible vec_ms in vec_m::addmodp"<<endl;}
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [pr](const bigint& wi, const bigint& vi) { return mod(wi+vi,pr);});
 }
 
-vec_m& vec_m::operator-=(const vec_m& q2)
+vec_m& vec_m::operator-=(const vec_m& w)
 {
-  bigint* vi=entries; bigint* wi=q2.entries; long i=d;
-  if (d==q2.d) {while(i--)(*vi++)-=(*wi++);}
-  else {cerr << "Incompatible vec_ms in vec_m::operator-="<<endl;}
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [](const bigint& wi, const bigint& vi) { return vi - wi;});
   return *this;
 }
 
 vec_m& vec_m::operator*=(const bigint& scal)
 {
-  bigint* vi=entries; long i=d;
-  while (i--) (*vi++) *= scal;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [scal](const bigint& vi) {return vi * scal;});
   return *this;
 }
 
 vec_m& vec_m::operator/=(const bigint& scal)
 {
-  bigint* vi=entries; long i=d;
-  while (i--) (*vi++) /= scal;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [scal](const bigint& vi) {return vi / scal;});
   return *this;
 }
 
 vec_m vec_m::slice(long first, long last) const       // returns subvec_m
 {
  if (last==-1) {last=first; first=1;}
- long n = last-first+1;
- vec_m ans(n);
- bigint *entriesi=entries+(first-1), *ansi=ans.entries; long i=n;
- while (i--) *ansi++ = *entriesi++;
+ vec_m ans(last-first+1);
+ std::copy(entries.begin()+first-1, entries.begin()+last, ans.entries.begin());
  return ans;
 }
 
-vec_m vec_m::operator[](const vec_i& index) const//returns v[index[j]]
-{long dd = dim(index); vec_m w(dd);
- for(long i=1; i<=dd;i++) w[i] = entries[index[i]-1];
+vec_m vec_m::operator[](const vec_i& index) const //returns v[index[j]]
+{
+  vec_m w(index.entries.size());
+  std::transform(index.entries.begin(), index.entries.end(), w.entries.begin(),
+                 [this](const int& i) {return entries.at(i-1);});
  return w;
 }
 
 vec_m vec_m::operator[](const vec_l& index) const
-{long dd = dim(index); vec_m w(dd);
- for(long i=1; i<=dd;i++) w[i] = entries[index[i]-1];
+{
+  vec_m w(index.entries.size());
+  std::transform(index.entries.begin(), index.entries.end(), w.entries.begin(),
+                 [this](const long& i) {return entries.at(i-1);});
  return w;
 }
 
 bigint vec_m::sub(long i) const
 {
- if ((i>0) && (i<=d)) return entries[i-1];
- else {bigint zero; cerr << "bad subscript "<<i<<" in vec_m::sub"<<endl; return zero;}
+  return entries.at(i-1);
 }
 
 void vec_m::set(long i, const bigint& x)
 {
- if ((i>0) && (i<=d)) entries[i-1]=x;
- else {cerr << "bad subscript "<< i <<" in vec_m::set"<<endl;}
+  entries.at(i-1) = x;
 }
 
 void vec_m::add(long i, const bigint& x)
 {
- if ((i>0) && (i<=d)) entries[i-1]+=x;
- else {cerr << "bad subscript " << i << " in vec_m::add"<<endl;}
+  entries.at(i-1) += x;
 }
 
 vec_l vec_m::shorten(long x) const  //converts to a vector of longs
 {
-  vec_l ans(d);
-  bigint *v1=entries; auto v2=ans.entries.begin(); long n=d;
-  while(n--)
-    {
-      bigint& veci = *v1++;
-      if(is_long(veci))
-        *v2 = I2long(veci);
-      else
-        cerr << "Problem shortening bigint " << veci << " to a long!" << endl;
-      v2++;
-    }
+  vec_l ans(entries.size());
+  auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
+  std::transform(entries.begin(), entries.end(), ans.entries.begin(), tolong);
   return ans;
 }
 
 vec_i vec_m::shorten(int x) const  //converts to a vector of ints
 {
-  vec_i ans(d);
-  bigint *v1=entries; auto v2=ans.entries.begin(); long n=d;
-  while(n--)
-    {
-      bigint& veci = *v1++;
-      if(is_int(veci)) 
-        *v2 = I2int(veci);
-      else 
-	{
-	  cerr << "Problem shortening bigint " << veci << " to an int!" << endl;
-	}
-      v2++;
-    }
+  vec_i ans(entries.size());
+  auto toint = [](const bigint& a) {return is_long(a)? I2long(a) : int(0);};
+  std::transform(entries.begin(), entries.end(), ans.entries.begin(), toint);
   return ans;
 }
 
@@ -260,88 +160,75 @@ vec_i vec_m::shorten(int x) const  //converts to a vector of ints
 
 bigint operator*(const vec_m& v, const vec_m& w)
 {
- long d=v.d;
- bigint dot, *vi=v.entries, *wi=w.entries;
- if (d==w.d)
-   while (d--) dot+= (*vi++)*(*wi++);
- else
-   cerr << "Unequal dimensions in dot product"<<endl;
- return dot;
+  static const bigint zero(0);
+  return std::inner_product(v.entries.begin(), v.entries.end(), w.entries.begin(), zero);
 }
 
 int operator==(const vec_m& v, const vec_m& w)
 {
-  long d=v.d;
-  long equal = (d==w.d);
-  bigint* vi=v.entries, *wi=w.entries;
-  while ((d--) && equal) equal = ((*vi++)==(*wi++));
-  return equal;
+  return v.entries == w.entries;
 }
 
 int trivial(const vec_m& v)
 {
-   int ans=1, i=v.d;   bigint* vi=v.entries;
-   while ((i--)&&ans) ans=(is_zero(*vi++));
-   return ans;
+  return std::all_of(v.entries.begin(), v.entries.end(), [](const bigint& vi) {return is_zero(vi);});
 }
 
 ostream& operator<<(ostream& s, const vec_m& v)
 {
-   long i=v.d; bigint* vi=v.entries;
-   s << "[";
-   while (i--) {s<<(*vi++); if(i)s<<",";}
-   s << "]";
-   return s;
+  s << "[";
+  long i=0;
+  for ( const auto& vi : v.entries)
+    {
+      if(i++)
+        s<<",";
+      s<<vi;
+    }
+  s << "]";
+  return s;
 }
 
 istream& operator>>(istream& s, vec_m& v) // v cannot be const
 {
- long i = v.d;
- bigint* vi = v.entries;
- while (i--) s >> (*vi++);
- return s;
+  for (bigint& vi : v.entries)
+    s>>vi;
+  return s;
 }
 
-bigint mvecgcd(const vec_m& v)
+bigint content(const vec_m& v)
 {
- long i=v.d; bigint g; bigint *vi=v.entries;
- while ((i--)&&(!is_one(g))) g=gcd(g,*vi++);
- return g;
+  static const bigint zero(0);
+  return v.entries.empty()?
+    bigint(1) :
+    std::accumulate(v.entries.begin(), v.entries.end(), zero,
+                    [](const bigint& x, const bigint& y) {return gcd(x,y);});
 }
 
 void swapvec(vec_m& v, vec_m& w)
-{bigint *temp; 
- if (v.d==w.d) {temp=v.entries; v.entries=w.entries; w.entries=temp;}
- else {cerr << "Attempt to swap vec_ms of different lengths!"<<endl;}
+{
+  std::swap(v.entries, w.entries);
 }
 
 int member(const bigint& a, const vec_m& v)
-{int ans=0; long i=dim(v); bigint* vi=v.entries;
- while (i--&&!ans) ans=(a==(*vi++));
- return ans;
+{
+  return std::find(v.entries.begin(), v.entries.end(), a) != v.entries.end();
 }
- 
+
 // Definition of non-friend operators and functions
 
 vec_m express(const vec_m& v, const vec_m& v1, const vec_m& v2)
 {
-  vec_m ans(3);
-  static bigint one; one=1;
-   bigint v1v1 = v1 * v1;
-   bigint v1v2 = v1 * v2;
-   bigint v2v2 = v2 * v2;
-   bigint vv1 = v * v1;
-   bigint vv2 = v * v2;
-   ans[1]= vv1*v2v2 - vv2*v1v2;
-   ans[2]= vv2*v1v1 - vv1*v1v2;
-   ans[3]= v1v1*v2v2 - v1v2*v1v2;
-   bigint g = mvecgcd(ans);
-   if (g>one) ans/=g;
-   if (ans[3]*v!=ans[1]*v1+ans[2]*v2)
-     {
-       cerr << "Error in express: v is not in <v1,v2>"<<endl;
-     }
-   return ans;
+  static bigint one(1);
+  bigint v1v1 = v1 * v1;
+  bigint v1v2 = v1 * v2;
+  bigint v2v2 = v2 * v2;
+  bigint vv1 = v * v1;
+  bigint vv2 = v * v2;
+  vec_m ans({vv1*v2v2 - vv2*v1v2, vv2*v1v1 - vv1*v1v2, v1v1*v2v2 - v1v2*v1v2});
+  makeprimitive(ans);
+  if (ans[3]*v!=ans[1]*v1+ans[2]*v2)
+    cerr << "Error in express: v is not in <v1,v2>"<<endl;
+  return ans;
 }
 
 vec_m lift(const vec_m& v, const bigint& pr)
@@ -351,10 +238,9 @@ vec_m lift(const vec_m& v, const bigint& pr)
  bigint lim = sqrt(pr>>1), nu, de, g;
  g=1;               // g = least common denom. after lifting via modrat
  vec_m denoms(d);
- for (i=1; i<=d; i++) 
+ for (i=1; i<=d; i++)
    {
-     bigint& vi=v[i];
-     modrat(vi,pr,lim,nu,de);
+     modrat(v[i],pr,lim,nu,de);
      nums[i]=nu; denoms[i]=de;
      g=lcm(g,de);
    }
@@ -383,24 +269,21 @@ int liftok(vec_m& v, const bigint& pr)
 
 bigint dotmodp(const vec_m& v1, const vec_m& v2, const bigint& pr)
 {
-  bigint ans;
-  for(long i=1; i<=dim(v1); i++)
-    ans=mod(ans+mod(v1[i]*v2[i],pr),pr);
-  return ans;
+  static const bigint zero(0);
+  auto a = [pr] (const bigint& x, const bigint& y) {return mod(x+y,pr);};
+  auto m = [pr] (const bigint& x, const bigint& y) {return mod(x*y,pr);};
+  return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), zero, a, m);
 }
 
-long dim(const vec_m& v) {return v.d;}
+long dim(const vec_m& v) {return v.entries.size();}
 
 int operator!=(const vec_m& v, const vec_m& w) { return !(v==w);}
 
-vec_m operator+(const vec_m& v) 
-{return v;}
+vec_m operator+(const vec_m& v) {return v;}
 
-vec_m operator-(const vec_m& v) 
-{vec_m ans(v); ans*=BIGINT(-1); return ans;}
+vec_m operator-(const vec_m& v) {vec_m ans(v); ans*=BIGINT(-1); return ans;}
 
-vec_m operator+(const vec_m& v1, const vec_m& v2)
-{vec_m ans(v1); ans+=v2; return ans;}
+vec_m operator+(const vec_m& v1, const vec_m& v2) {vec_m ans(v1); ans+=v2; return ans;}
 
 vec_m addmodp(const vec_m& v1, const vec_m& v2, const bigint& pr)
 {vec_m ans(v1); ans.addmodp(v2,pr); return ans;}
@@ -420,7 +303,7 @@ vec_m operator/(const vec_m& v, const bigint& scal)
 {vec_m ans(v); ans/=scal; return ans;}
 
 void makeprimitive(vec_m& v)
-{ bigint g=mvecgcd(v); if(!(is_one(g)||is_zero(g))) v/=g;}
+{ bigint g = content(v); if(!(is_one(g)||is_zero(g))) v/=g;}
 
 void elim(const vec_m& a, vec_m& b, long pos)
 { (b*=a[pos])-=(b[pos]*a);}

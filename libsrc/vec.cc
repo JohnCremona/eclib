@@ -188,7 +188,8 @@ scalar content(const vec& v)
 {
   return v.entries.empty()?
     1 :
-    std::accumulate(v.entries.begin(), v.entries.end(), 0, [](const scalar& x, const scalar& y) {return gcd(x,y);});
+    std::accumulate(v.entries.begin(), v.entries.end(), 0,
+                    [](const scalar& x, const scalar& y) {return gcd(x,y);});
 }
 
 void swapvec(vec& v, vec& w)
@@ -216,8 +217,7 @@ vec express(const vec& v, const vec& v1, const vec& v2)
    scalar vv1 = v * v1;
    scalar vv2 = v * v2;
    vec ans({vv1*v2v2 - vv2*v1v2,  vv2*v1v1 - vv1*v1v2, v1v1*v2v2 - v1v2*v1v2});
-   scalar g = vecgcd(ans);
-   if (g>1) ans/=g;
+   makeprimitive(ans);
    if (ans[3]*v!=ans[1]*v1+ans[2]*v2)
      cerr << "Error in express: v is not in <v1,v2>"<<endl;
    return ans;

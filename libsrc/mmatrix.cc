@@ -190,7 +190,7 @@ void mat_m::setrow(long i, const vec_m& v)
  if ((0<i) && (i<=nro) && (dim(v)==nco))
   {
     bigint * rowi = entries + (i-1)*nco;
-    bigint * vec = v.entries;
+    auto vec = v.entries.begin();
     long c=nco;
     while(c--) *rowi++ = *vec++;
   }
@@ -202,7 +202,7 @@ void mat_m::setcol(long j, const vec_m& v)
  if ((0<j) && (j<=nco) && (dim(v)==nro))
   {
    bigint * colj = entries+(j-1);
-   bigint * vec = v.entries;
+   auto vec = v.entries.begin();
    long n=nro;
    while(n--) {*colj = *vec++; colj+=nco;}
  }
@@ -212,9 +212,8 @@ void mat_m::setcol(long j, const vec_m& v)
 vec_m mat_m::row(long i) const
 {
  vec_m mi(nco);
- long j=nco; bigint *matij=entries+(i-1)*nco, *v=mi.entries;
- if ((0<i) && (i<=nro)) 
-   while(j--) *v++ = *matij++;
+ if ((0<i) && (i<=nro))
+   std::copy(entries+(i-1)*nco, entries+i*nco, mi.entries.begin());
  else
    {
      cerr << "Bad row number in function mat_m::row"<<endl;
@@ -225,9 +224,10 @@ vec_m mat_m::row(long i) const
 vec_m mat_m::col(long j) const
 {
  vec_m mj(nro);
- long i=nro; bigint *matij=entries+(j-1), *v=mj.entries;
+ long i=nro; bigint *matij=entries+(j-1);
+ auto vi=mj.entries.begin();
  if ((0<j) && (j<=nco))
-   while(i--) {*v++ = *matij; matij+=nco;}
+   while(i--) {*vi++ = *matij; matij+=nco;}
  else
    {
      cerr << "Bad column number in function mat_m::col"<<endl;
@@ -589,12 +589,13 @@ vec_m operator*(const mat_m& m, const vec_m& v)
 {
  long r=m.nro, c=m.nco;
  vec_m w(r);
- if (c==v.d)
+ if (c==dim(v))
    {
-     bigint *mp=m.entries, *wp=w.entries;
+     bigint *mp=m.entries;
+     auto wp=w.entries.begin();
      while(r--)
        {
-         bigint *vp=v.entries;
+         auto vp=v.entries.begin();
          c=m.nco;
          while(c--)
            *wp += (*mp++)*(*vp++);
