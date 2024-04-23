@@ -76,7 +76,7 @@ vec_m::vec_m(const vec_m& v)                       // copy constructor
 
 vec_m::vec_m(const vec_i& v)
 {
-  d=v.d;
+  d=dim(v);
   entries=new bigint[d];  
   if (!entries)
     {
@@ -84,22 +84,22 @@ vec_m::vec_m(const vec_i& v)
     }
   else
     {
-      bigint *v1=entries; int *v2=v.entries; long n=d;
+      bigint *v1=entries; auto v2=v.entries.begin(); long n=d;
       while(n--) *v1++=*v2++;
     }
 }
 
 vec_m::vec_m(const vec_l& v)
 {
-  d=v.d;
-  entries=new bigint[d];  
+  d=dim(v);
+  entries=new bigint[d];
   if (!entries)
     {
       cerr<<"Out of memory in vec_m constructor"<<endl;
     }
   else
     {
-      bigint *v1=entries; long *v2=v.entries; long n=d;
+      bigint *v1=entries; auto v2=v.entries.begin(); long n=d;
       while(n--) *v1++=*v2++;
     }
 }
@@ -225,16 +225,14 @@ void vec_m::add(long i, const bigint& x)
 vec_l vec_m::shorten(long x) const  //converts to a vector of longs
 {
   vec_l ans(d);
-  bigint *v1=entries; long *v2=ans.entries; long n=d;
+  bigint *v1=entries; auto v2=ans.entries.begin(); long n=d;
   while(n--)
     {
       bigint& veci = *v1++;
-      if(is_long(veci)) 
+      if(is_long(veci))
         *v2 = I2long(veci);
-      else 
-	{
-	  cerr << "Problem shortening bigint " << veci << " to a long!" << endl;
-	}
+      else
+        cerr << "Problem shortening bigint " << veci << " to a long!" << endl;
       v2++;
     }
   return ans;
@@ -243,7 +241,7 @@ vec_l vec_m::shorten(long x) const  //converts to a vector of longs
 vec_i vec_m::shorten(int x) const  //converts to a vector of ints
 {
   vec_i ans(d);
-  bigint *v1=entries; int *v2=ans.entries; long n=d;
+  bigint *v1=entries; auto v2=ans.entries.begin(); long n=d;
   while(n--)
     {
       bigint& veci = *v1++;

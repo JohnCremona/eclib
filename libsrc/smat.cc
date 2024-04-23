@@ -140,13 +140,13 @@ void smat::set_row( int i, int d, int* pos, scalar* values) // i counts from 0
 
 void smat::setrow ( int i, const vec& v) // i counts from 1
 {
-  int j, m, n;
-  scalar *vi, *vali;
+  int j, m, n, dimv=dim(v);
+  scalar *vali;
   int *coli;
 
   // count nonzero entries of v:
-  vi = v.entries;
-  j = v.d;
+  auto vi = v.entries.begin();
+  j = dimv;
   n = 0;
   while(j--)
     if (*vi++)
@@ -165,8 +165,8 @@ void smat::setrow ( int i, const vec& v) // i counts from 1
 
   // copy nonzero entries
   coli++;
-  vi = v.entries;
-  for(m=1; m<=v.d; m++)
+  vi = v.entries.begin();
+  for(m=1; m<=dimv; m++)
     {
       scalar e = *vi++;
       if (e)
@@ -175,19 +175,11 @@ void smat::setrow ( int i, const vec& v) // i counts from 1
           *vali++ = e;
         }
     }
-
-  // check
-  // if (row(i+1).as_vec() != v)
-  //   {
-  //     cerr << "error in smat::setrow(int, vec):";
-  //     cerr << "v = "<<v<<endl;
-  //     cerr << "row was set to "<< row(i+1).as_vec()<<endl;
-  //   }
 }
 
 void smat::setrow ( int i, const svec& v) // i counts from 1
 {
-  int d=v.entries.size(); // = #non-zero entries
+  int d=v.entries.size();
   i--;
   scalar *vali = val[i];
   int *coli = col[i];

@@ -29,71 +29,75 @@ class svec;
 class subspace;
 
 class vec;
-vec iota(scalar n);                      // (1,2,...,n)
 mat restrict_mat(const mat& m, const subspace& s, int cr=0);
 mat prestrict(const mat& m, const subspace& s, scalar pr, int cr=0);
 
 class vec {
-friend class svec;
-friend class smat;
-friend class smat_elim;
-friend class vec_m;
-friend class mat;
-friend class subspace;
+  friend class svec;
+  friend class smat;
+  friend class smat_elim;
+  friend class vec_m;
+  friend class mat;
+  friend class subspace;
 public:
-    // constructors
-        vec(long n=0);
-        vec(long n, scalar* arr);
-        vec(const vec&);                       // copy constructor
-        ~vec();                                   // destructor
-     // member functions & operators
-        void init(long n=0);                 // (re)-initializes 
-        vec& operator=(const vec&);         // assignment
-        scalar& operator[](long i) const;            // the i'th component 
-        vec& operator+=(const vec&);
-        void add_row(const mat&m, int i);
-        void addmodp(const vec&, scalar);
-        vec& operator-=(const vec&);
-        void sub_row(const mat&m, int i);
-        vec& operator*=(scalar);
-        vec& operator/=(scalar);
-        vec slice(long,long=-1) const;           // returns subvec
-        vec operator[](const vec&) const;   // subscript composition
-        void set(long i, scalar x);                  // sets v[i]=x
-        void add(long i, scalar x);                  // v[i]+=x
-        void add_modp(long i, scalar x, scalar p);                  // v[i]+=x mod p
-        scalar sub(long i) const;                    // same as v[i] (no ref)
-	const scalar* get_entries()const {return entries;}
-     // non-member (friend) functions and operators
-        friend long dim(const vec&);                  // the dimension
-        friend scalar operator*(const vec&, const vec&);   // dot product
-        friend scalar operator*(const svec&, const vec&); 
-        friend vec operator*(const mat& m, const vec& v);
-        friend int operator==(const vec&, const vec&);
-        friend int operator!=(const vec&, const vec&);
-        friend int trivial(const vec&);                  // v==zerovec?
+  // constructors
+  explicit vec(long n=0);
+  explicit vec(vector<scalar> arr);
+  vec(const vec&);                       // copy constructor
+  // member functions & operators
+  void init(long n=0);                 // (re)-initializes
+  vec& operator=(const vec&);         // assignment
+  scalar& operator[](long i);            // the i'th component
+  scalar operator[](long i) const;       // the i'th component
+  vec& operator+=(const vec&);
+  void add_row(const mat&m, int i);
+  void addmodp(const vec&, scalar);
+  vec& operator-=(const vec&);
+  void sub_row(const mat&m, int i);
+  vec& operator*=(scalar);
+  vec& operator/=(scalar);
+  vec slice(long i, long j=-1) const;  // returns subvec with indices i..j of 1..i if j=-1
+  vec operator[](const vec&) const;   // subscript composition
+  void set(long i, scalar x);                  // sets v[i]=x
+  void add(long i, scalar x);                  // v[i]+=x
+  void add_modp(long i, scalar x, scalar p);                  // v[i]+=x mod p
+  scalar sub(long i) const;                    // same as v[i] (no ref)
+  const vector<scalar> get_entries()const {return entries;}
+  // non-member (friend) functions and operators
+  friend long dim(const vec&);                  // the dimension
+  friend scalar operator*(const vec&, const vec&);   // dot product
+  friend scalar operator*(const svec&, const vec&);
+  friend scalar content(const vec&);
+  friend vec operator*(const mat& m, const vec& v);
+  friend int operator==(const vec&, const vec&);
+  friend int operator!=(const vec&, const vec&);
+  friend int trivial(const vec&);                  // is v all 0
+  friend int member(scalar a, const vec& v);//tests if a=v[i] for some i
+  friend vec reverse(const vec& order);
+  friend vec iota(scalar n);                      // (1,2,...,n)
   // add/sub row i of mat to v (implemented in mat.cc)
-        friend void add_row_to_vec(const vec& v, const mat& m, long i);
-        friend void sub_row_to_vec(const vec& v, const mat& m, long i);
-        friend ostream& operator<< (ostream&s, const vec&);
-        friend istream& operator>> (istream&s, vec&);
-        friend vec iota(scalar n);                      // (1,2,...,n)
-        friend scalar vecgcd(const vec&);
-        friend void swapvec(vec& v, vec& w);
-        friend int member(scalar a, const vec& v);//tests if a=v[i] for some i
-        friend mat restrict_mat(const mat& m, const subspace& s, int cr);
-        friend mat_m restrict_mat(const mat_m& m, const msubspace& s);
-        friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr);
-        friend mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr);
-        friend scalar dotmodp(const vec& v1, const vec& v2, scalar pr);
+  friend void add_row_to_vec(vec& v, const mat& m, long i);
+  friend void sub_row_to_vec(vec& v, const mat& m, long i);
+  friend ostream& operator<< (ostream&s, const vec&);
+  friend istream& operator>> (istream&s, vec&);
+  friend void swapvec(vec& v, vec& w);
+  friend mat restrict_mat(const mat& m, const subspace& s, int cr);
+  friend mat_m restrict_mat(const mat_m& m, const msubspace& s);
+  friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr);
+  friend mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr);
+  friend scalar dotmodp(const vec& v1, const vec& v2, scalar pr);
+  friend vec reduce_modp(const vec& v, const scalar& p);
 
-// Implementation
+  // Implementation
 private:
-       long d;
-       scalar * entries;
+  vector<scalar> entries;
 };
 
 // Declaration of non-member, non-friend functions
+
+vec iota(scalar n);                      // (1,2,...,n)
+scalar content(const vec&);
+inline scalar vecgcd(const vec& v) {return content(v);}
 
 vec operator+(const vec&);                   // unary
 vec operator-(const vec&);                   // unary
@@ -106,14 +110,13 @@ void makeprimitive(vec& v);
 void elim(const vec& a, vec& b, long pos);
 void elim1(const vec& a, vec& b, long pos);
 void elim2(const vec& a, vec& b, long pos, scalar lastpivot);
-vec reverse(const vec& order);
 vec express(const vec& v, const vec& v1, const vec& v2);
 int lift(const vec& v, scalar pr, vec& ans);  //lifts a mod-p vector to a rational
                                    //and scales to a primitive vec in Z. Returns success flag
 
 // inline function definitions
 
-inline long dim(const vec& v) {return v.d;}
+inline long dim(const vec& v) {return v.entries.size();}
 
 inline int operator!=(const vec& v, const vec& w) { return !(v==w);}
 
@@ -126,8 +129,6 @@ inline vec operator+(const vec& v1, const vec& v2)
 
 inline vec addmodp(const vec& v1, const vec& v2, scalar pr)
 { vec ans(v1); ans.addmodp(v2,pr); return ans;}
-
-vec reduce_modp(const vec& v, const scalar& p);
 
 inline vec operator-(const vec& v1, const vec& v2)
 { vec ans(v1); ans-=v2; return ans;}
@@ -149,4 +150,3 @@ inline void elim1(const vec& a, vec& b, long pos)
 
 inline void elim2(const vec& a, vec& b, long pos, scalar lastpivot)
 { ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}
-

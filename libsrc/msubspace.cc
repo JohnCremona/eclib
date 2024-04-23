@@ -43,15 +43,14 @@ msubspace combine(const msubspace& s1, const msubspace& s2)
   vec_i p = s1.pivots[s2.pivots];
   return msubspace(b,p,d);
 }
- 
-//This one is used a LOT
+
 mat_m restrict_mat(const mat_m& m, const msubspace& s)
 { long i,j,k,d = dim(s), n=m.nro;
   bigint dd = s.denom;
   mat_m ans(d,d);
   const mat_m& sb = s.basis;
   bigint *ap, *a=m.entries, *b=sb.entries, *bp, *c=ans.entries, *cp;
-  int *pv=s.pivots.entries;
+  auto pv=s.pivots.entries.begin();
   for(i=0; i<d; i++)
     {
       bp=b; k=n; ap=a+n*(pv[i]-1);
@@ -66,8 +65,8 @@ mat_m restrict_mat(const mat_m& m, const msubspace& s)
         }
       c += d;
     }
-// N.B. The following check is strictly unnecessary and slows it down, 
-// but is advisable! 
+// N.B. The following check is strictly unnecessary and slows it down,
+// but is advisable!
 #ifdef CHECK_RESTRICT
   int check = 1; n = sb.nrows();
   for (i=1; (i<=n) && check; i++)
@@ -140,7 +139,7 @@ mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr)
   mat_m ans(d,d);
   const mat_m& sb = s.basis;
   bigint *ap, *a=m.entries, *b=sb.entries, *bp, *c=ans.entries, *cp;
-  int *pv=s.pivots.entries;
+  auto pv=s.pivots.entries.begin();
   for(i=0; i<d; i++)
     {
       bp=b; k=n; ap=a+n*(pv[i]-1);

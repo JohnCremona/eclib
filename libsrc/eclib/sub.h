@@ -21,20 +21,18 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-// Not to be included directly by user: use matrix.h which defines
+// Not to be included directly by user: use subspace.h which defines
 // _ECLIB_SUBSPACE_H and includes this twice
 //
-
 
 class subspace {
 
 public:
-     // constructors
-        subspace(int n=0);
-        subspace(const mat& b, const vec& p, scalar d);
-	subspace(const subspace& s);
-     // destructor
-        ~subspace();
+  // constructors
+  subspace(int n=0) :denom(1),pivots(::iota((scalar)n)),basis(idmat((scalar)n)) {}
+  subspace(const mat& b, const vec& p, scalar d) :denom(d),pivots(p),basis(b) {}
+  subspace(const subspace& s) :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
+
      // assignment
 	void operator=(const subspace& s);
 

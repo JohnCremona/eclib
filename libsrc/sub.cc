@@ -23,23 +23,7 @@
 
 // Only to be included by subspace.cc
 
-// Inline definitions of member operators and functions:  
-
-subspace::subspace(int n) 
-:denom(1),pivots(iota((scalar)n)),basis(idmat((scalar)n))
-{}
-
-subspace::subspace(const mat& b, const vec& p, scalar d)
-:denom(d),pivots(p),basis(b)
-{}
-
-subspace::subspace(const subspace& s) 
-:denom(s.denom),pivots(s.pivots),basis(s.basis) 
-{}
-
-// destructor -- no need to do anything as componenets have their own
-subspace::~subspace() 
-{}
+// definitions of member operators and functions:
 
 // assignment
 void subspace::operator=(const subspace& s) 
@@ -83,7 +67,8 @@ mat restrict_mat(const mat& m, const subspace& s, int cr)
   scalar dd = s.denom;
   mat ans(d,d);
   const mat& sb = s.basis;
-  scalar *a=m.entries, *b=sb.entries, *c=ans.entries, *cp, *pv=s.pivots.entries;
+  scalar *a=m.entries, *b=sb.entries, *c=ans.entries, *cp;
+  auto pv = s.pivots.entries.begin();
   for(int i=0; i<d; i++)
     {
       scalar *ap=a+n*(pv[i]-1);
@@ -176,7 +161,8 @@ mat prestrict(const mat& m, const subspace& s, scalar pr, int cr)
   scalar dd = s.denom;  // will be 1 if s is a mod-p subspace
   mat ans(d,d);
   const mat& sb = s.basis;
-  scalar *a=m.entries, *b=sb.entries, *c=ans.entries, *pv=s.pivots.entries;
+  scalar *a=m.entries, *b=sb.entries, *c=ans.entries;
+  auto pv = s.pivots.entries.begin();
   for(int i=0; i<d; i++)
     {
       scalar *ap=a+n*(pv[i]-1), *bp=b, *cp;

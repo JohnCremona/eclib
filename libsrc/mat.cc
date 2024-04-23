@@ -23,9 +23,6 @@
  
 // Only to be included by matrix.cc
 
-#define LONGLONG scalar   // long longs caused memory alocation bugs
-                        // N.B. if = long long, uncomment abs() below
-
 // Definitions of member operators and functions:
 
 mat::mat(long nr, long nc)
@@ -160,11 +157,11 @@ void mat::setrow(long i, const vec& v)
  if ((0<i) && (i<=nro) && (dim(v)==nco))
   {
     scalar * rowi = entries + (i-1)*nco;
-    scalar * vec = v.entries;
-    long c=nco; 
-    while(c--) *rowi++ = *vec++;
+    auto vi = v.entries.begin();
+    long c=nco;
+    while(c--) *rowi++ = *vi++;
   }
- else 
+ else
    {
      cerr << "Bad indices in mat::setrow (i="<<i<<", nro="<<nro
 	  <<", dim(v)="<<dim(v)<<", nco="<<nco<<")"<<endl;
@@ -176,9 +173,9 @@ void mat::setcol(long j, const vec& v)
  if ((0<j) && (j<=nco) && (dim(v)==nro))
   {
    scalar * colj = entries+(j-1);
-   scalar * vec = v.entries;
+   auto vi = v.entries.begin();
    long n=nro;
-   while(n--) {*colj = *vec++; colj+=nco;}
+   while(n--) {*colj = *vi++; colj+=nco;}
  }
  else
    {
@@ -191,7 +188,7 @@ vec mat::row(long i) const
 {
  vec mi(nco);
  if ((0<i) && (i<=nro))
-   memcpy(mi.entries, entries+(i-1)*nco, nco*sizeof(scalar));
+   std::copy(entries+(i-1)*nco, entries+i*nco, mi.entries.begin());
  else
    cerr << "Bad row number "<<i<<" in function mat::row (nro="<<nro<<")"<<endl;
  return mi;
@@ -200,9 +197,11 @@ vec mat::row(long i) const
 vec mat::col(long j) const
 {
  vec mj(nro);
- long i=nro; scalar *entriesij=entries+(j-1), *v=mj.entries;
+ long i=nro;
+ scalar *entriesij=entries+(j-1);
+ auto vi = mj.entries.begin();
  if ((0<j) && (j<=nco))
-   while(i--) {*v++ = *entriesij; entriesij+=nco;}
+   while(i--) {*vi++ = *entriesij; entriesij+=nco;}
  else
    cerr << "Bad column number "<<j<<" in function mat::col (nco="<<nco<<")"<<endl;
  return mj;
@@ -312,17 +311,15 @@ mat& mat::operator/=(scalar scal)
 
 // Definitions of non-member, friend operators and functions
 
-// add/sub row i of mat to v (implemented in mat.cc)
-void add_row_to_vec(const vec& v, const mat& m, long i)
+// add/sub row i of mat to v
+void add_row_to_vec(vec& v, const mat& m, long i)
 {
-  scalar* vi=v.entries, *mij=m.entries+(i-1)*m.nco; long j=v.d;
-  while(j--)(*vi++)+=(*mij++);
+  std::transform(v.entries.begin(), v.entries.end(), m.entries+(i-1)*m.nco, v.entries.begin(), std::plus<scalar>());
 }
 
-void sub_row_to_vec(const vec& v, const mat& m, long i)
+void sub_row_to_vec(vec& v, const mat& m, long i)
 {
-  scalar* vi=v.entries, *mij=m.entries+(i-1)*m.nco; long j=v.d;
-  while(j--)(*vi++)-=(*mij++);
+  std::transform(v.entries.begin(), v.entries.end(), m.entries+(i-1)*m.nco, v.entries.begin(), std::minus<scalar>());
 }
 
 mat operator*(const mat& m1, const mat& m2)
@@ -408,7 +405,7 @@ void mat::output_pretty(ostream& s) const
 {
   long i,j; scalar* mij;
   long nc=nco,nr=nro;
-  int* colwidths = new int[nc];
+  vector<int> colwidths(nc);
   for(j=0; j<nco; j++)
     {
       scalar ma=0, mi=0;
@@ -436,7 +433,6 @@ void mat::output_pretty(ostream& s) const
 	}
       s<<"]\n";
     }
-  delete[]colwidths;
 }
 
 void mat::dump_to_file(string filename) const
@@ -595,12 +591,13 @@ vec operator*(const mat& m, const vec& v)
 {
  long r=m.nro, c=m.nco;
  vec w(r);
- if (c==v.d)
+ if (c==dim(v))
    {
-     scalar *mp=m.entries, *wp=w.entries;
+     scalar *mp=m.entries;
+     auto wp = w.entries.begin();
      while(r--)
        {
-	 scalar *vp=v.entries;
+	 auto vp = v.entries.begin();
          c=m.nco;
 	 while(c--)
            *wp += (*mp++)*(*vp++);
@@ -648,11 +645,10 @@ mat echelon(const mat& entries, vec& pcols, vec& npcols,
                long& rk, long& ny, scalar& d, int method)
 {
   switch (method)
-    {case 0: return echelon0(entries,pcols,npcols,rk,ny,d);
-     case 1: return echelonl(entries,pcols,npcols,rk,ny,d);
-     case 2: return echelonp(entries,pcols,npcols,rk,ny,d,DEFAULT_MODULUS);
-     default: return echelon0(entries,pcols,npcols,rk,ny,d);
-    }        
+    {
+    case 0: default: return echelon0(entries,pcols,npcols,rk,ny,d);
+    case 2: return echelonp(entries,pcols,npcols,rk,ny,d,DEFAULT_MODULUS);
+    }
 }
 
 //#define DEBUG_ECH_0
@@ -976,159 +972,39 @@ long mat::determinant() const
 
 void vec::sub_row(const mat& m, int i)
 {
-  scalar* vi=entries, *wi=m.entries+(i-1)*d; long n=d;
-  if (d==m.ncols()) {while(n--)(*vi++)-=(*wi++);}
+  scalar *wi=m.entries+(i-1)*entries.size();
+  auto vi = entries.begin();
+  long n=entries.size();
+  if (n==m.ncols()) {while(n--)(*vi++)-=(*wi++);}
   else {cerr << "Incompatible vecs in vec::sub_row"<<endl;}
 }
 
 void vec::add_row(const mat& m, int i)
 {
-  scalar* vi=entries, *wi=m.entries+(i-1)*d; long n=d;
-  if (d==m.ncols()) {while(n--)(*vi++)+=(*wi++);}
-  else {cerr << "Incompatible vecs in vec::add_row(): d="<<d<<" but m has "<<m.ncols()<<"cols"<<endl;}
+  scalar *wi=m.entries+(i-1)*entries.size();
+  auto vi = entries.begin();
+  long n=entries.size();
+  if (n==m.ncols()) {while(n--)(*vi++)+=(*wi++);}
+  else {cerr << "Incompatible vecs in vec::add_row(): d="<<n<<" but m has "<<m.ncols()<<"cols"<<endl;}
 }
 
 mat addscalar(const mat& m, scalar c)
 {
   return m+(c*idmat((scalar)m.nrows()));
 }
- 
+
 vec apply(const mat& m, const vec& v)    // same as *(mat, vec)
 {
  long nr=m.nrows(), nc=m.ncols();
  vec ans(nr);
  if (nc==dim(v))
-   for (long i=1; i<=nr; i++) 
+   for (long i=1; i<=nr; i++)
      ans[i] = m.row(i)*v;
- else 
+ else
    {
      cerr << "Incompatible sizes in *(mat,vec)"<<endl;
    }
  return ans;
-}
-
-/*  Need this when LONGLONG = long long!
-LONGLONG abs(LONGLONG a)
-{return ((a<0) ? -a : a);
-}
-*/
-
-LONGLONG lgcd(LONGLONG aa, LONGLONG bb)
-{LONGLONG a=aa,b=bb;
- while (b!=0) {LONGLONG c=a%b; a=b; b=c;}
- return ((a<0) ? -a : a);
-}
-
-LONGLONG llcm(LONGLONG a, LONGLONG b)
-{LONGLONG g = lgcd(a,b);
- if (g==0) return 0;
- return a*(b/g);
-}
-
-void lelim(LONGLONG *m, long nc, long r1, long r2, long pos)
-{LONGLONG *mr1=m+r1*nc, *mr2=m+r2*nc;
- scalar p = mr1[pos], q = mr2[pos];
- while(nc--)
-   {
-     (*mr2)=(p*(*mr2))-(q*(*mr1)); 
-     mr1++; mr2++;
-   }
-}
-
-void lclear(LONGLONG* row, long nc)
-{long n=nc; LONGLONG *rowi=row; LONGLONG g = 0;
- while((n--)&&(g!=1)) g=lgcd(g,*rowi++);
- if (g<0)g=-g;
- if (g>1) 
-   {
-     n=nc; rowi=row; while(n--) (*rowi++) /= g;
-   }
-}
-
-// The following version of echelon uses long-long-integers for internal
-// calculation and a minimum of function calls; the structures vec and
-// mat are used for input/output but not internally.
-
-mat echelonl(const mat& entries, vec& pc, vec& npc,
-                long& rk, long& ny, scalar& d)
-{
-  rk=0; ny=0;
-  long nr=entries.nro, nc=entries.nco, r=0, c,r2,r3,i, mr2c,lastpivot=1;
-  LONGLONG *m, *mi1, *mi2, *mij; LONGLONG temp;
-  m = new LONGLONG[nr*nc];
-  long n=nr*nc; mij=m; mi1=entries.entries;
-  while(n--) *mij++ = (LONGLONG)(*mi1++);
-
-  scalar *pcols = new scalar[nc];
-  scalar *npcols = new scalar[nc];
-  for (c=0; (c<nc)&&(r<nr); c++)
-    {
-      mij=m+r*nc+c;  // points to column c in row r
-      long min = abs(*mij);
-      long rmin = r;
-      for (r2=r+1, mij+=nc; (r2<nr)&&(min!=1); r2++, mij+=nc)
-       { mr2c = abs(*mij);
-         if ((0<mr2c) && ((mr2c<min) || (min==0))) { min=mr2c; rmin=r2 ;}
-       }
-     if (min==0) npcols[ny++] = c;
-     else
-       {pcols[rk++] = c;
-        if (rmin>r) //swap rows
-	  {
-	    mi1=m+r*nc; mi2=m+rmin*nc; n=nc;
-	    while(n--) {temp = *mi1; *mi1++ = *mi2; *mi2++ = temp;}
-	  } 
-        for (r3 = r+1 ; r3<nr; r3++)
-          {
-            lelim(m,nc,r,r3,c);
-	    mi1 = m+r3*nc; n=nc; while(n--) *mi1++ /= lastpivot;
-          }
-        lastpivot=min;
-        r++;
-      }
-    }
-  for (c = rk+ny; c<nc; c++) npcols[ny++] = c;
-  d=1;
-  if (ny>0)   // Back-substitute and even up pivots
-    {for (r=0; r<rk; r++) lclear(m+r*nc,nc);
-     for (r=0; r<rk; r++)
-       {
-	 for (r2=r+1; r2<rk; r2++) lelim(m,nc,r2,r,pcols[r2]);  
-	 mi1=m+r*nc;
-	 lclear(mi1,nc);
-	 d = llcm(d,mi1[pcols[r]]);
-       }
-     d = abs(d);
-     // cout << "d = " << d << "\n";
-     for (r=0, mij=m; r<rk; r++)
-       {
-	 n=nc;
-	 scalar fac = d/mij[pcols[r]];  
-	 while(n--) *mij++ *= fac;
-       }
-   }
-  else 
-    {
-      mij=m;
-      for (r=0; r<rk; r++)
-	for (c=0; c<nc; c++)
-	  *mij++ = (c==pcols[r]);  // 0 or 1 !
-    }
-  // Copy back into mat
-  mat ans(rk,nc);
-  n=rk*nc; scalar* ansij=ans.entries; mij=m;
-  while(n--)
-      *ansij++=*mij++;
-
-  delete[] m;
-  // fix vectors
-  pc.init(rk); npc.init(ny);
-  for (i=0; i<rk; i++)  pc[i+1]= pcols[i]+1;
-  for (i=0; i<ny; i++) npc[i+1]=npcols[i]+1;
-  delete[] pcols;
-  delete[] npcols;
-
-  return ans;
 }
 
 mat reduce_modp(const mat& m, const scalar& p)
