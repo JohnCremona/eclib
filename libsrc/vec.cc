@@ -66,7 +66,7 @@ vec& vec::operator+=(const vec& w)
 void vec::addmodp(const vec& w, scalar pr)
 {
   std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
-                 [pr](const scalar& wi, const scalar& vi) { return xmod(wi+vi,pr);});
+                 [pr](const scalar& wi, const scalar& vi) { return mod(wi+vi,pr);});
 }
 
 vec& vec::operator-=(const vec& w)
@@ -125,7 +125,7 @@ void vec::add(long i, scalar x)
 
 void vec::add_modp(long i, scalar x, scalar p)
 {
-  entries.at(i-1) = xmod(entries.at(i-1)+x,p);
+  entries.at(i-1) = mod(entries.at(i-1)+x,p);
 }
 
 // Definitions of non-member, friend operators and functions
@@ -135,7 +135,7 @@ vec reduce_modp(const vec& v, const scalar& p)
   if (p==0) return v;
   vec w(v.entries.size());
   std::transform(v.entries.begin(), v.entries.end(), w.entries.begin(),
-                 [p](const scalar& vi) {return xmod(vi,p);});
+                 [p](const scalar& vi) {return mod(vi,p);});
   return w;
 }
 
