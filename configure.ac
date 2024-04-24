@@ -55,8 +55,8 @@ AC_PROG_INSTALL
 LT_INIT
 
 # Checks for system features and libraries, via macros defined in m4/ directory
-# Note that unordered_map is standard since c++11
-AX_CXX_COMPILE_STDCXX(11,,mandatory)
+
+AX_CXX_COMPILE_STDCXX([14],,mandatory)
 
 # NB At present if configure finds boost on your system then it WILL
 # define ECLIB_MULTITHREAD which you may not want, if you have not put
