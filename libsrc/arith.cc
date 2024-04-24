@@ -287,12 +287,16 @@ long posmod(long a, long b)
 
 long gcd(long a, long b)
 {
+  if ((a==1)||(b==1)) return 1;
+  if (a==0) return abs(b);
   while (b!=0) {long c=a%b; a=b; b=c;}
   return abs(a);
 }
 
 int gcd(int a, int b)
 {
+  if ((a==1)||(b==1)) return 1;
+  if (a==0) return abs(b);
   while (b!=0) {int c=a%b; a=b; b=c;}
   return abs(a);
 }
