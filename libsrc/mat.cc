@@ -552,62 +552,47 @@ mat echelon(const mat& entries, vec& pcols, vec& npcols,
 
 void conservative_elim(vector<scalar>& m, long nc, long r1, long r2, long pos)
 {
-  long nc1=nc;
-  auto mr1=m.begin()+r1*nc;
-  auto mr2=m.begin()+r2*nc;
-  scalar p = *(mr1+pos), q = *(mr2+pos);
+  auto mr1=m.begin() + r1*nc + pos;
+  auto mr2=m.begin() + r2*nc + pos;
+  scalar p = *mr1, q = *mr2;
+  nc -= pos;
 #ifdef DEBUG_ECH_0
   cout<<"In conservative_elim with p = "<<p<<" and q = " << q << endl;
   cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
   cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
 #endif
-  if(p==1)
-    if(q==0) {;} // nothing to do
-    else
+  if ((p==1)&&(q==0))
+    return;
+  // generic function to make y (entry in row2) 0
+  std::function<scalar (scalar, scalar)>
+    f = [p,q](const scalar& x, const scalar& y) {return p*y - q*x;};
+  if(p==1) // now q!=0
+    {
       if(q==1)
-        while(nc--)
-          {
-            (*mr2)-=(*mr1);
-            mr1++; mr2++;
-          }
-      else // general q
-        while(nc--)
-          {
-            (*mr2)-=(q*(*mr1));
-            mr1++; mr2++;
-          }
-  else  // p!=1; we cannot assume p>0
-    if(q==0) // must still multiply r2 by p
-      while(nc--)
+        f = [p,q](const scalar& x, const scalar& y) {return y - x;};
+      else
         {
-          (*mr2)*=p;
-          mr2++;
+          if(q==-1)
+            f = [p,q](const scalar& x, const scalar& y) {return y + x;};
+          else
+            f = [p,q](const scalar& x, const scalar& y) {return y - q*x;};
         }
-    else
+    }
+  else  // p!=1
+    {
+      if(q==0)
+        f = [p,q](const scalar& x, const scalar& y) {return p*y;};
       if(q==1)
-        while(nc--)
-          {
-            (*mr2)=(p*(*mr2))-(*mr1);
-            mr1++; mr2++;
-          }
-     else // general q
-       while(nc--)
-	 {
-	   (*mr2)=(p*(*mr2))-(q*(*mr1));
-	   mr1++; mr2++;
-	 }
-#ifdef DEBUG_ECH_0
-  cout<<"After conservative_elim with p = "<<p<<" and q = " << q << endl;
-  nc=nc1;
-  mr1=m.begin()+r1*nc;
-  mr2=m.begin()+r2*nc;
-  cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
-  cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
-#endif
+        f = [p,q](const scalar& x, const scalar& y) {return p*y - x;};
+      if(q==-1)
+        f = [p,q](const scalar& x, const scalar& y) {return p*y + x;};
+    }
+  std::transform(mr1, mr1+nc, mr2, mr2, f);
 }
 
-// This version does not multiply row r1 by p unnecessarily
-// (used in back substitution)
+// This version does not multiply row r1 by p unnecessarily.  Used in
+// back substitution, it does not assume that the entries in
+// columns<pos are 0.
 
 void elim(vector<scalar>& m, long nc, long r1, long r2, long pos)
 {
@@ -619,36 +604,31 @@ void elim(vector<scalar>& m, long nc, long r1, long r2, long pos)
   cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
   cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
 #endif
-  if(p==1)
-    if(q==0) {;} // nothing to do
-    else
+  if ((p==1)&&(q==0))
+    return;
+  // generic function to make y (entry in row2) 0
+  std::function<scalar (scalar, scalar)>
+    f = [p,q](const scalar& x, const scalar& y) {return p*y - q*x;};
+  if(p==1) // now q!=0
+    {
       if(q==1)
-        while(nc--)
-          {
-            (*mr2)-=(*mr1);
-            mr1++; mr2++;
-	 }
-      else // general q
-        while(nc--)
-          {
-            (*mr2)-=(q*(*mr1));
-            mr1++; mr2++;
-          }
-  else  // p!=1; we cannot assume p>0
-    if(q==0)    {;} // nothing to do
-    else
+        f = [p,q](const scalar& x, const scalar& y) {return y - x;};
+      else
+        {
+          if(q==-1)
+            f = [p,q](const scalar& x, const scalar& y) {return y + x;};
+          else
+            f = [p,q](const scalar& x, const scalar& y) {return y - q*x;};
+        }
+    }
+  else  // p!=1
+    {
       if(q==1)
-        while(nc--)
-          {
-            (*mr2)=(p*(*mr2))-(*mr1);
-            mr1++; mr2++;
-          }
-      else // general q
-        while(nc--)
-          {
-            (*mr2)=(p*(*mr2))-(q*(*mr1));
-            mr1++; mr2++;
-          }
+        f = [p,q](const scalar& x, const scalar& y) {return p*y - x;};
+      if(q==-1)
+        f = [p,q](const scalar& x, const scalar& y) {return p*y + x;};
+    }
+  std::transform(mr1, mr1+nc, mr2, mr2, f);
 }
 
 void clear(vector<scalar>& row, long col1, long col2)
@@ -661,9 +641,9 @@ void clear(vector<scalar>& row, long col1, long col2)
     std::for_each(row1, row2, [g](scalar& x) {x/=g;});
 }
 
-// #ifndef DEBUG_ECH_0
-// #define DEBUG_ECH_0
-// #endif
+//#ifndef DEBUG_ECH_0
+//#define DEBUG_ECH_0
+//#endif
 
 #ifdef DEBUG_ECH_0
 void show(vector<scalar> m, long nr, long nc)
@@ -934,65 +914,51 @@ void elimp(mat& m, long r1, long r2, long pos, scalar pr)
   scalar p = mod(*mr1,pr), q=mod(*mr2,pr);
   if(q==0) {return;} // nothing to do
   nc -= (pos-1); // first pos-1 entries are assumed 0 already
+  // generic function to make y (entry in row2) 0
+  std::function<scalar (scalar, scalar)>
+    f = [pr,p,q](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)-xmodmul(q,x,pr), pr);};
+  // simpler special cases (for same signature they must also capture both p and q)
   if(p==1)
    {
      if(q==1)
+       f = [pr,p,q](const scalar& x, const scalar& y) {return mod(y-x, pr);};
+     else
        {
-         auto f = [pr](const scalar& x, const scalar& y) {return mod(y-x, pr);};
-         std::transform(mr1, mr1+nc, mr2, mr2, f);
-         return;
+         if(q==-1)
+           f = [pr,p,q](const scalar& x, const scalar& y) {return mod(y+x, pr);};
+         else
+           // general q
+           f = [pr,p,q](const scalar& x, const scalar& y) {return mod(y-xmodmul(q,x,pr), pr);};
        }
-     if(q==-1)
-       {
-         auto f = [pr](const scalar& x, const scalar& y) {return mod(y+x, pr);};
-         std::transform(mr1, mr1+nc, mr2, mr2, f);
-         return;
-       }
-     // general q
-     auto f = [pr,q](const scalar& x, const scalar& y) {return mod(y-xmodmul(q,x,pr), pr);};
-     std::transform(mr1, mr1+nc, mr2, mr2, f);
-     return;
    }
- // general p (p!=1)
- if(q==1)
-   {
-     auto f = [pr,p](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)-x, pr);};
-     std::transform(mr1, mr1+nc, mr2, mr2, f);
-     return;
-   }
- if(q==-1)
-   {
-     auto f = [pr,p](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)+x, pr);};
-     std::transform(mr1, mr1+nc, mr2, mr2, f);
-     return;
-   }
- // general q
- auto f = [pr,p,q](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)-xmodmul(q,x,pr), pr);};
- std::transform(mr1, mr1+nc, mr2, mr2, f);
+  else // general p!=1
+    {
+      if(q==1)
+        f = [pr,p,q](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)-x, pr);};
+      if(q==-1)
+        f = [pr,p,q](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)+x, pr);};
+      // else the generic f will be used
+    }
+  std::transform(mr1, mr1+nc, mr2, mr2, f);
 }
 
 void elimp1(mat& m, long r1, long r2, long pos, scalar pr)
 //same as elimp except assumes pivot is 1
 {
   long nc=m.nco;
-  auto mr1 = m.entries.begin() + (r1-1)*nc;
-  auto mr2 = m.entries.begin() + (r2-1)*nc;
-  scalar q=mod(*(mr2+pos-1),pr);
+  auto mr1 = m.entries.begin() + (r1-1)*nc + (pos-1);
+  auto mr2 = m.entries.begin() + (r2-1)*nc + (pos-1);
+  scalar q=mod(*mr2,pr);
   if(q==0) return;
-  if(q==1)
-    {
-      auto f = [pr](const scalar& x, const scalar& y) {return mod(y-x, pr);};
-      std::transform(mr1, mr1+nc, mr2, mr2, f);
-      return;
-    }
-  if(q==-1)
-    {
-      auto f = [pr](const scalar& x, const scalar& y) {return mod(y+x, pr);};
-      std::transform(mr1, mr1+nc, mr2, mr2, f);
-      return;
-    }
-  // general q
-  auto f = [pr,q](const scalar& x, const scalar& y) {return mod(y-xmodmul(q,x,pr), pr);};
+  nc -= (pos-1); // first pos-1 entries are assumed 0 already
+  // generic function to make y (entry in row2) 0
+  std::function<scalar (scalar, scalar)>
+    f = [pr,q](const scalar& x, const scalar& y) {return mod(y-xmodmul(q,x,pr), pr);};
+  // simpler special cases
+  if (q==1)
+    f = [pr,q](const scalar& x, const scalar& y) {return mod(y-x, pr);};
+  if (q==-1)
+    f = [pr,q](const scalar& x, const scalar& y) {return mod(y+x, pr);};
   std::transform(mr1, mr1+nc, mr2, mr2, f);
 }
 
