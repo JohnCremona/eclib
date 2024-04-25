@@ -64,12 +64,14 @@ public:
   void swaprows(long r1, long r2);
   void multrow(long r, scalar scal);
   void divrow(long r, scalar scal);
-  scalar row_content(long r);
+  scalar content() const;
+  scalar row_content(long r) const;
   void clearrow(long r);
-  mat& operator+=(const mat&);
-  mat& operator-=(const mat&);
-  mat& operator*=(scalar);
-  mat& operator/=(scalar);
+  void makeprimitive();
+  void operator+=(const mat&);
+  void operator-=(const mat&);
+  void operator*=(scalar);
+  void operator/=(scalar);
   const vector<scalar> get_entries()const{return entries;}
   long nrows() const {return nro;}
   long ncols() const {return nco;}
@@ -99,11 +101,13 @@ public:
   friend void elimrows2(mat& m, long r1, long r2, long pos, scalar last); //elimination + divide by last pivot
   friend mat echelon0(const mat& m, vec& pcols, vec& npcols,
                       long& rk, long& ny, scalar& d);
-  friend void elimp(const mat& m, long r1, long r2, long pos, scalar pr);
-  friend void elimp1(const mat& m, long r1, long r2, long pos, scalar pr);
+  friend void elimp(mat& m, long r1, long r2, long pos, scalar pr);
+  friend void elimp1(mat& m, long r1, long r2, long pos, scalar pr);
   friend mat echelonp(const mat& m, vec& pcols, vec& npcols,
                       long& rk, long& ny, scalar& d, scalar pr);
   friend mat echmodp(const mat& m, vec& pcols, vec& npcols,
+                     long& rk, long& ny, scalar pr);
+  friend mat echmodp_uptri(const mat& m, vec& pcols, vec& npcols,
                      long& rk, long& ny, scalar pr);
   friend mat ref_via_flint(const mat& M, vec& pcols, vec& npcols,
                            long& rk, long& ny, scalar pr);
@@ -129,7 +133,8 @@ public:
   friend mat reduce_modp(const mat& m, const scalar& p);
   friend mat matmulmodp(const mat&, const mat&, scalar pr);
   friend mat echmodp_d(const mat& mat, vec& pcols, vec& npcols, long& rk, long& ny, double pr);
-  friend double sparsity(const mat& m);
+  friend long population(const mat& m); // #nonzero entries
+  friend double sparsity(const mat& m); // #nonzero entries/#entries
   // Implementation
 private:
   long nro,nco;
@@ -150,7 +155,11 @@ mat operator/(const mat& m, scalar scal);
 int operator!=(const mat& m1, const mat& m2);
 mat idmat(scalar n);
 mat transpose(const mat& m);
+// submatrix of only rows indexed by v, all columns
+mat rowsubmat(const mat& m, const vec& v);
+// submatrix of rows indexed by iv, columns indexed by jv
 mat submat(const mat& m, const vec& iv, const vec& jv);
+
 mat echelon(const mat& m, vec& pcols, vec& npcols,
                           long& rk, long& ny, scalar& d, int method=0);  // default method 0: scalars
 mat addscalar(const mat&, scalar);

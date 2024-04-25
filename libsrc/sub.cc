@@ -41,11 +41,10 @@ subspace combine(const subspace& s1, const subspace& s2)
   const mat& b1=s1.basis, b2=s2.basis;
   int nr = b1.nro, nc = b2.nco;
   mat b = b1*b2;
-  scalar g=0; int n=nr*nc; scalar* bp=b.entries;
-  while ((n--)&&(g!=1)) g=gcd(g,*bp++);
+  scalar g = b.content();
   if(g>1)
     {
-      d/=g; bp=b.entries; n=nr*nc; while(n--) (*bp++)/=g;
+      d/=g; b/=g;
     }
   vec p = s1.pivots[s2.pivots];
   return subspace(b,p,d);
@@ -59,47 +58,28 @@ mat expressvectors(const mat& m, const subspace& s)
   for (int i=1; i<=n; i++) ans.setrow(i, m.row(p[i]));
   return ans;
 }
- 
-//This one is used a LOT
-mat restrict_mat(const mat& m, const subspace& s, int cr)
-{ long d = dim(s), n=m.nro;
-  if(d==n) return m; // trivial special case, s is whole space
-  scalar dd = s.denom;
-  mat ans(d,d);
-  const mat& sb = s.basis;
-  scalar *a=m.entries, *b=sb.entries, *c=ans.entries, *cp;
-  auto pv = s.pivots.entries.begin();
-  for(int i=0; i<d; i++)
+
+//This one is used a lot:
+// M is nxn;
+// S is a subspace of dim d<=n with nxd basis B, whose pivotal rows are a multiple den of the dxd identity
+// return A such that den*M*B = B*A
+//
+// Algorithm: restricting to pivotal rows on both sides: B restricts to den*I and M to M1 (say), so
+// den*M1*B=den*A, so A=M1*B
+
+mat restrict_mat(const mat& M, const subspace& S, int cr)
+{
+  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  const mat& B = S.basis;
+  mat A = rowsubmat(M, S.pivots) * B;
+
+  if(cr) // optional check that S is invariant under M
     {
-      scalar *ap=a+n*(pv[i]-1);
-      scalar *bp=b;
-      int k=n;
-      while(k--)
-	{
-	  cp=c;
-          int j=d;
-	  while(j--)
-	    {
-	      *cp++ += *ap * *bp++;
-	    }
-	  ap++;
-	}
-      c += d;
+      int check = (S.denom*matmulmodp(M,B,DEFAULT_MODULUS) == matmulmodp(B,A,DEFAULT_MODULUS));
+      if (!check)
+        cerr<<"Error in restrict_mat: subspace not invariant!"<<endl;
     }
-// N.B. The following check is strictly unnecessary and slows it down, 
-// but is advisable! 
-  if(cr) {
-//  int check = 1, n = b.nrows();
-//  for (i=1; (i<=n) && check; i++)
-//  for (j=1; (j<=d) && check; j++)
-//   check = (dd*m.row(i)*b.col(j) == b.row(i)*ans.col(j));
-    int check = (dd*matmulmodp(m,sb,DEFAULT_MODULUS) == matmulmodp(sb,ans,DEFAULT_MODULUS));
-    if (!check) 
-      {
-	cerr<<"Error in restrict_mat: subspace not invariant!"<<endl;
-      }
-  }
-  return ans;
+  return A;
 }
 
 subspace kernel(const mat& m1, int method)
@@ -130,14 +110,14 @@ subspace image(const mat& m, int method)
   subspace ans(b,p,d);
   return ans;
 }
- 
+
 subspace eigenspace(const mat& m1, scalar lambda, int method)
 {
   mat m = addscalar(m1,-lambda);
   subspace ans = kernel(m,method);
   return ans;
 }
- 
+
 subspace subeigenspace(const mat& m1, scalar l, const subspace& s, int method)
 {
   mat m = restrict_mat(m1,s);
@@ -155,49 +135,20 @@ subspace pcombine(const subspace& s1, const subspace& s2, scalar pr)
   return subspace(b,p,d);
 }
 
-mat prestrict(const mat& m, const subspace& s, scalar pr, int cr)
-{ int d = dim(s), n=m.nro;
-  if(d==n) return m; // trivial special case, s is whole space
-  scalar dd = s.denom;  // will be 1 if s is a mod-p subspace
-  mat ans(d,d);
-  const mat& sb = s.basis;
-  scalar *a=m.entries, *b=sb.entries, *c=ans.entries;
-  auto pv = s.pivots.entries.begin();
-  for(int i=0; i<d; i++)
+// Same as restrict_mat, but modulo pr
+mat prestrict(const mat& M, const subspace& S, scalar pr, int cr)
+{
+  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  const mat& B = S.basis;
+  mat A = matmulmodp(rowsubmat(M, S.pivots), B, pr);
+
+  if(cr) // optional check that S is invariant under M
     {
-      scalar *ap=a+n*(pv[i]-1), *bp=b, *cp;
-      int j, k=n;
-      while(k--)
-	{
-	  cp=c;
-          j=d;
-	  while(j--)
-	    {
-	      *cp += xmodmul(*ap , *bp++, pr);
-	      *cp = xmod(*cp, pr);
-	      cp++;
-	    }
-	  ap++;
-	}
-      cp=c;
-      j=d;
-      while(j--)
-	{
-	  *cp = mod(*cp,pr);
-	  cp++;
-	}
-      c += d;
+      int check = (S.denom*matmulmodp(M,B,pr) == matmulmodp(B,A,pr));
+      if (!check)
+        cerr<<"Error in prestrict: subspace not invariant!"<<endl;
     }
-  if(cr) {
-    const mat& left = dd*matmulmodp(m,sb,pr);
-    const mat& right = matmulmodp(sb,ans,pr);
-    int check = (left==right);
-    if (!check)
-      {
-	cout<<"Error in prestrict: subspace not invariant!\n";
-      }
-  }
-  return ans;
+  return A;
 }
 
 subspace oldpkernel(const mat& m1, scalar pr)   // using full echmodp

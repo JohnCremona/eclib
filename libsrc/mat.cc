@@ -73,6 +73,8 @@ mat mat::slice(long r1,long r2,long c1,long c2) const
 mat& mat::operator=(const mat& m)
 {
  if (this==&m) return *this;
+ nro=m.nro;
+ nco=m.nco;
  entries = m.entries;
  return *this;
 }
@@ -138,12 +140,18 @@ void mat::multrow(long r, scalar scal)
 
 void mat::divrow(long r, scalar scal)
 {
-  if (scal==1) return;
+  if (scal<=1) return;
   auto mij = entries.begin()+(r-1)*nco;
   std::transform(mij, mij+nco, mij, [scal](const scalar& x) {return x / scal;});
 }
 
-scalar mat::row_content(long r)
+scalar mat::content() const
+{
+  return std::accumulate(entries.begin(), entries.end(), 0,
+                         [](const scalar& x, const scalar& y) {return gcd(x,y);});
+}
+
+scalar mat::row_content(long r) const
 {
   auto mij = entries.begin()+(r-1)*nco;
   return std::accumulate(mij, mij+nco, 0,
@@ -155,7 +163,15 @@ void mat::clearrow(long r)
   divrow(r, row_content(r));
 }
 
-mat& mat::operator+=(const mat& n)
+void mat::makeprimitive()
+{
+  scalar g = content();
+  if (g<=1) return;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [g](const scalar& x) {return x / g;});
+}
+
+void mat::operator+=(const mat& n)
 {
   if ((nro==n.nro) && (nco=n.nco))
     {
@@ -166,42 +182,38 @@ mat& mat::operator+=(const mat& n)
     {
       cerr << "Incompatible matrices in operator +="<<endl;
     }
-  return *this;
 }
 
-mat& mat::operator-=(const mat& n)
+void mat::operator-=(const mat& n)
 {
   if ((nro==n.nro) && (nco=n.nco))
     {
       std::transform(n.entries.begin(), n.entries.end(), entries.begin(), entries.begin(),
-                     [](const scalar& x, const scalar& y) { return x - y;});
+                     [](const scalar& x, const scalar& y) { return y - x;});
     }
   else
     {
       cerr << "Incompatible matrices in operator -="<<endl;
     }
-  return *this;
 }
 
-mat& mat::operator*=(scalar scal)
+void mat::operator*=(scalar scal)
 {
   if (scal==1)
-    return *this;
+    return;
   if (scal==0)
     std::fill(entries.begin(), entries.end(), 0);
   else
     std::transform(entries.begin(), entries.end(), entries.begin(),
                    [scal](const scalar& x) {return x * scal;});
-  return *this;
 }
 
-mat& mat::operator/=(scalar scal)
+void mat::operator/=(scalar scal)
 {
-  if (scal==1)
-    return *this;
+  if (scal<=1)
+    return;
   std::transform(entries.begin(), entries.end(), entries.begin(),
                  [scal](const scalar& x) {return x / scal;});
-  return *this;
 }
 
 // Definitions of non-member, friend operators and functions
@@ -362,13 +374,14 @@ mat colcat(const mat& a, const mat& b)
          std::copy(aij, aij+nca, cij);
          aij+=nca;
          cij+=nca;
-         std::copy(bij, bij+ncb, cij+nca);
+         std::copy(bij, bij+ncb, cij);
          bij+=ncb;
          cij+=ncb;
        }
    }
  else
    cerr << "colcat: matrices have different number of rows!" << endl;
+ // cout<<"colcat of\n"<<a<<" and\n" <<b<<" is\n"<<c<<endl;
  return c;
 }
 
@@ -388,6 +401,7 @@ mat rowcat(const mat& a, const mat& b)
    {
      cerr << "rowcat: matrices have different number of columns!" << endl;
    }
+ // cout<<"rowcat of\n"<<a<<" and\n" <<b<<" is\n"<<c<<endl;
  return c;
 }
 
@@ -496,10 +510,21 @@ mat transpose(const mat& m)
   return ans;
 }
 
+// submatrix of rows indexed by v, all columns
+mat rowsubmat(const mat& m, const vec& v)
+{
+  long nr = dim(v), nc = m.ncols();
+  mat ans(nr,nc);
+  for (long i=1; i<=nr; i++)
+    for (long j=1; j<=nc; j++)
+      ans.set(i,j, m(v[i],j));
+  return ans;
+}
+
+// submatrix of rows indexed by iv, columns indexed by jv
 mat submat(const mat& m, const vec& iv, const vec& jv)
 {
-  long nr = dim(iv);
-  long nc = dim(jv);
+  long nr = dim(iv), nc = dim(jv);
   mat ans(nr,nc);
   for (long i=1; i<=nr; i++)
     for (long j=1; j<=nc; j++)
@@ -525,10 +550,17 @@ mat echelon(const mat& entries, vec& pcols, vec& npcols,
 //computing contents of rows as this is slower.
 // Used in forward elimination in echelon0
 
-void conservative_elim(vector<scalar> m, long nc, long r1, long r2, long pos)
+void conservative_elim(vector<scalar>& m, long nc, long r1, long r2, long pos)
 {
-  auto mr1=m.begin()+r1*nc, mr2=m.begin()+r2*nc;
+  long nc1=nc;
+  auto mr1=m.begin()+r1*nc;
+  auto mr2=m.begin()+r2*nc;
   scalar p = *(mr1+pos), q = *(mr2+pos);
+#ifdef DEBUG_ECH_0
+  cout<<"In conservative_elim with p = "<<p<<" and q = " << q << endl;
+  cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
+  cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
+#endif
   if(p==1)
     if(q==0) {;} // nothing to do
     else
@@ -564,14 +596,23 @@ void conservative_elim(vector<scalar> m, long nc, long r1, long r2, long pos)
 	   (*mr2)=(p*(*mr2))-(q*(*mr1));
 	   mr1++; mr2++;
 	 }
+#ifdef DEBUG_ECH_0
+  cout<<"After conservative_elim with p = "<<p<<" and q = " << q << endl;
+  nc=nc1;
+  mr1=m.begin()+r1*nc;
+  mr2=m.begin()+r2*nc;
+  cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
+  cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
+#endif
 }
 
 // This version does not multiply row r1 by p unnecessarily
 // (used in back substitution)
 
-void elim(vector<scalar> m, long nc, long r1, long r2, long pos)
+void elim(vector<scalar>& m, long nc, long r1, long r2, long pos)
 {
-  auto mr1=m.begin()+r1*nc, mr2=m.begin()+r2*nc;
+  auto mr1=m.begin()+r1*nc;
+  auto mr2=m.begin()+r2*nc;
   scalar p = *(mr1+pos), q = *(mr2+pos);
 #ifdef DEBUG_ECH_0
   cout<<"In elim with p = "<<p<<" and q = " << q << endl;
@@ -610,7 +651,7 @@ void elim(vector<scalar> m, long nc, long r1, long r2, long pos)
           }
 }
 
-void clear(vector<scalar> row, long col1, long col2)
+void clear(vector<scalar>& row, long col1, long col2)
 {
   auto row1=row.begin()+col1;
   auto row2=row.begin()+col2;
@@ -620,14 +661,14 @@ void clear(vector<scalar> row, long col1, long col2)
     std::for_each(row1, row2, [g](scalar& x) {x/=g;});
 }
 
-//#ifndef DEBUG_ECH_0
-//#define DEBUG_ECH_0
-//#endif
+// #ifndef DEBUG_ECH_0
+// #define DEBUG_ECH_0
+// #endif
 
 #ifdef DEBUG_ECH_0
 void show(vector<scalar> m, long nr, long nc)
 {
-  auto mij = m.begin()
+  auto mij = m.begin();
   for(long i=0; i<nr; i++)
     {
       for(long j=0; j<nc; j++)
@@ -640,10 +681,12 @@ void show(vector<scalar> m, long nr, long nc)
 mat echelon0(const mat& entries, vec& pc, vec& npc,
              long& rk, long& ny, scalar& d)
 {
+#ifdef DEBUG_ECH_0
+  cout<<"In echelon0 with matrix:\n"<<entries<<endl;
+#endif
   rk=0; ny=0;
   scalar lastpivot=1;
   long r=0, nc=entries.nco, nr=entries.nro;
-  scalar *mi1, *mi2; scalar temp;
   vector<scalar> m = entries.entries;
   vector<scalar> pcols(nc), npcols(nc);
   for (long c=0; (c<nc)&&(r<nr); c++)
@@ -667,7 +710,7 @@ mat echelon0(const mat& entries, vec& pc, vec& npc,
        {
          pcols[rk++] = c;
 #ifdef DEBUG_ECH_0
-         cout<<"Using col "<<c<<" as pivotal col"<<endl;
+         cout<<"Using col "<<c<<" as pivotal col; pivot="<<piv<<" in row "<<rmin<<endl;
 #endif
          if (rmin>r) //swap rows
 	  {
@@ -682,8 +725,12 @@ mat echelon0(const mat& entries, vec& pc, vec& npc,
           {
 #ifdef DEBUG_ECH_0
 	    cout<<"Eliminating from row "<<r3<<endl;
+            cout<<"Before, m is\n"; show(m,nr,nc);
 #endif
             conservative_elim(m,nc,r,r3,c);
+#ifdef DEBUG_ECH_0
+            cout<<"After, m is\n"; show(m,nr,nc);
+#endif
 	    if(lastpivot>1)
 	      {
 		auto mi1 = m.begin()+r3*nc;
@@ -697,7 +744,7 @@ mat echelon0(const mat& entries, vec& pc, vec& npc,
          r++;
        }
 #ifdef DEBUG_ECH_0
-      //     cout<<"Current mat is:\n";show(m,nr,nc);
+      cout<<"Current mat is:\n";show(m,nr,nc);
 #endif
     }
   for (long c = rk+ny; c<nc; c++) npcols[ny++] = c;
@@ -714,7 +761,7 @@ mat echelon0(const mat& entries, vec& pc, vec& npc,
 #ifdef DEBUG_ECH_0
       cout<<"After clearing, pivots are:"<<endl;
       for(long r3=0; r3<rk; r3++)
-        cout<<*(m+r3*nc+pcols[r3])<<",";
+        cout<<*(m.begin()+r3*nc+pcols[r3])<<",";
       cout<<endl;
 #endif
       for (long r=0; r<rk; r++)
@@ -879,102 +926,74 @@ mat reduce_modp(const mat& m, const scalar& p)
   return w;
 }
 
-void elimp(const mat& m, long r1, long r2, long pos, scalar pr)
+void elimp(mat& m, long r1, long r2, long pos, scalar pr)
 {
   long nc=m.nco;
   auto mr1 = m.entries.begin() + (r1-1)*nc + (pos-1);
   auto mr2 = m.entries.begin() + (r2-1)*nc + (pos-1);
   scalar p = mod(*mr1,pr), q=mod(*mr2,pr);
   if(q==0) {return;} // nothing to do
-  nc -= (pos-1);
+  nc -= (pos-1); // first pos-1 entries are assumed 0 already
   if(p==1)
    {
      if(q==1)
        {
-         while(nc--)
-           {
-             (*mr2)= mod(*mr2-*mr1,pr);
-             mr1++; mr2++;
-           }
+         auto f = [pr](const scalar& x, const scalar& y) {return mod(y-x, pr);};
+         std::transform(mr1, mr1+nc, mr2, mr2, f);
          return;
        }
      if(q==-1)
        {
-         while(nc--)
-           {
-             (*mr2)= mod(*mr2+*mr1,pr);
-             mr1++; mr2++;
-           }
+         auto f = [pr](const scalar& x, const scalar& y) {return mod(y+x, pr);};
+         std::transform(mr1, mr1+nc, mr2, mr2, f);
          return;
        }
      // general q
-     while(nc--)
-       {
-         (*mr2)= mod(*mr2-xmodmul(q,*mr1,pr),pr);
-         mr1++; mr2++;
-       }
+     auto f = [pr,q](const scalar& x, const scalar& y) {return mod(y-xmodmul(q,x,pr), pr);};
+     std::transform(mr1, mr1+nc, mr2, mr2, f);
      return;
    }
  // general p (p!=1)
  if(q==1)
    {
-     while(nc--)
-       {
-	 (*mr2)= mod(xmodmul(p,*mr2,pr)-*mr1,pr);
-	 mr1++; mr2++;
-       }
+     auto f = [pr,p](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)-x, pr);};
+     std::transform(mr1, mr1+nc, mr2, mr2, f);
      return;
    }
  if(q==-1)
    {
-     while(nc--)
-       {
-	 (*mr2)= mod(xmodmul(p,*mr2,pr)+*mr1,pr);
-	 mr1++; mr2++;
-       }
+     auto f = [pr,p](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)+x, pr);};
+     std::transform(mr1, mr1+nc, mr2, mr2, f);
      return;
    }
  // general q
- while(nc--)
-   {
-     (*mr2)= mod(xmodmul(p,*mr2,pr)-xmodmul(q,*mr1,pr),pr);
-     mr1++; mr2++;
-   }
+ auto f = [pr,p,q](const scalar& x, const scalar& y) {return mod(xmodmul(p,y,pr)-xmodmul(q,x,pr), pr);};
+ std::transform(mr1, mr1+nc, mr2, mr2, f);
 }
 
-void elimp1(const mat& m, long r1, long r2, long pos, scalar pr)
+void elimp1(mat& m, long r1, long r2, long pos, scalar pr)
 //same as elimp except assumes pivot is 1
 {
- long nc=m.nco;
- auto mr1 = m.entries.begin() + (r1-1)*nc;
- auto mr2 = m.entries.begin() + (r2-1)*nc;
- scalar q=mod(*(mr2+pos-1),pr);
- if(q==0) return;
- if(q==1)
-   {
-     while(nc--)
-       {
-         (*mr2)= xmod(*mr2-*mr1,pr);
-         mr1++; mr2++;
-       }
-     return;
-   }
- if(q==-1)
-   {
-     while(nc--)
-       {
-         (*mr2)= xmod(*mr2+*mr1,pr);
-         mr1++; mr2++;
-       }
-     return;
-   }
- // general q
- while(nc--)
-   {
-     if(*mr1)
-       (*mr2)= xmod((*mr2)-xmodmul(q,*mr1,pr),pr);
-     mr1++; mr2++;
-   }
+  long nc=m.nco;
+  auto mr1 = m.entries.begin() + (r1-1)*nc;
+  auto mr2 = m.entries.begin() + (r2-1)*nc;
+  scalar q=mod(*(mr2+pos-1),pr);
+  if(q==0) return;
+  if(q==1)
+    {
+      auto f = [pr](const scalar& x, const scalar& y) {return mod(y-x, pr);};
+      std::transform(mr1, mr1+nc, mr2, mr2, f);
+      return;
+    }
+  if(q==-1)
+    {
+      auto f = [pr](const scalar& x, const scalar& y) {return mod(y+x, pr);};
+      std::transform(mr1, mr1+nc, mr2, mr2, f);
+      return;
+    }
+  // general q
+  auto f = [pr,q](const scalar& x, const scalar& y) {return mod(y-xmodmul(q,x,pr), pr);};
+  std::transform(mr1, mr1+nc, mr2, mr2, f);
 }
 
 //#define TRACE 1
@@ -1098,7 +1117,83 @@ mat echelonp(const mat& entries, vec& pcols, vec& npcols,
 
 mat echmodp(const mat& entries, vec& pcols, vec& npcols, long& rk, long& ny, scalar pr)
 {
-// cout << "In echmodp with entries = " << entries;
+  // cout << "In echmodp with p="<<pr<<" and matrix " << entries << endl;
+ long nr=entries.nrows(), nc=entries.ncols();
+ mat m(nr,nc);
+ std::transform(entries.entries.begin(), entries.entries.end(), m.entries.begin(),
+                [pr] (const scalar& x) {return mod(x,pr);});
+ // cout << " - after reducing modulo p,  matrix is " << m << endl;
+ pcols.init(nc);
+ npcols.init(nc);
+ rk=ny=0;
+ long r=1;
+ for (long c=1; (c<=nc)&&(r<=nr); c++)
+   {
+     auto mij=m.entries.begin()+(r-1)*nc+c-1;
+     scalar mmin = *mij;
+     long rmin = r;
+     mij += nc;
+     for (long r2=r+1; (r2<=nr)&&(mmin==0); r2++, mij+=nc)
+       {
+	 scalar mr2c = *mij;
+	 if (0!=mr2c)
+           {
+             mmin=mr2c;
+             rmin=r2;
+           }
+       }
+     if (mmin==0)
+       npcols[++ny] = c;
+     else
+       {
+	 pcols[++rk] = c;
+	 if (rmin>r)
+           m.swaprows(r,rmin);
+	 auto entriesij = m.entries.begin()+(r-1)*nc;
+         // cout<<"pivot = "<<mmin<<endl;
+         scalar fac = xmod(invmod(mmin,pr),pr);
+         std::transform(entriesij, entriesij+nc, entriesij,
+                        [pr,fac] (const scalar& x) {return mod(fac*x, pr);});
+         for (long r3 = r+1 ; r3<=nr; r3++)
+           elimp1(m,r,r3,c,pr);
+	 r++;
+       }
+     // cout << "After c="<<c<<" elimination, matrix is "<<m<<endl;
+   }
+ for (long c = rk+ny+1; c<=nc; c++)
+   npcols[++ny] = c ;
+ pcols  =  pcols.slice(rk);
+ npcols =  npcols.slice(ny);    // truncate index vectors
+ // cout << "After forward elimination, matrix is "<<m<<endl;
+ // cout << "Rank = " << rk << ".  Nullity = " << ny << ".\n";
+ if (ny>0)
+   {
+     for (long r=1; r<=rk; r++)
+       for (long r2=r+1; r2<=rk; r2++)
+	 elimp(m,r2,r,pcols[r2],pr);
+     for (long r=1; r<=rk; r++)
+       {
+	 auto mij = m.entries.begin()+(r-1)*nc;
+	 scalar fac = *(mij+pcols[r]-1);
+	 fac = mod(invmod(fac,pr),pr);
+         std::transform(mij, mij+nc, mij,
+                        [pr,fac] (const scalar& x) {return mod(fac*x, pr);});
+       }
+   }
+ else
+   {
+     auto mij=m.entries.begin();
+     for (long r=1; r<=rk; r++)
+       for (long c=1; c<=nc; c++)
+	 *mij++ = (c==pcols[r]);    // 0 or 1 !
+   }
+ return m.slice(rk,nc);
+}
+
+mat echmodp_uptri(const mat& entries, vec& pcols, vec& npcols,
+                                  long& rk, long& ny, scalar pr)
+{
+// cout << "In echmodp_uptri with matrix = " << entries;
  long nr=entries.nrows(), nc=entries.ncols();
  mat m(nr,nc);
  std::transform(entries.entries.begin(), entries.entries.end(), m.entries.begin(),
@@ -1130,9 +1225,9 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols, long& rk, long& ny, sca
 	 if (rmin>r)
            m.swaprows(r,rmin);
 	 auto entriesij = m.entries.begin()+(r-1)*nc;
-         scalar fac = xmod(invmod(mmin,pr),pr);
+         scalar fac = mod(invmod(mmin,pr),pr);
          std::transform(entriesij, entriesij+nc, entriesij,
-                        [pr,fac] (const scalar& x) {return xmodmul(fac , x, pr);});
+                        [pr,fac] (const scalar& x) {return mod(fac*x, pr);});
          for (long r3 = r+1 ; r3<=nr; r3++)
            elimp1(m,r,r3,c,pr);
 	 r++;
@@ -1143,27 +1238,6 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols, long& rk, long& ny, sca
  pcols  =  pcols.slice(rk);
  npcols =  npcols.slice(ny);    // truncate index vectors
  // cout << "Rank = " << rk << ".  Nullity = " << ny << ".\n";
- if (ny>0)
-   {
-     for (long r=1; r<=rk; r++)
-       for (long r2=r+1; r2<=rk; r2++)
-	 elimp(m,r2,r,pcols[r2],pr);
-     for (long r=1; r<=rk; r++)
-       {
-	 auto mij = m.entries.begin()+(r-1)*nc;
-	 scalar fac = *(mij+pcols[r]-1);
-	 fac = xmod(invmod(fac,pr),pr);
-         std::transform(mij, mij+nc, mij,
-                        [pr,fac] (const scalar& x) {return xmodmul(fac , x, pr);});
-       }
-   }
- else
-   {
-     auto mij=m.entries.begin();
-     for (long r=1; r<=rk; r++)
-       for (long c=1; c<=nc; c++)
-	 *mij++ = (c==pcols[r]);    // 0 or 1 !
-   }
  return m.slice(rk,nc);
 }
 
@@ -1520,11 +1594,16 @@ int liftmat(const mat& mm, scalar pr, mat& m, scalar& dd, int trace)
   return 1;
 }
 
+long population(const mat& m) // #nonzero entries
+{
+  if (m.entries.empty()) return 0;
+  return std::count_if(m.entries.begin(), m.entries.end(), [](const scalar& x) {return x!=0;});
+}
+
 double sparsity(const mat& m)
 {
   if (m.entries.empty()) return 1;
-  long count = std::count_if(m.entries.begin(), m.entries.end(), [](const scalar& x) {return x!=0;});
-  return double(count)/m.entries.size();
+  return double(population(m))/m.entries.size();
 }
 
 #if (FLINT==1)&&(__FLINT_VERSION>2)&&(SCALAR_OPTION==1)

@@ -90,14 +90,14 @@ smat::smat(const mat& m)
   int i, j, k, l, p;
   for( i = 0; i < nro; i++ )
     {
-      scalar *veci = m.entries + i*nco;
+      auto veci = m.entries.begin() + i*nco;
       for( j = 0, k = 0; j < nco; j++ ) if( *veci++ ) k++;
-      col[i] = new int[ k+1 ];  
-      val[i] = new scalar[ k ];  
+      col[i] = new int[ k+1 ];
+      val[i] = new scalar[ k ];
       scalar *values = val[i]; int *pos = col[i];
-      veci = m.entries + i*nco;
+      veci = m.entries.begin() + i*nco;
       *pos++ = k;
-      for( l = 0, p = 1;  l < nco; l++, p++,veci++ ) 
+      for( l = 0, p = 1;  l < nco; l++, p++,veci++ )
 	if( *veci ) { *values++ = *veci; *pos++ = p; }
     }
 }
@@ -222,8 +222,8 @@ smat smat::select_rows(const vec& rows) const
 mat smat::as_mat( ) const
 {
   //  cout<<"Converting smat to mat("<<nro<<"x"<<nco<<")"<<endl;
-  mat ans( nro, nco ); 
-  scalar *mi = ans.entries;
+  mat ans( nro, nco );
+  auto mi = ans.entries.begin();
   for( int i = 0; i < nro; i++ )
     {
       int d = *col[i];

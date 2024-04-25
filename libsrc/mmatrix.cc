@@ -64,28 +64,16 @@ mat_m::mat_m(const mat_i& m)
 {
  nro=m.nro;
  nco=m.nco;
- long n = nro*nco;
- entries=new bigint[n];
- if (!entries)
-   cerr<<"Out of memory in mat_m constructor"<<endl;
- {
-   bigint *m1=entries; int *m2=m.entries;
-   while(n--) *m1++ = *m2++;
- }
+ entries=new bigint[nro*nco];
+ std::transform(m.entries.begin(), m.entries.end(), entries, [](const int& x) {return bigint(x);});
 }
 
 mat_m::mat_m(const mat_l& m)
 {
  nro=m.nro;
  nco=m.nco;
- long n = nro*nco;
- entries=new bigint[n];
- if (!entries)
-   cerr<<"Out of memory in mat_m constuctor"<<endl;
- {
-   bigint *m1=entries; long *m2=m.entries;
-   while(n--) *m1++ = *m2++;
- }
+ entries=new bigint[nro*nco];
+ std::transform(m.entries.begin(), m.entries.end(), entries, [](const int& x) {return bigint(x);});
 }
 
 mat_m::~mat_m()
@@ -337,64 +325,16 @@ mat_m& mat_m::operator/=(const bigint& scal)
 mat_i mat_m::shorten(int x) const
 {
   mat_i ans(nro,nco);
-  bigint *matij=entries; int *ansij=ans.entries; long n=nro*nco;
-  bigint minint; minint=MININT;
-  bigint maxint; maxint=MAXINT;
-  while(n--)
-    {
-      bigint mij = *matij++;
-// NB gmp's test function here is broken!
-      if((mij>=minint)&&(mij<=maxint)) 
-	{
-	  if(is_zero(mij)) *ansij=0;
-	  else
-	    {
-	      int aij = I2int(mij);
-	      *ansij =aij;
-	      if(BIGINT(*ansij)!=mij)
-		{
-		  cerr<<"Problem: I2int("<<mij<<") returns "<<(*ansij)<<endl;
-		}
-	    }
-	}
-      else
-	{
-	  cerr << "Problem shortening bigint " << mij << " to an int!" << endl;
-	}
-      ansij++;
-    }
+  long n=nro*nco;
+  std::transform(entries, entries+n, ans.entries.begin(), [](const bigint& x) {return I2int(x);});
   return ans;
 }
 
 mat_l mat_m::shorten(long x) const
 {
   mat_l ans(nro,nco);
-  bigint *matij=entries; long *ansij=ans.entries; long n=nro*nco;
-  bigint minlong; minlong=MINLONG;
-  bigint maxlong; maxlong=MAXLONG;
-  while(n--)
-    {
-      bigint& mij = *matij++;
-// NB gmp's test function here is broken!
-      if((mij>=minlong)&&(mij<=maxlong)) 
-	{
-	  if(is_zero(mij)) *ansij=0;
-	  else
-	    {
-	      long aij = I2long(mij);
-	      *ansij = aij;
-	      if(BIGINT(*ansij)!=mij)
-		{
-		  cerr<<"Problem: I2int("<<mij<<") returns "<<(*ansij)<<endl;
-		}
-	    }
-	}
-      else
-	{
-	  cerr << "Problem shortening bigint " << mij << " to a long!" << endl;
-	}
-      ansij++;
-      }
+  long n=nro*nco;
+  std::transform(entries, entries+n, ans.entries.begin(), [](const bigint& x) {return I2long(x);});
   return ans;
 }
 

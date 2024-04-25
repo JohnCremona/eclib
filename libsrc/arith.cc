@@ -278,11 +278,51 @@ long mod(long a, long b)
  return(c);
 }
 
+long mod(int a, long b)
+{long c;
+ if (b<0) b=-b;
+ if (a>=0) c=a%b; else c=b-((-a)%b);
+ if (c>(b>>1)) c-=b;
+ return(c);
+}
+
+int mod(int a, int b)
+{int c;
+ if (b<0) b=-b;
+ if (a>=0) c=a%b; else c=b-((-a)%b);
+ if (c>(b>>1)) c-=b;
+ return(c);
+}
+
+int mod(long a, int b)
+{
+  return (int)mod(a,(long)b);
+}
+
 long posmod(long a, long b)
 {
   long c=a%b;
   if (c<0) return(c+b);
   return(c);
+}
+
+long posmod(int a, long b)
+{
+  long c=(long(a))%b;
+  if (c<0) return(c+b);
+  return(c);
+}
+
+int posmod(int a, int b)
+{
+  int c=a%b;
+  if (c<0) return(c+b);
+  return(c);
+}
+
+int posmod(long a, int b)
+{
+  return (int)posmod(a, (long)b);
 }
 
 long gcd(long a, long b)

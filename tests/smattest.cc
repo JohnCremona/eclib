@@ -442,14 +442,7 @@ int main(void)
 	  mat m = sm.as_mat ();  
 	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
 	  cout << " rank using echmodp : " << rk;
-	  int pop = 0;
-	  int nr = ker_mat.nrows();
-	  int nc = ker_mat.ncols();
-	  for( int r = 1; r <= nr; r++ ) {
-	    for( int c = 1; c <= nc; c++ ) {
-	      pop += ( ker_mat( r, c ) != 0 );
-	    }
-	  }
+	  int pop = population(ker_mat);
 	  cout << " number of non-zero entries: " << pop << endl;
 	}
 	/********A.step0 ();

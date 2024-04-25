@@ -131,7 +131,13 @@ inline vector<long> sqfreedivs(long n)
 }
 
 long mod(long a, long modb); /* modulus in range plus or minus half mod */
+long mod(int a, long modb); /* modulus in range plus or minus half mod */
+int mod(int a, int modb); /* modulus in range plus or minus half mod */
+int mod(long a, int modb); /* modulus in range plus or minus half mod */
 long posmod(long a, long modb); /* ordinary modulus, but definitely positive */
+long posmod(int a, long modb); /* ordinary modulus, but definitely positive */
+int posmod(int a, int modb); /* ordinary modulus, but definitely positive */
+int posmod(long a, int modb); /* ordinary modulus, but definitely positive */
 
 // gcc division truncates towards 0, while we need rounding, with a
 // consistent behaviour for halves (they go up here).
