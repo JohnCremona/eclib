@@ -36,10 +36,9 @@ void subspace::operator=(const subspace& s)
 // Definitions of nonmember, nonfriend operators and functions:
 
 subspace combine(const subspace& s1, const subspace& s2)
-{ 
+{
   scalar d = s1.denom * s2.denom;
   const mat& b1=s1.basis, b2=s2.basis;
-  int nr = b1.nro, nc = b2.nco;
   mat b = b1*b2;
   scalar g = b.content();
   if(g>1)
@@ -49,7 +48,7 @@ subspace combine(const subspace& s1, const subspace& s2)
   vec p = s1.pivots[s2.pivots];
   return subspace(b,p,d);
 }
- 
+
 //Don't think the following is ever actually used...
 mat expressvectors(const mat& m, const subspace& s)
 { vec p = pivots(s);

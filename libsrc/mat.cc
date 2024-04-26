@@ -317,7 +317,7 @@ void mat::output_pretty(ostream& s) const
       if(mi>ma)ma=mi;
       colwidths[j]=ma;
     }
-  long nc=nco,nr=nro;
+  long nr=nro;
   auto mij=entries.begin();
   while(nr--)
     {
@@ -736,46 +736,46 @@ mat echelon0(const mat& entries, vec& pc, vec& npc,
   d=1;
   if (ny>0)   // Back-substitute and even up pivots
     {
-      for (long r=0; r<rk; r++)
-        clear(m, r*nc, (r+1)*nc);
+      for (long r1=0; r1<rk; r1++)
+        clear(m, r1*nc, (r1+1)*nc); // dives row by its content
 #ifdef DEBUG_ECH_0
       cout<<"After clearing, pivots are:"<<endl;
       for(long r3=0; r3<rk; r3++)
         cout<<*(m.begin()+r3*nc+pcols[r3])<<",";
       cout<<endl;
 #endif
-      for (long r=0; r<rk; r++)
+      for (long r1=0; r1<rk; r1++)
         {
-          auto mi1 = m.begin()+r*nc;
+          auto mi1 = m.begin()+r1*nc;
 #ifdef DEBUG_ECH_0
           cout<<"Before back-subst, row "<<r<<" is:"<<endl;
           for(long r3=0; r3<nc; r3++)
             cout<<*(mi1+r3)<<",";
-          cout<<": pivot = "<<*(mi1+pcols[r])<<endl;
+          cout<<": pivot = "<<*(mi1+pcols[r1])<<endl;
 #endif
-          for (long r2=r+1; r2<rk; r2++)
-            elim(m,nc,r2,r,pcols[r2]);
+          for (long r2=r1+1; r2<rk; r2++)
+            elim(m,nc,r2,r1,pcols[r2]);
 #ifdef DEBUG_ECH_0
           cout<<"After back-subst, row "<<r<<" is:"<<endl;
           for(long r3=0; r3<nc; r3++)
             cout<<*(mi1+r3)<<",";
-          cout<<": pivot = "<<*(mi1+pcols[r])<<endl;
+          cout<<": pivot = "<<*(mi1+pcols[r1])<<endl;
 #endif
-          clear(m, r*nc, (r+1*nc));
+          clear(m, r1*nc, (r1+1*nc));
 #ifdef DEBUG_ECH_0
-          cout<<"After clearing, row "<<r<<" is:"<<endl;
+          cout<<"After clearing, row "<<r1<<" is:"<<endl;
           for(long r3=0; r3<nc; r3++)
             cout<<*(mi1+r3)<<",";
-          cout<<": pivot = "<<*(mi1+pcols[r])<<endl;
+          cout<<": pivot = "<<*(mi1+pcols[r1])<<endl;
 #endif
-          d = lcm(d, *(mi1+pcols[r]));
+          d = lcm(d, *(mi1+pcols[r1]));
         }
       d = abs(d);
       // cout << "d = " << d << "\n";
       auto mij = m.begin();
-      for (long r=0; r<rk; r++)
+      for (long r1=0; r1<rk; r1++)
         {
-          scalar fac = d/mij[pcols[r]];
+          scalar fac = d/mij[pcols[r1]];
           std::transform(mij, mij+nc, mij, [fac](const scalar& x){return fac*x;});
           mij += nc;
         }
@@ -783,9 +783,9 @@ mat echelon0(const mat& entries, vec& pc, vec& npc,
   else
     {
       auto mij = m.begin();
-      for (long r=0; r<rk; r++)
-	for (long c=0; c<nc; c++)
-	  *mij++ = (c==pcols[r]);  // 0 or 1 !
+      for (long i=0; i<rk; i++)
+	for (long j=0; j<nc; j++)
+	  *mij++ = (j==pcols[i]);  // 0 or 1 !
     }
 
   // fix vectors
@@ -1029,9 +1029,9 @@ mat echelonp(const mat& entries, vec& pcols, vec& npcols,
      }
  }
  else
-   for (long r=1; r<=rk; r++)
-     for (long c=1; c<=nc; c++)
-       m(r,c)=(c==pcols[r]);    // 0 or 1 !
+   for (long i=1; i<=rk; i++)
+     for (long j=1; j<=nc; j++)
+       m(i,j)=(j==pcols[i]);    // 0 or 1 !
 
  scalar modulus=pr;
  float lim=floor(sqrt(pr/2.0));
@@ -1134,13 +1134,13 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols, long& rk, long& ny, sca
  // cout << "Rank = " << rk << ".  Nullity = " << ny << ".\n";
  if (ny>0)
    {
-     for (long r=1; r<=rk; r++)
-       for (long r2=r+1; r2<=rk; r2++)
-	 elimp(m,r2,r,pcols[r2],pr);
-     for (long r=1; r<=rk; r++)
+     for (long r1=1; r1<=rk; r1++)
+       for (long r2=r1+1; r2<=rk; r2++)
+	 elimp(m,r2,r1,pcols[r2],pr);
+     for (long r1=1; r1<=rk; r1++)
        {
-	 auto mij = m.entries.begin()+(r-1)*nc;
-	 scalar fac = *(mij+pcols[r]-1);
+	 auto mij = m.entries.begin()+(r1-1)*nc;
+	 scalar fac = *(mij+pcols[r1]-1);
 	 fac = mod(invmod(fac,pr),pr);
          std::transform(mij, mij+nc, mij,
                         [pr,fac] (const scalar& x) {return mod(fac*x, pr);});
@@ -1149,9 +1149,9 @@ mat echmodp(const mat& entries, vec& pcols, vec& npcols, long& rk, long& ny, sca
  else
    {
      auto mij=m.entries.begin();
-     for (long r=1; r<=rk; r++)
-       for (long c=1; c<=nc; c++)
-	 *mij++ = (c==pcols[r]);    // 0 or 1 !
+     for (long i=1; i<=rk; i++)
+       for (long j=1; j<=nc; j++)
+	 *mij++ = (j==pcols[i]);    // 0 or 1 !
    }
  return m.slice(rk,nc);
 }
