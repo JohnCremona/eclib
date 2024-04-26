@@ -29,39 +29,36 @@
 class msubspace {
 
 public:
-     // constructors
-        msubspace(int n=0)
-	  :pivots(iota(n)),basis(midmat(n)), denom(1) {}
-        msubspace(const mat_m& b, const vec_i& p, const bigint& d)
-	  :denom(d),pivots(p),basis(b) {}
-        msubspace(const msubspace& s)
-	  :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
-     // destructor
-        ~msubspace() {;}
-     // assignment
-        void operator=(const msubspace& s) 
-           {pivots=s.pivots; basis=s.basis; denom=s.denom;}
+  // constructors
+  msubspace(int n=0)
+    :pivots(iota(n)),basis(midmat(n)), denom(1) {}
+  msubspace(const mat_m& b, const vec_i& p, const bigint& d)
+    :denom(d),pivots(p),basis(b) {}
+  msubspace(const msubspace& s)
+    :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
+  // assignment
+  void operator=(const msubspace& s)
+  {pivots=s.pivots; basis=s.basis; denom=s.denom;}
 
-     // member functions & operators
-        void clear() { pivots.init(); basis.init();}
+  // member functions & operators
+  void clear() { pivots.init(); basis.init();}
 
-     // non-member (friend) functions and operators
-        friend int dim(const msubspace& s);      // the dimension
-        friend bigint denom(const msubspace& s);   // the denominator
-        friend vec_i pivots(const msubspace& s);// the pivot vector
-        friend mat_m basis(const msubspace& s) ;// the basis matrix
-        friend msubspace combine(const msubspace& s1, const msubspace& s2);
-        friend mat_m restrict_mat(const mat_m& m, const msubspace& s);
-        friend msubspace pcombine(const msubspace& s1, const msubspace& s2, const bigint& pr);
-        friend mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr);
-        friend msubspace lift(const msubspace& s, const bigint& pr, int trace);
+  // non-member (friend) functions and operators
+  friend int dim(const msubspace& s);      // the dimension
+  friend bigint denom(const msubspace& s);   // the denominator
+  friend vec_i pivots(const msubspace& s);// the pivot vector
+  friend mat_m basis(const msubspace& s) ;// the basis matrix
+  friend msubspace combine(const msubspace& s1, const msubspace& s2);
+  friend mat_m restrict_mat(const mat_m& m, const msubspace& s);
+  friend msubspace pcombine(const msubspace& s1, const msubspace& s2, const bigint& pr);
+  friend mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr);
+  friend int lift(const msubspace& s, const bigint& pr, msubspace& ans, int trace);
 
-
-// Implementation
+  // Implementation
 private:
-       bigint   denom;
-       vec_i pivots;
-       mat_m basis;
+  bigint   denom;
+  vec_i pivots;
+  mat_m basis;
 };
 
 

@@ -38,7 +38,8 @@ void subspace::operator=(const subspace& s)
 subspace combine(const subspace& s1, const subspace& s2)
 {
   scalar d = s1.denom * s2.denom;
-  const mat& b1=s1.basis, b2=s2.basis;
+  const mat& b1=s1.basis;
+  const mat& b2=s2.basis;
   mat b = b1*b2;
   scalar g = b.content();
   if(g>1)

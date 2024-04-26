@@ -29,57 +29,26 @@
 // Definitions of nonmember, nonfriend operators and functions:
 
 msubspace combine(const msubspace& s1, const msubspace& s2)
-{ 
+{
   bigint d = s1.denom * s2.denom;
-  mat_m b1=s1.basis, b2=s2.basis;
-  long nr = b1.nro, nc = b2.nco;
+  const mat_m& b1=s1.basis;
+  const mat_m& b2=s2.basis;
   mat_m b = b1*b2;
-  bigint g; long n=nr*nc; bigint* bp=b.entries;
-  while ((n--)&&(!is_one(g))) g=gcd(g,*bp++);
-  if(!(is_zero(g)||is_one(g)))
+  bigint g = b.content();
+  if(g>1)
     {
-      d/=g; bp=b.entries; n=nr*nc; while(n--) (*bp++)/=g;
+      d/=g; b/=g;
     }
   vec_i p = s1.pivots[s2.pivots];
   return msubspace(b,p,d);
 }
 
-mat_m restrict_mat(const mat_m& m, const msubspace& s)
-{ long i,j,k,d = dim(s), n=m.nro;
-  bigint dd = s.denom;
-  mat_m ans(d,d);
-  const mat_m& sb = s.basis;
-  bigint *ap, *a=m.entries, *b=sb.entries, *bp, *c=ans.entries, *cp;
-  auto pv=s.pivots.entries.begin();
-  for(i=0; i<d; i++)
-    {
-      bp=b; k=n; ap=a+n*(pv[i]-1);
-      while(k--)
-        {
-          cp=c; j=d;
-          while(j--)
-            {
-              *cp++ += *ap * *bp++;
-            }
-          ap++;
-        }
-      c += d;
-    }
-// N.B. The following check is strictly unnecessary and slows it down,
-// but is advisable!
-#ifdef CHECK_RESTRICT
-  int check = 1; n = sb.nrows();
-  for (i=1; (i<=n) && check; i++)
-  for (j=1; (j<=d) && check; j++)
-    check = (dd*m.row(i)*sb.col(j) == sb.row(i)*ans.col(j));
-  if (!check) 
-    {
-      cerr<<"Error in restrict_mat: msubspace not invariant!"<<endl;
-    }
-#endif
-  return ans;
+mat_m restrict_mat(const mat_m& M, const msubspace& S)
+{
+  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  return rowsubmat(M, S.pivots) * S.basis;
 }
- 
+
 msubspace kernel(const mat_m& mat, int method)
 {
    long rank, nullity;
@@ -133,41 +102,12 @@ msubspace pcombine(const msubspace& s1, const msubspace& s2, const bigint& pr)
   return msubspace(b,p,d);
 }
 
-mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr)
-{ long i,j,k,d = dim(s), n=m.nro;
-  bigint dd = s.denom;  // will be 1 if s is a mod-p msubspace
-  mat_m ans(d,d);
-  const mat_m& sb = s.basis;
-  bigint *ap, *a=m.entries, *b=sb.entries, *bp, *c=ans.entries, *cp;
-  auto pv=s.pivots.entries.begin();
-  for(i=0; i<d; i++)
-    {
-      bp=b; k=n; ap=a+n*(pv[i]-1);
-      while(k--)
-        {
-          cp=c; j=d;
-          while(j--)
-            {
-              *cp += mod(*ap * *bp++, pr);
-              *cp = mod(*cp, pr);
-              cp++;
-            }
-          ap++;
-        }
-      c += d;
-    }
-#ifdef CHECK_RESTRICT
-  mat_m& left = matmulmodp(m,sb,pr), right = matmulmodp(sb,ans,pr);
-  if(dd!=1) left*=dd;
-  int check = (left==right);
-  if (!check) 
-    {
-      cerr<<"Error in prestrict: msubspace not invariant!"<<endl;
-    }
-#endif
-  return ans;
+mat_m prestrict(const mat_m& M, const msubspace& S, const bigint& pr)
+{
+  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  return matmulmodp(rowsubmat(M, S.pivots), S.basis, pr);
 }
- 
+
 msubspace pkernel(const mat_m& mat, const bigint& pr)
 {
    long rank, nullity;
@@ -186,7 +126,7 @@ msubspace pkernel(const mat_m& mat, const bigint& pr)
    msubspace ans(basis, npcols, one);
    return ans;
 }
- 
+
 msubspace pimage(const mat_m& mat, const bigint& pr)
 {
   vec_i p,np;
@@ -195,7 +135,7 @@ msubspace pimage(const mat_m& mat, const bigint& pr)
   msubspace ans(b,p,BIGINT(1));
   return ans;
 }
- 
+
 msubspace peigenspace(const mat_m& mat, const bigint& lambda, const bigint& pr)
 {
   mat_m m = addscalar(mat,-lambda);
@@ -215,37 +155,14 @@ msubspace psubeigenspace(const mat_m& mat, const bigint& l, const msubspace& s, 
 //Attempts to lift from a mod-p msubspace to a normal Q-msubspace by expressing
 //basis as rational using modrat and clearing denominators
 //
-msubspace lift(const msubspace& s, const bigint& pr, int trace)
+int lift(const msubspace& s, const bigint& pr, msubspace& ans, int trace)
 {
-  bigint modulus=pr,dd,n,d; long nr,nc,nrc;
-  int success=1;
-  bigint lim=sqrt(pr>>1);
-  mat_m m = s.basis; bigint *mp;
-  if(trace)
+  bigint dd;
+  mat_m m;
+  if (liftmat(s.basis,pr,m,dd,trace))
     {
-      cout << "Lifting mod-p msubspace.\n basis mat_m mod "<<pr<<" is:\n";
-      cout << m;
-      cout << "Now lifting back to Q.\n";
-      cout << "lim = " << lim << "\n";
+      ans = msubspace(m, pivots(s), dd);
+      return 1;
     }
-  nr = m.nro; nc = m.nco;  nrc = nr*nc; mp=m.entries;
-  dd=1;
-  while(nrc--)
-    {
-      int succ = modrat(*mp++,modulus,lim,n,d);
-      success = success && succ;
-      dd=lcm(d,dd);
-    }
-  if(!success)
-    cout << "Problems encountered with modrat lifting of msubspace." << endl;
-  dd=abs(dd);
-  if(trace) cout << "Common denominator = " << dd << "\n";
-  nrc=nr*nc; mp=m.entries;
-  while(nrc--)
-      {
-        *mp=mod(dd*(*mp),pr); 
-        mp++;
-      }
-  msubspace ans(m, pivots(s), dd);
-  return ans;
+  return 0;
 }

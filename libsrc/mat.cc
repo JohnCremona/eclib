@@ -173,28 +173,14 @@ void mat::makeprimitive()
 
 void mat::operator+=(const mat& n)
 {
-  if ((nro==n.nro) && (nco=n.nco))
-    {
-      std::transform(n.entries.begin(), n.entries.end(), entries.begin(), entries.begin(),
-                     [](const scalar& x, const scalar& y) { return x + y;});
-    }
-  else
-    {
-      cerr << "Incompatible matrices in operator +="<<endl;
-    }
+  std::transform(n.entries.begin(), n.entries.end(), entries.begin(), entries.begin(),
+                 [](const scalar& x, const scalar& y) { return x + y;});
 }
 
 void mat::operator-=(const mat& n)
 {
-  if ((nro==n.nro) && (nco=n.nco))
-    {
-      std::transform(n.entries.begin(), n.entries.end(), entries.begin(), entries.begin(),
-                     [](const scalar& x, const scalar& y) { return y - x;});
-    }
-  else
-    {
-      cerr << "Incompatible matrices in operator -="<<endl;
-    }
+  std::transform(n.entries.begin(), n.entries.end(), entries.begin(), entries.begin(),
+                 [](const scalar& x, const scalar& y) { return y - x;});
 }
 
 void mat::operator*=(scalar scal)
@@ -237,7 +223,7 @@ mat operator*(const mat& m1, const mat& m2)
 {
  long m=m1.nro, n=m1.nco, p=m2.nco;
  mat m3(m,p);
- if (n==m2.nro)  // algorithm from Dr Dobb's Journal August 1993
+ if (n==m2.nro)
    {
      auto a=m1.entries.begin();                                     // a points to m1(i,k)
      for (auto c=m3.entries.begin(); c!=m3.entries.end(); c+=p)     // c points to m3(i,_) for 0<=i<m
@@ -362,8 +348,7 @@ istream& operator>>(istream& s, mat& m) // m cannot be const
 mat colcat(const mat& a, const mat& b)
 {
  long nr = a.nro, nca = a.nco, ncb = b.nco;
- long ncc = nca+ncb;
- mat c(nr,ncc);
+ mat c(nr,nca+ncb);
  if (nr==b.nro)
    {
      auto aij = a.entries.begin();
@@ -381,16 +366,13 @@ mat colcat(const mat& a, const mat& b)
    }
  else
    cerr << "colcat: matrices have different number of rows!" << endl;
- // cout<<"colcat of\n"<<a<<" and\n" <<b<<" is\n"<<c<<endl;
  return c;
 }
 
 mat rowcat(const mat& a, const mat& b)
 {
- long nra = a.nro, nc = a.nco, nrb = b.nro;
- long nrc = nra+nrb;
- mat c(nrc,nc);
- if (nc==b.nco)
+ mat c(a.nro+b.nro,a.nco);
+ if (a.nco==b.nco)
  {
    auto cij = c.entries.begin();
    std::copy(a.entries.begin(), a.entries.end(), cij);
@@ -398,10 +380,7 @@ mat rowcat(const mat& a, const mat& b)
    std::copy(b.entries.begin(), b.entries.end(), cij);
  }
  else
-   {
-     cerr << "rowcat: matrices have different number of columns!" << endl;
-   }
- // cout<<"rowcat of\n"<<a<<" and\n" <<b<<" is\n"<<c<<endl;
+   cerr << "rowcat: matrices have different number of columns!" << endl;
  return c;
 }
 
@@ -440,12 +419,12 @@ void elimrows2(mat& m, long r1, long r2, long pos, scalar last)
 
 mat operator+(const mat& m)
 {
-        return m;
+  return m;
 }
 
 mat operator-(const mat& m)
 {
-        return (-1)*m;
+  return (-1)*m;
 }
 
 mat operator+(const mat& m1, const mat& m2)
@@ -487,9 +466,7 @@ vec operator*(const mat& m, const vec& v)
        }
    }
  else
-   {
-     cerr << "Incompatible sizes in *(mat,vec)"<<endl;
-   }
+   cerr << "Incompatible sizes in *(mat,vec)"<<endl;
  return w;
 }
 
@@ -737,7 +714,7 @@ mat echelon0(const mat& entries, vec& pc, vec& npc,
   if (ny>0)   // Back-substitute and even up pivots
     {
       for (long r1=0; r1<rk; r1++)
-        clear(m, r1*nc, (r1+1)*nc); // dives row by its content
+        clear(m, r1*nc, (r1+1)*nc); // divides row by its content
 #ifdef DEBUG_ECH_0
       cout<<"After clearing, pivots are:"<<endl;
       for(long r3=0; r3<rk; r3++)
@@ -761,7 +738,7 @@ mat echelon0(const mat& entries, vec& pc, vec& npc,
             cout<<*(mi1+r3)<<",";
           cout<<": pivot = "<<*(mi1+pcols[r1])<<endl;
 #endif
-          clear(m, r1*nc, (r1+1*nc));
+          clear(m, r1*nc, (r1+1)*nc);
 #ifdef DEBUG_ECH_0
           cout<<"After clearing, row "<<r1<<" is:"<<endl;
           for(long r3=0; r3<nc; r3++)
@@ -1512,7 +1489,7 @@ mat matmulmodp(const mat& m1, const mat& m2, scalar pr)
 {
  long m=m1.nro, n=m1.nco, p=m2.nco;
  mat m3(m,p);
- if (n==m2.nro)  // algorithm from Dr Dobb's Journal August 1993
+ if (n==m2.nro)
    {
      auto a=m1.entries.begin();                                     // a points to m1(i,k)
      for (auto c=m3.entries.begin(); c!=m3.entries.end(); c+=p)     // c points to m3(i,_) for 0<=i<m
