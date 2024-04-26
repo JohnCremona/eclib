@@ -26,6 +26,39 @@
 
 #include "vector.h"
 
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+
+#include "vec.h"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+
+vec_m to_vec_m(const vec_i& v);
+vec_m to_vec_m(const vec_l& v);
+vec_i to_vec_i(const vec_m& v);
+vec_l to_vec_l(const vec_m& v);
+
+#if(0)
+
 class vec_m {
 friend class mat_m;
 friend class msubspace;
@@ -114,5 +147,7 @@ void makeprimitive(vec_m& v);
 void elim(const vec_m& a, vec_m& b, long pos);
 void elim1(const vec_m& a, vec_m& b, long pos);
 void elim2(const vec_m& a, vec_m& b, long pos, const bigint& lastpivot);
+
+#endif // end of #if(0)
 
 #endif

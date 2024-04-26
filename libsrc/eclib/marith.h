@@ -155,7 +155,7 @@ int kronecker(const bigint& d, long n);
 
 long gcd(const bigint& a, long b);
 
-int modrat(const bigint& n, const bigint& m, const bigint& lim, 
+int modrat(const bigint& n, const bigint& m, const bigint& lim,
            /* return values: */ bigint& a, bigint& b);
 
 int sqrt_mod_2_power(bigint& x, const bigint& a, int e);

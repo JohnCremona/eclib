@@ -48,7 +48,7 @@ General slice; beginning, end? Slice = [4,3,2,1,10]
 Now v = [1,2,3,4,5,4,3,2,1,10]
 w = [2,4,6,8,10,8,6,4,2,0]; content(w) = 2
 After makeprimitive(w), w = [1,2,3,4,5,4,3,2,1,0]
-v shortened to a vector of longs: [1,2,3,4,5,4,3,2,1,10]
+v shortened to a vector of ints: [1,2,3,4,5,4,3,2,1,10]
 u = [0,0,0,0,0,0,0,0,0,0]
 After swapvec(u,v):
 u = [1,2,3,4,5,4,3,2,1,10]

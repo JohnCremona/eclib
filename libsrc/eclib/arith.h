@@ -156,10 +156,13 @@ long bezout(long, long, long&, long&);
 int intbezout(int aa, int bb, int& xx, int& yy);
 
 long invmod(long, long);
-int modrat(long, long, float, long&, long&);
-int modrat(int, int, float, int&, int&);
+int modrat(long, long, long, long&, long&);
+int modrat(int, int, int, int&, int&);
 
+// 3 utilities for compatibility ith bigint args
 inline int is_zero(long n) {return n==0;}
+inline int is_one(long n) {return n==1;}
+inline long I2long(long n) {return n;}
 
 long val(long factor, long number); // order of factor in number
 

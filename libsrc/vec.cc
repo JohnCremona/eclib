@@ -27,7 +27,7 @@
 
 vec::vec(long n)
 {
-  entries.resize(n, 0);
+  entries.resize(n, scalar(0));
 }
 
 vec::vec(vector<scalar> arr) :entries(arr) {}
@@ -36,7 +36,7 @@ vec::vec(const vec& v) :entries(v.entries) {} // copy constructor
 
 void vec::init(long n)                 // (re)-initializes
 {
-  entries.resize(n, 0);
+  entries.resize(n, scalar(0));
 }
 
 vec& vec::operator=(const vec& v)                    // assignment
@@ -100,11 +100,21 @@ vec vec::slice(long first, long last) const       // returns subvector
  return ans;
 }
 
-vec vec::operator[](const vec& index) const  // returns v[index[j]]
+vec vec::operator[](const vec_i& index) const  // returns v[index[j]]
 {
-  vec w(index.entries.size());
-  std::transform(index.entries.begin(), index.entries.end(), w.entries.begin(),
-                 [this](const scalar& i) {return entries.at(i-1);});
+  vec w(dim(index));
+  const vector<int>& vi = index.get_entries();
+  std::transform(vi.begin(), vi.end(), w.entries.begin(),
+                 [this](const int& i) {return entries.at(i-1);});
+  return w;
+}
+
+vec vec::operator[](const vec_l& index) const  // returns v[index[j]]
+{
+  vec w(dim(index));
+  const vector<long>& vi = index.get_entries();
+  std::transform(vi.begin(), vi.end(), w.entries.begin(),
+                 [this](const int& i) {return entries.at(i-1);});
   return w;
 }
 
@@ -141,7 +151,7 @@ vec reduce_modp(const vec& v, const scalar& p)
 
 scalar operator*(const vec& v, const vec& w)
 {
-  return std::inner_product(v.entries.begin(), v.entries.end(), w.entries.begin(), 0);
+  return std::inner_product(v.entries.begin(), v.entries.end(), w.entries.begin(), scalar(0));
 }
 
 int operator==(const vec& v, const vec& w)
@@ -179,16 +189,16 @@ istream& operator>>(istream& s, vec& v)
 
 vec iota(scalar n)
 {
- vec v(n);
- std::iota(v.entries.begin(), v.entries.end(), 1);
- return v;
+  vec v(I2long(n));
+  std::iota(v.entries.begin(), v.entries.end(), scalar(1));
+  return v;
 }
 
 scalar content(const vec& v)
 {
   return v.entries.empty()?
-    1 :
-    std::accumulate(v.entries.begin(), v.entries.end(), 0,
+    scalar(1) :
+    std::accumulate(v.entries.begin(), v.entries.end(), scalar(0),
                     [](const scalar& x, const scalar& y) {return gcd(x,y);});
 }
 
@@ -227,12 +237,12 @@ vec express(const vec& v, const vec& v1, const vec& v2)
 int lift(const vec& v, scalar pr, vec& ans)
 {
   long i0, i, j, d = dim(v);
- scalar nu, de;
- int succ;
- float lim = sqrt(pr/2.0)-1;
- scalar maxallowed = 10*int(lim);
+  scalar nu, de;
+  int succ;
+  scalar lim = sqrt(pr>>2)-1;
+  scalar maxallowed = 10*lim;
 #ifdef LIFT_DEBUG
- cout<<"Lifting vector v = "<<v<<endl;
+  cout<<"Lifting vector v = "<<v<<endl;
 #endif
  // NB We do *not* make cumulative rescalings, since it is possible
  // for an apparently successful modrat reconstruction to give an
@@ -251,7 +261,7 @@ int lift(const vec& v, scalar pr, vec& ans)
  // coprime to the first non-zero entry.
 
  ans = v; // starts as a copy, and will be rescaled in place
- scalar vi0, inv_vi0, vi, maxvi=0;
+ scalar vi0, inv_vi0, vi, maxvi(0);
  for(i0=1; i0<=d; i0++)
    {
      // scale so that i0'th entry is 1 mod p, then reduce vector
@@ -261,7 +271,7 @@ int lift(const vec& v, scalar pr, vec& ans)
      inv_vi0=invmod(vi0,pr);
      for (i=1; i<=d; i++)
        {
-         ans[i]=vi=mod(xmodmul(inv_vi0,ans[i],pr),pr);
+         ans[i]=vi=mod(mod(inv_vi0*ans[i],pr),pr);
          maxvi=max(maxvi,abs(vi));
        }
 #ifdef LIFT_DEBUG
@@ -290,7 +300,7 @@ int lift(const vec& v, scalar pr, vec& ans)
          maxvi = 0;
          for (j=1; j<=d; j++) 
            {
-             ans[j] = vi = mod(xmodmul(de,ans[j],pr),pr);
+             ans[j] = vi = mod(mod(de*ans[j],pr),pr);
              maxvi=max(maxvi,abs(vi));
            }
 #ifdef LIFT_DEBUG
@@ -323,5 +333,5 @@ scalar dotmodp(const vec& v1, const vec& v2, scalar pr)
 {
   auto a = [pr] (const scalar& x, const scalar& y) {return mod(x+y,pr);};
   auto m = [pr] (const scalar& x, const scalar& y) {return mod(x*y,pr);};
-  return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), 0, a, m);
+  return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), scalar(0), a, m);
 }

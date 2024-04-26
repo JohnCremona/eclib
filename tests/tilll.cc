@@ -50,7 +50,6 @@ int main()
   for(int i=1; i<=n; i++) cout<<b[i]<<endl;
   cout<<endl;
 
-
   vec_m shortest=b[1];
   bigint min_length=sdot(b,1,1);
   for(int i=1; i<=n; i++)
@@ -66,7 +65,7 @@ int main()
 	  for(int k=1; ok&&(k>-2); k--)
 	    {
 	      if((i==0)&&(j==0)&&(k==0)) {ok=0;break;}
-	      vec_m v=i*b[1]+j*b[2]+k*b[3];
+	      vec_m v=bigint(i)*b[1]+bigint(j)*b[2]+bigint(k)*b[3];
 	      bigint norm = sqr(v[1])+sqr(v[2])+sqr(v[3]);
 	      cout<<"("<<i<<","<<j<<","<<k<<"): "<<v<<", norm = "<<norm<<endl;
 	      if(norm<min_length) {min_length=norm; shortest=v; better=1;}

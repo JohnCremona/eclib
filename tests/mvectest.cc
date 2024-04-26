@@ -54,7 +54,7 @@ int main(void)
  bigint two; two=2;
  w*=two;
  cout << "After w*=2, w = " << w << endl;
- cout << "3*v = " << (3*v) << endl;
+ cout << "3*v = " << (bigint(3)*v) << endl;
  cout << "Now v = " << v << endl;
  cout << "v+w = " << v+w << endl;
  cout << "Now v = " << v << endl;
@@ -102,8 +102,8 @@ int main(void)
  makeprimitive(w);
  cout << "After makeprimitive(w), w = " << w << endl;
 
- vec sv = v.shorten(n);
- cout << "v shortened to a vector of longs: " << sv << endl;
+ vec sv = to_vec_i(v);
+ cout << "v shortened to a vector of ints: " << sv << endl;
 
  vec_m u(n);
  cout << "u = "<< u << endl;

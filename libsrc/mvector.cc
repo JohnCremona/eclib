@@ -24,6 +24,60 @@
 #include <eclib/mvector.h>
 #include <eclib/marith.h>
 
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+
+#include "vec.cc"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+
+vec_m to_vec_m(const vec_i& v)
+{
+  const vector<int> & vi = v.get_entries();
+  vector<bigint> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), [](const int& x) {return bigint(x);});
+  return vec_m(w);
+}
+
+vec_m to_vec_m(const vec_l& v)
+{
+  const vector<long> & vi = v.get_entries();
+  vector<bigint> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), [](const long& x) {return bigint(x);});
+  return vec_m(w);
+}
+
+vec_i to_vec_i(const vec_m& v)
+{
+  const vector<bigint> & vi = v.get_entries();
+  auto toint = [](const bigint& a) {return is_int(a)? I2int(a) : int(0);};
+  vector<int> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), toint);
+  return vec_i(w);
+}
+
+vec_l to_vec_l(const vec_m& v)
+{
+  const vector<bigint> & vi = v.get_entries();
+  auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
+  vector<long> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), tolong);
+  return vec_l(w);
+}
+
+
+#if(0)
+
 // Definitions of member operators and functions:
 
 vec_m::vec_m(long n)
@@ -151,7 +205,7 @@ vec_l vec_m::shorten(long x) const  //converts to a vector of longs
 vec_i vec_m::shorten(int x) const  //converts to a vector of ints
 {
   vec_i ans(entries.size());
-  auto toint = [](const bigint& a) {return is_long(a)? I2long(a) : int(0);};
+  auto toint = [](const bigint& a) {return is_int(a)? I2int(a) : int(0);};
   std::transform(entries.begin(), entries.end(), ans.entries.begin(), toint);
   return ans;
 }
@@ -314,3 +368,4 @@ void elim1(const vec_m& a, vec_m& b, long pos)
 void elim2(const vec_m& a, vec_m& b, long pos, const bigint& lastpivot)
 { ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}
 
+#endif

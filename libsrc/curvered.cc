@@ -373,7 +373,7 @@ vector<long> tamagawa_primes(const CurveRed& C, int real_too)
 {
   vector<bigint> T = pdivs(global_Tamagawa_exponent(C, real_too));
   vector<long> t(T.size());
-  std::transform(T.begin(), T.end(), t.begin(), I2long);
+  std::transform(T.begin(), T.end(), t.begin(), [](const bigint& x) {return I2long(x);});
   return t;
 }
 

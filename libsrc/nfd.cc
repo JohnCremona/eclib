@@ -285,11 +285,11 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   vec_m mrowi(dims), coordi(dimh);
   vec rowi(dims);
   for (i=1; i<=ncoord; i++)
-    { 
-      coordi = vec_m((h1->coord_vecs[i]).as_vec());
-      if(h1->cuspidal) coordi = vec_m(h1->cuspidalpart(coordi.shorten(0)));
+    {
+      coordi = to_vec_m((h1->coord_vecs[i]).as_vec());
+      if(h1->cuspidal) coordi = to_vec_m(h1->cuspidalpart(to_vec_i(coordi)));
       mrowi = V*coordi;
-      rowi=mrowi.shorten((int)i);
+      rowi = to_vec_i(mrowi);
       projcoord.setrow(i,rowi);
       coord_fac=gcd(coord_fac,(long)content(rowi));
     }
@@ -347,7 +347,7 @@ vec_m nfd::ap(long p)
 	    {
 	      symb s = h1->symbol(h1->freegens[k]);
 	      for(l=0; l<matlist.size(); l++)
-                apvec += mKkj*vec_m(matlist[l](s,h1,projcoord));
+                apvec += mKkj*to_vec_m(matlist[l](s,h1,projcoord));
 	    }
 	}
     }
@@ -390,7 +390,7 @@ mat_m nfd::heckeop(long p)
 		{
 		  vec vt = (h1->applyop(matlist,h1->freemods[k])).as_vec();
 		  if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		  colj += (mKkj*vec_m(vt));
+		  colj += (mKkj*to_vec_m(vt));
 		}
 	      else
 		{
@@ -399,7 +399,7 @@ mat_m nfd::heckeop(long p)
 		    {
 		      vec vt = (matlist[l](s,h1)).as_vec();
 		      if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		      colj += mKkj*vec_m(vt);
+		      colj += mKkj*to_vec_m(vt);
 		    }
 		}
 	    }

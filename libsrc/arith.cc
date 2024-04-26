@@ -371,7 +371,7 @@ long invmod(long a, long p)
    }
 }
 
-int modrat(int n, int m, float lim, int& a, int& b)
+int modrat(int n, int m, int lim, int& a, int& b)
 {
   long la,lb,ln=n,lm=m;
   int ans = modrat(ln,lm,lim,la,lb);
@@ -381,7 +381,7 @@ int modrat(int n, int m, float lim, int& a, int& b)
 
 //#define DEBUG_MODRAT
 
-int modrat(long n, long m, float lim, long& a, long& b)
+int modrat(long n, long m, long lim, long& a, long& b)
 {
 #ifdef DEBUG_MODRAT
   cout<<"modrat("<<n<<","<<m<<")\n";

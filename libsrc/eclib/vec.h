@@ -36,7 +36,6 @@ class vec {
   friend class svec;
   friend class smat;
   friend class smat_elim;
-  friend class vec_m;
   friend class mat;
   friend class subspace;
 public:
@@ -57,7 +56,8 @@ public:
   vec& operator*=(scalar);
   vec& operator/=(scalar);
   vec slice(long i, long j=-1) const;  // returns subvec with indices i..j of 1..i if j=-1
-  vec operator[](const vec&) const;   // subscript composition
+  vec operator[](const vec_i&) const;   // subscript composition
+  vec operator[](const vec_l&) const;   // subscript composition
   void set(long i, scalar x);                  // sets v[i]=x
   void add(long i, scalar x);                  // v[i]+=x
   void add_modp(long i, scalar x, scalar p);                  // v[i]+=x mod p
@@ -74,7 +74,7 @@ public:
   friend int trivial(const vec&);                  // is v all 0
   friend int member(scalar a, const vec& v);//tests if a=v[i] for some i
   friend vec reverse(const vec& order);
-  friend vec iota(scalar n);                      // (1,2,...,n)
+  friend vec iota(scalar n);              // (1,2,...,n); type of arg determines type of result
   // add/sub row i of mat to v (implemented in mat.cc)
   friend void add_row_to_vec(vec& v, const mat& m, long i);
   friend void sub_row_to_vec(vec& v, const mat& m, long i);
@@ -120,7 +120,7 @@ inline int operator!=(const vec& v, const vec& w) { return !(v==w);}
 
 inline vec operator+(const vec& v) { return v;}
 
-inline vec operator-(const vec& v) { return (-1)*v;}
+inline vec operator-(const vec& v) { return scalar(-1)*v;}
 
 inline vec operator+(const vec& v1, const vec& v2)
 { vec ans(v1); ans+=v2; return ans;}
