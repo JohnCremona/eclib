@@ -30,7 +30,7 @@ void swap(bigcomplex& a, bigcomplex& b)
 {
   bigcomplex c(a); a=b; b=c;
 }
-#define SMALL(x) is_zero((x))
+#define SMALL(x) is_complex_zero((x))
 #else
 #define SMALL(x) is_approx_zero((x))
 //#define SMALL(x) (abs(x)<1.0e-14)
@@ -213,7 +213,7 @@ vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, c
 	{
 	  fz = ((z+rc1)*z+rc2)*z+rc3;
 	  fdashz = (three*z+two*rc1)*z+rc2;
-	  if(!is_zero(fdashz)) z -= fz/fdashz;
+	  if(!is_complex_zero(fdashz)) z -= fz/fdashz;
 	}
       roots[i] = z;
     }
@@ -493,7 +493,7 @@ bigcomplex cagm1(const bigcomplex& a, const bigcomplex& b)
 #ifdef MPFP
       if(is_approx_zero(abs((x-y)/x))) return x;
 #else
-      if(is_zero(abs((x-y)/x))) return x;
+      if(is_complex_zero(abs((x-y)/x))) return x;
 #endif
     }
   return x;

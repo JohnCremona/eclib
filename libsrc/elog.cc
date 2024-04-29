@@ -224,7 +224,7 @@ vector<bigcomplex> ellztopoint(Curvedata& E,  const Cperiods& per, const bigcomp
 
 Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const bigint& den)
 {
-  if(is_zero(z)) {return Point(E);}
+  if(is_complex_zero(z)) {return Point(E);}
 #ifdef DEBUG_EZP
   cout<<"In ellztopoint() with z = "<<z<<endl;
 #endif

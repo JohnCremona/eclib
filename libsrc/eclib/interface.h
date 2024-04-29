@@ -199,8 +199,8 @@ inline RR to_bigfloat(const double& x) {return to_RR(x);}
 inline RR I2bigfloat(const bigint& x) { return to_RR(x);}
 inline int doublify(const bigfloat& x, double& d){ d=to_double(x); return 0;}
 int longify(const bigfloat& x, long& a, int rounding=0);
-inline int is_zero(bigfloat x) {return IsZero(x);}
-inline int is_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
+inline int is_real_zero(bigfloat x) {return IsZero(x);}
+inline int is_complex_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
 inline void Iasb(bigint& a, bigfloat x) {RoundToZZ(a,x);}
 inline void Iasb(long& a, bigfloat x) {ZZ n; RoundToZZ(n,x); a=I2long(n);}
 istream& operator>>(istream& is, bigcomplex& z);
@@ -219,7 +219,7 @@ typedef double bigfloat;
 
 inline long decimal_precision() {return 14;}
 inline long bit_precision() {return 52;}
-inline int is_zero(double x) {return fabs(x)<1e-14;}
+inline int is_real_zero(double x) {return fabs(x)<1e-14;}
 inline int is_approx_zero(double x) {return fabs(x)<1e-11;}
 inline int sign(double x) {return (double(0) < x) - (x < double(0));}
 
@@ -251,8 +251,8 @@ inline bigfloat I2bigfloat(const bigint& x) {return I2double(x);}
 #include <complex>
 typedef complex<double> bigcomplex;
 
-inline int is_zero(const bigcomplex& z) 
- {return is_zero(z.real())&&is_zero(z.imag());}
+inline int is_complex_zero(const bigcomplex& z) 
+ {return is_real_zero(z.real())&&is_real_zero(z.imag());}
 inline int is_approx_zero(const bigcomplex& z)
  {return is_approx_zero(z.real())&&is_approx_zero(z.imag());}
 

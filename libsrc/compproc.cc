@@ -110,7 +110,7 @@ void getc4c6(const bigcomplex& w1, const bigcomplex& w2,
 #ifdef MPFP
        (n==1)|| (!is_approx_zero(term/sum6));
 #else
-       (n==1)|| (!is_zero(term/sum6));
+       (n==1)|| (!is_complex_zero(term/sum6));
 #endif
        n+=1)
     {  n2      = n*n;
@@ -138,7 +138,7 @@ bigcomplex cube_root(const bigcomplex& z)
 #ifdef DEBUG_CUBIC
   cout << "Taking complex cube root of z = "<<z<<endl;
 #endif
-  if(is_zero(z)) return z;
+  if(is_complex_zero(z)) return z;
   return exp(log(z)/to_bigfloat(3));
 }
 
@@ -159,8 +159,8 @@ cout << "p3 = "<<p3<<", -c1/3 = "<<mc1over3<<"\n";
 #endif
    vector<bigcomplex> roots(3);
  
-   if (is_zero(abs(disc))) 
-     {if (is_zero(abs(p3)))     // triple root
+   if (is_real_zero(abs(disc))) 
+     {if (is_real_zero(abs(p3)))     // triple root
         {roots[0]=roots[1]=roots[2]= mc1over3;
         }
       else           // double root
@@ -208,7 +208,7 @@ cout << "q = " << q << ", p3 = " << p3 << ", d = " << d << "\n";
 		{
 		  fz = ((z+c1)*z+c2)*z+c3;
 		  fdashz = (three*z+two*c1)*z+c2;
-		  if(!is_zero(fdashz)) z -= fz/fdashz;
+		  if(!is_complex_zero(fdashz)) z -= fz/fdashz;
 		}
 	      roots[i] = z;
 	    }
@@ -240,7 +240,7 @@ for(i=0; i<3; i++)
       {
 	fz = ((z+c1)*z+c2)*z+c3;
 	fdashz = (three*z+two*c1)*z+c2;
-	if(!is_zero(fdashz)) z -= fz/fdashz;
+	if(!is_complex_zero(fdashz)) z -= fz/fdashz;
       }
     roots[i] = z;
   }
@@ -398,7 +398,7 @@ vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const 
   static bigfloat x256 = to_bigfloat(256);
   bigcomplex a4=a/four;
   vector<bigcomplex> roots(4);
-  if(is_zero(d))
+  if(is_complex_zero(d))
     { 
       roots[0]= zero;
       vector<bigcomplex> cuberoots=solvecubic(a,b,c);
@@ -450,7 +450,7 @@ vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const 
 	{
 	  fz = (((z+a)*z+b)*z+c)*z+d;
 	  fdashz = ((four*z+three*a)*z+two*b)*z+c;
-	  if(!is_zero(fdashz)) z -= fz/fdashz;
+	  if(!is_complex_zero(fdashz)) z -= fz/fdashz;
 	}
       roots[i] = z;
     }

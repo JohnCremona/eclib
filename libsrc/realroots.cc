@@ -34,7 +34,7 @@ bigfloat safe_sqrt(const bigfloat& x)
 
 bigfloat cube_root(const bigfloat& x)
 {
-  return is_zero(x)? x : sign(x)*exp(log(fabs(x))/3);
+  return is_real_zero(x)? x : sign(x)*exp(log(fabs(x))/3);
 }
 
 // coeff contains deg+1 reals starting with the leading coefficient
@@ -51,7 +51,7 @@ vector<bigfloat> realroots( const vector<bigfloat>& coeff )
 #endif
   // trim leading zeros:
   vector<bigfloat> tcoeff;
-  unsigned int i=0; while(is_zero(coeff[i])) i++;
+  unsigned int i=0; while(is_real_zero(coeff[i])) i++;
   while(i<coeff.size()) tcoeff.push_back(coeff[i++]);
 #ifdef DEBUG_REALROOTS
   cout<<"realroots: trimmed coeffs = "<<tcoeff<<endl;
@@ -97,7 +97,7 @@ vector<bigfloat> realroots( const vector<bigfloat>& coeff )
 #ifdef DEBUG_REALROOTS
 	  cout<<"one real root "<<endl;
 #endif
-	  if(is_zero(P)) 
+	  if(is_real_zero(P)) 
 	    {
 #ifdef DEBUG_REALROOTS
 	      cout<<"Case P=0 (P="<<P<<")"<<endl;
