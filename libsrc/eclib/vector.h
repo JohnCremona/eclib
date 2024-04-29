@@ -77,4 +77,27 @@ class subspace_i; class subspace_l; class msubspace;
 #undef smat
 #undef smat_elim
 
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+
+#include "vec.h"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+
+vec_m to_vec_m(const vec_i& v);
+vec_m to_vec_m(const vec_l& v);
+vec_i to_vec_i(const vec_m& v);
+vec_l to_vec_l(const vec_m& v);
+
 #endif

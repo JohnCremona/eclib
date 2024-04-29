@@ -23,7 +23,7 @@
  
 #include <time.h>
 #include <eclib/method.h>
-#include <eclib/mmatrix.h>
+#include <eclib/matrix.h>
 
 int main(void)
 {

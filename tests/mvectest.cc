@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/method.h>
-#include <eclib/mvector.h>
+#include <eclib/vector.h>
 
 int main(void)
 {

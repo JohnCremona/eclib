@@ -24,7 +24,8 @@
 #if     !defined(_ECLIB_MSUBSPACE_H)
 #define _ECLIB_MSUBSPACE_H      1       //flags that this file has been included
 
-#include "mmatrix.h"
+#include "marith.h"
+#include "matrix.h"
 
 class msubspace {
 
@@ -71,7 +72,7 @@ msubspace subeigenspace(const mat_m& mat, const bigint& l, const msubspace& s, i
 
 
 //The following work with msubspaces "mod p" using "echmodp" from
-//mmatrix.h/cc to do gaussian elimination.  The "denom" of each is 1.
+//matrix.h/cc to do gaussian elimination.  The "denom" of each is 1.
 
 msubspace pkernel(const mat_m& mat, const bigint& pr);
 msubspace pimage(const mat_m& mat, const bigint& pr);

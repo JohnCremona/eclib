@@ -32,7 +32,7 @@
 #ifndef _ECLIB_ILLL_H
 #define _ECLIB_ILLL_H      1     //flags that this file has been included
 
-#include "mvector.h"
+#include "vector.h"
 
 // dot product of b[i] and b[j] with weights from b[0]:
 bigint sdot(const vector<vec_m>& b, int i, int j);

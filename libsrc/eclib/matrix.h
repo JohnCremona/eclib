@@ -24,6 +24,7 @@
 #if     !defined(_ECLIB_MATRIX_H)
 #define _ECLIB_MATRIX_H      1       //flags that this file has been included
 
+#include "marith.h"
 #include "vector.h"
 #include "limits.h" // MAX_INT gcc >= 4.3
 
@@ -66,6 +67,29 @@
 #undef svec
 #undef smat
 #undef smat_elim
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+
+#include "mat.h"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+
+mat_m to_mat_m(const mat_i& v);
+mat_m to_mat_m(const mat_l& v);
+mat_i to_mat_i(const mat_m& v);
+mat_l to_mat_l(const mat_m& v);
 
 #endif
 

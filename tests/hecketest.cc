@@ -33,7 +33,7 @@
 #include <eclib/cusp.h>
 #include <eclib/homspace.h>
 #include <eclib/smatrix_elim.h>
-#include <eclib/mmatrix.h>
+#include <eclib/matrix.h>
 #include <eclib/msubspace.h>
 
 //#define AUTOLOOP

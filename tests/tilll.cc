@@ -21,8 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/mvector.h>
-#include <eclib/mmatrix.h>
+#include <eclib/matrix.h>
 #include <eclib/illl.h>
 
 int main()
