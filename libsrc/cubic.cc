@@ -684,14 +684,14 @@ bigfloat cubic::real_root() const
     }
 
   bigfloat A = I2bigfloat(a());
-  if(is_zero(A))
+  if(is_real_zero(A))
     {
       return A;
     }
 
   bigfloat P = I2bigfloat(p_semi());
   bigfloat Q = I2bigfloat(q_semi());
-  if(is_zero(P))
+  if(is_real_zero(P))
     {
       bigfloat R = I2bigfloat(r_semi())/Q;
       bigfloat eta3  = I2bigfloat(d())/A - (I2bigfloat(c())*R)/(3*A);

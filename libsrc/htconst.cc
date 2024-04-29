@@ -715,7 +715,7 @@ int point_min_height_finder::process(const bigint& x, const bigint& y, const big
       if(egr)
 	{
 	  bigfloat hP=height(P);
-	  if(is_zero(hP)) return 0;
+	  if(is_real_zero(hP)) return 0;
 	  if(verbose) 
 	    cout<<"Found point "<<P<<" with height "<<hP<<endl;
 	  all_points.push_back(P);
