@@ -28,6 +28,68 @@ const bigint MBIGPRIME=atoI(string("6074000003").c_str());
 // will convert this string to an bigint
 //This is nearly the largest p such that (p/2)^2 < 2^63.
 
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+#undef svec
+#undef smat
+#undef smat_elim
+
+#include "mat.cc"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+
+mat_m to_mat_m(const mat_i& m)
+{
+  const vector<int> & mij = m.get_entries();
+  vector<bigint> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), [](const int& x) {return bigint(x);});
+  return mat_m(m.nrows(), m.ncols(), n);
+}
+
+mat_m to_mat_m(const mat_l& m)
+{
+  const vector<long> & mij = m.get_entries();
+  vector<bigint> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), [](const long& x) {return bigint(x);});
+  return mat_m(m.nrows(), m.ncols(), n);
+}
+
+mat_i to_mat_i(const mat_m& m)
+{
+  const vector<bigint> & mij = m.get_entries();
+  auto toint = [](const bigint& a) {return is_int(a)? I2int(a) : int(0);};
+  vector<int> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), toint);
+  return mat_i(m.nrows(), m.ncols(), n);
+}
+
+mat_l to_mat_l(const mat_m& m)
+{
+  const vector<bigint> & mij = m.get_entries();
+  auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
+  vector<long> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), tolong);
+  return mat_l(m.nrows(), m.ncols(), n);
+}
+
+#if(0)
+
 // Definitions of member operators and functions:
 
 mat_m::mat_m(const mat_i& m)
@@ -990,3 +1052,5 @@ int liftmat(const mat_m& mm, const bigint& pr, mat_m& m, bigint& dd, int trace)
   return 1;
 }
 
+
+#endif

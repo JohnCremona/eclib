@@ -27,6 +27,39 @@
 #include "mvector.h"
 #include "matrix.h"
 
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+
+#include "mat.h"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+
+mat_m to_mat_m(const mat_i& v);
+mat_m to_mat_m(const mat_l& v);
+mat_i to_mat_i(const mat_m& v);
+mat_l to_mat_l(const mat_m& v);
+
+#if(0)
+
 int liftmat(const mat_m& mm, const bigint& pr, mat_m& m, bigint& dd, int trace=0);
 int lift(const msubspace& s, const bigint& pr, msubspace& ans, int trace=0);
 
@@ -130,5 +163,7 @@ mat_m echelon(const mat_m& m, vec_l& pcols, vec_l& npcols,
                           long& rk, long& ny, bigint& d, int method=0);
 mat_m addscalar(const mat_m&, const bigint&);
 vec_m apply(const mat_m&, const vec_m&);
+
+#endif // end of #if(0)
 
 #endif

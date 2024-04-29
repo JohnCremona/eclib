@@ -199,7 +199,7 @@ void saturator::nextq()
       cout<<TLim<<endl;
       cout<<"Now reducing to echelon form..."<<endl;
     }
-  vec_l pcols, npcols; // not used
+  vec_i pcols, npcols; // not used
   long newTLrank, ny;
   mat_l newTLmat = echmodp(rowcat(TLimage,TLim),pcols, npcols, newTLrank, ny, p);
   if(verbose>2) 

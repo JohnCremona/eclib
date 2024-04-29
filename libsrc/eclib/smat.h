@@ -67,7 +67,7 @@ public:
      smat& operator/= (scalar);
      mat operator*( const mat& );
      void set_row ( int, int, int*, scalar* );
-     smat select_rows(const vec& rows) const;
+     smat select_rows(const vec_i& rows) const;
      void setrow ( int i, const svec& v); // i counts from 1
      void setrow ( int i, const vec& v); // i counts from 1
      svec row(int) const; // extract row i as an svec
@@ -75,6 +75,9 @@ public:
      int ncols() const {return nco;}
      long rank(scalar mod=DEFAULT_MODULUS);
      long nullity(const scalar& lambda, scalar mod=DEFAULT_MODULUS); // nullity of this-lambda*I
+
+     static smat scalar_matrix(int n, const scalar& a);  // nxn scalar matrix a*I
+     static smat identity_matrix(int n) {return scalar_matrix(n, scalar(1));}  // nxn identity matrix I
 
      // non-member (friend) functions and operators
 
@@ -99,7 +102,6 @@ public:
      friend inline double density (const smat& m)
      {return (((double)(get_population(m)))/m.nro)/m.nco;}
      friend void random_fill_in( smat&, int, scalar ); //the elimination program
-     friend smat sidmat(scalar);  // identity matrix
      friend int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace);
      friend int liftmats_chinese(const smat& mm1, scalar pr1, const smat& mm2, scalar pr2,
                                  smat& m, scalar& dd);
@@ -114,7 +116,6 @@ smat operator-(const smat& m1, const smat& m2);
 smat operator*(scalar scal, const smat& m);
 smat operator/(const smat& m, scalar scal);
 int operator!=(const smat& m1, const smat& m2);
-smat sidmat(scalar);  // identity matrix
 
 inline void display_population(const smat& A)
 {

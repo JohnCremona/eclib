@@ -79,7 +79,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     cout << "with dimension " << dim(elambda) << endl;
     cout << "\nNow repeating eigenspace calculation modulo " << MBIGPRIME << endl;
     msubspace elp;
-    lift(peigenspace(m,lambda,MBIGPRIME),MBIGPRIME, elp);
+    lift(peigenspace(m,lambda,MBIGPRIME),MBIGPRIME, elp, 0);
     cout << "eigenspace for lambda has basis\n" << basis(elp);
     cout << "with dimension " << dim(elp) << endl;
   }

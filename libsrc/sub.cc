@@ -46,13 +46,13 @@ subspace combine(const subspace& s1, const subspace& s2)
     {
       d/=g; b/=g;
     }
-  vec p = s1.pivots[s2.pivots];
+  vec_i p = s1.pivots[s2.pivots];
   return subspace(b,p,d);
 }
 
 //Don't think the following is ever actually used...
 mat expressvectors(const mat& m, const subspace& s)
-{ vec p = pivots(s);
+{ vec_i p = pivots(s);
   long   n = dim(s);
   mat ans(n,m.ncols());
   for (int i=1; i<=n; i++) ans.setrow(i, m.row(p[i]));
@@ -86,7 +86,7 @@ subspace kernel(const mat& m1, int method)
 {
    long rank, nullity;
    scalar d;
-   vec pcols,npcols;
+   vec_i pcols,npcols;
    mat m = echelon(m1,pcols,npcols, rank, nullity, d, method);
    mat basis(m.ncols(),nullity);
    for (int n=1; n<=nullity; n++)
@@ -103,7 +103,7 @@ subspace kernel(const mat& m1, int method)
 
 subspace image(const mat& m, int method)
 {
-  vec p,np;
+  vec_i p,np;
   long rank, nullity;
   scalar d;
   mat b = transpose(echelon(transpose(m),p,np,rank,nullity,d,method));
@@ -111,14 +111,14 @@ subspace image(const mat& m, int method)
   return ans;
 }
 
-subspace eigenspace(const mat& m1, scalar lambda, int method)
+subspace eigenspace(const mat& m1, const scalar& lambda, int method)
 {
   mat m = addscalar(m1,-lambda);
   subspace ans = kernel(m,method);
   return ans;
 }
 
-subspace subeigenspace(const mat& m1, scalar l, const subspace& s, int method)
+subspace subeigenspace(const mat& m1, const scalar& l, const subspace& s, int method)
 {
   mat m = restrict_mat(m1,s);
   subspace ss = eigenspace(m, l*(denom(s)),method);
@@ -126,17 +126,17 @@ subspace subeigenspace(const mat& m1, scalar l, const subspace& s, int method)
   return ans;
 }
 
-subspace pcombine(const subspace& s1, const subspace& s2, scalar pr)
+subspace pcombine(const subspace& s1, const subspace& s2, const scalar& pr)
 {
   scalar   d = s1.denom * s2.denom;  // redundant since both should be 1
   const mat& b1=s1.basis,  b2=s2.basis;
   const mat& b = matmulmodp(b1,b2,pr);
-  const vec& p = s1.pivots[s2.pivots];
+  const vec_i& p = s1.pivots[s2.pivots];
   return subspace(b,p,d);
 }
 
 // Same as restrict_mat, but modulo pr
-mat prestrict(const mat& M, const subspace& S, scalar pr, int cr)
+mat prestrict(const mat& M, const subspace& S, const scalar& pr, int cr)
 {
   if(dim(S)==M.nro) return M; // trivial special case, s is whole space
   const mat& B = S.basis;
@@ -151,10 +151,10 @@ mat prestrict(const mat& M, const subspace& S, scalar pr, int cr)
   return A;
 }
 
-subspace oldpkernel(const mat& m1, scalar pr)   // using full echmodp
+subspace oldpkernel(const mat& m1, const scalar& pr)   // using full echmodp
 {
    long rank, nullity;
-   vec pcols,npcols;
+   vec_i pcols,npcols;
    mat m = echmodp(m1,pcols,npcols, rank, nullity, pr);
    mat basis(m.ncols(),nullity);
    for (int n=1; n<=nullity; n++)
@@ -170,10 +170,10 @@ subspace oldpkernel(const mat& m1, scalar pr)   // using full echmodp
 }
 
 // using echmodp_uptri, with no back-substitution
-subspace pkernel(const mat& m1, scalar pr)
+subspace pkernel(const mat& m1, const scalar& pr)
 {
   long rank, nullity;
-  vec pcols,npcols;
+  vec_i pcols,npcols;
   mat m = echmodp_uptri(m1,pcols,npcols, rank, nullity, pr);
   mat basis(m.ncols(),nullity);
   for(int j=nullity; j>0; j--)
@@ -196,23 +196,23 @@ subspace pkernel(const mat& m1, scalar pr)
   return ans;
 }
 
-subspace pimage(const mat& m, scalar pr)
+subspace pimage(const mat& m, const scalar& pr)
 {
-  vec p,np;
+  vec_i p,np;
   long rank, nullity;
   const mat& b = transpose(echmodp(transpose(m),p,np,rank,nullity,pr));
   subspace ans(b,p,1);
   return ans;
 }
 
-subspace peigenspace(const mat& m1, scalar lambda, scalar pr)
+subspace peigenspace(const mat& m1, const scalar& lambda, const scalar& pr)
 {
   const mat& m = addscalar(m1,-lambda);
   subspace ans = pkernel(m,pr);
   return ans;
 }
 
-subspace psubeigenspace(const mat& m1, scalar l, const subspace& s, scalar pr)
+subspace psubeigenspace(const mat& m1, const scalar& l, const subspace& s, const scalar& pr)
 {
   const mat& m = prestrict(m1,s,pr);
   const subspace& ss = peigenspace(m, l*(denom(s)),pr);
@@ -224,7 +224,7 @@ subspace psubeigenspace(const mat& m1, scalar l, const subspace& s, scalar pr)
 //Attempts to lift from a mod-p subspace to a normal Q-subspace by expressing
 //basis as rational using modrat and clearing denominators
 //
-int lift(const subspace& s, scalar pr, subspace& ans, int trace)
+int lift(const subspace& s, const scalar& pr, subspace& ans, int trace)
 {
   scalar dd;
   mat m;

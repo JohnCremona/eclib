@@ -103,7 +103,6 @@ public:
   friend inline int operator!=(const vec& v1, const svec& v2) {return v2!=v1;}
   friend smat transpose(const smat&);
   friend smat operator* ( const smat&, const smat&);
-  friend smat sidmat(scalar);
   friend scalar content(const svec& v);
   friend scalar make_primitive(svec& v); // divides by & returns content
   friend svec operator* ( const smat& A, const svec& v );

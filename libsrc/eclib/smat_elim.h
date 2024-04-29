@@ -98,9 +98,9 @@ public:
   void standard( );
   void back_sub( );
   void sparse_elimination( );
-  smat old_kernel( vec&, vec& );
-  smat new_kernel( vec&, vec& );
-  smat kernel( vec&, vec& );
+  smat old_kernel( vec_i&, vec_i& );
+  smat new_kernel( vec_i&, vec_i& );
+  smat kernel( vec_i&, vec_i& );
   void normalize( int, int );
   void eliminate( const int&, const int& );
   void step5dense();
@@ -128,7 +128,7 @@ class ssubspace {
 public:
      // constructors
         ssubspace(int n=0);
-        ssubspace(const smat& b, const vec& p, scalar mod=DEFAULT_MODULUS);
+        ssubspace(const smat& b, const vec_i& p, scalar mod=DEFAULT_MODULUS);
 	ssubspace(const ssubspace& s);
      // destructor
         ~ssubspace();
@@ -137,13 +137,13 @@ public:
 
      // member functions & operators
         inline void clear() { pivots.init(); basis=smat(0,0);}
-        inline vec pivs() const {return pivots;}  // the pivot vector
+        inline vec_i pivs() const {return pivots;}  // the pivot vector
         inline smat bas() const {return basis;}   // the basis matrix
         inline scalar mod() const {return modulus;}   // the (prime) modulus
 
      // non-member (friend) functions and operators
         friend int dim(const ssubspace& s)     {return s.basis.ncols();}
-        friend vec pivots(const ssubspace& s)  {return s.pivots;}
+        friend vec_i pivots(const ssubspace& s)  {return s.pivots;}
         friend smat basis(const ssubspace& s)  {return s.basis;}
 	friend ssubspace combine(const ssubspace& s1, const ssubspace& s2);
 	friend smat restrict_mat(const smat& m, const ssubspace& s);
@@ -151,7 +151,7 @@ public:
 // Implementation
 private:
        scalar modulus;
-       vec pivots;
+       vec_i pivots;
        smat basis;
 };
 

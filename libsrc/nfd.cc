@@ -53,7 +53,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
       while (n%pr==0) pr++;
       p=pr;
       cout << "Computing T_p for p = " << p << "..." << flush;
-      tp = mat_m(transpose(h1->newheckeop(p,0)));
+      tp = to_mat_m(transpose(h1->newheckeop(p,0)));
       cout<<"done."<<endl;
     }
   else
@@ -71,7 +71,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	  else
 	    {
 	      cout << "Computing T_p for p = " << p << "..." << flush;
-	      tp1 = mat_m(transpose(h1->newheckeop(p,0)));
+	      tp1 = to_mat_m(transpose(h1->newheckeop(p,0)));
 	      cout<<"done."<<endl;
 	      cout<<"coefficient of T_"<<p<<": "; cin>>ap1;
 	      if(ap1!=1) tp1*=ap1;
@@ -94,7 +94,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	  cout<<"Enter eigenvalue of W("<<q<<"): ";
 	  cin>>eq;
 	  eq *=dH;
-	  mat_m wq = mat_m(transpose(h1->heckeop(q,0)));
+	  mat_m wq = to_mat_m(transpose(h1->heckeop(q,0)));
 	  if(dimsw<dimh)
 	    {
 	      SW=subeigenspace(wq,eq,SW);
@@ -215,7 +215,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   //    if(verbose) 
       cout<<"finished constructing S, now restricting T_p to S"<<endl;
 
-      tp0 = mat_m(restrict_mat(tp,S));
+      tp0 = restrict_mat(tp,S);
 
   //  if(verbose) 
       cout<<"done.  now combining S and SW"<<endl;
@@ -356,7 +356,7 @@ vec_m nfd::ap(long p)
 
 mat_m nfd::oldheckeop(long p)
 {
-  return restrict_mat(transpose(mat_m(h1->newheckeop(p,0))),S);
+  return restrict_mat(transpose(to_mat_m(h1->newheckeop(p,0))),S);
 }
 
 mat_m nfd::heckeop(long p)
@@ -412,7 +412,7 @@ mat_m nfd::heckeop(long p)
 bigint inverse(const mat_m& a, mat_m& ainv)
 {
   long d = a.nrows();
-  mat_m aug=colcat(a,midmat(d));
+  mat_m aug=colcat(a, mat_m::identity_matrix(d));
   long rk, ny; vec pc,npc; bigint denom;
   mat_m ref = echelon(aug, pc, npc, rk, ny, denom);
   ainv = ref.slice(1,d,d+1,2*d);

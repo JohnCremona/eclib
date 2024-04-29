@@ -207,7 +207,7 @@ void smat::setrow ( int i, const svec& v) // i counts from 1
   //   }
 }
 
-smat smat::select_rows(const vec& rows) const
+smat smat::select_rows(const vec_i& rows) const
 {
   int n=dim(rows);
   smat ans(n,nco);
@@ -873,16 +873,16 @@ int get_population(const smat& m )
   return count;
 }
 
-smat sidmat(scalar n)  // identity matrix
+smat smat::scalar_matrix(int n, const scalar& a)  // nxn scalar matrix a*I
 {
-  smat I(n,n); // creates enough space
+  smat D(n,n); // creates enough space
   for( int i = 0; i < n; i++ )
     {
-      I.col[i][0] = 1;   // one entry in this row
-      I.col[i][1] = i+1; // ...it's in column i+1
-      I.val[i][0] = 1;   // ...its value is 1
+      D.col[i][0] = 1;   // one entry in this row
+      D.col[i][1] = i+1; // ...it's in column i+1
+      D.val[i][0] = a;   // ...its value is a
     }
-  return I;
+  return D;
 }
 
 int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace)

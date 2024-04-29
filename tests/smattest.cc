@@ -435,7 +435,7 @@ int main(void)
 	    cin >> sm;
 	  }
 	smat_elim A( sm );
-	vec pc, npc;
+	vec_i pc, npc;
 	
 	if( flag ) {
 	  long rk, ny; scalar pr = DEFAULT_MODULUS;

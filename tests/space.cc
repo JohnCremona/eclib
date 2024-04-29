@@ -60,7 +60,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     while(times--) ker = kernel(m);
     mat kerbasis = basis(ker);
     cout << "kernel(m) has basis\n" << kerbasis;
-    vec kerpivs = pivots(ker);
+    vec_i kerpivs = pivots(ker);
     cout << "pivots: " << kerpivs << "\n";
     int kerdenom = denom(ker);
     cout << "denom:  " << kerdenom  << "\n";
@@ -71,7 +71,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     while(times--) ker = pkernel(m,DEFAULT_MODULUS);
     mat kerbasis = basis(ker);
     cout << "kernel(m) has basis\n" << kerbasis;
-    vec kerpivs = pivots(ker);
+    vec_i kerpivs = pivots(ker);
     cout << "pivots: " << kerpivs << "\n";
     times=ntimes; subspace oldker; 
     while(times--) oldker = oldpkernel(m,DEFAULT_MODULUS);

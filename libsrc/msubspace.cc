@@ -45,7 +45,7 @@ msubspace combine(const msubspace& s1, const msubspace& s2)
 
 mat_m restrict_mat(const mat_m& M, const msubspace& S)
 {
-  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  if(dim(S)==M.nrows()) return M; // trivial special case, s is whole space
   return rowsubmat(M, S.pivots) * S.basis;
 }
 
@@ -104,7 +104,7 @@ msubspace pcombine(const msubspace& s1, const msubspace& s2, const bigint& pr)
 
 mat_m prestrict(const mat_m& M, const msubspace& S, const bigint& pr)
 {
-  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  if(dim(S)==M.nrows()) return M; // trivial special case, s is whole space
   return matmulmodp(rowsubmat(M, S.pivots), S.basis, pr);
 }
 

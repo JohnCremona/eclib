@@ -35,7 +35,8 @@ int main(void)
   {
     long i; scalar r;
     mat a,aug,ref;
-    vec pc(1),npc(1),poly(1);
+    vec_i pc(1),npc(1);
+    vec poly(1);
 {
 cout << "Enter size of a square matrix A: "; cin >> r;
 a.init(r,r);
@@ -120,13 +121,13 @@ cout << "Now A = " << a;
 cout << "Enter any number "; cin >> i;
 }
 {
-vector<long> cp = a.charpoly();
+vector<scalar> cp = a.charpoly();
 cout << "char. poly. of A has coefficients " << cp << endl;
 cout << "det(A) = " << a.determinant() << endl;
 }
 {
-aug = colcat(a,idmat(r));
-cout << "Augmented matrix = " << aug << endl;
+  aug = colcat(a,mat::identity_matrix(r));
+  cout << "Augmented matrix = " << aug << endl;
 }
 
 long rk, ny;
@@ -158,7 +159,7 @@ else
   if (denom>1) cout << "(1/" << denom << ")*";
   cout << ainv;
   cout << "Check: A.A^(-1) = I ?";
-  if (a*ainv == denom*idmat(r)) cout << " True!";
+  if (a*ainv == mat::scalar_matrix(r,denom)) cout << " True!";
   else cout << " False!";
   cout << endl;
  }

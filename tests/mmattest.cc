@@ -34,7 +34,7 @@ int main(void)
     long i;
     scalar r;
     mat_m a,aug,ref;
-    vec_l pc(1),npc(1); vec_m poly(1);
+    vec_i pc(1),npc(1); vec_m poly(1);
     {
       cout << "Enter size of a square matrix A: "; cin >> r;
       a.init(r,r);
@@ -64,8 +64,8 @@ cout << "directsum(A,A) = " << directsum(a,a);
 cout << "Enter any number "; cin >> i;
 }
 {
-mat sa = a.shorten(r);
-cout << "After shortening to a matrix of longs, A = " << sa;
+  mat sa = to_mat_i(a);
+  cout << "After shortening to a matrix of ints, A = " << sa;
 }
 mat_m b = a;
 {
@@ -113,8 +113,8 @@ cout << "char. poly. of A has coefficients " << cp << endl;
 cout << "det(A) = " << a.determinant() << endl;
 }
 {
-aug = colcat(a,midmat(r));
-cout << "Augmented matrix = " << aug << endl;
+  aug = colcat(a, mat_m::identity_matrix(r));
+  cout << "Augmented matrix = " << aug << endl;
 }
 
 long rk, ny;
@@ -143,7 +143,7 @@ else
   if (!is_one(denom)) cout << "(1/" << denom << ")*";
   cout << ainv;
   cout << "Check: A.A^(-1) = I ?";
-  if (a*ainv == denom*midmat(r)) cout << " True!";
+  if (a*ainv == mat_m::scalar_matrix(r,denom)) cout << " True!";
   else cout << " False!";
   cout << endl;
  }

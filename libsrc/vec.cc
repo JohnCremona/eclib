@@ -30,7 +30,7 @@ vec::vec(long n)
   entries.resize(n, scalar(0));
 }
 
-vec::vec(vector<scalar> arr) :entries(arr) {}
+vec::vec(const vector<scalar>& arr) :entries(arr) {}
 
 vec::vec(const vec& v) :entries(v.entries) {} // copy constructor
 
@@ -63,7 +63,7 @@ vec& vec::operator+=(const vec& w)
   return *this;
 }
 
-void vec::addmodp(const vec& w, scalar pr)
+void vec::addmodp(const vec& w, const scalar& pr)
 {
   std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
                  [pr](const scalar& wi, const scalar& vi) { return mod(wi+vi,pr);});
@@ -76,14 +76,14 @@ vec& vec::operator-=(const vec& w)
   return *this;
 }
 
-vec& vec::operator*=(scalar scal)
+vec& vec::operator*=(const scalar& scal)
 {
   std::transform(entries.begin(), entries.end(), entries.begin(),
                  [scal](const scalar& vi) {return vi * scal;});
   return *this;
 }
 
-vec& vec::operator/=(scalar scal)
+vec& vec::operator/=(const scalar& scal)
 {
   std::transform(entries.begin(), entries.end(), entries.begin(),
                  [scal](const scalar& vi) {return vi / scal;});
@@ -94,9 +94,7 @@ vec vec::slice(long first, long last) const       // returns subvector
 {
  if (last==-1) {last=first; first=1;}
  vec ans(last-first+1);
- // cout<<"slicing vector "<<(*this)<<" (size "<<entries.size()<<") from "<<first<<" to "<<last<<endl;
  std::copy(entries.begin()+first-1, entries.begin()+last, ans.entries.begin());
- // cout<<"slice is "<<ans<<" (size "<<ans.entries.size()<<")"<<endl;
  return ans;
 }
 
@@ -123,19 +121,26 @@ scalar vec::sub(long i) const
   return entries.at(i-1);
 }
 
-void vec::set(long i, scalar x)
+void vec::set(long i, const scalar& x)
 {
   entries.at(i-1) = x;
 }
 
-void vec::add(long i, scalar x)
+void vec::add(long i, const scalar& x)
 {
   entries.at(i-1) += x;
 }
 
-void vec::add_modp(long i, scalar x, scalar p)
+void vec::add_modp(long i, const scalar& x, const scalar& p)
 {
   entries.at(i-1) = mod(entries.at(i-1)+x,p);
+}
+
+vec vec::iota(long n)
+{
+  vec v(n);
+  std::iota(v.entries.begin(), v.entries.end(), scalar(1));
+  return v;
 }
 
 // Definitions of non-member, friend operators and functions
@@ -187,13 +192,6 @@ istream& operator>>(istream& s, vec& v)
 
 // Definition of non-friend operators and functions
 
-vec iota(scalar n)
-{
-  vec v(I2long(n));
-  std::iota(v.entries.begin(), v.entries.end(), scalar(1));
-  return v;
-}
-
 scalar content(const vec& v)
 {
   return v.entries.empty()?
@@ -215,7 +213,7 @@ void swapvec(vec& v, vec& w)
   std::swap(v.entries, w.entries);
 }
 
-int member(scalar a, const vec& v)
+int member(const scalar& a, const vec& v)
 {
   return std::find(v.entries.begin(), v.entries.end(), a) != v.entries.end();
 }
@@ -243,7 +241,7 @@ vec express(const vec& v, const vec& v1, const vec& v2)
 
 //#define DEBUG_LIFT
 
-int lift(const vec& v, scalar pr, vec& ans)
+int lift(const vec& v, const scalar& pr, vec& ans)
 {
   long i0, i, j, d = dim(v);
   scalar nu, de;
@@ -351,9 +349,9 @@ int lift(const vec& v, scalar pr, vec& ans)
  return 0;
 }
 
-scalar dotmodp(const vec& v1, const vec& v2, scalar pr)
+scalar dotmodp(const vec& v1, const vec& v2, const scalar& pr)
 {
   auto a = [pr] (const scalar& x, const scalar& y) {return mod(x+y,pr);};
-  auto m = [pr] (const scalar& x, const scalar& y) {return mod(x*y,pr);};
+  auto m = [pr] (const scalar& x, const scalar& y) {return xmodmul(x,y,pr);};
   return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), scalar(0), a, m);
 }

@@ -406,7 +406,7 @@ void smat_elim::sparse_elimination( )
 #endif
 }
 
-smat smat_elim::kernel( vec& pc, vec& npc)
+smat smat_elim::kernel( vec_i& pc, vec_i& npc)
 {
   return old_kernel(pc, npc);
 }
@@ -416,7 +416,7 @@ smat smat_elim::kernel( vec& pc, vec& npc)
 
 #define TRACE_ELIM 0
 
-smat smat_elim::new_kernel( vec& pc, vec& npc)
+smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
 {
   int i,ir, j, jj, t, r, c;
   scalar v;
@@ -644,7 +644,7 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
 
 // old version of kernel which uses back_sub()
 
-smat smat_elim::old_kernel( vec& pc, vec& npc)
+smat smat_elim::old_kernel( vec_i& pc, vec_i& npc)
 {
   int i,n,r;
 #if TRACE_ELIM
@@ -1291,7 +1291,7 @@ void smat_elim::step5dense()
 #if TRACE_DENSE
   cout<<"Constructed dense matrix, starting dense elimination step..." <<endl;
 #endif
-  vec pc,npc; long rk,ny;
+  vec_i pc,npc; long rk,ny;
 
   // this will call ref_via_ntl() if FLINT, else ref_via_flint()
   dmat = rref(dmat,pc,npc,rk,ny,modulus);
@@ -1349,11 +1349,11 @@ long smat::rank(scalar mod)
   return sme.get_rank();
 }
 
-ssubspace::ssubspace(int n) 
- :pivots(iota((scalar)n)),basis(sidmat((scalar)n))
+ssubspace::ssubspace(int n)
+  :pivots(vec_i::iota(n)), basis(smat::identity_matrix(n))
 {}
 
-ssubspace::ssubspace(const smat& b, const vec& p, scalar mod)
+ssubspace::ssubspace(const smat& b, const vec_i& p, scalar mod)
   :modulus(mod),pivots(p),basis(b)
 {}
 
@@ -1362,7 +1362,7 @@ ssubspace::ssubspace(const ssubspace& s)
 {}
 
 // destructor -- no need to do anything as components have their own
-ssubspace::~ssubspace() 
+ssubspace::~ssubspace()
 {}
 
 // assignment
@@ -1388,7 +1388,7 @@ smat restrict_mat(const smat& m, const ssubspace& s)
  
 ssubspace kernel(const smat& sm, scalar mod)
 {
-  vec pivs, npivs;
+  vec_i pivs, npivs;
   smat kern = smat_elim(sm,mod).kernel(npivs,pivs);
   return ssubspace(kern,pivs,mod);
 }
@@ -1404,14 +1404,13 @@ ssubspace subeigenspace(const smat& m1, scalar l, const ssubspace& s)
   return combine(s,eigenspace(restrict_mat(m1,s), l));
 }
 
-
-ssubspace make1d(const vec& bas, long&piv, scalar mod) 
+ssubspace make1d(const vec& bas, long&piv, scalar mod)
 // make a 1-D ssubspace with basis bas
 {
   smat tbasis(1,dim(bas));
   svec sbas(bas);
   tbasis.setrow(1,sbas);
-  vec pivs(1); // initialised to 0
+  vec_i pivs(1); // initialised to 0
   pivs[1]=sbas.first_index();
   piv=sbas.elem(pivs[1]);
   return ssubspace(transpose(tbasis),pivs,mod);

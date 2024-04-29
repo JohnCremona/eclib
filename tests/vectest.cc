@@ -27,7 +27,7 @@ int main(void)
 {
  cout << "Test run of vector package.\n\n"; 
  int i,j,k,n;
- cout << "iota(10) = " << iota(10) << endl;
+ cout << "iota(10) = " << vec::iota(10) << endl;
  cout << "Enter n : "; cin >> n;
  vec v;
  cout << "Uninitialized new vec v = " << v << endl;

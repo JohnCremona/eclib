@@ -123,7 +123,7 @@ smat form_finder::make_nested_submat(long ip, ff_data &data)
 
   // first we go up the chain, composing pivotal indices
 
-  vec jlist = iota((scalar)subdim);
+  vec jlist = vec::iota(subdim);
   smat b = d->rel_space_->bas();
   int level = depth;
   while (level--)

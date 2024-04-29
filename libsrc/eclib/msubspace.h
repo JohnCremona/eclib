@@ -31,7 +31,7 @@ class msubspace {
 public:
   // constructors
   msubspace(int n=0)
-    :pivots(iota(n)),basis(midmat(n)), denom(1) {}
+    :pivots(vec_i::iota(n)),basis(mat_m::identity_matrix(n)), denom(1) {}
   msubspace(const mat_m& b, const vec_i& p, const bigint& d)
     :denom(d),pivots(p),basis(b) {}
   msubspace(const msubspace& s)
