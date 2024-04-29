@@ -202,6 +202,14 @@ scalar content(const vec& v)
                     [](const scalar& x, const scalar& y) {return gcd(x,y);});
 }
 
+scalar maxabs(const vec& v)
+{
+  return v.entries.empty()?
+    scalar(0) :
+    std::accumulate(v.entries.begin(), v.entries.end(), scalar(0),
+                    [](const scalar& x, const scalar& y) {return max(x,abs(y));});
+}
+
 void swapvec(vec& v, vec& w)
 {
   std::swap(v.entries, w.entries);
@@ -233,16 +241,17 @@ vec express(const vec& v, const vec& v1, const vec& v2)
    return ans;
 }
 
-//#define LIFT_DEBUG
+//#define DEBUG_LIFT
+
 int lift(const vec& v, scalar pr, vec& ans)
 {
   long i0, i, j, d = dim(v);
   scalar nu, de;
   int succ;
-  scalar lim = sqrt(pr>>2)-1;
+  scalar lim = sqrt(pr>>1)-1;
   scalar maxallowed = 10*lim;
-#ifdef LIFT_DEBUG
-  cout<<"Lifting vector v = "<<v<<endl;
+#ifdef DEBUG_LIFT
+  cout<<"Lifting vector v = "<<v<<" mod "<<pr<<" (lim = "<<lim<<")"<<endl;
 #endif
  // NB We do *not* make cumulative rescalings, since it is possible
  // for an apparently successful modrat reconstruction to give an
@@ -260,21 +269,34 @@ int lift(const vec& v, scalar pr, vec& ans)
  // requiring that in the primitive rescaling, there is an entry
  // coprime to the first non-zero entry.
 
- ans = v; // starts as a copy, and will be rescaled in place
+ ans = reduce_modp(v, pr); // starts as a copy, and will be rescaled in place
+#ifdef DEBUG_LIFT
+  cout<<"After reduce_modp: v = "<<ans<<endl;
+#endif
+ if (maxabs(ans) <= maxallowed)
+   {
+#ifdef DEBUG_LIFT
+     cout<<"No scaling needed, lift is "<<ans<<endl;
+#endif
+     return 1;
+   }
  scalar vi0, inv_vi0, vi, maxvi(0);
  for(i0=1; i0<=d; i0++)
    {
      // scale so that i0'th entry is 1 mod p, then reduce vector
      // entries mod p to lie in (-p/2,p/2), and find the maximum
      // entry:
-     while((vi0=mod(v[i0],pr))==0) {i0++;} // skip over any zero entries
+     while((vi0=ans[i0])==0) {i0++;} // skip over any zero entries
      inv_vi0=invmod(vi0,pr);
+#ifdef DEBUG_LIFT
+     cout<<"Scaling by "<<inv_vi0<<" (inverse of "<<vi0<<")"<<endl;
+#endif
      for (i=1; i<=d; i++)
        {
-         ans[i]=vi=mod(mod(inv_vi0*ans[i],pr),pr);
+         ans[i]=vi=mod(xmodmul(inv_vi0,ans[i],pr),pr);
          maxvi=max(maxvi,abs(vi));
        }
-#ifdef LIFT_DEBUG
+#ifdef DEBUG_LIFT
      cout<<"Reduced v = "<<ans<<", with max entry "<<maxvi<<endl;
 #endif
      if(maxvi<=maxallowed) // no scaling needed!
@@ -294,16 +316,16 @@ int lift(const vec& v, scalar pr, vec& ans)
          succ=modrat(ans[i],pr,lim,nu,de);     de=abs(de);
          if ((!succ)||(de==1)) continue; // loop on i
          // scale by de & recompute max entry:
-#ifdef LIFT_DEBUG
+#ifdef DEBUG_LIFT
          cout<<"Scaling by d="<<de<<endl;
 #endif
          maxvi = 0;
-         for (j=1; j<=d; j++) 
+         for (j=1; j<=d; j++)
            {
-             ans[j] = vi = mod(mod(de*ans[j],pr),pr);
+             ans[j] = vi = mod(xmodmul(de,ans[j],pr),pr);
              maxvi=max(maxvi,abs(vi));
            }
-#ifdef LIFT_DEBUG
+#ifdef DEBUG_LIFT
          cout<<"Now v = "<<ans<<", with max entry "<<maxvi<<endl;
 #endif
          if(maxvi<=maxallowed)

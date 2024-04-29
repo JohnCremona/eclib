@@ -68,6 +68,7 @@ public:
   friend scalar operator*(const vec&, const vec&);   // dot product
   friend scalar operator*(const svec&, const vec&);
   friend scalar content(const vec&);
+  friend scalar maxabs(const vec&);
   friend vec operator*(const mat& m, const vec& v);
   friend int operator==(const vec&, const vec&);
   friend int operator!=(const vec&, const vec&);

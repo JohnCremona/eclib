@@ -121,7 +121,7 @@ void svec::add_mod_p(int i, scalar a, const scalar& p)
     entries[i]=a;
   else
     {
-      scalar sum = xmod((vi->second)+a,p);
+      scalar sum = mod((vi->second)+a,p);
       if(sum==0) entries.erase(vi);
       else (vi->second)=sum;
     }
@@ -135,7 +135,7 @@ void svec::sub_mod_p(int i, scalar a, const scalar& p)
     entries[i]=a;
   else
     {
-      scalar sum = xmod((vi->second)+a,p);
+      scalar sum = mod((vi->second)-a,p);
       if(sum==0) entries.erase(vi);
       else (vi->second)=sum;
     }

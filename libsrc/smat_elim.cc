@@ -33,6 +33,8 @@ inline scalar xmm(scalar a, scalar b, scalar m)
   if (a==-1) return -b;
   if (b==1) return a;
   if (b==-1) return -a;
+  //cout<<"xmodmul("<<a<<","<<b<<","<<m<<") = "<<xmodmul(a,b,m)<<endl;
+  //cout<<"xmodmul("<<a<<"*(int64_t)"<<b<<")%"<<m<<" = "<< (a*(int64_t)b) % m<<endl;
   //return xmodmul(a,b,m);
   //return (a*b) % m;
   return (a*(int64_t)b) % m;

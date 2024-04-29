@@ -1187,7 +1187,7 @@ void newforms::display_modular_symbol_map(int check) const
        }
      long j=h1->coordindex[i];
      long sg=::sign(j); j=abs(j);
-     //     cout<<"j="<<j<<"("<<sg<<")"<<endl;
+     // cout<<"g="<<g<<", j="<<j<<"("<<sg<<")"<<endl;
      if(j==0)
        for(long k=0; k<n1ds; k++)
 	 if(sign!=0)
