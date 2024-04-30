@@ -34,7 +34,7 @@
 #include <eclib/homspace.h>
 #include <eclib/smatrix_elim.h>
 #include <eclib/matrix.h>
-#include <eclib/msubspace.h>
+#include <eclib/subspace.h>
 
 //#define AUTOLOOP
 //#define COMPARE_OLD

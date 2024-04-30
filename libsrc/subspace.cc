@@ -51,3 +51,15 @@
 #undef vec
 #undef mat
 #undef subspace
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+
+#include "sub.cc"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace

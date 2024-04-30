@@ -26,7 +26,7 @@
 #include <eclib/interface.h>
 #include <eclib/timer.h>
 #include <eclib/marith.h>
-#include <eclib/msubspace.h>
+#include <eclib/subspace.h>
 #include <eclib/moddata.h>
 #include <eclib/symb.h>
 #include <eclib/homspace.h>

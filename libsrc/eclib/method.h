@@ -60,8 +60,8 @@
 typedef bigint SCALAR;
 typedef vec_m VEC;
 typedef mat_m MAT;
-typedef msubspace SUBSP;
-#include <eclib/msubspace.h>
+typedef subspace_m SUBSP;
+#include <eclib/subspace.h>
 #define MODULUS atoI(string("6074000003").c_str())  // will convert
 						    // this string to
 						    // a bigint

@@ -75,7 +75,8 @@ mat restrict_mat(const mat& M, const subspace& S, int cr)
 
   if(cr) // optional check that S is invariant under M
     {
-      int check = (S.denom*matmulmodp(M,B,DEFAULT_MODULUS) == matmulmodp(B,A,DEFAULT_MODULUS));
+      scalar m(DEFAULT_MODULUS);
+      int check = (S.denom*matmulmodp(M,B,m) == matmulmodp(B,A,m));
       if (!check)
         cerr<<"Error in restrict_mat: subspace not invariant!"<<endl;
     }
@@ -158,14 +159,14 @@ subspace oldpkernel(const mat& m1, const scalar& pr)   // using full echmodp
    mat m = echmodp(m1,pcols,npcols, rank, nullity, pr);
    mat basis(m.ncols(),nullity);
    for (int n=1; n<=nullity; n++)
-     basis.set(npcols[n],n,1);
+     basis.set(npcols[n],n,scalar(1));
    for (int r=1; r<=rank; r++)
    {
      int i = pcols[r];
      for (int j=1; j<=nullity; j++)
        basis.set(i,j, mod(-m(r,npcols[j]),pr));
    }
-   subspace ans(basis, npcols, 1);
+   subspace ans(basis, npcols, scalar(1));
    return ans;
 }
 
@@ -192,7 +193,7 @@ subspace pkernel(const mat& m1, const scalar& pr)
           basis(pcols[i],j) = mod(temp,pr);
         }
     }
-  subspace ans(basis, npcols, 1);
+  subspace ans(basis, npcols, scalar(1));
   return ans;
 }
 
@@ -201,7 +202,7 @@ subspace pimage(const mat& m, const scalar& pr)
   vec_i p,np;
   long rank, nullity;
   const mat& b = transpose(echmodp(transpose(m),p,np,rank,nullity,pr));
-  subspace ans(b,p,1);
+  subspace ans(b,p,scalar(1));
   return ans;
 }
 

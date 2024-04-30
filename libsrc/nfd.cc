@@ -82,7 +82,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
 // Compute the appropriate W-eigenspace and restrict to it
 
-  msubspace SW(dimh);
+  subspace_m SW(dimh);
   int dimsw=dimh;
   if(w_split)
     {
@@ -224,7 +224,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
     {
       mat_m SWbasis=basis(SW);
       bigint  SWden; SWden=denom(SW);
-      msubspace mSW(SWbasis,pivots(SW),SWden);
+      subspace_m mSW(SWbasis,pivots(SW),SWden);
       S=combine(mSW,S);  
     }
 

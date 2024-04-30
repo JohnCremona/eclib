@@ -83,9 +83,7 @@ public:
   friend istream& operator>> (istream&s, vec&);
   friend void swapvec(vec& v, vec& w);
   friend mat restrict_mat(const mat& m, const subspace& s, int cr);
-  friend mat_m restrict_mat(const mat_m& m, const msubspace& s);
   friend mat prestrict(const mat& m, const subspace& s, const scalar& pr, int cr);
-  friend mat_m prestrict(const mat_m& m, const msubspace& s, const bigint& pr);
   friend scalar dotmodp(const vec& v1, const vec& v2, const scalar& pr);
   friend vec reduce_modp(const vec& v, const scalar& p);
 

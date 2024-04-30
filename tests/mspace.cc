@@ -1,4 +1,4 @@
-// mspace.cc: test program for msubspace class
+// mspace.cc: test program for subspace class with bigint scalars
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/msubspace.h>
+#include <eclib/subspace.h>
 const bigint MBIGPRIME=atoI("6074000003");
 // will convert this string to an bigint
 //This is nearly the largest p such that (p/2)^2 < 2^63.
@@ -57,7 +57,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   cout << "rank(M) = " << m.rank() << endl;
   cout << "nullity(M) = " << m.nullity() << endl;
   {
-    msubspace ker = kernel(m);
+    subspace_m ker = kernel(m);
     mat_m kerbasis = basis(ker);
     cout << "kernel(m) has basis\n" << kerbasis;
     vec_i kerpivs = pivots(ker);
@@ -66,7 +66,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     cout << "denom:  " << kerdenom  << "\n";
   }
   {
-    msubspace im = image(m);
+    subspace_m im = image(m);
     cout << "image(m) has basis\n" << basis(im);
     cout << "pivots: " << pivots(im) << "\n";
     cout << "denom:  " << denom(im)  << "\n";
@@ -74,11 +74,11 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   {
     bigint lambda;
     cout << "Enter lambda: "; cin >> lambda;
-    msubspace elambda = eigenspace(m,lambda);
+    subspace_m elambda = eigenspace(m,lambda);
     cout << "eigenspace for lambda = " << lambda << " has basis\n" << basis(elambda);
     cout << "with dimension " << dim(elambda) << endl;
     cout << "\nNow repeating eigenspace calculation modulo " << MBIGPRIME << endl;
-    msubspace elp;
+    subspace_m elp;
     lift(peigenspace(m,lambda,MBIGPRIME),MBIGPRIME, elp, 0);
     cout << "eigenspace for lambda has basis\n" << basis(elp);
     cout << "with dimension " << dim(elp) << endl;

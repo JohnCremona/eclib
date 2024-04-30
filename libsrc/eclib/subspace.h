@@ -70,4 +70,16 @@
 #undef smat
 #undef smat_elim
 
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+
+#include "sub.h"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+
 #endif
