@@ -987,10 +987,10 @@ void mod_mat_from_smat(mod_mat& A, const smat& M, scalar pr)
   long i, j;
 
   // copy of the modulus for FLINT
-  uscalar mod = (uscalar)pr;
+  uscalar p = (uscalar)pr;
 
   // create flint matrix copy of M:
-  mod_mat_init(A, nr, nc, mod);
+  mod_mat_init(A, nr, nc, p);
   for(i=0; i<nr; i++)
     for(j=0; j<nc; j++)
       mod_mat_entry(A,i,j) = (uscalar)posmod(M.elem(i+1,j+1),pr);

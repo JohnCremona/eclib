@@ -722,7 +722,7 @@ smat smat_elim::old_kernel( vec_i& pc, vec_i& npc)
       bas.col[i] = new int [count + 1];
       bas.val[i] = new scalar [count];
       int *pos = bas.col[i];
-      scalar *val = bas.val[i];
+      scalar *vali = bas.val[i];
       axp = aux_col;
       axv = aux_val;
       *pos++ = count;
@@ -730,8 +730,8 @@ smat smat_elim::old_kernel( vec_i& pc, vec_i& npc)
       size_t nbytes = count*sizeof(int);
       memmove(pos,axp,nbytes);
       nbytes = count*sizeof(scalar);
-      memmove(val,axv,nbytes);
-      // for( n = 0; n < count; n++ ) { *pos++ = *axp++; *val++ = *axv++; }
+      memmove(vali,axv,nbytes);
+      // for( n = 0; n < count; n++ ) { *pos++ = *axp++; *vali++ = *axv++; }
     }
   delete[]new_row;
   delete[]aux_val;
@@ -844,8 +844,8 @@ void smat_elim::step3()
   int col0,col1;
   //  for( col0 = 0; col0 < nco; col0++ ) {
   for( col0 = nco-1; col0 >=0; col0-- ) {
-    scalar val = (column+col0)->num;
-    if( val == 2 || val == 1 ) {col1=col0+1; L.put(col1);}
+    scalar vali = (column+col0)->num;
+    if( vali == 2 || vali == 1 ) {col1=col0+1; L.put(col1);}
   }
   
   while( (col0 = L.next()) != -1 ) {
@@ -1129,8 +1129,8 @@ void smat_elim::check_row (int d, int row2, list& L )
 }
 void smat_elim::check_col( int c, list& L ) 
 {
-  int val = (column+c)->num;
-  if( val == 2 || val == 1 ) {L.put(c+1);}
+  int vali = (column+c)->num;
+  if( vali == 2 || vali == 1 ) {L.put(c+1);}
 }
 
 int smat_elim::get_weight( int row, const int* lightness ) 
@@ -1377,8 +1377,8 @@ void ssubspace::operator=(const ssubspace& s)
 
 ssubspace combine(const ssubspace& s1, const ssubspace& s2)
 {
-  scalar mod = s1.modulus;
-  return ssubspace(mult_mod_p(s1.basis,s2.basis,mod),s1.pivots[s2.pivots],mod);
+  scalar m = s1.modulus;
+  return ssubspace(mult_mod_p(s1.basis,s2.basis,m),s1.pivots[s2.pivots],m);
 }
  
 smat restrict_mat(const smat& m, const ssubspace& s)
@@ -1386,11 +1386,11 @@ smat restrict_mat(const smat& m, const ssubspace& s)
   return mult_mod_p(m.select_rows(pivots(s)),basis(s),s.modulus);
 }
  
-ssubspace kernel(const smat& sm, scalar mod)
+ssubspace kernel(const smat& sm, scalar m)
 {
   vec_i pivs, npivs;
-  smat kern = smat_elim(sm,mod).kernel(npivs,pivs);
-  return ssubspace(kern,pivs,mod);
+  smat kern = smat_elim(sm,m).kernel(npivs,pivs);
+  return ssubspace(kern,pivs,m);
 }
  
 ssubspace eigenspace(const smat& m1, scalar lambda, scalar mod)
