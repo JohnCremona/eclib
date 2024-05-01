@@ -359,50 +359,102 @@ long bezout(long aa, long bb, long& xx, long& yy)
  if (a<0) {xx=-oldx; yy=-oldy; return(-a);}
  else     {xx= oldx; yy= oldy; return( a);}
 }
- 
+
 long invmod(long a, long p)
 {long g,x,y;
  g=bezout(a,p,x,y);
  if (g==1) return x;
- else 
+ else
    {
      cout << "invmod called with " << a << " and " << p << " -- not coprime!"<<endl;
      return 0;
    }
 }
 
-int modrat(int n, int m, int lim, int& a, int& b)
-{
-  long la,lb,ln=n,lm=m;
-  int ans = modrat(ln,lm,lim,la,lb);
-  a=la; b=lb;
-  return ans;
-}
-
 //#define DEBUG_MODRAT
 
-int modrat(long n, long m, long lim, long& a, long& b)
+// Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
+void gauss_reduce(long a0, long b0, long c0, long d0,
+                  long& a, long& b, long& c, long& d)
 {
+  a=a0; b=b0; c=c0; d=d0;
 #ifdef DEBUG_MODRAT
-  cout<<"modrat("<<n<<","<<m<<")\n";
+  cout<<"Initial (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
 #endif
-  long q = m, qq = 0, rr = 1, r=posmod(n,m);
-  a = r; b = 1;
-  if (r<lim)
+  long P = a*a+b*b, Q = a*c+b*d, R = c*c+d*d, t=1;
+  while (t)
+    {
+#ifdef DEBUG_MODRAT
+      cout<<"(a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+      cout<<"(P,Q,R) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
+#endif
+      t = rounded_division(Q,P);
+      if (t)
+        {
+#ifdef DEBUG_MODRAT
+          cout<<"Shift by "<<t<<endl;
+#endif
+          c -= t*a;
+          d -= t*b;
+          Q -= t*P;
+          R = c*c+d*d;
+        }
+      if (R<P)
+        {
+#ifdef DEBUG_MODRAT
+          cout<<"Invert"<<endl;
+#endif
+          t = -a; a = c; c = t;
+          t = -b; b = d; d = t;
+          t = P; P = R; R = t; Q=-Q;
+          t = 1;
+        }
+    }
+#ifdef DEBUG_MODRAT
+  cout<<"Final (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+#endif
+}
+
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
+int modrat(int n, int m, int& a, int& b)
+{
+  long la,lb,ln=n,lm=m;
+  int ok = modrat(ln,lm,la,lb);
+  a=la; b=lb;
+  return ok;
+}
+
+int old_modrat(long n, long m, long& a, long& b);
+int new_modrat(long n, long m, long& a, long& b);
+
+int modrat(long n, long m, long& a, long& b)
+{
+  // return old_modrat(n, m, a, b);
+  return new_modrat(n, m, a, b);
+}
+
+int old_modrat(long n, long m, long& a, long& b)
+{long q,r,t,qq,rr,tt,quot;
+#ifdef DEBUG_MODRAT
+ cout<<"modrat("<<n<<","<<m<<")\n";
+#endif
+ float lim = sqrt(float(m)/2.0);
+ q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1;
+ if (r<lim)
    {
 #ifdef DEBUG_MODRAT
      cout<<" = "<<a<<"/"<<b<<"\n";
 #endif
      return 1;
    }
- while (r!=0)
+ while (r)
  {
-   long quot = q/r;
-   long t  =  q-quot*r;   q = r;   r = t;
-   long tt = qq-quot*rr; qq = rr; rr = tt;
+   quot = q/r;
 #ifdef DEBUG_MODRAT
    cout<<"q,r,t = "<<q<<" "<<r<<" "<<t<<"\n";
 #endif
+   t  =  q-quot*r;   q = r;   r = t;
+   tt = qq-quot*rr; qq = rr; rr = tt;
    if (r<lim)
      {
        if (abs(rr)<lim)
@@ -414,15 +466,27 @@ int modrat(long n, long m, long lim, long& a, long& b)
            return 1;
          }
 #ifdef DEBUG_MODRAT
-       cout << "\nmodrat error: no reconstruction for " << n << " mod " << m << "\n";
+       cerr << "***modrat failure: no reconstruction for " << n << " mod " << m << "\n";
 #endif
        return 0;
      }
  }
-#ifdef DEBUG_MODRAT
- cout << "\nmodrat error: common factor with " << n << " mod " << m << "\n";
-#endif
+ cerr << "***modrat error: common factor with " << n << " mod " << m << "\n";
  return 0;
+}
+
+int new_modrat(long n, long m, long& a, long& b)
+{
+#ifdef DEBUG_MODRAT
+  cout<<"modrat("<<n<<","<<m<<")\n";
+#endif
+  long c,d, n1 = mod(n,m);
+  gauss_reduce(n1,1,m,0,a,b,c,d);
+#ifdef DEBUG_MODRAT
+  cout<<" = "<<a<<"/"<<b<<"\n";
+#endif
+ float lim = sqrt(float(m)/2.0);
+ return (abs(a) <= lim) && (abs(b) <= lim);
 }
 
 long val(long factor, long number)
@@ -435,7 +499,7 @@ long val(long factor, long number)
  return e;
 }
 
-int intbezout(int aa, int bb, int& xx, int& yy)
+int bezout(int aa, int bb, int& xx, int& yy)
 {int a = aa, b = bb, x = 0, oldx = 1, y = 1, oldy = 0;
  while (b!=0)
  { long q = a/b;

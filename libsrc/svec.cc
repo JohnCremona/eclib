@@ -114,7 +114,7 @@ void svec::sub(int i, scalar a)   // subtracts a from i'th entry
 
 void svec::add_mod_p(int i, scalar a, const scalar& p)
 {
-  a=xmod(a,p);
+  a=mod(a,p);
   if(!a) return;
   auto vi = entries.find(i);
   if(vi==entries.end())
@@ -126,19 +126,10 @@ void svec::add_mod_p(int i, scalar a, const scalar& p)
       else (vi->second)=sum;
     }
 }
+
 void svec::sub_mod_p(int i, scalar a, const scalar& p)
 {
-  a=xmod(-a,p);
-  if(!a) return;
-  auto vi = entries.find(i);
-  if(vi==entries.end())
-    entries[i]=a;
-  else
-    {
-      scalar sum = mod((vi->second)-a,p);
-      if(sum==0) entries.erase(vi);
-      else (vi->second)=sum;
-    }
+  add_mod_p(i, -a, p);
 }
 
 svec& svec::operator+=(const svec& w)
@@ -290,20 +281,21 @@ void svec::reduce_mod_p(const scalar& p)
 
 svec& svec::mult_by_scalar_mod_p(scalar scal, const scalar& p)
 {
-  //  if(xmod(scal,p)==0) cout<<"Attempt to multiply svec by 0\n"<<endl;
-  if(scal!=1)
+  scalar s = mod(scal,p);
+  if(s!=1)
     for( auto& vi : entries)
-      (vi.second)=xmodmul(vi.second,scal,p);
+      (vi.second)=xmodmul(vi.second,s,p);
   return *this;
 }
 
-svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, const scalar& p)
+svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, const scalar& p)
 {
   if (d!=w.d)
     {
       cerr << "Incompatible svecs in svec::add_scalar_times()"<<endl;
       return *this;
     }
+  scalar a = mod(scal,p);
   if(a==0) return *this;
   auto wi=w.entries.begin();
   auto vi=entries.begin();
@@ -339,7 +331,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, const scalar& p)
   return *this;
 }
 
-svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, std::set<int>& ons, std::set<int>& offs, 
+svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, std::set<int>& ons, std::set<int>& offs,
 				   const scalar& p)
 {
   ons.clear();
@@ -349,6 +341,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar a, std::set<int>& ons, 
       cerr << "Incompatible svecs in svec::add_scalar_times()"<<endl;
       return *this;
     }
+  scalar a = mod(scal,p);
   if(a==0) return *this;
   auto wi=w.entries.begin();
   auto vi=entries.begin();
@@ -540,7 +533,7 @@ scalar dotmodp(const svec& v, const vec& w, scalar pr)
 {
   scalar ans=0;
   for( const auto& vi : v.entries)
-    ans=xmod(ans+xmodmul(vi.second,w[vi.first],pr),pr);
+    ans=mod(ans+xmodmul(vi.second,w[vi.first],pr),pr);
   return ans;
 }
 
@@ -554,7 +547,7 @@ scalar dotmodp(const svec& v, const svec& w, scalar pr)
       if((vi->first)<(wi->first)) {vi++;} else
 	if((wi->first)<(vi->first)) {wi++;} else
 	  {
-	    ans=xmod(ans+xmodmul(vi->second,wi->second,pr),pr);
+	    ans=mod(ans+xmodmul(vi->second,wi->second,pr),pr);
 	    vi++; wi++;
 	  }
     }

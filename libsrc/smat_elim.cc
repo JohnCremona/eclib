@@ -639,6 +639,7 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
   cout<<" basis = "<<bas.as_mat()<<endl;
 #endif
 
+  bas.reduce_mod_p(modulus);
   return bas;
 }
 
@@ -736,6 +737,7 @@ smat smat_elim::old_kernel( vec_i& pc, vec_i& npc)
   delete[]new_row;
   delete[]aux_val;
   delete[]aux_col;
+  bas.reduce_mod_p(modulus);
 #if TRACE_ELIM
   cout<<"Finished constructing basis for kernel"<<endl;
   cout<<"Basis = "<<bas.as_mat()<<endl;
@@ -1340,7 +1342,6 @@ void smat_elim::step5dense()
     cout<<"finished dense step"<<endl;
 #endif
 }
-
 
 long smat::rank(scalar mod)
 {

@@ -61,6 +61,7 @@ public:
   void set(long i, const scalar& x);                  // sets v[i]=x
   void add(long i, const scalar& x);                  // v[i]+=x
   void add_modp(long i, const scalar& x, const scalar& p);                  // v[i]+=x mod p
+  void red_modp(const scalar& p);              // reduce mod p in place
   scalar sub(long i) const;                    // same as v[i] (no ref)
   const vector<scalar> get_entries()const {return entries;}
   static vec iota(long n);              // (1,2,...,n)
@@ -85,7 +86,6 @@ public:
   friend mat restrict_mat(const mat& m, const subspace& s, int cr);
   friend mat prestrict(const mat& m, const subspace& s, const scalar& pr, int cr);
   friend scalar dotmodp(const vec& v1, const vec& v2, const scalar& pr);
-  friend vec reduce_modp(const vec& v, const scalar& p);
 
   // Implementation
 private:
@@ -121,19 +121,24 @@ inline vec operator+(const vec& v) { return v;}
 inline vec operator-(const vec& v) { return scalar(-1)*v;}
 
 inline vec operator+(const vec& v1, const vec& v2)
-{ vec ans(v1); ans+=v2; return ans;}
+{ vec w(v1); w+=v2; return w;}
 
 inline vec addmodp(const vec& v1, const vec& v2, const scalar& pr)
-{ vec ans(v1); ans.addmodp(v2,pr); return ans;}
+{ vec w(v1); w.addmodp(v2,pr); return w;}
+
+inline vec reduce_modp(const vec& v, const scalar& p)
+{
+  vec w(v); w.red_modp(p); return w;
+}
 
 inline vec operator-(const vec& v1, const vec& v2)
-{ vec ans(v1); ans-=v2; return ans;}
+{ vec w(v1); w-=v2; return w;}
 
 inline vec operator*(const scalar& scal, const vec& v)
-{ vec ans(v); ans*=scal; return ans;}
+{ vec w(v); w*=scal; return w;}
 
 inline vec operator/(const vec& v, const scalar& scal)
-{ vec ans(v); ans/=scal; return ans;}
+{ vec w(v); w/=scal; return w;}
 
 inline void makeprimitive(vec& v)
 { scalar g=content(v); if (g>1) v/=g;}

@@ -26,10 +26,10 @@
 // definitions of member operators and functions:
 
 // assignment
-void subspace::operator=(const subspace& s) 
+void subspace::operator=(const subspace& s)
 {
-  pivots=s.pivots; 
-  basis=s.basis; 
+  pivots=s.pivots;
+  basis=s.basis;
   denom=s.denom;
 }
 
@@ -98,8 +98,7 @@ subspace kernel(const mat& m1, int method)
      for (int j=1; j<=nullity; j++)
        basis.set(i,j, -m(r,npcols[j]));
    }
-   subspace ans(basis, npcols, d);
-   return ans;
+   return subspace(basis, npcols, d);
 }
 
 subspace image(const mat& m, int method)
@@ -108,23 +107,20 @@ subspace image(const mat& m, int method)
   long rank, nullity;
   scalar d;
   mat b = transpose(echelon(transpose(m),p,np,rank,nullity,d,method));
-  subspace ans(b,p,d);
-  return ans;
+  return subspace(b,p,d);
 }
 
 subspace eigenspace(const mat& m1, const scalar& lambda, int method)
 {
   mat m = addscalar(m1,-lambda);
-  subspace ans = kernel(m,method);
-  return ans;
+  return kernel(m,method);
 }
 
 subspace subeigenspace(const mat& m1, const scalar& l, const subspace& s, int method)
 {
   mat m = restrict_mat(m1,s);
   subspace ss = eigenspace(m, l*(denom(s)),method);
-  subspace ans = combine(s,ss );
-  return ans;
+  return combine(s,ss );
 }
 
 subspace pcombine(const subspace& s1, const subspace& s2, const scalar& pr)
@@ -166,8 +162,7 @@ subspace oldpkernel(const mat& m1, const scalar& pr)   // using full echmodp
      for (int j=1; j<=nullity; j++)
        basis.set(i,j, mod(-m(r,npcols[j]),pr));
    }
-   subspace ans(basis, npcols, scalar(1));
-   return ans;
+   return subspace(basis, npcols, scalar(1));
 }
 
 // using echmodp_uptri, with no back-substitution
@@ -193,8 +188,7 @@ subspace pkernel(const mat& m1, const scalar& pr)
           basis(pcols[i],j) = mod(temp,pr);
         }
     }
-  subspace ans(basis, npcols, scalar(1));
-  return ans;
+  return subspace(basis, npcols, scalar(1));
 }
 
 subspace pimage(const mat& m, const scalar& pr)
@@ -202,37 +196,33 @@ subspace pimage(const mat& m, const scalar& pr)
   vec_i p,np;
   long rank, nullity;
   const mat& b = transpose(echmodp(transpose(m),p,np,rank,nullity,pr));
-  subspace ans(b,p,scalar(1));
-  return ans;
+  return subspace(b,p,scalar(1));
 }
 
 subspace peigenspace(const mat& m1, const scalar& lambda, const scalar& pr)
 {
   const mat& m = addscalar(m1,-lambda);
-  subspace ans = pkernel(m,pr);
-  return ans;
+  return pkernel(m,pr);
 }
 
 subspace psubeigenspace(const mat& m1, const scalar& l, const subspace& s, const scalar& pr)
 {
   const mat& m = prestrict(m1,s,pr);
   const subspace& ss = peigenspace(m, l*(denom(s)),pr);
-  subspace ans = pcombine(s,ss,pr);
-  return ans;
+  return pcombine(s,ss,pr);
 }
 
 
 //Attempts to lift from a mod-p subspace to a normal Q-subspace by expressing
 //basis as rational using modrat and clearing denominators
 //
-int lift(const subspace& s, const scalar& pr, subspace& ans, int trace)
+int lift(const subspace& s, const scalar& pr, subspace& ans)
 {
   scalar dd;
   mat m;
-  if (liftmat(s.basis,pr,m,dd,trace))
-    {
-      ans = subspace(m, pivots(s), dd);
-      return 1;
-    }
-  return 0;
+  int ok = liftmat(s.basis,pr,m,dd);
+  if (!ok)
+    cerr << "Failed to lift subspace from mod "<<pr<<endl;
+  ans = subspace(m, pivots(s), dd);
+  return ok;
 }

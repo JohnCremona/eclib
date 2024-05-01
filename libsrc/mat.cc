@@ -892,13 +892,11 @@ vec apply(const mat& m, const vec& v)    // same as *(mat, vec)
   return m*v;
 }
 
-mat reduce_modp(const mat& m, const scalar& p)
+void mat::reduce_mod_p(const scalar& p)
 {
-  if (p==0) return m;
-  mat w(m.nrows(), m.ncols());
-  std::transform(m.entries.begin(), m.entries.end(), w.entries.begin(),
+  if (p==0) return;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
                  [p](const scalar& mij) {return mod(mij,p);});
-  return w;
 }
 
 void elimp(mat& m, long r1, long r2, long pos, const scalar& pr)
@@ -1028,12 +1026,10 @@ mat echelonp(const mat& entries, vec_i& pcols, vec_i& npcols,
      for (long j=1; j<=nc; j++)
        m(i,j)=(j==pcols[i]);    // 0 or 1 !
 
- scalar lim = sqrt(pr>>1)-1;
 #ifdef TRACE
  cout << "Finished second stage.\n Echelon mat mod "<<pr<<" is:\n";
  cout << m;
  cout << "Now lifting back to Q.\n";
- cout << "lim = " << lim << "\n";
 #endif /* TRACE */
  scalar dd(1);
  mat nmat(rk,nc);
@@ -1054,10 +1050,13 @@ mat echelonp(const mat& entries, vec_i& pcols, vec_i& npcols,
        {
          scalar n1,d1;
          long jj = npcols[j];
-         modrat(m(i,jj), pr,lim,n1,d1);
+         int ok = modrat(m(i,jj), pr,n1,d1);
          nmat(i,jj)=n1;
          dmat(i,jj)=d1;
-         dd=(dd*d1)/gcd(dd,d1);
+         if (ok)
+           dd=(dd*d1)/gcd(dd,d1);
+         else
+           cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q"<<endl;
        }
    }
  dd=abs(dd);
@@ -1528,31 +1527,44 @@ mat matmulmodp(const mat& m1, const mat& m2, const scalar& pr)
  return m3;
 }
 
-int liftmat(const mat& mm, const scalar& pr, mat& m, scalar& dd, int trace)
+int liftmat(const mat& mm, const scalar& pr, mat& m, scalar& dd)
 {
-  scalar lim = sqrt(pr>>1)-1;
+  int trace=0;
   if(trace)
     cout << "Lifting mod-p mat;  mat mod "<<pr<<" is:\n"
          << mm
-         << "Now lifting back to Q.\n"
-         << "lim = " << lim << endl;
+         << "Now lifting back to Q." << endl;
 
-  int success=1;
   scalar n,d;
+  scalar lim = sqrt(pr>>1);
   m = mm;
+  m.reduce_mod_p(pr);
+  if (maxabs(m) < lim) return 1;
+  int success = 1;
   dd=1;
   std::for_each(m.entries.begin(), m.entries.end(),
-                [&success,&dd,pr,lim,&n,&d] (const scalar& x)
-                {success=success&&modrat(x,pr,lim,n,d); d=lcm(d,dd);});
-  if(!success)
-    return 0;
-
+                [&success,lim,&dd,pr,&n,&d] (const scalar& x)
+                {if (abs(x)>lim) {int succ = modrat(x,pr,n,d); if(succ) d=lcm(d,dd); else success=0;}});
   dd=abs(dd);
   if(trace)
     cout << "Common denominator = " << dd << "\n";
   std::transform(m.entries.begin(), m.entries.end(), m.entries.begin(),
                  [pr,dd] (const scalar& x) {return mod(xmodmul(dd,x,pr),pr);});
+  if (!success)
+    {
+      cerr<<"liftmat() failed to lift some entries mod "<<pr<<endl;
+      return 0;
+    }
+  if(trace)
+    cout << "Lifted matrix is " << m << "\n";
   return 1;
+}
+
+scalar maxabs(const mat& m) // max entry
+{
+  scalar a(0);
+  std::for_each(m.entries.begin(), m.entries.end(), [&a](const scalar& x) {return max(a,abs(x));});
+  return a;
 }
 
 long population(const mat& m) // #nonzero entries

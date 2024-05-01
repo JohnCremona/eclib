@@ -523,9 +523,9 @@ mat smat::operator*( const mat& m )
   return product;
 }
 
-long smat::nullity(const scalar& lambda, scalar mod) // nullity of this-lambda*I
+long smat::nullity(const scalar& lambda, scalar m) // nullity of this-lambda*I modulo m
 {
-  smat sma(*this); sma-=lambda;  return sma.ncols()-sma.rank(mod);
+  smat sma(*this); sma-=lambda;  return sma.ncols()-sma.rank(m);
 }
 
 // Definitions of non-member, friend operators and functions
@@ -734,7 +734,7 @@ int operator==(const smat& sm1, const smat& sm2)
      {
        int d1 = *sm1.col[i], d2 = *sm2.col[i];
        if( d1 != d2 ) {return 0;}
-       
+
        scalar *sm1val = sm1.val[i], *sm2val= sm2.val[i];
        int *sm1pos= sm1.col[i] + 1;
        int *sm2pos = sm2.col[i] + 1;
@@ -754,7 +754,7 @@ int eqmodp(const smat& sm1, const smat& sm2, const scalar& p)
      {
        int d1 = *sm1.col[i], d2 = *sm2.col[i];
        if( d1!=d2 ) {return 0;}
-       
+
        scalar *sm1val = sm1.val[i], *sm2val= sm2.val[i];
        int *sm1pos= sm1.col[i] + 1;
        int *sm2pos = sm2.col[i] + 1;
@@ -857,7 +857,7 @@ smat operator/(const smat& sm, scalar scal)
 
 int operator!=(const smat& sm1, const smat& sm2)
 {
-        return !(sm1==sm2);
+  return !(sm1==sm2);
 }
 
 int get_population(const smat& m )
@@ -873,6 +873,19 @@ int get_population(const smat& m )
   return count;
 }
 
+scalar maxabs(const smat& m )
+{
+  scalar a(0);
+  for(int r = 0; r < m.nro; r++ )
+    {
+      int d = *(m.col[r]);
+      scalar *values = m.val[r];
+      int *pos = m.col[r] + 1;
+      while( d-- ) { a = max(a, abs(*values++)); pos++;}
+    }
+  return a;
+}
+
 smat smat::scalar_matrix(int n, const scalar& a)  // nxn scalar matrix a*I
 {
   smat D(n,n); // creates enough space
@@ -885,58 +898,73 @@ smat smat::scalar_matrix(int n, const scalar& a)  // nxn scalar matrix a*I
   return D;
 }
 
-int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace)
-{
-  scalar modulus=pr,n,d; long nr,nc; dd=1;
-  int success=1;
-  float lim=floor(sqrt(pr/2.0));
+int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd)
+{ int trace=0;
+  scalar n,d; long nr,nc; dd=1;
+  scalar lim = sqrt(pr>>1);
   m = mm;
+  m.reduce_mod_p(pr);
   if(trace)
     {
-      cout << "Lifting mod-p smat;  smat mod "<<pr<<" is:\n";
-      cout << m.as_mat();
+      cout << "Lifting mod-p smat" << endl;
+      if (trace>1) cout << "smat mod "<<pr<<" is:\n" << m.as_mat() <<endl;
       cout << "Now lifting back to Q.\n";
-      cout << "lim = " << lim << "\n";
+    }
+  scalar ma = maxabs(m);
+  if (ma < lim)
+    {
+      if (trace) cout<<"Nothing to do, max entry "<<ma<<" < "<<lim<<endl;
+      return 1;
     }
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
       {
-	int succ = modrat(m.val[nr][nc],modulus,lim,n,d);
-	success = success && succ;
-	dd=lcm(d,dd);
+        scalar v = m.val[nr][nc];
+        if (abs(v) < lim) continue;
+	int ok = modrat(v,pr,n,d);
+        scalar newdd=lcm(abs(d),dd);
+        if (newdd!=dd)
+          {
+            dd = newdd;
+            if(trace)
+              cout <<"denom = "<<abs(d)<<", common denom so far is "<<dd<<endl;
+          }
+        if (!ok)
+          {
+            if (trace) cerr << "Failed to lift "<<v<<" mod "<<pr<<" to Q"<<endl;
+            return 0;
+          }
       }
-  if(!success)
-    {
-      //cout << "Problems encountered with modrat lifting of smat." << endl;
-      return 0;
-    }
   dd=abs(dd);
   if(trace) cout << "Common denominator = " << dd << "\n";
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
       m.val[nr][nc] = mod(xmodmul(dd,(m.val[nr][nc]),pr),pr);
-  if(trace) cout << "Lifted smat = " << m.as_mat() << "\n";
+  if(trace)
+    {
+      if (trace>1) cout << "Lifted smat = " << m.as_mat() << "\n";
+      cout << " Lift has denominator "<<dd<<endl;
+    }
   return 1;
 }
 
 //#define DEBUG_CHINESE
 
 int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
-                     smat& m, scalar& dd)
+                      smat& m, scalar& dd)
 {
-  long modulus=(long)pr1*(long)pr2,n,d,mij;
-  long nr,nc,u,v;
-  float lim=floor(sqrt(modulus/2.0));
+  scalar modulus=pr1*pr2;
+  scalar n,d,u,v;
 
   dd = bezout(pr1,pr2,u,v); //==1
   if (dd!=1) return 0;
 
   // First time through: compute CRTs, common denominator and success flag
   m = m1; // NB We assume that m1 and m2 have nonzero entries in the same places
-  for(nr=0; nr<m1.nro; nr++)
-    for(nc=0; nc<m1.col[nr][0]; nc++)
+  for(int nr=0; nr<m1.nro; nr++)
+    for(int nc=0; nc<m1.col[nr][0]; nc++)
       {
-        mij = mod(v*m1.val[nr][nc],pr1)*pr2 + mod(u*m2.val[nr][nc],pr2)*pr1;
+        scalar mij = xmodmul(v,m1.val[nr][nc],pr1)*pr2 + xmodmul(u,m2.val[nr][nc],pr2)*pr1;
         mij = mod(mij,modulus);
 #ifdef DEBUG_CHINESE
         if (((mij-m1.val[nr][nc])%pr1)||((mij-m2.val[nr][nc])%pr2))
@@ -945,7 +973,7 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
           }
 #endif
         m.val[nr][nc] = mij;
-	if (modrat(mij,modulus,lim,n,d))
+        if (modrat(mij,modulus,n,d))
           dd=lcm(d,dd);
         else
           {
@@ -961,10 +989,10 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
   cout << "Common denominator = " << dd << "\n";
 #endif
   // Second time through: rescale
-  for(nr=0; nr<m.nro; nr++)
-    for(nc=0; nc<m.col[nr][0]; nc++)
+  for(int nr=0; nr<m.nro; nr++)
+    for(int nc=0; nc<m.col[nr][0]; nc++)
       {
-        m.val[nr][nc] = mod(xmodmul((dd/d),(long)m.val[nr][nc],modulus),modulus);
+        m.val[nr][nc] = mod(xmodmul((dd/d),m.val[nr][nc],modulus),modulus);
       }
   return 1;
 }

@@ -136,6 +136,13 @@ void vec::add_modp(long i, const scalar& x, const scalar& p)
   entries.at(i-1) = mod(entries.at(i-1)+x,p);
 }
 
+void vec::red_modp(const scalar& p)
+{
+  if (p==0) return;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [p](const scalar& vi) {return mod(vi,p);});
+}
+
 vec vec::iota(long n)
 {
   vec v(n);
@@ -144,15 +151,6 @@ vec vec::iota(long n)
 }
 
 // Definitions of non-member, friend operators and functions
-
-vec reduce_modp(const vec& v, const scalar& p)
-{
-  if (p==0) return v;
-  vec w(v.entries.size());
-  std::transform(v.entries.begin(), v.entries.end(), w.entries.begin(),
-                 [p](const scalar& vi) {return mod(vi,p);});
-  return w;
-}
 
 scalar operator*(const vec& v, const vec& w)
 {
@@ -241,6 +239,13 @@ vec express(const vec& v, const vec& v1, const vec& v2)
 
 //#define DEBUG_LIFT
 
+// int lift(const vec& v, const scalar& pr, vec& w)
+// {
+//   w = v;
+//   w.red_modp(pr);
+  
+// }
+
 int lift(const vec& v, const scalar& pr, vec& ans)
 {
   long i0, i, j, d = dim(v);
@@ -311,8 +316,9 @@ int lift(const vec& v, const scalar& pr, vec& ans)
 
      for(i=1; (i<=d); i++)
        {
-         succ=modrat(ans[i],pr,lim,nu,de);     de=abs(de);
-         if ((!succ)||(de==1)) continue; // loop on i
+         modrat(ans[i],pr,nu,de);
+         de=abs(de);
+         if (de==1) continue; // loop on i
          // scale by de & recompute max entry:
 #ifdef DEBUG_LIFT
          cout<<"Scaling by d="<<de<<endl;

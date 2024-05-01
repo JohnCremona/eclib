@@ -143,21 +143,23 @@ int posmod(long a, int modb); /* ordinary modulus, but definitely positive */
 // consistent behaviour for halves (they go up here).
 //
 // For b>0, rounded_division(a,b) = q such that a/b = q + r/b with -1/2 <= r/b < 1/2
-
-// The bigint version of a similar function roundover(a,b) is in
-// marith.h implmented as {bigint a0=(a%b); bigint c = (a-a0)/b;
-// if(2*a0>b) c+=1; return c;} which is not quite the same
 long rounded_division(long a, long b);
 
 long gcd(long, long);
 int gcd(int, int);
 long lcm(long, long);
 long bezout(long, long, long&, long&);
-int intbezout(int aa, int bb, int& xx, int& yy);
+int bezout(int aa, int bb, int& xx, int& yy);
 
 long invmod(long, long);
-int modrat(long, long, long, long&, long&);
-int modrat(int, int, int, int&, int&);
+
+// Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
+void gauss_reduce(long a0, long b0, long c0, long d0,
+                  long& a, long& b, long& c, long& d);
+
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
+int modrat(long n, long m, long& a, long& b);
+int modrat(int n, int m, int& a, int& b);
 
 // 3 utilities for compatibility ith bigint args
 inline int is_zero(long n) {return n==0;}

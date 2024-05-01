@@ -32,9 +32,6 @@
 #define INT_MIN (-INT_MAX-1)
 #endif
 
-int liftmat(const mat& mm, const scalar& pr, mat& m, const scalar& dd, int trace=0);
-int lift(const subspace& s, const scalar& pr, subspace& ans, int trace=0);
-
 class mat {
 friend class subspace;
 friend class smat;
@@ -84,6 +81,7 @@ public:
   void output_pretty(ostream&s=cout)   const;
   void dump_to_file(string filename) const; // binary output
   void read_from_file(string filename);     // binary input
+  void reduce_mod_p(const scalar& p);
 
   static mat scalar_matrix(long n, const scalar& a);
   static mat identity_matrix(long n) {return scalar_matrix(n, scalar(1));}
@@ -128,14 +126,14 @@ public:
   friend scalar det_via_ntl(const mat& M, const scalar& pr);
   friend subspace combine(const subspace& s1, const subspace& s2);
   friend mat restrict_mat(const mat& m, const subspace& s, int cr);
-  friend int liftmat(const mat& mm, const scalar& pr, mat& m, scalar& dd, int trace);
-  friend int lift(const subspace& s, const scalar& pr, subspace& ans, int trace);
+  friend int liftmat(const mat& mm, const scalar& pr, mat& m, scalar& dd);
+  friend int lift(const subspace& s, const scalar& pr, subspace& ans);
   friend subspace pcombine(const subspace& s1, const subspace& s2, const scalar& pr);
   friend mat prestrict(const mat& m, const subspace& s, const scalar& pr, int cr);
-  friend mat reduce_modp(const mat& m, const scalar& p);
   friend mat matmulmodp(const mat&, const mat&, const scalar& pr);
   friend mat echmodp_d(const mat& mat, vec_i& pcols, vec_i& npcols, long& rk, long& ny, double pr);
   friend long population(const mat& m); // #nonzero entries
+  friend scalar maxabs(const mat& m); // max entry
   friend double sparsity(const mat& m); // #nonzero entries/#entries
   // Implementation
 private:

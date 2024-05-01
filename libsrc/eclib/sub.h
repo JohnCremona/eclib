@@ -51,8 +51,7 @@ public:
         friend mat restrict_mat(const mat& m, const subspace& s, int cr);
 	friend subspace pcombine(const subspace& s1, const subspace& s2, const scalar& pr);
 	friend mat prestrict(const mat& m, const subspace& s, const scalar& pr, int cr);
-        friend int lift(const subspace& s, const scalar& pr, subspace& ans, int trace);
-
+        friend int lift(const subspace& s, const scalar& pr, subspace& ans);
 
 // Implementation
 private:
@@ -60,7 +59,6 @@ private:
        vec_i pivots;
        mat basis;
 };
-
 
 // Declarations of nonmember, nonfriend operators and functions:
 

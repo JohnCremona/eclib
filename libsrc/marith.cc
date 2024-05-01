@@ -44,6 +44,14 @@ int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
 int divides(const bigint& a, long b, bigint& q, long& r)
   { r=DivRem(q,a,b); return (r==0);}
 
+// For b>0, rounded_division(a,b) = q such that a/b = q + r/b with -1/2 <= r/b < 1/2
+bigint rounded_division(const bigint& a, const bigint& b)
+{
+  bigint q, r;
+  DivRem(q,r,a,b);
+  bigint r2 = r<<1;
+  return (r2<-b? q-1: (r2>=b? q+1: q));
+}
 
 // oddsqrt works on odd n, called by isqrt
 //
@@ -1084,33 +1092,50 @@ int kronecker(const bigint& d, long n)
 long gcd(const bigint& a, long b)
 {
   bigint bb = BIGINT(b);
-  return I2long(gcd( a, bb )); 
+  return I2long(gcd( a, bb ));
 }
 
-int modrat(const bigint& n, const bigint& m, const bigint& lim, 
+// Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
+void gauss_reduce(const bigint& a0, const bigint& b0, const bigint& c0, const bigint& d0,
+                  bigint& a, bigint& b, bigint& c, bigint& d)
+{
+  a=a0; b=b0; c=c0; d=d0;
+  // cout<<"Initial (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+  bigint P = a*a+b*b, Q = a*c+b*d, R = c*c+d*d, one(1), t;
+  t = one; // any nonzero will do
+  while (!is_zero(t))
+    {
+      // cout<<"(a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+      // cout<<"(P,Q,R) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
+      t = rounded_division(Q,P);
+      if (!is_zero(t))
+        {
+          // cout<<"Shift by "<<t<<endl;
+          c -= t*a;
+          d -= t*b;
+          Q -= t*P;
+          R = c*c+d*d;
+        }
+      if (R<P)
+        {
+          // cout<<"Invert"<<endl;
+          t = -a; a = c; c = t;
+          t = -b; b = d; d = t;
+          t = P; P = R; R = t;
+          t = one;
+        }
+    }
+  // cout<<"Final (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+}
+
+int modrat(const bigint& n, const bigint& m,
            /* return values: */ bigint& a, bigint& b)
 {
- bigint q,r,t,qq,rr,tt,quot;
- q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1; 
- if (r<lim) 
-   { 
-//   cout<<" = "<<a<<"/"<<b<<"\n";
-     return 1;
-   }
- while (sign(r)!=0) 
- { 
-   ::divides(q,r,quot,t);
-   q = r;   r = t;
-   tt = qq-quot*rr; qq = rr; rr = tt;
-   if (r<lim)
-     {
-       if (abs(rr)<lim) {a=r; b=rr; return 1;}
-       cout << "\nmodrat error: no reconstruction for " << n << " mod " << m << "\n";
-       return 0;
-     }
- }
- cout << "\nmodrat error: common factor with " << n << " mod " << m << "\n";
- return 0;
+  static const bigint zero(0), one(1);
+  bigint c,d, n1 = mod(n,m);
+  gauss_reduce(n1,one,m,zero,a,b,c,d);
+  bigint lim = sqrt(m>>1);
+  return (abs(a) <= lim) && (abs(b) <= lim);
 }
 
 // Find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p) and

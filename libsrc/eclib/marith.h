@@ -31,6 +31,9 @@ int divides(const bigint& a, const bigint& b, bigint& q, bigint& r);
 int divides(const bigint& a, long b, bigint& q, long& r);
 // returns 1 iff remainder r==0
 
+// For b>0, rounded_division(a,b) = q such that a/b = q + r/b with -1/2 <= r/b < 1/2
+bigint rounded_division(const bigint& a, const bigint& b);
+
 bigint Iround(bigfloat x);
 bigint Ifloor(bigfloat x);
 bigint Iceil(bigfloat x);
@@ -155,8 +158,12 @@ int kronecker(const bigint& d, long n);
 
 long gcd(const bigint& a, long b);
 
-int modrat(const bigint& n, const bigint& m, const bigint& lim,
-           /* return values: */ bigint& a, bigint& b);
+// Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
+void gauss_reduce(const bigint& a0, const bigint& b0, const bigint& c0, const bigint& d0,
+                  bigint& a, bigint& b, bigint& c, bigint& d);
+
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
+int modrat(const bigint& n, const bigint& m, bigint& a, bigint& b);
 
 int sqrt_mod_2_power(bigint& x, const bigint& a, int e);
 int sqrt_mod_p_power(bigint& x, const bigint& a, const bigint& p, int e);

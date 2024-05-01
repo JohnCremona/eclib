@@ -29,7 +29,6 @@
 // Original version by Luiz Figueiredo
 
 int eqmodp(const smat&, const smat&, const scalar& p=DEFAULT_MODULUS);
-int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace=0);
 
 class smat {
 
@@ -92,6 +91,7 @@ public:
      friend smat operator* ( const smat& A, const smat& B );
      friend smat mult_mod_p ( const smat& A, const smat& B, const scalar& p );
      friend smat mult_mod_p_flint ( const smat& A, const smat& B, const scalar& p );
+     friend scalar maxabs( const smat& A);
      friend smat transpose(const smat&);
      friend int operator==(const smat&, const smat&);
   // Equality mod p:
@@ -102,9 +102,9 @@ public:
      friend inline double density (const smat& m)
      {return (((double)(get_population(m)))/m.nro)/m.nco;}
      friend void random_fill_in( smat&, int, scalar ); //the elimination program
-     friend int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace);
+     friend int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd);
      friend int liftmats_chinese(const smat& mm1, scalar pr1, const smat& mm2, scalar pr2,
-                                 smat& m, scalar& dd);
+                                  smat& m, scalar& dd);
  };
 
 // Declaration of non-friend functions
