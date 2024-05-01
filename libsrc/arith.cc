@@ -434,12 +434,12 @@ int modrat(long n, long m, long& a, long& b)
 }
 
 int old_modrat(long n, long m, long& a, long& b)
-{long q,r,t,qq,rr,tt,quot;
+{long q=m, r=posmod(n,m), qq=0, rr=1;
 #ifdef DEBUG_MODRAT
  cout<<"modrat("<<n<<","<<m<<")\n";
 #endif
  float lim = sqrt(float(m)/2.0);
- q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1;
+ a=r; b=1;
  if (r<lim)
    {
 #ifdef DEBUG_MODRAT
@@ -449,9 +449,9 @@ int old_modrat(long n, long m, long& a, long& b)
    }
  while (r)
  {
-   quot = q/r;
+   long quot = q/r, t, tt;
 #ifdef DEBUG_MODRAT
-   cout<<"q,r,t = "<<q<<" "<<r<<" "<<t<<"\n";
+   cout<<"q,r,qq,rr = "<<q<<" "<<r<<" "<<qq<<" "<<rr<<"\n";
 #endif
    t  =  q-quot*r;   q = r;   r = t;
    tt = qq-quot*rr; qq = rr; rr = tt;

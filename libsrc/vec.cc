@@ -250,7 +250,6 @@ int lift(const vec& v, const scalar& pr, vec& ans)
 {
   long i0, i, j, d = dim(v);
   scalar nu, de;
-  int succ;
   scalar lim = sqrt(pr>>1)-1;
   scalar maxallowed = 10*lim;
 #ifdef DEBUG_LIFT

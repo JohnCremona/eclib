@@ -158,9 +158,9 @@ private:
 
 // Declarations of nonmember, nonfriend operators and functions:
 
-ssubspace kernel(const smat& m, scalar mod=DEFAULT_MODULUS);
-ssubspace eigenspace(const smat& m, scalar lambda, scalar mod=DEFAULT_MODULUS);
-ssubspace subeigenspace(const smat& m, scalar l, const ssubspace& s);
+ssubspace kernel(const smat& sm, scalar m=DEFAULT_MODULUS);
+ssubspace eigenspace(const smat& sm, scalar lambda, scalar m=DEFAULT_MODULUS);
+ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s);
 
 // construction of a 1-dimensional sparse subspace from a vector:
-ssubspace make1d(const vec& bas, long&piv, scalar mod=DEFAULT_MODULUS);
+ssubspace make1d(const vec& bas, long&piv, scalar m=DEFAULT_MODULUS);

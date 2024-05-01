@@ -1394,18 +1394,18 @@ ssubspace kernel(const smat& sm, scalar m)
   return ssubspace(kern,pivs,m);
 }
  
-ssubspace eigenspace(const smat& m1, scalar lambda, scalar mod)
+ssubspace eigenspace(const smat& sm, scalar lambda, scalar m)
 {
-  smat m = m1; m.sub_mod_p(lambda);
-  return kernel(m,mod);
+  smat m1 = sm; m1.sub_mod_p(lambda);
+  return kernel(m1,m);
 }
  
-ssubspace subeigenspace(const smat& m1, scalar l, const ssubspace& s)
+ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s)
 {
-  return combine(s,eigenspace(restrict_mat(m1,s), l));
+  return combine(s,eigenspace(restrict_mat(sm,s), l));
 }
 
-ssubspace make1d(const vec& bas, long&piv, scalar mod)
+ssubspace make1d(const vec& bas, long&piv, scalar m)
 // make a 1-D ssubspace with basis bas
 {
   smat tbasis(1,dim(bas));
@@ -1414,5 +1414,5 @@ ssubspace make1d(const vec& bas, long&piv, scalar mod)
   vec_i pivs(1); // initialised to 0
   pivs[1]=sbas.first_index();
   piv=sbas.elem(pivs[1]);
-  return ssubspace(transpose(tbasis),pivs,mod);
+  return ssubspace(transpose(tbasis),pivs,m);
 }
