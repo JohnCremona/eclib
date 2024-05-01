@@ -60,38 +60,37 @@ ostream& operator<<(ostream& os, const Kodaira_code& c)
 bigint root(const bigint& aa, int e, const bigint & p)
 // the e'th root of aa, mod p
 {
-  bigint i, ans, temp; int found=0;
-  const bigint& a = mod(aa, p);
-  for (i = 1; (! found); ++i)
-    {ans = i;
-     if (e==2) temp = ans*ans - a;
-     else temp = ans*ans*ans - a;
-     found = div(p, temp); }
-//   bigint ans;
-//   int found = 0;
-//   bigint a = aa % p;
-//   for ( ans = 1; (ans<=p) && (! found); ++ans)
-//     found = div(p, pow(ans,e) - a);     //N.B. pow(0,p) causes problems.
-  return ans;
+  bigint a = aa%p, r, b, xe(e);
+  if (is_zero(a)) return a;
+  if (e==2)
+    {
+      sqrt_mod_p(r, a, p);
+      return r;
+    }
+  for (r = 1; r<p; ++r)
+    {
+      power_mod(b, r, xe, p);
+      if (b==a) return r;
+    }
+  return bigint(0);
 }
 
 // test if quadratic aX^2 + bX + c = 0 (mod p) has roots
 int rootsexist(const bigint& aa, const bigint& bb, const bigint& cc, const bigint& p)
 {
+  if (even(p)) return is_zero((aa*bb*cc)%p);
   const bigint& a = aa % p;
+  if (is_zero(a)) return 1;
   const bigint& b = bb % p;
   const bigint& c = cc % p;
-  const bigint& temp = (a*b*c)%p;
-  if (even(p)) return sign(temp)==0;
-  if (sign(a)==0) return 1;
-  const bigint& d = b*b - 4*a*c;
-  return legendre(d, p) >= 0;      //ie true if legendre(d,p)=0,1
+  if (is_zero(c)) return 1;
+  return legendre(b*b - 4*a*c, p) >= 0;      //ie true if legendre(d,p)=0,1
 }
 
 //monic version
 int rootsexist(const bigint& bb, const bigint& cc, const bigint& p)
 {
-  static bigint one; one=1;
+  static const bigint one(1);
   return rootsexist(one,bb,cc,p);
 }
 
@@ -354,8 +353,8 @@ bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p)
 
 bigint global_Tamagawa_exponent(const CurveRed& c, int real_too)
 {
-  const bigint one = BIGINT(1);
-  const bigint two = BIGINT(2);
+  static const bigint one(1);
+  static const bigint two(2);
   bigint ans = ((real_too && (c.conncomp==2))? two: one);
 
   for( const auto&  ri : c.reduct_array)
@@ -389,29 +388,25 @@ vector<long> tamagawa_primes(const CurveRed& C, int real_too)
 int getord_p_discr(const CurveRed& c, const bigint& p)
 {
   auto ri = c.reduct_array.find(p);
-  if(ri==c.reduct_array.end()) return 0;
-  return (ri->second).ord_p_discr;
+  return (ri==c.reduct_array.end()? 0 : (ri->second).ord_p_discr);
 }
 
 int getord_p_N(const CurveRed& c, const bigint& p)
 {
   auto ri = c.reduct_array.find(p);
-  if(ri==c.reduct_array.end()) return 0;
-  return (ri->second).ord_p_N;
+  return (ri==c.reduct_array.end()? 0 : (ri->second).ord_p_N);
 }
 
 int getord_p_j_denom(const CurveRed& c, const bigint& p)
 {
   auto ri = c.reduct_array.find(p);
-  if(ri==c.reduct_array.end()) return 0;
-  return (ri->second).ord_p_j_denom;
+  return (ri==c.reduct_array.end()? 0 : (ri->second).ord_p_j_denom);
 }
 
 int getc_p(const CurveRed& c, const bigint& p)
 {
   auto ri = c.reduct_array.find(p);
-  if(ri==c.reduct_array.end()) return 1;
-  return (ri->second).c_p;
+  return (ri==c.reduct_array.end()? : (ri->second).c_p);
 }
 
 vector<bigint> all_cp(const CurveRed& c)
@@ -444,8 +439,7 @@ bigint global_Tamagawa_number(CurveRed& c, int real_too)
 Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p)
 {
   auto ri = c.reduct_array.find(p);
-  if(ri==c.reduct_array.end()) return Kodaira_code();
-  return (ri->second).Kcode;
+  return (ri==c.reduct_array.end()? Kodaira_code() : (ri->second).Kcode);
 }
 
 void CurveRed::output(ostream& os) const
@@ -533,30 +527,20 @@ int kro_3(long x); // kronecker(x,3)
 
 void CurveRed::setLocalRootNumber2()
 {
-  static const bigint two = BIGINT(2);
+  static const bigint two(2);
   auto ri = reduct_array.find(two);
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   int kod = PariKodairaCode(info.Kcode);
   int n2  = neron(2,kod);
 
-#ifdef DEBUG_ESIGN
-  cout<<"\nIn LocalRootNumber2(), n2 = "<<n2<<"..."<<endl;
-#endif
-
   bigint mu,mv; long u,v; int v4,v6;
 
   if (is_zero(c4)) {v4=12; u=0;}
   else {mu=c4; v4=divide_out(mu,two); u = posmod(mu,64);}
-#ifdef DEBUG_ESIGN
-  cout<<"c4="<<c4<<", v4="<<v4<<", u="<<u<<endl;
-#endif
 
   if (is_zero(c6)) {v6=12; v=0;}
   else {mv=c6; v6=divide_out(mv,two); v = posmod(mv,64);}
-#ifdef DEBUG_ESIGN
-  cout<<"c6="<<c6<<", v6="<<v6<<", v="<<v<<endl;
-#endif
 
   if (kod > 4)
     {
@@ -730,16 +714,13 @@ void CurveRed::setLocalRootNumber2()
 
 void CurveRed::setLocalRootNumber3()
 {
-  static const bigint three = BIGINT(3);
+  static const bigint three(3);
   auto ri = reduct_array.find(three);
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   int kod = PariKodairaCode(info.Kcode);
   int n2  = neron(3,kod);
 
-#ifdef DEBUG_ESIGN
-  cout<<"\nIn LocalRootNumber3()..."<<endl;
-#endif
   bigint mu,mv; long u,v; int v4;
 
   if (is_zero(c4)) {
@@ -752,10 +733,6 @@ void CurveRed::setLocalRootNumber3()
     u = posmod(mu,81);
   }
 
-#ifdef DEBUG_ESIGN
-  cout<<"c4="<<c4<<", v4="<<v4<<", u="<<u<<endl;
-#endif
-
   if (is_zero(c6)) {
     v=0;
   }
@@ -765,25 +742,11 @@ void CurveRed::setLocalRootNumber3()
     v = posmod(mv,81);
   }
 
-#ifdef DEBUG_ESIGN
-  cout<<"c6="<<c6<<", v6="<<v6<<", v="<<v<<endl;
-#endif
-
   bigint tmp = discr;
   divide_out(tmp,three);
   long d1=posmod(tmp,81);
-
-#ifdef DEBUG_ESIGN
-  cout<<"d1="<<d1<<endl;
-#endif
-
   long r6 = posmod(v,9);
   long K4=kro_3(u), K6=kro_3(v);
-#ifdef DEBUG_ESIGN
-  cout<<"r6="<<r6<<endl;
-  cout<<"K4="<<K4<<endl;
-  cout<<"K6="<<K6<<endl;
-#endif
 
   if (kod > 4)
     {
@@ -900,89 +863,40 @@ void CurveRed::setLocalRootNumber(const bigint& p)
 
 int kro(const bigint& d, const bigint& n)
 {
-#ifdef DEBUG_ESIGN
-  cout<<"kro("<<d<<","<<n<<") returns "<<flush;
-#endif
-  int ans = kronecker(d,n);
-#ifdef DEBUG_ESIGN
-  cout<<ans<<endl;
-#endif
-  return ans;
+  return kronecker(d,n);
 }
 
 int kro(const bigint& d, long n)
 {
-#ifdef DEBUG_ESIGN
-  cout<<"kro("<<d<<","<<n<<") returns "<<flush;
-#endif
-  int ans = kronecker(d,n);
-#ifdef DEBUG_ESIGN
-  cout<<ans<<endl;
-#endif
-  return ans;
+  return kronecker(d,n);
 }
 
 int kro(long d, long n)
 {
-#ifdef DEBUG_ESIGN
-  cout<<"kro("<<d<<","<<n<<") returns "<<flush;
-#endif
-  int ans = kronecker(d,n);
-#ifdef DEBUG_ESIGN
-  cout<<ans<<endl;
-#endif
-  return ans;
+  return kronecker(d,n);
 }
 
 int kro_m1(long x) // kronecker(-1,x) with x>0 odd
 {
   static const int kro_m1_tab[4] = {0,1,0,-1};
-#ifdef DEBUG_ESIGN
-  if (!((x>0)&&(odd(x))))
-    {
-      cout<<"kro_m1() called with x="<<x<<endl;
-      return 0;
-    }
-#endif
   return kro_m1_tab[x&3];
 }
 
 int kro_p2(long x) // kronecker(2,x) with x>0 odd
 {
   static const int kro_p2_tab[8] = {0,1,0,-1,0,-1,0,1};
-#ifdef DEBUG_ESIGN
-  if (!((x>0)&&(odd(x))))
-    {
-      cout<<"kro_p2() called with x="<<x<<endl;
-      return 0;
-    }
-#endif
   return kro_p2_tab[x&7];
 }
 
 int kro_m2(long x) // kronecker(-2,x) with x>0 odd
 {
   static const int kro_m2_tab[8] = {0,1,0,1,0,-1,0,-1};
-#ifdef DEBUG_ESIGN
-  if (!((x>0)&&(odd(x))))
-    {
-      cout<<"kro_m2() called with x="<<x<<endl;
-      return 0;
-    }
-#endif
   return kro_m2_tab[x&7];
 }
 
 int kro_3(long x) // kronecker(x,3)
 {
   static const int kro_3_tab[3] = {0,1,-1};
-#ifdef DEBUG_ESIGN
-  if (!(x>0))
-    {
-      cout<<"kro_3() called with x="<<x<<endl;
-      return 0;
-    }
-#endif
   return kro_3_tab[x%3];
 }
 
@@ -1109,10 +1023,10 @@ int CurveRed::neron(long p, int kod)
 
 bigint Trace_Frob(CurveRed& c, const bigint& p)
 {
-  const bigint zero=BIGINT(0);
-  const bigint one=BIGINT(1);
-  const bigint two=BIGINT(2);
-  const bigint three=BIGINT(3);
+  static const bigint zero(0);
+  static const bigint one(1);
+  static const bigint two(2);
+  static const bigint three(3);
   //  cout<<"Trace_Frob at "<<p<<endl;
 
   int f = getord_p_N(c,p);
