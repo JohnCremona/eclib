@@ -1396,13 +1396,13 @@ ssubspace kernel(const smat& sm, scalar m)
  
 ssubspace eigenspace(const smat& sm, scalar lambda, scalar m)
 {
-  smat m1 = sm; m1.sub_mod_p(lambda);
-  return kernel(m1,m);
+  smat m1 = sm; m1.sub_mod_p(lambda, m);
+  return kernel(m1, m);
 }
  
-ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s)
+ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s, scalar m)
 {
-  return combine(s,eigenspace(restrict_mat(sm,s), l));
+  return combine(s,eigenspace(restrict_mat(sm,s), l, m));
 }
 
 ssubspace make1d(const vec& bas, long&piv, scalar m)

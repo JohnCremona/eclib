@@ -370,7 +370,7 @@ int main(void)
 	    cout << "display fill-in information?" << endl;
 	    cin >> flag2;
 	    if( flag ) cout << "matrix A is " << sm << endl;
-	    smat_elim A (sm );
+	    smat_elim A (sm, DEFAULT_MODULUS );
 	    if( flag2 ) 
 	      { cout << "initial population: "; display_population(A); }
 	    A.step0();
@@ -434,7 +434,7 @@ int main(void)
 	    cout << "enter matrix as an smat" << endl;
 	    cin >> sm;
 	  }
-	smat_elim A( sm );
+	smat_elim A( sm, DEFAULT_MODULUS );
 	vec_i pc, npc;
 	
 	if( flag ) {
@@ -474,7 +474,7 @@ int main(void)
 	cout << "rank is:" << dim( pc ) << endl;
 	display_population(kern);
 
-        // smat_elim A2( sm );
+        // smat_elim A2( sm, DEFAULT_MODULUS );
         // smat oldkern = A2.old_kernel(pc, npc);
         // cerr << "old version ";
 	// cout << "rank is:" << dim( pc ) << endl;
@@ -509,7 +509,7 @@ int main(void)
 	cin >> A;
 	cout << "A = \n"<<A <<endl;
 	cout << "A (as matrix) = "; A.as_mat().output_pari(); cout <<endl;
-	ssubspace ker = kernel(A);
+	ssubspace ker = kernel(A, DEFAULT_MODULUS);
 	cout << "ker(A) has dimension " << dim(ker) << endl;
 	cout << "basis =  " << basis(ker) << endl;
 
@@ -517,7 +517,7 @@ int main(void)
 	scalar lambda;
 	cin >> lambda;
 	cout<<"lambda = "<<lambda<<endl;
-	ssubspace e = eigenspace(A,lambda);
+	ssubspace e = eigenspace(A,lambda, DEFAULT_MODULUS);
 	cout << "Eigenspace for lambda = "<<lambda<<" has dimension " << dim(e) << endl;
       }
     cout << "enter new value of t  ";

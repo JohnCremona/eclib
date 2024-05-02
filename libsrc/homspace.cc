@@ -234,7 +234,7 @@ if (verbose>1)
 
    vec pivs, npivs;
 #ifdef USE_SMATS
-   smat_elim sme(relmat);
+   smat_elim sme(relmat,MODULUS);
    //relmat=smat(0,0); // clear space
    int d1;
    start_time();
@@ -350,11 +350,11 @@ if (verbose>1)
      }
 
    smat sdeltamat(deltamat);
-   kern=kernel(sdeltamat);
+   kern=kernel(sdeltamat, MODULUS);
    vec pivs, npivs;
    int d2;
    smat sk;
-   liftmat(smat_elim(sdeltamat).kernel(npivs,pivs),MODULUS,sk,d2);
+   liftmat(smat_elim(sdeltamat, MODULUS).kernel(npivs,pivs),MODULUS,sk,d2);
    denom2=d2;
    tkernbas = transpose(kern.bas());         // dim(kern) x rank
    deltamat.init(0); // clear space.

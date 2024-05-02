@@ -178,7 +178,7 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 		                 << density(data.submat_) << ")..." << flush;
   ECLOG(3) << "submat = " << data.submat_ << flush;
 
-  s = eigenspace(data.submat_,eig2); // the relative eigenspace
+  s = eigenspace(data.submat_,eig2, DEFAULT_MODULUS); // the relative eigenspace
 
   // Increment data usage counter for parent node
   data.increaseSubmatUsage();
@@ -294,11 +294,11 @@ void form_finder::make_basis( ff_data &data ) {
     if(signeig<0) seig = -eig;
 
     if(depth) {
-	    spm_rel = new ssubspace(eigenspace(subconjmat,seig));
+	    spm_rel = new ssubspace(eigenspace(subconjmat,seig, DEFAULT_MODULUS));
 	    //spm_abs  = new ssubspace(combine(*s,*spm_rel));
     }
     else {
-      spm_rel = new ssubspace(eigenspace(subconjmat,seig));
+      spm_rel = new ssubspace(eigenspace(subconjmat,seig, DEFAULT_MODULUS));
       //spm_abs = spm_rel;
     }
 
@@ -638,9 +638,9 @@ mat sparse_restrict(const mat& m, const subspace& s)
   int check=0;
   if(check) {
     smat left = sm*sb; 
-    if(dd!=1) {cout<<"(dd="<<dd<<")"; left.mult_by_scalar_mod_p(dd);}
+    if(dd!=1) {cout<<"(dd="<<dd<<")"; left.mult_by_scalar_mod_p(dd, DEFAULT_MODULUS);}
     smat right = sb*ans;
-    int ok = eqmodp(left,right);
+    int ok = eqmodp(left,right, DEFAULT_MODULUS);
     if (!ok) 
     {
       cout<<"Warning from sparse_restrict: subspace not invariant!\n";
@@ -661,7 +661,7 @@ mat sparse_restrict(const mat& m, const subspace& s)
 smat restrict_mat(const smat& m, const subspace& s)
 {
   if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
-  return mult_mod_p(m.select_rows(pivots(s)),smat(basis(s)),MODULUS);
+  return mult_mod_p(m.select_rows(pivots(s)),smat(basis(s)), DEFAULT_MODULUS);
 }
 
 #endif

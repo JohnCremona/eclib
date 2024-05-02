@@ -41,6 +41,7 @@ void showrow(int*pos, scalar*val) // for debugging
 
 smat::smat(int nr, int nc)
 {
+  static const scalar zero(0);
   nco = nc;
   nro = nr;
   col = new int * [nr];
@@ -52,7 +53,8 @@ smat::smat(int nr, int nc)
     {
       col[i] = new int [ 2 ];
       val[i] = new scalar [ 1 ];
-      col[i][1] = col[i][0] = val[i][0] = 0;
+      col[i][1] = col[i][0] = 0;
+      val[i][0] = zero;
     }
 }
 
@@ -91,14 +93,14 @@ smat::smat(const mat& m)
   for( i = 0; i < nro; i++ )
     {
       auto veci = m.entries.begin() + i*nco;
-      for( j = 0, k = 0; j < nco; j++ ) if( *veci++ ) k++;
+      for( j = 0, k = 0; j < nco; j++ ) if( !is_zero(*veci++) ) k++;
       col[i] = new int[ k+1 ];
       val[i] = new scalar[ k ];
       scalar *values = val[i]; int *pos = col[i];
       veci = m.entries.begin() + i*nco;
       *pos++ = k;
       for( l = 0, p = 1;  l < nco; l++, p++,veci++ )
-	if( *veci ) { *values++ = *veci; *pos++ = p; }
+	if( !is_zero(*veci) ) { *values++ = *veci; *pos++ = p; }
     }
 }
 
@@ -129,7 +131,7 @@ void smat::set_row( int i, int d, int* pos, scalar* values) // i counts from 0
   while(j--) {
     scalar v = *values++;
     int c = *pos++;
-    if (v)
+    if (!is_zero(v))
       {
         *coli++ = c;
         *vali++ = v;
@@ -149,7 +151,7 @@ void smat::setrow ( int i, const vec& v) // i counts from 1
   j = dimv;
   n = 0;
   while(j--)
-    if (*vi++)
+    if (!is_zero(*vi++))
       n++;
 
   // (re)allocate position and value arrays
@@ -169,7 +171,7 @@ void smat::setrow ( int i, const vec& v) // i counts from 1
   for(m=1; m<=dimv; m++)
     {
       scalar e = *vi++;
-      if (e)
+      if (!is_zero(e))
         {
           *coli++ = m;
           *vali++ = e;
@@ -250,28 +252,29 @@ svec smat::row(int i) const // extract row i as an svec, i counts from 1
 scalar smat::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
         				  * can only be used as a rvalue  */
 {
- if( (0<i) && (i<=nro) && (0<j) && (j<=nco) )
+  static const scalar zero(0);
+  if( (0<i) && (i<=nro) && (0<j) && (j<=nco) )
    {
      int d = *col[i-1];
-     if (d==0) return 0;
+     if (d==0) return zero;
      int *first = col[i-1]+1;
      int *last = col[i-1]+1+d;
      int *p = std::lower_bound(first, last, j);
      if ((p==last) || (*p!=j))
-       return 0;
+       return zero;
      return val[i-1][p-first];
    }
  else
    {
      cerr << "Bad indices ("<<i<<","<<j<<") in smat::operator ()! (nro,nco)=("<<nro<<","<<nco<<")\n";
-     exit(1);
-     return 0;
+     return zero;
    }
 }
 
 
 smat& smat::operator=(const smat& sm)
 {
+ static const scalar zero(0);
  if (this==&sm) return *this;
  nco = sm.nco;
  int i, n = sm.nro; 
@@ -293,7 +296,8 @@ smat& smat::operator=(const smat& sm)
     {
       col[i] = new int [ 2 ];
       val[i] = new scalar [ 1 ];
-      col[i][1] = col[i][0] = val[i][0] = 0;
+      col[i][1] = col[i][0];
+      val[i][0] = zero;
     }
    }
  for( i = 0; i < nro; i++ )
@@ -543,7 +547,7 @@ svec operator* ( const smat& A, const svec& v )
   for(int j = 1; j<=n; j++)
     {
       scalar s = (A.row(j))*v;
-      if(s) prod.entries[j]=s;
+      if(!is_zero(s)) prod.entries[j]=s;
     }
   return prod;
 }
@@ -819,18 +823,16 @@ istream& operator >> (istream& s, smat& sm)
   return s;
 }
 
-
-    
 // Definition of non-friend functions
 
 smat operator+(const smat& sm)
 {
-        return sm;
+  return sm;
 }
 
 smat operator-(const smat& sm)
 {
-        return (-1)*sm;
+  return scalar(-1)*sm;
 }
 
 smat operator+(const smat& sm1, const smat& sm2)
@@ -866,7 +868,7 @@ int get_population(const smat& m )
       int d = *(m.col[r]);
       if(d==0) continue;
       int *pos = m.col[r] + 1;
-      while( d-- ) { count += ( *pos++ != 0 );}
+      while( d-- ) { count += ( !is_zero(*pos++) );}
     }
   return count;
 }
@@ -1004,7 +1006,7 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
 // (unsigned long) while non-standard was hmod_mat_t, with entries
 // hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
 // wrapper.  We use the former when scalar=long and the latter when
-// scalar=int and the FLINT versin is at least 3.  The unsigned
+// scalar=int and the FLINT version is at least 3.  The unsigned
 // scalar types are #define'd as uscalar.
 
 void mod_mat_from_smat(mod_mat& A, const smat& M, scalar pr)
@@ -1013,13 +1015,13 @@ void mod_mat_from_smat(mod_mat& A, const smat& M, scalar pr)
   long i, j;
 
   // copy of the modulus for FLINT
-  uscalar p = (uscalar)pr;
+  uscalar p = (uscalar)I2long(pr);
 
   // create flint matrix copy of M:
   mod_mat_init(A, nr, nc, p);
   for(i=0; i<nr; i++)
     for(j=0; j<nc; j++)
-      mod_mat_entry(A,i,j) = (uscalar)posmod(M.elem(i+1,j+1),pr);
+      mod_mat_entry(A,i,j) = (uscalar)I2long(posmod(M.elem(i+1,j+1),pr));
 }
 
 smat smat_from_mod_mat(const mod_mat& A, const scalar& p) //scalar just to fix return type
@@ -1033,7 +1035,7 @@ smat smat_from_mod_mat(const mod_mat& A, const scalar& p) //scalar just to fix r
     {
       svec rowi(nc);
       for(j=0; j<nc; j++)
-        rowi.set(j+1, mod_mat_entry(A,i,j));
+        rowi.set(j+1, scalar(mod_mat_entry(A,i,j)));
       M.setrow(i+1,rowi);
     }
   return M;
@@ -1049,7 +1051,7 @@ smat mult_mod_p_flint ( const smat& A, const smat& B, const scalar& pr )
   mod_mat A1, B1, C1;
   mod_mat_from_smat(A1,A,pr);
   mod_mat_from_smat(B1,B,pr);
-  mod_mat_init(C1, A.nrows(), B.ncols(), pr);
+  mod_mat_init(C1, A.nrows(), B.ncols(), I2long(pr));
   // timer T;
   // T.start();
   mod_mat_mul(C1,A1,B1);

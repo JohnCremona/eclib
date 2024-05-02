@@ -107,7 +107,7 @@ public:
   void free_space( int col );
   void elim( int row1, int row2, scalar v2 );
   // constructor:
-  explicit smat_elim( const smat& sm, scalar mod=DEFAULT_MODULUS) : smat( sm ), modulus(mod) { init(); };
+  explicit smat_elim( const smat& sm, scalar mod) : smat( sm ), modulus(mod) { init(); };
   smat_elim( int r = 0,int c = 0 );
   // destructor:
   ~smat_elim();
@@ -158,9 +158,9 @@ private:
 
 // Declarations of nonmember, nonfriend operators and functions:
 
-ssubspace kernel(const smat& sm, scalar m=DEFAULT_MODULUS);
-ssubspace eigenspace(const smat& sm, scalar lambda, scalar m=DEFAULT_MODULUS);
-ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s);
+ssubspace kernel(const smat& sm, scalar m);
+ssubspace eigenspace(const smat& sm, scalar lambda, scalar m);
+ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s, scalar m);
 
 // construction of a 1-dimensional sparse subspace from a vector:
-ssubspace make1d(const vec& bas, long&piv, scalar m=DEFAULT_MODULUS);
+ssubspace make1d(const vec& bas, long&piv, scalar m);

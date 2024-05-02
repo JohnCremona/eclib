@@ -28,7 +28,7 @@
 
 // Original version by Luiz Figueiredo
 
-int eqmodp(const smat&, const smat&, const scalar& p=DEFAULT_MODULUS);
+int eqmodp(const smat&, const smat&, const scalar& p);
 
 class smat {
 
@@ -45,7 +45,7 @@ public:
 
      smat (int nr=0, int nc = 0);
      smat (const smat&);                  // copy constructor
-     explicit smat (const mat &);                  // conversion constructor
+     explicit smat (const mat &);         // conversion constructor
      ~smat();                             // destructor
 
      // member functions & operators
@@ -59,10 +59,10 @@ public:
      smat& operator-= (const scalar& s)   // subtracts scalar*identity
       {this->operator+=(-s); return *this;}
      smat& operator*= (scalar);
-     void sub_mod_p(const scalar& lambdal, const scalar& p=DEFAULT_MODULUS); 
+     void sub_mod_p(const scalar& lambdal, const scalar& p);
       // subtracts scalar*identity mod p
-     void reduce_mod_p(const scalar& p=DEFAULT_MODULUS);
-     smat& mult_by_scalar_mod_p (scalar scal, const scalar& p=DEFAULT_MODULUS);
+     void reduce_mod_p(const scalar& p);
+     smat& mult_by_scalar_mod_p (scalar scal, const scalar& p);
      smat& operator/= (scalar);
      mat operator*( const mat& );
      void set_row ( int, int, int*, scalar* );
@@ -72,15 +72,15 @@ public:
      svec row(int) const; // extract row i as an svec
      int nrows() const {return nro;}
      int ncols() const {return nco;}
-     long rank(scalar mod=DEFAULT_MODULUS);
-     long nullity(const scalar& lambda, scalar mod=DEFAULT_MODULUS); // nullity of this-lambda*I
+     long rank(scalar mod);
+     long nullity(const scalar& lambda, scalar mod); // nullity of this-lambda*I
 
      static smat scalar_matrix(int n, const scalar& a);  // nxn scalar matrix a*I
      static smat identity_matrix(int n) {return scalar_matrix(n, scalar(1));}  // nxn identity matrix I
 
      // non-member (friend) functions and operators
 
-     friend inline vector<int> dim(const smat& A) 
+     friend inline vector<int> dim(const smat& A)
      {vector<int>d; d.push_back(A.nro);d.push_back(A.nco);return d;}
      friend vec operator*  (const smat& m, const vec& v);
      friend svec operator* ( const smat& A, const svec& v );

@@ -95,10 +95,10 @@ int main(void)
    smat conjmat = hplus.s_conj(1);
    cout<<" done."<<endl;
    cout << "Computing +1 eigenspace...  " << flush;
-   ssubspace h1plus = eigenspace(conjmat,den);
+   ssubspace h1plus = eigenspace(conjmat,den, MODULUS);
    cout<<" done, dimension = "<<dim(h1plus)<<endl;
    cout << "Computing -1 eigenspace...  " << flush;
-   ssubspace h1minus = eigenspace(conjmat,-den);
+   ssubspace h1minus = eigenspace(conjmat,-den, MODULUS);
    cout<<" done, dimension = "<<dim(h1minus)<<endl;
 
    int w_eigs=0;
@@ -131,7 +131,7 @@ int main(void)
 	  */
 	  cout<<"Using sparse matrix code..."<<endl;
 	  start_time();
-	  mult=dim(eigenspace(swq,e*den));
+	  mult=dim(eigenspace(swq,e*den, MODULUS));
 	  stop_time();
 	  show_time(cerr); cerr<<endl;
 	  cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;

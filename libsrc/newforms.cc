@@ -274,9 +274,9 @@ void newform::fixup_eigs()
       long piv;
       ssubspace espace;
       if(sign==-1)
-        espace=make1d(bminus,piv);
+        espace=make1d(bminus,piv, MODULUS);
       else
-        espace=make1d(bplus,piv);
+        espace=make1d(bplus,piv, MODULUS);
       piv*=denom;
       while(aqi!=aqlist.end()) // compute missing aq
 	{
@@ -658,9 +658,9 @@ void newform::add_more_ap(int nap)
 	  if(!have_espace)
 	    {
               if(sign==-1)
-                espace=make1d(bminus,piv);
+                espace=make1d(bminus,piv, MODULUS);
               else
-                espace=make1d(bplus,piv);
+                espace=make1d(bplus,piv, MODULUS);
 	      piv*=nf->h1->h1denom();
 	      have_espace=1;
 	    }
