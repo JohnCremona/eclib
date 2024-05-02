@@ -31,18 +31,9 @@ svec::svec(const vec& v)
   for(int i = 1; i <= d; i++ )
     {
       scalar vi = v[i];
-      if(vi) // assignment not equality!
+      if(!is_zero(vi))
         entries[i]=vi;
     }
-}
-
-svec::svec (int dim, scalar* a)     // conversion constructor
-  :d(dim)
-{
-  scalar* ai=a;
-  for(int i=0 ; i<d; i++)
-    if(*ai++)
-      entries[i+1]=*ai;
 }
 
 vec svec::as_vec( ) const
@@ -56,13 +47,13 @@ vec svec::as_vec( ) const
 scalar svec::elem(int i)  const   // returns i'th entry
 {
   auto vi = entries.find(i);
-  if(vi==entries.end()) return 0;
+  if(vi==entries.end()) return scalar(0);
   return vi->second;
 }
 
-void svec::set(int i, scalar a)
+void svec::set(int i, const scalar& a)
 {
-  if(a) entries[i]=a;
+  if(!is_zero(a)) entries[i]=a;
 }
 
 void svec::erase(int i)
@@ -84,50 +75,42 @@ std::set<int> svec::support() const
   return ans;
 }
 
-void svec::add(int i, scalar a)   // adds a to i'th entry
+void svec::add(int i, const scalar& a)   // adds a to i'th entry
 {
-  if(!a) return;
+  if(is_zero(a)) return;
   auto  vi = entries.find(i);
   if(vi==entries.end())
     entries[i]=a;
   else
     {
       scalar sum = (vi->second)+a;
-      if(sum==0) entries.erase(vi);
+      if(is_zero(sum)) entries.erase(vi);
       else (vi->second)=sum;
     }
 }
 
-void svec::sub(int i, scalar a)   // subtracts a from i'th entry
+void svec::sub(int i, const scalar& a)   // subtracts a from i'th entry
 {
-  if(!a) return;
-  auto vi = entries.find(i);
-  if(vi==entries.end())
-    entries[i]=-a;
-  else
-    {
-      scalar sum = (vi->second)-a;
-      if(sum==0) entries.erase(vi);
-      else (vi->second)=sum;
-    }
+  if(is_zero(a)) return;
+  add(i, -a);
 }
 
-void svec::add_mod_p(int i, scalar a, const scalar& p)
+void svec::add_mod_p(int i, const scalar& aa, const scalar& p)
 {
-  a=mod(a,p);
-  if(!a) return;
+  scalar a=mod(aa,p);
+  if(is_zero(a)) return;
   auto vi = entries.find(i);
   if(vi==entries.end())
     entries[i]=a;
   else
     {
       scalar sum = mod((vi->second)+a,p);
-      if(sum==0) entries.erase(vi);
+      if(is_zero(sum)) entries.erase(vi);
       else (vi->second)=sum;
     }
 }
 
-void svec::sub_mod_p(int i, scalar a, const scalar& p)
+void svec::sub_mod_p(int i, const scalar& a, const scalar& p)
 {
   add_mod_p(i, -a, p);
 }
@@ -163,7 +146,7 @@ svec& svec::operator+=(const svec& w)
 	    else
 	      {
 		scalar sum = (vi->second) + (wi->second);
-		if(sum) {vi->second = sum; vi++;}
+		if(!is_zero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first);}
 		wi++;
 	      }
@@ -174,52 +157,18 @@ svec& svec::operator+=(const svec& w)
 
 svec& svec::operator-=(const svec& w)
 {
-  if (d!=w.d)
-    {
-      cerr << "Incompatible svecs in svec::operator-=()"<<endl;
-      return *this;
-    }
-  auto wi=w.entries.begin();
-  auto vi=entries.begin();
-  while(wi!=w.entries.end())
-    {
-      if(vi==entries.end())
-	{
-	  while(wi!=w.entries.end())
-	    {
-	      entries[wi->first]=-wi->second;
-	      wi++;
-	    }
-	}
-      else
-	{
-	  if((vi->first)<(wi->first))  {vi++;}
-	  else
-	    if((wi->first)<(vi->first))
-	      {
-		entries[wi->first]=-wi->second;
-		wi++;
-	      }
-	    else
-	      {
-		scalar diff = (vi->second) - (wi->second);
-		if(diff) {vi->second = diff; vi++;}
-		else {vi++; entries.erase(wi->first);}
-		wi++;
-	      }
-	}
-    }
+  this -> operator+=(-w);
   return *this;
 }
 
-svec& svec::add_scalar_times(const svec& w, scalar a)
+svec& svec::add_scalar_times(const svec& w, const scalar& a)
 {
   if (d!=w.d)
     {
       cerr << "Incompatible svecs in svec::add_scalar_times()"<<endl;
       return *this;
     }
-  if(a==0) return *this;
+  if(is_zero(a)) return *this;
   auto wi=w.entries.begin();
   auto vi=entries.begin();
   while(wi!=w.entries.end())
@@ -244,7 +193,7 @@ svec& svec::add_scalar_times(const svec& w, scalar a)
 	    else
 	      {
 		scalar sum = (vi->second) + a* (wi->second);
-		if(sum) {vi->second = sum; vi++;}
+		if(!is_zero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first);}
 		wi++;
 	      }
@@ -253,9 +202,8 @@ svec& svec::add_scalar_times(const svec& w, scalar a)
   return *this;
 }
 
-svec& svec::operator*=(scalar scal)
+svec& svec::operator*=(const scalar& scal)
 {
-  //  if(scal==0) cout<<"Attempt to multiply svec by 0\n"<<endl;
   for ( auto& vi : entries)
     (vi.second)*=scal;
   return *this;
@@ -267,7 +215,7 @@ void svec::reduce_mod_p(const scalar& p)
   while( vi != entries.end() )
     {
       scalar a = mod(vi->second,p);
-      if(a)
+      if(!is_zero(a))
         {
           (vi->second)=a;
           vi++;
@@ -279,16 +227,16 @@ void svec::reduce_mod_p(const scalar& p)
     }
 }
 
-svec& svec::mult_by_scalar_mod_p(scalar scal, const scalar& p)
+svec& svec::mult_by_scalar_mod_p(const scalar& scal, const scalar& p)
 {
   scalar s = mod(scal,p);
-  if(s!=1)
+  if(!is_one(s))
     for( auto& vi : entries)
       (vi.second)=xmodmul(vi.second,s,p);
   return *this;
 }
 
-svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, const scalar& p)
+svec& svec::add_scalar_times_mod_p(const svec& w, const scalar& scal, const scalar& p)
 {
   if (d!=w.d)
     {
@@ -296,7 +244,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, const scalar& p)
       return *this;
     }
   scalar a = mod(scal,p);
-  if(a==0) return *this;
+  if(is_zero(a)) return *this;
   auto wi=w.entries.begin();
   auto vi=entries.begin();
   while(wi!=w.entries.end())
@@ -321,7 +269,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, const scalar& p)
 	    else
 	      {
 		scalar sum = xmod((vi->second) + xmodmul(a, (wi->second),p),p);
-		if(sum) {vi->second = sum; vi++;}
+		if(!is_zero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first); }
 		wi++;
 	      }
@@ -331,7 +279,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, const scalar& p)
   return *this;
 }
 
-svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, std::set<int>& ons, std::set<int>& offs,
+svec& svec::add_scalar_times_mod_p(const svec& w, const scalar& scal, std::set<int>& ons, std::set<int>& offs,
 				   const scalar& p)
 {
   ons.clear();
@@ -342,7 +290,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, std::set<int>& on
       return *this;
     }
   scalar a = mod(scal,p);
-  if(a==0) return *this;
+  if(is_zero(a)) return *this;
   auto wi=w.entries.begin();
   auto vi=entries.begin();
   while(wi!=w.entries.end())
@@ -369,7 +317,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, scalar scal, std::set<int>& on
 	    else
 	      {
 		scalar sum = xmod((vi->second) + xmodmul(a, (wi->second),p),p);
-		if(sum) {vi->second = sum; vi++;}
+		if(!is_zero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first); offs.insert(wi->first);}
 		wi++;
 	      }
@@ -410,7 +358,7 @@ svec& svec::add_mod_p(const svec& w, const scalar& p)
 	    else
 	      {
 		scalar sum = xmod((vi->second) + (wi->second),p);
-		if(sum) {vi->second = sum; vi++;}
+		if(!is_zero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first); }
 		wi++;
 	      }
@@ -421,50 +369,14 @@ svec& svec::add_mod_p(const svec& w, const scalar& p)
 
 svec& svec::sub_mod_p(const svec& w, const scalar& p)
 {
-  if (d!=w.d)
-    {
-      cerr << "Incompatible svecs in svec::add_scalar_times()"<<endl;
-      return *this;
-    }
-  auto wi=w.entries.begin();
-  auto vi=entries.begin();
-  while(wi!=w.entries.end())
-    {
-      if(vi==entries.end())
-	{
-	  while(wi!=w.entries.end())
-	    {
-	      entries[wi->first]=-(wi->second);
-	      wi++;
-	    }
-	}
-      else
-	{
-	  if((vi->first)<(wi->first)) {vi++;}
-	  else
-	    if((wi->first)<(vi->first))
-	      {
-		entries[wi->first]=-(wi->second);
-		wi++;
-	      }
-	    else
-	      {
-		scalar sum = xmod((vi->second) - (wi->second),p);
-		if(sum) {vi->second = sum; vi++;}
-		else {vi++; entries.erase(wi->first); }
-		wi++;
-	      }
-	}
-    }
+  add_mod_p(-w, p);
   return *this;
 }
 
-svec& svec::operator/=(scalar scal)
+svec& svec::operator/=(const scalar& scal)
 {
-  if(scal==0)
-    {
-      cerr<<"Attempt to divide svec by 0"<<endl;
-    }
+  if(is_zero(scal))
+    cerr<<"Attempt to divide svec by 0"<<endl;
   for( auto& vi : entries)
     (vi.second)/=scal;
   return *this;
@@ -505,7 +417,7 @@ ostream& operator << (ostream& s, const svec& v)
 
 scalar operator*(const svec& v, const svec& w) //dot prod
 {
-  scalar ans=0;
+  scalar ans(0);
   if((v.entries.size()==0)||(w.entries.size()==0)) return ans;
   auto vi=v.entries.begin(), wi=w.entries.begin();
   while((vi!=v.entries.end())&&(wi!=w.entries.end()))
@@ -522,24 +434,24 @@ scalar operator*(const svec& v, const svec& w) //dot prod
 
 scalar operator*(const svec& v, const vec& w) //dot prod
 {
-  scalar ans=0;
+  scalar ans(0);
   if((v.entries.size()==0)) return ans;
   for( const auto& vi : v.entries)
     ans+=(vi.second)* w[vi.first];
   return ans;
 }
 
-scalar dotmodp(const svec& v, const vec& w, scalar pr)
+scalar dotmodp(const svec& v, const vec& w, const scalar& pr)
 {
-  scalar ans=0;
+  scalar ans(0);
   for( const auto& vi : v.entries)
     ans=mod(ans+xmodmul(vi.second,w[vi.first],pr),pr);
   return ans;
 }
 
-scalar dotmodp(const svec& v, const svec& w, scalar pr)
+scalar dotmodp(const svec& v, const svec& w, const scalar& pr)
 {
-  scalar ans=0;
+  scalar ans(0);
   if((v.entries.size()==0)||(w.entries.size()==0)) return ans;
   auto vi=v.entries.begin(), wi=w.entries.begin();
   while((vi!=v.entries.end())&&(wi!=w.entries.end()))
@@ -556,14 +468,14 @@ scalar dotmodp(const svec& v, const svec& w, scalar pr)
 
 scalar content(const svec& v)
 {
-  scalar ans=0;
+  scalar g(0);
   for( const auto & vi : v.entries)
     {
-      ans=gcd(ans,vi.second);
-      if (ans==1)
-        break;
+      g=gcd(g,vi.second);
+      if (is_one(g))
+        return g;
     }
-  return ans;
+  return g;
 }
 
 scalar make_primitive(svec& v) // divides by & returns content

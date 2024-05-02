@@ -613,8 +613,7 @@ svec mult_mod_p( const smat& A, const svec& v, const scalar& p  )
     }
   else
     {
-      int i;
-      for(i=1; i<=A.nrows(); i++)
+      for(int i=1; i<=A.nrows(); i++)
         w.set(i,dotmodp(A.row(i),v,p));
     }
   return w;
@@ -630,8 +629,7 @@ vec mult_mod_p( const smat& A, const vec& v, const scalar& p  )
     }
   else
     {
-      int i;
-      for(i=1; i<=A.nrows(); i++)
+      for(int i=1; i<=A.nrows(); i++)
         w.set(i,dotmodp(A.row(i),v,p));
     }
   return w;

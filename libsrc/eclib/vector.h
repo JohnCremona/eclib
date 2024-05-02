@@ -28,9 +28,9 @@
 
 class vec_i; class vec_l; class vec_m;
 class mat_i; class mat_l; class mat_m;
-class svec_i; class svec_l;
-class smat_i; class smat_l;
-class smat_i_elim; class smat_l_elim;
+class svec_i; class svec_l; class svec_m;
+class smat_i; class smat_l; class smat_m;
+class smat_i_elim; class smat_l_elim; class smat_m_elim;
 class subspace_i; class subspace_l; class subspace_m;
 
 #undef scalar
