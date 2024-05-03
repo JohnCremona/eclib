@@ -32,11 +32,12 @@ class bigrational {
 public:
         // constructors
         bigrational() : n(0), d(1) {;}
-        bigrational(const bigint& num_val) : n(num_val), d(1) {;}
+        explicit bigrational(const bigint& num_val) : n(num_val), d(1) {;}
         bigrational(const bigint& num_val, const bigint& den_val);
         bigrational(const bigrational& q);
         explicit bigrational(const rational& q);
         void operator=(const bigrational& q);
+        void operator=(const bigint& a);
         void operator=(const rational& q);
 
         // bigrational manipulations
@@ -103,6 +104,7 @@ inline bigrational::bigrational(const bigint& num_val, const bigint& den_val)
 inline bigrational::bigrational(const bigrational& q) :n(q.n), d(q.d) {;}
 inline bigrational::bigrational(const rational& q) :n(q.n), d(q.d) {;}
 inline void bigrational::operator=(const bigrational& q) {n=q.n; d=q.d;}
+inline void bigrational::operator=(const bigint& a) {n=a; d=bigint(1);}
 inline void bigrational::operator=(const rational& q) {n=bigint(q.n); d=bigint(q.d);}
 
 inline bigrational bigrational::operator+()

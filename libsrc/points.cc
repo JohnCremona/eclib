@@ -482,7 +482,7 @@ vector<Point> m_torsion(Curvedata& E, long m, int exact)
   // accumulate the points with each x-coorindate:
   for( const auto& xi : xs)
     {
-      vector<Point> Ps = points_from_x(E, xi);
+      vector<Point> Ps = points_from_x(E, bigrational(xi));
 #ifdef DEBUG_TORSION
       cout<<" x = "<<xi<< " gives points "<<Ps<<" of order dividing "<<m<<": "<<Ps<<"\n";
 #endif
