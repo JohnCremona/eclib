@@ -76,6 +76,11 @@ using namespace NTL;
 
 typedef ZZ bigint;
 
+inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
+inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
+int I2int(const bigint& x);    // too long to inline
+long I2long(const bigint& x);  // too long to inline
+
 
 // Reals and Complexes
 
@@ -209,10 +214,5 @@ inline int is_approx_zero(const bigcomplex& z)
 // default to use if the variable is not set or empty.
 
 string getenv_with_default(string env_var, string def_val);
-
-inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
-inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
-int I2int(const bigint& x);    // too long to inline
-long I2long(const bigint& x);  // too long to inline
 
 #endif // #define _INTERFACE_H_
