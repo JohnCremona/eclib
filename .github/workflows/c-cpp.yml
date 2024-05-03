@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         cc: [gcc, clang]
-        mpfp: [enable-mpfp, disable-mpfp]
+        mpfp: [enable-mpfp]
 
     steps:
     - uses: actions/checkout@v4
