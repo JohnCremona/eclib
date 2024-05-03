@@ -296,7 +296,7 @@ smat& smat::operator=(const smat& sm)
     {
       col[i] = new int [ 2 ];
       val[i] = new scalar [ 1 ];
-      col[i][1] = col[i][0];
+      col[i][1] = col[i][0] = 0;
       val[i][0] = zero;
     }
    }
