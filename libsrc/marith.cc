@@ -39,43 +39,6 @@ vector<bigint> show(const vector<bigint>& a) {cout<<a<<endl; return a;}
 
 // integers and rationals
 
-int I2int(const bigint& x)
-{
-  if(IsZero(x)) return 0;
-  if(!is_int(x)) 
-    {
-      cerr<<"Attempt to convert "<<x<<" to int fails!"<<endl;
-      return 0;
-    }
-  switch(sign(x)) {
-  case 0: 
-    return (int)0;
-  case 1: 
-    return (x==MAXINT? (int)MAXINT : (int)rem(x,(long)MAXINT));
-  default:
-    return (x==MININT? (int)MININT : -I2int(-x));
-  }
-}
-
-
-long I2long(const bigint& x) 
-{
-  if(IsZero(x)) return 0;
-  if(!is_long(x))
-    {
-      cerr<<"Attempt to convert "<<x<<" to long fails!"<<endl;
-      return 0;
-    }
-  switch(sign(x)) {
-  case 0: 
-    return 0;
-  case 1: 
-    return (x==MAXLONG? (long)MAXLONG : (long)rem(x,(long)MAXLONG));
-  default: 
-    return (x==MINLONG? (long)MINLONG : -I2long(-x));
-  }
-}
-
 bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy)
 {bigint ans; XGCD(ans,xx,yy,aa,bb); return ans;}
 int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)

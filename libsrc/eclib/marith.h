@@ -40,12 +40,8 @@ inline void lshift(const bigint& a, long i, bigint& c) {LeftShift(c,a,i);}
 #endif
 inline void setbit(bigint& a, int e) {SetBit(a,e);}
 inline long lg(const bigint& x) {return NumBits(x)-1;}
-inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
-inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
 
 // The following are not in NTL & need defining
-int I2int(const bigint& x);    // too long to inline
-long I2long(const bigint& x);  // too long to inline
 inline void longasI(long& a, const bigint& x) {a = I2long(x);}
 inline void negate(bigint& a) {a=-a;}
 inline void sqrt(bigint& a, const bigint& b) {SqrRoot(a,b);}

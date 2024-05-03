@@ -140,17 +140,21 @@ inline RR to_bigfloat(const int& n) {return to_RR(n);}
 inline RR to_bigfloat(const long& n) {return to_RR(n);}
 inline RR to_bigfloat(const double& x) {return to_RR(x);}
 inline RR I2bigfloat(const bigint& x) { return to_RR(x);}
+inline double I2double(const bigint& x) {return to_double(x);}
 inline int doublify(const bigfloat& x, double& d){ d=to_double(x); return 0;}
 int longify(const bigfloat& x, long& a, int rounding=0);
 inline int is_real_zero(bigfloat x) {return IsZero(x);}
 inline int is_complex_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
 inline void Iasb(bigint& a, bigfloat x) {RoundToZZ(a,x);}
+inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
+inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
+int I2int(const bigint& x);    // too long to inline
+long I2long(const bigint& x);  // too long to inline
 inline void Iasb(long& a, bigfloat x) {ZZ n; RoundToZZ(n,x); a=I2long(n);}
 istream& operator>>(istream& is, bigcomplex& z);
 inline bigcomplex pow(const bigcomplex& a, int e)  {return (to_RR(e)*a.log()).exp();}
 inline bigcomplex pow(const bigcomplex& a, long e)  {return (to_RR(e)*a.log()).exp();}
 inline bigcomplex pow(const bigcomplex& a, const RR& e)  {return (e*a.log()).exp();}
-
 
 //////////////////////////////////////////////////////////////////
 #else  // C doubles and libg++ Complexes
@@ -187,7 +191,6 @@ inline double to_bigfloat(const int& n) {return double(n);}
 inline double to_bigfloat(const long& n) {return double(n);}
 inline double to_bigfloat(const double& x) {return x;}
 inline double I2double(const bigint& x) {return to_double(x);}
-inline bigfloat I2bigfloat(const bigint& x) {return I2double(x);}
 
 // complexes
 
