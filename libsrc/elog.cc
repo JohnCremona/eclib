@@ -385,11 +385,10 @@ vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P
   Point Q(E);
 
   bigcomplex z(to_bigfloat(0)), w;
-  bigint den;
+  bigint den(1);
   int zero_flag = P.is_zero();
   if(zero_flag)
     {
-      den=BIGINT(1);
       if(even(m)) ans=two_torsion(E); // computed algebraically
       else        ans.push_back(P);   // (more robust)
     }

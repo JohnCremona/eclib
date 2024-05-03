@@ -53,10 +53,11 @@ two_descent::two_descent(Curvedata* ec,
 	      long n_aux, int second_descent)
   :verbose(verb), selmer_only(sel), e_orig(*ec) 
   {
+    static const bigint one(1);
     qai.resize(5);
     bigint a1,a2,a3,a4,a6;
     ec->getai(a1,a2,a3,a4,a6);
-    v=BIGINT(1); 
+    v=one;
     qai[0]=a1; qai[1]=a2; qai[2]=a3; qai[3]=a4; qai[4]=a6;
     do_the_descent(firstlim,secondlim,n_aux,second_descent);
   }

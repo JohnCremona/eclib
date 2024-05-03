@@ -54,16 +54,16 @@ public:
     : X(x), Y(y), Z(z)
     { reduce(); }
   P2Point(const bigint& x, const bigint& y, long z)
-    : X(x), Y(y), Z(BIGINT(z))
+    : X(x), Y(y), Z(z)
     { reduce(); }
   P2Point(const bigint& x, long y, long z)
-    : X(x), Y(BIGINT(y)), Z(BIGINT(z))
+    : X(x), Y(y), Z(z)
     { reduce(); }
   P2Point(long x, long y, long z)
-    : X(BIGINT(x)), Y(BIGINT(y)), Z(BIGINT(z))
+    : X(x), Y(y), Z(z)
     { reduce(); }
   P2Point(const bigint& x, const bigint& y)
-    : X(x), Y(y), Z(BIGINT(1))
+    : X(x), Y(y), Z(1)
     { ; } // no need to reduce 
   /* The following creates ambiguities owing to the bigint->bigrational coercion
   P2Point(const bigrational& x, const bigrational& y)
@@ -111,7 +111,7 @@ public:
   void init(const bigint& x, const bigint& y, const bigint& z)
   {X=x; Y=y; Z=z; reduce(); }
   void init(const bigint& x, const bigint& y)
-  {X=x; Y=y; Z = BIGINT(1); }
+  {X=x; Y=y; Z = bigint(1); }
   void operator=(const P2Point& Q) // P1 = P2
     { X=Q.X ; Y=Q.Y; Z=Q.Z;  }
 
@@ -134,8 +134,9 @@ public:
   bigint getX() const {return X; }
   bigint getY() const {return Y; }
   bigint getZ() const {return Z; }
-  int isintegral() const { return Z==BIGINT(1); }
-  int isinfinite() const { return Z==BIGINT(0); }
+  int isintegral() const { return is_one(Z); }
+  int isinfinite() const { return is_zero(Z); }
+  int isfinite() const { return is_nonzero(Z); }
 
 }; // end of p2point class
 

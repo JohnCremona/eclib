@@ -137,7 +137,7 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
 
 int qpsoluble(const quartic& g, const bigint& p)
 { 
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   bigint a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
   if (zpsol(a,b,c,d,e,p,zero,0)) return 1;
   else return zpsol(e,d,c,b,a,p,zero,1);
@@ -146,21 +146,21 @@ int qpsoluble(const quartic& g, const bigint& p)
 int qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
 	      const bigint& e, const bigint& p)
 { 
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   if (zpsol(a,b,c,d,e,p,zero,0)) return 1;
   else return zpsol(e,d,c,b,a,p,zero,1);
 } /* end of qpsoluble */
 
 int qpsoluble(const bigint& a, const bigint& c, const bigint& e, const bigint& p)
 { 
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   if (zpsol(a,zero,c,zero,e,p,zero,0)) return 1;
   else return zpsol(e,zero,c,zero,a,p,zero,1);
 } /* end of qpsoluble */
 
 int Rsoluble(const quartic& g)
 {
-  return ((g.gettype()>1)||(g.geta()>BIGINT(0)));
+  return ((g.gettype()>1)|| is_positive(g.geta()));
 }
 
 int Rsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,  
@@ -182,14 +182,8 @@ int locallysoluble(const quartic& g, const vector<bigint>& plist, bigint& badp)
 int locallysoluble(const bigint& a, const bigint& c, const bigint& e, 
 		   const vector<bigint>& plist, bigint& badp)
 {
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   bigint d = c*c-4*a*e;
-//   cout<<"In locallysoluble(a,c,e) with plist = "<<plist<<endl;
-//   cout<<"(a,c,e)=("<<a<<","<<c<<","<<e<<")\n";
-//   cout<<"d="<<d<<endl;
-//   int h = global_hilbert(a,d,plist,badp);
-//   cout<<"global_hilbert() returns "<<h<<endl;
-//   if(h) {cout<<"badp="<<badp<<endl; return 0;}
   if(global_hilbert(a,d,plist,badp)) return 0;
   return locallysoluble(a,zero,c,zero,e,plist,badp);
 }
@@ -200,7 +194,7 @@ int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigi
   // First check R-solubility
   if (!Rsoluble(a,b,c,d,e))
     {
-      badp = BIGINT(0);
+      badp = bigint(0);
       return 0;
     }
   if(is_zero(b)&&is_zero(d)) // do a quick Hilbert check:

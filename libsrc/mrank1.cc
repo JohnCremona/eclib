@@ -122,6 +122,7 @@ void rank1::show_eps_vec(const vector<long>& vec)
 void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 		       const bigint& d, const bigint& e)
 {
+  static bigint one(1);
   long firsti, i, oldnumber=0, thisnumber, nfl;
   char ab;
   int trivial=0, newone=1, gls=0, els=0;
@@ -207,7 +208,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 
       if(selmer_only)
 	{
-	  gls = ratpoint(thisq,BIGINT(1),BIGINT(lim1),x,y,z);
+	  gls = ratpoint(thisq, one,bigint(lim1),x,y,z);
 	  if(gls) els=1;
 	  else els=locallysoluble(thisq,plist,badp);
           if(verbose)
@@ -218,7 +219,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 	}
       else
 
-      if (ratpoint(thisq,BIGINT(1),BIGINT(lim1),x,y,z))
+      if (ratpoint(thisq, one,bigint(lim1),x,y,z))
 	{
 	  gls=els=1;
 	  if (verbose) cout<<"(x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
@@ -398,6 +399,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 
 void rank1::getquartics()
 {
+  static bigint two(2), three(3);
   nquarticsa = 0; nfirstlota = 0;
   nquarticsb = 0; nfirstlotb = 0;
   have_eggpoint = 0;
@@ -521,7 +523,7 @@ void rank1::getquartics()
 
   vector<bigint> plist0 = getbad_primes(*the_curve); // sorted by construction
   // now make sure 2 and 3 are in the list of primes
-  vector<bigint> p23; p23.push_back(BIGINT(2)); p23.push_back(BIGINT(3));
+  vector<bigint> p23 = {two, three};
   set_union(plist0.begin(),plist0.end(),p23.begin(),p23.end(),back_inserter(plist));
 //   cout<<"\nplist0 = "<<plist0<<", p23="<<p23<<endl;
 //   cout<<"\tplist = "<<plist<<endl;
@@ -620,7 +622,7 @@ void rank1::getquartics1()
   if (verbose)
     cout<<"Looking for quartics with I = "<< ii << ", J = " << jj << endl;
 
-  static bigint zero = BIGINT(0);
+  static bigint zero(0);
   IJ_curve = Curvedata(zero,zero,zero,-27*ii,-27*jj,0);  // don't minimise
 
   if (posdisc)
@@ -653,7 +655,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   int a_is_odd, b_is_odd, a_div_by_4;
   int a_positive;
   bigint I48=48*ii, J64=64*jj;
-  static const bigint m27=BIGINT(-27);
+  static const bigint m27(-27);
   static const bigfloat root27=sqrt(to_bigfloat(27));
   static const bigfloat zero=to_bigfloat(0);
   bigint rsq, r, rem, h, d, e, ee;
@@ -1191,9 +1193,9 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			}
 		      if(!ok) continue;
 
-		      bigint biga=BIGINT(a);
+		      bigint biga(a);
 		      bigint biga8=biga<<3;
-		      bigint bigb=BIGINT(b);
+		      bigint bigb(b);
 		      bigint bigbsq=sqr(bigb);
 		      bigint bigbb3=3*bigbsq;
 		      h = biga8*c-bigbb3;
@@ -1222,7 +1224,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 #ifdef DEBUG_AH
 		      cout<<"; r = "<<r<<" "<<flush;
 #endif
-		       bigint bigc = BIGINT(c);
+		       bigint bigc(c);
 		       bigint bigcsq = bigc*bigc;
 		       bigint ii_cc = ii-bigcsq;
 #ifdef USE_BIGINTS
@@ -1405,6 +1407,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   : rank12(ec,verb,sel,lim1,lim2,n_aux,1)
 {
+  static bigint zero(0);
   traceequiv=0;
   success=1; // the default!
   if(num_aux==-1) num_aux=DEFAULT_NAUX;
@@ -1434,7 +1437,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   the_curve->getai(a1,a2,a3,a4,a6);
   tr_u=6; tr_r=3*b2; tr_s=3*a1; tr_t=108*a3;
 
-  vector<bigint> ir = Introotscubic( BIGINT(0),-27*c4,-54*c6);
+  vector<bigint> ir = Introotscubic( zero,-27*c4,-54*c6);
   n0=ir.size()+1;
 
   long e0,e1,e2;
@@ -1722,10 +1725,11 @@ vector<Point> rank1::getpoints()
 // reps for the subgroup A in pointlist1 and
 // gens for the complementary subgroup B in pointlist2
 {
+  static bigint zero(0), one(1);
   long np = (1+npoints1) << npoints2;
   vector<Point> ans;
   long j, k, ip=1+npoints1;
-  ans.push_back(Point(the_curve,BIGINT(0),BIGINT(1),BIGINT(0)));
+  ans.push_back(Point(the_curve, zero, one, zero));
   ans.insert(ans.end(),pointlist1.begin(),pointlist1.end());
   ans.resize(np);
   for(j=0; j<npoints2; j++, ip*=2)

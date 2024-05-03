@@ -36,7 +36,46 @@
 
 bigint show(const bigint& a) {cout<<a<<endl; return a;}
 vector<bigint> show(const vector<bigint>& a) {cout<<a<<endl; return a;}
- 
+
+// integers and rationals
+
+int I2int(const bigint& x)
+{
+  if(IsZero(x)) return 0;
+  if(!is_int(x)) 
+    {
+      cerr<<"Attempt to convert "<<x<<" to int fails!"<<endl;
+      return 0;
+    }
+  switch(sign(x)) {
+  case 0: 
+    return (int)0;
+  case 1: 
+    return (x==MAXINT? (int)MAXINT : (int)rem(x,(long)MAXINT));
+  default:
+    return (x==MININT? (int)MININT : -I2int(-x));
+  }
+}
+
+
+long I2long(const bigint& x) 
+{
+  if(IsZero(x)) return 0;
+  if(!is_long(x))
+    {
+      cerr<<"Attempt to convert "<<x<<" to long fails!"<<endl;
+      return 0;
+    }
+  switch(sign(x)) {
+  case 0: 
+    return 0;
+  case 1: 
+    return (x==MAXLONG? (long)MAXLONG : (long)rem(x,(long)MAXLONG));
+  default: 
+    return (x==MINLONG? (long)MINLONG : -I2long(-x));
+  }
+}
+
 bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy)
 {bigint ans; XGCD(ans,xx,yy,aa,bb); return ans;}
 int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
@@ -69,7 +108,7 @@ int sqrtq2(bigint& root, const bigint& n)
   if(r==1) {a0=3; r=0;}           // special case
   a=a0;
 //  cout<<"odd part 1 mod 8 with quotient r = " << r << endl;
-  bigint twok = BIGINT(8), twok3= BIGINT(1);
+  bigint twok(8), twok3(1);
   long kminus1=2;
   while(r>0)
     {
@@ -226,10 +265,11 @@ int sqrt_mod_p_power(bigint& x, const bigint& a, const bigint& p, int e)
 
 int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m)
 {
+  static const bigint zero(0), one(1);
   // Some trivial cases require no work:
-  if(is_one(m))  {x=BIGINT(0); return 1;}
-  if(is_zero(a)) {x=BIGINT(0); return 1;}
-  if(is_one(a))  {x=BIGINT(1); return 1;}
+  if(is_one(m))  {x=zero; return 1;}
+  if(is_zero(a)) {x=zero; return 1;}
+  if(is_one(a))  {x=one; return 1;}
 #ifdef CHECK_SQRT_MOD
   cout<<"Factorizing "<<m<<"..."<<flush;
 #endif  
@@ -376,8 +416,7 @@ vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint>& factor_ba
 
 // n>0 will be changed;  returns prime factors p<pmax and divides out from n
 
-vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax=BIGINT(maxprime()))
-//vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax)
+vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax)
 {
   vector<bigint> plist;
   if(n<2) return plist;
@@ -416,7 +455,7 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
   if(n<2) return plist;
   if(trace) cout<< "After using factor base, n= " <<n<<", plist = "<< plist << endl;
 
-  plist = vector_union(plist,pdivs_trial_div(n));
+  plist = vector_union(plist,pdivs_trial_div(n, bigint(maxprime())));
   if(trace) cout<< "After using trial division, n= " <<n<<", plist = "<< plist << endl;
 
   if(n>1) if(ProbPrime(n)) 
@@ -482,10 +521,10 @@ factor(const bigint& n, int proof=1)
 
 // The following uses pari's factorization function.
 // However, numbers less than
-#define TRIAL_DIV_BOUND BIGINT(100000000)
+#define TRIAL_DIV_BOUND bigint(100000000)
 // will be handled by trial division, and the libpari function will
 // only be called once primes factors less than
-#define TRIAL_DIV_PRIME_BOUND BIGINT(10000)
+#define TRIAL_DIV_PRIME_BOUND bigint(10000)
 // have been divided out,  to reduce the overheads involved.
 
 vector<bigint> pdivs_pari(const bigint& number, int trace)
@@ -548,7 +587,8 @@ vector<bigint> posdivs(const bigint& number)
 
 vector<bigint> posdivs(const bigint& number, const vector<bigint>& plist)
 {
- int np = plist.size();
+  static const bigint one(1);
+  int np = plist.size();
  int e, nu = 1; int nd=nu;
  vector<int> elist;
  elist.reserve(np);
@@ -559,7 +599,7 @@ vector<bigint> posdivs(const bigint& number, const vector<bigint>& plist)
      nd*=(1+e);
    }
  // cout<<"In posdivs (0) : elist = "<<elist<<endl;
- vector<bigint> dlist(1,BIGINT(1)); 
+ vector<bigint> dlist(1, one);
  // cout<<"In posdivs (1) : dlist = "<<dlist<<endl;
  dlist.resize(nd);
  // cout<<"In posdivs (2) : dlist = "<<dlist<<endl;
@@ -587,6 +627,7 @@ vector<bigint> alldivs(const bigint& number)
 
 vector<bigint> alldivs(const bigint& number, const vector<bigint>& plist)
 {
+ static const bigint one(1);
  int np = plist.size();
  int e, nu = 2; int nd=nu;
  vector<int> elist;
@@ -597,8 +638,8 @@ vector<bigint> alldivs(const bigint& number, const vector<bigint>& plist)
      elist.push_back(e);
      nd*=(1+e);
    }
- vector<bigint> dlist(1,BIGINT(1));
- dlist.push_back(BIGINT(-1));
+ vector<bigint> dlist(1, one);
+ dlist.push_back(-one);
  dlist.resize(nd);
  nd=nu;
  auto ei = elist.begin();
@@ -621,6 +662,7 @@ vector<bigint> sqdivs(const bigint& number)
 
 vector<bigint> sqdivs(const bigint& number, const vector<bigint>& plist)
 {
+ static const bigint one(1);
  int np = plist.size();
  int e, nu = 1; int nd=nu;
  vector<int> elist;
@@ -631,7 +673,7 @@ vector<bigint> sqdivs(const bigint& number, const vector<bigint>& plist)
      elist.push_back(e);
      nd*=(1+e);
    }
- vector<bigint> dlist(1,BIGINT(1)); 
+ vector<bigint> dlist(1, one);
  dlist.resize(nd);
  nd=nu;
  auto ei = elist.begin();
@@ -654,10 +696,11 @@ vector<bigint> sqfreedivs(const bigint& number)
 
 vector<bigint> sqfreedivs(const bigint& number, const vector<bigint>& plist)
 {
+ static const bigint one(1);
  int np = plist.size();
  int nu = 1, nd=pow(2,np);
  vector<int> elist(np,1);
- vector<bigint> dlist(1,BIGINT(1));
+ vector<bigint> dlist(1, one);
  dlist.resize(nd);
  nd=nu;
  auto ei=elist.begin();
@@ -1044,7 +1087,7 @@ int legendre(const bigint& a, const bigint& b)
 int legendre(const bigint& aa, long b)
 { 
   if(!(b%2)) return 0;  // b was even
-  long a=I2long(aa%BIGINT(b));
+  long a=I2long(aa%b);
   long g=::gcd(a,b);
   if(g!=1)  return 0;
   return leg(a,b);
@@ -1091,7 +1134,7 @@ int kronecker(const bigint& d, long n)
  
 long gcd(const bigint& a, long b)
 {
-  bigint bb = BIGINT(b);
+  bigint bb(b);
   return I2long(gcd( a, bb ));
 }
 

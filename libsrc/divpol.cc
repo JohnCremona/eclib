@@ -51,10 +51,11 @@ ZPoly div_pol_2(const bigint& a1,const bigint& a2,const bigint& a3,const bigint&
 ZPoly div_pol_odd(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
                   const bigint& a6, int n)
 {
+  static const bigint four(4);
   ZPoly X; ZPolySetX(X);
   ZPoly f1 = X*(X*(X+a2)+a4)+a6;
   ZPoly f2 = a1*X+a3;
-  ZPoly psi24=(BIGINT(4)*f1+f2*f2); psi24*=psi24;
+  ZPoly psi24=(four*f1+f2*f2); psi24*=psi24;
   ZPoly ans;
   switch(n) {
   case 0: 

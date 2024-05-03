@@ -101,7 +101,7 @@ int main()
             cout<<im;
           cout<<endl;
         }
-      bigint p = BIGINT(0);
+      bigint p(0);
       cout<<"R "<< CG.ComponentGroup(p)<<"  ";
       ims = MapPointsToComponentGroup(CG, points_min,  p);
       for( const auto&  im : ims)

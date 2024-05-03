@@ -275,7 +275,7 @@ vector<Point> points_from_x(Curvedata &E, const bigrational& x)
         {
           //          cout<<"t = "<<t<<endl;
           yn = t - (a1*xn+a3*xd2)*xd;
-          divide_exact(yn,BIGINT(2),yn);
+          divide_exact(yn,bigint(2),yn);
           //          cout<<"yn = "<<yn<<endl;
           Point P(E,xn*xd,yn,xd2*xd);
           //          cout<<"point="<<P<<endl;
@@ -359,13 +359,14 @@ vector<Point> two_torsion(Curvedata& E, int exact)
   cout<<"\nIn two_torsion() with curve "<<(Curve)E<<"\n";
 #endif
   bigint a1, a2, a3, a4, a6, b2, b4, b6, b8;
+  static const bigint zero(0), one(1), eight(8), sixteen(16);
   E.getai(a1,a2,a3,a4,a6);
   E.getbi(b2,b4,b6,b8);
   int scaled=0;
   if (odd(a1) || odd(a3))
     {
-      b4*=BIGINT(8);
-      b6*=BIGINT(16);
+      b4*=eight;
+      b6*=sixteen;
       scaled=1;
     }
   else
@@ -379,9 +380,9 @@ vector<Point> two_torsion(Curvedata& E, int exact)
   for( const auto& ei : xlist)
     {
       if(scaled)
-	two_tors.push_back(Point(E,2*ei,-a1*ei-4*a3,BIGINT(8)));
+	two_tors.push_back(Point(E,2*ei,-a1*ei-4*a3,eight));
       else
-	two_tors.push_back(Point(E,ei,BIGINT(0),BIGINT(1)));
+	two_tors.push_back(Point(E,ei,zero,one));
     }
   ::sort(two_tors.begin(), two_tors.end(), Point_cmp);
 #ifdef DEBUG_TORSION
@@ -425,6 +426,7 @@ vector<Point> three_torsion(Curvedata& E, int exact)
 #ifdef DEBUG_TORSION
   cout<<"\nIn three_torsion() with curve "<<(Curve)E<<"\n";
 #endif
+  static const bigint two(2);
   bigint a1, a2, a3, a4, a6, b2, b4, b6, b8, d, rd;
   E.getai(a1,a2,a3,a4,a6);
   E.getbi(b2,b4,b6,b8);
@@ -440,7 +442,7 @@ vector<Point> three_torsion(Curvedata& E, int exact)
 	  d = ((4*xi+b2)*xi+(2*b4))*xi+b6;
 	  if(isqrt(d,rd))
 	    {
-	      Point P(E,2*xi,rd-(a1*xi+a3),BIGINT(2));
+	      Point P(E,2*xi,rd-(a1*xi+a3),two);
 	      three_tors.push_back(P);
 	      three_tors.push_back(-P);
 	    }
@@ -680,10 +682,11 @@ int Point::has_good_reduction(const bigint& p) const
 
 int Point::has_good_reduction(const vector<bigint>& plist, bigint& p0, int check_real) const
 {
+  static const bigint zero(0);
   if (check_real)
     if (!is_on_real_identity_component())
       {
-        p0 = BIGINT(0);
+        p0 = zero;
         return 0;
       }
   auto it = std::find_if(plist.begin(), plist.end(), [this](const bigint& p) {return !has_good_reduction(p);});

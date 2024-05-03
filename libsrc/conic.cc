@@ -147,6 +147,7 @@ int solve_conic_diag(const bigint& a, const vector<bigint>& aplist,
      //
      // Here trivial cases are dealt with, non-trivial passed on
 {
+  static const bigint one(1), minusone(-1);
 #ifdef DEBUG_CONIC
   cout << "In solve_conic_diag with a = " << a << ", b = " << b << endl;
 #endif // DEBUG_CONIC
@@ -197,8 +198,7 @@ int solve_conic_diag(const bigint& a, const vector<bigint>& aplist,
 
   if(b==a) 
     {
-      bigint m1; m1=-1;
-      int res = solve_conic_diag(m1,pdivs(BIGINT(1)),a,aplist,y,x,z,method);
+      int res = solve_conic_diag(minusone,pdivs(one),a,aplist,y,x,z,method);
       x*=a;
 #ifdef DEBUG_CONIC
       cout << "...returns ";  show_xyz(x,y,z);

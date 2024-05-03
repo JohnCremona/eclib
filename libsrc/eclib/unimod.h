@@ -25,6 +25,7 @@
 #define _ECLIB_UNIMOD_H      1      //flags that this file has been included
 
 #include <eclib/interface.h>
+#include <eclib/marith.h>
 
 class unimod {
   friend class quadratic;

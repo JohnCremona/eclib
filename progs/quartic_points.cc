@@ -67,7 +67,7 @@ int main()
       double hlim;
       cout << "Limit on height? "; cin >> hlim;
 
-      bigint I = g.getI(), J=g.getJ(), zero=BIGINT(0);
+      bigint I = g.getI(), J=g.getJ(), zero(0);
       Curvedata IJ_curve(zero,zero,zero,-27*I,-27*J,0);
       bigint tr_u,tr_r,tr_s,tr_t;
       Curvedata E = IJ_curve.minimalize(tr_u,tr_r,tr_s,tr_t);
@@ -80,11 +80,11 @@ int main()
       unsigned int i, els, els1;
 
       cout << "Checking local solublity in R:\n";
-      els = ((g.gettype()>1)||(g.geta()>BIGINT(0)));
+      els = ((g.gettype()>1)||is_positive((g.geta())));
       if(!els) cout << "Not locally soluble over R\n";
 
       cout << "Checking local solublity at primes " << plist << ":\n";
-      els1 = qpsoluble(g,BIGINT(2));
+      els1 = qpsoluble(g,bigint(2));
       if(!els1) cout << "Not locally soluble at p = 2\n";
       els = els&els1;
 
@@ -95,9 +95,9 @@ int main()
 	  els = els&els1;
 	}
       if(!els) continue;
-      
+
       cout << "Everywhere locally soluble.\n";
-      
+
       quartic_sieve qs(&g,modopt,verb);
       cout << "Searching for points on "<<g<<" up to height "<<hlim<<endl;
 

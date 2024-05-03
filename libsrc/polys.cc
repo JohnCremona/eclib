@@ -174,6 +174,6 @@ int nrootscubic(const bigint& b, const bigint& c, const bigint& d, const bigint&
   coeffs.push_back(d);
   coeffs.push_back(c);
   coeffs.push_back(b);
-  coeffs.push_back(BIGINT(1));
+  coeffs.push_back(bigint(1));
   return rootsmod(coeffs,p).size();
 }

@@ -62,9 +62,7 @@ typedef vec_m VEC;
 typedef mat_m MAT;
 typedef subspace_m SUBSP;
 #include <eclib/subspace.h>
-#define MODULUS atoI(string("6074000003").c_str())  // will convert
-						    // this string to
-						    // a bigint
+#define MODULUS to_ZZ("6074000003")
 #else
 #define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
 typedef scalar SCALAR;

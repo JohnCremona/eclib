@@ -55,8 +55,9 @@ Curvedata::Curvedata(const bigint& aa1, const bigint& aa2,
 Curvedata::Curvedata(const vector<bigrational>& qai, bigint& scale)
 : minimal_flag(0), ntorsion(0)
 {
+  static const bigint one(1);
   bigrational qa1(qai[0]), qa2(qai[1]), qa3(qai[2]), qa4(qai[3]), qa6(qai[4]);
-  scale=BIGINT(1);
+  scale = one;
   a1=num(qa1);  a2=num(qa2);  a3=num(qa3);  a4=num(qa4);  a6=num(qa6);
 #ifdef DEBUG_Q_INPUT
   cout<<"In Curvedata constructor with ["<<qa1<<","<<qa2<<","<<qa3<<","<<qa4<<","<<qa6<<"]"<<endl;
@@ -317,7 +318,7 @@ void Curvedata::output(ostream& os) const
 
 Curvedata opt_x_shift(const Curvedata& C, bigint& k)
 {
-  bigint b2,b4,b6,b8,four,zero; four=BIGINT(4); zero=BIGINT(0);
+  bigint b2,b4,b6,b8,four(4),zero(0);
   C.getbi(b2,b4,b6,b8);
   cubic b_cubic(four,b2,2*b4,b6);
   k = b_cubic.shift_reduce();

@@ -76,63 +76,6 @@ using namespace NTL;
 
 typedef ZZ bigint;
 
-#define BIGINT(val) to_ZZ(val)
-inline bigint atoI(const char* s) {return to_ZZ(s);}
-
-inline int odd(const int& a) {return a&1;}
-inline int even(const int& a) {return !(a&1);}
-inline int odd(const long& a) {return a&1;}
-inline int even(const long& a) {return !(a&1);}
-
-inline int is_zero(const bigint& x) {return IsZero(x);}
-inline int is_positive(const bigint& x) {return sign(x)>0;}
-inline int is_negative(const bigint& x) {return sign(x)<0;}
-inline int is_one(const bigint& x) {return IsOne(x);}
-inline int odd(const bigint& a) {return IsOdd(a);}
-inline int even(const bigint& a) {return !IsOdd(a);}
-inline void rshift(const bigint& a, long i, bigint& c) {RightShift(c,a,i);}
-inline void lshift(const bigint& a, long i, bigint& c) {LeftShift(c,a,i);}
-#ifdef setbit
-#undef setbit
-#endif
-inline void setbit(bigint& a, int e) {SetBit(a,e);}
-inline long lg(const bigint& x) {return NumBits(x)-1;}
-inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
-inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
-
-// The following are not in NTL & need defining
-int I2int(const bigint& x);    // too long to inline
-long I2long(const bigint& x);  // too long to inline
-inline double I2double(const bigint& x) {return to_double(x);}
-inline void longasI(long& a, const bigint& x) {a = I2long(x);}
-inline void negate(bigint& a) {a=-a;}
-inline void sqrt(bigint& a, const bigint& b) {SqrRoot(a,b);}
-inline bigint sqrt(const bigint& a) {bigint b; sqrt(b,a); return b;}
-inline void square(bigint& a, const bigint& b) {sqr(a,b);}
-inline bigint gcd(const bigint& a, const bigint& b) {return GCD(a,b);}
-inline bigint lcm(const bigint& a, const bigint& b)
- {if (IsZero(a) && IsZero(b)) return ZZ::zero(); else return a*(b/GCD(a,b));}
-
-// In NTL add, sub, mul, div are defined with result in first place
-inline void addx(const bigint& a, const bigint& b, bigint& c)  {add(c,a,b);}
-inline void subx(const bigint& a, const bigint& b, bigint& c)  {sub(c,a,b);}
-inline void divx(const bigint& a, const bigint& b, bigint& c)  {div(c,a,b);}
-inline void mulx(const bigint& a, const bigint& b, bigint& c)  {mul(c,a,b);}
-inline bigint pow(const bigint& a, long e)  {return power(a,e);}
-
-//N.B. no power to bigint exponent in NTL
-inline long jacobi(const bigint& a, const bigint& p)  {return Jacobi(a,p);}
-inline void sqrt_mod_p(bigint & x, const bigint & a, const bigint & p)  
-  {SqrRootMod(x,a,p); if(x>(p-x)) x= p-x;}
-inline void power_mod(bigint& ans, const bigint& base, const bigint& expo, const bigint& m) 
- {PowerMod(ans,base,expo,m);}
-inline void nearest(bigint& c, const bigint& a, const bigint& b) 
- {bigint a0=(a%b);  c = (a-a0)/b; if(2*a0>b) c+=1;}
-inline bigint roundover(const bigint& a, const bigint& b)
- {bigint a0=(a%b); bigint c = (a-a0)/b; if(2*a0>b) c+=1; return c;}
-
-#define bigint_mod_long(a,m) (a%m)
-
 
 // Reals and Complexes
 
@@ -243,7 +186,7 @@ inline double power(double x, long n) {return pow(x,n);}
 inline double to_bigfloat(const int& n) {return double(n);}
 inline double to_bigfloat(const long& n) {return double(n);}
 inline double to_bigfloat(const double& x) {return x;}
-
+inline double I2double(const bigint& x) {return to_double(x);}
 inline bigfloat I2bigfloat(const bigint& x) {return I2double(x);}
 
 // complexes

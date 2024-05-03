@@ -121,6 +121,7 @@ CurveRed::CurveRed(const Curvedata& E)
   : Curvedata(E, 1), //minimalize in constructor
     N(1)
 {
+  static const bigint one(1), three(3), twelve(12);
   // constructor stuff
   if (discr==0) {N = 0; return; }
   factor_discr(); // will only do anything if not already factored
@@ -158,7 +159,7 @@ CurveRed::CurveRed(const Curvedata& E)
       { if ( div(p,C.b2) ) r = root(-C.b6,3,p); else r = -invmod(C.b2,p)*C.b4;
         t  =  C.a1*r + C.a3; }
     else
-      { if ( div(p,c4) ) r = -invmod(BIGINT(12),p)*C.b2;
+      { if ( div(p,c4) ) r = -invmod(twelve,p)*C.b2;
         else r = -invmod(12*c4,p)*(c6+C.b2*c4);
         t =  -halfmodp*(C.a1*r+C.a3); }
     r = mod(r,p);
@@ -282,7 +283,7 @@ CurveRed::CurveRed(const Curvedata& E)
       // change coords so that T=0 mod p
       if ( pdiv2 ) r = b;
       else if ( pdiv3 ) r = root(-d,3,p);
-      else r = -b*invmod(BIGINT(3),p);
+      else r = -b*invmod(three,p);
       r = p*mod(r,p);
       C.transform(r,zero,zero);
 
@@ -322,7 +323,7 @@ CurveRed::CurveRed(const Curvedata& E)
       // one would divide each ai by p^i and start again
     };  // end switch
   }     // end primes for-loop
-  N = BIGINT(1);
+  N = one;
   for( const auto& ri : reduct_array)
     N *= pow((ri.first), (ri.second).ord_p_N);
   return;
@@ -332,17 +333,18 @@ CurveRed::CurveRed(const Curvedata& E)
 // component group is (2,2).  Use p=0 for reals
 bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p)
 {
-  if (is_zero(p)) return BIGINT(c.conncomp);
+  static const bigint one(1), two(2), four(4);
+  if (is_zero(p)) return bigint(c.conncomp);
   auto ri = c.reduct_array.find(p);
   if (ri == c.reduct_array.end())
-    return BIGINT(1);
+    return one;
   Reduction_type info = ri->second;
   int cp = info.c_p;
   if (cp!=4)
-    return BIGINT(cp);
+    return bigint(cp);
   // see if we have C4 or C2xC2
   int code = info.Kcode.code;
-  return BIGINT(code%20==1? 2: 4); // Type I*m, m even: [2,2], else 4
+  return (code%20==1? two: four); // Type I*m, m even: [2,2], else 4
 }
 
 // The global Tamagawa exponent, i.e. the lcm of the exponents of
@@ -362,7 +364,7 @@ bigint global_Tamagawa_exponent(const CurveRed& c, int real_too)
       Reduction_type info = ri.second;
       int code = info.Kcode.code;
       int ep = (code%20==1? 2: info.c_p); // Type I*m, m even: [2,2]
-      ans = lcm(ans,BIGINT(ep));
+      ans = lcm(ans,bigint(ep));
     }
   return ans;
 }
@@ -413,27 +415,28 @@ vector<bigint> all_cp(const CurveRed& c)
 {
   vector<bigint> ans(c.reduct_array.size());
   std::transform(c.reduct_array.begin(), c.reduct_array.end(), ans.begin(),
-                 [] (const pair<bigint,Reduction_type>& x) {return BIGINT(x.second.c_p);});
+                 [] (const pair<bigint,Reduction_type>& x) {return bigint(x.second.c_p);});
   return ans;
 }
 
 bigint prodcp(const CurveRed& c)
 {
+  static const bigint one(1);
   vector<bigint> allcp = all_cp(c);
-  return std::accumulate(allcp.begin(), allcp.end(), BIGINT(1),
+  return std::accumulate(allcp.begin(), allcp.end(), one,
                          [](const bigint& c1, const bigint& c2) {return c1*c2;});
 }
 
 // The local Tamagawa number.  Use p=0 for reals
 bigint local_Tamagawa_number(CurveRed& c, const bigint& p)
 {
-  return BIGINT(is_zero(p)? getconncomp(c): getc_p(c,p));
+  return bigint(is_zero(p)? getconncomp(c): getc_p(c,p));
 }
 
 // The global Tamagawa number, = product of local ones.
 bigint global_Tamagawa_number(CurveRed& c, int real_too)
 {
-  return BIGINT(prodcp(c) * (real_too ? getconncomp(c) : 1));
+  return bigint(prodcp(c) * (real_too ? getconncomp(c) : 1));
 }
 
 Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p)
@@ -1032,7 +1035,7 @@ bigint Trace_Frob(CurveRed& c, const bigint& p)
   int f = getord_p_N(c,p);
   // Bad primes: for convenience returns the p'th coefficient of the L-series
   if(f>=2)  return zero;
-  if(f==1)  return BIGINT(-LocalRootNumber(c,p));
+  if(f==1)  return bigint(-LocalRootNumber(c,p));
 
   bigint n=zero;
   if(p==two) // curvemodq class only in characteristic > 3

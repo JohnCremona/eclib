@@ -82,8 +82,8 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
     }
   bigint x0,z0,d0, p, result;
   bigint d = d1*d2, cdash = -2*c, ddash = sqr(c)-4*d;
-  static const bigint one = BIGINT(1);
-  static const bigint two = BIGINT(2);
+  static const bigint one(1);
+  static const bigint two(2);
   int add2tosupp = (val(2,ddash)==4);  
   if(add2tosupp) add2tosupp = (find(supp.begin(),supp.end(),two)==supp.end());  
 // For we are on E' and the original d was odd
@@ -277,7 +277,7 @@ int process_d3(const quadratic& q0, const bigint& d3,
   //  if(xverb) cout<<"\nplist = "<<plist<<"\n";
   bigint s1,u1,t1,ga,gb,gc,gd,ge,cont;
   bigint p,ggI,ggJ,ggD;
-  static const bigint one = BIGINT(1), zero = BIGINT(0);
+  static const bigint one(1), zero(0);
   vector<bigint> ggbadp, ggextrap;
   quadratic Q1, Q2, Q3;
   int resd3 = solve_conic_param(q1,d3,factorbase,Q1,Q2,Q3);

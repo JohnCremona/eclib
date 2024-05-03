@@ -77,7 +77,7 @@ int main(void)
   for(primevar pr(25); pr.ok(); pr++)
     {
       long p = pr;
-      bigint ap = Trace_Frob(cdr,BIGINT(p));
+      bigint ap = Trace_Frob(cdr,bigint(p));
       cout<<"p="<<p<<": ap="<<ap;
       if(div(p,getdiscr(cdr))) cout<<" (bad reduction)";
       cout<<endl;
@@ -85,14 +85,14 @@ int main(void)
   // for(primevar pr(1270000); pr.ok(); pr++)
   //   {
   //     p=pr;
-  //     ap = Trace_Frob(cdr,BIGINT(p));
+  //     ap = Trace_Frob(cdr,bigint(p));
   //   }
 
   cout <<"Testing construction from a non-integral model:\n";
   bigint a1,a2,a3,a4,a6;
   E.getai(a1,a2,a3,a4,a6);
   bigrational qa1(a1),qa2(a2),qa3(a3),qa4(a4),qa6(a6);
-  bigint s=BIGINT(60), scale;
+  bigint s(60), scale;
   bigint si=s;
   qa1/=si; si*=s;
   qa2/=si; si*=s;

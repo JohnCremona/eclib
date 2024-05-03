@@ -69,7 +69,8 @@ int new_equiv( quartic& q1, quartic& q2, int info)
 
   // Compute the integral roots of "u-poly",  q1 and q2 are equivalent if there are any
 
-  vector<bigint> upolroots = Introotsquartic(BIGINT(0),-2*p, -8*r, s);
+  static const bigint zero(0);
+  vector<bigint> upolroots = Introotsquartic(zero,-2*p, -8*r, s);
   if (upolroots.size()>0)
     {
       if(info) cout<<"Root u = "<<upolroots[0]<<endl;

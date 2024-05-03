@@ -94,15 +94,15 @@ int rank2::testquartic(const bigint& c,const bigint& d1,const bigint& d2,int whi
   // creates quartic (d1,0,c,0,d2), assumed els, and tries to find a rational point
   // returns +1 if rational point found (handled my makepoint())
   //          0 if undecided
-  static const bigint zero = BIGINT(0);
-  static const bigint one  = BIGINT(1);
+  static const bigint zero(0);
+  static const bigint one(1);
   quartic q(d1,  zero, c,  zero, d2);
   if (verbose) cout<<q<<": ";
 
   bigint x,y,z;
 
   // First a quick search for a small point:
-  if (ratpoint(q,one,BIGINT(lim1),x,y,z))
+  if (ratpoint(q,one,bigint(lim1),x,y,z))
     { 
       makepoint(c,d1,d2,x,y,z,which);
       return 1;
@@ -166,7 +166,7 @@ int rank2::second_descent(const bigint& c, const bigint& d1, const bigint& d2, i
 
 void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 {
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   if (verbose>1) 
     {
       if(which) cout<<"\n";
@@ -696,7 +696,7 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 void rank2::local_descent(const bigint& x0)
 {
   bigint c,d,cdash,ddash,disc,rootd;
-  const bigint zero = BIGINT(0), two=BIGINT(2), minusone=BIGINT(-1);
+  static const bigint zero(0), two(2), minusone(-1);
 
   c =  3 * x0 + s2;
   d = x0*(c+s2) + s4;
@@ -827,6 +827,7 @@ void rank2::local_descent(const bigint& x0)
 rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
   : rank12(ec,verb,sel,l1,l2,0,second)
 {
+  static const bigint zero(0), one(1), eight(8);
   bigint a1, a2, a3, a4, a6;
   ec->getai(a1,a2,a3,a4,a6);
   fullnpoints = npoints = 0;
@@ -864,8 +865,8 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
   for(n=0; n<ntwo_torsion; n++)
     {
       bigint ei = xlist[n];
-      if(scaled) two_torsion[n].init(the_curve,2*ei,-a1*ei-4*a3,BIGINT(8));
-      else two_torsion[n].init(the_curve,ei,BIGINT(0),BIGINT(1));
+      if(scaled) two_torsion[n].init(the_curve,2*ei,-a1*ei-4*a3, eight);
+      else two_torsion[n].init(the_curve,ei, zero, one);
       if(verbose)
 	{ if(n>0) cout<<", "; cout<<two_torsion[n];}
     }

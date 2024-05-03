@@ -880,7 +880,7 @@ Interval01 operator+(const Interval01& I, const bigfloat& shift)
 
 long exponent(CurveRed& CR, long p)
 {
-  bigint pp = BIGINT(p);
+  bigint pp(p);
   int ord_p_N = getord_p_N(CR, pp);
 
   if (ord_p_N>1)

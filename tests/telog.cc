@@ -77,13 +77,13 @@ int main(){
 
   // a curve with rank 3 and D>0:
 
-  Curve c(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
+  Curve c(0,0,1,-7,6);
   Curvedata cd(c,1);
 
   cout << "Testing some points:\n";
-  Point P0(cd, BIGINT(0),BIGINT(2)) ;
-  Point P1(cd, BIGINT(1),BIGINT(0)) ;
-  Point P2(cd, BIGINT(2),BIGINT(0)) ;
+  Point P0(cd, bigint(0),bigint(2)) ;
+  Point P1(cd, bigint(1),bigint(0)) ;
+  Point P2(cd, bigint(2),bigint(0)) ;
 
   cout << "The points are P0 = " << P0 << 
     ", P1 = " << P1 << ", and P2 = " << P2 << endl ;
@@ -95,13 +95,13 @@ int main(){
   /*
   // a curve with rank 3 and D<0:
 
-  Curve c(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-1),BIGINT(6));
+  Curve c(0,0,1,-1,6);
   Curvedata cd(c,1);
 
   cout << "Testing some points:\n";
-  Point P0(cd, BIGINT(0),BIGINT(2)) ;
-  Point P1(cd, BIGINT(1),BIGINT(2)) ;
-  Point P2(cd, BIGINT(12),BIGINT(41)) ;
+  Point P0(cd, bigint(0),bigint(2)) ;
+  Point P1(cd, bigint(1),bigint(2)) ;
+  Point P2(cd, bigint(12),bigint(41)) ;
 
   cout << "The points are P0 = " << P0 << 
     ", P1 = " << P1 << ", and P2 = " << P2 << endl ;
@@ -113,10 +113,10 @@ int main(){
   /*
   // a curve (7998K1) with rank 1 and 5-torsion:
 
-  Curve c(BIGINT(1),BIGINT(0),BIGINT(0),BIGINT(5355560),BIGINT(7740216896));
+  Curve c(1,0,0,5355560,7740216896);
   Curvedata cd(c,1);
 
-  Point P0(cd, BIGINT(-248),BIGINT(80104)) ;
+  Point P0(cd, bigint(-248),bigint(80104)) ;
 
   cout << "The point is P0 = " << P0 << endl ;
 
@@ -157,7 +157,7 @@ int main(){
 
   cout << "================================ "<<endl;
 
-  Curve c3(BIGINT(1),BIGINT(1),BIGINT(0),BIGINT(-202),BIGINT(1025));
+  Curve c3(1,1,0,-202,1025);
   Curvedata cd3(c3,1);
   cout << "Curve "<<c3<<endl;
 
@@ -165,10 +165,10 @@ int main(){
   //cout << "Periods: "<<cp3<<endl;
   cout<<endl;
 
-  Point Q(cd3,BIGINT(-8),BIGINT(51));
+  Point Q(cd3,bigint(-8),bigint(51));
   cout << "The point Q is = " << Q << endl ;
   test1(cd3,cp3,Q);
-  Point P3(cd3, BIGINT(8),BIGINT(-3)) ;
+  Point P3(cd3, bigint(8),bigint(-3)) ;
   cout << "The point P3 is = " << P3 << endl ;
 
   test1(cd3,cp3,P3);

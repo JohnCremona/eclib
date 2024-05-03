@@ -27,7 +27,7 @@
 int main(void)
 {
  cout << "Test run of bigrational number procs.\n\n";
- bigint n = BIGINT(4), d = BIGINT(6), g;
+ bigint n(4), d(6), g;
  g = gcd(n,d);
  cout << "gcd(" << n << "," << d << ") = " << g << "\n";
  bigrational q = bigrational(n,d);

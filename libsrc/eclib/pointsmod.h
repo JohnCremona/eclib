@@ -60,15 +60,15 @@ class pointmodq{
 public:
   // constructors 
   pointmodq(void) :E() {}
-  explicit pointmodq(const curvemodq& EE ) :is0flag(1), order(BIGINT(1)), E(EE) {} //  the point at oo
+  explicit pointmodq(const curvemodq& EE ) :is0flag(1), order(1), E(EE) {} //  the point at oo
   pointmodq(const gf_element&x, const gf_element&y, const curvemodq& EE) 
-    :X(x), Y(y), is0flag(0), order(BIGINT(0)), E(EE)
+    :X(x), Y(y), is0flag(0), order(0), E(EE)
     {
       if(!on_curve())
 	cout<<"Error!  ("<<x<<","<<y<<") is not on "<<(EE)<<endl;
     }
   pointmodq(const bigint&x, const bigint&y, const curvemodq& EE) 
-    :X(to_ZZ_p(x)), Y(to_ZZ_p(y)), is0flag(0), order(BIGINT(0)), E(EE)
+    :X(to_ZZ_p(x)), Y(to_ZZ_p(y)), is0flag(0), order(0), E(EE)
     {
       if(!on_curve())
 	cout<<"Error!  ("<<x<<","<<y<<") is not on "<<(EE)<<endl;

@@ -48,7 +48,7 @@ int local_hilbert(const bigint& a, const bigint& b, const bigint& p);
 
 inline int local_hilbert(const bigint& a, const bigint& b, const long& p)
 {
-  return local_hilbert(a,b,BIGINT(p));
+  return local_hilbert(a,b,bigint(p));
 }
 
 // Returns 0 if soluble at all primes in list (or all dividing a*b, or

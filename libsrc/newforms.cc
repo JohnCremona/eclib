@@ -271,7 +271,7 @@ void newform::fixup_eigs()
     }
   if(aqi!=aqlist.end()) // compute missing aq
     {
-      long piv;
+      scalar piv;
       ssubspace espace;
       if(sign==-1)
         espace=make1d(bminus,piv, MODULUS);
@@ -639,7 +639,7 @@ void newform::add_more_ap(int nap)
   // only ap we are missing are aq which we already have...
   ssubspace espace;
   int have_espace=0;
-  long piv;
+  scalar piv;
 
   primevar pr(nap,aplist.size()+1);
   while((int)aplist.size()<nap)
@@ -1530,7 +1530,7 @@ vector<long> eiglist(CurveRed& C, int nap)
   vector<long> ans;
   for(primevar pr(nap); pr.ok(); pr++)
     {
-      long p=pr; bigint pp=BIGINT(p);
+      long p=pr; bigint pp(p);
       if(N%p==0)
 	ans.push_back(LocalRootNumber(C,pp));
       else

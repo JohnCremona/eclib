@@ -188,24 +188,24 @@ int comprat(const bigint& n1, const bigint& d1,
 
 vector<long> getelllist(const CurveRed& CR)
 {
-  static const bigint j11a = BIGINT(-32768);
-  static const bigint j11b = BIGINT(-121);
-  static const bigint j11c = BIGINT(-24729001);
+  static const bigint j11a(-32768);
+  static const bigint j11b(-121);
+  static const bigint j11c(-24729001);
 
-  static const bigint nj17a = BIGINT(-297756989);
-  static const bigint dj17a = BIGINT(2);
-  static const bigint nj17b = BIGINT(-882216989);
-  static const bigint dj17b = BIGINT(131072);
+  static const bigint nj17a(-297756989);
+  static const bigint dj17a(2);
+  static const bigint nj17b(-882216989);
+  static const bigint dj17b(131072);
 
-  static const bigint j37a = BIGINT(-9317);
-  static const bigint j37b = atoI("-162677523113838677");
+  static const bigint j37a(-9317);
+  static const bigint j37b = to_ZZ("-162677523113838677");
 
-  static const bigint j19 = BIGINT(-884736);
-  static const bigint j43 = BIGINT(-884736000);
-  static const bigint j67 = atoI("-147197952000");
-  static const bigint j163 = atoI("-262537412640768000");
+  static const bigint j19(-884736);
+  static const bigint j43(-884736000);
+  static const bigint j67 = to_ZZ("-147197952000");
+  static const bigint j163 = to_ZZ("-262537412640768000");
 
-  static const bigint one = BIGINT(1);
+  static const bigint one(1);
 
   vector<long> ans; ans.reserve(4);
   ans.push_back(2);

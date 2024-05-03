@@ -130,6 +130,19 @@ inline vector<long> sqfreedivs(long n)
   return sqfreedivs(n, pdivs(n));
 }
 
+// utilities for compatibility with bigint args
+inline int odd(const int& a) {return a&1;}
+inline int even(const int& a) {return !(a&1);}
+inline int odd(const long& a) {return a&1;}
+inline int even(const long& a) {return !(a&1);}
+inline int is_zero(int n) {return n==0;}
+inline int is_zero(long n) {return n==0;}
+inline int is_nonzero(int n) {return n!=0;}
+inline int is_nonzero(long n) {return n!=0;}
+inline int is_one(int n) {return n==1;}
+inline int is_one(long n) {return n==1;}
+inline long I2long(long n) {return n;}
+
 long mod(long a, long modb); /* modulus in range plus or minus half mod */
 long mod(int a, long modb); /* modulus in range plus or minus half mod */
 int mod(int a, int modb); /* modulus in range plus or minus half mod */
@@ -153,6 +166,38 @@ int bezout(int aa, int bb, int& xx, int& yy);
 
 long invmod(long, long);
 
+inline int xmm(int a, int b, int m)
+{
+  if (a==1) return b;
+  if (a==-1) return -b;
+  if (b==1) return a;
+  if (b==-1) return -a;
+  return (a*(int64_t)b) % m;
+}
+
+inline int addmod(int a, int b, int m)
+{
+  if (is_zero(a)) return b;
+  if (is_zero(b)) return a;
+  return mod(a+b,m);
+}
+
+inline long addmod(long a, long b, long m)
+{
+  if (is_zero(a)) return b;
+  if (is_zero(b)) return a;
+  return mod(a+b,m);
+}
+
+inline long xmm(long a, long b, long m)
+{
+  if (a==1) return b;
+  if (a==-1) return -b;
+  if (b==1) return a;
+  if (b==-1) return -a;
+  return (a*(int64_t)b) % m;
+}
+
 // Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
 void gauss_reduce(long a0, long b0, long c0, long d0,
                   long& a, long& b, long& c, long& d);
@@ -160,11 +205,6 @@ void gauss_reduce(long a0, long b0, long c0, long d0,
 // Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
 int modrat(long n, long m, long& a, long& b);
 int modrat(int n, int m, int& a, int& b);
-
-// 3 utilities for compatibility ith bigint args
-inline int is_zero(long n) {return n==0;}
-inline int is_one(long n) {return n==1;}
-inline long I2long(long n) {return n;}
 
 long val(long factor, long number); // order of factor in number
 

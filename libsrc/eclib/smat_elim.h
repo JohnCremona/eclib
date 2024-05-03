@@ -128,10 +128,8 @@ class ssubspace {
 public:
      // constructors
         ssubspace(int n=0);
-        ssubspace(const smat& b, const vec_i& p, scalar mod=DEFAULT_MODULUS);
+        ssubspace(const smat& b, const vec_i& p, scalar mod);
 	ssubspace(const ssubspace& s);
-     // destructor
-        ~ssubspace();
      // assignment
 	void operator=(const ssubspace& s);
 
@@ -163,4 +161,4 @@ ssubspace eigenspace(const smat& sm, scalar lambda, scalar m);
 ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s, scalar m);
 
 // construction of a 1-dimensional sparse subspace from a vector:
-ssubspace make1d(const vec& bas, long&piv, scalar m);
+ssubspace make1d(const vec& bas, scalar&piv, scalar m);

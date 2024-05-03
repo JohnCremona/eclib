@@ -37,7 +37,7 @@ public:
   void set(const  bigint& a, const bigint& b, const bigint& c) {coeffs = {a, b, c};}
   quadratic() { bigint zero(0); coeffs={zero,zero,zero};}
   quadratic(const  bigint& a, const bigint& b, const bigint& c) :coeffs({a, b, c}) {;}
-  quadratic(long a, long b, long c)  :coeffs({BIGINT(a), BIGINT(b), BIGINT(c)}) {;}
+  quadratic(long a, long b, long c)  :coeffs({bigint(a), bigint(b), bigint(c)}) {;}
   explicit quadratic(const  bigint* q) :coeffs({q[0], q[1], q[2]}) {;}
   quadratic(const  quadratic& q) :coeffs(q.coeffs) {;}
   void operator=(const quadratic& q)  {coeffs = q.coeffs;}

@@ -105,12 +105,12 @@ int main(){
   }       // end curve loop
   //  exit(0);
 // Some tests borrowed from OM's test program:
-  E = Curve(BIGINT(0), BIGINT(0), BIGINT(1), BIGINT(-7), BIGINT(6));  
+  E = Curve(0, 0, 1, -7, 6);
   Curvedata C(E, 0);
   cout << "\n\nTesting points on the curve " << E << endl;
-  Point P0(C, BIGINT(0),BIGINT(2));
-  Point P1(C, BIGINT(1),BIGINT(0));
-  Point P2(C, BIGINT(2),BIGINT(0));
+  Point P0(C, bigint(0),bigint(2));
+  Point P1(C, bigint(1),bigint(0));
+  Point P2(C, bigint(2),bigint(0));
   cout << "The points are P0 = " << P0 << 
     ", P1 = " << P1 << ", and P2 = " << P2 << endl;
   if (!P0.isvalid()) cout << "P0 is not on the curve!\n";

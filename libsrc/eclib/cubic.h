@@ -40,20 +40,12 @@ class cubic {
 private:
   vector<bigint> coeffs;  // will always have length 4
 public:
-  // void set(long a, long b, long c, long d)
-  // {coeffs = {BIGINT(a),BIGINT(b),BIGINT(c),BIGINT(d)};}
-  // void set(const  bigint& a, const bigint& b, const bigint& c, const bigint& d)
-  // {coeffs = {a,b,c,d};}
-  // void set(const vector<bigint>& abcd)
-  // {std::copy(abcd.begin(), abcd.end(), coeffs.begin());}
-  // void set(const  cubic& q)
-  // {std::copy(q.coeffs.begin(), q.coeffs.end(), coeffs.begin());}
   cubic()
-  {coeffs.resize(4, BIGINT(0));}
+  {coeffs.resize(4, bigint(0));}
   cubic(const  bigint& a, const bigint& b, const bigint& c, const bigint& d) 
     :coeffs({a,b,c,d}) {;}
-  cubic(long a, long b, long c, long d) 
-    :coeffs({BIGINT(a),BIGINT(b),BIGINT(c),BIGINT(d)}) {;}
+  cubic(long a, long b, long c, long d)
+    :coeffs({bigint(a),bigint(b),bigint(c),bigint(d)}) {;}
   explicit cubic(const vector<bigint>& abcd)
     :coeffs(abcd) {;}
   cubic(const  cubic& q)

@@ -356,7 +356,7 @@ int main(void)
       cout<<"Total multiplicity of rational eigenvalues = "<<totalmult<<endl;
 #endif // TEST_EIGS
 #ifdef CHECK_COMMUTE
-      bigint P = BIGINT(MODULUS);
+      bigint P(MODULUS);
       for (int kp=firstq; kp<nq; kp++)
 	{if (matmulmodp(wqlist[kp],tplist[ip],P)!=matmulmodp(tplist[ip],wqlist[kp],P))
 	   {

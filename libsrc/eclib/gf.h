@@ -96,7 +96,7 @@ inline gf_element root_of_unity(const galois_field& F, int n)
 inline bigint order(const gf_element& z)
 {
   gf_element one=to_ZZ_p(1);
-  gf_element zn=z;  bigint n=BIGINT(1);
+  gf_element zn=z;  bigint n(1);
   while (zn!=one) {zn*=z; n+=1;}
   return n;
 }

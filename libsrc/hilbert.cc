@@ -31,8 +31,8 @@
 
 int local_hilbert(const bigint& a, const bigint& b, const bigint& p)
 {
-  static const bigint zero = BIGINT(0);
-  static const bigint  two = BIGINT(2);
+  static const bigint zero(0);
+  static const bigint  two(2);
   long alpha, beta;
   bigint u,v;
   int ans;

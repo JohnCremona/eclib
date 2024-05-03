@@ -155,7 +155,7 @@ void Curve::input(istream& is)
 	   }
          if (valid_invariants(c4, c6))
            {
-             const bigint& b2 = BIGINT(mod(-c6,12));
+             const bigint& b2 = bigint(mod(-c6,12));
              const bigint& b22 = b2*b2;
              const bigint& b4 = (b22-c4)/24;
              const bigint& b6 = (-b2*b22+36*b2*b4-c6)/216;

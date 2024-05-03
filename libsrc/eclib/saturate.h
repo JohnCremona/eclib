@@ -98,14 +98,14 @@ public:
       tam_primes = tamagawa_primes(C, 1); // 1 means include 2 if E(R) has 2 components
       badp = getbad_primes(*E);
       maxq = 0;
-      the_index_bound = BIGINT(0); // means not set
+      the_index_bound = bigint(0); // means not set
     }
   ~saturator() {; }
 
   // initialize point list
   void set_points(const vector<Point>& PP) {
     Plist = PP;
-    the_index_bound = BIGINT(0);
+    the_index_bound = bigint(0);
   }
 
   // initialize index bound

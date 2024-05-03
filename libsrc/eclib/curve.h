@@ -78,9 +78,10 @@ public:
   Curve(const bigint& aa1, const bigint& aa2, const bigint& aa3,
         const bigint& aa4, const bigint& aa6)
     :a1(aa1),a2(aa2),a3(aa3),a4(aa4),a6(aa6) {}
+  Curve(long aa1, long aa2, long aa3, long aa4, long aa6)
+    :a1(aa1),a2(aa2),a3(aa3),a4(aa4),a6(aa6) {}
   Curve(const Curve& c)
-    : a1(c.a1), a2(c.a2), a3(c.a3), a4(c.a4), a6(c.a6)
-      {}
+    : a1(c.a1), a2(c.a2), a3(c.a3), a4(c.a4), a6(c.a6) {}
   void operator=(const Curve& c)
     { a1=c.a1; a2=c.a2; a3=c.a3; a4=c.a4; a6=c.a6; }
 // no destructor is needed

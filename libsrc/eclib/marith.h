@@ -26,6 +26,55 @@
 
 #include <eclib/arith.h>
 
+inline int is_zero(const bigint& x) {return IsZero(x);}
+inline int is_nonzero(const bigint& x) {return !IsZero(x);}
+inline int is_positive(const bigint& x) {return sign(x)>0;}
+inline int is_negative(const bigint& x) {return sign(x)<0;}
+inline int is_one(const bigint& x) {return IsOne(x);}
+inline int odd(const bigint& a) {return IsOdd(a);}
+inline int even(const bigint& a) {return !IsOdd(a);}
+inline void rshift(const bigint& a, long i, bigint& c) {RightShift(c,a,i);}
+inline void lshift(const bigint& a, long i, bigint& c) {LeftShift(c,a,i);}
+#ifdef setbit
+#undef setbit
+#endif
+inline void setbit(bigint& a, int e) {SetBit(a,e);}
+inline long lg(const bigint& x) {return NumBits(x)-1;}
+inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
+inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
+
+// The following are not in NTL & need defining
+int I2int(const bigint& x);    // too long to inline
+long I2long(const bigint& x);  // too long to inline
+inline void longasI(long& a, const bigint& x) {a = I2long(x);}
+inline void negate(bigint& a) {a=-a;}
+inline void sqrt(bigint& a, const bigint& b) {SqrRoot(a,b);}
+inline bigint sqrt(const bigint& a) {bigint b; sqrt(b,a); return b;}
+inline void square(bigint& a, const bigint& b) {sqr(a,b);}
+inline bigint gcd(const bigint& a, const bigint& b) {return GCD(a,b);}
+inline bigint lcm(const bigint& a, const bigint& b)
+ {if (IsZero(a) && IsZero(b)) return ZZ::zero(); else return a*(b/GCD(a,b));}
+
+// In NTL add, sub, mul, div are defined with result in first place
+inline void addx(const bigint& a, const bigint& b, bigint& c)  {add(c,a,b);}
+inline void subx(const bigint& a, const bigint& b, bigint& c)  {sub(c,a,b);}
+inline void divx(const bigint& a, const bigint& b, bigint& c)  {div(c,a,b);}
+inline void mulx(const bigint& a, const bigint& b, bigint& c)  {mul(c,a,b);}
+inline bigint pow(const bigint& a, long e)  {return power(a,e);}
+
+//N.B. no power to bigint exponent in NTL
+inline long jacobi(const bigint& a, const bigint& p)  {return Jacobi(a,p);}
+inline void sqrt_mod_p(bigint & x, const bigint & a, const bigint & p)  
+  {SqrRootMod(x,a,p); if(x>(p-x)) x= p-x;}
+inline void power_mod(bigint& ans, const bigint& base, const bigint& expo, const bigint& m) 
+ {PowerMod(ans,base,expo,m);}
+inline void nearest(bigint& c, const bigint& a, const bigint& b) 
+ {bigint a0=(a%b);  c = (a-a0)/b; if(2*a0>b) c+=1;}
+inline bigint roundover(const bigint& a, const bigint& b)
+ {bigint a0=(a%b); bigint c = (a-a0)/b; if(2*a0>b) c+=1; return c;}
+
+#define bigint_mod_long(a,m) (a%m)
+
 bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy);
 int divides(const bigint& a, const bigint& b, bigint& q, bigint& r);
 int divides(const bigint& a, long b, bigint& q, long& r);
@@ -129,6 +178,22 @@ bigint chrem(const bigint& a1, const bigint& a2,
 bigint mod(const bigint& a, const bigint& b);     // a mod b in range +- half b
 long mod(const bigint& a, long b);
 
+inline bigint addmod(const bigint& a, const bigint& b, const bigint& m)
+{
+  if (is_zero(a)) return b;
+  if (is_zero(b)) return a;
+  return mod(a+b,m);
+}
+
+inline bigint xmm(const bigint& a, const bigint& b, const bigint& m)
+{
+  if (a==1) return b;
+  if (a==-1) return -b;
+  if (b==1) return a;
+  if (b==-1) return -a;
+  return (a*b) % m;
+}
+
 long val(const bigint& factor, const bigint& number);
 long val(long factor, const bigint& number);
 
@@ -183,7 +248,7 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x);
 // and assign roots to a list of these
 int nrootscubic(long b, long c, long d, long p, vector<long>& roots);
 
-void ratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxd=BIGINT(0));
+void ratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxd);
 void ratapprox(bigfloat x, long& a, long& b, long maxd=0);
 
 #endif

@@ -41,8 +41,8 @@ int ratpoint(const quartic& g, const bigint& min, const bigint& max, bigint& xx,
   if(isqrt(a,n)) {xx=1; yy=n; zz=0; return 1;}
   if(isqrt(e,n)) {xx=0; yy=n; zz=1; return 1;}
   bigint x,x2,x3,x4,z,z2,z3,z4,ax4,bx3z,cx2z2,dxz3,ez4;
-  static const bigint zero = BIGINT(0);
-  static const bigint one  = BIGINT(1);
+  static const bigint zero(0);
+  static const bigint one(1);
   for (n=min; (n<=max) && (!found); ++n)
     { 
       if (n==1) 
@@ -474,7 +474,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 	{
 
 // some preliminary calculations of multiples of w etc.
-	  w2 = sqr(BIGINT(w));  w3 = w*w2; w4 = w2*w2;
+	  w2 = sqr(bigint(w));  w3 = w*w2; w4 = w2*w2;
 	  aw = a; bw = b*w; cw = c*w2; dw = d*w3; ew = e*w4;
 
 	  for ( i=0; i < num_aux; i++)
@@ -556,7 +556,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 
 	  if(!w_vars_set)
 	    {
-	      w2 = sqr(BIGINT(w));  w3 = w*w2; w4 = w2*w2;
+	      w2 = sqr(bigint(w));  w3 = w*w2; w4 = w2*w2;
 	      aw = a; bw = b*w; cw = c*w2; dw = d*w3; ew = e*w4;
 	      w_vars_set=1;
 	    }

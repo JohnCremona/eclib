@@ -26,21 +26,6 @@
 
 #include <eclib/timer.h>
 
-
-inline scalar xmm(scalar a, scalar b, scalar m)
-{
-  if (a==1) return b;
-  if (a==-1) return -b;
-  if (b==1) return a;
-  if (b==-1) return -a;
-  //cout<<"xmodmul("<<a<<","<<b<<","<<m<<") = "<<xmodmul(a,b,m)<<endl;
-  //cout<<"xmodmul("<<a<<"*(int64_t)"<<b<<")%"<<m<<" = "<< (a*(int64_t)b) % m<<endl;
-  //return xmodmul(a,b,m);
-  //return (a*b) % m;
-  return (a*(int64_t)b) % m;
-  //return (scalar)(((long)a*(long)b) % (long)m);
-}
-
 #if(0)
 // This special version only works modulo BIGPRIME, not a general modulus:
 
@@ -77,22 +62,6 @@ inline scalar xmm0(scalar a, scalar b)
 }
 
 #endif
-
-inline scalar addmod0(scalar a, scalar b)
-{
-  scalar c=a+b;
-  c += ((c<0)?DEFAULT_MODULUS:0);
-  c -= ((c>=DEFAULT_MODULUS)?DEFAULT_MODULUS:0);
-  return c;
-}
-
-inline scalar addmod(scalar a, scalar b, scalar mod)
-{
-  scalar c=a+b;
-  c += ((c<0)?mod:0);
-  c -= ((c>=mod)?mod:0);
-  return c;
-}
 
 //#define TRACE_LISTS
 //#define TRACE_FIND
@@ -420,6 +389,8 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
 {
   int i,ir, j, jj, t, r, c;
   scalar v;
+  static const scalar zero(0);
+  static const scalar one(1);
 
 #if TRACE_ELIM
   cout<<"Starting sparse_elimination()..."<<flush;
@@ -529,7 +500,7 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
       jj = npc[j]-1;  // NB constructor gives this much
       bas.col[jj][0] = 1; // 1 entry in this row
       bas.col[jj][1] = j; // in column 1
-      bas.val[jj][0] = 1; // with value 1
+      bas.val[jj][0] = one; // with value 1
     }
 
   /* set the other entries in order */
@@ -563,7 +534,7 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
       int nv=0; // counts # non-zero v
 
       for(t=0; t<rank; t++)
-        R[t] = (t<i?0:elem(ir+1, position[elim_row[t]]));
+        R[t] = (t<i? zero : elem(ir+1, position[elim_row[t]]));
 
       for(j=0; j<nullity; j++) // set B[i][j], using B[t][j] for t>i
         {
@@ -574,10 +545,10 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
           while(t--)
             {
               rr = *Rt--;
-              if (rr)
+              if (is_nonzero(rr))
                 {
                   ss = (*Bt)[j];
-                  if (ss)
+                  if (is_nonzero(ss))
                     {
                       v = mod(v - xmodmul(rr, ss, modulus), modulus);
                     }
@@ -585,7 +556,7 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
               Bt--; // must be outside the if(rr)
             }
           *bij++ = v;
-          if (v)
+          if (is_nonzero(v))
             {
               nv++;
               *bij_nz++ = v;
@@ -846,10 +817,10 @@ void smat_elim::step3()
   int col0,col1;
   //  for( col0 = 0; col0 < nco; col0++ ) {
   for( col0 = nco-1; col0 >=0; col0-- ) {
-    scalar vali = (column+col0)->num;
+    int vali = (column+col0)->num;
     if( vali == 2 || vali == 1 ) {col1=col0+1; L.put(col1);}
   }
-  
+
   while( (col0 = L.next()) != -1 ) {
     if( (column+col0-1)->num < 1 ) continue;
     int row = (column+col0-1)->next();
@@ -1330,7 +1301,7 @@ void smat_elim::step5dense()
 #endif
   for(i=1; i<=nrd; i++) 
     {
-      if (xmod(dmat(i,pc[i])-1,modulus))
+      if (is_nonzero(xmod(dmat(i,pc[i])-1,modulus)))
         cout<<"Bad pivot #"<<i<<" ("<<dmat(i,pc[i])<<")"<<endl;
       int r = remaining_rows[i-1]-1;
       int c = remaining_cols[pc[i]-1];
@@ -1360,10 +1331,6 @@ ssubspace::ssubspace(const smat& b, const vec_i& p, scalar mod)
 
 ssubspace::ssubspace(const ssubspace& s)
   :modulus(s.modulus),pivots(s.pivots),basis(s.basis)
-{}
-
-// destructor -- no need to do anything as components have their own
-ssubspace::~ssubspace()
 {}
 
 // assignment
@@ -1405,7 +1372,7 @@ ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s, scalar m)
   return combine(s,eigenspace(restrict_mat(sm,s), l, m));
 }
 
-ssubspace make1d(const vec& bas, long&piv, scalar m)
+ssubspace make1d(const vec& bas, scalar&piv, scalar m)
 // make a 1-D ssubspace with basis bas
 {
   smat tbasis(1,dim(bas));

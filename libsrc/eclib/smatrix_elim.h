@@ -56,6 +56,7 @@ find( int X, const int* ptr, int ub, int lb = 0 ) {
 #define smat smat_i
 #define smat_elim smat_i_elim
 #define ssubspace ssubspace_i
+
 #include "smat_elim.h"
 
 #undef scalar
@@ -75,6 +76,27 @@ find( int X, const int* ptr, int ub, int lb = 0 ) {
 #define smat smat_l
 #define smat_elim smat_l_elim
 #define ssubspace ssubspace_l
+
+#include "smat_elim.h"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+#undef ssubspace
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+#define ssubspace ssubspace_m
+
 #include "smat_elim.h"
 
 #undef scalar

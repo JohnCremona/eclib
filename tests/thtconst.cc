@@ -85,13 +85,13 @@ int main()
       bigint kmin=k; double cpsmin=cps2; long kkmin=0;
 
       Curvedata CDup=CD2;
-      CDup.transform(BIGINT(1),BIGINT(0),BIGINT(0));
+      CDup.transform(bigint(1),bigint(0),bigint(0));
       double cpsup = cps_bound(CDup);
       cout << "Shift by "<<(k+1)<<" (up by 1): "<< (Curve)CDup <<":\t";
       cout << "CPS bound = " << cpsup << "\n";
 
       Curvedata CDdown=CD2;
-      CDdown.transform(BIGINT(-1),BIGINT(0),BIGINT(0));
+      CDdown.transform(bigint(-1),bigint(0),bigint(0));
       double cpsdown = cps_bound(CDdown);
       cout << "Shift by "<<(k-1)<<" (down by 1): "<< (Curve)CDdown <<":\t";
       cout << "CPS bound = " << cpsdown << "\n";
@@ -116,7 +116,7 @@ int main()
 	  for(long kk=kd; ; kk+=kd)
 	    {
 	      Curvedata CDk=CD2;
-	      CDk.transform(BIGINT(kk),BIGINT(0),BIGINT(0));
+	      CDk.transform(bigint(kk),bigint(0),bigint(0));
 	      double cpsk = cps_bound(CDk);
 	      cout << "Shift by "<<(k+kk)<<" (relative "<<kk<<"): "<< (Curve)CDk <<":\t";
 	      cout << "CPS bound = " << cpsk << "\n";

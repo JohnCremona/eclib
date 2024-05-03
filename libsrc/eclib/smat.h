@@ -72,7 +72,7 @@ public:
      svec row(int) const; // extract row i as an svec
      int nrows() const {return nro;}
      int ncols() const {return nco;}
-     long rank(scalar mod);
+     long rank(scalar mod); // implemented in smat_elim.cc
      long nullity(const scalar& lambda, scalar mod); // nullity of this-lambda*I
 
      static smat scalar_matrix(int n, const scalar& a);  // nxn scalar matrix a*I

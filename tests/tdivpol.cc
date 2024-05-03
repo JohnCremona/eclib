@@ -32,7 +32,7 @@ int main()
 {
   initprimes("PRIMES",0);
 
-  Curve E(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
+  Curve E(0,0,1,-7,6);
 
   Curvedata C(E, 0);
   cout << "Curve " << E << endl;
@@ -56,9 +56,9 @@ int main()
 #if(1)
   cout << "\nTesting division of points:\n";
 
-  Point P0(C, BIGINT(0),BIGINT(2)) ;
-  Point P1(C, BIGINT(1),BIGINT(0)) ;
-  Point P2(C, BIGINT(2),BIGINT(0)) ;
+  Point P0(C, bigint(0),bigint(2)) ;
+  Point P1(C, bigint(1),bigint(0)) ;
+  Point P2(C, bigint(2),bigint(0)) ;
 
   vector<Point> Plist = {P0, P1, P2, P0+P1, P0+P2, P1+P2, P0+P1+P2};
   for ( const auto& P : Plist)

@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_VECTOR_H)
 #define _ECLIB_VECTOR_H      1       //flags that this file has been included
 
-#include <eclib/arith.h>
+#include <eclib/marith.h>
 
 class vec_i; class vec_l; class vec_m;
 class mat_i; class mat_l; class mat_m;

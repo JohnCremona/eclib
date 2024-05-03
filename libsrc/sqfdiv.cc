@@ -127,7 +127,7 @@ vector<bigint> sqfdiv::getsupp(int bothsigns) const
 {
  int use_minus_one = (!positive)||bothsigns;
  vector<bigint> supp;
- if(use_minus_one) {supp.push_back(BIGINT(-1));}
+ if(use_minus_one) {supp.push_back(bigint(-1));}
  for(unsigned long i=0; i<primebase->size(); i++)
    {
      const bigint& p = (*primebase)[i];
@@ -197,7 +197,7 @@ vector<bigint> support(const bigint& n)
   vector<bigint> supp;
   if(is_zero(n)) { return supp;}
   vector<bigint> supp_pos  = pdivs(n);
-  supp.push_back(BIGINT(-1));
+  supp.push_back(bigint(-1));
   supp.insert(supp.end(),supp_pos.begin(),supp_pos.end());
   return supp;
 }

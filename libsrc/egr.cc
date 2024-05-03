@@ -471,9 +471,10 @@ int ComponentGroups::grprimes(vector<Point>& Plist, const vector<bigint>& plist)
 // returning the overall index
 int ComponentGroups::egr_subgroup(vector<Point>& Plist, int real_too)
 {
+  static const bigint zero(0);
   if(Plist.size()==0) return 1;
   vector<bigint> plist = the_bad_primes;
-  if(real_too && (conncomp==2)) plist.push_back(BIGINT(0));
+  if(real_too && (conncomp==2)) plist.push_back(zero);
 #ifdef DEBUG_EGR
   cout<<"Using primes "<<plist<<endl;
 #endif
@@ -487,7 +488,8 @@ bigint comp_map_image(const vector<int> moduli, const mat& image);
 
 bigint egr_index(const vector<Point>& Plist, int real_too)
 {
-  if(Plist.size()==0) return BIGINT(1);
+  static const bigint zero(0), one(1);
+  if(Plist.size()==0) return one;;
 
   // Compute minimal model and map points to it if necessary
 
@@ -519,7 +521,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
 
   ComponentGroups CGS(Emin);
   vector<bigint> plist = getbad_primes(CGS);
-  if(real_too && (getconncomp(CGS)==2)) plist.push_back(BIGINT(0));
+  if(real_too && (getconncomp(CGS)==2)) plist.push_back(zero);
 #ifdef DEBUG_EGR
   cout<<"Using primes "<<plist<<endl;
 #endif
@@ -552,7 +554,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
 
   mat m(Plist.size(),n);
   unsigned int j=0, j1, j2, i;
-  bigint imageorder=BIGINT(1);
+  bigint imageorder=one;
   for(i=0; i<moduli.size(); i++) imageorder*=moduli[i];
   for(j1=0; j1<plist.size(); j1++)
     for(j2=0; j2<imagematrix[j1][0].size(); j2++)

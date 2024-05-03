@@ -956,7 +956,7 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
 		  long k;
 		  if(compute_bc)
 		    { //compute entries bc[k] = c[k] * b^(degree-k), k < degree
-		      bigint tmp=BIGINT(1);
+		      bigint tmp(1);
 		      for(k = degree-1; k >= 0; k--)
 			{
 			  tmp *= b;
@@ -978,7 +978,7 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
 		    { 
 		      if (verbose)
 			cout<<"x = "<<a<<"/"<<b<<" gives a rational point."<<endl;
-		      halt_flag = (*curve).process(BIGINT(a),y,BIGINT(b));  
+		      halt_flag = (*curve).process(bigint(a),y,bigint(b));  
 #if DEBUG_QS>0
 		      cout<<"After calling process(), halt_flag = "<<halt_flag<<endl;
 #endif
@@ -994,7 +994,7 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
 		{ 
 		  if (verbose)
 		    cout<<a<<"/"<<b<<" may be a point (no check)."<<endl;
-		  halt_flag = (*curve).process(BIGINT(a),BIGINT(0),BIGINT(b));
+		  halt_flag = (*curve).process(bigint(a),bigint(0),bigint(b));
 #if DEBUG_QS>0
 		  cout<<"After calling process(), halt_flag = "
 		      <<halt_flag<<endl;
@@ -1064,7 +1064,7 @@ long qsieve::search()
   
   if (proc_infty)
     {
-      halt_flag = (*curve).process(BIGINT(0),BIGINT(1),BIGINT(0));
+      halt_flag = (*curve).process(bigint(0),bigint(1),bigint(0));
 #if DEBUG_QS>0
       cout<<"After calling process(), halt_flag = "<<halt_flag<<endl;
 #endif

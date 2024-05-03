@@ -42,7 +42,7 @@ void saturator::reset_points(const vector<Point>& PP)
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
-  the_index_bound = BIGINT(0);
+  the_index_bound = bigint(0);
 }
 
 // initialize index bound
@@ -590,7 +590,7 @@ bigint index_bound(vector<Point>& points,
 {
   int npts = points.size();
   if (npts==0)
-    return BIGINT(1);
+    return bigint(1);
 
   Curvedata C = Curvedata(points[0].getcurve(), 0);
   if(verbose)
@@ -628,7 +628,7 @@ bigint index_bound(vector<Point>& points,
   // no need to use egr_reg in next line since we multiply by index
   bigfloat ib = index*sqrt(reg*pow(gamma/lambda,npts));
   bigint ans = Ifloor(ib+0.1);  // be careful about rounding errors!
-  if(ans<2) ans=BIGINT(1);  // In case 0.9999 has rounded down to 0
+  if(ans<2) ans=bigint(1);  // In case 0.9999 has rounded down to 0
   if(verbose)
     cout<<"Saturation index bound " << ib << ", rounds down to "<<ans<<endl;
   return ans;
@@ -679,8 +679,8 @@ bigint index_bound(vector<Point>& points,
   //  cout<<"Before shifting, newpoints = "<<newpoints<<endl;
   if(shift_flag) 
     for(unsigned int i=0; i<newpoints.size(); i++)
-      newpoints[i] = transform(newpoints[i],C,BIGINT(1),
-			   x_shift,BIGINT(0),BIGINT(0),1);
+      newpoints[i] = transform(newpoints[i],C,bigint(1),
+			   x_shift,bigint(0),bigint(0),1);
   //  cout<<"After shifting, newpoints = "<<newpoints<<endl;
   Point Pmin = pmh.get_min_ht_point();
   if(lambda==0)

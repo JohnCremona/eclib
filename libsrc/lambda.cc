@@ -127,13 +127,14 @@ int make_point_from_x(Curvedata* CD, const bigint& xa, const bigint& xd, Point* 
 
 int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P)
 {
+  static const bigint ten(10);
   bigint a,b,c,d;
 //cout<<"In ratapprox2 with x = " << x << endl;
   bigint x0, x1, x2, y0, y1, y2;
   bigfloat xx, diff, xc;
   xx = x; x0 = 0; x1 = 1; y0 = 1; y1 = 0;
   diff = 1;
-  bigint maxdenom = pow(BIGINT(10),maxdd);
+  bigint maxdenom = pow(ten,maxdd);
   while ( !is_approx_zero(diff) && (y2<maxdenom))
     { c = Iround( xx ); xc=I2bigfloat(c);
       x2 = x0 + c*x1; x0 = x1; x1 = x2;

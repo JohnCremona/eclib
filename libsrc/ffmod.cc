@@ -116,9 +116,10 @@ gf_element ffmodq::evaluate(const pointmodq& P) const
 // vertical(P) has divisor (P)+(-P)-2(0)
 ffmodq vertical(const pointmodq& P)
 {
-  if(P.is_zero()) 
+  static const bigint one(1);
+  if(P.is_zero())
     {
-      ffmodq g(BIGINT(1)); return g;
+      ffmodq g(one); return g;
     }
   NewFqPoly(base_field(P),h1);
   FqPolyAssignX(h1);
@@ -128,9 +129,10 @@ ffmodq vertical(const pointmodq& P)
 // tangent(P) has divisor 2(P)+(-2P)-3(0)
 ffmodq tangent(const pointmodq& P)
 {
-  if(P.is_zero()) 
+  static const bigint one(1);
+  if(P.is_zero())
     {
-      ffmodq g(BIGINT(1)); return g;
+      ffmodq g(one); return g;
     }
   gf_element x=P.get_x(), y=P.get_y();
   gf_element a1,a2,a3,a4,a6;
@@ -182,7 +184,8 @@ ffmodq chord(const pointmodq& P, const pointmodq& Q)
 
 ffmodq weil_pol(const pointmodq& T, int m)
 {
-  ffmodq h(BIGINT(1));
+  static const bigint one(1);
+  ffmodq h(one);
   switch(m) {
   case 2: return vertical(T);
   case 3: return tangent(T);
