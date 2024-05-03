@@ -146,10 +146,6 @@ int longify(const bigfloat& x, long& a, int rounding=0);
 inline int is_real_zero(bigfloat x) {return IsZero(x);}
 inline int is_complex_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
 inline void Iasb(bigint& a, bigfloat x) {RoundToZZ(a,x);}
-inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
-inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
-int I2int(const bigint& x);    // too long to inline
-long I2long(const bigint& x);  // too long to inline
 inline void Iasb(long& a, bigfloat x) {ZZ n; RoundToZZ(n,x); a=I2long(n);}
 istream& operator>>(istream& is, bigcomplex& z);
 inline bigcomplex pow(const bigcomplex& a, int e)  {return (to_RR(e)*a.log()).exp();}
@@ -191,6 +187,7 @@ inline double to_bigfloat(const int& n) {return double(n);}
 inline double to_bigfloat(const long& n) {return double(n);}
 inline double to_bigfloat(const double& x) {return x;}
 inline double I2double(const bigint& x) {return to_double(x);}
+inline double I2bigfloat(const bigint& x) { return to_double(x);}
 
 // complexes
 
@@ -212,5 +209,10 @@ inline int is_approx_zero(const bigcomplex& z)
 // default to use if the variable is not set or empty.
 
 string getenv_with_default(string env_var, string def_val);
+
+inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
+inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
+int I2int(const bigint& x);    // too long to inline
+long I2long(const bigint& x);  // too long to inline
 
 #endif // #define _INTERFACE_H_
