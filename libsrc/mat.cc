@@ -86,7 +86,7 @@ void mat::set(long i, long j, const scalar& x)
 
 void mat::add(long i, long j, const scalar& x)
 {
-  if (!is_zero(x)) entries.at((i-1)*nco+(j-1)) += x;
+  if (is_nonzero(x)) entries.at((i-1)*nco+(j-1)) += x;
 }
 
 void mat::setrow(long i, const vec& v)
@@ -281,7 +281,7 @@ long ndigits(const scalar& a)
   int digits = 0;
   scalar aa(a);
   if (aa < 0) digits = 1; // for the '-'
-  while (!is_zero(aa)) { aa /= 10; digits++; }
+  while (is_nonzero(aa)) { aa /= 10; digits++; }
   return digits;
 }
 
@@ -808,7 +808,7 @@ long mat::rank() const
       for (long r2=r+1; (r2<=nr)&&(!is_one(mmin)); r2++)
         {
           scalar mr2c = abs(m(r2,c));
-          if ((!is_zero(mr2c)) && ((mr2c<mmin) || (is_zero(mmin))))
+          if ((is_nonzero(mr2c)) && ((mr2c<mmin) || (is_zero(mmin))))
             {
               mmin=mr2c;
               rmin=r2;
@@ -942,7 +942,7 @@ void elimp1(mat& m, long r1, long r2, long pos, const scalar& pr)
   auto mr1 = m.entries.begin() + (r1-1)*nc + (pos-1);
   auto mr2 = m.entries.begin() + (r2-1)*nc + (pos-1);
   scalar q=mod(*mr2,pr);
-  if(q==0) return;
+  if(is_zero(q)) return;
   nc -= (pos-1); // first pos-1 entries are assumed 0 already
   // generic function to make y (entry in row2) 0
   std::function<scalar (const scalar&, const scalar&)>
@@ -1076,7 +1076,7 @@ mat echelonp(const mat& entries, vec_i& pcols, vec_i& npcols,
 
 mat echmodp(const mat& entries, vec_i& pcols, vec_i& npcols, long& rk, long& ny, const scalar& pr)
 {
-  // cout << "In echmodp with p="<<pr<<" and matrix " << entries << endl;
+ // cout << "In echmodp with p="<<pr<<" and matrix " << entries << endl;
  long nr=entries.nrows(), nc=entries.ncols();
  mat m(nr,nc);
  std::transform(entries.entries.begin(), entries.entries.end(), m.entries.begin(),
@@ -1089,19 +1089,19 @@ mat echmodp(const mat& entries, vec_i& pcols, vec_i& npcols, long& rk, long& ny,
  for (long c=1; (c<=nc)&&(r<=nr); c++)
    {
      auto mij=m.entries.begin()+(r-1)*nc+c-1;
-     scalar mmin = *mij;
+     scalar mmin(*mij);
      long rmin = r;
      mij += nc;
-     for (long r2=r+1; (r2<=nr)&&(mmin==0); r2++, mij+=nc)
+     for (long r2=r+1; (r2<=nr)&&(is_zero(mmin)); r2++, mij+=nc)
        {
-	 scalar mr2c = *mij;
-	 if (0!=mr2c)
+	 scalar mr2c(*mij);
+	 if (is_nonzero(mr2c))
            {
              mmin=mr2c;
              rmin=r2;
            }
        }
-     if (mmin==0)
+     if (is_zero(mmin))
        npcols[++ny] = c;
      else
        {
@@ -1109,10 +1109,10 @@ mat echmodp(const mat& entries, vec_i& pcols, vec_i& npcols, long& rk, long& ny,
 	 if (rmin>r)
            m.swaprows(r,rmin);
 	 auto entriesij = m.entries.begin()+(r-1)*nc;
-         // cout<<"pivot = "<<mmin<<endl;
+         // cout<<"c = "<<c<<", pivot = "<<mmin<<endl;
          scalar fac = xmod(invmod(mmin,pr),pr);
          std::transform(entriesij, entriesij+nc, entriesij,
-                        [pr,fac] (const scalar& x) {return mod(fac*x, pr);});
+                        [pr,fac] (const scalar& x) {return mod(xmodmul(fac,x, pr), pr);});
          for (long r3 = r+1 ; r3<=nr; r3++)
            elimp1(m,r,r3,c,pr);
 	 r++;
@@ -1136,7 +1136,7 @@ mat echmodp(const mat& entries, vec_i& pcols, vec_i& npcols, long& rk, long& ny,
 	 scalar fac = *(mij+pcols[r1]-1);
 	 fac = mod(invmod(fac,pr),pr);
          std::transform(mij, mij+nc, mij,
-                        [pr,fac] (const scalar& x) {return mod(fac*x, pr);});
+                        [pr,fac] (const scalar& x) {return mod(xmodmul(fac,x, pr), pr);});
        }
    }
  else
@@ -1144,7 +1144,7 @@ mat echmodp(const mat& entries, vec_i& pcols, vec_i& npcols, long& rk, long& ny,
      auto mij=m.entries.begin();
      for (long i=1; i<=rk; i++)
        for (long j=1; j<=nc; j++)
-	 *mij++ = (j==pcols[i]);    // 0 or 1 !
+	 *mij++ = scalar(j==pcols[i]);    // 0 or 1 !
    }
  return m.slice(rk,nc);
 }
@@ -1570,7 +1570,7 @@ scalar maxabs(const mat& m) // max entry
 long population(const mat& m) // #nonzero entries
 {
   if (m.entries.empty()) return 0;
-  return std::count_if(m.entries.begin(), m.entries.end(), [](const scalar& x) {return x!=0;});
+  return std::count_if(m.entries.begin(), m.entries.end(), [](const scalar& x) {return is_nonzero(x);});
 }
 
 double sparsity(const mat& m)

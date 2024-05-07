@@ -21,13 +21,12 @@ check_run = echo -n "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_di
 
 ################ PROCS #############################################
 
-PROCS_TESTS = smattest comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 mattest1 mattest2 space1 space2 svectest1 svectest2 tcon2 tlegcert timing threading tversion
+PROCS_TESTS = smattest1 smattest2 smattest3 comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 vectest3 mattest1 mattest2 mattest3 space1 space2 space3 svectest1 svectest2 svectest3 tcon2 tlegcert timing threading tversion
 PROCS_TESTS_SUFFIXED = $(PROCS_TESTS:=$(EXEEXT))
 procs_tests: $(PROCS_TESTS_SUFFIXED)
 
 ptest_SOURCES=ptest.cc
 mptest_SOURCES=mptest.cc
-smattest_SOURCES=smattest.cc
 comptest_SOURCES=comptest.cc
 rattest_SOURCES=rattest.cc
 bigrattest_SOURCES=bigrattest.cc
@@ -42,18 +41,32 @@ vectest1_SOURCES=vectest.cc
 vectest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
 vectest2_SOURCES=vectest.cc
 vectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+vectest3_SOURCES=vectest.cc
+vectest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
 mattest1_SOURCES=mattest.cc
 mattest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
 mattest2_SOURCES=mattest.cc
 mattest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+mattest3_SOURCES=mattest.cc
+mattest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
 space1_SOURCES=space.cc
 space1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
 space2_SOURCES=space.cc
 space2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+space3_SOURCES=space.cc
+space3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
 svectest1_SOURCES=svectest.cc
 svectest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
 svectest2_SOURCES=svectest.cc
 svectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+svectest3_SOURCES=svectest.cc
+svectest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
+smattest1_SOURCES=smattest.cc
+smattest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
+smattest2_SOURCES=smattest.cc
+smattest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+smattest3_SOURCES=smattest.cc
+smattest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
 tcon2_SOURCES=tcon2.cc
 tlegcert_SOURCES=tlegcert.cc
 timing_SOURCES=timing.cc

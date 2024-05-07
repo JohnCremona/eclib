@@ -28,11 +28,9 @@
 float ran0( long& idum ); 
 float ran0( int& idum ); 
 
-//#define SCALAR_OPTION 1 // ints
-#define SCALAR_OPTION 2   // longs
-
-#include <eclib/smatrix_elim.h>
 #include <eclib/types.h>
+
+const scalar modulus(PRIME30); // 1073741789 = max p s.t. p < 2^30
 
 long starttime,stoptime;
 
@@ -370,7 +368,7 @@ int main(void)
 	    cout << "display fill-in information?" << endl;
 	    cin >> flag2;
 	    if( flag ) cout << "matrix A is " << sm << endl;
-	    smat_elim A (sm, DEFAULT_MODULUS );
+	    smat_elim A (sm, modulus );
 	    if( flag2 ) 
 	      { cout << "initial population: "; display_population(A); }
 	    A.step0();
@@ -434,11 +432,11 @@ int main(void)
 	    cout << "enter matrix as an smat" << endl;
 	    cin >> sm;
 	  }
-	smat_elim A( sm, DEFAULT_MODULUS );
+	smat_elim A( sm, modulus );
 	vec_i pc, npc;
 	
 	if( flag ) {
-	  long rk, ny; scalar pr = DEFAULT_MODULUS;
+	  long rk, ny; scalar pr = modulus;
 	  mat m = sm.as_mat ();  
 	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
 	  cout << " rank using echmodp : " << rk;
@@ -474,7 +472,7 @@ int main(void)
 	cout << "rank is:" << dim( pc ) << endl;
 	display_population(kern);
 
-        // smat_elim A2( sm, DEFAULT_MODULUS );
+        // smat_elim A2( sm, modulus );
         // smat oldkern = A2.old_kernel(pc, npc);
         // cerr << "old version ";
 	// cout << "rank is:" << dim( pc ) << endl;
@@ -491,7 +489,7 @@ int main(void)
         //   }
 
 
-        smat result = mult_mod_p(sm,kern,DEFAULT_MODULUS);
+        smat result = mult_mod_p(sm,kern,modulus);
 	// cout << "sm  is:\n" << sm.as_mat() << endl;
 	// cout << "kern is:\n" << kern.as_mat() << endl;
 	// cout << "result is:\n" << result.as_mat() << endl;
@@ -509,7 +507,7 @@ int main(void)
 	cin >> A;
 	cout << "A = \n"<<A <<endl;
 	cout << "A (as matrix) = "; A.as_mat().output_pari(); cout <<endl;
-	ssubspace ker = kernel(A, DEFAULT_MODULUS);
+	ssubspace ker = kernel(A, modulus);
 	cout << "ker(A) has dimension " << dim(ker) << endl;
 	cout << "basis =  " << basis(ker) << endl;
 
@@ -517,7 +515,7 @@ int main(void)
 	scalar lambda;
 	cin >> lambda;
 	cout<<"lambda = "<<lambda<<endl;
-	ssubspace e = eigenspace(A,lambda, DEFAULT_MODULUS);
+	ssubspace e = eigenspace(A,lambda, modulus);
 	cout << "Eigenspace for lambda = "<<lambda<<" has dimension " << dim(e) << endl;
       }
     cout << "enter new value of t  ";

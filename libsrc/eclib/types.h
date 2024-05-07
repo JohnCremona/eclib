@@ -26,9 +26,9 @@
 
 #include <eclib/smatrix_elim.h>
 
-// SCALAR_OPTION may be set to 1 or 2 by user
+// SCALAR_OPTION may be set to 1 or 2 or 3 by user
 
-#if (SCALAR_OPTION==1)
+#if (SCALAR_OPTION==1) // scalar is int
 typedef int scalar;
 typedef vec_i vec;
 typedef mat_i mat;
@@ -38,6 +38,7 @@ typedef svec_i svec;
 typedef smat_i smat;
 typedef smat_i_elim smat_elim;
 #else
+#if (SCALAR_OPTION==2) // scalar is long
 typedef long scalar;
 typedef vec_l vec;
 typedef mat_l mat;
@@ -46,6 +47,18 @@ typedef ssubspace_l ssubspace;
 typedef svec_l svec;
 typedef smat_l smat;
 typedef smat_l_elim smat_elim;
+#else
+#if (SCALAR_OPTION==3) // scalar is bigint
+typedef long scalar;
+typedef vec_l vec;
+typedef mat_l mat;
+typedef subspace_l subspace;
+typedef ssubspace_l ssubspace;
+typedef svec_l svec;
+typedef smat_l smat;
+typedef smat_l_elim smat_elim;
+#endif
+#endif
 #endif
 
 #endif

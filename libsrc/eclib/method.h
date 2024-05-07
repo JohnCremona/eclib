@@ -43,6 +43,7 @@
 
 #if (METHOD==3)||(METHOD==4)
 #define MULTI
+#define SCALAR_OPTION 3
 #endif
 
 //The next two cause scalar, vector, matrix to be defined properly:

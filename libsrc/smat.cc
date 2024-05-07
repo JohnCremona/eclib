@@ -93,14 +93,14 @@ smat::smat(const mat& m)
   for( i = 0; i < nro; i++ )
     {
       auto veci = m.entries.begin() + i*nco;
-      for( j = 0, k = 0; j < nco; j++ ) if( !is_zero(*veci++) ) k++;
+      for( j = 0, k = 0; j < nco; j++ ) if( is_nonzero(*veci++) ) k++;
       col[i] = new int[ k+1 ];
       val[i] = new scalar[ k ];
       scalar *values = val[i]; int *pos = col[i];
       veci = m.entries.begin() + i*nco;
       *pos++ = k;
       for( l = 0, p = 1;  l < nco; l++, p++,veci++ )
-	if( !is_zero(*veci) ) { *values++ = *veci; *pos++ = p; }
+	if( is_nonzero(*veci) ) { *values++ = *veci; *pos++ = p; }
     }
 }
 
@@ -131,7 +131,7 @@ void smat::set_row( int i, int d, int* pos, scalar* values) // i counts from 0
   while(j--) {
     scalar v = *values++;
     int c = *pos++;
-    if (!is_zero(v))
+    if (is_nonzero(v))
       {
         *coli++ = c;
         *vali++ = v;
@@ -151,7 +151,7 @@ void smat::setrow ( int i, const vec& v) // i counts from 1
   j = dimv;
   n = 0;
   while(j--)
-    if (!is_zero(*vi++))
+    if (is_nonzero(*vi++))
       n++;
 
   // (re)allocate position and value arrays
@@ -171,7 +171,7 @@ void smat::setrow ( int i, const vec& v) // i counts from 1
   for(m=1; m<=dimv; m++)
     {
       scalar e = *vi++;
-      if (!is_zero(e))
+      if (is_nonzero(e))
         {
           *coli++ = m;
           *vali++ = e;
@@ -547,7 +547,7 @@ svec operator* ( const smat& A, const svec& v )
   for(int j = 1; j<=n; j++)
     {
       scalar s = (A.row(j))*v;
-      if(!is_zero(s)) prod.entries[j]=s;
+      if(is_nonzero(s)) prod.entries[j]=s;
     }
   return prod;
 }
@@ -868,7 +868,7 @@ int get_population(const smat& m )
       int d = *(m.col[r]);
       if(d==0) continue;
       int *pos = m.col[r] + 1;
-      while( d-- ) { count += ( !is_zero(*pos++) );}
+      while( d-- ) { count += ( is_nonzero(*pos++) );}
     }
   return count;
 }

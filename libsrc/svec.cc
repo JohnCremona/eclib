@@ -31,7 +31,7 @@ svec::svec(const vec& v)
   for(int i = 1; i <= d; i++ )
     {
       scalar vi = v[i];
-      if(!is_zero(vi))
+      if(is_nonzero(vi))
         entries[i]=vi;
     }
 }
@@ -53,7 +53,7 @@ scalar svec::elem(int i)  const   // returns i'th entry
 
 void svec::set(int i, const scalar& a)
 {
-  if(!is_zero(a)) entries[i]=a;
+  if(is_nonzero(a)) entries[i]=a;
 }
 
 void svec::erase(int i)
@@ -146,7 +146,7 @@ svec& svec::operator+=(const svec& w)
 	    else
 	      {
 		scalar sum = (vi->second) + (wi->second);
-		if(!is_zero(sum)) {vi->second = sum; vi++;}
+		if(is_nonzero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first);}
 		wi++;
 	      }
@@ -193,7 +193,7 @@ svec& svec::add_scalar_times(const svec& w, const scalar& a)
 	    else
 	      {
 		scalar sum = (vi->second) + a* (wi->second);
-		if(!is_zero(sum)) {vi->second = sum; vi++;}
+		if(is_nonzero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first);}
 		wi++;
 	      }
@@ -215,7 +215,7 @@ void svec::reduce_mod_p(const scalar& p)
   while( vi != entries.end() )
     {
       scalar a = mod(vi->second,p);
-      if(!is_zero(a))
+      if(is_nonzero(a))
         {
           (vi->second)=a;
           vi++;
@@ -269,7 +269,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, const scalar& scal, const scal
 	    else
 	      {
 		scalar sum = xmod((vi->second) + xmodmul(a, (wi->second),p),p);
-		if(!is_zero(sum)) {vi->second = sum; vi++;}
+		if(is_nonzero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first); }
 		wi++;
 	      }
@@ -317,7 +317,7 @@ svec& svec::add_scalar_times_mod_p(const svec& w, const scalar& scal, std::set<i
 	    else
 	      {
 		scalar sum = xmod((vi->second) + xmodmul(a, (wi->second),p),p);
-		if(!is_zero(sum)) {vi->second = sum; vi++;}
+		if(is_nonzero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first); offs.insert(wi->first);}
 		wi++;
 	      }
@@ -358,7 +358,7 @@ svec& svec::add_mod_p(const svec& w, const scalar& p)
 	    else
 	      {
 		scalar sum = xmod((vi->second) + (wi->second),p);
-		if(!is_zero(sum)) {vi->second = sum; vi++;}
+		if(is_nonzero(sum)) {vi->second = sum; vi++;}
 		else {vi++; entries.erase(wi->first); }
 		wi++;
 	      }
