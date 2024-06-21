@@ -258,7 +258,7 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
   //  cout<<"regulator = "<<reg0<<endl;
   //  cout<<n<<" points"<<endl;
 #endif
-  if(npts==0) return 1;
+  if(Plist.empty()) return 1;
   Point P0 = Plist[0], P1;
   vector<int> CG = ComponentGroup(p);
   long CGexpo=CG[0];
@@ -368,8 +368,8 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
   if(CGOrder==1) return 1;
 #ifdef DEBUG_EGR
   cout<< "processing point #1: "<<flush;
-#endif
-  m=OrderInComponentGroup(P0,p,CG); // will hold current index
+#endif 
+ m=OrderInComponentGroup(P0,p,CG); // will hold current index
   for(j=1; j<npts; j++)
     {
       n0 = m;

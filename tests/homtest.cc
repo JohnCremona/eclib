@@ -71,7 +71,7 @@ int main(void)
 	cout << plus << ": ";
 	cout << "\tDimension = " << dim;
 	cout << "\tCuspidal dimension = " << cdim;
-	if(d*cd>1) cout<<" denoms ("<<d<<","<<cd<<")";
+	if(d*cd>1 &&verbose) cout<<" denoms ("<<d<<","<<cd<<")";
 #ifdef SHOW_TIMES
 	show_time();
 #endif
