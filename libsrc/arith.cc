@@ -429,8 +429,8 @@ int new_modrat(long n, long m, long& a, long& b);
 
 int modrat(long n, long m, long& a, long& b)
 {
-  // return old_modrat(n, m, a, b);
-  return new_modrat(n, m, a, b);
+  return old_modrat(n, m, a, b);
+  //return new_modrat(n, m, a, b);  // NB new version has problems on 32-bit
 }
 
 int old_modrat(long n, long m, long& a, long& b)
