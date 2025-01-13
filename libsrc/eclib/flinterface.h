@@ -37,6 +37,7 @@
 
 //#define TRACE_FLINT_RREF
 
+#include <gmp.h>
 #include <flint/flint.h> // must include this first to set __FLINT_VERSION
 
 #if (__FLINT_VERSION>2)
