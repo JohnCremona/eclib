@@ -101,7 +101,6 @@ vector<vector<bigfloat>> get_minor(const vector<vector<bigfloat>>& m, long m_siz
       for (long j=0; j<m_size-1; j++)
       {
 	long jj = (j>=j0? j+1 : j);
-        if(j>=j0) jj++;
 	the_minor[i][j] = m[ii][jj];
       }
     }
