@@ -7,7 +7,7 @@ AC_PREREQ([2.69])
 # The version is the concatenation of 'v' and the year, month, date: vyyyymmdd
 # To access this as a string or integer triple, see libsrc/eclib/version.h
 
-AC_INIT([eclib], [20241112], [john.cremona@gmail.com])
+AC_INIT([eclib], [20250122], [john.cremona@gmail.com])
 
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
@@ -41,7 +41,7 @@ LT_INIT
 # NB The suffix of the library name (libec.so here) is (c-a).a.r
 
 LT_CURRENT=14
-LT_REVISION=0
+LT_REVISION=1
 LT_AGE=0
 
 AC_SUBST(LT_CURRENT)
