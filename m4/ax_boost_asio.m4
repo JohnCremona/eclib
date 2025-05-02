@@ -69,7 +69,7 @@ AC_DEFUN([AX_BOOST_ASIO],
 											]],
                                   [[
 
-                                    boost::asio::io_service io;
+                                    boost::asio::io_context io;
                                     boost::system::error_code timer_result;
                                     boost::asio::deadline_timer t(io);
                                     t.cancel();
