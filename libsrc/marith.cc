@@ -1245,8 +1245,8 @@ int is_nth_power(const bigint& x, int n)
   if ((x<0) && (n%2==0))
     return 0;
   vector<bigint> plist = pdivs(x);
-  for (auto pi=plist.begin(); pi!=plist.end(); ++pi)
-    if (val(*pi, x)%n!=0)
+  for (auto p: plist)
+    if (val(p, x)%n!=0)
       return 0;
   return 1;
 }
@@ -1256,8 +1256,12 @@ bigint prime_to_S_part(const bigint& x,  const vector<bigint>& S)
   if (is_zero(x))
     return x;
   bigint y(abs(x));
-  for (auto pi=S.begin(); pi!=S.end() && y>1; ++pi)
-    divide_out(y, *pi);
+  for (auto p: S)
+    {
+      divide_out(y, p);
+      if (y==1)
+        break;
+    }
   return y;
 }
 
@@ -1265,6 +1269,5 @@ int is_S_unit(const bigint& x,  const vector<bigint>& S)
 {
   return prime_to_S_part(x, S)==1;
 }
-
 
 // end of file marith.cc

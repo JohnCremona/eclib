@@ -60,7 +60,9 @@ public:
   void getai(bigint& aa1, bigint& aa2, bigint& aa3,
              bigint& aa4, bigint& aa6) const
     {aa1=a1; aa2=a2; aa3=a3; aa4=a4; aa6=a6; }
-    
+  vector<bigint> a_invariants() const
+  { return vector<bigint>{a1,a2,a3,a4,a6}; }
+
 // input and output
   void output(ostream& os) const
     { os<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";}
@@ -95,6 +97,11 @@ public:
   int operator!=(const Curve& f) const
     {return ((a1!=f.a1)||(a2!=f.a2)||
              (a3!=f.a3)||(a4!=f.a4)||(a6!=f.a6));}
+
+  // Trace of Frobenius (via pari) if p good
+  // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
+  long ap(long p);
+
 protected:
   bigint a1 ;
   bigint a2 ;
@@ -157,7 +164,7 @@ public:
   friend inline vector<bigint> getbad_primes(Curvedata& c)
     {
       if(!c.discr_factored) c.factor_discr();
-      return c.the_bad_primes; 
+      return c.the_bad_primes;
     }
   // NB the is_minimal function returns 0 when minimization has not
   // been done; the curve may still be minimal
@@ -180,31 +187,6 @@ protected:
 // function to find "optimal x shift" of a given curve
 Curvedata opt_x_shift(const Curvedata& C, bigint& k);
 
-/*
-//
-// further derived class for curve, invariants and periods:
-//
-
-class CurvedataExtra : public Curvedata{ 
-public:
-  CurvedataExtra(const Curvedata&) ; 
-  virtual void output(ostream& os) const;
-  void input(istream& is)
-    {cout<<"*** You cannot input a CurvedataExtra -- must be just Curve\n";
-     exit(1); }
-  void getroots(bigfloat& r1, bigfloat& r2, bigfloat& r3) const
-    {r1=roots[0]; r2=roots[1]; r3=roots[2]; }
-      // NB caller should then look at conncomp to see how many are set
-  friend inline bigfloat getperiod(const CurvedataExtra c) {return c.period; }
-protected:
-  bigfloat roots[3] ;     // real two-division points; NB if there's only one,
-                        // it is stored in roots[2]
-  bigfloat period ;       // smallest real period * conncomp
-                
-} ;
-*/
-
-//
 // CurveRed class call Tates algorithm as constructor,
 // stores the info as member variables
 
@@ -269,10 +251,17 @@ public:
   ~CurveRed();
   CurveRed(const CurveRed& E);
   void operator=(const CurveRed& E);
-  // The full display function is not const, since if called they will
+  bigint conductor() {return N;}
+  // The full display function is not const, since if called it will
   // compute and set the local root numbers if necessary
   void display(ostream& os); // full output
   void output(ostream& os) const;  // just the curvedata and conductor
+
+  // Sort key for sorting lists of curves (LMFDB ordering):
+  // (1) conductor
+  // (2) list of ap for good p < NP_SORT
+  // (3) a1,a2,a3,4,a6
+  vector<bigint> sort_key(const int NP_SORT=25);
 
 private:
   // functions for setting local root numbers:
@@ -284,7 +273,7 @@ private:
 
 public:
   // member access functions:
-  friend inline vector<bigint> getbad_primes(const CurveRed& c) 
+  friend inline vector<bigint> getbad_primes(const CurveRed& c)
   {return c.the_bad_primes; }
   friend inline bigint getconductor(const CurveRed& c) {return c.N; }
   friend int getord_p_discr(const CurveRed& c, const bigint& p);
@@ -309,16 +298,12 @@ public:
   // real_too is 1), which is the lcm of the local Tamagawa exponents.
   // So (with no further knowledge of the MW group) we know that m*P
   // is in the good-reduction subgroup for all P, with this m.
-<<<<<<< HEAD
-  friend bigint global_Tamagawa_exponent(CurveRed& c, int real_too);
+  friend bigint global_Tamagawa_exponent(const CurveRed& c, int real_too);
 
   int has_good_reduction_outside_S(const vector<bigint>& S)
   {
     return is_S_unit(N, S);
   }
-=======
-  friend bigint global_Tamagawa_exponent(const CurveRed& c, int real_too);
->>>>>>> master
 };
 
 // The global Tamagawa number, = product of local ones.
@@ -363,6 +348,21 @@ inline int GlobalRootNumber(const Curvedata& E)
   CurveRed C(E);
   return GlobalRootNumber(C);
 }
+
+// Quadratic twist of an elliptic curve
+CurveRed QuadraticTwist(const CurveRed& E, const bigint& D);
+
+// Given a list of elliptic curves E, and one discriminant D, return the
+// list of twists of the curves by D
+vector<CurveRed> QuadraticTwists(const vector<CurveRed>& EE, const bigint& D);
+
+// Given a list of elliptic curves E, and one prime p, return the
+// list of twists of the curves by:
+// +p if p=1 (mod 4)
+// -p if p=3 (mod 4)
+// -4, 8 and -8 if p=2
+
+vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, const bigint& p);
 
 // end of file: curve.h
 

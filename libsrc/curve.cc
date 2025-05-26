@@ -24,6 +24,7 @@
 // originally adapted from Elliptic.cc by Oisin McGuiness
 
 #include <eclib/curve.h>
+#include <eclib/parifact.h> // for ellap
 
 //Kraus' conditions:
 
@@ -285,5 +286,11 @@ void Curve::tex_print(ostream &os) const
         return ;
 }
 
+// Trace of Frobenius (via pari) if p good
+// (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
+long Curve::ap(long p)
+{
+  return ellap(posmod(a1,p), posmod(a2,p), posmod(a3,p), posmod(a4,p), posmod(a6,p), p);
+}
 
 // end of file: curve.cc

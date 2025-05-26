@@ -22,8 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <eclib/curve.h>
-#include <eclib/polys.h> // for nrootscubic
-#include <eclib/curvemod.h> // for point counting to get ap
+#include <eclib/polys.h>    // for nrootscubic
 #include <eclib/ffmod.h>
 
 ostream& operator<<(ostream& os, const Kodaira_code& c)
@@ -329,6 +328,25 @@ CurveRed::CurveRed(const Curvedata& E)
   return;
 }     // end of Tate's algorithm
 
+// Sort key for sorting lists of curves (LMFDB ordering):
+// (1) conductor
+// (2) list of ap for p < NP_SORT
+// (3) a1,a2,a3,4,a6
+vector<bigint> CurveRed::sort_key(const int NP_SORT)
+{
+  vector<bigint> key;
+  key.push_back(N);
+  for(primevar pr(NP_SORT); pr.ok(); ++pr)
+    key.push_back(bigint(ap(pr)));
+  key.push_back(a1);
+  key.push_back(a2);
+  key.push_back(a3);
+  key.push_back(a4);
+  key.push_back(a6);
+  return key;
+}
+
+
 // The local Tamagawa exponent -- same as Tamagawa number unless the
 // component group is (2,2).  Use p=0 for reals
 bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p)
@@ -357,7 +375,7 @@ bigint global_Tamagawa_exponent(const CurveRed& c, int real_too)
 {
   static const bigint one(1);
   static const bigint two(2);
-  bigint ans = ((real_too && (c.conncomp==2))? two: one);
+  bigint ans = ((real_too && (getconncomp(c)==2))? two: one);
 
   for( const auto&  ri : c.reduct_array)
     {
@@ -1078,3 +1096,49 @@ bigint Trace_Frob(CurveRed& c, const bigint& p)
   bigint ans = one+p-n;
   return ans;
 }
+
+// Quadratic twist of an elliptic curve
+CurveRed QuadraticTwist(const CurveRed& E, const bigint& D)
+{
+  static bigint zero(0);
+  bigint c4, c6, D2=D*D;
+  E.getci(c4, c6);
+  Curvedata ED(zero, zero, zero,-27*D2*c4,-54*D*D2*c6, 1); // 1 means minimise
+  return CurveRed(ED);
+}
+
+// Given a list of elliptic curves E, and one discriminant D, return the
+// list of twists of the curves by D
+vector<CurveRed> QuadraticTwists(const vector<CurveRed>& EE, const bigint& D)
+{
+  vector<CurveRed> ans;
+  for(auto E: EE)
+    ans.push_back(QuadraticTwist(E,D));
+  return ans;
+}
+
+
+// Given a list of elliptic curves E, and one prime p, return the
+// list of twists of the curves by:
+// +p if p=1 (mod 4)
+// -p if p=3 (mod 4)
+// -4, 8 and -8 if p=2
+
+vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, const bigint& p)
+{
+  long p4 = posmod(p,4);
+  if (p4==1)
+    return QuadraticTwists(EE,p);
+  if (p4==3)
+    return QuadraticTwists(EE,-p);
+  vector<CurveRed> ans;
+  static const vector<bigint> D2 = {bigint(-4), bigint(-8), bigint(8)};
+  for (auto D: D2)
+    {
+      vector<CurveRed> ans1 = QuadraticTwists(EE,D);
+      ans.insert(ans.end(), ans1.begin(), ans1.end());
+    }
+  return ans;
+}
+
+
