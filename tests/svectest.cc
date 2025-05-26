@@ -1,7 +1,7 @@
 // svectest.cc: Test of sparse vector package
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -103,7 +103,7 @@ int main(void)
  cout << "General slice; beginning, end? "; cin >> j >> k;
  cout << "Slice = " << v.slice(j,k) << endl;
  cout << "Now v = " << v << endl;
- cout << "w = " << w << "; vecgcd(w) = " << vecgcd(w) << endl;
+ cout << "w = " << w << "; content(w) = " << content(w) << endl;
  makeprimitive(w);
  cout << "After makeprimitive(w), w = " << w << endl;
 

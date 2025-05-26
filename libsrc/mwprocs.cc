@@ -1,26 +1,26 @@
 // mwprocs.cc: implementation of class mw for Mordell-Weil basis
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
-// 
+// Copyright 1990-2023 John Cremona
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 
 //#define DEBUG_QSIEVE
 
@@ -79,97 +79,81 @@ bigfloat min_real(vector<bigcomplex> array)
 //cout<<"minr finally " << minr << "\n";
   return minr;
 }
-  
+
 int order_real_roots(vector<double>& bnd, vector<bigcomplex> roots);
-//checks (and returns) how many roots are actually real, and puts those in 
+//checks (and returns) how many roots are actually real, and puts those in
 //bnd, in increasing order, by calling set_the_bound
 int set_the_bounds(vector<double>& bnd, bigfloat x0, bigfloat x1, bigfloat x2);
-//This transforms (if possible) x0, x1 and x1 into double;  the search 
-//should be made on [x0,x1]U[x2,infty] so if x1 or x2 overflows, the search 
+//This transforms (if possible) x0, x1 and x1 into double;  the search
+//should be made on [x0,x1]U[x2,infty] so if x1 or x2 overflows, the search
 //is on [x0,infty].  The function returns 3 in the first case, 1 in the second.
 //If x0 overflows, it returns 0.  A warning is printed out.
 
-#define matentry(m,i,j) *((m)+((i)*MAXRANK)+(j))
-
-bigfloat det(bigfloat *m, long m_size);
+bigfloat det(const vector<vector<bigfloat>>& m, long m_size);
    // fwd declaration: det and detminor jointly recursive
 
-bigfloat* get_minor(bigfloat *m, long m_size, long i0, long j0)
+vector<vector<bigfloat>> get_minor(const vector<vector<bigfloat>>& m, long m_size, long i0, long j0)
 {
-  long i, j, ii, jj;
-  bigfloat *minor = new bigfloat[MAXRANK*MAXRANK];
-  for (i=0; i<m_size-1; i++)
-    { 
-      ii=i; if(i>=i0)ii++;
-      for (j=0; j<m_size-1; j++)
+  vector<vector<bigfloat>> the_minor(MAXRANK, vector<bigfloat>(MAXRANK));
+  for (long i=0; i<m_size-1; i++)
+    {
+      long ii = (i>=i0? i+1 : i);
+      for (long j=0; j<m_size-1; j++)
       {
-	jj=j; if(j>=j0) jj++;
-	matentry(minor,i,j) = matentry(m,ii,jj);
+	long jj = (j>=j0? j+1 : j);
+	the_minor[i][j] = m[ii][jj];
       }
     }
-  return minor;
+  return the_minor;
 }
 
-
-bigfloat det_minor(bigfloat *m, long m_size, long i0, long j0)
+bigfloat det_minor(const vector<vector<bigfloat>>& m, long m_size, long i0, long j0)
 {
-  bigfloat *minor = get_minor(m,m_size,i0,j0);
-  bigfloat det_return = det(minor, m_size-1);
-  delete [] minor;
-  return det_return;
+  return det(get_minor(m,m_size,i0,j0), m_size-1);
 }
 
-bigfloat det(bigfloat *m, long m_size)
+bigfloat det(const vector<vector<bigfloat>>& m, long m_size)
 {
+  bigfloat one = to_bigfloat(1);
   switch (m_size) {
-  case 0: 
-    return to_bigfloat(1); break;  
+  case 0:
+    return one; break;
   case 1:
-    return matentry(m,0,0); break;
+    return m[0][0]; break;
   case 2:
-    return matentry(m,0,0)*matentry(m,1,1) - matentry(m,1,0)*matentry(m,0,1);
+    return m[0][0]*m[1][1] - m[0][1]*m[1][0];
     break;
   default:
-    // use recursion
-/*  // Old naive minor-expansion method:
-    bigfloat ans = 0;
-    long sign = 1, j;
-    for (j=0; j<m_size; j++)
-      { ans += sign * matentry(m,0,j) * det_minor(m, m_size, 0, j);
-	sign *= -1;
-      }
-    return ans;
-*/
-// New Gaussian method (20/1/95)
-    long i,j,i0; 
-    bigfloat ans=to_bigfloat(1), pivot=matentry(m,0,0), piv, temp, 
-      eps=to_bigfloat(1.0e-6);
-    for(i0=0; i0<m_size && abs(pivot)<eps; i0++) pivot=matentry(m,i0,0);
-    if(i0==m_size) return to_bigfloat(0); // first column all 0
+    // Make a copy since we will change m before recursing
+    vector<vector<bigfloat>> m1 = m;
+    int neg = 0;
+    long i,j,i0;
+    bigfloat pivot=m1[0][0], piv, temp, eps=to_bigfloat(1.0e-6);
+    for(i0=0; i0<m_size && abs(pivot)<eps; i0++)
+      pivot=m1[i0][0];
+    if(i0==m_size)
+      return to_bigfloat(0); // first column all 0
     if(i0>0)  // swap rows 0, i0:
       {
-	ans=to_bigfloat(-1);
+	neg = 1;
 	for(j=0; j<m_size; j++)
 	  {
-	    temp=matentry(m,i0,j); 
-	    matentry(m,i0,j)=matentry(m,0,j);
-	    matentry(m,0,j)=temp;
+	    temp=m1[i0][j]; m1[i0][j]=m1[0][j]; m1[0][j]=temp;
 	  }
       }
     // eliminate first column
-    pivot=matentry(m,0,0);
+    pivot=m1[0][0];
     for(i=1; i<m_size; i++)
       {
-	piv=matentry(m,i,0)/pivot;
+	piv=m1[i][0]/pivot;
 	for(j=0; j<m_size; j++)
-	  matentry(m,i,j) = matentry(m,i,j)-matentry(m,0,j)*piv;
+	  m1[i][j] -= m1[0][j]*piv;
       }
-    return ans*pivot*det_minor(m,m_size,0,0);
-    break;
+    if (neg) pivot = -pivot;
+    return pivot*det_minor(m1,m_size,0,0);
   }
-  return to_bigfloat(1);  // shouldn't get here in fact
+  return one;  // shouldn't get here
 }
-  
 
 //#define DEBUG 1
 
@@ -188,7 +172,7 @@ vector<long> cleardenoms(vector<bigfloat> alpha)
 #ifdef DEBUG
       cout<<"ratapprox: of "<< x <<" is "<<nlist[i]<<" / "<<dlist[i]<<endl;
       cout<<"  lcm of denoms so far: "<<lcmd<<endl;
-#endif  
+#endif
     }
   for (i=0; i < len-1; i++)
     nlist[i] *= (lcmd / dlist[i]);  // clear the denominators
@@ -202,12 +186,7 @@ mw::mw(Curvedata *EE, int verb, int pp, int maxr)
 #ifdef DEBUG
   verbose=1;
 #endif
-  height_pairs = new bigfloat[MAXRANK*MAXRANK];
-}
-
-mw::~mw() 
-{
-   delete [] height_pairs;
+  height_pairs.resize(MAXRANK, vector<bigfloat>(MAXRANK));
 }
 
 // NB We cannot use the default parameter mechanism as this must fit
@@ -222,7 +201,7 @@ int mw::process(const bigint& x, const bigint& y, const bigint& z, int sat)
 {
 #ifdef DEBUG
   cout<<"mw::process with x = "<< x <<", y = "<<y<<", z = "<<z<<endl;
-#endif  
+#endif
   bigint rz; isqrt(z,rz);
   bigint x1=x*rz, y1=y, z1=z*rz;
   if(iso)
@@ -235,24 +214,28 @@ int mw::process(const bigint& x, const bigint& y, const bigint& z, int sat)
   if(P.isvalid()) return process(P,sat);
 
   // error:
-  cout<<"Raw point       x,y,z = "<<x<<", "<<y<<", "<<z<<endl;
-  cout<<"converted point x,y,z = "<<x1<<", "<<y1<<", "<<z1<<"\t";
-  cout<<"--not on curve!"<<endl;
+  cerr<<"Raw point       x,y,z = "<<x<<", "<<y<<", "<<z<<endl;
+  cerr<<"converted point x,y,z = "<<x1<<", "<<y1<<", "<<z1<<"\t";
+  cerr<<"--not on curve!"<<endl;
  return 0;
 }
 
-int mw::process(const vector<Point>& Plist, int sat) 
+int mw::process(const vector<Point>& Plist, int sat)
 {
   // process the points without saturation, do that at the end
 
-  if(verbose) 
+  if(verbose)
     cout<<"Processing "<<Plist.size()<<" points ..."<<endl;
+  // cout<<"mw::E is "<<E<<endl;
+  int flag=0; // flags whether rank has increased
+  for( const auto& P : Plist)
+    {
+      // ensure all P are processed whatever the flag values
+      int flag1 = process(P,0);
+      flag = flag || flag1;
+    }
 
-  int flag=0;
-  for(vector<Point>::const_iterator P=Plist.begin(); P!=Plist.end(); P++)  
-    flag = (process(*P,0));
-
-  if(verbose) 
+  if(verbose)
     cout<<"Finished processing the points (which had rank "<<rank<<")"<<endl;
 
   if((sat>0)&&(rank>0))
@@ -274,23 +257,23 @@ int mw::process(const vector<Point>& Plist, int sat)
       if(index>1)
 	{
 	  basis = satsieve.getgens();
-	  if(verbose) 
+	  if(verbose)
 	    cout<<"Gained index "<<index<<", new generators = "<<basis<<endl;
 	}
 // compute the height pairing matrix and regulator
       int i, j;
       for (i=0; i < rank; i++)
-	{ 
+	{
 	  mat_entry(i,i) = height(basis[i]);
 	  for (j=0; j < i; j++)
 	    {
-	      mat_entry(i,j) 
-		= mat_entry(j,i) 
-		= height_pairing(basis[i], basis[j]); 
+	      mat_entry(i,j)
+		= mat_entry(j,i)
+		= height_pairing(basis[i], basis[j]);
 	    }
 	}
       reg = det(height_pairs,rank);
-      if(verbose) 
+      if(verbose)
 	cout<<"Regulator =  "<<reg<<endl;
     }
   return flag;
@@ -300,17 +283,19 @@ int mw::process(const Point& PP, int sat)
 {
 #ifdef DEBUG
   cout<<"mw::process with P = "<< PP <<endl;
-#endif  
-  Point P = PP;  // so we can process const points
+#endif
+  Point P(E, PP);  // (1) copy so we can process const points
+                   // (2) make sure P's curve is on this mw's curve
+  if(!P.isvalid()) cerr << "###Runtime error### P="<<P<<" not on curve "<<(Curve)(*E)<< " in mw::process()\n";
   long ord = order(P);
   long i, j, rank1=rank+1;
 #ifdef DEBUG
   cout<<"P = "<< P <<" has order "<<ord<<endl;
   bigfloat hP=height(P);
   cout<<"P = "<< P <<" has height "<<hP<<endl;
-#endif  
+#endif
 
-  if (verbose) 
+  if (verbose)
     {cout<<"P"<<rank1<<" = "<<P;
 #ifdef DEBUG
     cout<<" (height "<<height(P)<<")";
@@ -318,12 +303,11 @@ int mw::process(const Point& PP, int sat)
     cout << "\t" << flush;
 #ifdef DEBUG
     cout << "\n";
-    if(!P.isvalid()) cout << "###Warning### Not on curve!\n";
-#endif  
+#endif
     }
-  
+
   if (ord > 0)
-    { 
+    {
       if (verbose) cout<<" is torsion point, order "<<ord<<endl;
       return 0;
     } // we're not interested in torsion points
@@ -336,15 +320,15 @@ int mw::process(const Point& PP, int sat)
     }
 
   if (rank==0)  // first non-torsion point
-    { 
+    {
       reg = height(P);
-      mat_entry(0,0) = reg;  // ie height_pairs[0][0] = reg
+      height_pairs[0][0] = reg;
       basis.push_back(P); rank=1;
       if (verbose) cout<<"  is generator number 1\n";
 #ifdef DEBUG
-      cout << "first non-torsion point, reg so far = "<<reg<<"\n";
+      cout << "first non-torsion point P = "<<P<<", reg so far = h(P) = "<<reg<<"\n";
       //      cout << "returning "<<(maxrank<2)<<endl;
-#endif  
+#endif
       if(sat>0)
 	{
           satsieve.set_points(basis);
@@ -371,28 +355,28 @@ int mw::process(const Point& PP, int sat)
 	}
       return (maxrank<2); // 1 if max reached
     }
-  
+
   // otherwise general procedure:
 
 #ifdef DEBUG
   cout<<"additional non-torsion point..."<<endl;
 #endif
   //  update the height pairing matrix (at least for now)
-  // but don't add point yet 
+  // but don't add point yet
   mat_entry(rank,rank) = height(P); // also sets height in P
   for (i=0; i < rank; i++)
-    { 
+    {
       Point Q = basis[i];
-      bigfloat hp = height_pairing(Q, P); 
+      bigfloat hp = height_pairing(Q, P);
       mat_entry(i,rank) = hp;
-      mat_entry(rank,i) = hp;     
+      mat_entry(rank,i) = hp;
     }
-  
+
   // compute cofactors of new last column
   vector<bigfloat> alpha(rank1);  // to store cofactors
   long detsign = ( odd(rank) ? +1 : -1 ); //set for flip before first use
   for (i=0; i < rank; i++)
-    { 
+    {
       detsign = -detsign;
       alpha[i] = det_minor(height_pairs, rank1, i, rank) * detsign;
 #ifdef DEBUG
@@ -403,7 +387,7 @@ int mw::process(const Point& PP, int sat)
 #ifdef DEBUG
   cout<<"alpha["<<rank<<"] = "<<alpha[rank]<<"\n";
 #endif
-  
+
   // find the new determinant
   bigfloat newreg = to_bigfloat(0);
   for (i=0; i <= rank; i++) newreg += mat_entry(i,rank) * alpha[i];
@@ -415,15 +399,15 @@ int mw::process(const Point& PP, int sat)
       cout << "\n";
     }
   cout<<"\nreg is now " << newreg << "\t";
-#endif  
+#endif
 
   // test for simple case, new point is indep previous
   if ( abs(newreg/reg) > 1.0e-4 )
-    { 
+    {
       reg = newreg;
 #ifdef DEBUG
       cout << "treating as NON-zero" << "\n";
-#endif  
+#endif
       basis.push_back(P); rank=rank1;
       if (verbose) cout<<"  is generator number "<<rank<<endl;
       if(sat>0)
@@ -448,13 +432,13 @@ int mw::process(const Point& PP, int sat)
               if(verbose) cout<<"Gained index "<<index<<", new generators = "<<basis<<endl;
               // completely recompute the height pairing matrix
               for (i=0; i < rank; i++)
-                { 
+                {
                   mat_entry(i,i) = height(basis[i]);
                   for (j=0; j < i; j++)
                     {
-                      mat_entry(i,j) 
-                        = mat_entry(j,i) 
-                        = height_pairing(basis[i], basis[j]); 
+                      mat_entry(i,j)
+                        = mat_entry(j,i)
+                        = height_pairing(basis[i], basis[j]);
                     }
                 }
               reg /= (index*index);
@@ -462,32 +446,32 @@ int mw::process(const Point& PP, int sat)
 	}
 #ifdef DEBUG
       cout << "about to return, rank = "<<rank<<", maxrank = "<<maxrank<<": returning "<<(maxrank==rank)<<endl;
-#endif      
+#endif
       return (maxrank==rank); // 1 if max reached
     }
-  
+
   // otherwise, express new point as lin-comb of the previous Now that
   // we are saturating as we go, this should not happen (unless the
   // index is divisible by a prime > sat)
 #ifdef DEBUG
   cout << "treating as ZERO" << "\n";
   cout << "Finding a linear relation between P and current basis\n";
-#endif  
+#endif
 
   vector<long> nlist = cleardenoms(alpha);
   long index = nlist[rank];
 
 #ifdef DEBUG
   cout<<"index = "<<index<<endl;
-#endif  
+#endif
 
   // test simple case when new is just Z-linear comb of old
   if ( index == 1 )
     { if (verbose)
-	{ 
+	{
 	  cout<<" = "<<-nlist[0]<<"*P1";
 	  for(i=1; i<rank; i++)
-	     cout<<" + "<<-nlist[i]<<"*P"<<(i+1); 
+	     cout<<" + "<<-nlist[i]<<"*P"<<(i+1);
 	  cout<<" (mod torsion)\n";
 	}
 // Check:
@@ -503,15 +487,15 @@ int mw::process(const Point& PP, int sat)
       {
 	cout<<"Difference = "<<Q<<" with height "<<height(Q)<<endl;
       }
-    
+
     return 0;  // with regulator and basis (and h_p matrix) unchanged
     } // end of if(index==1)
-  
+
   // otherwise add P to the list now, compute to gain index
   basis.push_back(P);
-  
+
   if (verbose)
-    { 
+    {
       for (i=0; i < rank; i++)
 	cout<<nlist[i]<<"*P"<<(i+1)<<" + ";
       cout<<index<<"*"<<"P"<<(rank1)<<" = 0 (mod torsion)\n";
@@ -529,8 +513,8 @@ int mw::process(const Point& PP, int sat)
     {
       cout<<"Difference = "<<Q<<" with height "<<height(Q)<<endl;
     }
-    
-  
+
+
   // find minimum coeff. |ai|
   long min = 0, ni;
   long imin = -1;
@@ -573,18 +557,16 @@ int mw::process(const Point& PP, int sat)
   if (verbose)
     cout<<"Gaining index "<<index<<"; ";
 
-  // delete basis[imin]
   basis.erase(basis.begin()+imin);
-  //  for(j=imin; j<rank; j++) basis[j]=basis[j+1];
 
   // completely recompute the height pairing matrix
   for (i=0; i < rank; i++)  // 19/8/02: this was <=rank
     { mat_entry(i,i) = height(basis[i]);
       for (j=0; j < i; j++)
 	{
-	  mat_entry(i,j) 
-	    = mat_entry(j,i) 
-	    = height_pairing(basis[i], basis[j]); 
+	  mat_entry(i,j)
+	    = mat_entry(j,i)
+	    = height_pairing(basis[i], basis[j]);
 	}
     }
 
@@ -592,7 +574,7 @@ int mw::process(const Point& PP, int sat)
   if (verbose)
     {
       cout<<"\nNew set of generators: \n";
-      for(i=0; i<rank; i++) 
+      for(i=0; i<rank; i++)
 	{
 	  if(i)cout<<", ";
 	  cout<<"P"<<(i+1)<<" = "<< basis[i];
@@ -604,6 +586,7 @@ int mw::process(const Point& PP, int sat)
 
 int mw::saturate(long& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
 {
+  if (verbose) cout<<"saturating basis (reg="<<reg<<")..."<<flush;
   if (verbose) cout<<"saturating basis..."<<flush;
 
   // This code does a dummy call to index_bound() in order to get
@@ -619,12 +602,12 @@ int mw::saturate(long& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
   int oldrank=rank;
   process(pts,0); //no saturation here!  This may update basis
   bigint ind = Iround(sqrt(oldreg/reg));
-  if(verbose&&(ind>1)) 
+  if(verbose&&(ind>1))
     {
       cout<<"after search, gained index "<<ind
 	  <<", regulator = "<<reg<<endl;
     }
-  if((rank>oldrank)) 
+  if((rank>oldrank))
     {
       cout<<"after search, rank increases to "<<rank
 	  <<", regulator = "<<reg<<endl;
@@ -643,13 +626,13 @@ int mw::saturate(long& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
       basis = satsieve.getgens();
   // completely recompute the height pairing matrix
       for (int i=0; i < rank; i++)
-	{ 
+	{
 	  mat_entry(i,i) = height(basis[i]);
 	  for (int j=0; j < i; j++)
 	    {
-	      mat_entry(i,j) 
-		= mat_entry(j,i) 
-		= height_pairing(basis[i], basis[j]); 
+	      mat_entry(i,j)
+		= mat_entry(j,i)
+		= height_pairing(basis[i], basis[j]);
 	    }
 	}
       reg /= (index*index);
@@ -697,23 +680,23 @@ void mw::search(bigfloat h_lim, int moduli_option, int verb)
       bigcomplex c1(I2bigfloat(c[2])),
                  c2(I2bigfloat(c[1])),
                  c3(I2bigfloat(c[0]));
-      vector<bigcomplex> roots=solvecubic(c1,c2,c3);
+      vector<bigcomplex> rts=solvecubic(c1,c2,c3);
       vector<double> bnd(3);
-      int nrr=order_real_roots(bnd,roots);
+      int nrr=order_real_roots(bnd,rts);
 #ifdef DEBUG_QSIEVE
       cout<<endl;
       cout<<"cubic "<<c[0]<<" "<<c[1]<<" "<<c[2]<<" "<<c[3]<<endl;
       cout<<"coeff "<<c1<<" "<<c2<<" "<<c3<<endl;
-      cout<<"roots "<<roots<<endl;
+      cout<<"roots "<<rts<<endl;
       cout<<"bnd "<<bnd<<endl;
       cout<<"smallest "<<bnd[0]<<endl;
 #endif
       s.set_intervals(bnd,nrr,1);
-      s.search(); //searches and processes 
+      s.search(); //searches and processes
     }
 }
 
-void mw::search_range(bigfloat xmin, bigfloat xmax, bigfloat h_lim, 
+void mw::search_range(bigfloat xmin, bigfloat xmax, bigfloat h_lim,
 		    int moduli_option, int verb)
 {
   sieve s(E, this, moduli_option, verb);
@@ -732,22 +715,22 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
 
 // find pt of order two in E(R) with minimal x-coord
 
-  vector<bigcomplex> roots = roots_of_cubic(*E);
+  vector<bigcomplex> rts = roots_of_cubic(*E);
   if(posdisc)
     {
-      x1=real(roots[0]);
-      x2=real(roots[1]);
-      x3=real(roots[2]);
+      x1=real(rts[0]);
+      x2=real(rts[1]);
+      x3=real(rts[2]);
       orderreal(x3,x2,x1);  // so x1<x2<x3
       xmin=x1;
     }
   else
-    x3=xmin = min_real(roots);
+    x3=xmin = min_real(rts);
 
   if (verbose)
     {
       cout << "sieve: real points have ";
-      if(posdisc) cout<<x1<<" <= x <= " << x2 << " or "; 
+      if(posdisc) cout<<x1<<" <= x <= " << x2 << " or ";
       cout << x3 << " <= x; xmin =  " << xmin << endl;
     }
 // set up list of auxiliary moduli
@@ -755,98 +738,44 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
 
   switch(moduli_option) {
   case 1:
-    num_aux = 10; 
-    auxs = new long[num_aux];
-    auxs[0]=3;
-    auxs[1]=5;
-    auxs[2]=7;
-    auxs[3]=11;
-    auxs[4]=13;
-    auxs[5]=17;
-    auxs[6]=19;
-    auxs[7]=23;
-    auxs[8]=29;
-    auxs[9]=31;
+    num_aux = 10;
+    auxs = {3, 5, 7, 11, 13, 17, 19, 23, 29, 31};
     break;
 
   case 2:// the following taken from Gebel's scheme
-    num_aux = 3; 
-    auxs = new long[num_aux];
-    auxs[0]=5184;  // = (2^6)*(3^4)   // old: 6624; //  = (2^5)*(3^2)*23
-    auxs[1]=5929;  // = (7^2)*(11^2)  // old: 8075; //  = (5^2)*17*19
-    auxs[2]=4225;  // = (5^2)*(13^2)  // old: 7007; //  = (7^2)*11*13
+    num_aux = 3;
+    auxs = {5184, 5929, 4225}; // 5184 = (2^6)*(3^4), 5929 = (7^2)*(11^2), 4225 = (5^2)*(13^2)
     break;
 
   case 3:
   default:
     num_aux = 9;
-    auxs = new long[num_aux];
-    auxs[0]=32;
-    auxs[1]= 9;
-    auxs[2]=25;
-    auxs[3]=49;
-    auxs[4]=11;
-    auxs[5]=13;
-    auxs[6]=17;
-    auxs[7]=19;
-    auxs[8]=23;
+    auxs = {32, 9, 25, 49, 11, 13, 17, 19, 23};
     break;
   }
 
 #ifdef DEBUG_SIEVE
-  if(verbose) 
-    {
-      cout<<"Using "<<num_aux<<" sieving moduli:\n";
-      for(i=0; i<num_aux; i++) cout << auxs[i]<<"\t";
-      cout<<endl;
-    }
+  if(verbose)
+    cout<<"Using "<<num_aux<<" sieving moduli:\n" << auxs <<endl;
 #endif
 
-  xgood_mod_aux = new int*[num_aux];
-//  x1good_mod_aux = new int*[num_aux];
-  squares = new int*[num_aux];
-  amod = new long[num_aux];
+  xgood_mod_aux.resize(num_aux);
+  squares.resize(num_aux);
+  amod.resize(num_aux);
 
   for (i = 0; i < num_aux; i++)
     {
       long aux = auxs[i];
-      long half_aux = ((aux + 1) / 2);
-      squares[i] = new int[aux];
-      for (j = 0; j < aux; j++)      squares[i][j]=0;
-      for (j = 0; j < half_aux; j++) squares[i][(j*j)%aux]=1;
-      xgood_mod_aux[i] = new int[aux];
-
-//       x1good_mod_aux[i] = new int[aux];
-// 
-//     // set the flag matrix for c=1:
-// 
-//       long pd1 = posmod(a1, aux);
-//       long pd2 = posmod(a2, aux);
-//       long pd3 = posmod(a3, aux);
-//       long pd4 = posmod(a4, aux);
-//       long pd6 = posmod(a6, aux);
-//       
-//       long disc, temp, temp2, x=0;
-//       
-//       long dddf= posmod(24,aux);
-//       long ddf = posmod(2*(pd1*pd1)%aux + 8*pd2+24 , aux);
-//       long df  = posmod(pd1*(pd1+2*pd3)%aux + 4*(pd4+pd2+1) , aux);
-//       long f   = posmod(((pd3*pd3)%aux+4*pd6) , aux);
-// 
-//       while(x<aux)
-// 	{
-// 	  x1good_mod_aux[i][x] = squares[i][f];
-// 	  x++;
-// 	  f   +=  df; if(f  >=aux) f  -=aux;
-// 	  df  += ddf; if(df >=aux) df -=aux;
-// 	  ddf +=dddf; if(ddf>=aux) ddf-=aux;
-// 	}
+      squares[i].resize(aux, 0);
+      for (j = 0; 2*j < aux; j++) squares[i][(j*j)%aux]=1;
+      xgood_mod_aux[i].resize(aux);
     }  // end of aux loop
+
 #ifdef DEBUG_SIEVE
-  if(verbose) 
+  if(verbose)
     {
       cout<<"squares lists:\n";
-      for(i=0; i<num_aux; i++) 
+      for(i=0; i<num_aux; i++)
 	{
 	  cout << auxs[i]<<":\t";
 	  for(j=0; j<auxs[i]; j++) if(squares[i][j]) cout<<j<<"\t";
@@ -854,45 +783,16 @@ sieve::sieve(Curvedata * EE, mw* mwb, int moduli_option, int verb)
 	}
     }
 #endif
-  
-// variables for collecting efficiency data:  
 
-  modhits = new long[num_aux];
+// variables for collecting efficiency data:
+
+  modhits.resize(num_aux, 0);
   ascore=0; npoints=0;
-  for(i=0; i<num_aux; i++) modhits[i]=0;
-
-//   if(verbose) 
-//     {
-//       cout << "Finished constructing sieve, using ";
-//       switch(moduli_option)
-// 	{
-// 	case 1: cout << "ten primes 3..31"; break;
-// 	      case 2: cout << "Gebel's three moduli"; break;
-// 	      case 3: cout << "prime powers"; break;
-// 	      }
-//       cout << endl;
-//     }
-}
-
-sieve::~sieve()
-{
-  delete [] auxs;
-  for(long i=0; i<num_aux; i++) 
-    {
-      delete [] xgood_mod_aux[i];
-//      delete [] x1good_mod_aux[i];
-      delete [] squares[i];
-    }
-  delete [] xgood_mod_aux;
-//  delete [] x1good_mod_aux;
-  delete [] squares;
-  delete [] amod;
-  delete [] modhits;
 }
 
 void sieve::search(bigfloat h_lim)
 {
-// N.B. On 32-bit machines, h_lim MUST be < 21.48 else exp(h_lim)>2^31 
+// N.B. On 32-bit machines, h_lim MUST be < 21.48 else exp(h_lim)>2^31
 //      and overflows
 //      On 64-bit machines, h_lim must be < 43.668.
 
@@ -901,24 +801,23 @@ void sieve::search(bigfloat h_lim)
   // set initial bounds for point coefficients
   alim = I2long(Ifloor(exp(h_lim)));
   clim = clim1 = clim2 = clim0 = I2long(Ifloor(exp(h_lim / 2)));
-  long temp;
 
   if(posdisc)
     {
       if(x2<-1)
 	{
-	  temp = I2long(Ifloor(sqrt(alim/(-x2))));
+	  long temp = I2long(Ifloor(sqrt(alim/(-x2))));
 	  if(clim1>temp) clim1=temp;
 	}
       if(x1>1)
 	{
-	  temp = I2long(Ifloor(sqrt(alim/x1)));
+	  long temp = I2long(Ifloor(sqrt(alim/x1)));
 	  if(clim1>temp) clim1=temp;
 	}
     }
-  if (x3>1) 
+  if (x3>1)
     {
-      temp = I2long(Ifloor(sqrt(alim/x3)));
+      long temp = I2long(Ifloor(sqrt(alim/x3)));
       if(clim2>temp) clim2=temp;
     }
   clim=clim2;
@@ -929,8 +828,8 @@ void sieve::search(bigfloat h_lim)
 
 // declare and initialize other loop variables
   long pd1,pd2,pd3,pd4,pd6, csq, aux;
-  cflag = new int[10000];  // max needed; only used up to c each time,
-                           // and only when c<=10000 (use_cflag==1)
+  cflag.resize(10000);  // max needed; only used up to c each time,
+                        // and only when c<=10000 (use_cflag==1)
 
 //
 // MAIN LOOP
@@ -941,13 +840,13 @@ void sieve::search(bigfloat h_lim)
   for (c = FIRSTC; c <= clim; c++)
     {
       // some preliminary calculations of multiples of c etc.
-      csq = c*c /* long */; 
-      c2 = csq  /* bigint */; 
+      csq = c*c /* long */;
+      c2 = csq  /* bigint */;
       c3 = c*c2; c4 = c2*c2; c6 = c2*c4;
       d1 = a1*c; d2 = a2*c2; d3 = a3*c3; d4 = a4*c4; d6 = a6*c6;
-      
+
 #ifdef DEBUG_SIEVE
-  if(verbose) 
+  if(verbose)
     {
       cout<<"c = "<<c<<"\n";
       cout<<"d1,...,d6 = "<<d1<<", "<<d2<<", "<<d3<<", "<<d4<<", "<<d6<<"\n";
@@ -958,79 +857,53 @@ void sieve::search(bigfloat h_lim)
 	{
 // set up flag array of residues coprime to c
 	  cflag[0]=(c==1);
-	  for(i=1; i<c; i++) cflag[i] = cflag[c-i] = (::gcd(i,c)==1);
+	  for(i=1; 2*i<=c; i++)
+            cflag[i] = cflag[c-i] = (::gcd(i,c)==1);
 	}
-      
+
       // set the main flag matrix
       for (long index = 0; index < num_aux; index++)
 	{
 	  aux = auxs[index];
+          {
+            pd1 = posmod(d1 , aux);
+            pd2 = posmod(d2 , aux);
+            pd3 = posmod(d3 , aux);
+            pd4 = posmod(d4 , aux);
+            pd6 = posmod(d6 , aux);
 
-// 	  if(gcd(c,aux)==1)  // the easy case
-// 	    {
-// 	      long xcc=0, csqm=csq%aux;;
-// 	      int* flag = xgood_mod_aux[index];
-// 	      int* flag1 = x1good_mod_aux[index];
-// 	      x=aux; 
-// 	      while(x--)
-// 		{
-// 		  *flag = *flag1++;
-// 		  xcc+=csqm; flag+=csqm; 
-// 		  if(xcc>=aux) {xcc-=aux; flag-=aux;}
-// 		}
-// 	    }
-// 	  else  // c, aux have common factor
-// 	    {
-// 	      if(odd(aux)&&((csq%aux)==0))
-// 		{
-// 		  int* flag = xgood_mod_aux[index];
-// 		  int* sqs = squares[index];
-// 		  x=aux; 
-// 		  while(x--) *flag++ = *sqs++;
-// 		}  // end of if(odd(aux))
-// 		else  //default: full recomputation
-		  {
-		    pd1 = posmod(d1 , aux);
-		    pd2 = posmod(d2 , aux);
-		    pd3 = posmod(d3 , aux);
-		    pd4 = posmod(d4 , aux);
-		    pd6 = posmod(d6 , aux);
-		    
-		    long dddf= 24%aux;
-		    long ddf = posmod(2*(pd1*pd1)%aux + 8*pd2+24 , aux);
-		    long df  = posmod(pd1*(pd1+2*pd3)%aux + 4*(pd4+pd2+1) , aux);
-		    long f   = posmod(((pd3*pd3)%aux+4*pd6) , aux);
-		    
-		    int* flag = xgood_mod_aux[index];
-		    int* sqs = squares[index];
-		    long x=aux;
-#ifdef DEBUG_SIEVE
-  if(verbose) 
-    {
-      cout<<"aux = "<< aux <<"\n ";
-      cout<<"pd1,...,pd6 = "<<pd1<<", "<<pd2<<", "<<pd3<<", "<<pd4<<", "<<pd6<<"\n";
-    }
-#endif
-		    while(x--)
-		      {
-			*flag++ = sqs[f];
-#ifdef DEBUG_SIEVE
-  if(verbose) 
-    {
-      cout<<"x = "<< aux-x-1 <<", f(x) = "<<f<<": flag = "<<sqs[f]<<"\n";
-    }
-#endif
-			f   +=  df; if(f  >=aux) f  -=aux;
-			df  += ddf; if(df >=aux) df -=aux;
-			ddf +=dddf; if(ddf>=aux) ddf-=aux;
-		      }
-		    
-		  }  // end of default case
+            long dddf= 24%aux;
+            long ddf = posmod(2*(pd1*pd1)%aux + 8*pd2+24 , aux);
+            long df  = posmod(pd1*(pd1+2*pd3)%aux + 4*(pd4+pd2+1) , aux);
+            long f   = posmod(((pd3*pd3)%aux+4*pd6) , aux);
 
-// 	    }  // end of non-coprime case
+            auto flag = xgood_mod_aux[index].begin();
+            auto sqs = squares[index].begin();
+            long x=aux;
+#ifdef DEBUG_SIEVE
+            if(verbose)
+              {
+                cout<<"aux = "<< aux <<"\n ";
+                cout<<"pd1,...,pd6 = "<<pd1<<", "<<pd2<<", "<<pd3<<", "<<pd4<<", "<<pd6<<"\n";
+              }
+#endif
+            while(x--)
+              {
+                *flag++ = sqs[f];
+#ifdef DEBUG_SIEVE
+                if(verbose)
+                  {
+                    cout<<"x = "<< aux-x-1 <<", f(x) = "<<f<<": flag = "<<sqs[f]<<"\n";
+                  }
+#endif
+                f   +=  df; if(f  >=aux) f  -=aux;
+                df  += ddf; if(df >=aux) df -=aux;
+                ddf +=dddf; if(ddf>=aux) ddf-=aux;
+              }
+          }  // end of default case
  	}  // end of aux loop
 #ifdef DEBUG_SIEVE
-  if(verbose) 
+  if(verbose)
     {
       for(i=0; i<num_aux; i++)
 	{
@@ -1040,7 +913,7 @@ void sieve::search(bigfloat h_lim)
 	}
     }
 #endif
-  if(verbose>1) 
+  if(verbose>1)
     {
       for(i=0; i<num_aux; i++)
 	{
@@ -1072,7 +945,6 @@ void sieve::search(bigfloat h_lim)
 	  a_search(amin,amax);
 	}
     } // ends c- loop
-  delete []cflag;
 } // end of sieve::search()
 
 void sieve::search_range(bigfloat xmin, bigfloat xmax, bigfloat h_lim)
@@ -1103,8 +975,8 @@ void sieve::search_range(bigfloat xmin, bigfloat xmax, bigfloat h_lim)
 
 // declare and initialize other loop variables
   long pd1,pd2,pd3,pd4,pd6, csq, aux;
-  cflag = new int[10000];  // max needed; only used up to c each time,
-                           // and only when c<=10000 (use_cflag==1)
+  cflag.resize(10000);  // max needed; only used up to c each time,
+                        // and only when c<=10000 (use_cflag==1)
 
 //
 // MAIN LOOP
@@ -1115,13 +987,13 @@ void sieve::search_range(bigfloat xmin, bigfloat xmax, bigfloat h_lim)
       if(c>clim1) continue;
 
       // some preliminary calculations of multiples of c etc.
-      csq = c*c /* long */; 
-      c2 = csq  /* bigint */; 
+      csq = c*c /* long */;
+      c2 = csq  /* bigint */;
       c3 = c*c2; c4 = c2*c2; c6 = c2*c4;
       d1 = a1*c; d2 = a2*c2; d3 = a3*c3; d4 = a4*c4; d6 = a6*c6;
-      
+
       long amin = -alim, amax = alim;
-      long temp = I2long(Iceil(csq*xmin));
+      temp = I2long(Iceil(csq*xmin));
       if(temp>amin) amin=temp;
       temp = I2long(Ifloor(csq*xmax));
       if(temp<amax) amax=temp;
@@ -1140,9 +1012,10 @@ cout<<"amin = " << amin << ", amax = " << amax <<  endl;
 	  if(use_cflag)
 	    {
 	      cflag[0]=(c==1);
-	      for(i=1; i<c; i++) cflag[i] = cflag[c-i] = (::gcd(i,c)==1);
+	      for(i=1; 2*i<c; i++)
+                cflag[i] = cflag[c-i] = (::gcd(i,c)==1);
 	    }
-      
+
 // set the main flag matrix
 	  for (long index = 0; index < num_aux; index++)
 	    {
@@ -1152,14 +1025,14 @@ cout<<"amin = " << amin << ", amax = " << amax <<  endl;
 	      pd3 = posmod(d3 , aux);
 	      pd4 = posmod(d4 , aux);
 	      pd6 = posmod(d6 , aux);
-	    
+
 	      long dddf= 24%aux;
 	      long ddf = posmod(2*(pd1*pd1)%aux + 8*pd2+24 , aux);
 	      long df  = posmod(pd1*(pd1+2*pd3)%aux + 4*(pd4+pd2+1) , aux);
 	      long f   = posmod(((pd3*pd3)%aux+4*pd6) , aux);
-	    
-	      int* flag = xgood_mod_aux[index];
-	      int* sqs = squares[index];
+
+              auto flag = xgood_mod_aux[index].begin();
+	      auto sqs = squares[index].begin();
 	      long x=aux;
 	      while(x--)
 		{
@@ -1172,7 +1045,6 @@ cout<<"amin = " << amin << ", amax = " << amax <<  endl;
 	  a_search(amin,amax);
 	}
     } // ends c- loop
-  delete []cflag;
 } // end of sieve::search() version 2 (explicit xmin, xmax)
 
 void sieve::a_search(const long& amin, const long& amax)
@@ -1182,18 +1054,18 @@ void sieve::a_search(const long& amin, const long& amax)
   a--;
   if (verbose) cout<<"sieve::search: trying c = "<<c<<"\t"
                    <<"("<<amin<<" <= a <= "<<amax<<")"<<endl;
-  
+
   for (i=0; i < num_aux; i++)  amod[i] = posmod(a, auxs[i]);
   amodc = posmod(a,c);
 #ifdef DEBUG_SIEVE
-  if(verbose) 
+  if(verbose)
     {
       cout<<"Initial a =  "<<a<<" modulo moduli = \t";
       for(i=0; i<num_aux; i++) cout << amod[i]<<"\t";
       cout<<endl;
     }
 #endif
-      
+
   while (a < amax)
     {
       a++;
@@ -1203,18 +1075,17 @@ void sieve::a_search(const long& amin, const long& amax)
       if(use_cflag) try_x = cflag[amodc];
       else          try_x = (::gcd(a,c)==1);
 
-      if(try_x) 
+      if(try_x)
 	{
 	  ascore++;
 	}
-      // DON'T add "else continue; (with next a) 
-      // as the amod[i] are not yet updated!	  
-//    for ( i=0; (i<num_aux); i++)
+      // DON'T add "else continue; (with next a)
+      // as the amod[i] are not yet updated!
       for ( i=num_aux-1; (i>=0); i--)
 	{ long& amodi = amod[i];
 	  amodi++;
 	  if (amodi == auxs[i]) amodi = 0;
-	  if(try_x) 
+	  if(try_x)
 	    {
 	      try_x = xgood_mod_aux[i][amodi];
 	      if(!try_x) modhits[i]++;
@@ -1242,7 +1113,7 @@ void sieve::a_simple_search(const long& amin, const long& amax)
   long a;
   if (verbose) cout<<"sieve::search: trying c = "<<c<<"\t"
                    <<"("<<amin<<" <= a <= "<<amax<<")\n";
-  
+
   for (a=amin; a<amax; a++)
     {
 //    pb = a*d1 + d3;
@@ -1278,11 +1149,11 @@ void sieve::stats(void)
 }
 
 int order_real_roots(vector<double>& bnd, vector<bigcomplex> roots)
-{//checks (and returns) how many roots are actually real, and puts those in 
+{//checks (and returns) how many roots are actually real, and puts those in
  //bnd, in increasing order, by calling set_the_bound
   long i,nrr=0;
   vector<bigfloat> real_roots;
-  
+
   for (i=0;i<3;i++)
     {
       if (is_approx_zero(roots[i].imag()))
@@ -1298,10 +1169,10 @@ int order_real_roots(vector<double>& bnd, vector<bigcomplex> roots)
   switch (nrr)
     {
     case 1: // possible overflow in assignment from bigfloat to double
-	return !doublify(real_roots[0],bnd[0]); 
+	return !doublify(real_roots[0],bnd[0]);
 	break;
     case 3:
-      orderreal(real_roots[2],real_roots[1],real_roots[0]); 
+      orderreal(real_roots[2],real_roots[1],real_roots[0]);
       return set_the_bounds(bnd,real_roots[0],real_roots[1],real_roots[2]);
     default:
       cout<<"mw_info::set_the_bounds: two real roots for the elliptic curve...\n";
@@ -1321,7 +1192,7 @@ int set_the_bounds(vector<double>& bnd, bigfloat x0, bigfloat x1, bigfloat x2)
       cout<<"##WARNING##: lowest bound "<<x0<<" is not a double.\n";
       cout<<"Search will be made over [-height,height]."<<endl;
       return 0;
-    } 
+    }
   else
     {
       if (doublify(x1,bnd[1]) || doublify(x2,bnd[2]))
@@ -1332,15 +1203,10 @@ int set_the_bounds(vector<double>& bnd, bigfloat x0, bigfloat x1, bigfloat x2)
 	}
       else
 	{
-	  return 3; 
+	  return 3;
 	}
     }
 }
 
 
 //end of file mwprocs.cc
-
-
-
-
-

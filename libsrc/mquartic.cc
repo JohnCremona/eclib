@@ -1,7 +1,7 @@
 // mquartic.cc:   Implementation of class quartic and related functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -29,28 +29,26 @@
 quartic::quartic() 
 {
   have_zpol=0; equiv_code=0;
-  roots=new bigcomplex[4];
+  roots.resize(4);
   //cout<<"Quartic constructor #1: " << this << endl;
 }
 
 quartic::quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
 		 const bigint& qd, const bigint& qe, 
-		 bigcomplex* qr,	 int qt,
+		 const vector<bigcomplex>& qr,	 int qt,
 		 const bigint& qi,const bigint& qj,const bigint& qdisc)
-:a(qa),b(qb),c(qc),d(qd),e(qe),type(qt),ii(qi),jj(qj),disc(qdisc)
-{ 
-  have_zpol=0; equiv_code=0;
-  roots=new bigcomplex[4]; 
-  for(int i=0; i<4; i++) roots[i] = qr[i];
+:a(qa),b(qb),c(qc),d(qd),e(qe),
+ roots(qr), type(qt),ii(qi),jj(qj),disc(qdisc),
+ have_zpol(0), equiv_code(0)
+{
   //cout<<"Quartic constructor #2: " << this << ", roots="<<roots<< endl;
 }
 
 quartic::quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
 		 const bigint& qd, const bigint& qe)
-:a(qa),b(qb),c(qc),d(qd),e(qe)
+  :a(qa),b(qb),c(qc),d(qd),e(qe), have_zpol(0), equiv_code(0)
 {
-  have_zpol=0; equiv_code=0;
-  roots=new bigcomplex[4]; 
+  roots.resize(4);
   set_roots_and_type();
 }
 
@@ -70,17 +68,17 @@ void quartic::set_roots_and_type()
   if(is_zero(diff)) cout<<"Syzygy satisfied.\n";
   else cout<<"Syzygy NOT satisfied.\n";
 #endif
-  int nrr;
-  if(disc<0) 
-    {type=3; nrr=2;}       // 2 real roots
-  else 
+  if(disc<0)
+    {type=3;}       // 2 real roots
+  else
     {
       if((sign(H)<0)&&(sign(Q)>0)) 
-	{type=2; nrr=4;}   // 4 real roots
-      else 
-	{type=1; nrr=0;}   // 0 real roots
+	{type=2;}   // 4 real roots
+      else
+	{type=1;}   // 0 real roots
     }
 #ifdef DEBUG_ROOTS
+  int nrr = (type==3? 2 : (type==2? 4 : 0));
   cout<<"Type = " << type << " ("<<nrr<<" real roots)\n";
 #endif
   bigcomplex c1(to_bigfloat(0)), c2(-3*I2bigfloat(ii)), c3(I2bigfloat(jj));
@@ -193,21 +191,14 @@ void quartic::set_roots_and_type()
 #ifdef DEBUG_ROOTS
   cout << "finished setting roots of quartic.\n";
   dump(cout);
-#endif  
-}
-
-quartic::~quartic() 
-{ 
-  //cout<<"Quartic destructor: " << this << ", roots="<<roots<<endl;
-  delete[] roots;
+#endif
 }
 
 quartic::quartic(const quartic& q)
-:a(q.a),b(q.b),c(q.c),d(q.d),e(q.e),type(q.type),ii(q.ii),jj(q.jj),disc(q.disc)
-{ 
-  have_zpol=0; equiv_code=q.equiv_code;
-  roots=new bigcomplex[4];
-  for(int i=0; i<4; i++) roots[i] = q.roots[i];
+:a(q.a),b(q.b),c(q.c),d(q.d),e(q.e),
+ roots(q.roots),type(q.type),ii(q.ii),jj(q.jj),disc(q.disc),
+ have_zpol(0), equiv_code(q.equiv_code)
+{
   //cout<<"Quartic constructor #3: " << this << endl;
 }
 
@@ -223,12 +214,12 @@ void quartic::assign(const bigint& qa, const bigint& qb, const bigint& qc,
 
 void quartic::assign(const bigint& qa, const bigint& qb, const bigint& qc, 
 		     const bigint& qd, const bigint& qe, 
-		     bigcomplex* qr,	     int qt,
+		     const vector<bigcomplex>& qr,	     int qt,
 		     const bigint& qi,const bigint& qj,const bigint& qdisc)
 { 
   have_zpol=0; equiv_code=0;
-  a=qa; b=qb; c=qc; d=qd; e=qe; 
-  for(int i=0; i<4; i++) roots[i] = qr[i];
+  a=qa; b=qb; c=qc; d=qd; e=qe;
+  roots = qr;
   type=qt; ii=qi; jj=qj; disc=qdisc;
 //  cout<<"Quartic assign, now: "; dump(cout);
 }
@@ -239,7 +230,7 @@ void quartic::operator=(const quartic& q)
   //cout<<" Quartic op=, LHS was: "; dump(cout);
   //cout<<" RHS = "; q.dump(cout);
   a=q.a; b=q.b; c=q.c; d=q.d; e=q.e; 
-  for(int i=0; i<4; i++) roots[i] = q.roots[i];
+  roots = q.roots;
   type=q.type; ii=q.ii; jj=q.jj; disc=q.disc;
   //cout<<" Quartic op=, LHS now: "; dump(cout);
 }

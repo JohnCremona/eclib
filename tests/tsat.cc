@@ -1,7 +1,7 @@
 // tsat.cc -- test for saturate.h/cc
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -51,7 +51,6 @@ int main()
   initprimes("PRIMES",0);
   int verbose = 1;
   cerr<<"verbose (0/1)? ";             cin >>verbose;
-  int j, npts;
 
   // Curve E;
   // cout<<"\nInput a curve: ";      cin >> E;
@@ -66,10 +65,11 @@ int main()
       cout << "E = " << (Curve)C <<endl;
       saturator sieve(&C,1, verbose);
 
+  int j=0, npts;
   Point P(C);
   cerr<<"enter number of points: ";      cin >> npts;
   vector<Point> points; points.reserve(npts);
-  j=0; 
+
   while(j<npts)
     { 
       cerr<<"\n  enter point "<<(j+1)<<" : ";

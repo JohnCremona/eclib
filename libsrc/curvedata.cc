@@ -1,7 +1,7 @@
 // curvedata.cc -- implementation of Curvedata class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -28,11 +28,13 @@
 Curvedata::Curvedata(const bigint& aa1, const bigint& aa2, 
 		     const bigint& aa3, const bigint& aa4, 
 		     const bigint& aa6, int min_on_init)
-  : Curve(aa1,aa2,aa3,aa4,aa6),  minimal_flag(0), ntorsion(0)
+  : Curve(aa1,aa2,aa3,aa4,aa6),
+    b2(a1*a1 + 4*a2), b4(2*a4 + a1*a3), b6(a3*a3 + 4*a6),
+    minimal_flag(0), ntorsion(0)
 {
-  b2 = a1*a1 + 4*a2; b4 = 2*a4 + a1*a3;
-  b6 = a3*a3 + 4*a6; b8 =  (b2*b6 - b4*b4) / 4;
-  c4 = b2*b2 - 24*b4; c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
+  b8 =  (b2*b6 - b4*b4) / 4;
+  c4 = b2*b2 - 24*b4;
+  c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
   discr = (c4*c4*c4 - c6*c6) / 1728;
   discr_factored=0;
   if(sign(discr)==0)  // singular curve, replace by null
@@ -53,8 +55,9 @@ Curvedata::Curvedata(const bigint& aa1, const bigint& aa2,
 Curvedata::Curvedata(const vector<bigrational>& qai, bigint& scale)
 : minimal_flag(0), ntorsion(0)
 {
+  static const bigint one(1);
   bigrational qa1(qai[0]), qa2(qai[1]), qa3(qai[2]), qa4(qai[3]), qa6(qai[4]);
-  scale=BIGINT(1);
+  scale = one;
   a1=num(qa1);  a2=num(qa2);  a3=num(qa3);  a4=num(qa4);  a6=num(qa6);
 #ifdef DEBUG_Q_INPUT
   cout<<"In Curvedata constructor with ["<<qa1<<","<<qa2<<","<<qa3<<","<<qa4<<","<<qa6<<"]"<<endl;
@@ -67,9 +70,8 @@ Curvedata::Curvedata(const vector<bigrational>& qai, bigint& scale)
 #ifdef DEBUG_Q_INPUT
   cout<<"Denominator primes: "<<plist<<endl;
 #endif
-  for(vector<bigint>::const_iterator pp=plist.begin(); pp!=plist.end(); pp++)
+  for( const auto& p : plist)
     {
-      bigint p=*pp;
 #ifdef DEBUG_Q_INPUT
       cout<<"p =  "<<p<<endl;
 #endif
@@ -116,11 +118,13 @@ Curvedata::Curvedata(const vector<bigrational>& qai, bigint& scale)
 }
 
 Curvedata::Curvedata(const Curve& c, int min_on_init)
-: Curve(c), minimal_flag(0), ntorsion(0)
+: Curve(c),
+  b2(a1*a1 + 4*a2), b4(2*a4 + a1*a3), b6(a3*a3 + 4*a6),
+  minimal_flag(0), ntorsion(0)
 {
-  b2 = a1*a1 + 4*a2; b4 = 2*a4 + a1*a3;
-  b6 = a3*a3 + 4*a6; b8 =  (b2*b6 - b4*b4) / 4;
-  c4 = b2*b2 - 24*b4; c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
+  b8 =  (b2*b6 - b4*b4) / 4;
+  c4 = b2*b2 - 24*b4;
+  c6 = -b2*b2*b2 + 36*b2*b4 - 216*b6;
   discr = (c4*c4*c4 - c6*c6) / 1728;
   discr_factored=0;
   if(sign(discr)==0)  // singular curve, replace by null
@@ -190,7 +194,7 @@ Curvedata::Curvedata(const bigint& cc4, const bigint& cc6, int min_on_init)
 
 void Curvedata::operator=(const Curvedata& c)
 {
-  a1 = c.a1, a2 = c.a2, a3 = c.a3, a4 = c.a4, a6 = c.a6; 
+  a1 = c.a1, a2 = c.a2, a3 = c.a3, a4 = c.a4, a6 = c.a6;
   b2 = c.b2, b4 = c.b4, b6 = c.b6, b8 = c.b8;
   c4 = c.c4, c6 = c.c6, discr = c.discr;
   minimal_flag = c.minimal_flag;
@@ -223,13 +227,11 @@ void Curvedata::minimalize()
     { 
       if(u>1) // trim list of bad primes
 	{
-	  bigint p;
 	  vector<bigint> new_bad_primes;
-	  vector<bigint>::iterator pr = the_bad_primes.begin();
-	  while(pr!=the_bad_primes.end())
+          for (const auto& p : the_bad_primes)
 	    {
-	      bigint p=*pr++;
-	      if(div(p,discr)) new_bad_primes.push_back(p);
+	      if(div(p,discr))
+                new_bad_primes.push_back(p);
 	    }
 	  the_bad_primes=new_bad_primes;
 	}
@@ -314,10 +316,9 @@ void Curvedata::output(ostream& os) const
   else os<<"#torsion not yet computed"<<endl;
 }
 
-
 Curvedata opt_x_shift(const Curvedata& C, bigint& k)
 {
-  bigint b2,b4,b6,b8,four,zero; four=BIGINT(4); zero=BIGINT(0);
+  bigint b2,b4,b6,b8,four(4),zero(0);
   C.getbi(b2,b4,b6,b8);
   cubic b_cubic(four,b2,2*b4,b6);
   k = b_cubic.shift_reduce();
@@ -326,86 +327,4 @@ Curvedata opt_x_shift(const Curvedata& C, bigint& k)
   return CD;
 }
 
-#if(0)
-
-// next the invariants package
-
-bigfloat agm( bigfloat a, bigfloat b)
-{
-  bigfloat a0, b0 ;
-  do{
-    a0 = (a + b) / 2.0 ;
-    b0 = sqrt( a * b ) ;
-    a = a0 ; b = b0 ;
-  } while ( !is_approx_zero(a-b) ) ;
-  return ( a ) ;
-}
- 
-bigfloat cuberoot(bigfloat x ) /* computes x^(1.0/3.0) for all x */
-{ 
-  bigfloat third(1); third/=3;
-  if (x >= 0.0) 
-    return (pow(x, third) ) ;
-  else 
-    return( - pow(-x, third) );
-}
-
-void  sort(bigfloat roots[3] )
-{
-        bigfloat x0, x1, x2, temp ;
-        x0 = roots[0] ; x1 = roots[1] ; x2 = roots[2] ;
-        if (x0 > x1) { temp = x0; x0 = x1 ; x1 = temp ; }  /* now x0 < x1 */
-        if (x1 > x2) { temp = x1; x1 = x2 ; x2 = temp ; }  /* now x1 < x2, x0 < x2 */
-        if (x0 > x1) { temp = x0; x0 = x1 ; x1 = temp ; }  /* now x0 < x1 < x2 */
-        roots[0] = x0 ; roots[1] = x1; roots[2] = x2 ;
-}
-
-CurvedataExtra::CurvedataExtra(const Curvedata& c)
-: Curvedata(c)
-{
-  if ( isnull() ) {roots[0]=roots[1]=roots[2]=period=0; return; }
-  bigfloat fb2 = I2bigfloat(b2);
-  bigfloat fc6 = I2bigfloat(c6);
-  bigfloat fdiscr = I2bigfloat(discr);
-  if (conncomp == 1) {
-    bigfloat sqdisc  = 24.0 * sqrt(-3.0 * fdiscr) ;
-    roots[2] = ( -fb2 + cuberoot(fc6 - sqdisc) +
-                cuberoot(fc6 + sqdisc) ) / 12.0 ;
-  } else {
-    bigfloat theta = atan2( 24.0 * sqrt(3.0*fdiscr),  fc6) ;
-    bigfloat fc4 = I2bigfloat(c4);
-    bigfloat sqc4 = sqrt( fc4 ) ;
-    roots[0] = (-fb2 + 2.0 * sqc4 * cos( theta/3.0 )) / 12.0 ;
-    roots[1] = (-fb2 + 2.0 * sqc4 * cos( (theta+2.0*Pi())/3.0)) / 12.0;
-    roots[2] = (-fb2 + 2.0 * sqc4 * cos( (theta+4.0*Pi())/3.0)) / 12.0;
-    sort(roots) ;
-  }
-  // note that roots[2] (the THIRD one!) is always the largest root 
-  // now compute the period
-  bigfloat a, b ; // parameters to feed to agm()
-  if (conncomp == 2){
-    a = sqrt(roots[2] - roots[0]) ;
-    b = sqrt(roots[2] - roots[1]) ;
-  } else {
-    bigfloat fb4 = I2bigfloat(b4); // bigfloat version of b4
-    bigfloat fp = sqrt( fb4/2.0 + roots[2] * (fb2/2.0 + 3.0 * roots[2]) );
-                                  // f', where f is the cubic 
-    a = 2.0 * sqrt( fp ) ;
-    b = sqrt( 3.0 * roots[2] + fb2/4.0 + 2.0 * fp ) ;
-  }
-  period =  (2.0 * Pi() / agm(a, b) );
-}
-
-void CurvedataExtra::output(ostream& os) const
-{
-  Curvedata::output(os);
-  if(conncomp == 1) 
-     os << "The real two-division point is " << roots[2] << endl ;
-  else 
-  if(conncomp == 2) 
-     os << "The real two-division points are " 
-        << roots[0] << ", " << roots[1] << ", "<< roots[2] << endl ; 
-  os << "The real period is " << period << endl;
-}
-#endif
 

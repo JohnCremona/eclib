@@ -1,7 +1,7 @@
 // arith.cc: definitions of arithmetic functions (single precision)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -81,7 +81,7 @@ void primeclass::init(long maxnum)  /* initializes variable pdiffptr */
   //    for(k=0; k<NPRIMES+1; k++) cout<<(int)p[k]<<" "; cout<<endl;
 //  cout<<"BIGGESTPRIME = "<< BIGGESTPRIME << endl;
   pdiffptr = new unsigned char[NPRIMES+1];
-  q=p; r=pdiffptr; k=NPRIMES+1;  
+  q=p; r=pdiffptr; k=NPRIMES+1;
   while(k--) {*r = *q; r++; q++;}
   delete [] p;
   reset();
@@ -97,14 +97,14 @@ primeclass::~primeclass()
 
 void primeclass::reset(void) {p_ind=0; p_val=0; p_aptr=pdiffptr;}
 int primeclass::at_end(void) {return *p_aptr==0;}
-int primeclass::advance(void) 
+int primeclass::advance(void)
 {
     unsigned char d=*p_aptr;
     if(d) {p_ind++; p_val+=d; p_aptr++; return 1;}
     else  {return 0;}
 }
 
-long primeclass::number(long n)  
+long primeclass::number(long n)
 // returns n'th prime from list, starting at n=1 for p=2
 {
 //  cout << "In primeclass::number("<<n<<")"<<endl;
@@ -117,7 +117,7 @@ long primeclass::number(long n)
     }
   if(!ok)
     {
-      cout<<"Not enough primes in primeclass.number("<<n<<") !"<<endl;
+      cerr<<"Not enough primes in primeclass.number("<<n<<") !"<<endl;
     }
   return p_val;
 }
@@ -135,7 +135,7 @@ vector<long> primeclass::getfirst (long n)  /* returns list of first n primes */
     }
   if(!ok)
     {
-      cout<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
+      cerr<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
     }
   return ans;
 }
@@ -145,7 +145,7 @@ long prime_pi(long p)
 {
   primevar pr;
   int ip=0;
-  while ((long)pr<p) {pr++; ip++;}
+  while ((long)pr<p) {++pr; ip++;}
   return ip;
 }
 
@@ -153,14 +153,15 @@ long prime_pi(long p)
 long primdiv(long aa)
 {
  primevar pr;
- long p=0,q;
+ long p=0;
  long a = labs(aa);
  while (pr.ok() && p==0)
-   {q=pr; pr++;
-    if (a%q==0) p = q;
-    else if (q*q>a) p=a;   // N.B. this causes a=1 to return 1.  Beware!
+   {
+     long q=pr; ++pr;
+     if (a%q==0) p = q;
+     else if (q*q>a) p=a;   // N.B. this causes a=1 to return 1.  Beware!
    }
- if (p==0) {p=a; 
+ if (p==0) {p=a;
             cout<<"No prime divisor found for "<<aa<<" so assuming prime!\n";
            }
  return p;
@@ -169,9 +170,10 @@ long primdiv(long aa)
 
 vector<long> pdivs(long aa)
 {vector<long> plist;
- primevar pr; long a = abs(aa);long p;
+ primevar pr;
+ long a = abs(aa);
  while ( (a>1) && (pr.ok()))
- { p = pr; pr++;
+ { long p = pr; ++pr;
  if (a%p==0) 
    {
      plist.push_back(p);
@@ -192,34 +194,32 @@ vector<long> posdivs(long a, const vector<long>& plist)
 {
 // cout << "In posdivs with a = " << a << endl;
 // cout << plist.size() << " primes: " <<endl; cout << plist << endl;
- long j,k,p,e,nd = 1;
+ long nd = 1;
  vector<long> dlist(1,1);  // cout << "Divisor 0 = 1" << endl;
- vector<long>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     p=*pr++; e = val(p,a);
+     long e = val(p,a);
      dlist.resize((e+1)*dlist.size());
-     for (j=0; j<e; j++)
-       for (k=0; k<nd; k++)
+     for (long j=0; j<e; j++)
+       for (long k=0; k<nd; k++)
 	 dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
      nd*=(e+1);
-   } 
+   }
  return dlist;
 }
 
 vector<long> alldivs(long a, const vector<long>& plist)
 {//cout << "In alldivs with a = " << a << endl;
 // cout << plist.size() << " primes: " <<endl; cout << plist << endl;
- long j,k,p,e,nd = 2;
+ long nd = 2;
  vector<long> dlist(1,1);  // cout << "Divisor 0 =  1" << endl;
  dlist.push_back(-1);      // cout << "Divisor 1 = -1" << endl;
- vector<long>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
  {
-   p = *pr++; e = val(p,a);
+   long e = val(p,a);
    dlist.resize((e+1)*dlist.size());
-   for (j=0; j<e; j++)
-     for (k=0; k<nd; k++)
+   for (long j=0; j<e; j++)
+     for (long k=0; k<nd; k++)
        dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
    nd*=(e+1);
  }
@@ -228,15 +228,14 @@ vector<long> alldivs(long a, const vector<long>& plist)
 
 vector<long> sqdivs(long a, const vector<long>& plist)
 {
- long j,k,p,e,nd = 1;
+ long nd = 1;
  vector<long> dlist(1,1);
- vector<long>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     p = *pr++; e = val(p,a)/2;
+     long e = val(p,a)/2;
      dlist.resize((e+1)*dlist.size());
-     for (j=0; j<e; j++)
-       for (k=0; k<nd; k++)
+     for (long j=0; j<e; j++)
+       for (long k=0; k<nd; k++)
 	 dlist[nd*(j+1)+k] =  p*dlist[nd*j+k];
      nd*=(e+1);
    }
@@ -245,19 +244,30 @@ vector<long> sqdivs(long a, const vector<long>& plist)
 
 vector<long> sqfreedivs(long a, const vector<long>& plist)
 {
- long j,k,p,e,nd = 1;
+ long nd = 1;
  vector<long> dlist(1,1);
- vector<long>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
  {
-  p = *pr++; e = 1;
+  long e = 1;
   dlist.resize((e+1)*dlist.size());
-  for (j=0; j<e; j++)
-    for (k=0; k<nd; k++)
+  for (long j=0; j<e; j++)
+    for (long k=0; k<nd; k++)
       dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
   nd*=(e+1);
  }
  return dlist;
+}
+
+// gcc division truncates towards 0, while we need rounding, with a
+// consistent behaviour for halves (they go up here).
+//
+// For b>0, rounded_division(a,b) = q such that a/b = q + r/b with -1/2 <= r/b < 1/2
+long rounded_division(long a, long b)
+{
+  std::ldiv_t qr = ldiv(a, b);
+  long r = qr.rem, q = qr.quot;
+  long r2 = r<<1;
+  return (r2<-b? q-1: (r2>=b? q+1: q));
 }
 
 long mod(long a, long b)
@@ -268,24 +278,66 @@ long mod(long a, long b)
  return(c);
 }
 
+long mod(int a, long b)
+{long c;
+ if (b<0) b=-b;
+ if (a>=0) c=a%b; else c=b-((-a)%b);
+ if (c>(b>>1)) c-=b;
+ return(c);
+}
+
+int mod(int a, int b)
+{int c;
+ if (b<0) b=-b;
+ if (a>=0) c=a%b; else c=b-((-a)%b);
+ if (c>(b>>1)) c-=b;
+ return(c);
+}
+
+int mod(long a, int b)
+{
+  return (int)mod(a,(long)b);
+}
+
 long posmod(long a, long b)
 {
-  long c=a%b;  
+  long c=a%b;
   if (c<0) return(c+b);
   return(c);
 }
 
+long posmod(int a, long b)
+{
+  long c=(long(a))%b;
+  if (c<0) return(c+b);
+  return(c);
+}
+
+int posmod(int a, int b)
+{
+  int c=a%b;
+  if (c<0) return(c+b);
+  return(c);
+}
+
+int posmod(long a, int b)
+{
+  return (int)posmod(a, (long)b);
+}
+
 long gcd(long a, long b)
 {
-  long c;
-  while (b!=0) {c=a%b; a=b; b=c;}
+  if ((a==1)||(b==1)) return 1;
+  if (a==0) return abs(b);
+  while (b!=0) {long c=a%b; a=b; b=c;}
   return abs(a);
 }
 
 int gcd(int a, int b)
 {
-  int c;
-  while (b!=0) {c=a%b; a=b; b=c;}
+  if ((a==1)||(b==1)) return 1;
+  if (a==0) return abs(b);
+  while (b!=0) {int c=a%b; a=b; b=c;}
   return abs(a);
 }
 
@@ -297,80 +349,144 @@ long lcm(long a, long b)
 }
 
 long bezout(long aa, long bb, long& xx, long& yy)
-{long a,b,c,x,oldx,newx,y,oldy,newy,q;
- oldx = 1; oldy = 0; x = 0; y = 1; a = aa; b = bb;
+{long a = aa, b = bb, x = 0, oldx = 1, y = 1, oldy = 0;
  while (b!=0)
- { q = a/b; 
-   c    = a    - q*b; a    = b; b = c;
-   newx = oldx - q*x; oldx = x; x = newx;
-   newy = oldy - q*y; oldy = y; y = newy;
+ { long q = a/b;
+   long c    = a    - q*b; a    = b; b = c;
+   long newx = oldx - q*x; oldx = x; x = newx;
+   long newy = oldy - q*y; oldy = y; y = newy;
   }
  if (a<0) {xx=-oldx; yy=-oldy; return(-a);}
  else     {xx= oldx; yy= oldy; return( a);}
 }
- 
+
 long invmod(long a, long p)
 {long g,x,y;
  g=bezout(a,p,x,y);
  if (g==1) return x;
- else 
+ else
    {
      cout << "invmod called with " << a << " and " << p << " -- not coprime!"<<endl;
      return 0;
    }
 }
 
-int modrat(int n, int m, float lim, int& a, int& b)
-{
-  long la,lb,ln=n,lm=m;
-  int ans = modrat(ln,lm,lim,la,lb);
-  a=la; b=lb;
-  return ans;
-}
-
 //#define DEBUG_MODRAT
 
-int modrat(long n, long m, float lim, long& a, long& b)
-{long q,r,t,qq,rr,tt,quot;
+// Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
+void gauss_reduce(long a0, long b0, long c0, long d0,
+                  long& a, long& b, long& c, long& d)
+{
+  a=a0; b=b0; c=c0; d=d0;
+#ifdef DEBUG_MODRAT
+  cout<<"Initial (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+#endif
+  long P = a*a+b*b, Q = a*c+b*d, R = c*c+d*d, t=1;
+  while (t)
+    {
+#ifdef DEBUG_MODRAT
+      cout<<"(a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+      cout<<"(P,Q,R) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
+#endif
+      t = rounded_division(Q,P);
+      if (t)
+        {
+#ifdef DEBUG_MODRAT
+          cout<<"Shift by "<<t<<endl;
+#endif
+          c -= t*a;
+          d -= t*b;
+          Q -= t*P;
+          R = c*c+d*d;
+        }
+      if (R<P)
+        {
+#ifdef DEBUG_MODRAT
+          cout<<"Invert"<<endl;
+#endif
+          t = -a; a = c; c = t;
+          t = -b; b = d; d = t;
+          t = P; P = R; R = t; Q=-Q;
+          t = 1;
+        }
+    }
+#ifdef DEBUG_MODRAT
+  cout<<"Final (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+#endif
+}
+
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
+int modrat(int n, int m, int& a, int& b)
+{
+  long la,lb,ln=n,lm=m;
+  int ok = modrat(ln,lm,la,lb);
+  a=la; b=lb;
+  return ok;
+}
+
+int old_modrat(long n, long m, long& a, long& b);
+int new_modrat(long n, long m, long& a, long& b);
+
+int modrat(long n, long m, long& a, long& b)
+{
+  return old_modrat(n, m, a, b);
+  //return new_modrat(n, m, a, b);  // NB new version has problems on 32-bit
+}
+
+int old_modrat(long n, long m, long& a, long& b)
+{long q=m, r=posmod(n,m), qq=0, rr=1;
 #ifdef DEBUG_MODRAT
  cout<<"modrat("<<n<<","<<m<<")\n";
 #endif
- q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1; 
- if (r<lim) 
-   { 
+ float lim = sqrt(float(m)/2.0);
+ a=r; b=1;
+ if (r<lim)
+   {
 #ifdef DEBUG_MODRAT
      cout<<" = "<<a<<"/"<<b<<"\n";
 #endif
      return 1;
    }
- while (r!=0) 
- { 
-   quot = q/r;
+ while (r)
+ {
+   long quot = q/r, t, tt;
 #ifdef DEBUG_MODRAT
-   cout<<"q,r,t = "<<q<<" "<<r<<" "<<t<<"\n";
+   cout<<"q,r,qq,rr = "<<q<<" "<<r<<" "<<qq<<" "<<rr<<"\n";
 #endif
    t  =  q-quot*r;   q = r;   r = t;
    tt = qq-quot*rr; qq = rr; rr = tt;
    if (r<lim)
      {
-       if (abs(rr)<lim) 
+       if (abs(rr)<lim)
          {
-           a=r; b=rr; 
+           a=r; b=rr;
 #ifdef DEBUG_MODRAT
            cout<<" success:  "<<a<<"/"<<b<<"\n";
 #endif
            return 1;
          }
 #ifdef DEBUG_MODRAT
-       cout << "\nmodrat error: no reconstruction for " << n << " mod " << m << "\n";
+       cerr << "***modrat failure: no reconstruction for " << n << " mod " << m << "\n";
 #endif
        return 0;
      }
  }
-#ifdef DEBUG_MODRAT
- cout << "\nmodrat error: common factor with " << n << " mod " << m << "\n";
-#endif
+ cerr << "***modrat error: common factor with " << n << " mod " << m << "\n";
  return 0;
+}
+
+int new_modrat(long n, long m, long& a, long& b)
+{
+#ifdef DEBUG_MODRAT
+  cout<<"modrat("<<n<<","<<m<<")\n";
+#endif
+  long c,d, n1 = mod(n,m);
+  gauss_reduce(n1,1,m,0,a,b,c,d);
+#ifdef DEBUG_MODRAT
+  cout<<" = "<<a<<"/"<<b<<"\n";
+#endif
+ float lim = sqrt(float(m)/2.0);
+ return (abs(a) <= lim) && (abs(b) <= lim);
 }
 
 long val(long factor, long number)
@@ -383,28 +499,50 @@ long val(long factor, long number)
  return e;
 }
 
-int intbezout(int aa, int bb, int& xx, int& yy)
-{int a,b,c,x,oldx,newx,y,oldy,newy,q;
- oldx = 1; oldy = 0; x = 0; y = 1; a = aa; b = bb;
+int bezout(int aa, int bb, int& xx, int& yy)
+{int a = aa, b = bb, x = 0, oldx = 1, y = 1, oldy = 0;
  while (b!=0)
- { q = a/b; 
-   c    = a    - q*b; a    = b; b = c;
-   newx = oldx - q*x; oldx = x; x = newx;
-   newy = oldy - q*y; oldy = y; y = newy;
+ { long q = a/b;
+   long c    = a    - q*b; a    = b; b = c;
+   long newx = oldx - q*x; oldx = x; x = newx;
+   long newy = oldy - q*y; oldy = y; y = newy;
   }
  if (a<0) {xx=-oldx; yy=-oldy; return(-a);}
  else     {xx= oldx; yy= oldy; return( a);}
 }
 
 long chi2(long a)
-{ static long table8[8] = {0,1,0,-1,0,-1,0,1};
+{ static const long table8[8] = {0,1,0,-1,0,-1,0,1};
   return table8[posmod(a,8)];
 }
- 
+
+// set root to rounded sqrt(a) if a>=0, return 1 iff exact
+int isqrt(long a, long& root)
+{
+  if (a<0) {return 0;}
+  root = round(sqrt(a));
+  return a==root*root;
+}
+
+// return rounded sqrt(a) (undefined for a<0)
+long isqrt(const long a)
+{
+  long r;
+  isqrt(a,r);
+  return r;
+}
+
+long squarefree_part(long d)
+{
+  if (d==0) return d;
+  long maxd = sqdivs(d).back();
+  return (d/maxd)/maxd;
+}
+
 long chi4(long a)
-{ static long table4[4] = {0,1,0,-1};
+{ static const long table4[4] = {0,1,0,-1};
   return table4[posmod(a,4)];
-} 
+}
 
 long hilbert2(long a, long b)
 { static long table44[4][4] = {{0,0,0,0},
@@ -462,7 +600,7 @@ long val2(unsigned long z);
 
 long kronecker(long x, long y)
 {
-  long r,s=1,x1,z;
+  long r,s=1,x1;
 
   if (y<=0)
   {
@@ -489,7 +627,7 @@ long kronecker(long x, long y)
       x1>>=r;
     }
     if (y&2 && x1&2) s= -s;
-    z=y%x1; y=x1; x1=z;
+    long z=y%x1; y=x1; x1=z;
   }
   return (y==1)? s: 0;
 }
@@ -507,39 +645,44 @@ int is_squarefree(long n)
   if(n%9==0) return 0;
   if(n%25==0) return 0;
   if(n%49==0) return 0;
-  vector<long>plist = pdivs(n);
-  for(unsigned int i=0; i<plist.size(); i++) 
-    if(val(plist[i],n)>1) return 0;
-  return 1;
+  auto plist = pdivs(n);
+  return std::all_of(plist.begin(), plist.end(), [n] (const long& p) {return val(p,n)==1;});
 }
 
 int is_valid_conductor(long n)
 {
-  long m=n, p, e;
+  if (n<11) return 0;
+  long m=n, e;
   e=0; while(!(m&1)) {e++; m>>=1;}  if(e>8) return 0;
   e=0; while(!(m%3)) {e++; m/=3;}   if(e>5) return 0;
-  vector<long>plist = pdivs(m);
-  for(unsigned int i=0; i<plist.size(); i++) 
-    {
-      p = plist[i]; 
-      e=0; while(!(m%p)) {e++; m/=p;} if(e>2) return 0;
-    }
-  return 1;
+  auto plist = pdivs(m);
+  return std::all_of(plist.begin(), plist.end(), [m] (const long& p) {return val(p,m)<=2;});
 }
 
 
+// a=b*q+r, return 1 iff r==0
+int divrem(long a, long b, long& q, long& r)
+{
+  std::ldiv_t qr = ldiv(a, b);
+  r = qr.rem;
+  q = qr.quot;
+  return (r==0);
+}
 
+// a=b*q+r, return 1 iff r==0
+int divrem(int a, int b, int& q, int& r)
+{
+  std::div_t qr = div(a, b);
+  r = qr.rem;
+  q = qr.quot;
+  return (r==0);
+}
 
-// The following is no longer used
-
-long old_kronecker(long d, long n)
-{ long ans=0; long m=n, d4=d%4; if(d4<0)d4+=4;
-  if ((gcd(d,n)==1) && ((d4==0)||(d4==1)))
-  { ans=1;
-    while (!(m%4)) m/=4;
-    if (!(m%2)) {m/=2; ans*=((d-1)%8 ? -1 : 1);}
-    ans *= legendre(d,m);
-  }
+// return list of integers from first to last inclusive
+vector<long> range(long first, long last)
+{
+  vector<long> ans(last-first+1);
+  std::iota(ans.begin(), ans.end(), first);
   return ans;
 }
 

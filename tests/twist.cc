@@ -1,7 +1,7 @@
 // twist.cc: program to compute & display quadratic twists
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -27,24 +27,20 @@
 int main(){
 
   initprimes("PRIMES",0);
-
-  Curvedata D, E;
-  CurveRed CR;
-  bigint c4,c6,twist2;
-  bigint v;
   int verbose=0;
   vector<bigrational> ai(5);
 
-
 while (getcurve(ai,verbose))
 {
-  Curvedata D(Curvedata(ai,v),1);
-  E = D;
-  CR = CurveRed(E);
-  cout << "\nCurve is:  " << endl;  CR.display(cout);
-  
+  bigint c4,c6,twist2;
+  bigint v;
   long twist=1;
-  
+
+  Curvedata D(Curvedata(ai,v),1);
+  Curvedata E = D;
+  CurveRed CR = CurveRed(E);
+  cout << "\nCurve is:  " << endl;  CR.display(cout);
+
   while(1)
     {
       cout << "\nEnter a twist value: ";
@@ -63,7 +59,7 @@ while (getcurve(ai,verbose))
 	  c6 *= twist*twist2;
 	  E = Curvedata(Curve(c4, c6), 1); //minimal form
 	  CR=CurveRed(E);
-	  cout << "\n\nE * " << twist/4 << " is:  \n"; CR.display(cout); 
+	  cout << "\n\nE * " << twist/4 << " is:  \n"; CR.display(cout);
 	  cout << endl;
 	}
     }

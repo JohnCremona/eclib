@@ -1,7 +1,7 @@
 // FILE APLIST.CC: program for listing ap
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -35,7 +35,7 @@ int main()
   cout<<"Enter output filename: ";
   cin>>filename;
   ofstream output(filename.c_str());
-  int n1,n2; short temp;
+  int n1,n2;
   cout<<"Enter first and last values of n: ";
   cin>>n1>>n2;
   for (int n=n1; n<=n2; n++)
@@ -45,17 +45,15 @@ int main()
       if (!datafile) cout<<"No file "<<data<<" exists!"<<endl;
       else
         {
-          int i,ic,xic,ip,jp,p,iq,nnf,naq,nap,nx;
+          int i,ic,xic,ip,jp,p,iq,nnf,naq;
 	  int nbigprimes = 5;  // max no. of primes over 100
 
-	  short temp_short;
 	  int temp_int;
 	  datafile.read((char*)&temp_int,sizeof(int));   // = number of newforms
 	  nnf=temp_int;
 	  datafile.read((char*)&temp_int,sizeof(int));   // = number of bad primes
 	  naq=temp_int;
 	  datafile.read((char*)&temp_int,sizeof(int));   // = number of eigs
-	  nap=temp_int;
 	  if(nnf==0) continue;
 
 	      // skip over extra data for each newform
@@ -93,10 +91,10 @@ int main()
 	      ip=25; // index into aptable
 	      jp=26; // current prime being considered
 	      p=prime_number(jp);
-	      for (ip=0; ip<25; ip++)
+	      for (int kp=0; kp<25; kp++)
 		{
-		  int p = prime_number(ip+1);
-		  while (nn%p==0) nn/=p;
+		  int pk = prime_number(kp+1);
+		  while (nn%pk==0) nn/=pk;
 		}
 	      while (nn>1)     // then there are primes>100 dividing n
 		{
@@ -124,22 +122,22 @@ int main()
 	      ic=booknumber0(n,ic);
 #endif
 	      iq=0;
-              for (int jp=0; jp<25; jp++)
-                { int p = prime_number(jp+1);
-		  int ap = aptable[ic][jp];
-                  if (n%p==0) // W_q-eig
+              for (int kp=0; kp<25; kp++)
+                { int pk = prime_number(kp+1);
+		  int ap = aptable[ic][kp];
+                  if (n%pk==0) // W_q-eig
 		    {
 		      ap=aqtable[ic][iq++];
-		      if(jp>8)  output<<" ";
+		      if(kp>8)  output<<" ";
 		      if(ap==1) output<<"  +"; else output<<"  -";
 		    }
                   else        // T_p-eig
 		    {
-		      if (jp>8) output<<setw(4)<<ap;
+		      if (kp>8) output<<setw(4)<<ap;
 		      else output<<setw(3)<<ap;
 		    }
                 }
-	      for(i=0; i<bigptable.size(); i++)
+	      for(i=0; i<(int)bigptable.size(); i++)
                 {
                   if (aqtable[ic][iq++]==1) output<<" +"; else output<<" -";
                   output<<"("<<bigptable[i]<<")";

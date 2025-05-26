@@ -1,7 +1,7 @@
 // lambda.h   Declarations of functions which compute Silverman's
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -80,10 +80,8 @@ vector<bigfloat> lambda_bad(const CurveRed& C, long& nlambda, int verbose)
   bigint discr = getdiscr(C);
   vector<bigint> plist = getbad_primes(C);
   long i, j, nl, nnl;
-  vector<bigint>::const_iterator pr=plist.begin();
-  while(pr!=plist.end())
+  for (const auto& p : plist)
     {
-      bigint p = *pr++;
       if (ndiv(p*p,discr))
 	{
 	  if(verbose)
@@ -129,13 +127,14 @@ int make_point_from_x(Curvedata* CD, const bigint& xa, const bigint& xd, Point* 
 
 int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P)
 {
+  static const bigint ten(10);
   bigint a,b,c,d;
 //cout<<"In ratapprox2 with x = " << x << endl;
   bigint x0, x1, x2, y0, y1, y2;
   bigfloat xx, diff, xc;
   xx = x; x0 = 0; x1 = 1; y0 = 1; y1 = 0;
   diff = 1;
-  bigint maxdenom = pow(BIGINT(10),maxdd);
+  bigint maxdenom = pow(ten,maxdd);
   while ( !is_approx_zero(diff) && (y2<maxdenom))
     { c = Iround( xx ); xc=I2bigfloat(c);
       x2 = x0 + c*x1; x0 = x1; x1 = x2;
@@ -167,10 +166,9 @@ int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P)
 int make_point_from_x_and_ht(Curvedata* CD, vector<bigfloat> lambdas, const bigfloat& xp, const bigfloat& ht, Point* P)
 {
   bigfloat rh = realheight(xp,CD);
-  vector<bigfloat>::const_iterator lam = lambdas.begin();
-  while(lam!=lambdas.end())
+  for (const auto& lam : lambdas)
     {
-      bigfloat logd = (ht-rh-(*lam++))/2;
+      bigfloat logd = (ht-rh-(lam))/2;
       bigfloat approxd = exp(logd);
       bigint xa, xd2, xd = Iround(approxd);
       if(xd>0) 

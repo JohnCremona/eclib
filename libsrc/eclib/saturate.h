@@ -1,7 +1,7 @@
 // saturate.h: declaration of class saturator for sieving E(Q)/pE(Q)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -88,7 +88,7 @@ private:
   //
 
 public:
-  saturator(Curvedata* EE, int egr=1, int verb=0)
+  explicit saturator(Curvedata* EE, int egr=1, int verb=0)
     :E(EE), egr_flag(egr), verbose(verb)
     {
       use_div_pols=0;
@@ -98,14 +98,14 @@ public:
       tam_primes = tamagawa_primes(C, 1); // 1 means include 2 if E(R) has 2 components
       badp = getbad_primes(*E);
       maxq = 0;
-      the_index_bound = BIGINT(0); // means not set
+      the_index_bound = bigint(0); // means not set
     }
   ~saturator() {; }
 
   // initialize point list
   void set_points(const vector<Point>& PP) {
     Plist = PP;
-    the_index_bound = BIGINT(0);
+    the_index_bound = bigint(0);
   }
 
   // initialize index bound

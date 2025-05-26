@@ -1,7 +1,7 @@
 // xsplit.h: Declaration of class form_finder
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 //                     Marcus Mo     (parallel code)
 // 
 // This file is part of the eclib package.
@@ -61,9 +61,9 @@ class form_finder {
     void splitoff(const vector<long>& eigs);
     void store(vec bp, vec bm, vector<long> eigs);
     
-    vec  getbasis( ff_data &data ) const {return data.bplus_;}
-    vec  getbasisplus( ff_data &data ) const {return data.bplus_;}
-    vec  getbasisminus( ff_data &data ) const {return data.bminus_;}
+    vec  getbasis( const ff_data &data ) const {return data.bplus_;}
+    vec  getbasisplus( const ff_data &data ) const {return data.bplus_;}
+    vec  getbasisminus( const ff_data &data ) const {return data.bminus_;}
 
     friend class ff_data; 
   

@@ -1,7 +1,7 @@
 // FILE logger.cc : Implementation of member functions for class logger
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 Marcus Mo
+// Copyright 1990-2023 Marcus Mo
 // 
 // This file is part of the eclib package.
 // 

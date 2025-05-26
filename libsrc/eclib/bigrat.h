@@ -1,7 +1,7 @@
 // bigrat.h: declaration of bigrational number class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -31,10 +31,13 @@ class bigrational {
 
 public:
         // constructors
-        bigrational(bigint num_val=BIGINT(0), bigint den_val=BIGINT(1));
+        bigrational() : n(0), d(1) {;}
+        explicit bigrational(const bigint& num_val) : n(num_val), d(1) {;}
+        bigrational(const bigint& num_val, const bigint& den_val);
         bigrational(const bigrational& q);
-        bigrational(const rational& q);
+        explicit bigrational(const rational& q);
         void operator=(const bigrational& q);
+        void operator=(const bigint& a);
         void operator=(const rational& q);
 
         // bigrational manipulations
@@ -46,17 +49,17 @@ public:
 
         // Binary Operator Functions
         friend bigrational operator+(const bigrational&, const bigrational&);
-        friend bigrational operator+(bigint, const bigrational&);
-        friend bigrational operator+(const bigrational&, bigint);
+        friend bigrational operator+(const bigint&, const bigrational&);
+        friend bigrational operator+(const bigrational&, const bigint&);
         friend bigrational operator-(const bigrational&, const bigrational&);
-        friend bigrational operator-(bigint, const bigrational&);
-        friend bigrational operator-(const bigrational&, bigint);
+        friend bigrational operator-(const bigint&, const bigrational&);
+        friend bigrational operator-(const bigrational&, const bigint&);
         friend bigrational operator*(const bigrational&, const bigrational&);
-        friend bigrational operator*(const bigrational&, bigint);
-        friend bigrational operator*(bigint, const bigrational&);
+        friend bigrational operator*(const bigrational&, const bigint&);
+        friend bigrational operator*(const bigint&, const bigrational&);
         friend bigrational operator/(const bigrational&, const bigrational&);
-        friend bigrational operator/(const bigrational&, bigint);
-        friend bigrational operator/(bigint, const bigrational&);
+        friend bigrational operator/(const bigrational&, const bigint&);
+        friend bigrational operator/(const bigint&, const bigrational&);
         friend int operator==(const bigrational&, const bigrational&);
         friend int operator!=(const bigrational&, const bigrational&);
         friend int operator<(const bigrational&, const bigrational&);
@@ -64,13 +67,13 @@ public:
         friend ostream& operator<< (ostream&s, const bigrational&);
         friend istream& operator>> (istream& is, bigrational& r);
         bigrational& operator+=(const bigrational&);
-        bigrational& operator+=(bigint);
+        bigrational& operator+=(const bigint&);
         bigrational& operator-=(const bigrational&);
-        bigrational& operator-=(bigint);
+        bigrational& operator-=(const bigint&);
         bigrational& operator*=(const bigrational&);
-        bigrational& operator*=(bigint);
+        bigrational& operator*=(const bigint&);
         bigrational& operator/=(const bigrational&);
-        bigrational& operator/=(bigint);
+        bigrational& operator/=(const bigint&);
         bigrational operator+();
         bigrational operator-();
         friend bigint floor(const bigrational& r);
@@ -87,21 +90,22 @@ private:
 
 inline void bigrational::cancel()                     // cancel *this in situ
 {
- bigint g = gcd(n,d);
- if (g>1) {n/=g; d/=g;}
- if (d<0) {n=-n; d=-d;}
+  bigint g(gcd(n,d));
+  if (g>1) {n/=g; d/=g;}
+  if (d<0) {n=-n; d=-d;}
 }
 
-inline bigrational::bigrational(bigint num_val, bigint den_val)
+inline bigrational::bigrational(const bigint& num_val, const bigint& den_val)
+  : n(num_val), d(den_val)
 {
-  n=num_val; d=den_val;
-  (*this).cancel(); 
+  cancel(); 
 }
 
 inline bigrational::bigrational(const bigrational& q) :n(q.n), d(q.d) {;}
-inline bigrational::bigrational(const rational& q) :n(BIGINT(q.n)), d(BIGINT(q.d)) {;}
+inline bigrational::bigrational(const rational& q) :n(q.n), d(q.d) {;}
 inline void bigrational::operator=(const bigrational& q) {n=q.n; d=q.d;}
-inline void bigrational::operator=(const rational& q) {n=BIGINT(q.n); d=BIGINT(q.d);}
+inline void bigrational::operator=(const bigint& a) {n=a; d=bigint(1);}
+inline void bigrational::operator=(const rational& q) {n=bigint(q.n); d=bigint(q.d);}
 
 inline bigrational bigrational::operator+()
 {
@@ -120,11 +124,11 @@ inline bigrational& bigrational::operator+=(const bigrational& q2)
 {
         n = n*q2.d+d*q2.n;
         d *= q2.d;
-        (*this).cancel();
+        cancel();
         return *this;
 }
 
-inline bigrational& bigrational::operator+=(bigint num_val2)
+inline bigrational& bigrational::operator+=(const bigint& num_val2)
 {
         n += d*num_val2;
         return *this;
@@ -134,27 +138,27 @@ inline bigrational& bigrational::operator-=(const bigrational& q2)
 {
         n = n*q2.d-d*q2.n;
         d *= q2.d;
-        (*this).cancel();
+        cancel();
         return *this;
 }
 
-inline bigrational& bigrational::operator-=(bigint num_val2)
+inline bigrational& bigrational::operator-=(const bigint& num_val2)
 {
         n -= d*num_val2;
         return *this;
 }
 
-inline bigrational& bigrational::operator*=(bigint num_val2)
+inline bigrational& bigrational::operator*=(const bigint& num_val2)
 {
         n*=num_val2;
-        (*this).cancel();
+        cancel();
         return *this;
 }
 
-inline bigrational& bigrational::operator/=(bigint num_val2)
+inline bigrational& bigrational::operator/=(const bigint& num_val2)
 {
         d*=num_val2;
-        (*this).cancel();
+        cancel();
         return *this;
 }
 
@@ -189,12 +193,12 @@ inline bigrational operator+(const bigrational& q1, const bigrational& q2)
         return bigrational(q1.n*q2.d + q2.n*q1.d, q1.d * q2.d);
 }
 
-inline bigrational operator+(bigint num_val1, const bigrational& q2)
+inline bigrational operator+(const bigint& num_val1, const bigrational& q2)
 {
         return bigrational(num_val1*q2.d + q2.n, q2.d);
 }
 
-inline bigrational operator+(const bigrational& q1, bigint num_val2)
+inline bigrational operator+(const bigrational& q1, const bigint& num_val2)
 {
         return bigrational(q1.n + num_val2*q1.d, q1.d);
 }
@@ -204,22 +208,22 @@ inline bigrational operator-(const bigrational& q1, const bigrational& q2)
         return bigrational(q1.n*q2.d - q2.n*q1.d, q1.d * q2.d);
 }
 
-inline bigrational operator-(bigint num_val1, const bigrational& q2)
+inline bigrational operator-(const bigint& num_val1, const bigrational& q2)
 {
         return bigrational(num_val1*q2.d - q2.n, q2.d);
 }
 
-inline bigrational operator-(const bigrational& q1, bigint num_val2)
+inline bigrational operator-(const bigrational& q1, const bigint& num_val2)
 {
         return bigrational(q1.n - num_val2*q1.d, q1.d);
 }
 
-inline bigrational operator*(const bigrational& q1, bigint num_val2)
+inline bigrational operator*(const bigrational& q1, const bigint& num_val2)
 {
         return bigrational(q1.n*num_val2, q1.d);
 }
 
-inline bigrational operator*(bigint num_val1, const bigrational& q2)
+inline bigrational operator*(const bigint& num_val1, const bigrational& q2)
 {
         return bigrational(q2.n*num_val1, q2.d);
 }
@@ -229,7 +233,7 @@ inline bigrational operator*(const bigrational& q1, const bigrational& q2)
         return bigrational(q1.n*q2.n, q1.d*q2.d);
 }
 
-inline bigrational operator/(const bigrational& q1, bigint num_val2)
+inline bigrational operator/(const bigrational& q1, const bigint& num_val2)
 {
         return bigrational(q1.n, q1.d*num_val2);
 }
@@ -239,7 +243,7 @@ inline bigrational operator/(const bigrational& q1, const bigrational& q2)
         return bigrational(q1.n*q2.d, q1.d*q2.n);
 }
 
-inline bigrational operator/(bigint num_val1, const bigrational& q2)
+inline bigrational operator/(const bigint& num_val1, const bigrational& q2)
 {
   return bigrational(q2.d*num_val1, q2.n);
 }
@@ -278,11 +282,11 @@ inline ostream& operator<<(ostream& s, const bigrational& q)
 
 inline istream& operator>> (istream& is, bigrational& r)
 {
-  char c=0;
-  bigint n,d=BIGINT(1);
+  bigint n,d(1);
   is>>n;
-  if(!is.eof()) 
+  if(!is.eof())
     {
+      char c;
       is.get(c);
       if(c=='/')
 	{
@@ -305,8 +309,8 @@ inline bigint floor(const bigrational& r)
 
 inline bigint ceil(const bigrational& r)
 {
-  if(r.d==BIGINT(1)) return r.n;
-  return BIGINT(1) + (r.n-(r.n%r.d))/r.d;
+  if(is_one(r.d)) return r.n;
+  return 1 + (r.n-(r.n%r.d))/r.d;
 }
 
 // int is_S_integral(const bigrational& x,  const vector<bigint>& S)

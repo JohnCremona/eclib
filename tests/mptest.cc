@@ -1,7 +1,7 @@
 // mptest.cc -- test program for marith functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -72,8 +72,7 @@ int main()
   cout<<"irary(7) is "<<irary[7]<<"\tirary[3] is "<<irary[3]<<endl;
 
   cout<<"testing find function\n";
-  vector<bigint>::iterator vi;
-  vi = find(irary.begin(),irary.end(),35);
+  auto vi = find(irary.begin(),irary.end(),35);
   if(vi==irary.end()) cout<<"35 is not there\n";
   else cout<<"35 is there:  "<<*vi<<" is item number "<<(vi-irary.begin())<<endl;
   vi = find(irary.begin(),irary.end(),13);
@@ -82,10 +81,10 @@ int main()
 
   cout<<"\n\nTest of sqrt and isqrt\n";
   bigint astop; astop=999;
-  bigint aaa,roota; int res; 
+  bigint aaa,roota;
   while (cout << "\nEnter a positive bigint a (999 to stop): ", cin >> aaa, aaa!=astop) 
    {
-     res = sign(aaa);
+     int res = sign(aaa);
      cout << "a = " << aaa << ", sign(a) = " << res << "\n";
      roota = sqrt(aaa);
      cout << "a = " << aaa << ", sqrt(a) = " << roota << " (rounded down)\n";
@@ -126,8 +125,8 @@ int main()
      vector<bigint> plist=pdivs(m);
      cout << "m has " << plist.size() << " prime divisors: " << plist << endl;
      cout << "with exponents: "; 
-     for(vector<bigint>::const_iterator pr = plist.begin(); pr!=plist.end(); pr++)
-       cout << *pr <<":"<<val(*pr,m) << "\t";
+     for( const auto& pi : plist)
+       cout << pi <<":"<<val(pi,m) << "\t";
      cout<<endl;
 
      vector<bigint> dlist=alldivs(m,plist);

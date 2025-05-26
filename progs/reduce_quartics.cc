@@ -1,7 +1,7 @@
 // REDUCE_QUARTICS.CC:  Program for minimisation and reduction of quartics
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

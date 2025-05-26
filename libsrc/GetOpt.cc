@@ -19,17 +19,17 @@ Foundation, 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 #ifdef __GNUG__
 #pragma implementation
 #endif
-/* AIX requires the alloca decl to be the first thing in the file. */
-#ifdef __GNUC__
-#define alloca __builtin_alloca
-#elif defined(sparc)
-#include <alloca.h>
-extern "C" void *__builtin_alloca(...);
-#elif defined(_AIX)
-#pragma alloca
-#else
-char *alloca ();
-#endif
+// /* AIX requires the alloca decl to be the first thing in the file. */
+// #ifdef __GNUC__
+// #define alloca __builtin_alloca
+// #elif defined(sparc)
+// #include <alloca.h>
+// extern "C" void *__builtin_alloca(...);
+// #elif defined(_AIX)
+// #pragma alloca
+// #else
+// char *alloca ();
+// #endif
 #include <eclib/GetOpt.h>
 
 char* GetOpt::nextchar = 0;
@@ -58,11 +58,12 @@ GetOpt::GetOpt (int argc, char **argv, const char *optstring)
 }
 
 void
-GetOpt::exchange (char **argv)
+GetOpt::exchange (char **argv) const
 {
   int nonopts_size
     = (last_nonopt - first_nonopt) * sizeof (char *);
-  char **temp = (char **) alloca (nonopts_size);
+  char **temp = new char*[nonopts_size];
+  // char **temp = (char **) alloca (nonopts_size);
 
   /* Interchange the two blocks of data in argv.  */
 
@@ -76,6 +77,7 @@ GetOpt::exchange (char **argv)
 
   first_nonopt += (optind - last_nonopt);
   last_nonopt = optind;
+  delete[] temp;
 }
 
 /* Scan elements of ARGV (whose length is ARGC) for option characters

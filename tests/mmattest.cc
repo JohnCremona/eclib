@@ -1,7 +1,7 @@
 // mmattest.cc: Multiprecision matrix package test program
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -23,7 +23,7 @@
  
 #include <time.h>
 #include <eclib/method.h>
-#include <eclib/mmatrix.h>
+#include <eclib/matrix.h>
 
 int main(void)
 {
@@ -31,10 +31,10 @@ int main(void)
   time(&starttime);
   cout << "\nMultiprecision matrix package test program.\n\n";
   {
-    long i,j; 
+    long i;
     scalar r;
     mat_m a,aug,ref;
-    vec_l pc(1),npc(1); vec_m poly(1);
+    vec_i pc(1),npc(1); vec_m poly(1);
     {
       cout << "Enter size of a square matrix A: "; cin >> r;
       a.init(r,r);
@@ -42,31 +42,30 @@ int main(void)
       cout << "A = " << a;
     }
 
-{
-cout << "Creating an array of 3 matrices\n";
-mat_m* matlist = new mat_m[3];
-matlist[0] = a;
-matlist[1] = BIGINT(2)*a;
-matlist[2] = BIGINT(3)*a;
-cout << " A=" << matlist[0];
-cout << "2A=" << matlist[1];
-cout << "3A=" << matlist[2];
-delete[] matlist;
-}
+    {
+      cout << "Creating an array of 3 matrices\n";
+      vector<mat_m> matlist(3);
+      matlist[0] = a;
+      matlist[1] = bigint(2)*a;
+      matlist[2] = bigint(3)*a;
+      cout << " A=" << matlist[0];
+      cout << "2A=" << matlist[1];
+      cout << "3A=" << matlist[2];
+    }
 
 {
 for (i=1; i<=r; i++)
  cout << "row(A,"<<i<<") = " << a.row(i) << endl;
 cout << "A = " << a;
-for (j=1; j<=r; j++)
+for (int j=1; j<=r; j++)
  cout << "col(A,"<<j<<") = " << a.col(j) << endl;
 cout << "A = " << a;
 cout << "directsum(A,A) = " << directsum(a,a);
 cout << "Enter any number "; cin >> i;
 }
 {
-mat sa = a.shorten(r);
-cout << "After shortening to a matrix of longs, A = " << sa;
+  mat sa = to_mat_i(a);
+  cout << "After shortening to a matrix of ints, A = " << sa;
 }
 mat_m b = a;
 {
@@ -114,8 +113,8 @@ cout << "char. poly. of A has coefficients " << cp << endl;
 cout << "det(A) = " << a.determinant() << endl;
 }
 {
-aug = colcat(a,midmat(r));
-cout << "Augmented matrix = " << aug << endl;
+  aug = colcat(a, mat_m::identity_matrix(r));
+  cout << "Augmented matrix = " << aug << endl;
 }
 
 long rk, ny;
@@ -144,7 +143,7 @@ else
   if (!is_one(denom)) cout << "(1/" << denom << ")*";
   cout << ainv;
   cout << "Check: A.A^(-1) = I ?";
-  if (a*ainv == denom*midmat(r)) cout << " True!";
+  if (a*ainv == mat_m::scalar_matrix(r,denom)) cout << " True!";
   else cout << " False!";
   cout << endl;
  }

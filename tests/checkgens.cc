@@ -1,7 +1,7 @@
 // FILE CHECKGENS.CC -- Program to check input gens are Mordell-Weil basis
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -51,7 +51,7 @@ int main()
   cin.flags( cin.flags() | ios::dec );
 
   int rank, rank2, i;
-  long cond, ncurve, nclass;
+  long cond, ncurve;
   bigfloat reg, hmax;;
   cerr<<"verbose (0/1)? ";             cin >>verbose;
   verbose=0;
@@ -74,6 +74,7 @@ int main()
 #ifdef INPUT_CLASS_IS_LETTER
       genin >> ccode;
 #else
+      int nclass;
       genin >> nclass;
       ccode = codeletter(nclass-1);
       //      cout<<"After input, nclass="<<nclass<<endl;
@@ -239,9 +240,9 @@ int main()
 
 	  vector<Point> b = mwbasis.getbasis();
 	  for (i=0; i<rank; i++)
-	    { Point P = b[i];
-	      cout << "\nGenerator "<<(i+1)<<" is "<<P<<"; ";
-	      cout << "height "<<height(P);
+	    { Point bi = b[i];
+	      cout << "\nGenerator "<<(i+1)<<" is "<<bi<<"; ";
+	      cout << "height "<<height(bi);
 	    }
 	  cout<<"\nNew regulator is "<<reg2<<" (old was "<<reg<<")"<<endl<<endl;
 	}

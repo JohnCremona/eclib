@@ -1,7 +1,7 @@
 // polys.cc : implements interface to NTL polynomials
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -111,12 +111,9 @@ vector<bigint> introots(const ZPoly& f)
   vector<bigint> ans;
   if (ratroots.size()==0)
     return ans;
-  for(vector<bigrational>::iterator ri=ratroots.begin(); ri!=ratroots.end(); ri++)
-    {
-      bigrational r = *ri;
-      if (den(r)==1)
-        ans.push_back(num(r));
-    }
+  for( const auto& r : ratroots)
+    if (den(r)==1)
+      ans.push_back(num(r));
   sort(ans.begin(), ans.end());
   return ans;
 }
@@ -177,6 +174,6 @@ int nrootscubic(const bigint& b, const bigint& c, const bigint& d, const bigint&
   coeffs.push_back(d);
   coeffs.push_back(c);
   coeffs.push_back(b);
-  coeffs.push_back(BIGINT(1));
+  coeffs.push_back(bigint(1));
   return rootsmod(coeffs,p).size();
 }

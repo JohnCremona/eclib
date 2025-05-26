@@ -1,7 +1,7 @@
 // FILE nfhpcurve.cc main newform- and curve-finding program
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -37,6 +37,7 @@
 
 //#define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 #define MAXNY 10000
 #define MAXD 10
@@ -78,8 +79,10 @@ int main(void)
  if (n>1)
 {
   if (curve_output)
-    curve_out_filename = single_curve_filename(n);
-    curve_out.open(curve_out_filename.c_str());
+    {
+      curve_out_filename = single_curve_filename(n);
+      curve_out.open(curve_out_filename.c_str());
+    }
   cout << ">>>Level " << n;
   // Temporary code to skip non-square-free levels
   //
@@ -99,14 +102,16 @@ int main(void)
       cout << "Finished level "<<n<<endl;
       continue;
     }
-  int plus=1, cuspidal=0;
+  int plus=1;
   newforms nf(n,verbose); 
   int noldap=25;
   nf.createfromscratch(plus,noldap);
 #ifdef LMFDB_ORDER
-  nf.sort();
-  nf.make_projcoord(); // needed for when we add more ap
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
 #endif
+  nf.make_projcoord(); // needed for when we add more ap
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   nf.addap(stopp);

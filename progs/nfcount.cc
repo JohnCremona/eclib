@@ -1,7 +1,7 @@
 // FILE NFCOUNT.CC:  program to count newforms (from data files)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -28,7 +28,6 @@
 int main(void)
 {
   int limit,n=1,count=0,firstn, verbose; 
-  int getindex=0;
   cout << "Verbose? (0/1) " << endl;  cin >> verbose;
   cout<<"Enter first and last N: ";cin>>firstn>>limit; 
   n=firstn-1; cout<<endl;

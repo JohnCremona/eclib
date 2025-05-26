@@ -1,26 +1,26 @@
 // sifter.cc: implementation of class for sifting E(Q)/2E(Q)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
-// 
+// Copyright 1990-2023 John Cremona
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 // NB This is used for proving that points are independent; now
 // largely obsolete, being superceded by general saturation algorithms
 
@@ -40,13 +40,12 @@ sifter::sifter(Curvedata* EE, int na, int verb)
   s = 3*s;
   t = 108*t;
 
-  auxs = new long[num_aux];
-  nroots = new int[num_aux];
-  thetamod = new long*[num_aux];
-  squares = new int*[num_aux];
-  all_p = new long[2*num_aux];
+  auxs.resize(num_aux);
+  nroots.resize(num_aux);
+  thetamod.resize(num_aux, vector<long>(3));
+  squares.resize(num_aux);
+  all_p.resize(2*num_aux);
 
-  for(i=0; i<num_aux; i++) thetamod[i] = new long[3];
   iaux=0;
   max_dim_im=0;
 
@@ -64,47 +63,39 @@ sifter::sifter(Curvedata* EE, int na, int verb)
       long c2 = mod(-27*J,p);
       nr = nrootscubic(0,c1,c2,p,thetamod[iaux]);
       if(verbose>1) cout<<"nr = " << nr << endl;
-      if(nr>0) 
+      if(nr>0)
 	{
 	  auxs[iaux]=p;
 	  nroots[iaux]=nr;
 	  iaux++;
-	  all_p[max_dim_im++]=p; 
+	  all_p[max_dim_im++]=p;
 	  if(nr>1) all_p[max_dim_im++]=p; //again, since p gives 2 bits
 	}
     }
 
-  pivcols = new int[max_dim_im];
-  eps_mat  = new int*[max_dim_im];
-  for(i=0; i<max_dim_im; i++)
-    {
-      eps_mat[i] = new int[max_dim_im];
-    }
+  pivcols.resize(max_dim_im);
+  eps_mat.resize(max_dim_im, vector<int>(max_dim_im));
 
   // report on which primes will be used:
 
-  if((verbose>1)&&(num_aux>0)) 
+  if((verbose>1)&&(num_aux>0))
     {
       cout<<"sifting using " <<num_aux<<" moduli: \n";
-      cout<<"p:\t";
-      for(j=0; j<num_aux; j++) cout<<auxs[j]<<"\t";
-      cout<<"\n";
-      cout<<"nroots:\t";
-      for(j=0; j<num_aux; j++) cout<<nroots[j]<<"\t";
-      cout<<"\n";
+      cout<<"p:\t"<<auxs<<"\n";
+      cout<<"nroots:\t" << nroots <<"\n";
       cout<<"theta1:\t";
       for(j=0; j<num_aux; j++) cout<<thetamod[j][0]<<"\t";
       cout<<"\n";
       cout<<"theta2:\t";
-      for(j=0; j<num_aux; j++) 
+      for(j=0; j<num_aux; j++)
 	if(nroots[j]==1) cout<<"*\t";
-	else 
+	else
 	  cout<<thetamod[j][1]<<"\t";
       cout<<"\n";
       cout<<"theta3:\t";
-      for(j=0; j<num_aux; j++) 
+      for(j=0; j<num_aux; j++)
 	if(nroots[j]==1) cout<<"*\t";
-	else 
+	else
 	  cout<<thetamod[j][2]<<"\t";
       cout<<"\n";
     }
@@ -114,36 +105,20 @@ sifter::sifter(Curvedata* EE, int na, int verb)
   for (i = 0; i < num_aux; i++)
     {
       long aux = auxs[i];
-      long half_aux = ((aux + 1) / 2);
-      squares[i] = new int[aux];
-      for (j = 0; j < aux; j++)      squares[i][j]=0;
-      for (j = 0; j < half_aux; j++) squares[i][posmod( j*j, aux )]=1;
+      squares[i].resize(aux,0);
+      for (j = 0; 2*j < aux; j++)
+        squares[i][posmod( j*j, aux )]=1;
 
     } // end of aux loop
 
-  if((verbose>1)&&(num_aux>0)) 
+  if((verbose>1)&&(num_aux>0))
     cout<<"finished sifter constructor"<<endl;
 }
 
-sifter::~sifter()
-{
-  long i;
-  for(i=0; i<max_dim_im; i++) delete[]eps_mat[i];
-  delete[]eps_mat;
-  for(i=0; i<num_aux; i++) delete[]thetamod[i];
-  delete[]thetamod;
-  for(i=0; i<num_aux; i++) delete[]squares[i];
-  delete[]squares;
-  delete[]auxs;
-  delete[]nroots;
-  delete[]all_p;
-  delete[]pivcols;
-}
-
-void sifter::vecout(int* v)
+void sifter::vecout(const vector<int>& v)
 {
   int i,j=0, first=1;
-  for(i=0; i<max_dim_im; i++) 
+  for(i=0; i<max_dim_im; i++)
     {
       cout << v[i];
       if(nroots[j]==1) {j++; cout<<" ";}
@@ -152,39 +127,37 @@ void sifter::vecout(int* v)
   cout<<endl;
 }
 
-int* sifter::eps(const bigint& x, const bigint& z2)
+vector<int> sifter::eps(const bigint& x, const bigint& z2)
 {
-  int *ans = new int[max_dim_im];  // caller is reposnsible for deletion
-  int i, c, *ansi=ans;
-
-  for(i=0; i<num_aux; i++)
+  vector<int> ans;
+  ans.reserve(max_dim_im);
+  for(int i=0; i<num_aux; i++)
     {
-      c = code(x,z2,i);
-      if(nroots[i]==1) 
-	*ansi++ = (c&1);
-      else 
+      int c = code(x,z2,i);
+      if(nroots[i]==1)
+	ans.push_back(c&1);
+      else
 	{
-	  *ansi++ = (c&1); 
+	  ans.push_back(c&1);
 	  c>>=1;
-	  *ansi++ = (c&1); 
+	  ans.push_back(c&1);
 	}
     }
   return ans;
 }
 
-void sifter::process(const vector<Point>& Plist) 
+void sifter::process(const vector<Point>& Plist)
 {
-  vector<Point>::const_iterator P=Plist.begin();
-  while(P!=Plist.end()) 
+  for ( const auto& P : Plist)
     {
-      if(verbose) cout<<"Processing point "<<*P<<endl;
-      process(*P++);
+      if(verbose) cout<<"Processing point "<<P<<endl;
+      process(P);
     }
 }
 
 //#define DEBUG
 
-void sifter::process(const Point& P) 
+void sifter::process(const Point& P)
 {
   bigint x0,y0,z0;  P.getcoordinates(x0,y0,z0); //P=[x0:y0:z0] on E
   bigint z=gcd(x0,z0); x0/=z;                // =[x0/z2,y0/z0] now, z0=z^3
@@ -195,7 +168,7 @@ void sifter::process(const Point& P)
   bigint check = y*y-(x*x*x-27*I*x*z2*z2-27*J*z0*z0);
   if(is_zero(check))
     {
-      if(verbose) 
+      if(verbose)
 	cout<<"Transformed P (on I,J curve) has (x,y,z) = ("<<x<<","<<y<<","<<z<<")\n";
     }
   else
@@ -206,8 +179,8 @@ void sifter::process(const Point& P)
 #endif
 
   int i,j;
-  int * image = eps(x,z2);
-  int *pivrow;
+  vector<int> image = eps(x,z2);
+  vector<int> pivrow;
 
   if(verbose)
     {
@@ -241,11 +214,11 @@ void sifter::process(const Point& P)
   if(newpiv<0) // this point is dependent
     {
       if(verbose)
-	cout << "eps(P) dependent on previous points!\n"; 
+	cout << "eps(P) dependent on previous points!\n";
     }
   else
     {
-      for(j=0; j<max_dim_im; j++) 
+      for(j=0; j<max_dim_im; j++)
 	eps_mat[rank][j]=image[j];
       pivcols[rank++] = newpiv;
       if(verbose)
@@ -255,7 +228,6 @@ void sifter::process(const Point& P)
 	  cout << "rank increases to "<<rank<<endl;
 	}
     }
-  delete[]image;
 }
 
 int sifter::code(const bigint& x, const bigint& z2, int i)
@@ -263,7 +235,7 @@ int sifter::code(const bigint& x, const bigint& z2, int i)
   long p = auxs[i], theta, alpha, beta;
   int j, ans; int eps[3];
   switch(nroots[i]) {
-  case 1: 
+  case 1:
     theta=thetamod[i][0];
     alpha = posmod(x - theta*z2 , p);
     if(alpha) return !(squares[i][alpha]);  // 1 or 0
@@ -293,8 +265,3 @@ int sifter::code(const bigint& x, const bigint& z2, int i)
 }
 
 //end of file sifter.cc
-
-
-
-
-

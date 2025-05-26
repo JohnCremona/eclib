@@ -1,7 +1,7 @@
 // svector.cc: implementation of class svec (sparse integer vectors)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <eclib/svector.h>
+#include <eclib/marith.h>
 
 #undef scalar
 #undef vec
@@ -57,3 +58,20 @@
 #undef subspace
 #undef svec
 
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+
+#include "svec.cc"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim

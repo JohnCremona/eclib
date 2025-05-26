@@ -1,7 +1,7 @@
 // tpoints.cc -- to test points.h/cc
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -32,13 +32,13 @@ int main(){
 #endif
   initprimes("PRIMES",1);
 
-  Curve c(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
+  Curve c(0,0,1,-7,6);
   Curvedata cd(c,1);
 
   cout << "Testing some points:\n";
-  Point P0(cd, BIGINT(0),BIGINT(2)) ;
-  Point P1(cd, BIGINT(1),BIGINT(0)) ;
-  Point P2(cd, BIGINT(2),BIGINT(0)) ;
+  Point P0(cd, bigint(0),bigint(2)) ;
+  Point P1(cd, bigint(1),bigint(0)) ;
+  Point P2(cd, bigint(2),bigint(0)) ;
   cout << "The points are P0 = " << P0 << 
     ", P1 = " << P1 << ", and P2 = " << P2 << endl ;
   cout << "Now in Pari format:\n";

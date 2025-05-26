@@ -1,7 +1,7 @@
 // FILE xsplit_data.h : Declaration of class ff_data
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 Marcus Mo
+// Copyright 1990-2023 Marcus Mo
 // 
 // This file is part of the eclib package.
 // 
@@ -56,7 +56,7 @@ enum childstatus { NOT_COMPLETE, COMPLETE, DESTROYED };
 class ff_data {
   public:
     // Constructor, destructor.
-    ff_data( form_finder* ff );
+    explicit ff_data( form_finder* ff );
     ~ff_data();
 
 #ifdef ECLIB_MULTITHREAD

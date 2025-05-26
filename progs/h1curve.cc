@@ -1,7 +1,7 @@
 // FILE H1CURVE.CC: Program to list curves
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 //
 // This file is part of the eclib package.
 //
@@ -38,14 +38,13 @@
 #endif
 
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 // If this is defined, the fisc6 output is placed in subdirectory
 // fixc6 in file fixc6/fixc6.N (one per level); otherwise it is all
 // put in ./fixc6.extra
 //#define FIXC6_OUTPUT_TO_SUBDIR
 
-#define BOOKORDER       // if defined, sorts newforms/curves into order
-                        // in the Book (relevant up to 500 only)
 #include <eclib/curvesort.h>
 
 vector<pair<int,int> > bad_ones; // holds bad (n,i) list
@@ -65,16 +64,16 @@ int main(void)
 #else
  cout<<"See detail? "; cin>>verb;
 #endif
- int limit,n=1;
+ long n=1;
 #ifdef AUTOLOOP
+ int limit;
  cout<<"Enter first and last N: ";cin>>n>>limit;
  n--; cout<<endl;
  cout<<endl<<"Table of curves computed from newforms via periods"<<endl;
-#ifdef BOOKORDER
- cout<<"(reordered to agree with Book for levels up to 1000)"<<endl;
-#endif
 #ifdef LMFDB_ORDER
- cout<<"(reordered to agree with LMFDB for levels over 1000)"<<endl;
+ cout<<"(in LMFDB order)"<<endl;
+#else
+ cout<<"(in Cremona order)"<<endl;
 #endif
  if(!verb)
    {
@@ -91,11 +90,13 @@ int main(void)
  newforms nf(n,verb);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
- #ifdef LMFDB_ORDER
- nf.sort();
- #endif
+#ifdef LMFDB_ORDER
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
+#endif
  int nnf = nf.n1ds;
- int inf = 1;
+ int inf = 0;
 #ifndef SINGLE
  if(verb>1) nf.display();
 #else
@@ -106,15 +107,16 @@ int main(void)
        {
 	 cout << "Not in range!\n"; inf=1; nnf=0;
        }
-     else nnf=inf;
+     else
+       {
+         nnf=inf;
+         inf--;
+       }
    }
 #endif
 
- for(int xi=inf-1; xi<nnf; xi++)
+ for(int xi=inf; xi<nnf; xi++)
    { int i = xi;
-#ifdef BOOKORDER
-     i=booknumber0(n,i);
-#endif
      if(verb) cout << "\nForm number " << i+1 << ": " << endl;
      else     cout << n << "\t" << codeletter(xi) << "\t";
      //#ifdef SINGLE
@@ -204,13 +206,13 @@ int checkap(const level* iN, const newform& nf, CurveRed& CR, long pmax)
   vector<long> aplist = nf.aplist;
   vector<long> primelist = primes(aplist.size());
   unsigned int i;
-  bigint ap, p=BIGINT(0);
-  int ok=1, ok1;
+  bigint ap, p=bigint(0);
+  int ok=1;
   for(i=0; (i<aplist.size())&&(p<=pmax); i++)
     {
       p=primelist[i];
       ap=Trace_Frob(CR,p);
-      ok1 =  (ap==BIGINT(aplist[i]));
+      int ok1 =  (ap==bigint(aplist[i]));
       if(!ok1) cout<<"p="<<p<<": ap(E)="<<ap<<" but ap(f)="<<aplist[i]<<endl;
       ok = ok && ok1;
     }

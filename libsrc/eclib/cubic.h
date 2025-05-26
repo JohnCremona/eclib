@@ -1,7 +1,7 @@
 // cubic.h: integer cubic class for unimodular transforms and reduction.
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -40,24 +40,16 @@ class cubic {
 private:
   vector<bigint> coeffs;  // will always have length 4
 public:
-  // void set(long a, long b, long c, long d)
-  // {coeffs = {BIGINT(a),BIGINT(b),BIGINT(c),BIGINT(d)};}
-  // void set(const  bigint& a, const bigint& b, const bigint& c, const bigint& d)
-  // {coeffs = {a,b,c,d};}
-  // void set(const vector<bigint>& abcd)
-  // {std::copy(abcd.begin(), abcd.end(), coeffs.begin());}
-  // void set(const  cubic& q)
-  // {std::copy(q.coeffs.begin(), q.coeffs.end(), coeffs.begin());}
   cubic()
-  {coeffs.resize(4, BIGINT(0));}
+  {coeffs.resize(4, bigint(0));}
   cubic(const  bigint& a, const bigint& b, const bigint& c, const bigint& d) 
-  {coeffs = {a,b,c,d};}
-  cubic(long a, long b, long c, long d) 
-  {coeffs = {BIGINT(a),BIGINT(b),BIGINT(c),BIGINT(d)};}
-  cubic(const vector<bigint>& abcd)
-  {coeffs = abcd;}
+    :coeffs({a,b,c,d}) {;}
+  cubic(long a, long b, long c, long d)
+    :coeffs({bigint(a),bigint(b),bigint(c),bigint(d)}) {;}
+  explicit cubic(const vector<bigint>& abcd)
+    :coeffs(abcd) {;}
   cubic(const  cubic& q)
-  {coeffs = q.coeffs;}
+    :coeffs(q.coeffs) {;}
   int operator==(const cubic& g) const
   {return (coeffs==g.coeffs);}
   inline bigint coeff(int i)
@@ -162,10 +154,10 @@ public:
 
   bigcomplex hess_root() const;
   bigfloat real_root() const;  // requires disc<0
-  int is_hessian_reduced(); // for positive discriminant only
+  int is_hessian_reduced() const; // for positive discriminant only
   void hess_reduce(unimod& m);
   void mathews_reduce(unimod& m);
-  int is_jc_reduced(); // for negative discriminant only
+  int is_jc_reduced() const; // for negative discriminant only
   void jc_reduce(unimod& m);
   // Just shifts x, returns the shift amount:
   bigint shift_reduce();

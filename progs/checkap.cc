@@ -1,7 +1,7 @@
 // FILE CHECKAP.CC: program for checking ap are in valid range
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -32,13 +32,12 @@ const long MAXNAP = 100000;
 
 int main(void)
 {
-  long firstn, lastn, n, nnf, naq, nap, n2ds, ap, i, j, p;
-  int ok, allok=1;
-  short temp;
+  long firstn, lastn, n, nnf, naq, nap, i, j, p;
+  int allok=1;
   cout<<"Enter first and last N: "; cin>>firstn>>lastn;
   for(n=firstn; n<=lastn; n++)
     {
-      ok=1;
+      int ok=1;
       string name = nf_filename(n,'x');
       ifstream datafile(name.c_str());
       if(!datafile.is_open())
@@ -47,7 +46,6 @@ int main(void)
 	}
       else 
 	{
-	  short temp_short;
 	  int temp_int;
 	  datafile.read((char*)&temp_int,sizeof(int));   // = number of newforms
 	  nnf=temp_int;
@@ -62,12 +60,12 @@ int main(void)
 	      int* batch_i = new int[ntotal];
 	      datafile.read((char*)batch_i,ntotal*sizeof(int));
               delete[] batch_i;
-              
+
 	      // skip over aq for each newform
 	      ntotal = naq*nnf;
 	      short* batch = new short[ntotal];
 	      datafile.read((char*)batch,ntotal*sizeof(short));
-	      
+
 	      // read and check ap for each newform
 	      ntotal = nap*nnf;
 	      delete[] batch;
@@ -92,7 +90,7 @@ int main(void)
 	      delete[] batch;
 	    } // ends if(nnf>0)
 	} // ends if(datafile)
-	    
+
       datafile.close();
       if(ok) cout << n << " ";
       else

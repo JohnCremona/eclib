@@ -1,7 +1,7 @@
 // FILE HOMSPACE.H: Declaration of class homspace
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -44,11 +44,11 @@ class matop;  // fully defined below
 class homspace :public symbdata {
   //private:
 public:
-  int *coordindex,*needed,*freegens;
+  vector<int> coordindex, needed, freegens;
   long rk,denom1,denom2;
   ssubspace kern; // kernel(delta) basis
   smat tkernbas; // transpose of kernel(delta) basis
-  modsym *freemods;
+  vector<modsym> freemods;
 public:
   vector<svec> coord_vecs;
   mat projcoord; // # cols = # newforms after they are found
@@ -63,7 +63,6 @@ public:
 	               //	     1 : basic short output
 	               //            2 : lots of detail)
 	   );
-  ~homspace();
   long h1cuspdim() const {return dim(kern);}
   long h1dim() const {return dimension;}  // No confusion with subspace::dim
   long h1denom() const {return denom1;}
@@ -219,7 +218,7 @@ class matop {  // formal sum of 2x2 matrices
 private: vector<mat22> mats;
 public: 
   matop(long p, long n);   // constructor for hecke ops
-  matop(long p);           // constructor for heilbronn matrices
+  explicit matop(long p);  // constructor for heilbronn matrices
   matop(long a, long b, long c, long d);  // constructor for a single matrix
   long size() const {return mats.size();}
   mat22 operator[](long i) const {return mats[i];}

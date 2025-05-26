@@ -1,18 +1,19 @@
 Documentation for the eclib library (building and running)
 
-%  Time-stamp: <2017-09-03 20:32:49 john>
+%  Time-stamp: <2023-11-10 15:16:50 john>
+
+0. Prerequisites:  gmp, pari, ntl, flint are all available for example
+   as ubuntu packages.  Configure will complain if it cannot find them.
 
 1. Download, build and install:
 
-(a) Get the latest version of eclib from
-http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/, say
-wget http://homepages.warwick.ac.uk/staff/J.E.Cremona/ftp/progs/eclib-2013-01-01.tar.gz
-
+(a) Get the latest version of eclib from GitHub, e.g.
+wget https://github.com/JohnCremona/eclib/releases/download/v20230424/eclib-20230424.tar.bz2
 (b) Unpack it using
-tar zxf eclib-2013-01-01.tar.gz
+tar jxf eclib-20230424.tar.bz2
 
 (c) Change into that directory:
-cd eclib-2013-01-01
+cd eclib-20230424
 
 (d) Configure using ./configure after reading the README file to see
 if you will need non-default options.
@@ -24,7 +25,7 @@ something non-default as --prefix in the ./configure step, otherwise
 make sure that the bin subdirectory of the install directory (say
 INSTALL_DIR) is in your PATH.
 
-2. Run.
+2. To run the modular symbols code to find modular elliptic curves:
 
 (a) Make your own working directory, say
 
@@ -45,7 +46,7 @@ Beware: if you change the source code and run the resulting programs,
 this may well overwrite the data files in $NF_DIR with garbage.  So
 when testing it is a good idea to create a new testing copy of
 $NF_DIR, leaving your master one untouched. My master newforms directory
-(containing all data to 235000) is 7.8G!
+(containing all data to 235000) is >23G.
 
 Question: why would you want or need to copy or use old newforms data?
 Answer: to find the newforms at level N, the program will need to knw
@@ -59,6 +60,13 @@ but (almost certainly) nowhere near enough to compute elliptic curves
 at level M.  The reason my newforms directory is so large is that for
 most levels I have a(p) for up to the first 5000 primes, as many as is
 needed for recomputing the ellitpic curves from the newforms.
+
+NB An alternative to having a copy of all the newforms data for all
+proper divisors M,  is to have the elliptic curves of
+conductor M.  You can make a git clone of
+https://github.com/JohnCremona/ecdata and then set the environment
+variable ECDB to point to the curves subdirectory of that, or make a
+symbolic link from that subdirectory to g0n/curves.
 
 EXAMPLE:  starting with a fresh newforms directory, running
 nfhpcurve like this:
@@ -76,7 +84,7 @@ for N=210 is 5372 bytes.
 EXAMPLE: as above, but use
 % echo 0 500 1 210 210 | nfhpmcurve
 will produce essentially the same output (both to the screen and to
-the newforms directory);  the actuall difference is that the code has
+the newforms directory);  the actual difference is that the code has
 used modular symbols in both + and - spaces instead of just the +
 space (hence pm instead of p) so the curves found are guaranteed to be
 optimal.
@@ -91,7 +99,7 @@ AUTOLOOP on for nfhpmcurve and of for nfhpcurve, it's just inconsistent.
 
 To recompute all the elliptic curve in my book, try
 
-% echo 0 500 1 11 1000 | nfhpmcurve
+% echo 0 500 1 1 11 1000 | nfhpmcurve
 
 and then remember how many years it took to get that far the first
 time!  (On 17 April 2012 it took 19m12s on a single processor.)

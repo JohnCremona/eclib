@@ -1,7 +1,7 @@
 // sieve_search.h: declarations of classes point_processor and qsieve
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -50,8 +50,8 @@ class point_printer : public point_processor {
  public:
   point_printer() {};
   ~point_printer() {};
-  int process(const bigint& xx, const bigint& yy, const bigint& zz) 
-    {cout<<"x= "<<xx<<" y= "<<yy<<" z= "<<zz<<" is a point."<<endl; return 0;}
+  int process(const bigint& xx, const bigint& yy, const bigint& zz) override
+  {cout<<"x= "<<xx<<" y= "<<yy<<" z= "<<zz<<" is a point."<<endl; return 0;}
 };
 
 class point_counter : public point_processor {
@@ -59,7 +59,7 @@ class point_counter : public point_processor {
  public:
   point_counter() {tally=0;};
   ~point_counter() {};
-  int process(const bigint& xx, const bigint& yy, const bigint& zz) 
+  int process(const bigint& xx, const bigint& yy, const bigint& zz) override
     {tally++; return 0;}
   int get_tally() {return tally;}
 };

@@ -1,7 +1,7 @@
 // mquartic.h:   Declaration of class quartic and related functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -53,22 +53,21 @@ inline bigint R_invariant(const bigint& a, const bigint& b, const bigint& c,
 
 class quartic {
 public:
-     // constructors (NOT inline as they all use "new"
+     // constructors
         quartic();
         quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
 		const bigint& qd, const bigint& qe, 
-                bigcomplex* qr,	int qt,
+                const vector<bigcomplex>& qr,	int qt,
 		const bigint& qi,const bigint& qj,const bigint& qdisc);
         quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
 		const bigint& qd, const bigint& qe);
   // latter calls set_roots_and_type()
-	~quartic();
         quartic(const quartic& q);
   // member functions & operators
         void set_roots_and_type();
 	void assign(const bigint& qa, const bigint& qb, const bigint& qc, 
 		    const bigint& qd, const bigint& qe, 
-		    bigcomplex *qr,    int qt,
+		    const vector<bigcomplex>& qr,    int qt,
 		    const bigint& qi,const bigint& qj,
 		    const bigint& qdisc);
 	void assign(const bigint& qa, const bigint& qb, const bigint& qc, 
@@ -86,7 +85,7 @@ public:
         bigint getJ() const {return jj;}
         bigint getH() const {return H_invariant(a,b,c);}
         bigint getdisc() const {return disc;}
-        bigcomplex* getroots(void) const {return roots;}
+        vector<bigcomplex> getroots(void) const {return roots;}
         void doubleup()
           {
 	    b*=2; c*=4; d*=8; e*=16; ii*=16; jj*=64; disc*=4096;
@@ -95,7 +94,7 @@ public:
         int trivial() const;     // Checks for a rational root
 	long nrootsmod(long p) const;
         friend ostream& operator<<(ostream& s, const quartic& q);
-	friend int new_equiv(quartic* q1, quartic* q2, int info);
+	friend int new_equiv( quartic& q1, quartic& q2, int info);
 	friend void qc(quartic& g,
 		       const bigint& x0,  const bigint& y0,  const bigint& z0,
 		       Curvedata * E, Curvedata* IJ_curve, 
@@ -112,7 +111,7 @@ public:
 // Implementation
 private:
        bigint a,b,c,d,e; // coefficients
-       bigcomplex* roots; // roots, array 0f 4 created in all constructors
+       vector<bigcomplex> roots; // 4 roots, created in all constructors
        int type;       // 1, 2 or 3
        bigint ii,jj,disc;
 // The following are used by new_equiv:  (NB p = -H)

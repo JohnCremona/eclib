@@ -1,7 +1,7 @@
 // FILE NFTEST.CC: test program for newform constructor
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -36,9 +36,10 @@
 
 int main(void)
 {
-  int limit,firstn,n=2,count=0; 
+  int n=2;
   int verbose=1;
 #ifdef AUTOLOOP
+  int firstn, limit, count=0;
   cerr<<"Enter first and last N: ";cin>>firstn>>limit; 
   n=firstn-1; cout<<endl;
   while (n<limit) { n++;
@@ -52,19 +53,16 @@ int main(void)
  newforms nf(n,verbose);
  cout << "\nAfter constructor, about to createfromdata() \n";
  nf.createfromdata(1,25);
- int num = nf.n1ds; count+=num;
+ int num = nf.n1ds;
+#ifdef AUTOLOOP
+ count+=num;
+#endif
  cout << num << " newform(s), "<<nf.nap<<" eigs on file." << endl;
 #ifdef LMFDB_ORDER
- nf.sort();
+ nf.sort_into_LMFDB_label_order();
+#else
+ nf.sort_into_Cremona_label_order();
 #endif
- // nf.makebases();
- /*
- nf.sort();
- cout<<"After sort():"<<endl;
- nf.display();
- nf.sort(1);
- cout<<"After sort(1):"<<endl;
- */
  nf.display();
 }       // end of if(n)
 }       // end of while()

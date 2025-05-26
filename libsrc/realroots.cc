@@ -1,7 +1,7 @@
 // realroots.cc: implementation of funtions for real roots of polynomials
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -34,22 +34,12 @@ bigfloat safe_sqrt(const bigfloat& x)
 
 bigfloat cube_root(const bigfloat& x)
 {
-  if(is_zero(x)) return x;
-  if(x<0) return -exp(log(-x)/3);
-  return exp(log(x)/3);
+  return is_real_zero(x)? x : sign(x)*exp(log(fabs(x))/3);
 }
-/*
-bigfloat cube_root(const bigfloat& x)
-{
-  static bigfloat third = to_bigfloat(1)/to_bigfloat(3);
-  if(x<0) return -pow(-x, third);
-  else    return  pow( x, third);
-}
-*/
 
 // coeff contains deg+1 reals starting with the leading coefficient
 // which must be nonzero
-// 
+//
 // we assume the roots are distinct
 
 //#define DEBUG_REALROOTS
@@ -61,7 +51,7 @@ vector<bigfloat> realroots( const vector<bigfloat>& coeff )
 #endif
   // trim leading zeros:
   vector<bigfloat> tcoeff;
-  unsigned int i=0; while(is_zero(coeff[i])) i++;
+  unsigned int i=0; while(is_real_zero(coeff[i])) i++;
   while(i<coeff.size()) tcoeff.push_back(coeff[i++]);
 #ifdef DEBUG_REALROOTS
   cout<<"realroots: trimmed coeffs = "<<tcoeff<<endl;
@@ -107,7 +97,7 @@ vector<bigfloat> realroots( const vector<bigfloat>& coeff )
 #ifdef DEBUG_REALROOTS
 	  cout<<"one real root "<<endl;
 #endif
-	  if(is_zero(P)) 
+	  if(is_real_zero(P)) 
 	    {
 #ifdef DEBUG_REALROOTS
 	      cout<<"Case P=0 (P="<<P<<")"<<endl;
@@ -167,7 +157,8 @@ vector<bigfloat> realroots( const vector<bigfloat>& coeff )
       else // all roots real
 	{
 	  vector<bigcomplex> croots = solvecubic(b/a,c/a,d/a);
-	  for(int i=0; i<3; i++) ans.push_back(real(croots[i]));
+          ans.resize(3);
+          std::transform(croots.begin(), croots.end(), ans.begin(), [](const bigcomplex& z) {return real(z);});
 	  return ans;
 	}
     }

@@ -1,7 +1,7 @@
 // FILE h1first.cc :  h1 (full space)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 //
 // This file is part of the eclib package.
 //
@@ -37,6 +37,7 @@
 #endif
 #define SHOWCURVES
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 int main(void)
 {
@@ -86,14 +87,16 @@ int main(void)
 #endif
         }
 #ifdef LMFDB_ORDER
-      nf.sort();
+      nf.sort_into_LMFDB_label_order();
+#else
+      nf.sort_into_Cremona_label_order();
 #endif
       int all_nf = 1; // default; means do all
-      int inf = 1;
 #ifdef SINGLE
       all_nf = 0;
       nf.nf_subset.clear();
       cout << "Enter list of form numbers (between 1 and "<<nnf<<"), ending with 0: ";
+      int inf = 1;
       cin>>inf;
       while((inf>0)&&(inf<=nnf))
         {
@@ -102,13 +105,10 @@ int main(void)
         }
       nnf = nf.nf_subset.size();
       cout << endl;
-      if(verbose)
-        {
-          cout << "Working on " << nnf << " newforms: " << nf.nf_subset << " ..." << endl;
-        }
 #endif
       if(verbose)
         {
+          cout << "Working on " << nnf << " newforms: " << nf.nf_subset << " ..." << endl;
           cout << "Finding +1 eigenvectors..." << flush;
         }
       nf.makebases(1, all_nf);
@@ -121,9 +121,6 @@ int main(void)
       if(verbose)
         {
           cout << "done.\nNow filling in data for newforms..."<<flush;
-        }
-      if(verbose)
-        {
           cout << "about to call merge" << endl;
         }
       nf.merge(all_nf);
@@ -138,11 +135,10 @@ int main(void)
           else
             {
               cout<<"updated newforms "<<nf.nf_subset<<":"<<endl;
-              vector<int>::const_iterator nfi;
-              for(nfi = nf.nf_subset.begin(); nfi!=nf.nf_subset.end(); nfi++)
+              for( const auto& nfi : nf.nf_subset)
                 {
-                  cout<<"# "<<(*nfi)<<":\t"<<endl;
-                  nf.nflist[*nfi].display();
+                  cout<<"# "<<nfi<<":\t"<<endl;
+                  nf.nflist[nfi].display();
                 }
             }
         }

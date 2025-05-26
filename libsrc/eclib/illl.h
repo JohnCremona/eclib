@@ -1,7 +1,7 @@
 // illl.h: declarations of functions for integer LLL
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -32,20 +32,19 @@
 #ifndef _ECLIB_ILLL_H
 #define _ECLIB_ILLL_H      1     //flags that this file has been included
 
-#include "mvector.h"
+#include "vector.h"
 
-bigint sdot(const vec_m* b, int i, int j);
+// dot product of b[i] and b[j] with weights from b[0]:
+bigint sdot(const vector<vec_m>& b, int i, int j);
 
-void lll_reduce(const int n, vec_m* b);
+// LLL-reduce the vectors b[1],...,b[n] in place.
 
+// b is an array of n+1 vectors indexed from 0 to n.
+// b[1]...b[n] are the lattice basis, while b[0] holds the coefficients
+// of the (diagonal) Gram matrix, so the inner product of b[i] and b[j]
+// is sdot(b, i, j) = sum(k,b[0][k]*b[i][k]*b[j][k]).
 //
-// Uses Pohst-Zassenhaus Algorithm (page 190) to find all vectors of
-// length < c, where the quadratic form is again given by b[0].
-//
-// NB The following DOES NOT WORK: I blindly implemented P-Z without
-// doing the necessary preliminary completing of the square.
-// So DO NOT USE
-//
-//void list_short_vecs(const int n, vec_m* b, const bigint& c);
+
+void lll_reduce(const int n, vector<vec_m>& b);
 
 #endif

@@ -1,7 +1,7 @@
 // FILE nfd.cc: implementation of class nfd (higher-dimensional newforms)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -37,7 +37,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   long denh = h1->h1denom(); dH=denh;
   vector<long> badprimes = h1->plist;
   mat K = basis(h1->kern).as_mat();
-  mat_m tp, tp1; mat_m m;
+  mat_m tp, tp1, m;
   long d, i,j, p;
   bigint ap1;
 
@@ -50,10 +50,10 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   if(one_p) // Compute one Tp:
     {
       primevar pr;
-      while (n%pr==0) pr++; 
+      while (n%pr==0) pr++;
       p=pr;
       cout << "Computing T_p for p = " << p << "..." << flush;
-      tp = transpose(h1->newheckeop(p,0));
+      tp = to_mat_m(transpose(h1->newheckeop(p,0)));
       cout<<"done."<<endl;
     }
   else
@@ -71,7 +71,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	  else
 	    {
 	      cout << "Computing T_p for p = " << p << "..." << flush;
-	      tp1 = transpose(h1->newheckeop(p,0));
+	      tp1 = to_mat_m(transpose(h1->newheckeop(p,0)));
 	      cout<<"done."<<endl;
 	      cout<<"coefficient of T_"<<p<<": "; cin>>ap1;
 	      if(ap1!=1) tp1*=ap1;
@@ -82,11 +82,10 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
 // Compute the appropriate W-eigenspace and restrict to it
 
-  msubspace SW(dimh);
+  subspace_m SW(dimh);
   int dimsw=dimh;
   if(w_split)
     {
-      vector<long> badprimes = h1->plist;
       int nq = badprimes.size();
       for(i=0; (i<nq)&&(dimsw>0); i++)
 	{
@@ -95,8 +94,8 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	  cout<<"Enter eigenvalue of W("<<q<<"): ";
 	  cin>>eq;
 	  eq *=dH;
-	  mat_m wq = transpose(h1->heckeop(q,0));
-	  if(dimsw<dimh) 
+	  mat_m wq = to_mat_m(transpose(h1->heckeop(q,0)));
+	  if(dimsw<dimh)
 	    {
 	      SW=subeigenspace(wq,eq,SW);
 	    }
@@ -147,7 +146,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
       SquareFreeDecomp(factors,ntl_cptp);
       if(verbose)  cout<<"NTL char poly square-free factors = "<<factors<<endl;
-      
+
       if(factors[0].b>1)
 	{
 	  cout<<"No factors of multiplicity 1"<<endl;
@@ -216,7 +215,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   //    if(verbose) 
       cout<<"finished constructing S, now restricting T_p to S"<<endl;
 
-  tp0 = restrict_mat(tp,S);
+      tp0 = restrict_mat(tp,S);
 
   //  if(verbose) 
       cout<<"done.  now combining S and SW"<<endl;
@@ -225,7 +224,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
     {
       mat_m SWbasis=basis(SW);
       bigint  SWden; SWden=denom(SW);
-      msubspace mSW(SWbasis,pivots(SW),SWden);
+      subspace_m mSW(SWbasis,pivots(SW),SWden);
       S=combine(mSW,S);  
     }
 
@@ -283,16 +282,16 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   long ncoord = h1->coord_vecs.size()-1;
   projcoord.init(ncoord,dims);
   coord_fac=0;
-  vec_m mrowi(dims);
-  vec rowi(dims), coordi(dimh);
+  vec_m mrowi(dims), coordi(dimh);
+  vec rowi(dims);
   for (i=1; i<=ncoord; i++)
-    { 
-      coordi = (h1->coord_vecs[i]).as_vec();
-      if(h1->cuspidal) coordi = h1->cuspidalpart(coordi);
+    {
+      coordi = to_vec_m((h1->coord_vecs[i]).as_vec());
+      if(h1->cuspidal) coordi = to_vec_m(h1->cuspidalpart(to_vec_i(coordi)));
       mrowi = V*coordi;
-      rowi=mrowi.shorten((int)i);
+      rowi = to_vec_i(mrowi);
       projcoord.setrow(i,rowi);
-      coord_fac=gcd(coord_fac,(long)vecgcd(rowi));
+      coord_fac=gcd(coord_fac,(long)content(rowi));
     }
   if(verbose>1) cout<<"content of projccord = "<<coord_fac<<endl;
   if(coord_fac>1)  projcoord /= coord_fac;
@@ -301,11 +300,11 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   Wdetnum*=dHS;
 
   Winv_scaled=Winv;
-  bigint g; g=mvecgcd(Winv_scaled.row(1));
+  bigint g; g=content(Winv_scaled.row(1));
   for(i=2; i<=dims; i++)
     {
       Winv_scaled.multrow(i,Hscales[i-1]*Sscales[i-1]);
-      g=gcd(g,mvecgcd(Winv_scaled.row(i)));
+      g=gcd(g,content(Winv_scaled.row(i)));
     }
   // now g is the content of Winv_scaled
   Winv_scaled/=g;
@@ -326,13 +325,13 @@ vec_m nfd::ap(long p)
 {
   mat K = basis(h1->kern).as_mat();
   long rk = K.nrows();
-  matop *matlist;
   long k,l,n = h1->modulus, dims=dim(S);
   vec_m apvec(dims);
   int bad = ::divides(p,n);
   if(bad) return apvec; // temporary fix!
-  if(bad) matlist=new matop(p,n);
-  else    matlist=new matop(p);
+  matop matlist(p);
+  // if(bad)
+  //   matlist=matop(p,n);
 
   for(k=0; k<rk; k++)
     {
@@ -340,47 +339,41 @@ vec_m nfd::ap(long p)
       if(Kkj!=0)
 	{
 	  bigint mKkj; mKkj = Kkj;
-	  if(bad)
-	    {
-              continue;  // not yet implemented
-	      // modsym s = h1->freemods[k];
-	      //	      for(l=0; l<matlist->size(); l++)
-	      //		apvec += mKkj*(*matlist)[l](s,h1,projcoord);
-	      //  apvec += mKkj*h1->applyop(*matlist,s,projcoord);
-	    }
-	  else
+	  // if(bad)
+	  //   {
+          //     continue;  // not yet implemented
+	  //   }
+	  // else
 	    {
 	      symb s = h1->symbol(h1->freegens[k]);
-	      for(l=0; l<matlist->size(); l++)
-		apvec += mKkj*(*matlist)[l](s,h1,projcoord);
+	      for(l=0; l<matlist.size(); l++)
+                apvec += mKkj*to_vec_m(matlist[l](s,h1,projcoord));
 	    }
 	}
     }
-  delete matlist;
   return apvec;
 }
 
 mat_m nfd::oldheckeop(long p)
 {
-  return restrict_mat(transpose(h1->newheckeop(p,0)),S);
+  return restrict_mat(transpose(to_mat_m(h1->newheckeop(p,0))),S);
 }
 
 mat_m nfd::heckeop(long p)
 {
   mat K = basis(h1->kern).as_mat();
   long rk = K.nrows();
-  matop *matlist;
   long j,k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
   int bad = ::divides(p,n);
-  if(bad) 
+  matop matlist(p);
+  if(bad)
     {
       cout<<"q = "<<p<<"\t";
-      matlist=new matop(p,n);
+      matlist=matop(p,n);
     }
   else
     {
       cout<<"p = "<<p<<"\t";
-      matlist=new matop(p);
     }
   mat_m TE(dimh,dims);
   vec_m colj(dimh);
@@ -395,32 +388,31 @@ mat_m nfd::heckeop(long p)
 	      bigint mKkj; mKkj = Kkj;
 	      if(bad)
 		{
-		  vec vt = (h1->applyop(*matlist,h1->freemods[k])).as_vec();
+		  vec vt = (h1->applyop(matlist,h1->freemods[k])).as_vec();
 		  if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		  colj += (mKkj*vt);
+		  colj += (mKkj*to_vec_m(vt));
 		}
 	      else
 		{
 		  symb s = h1->symbol(h1->freegens[k]);
-		  for(l=0; l<matlist->size(); l++)
+		  for(l=0; l<matlist.size(); l++)
 		    {
-		      vec vt = ((*matlist)[l](s,h1)).as_vec();
+		      vec vt = (matlist[l](s,h1)).as_vec();
 		      if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		      colj += mKkj*vt;
+		      colj += mKkj*to_vec_m(vt);
 		    }
 		}
 	    }
 	}
       TE.setcol(j+1,colj);
     }
-  delete matlist;
   return transpose(V*TE);
 }
 
 bigint inverse(const mat_m& a, mat_m& ainv)
 {
   long d = a.nrows();
-  mat_m aug=colcat(a,midmat(d));
+  mat_m aug=colcat(a, mat_m::identity_matrix(d));
   long rk, ny; vec pc,npc; bigint denom;
   mat_m ref = echelon(aug, pc, npc, rk, ny, denom);
   ainv = ref.slice(1,d,d+1,2*d);

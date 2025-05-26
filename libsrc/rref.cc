@@ -1,5 +1,5 @@
-#include "flint/fmpz.h"
-#include "flint/fmpz_mat.h"
+#include <flint/fmpz.h>
+#include <flint/fmpz_mat.h>
 #define uscalar mp_limb_t // unsigned long
 
 // Convert a mat_m to a flint fmpz_mat

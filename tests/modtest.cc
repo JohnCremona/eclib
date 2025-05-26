@@ -1,7 +1,7 @@
 // MODTEST.CC  -- Test for modular symbols
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -33,7 +33,6 @@ int main(void)
  init_time();
  start_time();
  int n=1; 
- int plus=1;
  int verbose=0;
  cout << "Display symbol details (0/1)? " << flush; cin >> verbose;
  int limit; 

@@ -1,7 +1,7 @@
 // tsat3.cc -- test for saturate.h/cc reading from gens files directly
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -61,7 +61,7 @@ int main()
   cerr<<"verbose (0/1)? ";             cin >>verbose;
   int j, npts;
 
-  long N, ncurve, nclass;
+  long N, ncurve;
   string code;
   Curve E;
 
@@ -73,7 +73,8 @@ int main()
 #ifdef INPUT_CLASS_IS_LETTER
   cin >> code;
 #else
-  cin >> nclass; 
+  int nclass;
+  cin >> nclass;
   code = codeletter(nclass-1);
 #endif
   cin >> ncurve;
@@ -151,7 +152,7 @@ int main()
 
   for (int i=0; i<npts; i++)
     { 
-      Point P = points[i];
+      P = points[i];
       cout << "Generator "<<(i+1)<<" is "<<P<<"; ";
       cout << "height "<<height(P);
       if(!P.isvalid()) cout<<" --warning: NOT on curve!";

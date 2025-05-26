@@ -1,7 +1,7 @@
 // Test of vec_m package
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/method.h>
-#include <eclib/mvector.h>
+#include <eclib/vector.h>
 
 int main(void)
 {
@@ -54,7 +54,7 @@ int main(void)
  bigint two; two=2;
  w*=two;
  cout << "After w*=2, w = " << w << endl;
- cout << "3*v = " << (3*v) << endl;
+ cout << "3*v = " << (bigint(3)*v) << endl;
  cout << "Now v = " << v << endl;
  cout << "v+w = " << v+w << endl;
  cout << "Now v = " << v << endl;
@@ -98,12 +98,12 @@ int main(void)
  cout << "General slice; beginning, end? "; cin >> j >> k;
  cout << "Slice = " << v.slice(j,k) << endl;
  cout << "Now v = " << v << endl;
- cout << "w = " << w << "; mvecgcd(w) = " << mvecgcd(w) << endl;
+ cout << "w = " << w << "; content(w) = " << content(w) << endl;
  makeprimitive(w);
  cout << "After makeprimitive(w), w = " << w << endl;
 
- vec sv = v.shorten(n);
- cout << "v shortened to a vector of longs: " << sv << endl;
+ vec sv = to_vec_i(v);
+ cout << "v shortened to a vector of ints: " << sv << endl;
 
  vec_m u(n);
  cout << "u = "<< u << endl;

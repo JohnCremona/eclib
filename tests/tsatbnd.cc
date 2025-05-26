@@ -1,7 +1,7 @@
 // tsatbnd.cc -- test saturation index bound
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -45,7 +45,6 @@ int main()
   initprimes("PRIMES",0);
   int verbose = 1;
   cerr<<"verbose (0/1)? ";             cin >>verbose;
-  int j, npts;
 
   Curvedata C;
 
@@ -56,9 +55,10 @@ int main()
       cout << "E = " << (Curve)C <<endl;
 
       Point P(C);
+      int j=0, npts;
       cerr<<"enter number of points: ";      cin >> npts;
       vector<Point> points; points.reserve(npts);
-      j=0;
+
       while(j<npts)
         {
           cerr<<"\n  enter point "<<(j+1)<<" : ";
@@ -74,11 +74,8 @@ int main()
             }
         }
       cout<<npts<<" points entered:\n";
-      for (vector<Point>::iterator Pi=points.begin(); Pi!=points.end(); Pi++)
-        {
-          P = *Pi;
-          cout << P << " (height "<<height(P)<<")"<<endl;
-        }
+      for ( auto& Pi : points)
+        cout << Pi << " (height "<<height(Pi)<<")"<<endl;
 
       bigfloat reg = regulator(points);
       cout << "Regulator of input points: " << reg << endl;
@@ -89,29 +86,26 @@ int main()
       cout<< "p   Group   Image(s)" <<endl;
       bigint u, r, s, t;
       Curvedata Cmin = C.minimalize(u,r,s,t);
-      vector<Point> points_min;
-      for (vector<Point>::const_iterator Pi = points.begin(); Pi!=points.end(); Pi++)
-        points_min.push_back(transform(*Pi, &Cmin, u, r, s, t));
-
+      vector<Point> points_min(points.size());
+      std::transform(points.begin(), points.end(), points_min.begin(),
+                     [&Cmin, u, r, s, t] (const Point& Pi) {return transform(Pi, &Cmin, u, r, s, t);});
       CurveRed CR(Cmin);
       vector<bigint> plist = getbad_primes(CR);
       ComponentGroups CG(CR);
       vector<vector<int> >  ims;
-      bigint p;
-      for(vector<bigint>::iterator pi=plist.begin(); pi!=plist.end(); pi++)
+      for( const auto& p : plist)
         {
-          p=*pi;
           cout<<p<<"  "<<CG.ComponentGroup(p)<<"  ";
-          ims = MapPointsToComponentGroup(CR, points_min,  p);
-          for(vector<vector<int> >::iterator im=ims.begin(); im!=ims.end(); im++)
-            cout<<(*im);
+          ims = MapPointsToComponentGroup(CG, points_min,  p);
+          for( const auto& im : ims)
+            cout<<im;
           cout<<endl;
         }
-      p = BIGINT(0);
+      bigint p(0);
       cout<<"R "<< CG.ComponentGroup(p)<<"  ";
-      ims = MapPointsToComponentGroup(CR, points_min,  p);
-      for(vector<vector<int> >::iterator im=ims.begin(); im!=ims.end(); im++)
-        cout<<(*im);
+      ims = MapPointsToComponentGroup(CG, points_min,  p);
+      for( const auto&  im : ims)
+        cout<<im;
       cout<<endl<<endl;
 
       bigint tam_prod = global_Tamagawa_number(CR, 1); // include real place

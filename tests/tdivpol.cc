@@ -1,7 +1,7 @@
 // tdivpol.cc -- test for division poly functions in divpol.h/cc 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -32,7 +32,7 @@ int main()
 {
   initprimes("PRIMES",0);
 
-  Curve E(BIGINT(0),BIGINT(0),BIGINT(1),BIGINT(-7),BIGINT(6));
+  Curve E(0,0,1,-7,6);
 
   Curvedata C(E, 0);
   cout << "Curve " << E << endl;
@@ -46,31 +46,26 @@ int main()
 
   bigint a1,a2,a3,a4,a6;
   E.getai(a1,a2,a3,a4,a6);
-  vector<int> nn = {2,3,5,7};
-  for(vector<int>::iterator n = nn.begin(); n!=nn.end(); n++)
+  for( int n : {2,3,5,7})
     {
-      i = *n;
-      cout << "n = " << i << ":\n";
-      cout<<"Numerator:  \t" << mul_by_n_num(a1,a2,a3,a4,a6,i) << endl;
-      cout<<"Denominator:\t" << mul_by_n_den(a1,a2,a3,a4,a6,i) << endl;
+      cout << "n = " << n << ":\n";
+      cout<<"Numerator:  \t" << mul_by_n_num(a1,a2,a3,a4,a6,n) << endl;
+      cout<<"Denominator:\t" << mul_by_n_den(a1,a2,a3,a4,a6,n) << endl;
     }
 
 #if(1)
   cout << "\nTesting division of points:\n";
 
-  Point P0(C, BIGINT(0),BIGINT(2)) ;
-  Point P1(C, BIGINT(1),BIGINT(0)) ;
-  Point P2(C, BIGINT(2),BIGINT(0)) ;
+  Point P0(C, bigint(0),bigint(2)) ;
+  Point P1(C, bigint(1),bigint(0)) ;
+  Point P2(C, bigint(2),bigint(0)) ;
 
   vector<Point> Plist = {P0, P1, P2, P0+P1, P0+P2, P1+P2, P0+P1+P2};
-  vector<int> mlist = {2,3,5,7,11,13};
-  for (vector<Point>::iterator Pi = Plist.begin(); Pi!=Plist.end(); Pi++)
+  for ( const auto& P : Plist)
     {
-      Point P = *Pi;
       cout << "\nP = " << P << endl;
-      for (vector<int>::iterator mi = mlist.begin(); mi!=mlist.end(); mi++)
+      for ( auto m : {2,3,5,7,11,13})
         {
-          int m = *mi;
           Point Q = m*P;
           vector<Point> newP = Q.division_points(m);
           cout << m << "*P = " << Q << ", divided by " << m << " gives back ";

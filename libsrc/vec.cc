@@ -1,7 +1,7 @@
 // vec.cc: implementation of integer vector classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -25,291 +25,235 @@
 
 // Definitions of member operators and functions:
 
-vec::~vec()
-{
-  delete[] entries;
-}
-
 vec::vec(long n)
 {
- d=n;
- entries=new scalar[n];
- if (!entries)
-   cerr<<"Out of memory in constructing vec of length "<<n<<endl;
- else
-   memset(entries, 0, n*sizeof(scalar));
+  entries.resize(n, scalar(0));
 }
 
-vec::vec(long n, scalar* arr)   //entries must have at least n elements!
-{
- d=n;
- entries=new scalar[n];
- if (!entries)
-   cerr<<"Out of memory in constructing vec of length "<<n<<endl;
- else
-   memcpy(entries, arr, n*sizeof(scalar));
-}
+vec::vec(const vector<scalar>& arr) :entries(arr) {}
 
-vec::vec(const vec& v)                       // copy constructor
-{
-  d=v.d;
-  entries=new scalar[d];
-  if (!entries)
-    cerr<<"Out of memory in copying vec of length "<<d<<endl;
-  else
-    memcpy(entries, v.entries, d*sizeof(scalar));
-}
+vec::vec(const vec& v) :entries(v.entries) {} // copy constructor
 
 void vec::init(long n)                 // (re)-initializes
 {
- if (d!=n) // no point in deleting if same size
-   {
-     delete[] entries;
-     d = n;
-     entries=new scalar[d];
-   }
- if (!entries)
-   cerr<<"Out of memory in initializing vec of length "<<d<<endl;
- else
-   memset(entries, 0, n*sizeof(scalar));
+  entries.resize(n, scalar(0));
 }
 
 vec& vec::operator=(const vec& v)                    // assignment
 {
  if (this==&v) return *this;
- if (d!=v.d) // no point in deleting if new is same size
-   {
-     delete[] entries;
-     d = v.d;
-     entries=new scalar[d];
-   }
- if (!entries)
-   cerr<<"Out of memory in assigning vec of length"<<d<<endl;
- else
-   memcpy(entries,v.entries,d*sizeof(scalar));
+ entries = v.entries;
  return *this;
 }
 
-scalar& vec::operator[](long i) const
+scalar& vec::operator[](long i)
 {
- if ((i>0) && (i<=d)) return entries[i-1];
- cerr << "bad subscript "<<i<<" in vec::operator[] (vec has dimension "<<d<<")"<<endl;
- return entries[0];
+  return entries.at(i-1);
 }
 
-vec& vec::operator+=(const vec& q2)
+scalar vec::operator[](long i) const
 {
-  scalar* vi=entries, *wi=q2.entries; long i=d;
-  if (d==q2.d) {while(i--)(*vi++)+=(*wi++);}
-  else
-    cerr << "Incompatible vecs in vec::operator+=";
+  return entries.at(i-1);
+}
+
+vec& vec::operator+=(const vec& w)
+{
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [](const scalar& wi, const scalar& vi) { return vi + wi;});
   return *this;
 }
 
-void vec::addmodp(const vec& w, scalar pr)
+void vec::addmodp(const vec& w, const scalar& pr)
 {
-  scalar* vi=entries, *wi=w.entries; long i=d;
-  if (d==w.d) {while(i--) {*vi = xmod((*wi++)+(*vi),pr);vi++;}}
-  else
-    cerr << "Incompatible vecs in vec::addmodp"<<endl;
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [pr](const scalar& wi, const scalar& vi) { return mod(wi+vi,pr);});
 }
 
-vec& vec::operator-=(const vec& q2)
+vec& vec::operator-=(const vec& w)
 {
-  scalar* vi=entries; scalar* wi=q2.entries; long i=d;
-  if (d==q2.d) {while(i--)(*vi++)-=(*wi++);}
-  else
-    cerr << "Incompatible vecs in vec::operator-="<<endl;
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [](const scalar& wi, const scalar& vi) { return vi - wi;});
   return *this;
 }
 
-vec& vec::operator*=(scalar scal)
+vec& vec::operator*=(const scalar& scal)
 {
-  scalar* vi=entries; long i=d;
-  while (i--) (*vi++) *= scal;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [scal](const scalar& vi) {return vi * scal;});
   return *this;
 }
 
-vec& vec::operator/=(scalar scal)
+vec& vec::operator/=(const scalar& scal)
 {
-  scalar* vi=entries; long i=d;
-  while (i--) (*vi++) /= scal;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [scal](const scalar& vi) {return vi / scal;});
   return *this;
 }
 
 vec vec::slice(long first, long last) const       // returns subvector
 {
  if (last==-1) {last=first; first=1;}
- long n = last-first+1;
- vec ans(n);
- memcpy(ans.entries,entries+(first-1),n*sizeof(scalar));
+ vec ans(last-first+1);
+ std::copy(entries.begin()+first-1, entries.begin()+last, ans.entries.begin());
  return ans;
 }
 
-vec vec::operator[](const vec& index) const  // returns v[index[j]]
-{long i=index.d; vec w(i);
- scalar* wi=w.entries, *indexi=index.entries;
- while (i--) (*wi++) = entries[(*indexi++)-1];
- return w;
+vec vec::operator[](const vec_i& index) const  // returns v[index[j]]
+{
+  vec w(dim(index));
+  const vector<int>& vi = index.get_entries();
+  std::transform(vi.begin(), vi.end(), w.entries.begin(),
+                 [this](const int& i) {return entries.at(i-1);});
+  return w;
+}
+
+vec vec::operator[](const vec_l& index) const  // returns v[index[j]]
+{
+  vec w(dim(index));
+  const vector<long>& vi = index.get_entries();
+  std::transform(vi.begin(), vi.end(), w.entries.begin(),
+                 [this](const int& i) {return entries.at(i-1);});
+  return w;
 }
 
 scalar vec::sub(long i) const
 {
- if ((i>0) && (i<=d)) return entries[i-1];
- else
-   {
-     cerr << "bad subscript in vec::sub"<<endl;
-     return 0;
-   }
+  return entries.at(i-1);
 }
 
-void vec::set(long i, scalar x)
+void vec::set(long i, const scalar& x)
 {
- if ((i>0) && (i<=d)) entries[i-1]=x;
- else
-   {
-     cerr << "bad subscript in vec::set"<<endl;
-   }
+  entries.at(i-1) = x;
 }
 
-void vec::add(long i, scalar x)
+void vec::add(long i, const scalar& x)
 {
- if ((i>0) && (i<=d)) entries[i-1]+=x;
- else
-   {
-     cerr << "bad subscript in vec::add"<<endl;
-   }
+  entries.at(i-1) += x;
 }
 
-void vec::add_modp(long i, scalar x, scalar p)
+void vec::add_modp(long i, const scalar& x, const scalar& p)
 {
-  if ((i>0) && (i<=d)) entries[i-1]=xmod(entries[i-1]+x,p);
-  else
-    {
-      cerr << "bad subscript in vec::add_modp"<<endl;
-    }
+  entries.at(i-1) = mod(entries.at(i-1)+x,p);
+}
+
+void vec::red_modp(const scalar& p)
+{
+  if (p==0) return;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [p](const scalar& vi) {return mod(vi,p);});
+}
+
+vec vec::iota(long n)
+{
+  vec v(n);
+  std::iota(v.entries.begin(), v.entries.end(), scalar(1));
+  return v;
 }
 
 // Definitions of non-member, friend operators and functions
 
 scalar operator*(const vec& v, const vec& w)
 {
- long dim=v.d; scalar dot=0;
- scalar* vi=v.entries, *wi=w.entries;
- if (dim==w.d)
-   while (dim--) dot+= (*vi++)*(*wi++);
- else
-   {
-     cerr << "Unequal dimensions in dot product"<<endl;
-   }
- return dot;
+  return std::inner_product(v.entries.begin(), v.entries.end(), w.entries.begin(), scalar(0));
 }
 
 int operator==(const vec& v, const vec& w)
 {
-   long dim=v.d;
-   long equal = (dim==w.d);
-   scalar* vi=v.entries, *wi=w.entries;
-   while ((dim--) && equal) equal = ((*vi++)==(*wi++));
-   return equal;
+  return v.entries == w.entries;
 }
 
 int trivial(const vec& v)
 {
-   int ans=1, i=v.d;   scalar* vi=v.entries;
-   while ((i--)&&ans) ans=((*vi++)==0);
-   return ans;
+  return std::all_of(v.entries.begin(), v.entries.end(), [](const scalar& vi) {return vi==0;});
 }
 
 ostream& operator<<(ostream& s, const vec& v)
 {
-   long i=v.d; scalar* vi=v.entries;
-   s << "[";
-   while (i--) {s<<(*vi++); if(i)s<<",";}
-   s << "]";
-   return s;
+  s << "[";
+  long i=0;
+  for ( const auto& vi : v.entries)
+    {
+      if(i++)
+        s<<",";
+      s<<vi;
+    }
+  s << "]";
+  return s;
 }
 
 istream& operator>>(istream& s, vec& v)
 {
- long i = v.d;
- scalar* vi = v.entries;
- while (i--) s >> (*vi++);
- return s;
+  for (scalar& vi : v.entries)
+    s>>vi;
+  return s;
 }
 
-vec iota(scalar n)
+// Definition of non-friend operators and functions
+
+scalar content(const vec& v)
 {
- vec v(n);
- scalar* entriesi=v.entries; long i=0;
- while (i<n) (*entriesi++)=(++i);
- return v;
+  return v.entries.empty()?
+    scalar(1) :
+    std::accumulate(v.entries.begin(), v.entries.end(), scalar(0),
+                    [](const scalar& x, const scalar& y) {return gcd(x,y);});
 }
 
-scalar vecgcd(const vec& v)
+scalar maxabs(const vec& v)
 {
- long i=v.d; 
- scalar g=0; 
- if (i==0) {g=1;} // so empty vector has content 1, not 0
- scalar *vi=v.entries;
- while ((i--)&&(g!=1)) g=gcd(g,*vi++);
- return g;
+  return v.entries.empty()?
+    scalar(0) :
+    std::accumulate(v.entries.begin(), v.entries.end(), scalar(0),
+                    [](const scalar& x, const scalar& y) {return max(x,abs(y));});
 }
 
 void swapvec(vec& v, vec& w)
-{scalar *temp; 
- if (v.d==w.d) {temp=v.entries; v.entries=w.entries; w.entries=temp;}
- else
-   {
-     cerr << "Attempt to swap vecs of different lengths!"<<endl;
-   }
+{
+  std::swap(v.entries, w.entries);
 }
 
-int member(scalar a, const vec& v)
-{int ans=0; long i=dim(v); scalar* vi=v.entries;
- while (i--&&!ans) ans=(a==(*vi++));
- return ans;
+int member(const scalar& a, const vec& v)
+{
+  return std::find(v.entries.begin(), v.entries.end(), a) != v.entries.end();
 }
- 
-// Definition of non-friend operators and functions
 
-vec reverse(vec& order)
-{ long i,n = dim(order);
-  vec ans(n);
-  for (i=1; i<=n; i++) ans.set(order[i],i);
+vec reverse(const vec& order)
+{
+  vec ans(order);
+  std::reverse(ans.entries.begin(), ans.entries.end());
   return ans;
 }
- 
+
 vec express(const vec& v, const vec& v1, const vec& v2)
 {
-   vec ans(3);
    scalar v1v1 = v1 * v1;
    scalar v1v2 = v1 * v2;
    scalar v2v2 = v2 * v2;
    scalar vv1 = v * v1;
    scalar vv2 = v * v2;
-   ans[1]= vv1*v2v2 - vv2*v1v2;
-   ans[2]= vv2*v1v1 - vv1*v1v2;
-   ans[3]= v1v1*v2v2 - v1v2*v1v2;
-   scalar g = vecgcd(ans);
-   if (g>1) ans/=g;
+   vec ans({vv1*v2v2 - vv2*v1v2,  vv2*v1v1 - vv1*v1v2, v1v1*v2v2 - v1v2*v1v2});
+   makeprimitive(ans);
    if (ans[3]*v!=ans[1]*v1+ans[2]*v2)
-     {
-       cerr << "Error in express: v is not in <v1,v2>"<<endl;
-     }
+     cerr << "Error in express: v is not in <v1,v2>"<<endl;
    return ans;
 }
 
-//#define LIFT_DEBUG
-int lift(const vec& v, scalar pr, vec& ans)
+//#define DEBUG_LIFT
+
+// int lift(const vec& v, const scalar& pr, vec& w)
+// {
+//   w = v;
+//   w.red_modp(pr);
+  
+// }
+
+int lift(const vec& v, const scalar& pr, vec& ans)
 {
   long i0, i, j, d = dim(v);
- scalar nu, de;
- int succ;
- float lim = sqrt(pr/2.0)-1;
- scalar maxallowed = 10*int(lim);
-#ifdef LIFT_DEBUG
- cout<<"Lifting vector v = "<<v<<endl;
+  scalar nu, de;
+  scalar lim = sqrt(pr>>1)-1;
+  scalar maxallowed = 10*lim;
+#ifdef DEBUG_LIFT
+  cout<<"Lifting vector v = "<<v<<" mod "<<pr<<" (lim = "<<lim<<")"<<endl;
 #endif
  // NB We do *not* make cumulative rescalings, since it is possible
  // for an apparently successful modrat reconstruction to give an
@@ -322,26 +266,39 @@ int lift(const vec& v, scalar pr, vec& ans)
  // be multiplied by this and we would never succeed.
 
  // This code allows for some entries to be >lim, and works as long as
- // (1) there is a lift with all entried at most 10*lim, (2) at least
+ // (1) there is a lift with all entries at most 10*lim, (2) at least
  // one entry has the correct denominator, which is equaivalent to
  // requiring that in the primitive rescaling, there is an entry
  // coprime to the first non-zero entry.
 
- ans = v; // starts as a copy, and will be rescaled in place
- scalar vi0, inv_vi0, vi, maxvi=0;
+ ans = reduce_modp(v, pr); // starts as a copy, and will be rescaled in place
+#ifdef DEBUG_LIFT
+  cout<<"After reduce_modp: v = "<<ans<<endl;
+#endif
+ if (maxabs(ans) <= maxallowed)
+   {
+#ifdef DEBUG_LIFT
+     cout<<"No scaling needed, lift is "<<ans<<endl;
+#endif
+     return 1;
+   }
+ scalar vi0, inv_vi0, vi, maxvi(0);
  for(i0=1; i0<=d; i0++)
    {
      // scale so that i0'th entry is 1 mod p, then reduce vector
      // entries mod p to lie in (-p/2,p/2), and find the maximum
      // entry:
-     while((vi0=mod(v[i0],pr))==0) {i0++;} // skip over any zero entries
+     while((vi0=ans[i0])==0) {i0++;} // skip over any zero entries
      inv_vi0=invmod(vi0,pr);
+#ifdef DEBUG_LIFT
+     cout<<"Scaling by "<<inv_vi0<<" (inverse of "<<vi0<<")"<<endl;
+#endif
      for (i=1; i<=d; i++)
        {
          ans[i]=vi=mod(xmodmul(inv_vi0,ans[i],pr),pr);
          maxvi=max(maxvi,abs(vi));
        }
-#ifdef LIFT_DEBUG
+#ifdef DEBUG_LIFT
      cout<<"Reduced v = "<<ans<<", with max entry "<<maxvi<<endl;
 #endif
      if(maxvi<=maxallowed) // no scaling needed!
@@ -358,19 +315,20 @@ int lift(const vec& v, scalar pr, vec& ans)
 
      for(i=1; (i<=d); i++)
        {
-         succ=modrat(ans[i],pr,lim,nu,de);     de=abs(de);
-         if ((!succ)||(de==1)) continue; // loop on i
+         modrat(ans[i],pr,nu,de);
+         de=abs(de);
+         if (de==1) continue; // loop on i
          // scale by de & recompute max entry:
-#ifdef LIFT_DEBUG
+#ifdef DEBUG_LIFT
          cout<<"Scaling by d="<<de<<endl;
 #endif
          maxvi = 0;
-         for (j=1; j<=d; j++) 
+         for (j=1; j<=d; j++)
            {
              ans[j] = vi = mod(xmodmul(de,ans[j],pr),pr);
              maxvi=max(maxvi,abs(vi));
            }
-#ifdef LIFT_DEBUG
+#ifdef DEBUG_LIFT
          cout<<"Now v = "<<ans<<", with max entry "<<maxvi<<endl;
 #endif
          if(maxvi<=maxallowed)
@@ -396,12 +354,9 @@ int lift(const vec& v, scalar pr, vec& ans)
  return 0;
 }
 
-
-scalar dotmodp(const vec& v1, const vec& v2, scalar pr)
+scalar dotmodp(const vec& v1, const vec& v2, const scalar& pr)
 {
-  scalar ans=0;
-  scalar *v1i=v1.entries, *v2i=v2.entries;
-  long n=v1.d;
-  while (n--) ans=mod(ans+xmodmul(*v1i++,*v2i++,pr),pr);
-  return ans;
+  auto a = [pr] (const scalar& x, const scalar& y) {return mod(x+y,pr);};
+  auto m = [pr] (const scalar& x, const scalar& y) {return xmodmul(x,y,pr);};
+  return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), scalar(0), a, m);
 }

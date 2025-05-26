@@ -1,7 +1,7 @@
 // heights.cc: implementation of height functions declared in points.h
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -28,11 +28,24 @@
 #define MAX_RANK_REG 50 // cannot ask for regulator of more than 50 points.
 #endif
 
+//#define DEBUG_HEIGHT
+
 bigfloat height(Point& P)
 {
+#ifdef DEBUG_HEIGHT
+  cout<<"Computing height of P = "<<P<<endl;
+  cout<<"(P.E = "<<P.E<<")\n";
+  cout<<"(E = "<<(Curve)*(P.E)<<")\n";
+  cout<<"(current height attribute is "<<P.height<<")\n";
+#endif
+  if (!(P.isvalid()))
+    {
+      cerr<<"Run-time error: point "<<P<<" is not valid on its curve "<<(Curve)(P.getcurve())<<endl;
+      exit(1);
+    }
   bigfloat zero(to_bigfloat(0));
-  if ( P.is_zero() ) return zero;
   if (P.height >= zero) return P.height;  // already calculated it
+  if (P.is_zero())  {P.height = zero; return zero; } // zero height if torsion
   if (order(P) > 0) {P.height = zero; return zero; } // zero height if torsion
 
   // N.B. So if we ever ask a point its height it will compute its order.
@@ -42,20 +55,22 @@ bigfloat height(Point& P)
   // pheight() if the curve is minimal at p
 
   Curvedata* E = P.E;
-  int is_min = is_minimal(*E);
-  bigint u, r, s, t;
+  vector<bigint> bad_p = getbad_primes(*E);
   Curvedata Emin;
-  Point Pmin = P;
-  if (!is_min)
+  Point Pmin(Emin); // assigns Pmin.E to a pointer to Emin
+  // NB the is_minimal function returns 0 when minimization has not
+  // been done; the curve may still be minimal
+  if (!is_minimal(*E))
     {
+      bigint u, r, s, t;
       Emin = E->minimalize(u,r,s,t);
-      is_min = is_one(abs(u)); // then E was already minimal, no adjustments needed
-    }
-  if (!is_min)
-    {
       Pmin = transform(P, &Emin, u, r, s, t);
+      bad_p = getbad_primes(Emin);
     }
-
+  else
+    {
+      Pmin = P;
+    }
   // Add local heights at finite primes dividing discr(E) OR denom(P).
   // The components for primes dividing denom(P) add to log(denom(x(P)));
   //   since P=(XZ:Y:Z^3), denom(P)=Z=gcd(XZ,Z^3), called "zroot" here,
@@ -64,25 +79,48 @@ bigfloat height(Point& P)
 
   const bigint& zroot = gcd(Pmin.getX(),Pmin.getZ());   // = cube root of Z
   bigfloat h = realheight(Pmin);
+#ifdef DEBUG_HEIGHT
+  cout<<" - real height = "<<h<<"\n";
+#endif
 
   // contribution from primes dividing the denoinator:
   h += 2*log(I2bigfloat(zroot));
+#ifdef DEBUG_HEIGHT
+  cout<<" - after adding log(denom), height = "<<h<<"\n";
+#endif
 
-  vector<bigint> bad_p = getbad_primes(Emin);
-  vector<bigint>::iterator pr = bad_p.begin();
-  for (pr = bad_p.begin(); pr!=bad_p.end(); pr++)
+#ifdef DEBUG_HEIGHT
+  cout<<" - E (min) = "<<(Curve)Emin<<" with bad primes "<<bad_p<<"\n";
+#endif
+
+  for ( const auto& p : bad_p)
     {
-      bigint p = *pr;
+#ifdef DEBUG_HEIGHT
+      cout<<" - bad prime p = "<<p<<"\n";
+#endif
       // we already have included the local height at p for primes p
       // dividing the denominator
       if(ndiv(p,zroot))
-        h += pheight(Pmin,p);
+        {
+          bigfloat pht = pheight(Pmin,p);
+#ifdef DEBUG_HEIGHT
+          cout<<" - local height at p is "<<pht<<"\n";
+#endif
+            h += pht;
+        }
+#ifdef DEBUG_HEIGHT
+      else
+        cout<<" - p divides denominator (zroot="<<zroot<<"), so ignoring\n";
+#endif
     }
   P.height = h;
+#ifdef DEBUG_HEIGHT
+  cout << "height(P) returns "<<h<<endl;
+#endif
   return h;
 }
 
-//#define DEBUG_HEIGHT
+#undef DEBUG_HEIGHT
 
 bigfloat pheight(const Point& P, const bigint& pr)
 // NB The local height at p will only be correctly computed by
@@ -285,7 +323,6 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
 #ifdef DEBUG_REG
   cout<<"In regulator with PointArray = " << P << endl;
 #endif
-  int i,j,k,d;
   int n = P.size();
   if( n <= 0) return to_bigfloat(1);
   if(n == 1) return height(P[0]) ;
@@ -302,13 +339,13 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
   // initialize the matrix of pairings
   mat_RR height_matrix;
   height_matrix.SetDims(n,n);
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     {
       height_matrix[i][i] = height(P[i]) ;
     }
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     {
-      for (j = i + 1; j < n; j++)
+      for (int j = i + 1; j < n; j++)
           {
             Point Q = P[i] + P[j];
             bigfloat h = (height(Q) - height_matrix[i][i] - height_matrix[j][j])/2 ;
@@ -323,9 +360,9 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
   if (n == 3)
     {
      bigfloat pair[3][3] ;
-     for (i = 0; i < 3; i++)
+     for (int i = 0; i < 3; i++)
        {pair[i][i] = height(P[i]) ;
-        for (j = i + 1; j < 3; j++)
+        for (int j = i + 1; j < 3; j++)
           {pair[i][j] = pair[j][i] = height_pairing(P[i], P[j]) ; }
        }
      bigfloat reg = (pair[0][0] * ( pair[1][1] * pair[2][2] - pair[1][2] * pair[1][2] )
@@ -340,9 +377,9 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
   if (n == 4)
     {
      bigfloat pair[4][4] ;
-     for (i = 0; i < 4; i++)
+     for (int i = 0; i < 4; i++)
        {pair[i][i] = height(P[i]) ;
-        for (j = i + 1; j < 4; j++)
+        for (int j = i + 1; j < 4; j++)
           {pair[i][j] = height_pairing(P[i], P[j]) ; }
        }
      //
@@ -375,25 +412,25 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
     }
   bigfloat pair[MAX_RANK_REG][MAX_RANK_REG] ;
   // initialize the matrix of pairings
-  for (i = 0; i < n; i++)
+  for (int i = 0; i < n; i++)
     {
       pair[i][i] = height(P[i]) ;
-      for (j = i + 1; j < n; j++)
+      for (int j = i + 1; j < n; j++)
         {
           pair[j][i] = pair[i][j] = height_pairing(P[i], P[j]) ;
         }
     }
   // Gaussian elimination
   // for the first n - 1 rows
-  for (j = 0 ; j < n - 1; j ++)
+  for (int j = 0 ; j < n - 1; j ++)
     {// use row j to pivot with
       bigfloat pivot = pair[j][j] ;
       // kill off rows below row j
-      for (i = j + 1; i < n ; i ++)
+      for (int i = j + 1; i < n ; i ++)
         {bigfloat multiplier = pair[i][j] / pivot ;
           // subtract multiplier * row j from row i
           //noting the beginning of row i is already zeroed
-          for (k = j ; k < n; k++)
+          for (int k = j ; k < n; k++)
             {
               pair[i][k] -= multiplier * pair[j][k] ;
             }
@@ -401,7 +438,7 @@ bigfloat regulator(vector<Point>& P)   // nb not const; sets heights when found
     }
   // now reg is the product of the diagonal entries
   bigfloat reg = to_bigfloat(1) ;
-  for (d = 0; d < n; d++) reg *= pair[d][d] ;
+  for (int d = 0; d < n; d++) reg *= pair[d][d] ;
   return reg ;
 #endif
 }

@@ -1,7 +1,7 @@
 // indep_test.cc: program to test input points for (in)dependence 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -34,28 +34,28 @@ int main()
   initprimes("PRIMES",0);
 
   int verbose = 1;
-  long rank, npts, j;
-  cout<<"verbose (0/1)? ";  
+  cout<<"verbose (0/1)? ";
   cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
   cin >>verbose;
-  Curve E;
 
     while (1)
     {
-      cout<<"\nInput a curve: ";      
+      cout<<"\nInput a curve: ";
       cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
+      Curve E;
       cin >> E;
       if ( E.isnull() ) exit(0);
       Curvedata C(E, 0);
       cout << "Curve " << (Curve)C << endl;
       Point P(C);
-      cout<<"enter number of points: ";      
+      cout<<"enter number of points: ";
       cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
+      int npts;
       cin >> npts;
       vector<Point> points; points.reserve(npts);
-      j=0; 
+      int j=0;
       while(j<npts)
-	{ 
+	{
 	  cout<<"\n  enter point "<<(j+1)<<" : ";
 	  cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
 	  cin >> P;
@@ -68,10 +68,10 @@ int main()
       cout << "Enter number of primes to use: "; 
       cin>>ws;  if(cin.eof()) {cerr<<endl; exit(0);}
       cin>>naux;
-      
+
       sifter box(&C, naux, verbose);
       box.process(points);
-      rank = box.getrank();
+      long rank = box.getrank();
       if(rank==npts)
 	cout<<"Points are all independent, their rank is "<<rank<<endl;
       else

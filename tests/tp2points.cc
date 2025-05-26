@@ -1,7 +1,7 @@
 // tp2points.cc:  test program for P2Point class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -37,9 +37,9 @@ int main()
   cout << "After P=P2Point(2,4,-6), P="<<P<<endl;
   Q=P;
   cout << "After Q=P, Q="<<Q<<endl;
-  Q=transform(P,BIGINT(3),BIGINT(4),BIGINT(5),BIGINT(6),0);
+  Q=transform(P,bigint(3),bigint(4),bigint(5),bigint(6),0);
   cout << "After Q=transform(P,3,4,5,6,0), Q="<<Q<<endl;
-  R=transform(Q,BIGINT(3),BIGINT(4),BIGINT(5),BIGINT(6),1);
+  R=transform(Q,bigint(3),bigint(4),bigint(5),bigint(6),1);
   cout << "After R=transform(Q,3,4,5,6,1), R="<<R<<endl;
   cout << "R==P? "<< (R==P) <<endl;
   bigint x,y,z; bigrational X,Y;  bigfloat rx,ry;

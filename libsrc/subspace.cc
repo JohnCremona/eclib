@@ -1,7 +1,7 @@
 // subspace.cc: implementations of subspace class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -44,6 +44,18 @@
 #define vec vec_l
 #define mat mat_l
 #define subspace subspace_l
+
+#include "sub.cc"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
 
 #include "sub.cc"
 

@@ -1,7 +1,7 @@
 // cubic.cc:  implementation of integer cubic class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -371,7 +371,7 @@ bigcomplex cubic::hess_root() const
   return gamma;
 }
 
-int cubic::is_hessian_reduced()
+int cubic::is_hessian_reduced() const
 // for positive discriminant only
 // The condition is -P < Q <= P < R or 0 <= Q <= P=R.
 {
@@ -468,7 +468,7 @@ void cubic::mathews_reduce(unimod& m)
   if(a()<0) negate(m);
 }
 
-int cubic::is_jc_reduced() // for negative discriminant only
+int cubic::is_jc_reduced() const // for negative discriminant only
 {
   if (is_zero(a())) // we want the quadratic form (b,c,d) to be reduced
     {
@@ -498,25 +498,26 @@ void cubic::jc_reduce(unimod& m)
   int s=1;   bigint k, jc2, jc3;
   bigint plus1(one), minus1(-one);
 
-  bigfloat alpha, ra, rb, rc, rd, h0, h1, h2;
+  bigfloat alpha, ra, rb, rc, h0, h1;
 
   m.reset();
 #ifdef DEBUG_REDUCE
-      cout << "\nJC-reducing " << (*this) << "...\n";
-      cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
-      alpha = real_root();
-      cout<<"alpha = "<<alpha<<endl;
-      ra = I2bigfloat(a());
-      rb = I2bigfloat(b());
-      rc = I2bigfloat(c());
-      rd = I2bigfloat(d());
-      h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
-      h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
-      h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
-      cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
+  bigfloat rd, h2;
+  cout << "\nJC-reducing " << (*this) << "...\n";
+  cout<<"C1="<<j_c1()<<", C2="<<j_c2()<<", C3="<<j_c3()<<", C4="<<j_c4()<<endl;
+  alpha = real_root();
+  cout<<"alpha = "<<alpha<<endl;
+  ra = I2bigfloat(a());
+  rb = I2bigfloat(b());
+  rc = I2bigfloat(c());
+  rd = I2bigfloat(d());
+  h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
+  h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
+  h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+  cout << "(h0,h1,h2) = ("<<h0<<", " << h1 << ", "<<h2<<")"<<endl;
 #endif
 
-      if (is_zero(a()))
+  if (is_zero(a()))
     {
       bigint bb=b(), cc=c(), q,r;
       if (bb<0)
@@ -579,7 +580,7 @@ void cubic::jc_reduce(unimod& m)
           rc = I2bigfloat(c());
           h0 = (9*ra*ra*alpha + 6*ra*rb)*alpha  + 6*ra*rc-rb*rb;
           h1 = 6*(ra*rb*alpha + (rb*rb-ra*rc))*alpha + 2*rb*rc;
-          h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
+          //h2 = 3*(ra*rc*alpha + rb*rc-3*ra*rd)*alpha + 2*rc*rc - 3*rb*rd;
           k = Iround(-h1/(2*h0)); // this is the amount to shift by
           if (k!=0)
             {
@@ -676,23 +677,22 @@ bigint cubic::shift_reduce()
 bigfloat cubic::real_root() const
 {
   bigfloat discr = I2bigfloat(disc());
-  if(discr>=0) 
+  if(discr>=0)
     {
       cout<<"Error: real_root called with positive dicriminant!\n";
       return to_bigfloat(0);
     }
-  bigfloat P = I2bigfloat(p_semi());
-  bigfloat Q = I2bigfloat(q_semi());
-  bigfloat A = I2bigfloat(a());
 
-  if(is_zero(A)) 
+  bigfloat A = I2bigfloat(a());
+  if(is_real_zero(A))
     {
       return A;
     }
 
-  if(is_zero(P)) 
+  bigfloat P = I2bigfloat(p_semi());
+  bigfloat Q = I2bigfloat(q_semi());
+  if(is_real_zero(P))
     {
-      bigfloat Q = I2bigfloat(q_semi());
       bigfloat R = I2bigfloat(r_semi())/Q;
       bigfloat eta3  = I2bigfloat(d())/A - (I2bigfloat(c())*R)/(3*A);
       bigfloat eta   = cube_root(eta3);

@@ -1,7 +1,7 @@
 // sub.cc: implementation of subspace class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -23,269 +23,206 @@
 
 // Only to be included by subspace.cc
 
-// Inline definitions of member operators and functions:  
-
-subspace::subspace(int n) 
-:denom(1),pivots(iota((scalar)n)),basis(idmat((scalar)n))
-{}
-
-subspace::subspace(const mat& b, const vec& p, scalar d)
-:denom(d),pivots(p),basis(b)
-{}
-
-subspace::subspace(const subspace& s) 
-:denom(s.denom),pivots(s.pivots),basis(s.basis) 
-{}
-
-// destructor -- no need to do anything as componenets have their own
-subspace::~subspace() 
-{}
+// definitions of member operators and functions:
 
 // assignment
-void subspace::operator=(const subspace& s) 
+void subspace::operator=(const subspace& s)
 {
-  pivots=s.pivots; 
-  basis=s.basis; 
+  pivots=s.pivots;
+  basis=s.basis;
   denom=s.denom;
 }
 
 // Definitions of nonmember, nonfriend operators and functions:
 
 subspace combine(const subspace& s1, const subspace& s2)
-{ 
+{
   scalar d = s1.denom * s2.denom;
-  const mat& b1=s1.basis, b2=s2.basis;
-  int nr = b1.nro, nc = b2.nco;
+  const mat& b1=s1.basis;
+  const mat& b2=s2.basis;
   mat b = b1*b2;
-  scalar g=0; int n=nr*nc; scalar* bp=b.entries;
-  while ((n--)&&(g!=1)) g=gcd(g,*bp++);
+  scalar g = b.content();
   if(g>1)
     {
-      d/=g; bp=b.entries; n=nr*nc; while(n--) (*bp++)/=g;
+      d/=g; b/=g;
     }
-  vec p = s1.pivots[s2.pivots];
+  vec_i p = s1.pivots[s2.pivots];
   return subspace(b,p,d);
 }
- 
+
 //Don't think the following is ever actually used...
 mat expressvectors(const mat& m, const subspace& s)
-{ vec p = pivots(s);
+{ vec_i p = pivots(s);
   long   n = dim(s);
   mat ans(n,m.ncols());
   for (int i=1; i<=n; i++) ans.setrow(i, m.row(p[i]));
   return ans;
 }
- 
-//This one is used a LOT
-mat restrict_mat(const mat& m, const subspace& s, int cr)
-{ long i,j,k,d = dim(s), n=m.nro;
-  if(d==n) return m; // trivial special case, s is whole space
-  scalar dd = s.denom;
-  mat ans(d,d);
-  const mat& sb = s.basis;
-  scalar *ap, *a=m.entries, *b=sb.entries, *bp, *c=ans.entries, *cp, *pv=s.pivots.entries;
-  for(i=0; i<d; i++)
+
+//This one is used a lot:
+// M is nxn;
+// S is a subspace of dim d<=n with nxd basis B, whose pivotal rows are a multiple den of the dxd identity
+// return A such that den*M*B = B*A
+//
+// Algorithm: restricting to pivotal rows on both sides: B restricts to den*I and M to M1 (say), so
+// den*M1*B=den*A, so A=M1*B
+
+mat restrict_mat(const mat& M, const subspace& S, int cr)
+{
+  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  const mat& B = S.basis;
+  mat A = rowsubmat(M, S.pivots) * B;
+
+  if(cr) // optional check that S is invariant under M
     {
-      bp=b; k=n; ap=a+n*(pv[i]-1);
-      while(k--)
-	{
-	  cp=c; j=d;
-	  while(j--)
-	    {
-	      *cp++ += *ap * *bp++;
-	    }
-	  ap++;
-	}
-      c += d;
+      scalar m(DEFAULT_MODULUS);
+      int check = (S.denom*matmulmodp(M,B,m) == matmulmodp(B,A,m));
+      if (!check)
+        cerr<<"Error in restrict_mat: subspace not invariant!"<<endl;
     }
-// N.B. The following check is strictly unnecessary and slows it down, 
-// but is advisable! 
-  if(cr) {
-//  int check = 1, n = b.nrows();
-//  for (i=1; (i<=n) && check; i++)
-//  for (j=1; (j<=d) && check; j++)
-//   check = (dd*m.row(i)*b.col(j) == b.row(i)*ans.col(j));
-    int check = (dd*matmulmodp(m,sb,DEFAULT_MODULUS) == matmulmodp(sb,ans,DEFAULT_MODULUS));
-    if (!check) 
-      {
-	cerr<<"Error in restrict_mat: subspace not invariant!"<<endl;
-      }
-  }
-  return ans;
+  return A;
 }
- 
+
 subspace kernel(const mat& m1, int method)
 {
-   long rank, nullity, n, r, i, j;
+   long rank, nullity;
    scalar d;
-   vec pcols,npcols;
+   vec_i pcols,npcols;
    mat m = echelon(m1,pcols,npcols, rank, nullity, d, method);
-   int dim = m.ncols();
-   mat basis(dim,nullity);
-   for (n=1; n<=nullity; n++) basis.set(npcols[n],n,d);
-   for (r=1; r<=rank; r++)
-   { i = pcols[r];
-     for (j=1; j<=nullity; j++) basis.set(i,j, -m(r,npcols[j]));
+   mat basis(m.ncols(),nullity);
+   for (int n=1; n<=nullity; n++)
+     basis.set(npcols[n],n,d);
+   for (int r=1; r<=rank; r++)
+   {
+     int i = pcols[r];
+     for (int j=1; j<=nullity; j++)
+       basis.set(i,j, -m(r,npcols[j]));
    }
-   subspace ans(basis, npcols, d);
-   return ans;
+   return subspace(basis, npcols, d);
 }
- 
+
 subspace image(const mat& m, int method)
 {
-  vec p,np;
+  vec_i p,np;
   long rank, nullity;
   scalar d;
   mat b = transpose(echelon(transpose(m),p,np,rank,nullity,d,method));
-  subspace ans(b,p,d);
-  return ans;
+  return subspace(b,p,d);
 }
- 
-subspace eigenspace(const mat& m1, scalar lambda, int method)
+
+subspace eigenspace(const mat& m1, const scalar& lambda, int method)
 {
   mat m = addscalar(m1,-lambda);
-  subspace ans = kernel(m,method);
-  return ans;
+  return kernel(m,method);
 }
- 
-subspace subeigenspace(const mat& m1, scalar l, const subspace& s, int method)
+
+subspace subeigenspace(const mat& m1, const scalar& l, const subspace& s, int method)
 {
   mat m = restrict_mat(m1,s);
   subspace ss = eigenspace(m, l*(denom(s)),method);
-  subspace ans = combine(s,ss );
-  return ans;
+  return combine(s,ss );
 }
 
-subspace pcombine(const subspace& s1, const subspace& s2, scalar pr)
+subspace pcombine(const subspace& s1, const subspace& s2, const scalar& pr)
 {
   scalar   d = s1.denom * s2.denom;  // redundant since both should be 1
   const mat& b1=s1.basis,  b2=s2.basis;
   const mat& b = matmulmodp(b1,b2,pr);
-  const vec& p = s1.pivots[s2.pivots];
+  const vec_i& p = s1.pivots[s2.pivots];
   return subspace(b,p,d);
 }
 
-mat prestrict(const mat& m, const subspace& s, scalar pr, int cr)
-{ int i,j,k,d = dim(s), n=m.nro;
-  if(d==n) return m; // trivial special case, s is whole space
-  scalar dd = s.denom;  // will be 1 if s is a mod-p subspace
-  mat ans(d,d);
-  const mat& sb = s.basis;
-  scalar *ap, *a=m.entries, *b=sb.entries, *bp, *c=ans.entries, *cp, *pv=s.pivots.entries;
-  for(i=0; i<d; i++)
-    {
-      bp=b; k=n; ap=a+n*(pv[i]-1);
-      while(k--)
-	{
-	  cp=c; j=d;
-	  while(j--)
-	    {
-	      *cp += xmodmul(*ap , *bp++, pr);
-	      *cp = xmod(*cp, pr);
-	      cp++;
-	    }
-	  ap++;
-	}
-      cp=c; j=d;
-      while(j--)
-	{
-	  *cp = mod(*cp,pr);
-	  cp++;
-	}
-      c += d;
-    }
-  if(cr) {
-    const mat& left = dd*matmulmodp(m,sb,pr);
-    const mat& right = matmulmodp(sb,ans,pr);
-    int check = (left==right);
-    if (!check) 
-      {
-	cout<<"Error in prestrict: subspace not invariant!\n";
-      }
-  }
-  return ans;
-}
- 
-subspace oldpkernel(const mat& m1, scalar pr)   // using full echmodp
+// Same as restrict_mat, but modulo pr
+mat prestrict(const mat& M, const subspace& S, const scalar& pr, int cr)
 {
-   long rank, nullity, n, r, i, j;
-   vec pcols,npcols;
+  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  const mat& B = S.basis;
+  mat A = matmulmodp(rowsubmat(M, S.pivots), B, pr);
+
+  if(cr) // optional check that S is invariant under M
+    {
+      int check = (S.denom*matmulmodp(M,B,pr) == matmulmodp(B,A,pr));
+      if (!check)
+        cerr<<"Error in prestrict: subspace not invariant!"<<endl;
+    }
+  return A;
+}
+
+subspace oldpkernel(const mat& m1, const scalar& pr)   // using full echmodp
+{
+   long rank, nullity;
+   vec_i pcols,npcols;
    mat m = echmodp(m1,pcols,npcols, rank, nullity, pr);
-   int dim = m.ncols();
-   mat basis(dim,nullity);
-   for (n=1; n<=nullity; n++) basis.set(npcols[n],n,1);
-   for (r=1; r<=rank; r++)
-   { i = pcols[r];
-     for (j=1; j<=nullity; j++) basis.set(i,j, mod(-m(r,npcols[j]),pr));
+   mat basis(m.ncols(),nullity);
+   for (int n=1; n<=nullity; n++)
+     basis.set(npcols[n],n,scalar(1));
+   for (int r=1; r<=rank; r++)
+   {
+     int i = pcols[r];
+     for (int j=1; j<=nullity; j++)
+       basis.set(i,j, mod(-m(r,npcols[j]),pr));
    }
-   subspace ans(basis, npcols, 1);
-   return ans;
+   return subspace(basis, npcols, scalar(1));
 }
 
 // using echmodp_uptri, with no back-substitution
-subspace pkernel(const mat& m1, scalar pr)
+subspace pkernel(const mat& m1, const scalar& pr)
 {
-  long rank, nullity, i, j, jj, t, tt;
-  vec pcols,npcols;
+  long rank, nullity;
+  vec_i pcols,npcols;
   mat m = echmodp_uptri(m1,pcols,npcols, rank, nullity, pr);
-  int dim = m.ncols();
-  mat basis(dim,nullity);
-  for(j=nullity; j>0; j--)
+  mat basis(m.ncols(),nullity);
+  for(int j=nullity; j>0; j--)
     {
-      jj = npcols[j];
+      int jj = npcols[j];
       basis(jj,j) = 1;
-      for(i=rank; i>0; i--)
+      for(int i=rank; i>0; i--)
         {
           scalar temp = -m(i,jj);
-          for(t=rank; t>i; t--)
+          for(int t=rank; t>i; t--)
             {
-              tt=pcols[t];
+              int tt=pcols[t];
               temp -= xmodmul(m(i,tt),basis(tt,j),pr);
               temp = xmod(temp,pr);
             }
           basis(pcols[i],j) = mod(temp,pr);
         }
     }
-  subspace ans(basis, npcols, 1);
-  return ans;
-}
- 
-subspace pimage(const mat& m, scalar pr)
-{
-  vec p,np;
-  long rank, nullity;
-  const mat& b = transpose(echmodp(transpose(m),p,np,rank,nullity,pr));
-  subspace ans(b,p,1);
-  return ans;
-}
- 
-subspace peigenspace(const mat& m1, scalar lambda, scalar pr)
-{
-  const mat& m = addscalar(m1,-lambda);
-  subspace ans = pkernel(m,pr);
-  return ans;
+  return subspace(basis, npcols, scalar(1));
 }
 
-subspace psubeigenspace(const mat& m1, scalar l, const subspace& s, scalar pr)
+subspace pimage(const mat& m, const scalar& pr)
+{
+  vec_i p,np;
+  long rank, nullity;
+  const mat& b = transpose(echmodp(transpose(m),p,np,rank,nullity,pr));
+  return subspace(b,p,scalar(1));
+}
+
+subspace peigenspace(const mat& m1, const scalar& lambda, const scalar& pr)
+{
+  const mat& m = addscalar(m1,-lambda);
+  return pkernel(m,pr);
+}
+
+subspace psubeigenspace(const mat& m1, const scalar& l, const subspace& s, const scalar& pr)
 {
   const mat& m = prestrict(m1,s,pr);
   const subspace& ss = peigenspace(m, l*(denom(s)),pr);
-  subspace ans = pcombine(s,ss,pr);
-  return ans;
+  return pcombine(s,ss,pr);
 }
 
 
 //Attempts to lift from a mod-p subspace to a normal Q-subspace by expressing
 //basis as rational using modrat and clearing denominators
 //
-int lift(const subspace& s, scalar pr, subspace& ans, int trace)
+int lift(const subspace& s, const scalar& pr, subspace& ans)
 {
   scalar dd;
   mat m;
-  if (liftmat(s.basis,pr,m,dd,trace))
-    {
-      ans = subspace(m, pivots(s), dd);
-      return 1;
-    }
-  return 0;
+  int ok = liftmat(s.basis,pr,m,dd);
+  if (!ok)
+    cerr << "Failed to lift subspace from mod "<<pr<<endl;
+  ans = subspace(m, pivots(s), dd);
+  return ok;
 }

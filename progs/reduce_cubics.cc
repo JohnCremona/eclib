@@ -1,7 +1,7 @@
 // reduce_cubics.cc: Program for reducing integer binary cubic forms
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -55,10 +55,10 @@ int main()
 	}
       else
 	{
-	  bigfloat alpha = g.real_root();
+	  //bigfloat alpha = g.real_root();
 	  //cout << "Real root alpha = " << alpha << endl;
-	  bigfloat xa=I2bigfloat(a), xb=I2bigfloat(b), xc=I2bigfloat(c), xd=I2bigfloat(d);
-	  bigfloat ga = ((xa*alpha+xb)*alpha+xc)*alpha+xd;
+	  //bigfloat xa=I2bigfloat(a), xb=I2bigfloat(b), xc=I2bigfloat(c), xd=I2bigfloat(d);
+	  //bigfloat ga = ((xa*alpha+xb)*alpha+xc)*alpha+xd;
 	  //cout << "g(alpha) = " << ga << endl;
 // First use Mathews reduction
 	  cout << "Using Mathews reduction ...\n";

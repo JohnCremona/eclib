@@ -5,7 +5,7 @@
 2 points entered:[ [-1870:9257:8] [-197:1984:1] ]
 Saturation index bound (for points of good reduction)  = 4
 Tamagawa index primes are [ 2 5 ]
-adding Tamagawa index prime 5 to saturation list
+Saturation primes are now[ 2 3 5 ]
 Checking saturation at [ 2 3 5 ]
 Checking 2-saturation 
 Points were proved 2-saturated (max q used = 17)

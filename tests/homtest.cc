@@ -1,7 +1,7 @@
 // FILE HOMTEST.CC: Test program for homspace class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -37,8 +37,7 @@ int main(void)
  int plus=1;
  int verbose=0;
  int cuspidal=0;
- long *dims = new long[3];
- long *cdims = new long[3];
+ vector<long> dims(3), cdims(3);
  // cout << "Verbose? "; cin >> verbose;
  // cout << "Plus space, minus space or full space (+1,-1,0)? "; cin >> plus;
  int s,limit; 
@@ -72,7 +71,7 @@ int main(void)
 	cout << plus << ": ";
 	cout << "\tDimension = " << dim;
 	cout << "\tCuspidal dimension = " << cdim;
-	if(d*cd>1) cout<<" denoms ("<<d<<","<<cd<<")";
+	if(d*cd>1 &&verbose) cout<<" denoms ("<<d<<","<<cd<<")";
 #ifdef SHOW_TIMES
 	show_time();
 #endif
@@ -98,6 +97,4 @@ int main(void)
   //  show_time();
 }       // end of if(n)
 }       // end of while()
-  delete[] dims;
-  delete[] cdims;
 }       // end of main()

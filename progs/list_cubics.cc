@@ -50,7 +50,7 @@ int main()
 {
   initprimes("PRIMES");
   bigint disc, absdisc, maxdisc;
-  int neg, verbose=0, include_reducibles=1, gl2=0, single=0;
+  int verbose=0, include_reducibles=1, gl2=0, single=0;
 
   cerr << "Verbosity level (0, 1 or 2): ";
   cin >> verbose;
@@ -88,7 +88,7 @@ int main()
           cerr << "Use GL(2,Z)-equivalence instead of SL(2,Z)? (0 or 1): ";
           cin >> gl2;
 
-          neg=(maxdisc<0);
+          int neg=(maxdisc<0);
 
           cout << (include_reducibles? "Cubics with ": "Irreducible cubics with ");
           cout << (neg? "negative discriminant down to ": "positive discriminant up to ");

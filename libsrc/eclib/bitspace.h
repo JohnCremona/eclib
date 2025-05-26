@@ -1,7 +1,7 @@
 // bitspace.h: declaration of class bitspace for handling F_2 spaces
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -24,16 +24,17 @@
 #if     !defined(_ECLIB_BITSPACE_H)
 #define _ECLIB_BITSPACE_H      1       //flags that this file has been included
 
+#include <eclib/templates.h>
+
 class bitspace {
 private: 
   long maxdim;
   long dim;
-  long * pivs; // holds the position of the ith pivot
-  unsigned long * gens; // holds the ith basis element
-  unsigned long bitmask;   // holds the bits of the pivs
+  vector<long> pivs;          // holds the position of the ith pivot
+  vector<unsigned long> gens; // holds the ith basis element
+  unsigned long bitmask;      // holds the bits of the pivs
 public:
-  bitspace(long d);
-  ~bitspace();
+  explicit bitspace(long d);
   unsigned long getbitmask() {return bitmask;}
   long reduce(unsigned long& v, long start=0) const; 
   // reduces v mod this, returns minimal i such that the reduced v has 

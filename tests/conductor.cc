@@ -1,7 +1,7 @@
 // conductor.cc: program to call Tate's algorithm and display conductors
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

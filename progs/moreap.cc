@@ -1,7 +1,7 @@
 // FILE moreap.cc: computes more ap for given level(s)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -34,7 +34,7 @@
 int main(void)
 {
  int n=1; 
- int lastn, stopp, output, showeigs, showforms, findcurves;
+ int stopp, output, showeigs, showforms, findcurves;
  int nnf, nap;
  cout << "Program moreap\n";
  cout << "---------------\n\n";
@@ -48,6 +48,7 @@ int main(void)
  if(findcurves) set_precision(60);
 #endif
 #ifdef AUTOLOOP
+ int lastn;
  cout << "How many primes for Hecke eigenvalues? ";
  cin  >> stopp; cout << endl;
  cout<<"Enter first and last N: ";cin>>n>>lastn; n--;
@@ -85,7 +86,7 @@ int main(void)
     }
   if(findcurves)
     {
-      int inf, nnf = nf.n1ds;
+      int inf;
       // Now we compute the curves
       cout<<"Computing "<<nnf<<" curves...\n";
       vector<int> forms;

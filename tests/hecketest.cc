@@ -1,7 +1,7 @@
 // FILE HECKETEST.CC  -- Test program for Hecke operators
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -33,8 +33,8 @@
 #include <eclib/cusp.h>
 #include <eclib/homspace.h>
 #include <eclib/smatrix_elim.h>
-#include <eclib/mmatrix.h>
-#include <eclib/msubspace.h>
+#include <eclib/matrix.h>
+#include <eclib/subspace.h>
 
 //#define AUTOLOOP
 //#define COMPARE_OLD
@@ -47,7 +47,7 @@ double sparsity(const mat& m);
 vector<long> eigrange(long p)
 {
   long aplim=3, four_p=p<<2;
-  while (aplim*aplim<=four_p) aplim++; 
+  while (aplim*aplim<=four_p) aplim++;
   aplim--;
   vector<long> ans(1+2*aplim);
   iota(ans.begin(),ans.end(),-aplim);
@@ -68,8 +68,8 @@ int main(void)
  int verbose=0;
  cout << "See the hecke matrices (0/1)? "; cin >> verbose;
  cout << "Plus space (0/1)? "; cin >> plus;
- int limit; 
 #ifdef AUTOLOOP
+     int limit; 
      cout<<"Enter limit on level: ";cin>>limit;
      while (n<limit) { n++;
 #else
@@ -88,17 +88,17 @@ int main(void)
  int nq = badprimes.size(); int firstq=0;  // =0 for all W's
  if (genus>0)
    {
-   mat_m id = idmat(genus);
+   mat_m id = mat_m::identity_matrix(genus);
    mat_m id2 = den2*id;
-   mat_m* wqlist = new mat_m[nq];
+   vector<mat_m> wqlist(nq);
    cout << "Computing conjmat...  " << flush;
    smat conjmat = hplus.s_conj(1);
    cout<<" done."<<endl;
    cout << "Computing +1 eigenspace...  " << flush;
-   ssubspace h1plus = eigenspace(conjmat,den);
+   ssubspace h1plus = eigenspace(conjmat,den, MODULUS);
    cout<<" done, dimension = "<<dim(h1plus)<<endl;
    cout << "Computing -1 eigenspace...  " << flush;
-   ssubspace h1minus = eigenspace(conjmat,-den);
+   ssubspace h1minus = eigenspace(conjmat,-den, MODULUS);
    cout<<" done, dimension = "<<dim(h1minus)<<endl;
 
    int w_eigs=0;
@@ -117,10 +117,11 @@ int main(void)
 	}
       if(w_eigs) {
       smat swq(wq);
-      int e; long mult;
+      int e;
       for(e=1; e>-2; e-=2)
 	{
-	  /*
+          long mult;
+          /*
 	  cout<<"Using modular matrix code..."<<flush;
 	  start_time();
 	  mult=dim(peigenspace(wq,e*den,MODULUS));
@@ -130,15 +131,15 @@ int main(void)
 	  */
 	  cout<<"Using sparse matrix code..."<<endl;
 	  start_time();
-	  mult=dim(eigenspace(swq,e*den));
+	  mult=dim(eigenspace(swq,e*den, MODULUS));
 	  stop_time();
 	  show_time(cerr); cerr<<endl;
 	  cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;
 	}
       }
-      wqlist[i]=wq;
+      wqlist[i] = to_mat_m(wq);
 #ifdef CHECK_COMMUTE
-      if (mult_mod_p(swq,swq,MODULUS)==den*den*sidmat(genus)) 
+      if (mult_mod_p(swq,swq,MODULUS) == smat::scalar_matrix(genus, den*den));
 	cout << "Involution!" << "\n";
       else
 	cout << "NOT an involution...." << "\n";
@@ -149,7 +150,7 @@ int main(void)
 
    int np=5,ip=0; 
    cout<<"How many T_p? "; cin>>np;
-   mat_m* tplist = new mat_m[np];
+   vector<mat_m> tplist(np);
    for (primevar pr(np+nq); pr.ok()&&ip<np; pr++, ip++)
      {while (n%pr==0) pr++;
       int p=pr;
@@ -157,12 +158,12 @@ int main(void)
 #ifdef COMPARE_OLD
       cout<<endl;
       start_time();
-      mat_m temp = hplus.heckeop(p,verbose);
+      mat_m temp = mat_m(hplus.heckeop(p,verbose));
       stop_time();
       cout<<"Time for old method: "; show_time(cerr); cerr<<endl;
 #endif // COMPARE_OLD
       start_time();
-      mat tp = hplus.newheckeop(p,verbose);
+      mat_m tp = to_mat_m(hplus.newheckeop(p,verbose));
       if(verbose)
 	{
 	  cout<<"Computed matrix "; 
@@ -182,7 +183,7 @@ int main(void)
 #ifdef TEST_EIGS
       vector<long> eigs = eigrange(p); // hplus.eigrange(nq+ip);
       cout<<"\nChecking for eigenvalues from "<<eigs<<endl;
-      long i,j,k,n=genus,r;
+      long i,j,k;
       long nulty, nulty1, totalmult=0;
       SCALAR dummy;
       mat m = tplist[ip].shorten(dummy);
@@ -219,9 +220,9 @@ int main(void)
 	}
 
       mat_ZZ M;
-      M.SetDims(n,n);
-      for(i=1; i<=n; i++) 
-	for(j=1; j<=n; j++) 
+      M.SetDims(genus,genus);
+      for(i=1; i<=genus; i++) 
+	for(j=1; j<=genus; j++) 
 	  M(i,j)=m(i,j);
       //      cout<<"NTL matrix = "<<M<<endl;
 
@@ -261,13 +262,13 @@ int main(void)
 	  cout<<"done, denom(ker)="<<denker; show_time(cerr); cout<<endl;
 	  if(nulty<21) 
 	    cout<<"Restriction of Tp to relevant subspace = \n" << MTR << endl;
-	  
+
 	  mat_ZZ Msub;
 	  Msub.SetDims(nulty,nulty);
 	  for(i=1; i<=nulty; i++) 
 	    for(j=1; j<=nulty; j++) 
 	      Msub(i,j)=MTR(i,j);
-	  
+
 	  ZZX cptp; ZZ cont;
 	  cout<<"computing char poly..."<<flush;
 	  start_time();
@@ -355,7 +356,7 @@ int main(void)
       cout<<"Total multiplicity of rational eigenvalues = "<<totalmult<<endl;
 #endif // TEST_EIGS
 #ifdef CHECK_COMMUTE
-      bigint P = BIGINT(MODULUS);
+      bigint P(MODULUS);
       for (int kp=firstq; kp<nq; kp++)
 	{if (matmulmodp(wqlist[kp],tplist[ip],P)!=matmulmodp(tplist[ip],wqlist[kp],P))
 	   {
@@ -370,7 +371,6 @@ int main(void)
 	}
 #endif //CHECK_COMMUTE
      } // loop on p
-   delete[] wqlist; delete[] tplist;
    }      // end of if(genus>0)
  }       // end of if(n)
      }       // end of while(n>1) or while(n<limit)

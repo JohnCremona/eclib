@@ -1,7 +1,7 @@
 // file pcprocs.cc: implementation of functions used to compute periods
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -79,7 +79,8 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 
   for(d=nf_d; (d<dmax)||(!have_both); d++)
     {
-      if(gcd(modulus,d)!=1) continue; long d2=d/2;
+      if(gcd(modulus,d)!=1) continue;
+      long d2=d/2;
       b1 = 1;
       if(d==nf_d) b1=nf_b;
       //      for(b=b1; (b<=d2)&&(!have_both); b++)
@@ -120,7 +121,6 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 		 if(d<lplus) 
 		   {
 		     x0=x*to_bigfloat(drx)/to_bigfloat(nrx);
-		     rp_fixed=1;
 		     if(verbose>1)
 		       cout<<"replacing original x0 by "<<x0
 			   <<" (which is more accurate since "<<d<<" < "<<lplus
@@ -155,10 +155,10 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 	  if(!have_both && (x>0.001) && (y>0.001) && trust_denom(dry))
 	    {
 	      have_both=1;
-	      if(trust_denom(drx)) {nrx0=nrx; drx0=drx;} 
+	      if(trust_denom(drx)) {nrx0=nrx; drx0=drx;}
 	      nry0=nry; dry0=dry;
-             //              cout<<"nrx0="<<nrx0<<endl;	      
-             //              cout<<"drx0="<<drx0<<endl;	      
+             //              cout<<"nrx0="<<nrx0<<endl;
+             //              cout<<"drx0="<<drx0<<endl;
 	      nflist[i].a=a;
 	      nflist[i].b=b;
 	      nflist[i].c=c;
@@ -186,7 +186,7 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
     cout<<"dotplus  ="<<dotplus<<endl;
     cout<<"dotminus ="<<dotminus<<endl;
   }
-  if(!have_both) {a=d=1; b=c=0; dotplus=dotminus=0;}
+  // if(!have_both) {a=d=1; b=c=0; dotplus=dotminus=0;}
   return have_both;
 }
 
@@ -231,7 +231,6 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 
   bigcomplex w1, w2; bigcomplex c4, c6;
   bigfloat x1=x0, y1=y0;
-  bigfloat c4err, c6err, c4c6err;
   for(nx=1; (nx<=maxnx); nx++)
     {x1=x0/to_bigfloat(nx);
     for(ny=1; (ny<=maxny); ny++)
@@ -241,7 +240,7 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 	  {
 	    if(type==2){w1=bigcomplex(x1,zero); w2=bigcomplex(zero,y1);}
 	    else {w1=bigcomplex(2*x1,zero); w2=bigcomplex(x1,y1);}
-	    bigcomplex tau=normalize(w1,w2);
+	    normalize(w1,w2);
 	    getc4c6(w1,w2,c4,c6);
             if (detail>1)
               {
@@ -258,10 +257,6 @@ int get_curve(long n, long fac, long maxnx, long maxny,
                 cout<<"ic4 = "<<ic4<<endl;
                 cout<<"ic6 = "<<ic6<<endl;
               }
-            c4err = abs(I2bigfloat(ic4)-real(c4));
-            c6err = abs(I2bigfloat(ic6)-real(c6));
-            c4c6err = max(c4err, c6err);
-	    int close = (c4c6err<0.001);
 	    int validc4c6 = 0;
             validc4c6 = valid_invariants(ic4,ic6);
             if((validc4c6)&&detail)
@@ -276,11 +271,7 @@ int get_curve(long n, long fac, long maxnx, long maxny,
               {
                 if (detail>1) cout << "Invalid c-invariants" << endl;
               }
-            // We relax the closeness criterion here, but do not
-            // ignore it completely since there have been cases where
-            // c4,c6 were valid & give the right conductor but are not
-            // actually correct.
-	    close = (c4c6err<0.01);
+
 	    if(validc4c6)
 	      {
 		Curve C(ic4,ic6);
@@ -359,12 +350,12 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 
 int newforms::find_lminus(long i, long lmax, const bigfloat& y1)
 {
-  long nry, dry, ell;
+  long nry, dry;
   lfchi lx(this,&(nflist[i]));
   long mm=0;
   for(primevar l; ((l<lmax)||(lmax==0))&&(mm==0); l++)
     {
-      ell = l; 
+      long ell = l;
       if(ell%4!=3) continue;
       if(legendre(-modulus,ell)!=nflist[i].sfe) continue;  // skip this l
       lx.compute(ell);

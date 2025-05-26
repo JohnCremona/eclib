@@ -38,7 +38,7 @@ Initial slice; length? Slice = [1]
 Now v = [1]
 General slice; beginning, end? Slice = [1]
 Now v = [1]
-w = [2]; vecgcd(w) = 2
+w = [2]; content(w) = 2
 After makeprimitive(w), w = [1]
 u = [0]
 After swapvec(u,v):

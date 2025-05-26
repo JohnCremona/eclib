@@ -1,7 +1,7 @@
 // FILE threadpool.h : Declaration of class threadpool
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 Marcus Mo
+// Copyright 1990-2023 Marcus Mo
 // 
 // This file is part of the eclib package.
 // 
@@ -33,7 +33,8 @@
 #include <stdlib.h>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/future.hpp>
-#include <boost/asio/io_service.hpp>
+#include <boost/asio/io_context.hpp>
+#include <boost/asio/post.hpp>
 #include <boost/shared_ptr.hpp>
 
 class threadpool {
@@ -61,7 +62,7 @@ class threadpool {
       }
 
       // Add reference to new task to job queue
-      io_service_.post( boost::bind< void >( boost::ref( task ) ) );
+      boost::asio::post(io_context_, boost::bind< void >( boost::ref( task ) ) );
     }
 
     unsigned int getThreadCount();
@@ -72,8 +73,8 @@ class threadpool {
     unsigned int threadCount_;
              int verbose_;
 
-    boost::asio::io_service io_service_;
-    boost::shared_ptr< boost::asio::io_service::work > work_;
+    boost::asio::io_context io_context_;
+    boost::asio::executor_work_guard<boost::asio::io_context::executor_type> work_;
     boost::thread_group     threads_;
     
 };

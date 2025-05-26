@@ -1,7 +1,7 @@
 // interface.cc: implementation of non-inline functions from interface.h
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -23,9 +23,7 @@
  
 #include <eclib/interface.h>
 
-// integers and rationals
-
-int I2int(const ZZ& x)
+int I2int(const bigint& x)
 {
   if(IsZero(x)) return 0;
   if(!is_int(x)) 
@@ -102,8 +100,9 @@ void Compute_Euler(RR& y)
   bigfloat u, v, a, b, c;
 
   l = RR::precision();
+  RR::SetPrecision(l+20);
 
-  x = 1 + static_cast<long>((0.25 * (l - 3)) * (NTL_BITS_PER_LONG * LOG2));
+  x = 1 + static_cast<long>(0.25 * (l - 3));
   n = 1 + static_cast<long>(3.591 * x);
 
   a=x;
@@ -111,7 +110,7 @@ void Compute_Euler(RR& y)
   if (sign(u) > 0)  u=-u;
   a=u;
   v=b=to_bigfloat(1);
-  
+
   for (k = 1; k <= n; k++) {
     mul(b, b, x);
     mul(b, b, x);
@@ -124,6 +123,7 @@ void Compute_Euler(RR& y)
     add(u, u, a);
     add(v, v, b);
   }
+  RR::SetPrecision(l);
   div(y, u, v);
 }
 

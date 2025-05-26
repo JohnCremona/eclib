@@ -1,7 +1,7 @@
 // smat_elim.cc: implementation of class smat_elim
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -25,19 +25,6 @@
 //  original written by Luiz Figueiredo
 
 #include <eclib/timer.h>
-
-
-inline scalar xmm(scalar a, scalar b, scalar m)
-{
-  if (a==1) return b;
-  if (a==-1) return -b;
-  if (b==1) return a;
-  if (b==-1) return -a;
-  //return xmodmul(a,b,m);
-  //return (a*b) % m;
-  return (a*(int64_t)b) % m;
-  //return (scalar)(((long)a*(long)b) % (long)m);
-}
 
 #if(0)
 // This special version only works modulo BIGPRIME, not a general modulus:
@@ -75,22 +62,6 @@ inline scalar xmm0(scalar a, scalar b)
 }
 
 #endif
-
-inline scalar addmod0(scalar a, scalar b)
-{
-  scalar c=a+b;
-  c += ((c<0)?DEFAULT_MODULUS:0);
-  c -= ((c>=DEFAULT_MODULUS)?DEFAULT_MODULUS:0);
-  return c;
-}
-
-inline scalar addmod(scalar a, scalar b, scalar mod)
-{
-  scalar c=a+b;
-  c += ((c<0)?mod:0);
-  c -= ((c>=mod)?mod:0);
-  return c;
-}
 
 //#define TRACE_LISTS
 //#define TRACE_FIND
@@ -131,7 +102,7 @@ smat_elim::list::grow()
 }
 
 int
-smat_elim::list::find( type& X, int ub, int lb )
+smat_elim::list::find( const type& X, int ub, int lb )
 {
   // returns highest  number i, lb <= i <= ub, such that list_array[i] <= X 
   // or returns ub+1 if list_array[ub]<X
@@ -404,7 +375,7 @@ void smat_elim::sparse_elimination( )
 #endif
 }
 
-smat smat_elim::kernel( vec& pc, vec& npc)
+smat smat_elim::kernel( vec_i& pc, vec_i& npc)
 {
   return old_kernel(pc, npc);
 }
@@ -414,10 +385,12 @@ smat smat_elim::kernel( vec& pc, vec& npc)
 
 #define TRACE_ELIM 0
 
-smat smat_elim::new_kernel( vec& pc, vec& npc)
+smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
 {
-  int i,ic,ir, j, jj, ip, t,tt, n, r, c;
-  scalar v, w;
+  int i,ir, j, jj, t, r, c;
+  scalar v;
+  static const scalar zero(0);
+  static const scalar one(1);
 
 #if TRACE_ELIM
   cout<<"Starting sparse_elimination()..."<<flush;
@@ -515,7 +488,7 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
 
    */
 
-  smat basis( nco, nullity );
+  smat bas( nco, nullity );
 
   /* First set the identity block */
 
@@ -525,9 +498,9 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
   for(j=1; j<=nullity; j++)
     {
       jj = npc[j]-1;  // NB constructor gives this much
-      basis.col[jj][0] = 1; // 1 entry in this row
-      basis.col[jj][1] = j; // in column 1
-      basis.val[jj][0] = 1; // with value 1
+      bas.col[jj][0] = 1; // 1 entry in this row
+      bas.col[jj][1] = j; // in column 1
+      bas.val[jj][0] = one; // with value 1
     }
 
   /* set the other entries in order */
@@ -561,7 +534,7 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
       int nv=0; // counts # non-zero v
 
       for(t=0; t<rank; t++)
-        R[t] = (t<i?0:elem(ir+1, position[elim_row[t]]));
+        R[t] = (t<i? zero : elem(ir+1, position[elim_row[t]]));
 
       for(j=0; j<nullity; j++) // set B[i][j], using B[t][j] for t>i
         {
@@ -572,10 +545,10 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
           while(t--)
             {
               rr = *Rt--;
-              if (rr)
+              if (is_nonzero(rr))
                 {
                   ss = (*Bt)[j];
-                  if (ss)
+                  if (is_nonzero(ss))
                     {
                       v = mod(v - xmodmul(rr, ss, modulus), modulus);
                     }
@@ -583,7 +556,7 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
               Bt--; // must be outside the if(rr)
             }
           *bij++ = v;
-          if (v)
+          if (is_nonzero(v))
             {
               nv++;
               *bij_nz++ = v;
@@ -594,15 +567,15 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
       cout<<" setting row "<< position[ir]-1 <<" (from 0) of basis: "<< nv <<" non-zero entries out of "<<nullity<<endl;
 #endif
       ir = position[ir]-1;
-      co = basis.col[ir];
-      va = basis.val[ir];
+      co = bas.col[ir];
+      va = bas.val[ir];
       if (nv > co[0]) // there are more entries in this row than the
                       // constructor gave us
         {
           delete [] co;
           delete [] va;
-          co = basis.col[ir] = new int[nv+1];
-          va = basis.val[ir] = new scalar[nv];
+          co = bas.col[ir] = new int[nv+1];
+          va = bas.val[ir] = new scalar[nv];
         }
       *co++ = nv;
       size_t nbytes = nv*sizeof(int);
@@ -634,15 +607,16 @@ smat smat_elim::new_kernel( vec& pc, vec& npc)
   cout<<endl;
 
   cout<<"Finished constructing basis for kernel"<<endl;
-  cout<<" basis = "<<basis.as_mat()<<endl;
+  cout<<" basis = "<<bas.as_mat()<<endl;
 #endif
 
-  return basis;
+  bas.reduce_mod_p(modulus);
+  return bas;
 }
 
 // old version of kernel which uses back_sub()
 
-smat smat_elim::old_kernel( vec& pc, vec& npc)
+smat smat_elim::old_kernel( vec_i& pc, vec_i& npc)
 {
   int i,n,r;
 #if TRACE_ELIM
@@ -666,7 +640,7 @@ smat smat_elim::old_kernel( vec& pc, vec& npc)
 #endif
 
     }
-  smat basis( nco, nullity );
+  smat bas( nco, nullity );
   pc.init( rank );
   npc.init( nullity );
 
@@ -695,17 +669,17 @@ smat smat_elim::old_kernel( vec& pc, vec& npc)
 #endif
   for( n = 1; n <= nullity; n++ )
     { 
-      int i = npc[n]-1;
-      basis.col[i][0] = 1;      //this much storage was granted in the
-      basis.col[i][1] = n;      // in the constructor.
-      basis.val[i][0] = 1;
+      i = npc[n]-1;
+      bas.col[i][0] = 1;      //this much storage was granted in the
+      bas.col[i][1] = n;      // in the constructor.
+      bas.val[i][0] = 1;
     }
 
   scalar *aux_val = new scalar [nco];
   int *aux_col = new int [nco];
   for ( r=1; r<=rank; r++)
     { 
-      int i = pc[r]-1;
+      i = pc[r]-1;
       int count = 0;
       int *axp = aux_col; scalar *axv = aux_val;
       int *posB = col[new_row[r-1]];
@@ -715,12 +689,12 @@ smat smat_elim::old_kernel( vec& pc, vec& npc)
 	while( *posB < npc[j] && h < d ) { posB++; h++; }
 	if( *posB == npc[j] ) {	*axp++ = j; *axv++ = -valB[h]; count++; }
       }
-      delete [] basis.col[i];
-      delete [] basis.val[i];
-      basis.col[i] = new int [count + 1];
-      basis.val[i] = new scalar [count];
-      int *pos = basis.col[i];
-      scalar *val = basis.val[i];
+      delete [] bas.col[i];
+      delete [] bas.val[i];
+      bas.col[i] = new int [count + 1];
+      bas.val[i] = new scalar [count];
+      int *pos = bas.col[i];
+      scalar *vali = bas.val[i];
       axp = aux_col;
       axv = aux_val;
       *pos++ = count;
@@ -728,17 +702,18 @@ smat smat_elim::old_kernel( vec& pc, vec& npc)
       size_t nbytes = count*sizeof(int);
       memmove(pos,axp,nbytes);
       nbytes = count*sizeof(scalar);
-      memmove(val,axv,nbytes);
-      // for( n = 0; n < count; n++ ) { *pos++ = *axp++; *val++ = *axv++; }
+      memmove(vali,axv,nbytes);
+      // for( n = 0; n < count; n++ ) { *pos++ = *axp++; *vali++ = *axv++; }
     }
   delete[]new_row;
   delete[]aux_val;
   delete[]aux_col;
+  bas.reduce_mod_p(modulus);
 #if TRACE_ELIM
   cout<<"Finished constructing basis for kernel"<<endl;
-  cout<<"Basis = "<<basis.as_mat()<<endl;
+  cout<<"Basis = "<<bas.as_mat()<<endl;
 #endif
-  return basis;
+  return bas;
 }
 
 void smat_elim::step0()
@@ -842,10 +817,10 @@ void smat_elim::step3()
   int col0,col1;
   //  for( col0 = 0; col0 < nco; col0++ ) {
   for( col0 = nco-1; col0 >=0; col0-- ) {
-    scalar val = (column+col0)->num;
-    if( val == 2 || val == 1 ) {col1=col0+1; L.put(col1);}
+    int vali = (column+col0)->num;
+    if( vali == 2 || vali == 1 ) {col1=col0+1; L.put(col1);}
   }
-  
+
   while( (col0 = L.next()) != -1 ) {
     if( (column+col0-1)->num < 1 ) continue;
     int row = (column+col0-1)->next();
@@ -870,12 +845,12 @@ void smat_elim::step4 ( )
     }
   int M0 = maxcolwt; // max(20, int(maxcolwt/10)); // 20;
   int Mstep = int(maxcolwt/100);
-  float Mscale = 0.9;
   if (Mstep==0) Mstep=1;
 #if TRACE_ELIM
   cout<<"Step 4, max column weight = "<<maxcolwt<<endl;  
 #endif
 
+  //float Mscale = 0.9;
   //for( M = M0; M >= 4; M--)
   //for( M = M0; M >= 3; M*=Mscale)
   for( M = M0; M >= 3; M-=Mstep)
@@ -1005,7 +980,7 @@ void smat_elim::normalize( int row, int col0)
   }
 }
 
-void smat_elim::eliminate( int& row, int& col0 ) //1<=col0<=nco;
+void smat_elim::eliminate( const int& row, const int& col0 ) //1<=col0<=nco;
 {
   //cout<<"Eliminating (r,c)=("<<row<<","<<col0-1<<")"<<endl;
   elim_col[ col0 - 1 ] = row;
@@ -1127,11 +1102,11 @@ void smat_elim::check_row (int d, int row2, list& L )
 }
 void smat_elim::check_col( int c, list& L ) 
 {
-  int c1, val = (column+c)->num;
-  if( val == 2 || val == 1 ) {c1=c+1; L.put(c1);}
+  int vali = (column+c)->num;
+  if( vali == 2 || vali == 1 ) {L.put(c+1);}
 }
 
-int smat_elim::get_weight( int row, int* lightness ) 
+int smat_elim::get_weight( int row, const int* lightness ) 
 {
   int wt = 0;
   int *pos = col[row];
@@ -1140,7 +1115,7 @@ int smat_elim::get_weight( int row, int* lightness )
   return wt;
 }
 
-int smat_elim::has_weight_one( int row, int* lightness )
+int smat_elim::has_weight_one( int row, const int* lightness )
 {
   int wt = 0;
   int *pos = col[row];
@@ -1273,17 +1248,14 @@ void smat_elim::step5dense()
       return;
     }
   mat dmat(nrr, nrc);
-  map<int,scalar>::const_iterator vi;
-  vector<int>::const_iterator rci;
   for (i=0; i<nrr; i++)
     {
       svec v = row(remaining_rows[i]);
       j=0;
-      for(vi=v.entries.begin();
-          vi!=v.entries.end(); vi++)
+      for( const auto& vi : v.entries)
         {
-          while (remaining_cols[j]<(vi->first)) j++;
-          dmat.set(i+1,j+1,vi->second);
+          while (remaining_cols[j]<(vi.first)) j++;
+          dmat.set(i+1,j+1,vi.second);
         }
     }
 
@@ -1292,15 +1264,12 @@ void smat_elim::step5dense()
 #if TRACE_DENSE
   cout<<"Constructed dense matrix, starting dense elimination step..." <<endl;
 #endif
-  vec pc,npc; long rk,ny;
+  vec_i pc,npc; long rk,ny;
 
-#if FLINT_LEVEL==0
-    //    dmat = echmodp_uptri(dmat,pc,npc,rk,ny,modulus);
-    dmat = ref_via_ntl(dmat,pc,npc,rk,ny,modulus);
-#else
-    dmat = ref_via_flint(dmat,pc,npc,rk,ny,modulus);
-#endif
-    #if TRACE_DENSE
+  // this will call ref_via_ntl() if FLINT, else ref_via_flint()
+  dmat = rref(dmat,pc,npc,rk,ny,modulus);
+
+#if TRACE_DENSE
     cout<<"...finished dense elimination, rank = "<<rk;
     cout<<", nullity = "<<ny<<endl;
     //cout<<"Pivotal columns:    "<<pc<<endl;
@@ -1317,7 +1286,7 @@ void smat_elim::step5dense()
   for(i=1; i<=nrd; i++)
     {
       rowi.clear();
-      for(int j=1; j<=nrc; j++)
+      for(j=1; j<=nrc; j++)
         rowi.set(remaining_cols[j-1],dmat(i,j));
       setrow(remaining_rows[i-1],rowi);
     }
@@ -1332,7 +1301,7 @@ void smat_elim::step5dense()
 #endif
   for(i=1; i<=nrd; i++) 
     {
-      if (xmod(dmat(i,pc[i])-1,modulus))
+      if (is_nonzero(xmod(dmat(i,pc[i])-1,modulus)))
         cout<<"Bad pivot #"<<i<<" ("<<dmat(i,pc[i])<<")"<<endl;
       int r = remaining_rows[i-1]-1;
       int c = remaining_cols[pc[i]-1];
@@ -1345,7 +1314,6 @@ void smat_elim::step5dense()
 #endif
 }
 
-
 long smat::rank(scalar mod)
 {
   smat_elim sme(*this,mod);
@@ -1353,20 +1321,16 @@ long smat::rank(scalar mod)
   return sme.get_rank();
 }
 
-ssubspace::ssubspace(int n) 
- :pivots(iota((scalar)n)),basis(sidmat((scalar)n))
+ssubspace::ssubspace(int n)
+  :pivots(vec_i::iota(n)), basis(smat::identity_matrix(n))
 {}
 
-ssubspace::ssubspace(const smat& b, const vec& p, scalar mod)
+ssubspace::ssubspace(const smat& b, const vec_i& p, scalar mod)
   :modulus(mod),pivots(p),basis(b)
 {}
 
 ssubspace::ssubspace(const ssubspace& s)
   :modulus(s.modulus),pivots(s.pivots),basis(s.basis)
-{}
-
-// destructor -- no need to do anything as components have their own
-ssubspace::~ssubspace() 
 {}
 
 // assignment
@@ -1381,8 +1345,8 @@ void ssubspace::operator=(const ssubspace& s)
 
 ssubspace combine(const ssubspace& s1, const ssubspace& s2)
 {
-  scalar mod = s1.modulus;
-  return ssubspace(mult_mod_p(s1.basis,s2.basis,mod),s1.pivots[s2.pivots],mod);
+  scalar m = s1.modulus;
+  return ssubspace(mult_mod_p(s1.basis,s2.basis,m),s1.pivots[s2.pivots],m);
 }
  
 smat restrict_mat(const smat& m, const ssubspace& s)
@@ -1390,33 +1354,32 @@ smat restrict_mat(const smat& m, const ssubspace& s)
   return mult_mod_p(m.select_rows(pivots(s)),basis(s),s.modulus);
 }
  
-ssubspace kernel(const smat& sm, scalar mod)
+ssubspace kernel(const smat& sm, scalar m)
 {
-  vec pivs, npivs;
-  smat kern = smat_elim(sm,mod).kernel(npivs,pivs);
-  return ssubspace(kern,pivs,mod);
+  vec_i pivs, npivs;
+  smat kern = smat_elim(sm,m).kernel(npivs,pivs);
+  return ssubspace(kern,pivs,m);
 }
  
-ssubspace eigenspace(const smat& m1, scalar lambda, scalar mod)
+ssubspace eigenspace(const smat& sm, scalar lambda, scalar m)
 {
-  smat m = m1; m.sub_mod_p(lambda);
-  return kernel(m,mod);
+  smat m1 = sm; m1.sub_mod_p(lambda, m);
+  return kernel(m1, m);
 }
  
-ssubspace subeigenspace(const smat& m1, scalar l, const ssubspace& s)
+ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s, scalar m)
 {
-  return combine(s,eigenspace(restrict_mat(m1,s), l));
+  return combine(s,eigenspace(restrict_mat(sm,s), l, m));
 }
 
-
-ssubspace make1d(const vec& bas, long&piv, scalar mod) 
+ssubspace make1d(const vec& bas, scalar&piv, scalar m)
 // make a 1-D ssubspace with basis bas
 {
   smat tbasis(1,dim(bas));
   svec sbas(bas);
   tbasis.setrow(1,sbas);
-  vec pivs(1); // initialised to 0
+  vec_i pivs(1); // initialised to 0
   pivs[1]=sbas.first_index();
   piv=sbas.elem(pivs[1]);
-  return ssubspace(transpose(tbasis),pivs,mod);
+  return ssubspace(transpose(tbasis),pivs,m);
 }

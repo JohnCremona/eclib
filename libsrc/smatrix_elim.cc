@@ -1,7 +1,7 @@
 // smatrix_elim.cc: implementation of class smat_elim
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -62,6 +62,26 @@
 #define smat smat_l
 #define smat_elim smat_l_elim
 #define ssubspace ssubspace_l
+
+#include "smat_elim.cc"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+#undef ssubspace
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+#define ssubspace ssubspace_m
 
 #include "smat_elim.cc"
 

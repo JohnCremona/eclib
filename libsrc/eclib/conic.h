@@ -1,7 +1,7 @@
 // conic.h: declarations of functions for solving conics (see also legendre.h)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -130,8 +130,8 @@ void show_cert(const bigint& p, const bigint& q, const bigint& r);
 void show_eqn(const bigint& a, const bigint& b, const bigint& c);
 void show_eqn_cert(const bigint& a, const bigint& b, const bigint& c,
 		   const bigint& p, const bigint& q, const bigint& r);
-void show_all(const bigint& a, const bigint& b, const bigint& c, 
-	      const bigint& p, const bigint& q, const bigint& r, 
-	      bigint& x, bigint& y, bigint& z);
+void show_all(const bigint& a, const bigint& b, const bigint& c,
+	      const bigint& p, const bigint& q, const bigint& r,
+	      const bigint& x, const bigint& y, const bigint& z);
 
 #endif

@@ -1,7 +1,7 @@
 // saturate.cc: implementation of class saturator for sieving E(Q)/pE(Q)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -42,7 +42,7 @@ void saturator::reset_points(const vector<Point>& PP)
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
-  the_index_bound = BIGINT(0);
+  the_index_bound = bigint(0);
 }
 
 // initialize index bound
@@ -136,27 +136,13 @@ void saturator::nextq()
 
       // First just check the order of E mod q, skip this q if not a multiple of p
 
-      map<bigint,bigint>::iterator Eqoi = Emodq_order.find(q);
       bigint order_mod_q;
+      auto Eqoi = Emodq_order.find(q);
       if(Eqoi==Emodq_order.end())
 	{
 	  if(verbose>2) cout<<"Computing order mod q =  "<<q<<": "<<endl;
           curvemodq Eq(*E,q);
-          if(0) // use orders of some random points as a proxy
-            {
-              bigint upper, lower; // bounds on group order
-              set_hasse_bounds(q,lower,upper);
-              pointmodq P1 = Eq.random_point();
-              bigint n1 = my_order_point(P1,lower,upper);
-              if (verbose>2)
-                cout<<"q="<<q<<"\tn1 = "<<n1<<endl;
-              order_mod_q = n1;
-            }
-          else
-            {
-              order_mod_q = Eq.group_order();
-            }
-
+          order_mod_q = Eq.group_order();
           Emodq_order[q] = order_mod_q;
           if (verbose>2)
             cout<<"Setting order mod "<<q<<" to "<<order_mod_q<<endl;
@@ -180,7 +166,7 @@ void saturator::nextq()
         }
       // next compute the structure of q if not yet known
 
-      map<bigint,curvemodqbasis>::iterator Eqi = Emodq.find(q);
+      auto Eqi = Emodq.find(q);
       if(Eqi==Emodq.end())
 	{
 	  if(verbose>2) cout<<"Initializing q =  "<<q<<": "<<endl;
@@ -213,7 +199,7 @@ void saturator::nextq()
       cout<<TLim<<endl;
       cout<<"Now reducing to echelon form..."<<endl;
     }
-  vec_l pcols, npcols; // not used
+  vec_i pcols, npcols; // not used
   long newTLrank, ny;
   mat_l newTLmat = echmodp(rowcat(TLimage,TLim),pcols, npcols, newTLrank, ny, p);
   if(verbose>2) 
@@ -252,12 +238,14 @@ int saturator::enlarge()
   if(TLrank==rank) return 0; // no enlargement;  should not be called in this case
   vec_l ker = basis(pkernel(TLimage, p)).col(1);
   if(verbose>0) cout<<"possible kernel vector = "<<ker<<endl;
-  Point Q(E), newQ(E); int flag, i, ci, keepi=-1;
-  for(i=0; i<rank; i++) 
+  Point Q(E), newQ(E); int flag, keepi=-1;
+  for(int i=0; i<rank; i++)
     {
-      if((ci = mod(ker[i+1],p))) 
+      int ci = mod(ker[i+1],p);
+      if(ci)
 	{
-	  if((keepi<0)&&(abs(ci)==1)) keepi=i;
+	  if((keepi<0)&&(abs(ci)==1))
+            keepi=i;
 	  Q+=ci*Plistx[i];
 	}
     }
@@ -356,15 +344,15 @@ int saturator::do_saturation(int pp, int maxntries)
 int l2i(long i) {return (int)i;}
 vector<int> lv2iv(const vector<long>& v)
 {
-  vector<int> ans;
-  transform(v.begin(),v.end(),inserter(ans,ans.end()),ptr_fun(l2i));
+  vector<int> ans(v.size());
+  transform(v.begin(),v.end(),ans.begin(), l2i);
   return ans;
 }
 int i2l(int i) {return (long)i;}
 vector<long> iv2lv(const vector<int>& v)
 {
-  vector<long> ans;
-  transform(v.begin(),v.end(),inserter(ans,ans.end()),ptr_fun(i2l));
+  vector<long> ans(v.size());
+  transform(v.begin(),v.end(),ans.begin(),i2l);
   return ans;
 }
 
@@ -382,18 +370,16 @@ int saturator::do_saturation(vector<int> plist,
 			     long& index, vector<int>& unsat, 
 			     int maxntries)
 {
-  unsigned int i; int pi, p;
   int success=1;
   index=1;
   if(verbose) cout<<"Checking saturation at "<<plist<<endl;
-  for(i=0; i<plist.size(); i++)
+  for( const int& p : plist)
     {
-      p = plist[i];
       if (trivially_saturated(p))
         continue; // to the next prime in the list
       if(verbose) cout<<"Checking "<<p<<"-saturation "<<endl;
-      pi = do_saturation(p,maxntries); // = log_index if >=0, -1 if failed
-      if(pi<0) 
+      int pi = do_saturation(p,maxntries); // = log_index if >=0, -1 if failed
+      if(pi<0)
 	{
 	  cout<<p<<"-saturation failed!"<<endl;
 	  unsat.push_back(p);
@@ -403,13 +389,13 @@ int saturator::do_saturation(vector<int> plist,
 	{
 	  if(verbose)
 	    {
-	      if(pi>0) 
+	      if(pi>0)
 		{
 		  cout<<"Points have successfully been "<<p
 		      <<"-saturated (max q used = "<<get_q()<<")"<<endl;
 		  cout<<"Index gain = "<<p<<"^"<<pi<<endl;
 		}
-	      if(pi==0) 
+	      if(pi==0)
 		{
 		  cout<<"Points were proved "<<p
 		      <<"-saturated (max q used = "<<get_q()<<")"<<endl;
@@ -491,16 +477,10 @@ int saturator::saturate(vector<long>& unsat, long& index,
     {
       if (verbose)
         cout << "Tamagawa index primes are " << tam_primes << endl;
-      for (vector<long>::iterator pi = tam_primes.begin(); pi!=tam_primes.end(); pi++)
-        {
-          p = *pi;
-          if ((p > ib) && ((sat_bd==-1) || (p <= sat_bd)))
-            {
-              if (verbose)
-                cout << "adding Tamagawa index prime " << p << " to saturation list" << endl;
-              satprimes.push_back(p);
-            }
-        }
+      std::copy_if(tam_primes.begin(), tam_primes.end(), std::back_inserter(satprimes),
+                   [ib, sat_bd] (const long& tp) {return ((tp > ib) && ((sat_bd==-1) || (tp <= sat_bd)));});
+      if (verbose)
+        cout << "Saturation primes are now" << satprimes << endl;
     }
 
   // do the saturation.  Will return ok iff we succeeded in saturating
@@ -513,22 +493,14 @@ int saturator::saturate(vector<long>& unsat, long& index,
 void saturator::show_q_tally()
 {
   cout << "Summary of auxiliary primes used" <<endl;
-  int num_q_used = 0;
-  map<bigint,int>::iterator qcount;
   cout << "Number of q used: " << q_tally.size() << endl;
   cout << "Maximum   q used: " << maxq << " (used for p="<<maxp<<")"<<endl;
   if (verbose<2)
     return;
   cout << "Counts of how many times each q was used:" << endl;
-  bigint q;
-  int c;
-  for (qcount = q_tally.begin(); qcount!=q_tally.end(); qcount++)
-    {
-      q = qcount->first;
-      c = qcount->second;
-      if (c)
-        cout << q << "\t" << c <<endl;
-    }
+  for ( const auto& qcount : q_tally)
+    if (qcount.second)
+      cout << qcount.first << "\t" << qcount.second <<endl;
 }
 
 
@@ -618,7 +590,7 @@ bigint index_bound(vector<Point>& points,
 {
   int npts = points.size();
   if (npts==0)
-    return BIGINT(1);
+    return bigint(1);
 
   Curvedata C = Curvedata(points[0].getcurve(), 0);
   if(verbose)
@@ -656,7 +628,7 @@ bigint index_bound(vector<Point>& points,
   // no need to use egr_reg in next line since we multiply by index
   bigfloat ib = index*sqrt(reg*pow(gamma/lambda,npts));
   bigint ans = Ifloor(ib+0.1);  // be careful about rounding errors!
-  if(ans<2) ans=BIGINT(1);  // In case 0.9999 has rounded down to 0
+  if(ans<2) ans=bigint(1);  // In case 0.9999 has rounded down to 0
   if(verbose)
     cout<<"Saturation index bound " << ib << ", rounds down to "<<ans<<endl;
   return ans;
@@ -707,8 +679,8 @@ bigint index_bound(vector<Point>& points,
   //  cout<<"Before shifting, newpoints = "<<newpoints<<endl;
   if(shift_flag) 
     for(unsigned int i=0; i<newpoints.size(); i++)
-      newpoints[i] = transform(newpoints[i],C,BIGINT(1),
-			   x_shift,BIGINT(0),BIGINT(0),1);
+      newpoints[i] = transform(newpoints[i],C,bigint(1),
+			   x_shift,bigint(0),bigint(0),1);
   //  cout<<"After shifting, newpoints = "<<newpoints<<endl;
   Point Pmin = pmh.get_min_ht_point();
   if(lambda==0)

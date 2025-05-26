@@ -1,7 +1,7 @@
 // mglobsol.cc: implementation of class quartic_sieve and functions for quartic solubility testing
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -41,8 +41,8 @@ int ratpoint(const quartic& g, const bigint& min, const bigint& max, bigint& xx,
   if(isqrt(a,n)) {xx=1; yy=n; zz=0; return 1;}
   if(isqrt(e,n)) {xx=0; yy=n; zz=1; return 1;}
   bigint x,x2,x3,x4,z,z2,z3,z4,ax4,bx3z,cx2z2,dxz3,ez4;
-  static const bigint zero = BIGINT(0);
-  static const bigint one  = BIGINT(1);
+  static const bigint zero(0);
+  static const bigint one(1);
   for (n=min; (n<=max) && (!found); ++n)
     { 
       if (n==1) 
@@ -100,8 +100,7 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
   if(!easy) 
     {
       nwprimes=25;
-      wprimes = new long[nwprimes];
-      long nwp=0;
+      wprimes.reserve(nwprimes);
       long a8=mod(a,8); long b8=mod(2*b,8); long c8=mod(4*c,8);
       long e8=mod(e,8); long d8=mod(2*d,8);
       long z0, t, tt, x, p;
@@ -112,25 +111,21 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 	  for(x=1; (x<8) && !two_is_ok; x+=2)
 	    {
 	      tt = mod((t + b8*x*z0),8);
-	      if((tt==0)||(tt==1)||(tt==4)) two_is_ok=1; 
+	      if((tt==0)||(tt==1)||(tt==4)) two_is_ok=1;
 	    }
 	}
-      if(!two_is_ok) wprimes[nwp++]=2;
+      if(!two_is_ok) wprimes.push_back(2);
       primevar pr; pr++; // to start at 3
-      for(;nwp<nwprimes; pr++)
+      while((long)wprimes.size()<nwprimes)
 	{
-	  p=pr;
-	  if(legendre(a,p)==-1) wprimes[nwp++]=p;
+	  p=pr; pr++;
+	  if(legendre(a,p)==-1) wprimes.push_back(p);
 	}
-      if(verbose) 
-	{
-	  cout<<"w-primes: ";
-	  for(nwp=0; nwp<nwprimes; nwp++) cout<<wprimes[nwp]<<" ";
-	  cout<<endl;
-	}
+      if(verbose)
+        cout<<"w-primes: "<<wprimes<<endl;
+
 // repeat for u-primes:
-      uprimes = new long[nwprimes];
-      nwp=0;
+      uprimes.reserve(nwprimes);
       two_is_ok = 0;
       for(z0=0; (z0<4) && !two_is_ok; z0++)
 	{
@@ -138,22 +133,18 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 	  for(x=1; (x<8) && !two_is_ok; x+=2)
 	    {
 	      tt = (t + d8*x*z0)%8;
-	      if((tt==0)||(tt==1)||(tt==4)) two_is_ok=1; 
+	      if((tt==0)||(tt==1)||(tt==4)) two_is_ok=1;
 	    }
 	}
-      if(!two_is_ok) uprimes[nwp++]=2;
+      if(!two_is_ok) uprimes.push_back(2);
       pr.init(); pr++; // to start at 3
-      for(;nwp<nwprimes; pr++)
+      while((long)uprimes.size()<nwprimes)
 	{
-	  p=pr;
-	  if(legendre(e,p)==-1) uprimes[nwp++]=p;
+	  p=pr; pr++;
+	  if(legendre(e,p)==-1) uprimes.push_back(p);
 	}
-      if(verbose) 
-	{
-	  cout<<"u-primes: ";
-	  for(nwp=0; nwp<nwprimes; nwp++) cout<<uprimes[nwp]<<" ";
-	  cout<<endl;
-	}
+      if(verbose)
+        cout<<"u-primes: "<<uprimes<<endl;
     }
 
 // set up list of auxiliary moduli
@@ -161,61 +152,39 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 
   switch(moduli_option) {
   case 1:
-    num_aux = 10; 
-    auxs = new long[num_aux];
-    auxs[0]=3;
-    auxs[1]=5;
-    auxs[2]=7;
-    auxs[3]=11;
-    auxs[4]=13;
-    auxs[5]=17;
-    auxs[6]=19;
-    auxs[7]=23;
-    auxs[8]=29;
-    auxs[9]=31;
+    num_aux = 10;
+    auxs = {3, 5, 7, 11, 13, 17, 19, 23, 29, 31};
     break;
 
   case 2:// the following taken from Gebel's scheme
-    num_aux = 3; 
-    auxs = new long[num_aux];
-    auxs[0]=5184;  // = (2^6)*(3^4)   // old: 6624; //  = (2^5)*(3^2)*23
-    auxs[1]=5929;  // = (7^2)*(11^2)  // old: 8075; //  = (5^2)*17*19
-    auxs[2]=4225;  // = (5^2)*(13^2)  // old: 7007; //  = (7^2)*11*13
+    num_aux = 3;
+    auxs = {5184, 5929, 4225};
+    // 5184 = (2^6)*(3^4),  5929 = (7^2)*(11^2),  4225 = (5^2)*(13^2)
     break;
 
   case 3:
   default:
     num_aux = 9;
-    auxs = new long[num_aux];
-    auxs[0]=32;
-    auxs[1]= 9;
-    auxs[2]=25;
-    auxs[3]=49;
-    auxs[4]=11;
-    auxs[5]=13;
-    auxs[6]=17;
-    auxs[7]=19;
-    auxs[8]=23;
+    auxs = {32, 9, 25, 49, 11, 13, 17, 19, 23};
     break;
   }
-  
-  xgood_mod_aux = new int*[num_aux];
-//  x1good_mod_aux = new int*[num_aux];
-  squares = new int*[num_aux];
-  umod = new long[num_aux];
 
-  long i,j;
-  for (i = 0; i < num_aux; i++)
+  xgood_mod_aux.resize(num_aux);
+  squares.resize(num_aux);
+  umod.resize(num_aux);
+
+  long i=0,j;
+  for ( const auto& aux : auxs)
     {
-      long aux = auxs[i];
       long half_aux = ((aux + 1) / 2);
-      squares[i] = new int[aux];
+      squares[i].resize(aux);
       for (j = 0; j < aux; j++)      squares[i][j]=0;
       for (j = 0; j < half_aux; j++) squares[i][posmod( j*j, aux )]=1;
-      xgood_mod_aux[i] = new int[aux];
+      xgood_mod_aux[i].resize(aux);
+      i++;
     }  // end of aux loop
-  
-  if(verbose>1) 
+
+  if(verbose>1)
     {
       cout << "Finished constructing quartic_sieve, using ";
       switch(moduli_option)
@@ -226,24 +195,6 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 	      }
       cout << endl;
     }
-}
-
-quartic_sieve::~quartic_sieve()
-{
-  if(nwprimes) { delete[] wprimes; delete[] uprimes;}
-
-  if(use_stoll)  // using Stoll search so rest not needed.
-    return; 
-  
-  delete[] auxs;
-  for(long i=0; i<num_aux; i++) 
-    {
-      delete[] xgood_mod_aux[i];
-      delete[] squares[i];
-    }
-  delete[] xgood_mod_aux;
-  delete[] squares;
-  delete[] umod;
 }
 
 //#define DEBUG_RANGES
@@ -297,7 +248,7 @@ long quartic_sieve::search(double h_lim, long maxnpts, int posxonly)
     cout << "quartic_sieve::search: trying u,w up to "<<ulim<<endl;
 
   int type = g->gettype();
-  bigcomplex * roots = g->getroots();
+  vector<bigcomplex> roots = g->getroots();
   bigfloat x1, x2, x3, x4,t, zero=to_bigfloat(0);
   switch (type) {
   case 0:  default: // no roots info known
@@ -366,7 +317,7 @@ long quartic_sieve::stoll_search(double h_lim, int posxonly)
   // Find and set search intervals
 
   int type = g->gettype(), lb_flag;
-  bigcomplex * roots = g->getroots();
+  vector<bigcomplex> roots = g->getroots();
   vector<double> real_roots(4); int nrr=0;
   bigfloat x1, x2, x3, x4, t;
   switch (type) {
@@ -421,7 +372,7 @@ long quartic_sieve::stoll_search(double h_lim, int posxonly)
 
 }
 
-long quartic_sieve::search_range(int lower, bigfloat lower_bound, 
+long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 				int upper, bigfloat upper_bound, int posxonly)
 {
 // Adjust bounds so exact roots are not missed by rounding error
@@ -453,7 +404,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 // declare other loop variables
   bigint w2,w3,w4, aw,bw,cw,dw,ew;
   long i, paw,pbw,pcw,pdw,pew, u, w, aux;
-  bigint vsq, v, f;
+  bigint vsq, v;
 
 //
 // MAIN LOOP on w (denominator)
@@ -469,7 +420,6 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
     {
       if(!odd(wstart)) wstart++;
     }
-  int* wflag = new int[10000];
 
   int odd_u_only=0;
   if(nwprimes>0) if(uprimes[0]==2) odd_u_only=1;
@@ -518,15 +468,16 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
       int use_gcd_table = use_w_sieve&&(w<10000)&&((last_u-first_u)>(w/2));
       long umodw=0; 
       int w_vars_set = 0;
+      vector<int> wflag(w);
 
       if(use_w_sieve)
 	{
 
 // some preliminary calculations of multiples of w etc.
-	  w2 = sqr(BIGINT(w));  w3 = w*w2; w4 = w2*w2;
+	  w2 = sqr(bigint(w));  w3 = w*w2; w4 = w2*w2;
 	  aw = a; bw = b*w; cw = c*w2; dw = d*w3; ew = e*w4;
 
-	  for ( i=0; i < num_aux; i++)  
+	  for ( i=0; i < num_aux; i++)
 	    umod[i] = posmod(first_u-ustep, auxs[i]);
 
 // set up flag array of residues coprime to w
@@ -546,19 +497,18 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 	      pcw = posmod(cw, aux);
 	      pdw = posmod(dw, aux);
 	      pew = posmod(ew, aux);
-	  
+
 	      long ddddf= posmod(24*paw , aux);
 	      long dddf = posmod(36*paw + 6*pbw , aux);
 	      long ddf  = posmod(14*paw + 6*pbw + 2*pcw , aux);
 	      long df   = posmod(paw+pbw+pcw+pdw, aux);
 	      long f    = posmod(pew , aux);
-	  
-	      int* flag = xgood_mod_aux[index];
-	      int* sqs = squares[index];
-	      long x=aux;
-	      while(x--)
+
+	      vector<int> flag = xgood_mod_aux[index];
+	      vector<int> sqs = squares[index];
+	      for (long x=0; x<aux; x++)
 		{
-		  *flag++ = sqs[f];
+		  flag[x] = sqs[f];
 		  f    +=    df; if(f    >= aux) f    -= aux;
 		  df   +=   ddf; if(df   >= aux) df   -= aux;
 		  ddf  +=  dddf; if(ddf  >= aux) ddf  -= aux;
@@ -582,7 +532,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 		  if(u_is_ok) 
 		    {
 		      u_is_ok = xgood_mod_aux[i][umodi];
-//		      if(!u_is_ok) 
+//		      if(!u_is_ok)
 //		      cout<<"(u,w)=("<<u<<","<<w<<") failed sieve mod "<<auxs[i]<<endl;
 		    }
 		}
@@ -596,22 +546,21 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 	      umodw+=ustep; while(umodw>=w) umodw-=w;
 	      u_is_ok = wflag[umodw];  // true if gcd(u,w)=1
 	    }
-	  if(!u_is_ok) continue;	  
+	  if(!u_is_ok) continue;
 
 // Check that u has no impossible prime factors:
 	  for(nwp=0; (nwp<nwprimes) && u_is_ok; nwp++)
 	    u_is_ok = ndivides(uprimes[nwp],u);
 
-	  if(!u_is_ok) continue;	  
+	  if(!u_is_ok) continue;
 
 	  if(!w_vars_set)
 	    {
-	      w2 = sqr(BIGINT(w));  w3 = w*w2; w4 = w2*w2;
+	      w2 = sqr(bigint(w));  w3 = w*w2; w4 = w2*w2;
 	      aw = a; bw = b*w; cw = c*w2; dw = d*w3; ew = e*w4;
 	      w_vars_set=1;
 	    }
-	  f=aw; f*=u; f+=bw; f*=u; f+=cw; f*=u; f+=dw; f*=u; f+=ew;
-//        f = ew+u*(dw+u*(cw+u*(bw+u*aw))); 
+	  bigint f=aw; f*=u; f+=bw; f*=u; f+=cw; f*=u; f+=dw; f*=u; f+=ew;
 	  if(isqrt(f,v))
 	    {
 #ifdef DEBUG_RANGES
@@ -625,7 +574,6 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 	} // ends u-loop
     } // ends w- loop
 
-  delete[] wflag;
   return npoints;
 
 } // end of quartic_sieve::search_range()

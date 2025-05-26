@@ -1,7 +1,7 @@
 // options.h:   declaration & implementation of class to handle mwrank options
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -82,7 +82,7 @@ public:
      ptl(pl), traceequiv(teq),  output_pari(o), selmer_only(sel), 
      second_descent(d2), saturation_bound(sat) {;}
 
-  void set(GetOpt& getopt)
+  void set( GetOpt& getopt) // parameter cannot be const despite what cppcheck says
     {
       int option_char;
       while ((option_char = getopt ()) != EOF)

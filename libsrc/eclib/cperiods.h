@@ -1,7 +1,7 @@
 // cperiods.h: declarations of class Cperiods & period lattice functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -31,7 +31,7 @@
 #define TWOPIEYE bigcomplex(to_bigfloat(0), TWOPI)
 
 
-inline bigcomplex q(const bigcomplex& z) // q(z) = exp(2*pi*i * z)
+inline bigcomplex e2pi(const bigcomplex& z) // q(z) = exp(2*pi*i * z)
 {
   bigfloat twopix = TWOPI * real(z);
   return exp(-TWOPI * imag(z)) *
@@ -79,7 +79,7 @@ public:
     tau = normalize(w2,w1);  // NB reverse params;  from compproc.h
     store_sums();
   }
-  Cperiods(const Curvedata& E); 
+  explicit Cperiods(const Curvedata& E); 
 
   // copying:
   Cperiods(const Cperiods& cp)
@@ -146,8 +146,8 @@ public:
   vector<bigcomplex> ellztopoint(const bigcomplex& z, const bigcomplex& a1, const bigcomplex& a2, const bigcomplex& a3);
 };  // end of class Cperiods def'n
 
-bigcomplex* solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bigint& c3); //Returns an array
-// Gets the 3 2-division points given the coefficients 
+vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bigint& c3);
+// Gets the 3 2-division points given the coefficients
 void getei(const Curvedata& E, bigcomplex& e1, bigcomplex& e2, bigcomplex& e3);
 // Reorders 3 complex nos so real parts are decreasing
 void reorder1(bigcomplex& a, bigcomplex& b, bigcomplex& c);

@@ -1,7 +1,7 @@
 // FILE OLDFORMS.CC: implementation of class oldforms
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -129,10 +129,8 @@ oldforms::oldforms(long intp, const level* iN, int verbose, int plus)
    nap = ntp;
    noldclasses = totalolddim = 0;
    plusflag=plus;
-   vector<long>::const_iterator d;
-   for(d=(N->dlist).begin();d!=(N->dlist).end();d++)
+   for (const auto& M : N->dlist)
      {
-       long M=*d;
        if(M<11) continue;
        if(M==(N->modulus)) continue;
        getoldclasses(M,verbose);
@@ -170,36 +168,32 @@ void oldforms::getoldclasses(long d, int verbose)
       long m = n/d;
       long k=0, xmult, mult, j, beta;
       vector<long> betalist; // =new long[N->npdivs];
-      vector<long>::const_iterator qj=(N->plist).begin();
-      while(qj!=(N->plist).end())
+      for (const auto& qj : N->plist)
 	{
-	  beta=val(*qj++,m);
+	  beta=val(qj,m);
 	  if(beta>0) k++;
 	  betalist.push_back(beta);
 	}
       if(verbose>1) cout<<"betas: "<<betalist<<endl;
       vector<long> nextoldformap(nap);
-      vector<long>::iterator betai;
-      vector<long>::const_iterator aqj;
-      primevar pr; long iform, c, ip, p, aq; int bit;
+      primevar pr; long iform, c, ip, aq; int bit;
       for(iform=0; iform<nforms; iform++)
-	{ 
+	{
 	  vector<long>& aqlist=olddata.nflist[iform].aqlist;
 	  nextoldformap = olddata.nflist[iform].aplist;
-	  if(verbose>1) 
+	  if(verbose>1)
 	    {
 	      cout<<"form #"<<(iform+1)<<": "<<"aqlist="<<aqlist<<endl;
 	      cout<<"aplist before adjusting (size "<<oldnap<<") ="<<nextoldformap<<endl;
 	    }
 	  for (c=0; c<(1<<k); c++) // 2^k different oldclasses
-	    {  
+	    {
 	      if(verbose>1) cout<<"c="<<c<<endl;
-	      mult=1; j=0; 
-	      betai=betalist.begin();
-	      aqj=aqlist.begin();
-              for (qj=(N->plist).begin(); qj!=(N->plist).end(); qj++)
+	      mult=1; j=0;
+	      auto betai=betalist.begin();
+	      auto aqj=aqlist.begin();
+              for ( const auto& p : N->plist)
 		{
-		  p = *qj;
                   ip = prime_pi(p);
 		  if(verbose>1) cout<<"p="<<p<<" (ip="<<ip<<")"<<endl;
                   beta = *betai++;

@@ -1,7 +1,7 @@
 // tsat2.cc -- test for saturate.h/cc reading from gens files directly
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -45,7 +45,6 @@ int main()
   initprimes("PRIMES",0);
   int verbose = 1;
   //  cout<<"verbose (0/1)? ";             cin >>verbose;
-  int i, j, npts;
 
   long N, nclass, ncurve;
   Curve E;
@@ -69,9 +68,10 @@ int main()
   cout<<endl;
   cout << N<<codeletter(nclass-1)<<ncurve<<" = "<< E << endl;
   Point P(C);
+  int j=0, npts;
   cin >> npts;
   vector<Point> points; points.reserve(npts);
-  j=0; 
+
   while(j<npts)
     { 
       cin >> P;
@@ -85,7 +85,7 @@ int main()
   vector<long> unsat;
 
   sieve.set_points(points);
-  int ok = sieve.saturate(unsat, index, pmax, 2, 10);
+  sieve.saturate(unsat, index, pmax, 2, 10);
 
   cout<<"Finished p-saturation";
   if (pmax!=-1)
@@ -121,9 +121,9 @@ int main()
   if(upcount>0)
     {
       cout<<"Curves which needed saturation: "<<endl;
-      for(i=0; i<upcount; i++)
+      for(int i=0; i<upcount; i++)
 	{
-	  vector<long> keep = keeplist[i];
+	  const auto& keep = keeplist[i];
 	  cout<<keep[0]<<codeletter(keep[1]-1)<<keep[2]<<": index gained = "<<keep[3]<<endl;
 	}
     }

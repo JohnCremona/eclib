@@ -1,7 +1,7 @@
 // hilbert.cc: implementation of Hilbert symbol functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -31,8 +31,8 @@
 
 int local_hilbert(const bigint& a, const bigint& b, const bigint& p)
 {
-  static const bigint zero = BIGINT(0);
-  static const bigint  two = BIGINT(2);
+  static const bigint zero(0);
+  static const bigint  two(2);
   long alpha, beta;
   bigint u,v;
   int ans;
@@ -74,24 +74,16 @@ int global_hilbert(const bigint& a, const bigint& b, const vector<bigint>& plist
 #ifdef DEBUG_HILBERT
   cout<<"In global_hilbert("<<a<<","<<b<<"), plist = "<<plist<<endl;
 #endif
-  badp=0;
-  if(local_hilbert(a,b,0)) return 1;
+  if(local_hilbert(a,b,0))
+    {
+      badp=0;
+      return 1;
+    }
 #ifdef DEBUG_HILBERT
   cout<<"Passed local condition at infinity..."<<endl;
 #endif
-  vector<bigint>::const_iterator pr = plist.begin();
-  while(pr!=plist.end())
-    {
-      badp=*pr++;
-#ifdef DEBUG_HILBERT
-      cout<<"Testing local condition at "<<badp<<"..."<<endl;
-#endif
-      if(local_hilbert(a,b,badp)) return 1;
-#ifdef DEBUG_HILBERT
-      cout<<"Passed local condition at "<<badp<<"..."<<endl;
-#endif
-    }
-  return 0;
+  return std::any_of(plist.begin(), plist.end(),
+                     [a,b,&badp] (const bigint& p) {badp=p;return local_hilbert(a,b,p);});
 }
 
 int global_hilbert(const bigint& a, const bigint& b, bigint& badp)

@@ -1,7 +1,7 @@
 // FILE xsplit_data.cc : Implementation of member functions for class ff_data
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 Marcus Mo
+// Copyright 1990-2023 Marcus Mo
 // 
 // This file is part of the eclib package.
 // 
@@ -179,14 +179,8 @@ ff_data* ff_data::child( long eig ) {
  * Returns number of completed children for current node.
  */
 int ff_data::numCompleteChildren() {
-  int completeCount = 0;
-
-  vector< childstatus >::iterator it;
-  for( it = completedChildren_.begin(); it != completedChildren_.end(); it++ ) {
-    if( *it != NOT_COMPLETE ) completeCount++; 
-  }
-
-  return completeCount;
+  return std::count_if(completedChildren_.begin(), completedChildren_.end(),
+                       [](childstatus s) {return s!=NOT_COMPLETE;});
 }
 
 /**

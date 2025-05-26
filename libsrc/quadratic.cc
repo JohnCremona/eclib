@@ -1,7 +1,7 @@
 // quadratic.cc: implementation of class for handling integer quadratics
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -22,19 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/quadratic.h>
-
-quadratic::~quadratic() {delete [] coeffs;}
-
-void quadratic::init()
-{
-  coeffs = new bigint[3];
-}
-
-bigint quadratic::coeff(int i) 
-    {if((i>=0)&&(i<=2)) return coeffs[i]; else {bigint ans; return ans;}}
-
-bigint quadratic::operator[](int i) const
-    {if((i>=0)&&(i<=2)) return coeffs[i]; else {bigint ans; return ans;}}
 
 void quadratic::transform(const unimod& m)
 {
@@ -93,7 +80,10 @@ void quadratic::reduce(unimod& m)
 }
 
 bigint resultant(const quadratic& q1, const quadratic& q2)
-{return sqr(q2.coeffs[0]*q1.coeffs[2]) + sqr(q1.coeffs[0]*q2.coeffs[2]) +
-   q2.coeffs[2]*q2.coeffs[0]*sqr(q1.coeffs[1]) - q2.coeffs[1]*q1.coeffs[1]*(q2.coeffs[0]*q1.coeffs[2] + q1.coeffs[0]*q2.coeffs[2]) +
-   (sqr(q2.coeffs[1])-2*q2.coeffs[0]*q2.coeffs[2])*q1.coeffs[0]*q1.coeffs[2];
+{
+  const bigint&
+    a1=q1.coeffs[0], b1=q1.coeffs[1], c1=q1.coeffs[2],
+    a2=q2.coeffs[0], b2=q2.coeffs[1], c2=q2.coeffs[2];
+  return
+    sqr(c2*a1) -a1*c2*b2*b1 + (-2*c2*a2 + sqr(b2))*c1*a1 + c2*a2*sqr(b1) - b2*a2*c1*b1 + sqr(a2*c1);
 }

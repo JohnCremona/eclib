@@ -1,7 +1,7 @@
 // points.cc:  implementations for Point class for points on elliptic curves
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -45,7 +45,7 @@ Point transform(const Point& P, Curvedata* newc,
 {
   if(P.is_zero()) return Point(newc);
   if(!P.isvalid())
-    cout << "Attempting to trabsform the point " << P 
+    cout << "Attempting to transform the point " << P 
 	 << "which is not a valid point on its curve " << P.getcurve() << "!\n";
   Point Q(newc,transform(P,u,r,s,t,back));
   if(!Q.isvalid())
@@ -61,20 +61,20 @@ Point transform(const Point& P, Curvedata* newc,
 // Genuine elliptic curve point functions:
 
 // addition and subtraction
-void Point::operator+=(const Point& Q)  // P += Q; 
+void Point::operator+=(const Point& Q)  // P += Q;
 {
   Point sum = (*this) + Q ;
   E = sum.E; X = sum.X; Y = sum.Y; Z = sum.Z; reduce();
   ord = 0; height = -1;
 }
 
-void Point::operator-=(const Point& Q)  // P -= Q ; 
+void Point::operator-=(const Point& Q)  // P -= Q ;
 {
   Point sum = -Q;  sum+=(*this);
   E = sum.E; X = sum.X; Y = sum.Y; Z = sum.Z; reduce();
   ord = 0; height = -1;
 }
-        
+
 Point Point::operator+(const Point& Q) const // P + Q
 {
   Point ans(E);
@@ -90,7 +90,7 @@ Point Point::operator+(const Point& Q) const // P + Q
   if(eq(*this , Q))      {return Q.twice();}
   Point minusQ=-Q;
   if(eq(*this , minusQ)) {return ans;}       // zero
-        
+
   // we now have genuine work to do
   // let's set up some local variables to avoid repeated references
   // coefficients
@@ -104,17 +104,17 @@ Point Point::operator+(const Point& Q) const // P + Q
   const bigint& Y2 = Q.Y ;
   const bigint& Z2 = Q.Z ;
   const bigint& Z12 = Z1 * Z2 ;
-        
+
   const bigint& L = - Y2 * Z1 + Y1 * Z2 ;    /* lambda */
   const bigint& M = - X2 * Z1 + X1 * Z2 ;    /* mu    */
   const bigint& N = - Y1 * X2 + Y2 * X1 ;    /* nu   */
-        
-  const bigint& Mz =  M * M * Z12  ; 
-  
+
+  const bigint& Mz =  M * M * Z12  ;
+
   const bigint& t = L * L * Z12 + M * ( A1 * L * Z12 - M * (A2 * Z12
                                         + X1 * Z2 + X2 * Z1 ) )  ;
   const bigint& newX =  M * t ;
-  const bigint& newY = - (  t * (L + A1 * M) +   Mz * (N + A3 * M )) ;    
+  const bigint& newY = - (  t * (L + A1 * M) +   Mz * (N + A3 * M )) ;
   const bigint& newZ = M * Mz ;
   ans.init(E, newX, newY, newZ);
   return ans;
@@ -246,27 +246,13 @@ int Point::isvalid() const // P on its curve ?
   if((sign(X)==0)&&(sign(Y)==0)&&(sign(Z)==0)) return 0;   
 // Point at infinity is on a curve
   if((sign(X)==0)&&(sign(Z)==0)) return 1 ;
-  else{
-    // should calculate 
-    //                       y^2 +a1 x y + a3 y 
-    //  and
-    //                       x^3 + a2 x^2 + a4 x + a6
-    // where 
-    //          x = X/Z, y = Y/Z
-    // and verify equality.
-    //
-    // In homogeneous coordinates:
-    //
-    // Lhs = Y^2 Z + a1 XYZ + a3 YZ^2 = (YZ) *(Y + a1 X + a3 Z)
-    //
-    //
-    // Rhs = X^3 +a2 X^2 Z + a4 X Z^2 + a6 Z^3
-    //
-    bigint A1,A2,A3,A4,A6;    E->getai(A1,A2,A3,A4,A6);
-    const bigint& Lhs = Y*Z*(Y + A1*X + A3*Z) ;
-    const bigint& Rhs = A6*pow(Z,3) + X*(A4*Z*Z + X*(A2*Z + X)) ;
-    return Lhs == Rhs ;
-  }
+  else
+    {
+      bigint A1,A2,A3,A4,A6;    E->getai(A1,A2,A3,A4,A6);
+      const bigint& Lhs = Y*Z*(Y + A1*X + A3*Z) ;
+      const bigint& Rhs = A6*pow(Z,3) + X*(A4*Z*Z + X*(A2*Z + X)) ;
+      return Lhs == Rhs ;
+    }
 }
 
 // Find all points with a given rational x-coordinate:
@@ -289,7 +275,7 @@ vector<Point> points_from_x(Curvedata &E, const bigrational& x)
         {
           //          cout<<"t = "<<t<<endl;
           yn = t - (a1*xn+a3*xd2)*xd;
-          divide_exact(yn,BIGINT(2),yn);
+          divide_exact(yn,bigint(2),yn);
           //          cout<<"yn = "<<yn<<endl;
           Point P(E,xn*xd,yn,xd2*xd);
           //          cout<<"point="<<P<<endl;
@@ -367,40 +353,36 @@ Point make_tor_pt(Curvedata& E, Cperiods& per,
 }
 
 
-vector<Point> two_torsion(Curvedata& E)
+vector<Point> two_torsion(Curvedata& E, int exact)
 {
 #ifdef DEBUG_TORSION
   cout<<"\nIn two_torsion() with curve "<<(Curve)E<<"\n";
 #endif
   bigint a1, a2, a3, a4, a6, b2, b4, b6, b8;
+  static const bigint zero(0), one(1), eight(8), sixteen(16);
   E.getai(a1,a2,a3,a4,a6);
   E.getbi(b2,b4,b6,b8);
   int scaled=0;
-  if (odd(a1) || odd(a3)) 
-    { 
-      b4*=BIGINT(8);
-      b6*=BIGINT(16);
+  if (odd(a1) || odd(a3))
+    {
+      b4*=eight;
+      b6*=sixteen;
       scaled=1;
     }
-  else 
+  else
     {
       b2=a2; b4=a4; b6=a6;
     }
   vector<bigint> xlist = Introotscubic(b2,b4,b6);
-  int n, n2tors = xlist.size();
-
-  // If there are 3 points of order 2, we order them for consistency:
-  if(n2tors==3)  sort(xlist.begin(),xlist.end());
-
   vector<Point> two_tors;
-  two_tors.push_back(Point(E)) ;     // zero point
-  for(n=0; n<n2tors; n++)
+  if (!exact)
+    two_tors.push_back(Point(E)) ;     // zero point
+  for( const auto& ei : xlist)
     {
-      bigint ei = xlist[n];
-      if(scaled) 
-	two_tors.push_back(Point(E,2*ei,-a1*ei-4*a3,BIGINT(8)));
-      else 
-	two_tors.push_back(Point(E,ei,BIGINT(0),BIGINT(1)));
+      if(scaled)
+	two_tors.push_back(Point(E,2*ei,-a1*ei-4*a3,eight));
+      else
+	two_tors.push_back(Point(E,ei,zero,one));
     }
   ::sort(two_tors.begin(), two_tors.end(), Point_cmp);
 #ifdef DEBUG_TORSION
@@ -439,27 +421,28 @@ vector<bigint> three_torsion_x(Curvedata& E)
   return xlist;
 }
 
-vector<Point> three_torsion(Curvedata& E)
+vector<Point> three_torsion(Curvedata& E, int exact)
 {
 #ifdef DEBUG_TORSION
   cout<<"\nIn three_torsion() with curve "<<(Curve)E<<"\n";
 #endif
-  bigint a1, a2, a3, a4, a6, b2, b4, b6, b8, xi, d, rd;
+  static const bigint two(2);
+  bigint a1, a2, a3, a4, a6, b2, b4, b6, b8, d, rd;
   E.getai(a1,a2,a3,a4,a6);
   E.getbi(b2,b4,b6,b8);
   vector<bigint> xlist = three_torsion_x(E);
   vector<Point> three_tors;
-  three_tors.push_back(Point(E)) ;     // zero point
-  for(unsigned int n=0; n<xlist.size(); n++)
+  if (!exact)
+    three_tors.push_back(Point(E)) ;     // zero point
+  for( auto& xi : xlist)
     {
-      xi = xlist[n];
       if(xi%3==0) // 3-torsion must be integral
 	{
 	  xi/=3;
 	  d = ((4*xi+b2)*xi+(2*b4))*xi+b6;
-	  if(isqrt(d,rd)) 			    
+	  if(isqrt(d,rd))
 	    {
-	      Point P(E,2*xi,rd-(a1*xi+a3),BIGINT(2));
+	      Point P(E,2*xi,rd-(a1*xi+a3),two);
 	      three_tors.push_back(P);
 	      three_tors.push_back(-P);
 	    }
@@ -472,179 +455,169 @@ vector<Point> three_torsion(Curvedata& E)
   return three_tors;
 }
 
-// New torsion point routine using Mazur's theorem to limit possibilities 
-// and computing possible real torsion from the period lattice.  Suggestion 
-// of Darrin Doud.
-//
-vector<Point> torsion_points(Curvedata& E)  // After Darrin Doud, adapted by JC
+vector<Point> m_torsion(Curvedata& E, long m, int exact)
+{
+#ifdef DEBUG_TORSION
+  cout<<"\nIn m_torsion() with m="<<m<<", curve "<<(Curve)E<<"\n";
+#endif
+  m = abs(m);
+  if (m==2) // worth treating separately as 2-torsion points are not necessarily integral
+            // and they don't come in +- pairs
+    return two_torsion(E, exact);
+  vector<Point> m_tors;
+  if (m==0) // not a valid input for this function
+    return m_tors;
+  if (!exact)
+    m_tors.push_back(Point(E)) ;     // zero point
+  if (m==1)
+    return m_tors;
+
+  // Now m is at least 3, m-torsion points are integral.
+  // Compute the integer roots of the m-division polynomial
+  vector<bigint> xs = introots(division_polynomial(&E, m));
+#ifdef DEBUG_TORSION
+  cout<<" integer roots of m-division polynomial: "<<xs<<"\n";
+#endif
+
+  // accumulate the points with each x-coorindate:
+  for( const auto& xi : xs)
+    {
+      vector<Point> Ps = points_from_x(E, bigrational(xi));
+#ifdef DEBUG_TORSION
+      cout<<" x = "<<xi<< " gives points "<<Ps<<" of order dividing "<<m<<": "<<Ps<<"\n";
+#endif
+      for (auto P : Ps)
+        {
+          if ((!exact)||(order(P)==m))
+            m_tors.push_back(P);
+        }
+    }
+
+#ifdef DEBUG_TORSION
+  cout<<" "<<m<<"-torsion points before sorting: "<<m_tors<<"\n";
+#endif
+  // sort the points
+  ::sort(m_tors.begin(), m_tors.end(), Point_cmp);
+#ifdef DEBUG_TORSION
+  cout<<" m_torsion() returning "<<m_tors<<endl;
+#endif
+  return m_tors;
+}
+
+vector<Point> torsion_points(Curvedata& E)
 {
   if ( E.isnull() ) return vector<Point>(0);
-//
-// table[i][] contains a list of possible maximal orders for a point,
-// given that the 2-torsion subgroup has order i
-//
-  static long table[5][5] = {{},{5,7,9,3},{12,6,8,4,10},{},{8,6,4}};
-  static long nt[5] = {0,4,5,0,3};
+
 #ifdef DEBUG_TORSION
   cout<<"\nIn torsion_points() with curve "<<(Curve)E<<"\n";
 #endif
-  bigint a1,a2,a3,a4,a6,sa2,sa4,sa6, x, y ;
-  E.getai(a1,a2,a3,a4,a6);
-  bigfloat ra1=I2bigfloat(a1), ra2=I2bigfloat(a2), ra3=I2bigfloat(a3);
-  long i,j,ntp=1,nt2;
-  vector<Point> points;
-  vector<Point> cycle;
-  Cperiods per(E);  bigcomplex w1,w2,z,z2; 
-  per.getwRI(w1,w2); z2=w2/to_bigfloat(2);
-  int ncc = getconncomp(E);
-  int found;
-#ifdef DEBUG_TORSION
-  cout<<"Periods: "<<per<<"\nReal Period = "<<w1<<endl;
-  cout<<ncc<<" real component(s)"<<endl;
-#endif
-  points.push_back(Point(E)) ;       // zero point
-  Point p, q;
 
-  // We find the two-torsion algebraically
-  
+  // Find the two-torsion subgroup, of order nt2 = 1, 2 or 4:
+
   vector<Point> two_tors = two_torsion(E);
-  nt2=two_tors.size();
+  int nt2=two_tors.size();
 #ifdef DEBUG_TORSION
   cout<<"Size of 2-torsion subgroup = " << nt2 << endl;
   cout << two_tors << endl;
 #endif
 
-  for(i=0, found=0; (i<nt[nt2])&&(!found); i++)
+  // Find the group exponent, and largest cyclic cubgroup, given 2-torsion:
+  // NB In these lists we must put multiples first, i.e. 9 before 3 etc
+  vector<long> possible_exponents;
+  switch (nt2) {
+  case 1: default: // cyclic of this odd order
+    possible_exponents = {5, 7, 9, 3};
+    break;
+  case 2:          // cyclic of this even order
+    possible_exponents = {12, 6, 8, 4, 10};
+    break;
+  case 4:          // non-cyclic of double this even order
+    possible_exponents = {8, 6, 4};
+    break;
+  }
+
+  int exponent = 0; // will set to n if a point of order n is found
+  vector<Point> cycle; // will set to the list of n multiples if ditto
+  for (auto ni = possible_exponents.begin(); (exponent==0)&&(ni!=possible_exponents.end()); ++ni)
     {
-      long ni=table[nt2][i]; 
-#ifdef DEBUG_TORSION
-      cout<<"Looking for a point of order " << ni << "\n";
-#endif
-      if(ni==3)
-	{
-	  p=Point(E);
-	  vector<Point> p3 = three_torsion(E);
-	  if(p3.size()>1) {p=p3[1];}
-	}
-      else
-	{
-	  z=w1/to_bigfloat(ni);
-	  p = make_tor_pt(E,per,ra1,ra2,ra3,z);
-	}
-#ifdef DEBUG_TORSION
-      cout<<"p = " << p <<"?\n";
-#endif
-      found=(p.isvalid())&&(order(p,cycle)==ni);
-      if(!found&&(ncc==2)&&even(ni))
-	{
-	  p = make_tor_pt(E,per,ra1,ra2,ra3,z+z2);
-#ifdef DEBUG_TORSION
-	  cout<<"p = " << p <<"?\n";
-#endif
-	  found=(p.isvalid())&&(order(p,cycle)==ni);
-	  if(!found&&((ni%4)==2))
-	    {
-	      p = make_tor_pt(E,per,ra1,ra2,ra3,z+z+z2);
-#ifdef DEBUG_TORSION
-	      cout<<"p = " << p <<"?\n";
-#endif
-	      found=(p.isvalid())&&(order(p,cycle)==ni);
-	    }
-	}
-      if(found)
-	{
-	  ntp=ni;
-	  points=cycle;
-#ifdef DEBUG_TORSION
-	  cout<<"Found a point " << p << " of order " << ni << endl;
-	  cout<<"generating subgroup "<<cycle<<endl;
-#endif
-	}
-#ifdef DEBUG_TORSION
-      else
-	{
-	  cout<<"none\n";
-	}
-#endif
+      vector<Point> n_torsion = m_torsion(E, *ni, /* exact= */ 1);
+      if (n_torsion.size())
+        {
+          exponent = *ni;
+          order(n_torsion[0], cycle);
+        }
     }
 
 #ifdef DEBUG_TORSION
-  cout<<"Number of points in cyclic part = " << ntp << endl;
-  cout<<points<<endl;
-#endif
-  
-  if(ntp==1) {return two_tors;}                   // C1, C2 or C2xC2
-  if(nt2==4)
-  // non-cyclic case, C2xC4, C2xC6 or C2xC8
-  // Find a point of order 2 not in the second factor and add it in
+  if (exponent==0)
+    cout<<" no torsion of order >2"<<endl;
+  else
     {
-      for(i=1; i<4; i++) // 0 is first point in two_tors !
-	{
-	  p=two_tors[i];
-	  if(find(points.begin(),points.end(),p)==points.end())
-	    {
-#ifdef DEBUG_TORSION
-	      cout<<"Using 2-torsion point "<<p<<" as coset rep\n";
-#endif
-	      for(j=0; j<ntp; j++)
-		{
-		  points.push_back(points[j]+p);
-		}
-	      ntp*=2;
-	      break;
-	    }
-#ifdef DEBUG_TORSION
-	  cout<<"2-torsion point "<<p<<" is in subgroup\n";
-#endif
-	}
+      cout<<" exponent is "<<exponent<<endl;
+      cout<<" cyclic subgroup "<<cycle<<endl;
     }
-  ::sort(points.begin(), points.end(), Point_cmp);
- return points;
+#endif
+
+  if (exponent==0) // 2-torsion is all
+    {
+      return two_tors;
+    }
+
+  if (nt2<4) // cyclic
+    {
+      ::sort(cycle.begin(), cycle.end(), Point_cmp);
+      return cycle;
+    }
+
+  // Now we have structure C2xCn for n = 4, 6, or 8
+
+  // Find a point of order 2 not in the second factor and add it in
+  Point T1 = cycle[exponent/2];
+  auto Ti = std::find_if_not(two_tors.begin()+1, two_tors.end(), [T1]( const auto& T ){return T==T1;});
+  Point T2 = *Ti;
+  vector<Point> all_torsion = cycle, coset(cycle.size());
+  std::transform(cycle.begin(), cycle.end(), coset.begin(),
+                 [T2] (const Point& P) {return T2+P;});
+  all_torsion.insert(all_torsion.end(), coset.begin(), coset.end());
+
+  ::sort(all_torsion.begin(), all_torsion.end(), Point_cmp);
+ return all_torsion;
 }
 
 //#define DEBUG_DIVISION_POINTS 1
 vector<Point> Point::division_points(int m) // list of Q s.t. n*Q=this
 {
+#ifdef DEBUG_DIVISION_POINTS
+  cout << "Attempting to divide " << (*this) << " by " << m << endl;
+#endif
   vector<Point> ans;
   vector<Point> Qs;
-  Point Q;
+  auto test = [this, m] (const Point& Q) {return m*Q==*this;};
+
   if (is_torsion())
     {
       Qs = torsion_points(*E);
-      for (vector<Point>::iterator Qi = Qs.begin(); Qi!=Qs.end(); Qi++)
-        {
-          Q = *Qi;
-          if (m * Q == *this)
-            ans.push_back(Q);
-        }
+      std::copy_if(Qs.begin(), Qs.end(), std::back_inserter(ans), test);
       return ans;
     }
+
+  // Now in the non-torsion case
+
   ZPoly pol = division_points_X_pol(E->a1,E->a2,E->a3,E->a4,E->a6, m, X, Z);
 #ifdef DEBUG_DIVISION_POINTS
   cout << "division poly = " << pol << endl;
 #endif
-
   vector<bigrational> xQs = roots(pol);
 #ifdef DEBUG_DIVISION_POINTS
   cout << " with roots " << xQs << endl;
 #endif
-  for(vector<bigrational>::iterator xQi = xQs.begin(); xQi!=xQs.end(); xQi++)
+  for( const auto& xQ : xQs)
     {
-      Qs = points_from_x(*E, *xQi);
-      // will have length 0 or 2 since non-torsion, and we only want
-      // exctly one when there two so, must check which works
-      if (Qs.size()>0)
-        {
-          Q = Qs[0];
-          if (m*Q == *this)
-            {
-              ans.push_back(Q);
-            }
-          else
-            {
-              ans.push_back(-Q);
-            }
-        }
+      Qs = points_from_x(*E, xQ); // will have length 0 or 2 since non-torsion; only one works
+      if (Qs.empty())
+        continue;
+      Point Q = Qs.front();
+      ans.push_back(test(Q)?Q:-Q);
     }
   return ans;
 }
@@ -709,21 +682,21 @@ int Point::has_good_reduction(const bigint& p) const
 
 int Point::has_good_reduction(const vector<bigint>& plist, bigint& p0, int check_real) const
 {
+  static const bigint zero(0);
   if (check_real)
     if (!is_on_real_identity_component())
       {
-        p0 = BIGINT(0);
+        p0 = zero;
         return 0;
       }
-  for(vector<bigint>::const_iterator pi = plist.begin(); pi!=plist.end(); ++pi)
+  auto it = std::find_if(plist.begin(), plist.end(), [this](const bigint& p) {return !has_good_reduction(p);});
+  if (it==plist.end())
+    return 1;
+  else
     {
-      if(!has_good_reduction(*pi))
-        {
-          p0 = *pi;
-          return 0;
-        }
+      p0 = *it;
+      return 0;
     }
-  return 1;
 }
 
 // end of file: points.cc

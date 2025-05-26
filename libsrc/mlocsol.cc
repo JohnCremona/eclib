@@ -1,7 +1,7 @@
 // mlocsol.cc: implementation of functions for local solubility of quartics 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -125,7 +125,7 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
        {
 	 if(p==2) if(lemma7(a,b,c,d,e,p,nu+1, x)==+1) return 1;
 	 if(lemma6(a,b,c,d,e,p,nu+1, x)==+1) return 1;
-       }    
+       }
    }
 
  for(i=0; i<p; ++i, x+=pnu)
@@ -137,7 +137,7 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
 
 int qpsoluble(const quartic& g, const bigint& p)
 { 
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   bigint a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
   if (zpsol(a,b,c,d,e,p,zero,0)) return 1;
   else return zpsol(e,d,c,b,a,p,zero,1);
@@ -146,21 +146,21 @@ int qpsoluble(const quartic& g, const bigint& p)
 int qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
 	      const bigint& e, const bigint& p)
 { 
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   if (zpsol(a,b,c,d,e,p,zero,0)) return 1;
   else return zpsol(e,d,c,b,a,p,zero,1);
 } /* end of qpsoluble */
 
 int qpsoluble(const bigint& a, const bigint& c, const bigint& e, const bigint& p)
 { 
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   if (zpsol(a,zero,c,zero,e,p,zero,0)) return 1;
   else return zpsol(e,zero,c,zero,a,p,zero,1);
 } /* end of qpsoluble */
 
 int Rsoluble(const quartic& g)
 {
-  return ((g.gettype()>1)||(g.geta()>BIGINT(0)));
+  return ((g.gettype()>1)|| is_positive(g.geta()));
 }
 
 int Rsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,  
@@ -182,52 +182,27 @@ int locallysoluble(const quartic& g, const vector<bigint>& plist, bigint& badp)
 int locallysoluble(const bigint& a, const bigint& c, const bigint& e, 
 		   const vector<bigint>& plist, bigint& badp)
 {
-  static const bigint zero = BIGINT(0);
+  static const bigint zero(0);
   bigint d = c*c-4*a*e;
-//   cout<<"In locallysoluble(a,c,e) with plist = "<<plist<<endl;
-//   cout<<"(a,c,e)=("<<a<<","<<c<<","<<e<<")\n";
-//   cout<<"d="<<d<<endl;
-//   int h = global_hilbert(a,d,plist,badp);
-//   cout<<"global_hilbert() returns "<<h<<endl;
-//   if(h) {cout<<"badp="<<badp<<endl; return 0;}
   if(global_hilbert(a,d,plist,badp)) return 0;
   return locallysoluble(a,zero,c,zero,e,plist,badp);
 }
 
-int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
+int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
 		   const bigint& e, const vector<bigint>& plist, bigint& badp)
 {
-  //  cout<<"("<<a<<","<<b<<","<<c<<","<<d<<","<<e<<")\n";
-
   // First check R-solubility
   if (!Rsoluble(a,b,c,d,e))
     {
-      badp = BIGINT(0);
+      badp = bigint(0);
       return 0;
     }
-  int sol = 1;
-
   if(is_zero(b)&&is_zero(d)) // do a quick Hilbert check:
-    {
-      bigint D = c*c-4*a*e;
-      if(global_hilbert(a,D,plist,badp)) return 0;
-    }
-  for (vector<bigint>::const_iterator p = plist.begin(); (p!=plist.end())&&sol; p++)
-   { badp = *p;
-     sol = new_qpsoluble(a,b,c,d,e,badp,0);
-#ifdef CHECK_LOC_SOL
-     cout<<"Checking solubility with old method (p="<<p<<")...\t";
-     if(sol != qpsoluble(a,b,c,d,e,badp))
-       {
-	 cout<<"\nProblem with local solubility of ("<<a<<","<<b<<","<<c<<","<<d<<","
-	     <<e<<") mod "<<badp<<"!\n";
-	 cout<<"New method returns "<<sol<<", old method disagrees!\n";
-	 sol=!sol;
-       }
-     else cout << "...OK.\n";
-#endif
-   }
-   return sol;
+    if(global_hilbert(a,c*c-4*a*e,plist,badp))
+      return 0;
+
+  return std::all_of(plist.begin(), plist.end(),
+                     [&badp, a,b,c,d,e] (const bigint& p) {badp=p; return new_qpsoluble(a,b,c,d,e,p,0);});
 }  /* end of locallysoluble */
 
 /* Samir Siksek's Local Solubility Test for odd p */
@@ -256,9 +231,11 @@ int new_qpsoluble_ace(const bigint& a, const bigint& c, const bigint& e,
 int new_qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
 			const bigint& e, const bigint& p, int verbose)
 {
-  int verb=verbose;
+  int verb;
 #ifdef DEBUG_NEW_LOCSOL
   verb=1;
+#else
+  verb=verbose;
 #endif
   if(p<CROSS_OVER_P) 
     {
@@ -279,11 +256,8 @@ int new_qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigin
 
 int new_zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const bigint& e, const bigint& p, int verbose)
 {
-  bigint *coeff =new bigint[5];
-  coeff[0]=a;  coeff[1]=b;  coeff[2]=c;  coeff[3]=d;  coeff[4]=e;
-  int res=local_sol(p,coeff,verbose);
-  delete[] coeff;
-  return res;
+  vector<bigint> coeff = {a, b, c, d, e};
+  return local_sol(p,coeff,verbose);
 }
 
 /* Samir's Local Solubility Test for odd p */
@@ -292,11 +266,11 @@ int new_zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,co
 #define Term pair_ZZ_pX_long
 #define Poly ZZ_pX
 
-Factorization fact_c(bigint *c, int verbose=0)
+Factorization fact_c(vector<bigint> c, int verbose=0)
 {
-  Poly f; ZZ_p ci;
-  for (long i=0; i<5; i++) 
-    { ci=to_ZZ_p(c[i]); SetCoeff(f,i,ci); }
+  Poly f;
+  for (long i=0; i<5; i++)
+    SetCoeff(f,i,to_ZZ_p(c[i]));
   if(verbose) cout<<"Factorizing "<<f<<" after making monic: ";
   MakeMonic(f);
   if(verbose) cout<<f<<endl;
@@ -304,7 +278,7 @@ Factorization fact_c(bigint *c, int verbose=0)
   return  CanZass(f, verbose);
 }
 
-int local_sol(const bigint& p, bigint *c, int verbose)
+int local_sol(const bigint& p, vector<bigint> c, int verbose)
 {
   ZZ_p::init(p);
   if (verbose)
@@ -315,7 +289,7 @@ int local_sol(const bigint& p, bigint *c, int verbose)
     }
 
   bigint r[2],t;
-  long e,fl,i;
+  long fl,i;
   bigint p2=sqr(p);
   Term term;
   Poly F;
@@ -327,13 +301,11 @@ int local_sol(const bigint& p, bigint *c, int verbose)
       if (verbose) cout << "f is 0 mod p: Case II" << endl;
       zeromodp=1;
       for (i=0; (i<5) && zeromodp; i++) { zeromodp=div(p2,c[i]); }
-      bigint *dd=new bigint[5];
+      vector<bigint> dd(5);
       if (zeromodp)
          { for (i=0; i<5; i++)   { dd[i]=c[i]/p2; }
 	   if (verbose) cout << "f is 0 mod p^2, recursing" << endl;
-           int res=local_sol(p,dd,verbose);
-           delete[] dd;
-           return res;
+           return local_sol(p,dd,verbose);
          }
       for (i=0; i<5; i++) { dd[i]=c[i]/p; }
       Factorization fact_f=fact_c(dd);
@@ -341,13 +313,12 @@ int local_sol(const bigint& p, bigint *c, int verbose)
       if (verbose) cout << "Factorization of f/p = "<<fact_f << endl;
       for (i=0; i<fact_f.length(); i++)
         { term=fact_f[i];
-	  F=term.a; 
-	  e=term.b;
+	  F=term.a;
+	  long e=term.b;
           if ((deg(F)==1) && (e==1))
-	    { if (verbose) 
+	    { if (verbose)
 	      cout << "Non-Repeated Root " << -ConstTerm(F)
 		   <<", returning 1"<<endl;
-              delete[] dd;
               return 1;
 	    }
         }
@@ -355,27 +326,25 @@ int local_sol(const bigint& p, bigint *c, int verbose)
       /* Go thru each repeated root and make the
          required transformation
       */
-      bigint *d=new bigint[5];
+      vector<bigint> d(5);
       fl=0;
       for (i=0; i<fact_f.length() && (!fl); i++)
         { term=fact_f[i];
           F=term.a;
-          e=term.b;
+          long e=term.b;
           if ((deg(F)==1) && (e!=1))
-            { bigint r=-rep(ConstTerm(F));
-              if (verbose) 
-		cout << "Repeated Root=" << r << ", recursing"<<endl;
+            { bigint rt=-rep(ConstTerm(F));
+              if (verbose)
+		cout << "Repeated Root=" << rt << ", recursing"<<endl;
  // Using f(pX+r)/p^2
               d[4]=dd[4]*p2*p;
-              d[3]=p2*(dd[3]+4*dd[4]*r);
-              d[2]=p*(dd[2]+6*dd[4]*r*r+3*dd[3]*r);
-              d[1]=(2*dd[2]*r+4*dd[4]*r*r*r+3*dd[3]*r*r+dd[1]);
-              d[0]=((((dd[4]*r+dd[3])*r+dd[2])*r+dd[1])*r+dd[0])/p;
+              d[3]=p2*(dd[3]+4*dd[4]*rt);
+              d[2]=p*(dd[2]+6*dd[4]*rt*rt+3*dd[3]*rt);
+              d[1]=(2*dd[2]*rt+4*dd[4]*rt*rt*rt+3*dd[3]*rt*rt+dd[1]);
+              d[0]=((((dd[4]*rt+dd[3])*rt+dd[2])*rt+dd[1])*rt+dd[0])/p;
               fl=local_sol(p,d,verbose);
             }
         }
-      delete[] d;
-      delete [] dd;
       return fl;
     }
 // CASE I
@@ -449,13 +418,13 @@ int local_sol(const bigint& p, bigint *c, int verbose)
   /* For each root which is also a root of h
      transform the equations and call again
   */
-  bigint *d=new bigint[5];
+  vector<bigint> d(5);
   fl=0;
   for (i=0; i<num_r && !fl; i++)
     { te=(((h4*r[i]+h3)*r[i]+h2)*r[i])%p;
       te=((te+h1)*r[i]+h0)%p;
       if (is_zero(te))
-        { if (verbose) 
+        { if (verbose)
         	  cout << "Using " << r[i] << " and recursing"<<endl;
           d[4]=c[4]*p2;
           d[3]=p*(c[3]+4*c[4]*r[i]);
@@ -465,8 +434,6 @@ int local_sol(const bigint& p, bigint *c, int verbose)
           fl=local_sol(p,d,verbose);
         }
     }
-
-  delete[] d;
   return fl;
 }
 

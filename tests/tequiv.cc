@@ -1,7 +1,7 @@
 // tequiv.cc: test program for quartic equivalence
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -60,7 +60,7 @@ int main()
   long nq;  cout << "How many quartics to check (0 to quit)? ";  cin >> nq;
   cout<<endl<<endl;
   if (nq<1) {return 0;}
-  quartic* glist = new quartic[nq];
+  vector<quartic> glist(nq);
   vector<bigint> dlist;
   int i,j;
 
@@ -76,15 +76,14 @@ int main()
       for(j=0; (j<i)&&(!eq); j++)
 	{
 #ifdef NEW_EQUIV
-	  eq = new_equiv(glist+i,glist+j,verb);
+	  eq = new_equiv(glist[i],glist[j],verb);
 #else
-	  eq = equiv(glist+i,glist+j,dlist,verb);
+	  eq = equiv(glist[i],glist[j],dlist,verb);
 #endif
 	  if(eq) cout<<" equivalent to #"<<(j+1)<<endl;
 	}
       if(!eq) cout<<" new"<<endl;
     }
-  delete[] glist;
     }
   return(0);
 }

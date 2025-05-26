@@ -1,24 +1,24 @@
 // File NEWFORMS.H
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
-// 
+// Copyright 1990-2023 John Cremona
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #ifndef _ECLIB_NEWFORMS_H
@@ -48,9 +48,9 @@ Items 1-18 are "int" while the ap and aq are "short"
 9.  lminus : prime =3 (mod 4) with L(f,lminus,1) nonzero
 10. mminus : L(f,lminus,1)*sqrt(-l)=mminus*yi
 11-14. a, b, c, d : entries of a matrix M=[a,b;N*c,d] in Gamma_0(N) s.t.
-15. dotplus       : the integral of f over {0,M(0)} is 
+15. dotplus       : the integral of f over {0,M(0)} is
 16. dotminus      : dotplus*x+dotminus*yi
-17. type : type 1 if period lattice = [2x,x+yi], type 2 if [x,yi] 
+17. type : type 1 if period lattice = [2x,x+yi], type 2 if [x,yi]
 18. degphi : degree of modular parametrization
 aq : list of Wq-eigenvalues at bad primes
 ap : list of Tp- & Wq-eigenvalues at all primes
@@ -62,14 +62,14 @@ public:
   newforms *nf;  // the "parent"
   int sign;   // 1/-1 for old-style newform, 0 for old-style h1newform
   vec bplus,bminus; // DUAL eigenvectors
-  scalar type;            // 2 for rectangular, 1 for triangular 
+  scalar type;            // 2 for rectangular, 1 for triangular
 			  //  period lattice
   long index;  // splitting index, -1 if not known
-  vector<long> aplist, aqlist; 
+  vector<long> aplist, aqlist;
   long ap0;     // Eigenvalue of first "good" p
   long sfe;     // sign of functional equation
   long cuspidalfactorplus, cuspidalfactorminus;  // pdot =cuspidalfactor*np0
-  long pdot,np0,dp0;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus, 
+  long pdot,np0,dp0;  // np0=1+p0-ap0, pdot = maninvector(p0).bplus,
                       //                    = cuspidalfactor*dp0
 
   rational loverp;  // L(f,1)/x where x = least real part of a period
@@ -98,11 +98,31 @@ public:
   void display(void) const;
   // Testing function
   int check_expand_contract();
-  // To fix eigenvalues lists after finding a newform
+
+  // Explanation of the following three utilities: after newform
+  // searching, each newform's aplist contains eigenvalues not Fourier
+  // coefficients: these are the same for good primes p but for bad
+  // primes q the eigenvalue is for thw AL-operator W_q.  Before
+  // sorting and outputting this needs "fixing up" as in fixup_eigs().
+  // After reading in from file (e.g. to compute more ap) we need to
+  // go back to the eigenvalue list using unfix_eigs() before
+  // recreating eigenspaces and then reverse this afterwards using
+  // refix_eigs().  Each of these functions has a version in the
+  // newforms class too, which applies the operation to every newform.
+
+  // To fix eigenvalues lists after finding a newform: use when aplist
+  // contains AL-eigenvalues w_q for bad primes q.  This extracts
+  // those into the list aqlist and replaces them with the Fourier
+  // coefficients a_q (=0 if q^2|N else -w_q).
   void fixup_eigs();
-  // To fix eigenvalues lists before/after recovering bases
+  // To fix eigenvalues lists before/after recovering bases: use when
+  // aplist contains Fourier coefficients for bad primes q.  This
+  // replaces those with AL-eigenvalues from aqlist.
   void unfix_eigs();
+  // Same as fixup_eigs except that aqlist is not (re)created. It
+  // replaces AL-eigenvalues in aplist with Fourier coefficients.
   void refix_eigs();
+
   // To find BSD ratio:
   void find_bsd_ratio();
   // To find projected coords:
@@ -134,23 +154,23 @@ private:
   int verbose; long maxdepth, cuspidal, sign;
   int basisflag;  // is set, then use() only sets bases for newforms
 		  // already defined.
-  mat opmat(int i, int d, int v=0) 
+  mat opmat(int i, int d, int v=0)
   {return h1->opmat(i,d,v);}
   vec opmat_col(int i, int j, int v=0)
   {return h1->opmat_col(i,j,v);}
   mat opmat_cols(int i, const vec& jlist, int v=0)
   {return h1->opmat_cols(i,jlist,v);}
-  mat opmat_restricted(int i, const subspace& s, int d, int v=0) 
+  mat opmat_restricted(int i, const subspace& s, int d, int v=0)
   {return h1->opmat_restricted(i,s,d,v);}
-  smat s_opmat(int i, int d, int v=0) 
+  smat s_opmat(int i, int d, int v=0)
   {return h1->s_opmat(i,d,v);}
   svec s_opmat_col(int i, int j, int v=0)
   {return h1->s_opmat_col(i,j,v);}
   smat s_opmat_cols(int i, const vec& jlist, int v=0)
   {return h1->s_opmat_cols(i,jlist,v);}
-  smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0) 
+  smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0)
   {return h1->s_opmat_restricted(i,s,d,v);}
-  long matdim(void)  {return h1->dimension;} 
+  long matdim(void)  {return h1->dimension;}
   long matden(void)  {return h1->denom1;}
   vector<long> eigrange(int i) {return h1->eigrange(i);}
   long dimoldpart(const vector<long> l);
@@ -165,7 +185,7 @@ public:
   long n1ds, j1ds;
   vector<newform> nflist;
   vector<int> nf_subset;
-  newforms(long n, int disp) 
+  newforms(long n, int disp)
     :level(n), verbose(disp), of(0), h1(0), h1plus(0), h1minus(0), h1full(0) {;}
   ~newforms(void);
   void display(void) const;
@@ -175,7 +195,7 @@ public:
   int  get_sign() {return sign;}
   void makeh1(int s);
 // add newform with basis b1, eiglist l to current list (b2 not used):
-  void use(const vec& b1, const vec& b2, const vector<long> l); 
+  void use(const vec& b1, const vec& b2, const vector<long> l);
 
   // find newforms using homology; ntp is number of eigenvalues to use
   // for oldforms, *not* the number computed via homology (use addap()
@@ -217,12 +237,17 @@ public:
   vector<long> apvec(long p);  // computes a[p] for each newform
   void addap(long last); // adds ap for primes up to the last'th prime
 
-  // Sort newforms 
+  // Sort newforms
   void sort(int oldorder=0);
-  // To fix eigenvalues lists before/after recovering bases
+  void sort_into_Cremona_label_order();
+  void sort_into_LMFDB_label_order() {sort(0);}
+
+  // To fix eigenvalues lists before/after recovering bases.  See
+  // comments for the same named methods in the newform class for
+  // details.
   void unfix_eigs();
   void refix_eigs();
-  
+
   // for the i'th newform return the value of the modular symbol {0,r} (default) or {oo,r}
   rational plus_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
   rational minus_modular_symbol(const rational& r, long i=0, int base_at_infinity=0) const;
@@ -266,5 +291,68 @@ public:
 
 void output_to_file_no_newforms(long n, int binflag=1, int smallflag=0);
 vector<long> eiglist(const newform& f, int oldorder=0);
+
+/******************************************************************************
+ To sort the newforms of level N from the order in which they are
+ stored in newforms/x<N> into the correct order to match the "Cremona
+ labels" of isogeny classes, we apply one of the following
+ procedures. Note that to sort into LMFDB order, sort(0) suffices.
+
+0: nf.sort(1) and then permute according to booknumber(N,i)
+1: nf.sort(1)
+2: nf.sort(0)
+3: nf.unfix_eigs(); nf.sort(0); nf.refix_eigs();
+
+Here:
+
+ -  unfix_eigs() replaces the coefficient aq in aplist for q|N with the AL-eigenvalue wq;
+ -  refix_eigs() reverse this;
+ -  sort(1) sorts first by lexicographically sorting aqlist (AL-eigenvalues) in order +1,-1,
+                  next  by lexicographically sorting aplist in order 0, +1, -1, +2, -2, ...;
+ -  sort(0) sorts by lexicographically sorting aplist in order ...,-2,-1,0,1,2,...
+
+The difference between cases 0 and 1 is that for N<=450 the order of
+the newform files is essentially random, being the order in which the
+newforms were found at a time when the strategy used in the code was
+evolving steadily -- this was in the late 1980s, running batch jobs on
+a remote mainframe, so rerunning those levels was not an easy option.
+Instead, for N<=450 we have hard-wired the permutation taking the
+order produced by sort(1) -- which is correct without further
+adjustment for 450<N<130000 -- to the published order.
+
+The required permutation is defined in eclib/libsrc/curvesort.cc and
+accessed via the function i -> booknumber0(N,i), which is not the
+identity for exactly 146 levels N between 56 and 450 inclusive.  The
+correct i'th newform is number booknumber(N,i) in the stored list.
+
+The difference between cases 2 and 3 is that in case 2, aplist contains
+the p'th coefficient for all p, while in case 3 the q'th coefficient
+for q|N is replaced by the AL-eigenvale wq.
+
+Case 2 is the LMFDB ordering and is correct for all N>230000, as well
+as some (but not all!) N between 130100 and 130200.  It should have
+been used for all N>130000 but was not (my mistake): case 3 is
+actually the order in which the newforms are found using the strategy
+in place since level 130000, but the line sort(0) was omitted for the
+code in error.
+
+*******************************************************************************/
+
+// utility to determine which sort method should be used, depending on
+// the level, to recreate the "Cremona label" order of newforms.
+
+inline int level_range(long N)
+{
+  if (N<=450)
+    return 0;
+  if (N<130000)
+    return 1;
+  if (N>230000)
+    return 2;
+  if ((N>130100)&&(N<130200)&&(N!=130144)&&(N!=130146)&&(N!=130150)&&(N!=130190)&&(N!=130192))
+    return 2;
+  return 3;
+}
+
 
 #endif

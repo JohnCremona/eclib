@@ -1,7 +1,7 @@
 // file fixc6.h: declaration of class for "fixing" large c6 values
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 

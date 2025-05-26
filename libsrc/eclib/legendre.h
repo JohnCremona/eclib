@@ -1,7 +1,7 @@
 // legendre.h: declarations of functions for solving legendre equations
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -63,12 +63,12 @@ int checkin(const bigint& a,const bigint& b,const bigint& c,
 
 // Check that purported solution is OK
 int check_leg(const bigint& a, const bigint& b, const bigint& c,
-	      bigint& x, bigint& y, bigint& z);
+	      const bigint& x, const bigint& y, const bigint& z);
 
 // Check that purported solution is OK & in correct lattice
 int check_leg(const bigint& a, const bigint& b, const bigint& c,
 	      const bigint& n, const bigint& p, const bigint& q, 
-	      bigint& x, bigint& y, bigint& z);
+	      const bigint& x, const bigint& y, const bigint& z);
 
 //Peel off a known square factor  u  from coefficient  a
 void lem2a(const bigint& a, const bigint& b, const bigint& c, 

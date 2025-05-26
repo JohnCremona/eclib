@@ -1,7 +1,7 @@
 // xsplit.cc: implementation of class form_finder
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 //                     Marcus Mo     (parallel code)
 // 
 // This file is part of the eclib package.
@@ -117,16 +117,15 @@ smat form_finder::make_nested_submat(long ip, ff_data &data)
   long depth = data.depth_;  // current depth
   long subdim = data.subdim_;  // current dimension
   ff_data *d = &data; // Pointer to nodes
-  int i, j, level;
 
   ECLOG(1) << "Computing operator of size " << subdim
            << " at depth " << depth << "..." << flush;
 
   // first we go up the chain, composing pivotal indices
 
-  vec jlist = iota((scalar)subdim);
+  vec jlist = vec::iota(subdim);
   smat b = d->rel_space_->bas();
-  level = depth;
+  int level = depth;
   while (level--)
     {
       ECLOG(2) << "["<<level<<"]" << flush;
@@ -179,7 +178,7 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 		                 << density(data.submat_) << ")..." << flush;
   ECLOG(3) << "submat = " << data.submat_ << flush;
 
-  s = eigenspace(data.submat_,eig2); // the relative eigenspace
+  s = eigenspace(data.submat_,eig2, DEFAULT_MODULUS); // the relative eigenspace
 
   // Increment data usage counter for parent node
   data.increaseSubmatUsage();
@@ -273,20 +272,16 @@ void form_finder::make_basis( ff_data &data ) {
     return;
   }
 
-  ssubspace* s;
-  if( bigmats ) {
-    s = data.abs_space_;  // only used when depth>0
-  }
-  ssubspace *spm_rel, *spm_abs;
+  ssubspace *spm_rel; //, *spm_abs;
   SCALAR eig = denom1;
-  // if(depth) eig*=denom(*s);
   smat subconjmat;            // only used when depth>0
   if( bigmats ) {
+    ssubspace* s;
+    s = data.abs_space_;  // only used when depth>0
     subconjmat = (depth) ? restrict_mat(data.conjmat_, *s) : data.conjmat_;
     // will only be a 2x2 in this case (genus 1 only!)
   }
   else {
-    //subconjmat = h->s_opmat_restricted(-1,*s,1,verbose);
     subconjmat = make_nested_submat(-1,data);
   }
 
@@ -299,11 +294,11 @@ void form_finder::make_basis( ff_data &data ) {
     if(signeig<0) seig = -eig;
 
     if(depth) {
-	    spm_rel = new ssubspace(eigenspace(subconjmat,seig));
+	    spm_rel = new ssubspace(eigenspace(subconjmat,seig, DEFAULT_MODULUS));
 	    //spm_abs  = new ssubspace(combine(*s,*spm_rel));
     }
     else {
-      spm_rel = new ssubspace(eigenspace(subconjmat,seig));
+      spm_rel = new ssubspace(eigenspace(subconjmat,seig, DEFAULT_MODULUS));
       //spm_abs = spm_rel;
     }
 
@@ -552,7 +547,7 @@ void form_finder::find( ff_data &data ) {
 
   // The recursive part:
   vector<long> t_eigs = h->eigrange(depth);
-  vector<long>::const_iterator apvar = t_eigs.begin();
+  auto apvar = t_eigs.begin();
 
   stringstream t_eigs_ss;
   std::copy(t_eigs.begin(),t_eigs.end(),ostream_iterator<long>(t_eigs_ss," "));
@@ -624,7 +619,7 @@ subspace sparse_combine(const subspace& s1, const subspace& s2)
 {
   // we assume s1, s2 are subspace mod DEFAULT_MODULUS
    scalar d=denom(s1)*denom(s2);
-   const smat& sm1(basis(s1)), sm2(basis(s2));
+   smat sm1(basis(s1)), sm2(basis(s2));
    const mat&  b = (sm1*sm2).as_mat(); 
    const vec&  p = pivots(s1)[pivots(s2)];
    return subspace(b,p,d);
@@ -643,9 +638,9 @@ mat sparse_restrict(const mat& m, const subspace& s)
   int check=0;
   if(check) {
     smat left = sm*sb; 
-    if(dd!=1) {cout<<"(dd="<<dd<<")"; left.mult_by_scalar_mod_p(dd);}
+    if(dd!=1) {cout<<"(dd="<<dd<<")"; left.mult_by_scalar_mod_p(dd, DEFAULT_MODULUS);}
     smat right = sb*ans;
-    int ok = eqmodp(left,right);
+    int ok = eqmodp(left,right, DEFAULT_MODULUS);
     if (!ok) 
     {
       cout<<"Warning from sparse_restrict: subspace not invariant!\n";
@@ -666,7 +661,7 @@ mat sparse_restrict(const mat& m, const subspace& s)
 smat restrict_mat(const smat& m, const subspace& s)
 {
   if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
-  return mult_mod_p(m.select_rows(pivots(s)),smat(basis(s)),MODULUS);
+  return mult_mod_p(m.select_rows(pivots(s)),smat(basis(s)), DEFAULT_MODULUS);
 }
 
 #endif

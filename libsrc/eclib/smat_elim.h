@@ -1,7 +1,7 @@
 // smat_elim.h: declaration of class smat_elim, for sparse elimination
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -38,7 +38,7 @@ class smat_elim : public smat{
     type *list_array;
     int num;
     int index;
-    void put( type& X) { 
+    void put( const type& X) { 
       if( num >= maxsize ) 
 	{
 // 	  cout<<"About to grow list from size "<<maxsize<<endl;
@@ -47,7 +47,7 @@ class smat_elim : public smat{
 	}
       list_array[ num++ ] = X; 
     }
-    int find( type& X, int ub, int lb = 0 );
+    int find( const type& X, int ub, int lb = 0 );
     void grow ();
     type next() { 
       if( index < num ) return( list_array[index++] ); else return(-1); 
@@ -79,8 +79,8 @@ class smat_elim : public smat{
   void clear_col(int,int,list&, int fr = 0, int fc = 0,int M = 0,int *li =0);
   void check_col( int col, list& L );
   void check_row (int d2, int row2, list& L ); 
-  int get_weight( int, int* ); 
-  int has_weight_one( int, int* ); 
+  int get_weight( int, const int* ); 
+  int has_weight_one( int, const int* ); 
   int n_active_cols(); // number of active columns
   int n_active_rows(); // number of active rows
   long n_active_entries(); // number of active entries
@@ -98,16 +98,16 @@ public:
   void standard( );
   void back_sub( );
   void sparse_elimination( );
-  smat old_kernel( vec&, vec& );
-  smat new_kernel( vec&, vec& );
-  smat kernel( vec&, vec& );
+  smat old_kernel( vec_i&, vec_i& );
+  smat new_kernel( vec_i&, vec_i& );
+  smat kernel( vec_i&, vec_i& );
   void normalize( int, int );
-  void eliminate( int&, int& );
+  void eliminate( const int&, const int& );
   void step5dense();
   void free_space( int col );
   void elim( int row1, int row2, scalar v2 );
   // constructor:
-  smat_elim( const smat& sm, scalar mod=DEFAULT_MODULUS) : smat( sm ), modulus(mod) { init(); };
+  explicit smat_elim( const smat& sm, scalar mod) : smat( sm ), modulus(mod) { init(); };
   smat_elim( int r = 0,int c = 0 );
   // destructor:
   ~smat_elim();
@@ -128,22 +128,20 @@ class ssubspace {
 public:
      // constructors
         ssubspace(int n=0);
-        ssubspace(const smat& b, const vec& p, scalar mod=DEFAULT_MODULUS);
+        ssubspace(const smat& b, const vec_i& p, scalar mod);
 	ssubspace(const ssubspace& s);
-     // destructor
-        ~ssubspace();
      // assignment
 	void operator=(const ssubspace& s);
 
      // member functions & operators
         inline void clear() { pivots.init(); basis=smat(0,0);}
-        inline vec pivs() const {return pivots;}  // the pivot vector
+        inline vec_i pivs() const {return pivots;}  // the pivot vector
         inline smat bas() const {return basis;}   // the basis matrix
         inline scalar mod() const {return modulus;}   // the (prime) modulus
 
      // non-member (friend) functions and operators
         friend int dim(const ssubspace& s)     {return s.basis.ncols();}
-        friend vec pivots(const ssubspace& s)  {return s.pivots;}
+        friend vec_i pivots(const ssubspace& s)  {return s.pivots;}
         friend smat basis(const ssubspace& s)  {return s.basis;}
 	friend ssubspace combine(const ssubspace& s1, const ssubspace& s2);
 	friend smat restrict_mat(const smat& m, const ssubspace& s);
@@ -151,16 +149,16 @@ public:
 // Implementation
 private:
        scalar modulus;
-       vec pivots;
+       vec_i pivots;
        smat basis;
 };
 
 
 // Declarations of nonmember, nonfriend operators and functions:
 
-ssubspace kernel(const smat& m, scalar mod=DEFAULT_MODULUS);
-ssubspace eigenspace(const smat& m, scalar lambda, scalar mod=DEFAULT_MODULUS);
-ssubspace subeigenspace(const smat& m, scalar l, const ssubspace& s);
+ssubspace kernel(const smat& sm, scalar m);
+ssubspace eigenspace(const smat& sm, scalar lambda, scalar m);
+ssubspace subeigenspace(const smat& sm, scalar l, const ssubspace& s, scalar m);
 
 // construction of a 1-dimensional sparse subspace from a vector:
-ssubspace make1d(const vec& bas, long&piv, scalar mod=DEFAULT_MODULUS);
+ssubspace make1d(const vec& bas, scalar&piv, scalar m);

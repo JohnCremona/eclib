@@ -1,7 +1,7 @@
 // method.h:  preprocessor definitions for linear algebra options
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -43,6 +43,7 @@
 
 #if (METHOD==3)||(METHOD==4)
 #define MULTI
+#define SCALAR_OPTION 3
 #endif
 
 //The next two cause scalar, vector, matrix to be defined properly:
@@ -60,11 +61,9 @@
 typedef bigint SCALAR;
 typedef vec_m VEC;
 typedef mat_m MAT;
-typedef msubspace SUBSP;
-#include <eclib/msubspace.h>
-#define MODULUS atoI(string("6074000003").c_str())  // will convert
-						    // this string to
-						    // a bigint
+typedef subspace_m SUBSP;
+#include <eclib/subspace.h>
+#define MODULUS to_ZZ("6074000003")
 #else
 #define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
 typedef scalar SCALAR;

@@ -86,6 +86,7 @@ tests/hecketest
 tests/homtest
 tests/mattest1
 tests/mattest2
+tests/mattest3
 tests/mhcount
 tests/mmattest
 tests/modtest
@@ -96,11 +97,15 @@ tests/nftest
 tests/oftest
 tests/ptest
 tests/rattest
-tests/smattest
+tests/smattest1
+tests/smattest2
+tests/smattest3
 tests/space1
 tests/space2
+tests/space3
 tests/svectest1
 tests/svectest2
+tests/svectest3
 tests/tate
 tests/tbessel
 tests/tcon2
@@ -133,3 +138,4 @@ tests/tversion
 tests/twist
 tests/vectest1
 tests/vectest2
+tests/vectest3

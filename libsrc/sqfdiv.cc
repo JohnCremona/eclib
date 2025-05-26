@@ -1,7 +1,7 @@
 // sqfdiv.cc : implementation of class sqfdiv for managing square-free divisors
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -27,9 +27,8 @@
 //#define DEBUG
 
 sqfdiv::sqfdiv(const bigint& dd, int posd, vector<bigint>* plist)
-:primebase(plist), np(0), positive(posd), factor(0)
+  :primebase(plist), d(1), np(0), positive(posd), factor(0)
 {
-  d=1;
   bigint p;
   for(unsigned long i=0; i<plist->size(); i++)
     if(p=(*primebase)[i],div(p,dd)) {d*=p; np++;}
@@ -128,7 +127,7 @@ vector<bigint> sqfdiv::getsupp(int bothsigns) const
 {
  int use_minus_one = (!positive)||bothsigns;
  vector<bigint> supp;
- if(use_minus_one) {supp.push_back(BIGINT(-1));}
+ if(use_minus_one) {supp.push_back(bigint(-1));}
  for(unsigned long i=0; i<primebase->size(); i++)
    {
      const bigint& p = (*primebase)[i];
@@ -198,7 +197,7 @@ vector<bigint> support(const bigint& n)
   vector<bigint> supp;
   if(is_zero(n)) { return supp;}
   vector<bigint> supp_pos  = pdivs(n);
-  supp.push_back(BIGINT(-1));
+  supp.push_back(bigint(-1));
   supp.insert(supp.end(),supp_pos.begin(),supp_pos.end());
   return supp;
 }

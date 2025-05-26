@@ -1,7 +1,7 @@
 // FILE H1BSD.CC: Program to compute L^(r)(f,1) for newforms 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -35,7 +35,7 @@
 
 int main(void)
 {
-  set_precision(50);
+  set_precision(60);
  int limit,n=1; 
 #ifdef AUTOLOOP
  cout<<"Enter first and last N: ";cin>>n>>limit; 
@@ -49,14 +49,22 @@ int main(void)
  newforms nf(n,0);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
- for(int i=0; i<nf.n1ds; i++)
+ for(int xi=0; xi<nf.n1ds; xi++)
    {
-     //     i=booknumber0(n,i);
+     int i = xi;
+     string code = codeletter(xi);
+     i=booknumber0(n,i);
      newform& nfi = nf.nflist[i];
      bigfloat lf1 = nfi.special_value();
      long r = nfi.rank();
-     cout << n << "\t" << codeletter(i) 
-	  << "\tRank = " << r << "\tL^(r)(f,1)/r! = " << lf1 << endl;
+     rational loverp = nfi.loverp;
+     // loverp = L(f,1)/x where the period lattice is [x,yi] or [2x,x+yi], so in BSD we want L(f,1)/2x
+     loverp /= 2;
+     cout << n << " ";
+     cout << codeletter(i) << "\t";
+     cout << "Rank = " << r << "\t";
+     cout << "L^(r)(f,1)/r! = " << lf1 << " \t";
+     cout << "L(f,1)/period = " << loverp << endl;
    }
 }       // end of if(n)
 }       // end of while()

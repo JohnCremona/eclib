@@ -1,7 +1,7 @@
 // smat.cc: implementation of sparse integer matrix class smat
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -41,6 +41,7 @@ void showrow(int*pos, scalar*val) // for debugging
 
 smat::smat(int nr, int nc)
 {
+  static const scalar zero(0);
   nco = nc;
   nro = nr;
   col = new int * [nr];
@@ -52,7 +53,8 @@ smat::smat(int nr, int nc)
     {
       col[i] = new int [ 2 ];
       val[i] = new scalar [ 1 ];
-      col[i][1] = col[i][0] = val[i][0] = 0;
+      col[i][1] = col[i][0] = 0;
+      val[i][0] = zero;
     }
 }
 
@@ -90,15 +92,15 @@ smat::smat(const mat& m)
   int i, j, k, l, p;
   for( i = 0; i < nro; i++ )
     {
-      scalar *veci = m.entries + i*nco;
-      for( j = 0, k = 0; j < nco; j++ ) if( *veci++ ) k++;
-      col[i] = new int[ k+1 ];  
-      val[i] = new scalar[ k ];  
+      auto veci = m.entries.begin() + i*nco;
+      for( j = 0, k = 0; j < nco; j++ ) if( is_nonzero(*veci++) ) k++;
+      col[i] = new int[ k+1 ];
+      val[i] = new scalar[ k ];
       scalar *values = val[i]; int *pos = col[i];
-      veci = m.entries + i*nco;
+      veci = m.entries.begin() + i*nco;
       *pos++ = k;
-      for( l = 0, p = 1;  l < nco; l++, p++,veci++ ) 
-	if( *veci ) { *values++ = *veci; *pos++ = p; }
+      for( l = 0, p = 1;  l < nco; l++, p++,veci++ )
+	if( is_nonzero(*veci) ) { *values++ = *veci; *pos++ = p; }
     }
 }
 
@@ -125,11 +127,11 @@ void smat::set_row( int i, int d, int* pos, scalar* values) // i counts from 0
     vali = val[i] = new scalar [d];
   }
   coli++;
-  int j=d, c; scalar v;
+  int j=d;
   while(j--) {
-    v = *values++;
-    c = *pos++;
-    if (v)
+    scalar v = *values++;
+    int c = *pos++;
+    if (is_nonzero(v))
       {
         *coli++ = c;
         *vali++ = v;
@@ -140,16 +142,16 @@ void smat::set_row( int i, int d, int* pos, scalar* values) // i counts from 0
 
 void smat::setrow ( int i, const vec& v) // i counts from 1
 {
-  int j, m, n;
-  scalar *vi, *vali, e;
+  int j, m, n, dimv=dim(v);
+  scalar *vali;
   int *coli;
 
   // count nonzero entries of v:
-  vi = v.entries;
-  j = v.d;
+  auto vi = v.entries.begin();
+  j = dimv;
   n = 0;
   while(j--)
-    if (*vi++)
+    if (is_nonzero(*vi++))
       n++;
 
   // (re)allocate position and value arrays
@@ -165,29 +167,21 @@ void smat::setrow ( int i, const vec& v) // i counts from 1
 
   // copy nonzero entries
   coli++;
-  vi = v.entries;
-  for(m=1; m<=v.d; m++)
+  vi = v.entries.begin();
+  for(m=1; m<=dimv; m++)
     {
-      e = *vi++;
-      if (e)
+      scalar e = *vi++;
+      if (is_nonzero(e))
         {
           *coli++ = m;
           *vali++ = e;
         }
     }
-
-  // check
-  // if (row(i+1).as_vec() != v)
-  //   {
-  //     cerr << "error in smat::setrow(int, vec):";
-  //     cerr << "v = "<<v<<endl;
-  //     cerr << "row was set to "<< row(i+1).as_vec()<<endl;
-  //   }
 }
 
 void smat::setrow ( int i, const svec& v) // i counts from 1
 {
-  int d=v.entries.size(); // = #non-zero entries
+  int d=v.entries.size();
   i--;
   scalar *vali = val[i];
   int *coli = col[i];
@@ -200,11 +194,10 @@ void smat::setrow ( int i, const svec& v) // i counts from 1
   }
 
   coli++;
-  for(map<int,scalar>::const_iterator vi=v.entries.begin();
-      vi!=v.entries.end(); vi++)
+  for( const auto& vi : v.entries)
     {
-      *coli++ = vi->first;
-      *vali++ = vi->second;
+      *coli++ = vi.first;
+      *vali++ = vi.second;
     }
 
   // check
@@ -216,23 +209,23 @@ void smat::setrow ( int i, const svec& v) // i counts from 1
   //   }
 }
 
-smat smat::select_rows(const vec& rows) const
-  {
-    int i,r, n=dim(rows);
-    smat ans(n,nco);
-    for(i=0; i<n; i++)
-      {
-	r=rows[i+1]-1;
-	ans.set_row(i,col[r][0],col[r]+1,val[r]);
-      }
-    return ans;
-  }
+smat smat::select_rows(const vec_i& rows) const
+{
+  int n=dim(rows);
+  smat ans(n,nco);
+  for(int i=0; i<n; i++)
+    {
+      int r=rows[i+1]-1;
+      ans.set_row(i,col[r][0],col[r]+1,val[r]);
+    }
+  return ans;
+}
 
 mat smat::as_mat( ) const
 {
   //  cout<<"Converting smat to mat("<<nro<<"x"<<nco<<")"<<endl;
-  mat ans( nro, nco ); 
-  scalar *mi = ans.entries;
+  mat ans( nro, nco );
+  auto mi = ans.entries.begin();
   for( int i = 0; i < nro; i++ )
     {
       int d = *col[i];
@@ -259,28 +252,29 @@ svec smat::row(int i) const // extract row i as an svec, i counts from 1
 scalar smat::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
         				  * can only be used as a rvalue  */
 {
- if( (0<i) && (i<=nro) && (0<j) && (j<=nco) )
+  static const scalar zero(0);
+  if( (0<i) && (i<=nro) && (0<j) && (j<=nco) )
    {
      int d = *col[i-1];
-     if (d==0) return 0;
+     if (d==0) return zero;
      int *first = col[i-1]+1;
      int *last = col[i-1]+1+d;
      int *p = std::lower_bound(first, last, j);
      if ((p==last) || (*p!=j))
-       return 0;
+       return zero;
      return val[i-1][p-first];
    }
  else
    {
      cerr << "Bad indices ("<<i<<","<<j<<") in smat::operator ()! (nro,nco)=("<<nro<<","<<nco<<")\n";
-     exit(1);
-     return 0;
+     return zero;
    }
 }
 
 
 smat& smat::operator=(const smat& sm)
 {
+ static const scalar zero(0);
  if (this==&sm) return *this;
  nco = sm.nco;
  int i, n = sm.nro; 
@@ -302,7 +296,8 @@ smat& smat::operator=(const smat& sm)
     {
       col[i] = new int [ 2 ];
       val[i] = new scalar [ 1 ];
-      col[i][1] = col[i][0] = val[i][0] = 0;
+      col[i][1] = col[i][0] = 0;
+      val[i][0] = zero;
     }
    }
  for( i = 0; i < nro; i++ )
@@ -420,25 +415,24 @@ smat& smat::operator-=(const smat& mat2)
 smat& smat::operator+= (const scalar& scal) // adds scalar*identity
 {
   if(scal==0) return *this;
-  int i, d, k;
-  for(i = 0; i < nro; i++ )
+
+  for(int i = 0; i < nro; i++ )
     {
-      d = *col[i];                      // length of old row
+      int d = *col[i];                      // length of old row
       int *pos1 = col[i] + 1;           // pointer to run along position vector
       scalar *val1 = val[i];            // pointer to run along value vector
       int *P = new int [ d + 2 ];       //  new position vector
       scalar *V = new scalar [ d + 1 ]; //  new value vector
       int* Pi=P+1;
       scalar* Vi=V;
-      scalar newval;
-      k = 0;           // k will be # of non-zero entries of new row
+      int k = 0;           // k will be # of non-zero entries of new row
       while((d)&&(*pos1<(i+1)))  // just copy entries
-	{ 
+	{
 	  *Pi++ = *pos1++; *Vi++ = *val1++; k++; d--;
 	}
       if(d&&(*pos1==(i+1)))     // add the scalar, see if it's zero
 	{
-	  newval = (*val1)+scal;
+	  scalar newval = (*val1)+scal;
 	  if( newval!=0) { *Vi++ = newval; *Pi++=*pos1; k++; }
 	  pos1++; val1++; d--;
 	}
@@ -478,11 +472,10 @@ void smat::reduce_mod_p(const scalar& p)
 smat& smat::operator*=(scalar scal)
 {
   if(scal==0) cerr<<"Attempt to multiply smat by 0\n"<<endl;
-  int i, d; scalar *veci;
-  for( i = 0; i < nro; i++)
+  for( int i = 0; i < nro; i++)
     {
-      d = *col[i];
-      veci = val[i];
+      int d = *col[i];
+      scalar *veci = val[i];
       while(d--) (*veci++) *= scal;
     }
   return *this;
@@ -491,11 +484,10 @@ smat& smat::operator*=(scalar scal)
 smat& smat::mult_by_scalar_mod_p (scalar scal, const scalar& p)
 {
   if(xmod(scal,p)==0) cerr<<"Attempt to multiply smat by 0\n"<<endl;
-  int i, d; scalar *veci;
-  for( i = 0; i < nro; i++)
+  for(int i = 0; i < nro; i++)
     {
-      d = *col[i];
-      veci = val[i];
+      int d = *col[i];
+      scalar *veci = val[i];
       while(d--) {(*veci) = xmodmul(*veci,scal,p); veci++;}
     }
   return *this;
@@ -504,11 +496,10 @@ smat& smat::mult_by_scalar_mod_p (scalar scal, const scalar& p)
 smat& smat::operator/=(scalar scal)
 {
   if(scal==0) cerr<<"Attempt to divide smat by 0\n"<<endl;
-  int i, d; scalar *veci;
-   for(  i = 0; i < nro; i++)
+  for(int i = 0; i < nro; i++)
     {
-      d = *col[i];
-      veci = val[i];
+      int d = *col[i];
+      scalar *veci = val[i];
       while(d--) (*veci++) /= scal;
     }
   return *this;
@@ -522,24 +513,23 @@ mat smat::operator*( const mat& m )
       return mat();
     }
   mat product( nro, m.ncols() );
-  int i, j, d, t;
   scalar ans;
-  for( i = 1; i <= nro; i++ ) 
+  for(int i = 1; i <= nro; i++ )
     {
-      d = col[i-1][0];
-      for( j = 1; j <= m.ncols(); j++ ) 
+      int d = col[i-1][0];
+      for(int j = 1; j <= m.ncols(); j++ ) 
 	{
 	  ans = 0;
-	  for( t = 0; t < d; t++ ) ans += val[i-1][t]*m(col[i-1][t+1],j);
+	  for(int t = 0; t < d; t++ ) ans += val[i-1][t]*m(col[i-1][t+1],j);
 	  product(i,j) = ans;
 	}
     }
   return product;
 }
 
-long smat::nullity(const scalar& lambda, scalar mod) // nullity of this-lambda*I
+long smat::nullity(const scalar& lambda, scalar m) // nullity of this-lambda*I modulo m
 {
-  smat sma(*this); sma-=lambda;  return sma.ncols()-sma.rank(mod);
+  smat sma(*this); sma-=lambda;  return sma.ncols()-sma.rank(m);
 }
 
 // Definitions of non-member, friend operators and functions
@@ -552,24 +542,22 @@ svec operator* ( const smat& A, const svec& v )
       cerr << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
       return svec();
     }
-  int n = A.nro, j; scalar s;
+  int n = A.nro;
   svec prod(n);
-  for(j = 1; j<=n; j++)  
+  for(int j = 1; j<=n; j++)
     {
-      s = (A.row(j))*v;
-      if(s) prod.entries[j]=s;
+      scalar s = (A.row(j))*v;
+      if(is_nonzero(s)) prod.entries[j]=s;
     }
   return prod;
 }
 
-vec operator*  (smat& m, const vec& v)
+vec operator* (const smat& m, const vec& v)
 {
   int r = m.nrows(), c=m.ncols();
   vec w(r);
   if(c!=dim(v))
-    {
-      cerr<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
-    }
+    cerr<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
   else
     for(int i=1; i<=r; i++) w.set(i,m.row(i)*v);
   return w;
@@ -580,56 +568,34 @@ vec operator*  (smat& m, const vec& v)
 svec operator* ( const svec& v, const smat& A )
 {
   svec prod(A.ncols());
-  if( v.d != A.nrows() ) 
-    { 
-      cerr << "incompatible sizes in v*A\n"; 
-      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
+  if( v.d != A.nrows() )
+    {
+      cerr << "incompatible sizes in v*A\n"
+           << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
     }
   else
     {
-      map<int,scalar>::const_iterator vi;
-      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
-        prod += (vi->second)*(A.row(vi->first));
+      for( const auto& vi : v.entries)
+        prod += (vi.second)*(A.row(vi.first));
     }
   return prod;
 }
-
-#if(0)
-svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
-{
-  svec prod(A.ncols());
-  if( v.d != A.nrows() ) 
-    { 
-      cerr << "incompatible sizes in v*A\n"; 
-      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
-    }
-  else
-    {
-      map<int,scalar>::const_iterator vi;
-      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
-        prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);
-    }
-  return prod;
-}
-
-#else
 
 svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
 {
   vec prod(A.ncols());
   if( v.d != A.nrows() )
     {
-      cerr << "incompatible sizes in v*A\n";
-      cerr << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
+      cerr << "incompatible sizes in v*A\n"
+           << "Dimensions "<<v.d<<" and "<<dim(A)<<endl;
     }
   else
     {
-      map<int,scalar>::const_iterator vi;
-      for(vi=v.entries.begin(); vi!=v.entries.end(); vi++)
+      for( const auto& vi : v.entries)
         {
           // prod.add_scalar_times_mod_p(A.row(vi->first), vi->second,p);
-          int i = (vi->first)-1;        // the row of A to use (from 0)
-          scalar c = vi->second;        // the coefficient tomultiply it by
+          int i = (vi.first)-1;         // the row of A to use (from 0)
+          scalar c = vi.second;         // the coefficient to multiply it by
           int d = A.col[i][0];          // #nonzero entries in this row
           int *posi = A.col[i] +1;      // pointer to array of columns
           scalar *values = A.val[i];    // pointer to array of values
@@ -639,7 +605,7 @@ svec mult_mod_p( const svec& v, const smat& A, const scalar& p  )
     }
   return svec(prod);
 }
-#endif
+
 
 svec mult_mod_p( const smat& A, const svec& v, const scalar& p  )
 {
@@ -651,8 +617,7 @@ svec mult_mod_p( const smat& A, const svec& v, const scalar& p  )
     }
   else
     {
-      int i;
-      for(i=1; i<=A.nrows(); i++)
+      for(int i=1; i<=A.nrows(); i++)
         w.set(i,dotmodp(A.row(i),v,p));
     }
   return w;
@@ -668,8 +633,7 @@ vec mult_mod_p( const smat& A, const vec& v, const scalar& p  )
     }
   else
     {
-      int i;
-      for(i=1; i<=A.nrows(); i++)
+      for(int i=1; i<=A.nrows(); i++)
         w.set(i,dotmodp(A.row(i),v,p));
     }
   return w;
@@ -711,9 +675,8 @@ smat transpose ( const smat& A )
 {
   // 1. Count the number of entries in each column (as in operator*() below):
   int *colwts = new int[A.nco];
-  int i, r;
-  for(i=0; i<A.nco; i++) colwts[i]=0;
-  for( r = 0; r <A.nro; r++ ) // counts # of elements in each col
+  for( int i=0; i<A.nco; i++) colwts[i]=0;
+  for( int r=0; r <A.nro; r++ ) // counts # of elements in each col
     {
       int d = *A.col[r];
       int *p = A.col[r] + 1;
@@ -729,7 +692,7 @@ smat transpose ( const smat& A )
   // Remove the default entries in B:
   for( int i = 0; i < B.nro; i++ ) { delete [] B.col[i]; delete [] B.val[i]; }
   // Replace with the correct sizes:
-  for( i = 0; i < B.nro; i++ )
+  for( int i = 0; i < B.nro; i++ )
     {
       int d = colwts[i];
       B.col[i] = new int[ d+1 ];  
@@ -741,8 +704,8 @@ smat transpose ( const smat& A )
   //   put into row i of the transpose
   int * aux = new int [B.nro];
   int *a=aux;
-  for( r = 0; r < B.nro; r++ ) *a++ = 0;
-  for( r = 0; r < A.nro; r++ ) {
+  for( int r = 0; r < B.nro; r++ ) *a++ = 0;
+  for( int r = 0; r < A.nro; r++ ) {
     int d = *A.col[r];
     //    cout<<"row "<<r<<" of A has "<<d<<" entries\n";
     scalar *v = A.val[r];
@@ -755,7 +718,7 @@ smat transpose ( const smat& A )
     }
 #if(0)
     cout<<"After processing that row, aux = \n";
-    for(i=0; i<A.nco; i++) cout<<aux[i]<<" ";
+    for(int i=0; i<A.nco; i++) cout<<aux[i]<<" ";
     cout<<endl;
 #endif
   }
@@ -773,7 +736,7 @@ int operator==(const smat& sm1, const smat& sm2)
      {
        int d1 = *sm1.col[i], d2 = *sm2.col[i];
        if( d1 != d2 ) {return 0;}
-       
+
        scalar *sm1val = sm1.val[i], *sm2val= sm2.val[i];
        int *sm1pos= sm1.col[i] + 1;
        int *sm2pos = sm2.col[i] + 1;
@@ -793,7 +756,7 @@ int eqmodp(const smat& sm1, const smat& sm2, const scalar& p)
      {
        int d1 = *sm1.col[i], d2 = *sm2.col[i];
        if( d1!=d2 ) {return 0;}
-       
+
        scalar *sm1val = sm1.val[i], *sm2val= sm2.val[i];
        int *sm1pos= sm1.col[i] + 1;
        int *sm2pos = sm2.col[i] + 1;
@@ -860,18 +823,16 @@ istream& operator >> (istream& s, smat& sm)
   return s;
 }
 
-
-    
 // Definition of non-friend functions
 
 smat operator+(const smat& sm)
 {
-        return sm;
+  return sm;
 }
 
 smat operator-(const smat& sm)
 {
-        return (-1)*sm;
+  return scalar(-1)*sm;
 }
 
 smat operator+(const smat& sm1, const smat& sm2)
@@ -896,86 +857,114 @@ smat operator/(const smat& sm, scalar scal)
 
 int operator!=(const smat& sm1, const smat& sm2)
 {
-        return !(sm1==sm2);
+  return !(sm1==sm2);
 }
 
 int get_population(const smat& m )
 {
-  int r,d,count = 0;
-  for( r = 0; r < m.nro; r++ ) 
+  int count = 0;
+  for(int r = 0; r < m.nro; r++ )
     {
-      d = *(m.col[r]);
+      int d = *(m.col[r]);
       if(d==0) continue;
       int *pos = m.col[r] + 1;
-      while( d-- ) { count += ( *pos++ != 0 );}
+      while( d-- ) { count += ( is_nonzero(*pos++) );}
     }
   return count;
 }
 
-smat sidmat(scalar n)  // identity matrix
+scalar maxabs(const smat& m )
 {
-  smat I(n,n); // creates enough space
-  for( int i = 0; i < n; i++ )
+  scalar a(0);
+  for(int r = 0; r < m.nro; r++ )
     {
-      I.col[i][0] = 1;   // one entry in this row
-      I.col[i][1] = i+1; // ...it's in column i+1
-      I.val[i][0] = 1;   // ...its value is 1
+      int d = *(m.col[r]);
+      scalar *values = m.val[r];
+      int *pos = m.col[r] + 1;
+      while( d-- ) { a = max(a, abs(*values++)); pos++;}
     }
-  return I;
+  return a;
 }
 
-int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd, int trace)
+smat smat::scalar_matrix(int n, const scalar& a)  // nxn scalar matrix a*I
 {
-  scalar modulus=pr,n,d; long nr,nc; dd=1;
-  int succ=0,success=1;
-  float lim=floor(sqrt(pr/2.0));
+  smat D(n,n); // creates enough space
+  for( int i = 0; i < n; i++ )
+    {
+      D.col[i][0] = 1;   // one entry in this row
+      D.col[i][1] = i+1; // ...it's in column i+1
+      D.val[i][0] = a;   // ...its value is a
+    }
+  return D;
+}
+
+int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd)
+{ int trace=0;
+  scalar n,d; long nr,nc; dd=1;
+  scalar lim = sqrt(pr>>1);
   m = mm;
+  m.reduce_mod_p(pr);
   if(trace)
     {
-      cout << "Lifting mod-p smat;  smat mod "<<pr<<" is:\n";
-      cout << m.as_mat();
+      cout << "Lifting mod-p smat" << endl;
+      if (trace>1) cout << "smat mod "<<pr<<" is:\n" << m.as_mat() <<endl;
       cout << "Now lifting back to Q.\n";
-      cout << "lim = " << lim << "\n";
+    }
+  scalar ma = maxabs(m);
+  if (ma < lim)
+    {
+      if (trace) cout<<"Nothing to do, max entry "<<ma<<" < "<<lim<<endl;
+      return 1;
     }
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
       {
-	succ = modrat(m.val[nr][nc],modulus,lim,n,d);
-	success = success && succ;
-	dd=lcm(d,dd);
+        scalar v = m.val[nr][nc];
+        if (abs(v) < lim) continue;
+	int ok = modrat(v,pr,n,d);
+        scalar newdd=lcm(abs(d),dd);
+        if (newdd!=dd)
+          {
+            dd = newdd;
+            if(trace)
+              cout <<"denom = "<<abs(d)<<", common denom so far is "<<dd<<endl;
+          }
+        if (!ok)
+          {
+            if (trace) cerr << "Failed to lift "<<v<<" mod "<<pr<<" to Q"<<endl;
+            return 0;
+          }
       }
-  if(!success)
-    {
-      //cout << "Problems encountered with modrat lifting of smat." << endl;
-      return 0;
-    }
   dd=abs(dd);
   if(trace) cout << "Common denominator = " << dd << "\n";
   for(nr=0; nr<m.nro; nr++)
     for(nc=0; nc<m.col[nr][0]; nc++)
       m.val[nr][nc] = mod(xmodmul(dd,(m.val[nr][nc]),pr),pr);
-  if(trace) cout << "Lifted smat = " << m.as_mat() << "\n";
+  if(trace)
+    {
+      if (trace>1) cout << "Lifted smat = " << m.as_mat() << "\n";
+      cout << " Lift has denominator "<<dd<<endl;
+    }
   return 1;
 }
 
 //#define DEBUG_CHINESE
 
 int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
-                     smat& m, scalar& dd)
+                      smat& m, scalar& dd)
 {
-  long modulus=(long)pr1*(long)pr2,n,d,mij;
-  long nr,nc,u,v;
-  float lim=floor(sqrt(modulus/2.0));
+  scalar modulus=pr1*pr2;
+  scalar n,d,u,v;
 
   dd = bezout(pr1,pr2,u,v); //==1
   if (dd!=1) return 0;
 
   // First time through: compute CRTs, common denominator and success flag
   m = m1; // NB We assume that m1 and m2 have nonzero entries in the same places
-  for(nr=0; nr<m1.nro; nr++)
-    for(nc=0; nc<m1.col[nr][0]; nc++)
+  for(int nr=0; nr<m1.nro; nr++)
+    for(int nc=0; nc<m1.col[nr][0]; nc++)
       {
-        mij = mod(v*m1.val[nr][nc],pr1)*pr2 + mod(u*m2.val[nr][nc],pr2)*pr1;
+        scalar mij = xmodmul(v,m1.val[nr][nc],pr1)*pr2 + xmodmul(u,m2.val[nr][nc],pr2)*pr1;
         mij = mod(mij,modulus);
 #ifdef DEBUG_CHINESE
         if (((mij-m1.val[nr][nc])%pr1)||((mij-m2.val[nr][nc])%pr2))
@@ -984,7 +973,7 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
           }
 #endif
         m.val[nr][nc] = mij;
-	if (modrat(mij,modulus,lim,n,d))
+        if (modrat(mij,modulus,n,d))
           dd=lcm(d,dd);
         else
           {
@@ -1000,77 +989,25 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
   cout << "Common denominator = " << dd << "\n";
 #endif
   // Second time through: rescale
-  for(nr=0; nr<m.nro; nr++)
-    for(nc=0; nc<m.col[nr][0]; nc++)
+  for(int nr=0; nr<m.nro; nr++)
+    for(int nc=0; nc<m.col[nr][0]; nc++)
       {
-        m.val[nr][nc] = mod(xmodmul((dd/d),(long)m.val[nr][nc],modulus),modulus);
+        m.val[nr][nc] = mod(xmodmul((dd/d),m.val[nr][nc],modulus),modulus);
       }
   return 1;
 }
 
-// Possible FLINT_LEVEL values are as follows.
-//
-// 0: no FLINT support (or a version <2.3)
-// 1: support for 64-bit nmod_mat (standard from version 2.3)
-// 2: support for 32-bit hmod_mat (non-standard, from version 2.3)
-//
-// The configure script should have detected whether the functions
-// nmod_mat_rref and/or hmod_mat_rref are available to be used here.
-//
-#if FLINT_LEVEL!=0
-//#define TRACE_FLINT_RREF
-#include "flint/fmpz.h"
-#if (SCALAR_OPTION==1)&&(FLINT_LEVEL==2)
-#include "flint/hmod_mat.h"
-#undef uscalar
-#undef mod_mat
-#undef mod_mat_init
-#undef mod_mat_clear
-#undef mod_mat_entry
-#undef mod_mat_nrows
-#undef mod_mat_ncols
-#undef mod_mat_rref
-#undef mod_mat_mul
-#define uscalar hlimb_t // unsigned int
-#define mod_mat hmod_mat_t // uses unsigned ints
-#define mod_mat_init hmod_mat_init
-#define mod_mat_clear hmod_mat_clear
-#define mod_mat_entry hmod_mat_entry
-#define mod_mat_nrows hmod_mat_nrows
-#define mod_mat_ncols hmod_mat_ncols
-#define mod_mat_rref hmod_mat_rref
-#define mod_mat_mul hmod_mat_mul
-#else
-#include "flint/nmod_mat.h"
-#undef uscalar
-#undef mod_mat
-#undef mod_mat_init
-#undef mod_mat_clear
-#undef mod_mat_entry
-#undef mod_mat_nrows
-#undef mod_mat_ncols
-#undef mod_mat_rref
-#undef mod_mat_mul
-#define uscalar mp_limb_t // unsigned long
-#define mod_mat nmod_mat_t // uses unsigned longs
-#define mod_mat_init nmod_mat_init
-#define mod_mat_clear nmod_mat_clear
-#define mod_mat_entry nmod_mat_entry
-#define mod_mat_nrows nmod_mat_nrows
-#define mod_mat_ncols nmod_mat_ncols
-#define mod_mat_rref nmod_mat_rref
-#define mod_mat_mul nmod_mat_mul
-#endif
-#include "flint/profiler.h"
-#include "eclib/timer.h"
+#if FLINT
 
-// FLINT has two types for modular matrices: standard in FLINT-2.3 has
-// nmod_mat_t with entries of type mp_limb_t (unsigned long);
-// non-standard (in an optional branch) is hmod_mat_t, with entries
-// hlimb_t (unsigned int).  We use the former when scalar=long and the
-// latter when scalar=int, provided that the optional functions are
-// present, which should have been determined by the configure script.
-// The unsigned scalar types are #define'd as uscalar.
+#include "eclib/flinterface.h"
+
+// FLINT has more than one type for modular matrices: standard in
+// FLINT-2.3..2.9 was nmod_mat_t with entries of type mp_limb_t
+// (unsigned long) while non-standard was hmod_mat_t, with entries
+// hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
+// wrapper.  We use the former when scalar=long and the latter when
+// scalar=int and the FLINT version is at least 3.  The unsigned
+// scalar types are #define'd as uscalar.
 
 void mod_mat_from_smat(mod_mat& A, const smat& M, scalar pr)
 {
@@ -1078,13 +1015,13 @@ void mod_mat_from_smat(mod_mat& A, const smat& M, scalar pr)
   long i, j;
 
   // copy of the modulus for FLINT
-  uscalar mod = (uscalar)pr;
+  uscalar p = (uscalar)I2long(pr);
 
   // create flint matrix copy of M:
-  mod_mat_init(A, nr, nc, mod);
+  mod_mat_init(A, nr, nc, p);
   for(i=0; i<nr; i++)
     for(j=0; j<nc; j++)
-      mod_mat_entry(A,i,j) = (uscalar)posmod(M.elem(i+1,j+1),pr);
+      mod_mat_entry(A,i,j) = (uscalar)I2long(posmod(M.elem(i+1,j+1),pr));
 }
 
 smat smat_from_mod_mat(const mod_mat& A, const scalar& p) //scalar just to fix return type
@@ -1098,7 +1035,7 @@ smat smat_from_mod_mat(const mod_mat& A, const scalar& p) //scalar just to fix r
     {
       svec rowi(nc);
       for(j=0; j<nc; j++)
-        rowi.set(j+1, mod_mat_entry(A,i,j));
+        rowi.set(j+1, scalar(mod_mat_entry(A,i,j)));
       M.setrow(i+1,rowi);
     }
   return M;
@@ -1114,10 +1051,10 @@ smat mult_mod_p_flint ( const smat& A, const smat& B, const scalar& pr )
   mod_mat A1, B1, C1;
   mod_mat_from_smat(A1,A,pr);
   mod_mat_from_smat(B1,B,pr);
-  mod_mat_init(C1, A.nrows(), B.ncols(), pr);
+  mod_mat_init(C1, A.nrows(), B.ncols(), I2long(pr));
   // timer T;
   // T.start();
-  // mod_mat_mul(C1,A1,B1);
+  mod_mat_mul(C1,A1,B1);
   // T.stop();
   // cout<<"mult_mod_p_flint time (size "<<dim(A)<<"x"<<dim(B)<<"): ";
   // T.show();

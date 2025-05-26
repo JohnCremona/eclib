@@ -1,7 +1,7 @@
 // FILE PERIODS.CC : implementation of classes for integrating newforms
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 //
 // This file is part of the eclib package.
 //
@@ -39,13 +39,8 @@
 character::character(long m)
 {
   modul=m;
-  chartable = new int[m];
+  chartable.resize(m);
   init();
-}
-
-character::~character()
-{
-  delete [] chartable;
 }
 
 void character::init()
@@ -56,9 +51,8 @@ void character::init()
 
 void character::reset(long m)
 {
-  delete [] chartable;
   modul=m;
-  chartable = new int[m];
+  chartable.resize(m);
   init();
 }
 
@@ -77,10 +71,10 @@ vector<long> resort_aplist(const level* iN,
   //  cout<<"resort_aplist(), using "<<nap<<" primes"<<endl;
   vector<long> aplist;
   aplist.reserve(nap);
-  long i, j, p, ip = iN->npdivs;
-  for(i=0; i<nap; i++)
-    { p = primelist[i];
-    vector<long>::const_iterator pi = find(iN->plist.begin(),iN->plist.end(),p);
+  long ip = iN->npdivs;
+  for(long i=0; i<nap; i++)
+    { long p = primelist[i];
+    auto pi = find(iN->plist.begin(),iN->plist.end(),p);
     if(pi==iN->plist.end()) // then p is good
       {
 	aplist.push_back( apl[ip++]);
@@ -95,7 +89,7 @@ vector<long> resort_aplist(const level* iN,
 	  }
 	else
 	  {
-	    j = pi-(iN->plist.begin());  // p is j'th bad prime
+	    long j = pi-(iN->plist.begin());  // p is j'th bad prime
 	    aplist.push_back(- apl[j]);
 // 	    cout << "i = "<<i<<",\tp = " << p << "\ta_p = " << aplist[i] << endl;
 	  }
@@ -109,8 +103,7 @@ vector<long> resort_aplist(const level* iN,
 void summer::initaplist(const level* iN, const vector<long>& apl)
 {
   N = iN->modulus;
-  nap = apl.size();
-  primelist = primes(nap);   //First nap primes, indexed from 0
+  primelist = primes(apl.size());   //First #apl primes, indexed from 0
 #ifdef NEW_OP_ORDER
   aplist=apl;
 #else
@@ -141,54 +134,52 @@ void summer::use2(long n, long an)
  cout<<"use2("<<n<<","<<an<<")"<<endl;
  cout<<"(n,an,can)=("<<n<<","<<an<<","<<can<<"):\t";
 #endif
-  if (n<rootlimit) {an_cache[n]=an;  
+  if (n<rootlimit) {an_cache[n]=an;
 #ifdef TRACE_CACHE
   cout<<"Caching an["<<n<<"]="<<an<<endl;
 #endif
   }
-  if (n<limit1) { bigfloat term=func1(n) * can; sum1 += term; 
-#ifdef TRACE_USE 
+  if (n<limit1) { bigfloat term=func1(n) * can; sum1 += term;
+#ifdef TRACE_USE
   cout<<"term="<<term<<",\tsum1="<<sum1<<"\n";
 #endif
   }
   if (n<limit2) { bigfloat term = func2(n) * can; sum2+=term;
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<term<<",\t"<<sum2<<"\n";
 #endif
   }
 }
-  
+
 // This calls use(m,am) for all m=n*2^a*3^b*5^c*7^d<limit
-void summer::use2357(long n, long an)  
+void summer::use2357(long n, long an)
 {
-  long m2=n,m23,m235,m2357;
-  long am2,am23,am235,am2357;
-  long i2,i3,i5,i7;
-  for(i2=0; (i2<=n2p)&&(m2<limit); i2++, m2*=2)
+  long m2=n;
+  for(long i2=0; (i2<=n2p)&&(m2<limit); i2++, m2*=2)
     {
-      am2=an*a2p_cache[i2];
-      m23=m2;
-      for(i3=0; (i3<=n3p)&&(m23<limit); i3++, m23*=3)
+      long am2=an*a2p_cache[i2];
+      long m23=m2;
+      for(long i3=0; (i3<=n3p)&&(m23<limit); i3++, m23*=3)
 	{
-	  am23=am2*a3p_cache[i3];
-	  m235=m23;
-	  for(i5=0; (i5<=n5p)&&(m235<limit); i5++, m235*=5)
+	  long am23=am2*a3p_cache[i3];
+	  long m235=m23;
+	  for(long i5=0; (i5<=n5p)&&(m235<limit); i5++, m235*=5)
 	    {
-	      am235=am23*a5p_cache[i5];
-	      m2357=m235;
-	      for(i7=0; (i7<=n7p)&&(m2357<limit); i7++, m2357*=7)
+	      long am235=am23*a5p_cache[i5];
+	      long m2357=m235;
+	      for(long i7=0; (i7<=n7p)&&(m2357<limit); i7++, m2357*=7)
 		{
-		  am2357=am235*a7p_cache[i7];
+		  long am2357=am235*a7p_cache[i7];
 		  use(m2357,am2357);
-		}      	      
-	    }      
-	}      
+		}
+	    }
+	}
     }
 }
 
 void summer::add(long n, long pindex, long y, long z)
-{ 
-  // y = a[n], z=a[n/p] 
+{
+  // y = a[n], z=a[n/p]
   // where p is the pindex'th prime, which is the largest prime dividing n
 
   //    cout<<"In add() with n="<<n<<",\tpindex="<<pindex<<",\ty="<<y
@@ -201,9 +192,9 @@ void summer::add(long n, long pindex, long y, long z)
   ip=istart;
   p=primelist[ip];
   if(triv&&(p>rootlimit)) return;
-  
+
   for(pn=n*p; (ip<=pindex) && (pn<=limit); ip++)
-    { 
+    {
       p=primelist[ip];
       pn=p*n;
       if(pn<=limit)
@@ -216,11 +207,11 @@ void summer::add(long n, long pindex, long y, long z)
 }
 
 void summer::add2357(long n, long pindex, long y, long z)
-{ 
-  // y = a[n], z=a[n/p] 
+{
+  // y = a[n], z=a[n/p]
   // where p is the pindex'th prime, which is the largest prime dividing n
 
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"In add() with n="<<n<<",\tpindex="<<pindex<<",\ty="<<y
       <<",\tz="<<z<<endl;
 #endif
@@ -232,9 +223,9 @@ void summer::add2357(long n, long pindex, long y, long z)
   ip=istart;
   p=primelist[ip];
   if(triv&&(p>rootlimit)) return;
-  
+
   for(pn=n*p; (ip<=pindex) && (pn<=limit); ip++)
-    { 
+    {
       p=primelist[ip];
       pn=p*n;
       if(pn<=limit)
@@ -253,7 +244,7 @@ void summer::sumit()
   static double log5 = log(5.0);
   static double log7 = log(7.0);
   double loglimit = log((double)limit);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"In sumit(), limit="<<limit<<", rootlimit="<<rootlimit<<endl;
 #endif
   sum1=sum2=to_bigfloat(0);
@@ -314,30 +305,30 @@ void summer::sumit()
 
   use2357(1,1);
   unsigned long ip=4; long p=11,ap;
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"Using primes with indices "<<ip<<" to "<<primelist.size()
       <<" and less than "<<rootlimit<<endl;
 #endif
   while( (ip+1<primelist.size()) && (p<rootlimit)  )
-  { 
+  {
     ap=aplist[ip];
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
     cout<<"Using prime("<<ip<<") = "<<p<<", ap = "<<ap<<endl;
 #endif
     add2357(p,ip,ap,1);
     p=primelist[++ip];
   }
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<endl;
 #endif
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"Using primes with indices "<<ip<<" to "<<primelist.size()
       <<" and less than "<<limit<<endl;
 #endif
   while( (ip+1<primelist.size()) && (p<=limit)  )
-  { 
+  {
     ap=aplist[ip];
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
     cout<<"Using prime("<<ip<<") = "<<p<<", ap = "<<ap<<endl;
 #endif
     if(ap!=0)
@@ -353,38 +344,37 @@ void summer::sumit()
 	    m++; n+=p;
 	  }
       }
-    p=primelist[++ip];  
+    p=primelist[++ip];
   }
 }
 
 /////////////////////////////////////////////
 //  functions for periods_via_lfchi class  //
 /////////////////////////////////////////////
- 
+
 periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
-: chi1(f->lplus), chi2(f->lminus)
+  : chi1(f->lplus), chi2(f->lminus)
 {
-  type = f->type;
-  dp0=f->dp0, mplus=f->mplus, mminus=f->mminus;
+  type = f->type; dp0 = f->dp0; mplus = f->mplus; mminus = f->mminus;
   if(f->lplus==1) mplus=f->np0; // L/P = dp0/np0 so now P=L*mplus/dp0
   initaplist(iN,f->aplist);
-  rootmod =  sqrt(to_bigfloat(N));  
+  rootmod =  sqrt(to_bigfloat(N));
   factor1 =  exp(-(TWOPI)/ (to_bigfloat(chi1.modulus()) * rootmod));
   factor2 =  exp(-(TWOPI)/ (to_bigfloat(chi2.modulus()) * rootmod));
   long bp = bit_precision();
  // MUST keep brackets around TWOPI!:
   bigfloat rootlimit1=(bp-log(1-factor1))*rootmod/(TWOPI) ;
-  bigfloat rootlimit2=(bp-log(1-factor1))*rootmod/(TWOPI) ; 
+  bigfloat rootlimit2=(bp-log(1-factor1))*rootmod/(TWOPI) ;
   Iasb(limit1,rootlimit1);
   Iasb(limit2,rootlimit2);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout << "Bit precision = "<<bp<<endl;
   cout << "Basic limits on n in sums = " << limit << endl;
 #endif
-  limit1=chi1.modulus()*limit1;  
+  limit1=chi1.modulus()*limit1;
   limit2=chi2.modulus()*limit2;
   limit = ( limit2 > limit1 ? limit2 : limit1);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   //  cout<<"periods_via_lfchi.limit = "<<limit<<endl;
   //  cout<<"Largest prime = "<<primelist[primelist.size()-1]<<endl;
 #endif
@@ -394,7 +384,7 @@ periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
 */
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout << "factor1 = "<<factor1<<", factor2 = "<<factor2<<endl;
   cout << "Limits on n in sums = " << limit1 <<", "<<limit2 << endl;
 #endif
@@ -402,7 +392,7 @@ periods_via_lfchi::periods_via_lfchi (const level* iN, const newform* f)
   cout << "Initial an_cache = "<<an_cache<<endl;
 #endif
 }
- 
+
 void periods_via_lfchi::compute(void)
 {
   sumit();
@@ -416,7 +406,7 @@ void periods_via_lfchi::compute(void)
 //////////////////////////////////////////
 //  functions for periods_direct class  //
 //////////////////////////////////////////
- 
+
 periods_direct::periods_direct(const level* iN, const newform*f)
 {
   eps_N = -(f->sfe);
@@ -434,7 +424,7 @@ void periods_direct::compute(long ta, long tb, long tc, long td)
 
 void periods_direct::compute(void)
 {
-  if(d==0) 
+  if(d==0)
    {
     cout<<"Problem: cannot compute periods for matrix with d=0!"<<endl;
     rp=ip=0;
@@ -471,7 +461,7 @@ void periods_direct::compute(void)
   limit = limit2;
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout << "Limits on n in sums = " << limit1 <<", "<<limit2 << endl;
   cout<<"periods_direct.limit = "<<limit<<endl;
   cout<<"Largest prime = "<<primelist[primelist.size()-1]<<endl;
@@ -495,16 +485,16 @@ void periods_direct::compute(void)
   rp = sum1;
   ip = sum2;
 }
- 
-void periods_direct::use(long n, long an)  
+
+void periods_direct::use(long n, long an)
 // specially defined, as does not fit simply into prototype provided by
 // summer class
-{ 
+{
   if(n>limit) return;
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"periods_direct::use("<<n<<","<<an<<")"<<endl;
 #endif
-  if (n<rootlimit) {an_cache[n]=an; 
+  if (n<rootlimit) {an_cache[n]=an;
 #ifdef TRACE_CACHE
   cout<<"Caching an["<<n<<"]="<<an<<endl;
 #endif
@@ -513,15 +503,15 @@ void periods_direct::use(long n, long an)
   bigfloat coeff = to_bigfloat(an)/dn;
   bigfloat ef2 = coeff * exp(dn*factor2);
   int nbd = (n*b)%d, ncd = (n*c)%d;
-  if(eps_N==-1) 
+  if(eps_N==-1)
     {
       if(n<limit1)
 	{
 	  bigfloat ef1 = coeff * exp(dn*factor1);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
 	  cout<<"n="<<n<<", ef1="<<ef1<<", ef2="<<ef2<<"\n";
 #endif
-	  sum1 -= (2*ef1); 
+	  sum1 -= (2*ef1);
 	}
       sum1 += ef2*(ctab[nbd]+ctab[ncd]);
       sum2 += ef2*(stab[nbd]+stab[ncd]);
@@ -531,15 +521,15 @@ void periods_direct::use(long n, long an)
       sum1 += ef2*(ctab[nbd]-ctab[ncd]);
       sum2 += ef2*(stab[nbd]-stab[ncd]);
     }
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"done: sum1 = "<<sum1<<", sum2 = "<<sum2<<endl;
 #endif
 }
- 
+
 ///////////////////////////////////////
 //  functions for part_period class  //
 ///////////////////////////////////////
- 
+
 part_period::part_period(const level* iN, const newform*f)
 {
   initaplist(iN, f->aplist);
@@ -559,7 +549,7 @@ void part_period::compute()
   limit1=limit2=limit;
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"Using limit = "<<limit<<endl;
 #endif
 #ifdef TRACE_CACHE
@@ -570,12 +560,12 @@ void part_period::compute()
   rp = sum1;
   ip = sum2;
 }
- 
- 
+
+
 //////////////////////////////////
 //  functions for ldash1 class  //
 //////////////////////////////////
- 
+
 ldash1::ldash1(const level* iN, const newform* f)
 {
   init(iN, f->aplist, f->sfe, f->loverp);
@@ -593,7 +583,7 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
 
   rootmod=sqrt(to_bigfloat(N));
   factor1 = (TWOPI)/rootmod;
-  long maxp = prime_number(nap);
+  long maxp = prime_number(aplist.size());
   limit  =  I2long(Ifloor((30+bit_precision())/factor1));
   //cout<<"ldash1::init() with N="<<N<<", bit_precision="<<bit_precision()<<endl;
   //cout<<"number of terms to use = "<<limit<<endl;
@@ -612,7 +602,7 @@ void ldash1::init(const level* iN, const vector<long>& f_aplist, long f_sfe, con
   else if(f_loverp==0) {r=2; }
 }
 
-void ldash1::compute(void) 
+void ldash1::compute(void)
 {
   static const bigfloat two=to_bigfloat(2);
   if(computed) return;
@@ -622,17 +612,29 @@ void ldash1::compute(void)
   while(abs(ld1)<0.0001) // ?? What's a sensible value??
     {
       //      cout<<"L^(r)(1) small for r="<<r<<", increasing to ";
-      r+=2;  
+      r+=2;
       //      cout<<r<<endl;
       sumit(); ld1=two*sum1;
     }
 }
 
+bigfloat ldash1::func1(long n)
+{
+#ifdef MPFP
+  long l = bit_precision();
+  set_precision(l+20);
+#endif
+  bigfloat ans = -G(factor1*to_bigfloat(n));
+#ifdef MPFP
+  set_precision(l);
+#endif
+  return ans;
+}
 
 /////////////////////////////////
 //  functions for lfchi class  //
 /////////////////////////////////
- 
+
 lfchi::lfchi (const level* iN, const newform* f)
 {
   initaplist(iN, f->aplist);
@@ -648,7 +650,7 @@ void lfchi::compute(long ell)
   factor1 =  exp(-(TWOPI)/ (to_bigfloat(ell) * rootmod));
   rootlimit=sqrt(to_bigfloat(limit));
   an_cache.resize(I2long(Ifloor(rootlimit+1)),0);
-#ifdef TRACE_USE 
+#ifdef TRACE_USE
   cout<<"lfchi.factor1 = "<<factor1<<" for ell="<<ell<<endl;
   cout<<"lfchi.limit = "<<limit<<" for ell="<<ell<<endl;
 #endif
@@ -659,32 +661,32 @@ void lfchi::compute(long ell)
 
   val = -2*sum1; // - since sumit() uses -a_n
 }
- 
+
 ////////////////////////////////////////////////////////
- 
+
 int newforms::get_real_period(long i, bigfloat& x, int verbose) const
 {
   const newform* nfi = &(nflist[i]);
   int rank0 = (num(nfi->loverp)!=0);
   lfchi lx(this,nfi);
-  
-  if(rank0) 
+
+  if(rank0)
     {
-      if(verbose) 
+      if(verbose)
 	cout << "Computing real period via L(f,1): ";
       lx.compute(1);
       if(verbose) cout<<"L(f,1) = "<<lx.value()<<"; ";
       rational lop=nfi->loverp;
-      x = abs(lx.value())*to_bigfloat(den(lop))/to_bigfloat(num(lop)); 
+      x = abs(lx.value())*to_bigfloat(den(lop))/to_bigfloat(num(lop));
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }
-  
+
   long lplus=nfi->lplus;
   long mplus=nfi->mplus;
   if(mplus!=0)
     {
-      if(verbose) 
+      if(verbose)
 	cout << "Computing real period via L(f,chi,1) with chi mod "
 	     <<lplus<<"...";
       lx.compute(lplus);
@@ -693,8 +695,8 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
       if(verbose) cout<<"real period = "<<x<<endl;
       return 1;
     }
-  
-  // we only reach here if sfe=-1 and level is square  
+
+  // we only reach here if sfe=-1 and level is square
 
   periods_direct pd(this,nfi);
   if(verbose) cout<<"...computing directly...";
@@ -710,13 +712,13 @@ int newforms::get_real_period(long i, bigfloat& x, int verbose) const
 int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
 {
   const newform* nfi = &(nflist[i]);
-  lfchi lx(this,nfi); 
-  
+  lfchi lx(this,nfi);
+
   long lminus=(nfi->lminus);
   long mminus=(nfi->mminus);
   if(mminus!=0)
     {
-      if(verbose) 
+      if(verbose)
 	cout << "Computing imaginary period via L(f,chi,1) with chi mod "
 	     <<lminus<<"...";
       lx.compute(lminus);
@@ -729,7 +731,7 @@ int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
 }
 
 ////////////////////////////////////////////////////////
- 
+
 Cperiods newforms::getperiods(long i, int method, int verbose)
   // method=1 to use periods_direct
   // method=0 to use periods_via_lfchi
@@ -751,12 +753,12 @@ Cperiods newforms::getperiods(long i, int method, int verbose)
   //  method=1;
   if(method==1)
        {
-         if(verbose) 
+         if(verbose)
 	   {
 	     cout<<"Finding periods -- direct method "<<endl;
 	     cout << "using matrix ("<<nfi->a<<","<<nfi->b<<";"<<nfi->c
 		  <<","<<nfi->d<<"), dotplus="<<nfi->dotplus
-		  <<", dotminus="<<nfi->dotminus<<"; type="<<nfi->type<<endl; 
+		  <<", dotminus="<<nfi->dotminus<<"; type="<<nfi->type<<endl;
 	   }
          periods_direct per(this,nfi);
          per.compute();
@@ -766,7 +768,7 @@ Cperiods newforms::getperiods(long i, int method, int verbose)
        }
      else
        {
-         if(verbose) 
+         if(verbose)
 	   cout<<"Finding periods -- via L(f_chi) using twists by "
 	       <<nfi->lplus<<" and "<<nfi->lminus<<endl;
          periods_via_lfchi per(this,nfi);
@@ -784,33 +786,41 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   long fac6=(odd(fac)?fac:2*fac);
 //  if(fac>1) cout<<"factor = "<<fac<<endl;
 //
-// p^2 | n => p | c4, c6 so we take advantage of the fact that c4, c6 
+// p^2 | n => p | c4, c6 so we take advantage of the fact that c4, c6
 // must be multiples of fac when rounding.
 //
   bigcomplex wR, wRI, w1, w2, c4, c6;
   Cperiods cp = getperiods(i, method, verbose);
-  if(verbose) cout<<cp<<endl;
+  if(verbose)
+    cout<<cp<<endl;
   cp.getwRI(wR, wRI);
   rperiod = real(wR);
   cp.getwi(w1, w2);
   getc4c6(w2,w1,c4,c6);  // from compproc.h
   bigfloat rc4 = real(c4), rc6 = real(c6);
-  if(verbose) cout << "c4 = " << rc4 << "\nc6 = " << rc6 << endl;
+  if(verbose)
+    cout << "c4 = " << rc4 << "\nc6 = " << rc6 << endl;
   bigint ic4 = fac*Iround(rc4/fac);
   bigint ic6 = fac6*Iround(rc6/fac6);
-  if(verbose) cout << "After rounding";
-  if(verbose&&(fac>1)) 
-    cout << ", using factors " << fac << " for c4 and " << fac6 << " for c6";
-  if(verbose) cout<<":\n";
-  if(verbose) cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
+  if(verbose)
+    {
+      cout << "After rounding";
+      if(fac>1)
+        cout << ", using factors " << fac << " for c4 and " << fac6 << " for c6";
+      cout<<":\n";
+      cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
+    }
   // To fix the c4 or c6 values insert data in files fixc4.data and
   // fixc6.data; NB the index here (i) starts at 0, but class fixc6
   // adjusts so in the data files, start at 1
 
 #ifndef MPFP // Multi-Precision Floating Point
   c4c6fixer(n,i,ic4,ic6);
-  if(verbose) cout << "After fixing: \n";
-  if(verbose) cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
+  if(verbose)
+    {
+      cout << "After fixing: \n";
+      cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
+    }
 #endif
   Curve C(ic4,ic6);
   if(C.isnull()) return C;
@@ -863,26 +873,142 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   return C;
 }
 
-// avoid underflow: log(MINDOUBLE)=-708.396
+bigfloat CG(int r, bigfloat x) // Cohen's G_r(x)
+{
+  // cout<<"CG("<<r<<","<<x<<") = ..."<<flush;
+  static const bigfloat one = to_bigfloat(1);
+  bigfloat n=one, emx=exp(-x), ans=x, term=x, y;
+  vector<bigfloat> Av(r+1, one);  // indexed from 0 to r
+  while(!is_approx_zero(emx*term*Av[r]))
+    {
+      n++;
+      // update A-vector, term and sum
+      for(int j=1;j<=r;j++)
+        Av[j]+=(Av[j-1]/n);
+      term*=x;
+      term/=n;
+      y = Av[r]*term;
+      ans+=y;
+      // cout<<"\n"<<y<<"\t"<<ans<<"\t"<<emx*ans;
+      if (is_approx_zero(y/ans)) break;
+    }
+  // cout<<"\n"<<emx*ans<<" (using "<<n<<" terms)"<<endl;
+  return emx*ans;
+}
 
-bigfloat myg0(bigfloat x)
+bigfloat Glarge(int r, bigfloat x) // Cohen's Gamma_r(x) for large x
+{
+  static const bigfloat zero = to_bigfloat(0);
+  static const bigfloat one = to_bigfloat(1);
+  static const bigfloat two = to_bigfloat(2);
+  bigfloat emx2=2*exp(-x), ans=zero, mxinv=-one/x;
+  bigfloat y, term = mxinv, n=zero;
+  if (is_approx_zero(abs(emx2*term)))
+    return zero;
+  // cout<<"Glarge("<<r<<","<<x<<") = ..."<<flush;
+  vector<bigfloat> Cv(r+1, zero);  // indexed from 0 to r
+  Cv[0]=one;
+  while((n<1000) && !is_approx_zero(abs(emx2*term)))
+    {
+      n++;
+      // update C-vector, term and sum
+      for(int j=r;j>0;j--) Cv[j]+=(Cv[j-1]/n);
+      term*=n;
+      term*=mxinv;
+      y = Cv[r]*term;
+      ans+=y;
+      // cout<<"\n"<<y<<"\t"<<ans<<"\t"<<emx2*ans;
+      if (is_approx_zero(y/ans)) break;
+    }
+  // cout<<"\n"<<emx2*ans<<" (using "<<n<<" terms)"<<endl;
+  return emx2*ans;
+}
+
+bigfloat Q(int r, bigfloat x)  // Q_r(x) polynomial from AMEC p.44
+{
+#ifdef MPFP // Multi-Precision Floating Point
+  static const bigint nz2=to_ZZ("3772654005711327105320428325461179161744295822071095339706353540767904529098322739007189721774317982928833");
+  bigfloat zeta2; MakeRR(zeta2,nz2,-350);
+  static const bigint nz3=to_ZZ("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
+  bigfloat zeta3; MakeRR(zeta3,nz3,-350);
+  static const bigint nz4=to_ZZ("2482306838570394152367457601777793352247775704274910416102594171643891396599068147834147756326957412925856");
+  bigfloat zeta4; MakeRR(zeta4,nz4,-350);
+#else
+ static const bigfloat zeta2 = 1.6449340668482264364724151666460251892189499;
+ static const bigfloat zeta3 = 1.20205690315959428539973816151144999076498629;
+ static const bigfloat zeta4 = 1.08232323371113819151600369654116790277475095;
+#endif
+ static const bigfloat two = to_bigfloat(2);
+ static const bigfloat three = to_bigfloat(3);
+ static const bigfloat four = to_bigfloat(4);
+ static const bigfloat nine = to_bigfloat(9);
+ static const bigfloat sixteen = to_bigfloat(16);
+ static const bigfloat twentyfour = to_bigfloat(24);
+ static const bigfloat const1 = nine*zeta4/sixteen;
+ static const bigfloat const2 = zeta3/three;
+ static const bigfloat const3 = zeta4/four;
+ static const bigfloat half = to_bigfloat(1)/two;
+ static const bigfloat third = to_bigfloat(1)/three;
+ static const bigfloat twenty4th = to_bigfloat(1)/twentyfour;
+  switch(r) {
+  case 1: default: return x;
+  case 2: return (x*x+zeta2)*half;
+  case 3: return x*(x*x*third+zeta2)*half-const2;
+  case 4: return const1 +x*(-const2+x*(const3+x*x*twenty4th));
+  }
+}
+
+bigfloat P(int r, bigfloat x)  // P_r(x) polynomial from AMEC p.44
+{
+  static bigfloat gamma=Euler();
+  return Q(r,x-gamma);
+}
+
+bigfloat Gsmall(int r, bigfloat x) // Cohen's Gamma_r(x) for small x
+{
+  bigfloat a=P(r,-log(x)), b = CG(r,x);
+  return (r%2? a+b : a-b);
+}
+
+bigfloat G(int r, bigfloat x)  // G_r(x)
 {
 #ifndef MPFP // Multi-Precision Floating Point
-  if(x>708) return to_bigfloat(0);
+  static const  bigfloat x0 = to_bigfloat(14);
+#else
+  // log(2) = 0.693147180599..
+  // this value only determines whether to use Gsmall or Glarge:
+  static const  bigfloat x0 = to_bigfloat(0.693147*bit_precision());
 #endif
-  return exp(-x);
+  //  cout<<"switch point = "<<x0<<endl;
+  //  cout<<"x="<<x<<endl;
+
+  return x<x0? Gsmall(r,x) : Glarge(r,x);
 }
+
+bigfloat ldash1::G(bigfloat x)  // G_r(x)
+{
+#ifndef MPFP // if without Multi-Precision Floating Point, avoid underflow: log(MINDOUBLE)=-708.396
+  if((r<2) && (x>708))
+    return to_bigfloat(0);
+  if(r==1)
+    return myg1(x);
+#endif
+  return r==0? exp(-x) : ::G(r,x);
+}
+
+// myg1(x) is the same as G_1(x) = G(1,x)
 
 //#define TRACEG1
 
 bigfloat myg1(bigfloat x)
 {
+  static bigfloat gamma=Euler();
 #ifndef MPFP // Multi-Precision Floating Point
-  if(x>708) return to_bigfloat(0); 
+  if(x>708) return to_bigfloat(0);
 #endif
   if(x<2)
     {
-      bigfloat ans = -log(x) - Euler();
+      bigfloat ans = -log(x) - gamma;
       bigfloat p = to_bigfloat(-1);
 #ifdef TRACEG1
       cout<<"Computing myg1 for x = "<<x<<" using series"<<endl;
@@ -931,7 +1057,7 @@ bigfloat myg1(bigfloat x)
 #ifdef TRACEG1
       cout<<"   k="<<k<<": approx = " << newans << endl;
 #endif
-      if (is_approx_zero(ans-newans)) 
+      if (is_approx_zero(ans-newans))
 	{
 //	  cout << "returning g1 = " << newans << endl;
 	  return newans;
@@ -942,189 +1068,3 @@ bigfloat myg1(bigfloat x)
   ans=0;
   return ans;
 }
-
-bigfloat CG(int r, bigfloat x) // Cohen's G_r(x)
-{
-  static const bigfloat one = to_bigfloat(1);
-  bigfloat emx=exp(-x), ans=x, term=x;
-  vector<bigfloat> Av(r+1);  // indexed from 0 to r
-  int j; bigfloat n=one;
-  for(j=0;j<=r;j++) Av[j]=one;
-  while(!is_approx_zero(emx*term*Av[r]))
-    //while(!is_approx_zero(term*Av[r]))
-    {
-      n++;
-      // update A-vector, term and sum
-      for(j=1;j<=r;j++) Av[j]+=(Av[j-1]/n); 
-      term*=(x/n);
-      ans+=(Av[r]*term);
-    }
-  return emx*ans;
-}
-
-bigfloat Glarge(int r, bigfloat x) // Cohen's Gamma_r(x) for large x
-{
-  static const bigfloat zero = to_bigfloat(0);
-  static const bigfloat one = to_bigfloat(1);
-  static const bigfloat two = to_bigfloat(2);
-  bigfloat emx=exp(-x), ans=zero, mxinv=-one/x;
-  bigfloat term = mxinv;
-  vector<bigfloat> Cv(r+1);  // indexed from 0 to r
-  int j; bigfloat n=zero;
-  Cv[0]=one;
-  for(j=1;j<=r;j++) Cv[j]=zero;
-  //cout<<"In Glarge with r="<<r<<", x="<<x<<": ";
-  //cout<<"emx*term="<<emx*term<<endl;
-  while((n<1000) && !is_approx_zero(abs(emx*term)))
-    //while(!is_approx_zero(abs(term)))
-    {
-      n++;
-      // update C-vector, term and sum
-      for(j=r;j>0;j--) Cv[j]+=(Cv[j-1]/n);
-      term*=(n*mxinv);
-      ans+=(Cv[r]*term);
-      //cout<<"term="<<term<<"; ans="<<ans<<endl;
-    }
-  //cout<<"Glarge returns "<<two*emx*ans<<" after using n="<<n<<" terms"<<endl;
-  return two*emx*ans;
-}
-
-bigfloat Q(int r, bigfloat x)  // Q_r(x) polynomial from AMEC p.44
-{
-#ifdef MPFP // Multi-Precision Floating Point
-  static const bigint nz2=atoI("3772654005711327105320428325461179161744295822071095339706353540767904529098322739007189721774317982928833");
-  bigfloat zeta2; MakeRR(zeta2,nz2,-350);
-  static const bigint nz3=atoI("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
-  bigfloat zeta3; MakeRR(zeta3,nz3,-350);
-  static const bigint nz4=atoI("2482306838570394152367457601777793352247775704274910416102594171643891396599068147834147756326957412925856");
-  bigfloat zeta4; MakeRR(zeta4,nz4,-350);
-#else
- static const bigfloat zeta2 = 1.6449340668482264364724151666460251892189499;
- static const bigfloat zeta3 = 1.20205690315959428539973816151144999076498629;
- static const bigfloat zeta4 = 1.08232323371113819151600369654116790277475095;
-#endif
- static const bigfloat two = to_bigfloat(2);
- static const bigfloat three = to_bigfloat(3);
- static const bigfloat four = to_bigfloat(4);
- static const bigfloat nine = to_bigfloat(9);
- static const bigfloat sixteen = to_bigfloat(16);
- static const bigfloat twentyfour = to_bigfloat(24);
- static const bigfloat const1 = nine*zeta4/sixteen;
- static const bigfloat const2 = zeta3/three;
- static const bigfloat const3 = zeta4/four;
- static const bigfloat half = to_bigfloat(1)/two;
- static const bigfloat third = to_bigfloat(1)/three;
- static const bigfloat twenty4th = to_bigfloat(1)/twentyfour;
-  switch(r) {
-  case 1: default: return x;
-  case 2: return (x*x+zeta2)*half;
-  case 3: return x*(x*x*third+zeta2)*half-const2;
-  case 4: return const1 +x*(-const2+x*(const3+x*x*twenty4th));
-  }
-}
-bigfloat P(int r, bigfloat x)  // P_r(x) polynomial from AMEC p.44
-{
-  static bigfloat gamma=Euler();
-  return Q(r,x-gamma);
-}
-bigfloat Gsmall(int r, bigfloat x) // Cohen's Gamma_r(x) for small x
-{
-  bigfloat a=P(r,-log(x)), b = CG(r,x);
-  return (r%2? a+b : a-b);
-}
-
-bigfloat G(int r, bigfloat x)  // G_r(x)
-{
-#ifndef MPFP // Multi-Precision Floating Point
-    static const  bigfloat x0 = to_bigfloat(14);
-#else
-    // log(2) = 0.69314718
-    static const  bigfloat x0 = to_bigfloat(0.69314718*bit_precision());
-#endif
-    //  cout<<"switch point = "<<x0<<endl;
-    //  cout<<"x="<<x<<endl;
-  if(x<x0) 
-    {
-      return Gsmall(r,x);
-    }
-  else
-    {  
-      return Glarge(r,x);
-    }
-}
-
-bigfloat ldash1::G(bigfloat x)  // G_r(x)
-{
-  switch(r) {
-  case 0: return myg0(x);
-  case 1: return myg1(x);
-  default: return ::G(r,x);
-  }
-}
- 
-#if(0) // myg2 and myg3 were inaccurate and now replaced by general
-       // G(r,x) -- which also works for r>3!
-bigfloat myg2(bigfloat x)
-{
-  static bigfloat zero=to_bigfloat(0);
-  static bigfloat one=to_bigfloat(1);
-  static bigfloat two=to_bigfloat(2);
-  static bigfloat twelve=to_bigfloat(12);
-  static bigfloat gamma=Euler();
-  if (x>20) return zero;
-//#define TRACEG2
-  bigfloat ans = -log(x) - gamma;
-#ifdef TRACEG2
-  cout<<"Computing myg2 for x = "<<x<<endl;
-#endif
-  ans=ans*ans/two + PI*PI/twelve;
-  bigfloat p = one;
-  int ok=0;
-  bigfloat term;
-  for (long n=1; (n<500) && !ok; n++)
-    {
-      p /=n;  p*= -x;
-      term = (p/n)/n;
-      ans += term;
-      ok=is_approx_zero(term/ans);
-#ifdef TRACEG2
-      // cout<<"\tn="<<n<<" \tans = "<<ans<<endl;
-#endif
-    }
-#ifdef TRACEG2
-  cout<<"...returning ans = "<<ans<<endl;
-#endif
-   return ans;
-}
- 
-bigfloat myg3(bigfloat x)
-{
-  static bigfloat zero=to_bigfloat(0);
-  static bigfloat one=to_bigfloat(1);
-  static bigfloat three=to_bigfloat(3);
-  static bigfloat twelve=to_bigfloat(12);
-#ifdef MPFP // Multi-Precision Floating Point
-  static const bigint nz3=atoI("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
-  bigfloat zeta3; MakeRR(zeta3,nz3,-350);
-#else
- const bigfloat zeta3 = 1.20205690315959428539973816151144999076498629;
-#endif
-  if (x>20) return zero;
-  bigfloat ans = -log(x) - Euler();
-//cout<<"Computing myg3 for x = "<<x<<endl;
-  ans = (PI*PI + 2*ans*ans) * ans/twelve - zeta3/three;
-  bigfloat p = -one;
-  bigfloat term;
-  int ok = 0;
-  for (long n=1; (n<500) && !ok; n++)
-    {
-      p *= -x/n;
-      term = ((p/n)/n)/n;
-      ans += term;
-      ok=is_approx_zero(term/ans);
-      //cout<<"   N="<<n<<" ans = "<<ans<<endl;
-    }
-   return ans;
-}
-#endif
-

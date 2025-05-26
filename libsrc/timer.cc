@@ -1,7 +1,7 @@
 // timer.cc:  implementations of timer functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 //                     Marcus Mo     (timer class)
 // 
 // This file is part of the eclib package.
@@ -131,7 +131,7 @@ void timer::add( string name ) {
          << "Erasing, and starting again." << endl;
 
     // Clear timer
-    times_[name].empty();
+    times_[name].clear();
   }
 }
 
@@ -172,13 +172,9 @@ void timer::stop( string name ) {
  * Stop all timers.
  */
 void timer::stopAll() {
-  timers::iterator it;
-
   // TODO Check if timer is active via flags
-
-  for( it = times_.begin(); it != times_.end(); it++ ) {
-    stop( it -> first );
-  }
+  for ( const auto& t : times_)
+    stop(t.first);
 }
 
 /**
@@ -226,11 +222,8 @@ void timer::show( int nline, string name, int idx1, int idx2 ) {
  * Loop through all timers, and write out.
  */
 void timer::showAll( int nline ) {
-  timers::iterator it;
- 
-  for( it = times_.begin(); it != times_.end(); it++ ) {
-    show( nline, it -> first );
-  }
+  for (const auto& t : times_)
+    show( nline, t.first );
 }
 
 /**
@@ -248,11 +241,8 @@ void timer::clear( string name ) {
  * Removes all times from all subtimers.
  */
 void timer::clearAll() {
-  timers::iterator it;
-
-  for( it = times_.begin(); it != times_.end(); it++ ) {
-    clear( it -> first );
-  }
+  for (const auto& t : times_)
+    clear( t.first );
 }
 
 /**
@@ -261,13 +251,9 @@ void timer::clearAll() {
  * List names of all available timers
  */
 void timer::list() {
-  timers::iterator it;
-
   string message;
-
-  for( it = times_.begin(); it != times_.end(); it++ ) {
-    message += it -> first + " ";
-  }
+  for (const auto& t : times_)
+    message += t.first + " ";
 
   message += "\n";
   s_ -> write( message.c_str(), message.size() );
@@ -290,15 +276,11 @@ int timer::count( string name ) {
  * Return total time of a given timer.
  */
 double timer::total( string name ) {
-  // Cache size of vector
-  vector<double>::size_type size = times_[name].size();
-  double total = 0;
-  
-  for( int i = 0; i < (int)size; i++ ) {
-    total += times_[name][i];
-  }
-
-  return total;
+  return std::accumulate(times_[name].begin(), times_[name].end(), 0);
+  // double total = 0;
+  // for ( const auto& t : times_[name])
+  //   total += t;
+  // return total;
 }
 
 /**
@@ -307,10 +289,7 @@ double timer::total( string name ) {
  * Return average time of a given timer.
  */
 double timer::average( string name ) {
-  // Cache size of vector
-  vector<double>::size_type size = times_[name].size();
-
-  return total( name ) / size;
+  return total( name ) /  times_[name].size();
 }
 
 /**

@@ -1,7 +1,7 @@
 // rat.h: declaration of rational number class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -273,11 +273,11 @@ inline ostream& operator<<(ostream& s, const rational& q)
 
 inline istream& operator>> (istream& is, rational& r)
 {
-  char c;
   long n,d=1;
   is>>n;
   if(!is.eof()) 
     {
+      char c;
       is.get(c);
       if(c=='/')
 	{

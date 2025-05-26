@@ -1,7 +1,7 @@
 // vector.h: manage declarations of integer vector classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -24,14 +24,14 @@
 #if     !defined(_ECLIB_VECTOR_H)
 #define _ECLIB_VECTOR_H      1       //flags that this file has been included
 
-#include <eclib/arith.h>
+#include <eclib/marith.h>
 
 class vec_i; class vec_l; class vec_m;
 class mat_i; class mat_l; class mat_m;
-class svec_i; class svec_l;
-class smat_i; class smat_l;
-class smat_i_elim; class smat_l_elim;
-class subspace_i; class subspace_l; class msubspace;
+class svec_i; class svec_l; class svec_m;
+class smat_i; class smat_l; class smat_m;
+class smat_i_elim; class smat_l_elim; class smat_m_elim;
+class subspace_i; class subspace_l; class subspace_m;
 
 #undef scalar
 #undef vec
@@ -76,5 +76,28 @@ class subspace_i; class subspace_l; class msubspace;
 #undef svec
 #undef smat
 #undef smat_elim
+
+#define scalar bigint
+#define vec vec_m
+#define mat mat_m
+#define subspace subspace_m
+#define svec svec_m
+#define smat smat_m
+#define smat_elim smat_m_elim
+
+#include "vec.h"
+
+#undef scalar
+#undef vec
+#undef mat
+#undef subspace
+#undef svec
+#undef smat
+#undef smat_elim
+
+vec_m to_vec_m(const vec_i& v);
+vec_m to_vec_m(const vec_l& v);
+vec_i to_vec_i(const vec_m& v);
+vec_l to_vec_l(const vec_m& v);
 
 #endif

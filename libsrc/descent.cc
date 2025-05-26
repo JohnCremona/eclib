@@ -1,7 +1,7 @@
 // descent.cc: implementation of classes rank12 and two_descent
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -53,10 +53,11 @@ two_descent::two_descent(Curvedata* ec,
 	      long n_aux, int second_descent)
   :verbose(verb), selmer_only(sel), e_orig(*ec) 
   {
+    static const bigint one(1);
     qai.resize(5);
     bigint a1,a2,a3,a4,a6;
     ec->getai(a1,a2,a3,a4,a6);
-    v=BIGINT(1); 
+    v=one;
     qai[0]=a1; qai[1]=a2; qai[2]=a3; qai[3]=a4; qai[4]=a6;
     do_the_descent(firstlim,secondlim,n_aux,second_descent);
   }
@@ -162,7 +163,7 @@ void two_descent::saturate(long sat_bd, long sat_low_bd)
 
 // Do a quick search for points on the curve before processing points
   bigfloat hlim=to_bigfloat(PRE_SATURATION_SEARCH_LIMIT);
-  bigfloat oldreg=mwbasis->regulator(), newreg=to_bigfloat(1);
+  bigfloat newreg=to_bigfloat(1);
   long search_rank=0;
   if ((r12->getrank()>0) || !(r12->getcertain()))
     {
@@ -200,23 +201,24 @@ void two_descent::saturate(long sat_bd, long sat_low_bd)
   else
     {
 //  Saturate
-      if(verbose) cout <<"Saturating (with bound = "<<sat_bd<<")..." << flush;
+      if(verbose)
+        cout <<"Saturating (with bound = "<<sat_bd<<")..." << flush;
       long index; vector<long> unsat;
       int sat_ok = mwbasis->saturate(index,unsat,sat_bd,sat_low_bd);
       // no need to check p-saturation for p<=sat_low_bd (default 2)
-      if(verbose) cout <<"done:"<<endl;
 
-// Report outcome
       if(verbose)
 	{
-	  if(index>1) 
+          cout <<"done:"<<endl;
+// Report outcome
+	  if(index>1)
 	    {
 	      cout <<"  *** saturation increased group by index "<<index<<endl;
 	      cout <<"  *** regulator is now "<<mwbasis->regulator()<<endl;
 	    }
 	  else cout << "  points were already saturated."<<endl;
 	}
-      if(!sat_ok) 
+      if(!sat_ok)
 	{
 	  cout << "*** saturation possibly incomplete at primes " << unsat << "\n";
 	}

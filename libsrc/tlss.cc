@@ -1,7 +1,7 @@
 // tlss.cc: implementation of class TLSS for sieving E(Q)/pE(Q) at one prime q
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -82,7 +82,7 @@ void TLSS::init_tlpolys()
     }
 
   // initialize the ffmodq class
-  ffmodq dummy((const curvemodq)Emodq);
+  ffmodq::init((const curvemodq)Emodq);
   // initialize the TL-functions
   TLpolys.resize(0);
   int i;
@@ -120,7 +120,7 @@ vector<int> TLSS::map1point(const Point& P) const
       cout<<"after multiplying by "<<I2long(n1/p)<<", get "<<Pmodq<<endl;
       cout<<"finding discrete log (mod "<<p<<") of "<<Pmodq<<" w.r.t. "<<P1<<endl;
 #endif
-      ans[0] = I2long(my_bg_algorithm(P1, Pmodq, BIGINT(0), BIGINT(p)));
+      ans[0] = I2long(my_bg_algorithm(P1, Pmodq, bigint(0), bigint(p)));
 #ifdef debugTL
       cout << "...done: dlog = " << ans[0] << endl;
       if(ans[0]*P1 != Pmodq)

@@ -1,7 +1,7 @@
 // tilll.cc: test program for illl integer lll reduction
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -21,17 +21,16 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/mvector.h>
-#include <eclib/mmatrix.h>
+#include <eclib/matrix.h>
 #include <eclib/illl.h>
 
 int main()
 {
-  int i, j, k, n;
+  int n;
   cout<<"Enter size n: "; cin>>n;
-  vec_m* b = new vec_m[n+1];
+  vector<vec_m> b(n+1);
   b[0]=vec_m(n);
-  for(i=1; i<=n; i++)
+  for(int i=1; i<=n; i++)
     {
       b[0][i]=1;  // these are the weights
       b[i]=vec_m(n);
@@ -39,7 +38,7 @@ int main()
       cin>>b[i];
     }
   cout<<"Before reduction, vectors are:\n";
-  for(i=1; i<=n; i++) cout<<b[i]<<endl;
+  for(int i=1; i<=n; i++) cout<<b[i]<<endl;
   cout<<endl;
 
   cout << "FIRST METHOD: JC'S implementation of integer LLL from HC's book\n";
@@ -47,13 +46,12 @@ int main()
   lll_reduce(n,b);
 
   cout<<"After reduction, vectors are:\n";
-  for(i=1; i<=n; i++) cout<<b[i]<<endl;
+  for(int i=1; i<=n; i++) cout<<b[i]<<endl;
   cout<<endl;
-
 
   vec_m shortest=b[1];
   bigint min_length=sdot(b,1,1);
-  for(i=1; i<=n; i++)
+  for(int i=1; i<=n; i++)
     cout<<"Square length of vector "<<i<<" is "<<sdot(b,i,i)<<endl;
 
   if(n==3) // then we know that any vector shorter than b[1] must be
@@ -61,12 +59,12 @@ int main()
     {
       cout<<"Candidates for shortest vectors:\n";
       int ok=1, better=0;
-      for(i=1; ok&&(i>-2); i--)
-	for(j=1; ok&&(j>-2); j--)
-	  for(k=1; ok&&(k>-2); k--)
+      for(int i=1; ok&&(i>-2); i--)
+	for(int j=1; ok&&(j>-2); j--)
+	  for(int k=1; ok&&(k>-2); k--)
 	    {
 	      if((i==0)&&(j==0)&&(k==0)) {ok=0;break;}
-	      vec_m v=i*b[1]+j*b[2]+k*b[3];
+	      vec_m v=bigint(i)*b[1]+bigint(j)*b[2]+bigint(k)*b[3];
 	      bigint norm = sqr(v[1])+sqr(v[2])+sqr(v[3]);
 	      cout<<"("<<i<<","<<j<<","<<k<<"): "<<v<<", norm = "<<norm<<endl;
 	      if(norm<min_length) {min_length=norm; shortest=v; better=1;}
@@ -76,6 +74,4 @@ int main()
       if(better)
 	cout<<"-- shorter than b[1]!"<<endl;
     }
-
-  delete[] b;
 }

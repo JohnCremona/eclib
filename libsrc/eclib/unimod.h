@@ -1,7 +1,7 @@
 // unimod.h: declarations of classes unimod and scaled_unimod
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -25,6 +25,7 @@
 #define _ECLIB_UNIMOD_H      1      //flags that this file has been included
 
 #include <eclib/interface.h>
+#include <eclib/marith.h>
 
 class unimod {
   friend class quadratic;
@@ -33,15 +34,15 @@ class unimod {
 protected:
   bigint m11, m12, m21, m22;
 public:
-  unimod()   {m11=1;m12=0;m21=0;m22=1;}
-  unimod(const bigint& a11, const bigint& a12, 
-	 const bigint& a21, const bigint& a22) 
+  unimod() :m11(1), m12(0), m21(0), m22(1) {;}
+  unimod(const bigint& a11, const bigint& a12,
+	 const bigint& a21, const bigint& a22)
     :m11(a11), m12(a12), m21(a21), m22(a22) {;}
   unimod(const unimod& m) :m11(m.m11), m12(m.m12), m21(m.m21), m22(m.m22) {;}
   void reset()
     {m11=1; m12=0; m21=0; m22=1;}
-  void set(const bigint& a11, const bigint& a12, 
-	   const bigint& a21, const bigint& a22) 
+  void set(const bigint& a11, const bigint& a12,
+	   const bigint& a21, const bigint& a22)
     {m11=a11; m12=a12; m21=a21; m22=a22;}
   void operator=(const unimod& m) {m11=m.m11; m12=m.m12; m21=m.m21; m22=m.m22;}
   bigint operator()(int i, int j) const
@@ -79,16 +80,16 @@ public:
 };
 
 class scaled_unimod : public unimod {
-private: 
+private:
   bigint m00;
 public:
-  scaled_unimod() :unimod() {m00=1;}
+  scaled_unimod() :unimod(), m00(1) {;}
   scaled_unimod(const bigint& a00, 
 		const bigint& a11, const bigint& a12, 
 		const bigint& a21, const bigint& a22) 
     :unimod(a11,a12,a21,a22), m00(a00) {;}
   scaled_unimod(const scaled_unimod& m) :unimod(m), m00(m.m00) {;}
-  scaled_unimod(const unimod& m) :unimod(m) {m00=1;}
+  explicit scaled_unimod(const unimod& m) :unimod(m), m00(1) {;}
   void reset()  {m00=1; m11=1; m12=0; m21=0; m22=1;}
   void set(const bigint& a00, 
 	   const bigint& a11, const bigint& a12, 

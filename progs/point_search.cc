@@ -1,7 +1,7 @@
 // point_search.cc:  program to find points up to given naive height
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -45,7 +45,7 @@ int main()
 
   bigfloat ht_limit;
   bigint u,r,s,t;
-  int verbose = 1, modopt=0, pp=1, change_flag; 
+  int verbose = 1, modopt=0, pp=1;
   long blength, rank, maxrank;
   cerr<<"\nenter search limit: ";      cin>>ht_limit;
   cerr<<"verbose (0/1)? ";             cin >>verbose;
@@ -61,7 +61,7 @@ int main()
       cout << "Input curve ";
       cout <<"["<<ai[0]<<","<<ai[1]<<","<<ai[2]<<","<<ai[3]<<","<<ai[4]<<"]" << endl;
       Curvedata C_min = C.minimalize(u,r,s,t);
-      change_flag = (v!=1) || (((Curve)C_min) != (Curve)C);
+      int change_flag = (v!=1) || (((Curve)C_min) != (Curve)C);
       if(change_flag)
 	{
 	  cout<<"Searching on standard minimal model "<<(Curve)C_min<<endl;
@@ -169,9 +169,4 @@ int main()
   cout<<endl;
 }
 
-//end of file findinf.cc
-
-
-
-
-
+//end of file point_search.cc

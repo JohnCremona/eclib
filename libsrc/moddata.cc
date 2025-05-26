@@ -1,7 +1,7 @@
 // FILE MODDATA.CC: Implementation of member functions for class moddata
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -25,12 +25,11 @@
 #include <eclib/arith.h>
 
 level::level(long n, long neigs)
+  : modulus(n), plist(pdivs(n)), dlist(posdivs(n)), nap(neigs)
 {
   //cout<<"Creating a class level with n = " << n << endl;
-  modulus=n; 
-  plist=pdivs(n); npdivs=plist.size();
-  dlist=posdivs(n); ndivs=dlist.size();
-  nap=neigs;
+  npdivs=plist.size();
+  ndivs=dlist.size();
   primelist=plist;
   primevar pr; long p; p0=0;
   while(primelist.size()<(unsigned)nap)
@@ -41,7 +40,7 @@ level::level(long n, long neigs)
 	  if(p0==0) p0=p;
 	  primelist.push_back(p);
 	}
-      pr++;
+      ++pr;
     }
   sqfac=1;
   for(long ip=0; ip<npdivs; ip++) 
@@ -54,24 +53,23 @@ level::level(long n, long neigs)
 }
 
 long bezout_x(long aa, long bb, long& xx)
-{long a,b,c,x,oldx,newx,q;
- oldx = 1; x = 0; a = aa; b = bb;
+{long a=aa, b=bb, x=0, oldx = 1;
  while (b!=0)
- { q = a/b; 
-   c    = a    - q*b; a    = b; b = c;
-   newx = oldx - q*x; oldx = x; x = newx;
+ { long q = a/b;
+   long c    = a    - q*b; a    = b; b = c;
+   long newx = oldx - q*x; oldx = x; x = newx;
   }
  if (a<0) {xx=-oldx; return(-a);}
  else     {xx= oldx; return( a);}
 }
- 
+
 moddata::moddata(long n) :level(n)
 {
   //   cout << "In constructor moddata::moddata.\n";
- long i,p,x,d,nd,nnoninv;
+ long x,nd,nnoninv;
  phi=psi=modulus;
- for(i=0; i<npdivs; i++)
-   {  p = plist[i];
+ for(long i=0; i<npdivs; i++)
+   {  long p = plist[i];
       phi -= phi/p;
       psi += psi/p;
     }
@@ -84,8 +82,8 @@ moddata::moddata(long n) :level(n)
  gcdtable.resize(modulus);         //list of gcds mod N
  unitdivlist.resize(modulus);      //list of units s.t. u*res | N
  nnoninv=0;
- for (i=0; i<modulus; i++)            //set up codes
- { d = bezout_x(i,modulus,x);
+ for (long i=0; i<modulus; i++)            //set up codes
+ { long d = bezout_x(i,modulus,x);
    gcdtable[i]=d;
    if (d==1) {unitdivlist[i] = invlist[i] = reduce(x); }
    else

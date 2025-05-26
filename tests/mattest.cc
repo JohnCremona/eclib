@@ -1,7 +1,7 @@
 // mattest.cc: Matrix package test program
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -33,9 +33,10 @@ int main(void)
   start_time();
   cout << "\nMatrix package test program.\n\n";
   {
-    long i,j; scalar r;
+    long i; scalar r;
     mat a,aug,ref;
-    vec pc(1),npc(1),poly(1);
+    vec_i pc(1),npc(1);
+    vec poly(1);
 {
 cout << "Enter size of a square matrix A: "; cin >> r;
 a.init(r,r);
@@ -60,22 +61,21 @@ cout << "Using A.output_pretty(cout): \n";  a.output_pretty(cout);
  cout << "Enter any number "; cin >> i;
 
 {
-cout << "Creating an array of 3 matrices\n";
-mat* matlist = new mat[3];
-matlist[0] = a;
-matlist[1] = 2*a;
-matlist[2] = 3*a;
-cout << " A=" << matlist[0];
-cout << "2A=" << matlist[1];
-cout << "3A=" << matlist[2];
-delete[] matlist;
+  cout << "Creating an array of 3 matrices\n";
+ vector<mat> matlist(3);
+ matlist[0] = a;
+ matlist[1] = 2*a;
+ matlist[2] = 3*a;
+ cout << " A=" << matlist[0];
+ cout << "2A=" << matlist[1];
+ cout << "3A=" << matlist[2];
 }
 
 {
 for (i=1; i<=r; i++)
  cout << "row(A,"<<i<<") = " << a.row(i) << endl;
 cout << "A = " << a;
-for (j=1; j<=r; j++)
+for (int j=1; j<=r; j++)
  cout << "col(A,"<<j<<") = " << a.col(j) << endl;
 cout << "A = " << a;
 cout << "directsum(A,A) = " << directsum(a,a);
@@ -121,13 +121,13 @@ cout << "Now A = " << a;
 cout << "Enter any number "; cin >> i;
 }
 {
-vector<long> cp = a.charpoly();
+vector<scalar> cp = a.charpoly();
 cout << "char. poly. of A has coefficients " << cp << endl;
 cout << "det(A) = " << a.determinant() << endl;
 }
 {
-aug = colcat(a,idmat(r));
-cout << "Augmented matrix = " << aug << endl;
+  aug = colcat(a,mat::identity_matrix(r));
+  cout << "Augmented matrix = " << aug << endl;
 }
 
 long rk, ny;
@@ -159,7 +159,7 @@ else
   if (denom>1) cout << "(1/" << denom << ")*";
   cout << ainv;
   cout << "Check: A.A^(-1) = I ?";
-  if (a*ainv == denom*idmat(r)) cout << " True!";
+  if (a*ainv == mat::scalar_matrix(r,denom)) cout << " True!";
   else cout << " False!";
   cout << endl;
  }

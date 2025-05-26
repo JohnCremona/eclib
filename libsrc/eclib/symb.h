@@ -1,7 +1,7 @@
 // FILE SYMB.H: Declarations for M-symbols, modular symbols
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -55,24 +55,23 @@ class modsym {
  private:
     rational a,b;
  public:
-    modsym()                                {a=rational(0); b=rational(0);}
-    modsym(const rational& ra, const rational& rb) {a=ra; b=rb;}
-    modsym(const symb&);                        //conversion
-    rational alpha() const {return a;}
-    rational beta() const {return b;}
-    friend ostream& operator<< (ostream& s, const modsym& m);
+  modsym() :a(0), b(0) {}
+  modsym(const rational& ra, const rational& rb) :a(ra), b(rb) {}
+  explicit modsym(const symb&);                        //conversion
+  rational alpha() const {return a;}
+  rational beta() const {return b;}
+  friend ostream& operator<< (ostream& s, const modsym& m);
 };
 
 #include <map>
 
 class symblist {
  private:
-    symb *list;
+    vector<symb> list;
     map<pair<long,long>,long> hashtable;
     long num,maxnum;
  public:
-  symblist(long n=0);
-  ~symblist();
+    symblist(long n=0);
     void add(const symb& s, long start=0);
     long index(const symb& s, long start=0) const;
     symb operator[](long n) const {return list[n];}
@@ -85,7 +84,7 @@ class symbdata :public moddata {
  private:
     symblist specials;         // The list of "special" symbols
  public:
-    symbdata(long);             // The constructor
+    explicit symbdata(long);             // The constructor
     long index2(long c, long d) const;
     long index(const symb& s) const {return index2(s.cee(),s.dee());}
     symb symbol(long i) const;
@@ -97,6 +96,6 @@ class symbdata :public moddata {
     long tof(long i) const {symb s=symbol(i); long c=s.cee(), d=s.dee(); return index2(c-d, c);} 
 };
 
-modsym jumpsymb(symb s1, symb s2);
+modsym jumpsymb(const symb& s1, const symb& s2);
 
 #endif

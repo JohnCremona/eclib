@@ -1,7 +1,7 @@
 // curve.h: declarations of elliptic curve classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -71,13 +71,14 @@ public:
   // puts out TeX-ed equation of curve; never been used
 
 // constructors 
-  Curve(void) //  :a1(0),a2(0),a3(0),a4(0),a6(0) 
-    {a1=0;a2=0;a3=0;a4=0;a6=0;}
+  Curve(void)  :a1(0),a2(0),a3(0),a4(0),a6(0)  {;}
   Curve(const bigint& c4, const bigint& c6); //init by invariants
                                  //check valid for elliptic curve
                                  //if not create null curve
   Curve(const bigint& aa1, const bigint& aa2, const bigint& aa3,
-        const bigint& aa4, const bigint& aa6) 
+        const bigint& aa4, const bigint& aa6)
+    :a1(aa1),a2(aa2),a3(aa3),a4(aa4),a6(aa6) {}
+  Curve(long aa1, long aa2, long aa3, long aa4, long aa6)
     :a1(aa1),a2(aa2),a3(aa3),a4(aa4),a6(aa6) {}
   Curve(const Curve& c)
     : a1(c.a1), a2(c.a2), a3(c.a3), a4(c.a4), a6(c.a6)
@@ -262,8 +263,8 @@ protected:
   map<bigint,Reduction_type> reduct_array;  // maps p -> its reduction type
   bigint N;                      //the conductor
 public:
-  CurveRed() : Curvedata() {N=0;}
-  CurveRed(const Curvedata& E);  // construct by Tate's algorithm
+  CurveRed() : Curvedata(), N(0) {}
+  explicit CurveRed(const Curvedata& E);  // construct by Tate's algorithm
              // arg E need not be minimal, but the reduced form will be
   ~CurveRed();
   CurveRed(const CurveRed& E);
@@ -290,6 +291,7 @@ public:
   friend int getord_p_N(const CurveRed& c, const bigint& p);
   friend int getord_p_j_denom(const CurveRed& c, const bigint& p);
   friend int getc_p(const CurveRed& c, const bigint& p);
+  friend vector<bigint> all_cp(const CurveRed& c);
   friend bigint prodcp(const CurveRed& c);
   friend int LocalRootNumber(CurveRed& c, const bigint& p);
   friend int GlobalRootNumber(CurveRed& c);
@@ -307,19 +309,23 @@ public:
   // real_too is 1), which is the lcm of the local Tamagawa exponents.
   // So (with no further knowledge of the MW group) we know that m*P
   // is in the good-reduction subgroup for all P, with this m.
+<<<<<<< HEAD
   friend bigint global_Tamagawa_exponent(CurveRed& c, int real_too);
 
   int has_good_reduction_outside_S(const vector<bigint>& S)
   {
     return is_S_unit(N, S);
   }
+=======
+  friend bigint global_Tamagawa_exponent(const CurveRed& c, int real_too);
+>>>>>>> master
 };
 
 // The global Tamagawa number, = product of local ones.
 bigint global_Tamagawa_number(CurveRed& c, int real_too);
 
 // Tamagawa primes: primes dividing any Tamagawa number
-vector<long> tamagawa_primes(CurveRed& C, int real_too);
+vector<long> tamagawa_primes(const CurveRed& C, int real_too);
 
 inline ostream& operator<<(ostream& os, const Curve& c)
 {

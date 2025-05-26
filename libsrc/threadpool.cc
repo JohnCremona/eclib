@@ -1,7 +1,7 @@
 // FILE threadpool.cc : Implementation of member functions for class threadpool
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 Marcus Mo
+// Copyright 1990-2023 Marcus Mo
 // 
 // This file is part of the eclib package.
 // 
@@ -47,7 +47,7 @@
  */
 threadpool::threadpool() 
   : maxThreads_( 0 ), threadCount_( 0 ), verbose_( -1 ),
-    work_( new boost::asio::io_service::work( io_service_ ) )
+    work_( boost::asio::make_work_guard( io_context_ ) )
 {}
 
 /**
@@ -56,7 +56,7 @@ threadpool::threadpool()
  * Main constructor.
  */
 threadpool::threadpool( unsigned int numThreads, int verbose ) 
-  : work_( new boost::asio::io_service::work( io_service_ ) ) {
+  : work_( boost::asio::make_work_guard( io_context_ ) ) {
   start( numThreads, verbose );
 }
 
@@ -104,7 +104,7 @@ void threadpool::start( unsigned int numThreads, int verbose ) {
 
   // Create threads and add to threadpool
   for( unsigned int i = 0; i < threadCount_-1; i++  ) {
-    threads_.create_thread( boost::bind( &boost::asio::io_service::run, &io_service_ ) );
+    threads_.create_thread( boost::bind( &boost::asio::io_context::run, &io_context_ ) );
   }
 }
 
@@ -127,10 +127,10 @@ void threadpool::close() {
   work_.reset();
 
   // run() blocks until all posted jobs have finished
-  io_service_.run();
+  io_context_.run();
 
   // We close the threadpool and join all threads
-  io_service_.stop();
+  io_context_.stop();
   threads_.join_all();
 }
 

@@ -1,7 +1,7 @@
 // marith.cc: implementations of integer arithmetic functions (multiprecision)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -36,7 +36,9 @@
 
 bigint show(const bigint& a) {cout<<a<<endl; return a;}
 vector<bigint> show(const vector<bigint>& a) {cout<<a<<endl; return a;}
- 
+
+// integers and rationals
+
 bigint bezout(const bigint& aa, const bigint& bb, bigint& xx, bigint& yy)
 {bigint ans; XGCD(ans,xx,yy,aa,bb); return ans;}
 int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
@@ -44,6 +46,14 @@ int divides(const bigint& a, const bigint& b, bigint& q, bigint& r)
 int divides(const bigint& a, long b, bigint& q, long& r)
   { r=DivRem(q,a,b); return (r==0);}
 
+// For b>0, rounded_division(a,b) = q such that a/b = q + r/b with -1/2 <= r/b < 1/2
+bigint rounded_division(const bigint& a, const bigint& b)
+{
+  bigint q, r;
+  DivRem(q,r,a,b);
+  bigint r2 = r<<1;
+  return (r2<-b? q-1: (r2>=b? q+1: q));
+}
 
 // oddsqrt works on odd n, called by isqrt
 //
@@ -61,7 +71,7 @@ int sqrtq2(bigint& root, const bigint& n)
   if(r==1) {a0=3; r=0;}           // special case
   a=a0;
 //  cout<<"odd part 1 mod 8 with quotient r = " << r << endl;
-  bigint twok = BIGINT(8), twok3= BIGINT(1);
+  bigint twok(8), twok3(1);
   long kminus1=2;
   while(r>0)
     {
@@ -218,10 +228,11 @@ int sqrt_mod_p_power(bigint& x, const bigint& a, const bigint& p, int e)
 
 int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m)
 {
+  static const bigint zero(0), one(1);
   // Some trivial cases require no work:
-  if(is_one(m))  {x=BIGINT(0); return 1;}
-  if(is_zero(a)) {x=BIGINT(0); return 1;}
-  if(is_one(a))  {x=BIGINT(1); return 1;}
+  if(is_one(m))  {x=zero; return 1;}
+  if(is_zero(a)) {x=zero; return 1;}
+  if(is_one(a))  {x=one; return 1;}
 #ifdef CHECK_SQRT_MOD
   cout<<"Factorizing "<<m<<"..."<<flush;
 #endif  
@@ -238,20 +249,19 @@ int sqrt_mod_m(bigint& x, const bigint& a, const bigint& m, const vector<bigint>
   if(is_one(m))  {x=0; return 1;}
   if(is_zero(a)) {x=0; return 1;}
   if(is_one(a))  {x=1; return 1;}
-  bigint mm, p, xp, q; int e;
+  bigint mm, xp, q; int e;
   x=0;  mm=1;
   
- for(vector<bigint>::const_iterator pr = mpdivs.begin(); pr!=mpdivs.end(); pr++)
+  for( const auto& p : mpdivs)
     {
-      p=*pr;
       e = val(p,m);
       if(e==0) continue;
-      if(p==2) 
+      if(p==2)
 	{if(!sqrt_mod_2_power(xp,a,e)) return 0;}
       else
 	{if(!sqrt_mod_p_power(xp,a,p,e)) return 0;}
       q=pow(p,e);
-      if(pr==mpdivs.begin())
+      if(p==mpdivs.front())
 	x=xp;
       else
 	x=chrem(x,xp,mm,q);
@@ -269,11 +279,10 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x)
      // Solves x^2=a mod b, returns success/fail
 {
   // Assumes b square-free, primes factors in bplist
-  bigint u, v, p, amodp, xmodp, m;
-  int res=1;  x=0; m=1;
-  for(vector<bigint>::const_iterator pr = bplist.begin(); res&&(pr!=bplist.end()); pr++)
+  bigint u, v, amodp, xmodp, m;
+  x=0; m=1;
+  for( const auto& p : bplist)
     {
-      p=*pr;
       if(p==2)
 	{
 	  xmodp=odd(a);
@@ -353,20 +362,16 @@ void extra_prime_class::read_from_file(const string pfilename, int verb)
 }
 
 
-vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_base);
-vector<bigint> pdivs_trial_div(bigint& n, const bigint& pmax=BIGINT(maxprime()));
-
 // n>0 will be changed;  returns prime factors from factor base and divides out from n
 
-vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint> factor_base)
+vector<bigint> pdivs_use_factorbase(bigint& n, const std::set<bigint>& factor_base)
 {
   vector<bigint> plist;
   if(n<2) return plist;
-  std::set<bigint>::const_iterator pri = factor_base.begin(); 
-  while((n>1)&&(pri!=factor_base.end()))
+  for (const auto& p : factor_base)
     {
-      bigint p=*pri++;
-      if(divide_out(n,p)) 	  
+      if (n==1) break;
+      if(divide_out(n,p))
 	plist.push_back(p);
     }
   return plist;
@@ -413,7 +418,7 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
   if(n<2) return plist;
   if(trace) cout<< "After using factor base, n= " <<n<<", plist = "<< plist << endl;
 
-  plist = vector_union(plist,pdivs_trial_div(n));
+  plist = vector_union(plist,pdivs_trial_div(n, bigint(maxprime())));
   if(trace) cout<< "After using trial division, n= " <<n<<", plist = "<< plist << endl;
 
   if(n>1) if(ProbPrime(n)) 
@@ -466,9 +471,8 @@ factor(const bigint& n, int proof=1)
   oss<<n;
   vector<bigint> plist =  read_vec_from_string(factor(oss.str()));
   if(proof)
-    for(vector<bigint>::const_iterator pi=plist.begin(); pi!=plist.end(); pi++)
+    for( const auto& p : plist)
       {
-	bigint p =*pi;
 	if(!is_prime(p))
 	  {
 	    cout<<"WARNING:  pari's factor() returned p="<<p
@@ -480,10 +484,10 @@ factor(const bigint& n, int proof=1)
 
 // The following uses pari's factorization function.
 // However, numbers less than
-#define TRIAL_DIV_BOUND BIGINT(100000000)
+#define TRIAL_DIV_BOUND bigint(100000000)
 // will be handled by trial division, and the libpari function will
 // only be called once primes factors less than
-#define TRIAL_DIV_PRIME_BOUND BIGINT(10000)
+#define TRIAL_DIV_PRIME_BOUND bigint(10000)
 // have been divided out,  to reduce the overheads involved.
 
 vector<bigint> pdivs_pari(const bigint& number, int trace)
@@ -546,28 +550,26 @@ vector<bigint> posdivs(const bigint& number)
 
 vector<bigint> posdivs(const bigint& number, const vector<bigint>& plist)
 {
- int np = plist.size();
+  static const bigint one(1);
+  int np = plist.size();
  int e, nu = 1; int nd=nu;
  vector<int> elist;
  elist.reserve(np);
- vector<bigint>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     e=val(*pr++,number);
+     e=val(p,number);
      elist.push_back(e);
      nd*=(1+e);
    }
  // cout<<"In posdivs (0) : elist = "<<elist<<endl;
- vector<bigint> dlist(1,BIGINT(1)); 
+ vector<bigint> dlist(1, one);
  // cout<<"In posdivs (1) : dlist = "<<dlist<<endl;
  dlist.resize(nd);
  // cout<<"In posdivs (2) : dlist = "<<dlist<<endl;
- pr=plist.begin();
- vector<int>::iterator ei = elist.begin();
+ auto ei = elist.begin();
  nd=nu;
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     bigint p=*pr++;
      e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
@@ -588,26 +590,24 @@ vector<bigint> alldivs(const bigint& number)
 
 vector<bigint> alldivs(const bigint& number, const vector<bigint>& plist)
 {
+ static const bigint one(1);
  int np = plist.size();
  int e, nu = 2; int nd=nu;
  vector<int> elist;
  elist.reserve(np);
- vector<bigint>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     e=val(*pr++,number);
+     e=val(p,number);
      elist.push_back(e);
      nd*=(1+e);
    }
- vector<bigint> dlist(1,BIGINT(1));
- dlist.push_back(BIGINT(-1));
+ vector<bigint> dlist(1, one);
+ dlist.push_back(-one);
  dlist.resize(nd);
  nd=nu;
- pr=plist.begin();
- vector<int>::iterator ei = elist.begin();
- while(pr!=plist.end())
+ auto ei = elist.begin();
+ for (const auto& p : plist)
    {
-     bigint p=*pr++;
      e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
@@ -625,25 +625,23 @@ vector<bigint> sqdivs(const bigint& number)
 
 vector<bigint> sqdivs(const bigint& number, const vector<bigint>& plist)
 {
+ static const bigint one(1);
  int np = plist.size();
  int e, nu = 1; int nd=nu;
  vector<int> elist;
  elist.reserve(np);
- vector<bigint>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
+ for (const auto& p : plist)
    {
-     e=val(*pr++,number)/2;
+     e=val(p,number)/2;
      elist.push_back(e);
      nd*=(1+e);
    }
- vector<bigint> dlist(1,BIGINT(1)); 
+ vector<bigint> dlist(1, one);
  dlist.resize(nd);
  nd=nu;
- pr=plist.begin();
- vector<int>::iterator ei = elist.begin();
- while(pr!=plist.end())
+ auto ei = elist.begin();
+ for (const auto& p : plist)
    {
-     bigint p=*pr++;
      e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
@@ -661,26 +659,17 @@ vector<bigint> sqfreedivs(const bigint& number)
 
 vector<bigint> sqfreedivs(const bigint& number, const vector<bigint>& plist)
 {
+ static const bigint one(1);
  int np = plist.size();
- int e, nu = 1; int nd=nu;
- vector<int> elist;
- elist.reserve(np);
- vector<bigint>::const_iterator pr = plist.begin();
- while(pr!=plist.end())
-   {
-     e=1; pr++;
-     elist.push_back(e);
-     nd*=(1+e);
-   }
- vector<bigint> dlist(1,BIGINT(1)); 
+ int nu = 1, nd=pow(2,np);
+ vector<int> elist(np,1);
+ vector<bigint> dlist(1, one);
  dlist.resize(nd);
  nd=nu;
- pr=plist.begin();
- vector<int>::iterator ei=elist.begin();
- while(pr!=plist.end())
+ auto ei=elist.begin();
+ for (const auto& p : plist)
    {
-     bigint p=*pr++;
-     e=*ei++;
+     int e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
          dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
@@ -705,10 +694,8 @@ void sqfdecomp(const bigint& a, vector<bigint>& plist, bigint& a1, bigint& a2)
   long j;
   vector<bigint> aplist;
   a1=1;  a2=1;
-  vector<bigint>::const_iterator pr = plist.begin();
-  while(pr!=plist.end())
+ for (const auto& p : plist)
     {
-      bigint p = *pr++;
       long e = val(p,a);
       if(e==0) continue;
       if(e&1) {a1*=p; aplist.push_back(p);}
@@ -808,7 +795,7 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
   if(x<0) {x=-x; s=-1;}
 //#define DEBUG_IFLOOR
  int e;
- double y = frexp(x,&e);
+ frexp(x,&e);
 #ifdef DEBUG_IFLOOR
  cout<<"x="<<x<<", e="<<e<<endl;
 #endif
@@ -834,7 +821,7 @@ bigint Ifloor(double x)  // bigfloats are just doubles in this case
 #ifdef DEBUG_IFLOOR
      cout<<", new x="<<x<<endl;
 #endif
-     y = frexp(x,&e);
+     frexp(x,&e);
    }
  if((x>0)&&(s<0)) ++ans;        // adjust if fractional part non-zero
  if(s<0) ans=-ans;  // adjust if negative
@@ -1039,7 +1026,7 @@ static int leg(const bigint& a, const bigint& b)
  
 static int leg(const long& a, const long& b) 
 //nb this function is not intended for public use!
-{ long aa = a, bb = b, c;
+{ long aa = a, bb = b;
 //  cout<<"leg("<<a<<","<<b<<") = "<<flush;
   int ans = 1;
   while (bb>1) 
@@ -1048,7 +1035,7 @@ static int leg(const long& a, const long& b)
         while (!(aa&3)) {aa/=4;}
         if    (!(aa&1)) {aa/=2; ans *= chi2(bb);}
         ans*=hilbert2(aa,bb);
-        c=bb; bb=aa; aa=c;
+        long c=bb; bb=aa; aa=c;
   }
 //  cout << ans << endl;
   return ans;
@@ -1063,7 +1050,7 @@ int legendre(const bigint& a, const bigint& b)
 int legendre(const bigint& aa, long b)
 { 
   if(!(b%2)) return 0;  // b was even
-  long a=I2long(aa%BIGINT(b));
+  long a=I2long(aa%b);
   long g=::gcd(a,b);
   if(g!=1)  return 0;
   return leg(a,b);
@@ -1110,62 +1097,75 @@ int kronecker(const bigint& d, long n)
  
 long gcd(const bigint& a, long b)
 {
-  bigint bb = BIGINT(b);
-  return I2long(gcd( a, bb )); 
+  bigint bb(b);
+  return I2long(gcd( a, bb ));
 }
 
-int modrat(const bigint& n, const bigint& m, const bigint& lim, 
+// Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
+void gauss_reduce(const bigint& a0, const bigint& b0, const bigint& c0, const bigint& d0,
+                  bigint& a, bigint& b, bigint& c, bigint& d)
+{
+  a=a0; b=b0; c=c0; d=d0;
+  // cout<<"Initial (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+  bigint P = a*a+b*b, Q = a*c+b*d, R = c*c+d*d, one(1), t;
+  t = one; // any nonzero will do
+  while (!is_zero(t))
+    {
+      // cout<<"(a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+      // cout<<"(P,Q,R) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
+      t = rounded_division(Q,P);
+      if (!is_zero(t))
+        {
+          // cout<<"Shift by "<<t<<endl;
+          c -= t*a;
+          d -= t*b;
+          Q -= t*P;
+          R = c*c+d*d;
+        }
+      if (R<P)
+        {
+          // cout<<"Invert"<<endl;
+          t = -a; a = c; c = t;
+          t = -b; b = d; d = t;
+          t = P; P = R; R = t;
+          t = one;
+        }
+    }
+  // cout<<"Final (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+}
+
+int modrat(const bigint& n, const bigint& m,
            /* return values: */ bigint& a, bigint& b)
 {
- bigint q,r,t,qq,rr,tt,quot;
- q=m; r=posmod(n,m); qq=0; rr=1; t=0; tt=0; a=r; b=1; 
- if (r<lim) 
-   { 
-//   cout<<" = "<<a<<"/"<<b<<"\n";
-     return 1;
-   }
- while (sign(r)!=0) 
- { 
-   ::divides(q,r,quot,t);
-   q = r;   r = t;
-   tt = qq-quot*rr; qq = rr; rr = tt;
-   if (r<lim)
-     {
-       if (abs(rr)<lim) {a=r; b=rr; return 1;}
-       cout << "\nmodrat error: no reconstruction for " << n << " mod " << m << "\n";
-       return 0;
-     }
- }
- cout << "\nmodrat error: common factor with " << n << " mod " << m << "\n";
- return 0;
+  static const bigint zero(0), one(1);
+  bigint c,d, n1 = mod(n,m);
+  gauss_reduce(n1,one,m,zero,a,b,c,d);
+  bigint lim = sqrt(m>>1);
+  return (abs(a) <= lim) && (abs(b) <= lim);
 }
 
-// find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
-// roots are put in r which should be allocated of size 3
-int nrootscubic(long b, long c, long d, long p, long* roots)
+// Find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p) and
+// assign roots to a list of these. A stupid search is good enough
+// since we only use this for very small p! Also it is tacitly assumed
+// that the roots are distinct.
+int nrootscubic(long b, long c, long d, long p, vector<long>& roots)
 {
-  long r, nr=0;
-  int found = 0;
-  for (r = 0; (r<p)&&!found ; r++)
+  int nr=0;
+  long r=0;
+  roots.clear();
+  for (r = 0; r<p; r++)
     {
-      found = (((((r+b)*r+c)*r+d)%p)==0 );
-    }
-  if (!found) return 0;
-
-  r--;  // because it was incremented one extra time in the loop!
-  roots[nr++]=r;
-  long e = b + r;
-  long f = c + e*r;
-  long e0 = (-e*((p+1)/2))%p;
-  long dd = posmod(e0*e0-f,p);
-  if(legendre(dd,p)==1) 
-    { // stupid search is good enough since we only use this for very small p!
-      for (r = 1; r<p ; r++)  
-	{
-	  if((r*r-dd)%p==0) break;
-	}
-      roots[nr++] = (e0+r)%p;
-      roots[nr++] = (e0-r)%p;
+      if (((((r+b)*r+c)*r+d)%p)==0)
+        {
+          roots.push_back(r);
+          nr++;
+          if (nr==2) // find 3rd root the easy way
+            {
+              roots.push_back(posmod(-b-roots[0]-roots[1],p));
+              std::sort(roots.begin(), roots.end());
+              return 3;
+            }
+        }
     }
   return nr;
 }

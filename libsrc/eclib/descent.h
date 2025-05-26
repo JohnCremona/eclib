@@ -1,7 +1,7 @@
 // descent.h: declaration of classes rank12 and two_descent
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -110,12 +110,12 @@ public:
 // n_aux=-1 causes default to be used (depends on method)
 // second_descent only relevant for descent via 2-isogeny
 
-  two_descent(Curvedata* ec, 
+  explicit two_descent(Curvedata* ec, 
 	      int verb=0, int sel=0, 
 	      long firstlim=20, long secondlim=5, 
 	      long n_aux=-1, int second_descent=1);
   // Version which takes a vector [a1,a2,a3,a4,a6] of *rationals*
-  two_descent(vector<bigrational> ai, 
+  explicit two_descent(vector<bigrational> ai, 
 	      int verb=0, int sel=0, 
 	      long firstlim=20, long secondlim=5, 
 	      long n_aux=-1, int second_descent=1);

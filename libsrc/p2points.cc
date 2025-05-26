@@ -1,7 +1,7 @@
 // p2points.cc:  implementations for P2Point class for points in P^2(Q)
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -47,25 +47,26 @@ void P2Point::reduce(void)
   }
 }
 
-// P2Point input: 3 formats allowed are 
+// P2Point input: 3 formats allowed are
 // [x:y:z], [x,y], [x/z,y/z] with any type of brackets
 
 istream& operator>>(istream & is, P2Point& P)
 {
-  char c; 
+  static const bigint zero(0), one(1);
+  char c;
   is>>c;  // swallow first bracket
   bigint x,y,dx,dy;
   is >> x >> c; // swallow comma or colon
   switch(c) {
   case ',':
-    P.X=x; is >> P.Y >> c; P.Z=BIGINT(1); break;
-  case '/': is >> dx >> c >> y >> c >> dy >> c; 
+    P.X=x; is >> P.Y >> c; P.Z=one; break;
+  case '/': is >> dx >> c >> y >> c >> dy >> c;
     P.X=x*dy; P.Y=y*dx; P.Z=dx*dy; break;
   case ':': P.X=x; is >> P.Y >> c >> P.Z >> c; break;
-  default: P.X=P.Y=P.Z=BIGINT(0); // null point
+  default: P.X=P.Y=P.Z=zero; // null point
   }
-  P.reduce(); 
-  return is; 
+  P.reduce();
+  return is;
 }
 
 // test of equality of points
@@ -114,19 +115,19 @@ void P2Point::getrealcoordinates(bigfloat&x, bigfloat& y) const
 // Coordinate transforms useful for elliptic curve points 
 P2Point scale(const P2Point& P, const bigint& u, int back)
 {
-  if(u==BIGINT(1)) return P;
+  if(is_one(u)) return P;
   bigint u2=u*u;
   bigint u3=u*u2;
-  if(back) 
+  if(back)
     return P2Point(u2*P.X,u3*P.Y,P.Z);
   else
     return P2Point(u*P.X,P.Y,u3*P.Z);
-} 
+}
 
 P2Point scale(const P2Point& P, long u, int back)
 {
   if(u==1) return P;
-  return scale(P,BIGINT(u),back);
+  return scale(P,bigint(u),back);
 }
 
 P2Point shift(const P2Point& P,

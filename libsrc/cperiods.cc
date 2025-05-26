@@ -1,7 +1,7 @@
 // cperiods.cc: implementations of class Cperiods and period lattice functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -30,7 +30,7 @@ void swap(bigcomplex& a, bigcomplex& b)
 {
   bigcomplex c(a); a=b; b=c;
 }
-#define SMALL(x) is_zero((x))
+#define SMALL(x) is_complex_zero((x))
 #else
 #define SMALL(x) is_approx_zero((x))
 //#define SMALL(x) (abs(x)<1.0e-14)
@@ -104,7 +104,7 @@ void eiperiods(bigcomplex e1, bigcomplex e2, bigcomplex e3,
 
 //#define DEBUG_CUBIC
 
-bigcomplex* solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bigint& c3) 
+vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bigint& c3) 
 //Returns an array of 3 complex roots.
 {
 #ifdef DEBUG_CUBIC
@@ -120,7 +120,7 @@ bigcomplex* solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bi
   bigint p3=  3*c2 - c1*c1;
   bigint q = c1*(2*sqr(c1)-9*c2)+27*c3;
   bigfloat rq=I2bigfloat(q), rp3=I2bigfloat(p3);
-  bigcomplex *roots = new bigcomplex[3];
+  vector<bigcomplex> roots(3);
   long i;
  
 #ifdef DEBUG_CUBIC
@@ -213,7 +213,7 @@ bigcomplex* solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bi
 	{
 	  fz = ((z+rc1)*z+rc2)*z+rc3;
 	  fdashz = (three*z+two*rc1)*z+rc2;
-	  if(!is_zero(fdashz)) z -= fz/fdashz;
+	  if(!is_complex_zero(fdashz)) z -= fz/fdashz;
 	}
       roots[i] = z;
     }
@@ -233,7 +233,7 @@ void getei(const Curvedata& E, bigcomplex& e1, bigcomplex& e2, bigcomplex& e3)
 #ifdef DEBUG
   cout<<"Solving monic cubic with coeffs "<<b2<<","<<(8*b4)<<","<<16*b6<<endl;
 #endif
-  bigcomplex* ei = solve_nonsingular_cubic(b2,8*b4,16*b6);
+  vector<bigcomplex> ei = solve_nonsingular_cubic(b2,8*b4,16*b6);
 #ifdef DEBUG
   cout<<"ei = "<<ei[0]<<","<<ei[1]<<","<<ei[2]<<endl;
 #endif
@@ -243,7 +243,6 @@ void getei(const Curvedata& E, bigcomplex& e1, bigcomplex& e2, bigcomplex& e3)
   cout<<"After rescaling,\n";
   cout<<"ei = "<<e1<<","<<e2<<","<<e3<<endl;
 #endif
-  delete [] ei;
 }
 
 Cperiods::Cperiods(const Curvedata& E)
@@ -321,7 +320,7 @@ Cperiods::Cperiods(const Curvedata& E)
 void Cperiods::store_sums()
 {
   static bigfloat one(to_bigfloat(1));
-  qtau = q(tau);
+  qtau = e2pi(tau);
   if(abs(qtau)>0.99)
     {
       cout << "Warning from Cperiods::store_sums: qtau = " 
@@ -444,7 +443,7 @@ void Cperiods::XY_coords(bigcomplex& X, bigcomplex& Y, const bigcomplex& z)
   z1-=wR*floor(real(z1)/real(wR));
   z1-=wI*floor(imag(z1)/imag(wI));
   z1/=w1;
-  bigcomplex qz = q(z1);
+  bigcomplex qz = e2pi(z1);
   //  while(abs(qz)>0.9) qz*=qtau;
   //  while(abs(qz)>1.1) qz*=qtau;
 #ifdef DEBUG_XY
@@ -494,7 +493,7 @@ bigcomplex cagm1(const bigcomplex& a, const bigcomplex& b)
 #ifdef MPFP
       if(is_approx_zero(abs((x-y)/x))) return x;
 #else
-      if(is_zero(abs((x-y)/x))) return x;
+      if(is_complex_zero(abs((x-y)/x))) return x;
 #endif
     }
   return x;

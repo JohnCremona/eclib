@@ -1,7 +1,7 @@
 // vectest.cc: Test of vector package
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -27,7 +27,7 @@ int main(void)
 {
  cout << "Test run of vector package.\n\n"; 
  int i,j,k,n;
- cout << "iota(10) = " << iota(10) << endl;
+ cout << "iota(10) = " << vec::iota(10) << endl;
  cout << "Enter n : "; cin >> n;
  vec v;
  cout << "Uninitialized new vec v = " << v << endl;
@@ -95,7 +95,7 @@ int main(void)
  cout << "General slice; beginning, end? "; cin >> j >> k;
  cout << "Slice = " << v.slice(j,k) << endl;
  cout << "Now v = " << v << endl;
- cout << "w = " << w << "; vecgcd(w) = " << vecgcd(w) << endl;
+ cout << "w = " << w << "; content(w) = " << content(w) << endl;
  makeprimitive(w);
  cout << "After makeprimitive(w), w = " << w << endl;
 

@@ -1,7 +1,7 @@
 // interface.h: used to provide common interface
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -76,62 +76,10 @@ using namespace NTL;
 
 typedef ZZ bigint;
 
-#define BIGINT(val) to_ZZ(val)
-inline bigint atoI(const char* s) {return to_ZZ(s);}
-
-inline int odd(const int& a) {return a&1;}
-inline int even(const int& a) {return !(a&1);}
-inline int odd(const long& a) {return a&1;}
-inline int even(const long& a) {return !(a&1);}
-
-inline int is_zero(const bigint& x) {return IsZero(x);}
-inline int is_positive(const bigint& x) {return sign(x)>0;}
-inline int is_negative(const bigint& x) {return sign(x)<0;}
-inline int is_one(const bigint& x) {return IsOne(x);}
-inline int odd(const bigint& a) {return IsOdd(a);}
-inline int even(const bigint& a) {return !IsOdd(a);}
-inline void rshift(const bigint& a, long i, bigint& c) {RightShift(c,a,i);}
-inline void lshift(const bigint& a, long i, bigint& c) {LeftShift(c,a,i);}
-#ifdef setbit
-#undef setbit
-#endif
-inline void setbit(bigint& a, int e) {SetBit(a,e);}
-inline long lg(const bigint& x) {return NumBits(x)-1;}
 inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
 inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
-
-// The following are not in NTL & need defining
 int I2int(const bigint& x);    // too long to inline
 long I2long(const bigint& x);  // too long to inline
-inline double I2double(const bigint& x) {return to_double(x);}
-inline void longasI(long& a, const bigint& x) {a = I2long(x);}
-inline void negate(bigint& a) {a=-a;}
-inline void sqrt(bigint& a, const bigint& b) {SqrRoot(a,b);}
-inline bigint sqrt(const bigint& a) {bigint b; sqrt(b,a); return b;}
-inline void square(bigint& a, const bigint& b) {sqr(a,b);}
-inline bigint gcd(const bigint& a, const bigint& b) {return GCD(a,b);}
-inline bigint lcm(const bigint& a, const bigint& b)
- {if (IsZero(a) && IsZero(b)) return ZZ::zero(); else return a*(b/GCD(a,b));}
-
-// In NTL add, sub, mul, div are defined with result in first place
-inline void addx(const bigint& a, const bigint& b, bigint& c)  {add(c,a,b);}
-inline void subx(const bigint& a, const bigint& b, bigint& c)  {sub(c,a,b);}
-inline void divx(const bigint& a, const bigint& b, bigint& c)  {div(c,a,b);}
-inline void mulx(const bigint& a, const bigint& b, bigint& c)  {mul(c,a,b);}
-inline bigint pow(const bigint& a, long e)  {return power(a,e);}
-
-//N.B. no power to bigint exponent in NTL
-inline long jacobi(const bigint& a, const bigint& p)  {return Jacobi(a,p);}
-inline void sqrt_mod_p(bigint & x, const bigint & a, const bigint & p)  
-  {SqrRootMod(x,a,p); if(x>(p-x)) x= p-x;}
-inline void power_mod(bigint& ans, const bigint& base, const bigint& expo, const bigint& m) 
- {PowerMod(ans,base,expo,m);}
-inline void nearest(bigint& c, const bigint& a, const bigint& b) 
- {bigint a0=(a%b);  c = (a-a0)/b; if(2*a0>b) c+=1;}
-inline bigint roundover(const bigint& a, const bigint& b)
- {bigint a0=(a%b); bigint c = (a-a0)/b; if(2*a0>b) c+=1; return c;}
-
-#define bigint_mod_long(a,m) (a%m)
 
 
 // Reals and Complexes
@@ -152,7 +100,6 @@ inline RR sinh(const RR& x) {return (exp(x)-exp(-x))/2;}
 inline RR tan(const RR& x) {return sin(x)/cos(x);}
 RR atan2(const RR&, const RR&);
 inline int is_approx_zero(const RR& x)
-//  {return abs(x)<power2_RR(2-RR::precision());}
 {
   if (IsZero(x)) return 1;
   long n = x.exponent()+RR::precision()-1;
@@ -198,17 +145,17 @@ inline RR to_bigfloat(const int& n) {return to_RR(n);}
 inline RR to_bigfloat(const long& n) {return to_RR(n);}
 inline RR to_bigfloat(const double& x) {return to_RR(x);}
 inline RR I2bigfloat(const bigint& x) { return to_RR(x);}
+inline double I2double(const bigint& x) {return to_double(x);}
 inline int doublify(const bigfloat& x, double& d){ d=to_double(x); return 0;}
 int longify(const bigfloat& x, long& a, int rounding=0);
-inline int is_zero(bigfloat x) {return IsZero(x);}
-inline int is_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
+inline int is_real_zero(bigfloat x) {return IsZero(x);}
+inline int is_complex_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
 inline void Iasb(bigint& a, bigfloat x) {RoundToZZ(a,x);}
 inline void Iasb(long& a, bigfloat x) {ZZ n; RoundToZZ(n,x); a=I2long(n);}
 istream& operator>>(istream& is, bigcomplex& z);
 inline bigcomplex pow(const bigcomplex& a, int e)  {return (to_RR(e)*a.log()).exp();}
 inline bigcomplex pow(const bigcomplex& a, long e)  {return (to_RR(e)*a.log()).exp();}
 inline bigcomplex pow(const bigcomplex& a, const RR& e)  {return (e*a.log()).exp();}
-
 
 //////////////////////////////////////////////////////////////////
 #else  // C doubles and libg++ Complexes
@@ -218,14 +165,15 @@ inline bigcomplex pow(const bigcomplex& a, const RR& e)  {return (e*a.log()).exp
 
 typedef double bigfloat;
 
-inline long decimal_precision() {return 15;}
-inline long bit_precision() {return 53;}
-inline int is_zero(double x) {return fabs(x)<1e-15;}
-inline int is_approx_zero(double x) {return fabs(x)<1e-10;}
+inline long decimal_precision() {return 14;}
+inline long bit_precision() {return 52;}
+inline int is_real_zero(double x) {return fabs(x)<1e-14;}
+inline int is_approx_zero(double x) {return fabs(x)<1e-11;}
+inline int sign(double x) {return (double(0) < x) - (x < double(0));}
 
 // We cannot set internal bit precision in this mode, so we just set the output decimal precision
-inline void set_precision(long n) {cout.precision(min(15,long(LOG_10_2*n)));}
-inline void set_precision(const string prompt)  {cout.precision(15);}
+inline void set_precision(long n) {cout.precision(min(14,long(LOG_10_2*n)));}
+inline void set_precision(const string prompt)  {cout.precision(14);}
 #define Pi()    (double)(3.1415926535897932384626433832795028841)
 #define Euler() (double)(0.57721566490153286060651209008240243104)
 
@@ -243,16 +191,16 @@ inline double power(double x, long n) {return pow(x,n);}
 inline double to_bigfloat(const int& n) {return double(n);}
 inline double to_bigfloat(const long& n) {return double(n);}
 inline double to_bigfloat(const double& x) {return x;}
-
-inline bigfloat I2bigfloat(const bigint& x) {return I2double(x);}
+inline double I2double(const bigint& x) {return to_double(x);}
+inline double I2bigfloat(const bigint& x) { return to_double(x);}
 
 // complexes
 
 #include <complex>
 typedef complex<double> bigcomplex;
 
-inline int is_zero(const bigcomplex& z) 
- {return is_zero(z.real())&&is_zero(z.imag());}
+inline int is_complex_zero(const bigcomplex& z) 
+ {return is_real_zero(z.real())&&is_real_zero(z.imag());}
 inline int is_approx_zero(const bigcomplex& z)
  {return is_approx_zero(z.real())&&is_approx_zero(z.imag());}
 

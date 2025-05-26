@@ -1,7 +1,7 @@
 // ffmod.cc: implementation of class ffmodq and Weil pairing functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -32,26 +32,17 @@ curvemodq ffmodq::E;
 FqPoly ffmodq::f1;
 FqPoly ffmodq::f2;
 
-//  special constructor to initialize the curve and field only:
-ffmodq::ffmodq(const curvemodq& EE)
+void ffmodq::init(const curvemodq& EE)
 {
-  E=EE; Fq=get_field(EE);
-  //  cout<<"In ffmodq constructor"<<endl;
-  init_f1f2();
-}
-
-void ffmodq::init_f1f2(void)
-{
-  //  cout<<"In ffmodq::init_f1f1()"<<endl;
-
-  NewGF(Fq,a1);  NewGF(Fq,a2);  NewGF(Fq,a3);
-  NewGF(Fq,a4);  NewGF(Fq,a6);
+  E = EE;
+  Fq = get_field(EE);
+  NewGF(Fq,a1);  NewGF(Fq,a2);  NewGF(Fq,a3);  NewGF(Fq,a4);  NewGF(Fq,a6);
   E.get_ai(a1,a2,a3,a4,a6);
   // set f1, f2:
-  NewFqPoly(Fq,X); 
+  NewFqPoly(Fq,X);
   FqPolyAssignX(X);
   f1 = X*(X*(X+a2)+a4)+a6;
-  f2 = a1*X+a3;     
+  f2 = a1*X+a3;
 }
 
 int ffmodq::operator==(const ffmodq& b) const
@@ -101,7 +92,7 @@ gf_element evaluate(const FqPoly& f, const gf_element& value)
 
   NewGF(GetField(f),result);
   GFSetZ(result,0);
-	
+
   if (d < 0) return result;
 
   result = PolyCoeff(f,d);
@@ -125,9 +116,10 @@ gf_element ffmodq::evaluate(const pointmodq& P) const
 // vertical(P) has divisor (P)+(-P)-2(0)
 ffmodq vertical(const pointmodq& P)
 {
-  if(P.is_zero()) 
+  static const bigint one(1);
+  if(P.is_zero())
     {
-      ffmodq g(BIGINT(1)); return g;
+      ffmodq g(one); return g;
     }
   NewFqPoly(base_field(P),h1);
   FqPolyAssignX(h1);
@@ -137,9 +129,10 @@ ffmodq vertical(const pointmodq& P)
 // tangent(P) has divisor 2(P)+(-2P)-3(0)
 ffmodq tangent(const pointmodq& P)
 {
-  if(P.is_zero()) 
+  static const bigint one(1);
+  if(P.is_zero())
     {
-      ffmodq g(BIGINT(1)); return g;
+      ffmodq g(one); return g;
     }
   gf_element x=P.get_x(), y=P.get_y();
   gf_element a1,a2,a3,a4,a6;
@@ -191,7 +184,8 @@ ffmodq chord(const pointmodq& P, const pointmodq& Q)
 
 ffmodq weil_pol(const pointmodq& T, int m)
 {
-  ffmodq h(BIGINT(1));
+  static const bigint one(1);
+  ffmodq h(one);
   switch(m) {
   case 2: return vertical(T);
   case 3: return tangent(T);

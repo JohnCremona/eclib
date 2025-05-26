@@ -1,7 +1,7 @@
 // curvemod.cc: implementation of class curvemodq for elliptic curve mod q 
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -34,6 +34,7 @@ curvemodq::curvemodq(void)
 
 curvemodq::curvemodq(const Curve& E, const bigint& qq)
 {
+  static const bigint zero(0);
   q=qq; Fq=new galois_field(q);
   //  cout<<"In curvemodq constructor, Fq = "<<Fq<<endl;
   bigint A1,A2,A3,A4,A6;
@@ -43,7 +44,7 @@ curvemodq::curvemodq(const Curve& E, const bigint& qq)
   GFSetZ(a3,A3);
   GFSetZ(a4,A4);
   GFSetZ(a6,A6);
-  order=BIGINT(0);
+  order=zero;
 }
 
 curvemodq::~curvemodq() 
@@ -73,16 +74,17 @@ void curvemodq::operator=(const curvemodq& C) // assignment
 
 void curvemodq::set_group_order_via_legendre()  
 {
+  static const bigint zero(0), one(1);
   // Do NOT make these static as the modulus might change!
   gf_element two=to_ZZ_p(2);
   gf_element four=two+two;
   if(!is_zero(order)) return; // order already set!
-  order=BIGINT(1);  // point at infinity
+  order=one;  // point at infinity
   gf_element b2 = a1*a1 + four*a2; 
   gf_element b4 = two*a4 + a1*a3;
   gf_element b6 = a3*a3 + four*a6; 
   bigint ix; NewGF(*Fq,x); NewGF(*Fq,d);
-  for(ix=BIGINT(0); ix<q; ix++)
+  for(ix=zero; ix<q; ix++)
     {
       GFSetZ(x,ix);
       d = ((four*x+b2)*x+(two*b4))*x+b6;

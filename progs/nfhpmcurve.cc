@@ -1,7 +1,7 @@
 // FILE nfhpmcurve.cc main newform- and curve-finding program
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -36,6 +36,7 @@
 
 #define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
+                          // otherwise, sorts newforms into Cremona order before output
 
 #define MAXNAP 20000
 #define BITPREC0 100  // initial bit precision
@@ -86,15 +87,16 @@ int main(void)
       cout << "Finished level "<<n<<endl;
       continue;
     }
-  int plus=1, cuspidal=0;
   newforms nf(n,verbose); 
   int noldap=25; // stopp0 must be at least this big!
   if (stopp0<noldap) stopp0=noldap;
   nf.createfromscratch(1,noldap);
 #ifdef LMFDB_ORDER
-  nf.sort();
-  nf.make_projcoord(); // needed for when we add more ap
+  nf.sort_into_LMFDB_label_order();
+#else
+  nf.sort_into_Cremona_label_order();
 #endif
+  nf.make_projcoord(); // needed for when we add more ap
   if(verbose) nf.display();
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   stopp=stopp0;
@@ -153,7 +155,6 @@ int main(void)
 
   stopp = stopp0; // will be increased if necessary
   set_precision(prec0);
-  bigfloat rperiod;
   vector<int> forms;
   for(inf=0; inf<nnf; inf++) forms.push_back(inf);
 
@@ -171,13 +172,13 @@ int main(void)
 	    }
 	}
       else
-	{      
+	{
 	  cout<<forms.size()<<" curve(s) missing: ";
-	  for(vector<int>::const_iterator inf=forms.begin(); inf!=forms.end(); inf++)
-	    cout<<(*inf+1)<<" ";
+	  for( int i : forms)
+	    cout<<i+1<<" ";
 	  cout<<endl;
 	  int newstopp;
-	  if(stopp<500) 
+	  if(stopp<500)
 	    newstopp=2*stopp;
 	  else
 	    newstopp=stopp+500;
@@ -199,7 +200,7 @@ int main(void)
                   nf.output_to_file(1,1);
                 }
 #ifdef MPFP
-              if(bit_precision()<BITPRECMAX) 
+              if(bit_precision()<BITPRECMAX)
                 {
                   set_precision(bit_precision()+BITPRECX);
                   cout << "Now working with bit precision "<<bit_precision()<< endl;

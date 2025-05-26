@@ -1,7 +1,7 @@
 // sub.h: declaration of class subspace
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -21,69 +21,65 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-// Not to be included directly by user: use matrix.h which defines
+// Not to be included directly by user: use subspace.h which defines
 // _ECLIB_SUBSPACE_H and includes this twice
 //
-
 
 class subspace {
 
 public:
-     // constructors
-        subspace(int n=0);
-        subspace(const mat& b, const vec& p, scalar d);
-	subspace(const subspace& s);
-     // destructor
-        ~subspace();
+  // constructors
+  subspace(int n=0) :denom(1),pivots(vec_i::iota(n)),basis(mat::identity_matrix(n)) {}
+  subspace(const mat& b, const vec_i& p, const scalar& d) :denom(d),pivots(p),basis(b) {}
+  subspace(const subspace& s) :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
+
      // assignment
 	void operator=(const subspace& s);
 
      // member functions & operators
         inline void clear() { pivots.init(); basis.init();}
         inline scalar den() const {return denom;}     // the denominator
-        inline vec pivs() const {return pivots;} // the pivot vector
+        inline vec_i pivs() const {return pivots;} // the pivot vector
         inline mat bas() const {return basis;}   // the basis matrix
 
      // non-member (friend) functions and operators
         friend int dim(const subspace& s);      // the dimension
         friend scalar denom(const subspace& s);   // the denominator
-        friend vec pivots(const subspace& s);// the pivot vector
+        friend vec_i pivots(const subspace& s);// the pivot vector
         friend mat basis(const subspace& s) ;// the basis matrix
 	friend subspace combine(const subspace& s1, const subspace& s2);
         friend mat restrict_mat(const mat& m, const subspace& s, int cr);
-	friend subspace pcombine(const subspace& s1, const subspace& s2, scalar pr);
-	friend mat prestrict(const mat& m, const subspace& s, scalar pr, int cr);
-        friend int lift(const subspace& s, scalar pr, subspace& ans, int trace);
-
+	friend subspace pcombine(const subspace& s1, const subspace& s2, const scalar& pr);
+	friend mat prestrict(const mat& m, const subspace& s, const scalar& pr, int cr);
+        friend int lift(const subspace& s, const scalar& pr, subspace& ans);
 
 // Implementation
 private:
        scalar   denom;
-       vec pivots;
+       vec_i pivots;
        mat basis;
 };
-
 
 // Declarations of nonmember, nonfriend operators and functions:
 
 mat expressvectors(const mat& m, const subspace& s);
 subspace kernel(const mat& m, int method=0);
 subspace image(const mat& m, int method=0);
-subspace eigenspace(const mat& m, scalar lambda, int method=0);
-subspace subeigenspace(const mat& m, scalar l, const subspace& s, int method=0);
+subspace eigenspace(const mat& m, const scalar& lambda, int method=0);
+subspace subeigenspace(const mat& m, const scalar& l, const subspace& s, int method=0);
 
 
 //The following work with subspaces "mod p" using "echmodp" from
 //matrix.h/cc to do gaussian elimination.  The "denom" of each is 1.
 
-subspace oldpkernel(const mat& m, scalar pr);
-subspace pkernel(const mat& m, scalar pr);
-subspace pimage(const mat& m, scalar pr);
-subspace peigenspace(const mat& m, scalar lambda, scalar pr);
-subspace psubeigenspace(const mat& m, scalar l, const subspace& s, scalar pr);
+subspace oldpkernel(const mat& m, const scalar& pr);
+subspace pkernel(const mat& m, const scalar& pr);
+subspace pimage(const mat& m, const scalar& pr);
+subspace peigenspace(const mat& m, const scalar& lambda, const scalar& pr);
+subspace psubeigenspace(const mat& m, const scalar& l, const subspace& s, const scalar& pr);
 
 
 inline int dim(const subspace& s) {return s.basis.ncols();}  // the dimension
 inline scalar denom(const subspace& s) {return s.denom;}    // the denominator
-inline vec pivots(const subspace& s) {return s.pivots;}     // the pivot vector
+inline vec_i pivots(const subspace& s) {return s.pivots;}     // the pivot vector
 inline mat basis(const subspace& s) {return s.basis;}       // the basis matrix

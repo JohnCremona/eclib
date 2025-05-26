@@ -1,7 +1,7 @@
 // minim.h: implementation of quartic minimization functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -34,13 +34,14 @@ bigint root_p(const bigint& a, const bigint& b, const bigint& c,
 // returns -1 if multiple root is at infinity (if a=b=0 mod p)
 // (program does not actaully use this dubious feature)
 {
-  if(div(p,a)&&div(p,b)) return BIGINT(-1);
-  if(div(p,e)&&div(p,d)) return BIGINT(0);
-  
+  static const bigint zero(0), one(1);
+  if(div(p,a)&&div(p,b)) return -one;
+  if(div(p,e)&&div(p,d)) return zero;
+
   // Now we have to find the multiple root, using invariant theory:
   if(p==2)
     {
-      return BIGINT(1);  // the only other possibility
+      return one;  // the only other possibility
     }
   if(p==3)
     {
@@ -75,11 +76,12 @@ int minim_p(bigint& a, bigint& b, bigint& c,
 // m holds the transformation matrix, must be initialized (say with identity)
 // returns success, can be 0 only for p=2
 {
+  static const bigint three(3), nine(9), twentyseven(27);
   bigint a0,b0,c0,d0,e0,r;
   bigint p2=sqr(p), temp;
 
-  int two   = (p==2);
-  int three = (p==3);
+  int p_is_2   = (p==2);
+  int p_is_3 = (p==3);
 
   // First test for trivial case where p^2 divides all coeffs:
 
@@ -152,7 +154,7 @@ int minim_p(bigint& a, bigint& b, bigint& c,
 	  zshift(gamma,a,b,c,d,e,m);
 	  divide_exact(b,p,b0); // b0=b/p;
 	}
-      if(two)
+      if(p_is_2)
 	{
 	  if(ndiv(16,e)) // failure (cannot happen if 2^6|I, 2^7|J 
 	                 //                        or 2^5|I & Q_2-soluble)
@@ -216,13 +218,13 @@ int minim_p(bigint& a, bigint& b, bigint& c,
   if(div(p,a)) // triple root case
     {
       bigint beta; beta=0;
-      if(three)
+      if(p_is_3)
 	{
 	  long vpi = val(3,12*a*e-3*b*d+c*c);
 	  if(vpi==4)
-	    divide_exact(-e,BIGINT(27),temp);
+	    divide_exact(-e, twentyseven,temp);
 	  else
-	    divide_exact(-c,BIGINT(9),temp);
+	    divide_exact(-c, nine,temp);
 	  if(ndiv(3,temp)) beta = 3 * mod(temp * invmod(b,3) , 3);
 	}
       else
@@ -248,9 +250,9 @@ int minim_p(bigint& a, bigint& b, bigint& c,
     }
   else  // quadruple root case
     {
-      if(three)
+      if(p_is_3)
 	{
-	  divide_exact(b,BIGINT(3),b0); // b0=b/3;
+	  divide_exact(b, three,b0); // b0=b/3;
 	  if(ndiv(p,b0))
 	    {
 	      bigint beta = 3 * mod(-b0*invmod(a,p),p);
@@ -261,7 +263,7 @@ int minim_p(bigint& a, bigint& b, bigint& c,
 	      xshift(beta,a,b,c,d,e,m);
 	    }
 	}
-      if(two)
+      if(p_is_2)
 	{
 	  if(ndiv(16,e)) // failure (cannot happen if 2^6|I, 2^7|J 
 	                 //          unless "bad case quartic")
@@ -307,30 +309,31 @@ void minim_all(bigint& ga, bigint& gb, bigint& gc, bigint& gd, bigint& ge,
       long smallp=1;            // these save testing a (possibly big) p 
       if (p==2) smallp=2;       // all the time
       else if (p==3) smallp=3;
-	  
+
       long vpi=1000; if(!is_zero(I)) vpi=val(p,I);
       long vpj=1000; if(!is_zero(J)) vpj=val(p,J);
       long vpd=0;
-      int nonmin, success;
       if(smallp==3) vpd = val(p,4*I*sqr(I)-sqr(J));
-      nonmin = is_nonmin(smallp,vpi,vpj,vpd, assume_locsol);
-      if(!nonmin) 
+      int nonmin = is_nonmin(smallp,vpi,vpj,vpd, assume_locsol);
+      if(!nonmin)
 	{
 	  if(verb) cout<<"p="<<p<<": minimal already\n";
 	  continue;
 	}
-      if(verb) 
+      if(verb)
 	{
 	  cout<<"p="<<p<<": ";
 	  if(smallp==2) cout<<"(possibly) ";
 	  cout<<"non-minimal (vp(I)="<<vpi<<", vp(J)="<<vpj<<")";
+
+          // Now nonminimal so do something
+
+          cout<<" minimalizing at "<<p<<"....\n";
 	}
 
-      // Now nonminimal so do something
-      if(verb) cout<<" minimalizing at "<<p<<"....\n";
       while(nonmin)
 	{
-	  success=minim_p(ga,gb,gc,gd,ge,p,m);
+	  int success=minim_p(ga,gb,gc,gd,ge,p,m);
 	  if(success) // can only fail for p=2
 	    {
 	      vpi-=4; vpj-=6; 

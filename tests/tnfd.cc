@@ -1,7 +1,7 @@
 // FILE TNFD.CC:  test program for nfd (d-dimensional newform) class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -26,7 +26,7 @@
 #include <eclib/interface.h>
 #include <eclib/timer.h>
 #include <eclib/marith.h>
-#include <eclib/msubspace.h>
+#include <eclib/subspace.h>
 #include <eclib/moddata.h>
 #include <eclib/symb.h>
 #include <eclib/homspace.h>
@@ -69,13 +69,14 @@ int main()
      if(dims==0) continue;
 
      bigint den=form.dHS;
-     int i, ip, nap=5, bad;
+     int i, ip, nap=5;
      cout<<"Number of ap? ";  cin>>nap;
-     primevar pr; long p;
+     primevar pr;
      //     start_time();
      for(ip=0; ip<nap; ip++, pr++)
        {
-	 p=pr; bad = ::divides(p,n);
+	 long p=pr;
+         int bad = ::divides(p,n);
 	 if(verbose)
 	   {
 	     mat_m tp = form.oldheckeop(p);
@@ -99,7 +100,7 @@ int main()
 
 	 if(bad) cout<<"w_"; else cout<<"a_";
 	 cout<<p<<" = ";
-	 
+
 	 if(dims==1)
 	   {
 	     cout<<apvec[1]<<endl; 

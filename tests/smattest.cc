@@ -1,7 +1,7 @@
 // smattest.cc: test of sparse matrix package
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -28,11 +28,9 @@
 float ran0( long& idum ); 
 float ran0( int& idum ); 
 
-//#define SCALAR_OPTION 1 // ints
-#define SCALAR_OPTION 2   // longs
-
-#include <eclib/smatrix_elim.h>
 #include <eclib/types.h>
+
+const scalar modulus(PRIME30); // 1073741789 = max p s.t. p < 2^30
 
 long starttime,stoptime;
 
@@ -86,7 +84,7 @@ int main(void)
   cout << "enter 5 to kernel test \n" << "enter> "<<endl;
   cout << "enter 6 to multiply smat by smat \n" << "enter> "<<endl;
   cout << "enter 7 to find eigenspaces \n" << "enter> "<<endl;
-  int t,i;
+  int t,i,d;
   cin >> t;
   
   while( t != 0 ) {
@@ -153,7 +151,6 @@ int main(void)
 	// *** testing set_row *** //
 	cout << "testing set_row" << endl;
 	cout << "enter new row : which row ? (starting from zero)" << endl;
-	int i, d;
 	cin >> i;
 	cout << "number of non-zero elements ?" << endl;
 	cin >> d;
@@ -163,6 +160,7 @@ int main(void)
 	cout << "values ? " << endl;
 	while( n-- ) cin >> *val++;
 	cout << " positions ? " << endl;
+        for (int ii=0; ii<d; ii++) pos[ii]=0;
 	n = d;
 	while( n-- ) cin >> *pos++;
 	pos -= d; val -= d;
@@ -370,7 +368,7 @@ int main(void)
 	    cout << "display fill-in information?" << endl;
 	    cin >> flag2;
 	    if( flag ) cout << "matrix A is " << sm << endl;
-	    smat_elim A (sm );
+	    smat_elim A (sm, modulus );
 	    if( flag2 ) 
 	      { cout << "initial population: "; display_population(A); }
 	    A.step0();
@@ -408,9 +406,9 @@ int main(void)
       {
 	cout << "test of kernel function" << endl;
 	cout << "enter size of matrix for elimination (row,col) "<< endl;
-	int nro,nc;
-	cin >> nro; cin >> nc;
-	smat sm(nro,nc);
+	int nro,nco;
+	cin >> nro; cin >> nco;
+	smat sm(nro,nco);
 	int rand;
 	cout << "Do you want to input the matrix for elimination or do you want\n";
 	cout << "a matrix with random entries? (1 for random and zero otherwise\n";
@@ -434,22 +432,15 @@ int main(void)
 	    cout << "enter matrix as an smat" << endl;
 	    cin >> sm;
 	  }
-	smat_elim A( sm );
-	vec pc, npc;
+	smat_elim A( sm, modulus );
+	vec_i pc, npc;
 	
 	if( flag ) {
-	  long rk, ny; scalar pr = DEFAULT_MODULUS;
+	  long rk, ny; scalar pr = modulus;
 	  mat m = sm.as_mat ();  
 	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
 	  cout << " rank using echmodp : " << rk;
-	  int pop = 0;
-	  int nro = ker_mat.nrows();
-	  int nco = ker_mat.ncols();
-	  for( int r = 1; r <= nro; r++ ) {
-	    for( int c = 1; c <= nco; c++ ) {
-	      pop += ( ker_mat( r, c ) != 0 );
-	    }
-	  }
+	  int pop = population(ker_mat);
 	  cout << " number of non-zero entries: " << pop << endl;
 	}
 	/********A.step0 ();
@@ -481,7 +472,7 @@ int main(void)
 	cout << "rank is:" << dim( pc ) << endl;
 	display_population(kern);
 
-        // smat_elim A2( sm );
+        // smat_elim A2( sm, modulus );
         // smat oldkern = A2.old_kernel(pc, npc);
         // cerr << "old version ";
 	// cout << "rank is:" << dim( pc ) << endl;
@@ -498,7 +489,7 @@ int main(void)
         //   }
 
 
-        smat result = mult_mod_p(sm,kern,DEFAULT_MODULUS);
+        smat result = mult_mod_p(sm,kern,modulus);
 	// cout << "sm  is:\n" << sm.as_mat() << endl;
 	// cout << "kern is:\n" << kern.as_mat() << endl;
 	// cout << "result is:\n" << result.as_mat() << endl;
@@ -516,7 +507,7 @@ int main(void)
 	cin >> A;
 	cout << "A = \n"<<A <<endl;
 	cout << "A (as matrix) = "; A.as_mat().output_pari(); cout <<endl;
-	ssubspace ker = kernel(A);
+	ssubspace ker = kernel(A, modulus);
 	cout << "ker(A) has dimension " << dim(ker) << endl;
 	cout << "basis =  " << basis(ker) << endl;
 
@@ -524,7 +515,7 @@ int main(void)
 	scalar lambda;
 	cin >> lambda;
 	cout<<"lambda = "<<lambda<<endl;
-	ssubspace e = eigenspace(A,lambda);
+	ssubspace e = eigenspace(A,lambda, modulus);
 	cout << "Eigenspace for lambda = "<<lambda<<" has dimension " << dim(e) << endl;
       }
     cout << "enter new value of t  ";

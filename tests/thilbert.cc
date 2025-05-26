@@ -1,7 +1,7 @@
 // thilbert.cc: test of Hilbert symbol functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -30,7 +30,7 @@
 
 int main()
 {
-  bigint a,b,p,x0,y0,z0; int resp, res, checkres;
+  bigint a,b,x0,y0,z0; int resp, res, checkres;
   bigint zero, one;  zero=0; one=1;
 #ifdef AUTO
   long la,lb,abmax;
@@ -58,9 +58,9 @@ int main()
     checkres = checkres^resp;
 
     vector<bigint> plist = vector_union(pdivs(a),pdivs(b));
-    for (vector<bigint>::iterator pr = plist.begin(); pr!=plist.end(); pr++)
+    for ( const auto& p : plist)
       {
-	p=*pr; if(p==2) continue;
+	if(p==2) continue;
 	resp=local_hilbert(a,b,p);
 	cout << p << "\t" << resp << endl;
 	res = res|resp;
@@ -69,6 +69,7 @@ int main()
     cout<<"\nGlobal symbol = " << res << endl;
     cout<<"Check (should be 0) = " << checkres << endl;
 
+    bigint p;
     int gres = global_hilbert(a,b,plist,p);
     if(res==gres)
       cout<<"--agrees with single call to global_hilbert()\n";

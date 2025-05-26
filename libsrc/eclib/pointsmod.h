@@ -1,7 +1,7 @@
 // pointsmod.h: declaration of classes pointmodq and curvemodqbasis
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -59,19 +59,17 @@ class pointmodq{
 
 public:
   // constructors 
-  pointmodq(void) :E() {;}
-  pointmodq(const curvemodq& EE ) :is0flag(1), order(BIGINT(1)), E(EE) {;} //  the point at oo
+  pointmodq(void) :E() {}
+  explicit pointmodq(const curvemodq& EE ) :is0flag(1), order(1), E(EE) {} //  the point at oo
   pointmodq(const gf_element&x, const gf_element&y, const curvemodq& EE) 
-    :X(x), Y(y), is0flag(0), order(BIGINT(0)), E(EE)
+    :X(x), Y(y), is0flag(0), order(0), E(EE)
     {
       if(!on_curve())
 	cout<<"Error!  ("<<x<<","<<y<<") is not on "<<(EE)<<endl;
     }
   pointmodq(const bigint&x, const bigint&y, const curvemodq& EE) 
-    :is0flag(0), order(BIGINT(0)), E(EE)
+    :X(to_ZZ_p(x)), Y(to_ZZ_p(y)), is0flag(0), order(0), E(EE)
     {
-      X=to_ZZ_p(x);
-      Y=to_ZZ_p(y);
       if(!on_curve())
 	cout<<"Error!  ("<<x<<","<<y<<") is not on "<<(EE)<<endl;
     }
@@ -170,11 +168,10 @@ class curvemodqbasis : public curvemodq {
                             // with P2=0 and P1 of "large" order
  public:
 
-  curvemodqbasis(void) :curvemodq(){n=n1=n2=0;}
-  curvemodqbasis(const curvemodq& C, int lazy=0) 
-    :curvemodq(C) 
+  curvemodqbasis(void) :curvemodq(), n(0), n1(0), n2(0) {}
+  explicit curvemodqbasis(const curvemodq& C, int lazy=0)
+    :curvemodq(C), lazy_flag(lazy)
   {
-    lazy_flag=lazy;
     set_basis();
   }
   curvemodqbasis(const Curve& E, const bigint& q, int lazy=0) 

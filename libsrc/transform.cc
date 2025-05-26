@@ -1,7 +1,7 @@
 // transform.cc: implementation of quartic transformation functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -90,26 +90,24 @@ void apply_transform(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 }
 
 void xshift(const bigint& alpha,
-	    bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+	    const bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 	    unimod& m)
 {
-  e = e+alpha*(d+alpha*(  c+alpha*(  b+  alpha*a)));
-  d =          d+alpha*(2*c+alpha*(3*b+4*alpha*a));
-  c =                     c+alpha*(3*b+6*alpha*a);
-  b =                                b+4*alpha*a;
-//a =                                          a;  
+  e += alpha*(d+alpha*(  c+alpha*(  b+  alpha*a)));
+  d +=          alpha*(2*c+alpha*(3*b+4*alpha*a));
+  c +=                     alpha*(3*b+6*alpha*a);
+  b +=                                4*alpha*a;
   m.x_shift(alpha);
 }
 
 void zshift(const bigint& gamma,
-	    bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+	    bigint& a, bigint& b, bigint& c, bigint& d, const bigint& e,
 	    unimod& m)
 {
-  a = a+gamma*(b+gamma*(  c+gamma*(  d+  gamma*e)));
-  b =          b+gamma*(2*c+gamma*(3*d+4*gamma*e));
-  c =                     c+gamma*(3*d+6*gamma*e);
-  d =                                d+4*gamma*e;
-//e =                                          e;
+  a += gamma*(b+gamma*(  c+gamma*(  d+  gamma*e)));
+  b +=          gamma*(2*c+gamma*(3*d+4*gamma*e));
+  c +=                     gamma*(3*d+6*gamma*e);
+  d +=                                4*gamma*e;
   m.y_shift(gamma);
 }
 

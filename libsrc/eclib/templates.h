@@ -1,7 +1,7 @@
 // templates.h:  some utility functions for vector<T> classes
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2012 John Cremona
+// Copyright 1990-2023 John Cremona
 // 
 // This file is part of the eclib package.
 // 
@@ -61,7 +61,6 @@ using std::map;
 using std::unordered_map;
 using std::min;
 using std::max;
-using std::ptr_fun;
 using std::pair;
 using std::sort;
 using std::abs;
