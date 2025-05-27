@@ -59,14 +59,6 @@ int main(void)
   cout << cd;
   cout << endl ;
   
-  /*
-    cout << "A test of extended invariants:\n" ;
-    CurvedataExtra cdx(cd) ;
-    cout << "The extra curve data is "; 
-    cout << cdx;
-    cout << endl ;
-  */
-  
   cout <<"A test of Tate's algorithm:\n";
   CurveRed cdr(cd);
   cout << cdr << endl;
@@ -77,16 +69,11 @@ int main(void)
   for(primevar pr(25); pr.ok(); pr++)
     {
       long p = pr;
-      bigint ap = Trace_Frob(cdr,bigint(p));
+      long ap = cdr.ap(p);
       cout<<"p="<<p<<": ap="<<ap;
       if(div(p,getdiscr(cdr))) cout<<" (bad reduction)";
       cout<<endl;
     }
-  // for(primevar pr(1270000); pr.ok(); pr++)
-  //   {
-  //     p=pr;
-  //     ap = Trace_Frob(cdr,bigint(p));
-  //   }
 
   cout <<"Testing construction from a non-integral model:\n";
   bigint a1,a2,a3,a4,a6;

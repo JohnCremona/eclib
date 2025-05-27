@@ -72,7 +72,7 @@ vector<bigfloat> lambda_bad_1(const bigint& p, long kcode, long npd, long& nlamb
   return ans;
 }
 
-vector<bigfloat> lambda_bad(const CurveRed& C, long& nlambda, int verbose)
+vector<bigfloat> lambda_bad(CurveRed& C, long& nlambda, int verbose)
 {
   vector<bigfloat> ans;
   nlambda = 1;

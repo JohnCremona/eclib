@@ -904,7 +904,7 @@ long exponent(CurveRed& CR, long p)
       return I2long(Emodq.get_exponent());
     }
   // now p=2 or 3
-  int np = 1 + p - I2long(Trace_Frob(CR,pp));
+  int np = 1 + p - CR.ap(p);
   if (p==2 || np!=4)
     return np; // exponent=order
   // Now p==3, and order=4, test whether we have full 2-torsion

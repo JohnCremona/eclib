@@ -145,10 +145,9 @@ int main(void)
      Curve C = nf.getcurve(i, -1, rperiod);
      rperiod = abs(rperiod*(type));
 
-     Curvedata CD(C,1);  // The 1 causes minimalization; else we get
-                         // [0,0,0,-27c4,-54c6]
-
-     IsogenyClass icl(CurveRed(CD),verbose);
+     Curvedata CD(C,1);  // The 1 causes minimalization; else we get [0,0,0,-27c4,-54c6]
+     CurveRed CR(CD);
+     IsogenyClass icl(CR,verbose);
      icl.grow();
      if(verbose) icl.displaycurves(cout);
      vector<CurveRed> clist = icl.getcurves();

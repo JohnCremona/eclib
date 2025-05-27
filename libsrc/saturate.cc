@@ -276,9 +276,12 @@ int saturator::enlarge()
         }
       return 0;
     }
-  if(verbose>0) cout<<"...and it is! "<<endl;
-  if(verbose>0) cout<<"Replacing old generator #"<<(keepi+1)
-		  <<" with new generator "<<newQ<<endl;
+  if(verbose>0)
+    {
+      cout<<"...and it is! "<<endl;
+      cout<<"Replacing old generator #"<<(keepi+1)
+          <<" with new generator "<<newQ<<endl;
+    }
   Plist[keepi]=newQ;
   Plistx[keepi]=newQ;
   log_index++;

@@ -98,10 +98,6 @@ public:
     {return ((a1!=f.a1)||(a2!=f.a2)||
              (a3!=f.a3)||(a4!=f.a4)||(a6!=f.a6));}
 
-  // Trace of Frobenius (via pari) if p good
-  // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
-  long ap(long p);
-
 protected:
   bigint a1 ;
   bigint a2 ;
@@ -276,18 +272,25 @@ public:
   friend inline vector<bigint> getbad_primes(const CurveRed& c)
   {return c.the_bad_primes; }
   friend inline bigint getconductor(const CurveRed& c) {return c.N; }
-  friend int getord_p_discr(const CurveRed& c, const bigint& p);
-  friend int getord_p_N(const CurveRed& c, const bigint& p);
-  friend int getord_p_j_denom(const CurveRed& c, const bigint& p);
-  friend int getc_p(const CurveRed& c, const bigint& p);
-  friend vector<bigint> all_cp(const CurveRed& c);
-  friend bigint prodcp(const CurveRed& c);
-  friend int LocalRootNumber(CurveRed& c, const bigint& p);
-  friend int GlobalRootNumber(CurveRed& c);
+  int ord_p_discr(const bigint& p);
+  int ord_p_N(const bigint& p);
+  int ord_p_j_denom(const bigint& p);
+  int c_p(const bigint& p);
+  vector<bigint> all_cp();
+  bigint prodcp();
+  int LocalRootNumber(const bigint& p);
+  int GlobalRootNumber();
+
   friend Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p);
-    // the returned value casts as a character array; to use coded as int,
-    // say declared Kodaira_code Kc, just use public member Kc.code
-  friend bigint Trace_Frob(CurveRed& c, const bigint& p);
+  // the returned value casts as a character array; to use coded as int,
+  // say declared Kodaira_code Kc, just use public member Kc.code
+
+  // Trace of Frobenius (via pari if p is good for long p)
+  // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
+  // These are not constant methods as a call to LocalRootNumber may be needed.
+  long ap(long p);
+  bigint ap(const bigint& p);
+
   // The local Tamagawa number.  Use p=0 for reals
   friend bigint local_Tamagawa_number(CurveRed& c, const bigint& p);
   // The local Tamagawa exponent -- same as Tamagawa number unless the
@@ -305,6 +308,20 @@ public:
     return is_S_unit(N, S);
   }
 };
+
+// Here the CurveRed parameter is not const since a call to
+// LocalRootNumber may have to compute and store it
+inline bigint Trace_Frob(CurveRed& c, const bigint& p) {return c.ap(p);}
+inline long Trace_Frob(CurveRed& c, const long& p) {return c.ap(p);}
+
+inline int getord_p_discr(CurveRed& c, const bigint& p) {return c.ord_p_discr(p);}
+inline int getord_p_N(CurveRed& c, const bigint& p) {return c.ord_p_N(p);}
+inline int getord_p_j_denom(CurveRed& c, const bigint& p) {return c.ord_p_j_denom(p);}
+inline int getc_p(CurveRed& c, const bigint& p) {return c.c_p(p);}
+inline vector<bigint> all_cp(CurveRed& c) {return c.all_cp();}
+inline bigint prodcp(CurveRed& c) {return c.prodcp();}
+inline int LocalRootNumber(CurveRed& c, const bigint& p) {return c.LocalRootNumber(p);}
+inline int GlobalRootNumber(CurveRed& c) {return c.GlobalRootNumber();}
 
 // The global Tamagawa number, = product of local ones.
 bigint global_Tamagawa_number(CurveRed& c, int real_too);

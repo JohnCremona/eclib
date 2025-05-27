@@ -277,7 +277,7 @@ void curvemodqbasis::set_basis()
   if(n2>1)
     {
       pointmodq Q1=(n1/n2)*P1; // order n2
-      
+
       cout<<"Computing "<<n2<<"-Weil pairing of "<<Q1<<" and "<<P2
 	  <<" mod "<<::get_modulus(*this)<<endl;
 
@@ -289,15 +289,14 @@ void curvemodqbasis::set_basis()
 	{
 	  cout<<"OK, that's a "<<m<<"'th root of unity";
 	  gf_element mupower = mu, one=mu/mu;
-	  int m=1;
-	  while(mupower!=one) {mupower*=mu; m++;}
-	  cout<<" of exact order "<<m;
-	  if(m==n2) cout<<" -OK"<<endl;
+	  int i=1;
+	  while(mupower!=one) {mupower*=mu; i++;}
+	  cout<<" of exact order "<<i;
+	  if(i==n2) cout<<" -OK"<<endl;
 	  else cout<<" ???"<<endl;
 	}
       else
 	cout<<"WRONG, that's NOT a "<<m<<"'th root of unity"<<endl;
-      
     }
 #endif //  DEBUG_ISO_TYPE
   if(n1!=order_point(P1)) 

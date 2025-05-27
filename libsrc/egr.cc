@@ -267,7 +267,7 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 #ifdef DEBUG_EGR
   cout<<"Component group structure = "<<CG<<endl;
 #endif
-  if(CG.size()>1) 
+  if(CG.size()>1)
     {
 #ifdef DEBUG_EGR
       cout<<"Non-cyclic component group "<<endl;
@@ -308,7 +308,7 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 		logm+=1; m*=2;
 		break;
 	      } // end of case 0
-	      
+
 	    case 1: // one generator so far: do we have a second generator?
 	      {
 		if (InSameComponent(Pk,Plist[0],p)) // no
@@ -328,7 +328,7 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 		  }
 		break;
 	      } // end of case 1
-	    
+
 	    case 2: // we already have 2 generators
 	      {
 		if (InSameComponent(Pk,Plist[0],p))
@@ -343,7 +343,7 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 		  else
 		    {
 		      if (InSameComponent(Pk,Third,p))
-			{ 
+			{
 			  Plist[k]=Pk-Third;
 			}
 		      else
@@ -351,7 +351,6 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 			  cerr<<"Problem in non-cyclic component group case!"<<endl;
 			  return 0;
 			}
-		      
 		    }
 	      } // end of case 2
 	    } // end of switch on logm
@@ -368,8 +367,8 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
   if(CGOrder==1) return 1;
 #ifdef DEBUG_EGR
   cout<< "processing point #1: "<<flush;
-#endif 
- m=OrderInComponentGroup(P0,p,CG); // will hold current index
+#endif
+  m=OrderInComponentGroup(P0,p,CG); // will hold current index
   for(j=1; j<npts; j++)
     {
       n0 = m;

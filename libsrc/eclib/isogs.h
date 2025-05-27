@@ -39,9 +39,10 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp,
 			  // of curves ell-isogenous to CR
 
 
-int semistable(const CurveRed& CR);
+int semistable(CurveRed& CR, const bigint& p);
+int semistable(CurveRed& CR);
 
-vector<long> getelllist(const CurveRed& CR); 
+vector<long> getelllist(CurveRed& CR); 
 // returns list of possible primes l ("ell") for which CR might have an l-isogeny.
 
 #define MAXNCURVES 26    // max number of curves in an isogeny class.
@@ -59,7 +60,7 @@ private:
   void matset(long i, long j, long ell) { matij[i*MAXNCURVES+j]=ell;}
   void process(long i);  // process i'th curve
 public:
-  IsogenyClass(const CurveRed& C, int verbose);
+  IsogenyClass(CurveRed& C, int verbose);
   void grow(void);       // does the work
   void display_llist(ostream& os)const {os<<llist;}
   void displaycurves(ostream& os)const;

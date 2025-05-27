@@ -31,7 +31,7 @@
 // (2) Intended for use in computing Heegner points (not yet implemented)
 
 vector<bigfloat> lambda_bad_1(const bigint& p, long kcode, long npd, long& nlambda);
-vector<bigfloat> lambda_bad(const CurveRed& C, long& nlambda, int verbose=0);
+vector<bigfloat> lambda_bad(CurveRed& C, long& nlambda, int verbose=0);
 
 // kcode is Kodaira Code with usual coding 10*n for I_n, 10*m+1 for I*_m, 
 // 1,2,3,4,5,6,7 for I,II,III,IV,IV*.III*,II* respectively

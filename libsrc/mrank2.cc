@@ -220,7 +220,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
       return;
     }
 
-  long mask=0, maxn=1<<ns, index, j, nelsgens=0;
+  long mask=0, maxn=long(1)<<ns, index, j, nelsgens=0;
   vector<bigint> elsgens;
 
 // use all torsion: added 24/6/02
@@ -406,7 +406,7 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
 
   bigint d1, d2, badp, x,y,z;
   unsigned long els2mask; long index;
-  long maxn=1<<nelsgens, nels2gens=0, els2piv;
+  long maxn = long(1)<<nelsgens, nels2gens=0, els2piv;
   vector<bigint> els2gens;
   bitspace els2_space(nelsgens);
 
@@ -418,7 +418,7 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
       d1=elsgens[index];
       if(verbose>1) cout<<"Processing torsion d1 = " << d1 << ":"<<endl;
 #endif
-      els2mask=(1<<index);
+      els2mask=(long(1)<<index);
       if(els2_space.mask(els2mask)) continue;  // we work mod the els2 subgp
       els2piv=els2_space.reduce(els2mask);
       if(els2piv<0) continue; // means we're in the subgp; won't happen
@@ -503,7 +503,7 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
   long nt2gens         = (which? nt2gens1: nt2gens0);
   vector<bigint> gls_gens;
   bitspace gls_space(nelsgens);
-  long glspiv, maxn = 1<<nelsgens;
+  long glspiv, maxn = long(1)<<nelsgens;
   long nglsgens=0;
   unsigned long glsmask;
   long index, stage, nstages=1; if(do_second_descent) nstages=2;
@@ -515,7 +515,7 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
 
   for(index=0; index<nt2gens; index++)
     {
-      glsmask=(1<<index);
+      glsmask=(long(1)<<index);
       d1=elsgens[index];
       glspiv=gls_space.reduce(glsmask);
       if(glspiv<0) 

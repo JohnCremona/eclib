@@ -125,7 +125,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 
   // Step 3
   long nsupp = supp.size();
-  long nd3=1<<nsupp, id3;
+  long nd3=long(1)<<nsupp, id3;
 
   // Step 4: For all square-free divisors of the resultant, attempt to
   //         form a descendent quartic

@@ -583,7 +583,7 @@ int intlog2(long& n, long& e, int roundup)
   long m=n;
   while (m) { m >>= 1; e++; }
   e--;
-  m=1<<e;
+  m=long(1)<<e;
 //                     at this point m=2^e <= n < 2^(e+1)
   if(m==n) return 1;
   if(roundup) {n=m<<1; e++;}

@@ -526,7 +526,7 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
 
   for(i=rank-1; i>=0; i--) // set B[i]
     {
-      bij = bi = B[i];
+      bij = B[i];
       bij_nz = bi_nz;
       ij_nz = i_nz;
 

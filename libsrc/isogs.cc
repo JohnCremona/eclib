@@ -171,13 +171,16 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
   return ans;
 }
 
-int semistable(const CurveRed& CR)
+int semistable(CurveRed& CR, const bigint& p)
 {
-  int ans=1;
+  return CR.ord_p_N(p) < 2;
+}
+
+int semistable(CurveRed& CR)
+{
   vector<bigint> plist = getbad_primes(CR);
-  for (const auto& p : plist)
-    if(getord_p_N(CR,p)>1) return 0;
-  return ans;
+  return std::all_of(plist.begin(), plist.end(),
+                     [&CR] (const bigint& p) {return semistable(CR, p);});
 }
 
 int comprat(const bigint& n1, const bigint& d1,
@@ -186,7 +189,7 @@ int comprat(const bigint& n1, const bigint& d1,
   return n1*d2==n2*d1;
 }
 
-vector<long> getelllist(const CurveRed& CR)
+vector<long> getelllist(CurveRed& CR)
 {
   static const bigint j11a(-32768);
   static const bigint j11b(-121);
@@ -241,7 +244,7 @@ vector<long> getelllist(const CurveRed& CR)
   return ans;
 }
 
-IsogenyClass::IsogenyClass(const CurveRed& C, int verbose)
+IsogenyClass::IsogenyClass(CurveRed& C, int verbose)
   : verb(verbose), cp(Cperiods(C))
 {
   if(verb)

@@ -24,6 +24,7 @@
 #include <eclib/curve.h>
 #include <eclib/polys.h>    // for nrootscubic
 #include <eclib/ffmod.h>
+#include <eclib/parifact.h> // for ellap
 
 ostream& operator<<(ostream& os, const Kodaira_code& c)
 {
@@ -405,42 +406,42 @@ vector<long> tamagawa_primes(const CurveRed& C, int real_too)
 // which is impossible without removing the "const" qualifier from the
 // CurveRed argument!
 
-int getord_p_discr(const CurveRed& c, const bigint& p)
+int CurveRed::ord_p_discr(const bigint& p)
 {
-  auto ri = c.reduct_array.find(p);
-  return (ri==c.reduct_array.end()? 0 : (ri->second).ord_p_discr);
+  auto ri = reduct_array.find(p);
+  return (ri==reduct_array.end()? 0 : (ri->second).ord_p_discr);
 }
 
-int getord_p_N(const CurveRed& c, const bigint& p)
+int CurveRed::ord_p_N(const bigint& p)
 {
-  auto ri = c.reduct_array.find(p);
-  return (ri==c.reduct_array.end()? 0 : (ri->second).ord_p_N);
+  auto ri = reduct_array.find(p);
+  return (ri==reduct_array.end()? 0 : (ri->second).ord_p_N);
 }
 
-int getord_p_j_denom(const CurveRed& c, const bigint& p)
+int CurveRed::ord_p_j_denom(const bigint& p)
 {
-  auto ri = c.reduct_array.find(p);
-  return (ri==c.reduct_array.end()? 0 : (ri->second).ord_p_j_denom);
+  auto ri = reduct_array.find(p);
+  return (ri==reduct_array.end()? 0 : (ri->second).ord_p_j_denom);
 }
 
-int getc_p(const CurveRed& c, const bigint& p)
+int CurveRed::c_p(const bigint& p)
 {
-  auto ri = c.reduct_array.find(p);
-  return (ri==c.reduct_array.end()? : (ri->second).c_p);
+  auto ri = reduct_array.find(p);
+  return (ri==reduct_array.end()? : (ri->second).c_p);
 }
 
-vector<bigint> all_cp(const CurveRed& c)
+vector<bigint> CurveRed::all_cp()
 {
-  vector<bigint> ans(c.reduct_array.size());
-  std::transform(c.reduct_array.begin(), c.reduct_array.end(), ans.begin(),
+  vector<bigint> ans(reduct_array.size());
+  std::transform(reduct_array.begin(), reduct_array.end(), ans.begin(),
                  [] (const pair<bigint,Reduction_type>& x) {return bigint(x.second.c_p);});
   return ans;
 }
 
-bigint prodcp(const CurveRed& c)
+bigint CurveRed::prodcp()
 {
   static const bigint one(1);
-  vector<bigint> allcp = all_cp(c);
+  vector<bigint> allcp = all_cp();
   return std::accumulate(allcp.begin(), allcp.end(), one,
                          [](const bigint& c1, const bigint& c2) {return c1*c2;});
 }
@@ -485,7 +486,7 @@ void CurveRed::display(ostream& os)
 {
   CurveRed::output(os);
   if(isnull()) return;
-  os << "Global Root Number = " << GlobalRootNumber(*this) << endl;
+  os << "Global Root Number = " << GlobalRootNumber() << endl;
   os << "Reduction type at bad primes:\n";
   os <<"p\tord(d)\tord(N)\tord(j)\tKodaira\tc_p\troot_number\n";
   for( const auto& ri : reduct_array)
@@ -508,33 +509,32 @@ void CurveRed::display(ostream& os)
 // C. R. Acad. Sci. Paris Sér. I Math. 326 (1998), no. 9, 1047--1052.
 //
 
-// The following functions return local and global root numbers, just
+// The following methods return local and global root numbers, just
 // looking up the local numbers from the
 // Reduction_type::local_root_number field, computing them if not
 // already set (i.e. field contains 0)
 
-int LocalRootNumber(CurveRed& c, const bigint& p)
+int CurveRed::LocalRootNumber(const bigint& p)
 {
   if(is_zero(p)) return -1;  // the infinite prime
-  auto ri = c.reduct_array.find(p);
-  if(ri==c.reduct_array.end()) return 1; // good reduction case
+  auto ri = reduct_array.find(p);
+  if(ri==reduct_array.end()) return 1; // good reduction case
   if((ri->second).local_root_number==0)
-    c.setLocalRootNumber(p);
+    setLocalRootNumber(p);
   return (ri->second).local_root_number;
 }
 
-int GlobalRootNumber(CurveRed& c)
+int CurveRed::GlobalRootNumber()
 {
   int ans=-1;
-  for( const auto& ri : c.reduct_array)
+  for( const auto& ri : reduct_array)
     {
       if((ri.second).local_root_number==0)
-	c.setLocalRootNumber(ri.first);
+	setLocalRootNumber(ri.first);
       ans *= (ri.second).local_root_number;
     }
   return ans;
 }
-
 
 int kro(const bigint& d, const bigint& n);
 int kro(const bigint& d, long n);
@@ -1039,62 +1039,43 @@ int CurveRed::neron(long p, int kod)
   return 0; /* should not occur */
 }
 
-// Here the CurveRed parameter is not const since the call to
-// LocalRootNumber may have to compute and store it
-
-bigint Trace_Frob(CurveRed& c, const bigint& p)
+// Trace of Frobenius (via pari) if p good
+// (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
+long CurveRed::ap(long p)
 {
+  bigint P(p);
+  int f = min(2, ord_p_N(P));
+
+  switch (f) {
+    // Bad primes: return the p'th coefficient of the L-series
+  case 2: return 0;
+  case 1: return -LocalRootNumber(P);
+  case 0: default: // good primes
+    // NB p must be good here else the ai mod p may define a singular curve
+    return ellap(posmod(a1,p), posmod(a2,p), posmod(a3,p), posmod(a4,p), posmod(a6,p), p);
+  }
+}
+
+// Trace of Frobenius (via pari) if p good
+// (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
+bigint CurveRed::ap(const bigint& p)
+{
+  if (is_long(p))
+    return bigint(ap(I2long(p)));
+
+  // now p does not fit in a long. until we implement conversion from
+  // NTL ZZ to pari integers we use our own point-counting
+
   static const bigint zero(0);
   static const bigint one(1);
-  static const bigint two(2);
-  static const bigint three(3);
-  //  cout<<"Trace_Frob at "<<p<<endl;
-
-  int f = getord_p_N(c,p);
-  // Bad primes: for convenience returns the p'th coefficient of the L-series
-  if(f>=2)  return zero;
-  if(f==1)  return bigint(-LocalRootNumber(c,p));
-
-  bigint n=zero;
-  if(p==two) // curvemodq class only in characteristic > 3
-    {
-      // Count points naively
-      // y^2+(a1*x+a3)*y-(x^3+a2*x^2+a4*x+a6) = y^2+ay+b
-      int a1=bigint_mod_long(c.a1,2), a2=bigint_mod_long(c.a2,2),
-	a3=bigint_mod_long(c.a3,2),  a4=bigint_mod_long(c.a4,2),
-	a6=bigint_mod_long(c.a6,2);
-      // x=0:
-      int a = odd(a3);        // 1 if odd else 0
-      int b = odd(a6);
-      n += (a?(b?0:2):1);
-      // x=1:
-      a = odd(a1+a3);
-      b = odd(1+a2+a4+a6);
-      n += (a?(b?0:2):1);
-      return two-n;
-    }
-  if(p==three) // curvemodq class only in characteristic > 3
-    {
-      // Count points naively
-      // y^2+(a1*x+a3)*y-(x^3+a2*x^2+a4*x+a6) = y^2+ay+b
-      int a1=bigint_mod_long(c.a1,3), a2=bigint_mod_long(c.a2,3),
-	a3=bigint_mod_long(c.a3,3),  a4=bigint_mod_long(c.a4,3),
-	a6=bigint_mod_long(c.a6,3);
-      for(int x=-1; x<2; x++)
-	{
-	  int a = (((x+a2)*x+a4)*x+a6)%3;
-	  int b = (a1*x+a3)%3;
-	  int d = (b*b+a)%3;
-	  if(d==2)d=-1;
-	  if(d==-2)d=1;
-	  n += (d+1);
-	}
-      return three-n;
-    }
-  curvemodq Cq = reduce_curve(c,p);
-  n = Cq.group_order();
-  bigint ans = one+p-n;
-  return ans;
+  int f = min(2, ord_p_N(p));
+  switch (f) {
+    // Bad primes: return the p'th coefficient of the L-series
+  case 2: return zero;
+  case 1: return bigint(-LocalRootNumber(p));
+  case 0: default: // good primes
+    return one + p - reduce_curve(*this,p).group_order();
+  }
 }
 
 // Quadratic twist of an elliptic curve
@@ -1112,11 +1093,10 @@ CurveRed QuadraticTwist(const CurveRed& E, const bigint& D)
 vector<CurveRed> QuadraticTwists(const vector<CurveRed>& EE, const bigint& D)
 {
   vector<CurveRed> ans;
-  for(auto E: EE)
-    ans.push_back(QuadraticTwist(E,D));
+  std::transform(EE.begin(), EE.end(), std::back_inserter(ans),
+                 [D] (const CurveRed& E) {return QuadraticTwist(E,D);});
   return ans;
 }
-
 
 // Given a list of elliptic curves E, and one prime p, return the
 // list of twists of the curves by:

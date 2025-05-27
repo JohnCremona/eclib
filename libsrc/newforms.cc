@@ -1534,9 +1534,8 @@ vector<long> eiglist(CurveRed& C, int nap)
       if(N%p==0)
 	ans.push_back(LocalRootNumber(C,pp));
       else
-	ans.push_back(I2long(Trace_Frob(C,pp)));
+	ans.push_back(C.ap(p));
     }
-  //  cout<<"eiglist("<<(Curve)C<<") = "<<ans<<endl;
   return ans;
 }
 
@@ -1798,12 +1797,21 @@ void newforms::makebases(int flag, int all_nf)
   splitspace.recover(eigs);  // NB newforms::use() determines what is
 			     // done with each one as it is found;
 			     // this depends on basisflag and sign
-  if(verbose) cout << "...done."<<endl;
+  if(verbose)
+    cout << "...done."<<endl;
   refix_eigs();
-  if(verbose>1) cout<<"Reordering newforms after recovery"<<endl;
-  if(verbose>1) {cout<<"Before sorting:\n"; display();}
+  if(verbose>1)
+    {
+      cout<<"Reordering newforms after recovery"<<endl;
+      cout<<"Before sorting:\n";
+      display();
+    }
   sort(int(modulus<130000)); // old order for N<130000, else new order
-  if(verbose>1) {cout<<"After sorting:\n"; display();}
+  if(verbose>1)
+    {
+      cout<<"After sorting:\n";
+      display();
+    }
 }
 
 void newforms::merge(int all_nf)

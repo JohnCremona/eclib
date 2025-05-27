@@ -24,7 +24,6 @@
 // originally adapted from Elliptic.cc by Oisin McGuiness
 
 #include <eclib/curve.h>
-#include <eclib/parifact.h> // for ellap
 
 //Kraus' conditions:
 
@@ -128,20 +127,25 @@ Curve::Curve(const bigint& c4, const bigint& c6)
 
 Curve::Curve(const bigrational& j) // one curve with this j-invariant
 {
-  if (is_zero(num(j)))
+  bigint n = num(j);
+  bigint m = n-1728*den(j);
+  a1=0; a2=0;
+  if (is_zero(n)) // j=0, make 27a3
     {
-      a1=0; a2=0; a3=1; a4=0; a6=0; // 27a3
+      a3 = 1;
+      a4 = 0;
+      a6 = 0;
     }
   else
-    if (num(j)==1728*den(j))
+    if (is_zero(m)) // j=1728, make 32a2
       {
-        a1=0; a2=0; a3=0; a4=-1; a6=0; // 32a2
+        a3 = 0;
+        a4 =-1;
+        a6 = 0;
       }
   else
     {
-      a1=0; a2=0; a3=0;
-      bigint n = num(j);
-      bigint m = n-1728*den(j);
+      a3 = 0;
       a4 = -3*n*m;
       a6 = -2*n*m*m;
     }
@@ -284,13 +288,6 @@ void Curve::tex_print(ostream &os) const
         }
         os << "$" ;
         return ;
-}
-
-// Trace of Frobenius (via pari) if p good
-// (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
-long Curve::ap(long p)
-{
-  return ellap(posmod(a1,p), posmod(a2,p), posmod(a3,p), posmod(a4,p), posmod(a6,p), p);
 }
 
 // end of file: curve.cc

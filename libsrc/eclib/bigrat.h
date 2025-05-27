@@ -80,7 +80,10 @@ public:
         friend bigint ceil(const bigrational& r);
         operator bigfloat();  // conversion operator
 
-// Implementation
+        int is_zero() const {return ::is_zero(n);}
+        int is_1728() const {return ::is_zero(n-1728*d);}
+
+  // Implementation
 private:
         bigint n, d;
 };
@@ -313,22 +316,19 @@ inline bigint ceil(const bigrational& r)
   return 1 + (r.n-(r.n%r.d))/r.d;
 }
 
-// int is_S_integral(const bigrational& x,  const vector<bigint>& S)
-// {
-//   return is_S_unit(den(x), S);
-// }
+inline int is_S_integral(const bigrational& x,  const vector<bigint>& S)
+{
+  return is_S_unit(den(x), S);
+}
 
-// int is_S_unit(const bigrational& x,  const vector<bigint>& S)
-// {
-//   return is_S_unit(den(x), S) && is_S_unit(num(x), S);
-// }
+inline int is_S_unit(const bigrational& x,  const vector<bigint>& S)
+{
+  return is_S_unit(den(x), S) && is_S_unit(num(x), S);
+}
 
-// bigrational prime_to_S_part(const bigrational& x,  const vector<bigint>& S)
-// {
-//   return bigrational(prime_to_S_part(num(x), S), prime_to_S_part(den(x), S));
-// }
-
-
-
+inline bigrational prime_to_S_part(const bigrational& x,  const vector<bigint>& S)
+{
+  return bigrational(prime_to_S_part(num(x), S), prime_to_S_part(den(x), S));
+}
 
 #endif
