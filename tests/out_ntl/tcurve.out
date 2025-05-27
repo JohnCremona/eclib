@@ -62,3 +62,25 @@ p=97: ap=6
 Testing construction from a non-integral model:
 After scaling down by 60, coeffs are [0,0,1/216000,-7/12960000,1/7776000000]
 Constructed curve is [0,0,1,-7,6] with scale = 60
+
+Testing quadratic twists
+Base curve: [0,-1,1,0,0] conductor 11
+Twist by -1 is [0,1,0,-5,-13] conductor 176
+Twist by 2 is [0,1,0,-1,1] conductor 704
+Twist by -2 is [0,-1,0,-1,-1] conductor 704
+Twist by 3 is [0,0,0,-48,304] conductor 1584
+Twist by -3 is [0,0,1,-3,-5] conductor 99
+
+Prime twists:
+p = 2:  Twist is [0,1,0,-5,-13] conductor 176
+ Twist is [0,-1,0,-1,-1] conductor 704
+ Twist is [0,1,0,-1,1] conductor 704
+p = 3:  Twist is [0,0,1,-3,-5] conductor 99
+p = 5:  Twist is [0,1,1,-8,19] conductor 275
+p = 7:  Twist is [0,1,1,-16,-66] conductor 539
+p = 11:  Twist is [0,-1,1,-40,-221] conductor 121
+p = 13:  Twist is [0,-1,1,-56,405] conductor 1859
+p = 17:  Twist is [0,1,1,-96,832] conductor 3179
+p = 19:  Twist is [0,1,1,-120,-1247] conductor 3971
+p = 23:  Twist is [0,-1,1,-176,-2082] conductor 5819
+p = 29:  Twist is [0,1,1,-280,4197] conductor 9251

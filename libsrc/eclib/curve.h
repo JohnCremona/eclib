@@ -366,7 +366,7 @@ inline int GlobalRootNumber(const Curvedata& E)
   return GlobalRootNumber(C);
 }
 
-// Quadratic twist of an elliptic curve
+// Quadratic twist of an elliptic curve (returns minimal model)
 CurveRed QuadraticTwist(const CurveRed& E, const bigint& D);
 
 // Given a list of elliptic curves E, and one discriminant D, return the

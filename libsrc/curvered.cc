@@ -1078,7 +1078,7 @@ bigint CurveRed::ap(const bigint& p)
   }
 }
 
-// Quadratic twist of an elliptic curve
+// Quadratic twist of an elliptic curve (returns minimal model)
 CurveRed QuadraticTwist(const CurveRed& E, const bigint& D)
 {
   static bigint zero(0);

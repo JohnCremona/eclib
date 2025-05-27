@@ -96,5 +96,27 @@ int main(void)
   qai.push_back(qa6);
   Curvedata Es(qai,scale);
   cout<<"Constructed curve is "<<(Curve)Es<<" with scale = "<<scale<<endl;
+
+  cout<<"\nTesting quadratic twists\n";
+  vector<long> Dlist = {-1,2,-2,3,-3};
+  Curve E0(0,-1,1,0,0);
+  Curvedata E0d(E0, 0);
+  CurveRed E0r(E0d);
+  cout<<"Base curve: "<<E0<<" conductor "<<E0r.conductor()<<endl;
+  for (auto D: Dlist)
+    {
+      CurveRed E0D = QuadraticTwist(E0r, bigint(D));
+      cout<<"Twist by "<<D<<" is "<<(Curve)E0D<<" conductor "<<E0D.conductor()<<endl;
+    }
+  vector<long> plist = primes(10);
+  vector<CurveRed> E0list = {E0r};
+  cout<<"\nPrime twists:\n";
+  for (auto p: plist)
+    {
+      cout << "p = "<<p<<": ";
+      vector<CurveRed> E0plist = PrimeTwists(E0list, bigint(p));
+      for (auto E0p: E0plist)
+        cout<<" Twist is "<<(Curve)E0p<<" conductor "<<E0p.conductor()<<endl;
+    }
   return 0;
 }
