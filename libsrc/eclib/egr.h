@@ -70,7 +70,7 @@ public:
 // Return least j>0 such that j*P has good reduction at p, i.e. the
 // order of the image of P in the component group at p; the component
 // group is given
-  int OrderInComponentGroup(const Point& P, const bigint& p, vector<int> grp);
+  int OrderInComponentGroup(const Point& P, const bigint& p, const vector<int>& grp);
 
 // replace (independent) points in Plist with a new set which spans
 // the subgroup of the original with good reduction at p, returning

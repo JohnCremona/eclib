@@ -219,7 +219,7 @@ long ComponentGroups::ImageInComponentGroup(const Point&P, const bigint& p, vect
 //
 // Since ComponentGroups are small we use nothing fancy here...
 
-int ComponentGroups::OrderInComponentGroup(const Point& P, const bigint& p, vector<int> grp)
+int ComponentGroups::OrderInComponentGroup(const Point& P, const bigint& p, const vector<int>& grp)
 {
 #ifdef DEBUG_EGR
   cout<<"In OrderInComponentGroup() with point "
