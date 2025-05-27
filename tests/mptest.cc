@@ -25,6 +25,28 @@
 #include <eclib/marith.h>
 #define MAXPRIME 1000000
 
+// test function for divisor_iterator
+int test_divisor_iterator(const bigint& N)
+{
+  if (is_zero(N)) return 1;
+  vector<bigint> divs1 = posdivs(N);
+  vector<bigint> divs2;
+  divisor_iterator divN(N);
+  while (divN.is_ok())
+    {
+      divs2.push_back(divN.value());
+      divN.increment();
+    }
+  std::sort(divs1.begin(), divs1.end());
+  std::sort(divs2.begin(), divs2.end());
+  if (divs1!=divs2)
+    {
+      cout << "divisors are "<< divs1 <<endl;
+      cout << "new list is  "<< divs2 <<endl;
+    }
+  return divs1==divs2;
+}
+
 int main()
 {
   initprimes("PRIMES",1);
@@ -144,4 +166,16 @@ int main()
 
  cout<<endl;
 
-}  // end of main    
+ // test divisor iterator
+ cout << "\nTest of divisor iterator class" <<endl;
+ vector<bigint>  Nlist = {bigint(1), bigint(65536), bigint(900), bigint(666666)};
+ for (auto N: Nlist)
+   {
+     cout << N << ": ";
+     if (test_divisor_iterator(N))
+       cout << "OK";
+     else
+       cout << "wrong";
+     cout<<endl;
+   }
+}  // end of main

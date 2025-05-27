@@ -157,3 +157,9 @@ m has 2 positive divisors whose square divides m: [ 1 2 ]
 m has 16 positive square-free divisors: [ 1 2 3 6 5 10 15 30 7 14 21 42 35 70 105 210 ]
 
 Enter a bigint m (0 to stop): 
+
+Test of divisor iterator class
+1: OK
+65536: OK
+900: OK
+666666: OK
