@@ -156,6 +156,7 @@ public:
   friend inline bigint getc4(const Curvedata& c) {return c.c4; }
   friend inline bigint getc6(const Curvedata& c) {return c.c6; }
   friend inline bigint getdiscr(const Curvedata& c) {return c.discr; }
+  friend inline bigrational j_invariant(const Curvedata& c) {return bigrational(power(c.c4,3),c.discr); }
   friend inline int getconncomp(const Curvedata& c) {return c.conncomp; }
   friend inline vector<bigint> getbad_primes(Curvedata& c)
     {
@@ -258,7 +259,7 @@ public:
   // (2) list of ap for good p < NP_SORT
   // (3) a1,a2,a3,4,a6
   vector<bigint> sort_key(const int NP_SORT=25);
-
+  int operator<(CurveRed& E) {return sort_key()<E.sort_key();}
 private:
   // functions for setting local root numbers:
   int neron(long p, int kod); // p = 2 or 3

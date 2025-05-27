@@ -112,6 +112,7 @@ tests/tcon2
 tests/tcurve
 tests/tdivpol
 tests/tegr
+tests/tegros
 tests/telog
 tests/tequiv
 tests/theight
