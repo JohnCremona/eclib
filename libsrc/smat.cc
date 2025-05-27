@@ -575,8 +575,8 @@ svec operator* ( const svec& v, const smat& A )
     }
   else
     {
-      for( const auto& vi : v.entries)
-        prod += (vi.second)*(A.row(vi.first));
+      std::for_each(v.entries.cbegin(), v.entries.cend(),
+                    [&prod, A](auto vi){prod += (vi.second)*(A.row(vi.first));});
     }
   return prod;
 }
@@ -695,8 +695,8 @@ smat transpose ( const smat& A )
   for( int i = 0; i < B.nro; i++ )
     {
       int d = colwts[i];
-      B.col[i] = new int[ d+1 ];  
-      B.val[i] = new scalar[ d ];  
+      B.col[i] = new int[ d+1 ];
+      B.val[i] = new scalar[ d ];
       B.col[i][0] = d;
     }
   delete[]colwts;
@@ -708,7 +708,7 @@ smat transpose ( const smat& A )
   for( int r = 0; r < A.nro; r++ ) {
     int d = *A.col[r];
     //    cout<<"row "<<r<<" of A has "<<d<<" entries\n";
-    scalar *v = A.val[r];
+    const scalar *v = A.val[r];
     int *p = A.col[r] + 1;
     while( d-- ) {
       int c = *p++ - 1;
@@ -879,7 +879,7 @@ scalar maxabs(const smat& m )
   for(int r = 0; r < m.nro; r++ )
     {
       int d = *(m.col[r]);
-      scalar *values = m.val[r];
+      const scalar *values = m.val[r];
       int *pos = m.col[r] + 1;
       while( d-- ) { a = max(a, abs(*values++)); pos++;}
     }

@@ -1245,10 +1245,8 @@ int is_nth_power(const bigint& x, int n)
   if ((x<0) && (n%2==0))
     return 0;
   vector<bigint> plist = pdivs(x);
-  for (auto p: plist)
-    if (val(p, x)%n!=0)
-      return 0;
-  return 1;
+  return std::all_of(plist.begin(), plist.end(),
+                     [n,x](const bigint& p){return val(p,x)%n==0;});
 }
 
 bigint prime_to_S_part(const bigint& x,  const vector<bigint>& S)

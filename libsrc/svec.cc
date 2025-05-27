@@ -435,17 +435,16 @@ scalar operator*(const svec& v, const svec& w) //dot prod
 scalar operator*(const svec& v, const vec& w) //dot prod
 {
   scalar ans(0);
-  if((v.entries.size()==0)) return ans;
-  for( const auto& vi : v.entries)
-    ans+=(vi.second)* w[vi.first];
+  std::for_each(v.entries.cbegin(), v.entries.cend(),
+                [&ans, w](auto vi){ans += (vi.second)* w[vi.first];});
   return ans;
 }
 
 scalar dotmodp(const svec& v, const vec& w, const scalar& pr)
 {
   scalar ans(0);
-  for( const auto& vi : v.entries)
-    ans=mod(ans+xmodmul(vi.second,w[vi.first],pr),pr);
+  std::for_each(v.entries.cbegin(), v.entries.cend(),
+                [&ans, w, pr](auto vi){ans=mod(ans+xmodmul(vi.second,w[vi.first],pr),pr);});
   return ans;
 }
 

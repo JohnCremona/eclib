@@ -139,10 +139,10 @@ int main(void)
       }
       wqlist[i] = to_mat_m(wq);
 #ifdef CHECK_COMMUTE
-      if (mult_mod_p(swq,swq,MODULUS) == smat::scalar_matrix(genus, den*den));
+      if (mult_mod_p(swq,swq,MODULUS) == smat::scalar_matrix(genus, den*den))
 	cout << "Involution!" << "\n";
       else
-	cout << "NOT an involution...." << "\n";
+	cout << " *** Not an involution...." << "\n";
 #else
       cout<<endl;
 #endif

@@ -587,7 +587,6 @@ int mw::process(const Point& PP, int sat)
 int mw::saturate(long& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
 {
   if (verbose) cout<<"saturating basis (reg="<<reg<<")..."<<flush;
-  if (verbose) cout<<"saturating basis..."<<flush;
 
   // This code does a dummy call to index_bound() in order to get
   // points from the search done there into the mwbasis.  But it was

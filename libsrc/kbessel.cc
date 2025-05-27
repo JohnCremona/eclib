@@ -114,7 +114,7 @@ double kbessel(double nu, double gx, int debug)
           if(debug) {
             cout << "...finished inner loop -- ex = "<<ex<<endl;
           }
-          p1=u;u=e;e=p1;p1=v;v=f;f=p1;
+          p1=u;u=e;v=f;f=p1;
           q*=(1+c);
           p1=q-r; ex=expo(p1);
           if(debug) {

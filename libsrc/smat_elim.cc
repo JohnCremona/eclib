@@ -515,7 +515,7 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
   while(i--)
     *b++ = new scalar[nullity];
 
-  scalar *bi, *bij, *bij_nz;
+  scalar *bij, *bij_nz;
   scalar *bi_nz = new scalar[nullity];
   scalar *R = new scalar[rank];
   scalar *Rt;

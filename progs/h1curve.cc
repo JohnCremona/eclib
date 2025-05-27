@@ -206,15 +206,17 @@ int checkap(const level* iN, const newform& nf, CurveRed& CR, long pmax)
   vector<long> aplist = nf.aplist;
   vector<long> primelist = primes(aplist.size());
   unsigned int i;
-  long ap, p=0;
+  long p=1;
   int ok=1;
   for(i=0; (i<aplist.size())&&(p<=pmax); i++)
     {
       p = primelist[i];
       long ap = CR.ap(p);
-      int ok1 =  (ap==aplist[i]);
-      if(!ok1) cout<<"p="<<p<<": ap(E)="<<ap<<" but ap(f)="<<aplist[i]<<endl;
-      ok = ok && ok1;
+      if (ap!=aplist[i])
+        {
+          cout<<"p="<<p<<": ap(E)="<<ap<<" but ap(f)="<<aplist[i]<<endl;
+          ok = 0;
+        }
     }
   return ok;
 }

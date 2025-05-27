@@ -252,8 +252,8 @@ void timer::clearAll() {
  */
 void timer::list() {
   string message;
-  for (const auto& t : times_)
-    message += t.first + " ";
+  std::for_each(times_.cbegin(), times_.cend(),
+                [&message](auto t){message += t.first + " ";});
 
   message += "\n";
   s_ -> write( message.c_str(), message.size() );

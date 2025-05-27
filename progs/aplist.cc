@@ -66,7 +66,7 @@ int main()
 	      ntotal = naq*nnf;
 	      short* batch = new short[ntotal];
 	      datafile.read((char*)batch,ntotal*sizeof(short));
-	      short* batchptr = batch;
+	      const short* batchptr = batch;
 	      vector< vector<long> > aqtable;
 	      for(ic=0; ic<nnf; ic++) aqtable.push_back(vector<long>(naq));
 	      for (iq=0; iq<naq; iq++)

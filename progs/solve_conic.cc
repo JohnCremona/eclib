@@ -58,7 +58,7 @@ int main()
       else
 	cout<<"Solution is WRONG\n";
 #ifdef TEST_PARAM
-      res = solve_conic_param(q,d,qx,qy,qz,CONIC_METHOD,VERBOSITY);
+      solve_conic_param(q,d,qx,qy,qz,CONIC_METHOD,VERBOSITY);
       x0=qx[0]; y0=qy[0]; z0=qz[0]; cancel(x0,y0,z0);
       cout << "Solution: "; show_xyz(x0,y0,z0); cout<<endl;
       cout << "Parametric solution:\n";

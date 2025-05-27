@@ -71,7 +71,7 @@ int main(void)
 	      delete[] batch;
 	      batch = new short[ntotal];
 	      datafile.read((char*)batch,ntotal*sizeof(short));
-	      short* batchptr = batch;
+	      const short* batchptr = batch;
 	      primevar pr;
 	      for(j=0; j<nap; j++, pr++) 
 		{

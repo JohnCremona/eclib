@@ -166,17 +166,17 @@ int main(void)
 	 cout << (Curve)CDi;
 	 cout << "\t" << r << "\t" << nt << "\t";
 
-	 CurveRed CR(CDi);
-	 long pcp = I2long(prodcp(CR));
+	 CurveRed CRi(CDi);
+	 long pcp = I2long(prodcp(CRi));
 #ifdef DEBUG_BSD
 	 cout<<"\nProduct of cp: ";
 #endif
 	 cout << pcp << "\t";
 
-	 bigint cond = getconductor(CR);
+	 bigint cond = getconductor(CRi);
 
-	 Cperiods CP(CDi); bigcomplex wR,wRI;
-	 CP.getwRI(wR,wRI);
+	 Cperiods CPi(CDi); bigcomplex wR,wRI;
+	 CPi.getwRI(wR,wRI);
 #ifdef DEBUG_BSD
 	 cout<<"\nPeriods:"<<CP<<endl;
 #endif

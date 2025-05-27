@@ -45,11 +45,11 @@ int main()
     cout<<"Enter nonzero a and b: "; cin>>a>>b;
     if(a*b==zero) break;
 #endif
-    res=checkres=0;
+    checkres=0;
     cout<<"("<<a<<","<<b<<")_p\n";
     resp = local_hilbert(a,b,0);
     cout<<0<<"\t"<<resp<<endl;
-    res = res|resp;
+    res = resp;
     checkres = checkres^resp;
 
     resp = local_hilbert(a,b,2);

@@ -977,7 +977,7 @@ void newforms::find_jlist()
       for (i=0; i<n1ds; i++)
 	{
 	  nflist[i].j0 = j0;
-          vec& bas = (sign==-1? nflist[i].bminus: nflist[i].bplus);
+          const vec& bas = (sign==-1? nflist[i].bminus: nflist[i].bplus);
           nflist[i].fac = bas[j0];
           if (verbose>1)
             {
@@ -994,7 +994,7 @@ void newforms::find_jlist()
       // Find out which pivots we'll be using:
       for (i=0; i<n1ds; i++)
 	{
-	  vec& bas = nflist[i].bplus;
+	  const vec& bas = nflist[i].bplus;
 	  j=1; while(bas[j]==0) j++;
 	  jlist.insert(j);
 	  nflist[i].j0 = j;
@@ -1067,9 +1067,10 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
 	  nf.find_matrix();
 	}
       if(verbose)
-	cout<<"done."<<endl;
-      if(verbose)
-        cout<<"Finished filling in data for newform #"<<(n+1)<<endl;
+        {
+          cout<<"done."<<endl;
+          cout<<"Finished filling in data for newform #"<<(n+1)<<endl;
+        }
       return;
     }
 
@@ -1452,8 +1453,11 @@ void newforms::createfromdata(int s, long ntp,
 	  createfromscratch(sign, ntp);
 	  output_to_file(1,0); // full newform data
 	  output_to_file(1,1); // short newform data (only DEFAULT_SMALL_NAP ap)
-	  if(verbose) cout << "Finished creating newform data for N = " << n << endl;
-	  if(verbose) display();
+	  if(verbose)
+            {
+              cout << "Finished creating newform data for N = " << n << endl;
+              display();
+            }
 	}
       return;
     }
@@ -1832,8 +1836,11 @@ void newforms::merge(int all_nf)
   for (const auto nfi : nf_subset)
    {
      int inf = nf_subset[nfi];
-     if(verbose) cout << "Newform #"<<(inf+1)<<":"<<endl;
-     if(verbose) cout << "-about to extend bplus,bminus..."<<flush;
+     if(verbose)
+       {
+         cout << "Newform #"<<(inf+1)<<":"<<endl;
+         cout << "-about to extend bplus,bminus..."<<flush;
+       }
      bplus.init(h1->nsymb);
      bminus.init(h1->nsymb);
      for(int i=1; i<=h1->nsymb; i++)
@@ -1915,7 +1922,7 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
       //cout<<"Computing image of "<<j<<"'th M-symbol "<<s<<endl;
       //cout<<" = "<<s<<"..."<<flush;
       long u=s.cee(),v=s.dee();
-      mat& pcd = h1->projcoord;
+      const mat& pcd = h1->projcoord;
       //cout<<"projcoord = "<<pcd;
 // Matrix [1,0;0,p]
       long ind = h1->coordindex[h1->index2(u,p*v)];
