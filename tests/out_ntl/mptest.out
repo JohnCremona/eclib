@@ -27,6 +27,10 @@ iplist (should be alldivs) [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 
 making an vector<bigint> of iplist (alldivs)
 stream output: [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
 irary(7) is -3	irary[3] is -2
+
+Radical of 420^2 = 176400 is 210
+Square-free decomposition of 420 is N1*N2^2 with N1 = 105 and N2 = 2
+
 testing find function
 35 is there:  35 is item number 36
 13 is not there

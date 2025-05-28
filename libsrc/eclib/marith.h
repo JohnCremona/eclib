@@ -292,11 +292,20 @@ public:
 // (name taken from gp)
 bigint factorback(const vector<bigint>&PP, const vector<int>& EE);
 
-// Squarefree part of N
-bigint sqf(const bigint& N);
+// Radical of N
+bigint radical(const bigint& N);
 
 // Maximum conductor for a given list of primes
 bigint MaxN(const vector<bigint>&S);
+
+// multiply all integers in a list by a constant:
+vector<bigint> multiply_list(const bigint& a, const vector<bigint>& L);
+
+// multiply all integers in L1 by all in L2:
+vector<bigint> multiply_lists(const vector<bigint>& L1, const vector<bigint>& L2);
+
+// multiply all integers in L by p^e for e in exponents:
+vector<bigint> multiply_list_by_powers(const bigint& p, const vector<int>& exponents, const vector<bigint>& L);
 
 
 #endif

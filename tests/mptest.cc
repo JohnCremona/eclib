@@ -93,7 +93,12 @@ int main()
   cout<<"stream output: "<<irary<<endl;
   cout<<"irary(7) is "<<irary[7]<<"\tirary[3] is "<<irary[3]<<endl;
 
-  cout<<"testing find function\n";
+  bigint radN = radical(num*num), N1, N2;
+  cout << "\nRadical of " << num << "^2 = " << num*num <<" is " << radN << endl;
+  sqfdecomp(num, N1, N2, iplist);
+  cout << "Square-free decomposition of " << num << " is N1*N2^2 with N1 = " << N1 << " and N2 = " << N2 << endl;
+
+  cout<<"\ntesting find function\n";
   auto vi = find(irary.begin(),irary.end(),35);
   if(vi==irary.end()) cout<<"35 is not there\n";
   else cout<<"35 is there:  "<<*vi<<" is item number "<<(vi-irary.begin())<<endl;
