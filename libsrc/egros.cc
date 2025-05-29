@@ -53,12 +53,7 @@ vector<bigint> twist_factors(const vector<bigint>& S, int n)
       vector<bigint> ppowers = {one};
       for (int i=1; i<n; i++)
         ppowers.push_back(ppowers[i-1]*p);
-      vector<bigint> pwlist;
-      pwlist.reserve(wlist.size()*n);
-      for (auto w: wlist)
-        for (auto pp: ppowers)
-          pwlist.push_back(pp*w);
-      wlist = pwlist;
+      wlist = multiply_lists(wlist, ppowers);
     }
   return wlist;
 }

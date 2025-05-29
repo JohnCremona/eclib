@@ -37,7 +37,7 @@ testing find function for the list [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10
 
 Testing list multiplication functions
 L   = [ 1 2 3 4 5 ]
-3*L = [ 1 2 3 4 5 ]
+3*L = [ 3 6 9 12 15 ]
 L2   = [ 1 10 100 ]
 L*L2 = [ 1 10 100 2 20 200 3 30 300 4 40 400 5 50 500 ]
 L*[2^e for e in [ 0 1 2 3 ]]: [ 1 2 3 4 5 2 4 6 8 10 4 8 12 16 20 8 16 24 32 40 ]
@@ -161,7 +161,8 @@ Enter a prime p: 0
 
 Enter a bigint m (0 to stop): m = 420
 m has 4 prime divisors: [ 2 3 5 7 ]
-with exponents: 2:2	3:1	5:1	7:1	
+with exponents [ 2 1 1 1 ]
+factorback recovers 420 (should be 420)
 m has 48 divisors: [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
 m has 24 positive divisors: [ 1 2 4 3 6 12 5 10 20 15 30 60 7 14 28 21 42 84 35 70 140 105 210 420 ]
 m has 2 positive divisors whose square divides m: [ 1 2 ]

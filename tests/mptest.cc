@@ -166,10 +166,10 @@ int main()
      cout << "m = " << m << endl;
      vector<bigint> plist=pdivs(m);
      cout << "m has " << plist.size() << " prime divisors: " << plist << endl;
-     cout << "with exponents: "; 
-     for( const auto& pi : plist)
-       cout << pi <<":"<<val(pi,m) << "\t";
-     cout<<endl;
+     vector<int> ee = valuations(m, plist);
+     cout << "with exponents " << ee << endl;
+     bigint m2 = factorback(plist, ee);
+     cout << "factorback recovers " << m2 << " (should be " << m << ")" << endl;
 
      vector<bigint> dlist=alldivs(m,plist);
      cout << "m has " << dlist.size() << " divisors: " << dlist << endl;

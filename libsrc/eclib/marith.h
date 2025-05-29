@@ -192,6 +192,8 @@ inline bigint xmm(const bigint& a, const bigint& b, const bigint& m)
 
 long val(const bigint& factor, const bigint& number);
 long val(long factor, const bigint& number);
+vector<int> valuations(const bigint& n, const vector<bigint>& primes);
+vector<int> valuations(const bigint& n, const vector<int>& primes);
 
 int div(const bigint& factor, const bigint& number);
 int div(long factor, const bigint& number);

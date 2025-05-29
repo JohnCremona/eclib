@@ -551,31 +551,24 @@ vector<bigint> posdivs(const bigint& number)
 vector<bigint> posdivs(const bigint& number, const vector<bigint>& plist)
 {
   static const bigint one(1);
-  int np = plist.size();
- int e, nu = 1; int nd=nu;
- vector<int> elist;
- elist.reserve(np);
- for (const auto& p : plist)
-   {
-     e=val(p,number);
-     elist.push_back(e);
-     nd*=(1+e);
-   }
+ vector<int> elist = valuations(number, plist);
+ int nd = std::transform_reduce(elist.cbegin(), elist.cend(),
+                                1,
+                                std::multiplies<>(),
+                                [](int e){return e+1;});
  // cout<<"In posdivs (0) : elist = "<<elist<<endl;
  vector<bigint> dlist(1, one);
  // cout<<"In posdivs (1) : dlist = "<<dlist<<endl;
  dlist.resize(nd);
  // cout<<"In posdivs (2) : dlist = "<<dlist<<endl;
  auto ei = elist.begin();
- nd=nu;
+ nd=1;
  for (const auto& p : plist)
    {
-     e=*ei++;
+     int e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
-	 {
          dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
-	 }
      nd*=(e+1);
    }
  // cout<<"In posdivs (3) : dlist = "<<dlist<<endl;
@@ -591,24 +584,19 @@ vector<bigint> alldivs(const bigint& number)
 vector<bigint> alldivs(const bigint& number, const vector<bigint>& plist)
 {
  static const bigint one(1);
- int np = plist.size();
- int e, nu = 2; int nd=nu;
- vector<int> elist;
- elist.reserve(np);
- for (const auto& p : plist)
-   {
-     e=val(p,number);
-     elist.push_back(e);
-     nd*=(1+e);
-   }
+ vector<int> elist = valuations(number, plist);
+ int nd = std::transform_reduce(elist.cbegin(), elist.cend(),
+                                2,
+                                std::multiplies<>(),
+                                [](int e){return e+1;});
  vector<bigint> dlist(1, one);
  dlist.push_back(-one);
  dlist.resize(nd);
- nd=nu;
+ nd=2;
  auto ei = elist.begin();
  for (const auto& p : plist)
    {
-     e=*ei++;
+     int e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
          dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
@@ -626,23 +614,21 @@ vector<bigint> sqdivs(const bigint& number)
 vector<bigint> sqdivs(const bigint& number, const vector<bigint>& plist)
 {
  static const bigint one(1);
- int np = plist.size();
- int e, nu = 1; int nd=nu;
- vector<int> elist;
- elist.reserve(np);
- for (const auto& p : plist)
-   {
-     e=val(p,number)/2;
-     elist.push_back(e);
-     nd*=(1+e);
-   }
+ vector<int> elist(plist.size());
+ auto pp = plist.begin();
+ std::generate(elist.begin(), elist.end(),
+               [number, &pp](){return val(*pp++, number)/2;});
+ int nd = std::transform_reduce(elist.cbegin(), elist.cend(),
+                                1,
+                                std::multiplies<>(),
+                                [](int e){return e+1;});
  vector<bigint> dlist(1, one);
  dlist.resize(nd);
- nd=nu;
+ nd=1;
  auto ei = elist.begin();
  for (const auto& p : plist)
    {
-     e=*ei++;
+     int e=*ei++;
      for (int j=0; j<e; j++)
        for (int k=0; k<nd; k++)
          dlist[nd*(j+1)+k] = p*dlist[nd*j+k];
@@ -661,11 +647,11 @@ vector<bigint> sqfreedivs(const bigint& number, const vector<bigint>& plist)
 {
  static const bigint one(1);
  int np = plist.size();
- int nu = 1, nd=pow(2,np);
+ int nd=pow(2,np);
  vector<int> elist(np,1);
  vector<bigint> dlist(1, one);
  dlist.resize(nd);
- nd=nu;
+ nd=1;
  auto ei=elist.begin();
  for (const auto& p : plist)
    {
@@ -694,7 +680,7 @@ void sqfdecomp(const bigint& a, vector<bigint>& plist, bigint& a1, bigint& a2)
   long j;
   vector<bigint> aplist;
   a1=1;  a2=1;
- for (const auto& p : plist)
+  for (const auto& p : plist)
     {
       long e = val(p,a);
       if(e==0) continue;
@@ -920,6 +906,24 @@ long val(long factor, const bigint& number)
  bigint n = number;                    // must be unlikely and POSITIVE.
  long e = divide_out(n,f);
  return e;
+}
+
+vector<int> valuations(const bigint& n, const vector<bigint>& primes)
+{
+  vector<int> ee(primes.size());
+  auto p = primes.begin();
+  std::generate(ee.begin(), ee.end(),
+                [n, &p](){return val(*p++, n);});
+  return ee;
+}
+
+vector<int> valuations(const bigint& n, const vector<int>& primes)
+{
+  vector<int> ee(primes.size());
+  auto p = primes.begin();
+  std::generate(ee.begin(), ee.end(),
+                [n, &p](){return val(*p++, n);});
+  return ee;
 }
 
 int div(const bigint& factor, const bigint& number) 
@@ -1337,23 +1341,20 @@ void divisor_iterator::report()
 // (name taken from gp)
 bigint factorback(const vector<bigint>&PP, const vector<int>& EE)
 {
-  bigint N(1);
-  auto pi =PP.begin();
-  auto ei=EE.begin();
-  while(pi!=PP.end())
-    N *= pow(*pi++, *ei++);
-  return N;
+  return std::transform_reduce(PP.cbegin(), PP.cend(), EE.cbegin(),
+                               bigint(1),                                   // initial value
+                               std::multiplies<>(),                         // how to combine terms,
+                               [](const bigint& p, int e){return pow(p,e);} // how to form terms
+                               );
 }
 
 // Maximum conductor for a given list of primes
 bigint MaxN(const vector<bigint>&PP)
 {
-  vector<int> EE;
-  for(auto p: PP)
-    {
-      EE.push_back((p==2?8:p==3?5:2));
-    }
-  return factorback(PP,EE);
+  bigint N(1);
+  std::for_each(PP.cbegin(), PP.cend(),
+               [&N](const bigint& p){N *= pow(p, (p==2?8:p==3?5:2));});
+  return N;
 }
 
 // Radical of N
@@ -1366,9 +1367,9 @@ bigint radical(const bigint& N)
 // multiply all integers in a list by a constant:
 vector<bigint> multiply_list(const bigint& a, const vector<bigint>& L)
 {
-  vector<bigint> aL = L;
-  for (auto x: aL)
-    x *= a;
+  vector<bigint> aL(L.size());
+  std::transform(L.begin(), L.end(), aL.begin(),
+                 [a](const bigint& x){return a*x;});
   return aL;
 }
 
@@ -1377,24 +1378,23 @@ vector<bigint> multiply_lists(const vector<bigint>& L1, const vector<bigint>& L2
 {
   vector<bigint> L3;
   L3.reserve(L1.size()*L2.size());
-  for (auto x: L1)
-    for (auto y: L2)
-      L3.push_back(x*y);
+  std::for_each(L1.cbegin(), L1.cend(),
+                [L2, &L3](const bigint& x)
+                {
+                  auto xL2 = multiply_list(x,L2);
+                  L3.insert(L3.end(), xL2.begin(), xL2.end());
+                });
   return L3;
 }
 
 // multiply all integers in L by p^e for e in exponents:
 vector<bigint> multiply_list_by_powers(const bigint& p, const vector<int>& exponents, const vector<bigint>& L)
 {
-  vector<bigint> peL;
-  peL.reserve(L.size()*exponents.size());
-  for (auto e: exponents)
-    {
-      bigint x = pow(p, e);
-      for (auto y: L)
-        peL.push_back(x*y);
-    }
-  return peL;
+  vector<bigint> pe(exponents.size());
+  auto e = exponents.begin();
+  std::generate(pe.begin(), pe.end(),
+                [p, &e](){return pow(p, *e++);;});
+  return multiply_lists(pe, L);
 }
 
 // convert a list of longs to a list of bigints:
