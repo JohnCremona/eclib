@@ -258,8 +258,8 @@ public:
   // (1) conductor
   // (2) list of ap for good p < NP_SORT
   // (3) a1,a2,a3,4,a6
-  vector<bigint> sort_key(const int NP_SORT=25);
-  int operator<(CurveRed& E) {return sort_key()<E.sort_key();}
+  vector<bigint> sort_key(const int NP_SORT=25) const;
+  int operator<(const CurveRed& E) {return sort_key()<E.sort_key();}
 private:
   // functions for setting local root numbers:
   int neron(long p, int kod); // p = 2 or 3
@@ -273,14 +273,14 @@ public:
   friend inline vector<bigint> getbad_primes(const CurveRed& c)
   {return c.the_bad_primes; }
   friend inline bigint getconductor(const CurveRed& c) {return c.N; }
-  int ord_p_discr(const bigint& p);
-  int ord_p_N(const bigint& p);
-  int ord_p_j_denom(const bigint& p);
-  int c_p(const bigint& p);
-  vector<bigint> all_cp();
-  bigint prodcp();
-  int LocalRootNumber(const bigint& p);
-  int GlobalRootNumber();
+  int ord_p_discr(const bigint& p) const;
+  int ord_p_N(const bigint& p) const;
+  int ord_p_j_denom(const bigint& p) const;
+  int c_p(const bigint& p) const;
+  vector<bigint> all_cp() const;
+  bigint prodcp() const;
+  int LocalRootNumber(const bigint& p) const;
+  int GlobalRootNumber() const;
 
   friend Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p);
   // the returned value casts as a character array; to use coded as int,
@@ -289,14 +289,14 @@ public:
   // Trace of Frobenius (via pari if p is good for long p)
   // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
   // These are not constant methods as a call to LocalRootNumber may be needed.
-  long ap(long p);
-  bigint ap(const bigint& p);
+  long ap(long p) const;
+  bigint ap(const bigint& p) const;
 
   // The local Tamagawa number.  Use p=0 for reals
-  friend bigint local_Tamagawa_number(CurveRed& c, const bigint& p);
+  friend bigint local_Tamagawa_number(const CurveRed& c, const bigint& p);
   // The local Tamagawa exponent -- same as Tamagawa number unless the
   // component group is (2,2).  Use p=0 for reals
-  friend bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p);
+  friend bigint local_Tamagawa_exponent(const CurveRed& c, const bigint& p);
   // The global Tamagawa exponent, i.e. the lcm of the exponents of
   // the component groups at all bad primes (including infinity if
   // real_too is 1), which is the lcm of the local Tamagawa exponents.
@@ -315,17 +315,17 @@ public:
 inline bigint Trace_Frob(CurveRed& c, const bigint& p) {return c.ap(p);}
 inline long Trace_Frob(CurveRed& c, const long& p) {return c.ap(p);}
 
-inline int getord_p_discr(CurveRed& c, const bigint& p) {return c.ord_p_discr(p);}
-inline int getord_p_N(CurveRed& c, const bigint& p) {return c.ord_p_N(p);}
-inline int getord_p_j_denom(CurveRed& c, const bigint& p) {return c.ord_p_j_denom(p);}
-inline int getc_p(CurveRed& c, const bigint& p) {return c.c_p(p);}
-inline vector<bigint> all_cp(CurveRed& c) {return c.all_cp();}
-inline bigint prodcp(CurveRed& c) {return c.prodcp();}
-inline int LocalRootNumber(CurveRed& c, const bigint& p) {return c.LocalRootNumber(p);}
-inline int GlobalRootNumber(CurveRed& c) {return c.GlobalRootNumber();}
+inline int getord_p_discr(const CurveRed& c, const bigint& p) {return c.ord_p_discr(p);}
+inline int getord_p_N(const CurveRed& c, const bigint& p) {return c.ord_p_N(p);}
+inline int getord_p_j_denom(const CurveRed& c, const bigint& p) {return c.ord_p_j_denom(p);}
+inline int getc_p(const CurveRed& c, const bigint& p) {return c.c_p(p);}
+inline vector<bigint> all_cp(const CurveRed& c) {return c.all_cp();}
+inline bigint prodcp(const CurveRed& c) {return c.prodcp();}
+inline int LocalRootNumber(const CurveRed& c, const bigint& p) {return c.LocalRootNumber(p);}
+inline int GlobalRootNumber(const CurveRed& c) {return c.GlobalRootNumber();}
 
 // The global Tamagawa number, = product of local ones.
-bigint global_Tamagawa_number(CurveRed& c, int real_too);
+bigint global_Tamagawa_number(const CurveRed& c, int real_too);
 
 // Tamagawa primes: primes dividing any Tamagawa number
 vector<long> tamagawa_primes(const CurveRed& C, int real_too);

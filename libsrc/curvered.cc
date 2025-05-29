@@ -326,6 +326,8 @@ CurveRed::CurveRed(const Curvedata& E)
   N = one;
   for( const auto& ri : reduct_array)
     N *= pow((ri.first), (ri.second).ord_p_N);
+  for (auto p: the_bad_primes)
+    setLocalRootNumber(p);
   return;
 }     // end of Tate's algorithm
 
@@ -333,7 +335,7 @@ CurveRed::CurveRed(const Curvedata& E)
 // (1) conductor
 // (2) list of ap for p < NP_SORT
 // (3) a1,a2,a3,4,a6
-vector<bigint> CurveRed::sort_key(const int NP_SORT)
+vector<bigint> CurveRed::sort_key(const int NP_SORT) const
 {
   vector<bigint> key;
   key.push_back(N);
@@ -350,7 +352,7 @@ vector<bigint> CurveRed::sort_key(const int NP_SORT)
 
 // The local Tamagawa exponent -- same as Tamagawa number unless the
 // component group is (2,2).  Use p=0 for reals
-bigint local_Tamagawa_exponent(CurveRed& c, const bigint& p)
+bigint local_Tamagawa_exponent(const CurveRed& c, const bigint& p)
 {
   static const bigint one(1), two(2), four(4);
   if (is_zero(p)) return bigint(c.conncomp);
@@ -406,31 +408,31 @@ vector<long> tamagawa_primes(const CurveRed& C, int real_too)
 // which is impossible without removing the "const" qualifier from the
 // CurveRed argument!
 
-int CurveRed::ord_p_discr(const bigint& p)
+int CurveRed::ord_p_discr(const bigint& p) const
 {
   auto ri = reduct_array.find(p);
   return (ri==reduct_array.end()? 0 : (ri->second).ord_p_discr);
 }
 
-int CurveRed::ord_p_N(const bigint& p)
+int CurveRed::ord_p_N(const bigint& p) const
 {
   auto ri = reduct_array.find(p);
   return (ri==reduct_array.end()? 0 : (ri->second).ord_p_N);
 }
 
-int CurveRed::ord_p_j_denom(const bigint& p)
+int CurveRed::ord_p_j_denom(const bigint& p) const
 {
   auto ri = reduct_array.find(p);
   return (ri==reduct_array.end()? 0 : (ri->second).ord_p_j_denom);
 }
 
-int CurveRed::c_p(const bigint& p)
+int CurveRed::c_p(const bigint& p) const
 {
   auto ri = reduct_array.find(p);
   return (ri==reduct_array.end()? : (ri->second).c_p);
 }
 
-vector<bigint> CurveRed::all_cp()
+vector<bigint> CurveRed::all_cp() const
 {
   vector<bigint> ans(reduct_array.size());
   std::transform(reduct_array.begin(), reduct_array.end(), ans.begin(),
@@ -438,7 +440,7 @@ vector<bigint> CurveRed::all_cp()
   return ans;
 }
 
-bigint CurveRed::prodcp()
+bigint CurveRed::prodcp() const
 {
   static const bigint one(1);
   vector<bigint> allcp = all_cp();
@@ -447,13 +449,13 @@ bigint CurveRed::prodcp()
 }
 
 // The local Tamagawa number.  Use p=0 for reals
-bigint local_Tamagawa_number(CurveRed& c, const bigint& p)
+bigint local_Tamagawa_number(const CurveRed& c, const bigint& p)
 {
   return bigint(is_zero(p)? getconncomp(c): getc_p(c,p));
 }
 
 // The global Tamagawa number, = product of local ones.
-bigint global_Tamagawa_number(CurveRed& c, int real_too)
+bigint global_Tamagawa_number(const CurveRed& c, int real_too)
 {
   return bigint(prodcp(c) * (real_too ? getconncomp(c) : 1));
 }
@@ -514,25 +516,19 @@ void CurveRed::display(ostream& os)
 // Reduction_type::local_root_number field, computing them if not
 // already set (i.e. field contains 0)
 
-int CurveRed::LocalRootNumber(const bigint& p)
+int CurveRed::LocalRootNumber(const bigint& p) const
 {
   if(is_zero(p)) return -1;  // the infinite prime
   auto ri = reduct_array.find(p);
   if(ri==reduct_array.end()) return 1; // good reduction case
-  if((ri->second).local_root_number==0)
-    setLocalRootNumber(p);
   return (ri->second).local_root_number;
 }
 
-int CurveRed::GlobalRootNumber()
+int CurveRed::GlobalRootNumber() const
 {
-  int ans=-1;
+  int ans=-1; // root number at the infinte place (which is real)
   for( const auto& ri : reduct_array)
-    {
-      if((ri.second).local_root_number==0)
-	setLocalRootNumber(ri.first);
-      ans *= (ri.second).local_root_number;
-    }
+    ans *= (ri.second).local_root_number;
   return ans;
 }
 
@@ -1041,7 +1037,7 @@ int CurveRed::neron(long p, int kod)
 
 // Trace of Frobenius (via pari) if p good
 // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
-long CurveRed::ap(long p)
+long CurveRed::ap(long p) const
 {
   bigint P(p);
   int f = min(2, ord_p_N(P));
@@ -1058,7 +1054,7 @@ long CurveRed::ap(long p)
 
 // Trace of Frobenius (via pari) if p good
 // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
-bigint CurveRed::ap(const bigint& p)
+bigint CurveRed::ap(const bigint& p) const
 {
   if (is_long(p))
     return bigint(ap(I2long(p)));
