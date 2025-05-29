@@ -369,18 +369,32 @@ inline int GlobalRootNumber(const Curvedata& E)
 
 // Quadratic twist of an elliptic curve (returns minimal model)
 CurveRed QuadraticTwist(const CurveRed& E, const bigint& D);
+inline CurveRed QuadraticTwist(const CurveRed& E, long D)
+{ return QuadraticTwist(E, bigint(D)); }
 
 // Given a list of elliptic curves E, and one discriminant D, return the
-// list of twists of the curves by D
+// list of quadratic twists of the curves by D
 vector<CurveRed> QuadraticTwists(const vector<CurveRed>& EE, const bigint& D);
+inline vector<CurveRed> QuadraticTwists(const vector<CurveRed>& EE, long D)
+{ return QuadraticTwists(EE, bigint(D)); }
 
 // Given a list of elliptic curves E, and one prime p, return the
-// list of twists of the curves by:
+// list of quadratic twists of the curves by:
 // +p if p=1 (mod 4)
 // -p if p=3 (mod 4)
 // -4, 8 and -8 if p=2
 
 vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, const bigint& p);
+inline vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, long p)
+{ return PrimeTwists(EE, bigint(p)); }
+
+// Given a list of elliptic curves, and a list of primes, return a
+// list of all quadratic twists of the curves by discriminants supported on
+// those primes (including the original curves)
+
+vector<CurveRed> AllTwists(const vector<CurveRed>& EE, const vector<bigint>& PP);
+inline vector<CurveRed> AllTwists(const vector<CurveRed>& EE, vector<long> PP)
+{ return AllTwists(EE, bigintify(PP)); }
 
 // end of file: curve.h
 

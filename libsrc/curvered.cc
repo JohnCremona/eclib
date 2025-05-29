@@ -1122,3 +1122,21 @@ vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, const bigint& p)
 }
 
 
+// Given a list of elliptic curves, and a list of primes, return a
+// list of all quadratic twists of the curves by discriminants supported on
+// those primes (including the original curves)
+
+vector<CurveRed> AllTwists(const vector<CurveRed>& EE, const vector<bigint>& PP)
+{
+  vector<CurveRed> ans = EE;
+  for (auto p: PP)
+    {
+      vector<CurveRed> p_twists = PrimeTwists(ans, p);
+      for (auto E: p_twists)
+        {
+          if (std::find(ans.begin(), ans.end(), E) == ans.end())
+            ans.push_back(E);
+        }
+    }
+  return ans;
+}

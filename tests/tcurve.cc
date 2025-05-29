@@ -102,11 +102,11 @@ int main(void)
   Curve E0(0,-1,1,0,0);
   Curvedata E0d(E0, 0);
   CurveRed E0r(E0d);
-  cout<<"Base curve: "<<E0<<" conductor "<<E0r.conductor()<<endl;
+  cout<<"Base curve:\t"<<E0<<"\tconductor "<<E0r.conductor()<<endl;
   for (auto D: Dlist)
     {
-      CurveRed E0D = QuadraticTwist(E0r, bigint(D));
-      cout<<"Twist by "<<D<<" is "<<(Curve)E0D<<" conductor "<<E0D.conductor()<<endl;
+      CurveRed E0D = QuadraticTwist(E0r, D);
+      cout<<"Twist by "<<D<<" is\t"<<(Curve)E0D<<"\tconductor "<<E0D.conductor()<<endl;
     }
   vector<long> plist = primes(10);
   vector<CurveRed> E0list = {E0r};
@@ -116,7 +116,13 @@ int main(void)
       cout << "p = "<<p<<": ";
       vector<CurveRed> E0plist = PrimeTwists(E0list, bigint(p));
       for (auto E0p: E0plist)
-        cout<<" Twist is "<<(Curve)E0p<<" conductor "<<E0p.conductor()<<endl;
+        cout<<"\tTwist is "<<(Curve)E0p<<"\tconductor "<<E0p.conductor()<<endl;
     }
+
+  cout << "\nAll 16 quadratic twists supported on {2,3,5}:\n";
+  auto twists235 = AllTwists({E0r}, primes(3)); // 2,3,5 give 16 quadratic twists
+  for (auto E0D: twists235)
+    cout<<(Curve)E0D<<"\tconductor "<<E0D.conductor()<<endl;
+
   return 0;
 }

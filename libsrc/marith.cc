@@ -1363,4 +1363,46 @@ bigint radical(const bigint& N)
   return std::accumulate(PP.begin(), PP.end(), bigint(1), std::multiplies<bigint>());
 }
 
+// multiply all integers in a list by a constant:
+vector<bigint> multiply_list(const bigint& a, const vector<bigint>& L)
+{
+  vector<bigint> aL = L;
+  for (auto x: aL)
+    x *= a;
+  return aL;
+}
+
+// multiply all integers in a list by all in a second list:
+vector<bigint> multiply_lists(const vector<bigint>& L1, const vector<bigint>& L2)
+{
+  vector<bigint> L3;
+  L3.reserve(L1.size()*L2.size());
+  for (auto x: L1)
+    for (auto y: L2)
+      L3.push_back(x*y);
+  return L3;
+}
+
+// multiply all integers in L by p^e for e in exponents:
+vector<bigint> multiply_list_by_powers(const bigint& p, const vector<int>& exponents, const vector<bigint>& L)
+{
+  vector<bigint> peL;
+  peL.reserve(L.size()*exponents.size());
+  for (auto e: exponents)
+    {
+      bigint x = pow(p, e);
+      for (auto y: L)
+        peL.push_back(x*y);
+    }
+  return peL;
+}
+
+// convert a list of longs to a list of bigints:
+vector<bigint> bigintify(const vector<long>& L)
+{
+  vector<bigint> LL(L.size());
+  std::transform(L.cbegin(), L.cend(), LL.begin(), [](long x){return bigint(x);});
+  return LL;
+}
+
 // end of file marith.cc

@@ -98,13 +98,28 @@ int main()
   sqfdecomp(num, N1, N2, iplist);
   cout << "Square-free decomposition of " << num << " is N1*N2^2 with N1 = " << N1 << " and N2 = " << N2 << endl;
 
-  cout<<"\ntesting find function\n";
+  cout<<"\ntesting find function for the list " << irary << ":\n";
   auto vi = find(irary.begin(),irary.end(),35);
   if(vi==irary.end()) cout<<"35 is not there\n";
   else cout<<"35 is there:  "<<*vi<<" is item number "<<(vi-irary.begin())<<endl;
   vi = find(irary.begin(),irary.end(),13);
   if(vi==irary.end()) cout<<"13 is not there\n";
   else cout<<"13 is there:  "<<*vi<<" is item number "<<(vi-irary.begin())<<endl;
+
+  cout << "\nTesting list multiplication functions\n";
+  vector<bigint> L = bigintify({1,2,3,4,5});
+  cout << "L   = " << L << endl;
+  vector<bigint> Lx3 = multiply_list(3, L);
+  cout << "3*L = " << Lx3 << endl;
+
+  vector<bigint> L2 = bigintify({1,10,100});
+  cout << "L2   = " << L2 << endl;
+  vector<bigint> LxL2 = multiply_lists(L,L2);
+  cout << "L*L2 = " << LxL2 << endl;
+
+  vector<int> ee = {0,1,2,3};
+  vector<bigint> L2e = multiply_list_by_powers(2, ee, L);
+  cout << "L*[2^e for e in "<<ee<<"]: "<< L2e << endl;
 
   cout<<"\n\nTest of sqrt and isqrt\n";
   bigint astop; astop=999;
