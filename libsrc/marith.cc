@@ -559,23 +559,20 @@ vector<bigint> posdivs(const bigint& number, const vector<bigint>& plist)
 
 vector<bigint> alldivs(const bigint& number)
 {
- const vector<bigint>& plist=pdivs(number);
- return alldivs(number, plist);
+  const vector<bigint>& plist=pdivs(number);
+  return alldivs(number, plist);
 }
 
 vector<bigint> alldivs(const bigint& number, const vector<bigint>& plist)
 {
- static const bigint one(1);
- vector<bigint> dlist = {one, -one};
-  for (auto p: plist)
-    dlist = multiply_lists(powers(p, val(p,number)), dlist);
-  return dlist;
+  static const bigint one(1);
+  return multiply_lists(posdivs(number, plist), {one, -one});
 }
 
 vector<bigint> sqdivs(const bigint& number)
 {
- const vector<bigint>& plist=pdivs(number);
- return sqdivs(number, plist);
+  const vector<bigint>& plist=pdivs(number);
+  return sqdivs(number, plist);
 }
 
 vector<bigint> sqdivs(const bigint& number, const vector<bigint>& plist)
