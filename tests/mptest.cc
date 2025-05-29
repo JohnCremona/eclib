@@ -107,6 +107,9 @@ int main()
   else cout<<"13 is there:  "<<*vi<<" is item number "<<(vi-irary.begin())<<endl;
 
   cout << "\nTesting list multiplication functions\n";
+  vector<bigint> powers_of_2 = powers(bigint(2), 10);
+  cout << "Powers of 2 up to 2^10: " << powers_of_2 << endl;
+
   vector<bigint> L = bigintify({1,2,3,4,5});
   cout << "L   = " << L << endl;
   vector<bigint> Lx3 = multiply_list(3, L);

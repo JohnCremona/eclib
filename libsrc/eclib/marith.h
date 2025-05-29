@@ -290,6 +290,9 @@ public:
   void report();
 };
 
+// [n^e for 0 <= e <= maxexp]
+vector<bigint> powers(const bigint& n, int maxexp);
+
 // Compute N from its factorization (lists of primes and exponents) --
 // (name taken from gp)
 bigint factorback(const vector<bigint>&PP, const vector<int>& EE);
