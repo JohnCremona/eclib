@@ -76,6 +76,7 @@ vector<CurveRed> egros_from_j_1728(const vector<bigint>& S)
       if (Ered.has_good_reduction_outside_S(S))
         Elist.push_back(Ered);
     }
+  std::sort(Elist.begin(), Elist.end());
   return Elist;
 }
 
@@ -101,6 +102,7 @@ vector<CurveRed> egros_from_j_0(const vector<bigint>& S)
       if (Ered.has_good_reduction_outside_S(S))
         Elist.push_back(Ered);
     }
+  std::sort(Elist.begin(), Elist.end());
   return Elist;
 }
 
@@ -182,6 +184,7 @@ vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S)
       if (Ered.has_good_reduction_outside_S(S))
         Elist.push_back(Ered);
     }
+  std::sort(Elist.begin(), Elist.end());
   return Elist;
 }
 

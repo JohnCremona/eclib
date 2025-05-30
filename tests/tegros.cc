@@ -54,13 +54,11 @@ int main(void)
   cout<<endl;
 
   vector<CurveRed> egr_S23_0 = egros_from_j_0(S23);
-  std::sort(egr_S23_0.begin(), egr_S23_0.end());
   cout << egr_S23_0.size()<< " curves with j=0 and good reduction outside "<<S23<<" (should be 72):\n";
   for (auto E1: egr_S23_0) cout<<(Curve)E1<<" conductor "<<E1.conductor()<<" sort key "<<E1.sort_key()<<endl;
   cout<<endl;
 
   vector<CurveRed> egr_S23_1728 = egros_from_j_1728(S23);
-  std::sort(egr_S23_1728.begin(), egr_S23_1728.end());
   cout << egr_S23_1728.size()<< " curves with j=1728 and good reduction outside "<<S23<<" (should be 32):\n";
   for (auto E1: egr_S23_1728) cout<<(Curve)E1<<" conductor "<<E1.conductor()<<" sort key "<<E1.sort_key()<<endl;
   cout<<endl;
@@ -83,8 +81,9 @@ int main(void)
       cout << endl;
       egr_11.insert(egr_11.end(), EE.cbegin(), EE.cend());
     }
+  cout<<endl;
   std::sort(egr_11.begin(), egr_11.end());
-  cout<<"Sorted list:\n";
+  cout<<"Full sorted list:\n";
   for (auto E1: egr_11)
     cout << "conductor " << E1.conductor() << "\t" << (Curve)E1 << "\tj = " << j_invariant(E1) << endl;
   cout << endl;
@@ -117,7 +116,8 @@ int main(void)
   cout << "Actual conductors and curves:\n";
   for (auto E1: E_j_0)
     cout << E1.conductor() << "\t" << (Curve)E1 << endl;
-  cout << "Possible conductors < 100 of curves with j=1728: " << N_j_1728 << endl;
+  cout << endl;
+  cout << "Possible conductors <= 100 of curves with j=1728: " << N_j_1728 << endl;
   cout << "Actual conductors and curves:\n";
   for (auto E1: E_j_1728)
     cout << E1.conductor() << "\t" << (Curve)E1 << endl;
