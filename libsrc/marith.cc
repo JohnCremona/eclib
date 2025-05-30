@@ -1184,8 +1184,8 @@ int is_nth_power(const bigint& x, int n)
   if ((x<0) && (n%2==0))
     return 0;
   vector<bigint> plist = pdivs(x);
-  return std::all_of(plist.begin(), plist.end(),
-                     [n,x](const bigint& p){return val(p,x)%n==0;});
+  auto local_condition = [n,x](const bigint& p){return val(p,x)%n==0;};
+  return std::all_of(plist.begin(), plist.end(), local_condition);
 }
 
 bigint prime_to_S_part(const bigint& x,  const vector<bigint>& S)
@@ -1279,8 +1279,8 @@ vector<bigint> powers(const bigint& n, int maxexp)
   bigint np(1);
   npowers[0] = np;
   int e = 0;
-  std::generate(npowers.begin()+1, npowers.end(),
-                [n, &np, &e](){np*=n; e++; return np;});
+  auto next_power = [n, &np, &e](){np*=n; e++; return np;};
+  std::generate(npowers.begin()+1, npowers.end(), next_power);
   return npowers;
 }
 
@@ -1288,9 +1288,8 @@ vector<bigint> powers(const bigint& n, int maxexp)
 vector<bigint> powers(const bigint& n, const vector<int>& exponents)
 {
   vector<bigint> npowers(exponents.size());
-  auto e = exponents.begin();
-  std::generate(npowers.begin(), npowers.end(),
-                [n, &e](){return pow(n, *e++);;});
+  auto npower = [n](int e){return pow(n,e);};
+  std::transform(exponents.cbegin(), exponents.cend(), npowers.begin(), npower);
   return npowers;
 }
 
@@ -1298,17 +1297,19 @@ vector<bigint> powers(const bigint& n, const vector<int>& exponents)
 // (name taken from gp)
 bigint factorback(const vector<bigint>&PP, const vector<int>& EE)
 {
+  static const bigint one(1);
+  auto power = [](const bigint& p, int e){return pow(p,e);};
   return std::transform_reduce(PP.cbegin(), PP.cend(), EE.cbegin(),
-                               bigint(1),                                   // initial value
-                               std::multiplies<>(),                         // how to combine terms,
-                               [](const bigint& p, int e){return pow(p,e);} // how to form terms
-                               );
+                               one,                  // initial value
+                               std::multiplies<>(),  // how to combine terms,
+                               power);               // how to form terms
 }
 
 // Maximum conductor for a given list of primes
 bigint MaxN(const vector<bigint>&PP)
 {
-  bigint N(1);
+  static const bigint one(1);
+  bigint N(one);
   std::for_each(PP.cbegin(), PP.cend(),
                [&N](const bigint& p){N *= pow(p, (p==2?8:p==3?5:2));});
   return N;
@@ -1325,8 +1326,8 @@ bigint radical(const bigint& N)
 vector<bigint> multiply_list(const bigint& a, const vector<bigint>& L)
 {
   vector<bigint> aL(L.size());
-  std::transform(L.begin(), L.end(), aL.begin(),
-                 [a](const bigint& x){return a*x;});
+  auto times_a = [a](const bigint& x){return a*x;};
+  std::transform(L.begin(), L.end(), aL.begin(), times_a);
   return aL;
 }
 
@@ -1354,7 +1355,8 @@ vector<bigint> multiply_list_by_powers(const bigint& p, const vector<int>& expon
 vector<bigint> bigintify(const vector<long>& L)
 {
   vector<bigint> LL(L.size());
-  std::transform(L.cbegin(), L.cend(), LL.begin(), [](long x){return bigint(x);});
+  auto long2big = [](long x){return bigint(x);};
+  std::transform(L.cbegin(), L.cend(), LL.begin(), long2big);
   return LL;
 }
 

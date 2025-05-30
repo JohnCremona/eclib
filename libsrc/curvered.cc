@@ -429,23 +429,22 @@ int CurveRed::ord_p_j_denom(const bigint& p) const
 int CurveRed::c_p(const bigint& p) const
 {
   auto ri = reduct_array.find(p);
-  return (ri==reduct_array.end()? : (ri->second).c_p);
+  return (ri==reduct_array.end()? 1 : (ri->second).c_p);
 }
 
 vector<bigint> CurveRed::all_cp() const
 {
-  vector<bigint> ans(reduct_array.size());
-  std::transform(reduct_array.begin(), reduct_array.end(), ans.begin(),
-                 [] (const pair<bigint,Reduction_type>& x) {return bigint(x.second.c_p);});
-  return ans;
+  vector<bigint> allcp(reduct_array.size());
+  auto cp = [] (const pair<bigint,Reduction_type>& x) {return bigint(x.second.c_p);};
+  std::transform(reduct_array.begin(), reduct_array.end(), allcp.begin(), cp);
+  return allcp;
 }
 
 bigint CurveRed::prodcp() const
 {
   static const bigint one(1);
   vector<bigint> allcp = all_cp();
-  return std::accumulate(allcp.begin(), allcp.end(), one,
-                         [](const bigint& c1, const bigint& c2) {return c1*c2;});
+  return std::accumulate(allcp.begin(), allcp.end(), one, std::multiplies<>());
 }
 
 // The local Tamagawa number.  Use p=0 for reals
@@ -526,10 +525,9 @@ int CurveRed::LocalRootNumber(const bigint& p) const
 
 int CurveRed::GlobalRootNumber() const
 {
-  int ans=-1; // root number at the infinte place (which is real)
-  for( const auto& ri : reduct_array)
-    ans *= (ri.second).local_root_number;
-  return ans;
+  auto rn = [](const std::pair<bigint,Reduction_type>& ri){return (ri.second).local_root_number;};
+  return std::transform_reduce(reduct_array.cbegin(), reduct_array.cend(),
+                               -1, std::multiplies<>(), rn);
 }
 
 int kro(const bigint& d, const bigint& n);

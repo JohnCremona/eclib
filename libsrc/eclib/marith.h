@@ -292,6 +292,8 @@ public:
 
 // [n^e for 0 <= e <= maxexp]
 vector<bigint> powers(const bigint& n, int maxexp);
+// [n^e for e in exponents]
+vector<bigint> powers(const bigint& n, const vector<int>& exponents);
 
 // Compute N from its factorization (lists of primes and exponents) --
 // (name taken from gp)

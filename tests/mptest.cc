@@ -109,6 +109,9 @@ int main()
   cout << "\nTesting list multiplication functions\n";
   vector<bigint> powers_of_2 = powers(bigint(2), 10);
   cout << "Powers of 2 up to 2^10: " << powers_of_2 << endl;
+  //  vector<int> odds = {1,3,5,7,9};
+  vector<bigint> odd_powers_of_2 = powers(bigint(2), {1,3,5,7,9});
+  cout << "Odd powers of 2 up to 2^10: " << odd_powers_of_2 << endl;
 
   vector<bigint> L = bigintify({1,2,3,4,5});
   cout << "L   = " << L << endl;
@@ -169,9 +172,9 @@ int main()
      cout << "m = " << m << endl;
      vector<bigint> plist=pdivs(m);
      cout << "m has " << plist.size() << " prime divisors: " << plist << endl;
-     vector<int> ee = valuations(m, plist);
-     cout << "with exponents " << ee << endl;
-     bigint m2 = factorback(plist, ee);
+     vector<int> vals = valuations(m, plist);
+     cout << "with exponents " << vals << endl;
+     bigint m2 = factorback(plist, vals);
      cout << "factorback recovers " << m2 << " (should be " << m << ")" << endl;
 
      vector<bigint> dlist=alldivs(m,plist);

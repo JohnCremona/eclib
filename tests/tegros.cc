@@ -56,13 +56,13 @@ int main(void)
   vector<CurveRed> egr_S23_0 = egros_from_j_0(S23);
   std::sort(egr_S23_0.begin(), egr_S23_0.end());
   cout << egr_S23_0.size()<< " curves with j=0 and good reduction outside "<<S23<<" (should be 72):\n";
-  for (auto E: egr_S23_0) cout<<(Curve)E<<" conductor "<<E.conductor()<<" sort key "<<E.sort_key()<<endl;
+  for (auto E1: egr_S23_0) cout<<(Curve)E1<<" conductor "<<E1.conductor()<<" sort key "<<E1.sort_key()<<endl;
   cout<<endl;
 
   vector<CurveRed> egr_S23_1728 = egros_from_j_1728(S23);
   std::sort(egr_S23_1728.begin(), egr_S23_1728.end());
   cout << egr_S23_1728.size()<< " curves with j=1728 and good reduction outside "<<S23<<" (should be 32):\n";
-  for (auto E: egr_S23_1728) cout<<(Curve)E<<" conductor "<<E.conductor()<<" sort key "<<E.sort_key()<<endl;
+  for (auto E1: egr_S23_1728) cout<<(Curve)E1<<" conductor "<<E1.conductor()<<" sort key "<<E1.sort_key()<<endl;
   cout<<endl;
 
   cout << "Elliptic curves with conductor a power of 11, from their known j-invariants" << endl;
@@ -75,18 +75,18 @@ int main(void)
     bigrational(bigint(-24729001))
   };
   vector<CurveRed> egr_11;
-  for (auto j: j11)
+  for (auto ji: j11)
     {
-      auto EE = egros_from_j(j, S11);
-      cout << EE.size() << " curves with j = " << j << ":";
-      for ( auto E: EE) cout << " " << (Curve)E;
+      auto EE = egros_from_j(ji, S11);
+      cout << EE.size() << " curves with j = " << ji << ":";
+      for ( auto E1: EE) cout << " " << (Curve)E1;
       cout << endl;
       egr_11.insert(egr_11.end(), EE.cbegin(), EE.cend());
     }
   std::sort(egr_11.begin(), egr_11.end());
   cout<<"Sorted list:\n";
-  for (auto E: egr_11)
-    cout << "conductor " << E.conductor() << "\t" << (Curve)E << "\tj = " << j_invariant(E) << endl;
+  for (auto E1: egr_11)
+    cout << "conductor " << E1.conductor() << "\t" << (Curve)E1 << "\tj = " << j_invariant(E1) << endl;
   cout << endl;
 
   vector<bigint> N_j_0, N_j_1728;
@@ -100,27 +100,27 @@ int main(void)
         {
           N_j_0.push_back(N);
           auto EE = egros_from_j_0(S);
-          for (auto E: EE)
-            if (E.conductor()==N)
-              E_j_0.push_back(E);
+          for (auto E1: EE)
+            if (E1.conductor()==N)
+              E_j_0.push_back(E1);
         }
       if (is_N_possible_j_1728(N, S))
         {
           N_j_1728.push_back(N);
           auto EE = egros_from_j_1728(S);
-          for (auto E: EE)
-            if (E.conductor()==N)
-              E_j_1728.push_back(E);
+          for (auto E1: EE)
+            if (E1.conductor()==N)
+              E_j_1728.push_back(E1);
         }
     }
   cout << "Possible conductors <= 100 of curves with j=0:    " << N_j_0 << endl;
   cout << "Actual conductors and curves:\n";
-  for (auto E: E_j_0)
-    cout << E.conductor() << "\t" << (Curve)E << endl;
+  for (auto E1: E_j_0)
+    cout << E1.conductor() << "\t" << (Curve)E1 << endl;
   cout << "Possible conductors < 100 of curves with j=1728: " << N_j_1728 << endl;
   cout << "Actual conductors and curves:\n";
-  for (auto E: E_j_1728)
-    cout << E.conductor() << "\t" << (Curve)E << endl;
+  for (auto E1: E_j_1728)
+    cout << E1.conductor() << "\t" << (Curve)E1 << endl;
 
   return 0;
 }
