@@ -58,14 +58,22 @@ typedef struct
     hlimb_t * entries;
     slong r;
     slong c;
+#if (__FLINT_VERSION==3)&&(__FLINT_VERSION_MINOR<3)
     hlimb_t ** rows;
+#else
+    slong stride;
+#endif
     nmod_t mod;
 }
 hmod_mat_struct;
 
 typedef hmod_mat_struct hmod_mat_t[1];
 
+#if (__FLINT_VERSION==3)&&(__FLINT_VERSION_MINOR<3)
 #define hmod_mat_entry(mat,i,j) ((mat)->rows[(i)][(j)])
+#else
+#define hmod_mat_entry nmod_mat_entry
+#endif
 #define hmod_mat_nrows(mat) ((mat)->r)
 #define hmod_mat_ncols(mat) ((mat)->c)
 

@@ -1602,7 +1602,9 @@ hmod_mat_clear(hmod_mat_t mat)
   if (mat->entries)
     {
       flint_free(mat->entries);
+#if (__FLINT_VERSION==3)&&(__FLINT_VERSION_MINOR<3)
       flint_free(mat->rows);
+#endif
     }
 }
 
