@@ -7,7 +7,7 @@ AC_PREREQ([2.69])
 # The version is the concatenation of 'v' and the year, month, date: vyyyymmdd
 # To access this as a string or integer triple, see libsrc/eclib/version.h
 
-AC_INIT([eclib], [20250616], [john.cremona@gmail.com])
+AC_INIT([eclib], [20250627], [john.cremona@gmail.com])
 
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
@@ -56,7 +56,7 @@ LT_INIT
 
 # Checks for system features and libraries, via macros defined in m4/ directory
 
-AX_CXX_COMPILE_STDCXX([14],,mandatory)
+AX_CXX_COMPILE_STDCXX([17],,mandatory)
 
 # NB At present if configure finds boost on your system then it WILL
 # define ECLIB_MULTITHREAD which you may not want, if you have not put
