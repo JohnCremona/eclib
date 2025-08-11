@@ -203,7 +203,7 @@ inline bigint xmodmul(const bigint& a, const bigint& b, const bigint& m) {return
 
 #if(1)
 const int DEFAULT_MODULUS = BIGPRIME;
-// table of inversers of residues<20 modulo BIGPRIME:
+// table of inverses of residues<20 modulo BIGPRIME:
 static int table_invs[20] = {0,1, 536870895, 357913930, 805306342, 214748358, 178956965, 920350105, 402653171, 477218573, 107374179, 97612890, 626349377, 330382089, 997045947, 71582786, 738197480, 442128972, 775480181, 226050903};
 #else
 const int DEFAULT_MODULUS = 1073741783; //BIGPRIME-6;

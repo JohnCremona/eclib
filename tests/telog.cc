@@ -113,7 +113,7 @@ int main(){
   /*
   // a curve (7998K1) with rank 1 and 5-torsion:
 
-  Curve c(1,0,0,5355560,7740216896);
+  Curve c(1,0,0,5355560,to_ZZ("7740216896");
   Curvedata cd(c,1);
 
   Point P0(cd, bigint(-248),bigint(80104)) ;
