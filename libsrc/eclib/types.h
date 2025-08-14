@@ -49,14 +49,14 @@ typedef smat_l smat;
 typedef smat_l_elim smat_elim;
 #else
 #if (SCALAR_OPTION==3) // scalar is bigint
-typedef long scalar;
-typedef vec_l vec;
-typedef mat_l mat;
-typedef subspace_l subspace;
-typedef ssubspace_l ssubspace;
-typedef svec_l svec;
-typedef smat_l smat;
-typedef smat_l_elim smat_elim;
+typedef bigint scalar;
+typedef vec_m vec;
+typedef mat_m mat;
+typedef subspace_m subspace;
+typedef ssubspace_m ssubspace;
+typedef svec_m svec;
+typedef smat_m smat;
+typedef smat_m_elim smat_elim;
 #endif
 #endif
 #endif

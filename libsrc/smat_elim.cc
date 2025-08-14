@@ -383,7 +383,7 @@ smat smat_elim::kernel( vec_i& pc, vec_i& npc)
 // New version of kernel, not using back_sub() but constructing the
 // kernel directly fro the "upper triangular" result of elim().
 
-#define TRACE_ELIM 0
+//#define TRACE_ELIM 1
 
 smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
 {
@@ -457,7 +457,7 @@ smat smat_elim::new_kernel( vec_i& pc, vec_i& npc)
   dense = 0;
   for (i=0; i<rank; i++)
     for (j=0; j<nullity; j++)
-      if (elem(elim_row[i]+1, npc[j+1]))
+      if (elem(elim_row[i]+1, npc[j+1]) !=0)
         dense += 1;
   dense /= (rank*nullity);
   cout<<"density of block = "<<dense<<endl;
@@ -699,11 +699,12 @@ smat smat_elim::old_kernel( vec_i& pc, vec_i& npc)
       axv = aux_val;
       *pos++ = count;
 
-      size_t nbytes = count*sizeof(int);
-      memmove(pos,axp,nbytes);
-      nbytes = count*sizeof(scalar);
-      memmove(vali,axv,nbytes);
-      // for( n = 0; n < count; n++ ) { *pos++ = *axp++; *vali++ = *axv++; }
+      // Using memmove only works when scalar is int or long, not bigint
+      for( n = 0; n < count; n++ ) { *pos++ = *axp++; *vali++ = *axv++; }
+      // size_t nbytes = count*sizeof(int);
+      // memmove(pos,axp,nbytes);
+      // nbytes = count*sizeof(scalar);
+      // memmove(vali,axv,nbytes);
     }
   delete[]new_row;
   delete[]aux_val;

@@ -79,8 +79,10 @@ public:
   void output(ostream&s=cout) const;
   void output_pari(ostream&s=cout)   const;
   void output_pretty(ostream&s=cout)   const;
-  void dump_to_file(string filename) const; // binary output
-  void read_from_file(string filename);     // binary input
+  // The binary file input/output only works for scalar=int or long, not
+  // bigint, and is not used anyehere else
+  // void dump_to_file(string filename) const; // binary output
+  // void read_from_file(string filename);     // binary input
   void reduce_mod_p(const scalar& p);
 
   static mat scalar_matrix(long n, const scalar& a);

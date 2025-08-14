@@ -997,6 +997,49 @@ int liftmats_chinese(const smat& m1, scalar pr1, const smat& m2, scalar pr2,
   return 1;
 }
 
+float ran0( int& idum );
+
+void random_fill_in( smat& sm, int max, int seed )
+{
+  int *intpos = new int [sm.ncols()];
+  scalar *scalarval = new scalar [sm.ncols()];
+  for( int r = 0; r < sm.nrows(); r++ )
+    {
+      int *lp = intpos; scalar *lv =scalarval;
+      for( int i = 0; i < sm.ncols(); i++ ) { *lp++ = 0; *lv++ = 0; }
+      int count = 0;
+      int N = int( (max+1) * ran0( seed ) ); //number of entries in row i
+      if( N == (max+1) ) N--;  // could occur !
+      for( int s = 0; s < N; s++ )
+	{
+	  int v = int( 20 * ran0( seed ) ) - 10; // value between -10 & 9
+	  if( v != 0 ) 
+	    {  
+	      int p = int( sm.ncols() * ran0( seed ) ); //position in matrix
+	      if( p == sm.ncols() ) p--;
+	      if( intpos[ p ] == 0 ) count++;
+	      intpos[ p ] = 1;
+	      scalarval[ p ] = v;
+	    }
+	}
+      delete[] sm.col[r]; delete[] sm.val[r];
+      int *ptr = sm.col[r] = new int [ count + 1 ];
+      scalar *vptr = sm.val[r] = new scalar [ count ];
+      *ptr++ = count;
+      for( int l = 0; l < sm.ncols(); l++ )
+	{
+	  if( intpos[l] != 0 ) 
+	    {
+	      *ptr++ = l+1;
+	      *vptr++ = scalarval[ l ];
+	    }
+	}
+    }
+  delete[] intpos;
+  delete[] scalarval;
+}
+
+
 #if FLINT
 
 #include "eclib/flinterface.h"

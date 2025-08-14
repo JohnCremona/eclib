@@ -318,24 +318,26 @@ void mat::output_pretty(ostream& s) const
     }
 }
 
-void mat::dump_to_file(string filename) const
-{
-  ofstream fout(filename.c_str(),ofstream::binary);
-  fout.write((char*)&nro,sizeof(nro));
-  fout.write((char*)&nco,sizeof(nco));
-  fout.write((char*)entries.data(),nro*nco*sizeof(scalar));
-  fout.close();
-}
+// The binary file input/output only works for scalar=int or long, not
+// bigint, and is not used anyehere else
+// void mat::dump_to_file(string filename) const
+// {
+//   ofstream fout(filename.c_str(),ofstream::binary);
+//   fout.write((char*)&nro,sizeof(nro));
+//   fout.write((char*)&nco,sizeof(nco));
+//   fout.write((char*)entries.data(),nro*nco*sizeof(scalar));
+//   fout.close();
+// }
 
-void mat::read_from_file(string filename)
-{
-  ifstream fin(filename.c_str());
-  fin.read((char*)&nro,sizeof(nro));
-  fin.read((char*)&nco,sizeof(nco));
-  entries.resize(nro*nco);
-  fin.read((char*)entries.data(),nro*nco*sizeof(scalar));
-  fin.close();
-}
+// void mat::read_from_file(string filename)
+// {
+//   ifstream fin(filename.c_str());
+//   fin.read((char*)&nro,sizeof(nro));
+//   fin.read((char*)&nco,sizeof(nco));
+//   entries.resize(nro*nco);
+//   fin.read((char*)entries.data(),nro*nco*sizeof(scalar));
+//   fin.close();
+// }
 
 istream& operator>>(istream& s, mat& m) // m cannot be const
 {

@@ -27,6 +27,8 @@ int main(void)
 {
  cout << "Test run of vector package.\n\n"; 
  int i,j,k,n;
+ scalar one(1), two(2), three(3);
+
  cout << "iota(10) = " << vec::iota(10) << endl;
  cout << "Enter n : "; cin >> n;
  vec v;
@@ -50,9 +52,9 @@ int main(void)
  cout << "w==v: " << (w==v) << endl;
  cout << "w!=v: " << (w!=v) << endl;
  cout << "Enter i : "; cin >> i;
- w*=2;
+ w*=two;
  cout << "After w*=2, w = " << w << endl;
- cout << "3*v = " << (3*v) << endl;
+ cout << "3*v = " << (three*v) << endl;
  cout << "Now v = " << v << endl;
  cout << "v+w = " << v+w << endl;
  cout << "Now v = " << v << endl;
@@ -60,7 +62,7 @@ int main(void)
  cout << "Now v = " << v << endl;
  cout << "v*w = " << v*w << endl;
  cout << "Now v = " << v << endl;
- cout << "w/2 = " << w/2 << endl;
+ cout << "w/2 = " << w/two << endl;
  cout << "Now w = " << w << endl;
  cout << "-v  = " << -v  << endl;
  cout << "+v  = " << +v  << endl;
@@ -71,13 +73,14 @@ int main(void)
  for (i=1; i<=n; i++) cout << "v[" << i << "] = " << v[i] << endl;
 
  cout << "Member test: Enter a test number: " ;
- cin >> i; cout << i;
- if (member(i,v)) cout << " IS "; else cout << " IS NOT ";
+ scalar vi;
+ cin >> vi; cout << vi;
+ if (member(vi,v)) cout << " IS "; else cout << " IS NOT ";
  cout << "a member of v." << endl;
 
  cout << "Subscript test\n";
  cout << "Enter length of subscript vec:";
- int m; cin >> m; vec index=vec(m);
+ int m; cin >> m; vec_i index(m);
  cout << "Enter subscript vector:";
  cin >> index;
  vec vv = v[index];

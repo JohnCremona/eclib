@@ -56,31 +56,34 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   cout << endl << "Enter number of times to repeat kernel tests: ";
   cin >> ntimes;
   {
-    times=ntimes; subspace ker; 
+    subspace ker;
+    times=ntimes;
     while(times--) ker = kernel(m);
     mat kerbasis = basis(ker);
     cout << "kernel(m) has basis\n" << kerbasis;
     vec_i kerpivs = pivots(ker);
     cout << "pivots: " << kerpivs << "\n";
-    int kerdenom = denom(ker);
+    scalar kerdenom = denom(ker);
     cout << "denom:  " << kerdenom  << "\n";
   }
-  cout << "Now compute kernel mod p, p = " << DEFAULT_MODULUS << endl;
+  scalar p(DEFAULT_MODULUS);
+  cout << "Now compute kernel mod p, p = " << p << endl;
   {
-    times=ntimes; subspace ker; 
-    while(times--) ker = pkernel(m,DEFAULT_MODULUS);
+    times=ntimes; subspace ker;
+    while(times--) ker = pkernel(m, p);
     mat kerbasis = basis(ker);
     cout << "kernel(m) has basis\n" << kerbasis;
     vec_i kerpivs = pivots(ker);
     cout << "pivots: " << kerpivs << "\n";
-    times=ntimes; subspace oldker; 
-    while(times--) oldker = oldpkernel(m,DEFAULT_MODULUS);
+    subspace oldker;
+    times=ntimes;
+    while(times--) oldker = oldpkernel(m, p);
     if((kerbasis!=basis(oldker))||(kerpivs!=pivots(oldker)))
       {
 	cout << "!!! Differs from old version !!!" << endl;
 	cout << "Old basis = \n"<<basis(oldker)<<endl;
       }
-    else 
+    else
       cout << "!!! Agrees  with old version !!!" << endl;
   }
 /*
@@ -91,7 +94,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     cout << "denom:  " << denom(im)  << "\n";
   }
   {
-    scalar lambda;		// 
+    scalar lambda;
     cout << "Enter lambda: "; cin >> lambda;
     subspace elambda = eigenspace(m,lambda);
     cout << "eigenspace for lambda has basis\n" << basis(elambda);

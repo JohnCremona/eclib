@@ -105,7 +105,8 @@ public:
      friend int liftmat(const smat& mm, scalar pr, smat& m, scalar& dd);
      friend int liftmats_chinese(const smat& mm1, scalar pr1, const smat& mm2, scalar pr2,
                                   smat& m, scalar& dd);
- };
+     friend void random_fill_in( smat& sm, int max, int seed );
+};
 
 // Declaration of non-friend functions
 

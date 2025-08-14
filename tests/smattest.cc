@@ -25,54 +25,12 @@
 
 #include <sys/times.h>
 #include <eclib/arith.h>
-float ran0( long& idum ); 
-float ran0( int& idum ); 
 
 #include <eclib/types.h>
 
 const scalar modulus(PRIME30); // 1073741789 = max p s.t. p < 2^30
 
 long starttime,stoptime;
-
-void random_fill_in( smat& sm, int max, scalar seed )
-{
-  int *intpos = new int [sm.nco];
-  scalar *scalarval = new scalar [sm.nco];
-  for( int r = 0; r < sm.nro; r++ )
-    {
-      int *lp = intpos; scalar *lv =scalarval;
-      for( int i = 0; i < sm.nco; i++ ) { *lp++ = 0; *lv++ = 0; }
-      int count = 0;
-      int N = int( (max+1) * ran0( seed ) ); //number of entries in row i
-      if( N == (max+1) ) N--;  // could occur !
-      for( int s = 0; s < N; s++ )
-	{
-	  int v = int( 20 * ran0( seed ) ) - 10; // value between -10 & 9
-	  if( v != 0 ) 
-	    {  
-	      int p = int( sm.nco * ran0( seed ) ); //position in matrix
-	      if( p == sm.nco ) p--;
-	      if( intpos[ p ] == 0 ) count++;
-	      intpos[ p ] = 1;
-	      scalarval[ p ] = v;
-	    }
-	}
-      delete[] sm.col[r]; delete[] sm.val[r];
-      int *ptr = sm.col[r] = new int [ count + 1 ];
-      scalar *vptr = sm.val[r] = new scalar [ count ];
-      *ptr++ = count;
-      for( int l = 0; l < sm.nco; l++ )
-	{
-	  if( intpos[l] != 0 ) 
-	    {
-	      *ptr++ = l+1;
-	      *vptr++ = scalarval[ l ];
-	    }
-	}
-    }
-  delete[] intpos;
-  delete[] scalarval;
-}
 
 int main(void)
 { 
@@ -86,7 +44,9 @@ int main(void)
   cout << "enter 7 to find eigenspaces \n" << "enter> "<<endl;
   int t,i,d;
   cin >> t;
-  
+  scalar one(1), two(2), three(3);
+  int seed(10);
+
   while( t != 0 ) {
     if( t == 1 )
       {
@@ -135,7 +95,7 @@ int main(void)
 	// cout << " for each row, enter first value then position for each of the entries" << endl;
 	// cout << " for each row terminate input by typing zero as a value." << endl;
 	// cin >> T;
-        int max=10, seed = 10;
+        int max = 10;
         random_fill_in( T, max, seed );
 	cout << endl << "smat = " << endl << T;
 	cout << "smat as a matrix = "<< endl << T.as_mat( ) << endl;
@@ -180,13 +140,13 @@ int main(void)
 	cout << "Enter size of smat A row,col: "<< endl; 
 	cin >> row >> col;
 	smat A( row, col );
-        random_fill_in( A, 10, 10 );
+        random_fill_in( A, 10, seed );
 	// cout << "Enter entries of A: "<< endl; 
 	// cin >> A;
 	cout << "Enter size of smat B: row,col: "<< endl; 
 	cin >> row >> col;
 	smat B( row, col );
-        random_fill_in( B, 10, 10 );
+        random_fill_in( B, 10, seed );
 	// cout << "Enter entries of B: "<< endl; 
 	// cin >> B;
 	cout << "matrix A" << endl << A << endl;
@@ -206,10 +166,10 @@ int main(void)
 	B-=A;
 	cout << "after B-=A, A = " << A <<endl <<"and B = "<< B<<endl;
 	cout << "Enter any number "; cin >> i;
-	B*=2;
+	B*=two;
 	cout << "after B*=2, B = " << B << endl;
 	cout << "Enter any number "; cin >> i;
-	B/=2;
+	B/=two;
 	cout << "after B/=2, B = " << B << endl;
 	cout << "Enter any number "; cin >> i;
 	cout << "A+B=" << (A+B) << endl;
@@ -221,7 +181,7 @@ int main(void)
 
 	cout << "test addition of scalar to smat" << endl;
 	B = A;
-	scalar sc = 17;
+	scalar sc(17);
 	B += sc;
 	cout<<"After adding 17 to A it is now:\n"<<B<<endl;
 	B -= sc;
@@ -246,7 +206,7 @@ int main(void)
 	cout << "enter smat: first row, col and then the rows" << endl;
 	cin >> row >> col;
 	smat sm(row,col);
-        random_fill_in( sm, 10, 10 );
+        random_fill_in( sm, 10, seed );
 	// cin >> sm;
 	cout << " now enter matrix: first row, col and then the entries"<<endl;
 	cin >> row >> col;
@@ -263,7 +223,7 @@ int main(void)
 	  cout<<"Wrong! Correct is \n"<<sm_as_m*m<<endl;
 	
 	A = smat(100,100);
-        random_fill_in( A, 10, 10 );
+        random_fill_in( A, 10, seed );
 	cout<<"Testing transpose function"<<endl;
 	// cout << "A = "<<A<<" = "<<A.as_mat()<<endl;
 	smat At = transpose(A);
@@ -300,9 +260,9 @@ int main(void)
 	  mat m(row,col);
 	  for( int r=1; r<=row; r++ ) {
 	    for( int c = 1; c<=5 && r+c < col; c++ ) {
-	      m1.set( r, r+c,1 );
-	      m2.set( r, r+c-1, 2 );
-	      m3.set( r, r+c+1, -1 );
+	      m1.set( r, r+c, one );
+	      m2.set( r, r+c-1, two );
+	      m3.set( r, r+c+1, -one );
 	    }
 	  }
 	  smat sm1(m1); smat sm2 (m2); smat sm3 (m3); smat sm(row,col);
@@ -337,8 +297,8 @@ int main(void)
 	  for(j = 0; j < loop; j++) 
 	    { 
 	      sm += sm1;
-	      sm -= 2*sm2; 
-	      sm += 3*sm3; 
+	      sm -= two*sm2; 
+	      sm += three*sm3; 
 	      if(see>1) cout<<sm<<endl; else cout<<"."<<flush;
 	    } 		  
 	  stoptime = clock();
@@ -359,7 +319,7 @@ int main(void)
 	    cin >> nro; cin >> nc;
 	    smat sm(nro,nc);
 	    cout << "enter matrix as an smat" << endl;
-	    int max=10, seed = 10;
+	    int max=10;
 	    random_fill_in( sm, max, seed );
 	    //	    cin >> sm;
 	    cout << "display matrices? ( 0 = no; 1 = yes )" << endl;
