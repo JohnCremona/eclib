@@ -360,7 +360,7 @@ vec lift(const vec& v)
   else
     cout << "Unable to lift eigenvector from mod " << MODULUS << endl;
 #else
-  makeprimitive(b);
+  make_primitive(b);
 #endif
 #ifdef MULTI
   scalar n=0; // dummy variable to gt the right type in next line

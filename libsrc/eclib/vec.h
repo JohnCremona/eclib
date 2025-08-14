@@ -102,7 +102,7 @@ vec addmodp(const vec&, const vec&, const scalar&);
 vec operator-(const vec&, const vec&);
 inline vec operator*(const scalar&, const vec&);       // componentwise
 vec operator/(const vec&, const scalar&);       // componentwise
-void makeprimitive(vec& v);
+void make_primitive(vec& v);
 void elim(const vec& a, vec& b, long pos);
 void elim1(const vec& a, vec& b, long pos);
 void elim2(const vec& a, vec& b, long pos, const scalar& lastpivot);
@@ -140,14 +140,14 @@ inline vec operator*(const scalar& scal, const vec& v)
 inline vec operator/(const vec& v, const scalar& scal)
 { vec w(v); w/=scal; return w;}
 
-inline void makeprimitive(vec& v)
+inline void make_primitive(vec& v)
 { scalar g=content(v); if (g>1) v/=g;}
 
 inline void elim(const vec& a, vec& b, long pos)
 { (b*=a[pos])-=(b[pos]*a);}
 
 inline void elim1(const vec& a, vec& b, long pos)
-{ (b*=a[pos])-=(b[pos]*a); makeprimitive(b);}
+{ (b*=a[pos])-=(b[pos]*a); make_primitive(b);}
 
 inline void elim2(const vec& a, vec& b, long pos, const scalar& lastpivot)
 { ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}

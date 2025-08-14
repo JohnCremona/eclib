@@ -163,7 +163,7 @@ void mat::clearrow(long r)
   divrow(r, row_content(r));
 }
 
-void mat::makeprimitive()
+void mat::make_primitive()
 {
   scalar g = content();
   if (is_zero(g)||is_one(g)) return;

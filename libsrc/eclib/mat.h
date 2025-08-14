@@ -63,7 +63,7 @@ public:
   scalar content() const;
   scalar row_content(long r) const;
   void clearrow(long r);
-  void makeprimitive();
+  void make_primitive();
   void operator+=(const mat&);
   void operator-=(const mat&);
   void operator*=(const scalar&);

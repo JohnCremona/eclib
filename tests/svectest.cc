@@ -106,8 +106,8 @@ int main(void)
  cout << "Slice = " << v.slice(j,k) << endl;
  cout << "Now v = " << v << endl;
  cout << "w = " << w << "; content(w) = " << content(w) << endl;
- makeprimitive(w);
- cout << "After makeprimitive(w), w = " << w << endl;
+ make_primitive(w);
+ cout << "After make_primitive(w), w = " << w << endl;
 
  vec u(n);
  cout << "u = "<< u << endl;
