@@ -97,10 +97,28 @@ vec_i to_vec_i(const vec_m& v)
   return vec_i(w);
 }
 
+vec_i to_vec_i(const vec_l& v)
+{
+  const vector<long> & vi = v.get_entries();
+  auto toint = [](const long& a) {return int(a);};
+  vector<int> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), toint);
+  return vec_i(w);
+}
+
 vec_l to_vec_l(const vec_m& v)
 {
   const vector<bigint> & vi = v.get_entries();
   auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
+  vector<long> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), tolong);
+  return vec_l(w);
+}
+
+vec_l to_vec_l(const vec_i& v)
+{
+  const vector<int> & vi = v.get_entries();
+  auto tolong = [](const int& a) {return long(a);};
   vector<long> w(vi.size());
   std::transform(vi.begin(), vi.end(), w.begin(), tolong);
   return vec_l(w);

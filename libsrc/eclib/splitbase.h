@@ -53,11 +53,11 @@ class splitter_base {
 public: 
   virtual mat opmat(int,int,int=0) = 0;
   virtual vec opmat_col(int i, int j, int verb=0) = 0;
-  virtual mat opmat_cols(int i, const vec& jlist, int verb=0) = 0;
+  virtual mat opmat_cols(int i, const vec_i& jlist, int verb=0) = 0;
   virtual mat opmat_restricted(int,const subspace& s, int,int=0) = 0;
   virtual smat s_opmat(int,int,int=0) = 0;
   virtual svec s_opmat_col(int i, int j, int verb=0) = 0;
-  virtual smat s_opmat_cols(int i, const vec& jlist, int verb=0) = 0;
+  virtual smat s_opmat_cols(int i, const vec_i& jlist, int verb=0) = 0;
   virtual smat s_opmat_restricted(int,const ssubspace& s, int, int=0) = 0;
   virtual long matdim(void) = 0;
   virtual scalar matden(void) = 0;

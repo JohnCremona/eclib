@@ -81,39 +81,39 @@ int xsqrt(bigfloat a, bigfloat &b)
 
 vector<long> rank1::qeps(const quartic& q, int x2)
 {
-  vector<long> vec(num_aux);  // position 0 is not used
-  long i; vec[0]=0;
+  vector<long> v(num_aux);  // position 0 is not used
+  long i; v[0]=0;
   for(i=1; i<num_aux; i++)
     {
       long a = posmod(q.geta(),auxs[i]);
       long H = posmod(q.getH(),auxs[i]);
       if(x2) H=posmod(hscalemod[i]*H,auxs[i]);
-      vec[i] = flags[i][a][H];
+      v[i] = flags[i][a][H];
     }
-  return vec;
+  return v;
 }
 
-void rank1::show_eps_vec(const vector<long>& vec)
+void rank1::show_eps_vec(const vector<long>& v)
 {
   long i;
   cout<<"(";
   for(i=1; i<num_aux; i++) {
     if(i>1) cout<<":";
     if(aux_types[i]==1)
-      switch(vec[i]) {
+      switch(v[i]) {
       case 15: cout<<"0"; break;
       case  5: cout<<"1"; break;
       default: cout<<"?";
     }
     else
-      switch(vec[i]) {
+      switch(v[i]) {
       case 15: cout<<"00"; break;
       case  5: cout<<"01"; break;
       case  3: cout<<"10"; break;
       case  1: cout<<"11"; break;
       default: cout<<"??";
     }
-    //    cout<<"("<<vec[i]<<")";
+    //    cout<<"("<<v[i]<<")";
   }
   cout<<")";
 }
