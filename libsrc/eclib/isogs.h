@@ -45,7 +45,7 @@ int semistable(CurveRed& CR);
 vector<long> getelllist(CurveRed& CR); 
 // returns list of possible primes l ("ell") for which CR might have an l-isogeny.
 
-#define MAXNCURVES 26    // max number of curves in an isogeny class.
+#define MAXNCURVES 8    // max number of curves in an isogeny class.
 
 class IsogenyClass {
 private: 

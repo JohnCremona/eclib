@@ -28,10 +28,6 @@
 #include <string>
 #include <eclib/templates.h>
 
-
-#define USE_NEW_CODE_LETTERS
-
-
 int booknumber0(int level, int form);  // permutes numbers starting from 0
 
 const char alphabet[] = "abcdefghijklmnopqrstuvwxyz";
@@ -49,11 +45,9 @@ int codeletter_to_int(string code);  // i counts from 0!
 // Function to convert integer (from 0) to new code
 
 string new_codeletter(int i);  // i counts from 0!
-
-#ifdef USE_NEW_CODE_LETTERS
 inline string codeletter(int i) {return new_codeletter(i);}
-#else
-inline string codeletter(int i) {return old_codeletter(i);}
-#endif
+
+// old version, no longer used
+//inline string codeletter(int i) {return old_codeletter(i);}
 
 #endif

@@ -188,11 +188,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
       if((!atype)&&(!qlistbflag[i])) continue;
       if(traceequiv)
 	cout << "\nTesting equiv with number " << ab<< i+1 << endl;
-#ifdef NEW_EQUIV
       newone = ! new_equiv(thisq,qlist[i],traceequiv);
-#else
-      newone = !     equiv(thisq,qlist[i],dlist,traceequiv);
-#endif
       if (!newone) oldnumber=i+1;
     }
 
@@ -528,9 +524,6 @@ void rank1::getquartics()
 //   cout<<"\nplist0 = "<<plist0<<", p23="<<p23<<endl;
 //   cout<<"\tplist = "<<plist<<endl;
 
-#ifndef NEW_EQUIV
-  dlist = sqdivs(disc,plist);
-#endif
   threediv = div(3,ii);
 
   aux_init();
@@ -593,9 +586,6 @@ void rank1::getquartics()
       extra2=1;  ii*= 16;  jj*= 64;  disc*= 4096; xii*=16; xjj*=64;
       tr_u*=2; tr_r*=4; tr_s*=2; tr_t*=8;
       Imod2=Jmod2=0;
-#ifndef NEW_EQUIV
-      dlist = sqdivs(disc,plist);
-#endif
       bigfloat four = to_bigfloat(4);
       cphi[0]*=four; cphi[1]*=four; cphi[2]*=four;
       getquartics1();

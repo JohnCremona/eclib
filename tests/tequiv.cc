@@ -69,17 +69,10 @@ int main()
       getquartic(glist[i], verb);
       cout<<(i+1)<<": "<<glist[i];
       if(verb) cout<<endl;
-#ifndef NEW_EQUIV
-      if(i==0) dlist = sqdivs(glist[i].getdisc());
-#endif
       int eq=0;
       for(j=0; (j<i)&&(!eq); j++)
 	{
-#ifdef NEW_EQUIV
 	  eq = new_equiv(glist[i],glist[j],verb);
-#else
-	  eq = equiv(glist[i],glist[j],dlist,verb);
-#endif
 	  if(eq) cout<<" equivalent to #"<<(j+1)<<endl;
 	}
       if(!eq) cout<<" new"<<endl;

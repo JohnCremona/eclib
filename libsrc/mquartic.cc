@@ -302,13 +302,11 @@ unsigned long quartic::set_equiv_code(const vector<long>& plist)
   cout << "Setting equiv_code for " << (*this) << "\n";
 #endif
   equiv_code=0;
-#ifdef NEW_EQUIV // else leave all codes 0, i.e. disable this test
   for(unsigned long i=0; i<plist.size(); i++)
     {
       int code = nrootsmod(plist[i]);
       equiv_code |= (code<<(2*i));
     }
-#endif
 #ifdef TEST_EQCODE
   cout << "Final code = " << equiv_code << "\n";
 #endif
