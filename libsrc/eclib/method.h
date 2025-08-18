@@ -41,36 +41,27 @@
 #define MODULAR   // Causes linear algebra to be done modulo global MODULUS
 #endif
 
-#if (METHOD==3)||(METHOD==4)
-#define MULTI
-#define SCALAR_OPTION 3
-#endif
-
-//The next two cause scalar, vector, matrix to be defined properly:
 #if (METHOD==0)||(METHOD==2)
 #define SCALAR_OPTION 1
 #endif
 #if (METHOD==5)||(METHOD==6)
 #define SCALAR_OPTION 2
 #endif
+#if (METHOD==3)||(METHOD==4)
+#define SCALAR_OPTION 3
+#endif
 
-#include <eclib/subspace.h>
+// types.h presets scalar, vec, mat, subspace, ssubspace, svec, smat, smat_elim
+// to be int/long/bigint and *_i/*_l/*_m according to SCALAR_OPTION
 #include "types.h"
 
-#ifdef MULTI
-typedef bigint SCALAR;
-typedef vec_m VEC;
-typedef mat_m MAT;
-typedef subspace_m SUBSP;
-#include <eclib/subspace.h>
+#if (SCALAR_OPTION==3)
 #define MODULUS to_ZZ("6074000003")
 #else
 #define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
-typedef scalar SCALAR;
-typedef vec VEC;
-typedef mat MAT;
-typedef subspace SUBSP;
 #endif
+
+#include <eclib/subspace.h>
 
 #ifdef MODULAR
 #define EIGENSPACE(a,b) peigenspace(a,b,MODULUS)

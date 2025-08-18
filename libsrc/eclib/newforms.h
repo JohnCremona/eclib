@@ -171,7 +171,7 @@ private:
   smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0)
   {return h1->s_opmat_restricted(i,s,d,v);}
   long matdim(void)  {return h1->dimension;}
-  long matden(void)  {return h1->denom1;}
+  scalar matden(void)  {return h1->denom1;}
   vector<long> eigrange(int i) {return h1->eigrange(i);}
   long dimoldpart(const vector<long> l);
 protected:

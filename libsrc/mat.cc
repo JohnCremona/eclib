@@ -1444,11 +1444,7 @@ mat ref_via_flint(const mat& M, vec_i& pcols, vec_i& npcols,
   long i, j, k;
 
 #ifdef TRACE_FLINT_RREF
-#if (SCALAR_OPTION==1)
-  cout << "In ref_via_flint(M) with M having "<<nr<<" rows and "<<nc<<" columns, using hmod_mat and modulus "<<pr<<"."<<endl;
-#else
-  cout << "In ref_via_flint(M) with M having "<<nr<<" rows and "<<nc<<" columns, using nmod_mat and modulus "<<pr<<"."<<endl;
-#endif
+  cout << "In ref_via_flint(M) with M having "<<nr<<" rows and "<<nc<<" columns, using mod_mat and modulus "<<pr<<"."<<endl;
   //  cout << "Size of  scalar = "<<8*sizeof(scalar)<<" bits"<<endl;
   //  cout << "Size of uscalar = "<<8*sizeof(uscalar)<<" bits"<<endl;
 #endif
@@ -1581,7 +1577,7 @@ double sparsity(const mat& m)
   return double(population(m))/m.entries.size();
 }
 
-#if (FLINT==1)&&(__FLINT_VERSION>2)&&(SCALAR_OPTION==1)
+#if (FLINT==1)&&(__FLINT_VERSION>2)&&defined(scalar_is_int)
 
 // Implementation of wrapper functions declared in flinterface.h
 // written by Fredrik Johansson
@@ -1590,22 +1586,22 @@ double sparsity(const mat& m)
 #include <flint/gr_mat.h>
 
 void
-hmod_mat_init(hmod_mat_t mat, slong rows, slong cols, hlimb_t n)
+hmod_mat_init(hmod_mat_t A, slong rows, slong cols, hlimb_t n)
 {
   gr_ctx_t ctx;
   gr_ctx_init_nmod32(ctx, n);
-  gr_mat_init((gr_mat_struct *) mat, rows, cols, ctx);
-  nmod_init(&(mat->mod), n);
+  gr_mat_init((gr_mat_struct *) A, rows, cols, ctx);
+  nmod_init(&(A->mod), n);
 }
 
 void
-hmod_mat_clear(hmod_mat_t mat)
+hmod_mat_clear(hmod_mat_t A)
 {
-  if (mat->entries)
+  if (A->entries)
     {
-      flint_free(mat->entries);
+      flint_free(A->entries);
 #if (__FLINT_VERSION==3)&&(__FLINT_VERSION_MINOR<3)
-      flint_free(mat->rows);
+      flint_free(A->rows);
 #endif
     }
 }
@@ -1619,12 +1615,12 @@ hmod_mat_mul(hmod_mat_t C, const hmod_mat_t A, const hmod_mat_t B)
 }
 
 slong
-hmod_mat_rref(hmod_mat_t mat)
+hmod_mat_rref(hmod_mat_t A)
 {
   slong rank;
   gr_ctx_t ctx;
-  gr_ctx_init_nmod32(ctx, mat->mod.n);
-  GR_MUST_SUCCEED(gr_mat_rref_lu(&rank, (gr_mat_struct *) mat, (gr_mat_struct *) mat, ctx));
+  gr_ctx_init_nmod32(ctx, A->mod.n);
+  GR_MUST_SUCCEED(gr_mat_rref_lu(&rank, (gr_mat_struct *) A, (gr_mat_struct *) A, ctx));
   return rank;
 }
 

@@ -31,7 +31,6 @@
 #undef subspace
 #undef svec
 #undef smat
-#undef SCALAR_OPTION
 
 #define scalar int
 #define vec vec_i
@@ -39,7 +38,6 @@
 #define subspace subspace_i
 #define svec svec_i
 #define smat smat_i
-#define SCALAR_OPTION 1
 
 #include "smat.cc"
 
@@ -49,7 +47,6 @@
 #undef subspace
 #undef svec
 #undef smat
-#undef SCALAR_OPTION
 
 #define scalar long
 #define vec vec_l
@@ -57,7 +54,6 @@
 #define subspace subspace_l
 #define svec svec_l
 #define smat smat_l
-#define SCALAR_OPTION 2
 
 #include "smat.cc"
 
@@ -67,7 +63,6 @@
 #undef subspace
 #undef svec
 #undef smat
-#undef SCALAR_OPTION
 
 #define scalar bigint
 #define vec vec_m
@@ -86,4 +81,5 @@
 #undef svec
 #undef smat
 #undef smat_elim
+
 

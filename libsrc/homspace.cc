@@ -679,7 +679,7 @@ vec homspace::calcop_col(string opname, long p, int j, const matop& mlist,
   return colj;
 }
 
-mat homspace::calcop_cols(string opname, long p, const vec& jlist, const matop& mlist,
+mat homspace::calcop_cols(string opname, long p, const vec_i& jlist, const matop& mlist,
                          int display) const
 {
   int i, d = dim(jlist);
@@ -704,7 +704,7 @@ svec homspace::s_calcop_col(string opname, long p, int j, const matop& mlist,
   return colj;
 }
 
-smat homspace::s_calcop_cols(string opname, long p, const vec& jlist, const matop& mlist,
+smat homspace::s_calcop_cols(string opname, long p, const vec_i& jlist, const matop& mlist,
                          int display) const
 {
   int i, d = dim(jlist);
@@ -765,7 +765,7 @@ vec homspace::heckeop_col(long p, int j, int display) const
  return calcop_col(name,p,j,matlist,display);
 }
 
-mat homspace::heckeop_cols(long p, const vec& jlist, int display) const
+mat homspace::heckeop_cols(long p, const vec_i& jlist, int display) const
 {
  matop matlist(p,modulus);
  string name = ((modulus%p) ? T_opname : W_opname);
@@ -779,7 +779,7 @@ svec homspace::s_heckeop_col(long p, int j, int display) const
  return s_calcop_col(name,p,j,matlist,display);
 }
 
-smat homspace::s_heckeop_cols(long p, const vec& jlist, int display) const
+smat homspace::s_heckeop_cols(long p, const vec_i& jlist, int display) const
 {
  matop matlist(p,modulus);
  string name = ((modulus%p) ? T_opname : W_opname);
@@ -861,7 +861,7 @@ vec homspace::conj_col(int j, int display) const
   return colj;
 }
 
-mat homspace::conj_cols(const vec& jlist, int display) const
+mat homspace::conj_cols(const vec_i& jlist, int display) const
 {
   int d = dim(jlist);
   mat m(d,rk);
@@ -883,7 +883,7 @@ svec homspace::s_conj_col(int j, int display) const
   return colj;
 }
 
-smat homspace::s_conj_cols(const vec& jlist, int display) const
+smat homspace::s_conj_cols(const vec_i& jlist, int display) const
 {
   int d = dim(jlist);
   smat m(d,rk);
@@ -1011,7 +1011,7 @@ vec homspace::opmat_col(int i, int j, int v)
   return ans;
 }
 
-mat homspace::opmat_cols(int i, const vec& jlist, int v)
+mat homspace::opmat_cols(int i, const vec_i& jlist, int v)
 {
   if(i==-1) return conj_cols(jlist,v);
   int d = dim(jlist);
@@ -1056,7 +1056,7 @@ svec homspace::s_opmat_col(int i, int j, int v)
   return ans;
 }
 
-smat homspace::s_opmat_cols(int i, const vec& jlist, int v)
+smat homspace::s_opmat_cols(int i, const vec_i& jlist, int v)
 {
   if(i==-1) return s_conj_cols(jlist,v);
   int d = dim(jlist);

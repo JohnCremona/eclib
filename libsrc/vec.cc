@@ -136,7 +136,7 @@ void vec::add_modp(long i, const scalar& x, const scalar& p)
   entries.at(i-1) = mod(entries.at(i-1)+x,p);
 }
 
-void vec::red_modp(const scalar& p)
+void vec::reduce_mod_p(const scalar& p)
 {
   if (p==0) return;
   std::transform(entries.begin(), entries.end(), entries.begin(),
@@ -242,8 +242,7 @@ vec express(const vec& v, const vec& v1, const vec& v2)
 // int lift(const vec& v, const scalar& pr, vec& w)
 // {
 //   w = v;
-//   w.red_modp(pr);
-  
+//   w.reduce_mod_p(pr);
 // }
 
 int lift(const vec& v, const scalar& pr, vec& ans)
@@ -271,9 +270,9 @@ int lift(const vec& v, const scalar& pr, vec& ans)
  // requiring that in the primitive rescaling, there is an entry
  // coprime to the first non-zero entry.
 
- ans = reduce_modp(v, pr); // starts as a copy, and will be rescaled in place
+ ans = reduce_mod_p(v, pr); // starts as a copy, and will be rescaled in place
 #ifdef DEBUG_LIFT
-  cout<<"After reduce_modp: v = "<<ans<<endl;
+  cout<<"After reduce_mod_p: v = "<<ans<<endl;
 #endif
  if (maxabs(ans) <= maxallowed)
    {

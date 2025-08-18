@@ -162,7 +162,7 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   // Set new depth
   child -> depth_ = depth + 1;
    
-  SCALAR eig2 = eig*denom1;
+  scalar eig2 = eig*denom1;
 
   ECLOG(1) << "Increasing depth to " << depth+1 << ", "
            << "trying eig = " << eig << "..."
@@ -273,7 +273,7 @@ void form_finder::make_basis( ff_data &data ) {
   }
 
   ssubspace *spm_rel; //, *spm_abs;
-  SCALAR eig = denom1;
+  scalar eig = denom1;
   smat subconjmat;            // only used when depth>0
   if( bigmats ) {
     ssubspace* s;
@@ -288,7 +288,7 @@ void form_finder::make_basis( ff_data &data ) {
   // C++11 loop over two variables (similar to python)
   // for( int b : { -1,+1 } ) { /* use b as -1 or +1 */ }
   for(long signeig=+1; signeig>-2; signeig-=2) {
-    SCALAR seig;
+    scalar seig;
            seig = eig;
 
     if(signeig<0) seig = -eig;
@@ -354,7 +354,7 @@ vec getbasis1(const ssubspace* s)
 vec lift(const vec& v)
 {
 #ifdef MODULAR
-  VEC b=v, bb;
+  vec b=v, bb;
   if(lift(b,MODULUS,bb))
     b = bb;
   else
@@ -362,7 +362,7 @@ vec lift(const vec& v)
 #else
   make_primitive(b);
 #endif
-#ifdef MULTI
+#if (SCALAR_OPTION==3)
   scalar n=0; // dummy variable to gt the right type in next line
   return b.shorten(n);
 #else

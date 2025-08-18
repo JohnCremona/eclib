@@ -49,7 +49,7 @@
 #include <flint/nmod_mat.h>
 #include <flint/profiler.h>
 
-#if (__FLINT_VERSION>2)&&(SCALAR_OPTION==1) // using 32-bit int scalars
+#if (__FLINT_VERSION>2)&&defined(scalar_is_int) // using 32-bit int scalars
 
 typedef unsigned int hlimb_t;
 
@@ -108,7 +108,7 @@ hmod_mat_rref(hmod_mat_t mat);
 #define mod_mat_rref hmod_mat_rref
 #define mod_mat_mul hmod_mat_mul
 
-#else // __FLINT_VERSION<3 or SCALAR_OPTION=2 -- using 64-bit int scalars
+#else // __FLINT_VERSION<3 or scalar_is_long -- using 64-bit int scalars
 
 #undef uscalar
 #undef mod_mat

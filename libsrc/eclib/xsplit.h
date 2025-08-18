@@ -73,7 +73,7 @@ class form_finder {
     int            plusflag, dual, bigmats, verbose, targetdim;
     int            gnfcount;                  // Global newform counter
     long           maxdepth, mindepth, dimen;
-    SCALAR         denom1;
+    scalar         denom1;
     vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists
     vector<vec>    gbplus, gbminus;           // Vector to hold all bplus/bminus
 

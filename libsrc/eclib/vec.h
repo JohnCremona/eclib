@@ -61,7 +61,7 @@ public:
   void set(long i, const scalar& x);                  // sets v[i]=x
   void add(long i, const scalar& x);                  // v[i]+=x
   void add_modp(long i, const scalar& x, const scalar& p);                  // v[i]+=x mod p
-  void red_modp(const scalar& p);              // reduce mod p in place
+  void reduce_mod_p(const scalar& p);              // reduce mod p in place
   scalar sub(long i) const;                    // same as v[i] (no ref)
   const vector<scalar> get_entries()const {return entries;}
   static vec iota(long n);              // (1,2,...,n)
@@ -126,9 +126,9 @@ inline vec operator+(const vec& v1, const vec& v2)
 inline vec addmodp(const vec& v1, const vec& v2, const scalar& pr)
 { vec w(v1); w.addmodp(v2,pr); return w;}
 
-inline vec reduce_modp(const vec& v, const scalar& p)
+inline vec reduce_mod_p(const vec& v, const scalar& p)
 {
-  vec w(v); w.red_modp(p); return w;
+  vec w(v); w.reduce_mod_p(p); return w;
 }
 
 inline vec operator-(const vec& v1, const vec& v2)

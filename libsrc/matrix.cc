@@ -27,13 +27,12 @@
 #undef vec
 #undef mat
 #undef subspace
-#undef SCALAR_OPTION
 
 #define scalar int
 #define vec vec_i
 #define mat mat_i
 #define subspace subspace_i
-#define SCALAR_OPTION 1
+#define scalar_is_int
 
 #include "mat.cc"
 
@@ -41,13 +40,12 @@
 #undef vec
 #undef mat
 #undef subspace
-#undef SCALAR_OPTION
+#undef scalar_is_int
 
 #define scalar long
 #define vec vec_l
 #define mat mat_l
 #define subspace subspace_l
-#define SCALAR_OPTION 2
 
 #include "mat.cc"
 
@@ -55,13 +53,11 @@
 #undef vec
 #undef mat
 #undef subspace
-#undef SCALAR_OPTION
 
 #define scalar bigint
 #define vec vec_m
 #define mat mat_m
 #define subspace subspace_m
-#define SCALAR_OPTION 0
 
 #include "mat.cc"
 
@@ -69,7 +65,9 @@
 #undef vec
 #undef mat
 #undef subspace
-#undef SCALAR_OPTION
+
+// The following functions are here and not in mat.cc since they are
+// not to be created in 3 versions
 
 mat_m to_mat_m(const mat_i& m)
 {
