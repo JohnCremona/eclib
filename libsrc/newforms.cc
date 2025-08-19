@@ -1045,7 +1045,7 @@ void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
       if(sign==+1)
         nf.bplus=b1;
       if(sign==-1)
-        nf.bminus=b1; // formfinder puts the basis vector in b1
+        nf.bminus=b1; // form_finder puts the basis vector in b1
       if(sign==0)
 	{
 	  nf.bplus=b1;

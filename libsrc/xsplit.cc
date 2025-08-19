@@ -510,7 +510,7 @@ void form_finder::find( ff_data &data ) {
   stringstream subeiglist_ss;
   std::copy(subeiglist.begin(),subeiglist.end(),ostream_iterator<long>(subeiglist_ss," "));
 
-  ECLOG(0) << "In formfinder, depth = " << depth 
+  ECLOG(0) << "In form_finder, depth = " << depth 
            << ", aplist = [ " << subeiglist_ss.str() << "];\t"
            << "dimsofar=" << subdim
            << ", dimold=" << dimold

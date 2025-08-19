@@ -123,3 +123,376 @@ vec_l to_vec_l(const vec_i& v)
   std::transform(vi.begin(), vi.end(), w.begin(), tolong);
   return vec_l(w);
 }
+
+///////////////////////////////////////////////////////////////////////////
+
+// Definitions of member operators and functions:
+
+template<class T>
+vecT<T>::vecT(long n)
+{
+  entries.resize(n, T(0));
+}
+
+template<class T>
+vecT<T>::vecT(const vector<T>& arr) :entries(arr) {}
+
+template<class T>
+vecT<T>::vecT(const vecT<T>& v) :entries(v.entries) {} // copy constructor
+
+template<class T>
+void vecT<T>::init(long n)     // (re)-initializes
+{
+  entries.resize(n, T(0));
+}
+
+template<class T>
+vecT<T>& vecT<T>::operator=(const vecT<T>& v)    // assignment
+{
+ if (this==&v) return *this;
+ entries = v.entries;
+ return *this;
+}
+
+template<class T>
+T& vecT<T>::operator[](long i)
+{
+  return entries.at(i-1);
+}
+
+template<class T>
+T vecT<T>::operator[](long i) const
+{
+  return entries.at(i-1);
+}
+
+template<class T>
+vecT<T>& vecT<T>::operator+=(const vecT<T>& w)
+{
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [](const T& wi, const T& vi) { return vi + wi;});
+  return *this;
+}
+
+template<class T>
+void vecT<T>::addmodp(const vecT<T>& w, const T& pr)
+{
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [pr](const T& wi, const T& vi) { return mod(wi+vi,pr);});
+}
+
+template<class T>
+vecT<T>& vecT<T>::operator-=(const vecT<T>& w)
+{
+  std::transform(w.entries.begin(), w.entries.end(), entries.begin(), entries.begin(),
+                 [](const T& wi, const T& vi) { return vi - wi;});
+  return *this;
+}
+
+template<class T>
+vecT<T>& vecT<T>::operator*=(const T& scal)
+{
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [scal](const T& vi) {return vi * scal;});
+  return *this;
+}
+
+template<class T>
+vecT<T>& vecT<T>::operator/=(const T& scal)
+{
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [scal](const T& vi) {return vi / scal;});
+  return *this;
+}
+
+template<class T>
+vecT<T> vecT<T>::slice(long first, long last) const       // returns subvector
+{
+ if (last==-1) {last=first; first=1;}
+ vecT<T> ans(last-first+1);
+ std::copy(entries.begin()+first-1, entries.begin()+last, ans.entries.begin());
+ return ans;
+}
+
+template<class T>
+vecT<T> vecT<T>::operator[](const vecT<int>& index) const  // returns v[index[j]]
+{
+  vecT<T> w(dim(index));
+  const vector<int>& vi = index.get_entries();
+  std::transform(vi.begin(), vi.end(), w.entries.begin(),
+                 [this](const int& i) {return entries.at(i-1);});
+  return w;
+}
+
+template<class T>
+vecT<T> vecT<T>::operator[](const vecT<long>& index) const  // returns v[index[j]]
+{
+  vecT<T> w(dim(index));
+  const vector<long>& vi = index.get_entries();
+  std::transform(vi.begin(), vi.end(), w.entries.begin(),
+                 [this](const int& i) {return entries.at(i-1);});
+  return w;
+}
+
+template<class T>
+T vecT<T>::sub(long i) const
+{
+  return entries.at(i-1);
+}
+
+template<class T>
+void vecT<T>::set(long i, const T& x)
+{
+  entries.at(i-1) = x;
+}
+
+template<class T>
+void vecT<T>::add(long i, const T& x)
+{
+  entries.at(i-1) += x;
+}
+
+template<class T>
+void vecT<T>::add_modp(long i, const T& x, const T& p)
+{
+  entries.at(i-1) = mod(entries.at(i-1)+x,p);
+}
+
+template<class T>
+void vecT<T>::reduce_mod_p(const T& p)
+{
+  if (p==0) return;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [p](const T& vi) {return mod(vi,p);});
+}
+
+template<class T>
+vecT<T> vecT<T>::iota(long n)
+{
+  vecT<T> v(n);
+  std::iota(v.entries.begin(), v.entries.end(), T(1));
+  return v;
+}
+
+// Definitions of non-member, friend operators and functions
+
+template<class T>
+T operator*(const vecT<T>& v, const vecT<T>& w)
+{
+  return std::inner_product(v.entries.begin(), v.entries.end(), w.entries.begin(), T(0));
+}
+
+template<class T>
+int operator==(const vecT<T>& v, const vecT<T>& w)
+{
+  return v.entries == w.entries;
+}
+
+template<class T>
+int trivial(const vecT<T>& v)
+{
+  return std::all_of(v.entries.begin(), v.entries.end(), [](const T& vi) {return vi==0;});
+}
+
+template<class T>
+ostream& operator<<(ostream& s, const vecT<T>& v)
+{
+  s << "[";
+  long i=0;
+  for ( const auto& vi : v.entries)
+    {
+      if(i++)
+        s<<",";
+      s<<vi;
+    }
+  s << "]";
+  return s;
+}
+
+template<class T>
+istream& operator>>(istream& s, vecT<T>& v)
+{
+  for (T& vi : v.entries)
+    s>>vi;
+  return s;
+}
+
+// Definition of non-friend operators and functions
+
+template<class T>
+T content(const vecT<T>& v)
+{
+  return v.entries.empty()?
+    T(1) :
+    std::accumulate(v.entries.begin(), v.entries.end(), T(0),
+                    [](const T& x, const T& y) {return gcd(x,y);});
+}
+
+template<class T>
+T maxabs(const vecT<T>& v)
+{
+  return v.entries.empty()?
+    T(0) :
+    std::accumulate(v.entries.begin(), v.entries.end(), T(0),
+                    [](const T& x, const T& y) {return max(x,abs(y));});
+}
+
+template<class T>
+void swapvec(vecT<T>& v, vecT<T>& w)
+{
+  std::swap(v.entries, w.entries);
+}
+
+template<class T>
+int member(const T& a, const vecT<T>& v)
+{
+  return std::find(v.entries.begin(), v.entries.end(), a) != v.entries.end();
+}
+
+template<class T>
+vecT<T> reverse(const vecT<T>& order)
+{
+  vecT<T> ans(order);
+  std::reverse(ans.entries.begin(), ans.entries.end());
+  return ans;
+}
+
+template<class T>
+vecT<T> express(const vecT<T>& v, const vecT<T>& v1, const vecT<T>& v2)
+{
+   T v1v1 = v1 * v1;
+   T v1v2 = v1 * v2;
+   T v2v2 = v2 * v2;
+   T vv1 = v * v1;
+   T vv2 = v * v2;
+   vecT<T> ans({vv1*v2v2 - vv2*v1v2,  vv2*v1v1 - vv1*v1v2, v1v1*v2v2 - v1v2*v1v2});
+   make_primitive(ans);
+   if (ans[3]*v!=ans[1]*v1+ans[2]*v2)
+     cerr << "Error in express: v is not in <v1,v2>"<<endl;
+   return ans;
+}
+
+//#define DEBUG_LIFT
+
+// int lift(const vecT<T>& v, const T& pr, vecT<T>& w)
+// {
+//   w = v;
+//   w.reduce_mod_p(pr);
+// }
+
+template<class T>
+int lift(const vecT<T>& v, const T& pr, vecT<T>& ans)
+{
+  long i0, i, j, d = dim(v);
+  T nu, de;
+  T lim = sqrt(pr>>1)-1;
+  T maxallowed = 10*lim;
+#ifdef DEBUG_LIFT
+  cout<<"Lifting vector v = "<<v<<" mod "<<pr<<" (lim = "<<lim<<")"<<endl;
+#endif
+ // NB We do *not* make cumulative rescalings, since it is possible
+ // for an apparently successful modrat reconstruction to give an
+ // incorrect denominator.  I have an example with pr=2^30-35 where
+ // the correct denominator is 4666 and one entry of the correct
+ // primitive scaled vector is 47493 (greater than lim = 23170) but
+ // since 47493/4666 = 587037152 = -10193/21607 (mod pr), rational
+ // reconstruction returned nu=-10193, de = 21607.  If we kept the
+ // (unsuccessful) scaling by 21607, all subsequent numerators would
+ // be multiplied by this and we would never succeed.
+
+ // This code allows for some entries to be >lim, and works as long as
+ // (1) there is a lift with all entries at most 10*lim, (2) at least
+ // one entry has the correct denominator, which is equaivalent to
+ // requiring that in the primitive rescaling, there is an entry
+ // coprime to the first non-zero entry.
+
+ ans = reduce_mod_p(v, pr); // starts as a copy, and will be rescaled in place
+#ifdef DEBUG_LIFT
+  cout<<"After reduce_mod_p: v = "<<ans<<endl;
+#endif
+ if (maxabs(ans) <= maxallowed)
+   {
+#ifdef DEBUG_LIFT
+     cout<<"No scaling needed, lift is "<<ans<<endl;
+#endif
+     return 1;
+   }
+ T vi0, inv_vi0, vi, maxvi(0);
+ for(i0=1; i0<=d; i0++)
+   {
+     // scale so that i0'th entry is 1 mod p, then reduce vector
+     // entries mod p to lie in (-p/2,p/2), and find the maximum
+     // entry:
+     while((vi0=ans[i0])==0) {i0++;} // skip over any zero entries
+     inv_vi0=invmod(vi0,pr);
+#ifdef DEBUG_LIFT
+     cout<<"Scaling by "<<inv_vi0<<" (inverse of "<<vi0<<")"<<endl;
+#endif
+     for (i=1; i<=d; i++)
+       {
+         ans[i]=vi=mod(xmodmul(inv_vi0,ans[i],pr),pr);
+         maxvi=max(maxvi,abs(vi));
+       }
+#ifdef DEBUG_LIFT
+     cout<<"Reduced v = "<<ans<<", with max entry "<<maxvi<<endl;
+#endif
+     if(maxvi<=maxallowed) // no scaling needed!
+           {
+             // Normalize so first nonzero entry is positive:
+             for(i0=1; i0<=d; i0++)
+               {
+                 while(ans[i0]==0) {i0++;}
+                 if(ans[i0]<0) ans=-ans;
+                 return 1;
+               }
+             return 0; // should not happen: means v==0!
+           }
+
+     for(i=1; (i<=d); i++)
+       {
+         modrat(ans[i],pr,nu,de);
+         de=abs(de);
+         if (de==1) continue; // loop on i
+         // scale by de & recompute max entry:
+#ifdef DEBUG_LIFT
+         cout<<"Scaling by d="<<de<<endl;
+#endif
+         maxvi = 0;
+         for (j=1; j<=d; j++)
+           {
+             ans[j] = vi = mod(xmodmul(de,ans[j],pr),pr);
+             maxvi=max(maxvi,abs(vi));
+           }
+#ifdef DEBUG_LIFT
+         cout<<"Now v = "<<ans<<", with max entry "<<maxvi<<endl;
+#endif
+         if(maxvi<=maxallowed)
+           {
+             // Normalize so first nonzero entry is positive:
+             for(i0=1; i0<=d; i0++)
+               {
+                 while(ans[i0]==0) {i0++;}
+                 if(ans[i0]<0) ans=-ans;
+                 return 1;
+               }
+             return 0; // should not happen: means v==0!
+           }
+       }
+   }
+ // Normalize so first nonzero entry is positive:
+ for(i0=1; i0<=d; i0++)
+   {
+     while(ans[i0]==0) {i0++;}
+     if(ans[i0]<0) ans=-ans;
+     return (maxvi<=lim);
+   }
+ return 0;
+}
+
+template<class T>
+T dotmodp(const vecT<T>& v1, const vecT<T>& v2, const T& pr)
+{
+  auto a = [pr] (const T& x, const T& y) {return mod(x+y,pr);};
+  auto m = [pr] (const T& x, const T& y) {return xmodmul(x,y,pr);};
+  return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), T(0), a, m);
+}

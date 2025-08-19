@@ -28,7 +28,6 @@
 class svec;
 class subspace;
 
-class vec;
 mat restrict_mat(const mat& m, const subspace& s, int cr=0);
 mat prestrict(const mat& m, const subspace& s, const scalar& pr, int cr=0);
 
