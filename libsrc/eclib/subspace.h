@@ -82,4 +82,99 @@
 #undef mat
 #undef subspace
 
+///////////////////////////////////////////////////////////////////////////
+
+template<class T> class vecT;
+template<class T> class svecT;
+template<class T> class smatT;
+template<class T> class smatT_elim;
+template<class T> class matT;
+template<class T> class subspaceT;
+
+template<class T> int dim(const subspaceT<T>& s);      // the dimension
+template<class T> T denom(const subspaceT<T>& s);   // the denominator
+template<class T> vecT<int> pivots(const subspaceT<T>& s);// the pivot vector
+template<class T> matT<T> basis(const subspaceT<T>& s) ;// the basis matrix
+template<class T> subspaceT<T> combine(const subspaceT<T>& s1, const subspaceT<T>& s2);
+template<class T> matT<T> restrict_mat(const matT<T>& m, const subspaceT<T>& s, int cr);
+template<class T> subspaceT<T> pcombine(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr);
+template<class T> matT<T> prestrict(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr);
+template<class T> int lift(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans);
+
+
+template<class T>
+class subspaceT {
+
+public:
+  // constructors
+  subspaceT(int n=0) :denom(1),pivots(vecT<int>::iota(n)),basis(matT<T>::identity_matrix(n)) {}
+  subspaceT(const matT<T>& b, const vecT<int>& p, const T& d) :denom(d),pivots(p),basis(b) {}
+  subspaceT(const subspaceT<T>& s) :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
+
+  // assignment
+  void operator=(const subspaceT<T>& s);
+
+  // member functions & operators
+  inline void clear() { pivots.init(); basis.init();}
+  inline T den() const {return denom;}     // the denominator
+  inline vecT<int> pivs() const {return pivots;} // the pivot vector
+  inline matT<T> bas() const {return basis;}   // the basis matrix
+
+  // non-member (friend) functions and operators
+  friend int dim<>(const subspaceT<T>& s);      // the dimension
+  friend T denom<>(const subspaceT<T>& s);   // the denominator
+  friend vecT<int> pivots<>(const subspaceT<T>& s);// the pivot vector
+  friend matT<T> basis<>(const subspaceT<T>& s) ;// the basis matrix
+  friend subspaceT<T> combine<>(const subspaceT<T>& s1, const subspaceT<T>& s2);
+  friend matT<T> restrict_mat<>(const matT<T>& m, const subspaceT<T>& s, int cr);
+  friend subspaceT<T> pcombine<>(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr);
+  friend matT<T> prestrict<>(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr);
+  friend int lift<>(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans);
+
+  // Implementation
+private:
+  T   denom;
+  vecT<int> pivots;
+  matT<T> basis;
+};
+
+// Declarations of nonmember, nonfriend operators and functions:
+
+template<class T>
+matT<T> expressvectors(const matT<T>& m, const subspaceT<T>& s);
+template<class T>
+subspaceT<T> kernel(const matT<T>& m, int method=0);
+template<class T>
+subspaceT<T> image(const matT<T>& m, int method=0);
+template<class T>
+subspaceT<T> eigenspace(const matT<T>& m, const T& lambda, int method=0);
+template<class T>
+subspaceT<T> subeigenspace(const matT<T>& m, const T& l, const subspaceT<T>& s, int method=0);
+
+
+//The following work with subspaces "mod p" using "echmodp" from
+//matrix.h/cc to do gaussian elimination.  The "denom" of each is 1.
+
+template<class T>
+subspaceT<T> oldpkernel(const matT<T>& m, const T& pr);
+template<class T>
+subspaceT<T> pkernel(const matT<T>& m, const T& pr);
+template<class T>
+subspaceT<T> pimage(const matT<T>& m, const T& pr);
+template<class T>
+subspaceT<T> peigenspace(const matT<T>& m, const T& lambda, const T& pr);
+template<class T>
+subspaceT<T> psubeigenspace(const matT<T>& m, const T& l, const subspaceT<T>& s, const T& pr);
+
+
+template<class T>
+inline int dim(const subspaceT<T>& s) {return s.basis.ncols();}  // the dimension
+template<class T>
+inline T denom(const subspaceT<T>& s) {return s.denom;}    // the denominator
+template<class T>
+inline vecT<int> pivots(const subspaceT<T>& s) {return s.pivots;}     // the pivot vector
+template<class T>
+inline matT<T> basis(const subspaceT<T>& s) {return s.basis;}       // the basis matrix
+
+
 #endif
