@@ -77,24 +77,31 @@
 
 #if (METHOD==0)
 #define form_finder form_finder0
+#define splitter_base splitter_base0
 #else
 #if (METHOD==1)
 #define form_finder form_finder1
+#define splitter_base splitter_base1
 #else
 #if (METHOD==2)
 #define form_finder form_finder2
+#define splitter_base splitter_base2
 #else
 #if (METHOD==3)
 #define form_finder form_finder3
+#define splitter_base splitter_base3
 #else
 #if (METHOD==4)
 #define form_finder form_finder4
+#define splitter_base splitter_base4
 #else
 #if (METHOD==5)
 #define form_finder form_finder5
+#define splitter_base splitter_base5
 #else
 #if (METHOD==6)
 #define form_finder form_finder6
+#define splitter_base splitter_base6
 #endif
 #endif
 #endif
