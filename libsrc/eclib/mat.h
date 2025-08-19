@@ -25,13 +25,6 @@
 // _ECLIB_MATRIX_H and includes this twice
 //
 
-#ifndef LONG_MIN
-#define LONG_MIN (-LONG_MAX-1)
-#endif
-#ifndef INT_MIN
-#define INT_MIN (-INT_MAX-1)
-#endif
-
 class mat {
 friend class subspace;
 friend class smat;
