@@ -25,69 +25,6 @@
 
 #include <eclib/smatrix.h>
 
-#if(0)
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-
-#define scalar int
-#define vec vec_i
-#define mat mat_i
-#define subspace subspace_i
-#define svec svec_i
-#define smat smat_i
-
-#include "smat.cc"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-
-#define scalar long
-#define vec vec_l
-#define mat mat_l
-#define subspace subspace_l
-#define svec svec_l
-#define smat smat_l
-
-#include "smat.cc"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-
-#define scalar bigint
-#define vec vec_m
-#define mat mat_m
-#define subspace subspace_m
-#define svec svec_m
-#define smat smat_m
-#define smat_elim smat_m_elim
-
-#include "smat.cc"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-#undef smat_elim
-
-#endif
-
-///////////////////////////////////////////////////////////////////////////
-
 // Instantiate smatT template classes for T=int, long, bigint
 
 template class smatT<int>;

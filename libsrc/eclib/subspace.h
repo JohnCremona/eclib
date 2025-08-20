@@ -26,68 +26,6 @@
 
 #include "matrix.h"
 
-#if(0)
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-#undef smat_elim
-
-#define scalar int
-#define vec vec_i
-#define mat mat_i
-#define subspace subspace_i
-#define svec svec_i
-#define smat smat_i
-#define smat_elim smat_i_elim
-
-#include "sub.h"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-#undef smat_elim
-
-#define scalar long
-#define vec vec_l
-#define mat mat_l
-#define subspace subspace_l
-#define svec svec_l
-#define smat smat_l
-#define smat_elim smat_l_elim
-
-#include "sub.h"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-#undef svec
-#undef smat
-#undef smat_elim
-
-#define scalar bigint
-#define vec vec_m
-#define mat mat_m
-#define subspace subspace_m
-
-#include "sub.h"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-
-#endif
-
-///////////////////////////////////////////////////////////////////////////
-
 template<class T>
 class subspaceT {
 

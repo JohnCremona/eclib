@@ -15,7 +15,7 @@ LIBS        = $(FLINT_LIBS) $(NTL_LIBS) $(PARI_LIBS) $(BOOST_LIBS) $(PTHREAD_LIB
 
 lib_LTLIBRARIES = libec.la
 
-PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/arith.h eclib/xmod.h eclib/marith.h eclib/bigcomplex.h eclib/compproc.h eclib/vec.h eclib/vector.h eclib/mat.h eclib/matrix.h eclib/sub.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svec.h eclib/svector.h eclib/smat.h eclib/smatrix.h eclib/smat_elim.h eclib/smatrix_elim.h eclib/method.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h eclib/xsplit_data.h eclib/threadpool.h eclib/logger.h eclib/types.h eclib/flinterface.h
+PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/arith.h eclib/xmod.h eclib/marith.h eclib/bigcomplex.h eclib/compproc.h eclib/vector.h eclib/matrix.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svector.h eclib/smatrix.h eclib/smatrix_elim.h eclib/method.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h eclib/xsplit_data.h eclib/threadpool.h eclib/logger.h eclib/types.h eclib/flinterface.h
 
 QCURVES_DOTHS = eclib/curve.h eclib/points.h eclib/cperiods.h eclib/isogs.h eclib/reader.h eclib/mwprocs.h eclib/lambda.h eclib/sifter.h eclib/sieve_search.h eclib/htconst.h eclib/egr.h eclib/saturate.h eclib/divpol.h eclib/pointsmod.h eclib/curvemod.h eclib/ffmod.h eclib/tlss.h eclib/elog.h eclib/getcurve.h eclib/egros.h
 
@@ -40,7 +40,7 @@ DOTCCS = $(PROCS_DOTCCS) $(QCURVES_DOTCCS) $(QRANK_DOTCCS) $(G0N_DOTCCS)
 # compiled.  But they do need to be in the distribution made by "make
 # dist" so we must list them here:
 
-EXTRA_DIST = vec.cc mat.cc sub.cc smat.cc svec.cc smat_elim.cc random.cc
+EXTRA_DIST = random.cc
 
 libec_la_SOURCES = $(DOTCCS)
 libec_la_LDFLAGS = -no-undefined $(AM_LDFLAGS) -version-info @LT_CURRENT@:@LT_REVISION@:@LT_AGE@

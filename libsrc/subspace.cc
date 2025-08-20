@@ -23,53 +23,6 @@
  
 #include <eclib/subspace.h>
 
-#if(0)
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-
-#define scalar int
-#define vec vec_i
-#define mat mat_i
-#define subspace subspace_i
-
-#include "sub.cc"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-
-#define scalar long
-#define vec vec_l
-#define mat mat_l
-#define subspace subspace_l
-
-#include "sub.cc"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-
-#define scalar bigint
-#define vec vec_m
-#define mat mat_m
-#define subspace subspace_m
-
-#include "sub.cc"
-
-#undef scalar
-#undef vec
-#undef mat
-#undef subspace
-
-#endif
-
-///////////////////////////////////////////////////////////////////////////
-
 // Instantiate subspaceT template classes for T=int, long, bigint
 
 template class subspaceT<int>;
