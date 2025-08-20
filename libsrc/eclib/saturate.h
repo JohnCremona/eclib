@@ -67,7 +67,7 @@ private:
   int rank;             // = #Plistx
   bigint disc;          // discriminant of E
   vector<bigint> badp;  // E's bad primes
-  int p;                // current prime to saturate at
+  long p;                // current prime to saturate at
   int log_index;         // current points have index p^log_index in original
   primevar qvar;          // loops over possible sieving primes q
   map<bigint, curvemodqbasis> Emodq;

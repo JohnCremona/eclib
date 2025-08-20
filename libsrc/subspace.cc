@@ -23,6 +23,8 @@
  
 #include <eclib/subspace.h>
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -64,7 +66,15 @@
 #undef mat
 #undef subspace
 
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
+
+// Instantiate subspaceT template classes for T=int, long, bigint
+
+template class subspaceT<int>;
+template class subspaceT<long>;
+template class subspaceT<bigint>;
 
 // definitions of member operators and functions:
 
@@ -283,3 +293,69 @@ int lift(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans)
   ans = subspaceT<T>(m, pivots(s), dd);
   return ok;
 }
+
+// Instantiate template functions for T=int
+
+template int dim<int>(const subspaceT<int>& s);
+template int denom<int>(const subspaceT<int>& s);
+template vecT<int> pivots<int>(const subspaceT<int>& s);
+template matT<int> basis<int>(const subspaceT<int>& s);
+template subspaceT<int> combine<int>(const subspaceT<int>& s1, const subspaceT<int>& s2);
+template matT<int> restrict_mat<int>(const matT<int>& m, const subspaceT<int>& s, int cr);
+template subspaceT<int> pcombine<int>(const subspaceT<int>& s1, const subspaceT<int>& s2, const int& pr);
+template matT<int> prestrict<int>(const matT<int>& m, const subspaceT<int>& s, const int& pr, int cr);
+template int lift<int>(const subspaceT<int>& s, const int& pr, subspaceT<int>& ans);
+template matT<int> expressvectors<int>(const matT<int>& m, const subspaceT<int>& s);
+template subspaceT<int> kernel<int>(const matT<int>& m, int method=0);
+template subspaceT<int> image<int>(const matT<int>& m, int method=0);
+template subspaceT<int> eigenspace<int>(const matT<int>& m, const int& lambda, int method=0);
+template subspaceT<int> subeigenspace<int>(const matT<int>& m, const int& l, const subspaceT<int>& s, int method=0);
+template subspaceT<int> oldpkernel<int>(const matT<int>& m, const int& pr);
+template subspaceT<int> pkernel<int>(const matT<int>& m, const int& pr);
+template subspaceT<int> pimage<int>(const matT<int>& m, const int& pr);
+template subspaceT<int> peigenspace<int>(const matT<int>& m, const int& lambda, const int& pr);
+template subspaceT<int> psubeigenspace<int>(const matT<int>& m, const int& l, const subspaceT<int>& s, const int& pr);
+
+// Instantiate template functions for T=long
+
+template int dim<long>(const subspaceT<long>& s);
+template long denom<long>(const subspaceT<long>& s);
+template vecT<int> pivots<long>(const subspaceT<long>& s);
+template matT<long> basis<long>(const subspaceT<long>& s);
+template subspaceT<long> combine<long>(const subspaceT<long>& s1, const subspaceT<long>& s2);
+template matT<long> restrict_mat<long>(const matT<long>& m, const subspaceT<long>& s, int cr);
+template subspaceT<long> pcombine<long>(const subspaceT<long>& s1, const subspaceT<long>& s2, const long& pr);
+template matT<long> prestrict<long>(const matT<long>& m, const subspaceT<long>& s, const long& pr, int cr);
+template int lift<long>(const subspaceT<long>& s, const long& pr, subspaceT<long>& ans);
+template matT<long> expressvectors<long>(const matT<long>& m, const subspaceT<long>& s);
+template subspaceT<long> kernel<long>(const matT<long>& m, int method=0);
+template subspaceT<long> image<long>(const matT<long>& m, int method=0);
+template subspaceT<long> eigenspace<long>(const matT<long>& m, const long& lambda, int method=0);
+template subspaceT<long> subeigenspace<long>(const matT<long>& m, const long& l, const subspaceT<long>& s, int method=0);
+template subspaceT<long> oldpkernel<long>(const matT<long>& m, const long& pr);
+template subspaceT<long> pkernel<long>(const matT<long>& m, const long& pr);
+template subspaceT<long> pimage<long>(const matT<long>& m, const long& pr);
+template subspaceT<long> peigenspace<long>(const matT<long>& m, const long& lambda, const long& pr);
+template subspaceT<long> psubeigenspace<long>(const matT<long>& m, const long& l, const subspaceT<long>& s, const long& pr);
+
+// Instantiate template functions for T=bigint
+
+template int dim<bigint>(const subspaceT<bigint>& s);
+template bigint denom<bigint>(const subspaceT<bigint>& s);
+template vecT<int> pivots<bigint>(const subspaceT<bigint>& s);
+template matT<bigint> basis<bigint>(const subspaceT<bigint>& s);
+template subspaceT<bigint> combine<bigint>(const subspaceT<bigint>& s1, const subspaceT<bigint>& s2);
+template matT<bigint> restrict_mat<bigint>(const matT<bigint>& m, const subspaceT<bigint>& s, int cr);
+template subspaceT<bigint> pcombine<bigint>(const subspaceT<bigint>& s1, const subspaceT<bigint>& s2, const bigint& pr);
+template matT<bigint> prestrict<bigint>(const matT<bigint>& m, const subspaceT<bigint>& s, const bigint& pr, int cr);
+template int lift<bigint>(const subspaceT<bigint>& s, const bigint& pr, subspaceT<bigint>& ans);
+template matT<bigint> expressvectors<bigint>(const matT<bigint>& m, const subspaceT<bigint>& s);
+template subspaceT<bigint> kernel<bigint>(const matT<bigint>& m, int method=0);
+template subspaceT<bigint> image<bigint>(const matT<bigint>& m, int method=0);
+template subspaceT<bigint> eigenspace<bigint>(const matT<bigint>& m, const bigint& lambda, int method=0);
+template subspaceT<bigint> subeigenspace<bigint>(const matT<bigint>& m, const bigint& l, const subspaceT<bigint>& s, int method=0);
+template subspaceT<bigint> oldpkernel<bigint>(const matT<bigint>& m, const bigint& pr);
+template subspaceT<bigint> pkernel<bigint>(const matT<bigint>& m, const bigint& pr);
+template subspaceT<bigint> pimage<bigint>(const matT<bigint>& m, const bigint& pr);
+template subspaceT<bigint> peigenspace<bigint>(const matT<bigint>& m, const bigint& lambda, const bigint& pr);
+template subspaceT<bigint> psubeigenspace<bigint>(const matT<bigint>& m, const bigint& l, const subspaceT<bigint>& s, const bigint& pr);

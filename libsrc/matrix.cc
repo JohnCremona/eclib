@@ -23,6 +23,8 @@
  
 #include <eclib/matrix.h>
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -66,62 +68,15 @@
 #undef mat
 #undef subspace
 
-// The following functions are here and not in mat.cc since they are
-// not to be created in 3 versions
-
-mat_m to_mat_m(const mat_i& m)
-{
-  const vector<int> & mij = m.get_entries();
-  vector<bigint> n(mij.size());
-  std::transform(mij.begin(), mij.end(), n.begin(), [](const int& x) {return bigint(x);});
-  return mat_m(m.nrows(), m.ncols(), n);
-}
-
-mat_m to_mat_m(const mat_l& m)
-{
-  const vector<long> & mij = m.get_entries();
-  vector<bigint> n(mij.size());
-  std::transform(mij.begin(), mij.end(), n.begin(), [](const long& x) {return bigint(x);});
-  return mat_m(m.nrows(), m.ncols(), n);
-}
-
-mat_i to_mat_i(const mat_m& m)
-{
-  const vector<bigint> & mij = m.get_entries();
-  auto toint = [](const bigint& a) {return is_int(a)? I2int(a) : int(0);};
-  vector<int> n(mij.size());
-  std::transform(mij.begin(), mij.end(), n.begin(), toint);
-  return mat_i(m.nrows(), m.ncols(), n);
-}
-
-mat_i to_mat_i(const mat_l& m)
-{
-  const vector<long> & mij = m.get_entries();
-  auto toint = [](const long& a) {return int(a);};
-  vector<int> n(mij.size());
-  std::transform(mij.begin(), mij.end(), n.begin(), toint);
-  return mat_i(m.nrows(), m.ncols(), n);
-}
-
-mat_l to_mat_l(const mat_m& m)
-{
-  const vector<bigint> & mij = m.get_entries();
-  auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
-  vector<long> n(mij.size());
-  std::transform(mij.begin(), mij.end(), n.begin(), tolong);
-  return mat_l(m.nrows(), m.ncols(), n);
-}
-
-mat_l to_mat_l(const mat_i& m)
-{
-  const vector<int> & mij = m.get_entries();
-  auto tolong = [](const int& a) {return long(a);};
-  vector<long> n(mij.size());
-  std::transform(mij.begin(), mij.end(), n.begin(), tolong);
-  return mat_l(m.nrows(), m.ncols(), n);
-}
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
+
+// Instantiate matT template classes for T=int, long, bigint
+
+template class matT<int>;
+template class matT<long>;
+template class matT<bigint>;
 
 // Definitions of member operators and functions:
 
@@ -639,7 +594,7 @@ matT<T> transpose(const matT<T>& m)
 
 // submatrix of rows indexed by v, all columns
 template<class T>
-matT<T> rowsubmat(const matT<T>& m, const vecT<T>& v)
+matT<T> rowsubmat(const matT<T>& m, const vecT<int>& v)
 {
   long nr = dim(v), nc = m.ncols();
   matT<T> ans(nr,nc);
@@ -1538,3 +1493,452 @@ T det_via_ntl(const matT<T>& M, const T& pr)
 #endif
   return mod(conv<T>(det), pr);
 }
+
+#if FLINT
+
+#include "eclib/flinterface.h"
+
+// FLINT has more than one type for modular matrices: standard in
+// FLINT-2.3..2.9 was nmod_mat_t with entries of type mp_limb_t
+// (unsigned long) while non-standard was hmod_mat_t, with entries
+// hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
+// wrapper.  We use the former when scalar=long and the latter when
+// scalar=int and the FLINT versin is at least 3.  The unsigned
+// scalar types are #define'd as uscalar.
+
+template<class T>
+void mod_mat_from_mat(mod_mat& A, const matT<T>& M, const T& pr)
+{
+  long nr=M.nrows(), nc=M.ncols();
+
+  // copy of the modulus for FLINT
+  long ipr = I2long(pr);
+  uscalar p = (uscalar)ipr;
+
+  // create flint matrix copy of M:
+  mod_mat_init(A, nr, nc, p);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      mod_mat_entry(A,i,j) = (uscalar)posmod(M(i+1,j+1),ipr);
+}
+
+template void mod_mat_from_mat<int>(mod_mat& A, const matT<int>& M, const int& pr);
+template void mod_mat_from_mat<long>(mod_mat& A, const matT<long>& M, const long& pr);
+
+template<class T>
+matT<T> mat_from_mod_mat(const mod_mat& A, const T& a) // scalar just to fix return type
+{
+  long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
+
+  // create matrix copy of A:
+  matT<T> M(nr, nc);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      M(i+1,j+1) = mod_mat_entry(A,i,j);
+  return M;
+}
+
+template matT<int> mat_from_mod_mat<int>(const mod_mat& A, const int& a);
+template matT<long> mat_from_mod_mat<long>(const mod_mat& A, const long& a);
+
+template<class T>
+matT<T> ref_via_flint(const matT<T>& M, const T& pr)
+{
+  // create flint matrix copy of M:
+  mod_mat A;
+  mod_mat_from_mat(A,M,pr);
+
+  // reduce A to rref:
+#ifdef TRACE_FLINT_RREF
+  timeit_t t;
+  timeit_start(t);
+  long nc=M.ncols(), nr=mod_mat_nrows(A);
+  cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
+#endif
+  mod_mat_rref(A);
+#ifdef TRACE_FLINT_RREF
+  timeit_stop(t);
+  cerr<<" cpu = "<<(t->cpu)<<" ms, wall = "<<(t->wall)<<" ms"<<endl;
+#endif
+
+  // copy back to a new matrix for return:
+  matT<T> ans = mat_from_mod_mat(A, pr);
+
+  // clear the flint matrix and return:
+  mod_mat_clear(A);
+  return ans;
+}
+
+template matT<int> ref_via_flint<int>(const matT<int>& M, const int& pr);
+template matT<long> ref_via_flint<long>(const matT<long>& M, const long& pr);
+
+// The following function computes the reduced echelon form
+// of M modulo the prime pr, calling FLINT's nmod_mat_rref function.
+
+template<class T>
+matT<T> ref_via_flint(const matT<T>& M, vecT<int>& pcols, vecT<int>& npcols,
+                      long& rk, long& ny, const T& pr)
+{
+  long nc=M.ncols();
+  long i, j, k;
+
+#ifdef TRACE_FLINT_RREF
+  cout << "In ref_via_flint(M) with M having "<<nr<<" rows and "<<nc<<" columns, using mod_mat and modulus "<<pr<<"."<<endl;
+  //  cout << "Size of  scalar = "<<8*sizeof(scalar)<<" bits"<<endl;
+  //  cout << "Size of uscalar = "<<8*sizeof(uscalar)<<" bits"<<endl;
+#endif
+
+  // create flint matrix copy of M:
+  mod_mat A;
+  mod_mat_from_mat(A,M,pr);
+
+#ifdef TRACE_FLINT_RREF
+  timeit_t t;
+  timeit_start(t);
+  long nr=M.nrows();
+  cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
+#endif
+
+  // reduce A to rref:
+  rk = mod_mat_rref(A);
+#ifdef TRACE_FLINT_RREF
+  timeit_stop(t);
+  cerr<<"rank = "<<rk<<". cpu = "<<(t->cpu)<<" ms, wall = "<<(t->wall)<<" ms"<<endl;
+#endif
+
+  // construct vectors of pivotal and non-pivotal columns
+  ny = nc-rk;
+  pcols.init(rk);
+  npcols.init(ny);
+  for (i = j = k = 0; i < rk; i++)
+    {
+      while (mod_mat_entry(A, i, j) == 0UL)
+        {
+          npcols[k+1] = j+1;
+          k++;
+          j++;
+        }
+      pcols[i+1] = j+1;
+      j++;
+    }
+  while (k < ny)
+    {
+      npcols[k+1] = j+1;
+      k++;
+      j++;
+    }
+
+  // copy back to a new matrix for return:
+  matT<T> ans = mat_from_mod_mat(A,pr).slice(rk,nc);
+
+  // clear the flint matrix and return:
+  mod_mat_clear(A);
+  return ans;
+}
+
+template matT<int> ref_via_flint<int>(const matT<int>& M, vecT<int>& pcols, vecT<int>& npcols,
+                                      long& rk, long& ny, const int& pr);
+template matT<long> ref_via_flint<long>(const matT<long>& M, vecT<int>& pcols, vecT<int>& npcols,
+                                        long& rk, long& ny, const long& pr);
+
+#endif // FLINT
+
+template<class T>
+matT<T> matmulmodp(const matT<T>& m1, const matT<T>& m2, const T& pr)
+{
+ int m=m1.nro, n=m1.nco, p=m2.nco;
+ matT<T> m3(m,p);
+ if (n==m2.nro)
+   {
+     auto a=m1.entries.begin();                                     // a points to m1(i,k)
+     for (auto c=m3.entries.begin(); c!=m3.entries.end(); c+=p)     // c points to m3(i,_) for 0<=i<m
+       {
+         for (auto b=m2.entries.begin(); b!=m2.entries.end(); b+=p) // b points to m2(k,_) for 0<=k<n
+           { // add m1(i,k)*m2(k,j) to m3(i,j) for 0<=j<p
+             T m1ik = *a++;
+             std::transform(b, b+p, c, c,
+                            [pr,m1ik] (const T& m2kj, const T& m3ij)
+                            {return xmod(xmodmul(m1ik,m2kj,pr)+m3ij, pr);});
+           }
+       }
+   }
+ else
+   {
+     cerr << "Incompatible sizes in mat product"<<endl;
+   }
+ return m3;
+}
+
+template<class T>
+int liftmat(const matT<T>& mm, const T& pr, matT<T>& m, T& dd)
+{
+  int trace=0;
+  if(trace)
+    cout << "Lifting mod-p mat;  mat mod "<<pr<<" is:\n"
+         << mm
+         << "Now lifting back to Q." << endl;
+
+  T n,d;
+  T lim = sqrt(pr>>1);
+  m = mm;
+  m.reduce_mod_p(pr);
+  if (maxabs(m) < lim) return 1;
+  int success = 1;
+  dd=1;
+  std::for_each(m.entries.begin(), m.entries.end(),
+                [&success,lim,&dd,pr,&n,&d] (const T& x)
+                {if (abs(x)>lim) {int succ = modrat(x,pr,n,d); if(succ) d=lcm(d,dd); else success=0;}});
+  dd=abs(dd);
+  if(trace)
+    cout << "Common denominator = " << dd << "\n";
+  std::transform(m.entries.begin(), m.entries.end(), m.entries.begin(),
+                 [pr,dd] (const T& x) {return mod(xmodmul(dd,x,pr),pr);});
+  if (!success)
+    {
+      cerr<<"liftmat() failed to lift some entries mod "<<pr<<endl;
+      return 0;
+    }
+  if(trace)
+    cout << "Lifted matrix is " << m << "\n";
+  return 1;
+}
+
+template<class T>
+T maxabs(const matT<T>& m) // max entry
+{
+  T a(0);
+  std::for_each(m.entries.begin(), m.entries.end(), [&a](const T& x) {return max(a,abs(x));});
+  return a;
+}
+
+template<class T>
+long population(const matT<T>& m) // #nonzero entries
+{
+  if (m.entries.empty()) return 0;
+  return std::count_if(m.entries.begin(), m.entries.end(), [](const T& x) {return is_nonzero(x);});
+}
+
+template<class T>
+double sparsity(const matT<T>& m)
+{
+  if (m.entries.empty()) return 1;
+  return double(population(m))/m.entries.size();
+}
+
+
+mat_m to_mat_m(const mat_i& m)
+{
+  const vector<int> & mij = m.get_entries();
+  vector<bigint> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), [](const int& x) {return bigint(x);});
+  return mat_m(m.nrows(), m.ncols(), n);
+}
+
+mat_m to_mat_m(const mat_l& m)
+{
+  const vector<long> & mij = m.get_entries();
+  vector<bigint> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), [](const long& x) {return bigint(x);});
+  return mat_m(m.nrows(), m.ncols(), n);
+}
+
+mat_i to_mat_i(const mat_m& m)
+{
+  const vector<bigint> & mij = m.get_entries();
+  auto toint = [](const bigint& a) {return is_int(a)? I2int(a) : int(0);};
+  vector<int> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), toint);
+  return mat_i(m.nrows(), m.ncols(), n);
+}
+
+mat_i to_mat_i(const mat_l& m)
+{
+  const vector<long> & mij = m.get_entries();
+  auto toint = [](const long& a) {return int(a);};
+  vector<int> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), toint);
+  return mat_i(m.nrows(), m.ncols(), n);
+}
+
+mat_l to_mat_l(const mat_m& m)
+{
+  const vector<bigint> & mij = m.get_entries();
+  auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
+  vector<long> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), tolong);
+  return mat_l(m.nrows(), m.ncols(), n);
+}
+
+mat_l to_mat_l(const mat_i& m)
+{
+  const vector<int> & mij = m.get_entries();
+  auto tolong = [](const int& a) {return long(a);};
+  vector<long> n(mij.size());
+  std::transform(mij.begin(), mij.end(), n.begin(), tolong);
+  return mat_l(m.nrows(), m.ncols(), n);
+}
+
+// Instantiate matT template functions for T=int
+template void add_row_to_vec<int>(vecT<int>& v, const matT<int>& m, long i);
+template void sub_row_to_vec<int>(vecT<int>& v, const matT<int>& m, long i);
+template matT<int> operator*<int>(const matT<int>&, const matT<int>&);
+template vecT<int> operator*<int>(const matT<int>&, const vecT<int>&);
+template int operator==<int>(const matT<int>&, const matT<int>&);
+template istream& operator>> <int>(istream&s, matT<int>&);
+template matT<int> colcat<int>(const matT<int>& a, const matT<int>& b);
+template matT<int> rowcat<int>(const matT<int>& a, const matT<int>& b);
+template matT<int> directsum<int>(const matT<int>& a, const matT<int>& b);
+template void elimrows<int>(matT<int>& m, long r1, long r2, long pos);
+template void elimrows1<int>(matT<int>& m, long r1, long r2, long pos);
+template void elimrows2<int>(matT<int>& m, long r1, long r2, long pos, const int& last);
+template matT<int> echelon0<int>(const matT<int>& m, vecT<int>& pcols, vecT<int>& npcols,
+                            long& rk, long& ny, int& d);
+template void elimp<int>(matT<int>& m, long r1, long r2, long pos, const int& pr);
+template void elimp1<int>(matT<int>& m, long r1, long r2, long pos, const int& pr);
+template matT<int> echelonp<int>(const matT<int>& m, vecT<int>& pcols, vecT<int>& npcols,
+                            long& rk, long& ny, int& d, const int& pr);
+template matT<int> echmodp<int>(const matT<int>& m, vecT<int>& pcols, vecT<int>& npcols,
+                           long& rk, long& ny, const int& pr);
+template matT<int> echmodp_uptri<int>(const matT<int>& m, vecT<int>& pcols, vecT<int>& npcols,
+                                 long& rk, long& ny, const int& pr);
+template matT<int> ref_via_ntl<int>(const matT<int>& M, vecT<int>& pcols, vecT<int>& npcols,
+                               long& rk, long& ny, const int& pr);
+template matT<int> rref<int>(const matT<int>& M, vecT<int>& pcols, vecT<int>& npcols,
+                        long& rk, long& ny, const int& pr);
+template long rank_via_ntl<int>(const matT<int>& M, const int& pr);
+template int det_via_ntl<int>(const matT<int>& M, const int& pr);
+template matT<int> transpose<int>(const matT<int>& m);
+template matT<int> matmulmodp<int>(const matT<int>&, const matT<int>&, const int& pr);
+template long population<int>(const matT<int>& m); // #nonzero entries
+template int maxabs<int>(const matT<int>& m); // max entry
+template double sparsity<int>(const matT<int>& m); // #nonzero entries/#entries
+template ostream& operator<< <int>(ostream&s, const matT<int>&m);
+template matT<int> operator+<int>(const matT<int>&);                   // unary
+template matT<int> operator-<int>(const matT<int>&);                   // unary
+template matT<int> operator+<int>(const matT<int>& m1, const matT<int>& m2);
+template matT<int> operator-<int>(const matT<int>& m1, const matT<int>& m2);
+template matT<int> operator*<int>(const int& scal, const matT<int>& m);
+template matT<int> operator/<int>(const matT<int>& m, const int& scal);
+template int operator!=<int>(const matT<int>& m1, const matT<int>& m2);
+template matT<int> rowsubmat<int>(const matT<int>& m, const vecT<int>& v);
+template matT<int> rowsubmat<int>(const matT<int>& m, const vecT<long>& v);
+template matT<int> submat<int>(const matT<int>& m, const vecT<int>& iv, const vecT<int>& jv);
+template matT<int> submat<int>(const matT<int>& m, const vecT<long>& iv, const vecT<long>& jv);
+template matT<int> echelon<int>(const matT<int>& m, vecT<int>& pcols, vecT<int>& npcols,
+                          long& rk, long& ny, int& d, int method=0);
+template matT<int> addscalar<int>(const matT<int>&, const int&);
+template vecT<int> apply<int>(const matT<int>&, const vecT<int>&);
+template int liftmat<int>(const matT<int>& mm, const int& pr, matT<int>& m, int& dd);
+
+template void vecT<int>::sub_row(const matT<int>& m, int i);
+template void vecT<int>::add_row(const matT<int>& m, int i);
+
+// Instantiate matT template functions for T=long
+template void add_row_to_vec<long>(vecT<long>& v, const matT<long>& m, long i);
+template void sub_row_to_vec<long>(vecT<long>& v, const matT<long>& m, long i);
+template matT<long> operator*<long>(const matT<long>&, const matT<long>&);
+template vecT<long> operator*<long>(const matT<long>&, const vecT<long>&);
+template int operator==<long>(const matT<long>&, const matT<long>&);
+template istream& operator>> <long>(istream&s, matT<long>&);
+template matT<long> colcat<long>(const matT<long>& a, const matT<long>& b);
+template matT<long> rowcat<long>(const matT<long>& a, const matT<long>& b);
+template matT<long> directsum<long>(const matT<long>& a, const matT<long>& b);
+template void elimrows<long>(matT<long>& m, long r1, long r2, long pos);
+template void elimrows1<long>(matT<long>& m, long r1, long r2, long pos);
+template void elimrows2<long>(matT<long>& m, long r1, long r2, long pos, const long& last);
+template matT<long> echelon0<long>(const matT<long>& m, vecT<int>& pcols, vecT<int>& npcols,
+                      long& rk, long& ny, long& d);
+template void elimp<long>(matT<long>& m, long r1, long r2, long pos, const long& pr);
+template void elimp1<long>(matT<long>& m, long r1, long r2, long pos, const long& pr);
+template matT<long> echelonp<long>(const matT<long>& m, vecT<int>& pcols, vecT<int>& npcols,
+                      long& rk, long& ny, long& d, const long& pr);
+template matT<long> echmodp<long>(const matT<long>& m, vecT<int>& pcols, vecT<int>& npcols,
+                     long& rk, long& ny, const long& pr);
+template matT<long> echmodp_uptri<long>(const matT<long>& m, vecT<int>& pcols, vecT<int>& npcols,
+                     long& rk, long& ny, const long& pr);
+template matT<long> ref_via_ntl<long>(const matT<long>& M, vecT<int>& pcols, vecT<int>& npcols,
+                         long& rk, long& ny, const long& pr);
+template matT<long> rref<long>(const matT<long>& M, vecT<int>& pcols, vecT<int>& npcols,
+                               long& rk, long& ny, const long& pr);
+template long rank_via_ntl<long>(const matT<long>& M, const long& pr);
+template long det_via_ntl<long>(const matT<long>& M, const long& pr);
+template matT<long> transpose<long>(const matT<long>& m);
+template matT<long> matmulmodp<long>(const matT<long>&, const matT<long>&, const long& pr);
+template long population<long>(const matT<long>& m); // #nonzero entries
+template long maxabs<long>(const matT<long>& m); // max entry
+template double sparsity<long>(const matT<long>& m); // #nonzero entries/#entries
+template ostream& operator<< <long>(ostream&s, const matT<long>&m);
+template matT<long> operator+<long>(const matT<long>&);                   // unary
+template matT<long> operator-<long>(const matT<long>&);                   // unary
+template matT<long> operator+<long>(const matT<long>& m1, const matT<long>& m2);
+template matT<long> operator-<long>(const matT<long>& m1, const matT<long>& m2);
+template matT<long> operator*<long>(const long& scal, const matT<long>& m);
+template matT<long> operator/<long>(const matT<long>& m, const long& scal);
+template int operator!=<long>(const matT<long>& m1, const matT<long>& m2);
+template matT<long> rowsubmat<long>(const matT<long>& m, const vecT<int>& v);
+template matT<long> rowsubmat<long>(const matT<long>& m, const vecT<long>& v);
+template matT<long> submat<long>(const matT<long>& m, const vecT<int>& iv, const vecT<int>& jv);
+template matT<long> submat<long>(const matT<long>& m, const vecT<long>& iv, const vecT<long>& jv);
+template matT<long> echelon<long>(const matT<long>& m, vecT<int>& pcols, vecT<int>& npcols,
+                          long& rk, long& ny, long& d, int method=0);
+template matT<long> addscalar<long>(const matT<long>&, const long&);
+template vecT<long> apply<long>(const matT<long>&, const vecT<long>&);
+template int liftmat<long>(const matT<long>& mm, const long& pr, matT<long>& m, long& dd);
+
+template void vecT<long>::sub_row(const matT<long>& m, int i);
+template void vecT<long>::add_row(const matT<long>& m, int i);
+
+// Instantiate matT template functions for T=bigint
+template void add_row_to_vec<bigint>(vecT<bigint>& v, const matT<bigint>& m, long i);
+template void sub_row_to_vec<bigint>(vecT<bigint>& v, const matT<bigint>& m, long i);
+template matT<bigint> operator*<bigint>(const matT<bigint>&, const matT<bigint>&);
+template vecT<bigint> operator*<bigint>(const matT<bigint>&, const vecT<bigint>&);
+template int operator==<bigint>(const matT<bigint>&, const matT<bigint>&);
+template istream& operator>> <bigint>(istream&s, matT<bigint>&);
+template matT<bigint> colcat<bigint>(const matT<bigint>& a, const matT<bigint>& b);
+template matT<bigint> rowcat<bigint>(const matT<bigint>& a, const matT<bigint>& b);
+template matT<bigint> directsum<bigint>(const matT<bigint>& a, const matT<bigint>& b);
+template void elimrows<bigint>(matT<bigint>& m, long r1, long r2, long pos);
+template void elimrows1<bigint>(matT<bigint>& m, long r1, long r2, long pos);
+template void elimrows2<bigint>(matT<bigint>& m, long r1, long r2, long pos, const bigint& last);
+template matT<bigint> echelon0<bigint>(const matT<bigint>& m, vecT<int>& pcols, vecT<int>& npcols,
+                      long& rk, long& ny, bigint& d);
+template void elimp<bigint>(matT<bigint>& m, long r1, long r2, long pos, const bigint& pr);
+template void elimp1<bigint>(matT<bigint>& m, long r1, long r2, long pos, const bigint& pr);
+template matT<bigint> echelonp<bigint>(const matT<bigint>& m, vecT<int>& pcols, vecT<int>& npcols,
+                      long& rk, long& ny, bigint& d, const bigint& pr);
+template matT<bigint> echmodp<bigint>(const matT<bigint>& m, vecT<int>& pcols, vecT<int>& npcols,
+                     long& rk, long& ny, const bigint& pr);
+template matT<bigint> echmodp_uptri<bigint>(const matT<bigint>& m, vecT<int>& pcols, vecT<int>& npcols,
+                     long& rk, long& ny, const bigint& pr);
+template matT<bigint> ref_via_ntl<bigint>(const matT<bigint>& M, vecT<int>& pcols, vecT<int>& npcols,
+                         long& rk, long& ny, const bigint& pr);
+template matT<bigint> rref<bigint>(const matT<bigint>& M, vecT<int>& pcols, vecT<int>& npcols,
+                               long& rk, long& ny, const bigint& pr);
+template long rank_via_ntl<bigint>(const matT<bigint>& M, const bigint& pr);
+template bigint det_via_ntl<bigint>(const matT<bigint>& M, const bigint& pr);
+template matT<bigint> transpose<bigint>(const matT<bigint>& m);
+template matT<bigint> matmulmodp<bigint>(const matT<bigint>&, const matT<bigint>&, const bigint& pr);
+template long population<bigint>(const matT<bigint>& m); // #nonzero entries
+template bigint maxabs<bigint>(const matT<bigint>& m); // max entry
+template double sparsity<bigint>(const matT<bigint>& m); // #nonzero entries/#entries
+template ostream& operator<< <bigint>(ostream&s, const matT<bigint>&m);
+template matT<bigint> operator+<bigint>(const matT<bigint>&);                   // unary
+template matT<bigint> operator-<bigint>(const matT<bigint>&);                   // unary
+template matT<bigint> operator+<bigint>(const matT<bigint>& m1, const matT<bigint>& m2);
+template matT<bigint> operator-<bigint>(const matT<bigint>& m1, const matT<bigint>& m2);
+template matT<bigint> operator*<bigint>(const bigint& scal, const matT<bigint>& m);
+template matT<bigint> operator/<bigint>(const matT<bigint>& m, const bigint& scal);
+template int operator!=<bigint>(const matT<bigint>& m1, const matT<bigint>& m2);
+template matT<bigint> rowsubmat<bigint>(const matT<bigint>& m, const vecT<int>& v);
+template matT<bigint> rowsubmat<bigint>(const matT<bigint>& m, const vecT<long>& v);
+template matT<bigint> submat<bigint>(const matT<bigint>& m, const vecT<int>& iv, const vecT<int>& jv);
+template matT<bigint> submat<bigint>(const matT<bigint>& m, const vecT<long>& iv, const vecT<long>& jv);
+template matT<bigint> echelon<bigint>(const matT<bigint>& m, vecT<int>& pcols, vecT<int>& npcols,
+                          long& rk, long& ny, bigint& d, int method=0);
+template matT<bigint> addscalar<bigint>(const matT<bigint>&, const bigint&);
+template vecT<bigint> apply<bigint>(const matT<bigint>&, const vecT<bigint>&);
+template int liftmat<bigint>(const matT<bigint>& mm, const bigint& pr, matT<bigint>& m, bigint& dd);
+
+template void vecT<bigint>::sub_row(const matT<bigint>& m, int i);
+template void vecT<bigint>::add_row(const matT<bigint>& m, int i);

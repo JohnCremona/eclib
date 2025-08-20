@@ -25,6 +25,8 @@
 #include <eclib/vector.h>
 #include "random.cc"
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -72,59 +74,15 @@
 #undef smat
 #undef smat_elim
 
-vec_m to_vec_m(const vec_i& v)
-{
-  const vector<int> & vi = v.get_entries();
-  vector<bigint> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), [](const int& x) {return bigint(x);});
-  return vec_m(w);
-}
-
-vec_m to_vec_m(const vec_l& v)
-{
-  const vector<long> & vi = v.get_entries();
-  vector<bigint> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), [](const long& x) {return bigint(x);});
-  return vec_m(w);
-}
-
-vec_i to_vec_i(const vec_m& v)
-{
-  const vector<bigint> & vi = v.get_entries();
-  auto toint = [](const bigint& a) {return is_int(a)? I2int(a) : int(0);};
-  vector<int> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), toint);
-  return vec_i(w);
-}
-
-vec_i to_vec_i(const vec_l& v)
-{
-  const vector<long> & vi = v.get_entries();
-  auto toint = [](const long& a) {return int(a);};
-  vector<int> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), toint);
-  return vec_i(w);
-}
-
-vec_l to_vec_l(const vec_m& v)
-{
-  const vector<bigint> & vi = v.get_entries();
-  auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
-  vector<long> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), tolong);
-  return vec_l(w);
-}
-
-vec_l to_vec_l(const vec_i& v)
-{
-  const vector<int> & vi = v.get_entries();
-  auto tolong = [](const int& a) {return long(a);};
-  vector<long> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), tolong);
-  return vec_l(w);
-}
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
+
+// Instantiate vecT template classes for T=int, long, bigint
+
+template class vecT<int>;
+template class vecT<long>;
+template class vecT<bigint>;
 
 // Definitions of member operators and functions:
 
@@ -496,3 +454,100 @@ T dotmodp(const vecT<T>& v1, const vecT<T>& v2, const T& pr)
   auto m = [pr] (const T& x, const T& y) {return xmodmul(x,y,pr);};
   return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), T(0), a, m);
 }
+
+vec_m to_vec_m(const vec_i& v)
+{
+  const vector<int> & vi = v.get_entries();
+  vector<bigint> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), [](const int& x) {return bigint(x);});
+  return vec_m(w);
+}
+
+vec_m to_vec_m(const vec_l& v)
+{
+  const vector<long> & vi = v.get_entries();
+  vector<bigint> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), [](const long& x) {return bigint(x);});
+  return vec_m(w);
+}
+
+vec_i to_vec_i(const vec_m& v)
+{
+  const vector<bigint> & vi = v.get_entries();
+  auto toint = [](const bigint& a) {return is_int(a)? I2int(a) : int(0);};
+  vector<int> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), toint);
+  return vec_i(w);
+}
+
+vec_i to_vec_i(const vec_l& v)
+{
+  const vector<long> & vi = v.get_entries();
+  auto toint = [](const long& a) {return int(a);};
+  vector<int> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), toint);
+  return vec_i(w);
+}
+
+vec_l to_vec_l(const vec_m& v)
+{
+  const vector<bigint> & vi = v.get_entries();
+  auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
+  vector<long> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), tolong);
+  return vec_l(w);
+}
+
+vec_l to_vec_l(const vec_i& v)
+{
+  const vector<int> & vi = v.get_entries();
+  auto tolong = [](const int& a) {return long(a);};
+  vector<long> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), tolong);
+  return vec_l(w);
+}
+
+// Instantiate vecT template functions for T=int
+template int dim<int>(const vecT<int>&);
+template int operator*<int>(const vecT<int>&, const vecT<int>&);
+template int content<int>(const vecT<int>&);
+template int maxabs<int>(const vecT<int>&);
+template int operator==<int>(const vecT<int>&, const vecT<int>&);
+template int operator!=<int>(const vecT<int>&, const vecT<int>&);
+template int trivial<int>(const vecT<int>&);                  // is v all 0
+template int member<int>(const int& a, const vecT<int>& v);//tests if a=v[i] for some i
+template vecT<int> reverse<int>(const vecT<int>& order);
+template ostream& operator<<<int> (ostream&s, const vecT<int>&);
+template istream& operator>><int> (istream&s, vecT<int>&);
+template void swapvec<int>(vecT<int>& v, vecT<int>& w);
+template int lift(const vecT<int>& v, const int& pr, vecT<int>& ans);
+
+// Instantiate vecT template functions for T=long
+template int dim<long>(const vecT<long>&);
+template long operator*<long>(const vecT<long>&, const vecT<long>&);
+template long content<long>(const vecT<long>&);
+template long maxabs<long>(const vecT<long>&);
+template int operator==<long>(const vecT<long>&, const vecT<long>&);
+template int operator!=<long>(const vecT<long>&, const vecT<long>&);
+template int trivial<long>(const vecT<long>&);                  // is v all 0
+template int member<long>(const long& a, const vecT<long>& v);//tests if a=v[i] for some i
+template vecT<long> reverse<long>(const vecT<long>& order);
+template ostream& operator<<<long> (ostream&s, const vecT<long>&);
+template istream& operator>><long> (istream&s, vecT<long>&);
+template void swapvec<long>(vecT<long>& v, vecT<long>& w);
+template int lift(const vecT<long>& v, const long& pr, vecT<long>& ans);
+
+// Instantiate vecT template functions for T=bigint
+template int dim<bigint>(const vecT<bigint>&);
+template bigint operator*<bigint>(const vecT<bigint>&, const vecT<bigint>&);
+template bigint content<bigint>(const vecT<bigint>&);
+template bigint maxabs<bigint>(const vecT<bigint>&);
+template int operator==<bigint>(const vecT<bigint>&, const vecT<bigint>&);
+template int operator!=<bigint>(const vecT<bigint>&, const vecT<bigint>&);
+template int trivial<bigint>(const vecT<bigint>&);                  // is v all 0
+template int member<bigint>(const bigint& a, const vecT<bigint>& v);//tests if a=v[i] for some i
+template vecT<bigint> reverse<bigint>(const vecT<bigint>& order);
+template ostream& operator<<<bigint> (ostream&s, const vecT<bigint>&);
+template istream& operator>><bigint> (istream&s, vecT<bigint>&);
+template void swapvec<bigint>(vecT<bigint>& v, vecT<bigint>& w);
+template int lift(const vecT<bigint>& v, const bigint& pr, vecT<bigint>& ans);

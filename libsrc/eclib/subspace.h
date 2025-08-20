@@ -26,6 +26,8 @@
 
 #include "matrix.h"
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -82,25 +84,9 @@
 #undef mat
 #undef subspace
 
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
-
-template<class T> class vecT;
-template<class T> class svecT;
-template<class T> class smatT;
-template<class T> class smatT_elim;
-template<class T> class matT;
-template<class T> class subspaceT;
-
-template<class T> int dim(const subspaceT<T>& s);      // the dimension
-template<class T> T denom(const subspaceT<T>& s);   // the denominator
-template<class T> vecT<int> pivots(const subspaceT<T>& s);// the pivot vector
-template<class T> matT<T> basis(const subspaceT<T>& s) ;// the basis matrix
-template<class T> subspaceT<T> combine(const subspaceT<T>& s1, const subspaceT<T>& s2);
-template<class T> matT<T> restrict_mat(const matT<T>& m, const subspaceT<T>& s, int cr);
-template<class T> subspaceT<T> pcombine(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr);
-template<class T> matT<T> prestrict(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr);
-template<class T> int lift(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans);
-
 
 template<class T>
 class subspaceT {

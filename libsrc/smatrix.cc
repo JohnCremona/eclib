@@ -25,6 +25,8 @@
 
 #include <eclib/smatrix.h>
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -82,7 +84,15 @@
 #undef smat
 #undef smat_elim
 
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
+
+// Instantiate smatT template classes for T=int, long, bigint
+
+template class smatT<int>;
+template class smatT<long>;
+template class smatT<bigint>;
 
 template<class T>
 void showrow(int*pos, T*val) // for debugging
@@ -608,7 +618,7 @@ matT<T> smatT<T>::operator*( const matT<T>& m )
 }
 
 template<class T>
-long smatT<T>::nullity(const T& lambda, T m) // nullity of this-lambda*I modulo m
+int smatT<T>::nullity(const T& lambda, T m) // nullity of this-lambda*I modulo m
 {
   smatT<T> sma(*this); sma-=lambda;  return sma.ncols()-sma.rank(m);
 }
@@ -1118,8 +1128,8 @@ void random_fill_in( smatT<T>& sm, int max, int seed )
       for( int s = 0; s < N; s++ )
 	{
 	  int v = int( 20 * ran0( seed ) ) - 10; // value between -10 & 9
-	  if( v != 0 ) 
-	    {  
+	  if( v != 0 )
+	    {
 	      int p = int( sm.ncols() * ran0( seed ) ); //position in matrix
 	      if( p == sm.ncols() ) p--;
 	      if( intpos[ p ] == 0 ) count++;
@@ -1217,3 +1227,96 @@ smatT<T> mult_mod_p_flint ( const smatT<T>& A, const smatT<T>& B, const T& pr )
 }
 
 #endif
+
+// Instantiate smatT template functions for T=int
+template vector<int> dim<int>(const smatT<int>& A);
+template smatT<int> transpose<int>( const smatT<int>&);
+template smatT<int> operator*<int>( const smatT<int>&, const smatT<int>&);
+template svecT<int> operator*<int>( const smatT<int>& A, const svecT<int>& v );
+template svecT<int> operator*<int>( const svecT<int>& v, const smatT<int>& A );
+template vecT<int> operator*<int>( const smatT<int>& m, const vecT<int>& v);
+template smatT<int> operator+<int>(const smatT<int>&);
+template smatT<int> operator-<int>(const smatT<int>&);
+template smatT<int> operator+<int>(const smatT<int>& m1, const smatT<int>& m2);
+template smatT<int> operator-<int>(const smatT<int>& m1, const smatT<int>& m2);
+template smatT<int> operator*<int>(int, const smatT<int>& m);
+template smatT<int> operator/<int>(const smatT<int>& m, int scal);
+template int operator!=<int>(const smatT<int>& sm1, const smatT<int>& sm2);
+template svecT<int> mult_mod_p<int>( const smatT<int>& A, const svecT<int>& v, const int& p  );
+template svecT<int> mult_mod_p<int>( const svecT<int>& v, const smatT<int>& A, const int& p  );
+template smatT<int> mult_mod_p<int>( const smatT<int>&, const smatT<int>&, const int&);
+template vecT<int> mult_mod_p<int>( const smatT<int>& A, const vecT<int>& v, const int& p  );
+template smatT<int> mult_mod_p_flint<int>( const smatT<int>& A, const smatT<int>& B, const int& p );
+template int maxabs<int>( const smatT<int>& A);
+template int operator==<int>(const smatT<int>&, const smatT<int>&);
+template int eqmodp<int>(const smatT<int>&, const smatT<int>&, const int& p);
+template ostream& operator<<<int>(ostream&s, const smatT<int>&);
+template istream& operator>><int>(istream&s, smatT<int>&);
+template int get_population<int>(const smatT<int>& );
+template double density<int>(const smatT<int>& m);
+template void random_fill_in<int>( smatT<int>&, int, int );
+template int liftmat<int>(const smatT<int>& mm, int pr, smatT<int>& m, int& dd);
+template int liftmats_chinese<int>(const smatT<int>& mm1, int pr1, const smatT<int>& mm2, int pr2,
+                              smatT<int>& m, int& dd);
+
+// Instantiate smatT template functions for T=long
+template vector<int> dim<long>(const smatT<long>& A);
+template smatT<long> transpose<long>( const smatT<long>&);
+template smatT<long> operator*<long>( const smatT<long>&, const smatT<long>&);
+template svecT<long> operator*<long>( const smatT<long>& A, const svecT<long>& v );
+template svecT<long> operator*<long>( const svecT<long>& v, const smatT<long>& A );
+template vecT<long> operator* <long>( const smatT<long>& m, const vecT<long>& v);
+template smatT<long> operator+<long>(const smatT<long>&);
+template smatT<long> operator-<long>(const smatT<long>&);
+template smatT<long> operator+<long>(const smatT<long>& m1, const smatT<long>& m2);
+template smatT<long> operator-<long>(const smatT<long>& m1, const smatT<long>& m2);
+template smatT<long> operator*<long>(long, const smatT<long>& m);
+template smatT<long> operator/<long>(const smatT<long>& m, long scal);
+template int operator!=<long>(const smatT<long>& sm1, const smatT<long>& sm2);
+template svecT<long> mult_mod_p<long>( const smatT<long>& A, const svecT<long>& v, const long& p  );
+template svecT<long> mult_mod_p<long>( const svecT<long>& v, const smatT<long>& A, const long& p  );
+template smatT<long> mult_mod_p<long>( const smatT<long>&, const smatT<long>&, const long&);
+template vecT<long> mult_mod_p<long>( const smatT<long>& A, const vecT<long>& v, const long& p  );
+template smatT<long> mult_mod_p_flint<long>( const smatT<long>& A, const smatT<long>& B, const long& p );
+template long maxabs<long>( const smatT<long>& A);
+template int operator==<long>(const smatT<long>&, const smatT<long>&);
+template int eqmodp<long>(const smatT<long>&, const smatT<long>&, const long& p);
+template ostream& operator<<<long>(ostream&s, const smatT<long>&);
+template istream& operator>><long>(istream&s, smatT<long>&);
+template int get_population<long>(const smatT<long>& );
+template double density<long>(const smatT<long>& m);
+template void random_fill_in<long>( smatT<long>&, int, int );
+template int liftmat<long>(const smatT<long>& mm, long pr, smatT<long>& m, long& dd);
+template int liftmats_chinese<long>(const smatT<long>& mm1, long pr1, const smatT<long>& mm2, long pr2,
+                                    smatT<long>& m, long& dd);
+
+// Instantiate smatT template functions for T=bigint
+template vector<int> dim<bigint>(const smatT<bigint>& A);
+template smatT<bigint> transpose<bigint>( const smatT<bigint>&);
+template smatT<bigint> operator*<bigint>( const smatT<bigint>&, const smatT<bigint>&);
+template svecT<bigint> operator*<bigint>( const smatT<bigint>& A, const svecT<bigint>& v );
+template svecT<bigint> operator*<bigint>( const svecT<bigint>& v, const smatT<bigint>& A );
+template vecT<bigint> operator* <bigint>( const smatT<bigint>& m, const vecT<bigint>& v);
+template smatT<bigint> operator+<bigint>(const smatT<bigint>&);
+template smatT<bigint> operator-<bigint>(const smatT<bigint>&);
+template smatT<bigint> operator+<bigint>(const smatT<bigint>& m1, const smatT<bigint>& m2);
+template smatT<bigint> operator-<bigint>(const smatT<bigint>& m1, const smatT<bigint>& m2);
+template smatT<bigint> operator*<bigint>(bigint, const smatT<bigint>& m);
+template smatT<bigint> operator/<bigint>(const smatT<bigint>& m, bigint scal);
+template int operator!=<bigint>(const smatT<bigint>& sm1, const smatT<bigint>& sm2);
+template svecT<bigint> mult_mod_p<bigint>( const smatT<bigint>& A, const svecT<bigint>& v, const bigint& p  );
+template svecT<bigint> mult_mod_p<bigint>( const svecT<bigint>& v, const smatT<bigint>& A, const bigint& p  );
+template smatT<bigint> mult_mod_p<bigint>( const smatT<bigint>&, const smatT<bigint>&, const bigint&);
+template vecT<bigint> mult_mod_p<bigint>( const smatT<bigint>& A, const vecT<bigint>& v, const bigint& p  );
+template smatT<bigint> mult_mod_p_flint<bigint>( const smatT<bigint>& A, const smatT<bigint>& B, const bigint& p );
+template bigint maxabs<bigint>( const smatT<bigint>& A);
+template int operator==<bigint>(const smatT<bigint>&, const smatT<bigint>&);
+template int eqmodp<bigint>(const smatT<bigint>&, const smatT<bigint>&, const bigint& p);
+template ostream& operator<<<bigint>(ostream&s, const smatT<bigint>&);
+template istream& operator>><bigint>(istream&s, smatT<bigint>&);
+template int get_population<bigint>(const smatT<bigint>& );
+template double density<bigint>(const smatT<bigint>& m);
+template void random_fill_in<bigint>( smatT<bigint>&, int, int );
+template int liftmat<bigint>(const smatT<bigint>& mm, bigint pr, smatT<bigint>& m, bigint& dd);
+template int liftmats_chinese<bigint>(const smatT<bigint>& mm1, bigint pr1, const smatT<bigint>& mm2, bigint pr2,
+                                      smatT<bigint>& m, bigint& dd);

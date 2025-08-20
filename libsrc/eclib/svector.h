@@ -26,6 +26,8 @@
 
 #include <eclib/vector.h>
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -85,42 +87,16 @@
 #undef svec
 #undef smat
 #undef smat_elim
-
+#endif
 ///////////////////////////////////////////////////////////////////////////
 
-template<class T> class vecT;
-template<class T> class svecT;
-template<class T> class smatT;
-template<class T> class smatT_elim;
-template<class T> class matT;
-template<class T> class subspaceT;
+template<class T> int dim(const svecT<T>& v);
+template<class T> T operator*(const vecT<T>& v, const svecT<T>& sv);
+template<class T> T dotmodp(const vecT<T>& v, const svecT<T>& sv, const T& pr);
+template<class T> int operator!=(const svecT<T>& v1, const vecT<T>& v2);
+template<class T> int operator==(const vecT<T>& v1, const svecT<T>& v2);
+template<class T> int operator!=(const vecT<T>& v1, const svecT<T>& v2);
 
-template<class T> int dim(const svecT<T>& v)  {return v.d;}
-template<class T> int eqmodp(const svecT<T>&, const svecT<T>&, const T& p);
-template<class T> ostream& operator<< (ostream&s, const svecT<T>&);
-template<class T> T operator*(const svecT<T>&, const svecT<T>&); //dot product
-template<class T> T operator*(const svecT<T>&, const vecT<T>&);
-template<class T> T operator*(const vecT<T>& v, const svecT<T>& sv) {return sv*v;}
-template<class T> T dotmodp(const svecT<T>&, const svecT<T>&, const T& pr);
-template<class T> T dotmodp(const svecT<T>&, const vecT<T>&, const T& pr);
-template<class T> T dotmodp(const vecT<T>& v, const svecT<T>& sv, const T& pr) {return dotmodp(sv,v,pr);}
-template<class T> svecT<T> operator+(const svecT<T>& v1, const svecT<T>& v2);
-template<class T> svecT<T> operator-(const svecT<T>& v1, const svecT<T>& v2);
-template<class T> int operator==(const svecT<T>& v1, const svecT<T>& v2);
-template<class T> int operator!=(const svecT<T>& v1, const svecT<T>& v2);
-template<class T> int operator==(const svecT<T>& v1, const vecT<T>& v2);
-template<class T> int operator!=(const svecT<T>& v1, const vecT<T>& v2) {return !(v1==v2);}
-template<class T> int operator==(const vecT<T>& v1, const svecT<T>& v2) {return v2==v1;}
-template<class T> int operator!=(const vecT<T>& v1, const svecT<T>& v2) {return v2!=v1;}
-template<class T> smatT<T> transpose(const smatT<T>&);
-template<class T> smatT<T> operator* ( const smatT<T>&, const smatT<T>&);
-template<class T> T content(const svecT<T>& v);
-template<class T> T make_primitive(svecT<T>& v); // divides by & returns content
-template<class T> svecT<T> operator* ( const smatT<T>& A, const svecT<T>& v );
-template<class T> svecT<T> operator* ( const svecT<T>& v, const smatT<T>& A );
-template<class T> svecT<T> mult_mod_p( const smatT<T>& A, const svecT<T>& v, const T& p  );
-template<class T> svecT<T> mult_mod_p( const svecT<T>& v, const smatT<T>& A, const T& p  );
-template<class T> smatT<T> mult_mod_p ( const smatT<T>&, const smatT<T>&, const T&);
 
 template<class T>
 class svecT {
@@ -179,24 +155,23 @@ public:
 
   // non-member (friend) functions and operators
 
-  friend inline int dim(const svecT<T>& v)  {return v.d;}
-  // Equality mod p:
+  friend int dim<>(const svecT<T>& v);
   friend int eqmodp<>(const svecT<T>&, const svecT<T>&, const T& p);
   friend ostream& operator<<<> (ostream&s, const svecT<T>&);
-  friend T operator*<>(const svecT<T>&, const svecT<T>&); //dot product
+  friend T operator*<>(const svecT<T>&, const svecT<T>&);
   friend T operator*<>(const svecT<T>&, const vecT<T>&);
-  friend T operator*(const vecT<T>& v, const svecT<T>& sv) {return sv*v;}
+  friend T operator*<>(const vecT<T>& v, const svecT<T>& sv);
   friend T dotmodp<>(const svecT<T>&, const svecT<T>&, const T& pr);
   friend T dotmodp<>(const svecT<T>&, const vecT<T>&, const T& pr);
-  friend T dotmodp(const vecT<T>& v, const svecT<T>& sv, const T& pr) {return dotmodp(sv,v,pr);}
+  friend T dotmodp<>(const vecT<T>& v, const svecT<T>& sv, const T& pr);
   friend svecT<T> operator+<>(const svecT<T>& v1, const svecT<T>& v2);
   friend svecT<T> operator-<>(const svecT<T>& v1, const svecT<T>& v2);
   friend int operator==<>(const svecT<T>& v1, const svecT<T>& v2);
   friend int operator!=<>(const svecT<T>& v1, const svecT<T>& v2);
   friend int operator==<>(const svecT<T>& v1, const vecT<T>& v2);
-  friend int operator!=(const svecT<T>& v1, const vecT<T>& v2) {return !(v1==v2);}
-  friend int operator==(const vecT<T>& v1, const svecT<T>& v2) {return v2==v1;}
-  friend int operator!=(const vecT<T>& v1, const svecT<T>& v2) {return v2!=v1;}
+  friend int operator!=<>(const svecT<T>& v1, const vecT<T>& v2);
+  friend int operator==<>(const vecT<T>& v1, const svecT<T>& v2);
+  friend int operator!=<>(const vecT<T>& v1, const svecT<T>& v2);
   friend smatT<T> transpose<>(const smatT<T>&);
   friend smatT<T> operator*<> ( const smatT<T>&, const smatT<T>&);
   friend T content<>(const svecT<T>& v);
@@ -218,11 +193,11 @@ inline svecT<T> operator-(const svecT<T>& v)                  // unary -
 template<class T>
 inline svecT<T> operator+(const svecT<T>& v1, const svecT<T>& v2)
 {
-  if(v1.entries.size()<v2.entries.size())   
+  if(v1.entries.size()<v2.entries.size())
     {
       svecT<T> ans(v2); ans+=v1; return ans;
     }
-  else 
+  else
     {
       svecT<T> ans(v1); ans+=v2; return ans;
     }

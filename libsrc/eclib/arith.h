@@ -222,7 +222,7 @@ inline int ndivides(long factor,long number)
 int divrem(long a, long b, long& q, long& r);
 int divrem(int a, int b, int& q, int& r);
 
-inline long m1pow(long a) {return (a%2 ?  -1 : +1);}
+inline int m1pow(long a) {return (a%2 ?  -1 : +1);}
 inline int sign(long a)   {return (a==0? 0: (a>0? 1: -1));}
 
 // set root to rounded sqrt(a) if a>=0, return 1 iff exact
@@ -230,11 +230,11 @@ int isqrt(long a, long& root);
 // return rounded sqrt(a) (undefined for a<0)
 long isqrt(const long a);
 
-long chi2(long a);
-long chi4(long a);
-long hilbert2(long a, long b);
-long legendre(long a, long b);
-long kronecker(long d, long n);
+int chi2(long a);
+int chi4(long a);
+int hilbert2(long a, long b);
+int legendre(long a, long b);
+int kronecker(long d, long n);
 int intlog2(long& n, long& e, int roundup);
 
 int is_squarefree(long n);

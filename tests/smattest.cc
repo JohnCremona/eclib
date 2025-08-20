@@ -281,8 +281,8 @@ int main(void)
 	  for(j = 0; j < loop; j++) 
 	    {  
 	      m += m1;
-	      m -= 2*m2; 
-	      m += 3*m3; 
+	      m -= scalar(2)*m2; 
+	      m += scalar(3)*m3; 
 	      if(see>1) cout<<m<<endl; else cout<<"."<<flush;
 	    }  
 	  stoptime = clock();
@@ -292,7 +292,7 @@ int main(void)
 	       << ((double)(stoptime-starttime)/CLOCKS_PER_SEC) 
 	       << " seconds"<<endl;
 	  m1.init(0,0); m2.init(0,0); m3.init(0,0);
-	  
+
 	  starttime = clock();
 	  for(j = 0; j < loop; j++) 
 	    { 
@@ -300,7 +300,7 @@ int main(void)
 	      sm -= two*sm2; 
 	      sm += three*sm3; 
 	      if(see>1) cout<<sm<<endl; else cout<<"."<<flush;
-	    } 		  
+	    }
 	  stoptime = clock();
 
 	  if( see ) cout << " resulting smat = " << sm << endl;
@@ -394,7 +394,7 @@ int main(void)
 	  }
 	smat_elim A( sm, modulus );
 	vec_i pc, npc;
-	
+
 	if( flag ) {
 	  long rk, ny; scalar pr = modulus;
 	  mat m = sm.as_mat ();  
@@ -480,7 +480,7 @@ int main(void)
       }
     cout << "enter new value of t  ";
     cin >> t;
-  }  
+  }
   cout<<endl;
   return(0);
 }

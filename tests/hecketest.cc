@@ -41,9 +41,6 @@
 //#define CHECK_COMMUTE
 //#define TEST_EIGS
 
-double sparsity(const mat_m& m);
-double sparsity(const mat& m);
-
 vector<long> eigrange(long p)
 {
   long aplim=3, four_p=p<<2;
@@ -80,7 +77,7 @@ int main(void)
  cout << ">>>Level " << n << "\t";
  homspace hplus(n,plus,0,0);
  int genus = hplus.h1dim();
- long den = hplus.h1denom();
+ int den = hplus.h1denom();
  bigint den2; den2 = den*den;
  cout << "Dimension = " << genus << "\n";
  cout << "denominator = " << den << "\n";
@@ -95,10 +92,10 @@ int main(void)
    smat conjmat = hplus.s_conj(1);
    cout<<" done."<<endl;
    cout << "Computing +1 eigenspace...  " << flush;
-   ssubspace h1plus = eigenspace(conjmat,den, MODULUS);
+   ssubspace h1plus = eigenspace(conjmat,den, scalar(MODULUS));
    cout<<" done, dimension = "<<dim(h1plus)<<endl;
    cout << "Computing -1 eigenspace...  " << flush;
-   ssubspace h1minus = eigenspace(conjmat,-den, MODULUS);
+   ssubspace h1minus = eigenspace(conjmat,-den, scalar(MODULUS));
    cout<<" done, dimension = "<<dim(h1minus)<<endl;
 
    int w_eigs=0;
@@ -377,13 +374,3 @@ int main(void)
  cout<<endl;
 exit(0);
      }       // end of main()
-
-double sparsity(const mat_m& m)
-  {
-    double count=0;
-    long i,j,nr=m.nrows(), nc=m.ncols();
-    for(i=0; i<nr; i++)
-      for(j=0; j<nc; j++)
-	if(!is_zero(m(i+1,j+1))) count=count+1;
-    return count/(nr*nc);
-  }

@@ -29,6 +29,8 @@
 #include "matrix.h"
 #include "svector.h"
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -89,45 +91,16 @@
 #undef smat
 #undef smat_elim
 
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 
-template<class T> class vecT;
-template<class T> class svecT;
-template<class T> class smatT;
-template<class T> class smatT_elim;
-template<class T> class matT;
-template<class T> class subspaceT;
-
-template<class T> inline vector<int> dim(const smatT<T>& A)
-{return vector<int>{A.nro, A.nco};}
-template<class T> vecT<T> operator*  (const smatT<T>& m, const vecT<T>& v);
-template<class T> svecT<T> operator* ( const smatT<T>& A, const svecT<T>& v );
-template<class T> svecT<T> operator* ( const svecT<T>& v, const smatT<T>& A );
-template<class T> svecT<T> mult_mod_p( const smatT<T>& A, const svecT<T>& v, const T& p  );
-template<class T> vecT<T> mult_mod_p( const smatT<T>& A, const vecT<T>& v, const T& p  );
-template<class T> svecT<T> mult_mod_p( const svecT<T>& v, const smatT<T>& A, const T& p  );
-template<class T> smatT<T> operator* ( const smatT<T>& A, const smatT<T>& B );
-template<class T> smatT<T> mult_mod_p ( const smatT<T>& A, const smatT<T>& B, const T& p );
-template<class T> smatT<T> mult_mod_p_flint ( const smatT<T>& A, const smatT<T>& B, const T& p );
-template<class T> T maxabs( const smatT<T>& A);
-template<class T> smatT<T> transpose(const smatT<T>&);
-template<class T> int operator==(const smatT<T>&, const smatT<T>&);
-template<class T> int eqmodp(const smatT<T>&, const smatT<T>&, const T& p);
-template<class T> ostream& operator<< (ostream&s, const smatT<T>&);
-template<class T> istream& operator>> (istream&s, smatT<T>&);
-template<class T> int get_population (const smatT<T>& );      //mainly used for testing
-template<class T> inline double density (const smatT<T>& m)
-{return (((double)(get_population(m)))/m.nro)/m.nco;}
-template<class T> void random_fill_in( smatT<T>&, int, T ); //the elimination program
-template<class T> int liftmat(const smatT<T>& mm, T pr, smatT<T>& m, T& dd);
-template<class T> int liftmats_chinese(const smatT<T>& mm1, T pr1, const smatT<T>& mm2, T pr2,
-                              smatT<T>& m, T& dd);
-template<class T> void random_fill_in( smatT<T>& sm, int max, int seed );
 
 template<class T>
 class smatT {
 
   friend class smatT_elim<T>;
+  friend class ssubspaceT<T>;
 
 protected:
   int nco;            // number of columns
@@ -167,8 +140,8 @@ public:
   svecT<T> row(int) const; // extract row i as an svec
   int nrows() const {return nro;}
   int ncols() const {return nco;}
-  long rank(T mod); // implemented in smat_elim.cc
-  long nullity(const T& lambda, T mod); // nullity of this-lambda*I
+  int rank(T mod); // implemented in smat_elim.cc
+  int nullity(const T& lambda, T mod); // nullity of this-lambda*I
 
   static smatT<T> scalar_matrix(int n, const T& a);  // nxn scalar matrix a*I
   static smatT<T> identity_matrix(int n) {return scalar_matrix(n, T(1));}  // nxn identity matrix I
@@ -182,7 +155,7 @@ public:
   friend svecT<T> mult_mod_p<>( const smatT<T>& A, const svecT<T>& v, const T& p  );
   friend vecT<T> mult_mod_p<>( const smatT<T>& A, const vecT<T>& v, const T& p  );
   friend svecT<T> mult_mod_p<>( const svecT<T>& v, const smatT<T>& A, const T& p  );
-  template<class T1>  friend smatT operator* ( const smatT<T1>& A, const smatT<T1>& B );
+  template<class T1>  friend smatT<T1> operator* ( const smatT<T1>& A, const smatT<T1>& B );
   friend smatT<T> mult_mod_p<> ( const smatT<T>& A, const smatT<T>& B, const T& p );
   friend smatT<T> mult_mod_p_flint<> ( const smatT<T>& A, const smatT<T>& B, const T& p );
   friend T maxabs<>( const smatT<T>& A);
@@ -191,13 +164,12 @@ public:
   friend int eqmodp<>(const smatT<T>&, const smatT<T>&, const T& p);
   friend ostream& operator<<<> (ostream&s, const smatT<T>&);
   friend istream& operator>><> (istream&s, smatT<T>&);
-  friend int get_population<> (const smatT<T>& );      //mainly used for testing
+  friend int get_population<> (const smatT<T>& );
   friend double density<> (const smatT<T>& m);
-  friend void random_fill_in<>( smatT<T>&, int, T ); //the elimination program
+  friend void random_fill_in<>( smatT<T>&, int, int );
   friend int liftmat<>(const smatT<T>& mm, T pr, smatT<T>& m, T& dd);
   friend int liftmats_chinese<>(const smatT<T>& mm1, T pr1, const smatT<T>& mm2, T pr2,
                                 smatT<T>& m, T& dd);
-  friend void random_fill_in<>( smatT<T>& sm, int max, int seed );
 };
 
 // Declaration of non-friend functions

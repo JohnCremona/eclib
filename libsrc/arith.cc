@@ -511,8 +511,8 @@ int bezout(int aa, int bb, int& xx, int& yy)
  else     {xx= oldx; yy= oldy; return( a);}
 }
 
-long chi2(long a)
-{ static const long table8[8] = {0,1,0,-1,0,-1,0,1};
+int chi2(long a)
+{ static const int table8[8] = {0,1,0,-1,0,-1,0,1};
   return table8[posmod(a,8)];
 }
 
@@ -539,24 +539,24 @@ long squarefree_part(long d)
   return (d/maxd)/maxd;
 }
 
-long chi4(long a)
-{ static const long table4[4] = {0,1,0,-1};
+int chi4(long a)
+{ static const int table4[4] = {0,1,0,-1};
   return table4[posmod(a,4)];
 }
 
-long hilbert2(long a, long b)
-{ static long table44[4][4] = {{0,0,0,0},
+int hilbert2(long a, long b)
+{ static int table44[4][4] = {{0,0,0,0},
                               {0,1,0,1},
                               {0,0,0,0},
                               {0,1,0,-1}};
   return table44[posmod(a,4)][posmod(b,4)];
 }
 
-long leg(long a, long b)  //nb this function is not intended for public use
+int leg(long a, long b)  //nb this function is just a helper for legendre()
 { long aa = a;
   long bb = b;
-  long ans = 1;
-  while (bb>1) 
+  int ans = 1;
+  while (bb>1)
   {     aa = aa % bb;
         if (aa<0)       {aa=-aa; ans*=chi4(bb);}
         while (!(aa%4)) {aa/=4;}
@@ -566,12 +566,12 @@ long leg(long a, long b)  //nb this function is not intended for public use
   }
   return ans;
 }
- 
-long legendre(long a, long b)
-{ 
+
+int legendre(long a, long b)
+{
   return (((gcd(a,b)==1) && (b%2)) ? leg(a,b) : 0);
 }
- 
+
 // Function which returns 1 and sets e such that 2**e=n if n is a power of 2.
 // If the "roundup" flag is set and n is not a power of 2 it increases n to
 // the next power of 2 (and returns 0)
@@ -596,9 +596,9 @@ static const int longis64bit = sizeof(long)==4;
 
 // The following function returns valuation(z,2) for a long int z:
 
-long val2(unsigned long z);
+int val2(unsigned long z);
 
-long kronecker(long x, long y)
+int kronecker(long x, long y)
 {
   long r,s=1,x1;
 
@@ -632,7 +632,7 @@ long kronecker(long x, long y)
   return (y==1)? s: 0;
 }
 
-long val2(unsigned long z)
+int val2(unsigned long z)
 {
   int v=0;
   while (!(z&1)) {v++; z>>=1;}

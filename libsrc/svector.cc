@@ -24,6 +24,8 @@
 #include <eclib/svector.h>
 #include <eclib/marith.h>
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -76,7 +78,15 @@
 #undef smat
 #undef smat_elim
 
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
+
+// Instantiate svecT template classes for T=int, long, bigint
+
+template class svecT<int>;
+template class svecT<long>;
+template class svecT<bigint>;
 
 // Definitions of member operators and functions:
 
@@ -569,3 +579,104 @@ T make_primitive(svecT<T>& v) // divides by & returns content
   v/=c;
   return c;
 }
+
+template<class T> int dim(const svecT<T>& v)   {return v.d;}
+template<class T> T operator*(const vecT<T>& v, const svecT<T>& sv)  {return sv*v;}
+template<class T> T dotmodp(const vecT<T>& v, const svecT<T>& sv, const T& pr) {return dotmodp(sv,v,pr);}
+template<class T> int operator!=(const svecT<T>& v1, const vecT<T>& v2) {return !(v1==v2);}
+template<class T> int operator==(const vecT<T>& v1, const svecT<T>& v2) {return v2==v1;}
+template<class T> int operator!=(const vecT<T>& v1, const svecT<T>& v2) {return v2!=v1;};
+
+// Instantiate svecT template functions for T=int
+template int operator*<int>(const svecT<int>&, const svecT<int>&);
+template int operator*<int>(const svecT<int>&, const vecT<int>&);
+template int content<int>(const svecT<int>& v);
+template int make_primitive<int>(svecT<int>& v);
+template int dotmodp<int>(const svecT<int>& v, const vecT<int>& w, const int& pr);
+template int dotmodp<int>(const svecT<int>& v, const svecT<int>& w, const int& pr);
+template int dim<int>(const svecT<int>& v);
+template int eqmodp<int>(const svecT<int>&, const svecT<int>&, const int& p);
+template ostream& operator<< <int>(ostream&s, const svecT<int>&);
+template int operator*<int>(const vecT<int>& v, const svecT<int>& sv);
+template int dotmodp<int>(const vecT<int>& v, const svecT<int>& sv, const int& pr);
+template svecT<int> operator+<int>(const svecT<int>& v1, const svecT<int>& v2);
+template svecT<int> operator-<int>(const svecT<int>& v1, const svecT<int>& v2);
+template int operator==<int>(const svecT<int>& v1, const svecT<int>& v2);
+template int operator!=<int>(const svecT<int>& v1, const svecT<int>& v2);
+template int operator==<int>(const svecT<int>& v1, const vecT<int>& v2);
+template int operator!=<int>(const svecT<int>& v1, const vecT<int>& v2);
+template int operator==<int>(const vecT<int>& v1, const svecT<int>& v2);
+template int operator!=<int>(const vecT<int>& v1, const svecT<int>& v2);
+template svecT<int> operator+<int>(const svecT<int>& v);
+template svecT<int> operator-<int>(const svecT<int>& v);
+// template svecT<int> operator+<int>(const svecT<int>& v1, const svecT<int>& v2);
+// template svecT<int> operator-<int>(const svecT<int>& v1, const svecT<int>& v2);
+template svecT<int> operator*<int>(const int& scal, const svecT<int>& v);
+template svecT<int> operator/<int>(const svecT<int>& v, const int& scal);
+// template int operator==<int>(const svecT<int>& v1, const svecT<int>& v2);
+// template int operator!=<int>(const svecT<int>& v1, const svecT<int>& v2);
+
+// Instantiate svecT template functions for T=long
+template long operator*<long>(const svecT<long>&, const svecT<long>&);
+template long operator*<long>(const svecT<long>&, const vecT<long>&);
+template long content<long>(const svecT<long>& v);
+template long make_primitive<long>(svecT<long>& v);
+template long dotmodp<long>(const svecT<long>& v, const vecT<long>& w, const long& pr);
+template long dotmodp<long>(const svecT<long>& v, const svecT<long>& w, const long& pr);
+template int dim<long>(const svecT<long>& v);
+template int eqmodp<long>(const svecT<long>&, const svecT<long>&, const long& p);
+template ostream& operator<< <long>(ostream&s, const svecT<long>&);
+template long operator*<long>(const vecT<long>& v, const svecT<long>& sv);
+template long dotmodp<long>(const vecT<long>& v, const svecT<long>& sv, const long& pr);
+template svecT<long> operator+<long>(const svecT<long>& v1, const svecT<long>& v2);
+template svecT<long> operator-<long>(const svecT<long>& v1, const svecT<long>& v2);
+template int operator==<long>(const svecT<long>& v1, const svecT<long>& v2);
+template int operator!=<long>(const svecT<long>& v1, const svecT<long>& v2);
+template int operator==<long>(const svecT<long>& v1, const vecT<long>& v2);
+template int operator!=<long>(const svecT<long>& v1, const vecT<long>& v2);
+template int operator==<long>(const vecT<long>& v1, const svecT<long>& v2);
+template int operator!=<long>(const vecT<long>& v1, const svecT<long>& v2);
+template svecT<long> operator+<long>(const svecT<long>& v);
+template svecT<long> operator-<long>(const svecT<long>& v);
+// template svecT<long> operator+<long>(const svecT<long>& v1, const svecT<long>& v2);
+// template svecT<long> operator-<long>(const svecT<long>& v1, const svecT<long>& v2);
+template svecT<long> operator*<long>(const long& scal, const svecT<long>& v);
+template svecT<long> operator/<long>(const svecT<long>& v, const long& scal);
+// template int operator==<long>(const svecT<long>& v1, const svecT<long>& v2);
+// template int operator!=<long>(const svecT<long>& v1, const svecT<long>& v2);
+
+// Instantiate svecT template functions for T=long
+template bigint operator*<bigint>(const svecT<bigint>&, const svecT<bigint>&);
+template bigint operator*<bigint>(const svecT<bigint>&, const vecT<bigint>&);
+template bigint content<bigint>(const svecT<bigint>& v);
+template bigint make_primitive<bigint>(svecT<bigint>& v);
+template bigint dotmodp<bigint>(const svecT<bigint>& v, const vecT<bigint>& w, const bigint& pr);
+template bigint dotmodp<bigint>(const svecT<bigint>& v, const svecT<bigint>& w, const bigint& pr);
+template int dim<bigint>(const svecT<bigint>& v);
+template int eqmodp<bigint>(const svecT<bigint>&, const svecT<bigint>&, const bigint& p);
+template ostream& operator<< <bigint>(ostream&s, const svecT<bigint>&);
+template bigint operator*<bigint>(const vecT<bigint>& v, const svecT<bigint>& sv);
+template bigint dotmodp<bigint>(const vecT<bigint>& v, const svecT<bigint>& sv, const bigint& pr);
+template svecT<bigint> operator+<bigint>(const svecT<bigint>& v1, const svecT<bigint>& v2);
+template svecT<bigint> operator-<bigint>(const svecT<bigint>& v1, const svecT<bigint>& v2);
+template int operator==<bigint>(const svecT<bigint>& v1, const svecT<bigint>& v2);
+template int operator!=<bigint>(const svecT<bigint>& v1, const svecT<bigint>& v2);
+template int operator==<bigint>(const svecT<bigint>& v1, const vecT<bigint>& v2);
+template int operator!=<bigint>(const svecT<bigint>& v1, const vecT<bigint>& v2);
+template int operator==<bigint>(const vecT<bigint>& v1, const svecT<bigint>& v2);
+template int operator!=<bigint>(const vecT<bigint>& v1, const svecT<bigint>& v2);
+template svecT<bigint> operator+<bigint>(const svecT<bigint>& v);
+template svecT<bigint> operator-<bigint>(const svecT<bigint>& v);
+// template svecT<bigint> operator+<bigint>(const svecT<bigint>& v1, const svecT<bigint>& v2);
+// template svecT<bigint> operator-<bigint>(const svecT<bigint>& v1, const svecT<bigint>& v2);
+template svecT<bigint> operator*<bigint>(const bigint& scal, const svecT<bigint>& v);
+template svecT<bigint> operator/<bigint>(const svecT<bigint>& v, const bigint& scal);
+// template int operator==<bigint>(const svecT<bigint>& v1, const svecT<bigint>& v2);
+// template int operator!=<bigint>(const svecT<bigint>& v1, const svecT<bigint>& v2);
+// template smatT<bigint> transpose<bigint>(const smatT<bigint>&);
+// template smatT<bigint> operator* <bigint>( const smatT<bigint>&, const smatT<bigint>&);
+// template svecT<bigint> operator* <bigint>( const smatT<bigint>& A, const svecT<bigint>& v );
+// template svecT<bigint> operator* <bigint>( const svecT<bigint>& v, const smatT<bigint>& A );
+// template svecT<bigint> mult_mod_p<bigint>( const smatT<bigint>& A, const svecT<bigint>& v, const bigint& p  );
+// template svecT<bigint> mult_mod_p<bigint>( const svecT<bigint>& v, const smatT<bigint>& A, const bigint& p  );
+// template smatT<bigint> mult_mod_p<bigint>( const smatT<bigint>&, const smatT<bigint>&, const bigint&);

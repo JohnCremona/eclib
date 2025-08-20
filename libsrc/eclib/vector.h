@@ -26,6 +26,8 @@
 
 #include <eclib/marith.h>
 
+#if(0)
+
 class vec_i; class vec_l; class vec_m;
 class mat_i; class mat_l; class mat_m;
 class svec_i; class svec_l; class svec_m;
@@ -95,19 +97,7 @@ class subspace_i; class subspace_l; class subspace_m;
 #undef smat
 #undef smat_elim
 
-// conversions between vectors of different scalar types
-
-vec_m to_vec_m(const vec_i& v);
-vec_m to_vec_m(const vec_l& v);
-inline vec_m to_vec_m(const vec_m& v) {return v;}
-
-vec_l to_vec_l(const vec_i& v);
-inline vec_l to_vec_l(const vec_l& v) {return v;}
-vec_l to_vec_l(const vec_m& v);
-
-inline vec_i to_vec_i(const vec_i& v) {return v;}
-vec_i to_vec_i(const vec_l& v);
-vec_i to_vec_i(const vec_m& v);
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -117,8 +107,33 @@ template<class T> class smatT;
 template<class T> class smatT_elim;
 template<class T> class matT;
 template<class T> class subspaceT;
+template<class T> class ssubspaceT;
 
-template<class T> long dim(const vecT<T>&);                  // the dimension
+typedef vecT<int> vec_i;
+typedef matT<int> mat_i;
+typedef subspaceT<int> subspace_i;
+typedef svecT<int> svec_i;
+typedef smatT<int> smat_i;
+typedef smatT_elim<int> smat_i_elim;
+typedef ssubspaceT<int> ssubspace_i;
+
+typedef vecT<long> vec_l;
+typedef matT<long> mat_l;
+typedef subspaceT<long> subspace_l;
+typedef svecT<long> svec_l;
+typedef smatT<long> smat_l;
+typedef smatT_elim<long> smat_l_elim;
+typedef ssubspaceT<long> ssubspace_l;
+
+typedef vecT<bigint> vec_m;
+typedef matT<bigint> mat_m;
+typedef subspaceT<bigint> subspace_m;
+typedef svecT<bigint> svec_m;
+typedef smatT<bigint> smat_m;
+typedef smatT_elim<bigint> smat_m_elim;
+typedef ssubspaceT<bigint> ssubspace_m;
+
+template<class T> int dim(const vecT<T>&);                  // the dimension
 template<class T> T operator*(const vecT<T>&, const vecT<T>&);   // dot product
 template<class T> T operator*(const svecT<T>&, const vecT<T>&);
 template<class T> T content(const vecT<T>&);
@@ -129,16 +144,107 @@ template<class T> int operator!=(const vecT<T>&, const vecT<T>&);
 template<class T> int trivial(const vecT<T>&);                  // is v all 0
 template<class T> int member(const T& a, const vecT<T>& v);//tests if a=v[i] for some i
 template<class T> vecT<T> reverse(const vecT<T>& order);
-  // add/sub row i of matT to v (implemented in mat.cc)
-template<class T> void add_row_to_vecT(vecT<T>& v, const matT<T>& m, long i);
-template<class T> void sub_row_to_vecT(vecT<T>& v, const matT<T>& m, long i);
+template<class T> void add_row_to_vec(vecT<T>& v, const matT<T>& m, long i);
+template<class T> void sub_row_to_vec(vecT<T>& v, const matT<T>& m, long i);
 template<class T> ostream& operator<< (ostream&s, const vecT<T>&);
 template<class T> istream& operator>> (istream&s, vecT<T>&);
 template<class T> void swapvec(vecT<T>& v, vecT<T>& w);
-template<class T> matT<T> restrict_mat(const matT<T>& m, const subspaceT<T>& s, int cr);
-template<class T> matT<T> prestrict(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr);
+template<class T> matT<T> operator*(const matT<T>&, const matT<T>&);
+template<class T> vecT<T> operator*(const matT<T>&, const vecT<T>&);
+template<class T> int operator==(const matT<T>&, const matT<T>&);
+template<class T> istream& operator>> (istream&s, matT<T>&);
+template<class T> matT<T> colcat(const matT<T>& a, const matT<T>& b);
+template<class T> matT<T> rowcat(const matT<T>& a, const matT<T>& b);
+template<class T> matT<T> directsum(const matT<T>& a, const matT<T>& b);
+template<class T> void elimrows(matT<T>& m, long r1, long r2, long pos); //plain elimination, no clearing
+template<class T> void elimrows1(matT<T>& m, long r1, long r2, long pos); //elimination + clearing
+template<class T> void elimrows2(matT<T>& m, long r1, long r2, long pos, const T& last); //elimination + divide by last pivot
+template<class T> matT<T> echelon0(const matT<T>& m, vecT<int>& pcols, vecT<int>& npcols,
+                      long& rk, long& ny, T& d);
+template<class T> void elimp(matT<T>& m, long r1, long r2, long pos, const T& pr);
+template<class T> void elimp1(matT<T>& m, long r1, long r2, long pos, const T& pr);
+template<class T> matT<T> echelonp(const matT<T>& m, vecT<int>& pcols, vecT<int>& npcols,
+                      long& rk, long& ny, T& d, const T& pr);
+template<class T> matT<T> echmodp(const matT<T>& m, vecT<int>& pcols, vecT<int>& npcols,
+                     long& rk, long& ny, const T& pr);
+template<class T> matT<T> echmodp_uptri(const matT<T>& m, vecT<int>& pcols, vecT<int>& npcols,
+                     long& rk, long& ny, const T& pr);
+template<class T> matT<T> ref_via_flint(const matT<T>& M, vecT<int>& pcols, vecT<int>& npcols,
+                           long& rk, long& ny, const T& pr);
+template<class T> matT<T> ref_via_ntl(const matT<T>& M, vecT<int>& pcols, vecT<int>& npcols,
+                         long& rk, long& ny, const T& pr);
+template<class T> matT<T> rref(const matT<T>& M, vecT<int>& pcols, vecT<int>& npcols,
+                               long& rk, long& ny, const T& pr);
+template<class T> long rank_via_ntl(const matT<T>& M, const T& pr);
+template<class T> T det_via_ntl(const matT<T>& M, const T& pr);
+template<class T> subspaceT<T> combine(const subspaceT<T>& s1, const subspaceT<T>& s2);
+template<class T> matT<T> restrict_mat(const matT<T>& m, const subspaceT<T>& s, int cr=0);
+template<class T> int liftmat(const matT<T>& mm, const T& pr, matT<T>& m, T& dd);
+template<class T> int lift(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans);
+template<class T> subspaceT<T> pcombine(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr);
+template<class T> matT<T> matmulmodp(const matT<T>&, const matT<T>&, const T& pr);
+template<class T> long population(const matT<T>& m); // #nonzero entries
+template<class T> T maxabs(const matT<T>& m); // max entry
+template<class T> double sparsity(const matT<T>& m); // #nonzero entries/#entries
+template<class T> matT<T> prestrict(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr=0);
 template<class T> T dotmodp(const vecT<T>& v1, const vecT<T>& v2, const T& pr);
-
+template<class T> int dim(const subspaceT<T>& s);
+template<class T> T denom(const subspaceT<T>& s);
+template<class T> vecT<int> pivots(const subspaceT<T>& s);
+template<class T> matT<T> basis(const subspaceT<T>& s);
+template<class T> subspaceT<T> combine(const subspaceT<T>& s1, const subspaceT<T>& s2);
+template<class T> subspaceT<T> pcombine(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr);
+template<class T> int lift(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans);
+template<class T> int eqmodp(const svecT<T>&, const svecT<T>&, const T& p);
+template<class T> ostream& operator<< (ostream&s, const svecT<T>&);
+template<class T> T operator*(const svecT<T>&, const svecT<T>&);
+template<class T> T operator*(const svecT<T>&, const vecT<T>&);
+template<class T> T operator*(const vecT<T>& v, const svecT<T>& sv);
+template<class T> T dotmodp(const svecT<T>&, const svecT<T>&, const T& pr);
+template<class T> T dotmodp(const svecT<T>&, const vecT<T>&, const T& pr);
+template<class T> T dotmodp(const vecT<T>& v, const svecT<T>& sv, const T& pr);
+template<class T> svecT<T> operator+(const svecT<T>& v1, const svecT<T>& v2);
+template<class T> svecT<T> operator-(const svecT<T>& v1, const svecT<T>& v2);
+template<class T> int operator==(const svecT<T>& v1, const svecT<T>& v2);
+template<class T> int operator!=(const svecT<T>& v1, const svecT<T>& v2);
+template<class T> int operator==(const svecT<T>& v1, const vecT<T>& v2);
+template<class T> smatT<T> transpose(const smatT<T>&);
+template<class T> smatT<T> operator* ( const smatT<T>&, const smatT<T>&);
+template<class T> T content(const svecT<T>& v);
+template<class T> T make_primitive(svecT<T>& v);
+template<class T> svecT<T> operator* ( const smatT<T>& A, const svecT<T>& v );
+template<class T> svecT<T> operator* ( const svecT<T>& v, const smatT<T>& A );
+template<class T> svecT<T> mult_mod_p( const smatT<T>& A, const svecT<T>& v, const T& p  );
+template<class T> svecT<T> mult_mod_p( const svecT<T>& v, const smatT<T>& A, const T& p  );
+template<class T> smatT<T> mult_mod_p ( const smatT<T>&, const smatT<T>&, const T&);
+template<class T> inline vector<int> dim(const smatT<T>& A)
+{return vector<int>{A.nro, A.nco};}
+template<class T> vecT<T> operator*  (const smatT<T>& m, const vecT<T>& v);
+template<class T> svecT<T> operator* ( const smatT<T>& A, const svecT<T>& v );
+template<class T> svecT<T> operator* ( const svecT<T>& v, const smatT<T>& A );
+template<class T> svecT<T> mult_mod_p( const smatT<T>& A, const svecT<T>& v, const T& p  );
+template<class T> vecT<T> mult_mod_p( const smatT<T>& A, const vecT<T>& v, const T& p  );
+template<class T> svecT<T> mult_mod_p( const svecT<T>& v, const smatT<T>& A, const T& p  );
+template<class T> smatT<T> operator* ( const smatT<T>& A, const smatT<T>& B );
+template<class T> smatT<T> mult_mod_p ( const smatT<T>& A, const smatT<T>& B, const T& p );
+template<class T> smatT<T> mult_mod_p_flint ( const smatT<T>& A, const smatT<T>& B, const T& p );
+template<class T> T maxabs( const smatT<T>& A);
+template<class T> smatT<T> transpose(const smatT<T>&);
+template<class T> int operator==(const smatT<T>&, const smatT<T>&);
+template<class T> int eqmodp(const smatT<T>&, const smatT<T>&, const T& p);
+template<class T> ostream& operator<< (ostream&s, const smatT<T>&);
+template<class T> istream& operator>> (istream&s, smatT<T>&);
+template<class T> int get_population (const smatT<T>& );
+template<class T> inline double density (const smatT<T>& m)
+{return (((double)(get_population(m)))/m.nro)/m.nco;}
+template<class T> void random_fill_in( smatT<T>&, int, int );
+template<class T> int liftmat(const smatT<T>& mm, T pr, smatT<T>& m, T& dd);
+template<class T> int liftmats_chinese(const smatT<T>& mm1, T pr1, const smatT<T>& mm2, T pr2,
+                              smatT<T>& m, T& dd);
+template<class T> int dim(const ssubspaceT<T>& s)     {return s.bas().ncols();}
+template<class T> smatT<T> basis(const ssubspaceT<T>& s)  {return s.bas();}
+template<class T> ssubspaceT<T> combine(const ssubspaceT<T>& s1, const ssubspaceT<T>& s2);
+template<class T> smatT<T> restrict_mat(const smatT<T>& m, const ssubspaceT<T>& s);
 
 template<class T>
 class vecT {
@@ -175,7 +281,7 @@ public:
   const vector<T> get_entries()const {return entries;}
   static vecT iota(long n);              // (1,2,...,n)
   // non-member (friend) functions and operators
-  friend long dim<>(const vecT<T>&);                  // the dimension
+  friend int dim<>(const vecT<T>&);                  // the dimension
   friend T operator*<>(const vecT<T>&, const vecT<T>&);   // dot product
   friend T operator*<>(const svecT<T>&, const vecT<T>&);
   friend T content<>(const vecT<T>&);
@@ -187,14 +293,11 @@ public:
   friend int member<>(const T& a, const vecT<T>& v);//tests if a=v[i] for some i
   friend vecT reverse<>(const vecT<T>& order);
   // add/sub row i of matT to v (implemented in mat.cc)
-  friend void add_row_to_vecT<>(vecT<T>& v, const matT<T>& m, long i);
-  friend void sub_row_to_vecT<>(vecT<T>& v, const matT<T>& m, long i);
+  friend void add_row_to_vec<>(vecT<T>& v, const matT<T>& m, long i);
+  friend void sub_row_to_vec<>(vecT<T>& v, const matT<T>& m, long i);
   friend ostream& operator<< <>(ostream&s, const vecT<T>&);
   friend istream& operator>> <>(istream&s, vecT<T>&);
   friend void swapvec<>(vecT<T>& v, vecT<T>& w);
-  friend matT<T> restrict_mat<>(const matT<T>& m, const subspaceT<T>& s, int cr);
-  friend matT<T> prestrict<>(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr);
-  friend T dotmodp<>(const vecT<T>& v1, const vecT<T>& v2, const T& pr);
 
   // Implementation
 private:
@@ -221,7 +324,7 @@ template<class T> int lift(const vecT<T>& v, const T& pr, vecT<T>& ans);  //lift
 
 // inline function definitions
 
-template<class T> inline long dim(const vecT<T>& v) {return v.entries.size();}
+template<class T> inline int dim(const vecT<T>& v) {return v.entries.size();}
 template<class T> inline int operator!=(const vecT<T>& v, const vecT<T>& w) { return !(v==w);}
 template<class T> inline vecT<T> operator+(const vecT<T>& v) { return v;}
 template<class T> inline vecT<T> operator-(const vecT<T>& v) { return T(-1)*v;}
@@ -245,5 +348,19 @@ template<class T> inline void elim1(const vecT<T>& a, vecT<T>& b, long pos)
 { (b*=a[pos])-=(b[pos]*a); make_primitive(b);}
 template<class T> inline void elim2(const vecT<T>& a, vecT<T>& b, long pos, const T& lastpivot)
 { ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}
+
+// conversions between vectors of different scalar types
+
+vec_m to_vec_m(const vec_i& v);
+vec_m to_vec_m(const vec_l& v);
+inline vec_m to_vec_m(const vec_m& v) {return v;}
+
+vec_l to_vec_l(const vec_i& v);
+inline vec_l to_vec_l(const vec_l& v) {return v;}
+vec_l to_vec_l(const vec_m& v);
+
+inline vec_i to_vec_i(const vec_i& v) {return v;}
+vec_i to_vec_i(const vec_l& v);
+vec_i to_vec_i(const vec_m& v);
 
 #endif

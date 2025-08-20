@@ -28,6 +28,8 @@
 #include "vector.h"
 #include "limits.h" // MAX_INT gcc >= 4.3
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -86,71 +88,9 @@
 #undef smat
 #undef smat_elim
 
-// conversions between matrices of different scalar types
-
-mat_m to_mat_m(const mat_i& m);
-mat_m to_mat_m(const mat_l& m);
-inline mat_m to_mat_m(const mat_m& m) {return m;}
-
-mat_i to_mat_i(const mat_m& m);
-mat_i to_mat_i(const mat_l& m);
-inline mat_i to_mat_i(const mat_i& m) {return m;}
-
-mat_l to_mat_l(const mat_m& m);
-mat_l to_mat_l(const mat_m& m);
-inline mat_l to_mat_l(const mat_l& m) {return m;}
-
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
-
-template<class T> class vecT;
-template<class T> class svecT;
-template<class T> class smatT;
-template<class T> class smatT_elim;
-template<class T> class matT;
-template<class T> class subspaceT;
-
-template<class T> void add_row_to_vec(vecT<T>& v, const matT<T>& m, long i);
-template<class T> void sub_row_to_vec(vecT<T>& v, const matT<T>& m, long i);
-template<class T> matT<T> operator*(const matT<T>&, const matT<T>&);
-template<class T> vecT<T> operator*(const matT<T>&, const vecT<T>&);
-template<class T> int operator==(const matT<T>&, const matT<T>&);
-template<class T> istream& operator>> (istream&s, matT<T>&);
-template<class T> matT<T> colcat(const matT<T>& a, const matT<T>& b);
-template<class T> matT<T> rowcat(const matT<T>& a, const matT<T>& b);
-template<class T> matT<T> directsum(const matT<T>& a, const matT<T>& b);
-template<class T> void elimrows(matT<T>& m, long r1, long r2, long pos); //plain elimination, no clearing
-template<class T> void elimrows1(matT<T>& m, long r1, long r2, long pos); //elimination + clearing
-template<class T> void elimrows2(matT<T>& m, long r1, long r2, long pos, const T& last); //elimination + divide by last pivot
-template<class T> matT<T> echelon0(const matT<T>& m, vecT<int>& pcols, vecT<int>& npcols,
-                      long& rk, long& ny, T& d);
-template<class T> void elimp(matT<T>& m, long r1, long r2, long pos, const T& pr);
-template<class T> void elimp1(matT<T>& m, long r1, long r2, long pos, const T& pr);
-template<class T> matT<T> echelonp(const matT<T>& m, vecT<int>& pcols, vecT<int>& npcols,
-                      long& rk, long& ny, T& d, const T& pr);
-template<class T> matT<T> echmodp(const matT<T>& m, vecT<int>& pcols, vecT<int>& npcols,
-                     long& rk, long& ny, const T& pr);
-template<class T> matT<T> echmodp_uptri(const matT<T>& m, vecT<int>& pcols, vecT<int>& npcols,
-                     long& rk, long& ny, const T& pr);
-template<class T> matT<T> ref_via_flint(const matT<T>& M, vecT<int>& pcols, vecT<int>& npcols,
-                           long& rk, long& ny, const T& pr);
-template<class T> matT<T> ref_via_ntl(const matT<T>& M, vecT<int>& pcols, vecT<int>& npcols,
-                         long& rk, long& ny, const T& pr);
-template<class T> matT<T> rref(const matT<T>& M, vecT<int>& pcols, vecT<int>& npcols,
-                               long& rk, long& ny, const T& pr);
-template<class T> long rank_via_ntl(const matT<T>& M, const T& pr);
-template<class T> T det_via_ntl(const matT<T>& M, const T& pr);
-template<class T> subspaceT<T> combine(const subspaceT<T>& s1, const subspaceT<T>& s2);
-template<class T> matT<T> restrict_mat(const matT<T>& m, const subspaceT<T>& s, int cr);
-template<class T> int liftmat(const matT<T>& mm, const T& pr, matT<T>& m, T& dd);
-template<class T> int lift(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans);
-template<class T> subspaceT<T> pcombine(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr);
-template<class T> matT<T> prestrict(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr);
-template<class T> matT<T> matmulmodp(const matT<T>&, const matT<T>&, const T& pr);
-template<class T> matT<T> echmodp_d(const matT<T>& mat, vecT<int>& pcols, vecT<int>& npcols, long& rk, long& ny, double pr);
-template<class T> long population(const matT<T>& m); // #nonzero entries
-template<class T> T maxabs(const matT<T>& m); // max entry
-template<class T> double sparsity(const matT<T>& m); // #nonzero entries/#entries
 
 template <class T>
 class matT {
@@ -243,7 +183,6 @@ public:
   friend subspaceT<T> pcombine<>(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr);
   friend matT prestrict<>(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr);
   friend matT matmulmodp<>(const matT<T>&, const matT<T>&, const T& pr);
-  friend matT echmodp_d<>(const matT<T>& mat, vecT<int>& pcols, vecT<int>& npcols, long& rk, long& ny, double pr);
   friend long population<>(const matT<T>& m); // #nonzero entries
   friend T maxabs<>(const matT<T>& m); // max entry
   friend double sparsity<>(const matT<T>& m); // #nonzero entries/#entries
@@ -312,6 +251,20 @@ mat_zz_p mat_zz_p_from_mat(const matT<T>& M, const T& pr);
 
 template<class T>
 matT<T> mat_from_mat_zz_p(const mat_zz_p& A, const T& pr); // type of T fixes return type
+
+// conversions between matrices of different scalar types
+
+mat_m to_mat_m(const mat_i& m);
+mat_m to_mat_m(const mat_l& m);
+inline mat_m to_mat_m(const mat_m& m) {return m;}
+
+mat_i to_mat_i(const mat_m& m);
+mat_i to_mat_i(const mat_l& m);
+inline mat_i to_mat_i(const mat_i& m) {return m;}
+
+mat_l to_mat_l(const mat_m& m);
+mat_l to_mat_l(const mat_m& m);
+inline mat_l to_mat_l(const mat_l& m) {return m;}
 
 #endif
 

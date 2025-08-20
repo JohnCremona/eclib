@@ -39,6 +39,8 @@ find( int X, const int* ptr, int ub, int lb = 0 ) {
   return lb;
 }
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -108,6 +110,8 @@ find( int X, const int* ptr, int ub, int lb = 0 ) {
 #undef smat_elim
 #undef ssubspace
 
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 
 template<class T> class vecT;
@@ -117,25 +121,22 @@ template<class T> class smatT_elim;
 template<class T> class matT;
 template<class T> class subspaceT;
 template<class T> class ssubspaceT;
-template<class T> class smat_elim_list;
-template<class T> class smat_elim_ordlist;
 
-template<class T>
 class smat_elim_list {
 public:
   static int listsize;
   int maxsize;
-  T *list_array;
+  int *list_array;
   int num;
   int index;
-  void put( const T& X)
+  void put( int X)
   {
     if( num >= maxsize ) grow();
     list_array[ num++ ] = X;
   }
-  int find( const T& X, int ub, int lb = 0 );
+  int find( int X, int ub, int lb = 0 );
   void grow ();
-  T next()
+  int next()
   {
     if( index < num ) return( list_array[index++] ); else return -1;
   }
@@ -144,17 +145,16 @@ public:
   void clear( int m = 0);
 };
 
-template<class T>
-class smat_elim_ordlist : public smat_elim_list<T> {
+class smat_elim_ordlist : public smat_elim_list {
 public:
-  void put( T& X);
-  void put( smat_elim_list<T>& L);     // L must be ordered
-  void remove( T& X );
-  void remove( smat_elim_list<T>& L );     // L must be ordered
-  smat_elim_ordlist( int m = 10) : smat_elim_list<T>(m) {;}
+  void put( int X);
+  void put( smat_elim_list& L);     // L must be ordered
+  void remove( int X );
+  void remove( smat_elim_list& L );     // L must be ordered
+  smat_elim_ordlist( int m = 10) : smat_elim_list(m) {;}
 };
 
-template<class T> ostream& operator<< (ostream&s, const smat_elim_list<T>&);
+ostream& operator<< (ostream&s, const smat_elim_list&);
 
 template<class T>
 class smatT_elim : public smatT<T>{
@@ -164,14 +164,14 @@ private:
   T modulus;
   int rank;
 
-  smat_elim_ordlist<T>* column; // an array of lists, oner per col, of row nos
+  smat_elim_ordlist* column; // an array of lists, oner per col, of row nos
 		   // which have nonzero entries in that col
   int *position;
   int *elim_col;     // in which row was col eliminated;
   int *elim_row;       //order of elimination of rows;
-  void clear_col(int,int, smat_elim_list<T>&, int fr = 0, int fc = 0,int M = 0,int *li =0);
-  void check_col( int col, smat_elim_list<T>& L );
-  void check_row (int d2, int row2, smat_elim_list<T>& L );
+  void clear_col(int,int, smat_elim_list&, int fr = 0, int fc = 0,int M = 0,int *li =0);
+  void check_col( int col, smat_elim_list& L );
+  void check_row (int d2, int row2, smat_elim_list& L );
   int get_weight( int, const int* );
   int has_weight_one( int, const int* );
   int n_active_cols(); // number of active columns
@@ -205,12 +205,11 @@ public:
   // destructor:
   ~smatT_elim();
 
-  friend ostream& operator<<<> (ostream&s, const smat_elim_list<T>&);
+  friend ostream& operator<< (ostream&s, const smat_elim_list&);
 
 };
 
-template<class T>
-inline ostream& operator<< (ostream&s, const smat_elim_list<T>& L)
+inline ostream& operator<< (ostream&s, const smat_elim_list& L)
 {
   s<<"[";
   int n=L.num;
@@ -220,11 +219,7 @@ inline ostream& operator<< (ostream&s, const smat_elim_list<T>& L)
   return s;
 }
 
-template<class T> int dim(const ssubspaceT<T>& s)     {return s.basis.ncols();}
-template<class T> vecT<int> pivots(const ssubspaceT<T>& s)  {return s.pivots;}
-template<class T> smatT<T> basis(const ssubspaceT<T>& s)  {return s.basis;}
-template<class T> ssubspaceT<T> combine(const ssubspaceT<T>& s1, const ssubspaceT<T>& s2);
-template<class T> smatT<T> restrict_mat(const smatT<T>& m, const ssubspaceT<T>& s);
+template<class T> vecT<int> pivots(const ssubspaceT<T>& s)  {return s.pivs();}
 
 template<class T>
 class ssubspaceT {
@@ -244,9 +239,6 @@ public:
   inline T mod() const {return modulus;}   // the (prime) modulus
 
   // non-member (friend) functions and operators
-  friend int dim(const ssubspaceT<T>& s)     {return s.basis.ncols();}
-  friend vecT<int> pivots(const ssubspaceT<T>& s)  {return s.pivots;}
-  friend smatT<T> basis(const ssubspaceT<T>& s)  {return s.basis;}
   friend ssubspaceT<T> combine<>(const ssubspaceT<T>& s1, const ssubspaceT<T>& s2);
   friend smatT<T> restrict_mat<>(const smatT<T>& m, const ssubspaceT<T>& s);
 
@@ -269,7 +261,7 @@ ssubspaceT<T> subeigenspace(const smatT<T>& sm, T l, const ssubspaceT<T>& s, T m
 
 // construction of a 1-dimensional sparse subspace from a vector:
 template<class T>
-ssubspaceT<T> make1d(const vecT<T>& bas, int piv, T m);
+ssubspaceT<T> make1d(const vecT<T>& bas, T& piv, T m);
 
 
 #endif

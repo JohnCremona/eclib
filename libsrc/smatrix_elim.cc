@@ -25,6 +25,8 @@
 
 #include <eclib/smatrix_elim.h>
 
+#if(0)
+
 #undef scalar
 #undef vec
 #undef mat
@@ -94,54 +96,68 @@
 #undef smat_elim
 #undef ssubspace
 
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
+
+// Instantiate smatT_elim template classes for T=int, long, bigint
+
+template class smatT_elim<int>;
+template class smatT_elim<long>;
+template class smatT_elim<bigint>;
+
+// Instantiate ssubspace template classes for T=int, long, bigint
+
+template class ssubspaceT<int>;
+template class ssubspaceT<long>;
+template class ssubspaceT<bigint>;
 
 //#define TRACE_LISTS
 //#define TRACE_FIND
 
-template<class T>
-int smat_elim_list<T>::listsize = 10;
+int smat_elim_list::listsize = 10;
 
-template<class T>
-void smat_elim_list<T>::clear( int m)
+void smat_elim_list::clear( int m)
 {
   delete [] list_array;
-  list_array = new T [m]; num = 0; maxsize = m; index = 0;
+  list_array = new int [m];
+  num = 0; maxsize = m; index = 0;
 }
 
-template<class T>
-smat_elim_list<T>::smat_elim_list( int m)
+smat_elim_list::smat_elim_list( int m)
 {
-  list_array = new T [m]; num = 0; maxsize = m; index = 0;
+  list_array = new int [m];
+  num = 0; maxsize = m; index = 0;
 }
 
-template<class T>
-smat_elim_list<T>::~smat_elim_list( ) { delete [] list_array; }
+smat_elim_list::~smat_elim_list( )
+{
+  delete [] list_array;
+}
 
-template<class T>
-void smat_elim_list<T>::grow()
+void smat_elim_list::grow()
 {
   int growth = (maxsize==0? listsize : maxsize/2 + 1);
-  T *new_array = new T [ maxsize + growth]; 
+  int *new_array = new int [ maxsize + growth];
   if( !new_array )
     {
       cerr << "memory exhausted in elim::list::grow"<< endl;
       return;
     }
-  T* newi = new_array;
-  T *P = list_array;
+  int* newi = new_array;
+  int *P = list_array;
   int s = maxsize;
-  while(s--) *newi++ = *P++;
-  // size_t n = s*sizeof(T);
-  // memmove(newi,P,n);
+  // while(s--) *newi++ = *P++;
+  size_t n = s*sizeof(int);
+  memmove(newi,P,n);
   maxsize += growth;
-  delete [] list_array;  list_array=new_array;
+  delete [] list_array;
+  list_array=new_array;
 }
 
-template<class T>
-int smat_elim_list<T>::find( const T& X, int ub, int lb )
+int smat_elim_list::find( int X, int ub, int lb )
 {
-  // returns highest  number i, lb <= i <= ub, such that list_array[i] <= X 
+  // returns highest  number i, lb <= i <= ub, such that list_array[i] <= X
   // or returns ub+1 if list_array[ub]<X
   // or returns lb   if list_array[lb]>X
 
@@ -149,7 +165,7 @@ int smat_elim_list<T>::find( const T& X, int ub, int lb )
 #ifdef TRACE_FIND
   cout<<"\n\t\tfinding "<<X<<" in list "<<(*this)<<" from "<<lb<<" to "<<ub<<endl;
 #endif
-  if( list_array[ub] <  X ) 
+  if( list_array[ub] <  X )
     {
 #ifdef TRACE_FIND
       cout<<"\t\tfind returns "<<(ub+1)<<endl;
@@ -166,30 +182,29 @@ int smat_elim_list<T>::find( const T& X, int ub, int lb )
   return lb;
 }
 
-template<class T>
-void smat_elim_ordlist<T>::put( T& X )
+void smat_elim_ordlist::put( int X )
 {
 #ifdef TRACE_LISTS
   cout<<"\tputting "<<X<<" into ordlist "<<(*this);
 #endif
-  if( smat_elim_list<T>::num == smat_elim_list<T>::maxsize ) smat_elim_list<T>::grow();
-  if( smat_elim_list<T>::num == 0 ) {
-    smat_elim_list<T>::list_array[0] = X;
-    smat_elim_list<T>::num++;
+  if( num == maxsize ) grow();
+  if( num == 0 ) {
+    list_array[0] = X;
+    num++;
   }
   else {
-    int ind = find( X, smat_elim_list<T>::num-1 );
-    if( (ind==smat_elim_list<T>::num)||(smat_elim_list<T>::list_array[ind] != X ))
+    int ind = find( X, num-1 );
+    if( (ind==num)||(list_array[ind] != X ))
       {  // if X is not already in there
-        T *array = smat_elim_list<T>::list_array + smat_elim_list<T>::num -1;
-        for( int r = smat_elim_list<T>::num; r > smat_elim_list<T>::ind; r-- ) array[1] = *array--;
+        int *array = list_array + num -1;
+        for( int r = num; r > ind; r-- ) array[1] = *array--;
         array[1] = X;
-        // T *source = smat_elim_list<T>::list_array + smat_elim_list<T>::num-1;
-        // T *dest = smat_elim_list<T>::list_array + smat_elim_list<T>::num;
-        // size_t n = sizeof(T)*(smat_elim_list<T>::num-smat_elim_list<T>::ind);
+        // T *source = list_array + num-1;
+        // T *dest = list_array + num;
+        // size_t n = sizeof(T)*(num-ind);
         // memmove(dest, source, n);
-        smat_elim_list<T>::list_array[smat_elim_list<T>::ind]=X;
-        smat_elim_list<T>::num++;
+        list_array[ind]=X;
+        num++;
       }
   }
 #ifdef TRACE_LISTS
@@ -197,112 +212,109 @@ void smat_elim_ordlist<T>::put( T& X )
 #endif
 }
 
-template<class T>
-void smat_elim_ordlist<T>::put( smat_elim_list<T>& L )   // L must be ordered
+void smat_elim_ordlist::put( smat_elim_list& L )   // L must be ordered
 {
   if( L.num == 0 ) return;
 #ifdef TRACE_LISTS
   cout<<"Inserting list "<<L<<" into ordlist "<<(*this)<<endl;
 #endif
   L.index = index = 0;  //need to reset in case next() was used before.
-  if( smat_elim_list<T>::num == 0 ) 
+  if( num == 0 )
     {
-      for( int r = 0; r < L.num; r++ ) 
+      for( int r = 0; r < L.num; r++ )
 	{
-	  T X = L.next();
-	  this->put( X );
+	  int X = L.next();
+	  put( X );
 	}
-      smat_elim_list<T>::num = L.num;
+      num = L.num;
     }
-  else 
+  else
     {
-      T *new_array = new T [ smat_elim_list<T>::maxsize + L.num ];
-      T *na = new_array;
-      for( int r = 0, ind = 0; r < L.num; r++ ) 
+      int *new_array = new int[ maxsize + L.num ];
+      int *na = new_array;
+      for( int r = 0, ind = 0; r < L.num; r++ )
 	{
-	  T X = L.next();
-	  ind = find( X, smat_elim_list<T>::num-1, ind );
-	  if( smat_elim_list<T>::list_array[ind] != X ) 
+	  int X = L.next();
+	  ind = find( X, num-1, ind );
+	  if( list_array[ind] != X )
 	    {
-	      while( smat_elim_list<T>::index < ind ) *na++ = smat_elim_list<T>::next();
+	      while( index < ind ) *na++ = next();
 	      *na++ = X;
-	    }	
-	}	
-      while( index < smat_elim_list<T>::num ) *na++ = smat_elim_list<T>::next();
-      delete [] smat_elim_list<T>::list_array;
-      smat_elim_list<T>::list_array = new_array;
-      smat_elim_list<T>::maxsize += L.num;
+	    }
+	}
+      while( index < num ) *na++ = next();
+      delete [] list_array;
+      list_array = new_array;
+      maxsize += L.num;
       L.index = index = 0;
-      smat_elim_list<T>::num = na - new_array;
+      num = na - new_array;
     }
 #ifdef TRACE_LISTS
   cout<<"Result is "<<(*this)<<endl;
 #endif
 }
 
-template<class T>
-void smat_elim_ordlist<T>::remove( T& X )
+void smat_elim_ordlist::remove( int X )
 {
 #ifdef TRACE_LISTS
   cout<<"\tremoving "<<X<<" from ordlist "<<(*this);
 #endif
-  int ind = find( X, smat_elim_list<T>::num-1 );
-  if( smat_elim_list<T>::list_array[ind] != X ) 
-    { 
-      cout<<endl;  
-      cerr << "error in remove(1)\n"; 
+  int ind = find( X, num-1 );
+  if( list_array[ind] != X )
+    {
+      cout<<endl;
+      cerr << "error in remove(1)\n";
       cerr<<"while removing "<<X<<" from "<<(*this)<<endl;
       return;
     }
-  T *array = smat_elim_list<T>::list_array + ind;
-  for( int s = ind + 1; s < smat_elim_list<T>::num; s++, array++ ) *array = array[1];
+  int *array = list_array + ind;
+  for( int s = ind + 1; s < num; s++, array++ ) *array = array[1];
   // T *source = list_array + ind +1;
   // T *dest   = list_array + ind ;
   // size_t n = sizeof(T)*(num-1-ind);
   // memmove(dest,source,n);
 
-  smat_elim_list<T>::num--;
+  num--;
 #ifdef TRACE_LISTS
   cout<<", result is "<<(*this)<<endl;
 #endif
 }
 
-template<class T>
-void smat_elim_ordlist<T>::remove( smat_elim_list<T>& L )  // L must be ordered
+void smat_elim_ordlist::remove( smat_elim_list& L )  // L must be ordered
 {
   if( L.num == 0 ) return;
 #ifdef TRACE_LISTS
   cout<<"Removing list "<<L<<" from ordlist "<<(*this)<<endl;
 #endif
   L.index = 0;
-  T X = L.next(); 
-  int ind1 = find(X, smat_elim_list<T>::num-1);
+  int X = L.next();
+  int ind1 = find(X, num-1);
   int ind2 = ind1;
-  if( smat_elim_list<T>::list_array[ind1] != X )  
-    { 
+  if( list_array[ind1] != X )
+    {
       cout<<endl;
-      cerr << "error in remove(2)\n"; 
+      cerr << "error in remove(2)\n";
       cerr<<"while removing "<<L<<" from "<<(*this)<<endl;
-      return; 
+      return;
     }
-  T *ar = smat_elim_list<T>::list_array + ind1;
+  int *ar = list_array + ind1;
   index = ind1+1;
   for( int r = 1; r < L.num; r++ ) {
     X = L.next();
-    ind2 = find( X, smat_elim_list<T>::num-1, ind2 );
-    if( smat_elim_list<T>::list_array[ind2] != X )  
-      { 
+    ind2 = find( X, num-1, ind2 );
+    if( list_array[ind2] != X )
+      {
 	cout<<endl;
-	cerr << "error in remove(3)\n"; 
+	cerr << "error in remove(3)\n";
 	cerr<<"while removing "<<L<<" from "<<(*this)<<endl;
-	return; 
+	return;
       }
-    while( smat_elim_list<T>::index < ind2 ) *ar++ = smat_elim_list<T>::next();
-    smat_elim_list<T>::index++;
+    while( index < ind2 ) *ar++ = next();
+    index++;
   }
-  while( index < smat_elim_list<T>::num ) *ar++ = smat_elim_list<T>::next();
+  while( index < num ) *ar++ = next();
   L.index = index = 0;
-  smat_elim_list<T>::num = ar - smat_elim_list<T>::list_array;
+  num = ar - list_array;
 #ifdef TRACE_LISTS
   cerr<<"Result is "<<(*this)<<endl;
 #endif
@@ -314,7 +326,7 @@ void smatT_elim<T>::init( )
   //  cout<<"smat_elim::init()  with smat:\n"<<(smatT<T>)(*this)<<endl;
   //  this->reduce_mod_p(modulus);
   //  cout<<"smat_elim::init()  after reducing:\n"<<(smatT<T>)(*this)<<endl;
-  smat_elim_list<T>::listsize = 10;
+  smat_elim_list::listsize = 10;
   rank = 0;
   position = new int[smatT<T>::nro];
   int *p = position;
@@ -332,7 +344,7 @@ void smatT_elim<T>::init( )
   for( r = 0; r < smatT<T>::nro; r++ ) {
     int d = *smatT<T>::col[r];
     p = smatT<T>::col[r] + 1;
-    while( d-- ) (column + (*p++) - 1)->smat_elim_list<T>::put(r);
+    while( d-- ) (column + (*p++) - 1)->put(r);
   }
 //   cout<<"At end of init(), columns are: \n";
 //   for( l = 0; l < nco; l++ ) 
@@ -623,9 +635,10 @@ smatT<T> smatT_elim<T>::new_kernel( vecT<int>& pc, vecT<int>& npc)
       *co++ = nv;
       size_t nbytes = nv*sizeof(int);
       memmove(co,i_nz,nbytes);
-      // TODO: don't use memmove on general T
-      nbytes = nv*sizeof(T);
-      memmove(va,bi_nz,nbytes);
+      // don't use memmove on general T
+      // nbytes = nv*sizeof(T);
+      // memmove(va,bi_nz,nbytes);
+      for(int n=0; n<nv; n++) {*va++ = *bi_nz++;}
 
 #if TRACE_ELIM
       cout<<" finished setting row "<< ir << endl;
@@ -1043,7 +1056,7 @@ void smatT_elim<T>::eliminate( const int& row, const int& col0 ) //1<=col0<=smat
 }
 
 template<class T>
-void smatT_elim<T>::clear_col( int row,int col0, smat_elim_list<T>& L, int fr, int fc,int M,int* li )
+void smatT_elim<T>::clear_col( int row,int col0, smat_elim_list& L, int fr, int fc,int M,int* li )
 {
   int numRow = (column+col0-1)->num;
   int d = smatT<T>::col[row][0];
@@ -1061,15 +1074,15 @@ void smatT_elim<T>::clear_col( int row,int col0, smat_elim_list<T>& L, int fr, i
     }
     return;
   }
-  smat_elim_list<T>::listsize = numRow;
+  smat_elim_list::listsize = numRow;
 
   /* for the d cols in col[row], these lists will contain rows to be taken
    * in/out of column */
-  smat_elim_list<T> *list_row_out = new smat_elim_list<T> [d];
-  smat_elim_list<T> *list_row_in = new smat_elim_list<T> [d];
+  smat_elim_list *list_row_out = new smat_elim_list [d];
+  smat_elim_list *list_row_in = new smat_elim_list [d];
   if( !list_row_out ) {cerr << "memory exhausted in elim::clear_col"<<endl; return;};
   if( !list_row_in ) {cerr << "memory exhauted in elim::clear_col"; return;};
-  smat_elim_list<T>* lri = list_row_in, *lro = list_row_out;
+  smat_elim_list* lri = list_row_in, *lro = list_row_out;
   /* eliminate col from other rows cutting col */
 
   int di = d;
@@ -1148,17 +1161,17 @@ void smatT_elim<T>::free_space( int col0 )
 }
 
 template<class T>
-void smatT_elim<T>::check_row (int d, int row2, smat_elim_list<T>& L ) 
+void smatT_elim<T>::check_row (int d, int row2, smat_elim_list& L ) 
 {
    if( *smatT<T>::col[row2] < 3 ) {
       if( *smatT<T>::col[row2] == 0 ) position[row2] = 0;
       //if d <= 2 then row2 was already in the list, so
-      else if( d > 2 ) L.put(row2);  
+      else if( d > 2 ) L.put(row2);
   }
 }
 
 template<class T>
-void smatT_elim<T>::check_col( int c, smat_elim_list<T>& L ) 
+void smatT_elim<T>::check_col( int c, smat_elim_list& L ) 
 {
   int vali = (column+c)->num;
   if( vali == 2 || vali == 1 ) {L.put(c+1);}
@@ -1193,7 +1206,7 @@ int smatT_elim<T>::n_active_cols() // number of active columns
 {
   // Remaining cols are those with positive column weight
   int j, nrc;
-  for(j=nrc=0; j<smatT<T>::nco; j++) 
+  for(j=nrc=0; j<this->nco; j++) 
     if (((column+j)->num)>0) 
       nrc++;
   return nrc;
@@ -1204,8 +1217,8 @@ int smatT_elim<T>::n_active_rows() // number of active rows
 {
   // Remaining rows are those with "position" code -1 or those which are empty
   int i, nrr;
-  for(i=nrr=0; i<smatT<T>::nro; i++)
-    if( (*smatT<T>::col[i] >0) && (position[i] == -1) )
+  for(i=nrr=0; i<this->nro; i++)
+    if( (*this->col[i] >0) && (position[i] == -1) )
       nrr++;
   return nrr;
 }
@@ -1215,7 +1228,7 @@ long smatT_elim<T>::n_active_entries() // number of active entries
 {
   // Remaining cols are those with positive column weight
   int j; long n=0;
-  for(j=0; j<smatT<T>::nco; j++)
+  for(j=0; j<this->nco; j++)
     n += ((column+j)->num); 
   return n;
 }
@@ -1249,12 +1262,12 @@ void smatT_elim<T>::report()
 template<class T>
 void smatT_elim<T>::elim( int row1, int row2, T v2 )
 {
-  int d = *smatT<T>::col[row1], d2 = *smatT<T>::col[row2];
-  T *oldVal = smatT<T>::val[row2]; int *oldMat = smatT<T>::col[row2];
-  int *pos1 = smatT<T>::col[row1]+1, *pos2 = oldMat + 1;
-  T *veci1 = smatT<T>::val[row1], *veci2 = oldVal;
-  int *P = smatT<T>::col[row2] = new int [ d + d2 + 1 ]; P++;
-  T *V = smatT<T>::val[row2] = new T [ d + d2 ];
+  int d = *this->col[row1], d2 = *this->col[row2];
+  T *oldVal = this->val[row2]; int *oldMat = this->col[row2];
+  int *pos1 = this->col[row1]+1, *pos2 = oldMat + 1;
+  T *veci1 = this->val[row1], *veci2 = oldVal;
+  int *P = this->col[row2] = new int [ d + d2 + 1 ]; P++;
+  T *V = this->val[row2] = new T [ d + d2 ];
   int k = 0;       /*k will be # of non-zero entries of sum*/
   while( d && d2 )
     { 
@@ -1275,7 +1288,7 @@ void smatT_elim<T>::elim( int row1, int row2, T v2 )
     { *P++ = *pos2++; *V++ = *veci2++; k++; d2--; }
   else if( d2 == 0 ) while( d )
                        { *P++ = *pos1++; *V++ = xmm(v2,(*veci1++),modulus); k++; d--; }
-  *smatT<T>::col[row2] = k;
+  *this->col[row2] = k;
   delete [] oldMat;
   delete [] oldVal;
 }
@@ -1293,13 +1306,13 @@ void smatT_elim<T>::step5dense()
 
   // Remaining rows are those with "position" code -1 or those which are empty
   int i, j;
-  for(i=0; i<smatT<T>::nro; i++)
-    if( (*smatT<T>::col[i] >0) && (position[i] == -1) )
+  for(i=0; i<this->nro; i++)
+    if( (*this->col[i] >0) && (position[i] == -1) )
       remaining_rows.push_back(i+1);
   int nrr = remaining_rows.size();
 
   // Remaining cols are those with positive column weight
-  for(j=0; j<smatT<T>::nco; j++) 
+  for(j=0; j<this->nco; j++) 
     if (((column+j)->num)>0) 
       remaining_cols.push_back(j+1);
   int nrc = remaining_cols.size();
@@ -1317,7 +1330,7 @@ void smatT_elim<T>::step5dense()
   matT<T> dmat(nrr, nrc);
   for (i=0; i<nrr; i++)
     {
-      svecT<T> v = smatT<T>::row(remaining_rows[i]);
+      svecT<T> v = this->row(remaining_rows[i]);
       j=0;
       for( const auto& vi : v.entries)
         {
@@ -1349,17 +1362,17 @@ void smatT_elim<T>::step5dense()
   // remaining_cols[j-1] column.  For simplicity of coding, we create
   // the new rows as svecs and the use setrow().
   int nrd = dmat.nrows(); // may be less than nrr since 0 rows are trimmed
-  svecT<T> rowi(smatT<T>::nco);
+  svecT<T> rowi(this->nco);
   for(i=1; i<=nrd; i++)
     {
       rowi.clear();
       for(j=1; j<=nrc; j++)
         rowi.set(remaining_cols[j-1],dmat(i,j));
-      setrow(remaining_rows[i-1],rowi);
+      this->setrow(remaining_rows[i-1],rowi);
     }
   rowi.clear();
   for(i=nrd+1; i<=nrr; i++)
-    setrow(remaining_rows[i-1],rowi);
+    this->setrow(remaining_rows[i-1],rowi);
 
   // (4) Use the known echelon form for these changed rows to eliminate them
 
@@ -1382,7 +1395,7 @@ void smatT_elim<T>::step5dense()
 }
 
 template<class T>
-long smatT<T>::rank(T mod)
+int smatT<T>::rank(T mod)
 {
   smatT_elim<T> sme(*this,mod);
   (void) sme.sparse_elimination();
@@ -1453,7 +1466,7 @@ template<class T>
 ssubspaceT<T> make1d(const vecT<T>& bas, T&piv, T m)
 // make a 1-D ssubspace with basis bas
 {
-  smatT<T>  tbasis(1,dim(bas));
+  smatT<T> tbasis(1,dim(bas));
   svecT<T> sbas(bas);
   tbasis.setrow(1,sbas);
   vecT<int> pivs(1); // initialised to 0
@@ -1461,4 +1474,41 @@ ssubspaceT<T> make1d(const vecT<T>& bas, T&piv, T m)
   piv=sbas.elem(pivs[1]);
   return ssubspaceT<T>(transpose(tbasis),pivs,m);
 }
+
+// Instantiate template functions for T=int
+template ssubspaceT<int> make1d<int>(const vecT<int>& bas, int&piv, int m);
+template int smatT<int>::rank(int mod);
+template smatT<int> restrict_mat<int>(const smatT<int>& m, const ssubspaceT<int>& s);
+template int dim<int>(const ssubspaceT<int>& s);
+template vecT<int> pivots<int>(const ssubspaceT<int>& s);
+template smatT<int> basis<int>(const ssubspaceT<int>& s);
+template ssubspaceT<int> combine<int>(const ssubspaceT<int>& s1, const ssubspaceT<int>& s2);
+template ssubspaceT<int> kernel<int>(const smatT<int>& sm, int m);
+template ssubspaceT<int> eigenspace<int>(const smatT<int>& sm, int lambda, int m);
+template ssubspaceT<int> subeigenspace<int>(const smatT<int>& sm, int l, const ssubspaceT<int>& s, int m);
+
+// Instantiate template functions for T=long
+template ssubspaceT<long> make1d<long>(const vecT<long>& bas, long&piv, long m);
+template int smatT<long>::rank(long mod);
+template smatT<long> restrict_mat<long>(const smatT<long>& m, const ssubspaceT<long>& s);
+template int dim<long>(const ssubspaceT<long>& s);
+template vecT<int> pivots<long>(const ssubspaceT<long>& s);
+template smatT<long> basis<long>(const ssubspaceT<long>& s);
+template ssubspaceT<long> combine<long>(const ssubspaceT<long>& s1, const ssubspaceT<long>& s2);
+template ssubspaceT<long> kernel<long>(const smatT<long>& sm, long m);
+template ssubspaceT<long> eigenspace<long>(const smatT<long>& sm, long lambda, long m);
+template ssubspaceT<long> subeigenspace<long>(const smatT<long>& sm, long l, const ssubspaceT<long>& s, long m);
+
+// Instantiate template functions for T=bigint
+template ssubspaceT<bigint> make1d<bigint>(const vecT<bigint>& bas, bigint&piv, bigint m);
+template int smatT<bigint>::rank(bigint mod);
+template smatT<bigint> restrict_mat<bigint>(const smatT<bigint>& m, const ssubspaceT<bigint>& s);
+template int dim<bigint>(const ssubspaceT<bigint>& s);
+template vecT<int> pivots<bigint>(const ssubspaceT<bigint>& s);
+template smatT<bigint> basis<bigint>(const ssubspaceT<bigint>& s);
+template ssubspaceT<bigint> combine<bigint>(const ssubspaceT<bigint>& s1, const ssubspaceT<bigint>& s2);
+template ssubspaceT<bigint> kernel<bigint>(const smatT<bigint>& sm, bigint m);
+template ssubspaceT<bigint> eigenspace<bigint>(const smatT<bigint>& sm, bigint lambda, bigint m);
+template ssubspaceT<bigint> subeigenspace<bigint>(const smatT<bigint>& sm, bigint l, const ssubspaceT<bigint>& s, bigint m);
+
 
