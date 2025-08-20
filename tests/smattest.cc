@@ -379,7 +379,7 @@ int main(void)
 	if( rand ) 
 	  {
 	    cout << "How many maximum number of non-zero entries per row?\n";
-	    int max, seed;
+	    int max;
 	    cin >> max;
 	    cout << "enter seed for random number generator\n";
 	    cin >> seed;

@@ -99,16 +99,16 @@ subspaceT<T> kernel(const matT<T>& m1, int method)
    T d;
    vecT<int> pcols,npcols;
    matT<T> m = echelon(m1,pcols,npcols, rank, nullity, d, method);
-   matT<T> basis(m.ncols(),nullity);
+   matT<T> bas(m.ncols(),nullity);
    for (int n=1; n<=nullity; n++)
-     basis.set(npcols[n],n,d);
+     bas.set(npcols[n],n,d);
    for (int r=1; r<=rank; r++)
    {
      int i = pcols[r];
      for (int j=1; j<=nullity; j++)
-       basis.set(i,j, -m(r,npcols[j]));
+       bas.set(i,j, -m(r,npcols[j]));
    }
-   return subspaceT<T>(basis, npcols, d);
+   return subspaceT<T>(bas, npcols, d);
 }
 
 template<class T>
@@ -169,16 +169,16 @@ subspaceT<T> oldpkernel(const matT<T>& m1, const T& pr)   // using full echmodp
    long rank, nullity;
    vecT<int> pcols,npcols;
    matT<T> m = echmodp(m1,pcols,npcols, rank, nullity, pr);
-   matT<T> basis(m.ncols(),nullity);
+   matT<T> bas(m.ncols(),nullity);
    for (int n=1; n<=nullity; n++)
-     basis.set(npcols[n],n,T(1));
+     bas.set(npcols[n],n,T(1));
    for (int r=1; r<=rank; r++)
    {
      int i = pcols[r];
      for (int j=1; j<=nullity; j++)
-       basis.set(i,j, mod(-m(r,npcols[j]),pr));
+       bas.set(i,j, mod(-m(r,npcols[j]),pr));
    }
-   return subspaceT<T>(basis, npcols, T(1));
+   return subspaceT<T>(bas, npcols, T(1));
 }
 
 // using echmodp_uptri, with no back-substitution
@@ -188,24 +188,24 @@ subspaceT<T> pkernel(const matT<T>& m1, const T& pr)
   long rank, nullity;
   vecT<int> pcols,npcols;
   matT<T> m = echmodp_uptri(m1,pcols,npcols, rank, nullity, pr);
-  matT<T> basis(m.ncols(),nullity);
+  matT<T> bas(m.ncols(),nullity);
   for(int j=nullity; j>0; j--)
     {
       int jj = npcols[j];
-      basis(jj,j) = 1;
+      bas(jj,j) = 1;
       for(int i=rank; i>0; i--)
         {
           T temp = -m(i,jj);
           for(int t=rank; t>i; t--)
             {
               int tt=pcols[t];
-              temp -= xmodmul(m(i,tt),basis(tt,j),pr);
+              temp -= xmodmul(m(i,tt),bas(tt,j),pr);
               temp = xmod(temp,pr);
             }
-          basis(pcols[i],j) = mod(temp,pr);
+          bas(pcols[i],j) = mod(temp,pr);
         }
     }
-  return subspaceT<T>(basis, npcols, T(1));
+  return subspaceT<T>(bas, npcols, T(1));
 }
 
 template<class T>
