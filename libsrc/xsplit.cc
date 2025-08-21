@@ -24,16 +24,31 @@
  
 #include <unistd.h>  // for unlink() (not needed on linux)
 
-#define USE_SPARSE 1
 #define ECLIB_INT_NUM_THREADS 8
 #define ECLIB_RECURSION_DIM_LIMIT 5821
 //#define ECLIB_MULTITHREAD_DEBUG
 #include <eclib/logger.h>
 #include <eclib/xsplit.h>
 #include <eclib/smatrix_elim.h>
-subspace sparse_combine(const subspace& s1, const subspace& s2);
-mat sparse_restrict(const mat& m, const subspace& s);
-smat restrict_mat(const smat& m, const subspace& s);
+
+template<class T>
+Zvec<T> lift(const Zvec<T>& v)
+{
+  Zvec<T> w;
+#ifdef MODULAR
+  if ( lift(v,T(MODULUS),w) )
+    return w;
+  else
+    {
+      cout << "Unable to lift eigenvector from mod " << MODULUS << endl;
+      return v;
+    }
+#else
+  w = b;
+  make_primitive(w);
+#endif
+  return w;
+}
 
 // CLASS FORM_FINDER (was called splitter)
 
@@ -265,7 +280,6 @@ void form_finder::make_basis( ff_data &data ) {
       data.bplus_[1] = 1;
 	  }
     else {
-      //data.bplus_ = getbasis1(data.abs_space_);
       data.bplus_ = make_basis1(data);
     }
 
@@ -316,7 +330,6 @@ void form_finder::make_basis( ff_data &data ) {
       return;
     }
 
-    //vec v = getbasis1(spm_abs);
     vec w = make_basis2(data, spm_rel->bas().as_mat().col(1));
 
     if(signeig>0) data.bplus_  = w;
@@ -344,30 +357,6 @@ vec form_finder::make_basis1(ff_data &data)
 {
   vec v(1);  v.set(1,1);
   return make_basis2(data, v);
-}
-
-vec getbasis1(const ssubspace* s)
-{
-  return lift(basis(*s).as_mat().col(1));
-}
-
-vec lift(const vec& v)
-{
-#ifdef MODULAR
-  vec b=v, bb;
-  if(lift(b,MODULUS,bb))
-    b = bb;
-  else
-    cout << "Unable to lift eigenvector from mod " << MODULUS << endl;
-#else
-  make_primitive(b);
-#endif
-#if (SCALAR_OPTION==3)
-  scalar n=0; // dummy variable to gt the right type in next line
-  return b.shorten(n);
-#else
-  return b;
-#endif
 }
 
 void form_finder::recover(vector< vector<long> > eigs) {
@@ -613,57 +602,5 @@ void form_finder::store(vec bp, vec bm, vector<long> eigs) {
   // Inform about newform count
   ECLOG(1) << "Current newform subtotal count at " << gnfcount << endl;
 }
-
-#if (METHOD==2)
-subspace sparse_combine(const subspace& s1, const subspace& s2)
-{
-  // we assume s1, s2 are subspace mod DEFAULT_MODULUS
-   scalar d=denom(s1)*denom(s2);
-   smat sm1(basis(s1)), sm2(basis(s2));
-   const mat&  b = (sm1*sm2).as_mat(); 
-   const vec&  p = pivots(s1)[pivots(s2)];
-   return subspace(b,p,d);
-   //  return COMBINE(s1,s2);
-}
-
-mat sparse_restrict(const mat& m, const subspace& s)
-{
-  if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
-  scalar dd = denom(s);  // will be 1 if s is a mod-p subspace
-  mat b(basis(s));
-  smat sm(m), sb(b);
-  vec piv=pivots(s);
-  smat smr = sm.select_rows(piv);
-  smat ans = smr*sb;
-  int check=0;
-  if(check) {
-    smat left = sm*sb; 
-    if(dd!=1) {cout<<"(dd="<<dd<<")"; left.mult_by_scalar_mod_p(dd, DEFAULT_MODULUS);}
-    smat right = sb*ans;
-    int ok = eqmodp(left,right, DEFAULT_MODULUS);
-    if (!ok) 
-    {
-      cout<<"Warning from sparse_restrict: subspace not invariant!\n";
-      cout<<"Difference = \n"<<left-right<<endl;
-    }
-  }
-  check=0;
-  if(check) {
-    int ok = (ans.as_mat()==RESTRICT(m,s));
-    if(!ok)
-    {
-      cout<<"Error in sparse_restrict: sparse result differs from normal!"<<endl;
-    }
-  }
-  return ans.as_mat();
-}
-
-smat restrict_mat(const smat& m, const subspace& s)
-{
-  if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
-  return mult_mod_p(m.select_rows(pivots(s)),smat(basis(s)), DEFAULT_MODULUS);
-}
-
-#endif
 
 // end of XSPLIT.CC

@@ -21,9 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#if     !defined(_ECLIB_TYPES_H)
-#define _ECLIB_TYPES_H      1       //flags that this file has been included
-
 #include <eclib/smatrix_elim.h>
 
 // SCALAR_OPTION may be set to 1 or 2 or 3 by user
@@ -59,6 +56,4 @@ typedef smat_m smat;
 typedef smat_m_elim smat_elim;
 #endif
 #endif
-#endif
-
 #endif

@@ -39,14 +39,6 @@ find( int X, const int* ptr, int ub, int lb = 0 ) {
   return lb;
 }
 
-template<class T> class Zvec;
-template<class T> class sZvec;
-template<class T> class sZmat;
-template<class T> class sZmat_elim;
-template<class T> class Zmat;
-template<class T> class subZspace;
-template<class T> class ssubZspace;
-
 class smat_elim_list {
 public:
   static int listsize;
@@ -144,7 +136,7 @@ inline ostream& operator<< (ostream&s, const smat_elim_list& L)
   return s;
 }
 
-template<class T> Zvec<int> pivots(const ssubZspace<T>& s)  {return s.pivs();}
+template<class T> inline Zvec<int> pivots(const ssubZspace<T>& s)  {return s.pivs();}
 
 template<class T>
 class ssubZspace {
@@ -174,7 +166,6 @@ private:
   sZmat<T> basis;
 };
 
-
 // Declarations of nonmember, nonfriend operators and functions:
 
 template<class T>
@@ -187,6 +178,4 @@ ssubZspace<T> subeigenspace(const sZmat<T>& sm, T l, const ssubZspace<T>& s, T m
 // construction of a 1-dimensional sparse subspace from a vector:
 template<class T>
 ssubZspace<T> make1d(const Zvec<T>& bas, T& piv, T m);
-
-
 #endif

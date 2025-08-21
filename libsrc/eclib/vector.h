@@ -103,7 +103,12 @@ template<class T> Zmat<T> rref(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& np
 template<class T> long rank_via_ntl(const Zmat<T>& M, const T& pr);
 template<class T> T det_via_ntl(const Zmat<T>& M, const T& pr);
 template<class T> subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2);
+template<class T> ssubZspace<T> combine(const ssubZspace<T>& s1, const ssubZspace<T>& s2);
+template<class T> subZspace<T> sparse_combine(const subZspace<T>& s1, const subZspace<T>& s2);
+template<class T> sZmat<T> restrict_mat(const sZmat<T>& m, const ssubZspace<T>& s);
 template<class T> Zmat<T> restrict_mat(const Zmat<T>& m, const subZspace<T>& s, int cr=0);
+template<class T> sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s);
+template<class T> Zmat<T> sparse_restrict_mat(const Zmat<T>& m, const subZspace<T>& s, int cr=0);
 template<class T> int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd);
 template<class T> int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans);
 template<class T> subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
@@ -168,8 +173,6 @@ template<class T> int liftmats_chinese(const sZmat<T>& mm1, T pr1, const sZmat<T
                               sZmat<T>& m, T& dd);
 template<class T> int dim(const ssubZspace<T>& s)     {return s.bas().ncols();}
 template<class T> sZmat<T> basis(const ssubZspace<T>& s)  {return s.bas();}
-template<class T> ssubZspace<T> combine(const ssubZspace<T>& s1, const ssubZspace<T>& s2);
-template<class T> sZmat<T> restrict_mat(const sZmat<T>& m, const ssubZspace<T>& s);
 
 template<class T>
 class Zvec {

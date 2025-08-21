@@ -53,25 +53,25 @@
 
 class form_finder {
   public:
-    form_finder(splitter_base* hh, int plus, int maxd, int mind=0, 
+    form_finder(splitter_base* hh, int plus, int maxd, int mind=0,
                 int dualflag=1, int bigmatsflag=0, int v=0);
-    ~form_finder(void); 
-    
+    ~form_finder(void);
+
     void find();
     void find(ff_data &data);
     void recover(vector< vector<long> > eigs);
     void splitoff(const vector<long>& eigs);
     void store(vec bp, vec bm, vector<long> eigs);
-    
+
     vec  getbasis( const ff_data &data ) const {return data.bplus_;}
     vec  getbasisplus( const ff_data &data ) const {return data.bplus_;}
     vec  getbasisminus( const ff_data &data ) const {return data.bminus_;}
 
-    friend class ff_data; 
-  
+    friend class ff_data;
+
   protected:
     splitter_base* h;
-    
+
     int            plusflag, dual, bigmats, verbose, targetdim;
     int            gnfcount;                  // Global newform counter
     long           maxdepth, mindepth, dimen;
@@ -96,8 +96,5 @@ class form_finder {
     boost::mutex store_lock;                  // Lock for store() function
 #endif
 };
-
-vec  getbasis1(const ssubspace* s);       // Assuming dim(s)=1, get basis vector
-vec  lift(const vec& v);                  // Lift basis vector
 
 #endif

@@ -1091,6 +1091,12 @@ void random_fill_in( sZmat<T>& sm, int max, int seed )
   delete[] scalarval;
 }
 
+template<class T>
+sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s)
+{
+  if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
+  return mult_mod_p(m.select_rows(pivots(s)),sZmat<T>(basis(s)), T(DEFAULT_MODULUS));
+}
 
 #if FLINT
 
@@ -1193,8 +1199,8 @@ template int get_population<int>(const sZmat<int>& );
 template double density<int>(const sZmat<int>& m);
 template void random_fill_in<int>( sZmat<int>&, int, int );
 template int liftmat<int>(const sZmat<int>& mm, int pr, sZmat<int>& m, int& dd);
-template int liftmats_chinese<int>(const sZmat<int>& mm1, int pr1, const sZmat<int>& mm2, int pr2,
-                              sZmat<int>& m, int& dd);
+template int liftmats_chinese<int>(const sZmat<int>& mm1, int pr1, const sZmat<int>& mm2, int pr2, sZmat<int>& m, int& dd);
+template sZmat<int> restrict_mat(const sZmat<int>& m, const subZspace<int>& s);
 
 // Instantiate sZmat template functions for T=long
 template vector<int> dim<long>(const sZmat<long>& A);
@@ -1224,8 +1230,8 @@ template int get_population<long>(const sZmat<long>& );
 template double density<long>(const sZmat<long>& m);
 template void random_fill_in<long>( sZmat<long>&, int, int );
 template int liftmat<long>(const sZmat<long>& mm, long pr, sZmat<long>& m, long& dd);
-template int liftmats_chinese<long>(const sZmat<long>& mm1, long pr1, const sZmat<long>& mm2, long pr2,
-                                    sZmat<long>& m, long& dd);
+template int liftmats_chinese<long>(const sZmat<long>& mm1, long pr1, const sZmat<long>& mm2, long pr2, sZmat<long>& m, long& dd);
+template sZmat<long> restrict_mat(const sZmat<long>& m, const subZspace<long>& s);
 
 // Instantiate sZmat template functions for T=bigint
 template vector<int> dim<bigint>(const sZmat<bigint>& A);
@@ -1255,5 +1261,5 @@ template int get_population<bigint>(const sZmat<bigint>& );
 template double density<bigint>(const sZmat<bigint>& m);
 template void random_fill_in<bigint>( sZmat<bigint>&, int, int );
 template int liftmat<bigint>(const sZmat<bigint>& mm, bigint pr, sZmat<bigint>& m, bigint& dd);
-template int liftmats_chinese<bigint>(const sZmat<bigint>& mm1, bigint pr1, const sZmat<bigint>& mm2, bigint pr2,
-                                      sZmat<bigint>& m, bigint& dd);
+template int liftmats_chinese<bigint>(const sZmat<bigint>& mm1, bigint pr1, const sZmat<bigint>& mm2, bigint pr2, sZmat<bigint>& m, bigint& dd);
+template sZmat<bigint> restrict_mat(const sZmat<bigint>& m, const subZspace<bigint>& s);
