@@ -23,17 +23,9 @@
 
 #include <eclib/interface.h>
 #include <eclib/timer.h>
-#include <eclib/xsplit.h>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/cusp.h>
-#include <eclib/homspace.h>
-#include <eclib/oldforms.h>
-#include <eclib/cperiods.h>     //from qcurves, for computing conductors
 #include <eclib/newforms.h>
-#include <eclib/periods.h>
-#include <eclib/pcprocs.h>
-#include <eclib/curvesort.h>
+#include <eclib/pcprocs.h>   // for get_curve()
+#include <eclib/curvesort.h> // for codeletter()
 
 //#define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output

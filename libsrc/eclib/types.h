@@ -28,7 +28,7 @@
 
 // SCALAR_OPTION may be set to 1 or 2 or 3 by user
 
-#if (SCALAR_OPTION==1) // scalar is int
+#if (SCALAR_OPTION==1 || !defined(SCALAR_OPTION)) // scalar is int
 typedef int scalar;
 typedef vec_i vec;
 typedef mat_i mat;

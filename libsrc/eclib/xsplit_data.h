@@ -38,7 +38,7 @@
 #endif
 
 // Header files for macros and custom data structures
-#include <eclib/method.h>
+#include <eclib/types.h>
 
 // Forward declaration of classes ... prevents circular includes.
 // form_finder only required as pointer
