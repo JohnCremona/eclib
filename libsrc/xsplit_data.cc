@@ -25,13 +25,18 @@
 #include "eclib/logger.h"
 #include "eclib/xsplit.h"
 
+template class ff_data<int>;
+template class ff_data<long>;
+template class ff_data<bigint>;
+
 /**
  * ff_data()
  *
  * Main constructor.
  * Simply initiates private variables.
  */
-ff_data::ff_data( form_finder* ff )
+template<class T>
+ff_data<T>::ff_data( form_finderT<T>* ff )
   : ff_( ff ),
     status_( INTERNAL ),
     depth_( 0 ),
@@ -54,7 +59,8 @@ ff_data::ff_data( form_finder* ff )
  * Prevents destruction of objects which may still be required
  * by others, especially when running concurrently.
  */
-ff_data::~ff_data() {
+template<class T>
+ff_data<T>::~ff_data() {
   // Delete dynamically created objects
   delete abs_space_;
   delete rel_space_;
@@ -68,7 +74,8 @@ ff_data::~ff_data() {
  * job queue. Task is to scan test eigenvalues to identify 
  * newforms, or  whether further recursion is necessary.
  */
-void ff_data::operator()() {
+template<class T>
+void ff_data<T>::operator()() {
   // Call go_down() on current node, passing through its parent
   // to keep interface consistent with original.
   ff_ -> go_down( *(this->parent_), eigenvalue_, 0 );
@@ -94,7 +101,8 @@ void ff_data::operator()() {
  *
  * Return status of current node.
  */
-nodestatus ff_data::status() {
+template<class T>
+nodestatus ff_data<T>::status() {
   return status_;
 }
 
@@ -103,7 +111,8 @@ nodestatus ff_data::status() {
  *
  * Returns absolute subspace of current depth.
  */
-ssubspace* ff_data::abs_space() {
+template<class T>
+ssubZspace<T>* ff_data<T>::abs_space() {
   return abs_space_;
 }
 
@@ -112,7 +121,8 @@ ssubspace* ff_data::abs_space() {
  *
  * Returns relative subspace of current depth.
  */
-ssubspace* ff_data::rel_space() {
+template<class T>
+ssubZspace<T>* ff_data<T>::rel_space() {
   return rel_space_;
 }
 
@@ -121,7 +131,8 @@ ssubspace* ff_data::rel_space() {
  *
  * Returns current depth. 
  */
-long ff_data::depth() {
+template<class T>
+long ff_data<T>::depth() {
   return depth_;
 }
 
@@ -130,7 +141,8 @@ long ff_data::depth() {
  *
  * Return subdimension
  */
-long ff_data::subdim() {
+template<class T>
+long ff_data<T>::subdim() {
   return subdim_;
 }
 
@@ -139,7 +151,8 @@ long ff_data::subdim() {
  *
  * Returns eigenvalue corresponding to current instance of class.
  */
-long ff_data::eig() {
+template<class T>
+long ff_data<T>::eig() {
   return eigenvalue_;
 }
 
@@ -150,7 +163,8 @@ long ff_data::eig() {
  * If an eiglist has already been computed, we simply return it to 
  * avoid accessing more nodes than necessary.
  */
-vector< long > ff_data::eiglist() {
+template<class T>
+vector< long > ff_data<T>::eiglist() {
   // Return precomputed eiglist if available
   if( !eiglist_.empty() ) return eiglist_;
 
@@ -169,7 +183,8 @@ vector< long > ff_data::eiglist() {
  *
  * Returns pointer to child w.r.t. given eigenvalue.
  */
-ff_data* ff_data::child( long eig ) {
+template<class T>
+ff_data<T>* ff_data<T>::child( long eig ) {
   return children_[ map(eig) ];
 }
 
@@ -178,7 +193,8 @@ ff_data* ff_data::child( long eig ) {
  *
  * Returns number of completed children for current node.
  */
-int ff_data::numCompleteChildren() {
+template<class T>
+int ff_data<T>::numCompleteChildren() {
   return std::count_if(completedChildren_.begin(), completedChildren_.end(),
                        [](childstatus s) {return s!=NOT_COMPLETE;});
 }
@@ -188,7 +204,8 @@ int ff_data::numCompleteChildren() {
  *
  * Return true if all children complete.
  */
-bool ff_data::complete() {
+template<class T>
+bool ff_data<T>::complete() {
   return ( numCompleteChildren() == numChildren_ ) ? true : false;
 }
 
@@ -197,7 +214,8 @@ bool ff_data::complete() {
  *
  * Store status of current node.
  */
-void ff_data::setStatus( nodestatus s ) {
+template<class T>
+void ff_data<T>::setStatus( nodestatus s ) {
   status_ = s;
 }
 
@@ -206,7 +224,8 @@ void ff_data::setStatus( nodestatus s ) {
  *
  * Increases current depth. First check delta is positive.
  */
-void ff_data::increaseDepth( long delta ) {
+template<class T>
+void ff_data<T>::increaseDepth( long delta ) {
   assert( delta > 0 );
   depth_ += delta;
 }
@@ -216,7 +235,8 @@ void ff_data::increaseDepth( long delta ) {
  *
  * Decrease current depth. First check delta is positive.
  */
-void ff_data::decreaseDepth( long delta ) {
+template<class T>
+void ff_data<T>::decreaseDepth( long delta ) {
   assert( delta > 0 );
   depth_ -= delta;
 }
@@ -226,13 +246,14 @@ void ff_data::decreaseDepth( long delta ) {
  *
  * Locked counter increment method.
  */
-void ff_data::increaseSubmatUsage() {
+template<class T>
+void ff_data<T>::increaseSubmatUsage() {
 #ifdef ECLIB_MULTITHREAD
   boost::mutex::scoped_lock lock( submat_lock_ );
 #endif
 
 #ifdef ECLIB_MULTITHREAD_DEBUG
-  ECLOG(2) << "Increasing submat usage from " << submatUsage_ << " to " << submatUsage_+1 
+  ECLOG(2) << "Increasing submat usage from " << submatUsage_ << " to " << submatUsage_+1
            << " for node eig=" << eigenvalue_ << " depth=" << depth_ << endl;
 #endif
 
@@ -245,7 +266,8 @@ void ff_data::increaseSubmatUsage() {
  * Copies given vector into object storage.
  * Use vec class overloaded operator=.
  */
-void ff_data::storeBplus( vec bp ) {
+template<class T>
+void ff_data<T>::storeBplus( Zvec<T> bp ) {
   bplus_ = bp;
 }
 
@@ -255,7 +277,8 @@ void ff_data::storeBplus( vec bp ) {
  * Copies given vector into object storage.
  * Use vec class overloaded operator=.
  */
-void ff_data::storeBminus( vec bm ) {
+template<class T>
+void ff_data<T>::storeBminus( Zvec<T> bm ) {
   bminus_ = bm;
 }
 
@@ -264,7 +287,8 @@ void ff_data::storeBminus( vec bm ) {
  *
  * Adds a new data node to the children vector.
  */
-void ff_data::addChild( long eig, ff_data &child ) {
+template<class T>
+void ff_data<T>::addChild( long eig, ff_data<T> &child ) {
   child.setParent( this ); 
   child.setEigenvalue( eig );
   children_[map(eig)] = &child;
@@ -275,7 +299,8 @@ void ff_data::addChild( long eig, ff_data &child ) {
  * 
  * Calls the destructor for the data node corresponding to given eigenvalue.
  */
-void ff_data::eraseChild( long eig ) {
+template<class T>
+void ff_data<T>::eraseChild( long eig ) {
   eraseChild( map(eig) );
 }
 
@@ -284,7 +309,8 @@ void ff_data::eraseChild( long eig ) {
  *
  * Overloaded method. Main method for destroying children.
  */
-void ff_data::eraseChild( int idx ) {
+template<class T>
+void ff_data<T>::eraseChild( int idx ) {
 #ifdef ECLIB_MULTITHREAD_DEBUG
   ECLOG(2) << "Deleting node (eig=" << children_[idx]->eigenvalue_ 
            << " depth=" << depth_+1 << " status=" << children_[idx]->status_ << ")" << endl;
@@ -300,7 +326,8 @@ void ff_data::eraseChild( int idx ) {
  *
  * Stores pointer to parent data node.
  */
-void ff_data::setParent( ff_data *parent ) {
+template<class T>
+void ff_data<T>::setParent( ff_data<T> *parent ) {
   parent_ = parent;
 }
 
@@ -309,7 +336,8 @@ void ff_data::setParent( ff_data *parent ) {
  *
  * Stores eigenvalue.
  */
-void ff_data::setEigenvalue( long eig ) {
+template<class T>
+void ff_data<T>::setEigenvalue( long eig ) {
   eigenvalue_ = eig;
 }
 
@@ -318,7 +346,8 @@ void ff_data::setEigenvalue( long eig ) {
  *
  * Stores number of children and eigrange, and resize vectors to correct size.
  */
-void ff_data::setChildren( vector<long> eigs ) {
+template<class T>
+void ff_data<T>::setChildren( vector<long> eigs ) {
   numChildren_ = eigs.size();
   eigrange_ = eigs;
 
@@ -332,7 +361,8 @@ void ff_data::setChildren( vector<long> eigs ) {
  * Sets value in map to 'flag', given a child node.
  * Monitors how many of a nodes children have completed.
  */
-void ff_data::childStatus( long eig, childstatus flag ) {
+template<class T>
+void ff_data<T>::childStatus( long eig, childstatus flag ) {
 #ifdef ECLIB_MULTITHREAD
   boost::mutex::scoped_lock lock( childComplete_lock_ );
 #endif
@@ -345,7 +375,8 @@ void ff_data::childStatus( long eig, childstatus flag ) {
  *
  * Loops through containers and destroys all children.
  */
-void ff_data::eraseChildren( ) {
+template<class T>
+void ff_data<T>::eraseChildren( ) {
   if( numChildren_ > 0 ) {
     for( int i = 0; i < numChildren_; i++ ) {
       if ( children_[i] != NULL) {
@@ -368,7 +399,8 @@ void ff_data::eraseChildren( ) {
  * numChildren_==2n+1 and they are [-n,...,-2,-1,0,1,2,...,n], but
  * this specific choice is no longer relied on.
  */
-int ff_data::map( long eig ) {
+template<class T>
+int ff_data<T>::map( long eig ) {
   int i = (int)(find(eigrange_.begin(),eigrange_.end(),eig)-eigrange_.begin());
   return i;
 }

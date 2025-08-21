@@ -148,7 +148,7 @@ public:
 };
 
 
-class newforms :public level, splitter_base   {
+class newforms :public level, splitter_base<scalar>   {
   friend class newform;
 private:
   int verbose; long maxdepth, cuspidal, sign;

@@ -49,23 +49,23 @@
 //                              1-dimensional eigenspaces as found.
 //                             (basis2 will not be used when plusflag=1)
 
+template<class T>
 class splitter_base {
-public: 
-  virtual mat opmat(int,int,int=0) = 0;
-  virtual vec opmat_col(int i, int j, int verb=0) = 0;
-  virtual mat opmat_cols(int i, const vec_i& jlist, int verb=0) = 0;
-  virtual mat opmat_restricted(int,const subspace& s, int,int=0) = 0;
-  virtual smat s_opmat(int,int,int=0) = 0;
-  virtual svec s_opmat_col(int i, int j, int verb=0) = 0;
-  virtual smat s_opmat_cols(int i, const vec_i& jlist, int verb=0) = 0;
-  virtual smat s_opmat_restricted(int,const ssubspace& s, int, int=0) = 0;
+public:
+  virtual Zmat<T> opmat(int,int,int=0) = 0;
+  virtual Zvec<T> opmat_col(int i, int j, int verb=0) = 0;
+  virtual Zmat<T> opmat_cols(int i, const vec_i& jlist, int verb=0) = 0;
+  virtual Zmat<T> opmat_restricted(int,const subZspace<T>& s, int,int=0) = 0;
+  virtual sZmat<T> s_opmat(int,int,int=0) = 0;
+  virtual sZvec<T> s_opmat_col(int i, int j, int verb=0) = 0;
+  virtual sZmat<T> s_opmat_cols(int i, const vec_i& jlist, int verb=0) = 0;
+  virtual sZmat<T> s_opmat_restricted(int,const ssubZspace<T>& s, int, int=0) = 0;
   virtual long matdim(void) = 0;
-  virtual scalar matden(void) = 0;
+  virtual T matden(void) = 0;
   virtual vector<long> eigrange(int) = 0;
   virtual long dimoldpart(const vector<long>) = 0;
-  virtual void use(const vec&, const vec&, const vector<long>) = 0;
+  virtual void use(const Zvec<T>&, const Zvec<T>&, const vector<long>) = 0;
   virtual ~splitter_base() {;}
 };
-
 
 #endif

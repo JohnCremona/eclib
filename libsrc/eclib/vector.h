@@ -33,6 +33,7 @@ template<class T> class sZmat_elim;
 template<class T> class Zmat;
 template<class T> class subZspace;
 template<class T> class ssubZspace;
+template<class T> class form_finderT;
 
 typedef Zvec<int> vec_i;
 typedef Zmat<int> mat_i;
@@ -41,6 +42,7 @@ typedef sZvec<int> svec_i;
 typedef sZmat<int> smat_i;
 typedef sZmat_elim<int> smat_i_elim;
 typedef ssubZspace<int> ssubspace_i;
+typedef form_finderT<int> form_finder_i;
 
 typedef Zvec<long> vec_l;
 typedef Zmat<long> mat_l;
@@ -49,6 +51,7 @@ typedef sZvec<long> svec_l;
 typedef sZmat<long> smat_l;
 typedef sZmat_elim<long> smat_l_elim;
 typedef ssubZspace<long> ssubspace_l;
+typedef form_finderT<long> form_finder_l;
 
 typedef Zvec<bigint> vec_m;
 typedef Zmat<bigint> mat_m;
@@ -57,16 +60,17 @@ typedef sZvec<bigint> svec_m;
 typedef sZmat<bigint> smat_m;
 typedef sZmat_elim<bigint> smat_m_elim;
 typedef ssubZspace<bigint> ssubspace_m;
+typedef form_finderT<bigint> form_finder_m;
 
-template<class T> int dim(const Zvec<T>&);                  // the dimension
-template<class T> T operator*(const Zvec<T>&, const Zvec<T>&);   // dot product
+template<class T> int dim(const Zvec<T>&);
+template<class T> T operator*(const Zvec<T>&, const Zvec<T>&);
 template<class T> T operator*(const sZvec<T>&, const Zvec<T>&);
 template<class T> T content(const Zvec<T>&);
 template<class T> T maxabs(const Zvec<T>&);
 template<class T> Zvec<T> operator*(const Zmat<T>& m, const Zvec<T>& v);
 template<class T> int operator==(const Zvec<T>&, const Zvec<T>&);
 template<class T> int operator!=(const Zvec<T>&, const Zvec<T>&);
-template<class T> int trivial(const Zvec<T>&);                  // is v all 0
+template<class T> int trivial(const Zvec<T>&);
 template<class T> int member(const T& a, const Zvec<T>& v);//tests if a=v[i] for some i
 template<class T> Zvec<T> reverse(const Zvec<T>& order);
 template<class T> void add_row_to_vec(Zvec<T>& v, const Zmat<T>& m, long i);
@@ -81,9 +85,9 @@ template<class T> istream& operator>> (istream&s, Zmat<T>&);
 template<class T> Zmat<T> colcat(const Zmat<T>& a, const Zmat<T>& b);
 template<class T> Zmat<T> rowcat(const Zmat<T>& a, const Zmat<T>& b);
 template<class T> Zmat<T> directsum(const Zmat<T>& a, const Zmat<T>& b);
-template<class T> void elimrows(Zmat<T>& m, long r1, long r2, long pos); //plain elimination, no clearing
-template<class T> void elimrows1(Zmat<T>& m, long r1, long r2, long pos); //elimination + clearing
-template<class T> void elimrows2(Zmat<T>& m, long r1, long r2, long pos, const T& last); //elimination + divide by last pivot
+template<class T> void elimrows(Zmat<T>& m, long r1, long r2, long pos);
+template<class T> void elimrows1(Zmat<T>& m, long r1, long r2, long pos);
+template<class T> void elimrows2(Zmat<T>& m, long r1, long r2, long pos, const T& last);
 template<class T> Zmat<T> echelon0(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                       long& rk, long& ny, T& d);
 template<class T> void elimp(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
@@ -113,9 +117,9 @@ template<class T> int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd)
 template<class T> int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans);
 template<class T> subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
 template<class T> Zmat<T> matmulmodp(const Zmat<T>&, const Zmat<T>&, const T& pr);
-template<class T> long population(const Zmat<T>& m); // #nonzero entries
-template<class T> T maxabs(const Zmat<T>& m); // max entry
-template<class T> double sparsity(const Zmat<T>& m); // #nonzero entries/#entries
+template<class T> long population(const Zmat<T>& m);
+template<class T> T maxabs(const Zmat<T>& m);
+template<class T> double sparsity(const Zmat<T>& m);
 template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr=0);
 template<class T> T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 template<class T> int dim(const subZspace<T>& s);

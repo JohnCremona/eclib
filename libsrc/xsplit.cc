@@ -22,14 +22,17 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <unistd.h>  // for unlink() (not needed on linux)
-
 #define ECLIB_INT_NUM_THREADS 8
 #define ECLIB_RECURSION_DIM_LIMIT 5821
 //#define ECLIB_MULTITHREAD_DEBUG
+
 #include <eclib/logger.h>
 #include <eclib/xsplit.h>
 #include <eclib/smatrix_elim.h>
+
+template class form_finderT<int>;
+template class form_finderT<long>;
+template class form_finderT<bigint>;
 
 template<class T>
 Zvec<T> lift(const Zvec<T>& v)
@@ -40,7 +43,7 @@ Zvec<T> lift(const Zvec<T>& v)
     return w;
   else
     {
-      cout << "Unable to lift eigenvector from mod " << MODULUS << endl;
+      cout << "Unable to lift eigenvector " << v << " from Z/" << MODULUS << " to Z" << endl;
       return v;
     }
 #else
@@ -52,18 +55,20 @@ Zvec<T> lift(const Zvec<T>& v)
 
 // CLASS FORM_FINDER (was called splitter)
 
-form_finder::form_finder(splitter_base* hh, int plus, int maxd, int mind, int dualflag, int bigmatsflag, int v)
+template<class T>
+form_finderT<T>::form_finderT(splitter_base<T>* hh,
+                              int plus, int maxd, int mind, int dualflag, int bigmatsflag, int v)
 :h(hh), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v),
 gnfcount(0), maxdepth(maxd), mindepth(mind)
 {
   eclogger::setLevel( verbose );
   denom1 = h->matden();
   dimen  = h->matdim();
- 
+
   // Create and initialise new data object as root node
   // passing a constant pointer of current form_finder object
   // to data class constructor
-  root = new ff_data( this );
+  root = new ff_data<T>( this );
 
   // Set initial values
   // form_finder class is a friend of ff_data class
@@ -77,7 +82,8 @@ gnfcount(0), maxdepth(maxd), mindepth(mind)
   }
 }
 
-form_finder::~form_finder(void) {
+template<class T>
+form_finderT<T>::~form_finderT(void) {
   // Decendants of root node will be recursively deleted
   // if they have not already been deleted during find()
   // All dynamically created objects (subspaces) held 
@@ -86,11 +92,13 @@ form_finder::~form_finder(void) {
 }
 
 // This is only used when bigmats==1 and we compute opmats on the entire ambient space:
-void form_finder::make_opmat(long i, ff_data &data) { 
+template<class T>
+void form_finderT<T>::make_opmat(long i, ff_data<T> &data) { 
   data.the_opmat_ = h -> s_opmat(i,dual,verbose); 
 }
 
-void form_finder::make_submat( ff_data &data ) {
+template<class T>
+void form_finderT<T>::make_submat( ff_data<T> &data ) {
   // Cache current data node depth
   long depth = data.depth_;
 
@@ -105,7 +113,7 @@ void form_finder::make_submat( ff_data &data ) {
 	    ECLOG(1) << "done." << endl;
 	  }
 
-    data.the_opmat_ = smat(0,0); // releases its space
+    data.the_opmat_ = sZmat<T>(0,0); // releases its space
   }
   else {
     if( data.submat_.nrows() == 0 ) // else we have it already
@@ -127,19 +135,20 @@ void form_finder::make_submat( ff_data &data ) {
  * Computes and returns the submat -- new nested version
  */
 
-smat form_finder::make_nested_submat(long ip, ff_data &data)
+template<class T>
+sZmat<T> form_finderT<T>::make_nested_submat(long ip, ff_data<T> &data)
 {
   long depth = data.depth_;  // current depth
   long subdim = data.subdim_;  // current dimension
-  ff_data *d = &data; // Pointer to nodes
+  ff_data<T> *d = &data; // Pointer to nodes
 
   ECLOG(1) << "Computing operator of size " << subdim
            << " at depth " << depth << "..." << flush;
 
   // first we go up the chain, composing pivotal indices
 
-  vec jlist = vec::iota(subdim);
-  smat b = d->rel_space_->bas();
+  Zvec<int> jlist = Zvec<int>::iota(subdim);
+  sZmat<T> b = d->rel_space_->bas();
   int level = depth;
   while (level--)
     {
@@ -147,14 +156,14 @@ smat form_finder::make_nested_submat(long ip, ff_data &data)
       jlist = d->rel_space_->pivs()[jlist];
       d->parent_->child_ = d;
       d = d->parent_;
-      if(level) b = mult_mod_p(d->rel_space_->bas(), b, MODULUS);
+      if(level) b = mult_mod_p(d->rel_space_->bas(), b, T(MODULUS));
     }
 
   // now compute the matrix of images of the j'th generator for j in jlist
   ECLOG(2) << " basis done..." << flush;
-  smat m = h -> s_opmat_cols(ip, jlist, 0);
+  sZmat<T> m = h -> s_opmat_cols(ip, jlist, 0);
   ECLOG(2) << " sub-opmat done..." << flush;
-  m = mult_mod_p(m,b,MODULUS);
+  m = mult_mod_p(m,b,T(MODULUS));
   ECLOG(1) <<" opmat done."<<endl;
   return m;
 }
@@ -167,22 +176,23 @@ smat form_finder::make_nested_submat(long ip, ff_data &data)
  * data node. Data node passed as parameter will become the
  * _parent_ of this new data node.
  */
-void form_finder::go_down(ff_data &data, long eig, int last) {
+template<class T>
+void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
   // Cache current depth
   long depth = data.depth_;
 
   // Locate required child w.r.t test eigenvalue
-  ff_data *child = data.child( eig ); 
+  ff_data<T> *child = data.child( eig ); 
 
   // Set new depth
   child -> depth_ = depth + 1;
    
-  scalar eig2 = eig*denom1;
+  T eig2 = eig*denom1;
 
   ECLOG(1) << "Increasing depth to " << depth+1 << ", "
            << "trying eig = " << eig << "..."
            << "after scaling, eig =  " << eig2 << "..." << endl;
-  ssubspace s(0);
+  ssubZspace<T> s(0);
 
   vector<int> submat_dim = dim(data.submat_);
   stringstream submat_dim_ss;
@@ -193,7 +203,7 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
 		                 << density(data.submat_) << ")..." << flush;
   ECLOG(3) << "submat = " << data.submat_ << flush;
 
-  s = eigenspace(data.submat_,eig2, DEFAULT_MODULUS); // the relative eigenspace
+  s = eigenspace(data.submat_,eig2, T(DEFAULT_MODULUS)); // the relative eigenspace
 
   // Increment data usage counter for parent node
   data.increaseSubmatUsage();
@@ -210,11 +220,11 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   ECLOG(1) << "done (dim = " << dim(s) << ")"<<endl;
   // ECLOG(1) << ", combining subspaces..." << flush;
 
-  child -> rel_space_ = new ssubspace(s);
+  child -> rel_space_ = new ssubZspace<T>(s);
   // if( depth == 0 )
-  //   child -> abs_space_ = new ssubspace(s);
+  //   child -> abs_space_ = new ssubZspace<T>(s);
   // else
-  //   child -> abs_space_ = new ssubspace(combine( *(data.abs_space_),s ));
+  //   child -> abs_space_ = new ssubZspace<T>(combine( *(data.abs_space_),s ));
   // ECLOG(1) << "done." << endl;
   
   depth++; // Local depth increment (does not effect data nodes)
@@ -230,9 +240,10 @@ void form_finder::go_down(ff_data &data, long eig, int last) {
   }
 }
 
-void form_finder::go_up( ff_data &data ) {
+template<class T>
+void form_finderT<T>::go_up( ff_data<T> &data ) {
   // Cache pointer to parent data node for access after current node is deleted
-  ff_data *parent = data.parent_;
+  ff_data<T> *parent = data.parent_;
 
 #ifdef ECLIB_MULTITHREAD
   // Lock parent node with scoped lock 
@@ -245,7 +256,7 @@ void form_finder::go_up( ff_data &data ) {
 #endif
 
   // Erasing node via children array of parent which calls destructor
-  // of object (ff_data), using eigenvalue as key
+  // of object (ff_data<T>), using eigenvalue as key
   parent -> childStatus( data.eigenvalue_, COMPLETE );
   parent -> eraseChild( data.eigenvalue_ );
 
@@ -257,7 +268,8 @@ void form_finder::go_up( ff_data &data ) {
 #endif
 }
 
-void form_finder::make_basis( ff_data &data ) {
+template<class T>
+void form_finderT<T>::make_basis( ff_data<T> &data ) {
   // Cache data values
   long depth  = data.depth();
   long subdim = data.subdim();
@@ -276,7 +288,7 @@ void form_finder::make_basis( ff_data &data ) {
     // must treat separately since we did not
     // define abs_space[0] in order to save space
     if(depth==0) {
-      data.bplus_    = vec(dimen);
+      data.bplus_    = Zvec<T>(dimen);
       data.bplus_[1] = 1;
 	  }
     else {
@@ -286,11 +298,11 @@ void form_finder::make_basis( ff_data &data ) {
     return;
   }
 
-  ssubspace *spm_rel; //, *spm_abs;
-  scalar eig = denom1;
-  smat subconjmat;            // only used when depth>0
+  ssubZspace<T> *spm_rel; //, *spm_abs;
+  T eig = denom1;
+  sZmat<T> subconjmat;            // only used when depth>0
   if( bigmats ) {
-    ssubspace* s;
+    ssubZspace<T>* s;
     s = data.abs_space_;  // only used when depth>0
     subconjmat = (depth) ? restrict_mat(data.conjmat_, *s) : data.conjmat_;
     // will only be a 2x2 in this case (genus 1 only!)
@@ -302,17 +314,17 @@ void form_finder::make_basis( ff_data &data ) {
   // C++11 loop over two variables (similar to python)
   // for( int b : { -1,+1 } ) { /* use b as -1 or +1 */ }
   for(long signeig=+1; signeig>-2; signeig-=2) {
-    scalar seig;
-           seig = eig;
+    T seig;
+    seig = eig;
 
     if(signeig<0) seig = -eig;
 
     if(depth) {
-	    spm_rel = new ssubspace(eigenspace(subconjmat,seig, DEFAULT_MODULUS));
-	    //spm_abs  = new ssubspace(combine(*s,*spm_rel));
+      spm_rel = new ssubZspace<T>(eigenspace(subconjmat,seig, T(DEFAULT_MODULUS)));
+	    //spm_abs  = new ssubZspace<T>(combine(*s,*spm_rel));
     }
     else {
-      spm_rel = new ssubspace(eigenspace(subconjmat,seig, DEFAULT_MODULUS));
+      spm_rel = new ssubZspace<T>(eigenspace(subconjmat,seig, T(DEFAULT_MODULUS)));
       //spm_abs = spm_rel;
     }
 
@@ -330,7 +342,7 @@ void form_finder::make_basis( ff_data &data ) {
       return;
     }
 
-    vec w = make_basis2(data, spm_rel->bas().as_mat().col(1));
+    Zvec<T> w = make_basis2(data, spm_rel->bas().as_mat().col(1));
 
     if(signeig>0) data.bplus_  = w;
     else          data.bminus_ = w;
@@ -340,26 +352,29 @@ void form_finder::make_basis( ff_data &data ) {
   }
 }
 
-vec form_finder::make_basis2(ff_data &data, const vec& v)
+template<class T>
+Zvec<T> form_finderT<T>::make_basis2(ff_data<T> &data, const Zvec<T>& v)
 {
-  ff_data *d = &data;
+  ff_data<T> *d = &data;
   int level = data.depth_;
-  vec w = v;
+  Zvec<T> w = v;
   while (level--)
     {
-      w = mult_mod_p(d->rel_space_->bas(), w, MODULUS);
+      w = mult_mod_p(d->rel_space_->bas(), w, T(MODULUS));
       d = d->parent_;
     }
   return lift(w);
 }
 
-vec form_finder::make_basis1(ff_data &data)
+template<class T>
+Zvec<T> form_finderT<T>::make_basis1(ff_data<T> &data)
 {
-  vec v(1);  v.set(1,1);
+  Zvec<T> v(1);  v.set(1,T(1));
   return make_basis2(data, v);
 }
 
-void form_finder::recover(vector< vector<long> > eigs) {
+template<class T>
+void form_finderT<T>::recover(vector< vector<long> > eigs) {
   for(unsigned int iform=0; iform<eigs.size(); iform++) {
     if(verbose) {
 	    cout << "Form number " << iform+1 << " with eigs ";
@@ -379,10 +394,11 @@ void form_finder::recover(vector< vector<long> > eigs) {
   root -> eraseChildren();
 }
 
-void form_finder::splitoff(const vector<long>& eigs) {
+template<class T>
+void form_finderT<T>::splitoff(const vector<long>& eigs) {
 
   // Always start at root node
-  ff_data *current = root;
+  ff_data<T> *current = root;
 
   // Temporary variables
   long depth  = current -> depth_;
@@ -427,7 +443,7 @@ void form_finder::splitoff(const vector<long>& eigs) {
     }
 
     // Create new child node
-    ff_data *child = new ff_data( this );
+    ff_data<T> *child = new ff_data<T>( this );
     
     // Configure data node ancestry
     current -> addChild( eigs[depth], *child );
@@ -451,7 +467,8 @@ void form_finder::splitoff(const vector<long>& eigs) {
   return;
 }
 
-void form_finder::find() {
+template<class T>
+void form_finderT<T>::find() {
 #ifdef ECLIB_MULTITHREAD
   // Set number of threads to use either through default
   // ECLIB_INT_NUM_THREADS macro defined above, or
@@ -486,7 +503,8 @@ void form_finder::find() {
   }
 }
 
-void form_finder::find( ff_data &data ) {
+template<class T>
+void form_finderT<T>::find( ff_data<T> &data ) {
   // Cache values of current data
   long depth  = data.depth();
   long subdim = data.subdim();
@@ -553,7 +571,7 @@ void form_finder::find( ff_data &data ) {
 
     // Initiate new data node, passing a constant reference of the current 
     // form_finder object to the data class constructor
-    ff_data *child = new ff_data( this );
+    ff_data<T> *child = new ff_data<T>( this );
 
     // Configure data node ancestry
     data.addChild( eig, *child );
@@ -561,7 +579,7 @@ void form_finder::find( ff_data &data ) {
 #ifdef ECLIB_MULTITHREAD
     if( data.subdim_ > ECLIB_RECURSION_DIM_LIMIT ) {
       // Post newly created child node to threadpool
-      pool.post< ff_data >( *child );
+      pool.post< ff_data<T> >( *child );
     }
     else {
       // Parallel granularity control. Continue in serial.
@@ -585,7 +603,8 @@ void form_finder::find( ff_data &data ) {
 #endif
 }
 
-void form_finder::store(vec bp, vec bm, vector<long> eigs) {
+template<class T>
+void form_finderT<T>::store(Zvec<T> bp, Zvec<T> bm, vector<long> eigs) {
 #ifdef ECLIB_MULTITHREAD
   // Lock function
   boost::mutex::scoped_lock lock( store_lock );

@@ -26,7 +26,6 @@
 // We use the pari C library for factoring (via a string interface
 // defined in parifact.h/cc)
 
-#include <unistd.h>  // for unlink() (not needed on linux)
 #include <sstream>
 #include <eclib/marith.h>
 

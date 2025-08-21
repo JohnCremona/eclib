@@ -34,6 +34,7 @@ typedef ssubspace_i ssubspace;
 typedef svec_i svec;
 typedef smat_i smat;
 typedef smat_i_elim smat_elim;
+typedef form_finder_i form_finder;
 #else
 #if (SCALAR_OPTION==2) // scalar is long
 typedef long scalar;
@@ -44,6 +45,7 @@ typedef ssubspace_l ssubspace;
 typedef svec_l svec;
 typedef smat_l smat;
 typedef smat_l_elim smat_elim;
+typedef form_finder_l form_finder;
 #else
 #if (SCALAR_OPTION==3) // scalar is bigint
 typedef bigint scalar;
@@ -54,6 +56,7 @@ typedef ssubspace_m ssubspace;
 typedef svec_m svec;
 typedef smat_m smat;
 typedef smat_m_elim smat_elim;
+typedef form_finder_m form_finder;
 #endif
 #endif
 #endif
