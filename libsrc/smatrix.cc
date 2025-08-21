@@ -25,11 +25,11 @@
 
 #include <eclib/smatrix.h>
 
-// Instantiate smatT template classes for T=int, long, bigint
+// Instantiate sZmat template classes for T=int, long, bigint
 
-template class smatT<int>;
-template class smatT<long>;
-template class smatT<bigint>;
+template class sZmat<int>;
+template class sZmat<long>;
+template class sZmat<bigint>;
 
 template<class T>
 void showrow(int*pos, T*val) // for debugging
@@ -47,7 +47,7 @@ void showrow(int*pos, T*val) // for debugging
 // Definitions of member operators and functions:
 
 template<class T>
-smatT<T>::smatT(int nr, int nc)
+sZmat<T>::sZmat(int nr, int nc)
 {
   static const T zero(0);
   nco = nc;
@@ -67,7 +67,7 @@ smatT<T>::smatT(int nr, int nc)
 }
 
 template<class T>
-smatT<T>::smatT(const smatT<T>& sm)
+sZmat<T>::sZmat(const sZmat<T>& sm)
 {
   nco = sm.nco;
   nro = sm.nro;
@@ -89,7 +89,7 @@ smatT<T>::smatT(const smatT<T>& sm)
 }
 
 template<class T>
-smatT<T>::smatT(const matT<T>& m)
+sZmat<T>::sZmat(const Zmat<T>& m)
 {
   //  cout<<"Converting mat("<<m.nro<<"x"<<m.nco<<") to smat"<<endl;
   nco = m.nco;
@@ -115,7 +115,7 @@ smatT<T>::smatT(const matT<T>& m)
 }
 
 template<class T>
-smatT<T>::~smatT()
+sZmat<T>::~sZmat()
 {
   for( int i = 0; i < nro; i++ ) { delete [] col[i]; delete [] val[i]; }
 #ifdef DEBUG_MEM
@@ -128,7 +128,7 @@ smatT<T>::~smatT()
 // member functions and operators
 
 template<class T>
-void smatT<T>::set_row( int i, int d, int* pos, T* values) // i counts from 0
+void sZmat<T>::set_row( int i, int d, int* pos, T* values) // i counts from 0
 {
   T *vali = val[i];
   int *coli = col[i];
@@ -153,7 +153,7 @@ void smatT<T>::set_row( int i, int d, int* pos, T* values) // i counts from 0
 }
 
 template<class T>
-void smatT<T>::setrow ( int i, const vecT<T>& v) // i counts from 1
+void sZmat<T>::setrow ( int i, const Zvec<T>& v) // i counts from 1
 {
   int j, m, n, dimv=dim(v);
   T *vali;
@@ -193,7 +193,7 @@ void smatT<T>::setrow ( int i, const vecT<T>& v) // i counts from 1
 }
 
 template<class T>
-void smatT<T>::setrow ( int i, const svecT<T>& v) // i counts from 1
+void sZmat<T>::setrow ( int i, const sZvec<T>& v) // i counts from 1
 {
   int d=v.entries.size();
   i--;
@@ -224,10 +224,10 @@ void smatT<T>::setrow ( int i, const svecT<T>& v) // i counts from 1
 }
 
 template<class T>
-smatT<T> smatT<T>::select_rows(const vecT<int>& rows) const
+sZmat<T> sZmat<T>::select_rows(const Zvec<int>& rows) const
 {
   int n=dim(rows);
-  smatT<T> ans(n,nco);
+  sZmat<T> ans(n,nco);
   for(int i=0; i<n; i++)
     {
       int r=rows[i+1]-1;
@@ -237,10 +237,10 @@ smatT<T> smatT<T>::select_rows(const vecT<int>& rows) const
 }
 
 template<class T>
-matT<T> smatT<T>::as_mat( ) const
+Zmat<T> sZmat<T>::as_mat( ) const
 {
   //  cout<<"Converting smat to mat("<<nro<<"x"<<nco<<")"<<endl;
-  matT<T> ans( nro, nco );
+  Zmat<T> ans( nro, nco );
   auto mi = ans.entries.begin();
   for( int i = 0; i < nro; i++ )
     {
@@ -254,10 +254,10 @@ matT<T> smatT<T>::as_mat( ) const
 }
 
 template<class T>
-svecT<T> smatT<T>::row(int i) const // extract row i as an svec, i counts from 1
+sZvec<T> sZmat<T>::row(int i) const // extract row i as an svec, i counts from 1
 {
   i--;
-  svecT<T> ans(nco);
+  sZvec<T> ans(nco);
   int d = *col[i];
   T *values = val[i];
   int *posi = col[i] + 1;
@@ -267,7 +267,7 @@ svecT<T> smatT<T>::row(int i) const // extract row i as an svec, i counts from 1
 }
 
 template<class T>
-T smatT<T>::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
+T sZmat<T>::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
         				  * can only be used as a rvalue  */
 {
   static const T zero(0);
@@ -290,7 +290,7 @@ T smatT<T>::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
 }
 
 template<class T>
-smatT<T>& smatT<T>::operator=(const smatT<T>& sm)
+sZmat<T>& sZmat<T>::operator=(const sZmat<T>& sm)
 {
  static const T zero(0);
  if (this==&sm) return *this;
@@ -337,7 +337,7 @@ smatT<T>& smatT<T>::operator=(const smatT<T>& sm)
 }
 
 template<class T>
-smatT<T>& smatT<T>::operator+=(const smatT<T>& mat2)
+sZmat<T>& sZmat<T>::operator+=(const sZmat<T>& mat2)
 {
   if (nro==mat2.nro)
     {
@@ -394,7 +394,7 @@ smatT<T>& smatT<T>::operator+=(const smatT<T>& mat2)
 }
 
 template<class T>
-smatT<T>& smatT<T>::operator-=(const smatT<T>& mat2)
+sZmat<T>& sZmat<T>::operator-=(const sZmat<T>& mat2)
 {
   if (nro==mat2.nro)
     {
@@ -433,7 +433,7 @@ smatT<T>& smatT<T>::operator-=(const smatT<T>& mat2)
 }
 
 template<class T>
-smatT<T>& smatT<T>::operator+= (const T& scal) // adds scalar*identity
+sZmat<T>& sZmat<T>::operator+= (const T& scal) // adds scalar*identity
 {
   if(scal==0) return *this;
 
@@ -473,7 +473,7 @@ smatT<T>& smatT<T>::operator+= (const T& scal) // adds scalar*identity
 }
 
 template<class T>
-void smatT<T>::sub_mod_p(const T& lambda, const T& p) 
+void sZmat<T>::sub_mod_p(const T& lambda, const T& p) 
 // subtracts scalar*identity mod p
 {
   this->operator-=(lambda);
@@ -481,9 +481,9 @@ void smatT<T>::sub_mod_p(const T& lambda, const T& p)
 }
 
 template<class T>
-void smatT<T>::reduce_mod_p(const T& p)
+void sZmat<T>::reduce_mod_p(const T& p)
 {
-  svecT<T> rowi;
+  sZvec<T> rowi;
   for(int i=1; i<=nro; i++)
     {
       rowi = row(i);
@@ -493,7 +493,7 @@ void smatT<T>::reduce_mod_p(const T& p)
 }
 
 template<class T>
-smatT<T>& smatT<T>::operator*=(T scal)
+sZmat<T>& sZmat<T>::operator*=(T scal)
 {
   if(scal==0) cerr<<"Attempt to multiply smat by 0\n"<<endl;
   for( int i = 0; i < nro; i++)
@@ -506,7 +506,7 @@ smatT<T>& smatT<T>::operator*=(T scal)
 }
 
 template<class T>
-smatT<T>& smatT<T>::mult_by_scalar_mod_p (T scal, const T& p)
+sZmat<T>& sZmat<T>::mult_by_scalar_mod_p (T scal, const T& p)
 {
   if(xmod(scal,p)==0) cerr<<"Attempt to multiply smat by 0\n"<<endl;
   for(int i = 0; i < nro; i++)
@@ -519,7 +519,7 @@ smatT<T>& smatT<T>::mult_by_scalar_mod_p (T scal, const T& p)
 }
 
 template<class T>
-smatT<T>& smatT<T>::operator/=(T scal)
+sZmat<T>& sZmat<T>::operator/=(T scal)
 {
   if(scal==0) cerr<<"Attempt to divide smat by 0\n"<<endl;
   for(int i = 0; i < nro; i++)
@@ -532,14 +532,14 @@ smatT<T>& smatT<T>::operator/=(T scal)
  }
 
 template<class T>
-matT<T> smatT<T>::operator*( const matT<T>& m )
+Zmat<T> sZmat<T>::operator*( const Zmat<T>& m )
 {
   if( nco != m.nrows() )
     {
       cerr << "incompatible smat & mat in operator*"<<endl;
-      return matT<T>();
+      return Zmat<T>();
     }
-  matT<T> product( nro, m.ncols() );
+  Zmat<T> product( nro, m.ncols() );
   T ans;
   for(int i = 1; i <= nro; i++ )
     {
@@ -555,24 +555,24 @@ matT<T> smatT<T>::operator*( const matT<T>& m )
 }
 
 template<class T>
-int smatT<T>::nullity(const T& lambda, T m) // nullity of this-lambda*I modulo m
+int sZmat<T>::nullity(const T& lambda, T m) // nullity of this-lambda*I modulo m
 {
-  smatT<T> sma(*this); sma-=lambda;  return sma.ncols()-sma.rank(m);
+  sZmat<T> sma(*this); sma-=lambda;  return sma.ncols()-sma.rank(m);
 }
 
 // Definitions of non-member, friend operators and functions
 
 template<class T>
-svecT<T> operator* ( const smatT<T>& A, const svecT<T>& v )
+sZvec<T> operator* ( const sZmat<T>& A, const sZvec<T>& v )
 {
   if( A.nco != dim(v) ) 
     { 
       cerr << "incompatible smat*svec\n"; 
       cerr << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
-      return svecT<T>();
+      return sZvec<T>();
     }
   int n = A.nro;
-  svecT<T> prod(n);
+  sZvec<T> prod(n);
   for(int j = 1; j<=n; j++)
     {
       T s = (A.row(j))*v;
@@ -582,10 +582,10 @@ svecT<T> operator* ( const smatT<T>& A, const svecT<T>& v )
 }
 
 template<class T>
-vecT<T> operator* (const smatT<T>& m, const vecT<T>& v)
+Zvec<T> operator* (const sZmat<T>& m, const Zvec<T>& v)
 {
   int r = m.nrows(), c=m.ncols();
-  vecT<T> w(r);
+  Zvec<T> w(r);
   if(c!=dim(v))
     cerr<<"Error in smat*vec:  wrong dimensions ("<<r<<"x"<<c<<")*"<<dim(v)<<endl;
   else
@@ -596,9 +596,9 @@ vecT<T> operator* (const smatT<T>& m, const vecT<T>& v)
 // (col) svec * smat
 
 template<class T>
-svecT<T> operator* ( const svecT<T>& v, const smatT<T>& A )
+sZvec<T> operator* ( const sZvec<T>& v, const sZmat<T>& A )
 {
-  svecT<T> prod(A.ncols());
+  sZvec<T> prod(A.ncols());
   if( v.d != A.nrows() )
     {
       cerr << "incompatible sizes in v*A\n"
@@ -613,9 +613,9 @@ svecT<T> operator* ( const svecT<T>& v, const smatT<T>& A )
 }
 
 template<class T>
-svecT<T> mult_mod_p( const svecT<T>& v, const smatT<T>& A, const T& p  )
+sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p  )
 {
-  vecT<T> prod(A.ncols());
+  Zvec<T> prod(A.ncols());
   if( v.d != A.nrows() )
     {
       cerr << "incompatible sizes in v*A\n"
@@ -635,13 +635,13 @@ svecT<T> mult_mod_p( const svecT<T>& v, const smatT<T>& A, const T& p  )
             prod.add_modp(*posi++,xmodmul(c,*values++,p),p);
         }
     }
-  return svecT<T>(prod);
+  return sZvec<T>(prod);
 }
 
 template<class T>
-svecT<T> mult_mod_p( const smatT<T>& A, const svecT<T>& v, const T& p  )
+sZvec<T> mult_mod_p( const sZmat<T>& A, const sZvec<T>& v, const T& p  )
 {
-  svecT<T> w(A.nrows());
+  sZvec<T> w(A.nrows());
   if( v.d != A.ncols() )
     {
       cerr << "incompatible sizes in A*v\n";
@@ -656,9 +656,9 @@ svecT<T> mult_mod_p( const smatT<T>& A, const svecT<T>& v, const T& p  )
 }
 
 template<class T>
-vecT<T> mult_mod_p( const smatT<T>& A, const vecT<T>& v, const T& p  )
+Zvec<T> mult_mod_p( const sZmat<T>& A, const Zvec<T>& v, const T& p  )
 {
-  vecT<T> w(A.nrows());
+  Zvec<T> w(A.nrows());
   if( dim(v) != A.ncols() )
     {
       cerr << "incompatible sizes in A*v\n";
@@ -673,10 +673,10 @@ vecT<T> mult_mod_p( const smatT<T>& A, const vecT<T>& v, const T& p  )
 }
 
 template<class T>
-smatT<T> operator* ( const smatT<T>& A, const smatT<T>& B )
+sZmat<T> operator* ( const sZmat<T>& A, const sZmat<T>& B )
 {
   int nro = A.nro, nco = B.nco;
-  smatT<T> prod( nro, nco );
+  sZmat<T> prod( nro, nco );
   if( A.nco != B.nro )
     {
       cerr << "incompatible smats in operator *"<<endl;
@@ -690,10 +690,10 @@ smatT<T> operator* ( const smatT<T>& A, const smatT<T>& B )
 }
 
 template<class T>
-smatT<T> mult_mod_p ( const smatT<T>& A, const smatT<T>& B, const T& p )
+sZmat<T> mult_mod_p ( const sZmat<T>& A, const sZmat<T>& B, const T& p )
 {
   int nro = A.nro, nco = B.nco;
-  smatT<T> prod( nro, nco );
+  sZmat<T> prod( nro, nco );
   if( A.nco != B.nro )
     {
       cerr << "incompatible smats in operator *"<<endl;
@@ -707,7 +707,7 @@ smatT<T> mult_mod_p ( const smatT<T>& A, const smatT<T>& B, const T& p )
 }
 
 template<class T>
-smatT<T> transpose ( const smatT<T>& A )
+sZmat<T> transpose ( const sZmat<T>& A )
 {
   // 1. Count the number of entries in each column (as in operator*() below):
   int *colwts = new int[A.nco];
@@ -724,7 +724,7 @@ smatT<T> transpose ( const smatT<T>& A )
   cout<<endl;
 #endif
   // 2. Make space for the output matrix:
-  smatT<T> B(A.nco,A.nro);
+  sZmat<T> B(A.nco,A.nro);
   // Remove the default entries in B:
   for( int i = 0; i < B.nro; i++ ) { delete [] B.col[i]; delete [] B.val[i]; }
   // Replace with the correct sizes:
@@ -763,7 +763,7 @@ smatT<T> transpose ( const smatT<T>& A )
 }
 
 template<class T>
-int operator==(const smatT<T>& sm1, const smatT<T>& sm2)
+int operator==(const sZmat<T>& sm1, const sZmat<T>& sm2)
 {
    int nr = sm1.nro, i;
    int equal = ( nr == sm2.nro );
@@ -784,7 +784,7 @@ int operator==(const smatT<T>& sm1, const smatT<T>& sm2)
 }
 
 template<class T>
-int eqmodp(const smatT<T>& sm1, const smatT<T>& sm2, const T& p)
+int eqmodp(const sZmat<T>& sm1, const sZmat<T>& sm2, const T& p)
 {
    int nr = sm1.nro, i;
    int equal = ( nr == sm2.nro );
@@ -805,7 +805,7 @@ int eqmodp(const smatT<T>& sm1, const smatT<T>& sm2, const T& p)
 }
 
 template<class T>
-ostream& operator << (ostream& s, const smatT<T>& sm)
+ostream& operator << (ostream& s, const sZmat<T>& sm)
 {
   for( int i = 0; i < sm.nro; i++ )
     {
@@ -827,7 +827,7 @@ ostream& operator << (ostream& s, const smatT<T>& sm)
 }
 
 template<class T>
-istream& operator >> (istream& s, smatT<T>& sm)
+istream& operator >> (istream& s, sZmat<T>& sm)
 {
   int *pos = new int [ sm.nco ];
   T *values = new T [ sm.nco ];
@@ -865,49 +865,49 @@ istream& operator >> (istream& s, smatT<T>& sm)
 // Definition of non-friend functions
 
 template<class T>
-smatT<T> operator+(const smatT<T>& sm)
+sZmat<T> operator+(const sZmat<T>& sm)
 {
   return sm;
 }
 
 template<class T>
-smatT<T> operator-(const smatT<T>& sm)
+sZmat<T> operator-(const sZmat<T>& sm)
 {
   return T(-1)*sm;
 }
 
 template<class T>
-smatT<T> operator+(const smatT<T>& sm1, const smatT<T>& sm2)
+sZmat<T> operator+(const sZmat<T>& sm1, const sZmat<T>& sm2)
 {
-  smatT<T> ans(sm1); ans+=sm2;  return ans;
+  sZmat<T> ans(sm1); ans+=sm2;  return ans;
 }
 
 template<class T>
-smatT<T> operator-(const smatT<T>& sm1, const smatT<T>& sm2) 
+sZmat<T> operator-(const sZmat<T>& sm1, const sZmat<T>& sm2) 
 {
-  smatT<T> ans(sm1); ans-=sm2;  return ans;
+  sZmat<T> ans(sm1); ans-=sm2;  return ans;
 }
 
 template<class T>
-smatT<T> operator*(T scal, const smatT<T>& sm)
+sZmat<T> operator*(T scal, const sZmat<T>& sm)
 {
-  smatT<T> ans(sm); ans*=scal;  return ans;
+  sZmat<T> ans(sm); ans*=scal;  return ans;
 }
 
 template<class T>
-smatT<T> operator/(const smatT<T>& sm, T scal)
+sZmat<T> operator/(const sZmat<T>& sm, T scal)
 {
-  smatT<T> ans(sm); ans/=scal;  return ans;
+  sZmat<T> ans(sm); ans/=scal;  return ans;
 }
 
 template<class T>
-int operator!=(const smatT<T>& sm1, const smatT<T>& sm2)
+int operator!=(const sZmat<T>& sm1, const sZmat<T>& sm2)
 {
   return !(sm1==sm2);
 }
 
 template<class T>
-int get_population(const smatT<T>& m )
+int get_population(const sZmat<T>& m )
 {
   int count = 0;
   for(int r = 0; r < m.nro; r++ )
@@ -921,7 +921,7 @@ int get_population(const smatT<T>& m )
 }
 
 template<class T>
-T maxabs(const smatT<T>& m )
+T maxabs(const sZmat<T>& m )
 {
   T a(0);
   for(int r = 0; r < m.nro; r++ )
@@ -935,9 +935,9 @@ T maxabs(const smatT<T>& m )
 }
 
 template<class T>
-smatT<T> smatT<T>::scalar_matrix(int n, const T& a)  // nxn scalar matrix a*I
+sZmat<T> sZmat<T>::scalar_matrix(int n, const T& a)  // nxn scalar matrix a*I
 {
-  smatT<T> D(n,n); // creates enough space
+  sZmat<T> D(n,n); // creates enough space
   for( int i = 0; i < n; i++ )
     {
       D.col[i][0] = 1;   // one entry in this row
@@ -948,7 +948,7 @@ smatT<T> smatT<T>::scalar_matrix(int n, const T& a)  // nxn scalar matrix a*I
 }
 
 template<class T>
-int liftmat(const smatT<T>& mm, T pr, smatT<T>& m, T& dd)
+int liftmat(const sZmat<T>& mm, T pr, sZmat<T>& m, T& dd)
 { int trace=0;
   T n,d; long nr,nc; dd=1;
   T lim = sqrt(pr>>1);
@@ -1001,8 +1001,8 @@ int liftmat(const smatT<T>& mm, T pr, smatT<T>& m, T& dd)
 //#define DEBUG_CHINESE
 
 template<class T>
-int liftmats_chinese(const smatT<T>& m1, T pr1, const smatT<T>& m2, T pr2,
-                      smatT<T>& m, T& dd)
+int liftmats_chinese(const sZmat<T>& m1, T pr1, const sZmat<T>& m2, T pr2,
+                      sZmat<T>& m, T& dd)
 {
   T modulus=pr1*pr2;
   T n,d,u,v;
@@ -1051,7 +1051,7 @@ int liftmats_chinese(const smatT<T>& m1, T pr1, const smatT<T>& m2, T pr2,
 float ran0( int& idum );
 
 template<class T>
-void random_fill_in( smatT<T>& sm, int max, int seed )
+void random_fill_in( sZmat<T>& sm, int max, int seed )
 {
   int *intpos = new int [sm.ncols()];
   T *scalarval = new T [sm.ncols()];
@@ -1105,7 +1105,7 @@ void random_fill_in( smatT<T>& sm, int max, int seed )
 // scalar types are #define'd as uscalar.
 
 template<class T>
-void mod_mat_from_smat(mod_mat& A, const smatT<T>& M, T pr)
+void mod_mat_from_smat(mod_mat& A, const sZmat<T>& M, T pr)
 {
   long nr=M.nrows(), nc=M.ncols();
   long i, j;
@@ -1121,16 +1121,16 @@ void mod_mat_from_smat(mod_mat& A, const smatT<T>& M, T pr)
 }
 
 template<class T>
-smatT<T> smat_from_mod_mat(const mod_mat& A, const T& p) //scalar just to fix return type
+sZmat<T> smat_from_mod_mat(const mod_mat& A, const T& p) //scalar just to fix return type
 {
   long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
 
   // create matrix copy of A:
-  smatT<T> M(nr, nc);
+  sZmat<T> M(nr, nc);
   long i, j;
   for(i=0; i<nr; i++)
     {
-      svecT<T> rowi(nc);
+      sZvec<T> rowi(nc);
       for(j=0; j<nc; j++)
         rowi.set(j+1, T(mod_mat_entry(A,i,j)));
       M.setrow(i+1,rowi);
@@ -1139,12 +1139,12 @@ smatT<T> smat_from_mod_mat(const mod_mat& A, const T& p) //scalar just to fix re
 }
 
 template<class T>
-smatT<T> mult_mod_p_flint ( const smatT<T>& A, const smatT<T>& B, const T& pr )
+sZmat<T> mult_mod_p_flint ( const sZmat<T>& A, const sZmat<T>& B, const T& pr )
 {
   if( A.ncols() != B.nrows() )
     {
       cerr << "incompatible smats in operator *"<<endl;
-      return smatT<T>();
+      return sZmat<T>();
     }
   mod_mat A1, B1, C1;
   mod_mat_from_smat(A1,A,pr);
@@ -1156,7 +1156,7 @@ smatT<T> mult_mod_p_flint ( const smatT<T>& A, const smatT<T>& B, const T& pr )
   // T.stop();
   // cout<<"mult_mod_p_flint time (size "<<dim(A)<<"x"<<dim(B)<<"): ";
   // T.show();
-  smatT<T> C = smat_from_mod_mat(C1, pr);
+  sZmat<T> C = smat_from_mod_mat(C1, pr);
   mod_mat_clear(A1);
   mod_mat_clear(B1);
   mod_mat_clear(C1);
@@ -1165,95 +1165,95 @@ smatT<T> mult_mod_p_flint ( const smatT<T>& A, const smatT<T>& B, const T& pr )
 
 #endif
 
-// Instantiate smatT template functions for T=int
-template vector<int> dim<int>(const smatT<int>& A);
-template smatT<int> transpose<int>( const smatT<int>&);
-template smatT<int> operator*<int>( const smatT<int>&, const smatT<int>&);
-template svecT<int> operator*<int>( const smatT<int>& A, const svecT<int>& v );
-template svecT<int> operator*<int>( const svecT<int>& v, const smatT<int>& A );
-template vecT<int> operator*<int>( const smatT<int>& m, const vecT<int>& v);
-template smatT<int> operator+<int>(const smatT<int>&);
-template smatT<int> operator-<int>(const smatT<int>&);
-template smatT<int> operator+<int>(const smatT<int>& m1, const smatT<int>& m2);
-template smatT<int> operator-<int>(const smatT<int>& m1, const smatT<int>& m2);
-template smatT<int> operator*<int>(int, const smatT<int>& m);
-template smatT<int> operator/<int>(const smatT<int>& m, int scal);
-template int operator!=<int>(const smatT<int>& sm1, const smatT<int>& sm2);
-template svecT<int> mult_mod_p<int>( const smatT<int>& A, const svecT<int>& v, const int& p  );
-template svecT<int> mult_mod_p<int>( const svecT<int>& v, const smatT<int>& A, const int& p  );
-template smatT<int> mult_mod_p<int>( const smatT<int>&, const smatT<int>&, const int&);
-template vecT<int> mult_mod_p<int>( const smatT<int>& A, const vecT<int>& v, const int& p  );
-template smatT<int> mult_mod_p_flint<int>( const smatT<int>& A, const smatT<int>& B, const int& p );
-template int maxabs<int>( const smatT<int>& A);
-template int operator==<int>(const smatT<int>&, const smatT<int>&);
-template int eqmodp<int>(const smatT<int>&, const smatT<int>&, const int& p);
-template ostream& operator<<<int>(ostream&s, const smatT<int>&);
-template istream& operator>><int>(istream&s, smatT<int>&);
-template int get_population<int>(const smatT<int>& );
-template double density<int>(const smatT<int>& m);
-template void random_fill_in<int>( smatT<int>&, int, int );
-template int liftmat<int>(const smatT<int>& mm, int pr, smatT<int>& m, int& dd);
-template int liftmats_chinese<int>(const smatT<int>& mm1, int pr1, const smatT<int>& mm2, int pr2,
-                              smatT<int>& m, int& dd);
+// Instantiate sZmat template functions for T=int
+template vector<int> dim<int>(const sZmat<int>& A);
+template sZmat<int> transpose<int>( const sZmat<int>&);
+template sZmat<int> operator*<int>( const sZmat<int>&, const sZmat<int>&);
+template sZvec<int> operator*<int>( const sZmat<int>& A, const sZvec<int>& v );
+template sZvec<int> operator*<int>( const sZvec<int>& v, const sZmat<int>& A );
+template Zvec<int> operator*<int>( const sZmat<int>& m, const Zvec<int>& v);
+template sZmat<int> operator+<int>(const sZmat<int>&);
+template sZmat<int> operator-<int>(const sZmat<int>&);
+template sZmat<int> operator+<int>(const sZmat<int>& m1, const sZmat<int>& m2);
+template sZmat<int> operator-<int>(const sZmat<int>& m1, const sZmat<int>& m2);
+template sZmat<int> operator*<int>(int, const sZmat<int>& m);
+template sZmat<int> operator/<int>(const sZmat<int>& m, int scal);
+template int operator!=<int>(const sZmat<int>& sm1, const sZmat<int>& sm2);
+template sZvec<int> mult_mod_p<int>( const sZmat<int>& A, const sZvec<int>& v, const int& p  );
+template sZvec<int> mult_mod_p<int>( const sZvec<int>& v, const sZmat<int>& A, const int& p  );
+template sZmat<int> mult_mod_p<int>( const sZmat<int>&, const sZmat<int>&, const int&);
+template Zvec<int> mult_mod_p<int>( const sZmat<int>& A, const Zvec<int>& v, const int& p  );
+template sZmat<int> mult_mod_p_flint<int>( const sZmat<int>& A, const sZmat<int>& B, const int& p );
+template int maxabs<int>( const sZmat<int>& A);
+template int operator==<int>(const sZmat<int>&, const sZmat<int>&);
+template int eqmodp<int>(const sZmat<int>&, const sZmat<int>&, const int& p);
+template ostream& operator<<<int>(ostream&s, const sZmat<int>&);
+template istream& operator>><int>(istream&s, sZmat<int>&);
+template int get_population<int>(const sZmat<int>& );
+template double density<int>(const sZmat<int>& m);
+template void random_fill_in<int>( sZmat<int>&, int, int );
+template int liftmat<int>(const sZmat<int>& mm, int pr, sZmat<int>& m, int& dd);
+template int liftmats_chinese<int>(const sZmat<int>& mm1, int pr1, const sZmat<int>& mm2, int pr2,
+                              sZmat<int>& m, int& dd);
 
-// Instantiate smatT template functions for T=long
-template vector<int> dim<long>(const smatT<long>& A);
-template smatT<long> transpose<long>( const smatT<long>&);
-template smatT<long> operator*<long>( const smatT<long>&, const smatT<long>&);
-template svecT<long> operator*<long>( const smatT<long>& A, const svecT<long>& v );
-template svecT<long> operator*<long>( const svecT<long>& v, const smatT<long>& A );
-template vecT<long> operator* <long>( const smatT<long>& m, const vecT<long>& v);
-template smatT<long> operator+<long>(const smatT<long>&);
-template smatT<long> operator-<long>(const smatT<long>&);
-template smatT<long> operator+<long>(const smatT<long>& m1, const smatT<long>& m2);
-template smatT<long> operator-<long>(const smatT<long>& m1, const smatT<long>& m2);
-template smatT<long> operator*<long>(long, const smatT<long>& m);
-template smatT<long> operator/<long>(const smatT<long>& m, long scal);
-template int operator!=<long>(const smatT<long>& sm1, const smatT<long>& sm2);
-template svecT<long> mult_mod_p<long>( const smatT<long>& A, const svecT<long>& v, const long& p  );
-template svecT<long> mult_mod_p<long>( const svecT<long>& v, const smatT<long>& A, const long& p  );
-template smatT<long> mult_mod_p<long>( const smatT<long>&, const smatT<long>&, const long&);
-template vecT<long> mult_mod_p<long>( const smatT<long>& A, const vecT<long>& v, const long& p  );
-template smatT<long> mult_mod_p_flint<long>( const smatT<long>& A, const smatT<long>& B, const long& p );
-template long maxabs<long>( const smatT<long>& A);
-template int operator==<long>(const smatT<long>&, const smatT<long>&);
-template int eqmodp<long>(const smatT<long>&, const smatT<long>&, const long& p);
-template ostream& operator<<<long>(ostream&s, const smatT<long>&);
-template istream& operator>><long>(istream&s, smatT<long>&);
-template int get_population<long>(const smatT<long>& );
-template double density<long>(const smatT<long>& m);
-template void random_fill_in<long>( smatT<long>&, int, int );
-template int liftmat<long>(const smatT<long>& mm, long pr, smatT<long>& m, long& dd);
-template int liftmats_chinese<long>(const smatT<long>& mm1, long pr1, const smatT<long>& mm2, long pr2,
-                                    smatT<long>& m, long& dd);
+// Instantiate sZmat template functions for T=long
+template vector<int> dim<long>(const sZmat<long>& A);
+template sZmat<long> transpose<long>( const sZmat<long>&);
+template sZmat<long> operator*<long>( const sZmat<long>&, const sZmat<long>&);
+template sZvec<long> operator*<long>( const sZmat<long>& A, const sZvec<long>& v );
+template sZvec<long> operator*<long>( const sZvec<long>& v, const sZmat<long>& A );
+template Zvec<long> operator* <long>( const sZmat<long>& m, const Zvec<long>& v);
+template sZmat<long> operator+<long>(const sZmat<long>&);
+template sZmat<long> operator-<long>(const sZmat<long>&);
+template sZmat<long> operator+<long>(const sZmat<long>& m1, const sZmat<long>& m2);
+template sZmat<long> operator-<long>(const sZmat<long>& m1, const sZmat<long>& m2);
+template sZmat<long> operator*<long>(long, const sZmat<long>& m);
+template sZmat<long> operator/<long>(const sZmat<long>& m, long scal);
+template int operator!=<long>(const sZmat<long>& sm1, const sZmat<long>& sm2);
+template sZvec<long> mult_mod_p<long>( const sZmat<long>& A, const sZvec<long>& v, const long& p  );
+template sZvec<long> mult_mod_p<long>( const sZvec<long>& v, const sZmat<long>& A, const long& p  );
+template sZmat<long> mult_mod_p<long>( const sZmat<long>&, const sZmat<long>&, const long&);
+template Zvec<long> mult_mod_p<long>( const sZmat<long>& A, const Zvec<long>& v, const long& p  );
+template sZmat<long> mult_mod_p_flint<long>( const sZmat<long>& A, const sZmat<long>& B, const long& p );
+template long maxabs<long>( const sZmat<long>& A);
+template int operator==<long>(const sZmat<long>&, const sZmat<long>&);
+template int eqmodp<long>(const sZmat<long>&, const sZmat<long>&, const long& p);
+template ostream& operator<<<long>(ostream&s, const sZmat<long>&);
+template istream& operator>><long>(istream&s, sZmat<long>&);
+template int get_population<long>(const sZmat<long>& );
+template double density<long>(const sZmat<long>& m);
+template void random_fill_in<long>( sZmat<long>&, int, int );
+template int liftmat<long>(const sZmat<long>& mm, long pr, sZmat<long>& m, long& dd);
+template int liftmats_chinese<long>(const sZmat<long>& mm1, long pr1, const sZmat<long>& mm2, long pr2,
+                                    sZmat<long>& m, long& dd);
 
-// Instantiate smatT template functions for T=bigint
-template vector<int> dim<bigint>(const smatT<bigint>& A);
-template smatT<bigint> transpose<bigint>( const smatT<bigint>&);
-template smatT<bigint> operator*<bigint>( const smatT<bigint>&, const smatT<bigint>&);
-template svecT<bigint> operator*<bigint>( const smatT<bigint>& A, const svecT<bigint>& v );
-template svecT<bigint> operator*<bigint>( const svecT<bigint>& v, const smatT<bigint>& A );
-template vecT<bigint> operator* <bigint>( const smatT<bigint>& m, const vecT<bigint>& v);
-template smatT<bigint> operator+<bigint>(const smatT<bigint>&);
-template smatT<bigint> operator-<bigint>(const smatT<bigint>&);
-template smatT<bigint> operator+<bigint>(const smatT<bigint>& m1, const smatT<bigint>& m2);
-template smatT<bigint> operator-<bigint>(const smatT<bigint>& m1, const smatT<bigint>& m2);
-template smatT<bigint> operator*<bigint>(bigint, const smatT<bigint>& m);
-template smatT<bigint> operator/<bigint>(const smatT<bigint>& m, bigint scal);
-template int operator!=<bigint>(const smatT<bigint>& sm1, const smatT<bigint>& sm2);
-template svecT<bigint> mult_mod_p<bigint>( const smatT<bigint>& A, const svecT<bigint>& v, const bigint& p  );
-template svecT<bigint> mult_mod_p<bigint>( const svecT<bigint>& v, const smatT<bigint>& A, const bigint& p  );
-template smatT<bigint> mult_mod_p<bigint>( const smatT<bigint>&, const smatT<bigint>&, const bigint&);
-template vecT<bigint> mult_mod_p<bigint>( const smatT<bigint>& A, const vecT<bigint>& v, const bigint& p  );
-template smatT<bigint> mult_mod_p_flint<bigint>( const smatT<bigint>& A, const smatT<bigint>& B, const bigint& p );
-template bigint maxabs<bigint>( const smatT<bigint>& A);
-template int operator==<bigint>(const smatT<bigint>&, const smatT<bigint>&);
-template int eqmodp<bigint>(const smatT<bigint>&, const smatT<bigint>&, const bigint& p);
-template ostream& operator<<<bigint>(ostream&s, const smatT<bigint>&);
-template istream& operator>><bigint>(istream&s, smatT<bigint>&);
-template int get_population<bigint>(const smatT<bigint>& );
-template double density<bigint>(const smatT<bigint>& m);
-template void random_fill_in<bigint>( smatT<bigint>&, int, int );
-template int liftmat<bigint>(const smatT<bigint>& mm, bigint pr, smatT<bigint>& m, bigint& dd);
-template int liftmats_chinese<bigint>(const smatT<bigint>& mm1, bigint pr1, const smatT<bigint>& mm2, bigint pr2,
-                                      smatT<bigint>& m, bigint& dd);
+// Instantiate sZmat template functions for T=bigint
+template vector<int> dim<bigint>(const sZmat<bigint>& A);
+template sZmat<bigint> transpose<bigint>( const sZmat<bigint>&);
+template sZmat<bigint> operator*<bigint>( const sZmat<bigint>&, const sZmat<bigint>&);
+template sZvec<bigint> operator*<bigint>( const sZmat<bigint>& A, const sZvec<bigint>& v );
+template sZvec<bigint> operator*<bigint>( const sZvec<bigint>& v, const sZmat<bigint>& A );
+template Zvec<bigint> operator* <bigint>( const sZmat<bigint>& m, const Zvec<bigint>& v);
+template sZmat<bigint> operator+<bigint>(const sZmat<bigint>&);
+template sZmat<bigint> operator-<bigint>(const sZmat<bigint>&);
+template sZmat<bigint> operator+<bigint>(const sZmat<bigint>& m1, const sZmat<bigint>& m2);
+template sZmat<bigint> operator-<bigint>(const sZmat<bigint>& m1, const sZmat<bigint>& m2);
+template sZmat<bigint> operator*<bigint>(bigint, const sZmat<bigint>& m);
+template sZmat<bigint> operator/<bigint>(const sZmat<bigint>& m, bigint scal);
+template int operator!=<bigint>(const sZmat<bigint>& sm1, const sZmat<bigint>& sm2);
+template sZvec<bigint> mult_mod_p<bigint>( const sZmat<bigint>& A, const sZvec<bigint>& v, const bigint& p  );
+template sZvec<bigint> mult_mod_p<bigint>( const sZvec<bigint>& v, const sZmat<bigint>& A, const bigint& p  );
+template sZmat<bigint> mult_mod_p<bigint>( const sZmat<bigint>&, const sZmat<bigint>&, const bigint&);
+template Zvec<bigint> mult_mod_p<bigint>( const sZmat<bigint>& A, const Zvec<bigint>& v, const bigint& p  );
+template sZmat<bigint> mult_mod_p_flint<bigint>( const sZmat<bigint>& A, const sZmat<bigint>& B, const bigint& p );
+template bigint maxabs<bigint>( const sZmat<bigint>& A);
+template int operator==<bigint>(const sZmat<bigint>&, const sZmat<bigint>&);
+template int eqmodp<bigint>(const sZmat<bigint>&, const sZmat<bigint>&, const bigint& p);
+template ostream& operator<<<bigint>(ostream&s, const sZmat<bigint>&);
+template istream& operator>><bigint>(istream&s, sZmat<bigint>&);
+template int get_population<bigint>(const sZmat<bigint>& );
+template double density<bigint>(const sZmat<bigint>& m);
+template void random_fill_in<bigint>( sZmat<bigint>&, int, int );
+template int liftmat<bigint>(const sZmat<bigint>& mm, bigint pr, sZmat<bigint>& m, bigint& dd);
+template int liftmats_chinese<bigint>(const sZmat<bigint>& mm1, bigint pr1, const sZmat<bigint>& mm2, bigint pr2,
+                                      sZmat<bigint>& m, bigint& dd);

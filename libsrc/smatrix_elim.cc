@@ -25,17 +25,17 @@
 
 #include <eclib/smatrix_elim.h>
 
-// Instantiate smatT_elim template classes for T=int, long, bigint
+// Instantiate sZmat_elim template classes for T=int, long, bigint
 
-template class smatT_elim<int>;
-template class smatT_elim<long>;
-template class smatT_elim<bigint>;
+template class sZmat_elim<int>;
+template class sZmat_elim<long>;
+template class sZmat_elim<bigint>;
 
 // Instantiate ssubspace template classes for T=int, long, bigint
 
-template class ssubspaceT<int>;
-template class ssubspaceT<long>;
-template class ssubspaceT<bigint>;
+template class ssubZspace<int>;
+template class ssubZspace<long>;
+template class ssubZspace<bigint>;
 
 //#define TRACE_LISTS
 //#define TRACE_FIND
@@ -246,29 +246,29 @@ void smat_elim_ordlist::remove( smat_elim_list& L )  // L must be ordered
 }
 
 template<class T>
-void smatT_elim<T>::init( )
+void sZmat_elim<T>::init( )
 {
-  //  cout<<"smat_elim::init()  with smat:\n"<<(smatT<T>)(*this)<<endl;
+  //  cout<<"smat_elim::init()  with smat:\n"<<(sZmat<T>)(*this)<<endl;
   //  this->reduce_mod_p(modulus);
-  //  cout<<"smat_elim::init()  after reducing:\n"<<(smatT<T>)(*this)<<endl;
+  //  cout<<"smat_elim::init()  after reducing:\n"<<(sZmat<T>)(*this)<<endl;
   smat_elim_list::listsize = 10;
   rank = 0;
-  position = new int[smatT<T>::nro];
+  position = new int[sZmat<T>::nro];
   int *p = position;
-  elim_col = new int[smatT<T>::nco];
+  elim_col = new int[sZmat<T>::nco];
   int* el = elim_col;
-  elim_row = new int[smatT<T>::nro];
+  elim_row = new int[sZmat<T>::nro];
   int* er = elim_row;
-  column = new smat_elim_ordlist[smatT<T>::nco];
+  column = new smat_elim_ordlist[sZmat<T>::nco];
   if( !column ) { cerr << "memory exhausted in smat_elim::init"<<endl; return; }
 //   else {cout<<"Successfully created column array of length "<<nco<<endl;}
   int l,r;
-  for( l = 0; l < smatT<T>::nco; l++ ) *el++ = -1;
-  for( r = 0; r < smatT<T>::nro; r++ ) { *er++ = 0; *p++ = -1; }
+  for( l = 0; l < sZmat<T>::nco; l++ ) *el++ = -1;
+  for( r = 0; r < sZmat<T>::nro; r++ ) { *er++ = 0; *p++ = -1; }
   
-  for( r = 0; r < smatT<T>::nro; r++ ) {
-    int d = *smatT<T>::col[r];
-    p = smatT<T>::col[r] + 1;
+  for( r = 0; r < sZmat<T>::nro; r++ ) {
+    int d = *sZmat<T>::col[r];
+    p = sZmat<T>::col[r] + 1;
     while( d-- ) (column + (*p++) - 1)->put(r);
   }
 //   cout<<"At end of init(), columns are: \n";
@@ -277,7 +277,7 @@ void smatT_elim<T>::init( )
 }
 
 template<class T>
-smatT_elim<T>::~smatT_elim()
+sZmat_elim<T>::~sZmat_elim()
 {
   delete [] position;
   delete [] elim_col;
@@ -289,7 +289,7 @@ smatT_elim<T>::~smatT_elim()
 //#define TRACE_DENSE 1
 
 template<class T>
-void smatT_elim<T>::sparse_elimination( )
+void sZmat_elim<T>::sparse_elimination( )
 {
 #if TRACE_ELIM || TRACE_DENSE
   int pop=get_population(*this);
@@ -354,7 +354,7 @@ void smatT_elim<T>::sparse_elimination( )
 }
 
 template<class T>
-smatT<T> smatT_elim<T>::kernel( vecT<int>& pc, vecT<int>& npc)
+sZmat<T> sZmat_elim<T>::kernel( Zvec<int>& pc, Zvec<int>& npc)
 {
   return old_kernel(pc, npc);
 }
@@ -365,7 +365,7 @@ smatT<T> smatT_elim<T>::kernel( vecT<int>& pc, vecT<int>& npc)
 //#define TRACE_ELIM 1
 
 template<class T>
-smatT<T> smatT_elim<T>::new_kernel( vecT<int>& pc, vecT<int>& npc)
+sZmat<T> sZmat_elim<T>::new_kernel( Zvec<int>& pc, Zvec<int>& npc)
 {
   int i,ir, j, jj, t, r, c;
   T v;
@@ -380,7 +380,7 @@ smatT<T> smatT_elim<T>::new_kernel( vecT<int>& pc, vecT<int>& npc)
   cout<<"finished sparse_elimination()"<<endl;
 #endif
 
-  int nullity = smatT<T>::nco - rank;
+  int nullity = sZmat<T>::nco - rank;
 
   /* pc and npc hold the pivotal and non-pivotal column numbers, each
      is a vec, so indexed from 1, and the values are indexed from 1.
@@ -400,7 +400,7 @@ smatT<T> smatT_elim<T>::new_kernel( vecT<int>& pc, vecT<int>& npc)
   cout<<"nullity = "<<nullity<<endl;
 
   float dense = get_population(*this);
-  dense /= (nro*smatT<T>::nco);
+  dense /= (nro*sZmat<T>::nco);
   cout<<"density = "<<dense<<endl;
 #endif
 
@@ -416,7 +416,7 @@ smatT<T> smatT_elim<T>::new_kernel( vecT<int>& pc, vecT<int>& npc)
   /* find the pivotal and non-pivotal columns and the pivotal rows.
 
   */
-  for( c = 1; c <= smatT<T>::nco; c++ )  // loop through all columns
+  for( c = 1; c <= sZmat<T>::nco; c++ )  // loop through all columns
     {
       r = elim_col[c-1]+1;
       if( r > 0 )            // this is a pivotal column for row r
@@ -468,7 +468,7 @@ smatT<T> smatT_elim<T>::new_kernel( vecT<int>& pc, vecT<int>& npc)
 
    */
 
-  smatT<T> bas( smatT<T>::nco, nullity );
+  sZmat<T> bas( sZmat<T>::nco, nullity );
 
   /* First set the identity block */
 
@@ -514,11 +514,11 @@ smatT<T> smatT_elim<T>::new_kernel( vecT<int>& pc, vecT<int>& npc)
       int nv=0; // counts # non-zero v
 
       for(t=0; t<rank; t++)
-        R[t] = (t<i? zero : smatT<T>::elem(ir+1, position[elim_row[t]]));
+        R[t] = (t<i? zero : sZmat<T>::elem(ir+1, position[elim_row[t]]));
 
       for(j=0; j<nullity; j++) // set B[i][j], using B[t][j] for t>i
         {
-          v = -smatT<T>::elem(ir+1, npc[j+1]);
+          v = -sZmat<T>::elem(ir+1, npc[j+1]);
           Rt = R + rank-1;
           Bt = B + rank-1;
           t = rank-1-i;
@@ -599,7 +599,7 @@ smatT<T> smatT_elim<T>::new_kernel( vecT<int>& pc, vecT<int>& npc)
 // old version of kernel which uses back_sub()
 
 template<class T>
-smatT<T> smatT_elim<T>::old_kernel( vecT<int>& pc, vecT<int>& npc)
+sZmat<T> sZmat_elim<T>::old_kernel( Zvec<int>& pc, Zvec<int>& npc)
 {
   int i,n,r;
 #if TRACE_ELIM
@@ -611,7 +611,7 @@ smatT<T> smatT_elim<T>::old_kernel( vecT<int>& pc, vecT<int>& npc)
 #endif
 
 
-  int nullity = smatT<T>::nco - rank;
+  int nullity = sZmat<T>::nco - rank;
   if (nullity>0)
     {
 #if TRACE_ELIM
@@ -623,7 +623,7 @@ smatT<T> smatT_elim<T>::old_kernel( vecT<int>& pc, vecT<int>& npc)
 #endif
 
     }
-  smatT<T> bas( smatT<T>::nco, nullity );
+  sZmat<T> bas( sZmat<T>::nco, nullity );
   pc.init( rank );
   npc.init( nullity );
 
@@ -633,7 +633,7 @@ smatT<T> smatT_elim<T>::old_kernel( vecT<int>& pc, vecT<int>& npc)
 #endif
   int ny = 0, k = 0;
   long *new_row = new long [ rank ];
-  for( i = 1; i <= smatT<T>::nco; i++ )
+  for( i = 1; i <= sZmat<T>::nco; i++ )
     {
       if( elim_col[i-1] > -1 )
         {
@@ -658,16 +658,16 @@ smatT<T> smatT_elim<T>::old_kernel( vecT<int>& pc, vecT<int>& npc)
       bas.val[i][0] = 1;
     }
 
-  T *aux_val = new T [smatT<T>::nco];
-  int *aux_col = new int [smatT<T>::nco];
+  T *aux_val = new T [sZmat<T>::nco];
+  int *aux_col = new int [sZmat<T>::nco];
   for ( r=1; r<=rank; r++)
     { 
       i = pc[r]-1;
       int count = 0;
       int *axp = aux_col; T *axv = aux_val;
-      int *posB = smatT<T>::col[new_row[r-1]];
+      int *posB = sZmat<T>::col[new_row[r-1]];
       int d = *posB++-1;
-      T *valB = smatT<T>::val[new_row[r-1]];
+      T *valB = sZmat<T>::val[new_row[r-1]];
       for (int j = 1, h = 0; j<=nullity; j++) {
 	while( *posB < npc[j] && h < d ) { posB++; h++; }
 	if( *posB == npc[j] ) {	*axp++ = j; *axv++ = -valB[h]; count++; }
@@ -701,34 +701,34 @@ smatT<T> smatT_elim<T>::old_kernel( vecT<int>& pc, vecT<int>& npc)
 }
 
 template<class T>
-void smatT_elim<T>::step0()
+void sZmat_elim<T>::step0()
 {
   /*This step eliminates all rows with zero or only one entry, 
    *  system is supposed to be homogeneous */ 
 
-  smat_elim_list L(smatT<T>::nro);
+  smat_elim_list L(sZmat<T>::nro);
   int row,i,j,n;
-  for( row = 0; row < smatT<T>::nro; row++ )
-    if( *smatT<T>::col[row] < 2 ) L.put( row );
+  for( row = 0; row < sZmat<T>::nro; row++ )
+    if( *sZmat<T>::col[row] < 2 ) L.put( row );
 
   while( (row = L.next()) != -1 ) { 
-   if( *smatT<T>::col[row] == 0 ) { position[ row ] = 0; continue; }
+   if( *sZmat<T>::col[row] == 0 ) { position[ row ] = 0; continue; }
     else {               // only one entry in that row
-      smatT<T>::val[row][0] = 1;   // trivial normalization
+      sZmat<T>::val[row][0] = 1;   // trivial normalization
 
       /* clear other rows with entry in that column */
 
-      int colr = smatT<T>::col[row][1];
+      int colr = sZmat<T>::col[row][1];
       int N = (column + colr - 1)->num;   // # of rows in column col;
       for( j = 0; j < N; j++ ) {
 	i = (column + colr - 1)->next();   // row to be cleared of col;
 	if( i == row ) continue;
-	int d = smatT<T>::col[i][0]--;
+	int d = sZmat<T>::col[i][0]--;
 	if( d == 2 ) L.put( i );
-	int ind = find( colr, smatT<T>::col[i]+1, d-1 );
-	int *pos = smatT<T>::col[i] + ind + 1;
+	int ind = find( colr, sZmat<T>::col[i]+1, d-1 );
+	int *pos = sZmat<T>::col[i] + ind + 1;
 	if( *pos != colr ) { cerr << "error in step0!"<<endl; return;}
-	T *values = smatT<T>::val[i] + ind;
+	T *values = sZmat<T>::val[i] + ind;
 	for( n = ind+1; n < d; n++, pos++, values++ ) 
 	  { *pos = pos[1]; *values = values[1]; }
       }
@@ -740,18 +740,18 @@ void smatT_elim<T>::step0()
 }
 
 template<class T>
-void smatT_elim<T>::step1 ()
+void sZmat_elim<T>::step1 ()
 {
   /* eliminates all rows which cut a column which has only one entry */
   
-  smat_elim_list L(smatT<T>::nco);
+  smat_elim_list L(sZmat<T>::nco);
   int col0,col1;
 #if TRACE_ELIM
   cout<<"Step 1, column weights:"<<endl;  
-  //  for( col0 = 0; col0 < smatT<T>::nco; col0++ ) cout<<(column+col0)->num<<" ";
+  //  for( col0 = 0; col0 < sZmat<T>::nco; col0++ ) cout<<(column+col0)->num<<" ";
   //  cout<<endl;
 #endif
-  for( col0 = 0; col0 < smatT<T>::nco; col0++ )
+  for( col0 = 0; col0 < sZmat<T>::nco; col0++ )
     if( (column+col0)->num == 1 ) {col1=col0+1; L.put(col1);}
 #if TRACE_ELIM
   cout<<"Step 1, smat_elim_list size = "<<L.num<<endl;  
@@ -762,7 +762,7 @@ void smatT_elim<T>::step1 ()
     normalize( row, col0 );
     
     /* update column */
-    int *pos = smatT<T>::col[row];
+    int *pos = sZmat<T>::col[row];
     int d = *pos++;
     while( d-- ) {
       int c = *pos++ - 1;
@@ -776,18 +776,18 @@ void smatT_elim<T>::step1 ()
 }
 
 template<class T>
-void smatT_elim<T>::step2()
+void sZmat_elim<T>::step2()
 {
   /*  eliminates all rows with 1 or 2 entries  */
 
-  smat_elim_list L(smatT<T>::nro);
+  smat_elim_list L(sZmat<T>::nro);
   int row;
-  for( row = 0; row < smatT<T>::nro; row++ )
-    if( *smatT<T>::col[row] < 3 && position[row] == -1 ) L.put( row );
+  for( row = 0; row < sZmat<T>::nro; row++ )
+    if( *sZmat<T>::col[row] < 3 && position[row] == -1 ) L.put( row );
 
    while( (row = L.next()) != -1 ) {
     if( position[row] != -1 ) continue;
-    int colr = smatT<T>::col[row][1];
+    int colr = sZmat<T>::col[row][1];
     normalize( row, colr );
     clear_col ( row, colr, L, 1 );
     eliminate( row, colr );
@@ -796,15 +796,15 @@ void smatT_elim<T>::step2()
 }
 
 template<class T>
-void smatT_elim<T>::step3()
+void sZmat_elim<T>::step3()
 {
   /* eliminates all rows which cut a column which have either one or two
      entries */
 
-  smat_elim_list L(smatT<T>::nco);
+  smat_elim_list L(sZmat<T>::nco);
   int col0,col1;
-  //  for( col0 = 0; col0 < smatT<T>::nco; col0++ ) {
-  for( col0 = smatT<T>::nco-1; col0 >=0; col0-- ) {
+  //  for( col0 = 0; col0 < sZmat<T>::nco; col0++ ) {
+  for( col0 = sZmat<T>::nco-1; col0 >=0; col0-- ) {
     int vali = (column+col0)->num;
     if( vali == 2 || vali == 1 ) {col1=col0+1; L.put(col1);}
   }
@@ -820,14 +820,14 @@ void smatT_elim<T>::step3()
 }
 
 template<class T>
-void smatT_elim<T>::step4 ( )
+void sZmat_elim<T>::step4 ( )
 {
-  int* lightness = new int[smatT<T>::nco];
+  int* lightness = new int[sZmat<T>::nco];
   int M, i, wt, r, row;
 
   // Find maximum column weight
   int maxcolwt=0;
-  for( i = 0; i < smatT<T>::nco; i++ ) 
+  for( i = 0; i < sZmat<T>::nco; i++ ) 
     {
       wt = (column+i)->num;
       if( maxcolwt < wt) maxcolwt=wt;
@@ -850,7 +850,7 @@ void smatT_elim<T>::step4 ( )
       /* divides columns in `light' and `heavy' */
       int nlight=0;
       int *l = lightness;
-      for( i = 0; i < smatT<T>::nco; i++ ) {
+      for( i = 0; i < sZmat<T>::nco; i++ ) {
 	wt = (column+i)->num;
 	if( 0 < wt && wt <= M ) {*l++ = 1; nlight++;} //light
 	else *l++ = 0;     //heavy; includes columns already eliminated
@@ -860,20 +860,20 @@ void smatT_elim<T>::step4 ( )
       report();
 #endif
   if (nlight==0) break; // from the loop over M
-  if (nlight<(smatT<T>::nco/2)) break; // from the loop over M
-  //if (nlight<=(smatT<T>::nco/4)) break; // from the loop over M
+  if (nlight<(sZmat<T>::nco/2)) break; // from the loop over M
+  //if (nlight<=(sZmat<T>::nco/4)) break; // from the loop over M
       while(1)
 	{
 	  /* eliminates rows with weight 1 */
-	  for( r = 0, row = -1; r < smatT<T>::nro; r++ ) {
+	  for( r = 0, row = -1; r < sZmat<T>::nro; r++ ) {
 	    if(has_weight_one(r, lightness) && position[r] == -1) 
 	      { row = r; break; }
 	  }
 	  if( row != -1 ) 
 	    {
 	      int col0 = 0;       // light col cutting row
-	      int d = *smatT<T>::col[row]; // weight in the process of eliminating row r.
-	      int *pos = smatT<T>::col[row] + 1;
+	      int d = *sZmat<T>::col[row]; // weight in the process of eliminating row r.
+	      int *pos = sZmat<T>::col[row] + 1;
 	      while( d-- ) {
 		int c = *pos++ - 1;
 		if(lightness[c] == 1) { col0 = c+1; break; }
@@ -892,7 +892,7 @@ void smatT_elim<T>::step4 ( )
 }
 
 template<class T>
-void smatT_elim<T>::standard ( ){
+void sZmat_elim<T>::standard ( ){
 
   // remaining elimination
 
@@ -912,8 +912,8 @@ void smatT_elim<T>::standard ( ){
   while(active_density() < density_threshold)
     {
   // Find minimum positive column weight
-      mincolwt=smatT<T>::nro+1; col0=-1;
-      for( i = 0; i < smatT<T>::nco; i++ ) 
+      mincolwt=sZmat<T>::nro+1; col0=-1;
+      for( i = 0; i < sZmat<T>::nco; i++ ) 
         {
           wt = (column+i)->num;
           if( (wt>0) && (mincolwt > wt) ) {col0=i+1; mincolwt=wt;}
@@ -937,42 +937,42 @@ void smatT_elim<T>::standard ( ){
 }
 
 template<class T>
-void smatT_elim<T>::back_sub ( ){
+void sZmat_elim<T>::back_sub ( ){
 
   /* Back substitution */
   for( int n = rank; n; n-- )
     {   
       int row = elim_row[n-1];
-      int* pos = smatT<T>::col[row] + 1;
-      for( int j = 0; j < *smatT<T>::col[row]; j++ )
+      int* pos = sZmat<T>::col[row] + 1;
+      for( int j = 0; j < *sZmat<T>::col[row]; j++ )
 	{
 	  int e  = elim_col[*pos++-1];
 	  if( e != -1 && e != row )
 	    {
-	      elim( e, row, -smatT<T>::val[row][j] );
+	      elim( e, row, -sZmat<T>::val[row][j] );
 	      j = -1;
-	      pos = smatT<T>::col[row] + 1;
+	      pos = sZmat<T>::col[row] + 1;
 	    }
 	}
     }
 }
 
 template<class T>
-void smatT_elim<T>::normalize( int row, int col0)
+void sZmat_elim<T>::normalize( int row, int col0)
 {
-  int d = *smatT<T>::col[row];
-  int count = find( col0, smatT<T>::col[row]+1, d-1 );
-  if( smatT<T>::col[row][count+1] != col0 ) 
+  int d = *sZmat<T>::col[row];
+  int count = find( col0, sZmat<T>::col[row]+1, d-1 );
+  if( sZmat<T>::col[row][count+1] != col0 ) 
     { cerr << "error in normalize "<<endl; return; }
-  if( smatT<T>::val[row][count] != 1 ) {
-    T invValue = invmod( smatT<T>::val[row][count], modulus);
-    T *values = smatT<T>::val[row];
+  if( sZmat<T>::val[row][count] != 1 ) {
+    T invValue = invmod( sZmat<T>::val[row][count], modulus);
+    T *values = sZmat<T>::val[row];
     while(d--) { *values = xmm( *values , invValue, modulus ); values++; }
   }
 }
 
 template<class T>
-void smatT_elim<T>::eliminate( const int& row, const int& col0 ) //1<=col0<=smatT<T>::nco;
+void sZmat_elim<T>::eliminate( const int& row, const int& col0 ) //1<=col0<=sZmat<T>::nco;
 {
   //cout<<"Eliminating (r,c)=("<<row<<","<<col0-1<<")"<<endl;
   elim_col[ col0 - 1 ] = row;
@@ -981,11 +981,11 @@ void smatT_elim<T>::eliminate( const int& row, const int& col0 ) //1<=col0<=smat
 }
 
 template<class T>
-void smatT_elim<T>::clear_col( int row,int col0, smat_elim_list& L, int fr, int fc,int M,int* li )
+void sZmat_elim<T>::clear_col( int row,int col0, smat_elim_list& L, int fr, int fc,int M,int* li )
 {
   int numRow = (column+col0-1)->num;
-  int d = smatT<T>::col[row][0];
-  int *pos1 = smatT<T>::col[row]+1;
+  int d = sZmat<T>::col[row][0];
+  int *pos1 = sZmat<T>::col[row]+1;
   if( numRow == 1 ) {
     for( int s = 0; s < d; s++ ) {
       int c = pos1[s] - 1;
@@ -1011,21 +1011,21 @@ void smatT_elim<T>::clear_col( int row,int col0, smat_elim_list& L, int fr, int 
   /* eliminate col from other rows cutting col */
 
   int di = d;
-  T *veci1 = smatT<T>::val[row];
+  T *veci1 = sZmat<T>::val[row];
   (column+col0-1)->index = 0;   //reset index for iteration
   for( int l = 0; l < numRow; l++ ) {
     int row2 = (column+col0-1)->next();
     if( row2 == row ) continue;
-    int *pos2 = smatT<T>::col[row2];
+    int *pos2 = sZmat<T>::col[row2];
     int d2 = *pos2++;
     int ind = find(col0, pos2, d2-1);
     if( pos2[ind] != col0 ) { cerr << "error in clear_col"<<endl; return; }
     int d2i = d2;
-    T *oldVal = smatT<T>::val[row2]; int *oldMat = smatT<T>::col[row2];
+    T *oldVal = sZmat<T>::val[row2]; int *oldMat = sZmat<T>::col[row2];
     T *veci2 = oldVal;
     T v2 = mod(modulus-veci2[ind],modulus);
-    int *P = smatT<T>::col[row2] = new int [ d + d2 + 1 ]; P++;
-    T *V = smatT<T>::val[row2] = new T [ d + d2 ];
+    int *P = sZmat<T>::col[row2] = new int [ d + d2 + 1 ]; P++;
+    T *V = sZmat<T>::val[row2] = new T [ d + d2 ];
 
     /* do row2+= v2*row1 */
     int k = 0;       /*k will be # of non-zero entries of sum*/
@@ -1052,7 +1052,7 @@ void smatT_elim<T>::clear_col( int row,int col0, smat_elim_list& L, int fr, int 
       lri[di-d].put(row2);
       *P++ = *pos1++; *V++ = xmm(v2,(*veci1++), modulus); k++; d--;
     }
-    *smatT<T>::col[row2] = k;
+    *sZmat<T>::col[row2] = k;
     if( fr ) check_row(d2i, row2, L);         // check condition for rows
     delete [] oldMat;
     delete [] oldVal;
@@ -1063,7 +1063,7 @@ void smatT_elim<T>::clear_col( int row,int col0, smat_elim_list& L, int fr, int 
 
   /* update column */
   for( int t = 0; t < di; t++ ) {
-    int c = smatT<T>::col[row][t+1]-1;
+    int c = sZmat<T>::col[row][t+1]-1;
     (column+c)->remove(row);
     column[c].remove(list_row_out[t]);
     (column+c)->put(list_row_in[t]);
@@ -1080,43 +1080,43 @@ void smatT_elim<T>::clear_col( int row,int col0, smat_elim_list& L, int fr, int 
 }
 
 template<class T>
-void smatT_elim<T>::free_space( int col0 )
+void sZmat_elim<T>::free_space( int col0 )
 {
   (column+col0-1)->clear();
 }
 
 template<class T>
-void smatT_elim<T>::check_row (int d, int row2, smat_elim_list& L ) 
+void sZmat_elim<T>::check_row (int d, int row2, smat_elim_list& L ) 
 {
-   if( *smatT<T>::col[row2] < 3 ) {
-      if( *smatT<T>::col[row2] == 0 ) position[row2] = 0;
+   if( *sZmat<T>::col[row2] < 3 ) {
+      if( *sZmat<T>::col[row2] == 0 ) position[row2] = 0;
       //if d <= 2 then row2 was already in the list, so
       else if( d > 2 ) L.put(row2);
   }
 }
 
 template<class T>
-void smatT_elim<T>::check_col( int c, smat_elim_list& L ) 
+void sZmat_elim<T>::check_col( int c, smat_elim_list& L ) 
 {
   int vali = (column+c)->num;
   if( vali == 2 || vali == 1 ) {L.put(c+1);}
 }
 
 template<class T>
-int smatT_elim<T>::get_weight( int row, const int* lightness ) 
+int sZmat_elim<T>::get_weight( int row, const int* lightness ) 
 {
   int wt = 0;
-  int *pos = smatT<T>::col[row];
+  int *pos = sZmat<T>::col[row];
   int d = *pos++;
   while( d-- ) wt += lightness[ *pos++ - 1 ];
   return wt;
 }
 
 template<class T>
-int smatT_elim<T>::has_weight_one( int row, const int* lightness )
+int sZmat_elim<T>::has_weight_one( int row, const int* lightness )
 {
   int wt = 0;
-  int *pos = smatT<T>::col[row];
+  int *pos = sZmat<T>::col[row];
   int d = *pos++;
   while( d-- )
     {
@@ -1127,7 +1127,7 @@ int smatT_elim<T>::has_weight_one( int row, const int* lightness )
 }
 
 template<class T>
-int smatT_elim<T>::n_active_cols() // number of active columns
+int sZmat_elim<T>::n_active_cols() // number of active columns
 {
   // Remaining cols are those with positive column weight
   int j, nrc;
@@ -1138,7 +1138,7 @@ int smatT_elim<T>::n_active_cols() // number of active columns
 }
 
 template<class T>
-int smatT_elim<T>::n_active_rows() // number of active rows
+int sZmat_elim<T>::n_active_rows() // number of active rows
 {
   // Remaining rows are those with "position" code -1 or those which are empty
   int i, nrr;
@@ -1149,7 +1149,7 @@ int smatT_elim<T>::n_active_rows() // number of active rows
 }
 
 template<class T>
-long smatT_elim<T>::n_active_entries() // number of active entries
+long sZmat_elim<T>::n_active_entries() // number of active entries
 {
   // Remaining cols are those with positive column weight
   int j; long n=0;
@@ -1159,7 +1159,7 @@ long smatT_elim<T>::n_active_entries() // number of active entries
 }
 
 template<class T>
-double smatT_elim<T>::active_density() // density of non-eliminated part
+double sZmat_elim<T>::active_density() // density of non-eliminated part
 {
   double d = n_active_entries();
   int n = n_active_cols();
@@ -1172,7 +1172,7 @@ double smatT_elim<T>::active_density() // density of non-eliminated part
 }
 
 template<class T>
-void smatT_elim<T>::report()
+void sZmat_elim<T>::report()
 {
   cerr << n_active_entries() << " active entries in ("
        << n_active_rows() << "," << n_active_cols()
@@ -1185,7 +1185,7 @@ void smatT_elim<T>::report()
 /* old fashioned elim function for back elimination.
  * Do row2+= v2*row1 */
 template<class T>
-void smatT_elim<T>::elim( int row1, int row2, T v2 )
+void sZmat_elim<T>::elim( int row1, int row2, T v2 )
 {
   int d = *this->col[row1], d2 = *this->col[row2];
   T *oldVal = this->val[row2]; int *oldMat = this->col[row2];
@@ -1219,7 +1219,7 @@ void smatT_elim<T>::elim( int row1, int row2, T v2 )
 }
 
 template<class T>
-void smatT_elim<T>::step5dense()
+void sZmat_elim<T>::step5dense()
 {
 #if TRACE_DENSE
   report();
@@ -1252,10 +1252,10 @@ void smatT_elim<T>::step5dense()
       standard();
       return;
     }
-  matT<T> dmat(nrr, nrc);
+  Zmat<T> dmat(nrr, nrc);
   for (i=0; i<nrr; i++)
     {
-      svecT<T> v = this->row(remaining_rows[i]);
+      sZvec<T> v = this->row(remaining_rows[i]);
       j=0;
       for( const auto& vi : v.entries)
         {
@@ -1269,7 +1269,7 @@ void smatT_elim<T>::step5dense()
 #if TRACE_DENSE
   cout<<"Constructed dense matrix, starting dense elimination step..." <<endl;
 #endif
-  vecT<int> pc,npc; long rk,ny;
+  Zvec<int> pc,npc; long rk,ny;
 
   // this will call ref_via_ntl() if FLINT, else ref_via_flint()
   dmat = rref(dmat,pc,npc,rk,ny,modulus);
@@ -1287,7 +1287,7 @@ void smatT_elim<T>::step5dense()
   // remaining_cols[j-1] column.  For simplicity of coding, we create
   // the new rows as svecs and the use setrow().
   int nrd = dmat.nrows(); // may be less than nrr since 0 rows are trimmed
-  svecT<T> rowi(this->nco);
+  sZvec<T> rowi(this->nco);
   for(i=1; i<=nrd; i++)
     {
       rowi.clear();
@@ -1320,31 +1320,31 @@ void smatT_elim<T>::step5dense()
 }
 
 template<class T>
-int smatT<T>::rank(T mod)
+int sZmat<T>::rank(T mod)
 {
-  smatT_elim<T> sme(*this,mod);
+  sZmat_elim<T> sme(*this,mod);
   (void) sme.sparse_elimination();
   return sme.get_rank();
 }
 
 template<class T>
-ssubspaceT<T>::ssubspaceT(int n)
-  :pivots(vecT<int>::iota(n)), basis(smatT<T>::identity_matrix(n))
+ssubZspace<T>::ssubZspace(int n)
+  :pivots(Zvec<int>::iota(n)), basis(sZmat<T>::identity_matrix(n))
 {}
 
 template<class T>
-ssubspaceT<T>::ssubspaceT(const smatT<T>& b, const vecT<int>& p, T mod)
+ssubZspace<T>::ssubZspace(const sZmat<T>& b, const Zvec<int>& p, T mod)
   :modulus(mod),pivots(p),basis(b)
 {}
 
 template<class T>
-ssubspaceT<T>::ssubspaceT(const ssubspaceT<T>& s)
+ssubZspace<T>::ssubZspace(const ssubZspace<T>& s)
   :modulus(s.modulus),pivots(s.pivots),basis(s.basis)
 {}
 
 // assignment
 template<class T>
-void ssubspaceT<T>::operator=(const ssubspaceT<T>& s) 
+void ssubZspace<T>::operator=(const ssubZspace<T>& s) 
 {
   pivots=s.pivots;
   basis=s.basis;
@@ -1354,86 +1354,86 @@ void ssubspaceT<T>::operator=(const ssubspaceT<T>& s)
 // Definitions of nonmember, nonfriend operators and functions:
 
 template<class T>
-ssubspaceT<T> combine(const ssubspaceT<T>& s1, const ssubspaceT<T>& s2)
+ssubZspace<T> combine(const ssubZspace<T>& s1, const ssubZspace<T>& s2)
 {
   T m = s1.modulus;
-  return ssubspaceT<T>(mult_mod_p(s1.basis,s2.basis,m),s1.pivots[s2.pivots],m);
+  return ssubZspace<T>(mult_mod_p(s1.basis,s2.basis,m),s1.pivots[s2.pivots],m);
 }
  
 template<class T>
-smatT<T> restrict_mat(const smatT<T>& m, const ssubspaceT<T>& s)
+sZmat<T> restrict_mat(const sZmat<T>& m, const ssubZspace<T>& s)
 { 
   return mult_mod_p(m.select_rows(pivots(s)),basis(s),s.modulus);
 }
  
 template<class T>
-ssubspaceT<T> kernel(const smatT<T>& sm, T m)
+ssubZspace<T> kernel(const sZmat<T>& sm, T m)
 {
-  vecT<int> pivs, npivs;
-  smatT<T> kern = smatT_elim(sm,m).kernel(npivs,pivs);
-  return ssubspaceT<T>(kern,pivs,m);
+  Zvec<int> pivs, npivs;
+  sZmat<T> kern = sZmat_elim(sm,m).kernel(npivs,pivs);
+  return ssubZspace<T>(kern,pivs,m);
 }
  
 template<class T>
-ssubspaceT<T> eigenspace(const smatT<T>& sm, T lambda, T m)
+ssubZspace<T> eigenspace(const sZmat<T>& sm, T lambda, T m)
 {
-  smatT<T> m1 = sm; m1.sub_mod_p(lambda, m);
+  sZmat<T> m1 = sm; m1.sub_mod_p(lambda, m);
   return kernel(m1, m);
 }
  
 template<class T>
-ssubspaceT<T> subeigenspace(const smatT<T>& sm, T l, const ssubspaceT<T>& s, T m)
+ssubZspace<T> subeigenspace(const sZmat<T>& sm, T l, const ssubZspace<T>& s, T m)
 {
   return combine(s,eigenspace(restrict_mat(sm,s), l, m));
 }
 
 template<class T>
-ssubspaceT<T> make1d(const vecT<T>& bas, T&piv, T m)
+ssubZspace<T> make1d(const Zvec<T>& bas, T&piv, T m)
 // make a 1-D ssubspace with basis bas
 {
-  smatT<T> tbasis(1,dim(bas));
-  svecT<T> sbas(bas);
+  sZmat<T> tbasis(1,dim(bas));
+  sZvec<T> sbas(bas);
   tbasis.setrow(1,sbas);
-  vecT<int> pivs(1); // initialised to 0
+  Zvec<int> pivs(1); // initialised to 0
   pivs[1]=sbas.first_index();
   piv=sbas.elem(pivs[1]);
-  return ssubspaceT<T>(transpose(tbasis),pivs,m);
+  return ssubZspace<T>(transpose(tbasis),pivs,m);
 }
 
 // Instantiate template functions for T=int
-template ssubspaceT<int> make1d<int>(const vecT<int>& bas, int&piv, int m);
-template int smatT<int>::rank(int mod);
-template smatT<int> restrict_mat<int>(const smatT<int>& m, const ssubspaceT<int>& s);
-template int dim<int>(const ssubspaceT<int>& s);
-template vecT<int> pivots<int>(const ssubspaceT<int>& s);
-template smatT<int> basis<int>(const ssubspaceT<int>& s);
-template ssubspaceT<int> combine<int>(const ssubspaceT<int>& s1, const ssubspaceT<int>& s2);
-template ssubspaceT<int> kernel<int>(const smatT<int>& sm, int m);
-template ssubspaceT<int> eigenspace<int>(const smatT<int>& sm, int lambda, int m);
-template ssubspaceT<int> subeigenspace<int>(const smatT<int>& sm, int l, const ssubspaceT<int>& s, int m);
+template ssubZspace<int> make1d<int>(const Zvec<int>& bas, int&piv, int m);
+template int sZmat<int>::rank(int mod);
+template sZmat<int> restrict_mat<int>(const sZmat<int>& m, const ssubZspace<int>& s);
+template int dim<int>(const ssubZspace<int>& s);
+template Zvec<int> pivots<int>(const ssubZspace<int>& s);
+template sZmat<int> basis<int>(const ssubZspace<int>& s);
+template ssubZspace<int> combine<int>(const ssubZspace<int>& s1, const ssubZspace<int>& s2);
+template ssubZspace<int> kernel<int>(const sZmat<int>& sm, int m);
+template ssubZspace<int> eigenspace<int>(const sZmat<int>& sm, int lambda, int m);
+template ssubZspace<int> subeigenspace<int>(const sZmat<int>& sm, int l, const ssubZspace<int>& s, int m);
 
 // Instantiate template functions for T=long
-template ssubspaceT<long> make1d<long>(const vecT<long>& bas, long&piv, long m);
-template int smatT<long>::rank(long mod);
-template smatT<long> restrict_mat<long>(const smatT<long>& m, const ssubspaceT<long>& s);
-template int dim<long>(const ssubspaceT<long>& s);
-template vecT<int> pivots<long>(const ssubspaceT<long>& s);
-template smatT<long> basis<long>(const ssubspaceT<long>& s);
-template ssubspaceT<long> combine<long>(const ssubspaceT<long>& s1, const ssubspaceT<long>& s2);
-template ssubspaceT<long> kernel<long>(const smatT<long>& sm, long m);
-template ssubspaceT<long> eigenspace<long>(const smatT<long>& sm, long lambda, long m);
-template ssubspaceT<long> subeigenspace<long>(const smatT<long>& sm, long l, const ssubspaceT<long>& s, long m);
+template ssubZspace<long> make1d<long>(const Zvec<long>& bas, long&piv, long m);
+template int sZmat<long>::rank(long mod);
+template sZmat<long> restrict_mat<long>(const sZmat<long>& m, const ssubZspace<long>& s);
+template int dim<long>(const ssubZspace<long>& s);
+template Zvec<int> pivots<long>(const ssubZspace<long>& s);
+template sZmat<long> basis<long>(const ssubZspace<long>& s);
+template ssubZspace<long> combine<long>(const ssubZspace<long>& s1, const ssubZspace<long>& s2);
+template ssubZspace<long> kernel<long>(const sZmat<long>& sm, long m);
+template ssubZspace<long> eigenspace<long>(const sZmat<long>& sm, long lambda, long m);
+template ssubZspace<long> subeigenspace<long>(const sZmat<long>& sm, long l, const ssubZspace<long>& s, long m);
 
 // Instantiate template functions for T=bigint
-template ssubspaceT<bigint> make1d<bigint>(const vecT<bigint>& bas, bigint&piv, bigint m);
-template int smatT<bigint>::rank(bigint mod);
-template smatT<bigint> restrict_mat<bigint>(const smatT<bigint>& m, const ssubspaceT<bigint>& s);
-template int dim<bigint>(const ssubspaceT<bigint>& s);
-template vecT<int> pivots<bigint>(const ssubspaceT<bigint>& s);
-template smatT<bigint> basis<bigint>(const ssubspaceT<bigint>& s);
-template ssubspaceT<bigint> combine<bigint>(const ssubspaceT<bigint>& s1, const ssubspaceT<bigint>& s2);
-template ssubspaceT<bigint> kernel<bigint>(const smatT<bigint>& sm, bigint m);
-template ssubspaceT<bigint> eigenspace<bigint>(const smatT<bigint>& sm, bigint lambda, bigint m);
-template ssubspaceT<bigint> subeigenspace<bigint>(const smatT<bigint>& sm, bigint l, const ssubspaceT<bigint>& s, bigint m);
+template ssubZspace<bigint> make1d<bigint>(const Zvec<bigint>& bas, bigint&piv, bigint m);
+template int sZmat<bigint>::rank(bigint mod);
+template sZmat<bigint> restrict_mat<bigint>(const sZmat<bigint>& m, const ssubZspace<bigint>& s);
+template int dim<bigint>(const ssubZspace<bigint>& s);
+template Zvec<int> pivots<bigint>(const ssubZspace<bigint>& s);
+template sZmat<bigint> basis<bigint>(const ssubZspace<bigint>& s);
+template ssubZspace<bigint> combine<bigint>(const ssubZspace<bigint>& s1, const ssubZspace<bigint>& s2);
+template ssubZspace<bigint> kernel<bigint>(const sZmat<bigint>& sm, bigint m);
+template ssubZspace<bigint> eigenspace<bigint>(const sZmat<bigint>& sm, bigint lambda, bigint m);
+template ssubZspace<bigint> subeigenspace<bigint>(const sZmat<bigint>& sm, bigint l, const ssubZspace<bigint>& s, bigint m);
 
 

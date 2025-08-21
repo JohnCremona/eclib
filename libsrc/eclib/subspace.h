@@ -27,78 +27,78 @@
 #include "matrix.h"
 
 template<class T>
-class subspaceT {
+class subZspace {
 
 public:
   // constructors
-  subspaceT(int n=0) :denom(1),pivots(vecT<int>::iota(n)),basis(matT<T>::identity_matrix(n)) {}
-  subspaceT(const matT<T>& b, const vecT<int>& p, const T& d) :denom(d),pivots(p),basis(b) {}
-  subspaceT(const subspaceT<T>& s) :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
+  subZspace(int n=0) :denom(1),pivots(Zvec<int>::iota(n)),basis(Zmat<T>::identity_matrix(n)) {}
+  subZspace(const Zmat<T>& b, const Zvec<int>& p, const T& d) :denom(d),pivots(p),basis(b) {}
+  subZspace(const subZspace<T>& s) :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
 
   // assignment
-  void operator=(const subspaceT<T>& s);
+  void operator=(const subZspace<T>& s);
 
   // member functions & operators
   inline void clear() { pivots.init(); basis.init();}
   inline T den() const {return denom;}     // the denominator
-  inline vecT<int> pivs() const {return pivots;} // the pivot vector
-  inline matT<T> bas() const {return basis;}   // the basis matrix
+  inline Zvec<int> pivs() const {return pivots;} // the pivot vector
+  inline Zmat<T> bas() const {return basis;}   // the basis matrix
 
   // non-member (friend) functions and operators
-  friend int dim<>(const subspaceT<T>& s);      // the dimension
-  friend T denom<>(const subspaceT<T>& s);   // the denominator
-  friend vecT<int> pivots<>(const subspaceT<T>& s);// the pivot vector
-  friend matT<T> basis<>(const subspaceT<T>& s) ;// the basis matrix
-  friend subspaceT<T> combine<>(const subspaceT<T>& s1, const subspaceT<T>& s2);
-  friend matT<T> restrict_mat<>(const matT<T>& m, const subspaceT<T>& s, int cr);
-  friend subspaceT<T> pcombine<>(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr);
-  friend matT<T> prestrict<>(const matT<T>& m, const subspaceT<T>& s, const T& pr, int cr);
-  friend int lift<>(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans);
+  friend int dim<>(const subZspace<T>& s);      // the dimension
+  friend T denom<>(const subZspace<T>& s);   // the denominator
+  friend Zvec<int> pivots<>(const subZspace<T>& s);// the pivot vector
+  friend Zmat<T> basis<>(const subZspace<T>& s) ;// the basis matrix
+  friend subZspace<T> combine<>(const subZspace<T>& s1, const subZspace<T>& s2);
+  friend Zmat<T> restrict_mat<>(const Zmat<T>& m, const subZspace<T>& s, int cr);
+  friend subZspace<T> pcombine<>(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
+  friend Zmat<T> prestrict<>(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr);
+  friend int lift<>(const subZspace<T>& s, const T& pr, subZspace<T>& ans);
 
   // Implementation
 private:
   T   denom;
-  vecT<int> pivots;
-  matT<T> basis;
+  Zvec<int> pivots;
+  Zmat<T> basis;
 };
 
 // Declarations of nonmember, nonfriend operators and functions:
 
 template<class T>
-matT<T> expressvectors(const matT<T>& m, const subspaceT<T>& s);
+Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s);
 template<class T>
-subspaceT<T> kernel(const matT<T>& m, int method=0);
+subZspace<T> kernel(const Zmat<T>& m, int method=0);
 template<class T>
-subspaceT<T> image(const matT<T>& m, int method=0);
+subZspace<T> image(const Zmat<T>& m, int method=0);
 template<class T>
-subspaceT<T> eigenspace(const matT<T>& m, const T& lambda, int method=0);
+subZspace<T> eigenspace(const Zmat<T>& m, const T& lambda, int method=0);
 template<class T>
-subspaceT<T> subeigenspace(const matT<T>& m, const T& l, const subspaceT<T>& s, int method=0);
+subZspace<T> subeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s, int method=0);
 
 
 //The following work with subspaces "mod p" using "echmodp" from
 //matrix.h/cc to do gaussian elimination.  The "denom" of each is 1.
 
 template<class T>
-subspaceT<T> oldpkernel(const matT<T>& m, const T& pr);
+subZspace<T> oldpkernel(const Zmat<T>& m, const T& pr);
 template<class T>
-subspaceT<T> pkernel(const matT<T>& m, const T& pr);
+subZspace<T> pkernel(const Zmat<T>& m, const T& pr);
 template<class T>
-subspaceT<T> pimage(const matT<T>& m, const T& pr);
+subZspace<T> pimage(const Zmat<T>& m, const T& pr);
 template<class T>
-subspaceT<T> peigenspace(const matT<T>& m, const T& lambda, const T& pr);
+subZspace<T> peigenspace(const Zmat<T>& m, const T& lambda, const T& pr);
 template<class T>
-subspaceT<T> psubeigenspace(const matT<T>& m, const T& l, const subspaceT<T>& s, const T& pr);
+subZspace<T> psubeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s, const T& pr);
 
 
 template<class T>
-inline int dim(const subspaceT<T>& s) {return s.basis.ncols();}  // the dimension
+inline int dim(const subZspace<T>& s) {return s.basis.ncols();}  // the dimension
 template<class T>
-inline T denom(const subspaceT<T>& s) {return s.denom;}    // the denominator
+inline T denom(const subZspace<T>& s) {return s.denom;}    // the denominator
 template<class T>
-inline vecT<int> pivots(const subspaceT<T>& s) {return s.pivots;}     // the pivot vector
+inline Zvec<int> pivots(const subZspace<T>& s) {return s.pivots;}     // the pivot vector
 template<class T>
-inline matT<T> basis(const subspaceT<T>& s) {return s.basis;}       // the basis matrix
+inline Zmat<T> basis(const subZspace<T>& s) {return s.basis;}       // the basis matrix
 
 
 #endif

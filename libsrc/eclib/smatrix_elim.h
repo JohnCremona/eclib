@@ -39,13 +39,13 @@ find( int X, const int* ptr, int ub, int lb = 0 ) {
   return lb;
 }
 
-template<class T> class vecT;
-template<class T> class svecT;
-template<class T> class smatT;
-template<class T> class smatT_elim;
-template<class T> class matT;
-template<class T> class subspaceT;
-template<class T> class ssubspaceT;
+template<class T> class Zvec;
+template<class T> class sZvec;
+template<class T> class sZmat;
+template<class T> class sZmat_elim;
+template<class T> class Zmat;
+template<class T> class subZspace;
+template<class T> class ssubZspace;
 
 class smat_elim_list {
 public:
@@ -82,7 +82,7 @@ public:
 ostream& operator<< (ostream&s, const smat_elim_list&);
 
 template<class T>
-class smatT_elim : public smatT<T>{
+class sZmat_elim : public sZmat<T>{
 
 private:
 
@@ -116,19 +116,19 @@ public:
   void standard( );
   void back_sub( );
   void sparse_elimination( );
-  smatT<T> old_kernel( vecT<int>&, vecT<int>& );
-  smatT<T> new_kernel( vecT<int>&, vecT<int>& );
-  smatT<T> kernel( vecT<int>&, vecT<int>& );
+  sZmat<T> old_kernel( Zvec<int>&, Zvec<int>& );
+  sZmat<T> new_kernel( Zvec<int>&, Zvec<int>& );
+  sZmat<T> kernel( Zvec<int>&, Zvec<int>& );
   void normalize( int, int );
   void eliminate( const int&, const int& );
   void step5dense();
   void free_space( int col );
   void elim( int row1, int row2, T v2 );
   // constructor:
-  explicit smatT_elim( const smatT<T>& sm, T mod) : smatT<T>( sm ), modulus(mod) { init(); };
-  smatT_elim( int r = 0,int c = 0 );
+  explicit sZmat_elim( const sZmat<T>& sm, T mod) : sZmat<T>( sm ), modulus(mod) { init(); };
+  sZmat_elim( int r = 0,int c = 0 );
   // destructor:
-  ~smatT_elim();
+  ~sZmat_elim();
 
   friend ostream& operator<< (ostream&s, const smat_elim_list&);
 
@@ -144,49 +144,49 @@ inline ostream& operator<< (ostream&s, const smat_elim_list& L)
   return s;
 }
 
-template<class T> vecT<int> pivots(const ssubspaceT<T>& s)  {return s.pivs();}
+template<class T> Zvec<int> pivots(const ssubZspace<T>& s)  {return s.pivs();}
 
 template<class T>
-class ssubspaceT {
+class ssubZspace {
 
 public:
   // constructors
-  ssubspaceT<T>(int n=0);
-  ssubspaceT<T>(const smatT<T>& b, const vecT<int>& p, T mod);
-  ssubspaceT<T>(const ssubspaceT<T>& s);
+  ssubZspace<T>(int n=0);
+  ssubZspace<T>(const sZmat<T>& b, const Zvec<int>& p, T mod);
+  ssubZspace<T>(const ssubZspace<T>& s);
   // assignment
-  void operator=(const ssubspaceT<T>& s);
+  void operator=(const ssubZspace<T>& s);
 
   // member functions & operators
-  inline void clear() { pivots.init(); basis=smatT<T>(0,0);}
-  inline vecT<int> pivs() const {return pivots;}  // the pivot vector
-  inline smatT<T> bas() const {return basis;}   // the basis matrix
+  inline void clear() { pivots.init(); basis=sZmat<T>(0,0);}
+  inline Zvec<int> pivs() const {return pivots;}  // the pivot vector
+  inline sZmat<T> bas() const {return basis;}   // the basis matrix
   inline T mod() const {return modulus;}   // the (prime) modulus
 
   // non-member (friend) functions and operators
-  friend ssubspaceT<T> combine<>(const ssubspaceT<T>& s1, const ssubspaceT<T>& s2);
-  friend smatT<T> restrict_mat<>(const smatT<T>& m, const ssubspaceT<T>& s);
+  friend ssubZspace<T> combine<>(const ssubZspace<T>& s1, const ssubZspace<T>& s2);
+  friend sZmat<T> restrict_mat<>(const sZmat<T>& m, const ssubZspace<T>& s);
 
   // Implementation
 private:
   T modulus;
-  vecT<int> pivots;
-  smatT<T> basis;
+  Zvec<int> pivots;
+  sZmat<T> basis;
 };
 
 
 // Declarations of nonmember, nonfriend operators and functions:
 
 template<class T>
-ssubspaceT<T> kernel(const smatT<T>& sm, T m);
+ssubZspace<T> kernel(const sZmat<T>& sm, T m);
 template<class T>
-ssubspaceT<T> eigenspace(const smatT<T>& sm, T lambda, T m);
+ssubZspace<T> eigenspace(const sZmat<T>& sm, T lambda, T m);
 template<class T>
-ssubspaceT<T> subeigenspace(const smatT<T>& sm, T l, const ssubspaceT<T>& s, T m);
+ssubZspace<T> subeigenspace(const sZmat<T>& sm, T l, const ssubZspace<T>& s, T m);
 
 // construction of a 1-dimensional sparse subspace from a vector:
 template<class T>
-ssubspaceT<T> make1d(const vecT<T>& bas, T& piv, T m);
+ssubZspace<T> make1d(const Zvec<T>& bas, T& piv, T m);
 
 
 #endif

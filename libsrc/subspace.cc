@@ -23,17 +23,17 @@
  
 #include <eclib/subspace.h>
 
-// Instantiate subspaceT template classes for T=int, long, bigint
+// Instantiate subZspace template classes for T=int, long, bigint
 
-template class subspaceT<int>;
-template class subspaceT<long>;
-template class subspaceT<bigint>;
+template class subZspace<int>;
+template class subZspace<long>;
+template class subZspace<bigint>;
 
 // definitions of member operators and functions:
 
 // assignment
 template<class T>
-void subspaceT<T>::operator=(const subspaceT<T>& s)
+void subZspace<T>::operator=(const subZspace<T>& s)
 {
   pivots=s.pivots;
   basis=s.basis;
@@ -43,26 +43,26 @@ void subspaceT<T>::operator=(const subspaceT<T>& s)
 // Definitions of nonmember, nonfriend operators and functions:
 
 template<class T>
-subspaceT<T> combine(const subspaceT<T>& s1, const subspaceT<T>& s2)
+subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2)
 {
   T d = s1.denom * s2.denom;
-  const matT<T>& b1=s1.basis;
-  const matT<T>& b2=s2.basis;
-  matT<T> b = b1*b2;
+  const Zmat<T>& b1=s1.basis;
+  const Zmat<T>& b2=s2.basis;
+  Zmat<T> b = b1*b2;
   T g = b.content();
   if(g>1)
     {
       d/=g; b/=g;
     }
-  vecT<int> p = s1.pivots[s2.pivots];
-  return subspaceT<T>(b,p,d);
+  Zvec<int> p = s1.pivots[s2.pivots];
+  return subZspace<T>(b,p,d);
 }
 
 template<class T>
-matT<T> expressvectors(const matT<T>& m, const subspaceT<T>& s)
-{ vecT<int> p = pivots(s);
+Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s)
+{ Zvec<int> p = pivots(s);
   long   n = dim(s);
-  matT<T> ans(n,m.ncols());
+  Zmat<T> ans(n,m.ncols());
   for (int i=1; i<=n; i++) ans.setrow(i, m.row(p[i]));
   return ans;
 }
@@ -76,11 +76,11 @@ matT<T> expressvectors(const matT<T>& m, const subspaceT<T>& s)
 // den*M1*B=den*A, so A=M1*B
 
 template<class T>
-matT<T> restrict_mat(const matT<T>& M, const subspaceT<T>& S, int cr)
+Zmat<T> restrict_mat(const Zmat<T>& M, const subZspace<T>& S, int cr)
 {
   if(dim(S)==M.nro) return M; // trivial special case, s is whole space
-  const matT<T>& B = S.basis;
-  matT<T> A = rowsubmat(M, S.pivots) * B;
+  const Zmat<T>& B = S.basis;
+  Zmat<T> A = rowsubmat(M, S.pivots) * B;
 
   if(cr) // optional check that S is invariant under M
     {
@@ -93,13 +93,13 @@ matT<T> restrict_mat(const matT<T>& M, const subspaceT<T>& S, int cr)
 }
 
 template<class T>
-subspaceT<T> kernel(const matT<T>& m1, int method)
+subZspace<T> kernel(const Zmat<T>& m1, int method)
 {
    long rank, nullity;
    T d;
-   vecT<int> pcols,npcols;
-   matT<T> m = echelon(m1,pcols,npcols, rank, nullity, d, method);
-   matT<T> bas(m.ncols(),nullity);
+   Zvec<int> pcols,npcols;
+   Zmat<T> m = echelon(m1,pcols,npcols, rank, nullity, d, method);
+   Zmat<T> bas(m.ncols(),nullity);
    for (int n=1; n<=nullity; n++)
      bas.set(npcols[n],n,d);
    for (int r=1; r<=rank; r++)
@@ -108,51 +108,51 @@ subspaceT<T> kernel(const matT<T>& m1, int method)
      for (int j=1; j<=nullity; j++)
        bas.set(i,j, -m(r,npcols[j]));
    }
-   return subspaceT<T>(bas, npcols, d);
+   return subZspace<T>(bas, npcols, d);
 }
 
 template<class T>
-subspaceT<T> image(const matT<T>& m, int method)
+subZspace<T> image(const Zmat<T>& m, int method)
 {
-  vecT<int> p,np;
+  Zvec<int> p,np;
   long rank, nullity;
   T d;
-  matT<T> b = transpose(echelon(transpose(m),p,np,rank,nullity,d,method));
-  return subspaceT<T>(b,p,d);
+  Zmat<T> b = transpose(echelon(transpose(m),p,np,rank,nullity,d,method));
+  return subZspace<T>(b,p,d);
 }
 
 template<class T>
-subspaceT<T> eigenspace(const matT<T>& m1, const T& lambda, int method)
+subZspace<T> eigenspace(const Zmat<T>& m1, const T& lambda, int method)
 {
-  matT<T> m = addscalar(m1,-lambda);
+  Zmat<T> m = addscalar(m1,-lambda);
   return kernel(m,method);
 }
 
 template<class T>
-subspaceT<T> subeigenspace(const matT<T>& m1, const T& l, const subspaceT<T>& s, int method)
+subZspace<T> subeigenspace(const Zmat<T>& m1, const T& l, const subZspace<T>& s, int method)
 {
-  matT<T> m = restrict_mat(m1,s);
-  subspaceT<T> ss = eigenspace(m, l*(denom(s)),method);
+  Zmat<T> m = restrict_mat(m1,s);
+  subZspace<T> ss = eigenspace(m, l*(denom(s)),method);
   return combine(s,ss );
 }
 
 template<class T>
-subspaceT<T> pcombine(const subspaceT<T>& s1, const subspaceT<T>& s2, const T& pr)
+subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr)
 {
   T   d = s1.denom * s2.denom;  // redundant since both should be 1
-  const matT<T>& b1=s1.basis,  b2=s2.basis;
-  const matT<T>& b = matmulmodp(b1,b2,pr);
-  const vecT<int>& p = s1.pivots[s2.pivots];
-  return subspaceT<T>(b,p,d);
+  const Zmat<T>& b1=s1.basis,  b2=s2.basis;
+  const Zmat<T>& b = matmulmodp(b1,b2,pr);
+  const Zvec<int>& p = s1.pivots[s2.pivots];
+  return subZspace<T>(b,p,d);
 }
 
 // Same as restrict_mat, but modulo pr
 template<class T>
-matT<T> prestrict(const matT<T>& M, const subspaceT<T>& S, const T& pr, int cr)
+Zmat<T> prestrict(const Zmat<T>& M, const subZspace<T>& S, const T& pr, int cr)
 {
   if(dim(S)==M.nro) return M; // trivial special case, s is whole space
-  const matT<T>& B = S.basis;
-  matT<T> A = matmulmodp(rowsubmat(M, S.pivots), B, pr);
+  const Zmat<T>& B = S.basis;
+  Zmat<T> A = matmulmodp(rowsubmat(M, S.pivots), B, pr);
 
   if(cr) // optional check that S is invariant under M
     {
@@ -164,12 +164,12 @@ matT<T> prestrict(const matT<T>& M, const subspaceT<T>& S, const T& pr, int cr)
 }
 
 template<class T>
-subspaceT<T> oldpkernel(const matT<T>& m1, const T& pr)   // using full echmodp
+subZspace<T> oldpkernel(const Zmat<T>& m1, const T& pr)   // using full echmodp
 {
    long rank, nullity;
-   vecT<int> pcols,npcols;
-   matT<T> m = echmodp(m1,pcols,npcols, rank, nullity, pr);
-   matT<T> bas(m.ncols(),nullity);
+   Zvec<int> pcols,npcols;
+   Zmat<T> m = echmodp(m1,pcols,npcols, rank, nullity, pr);
+   Zmat<T> bas(m.ncols(),nullity);
    for (int n=1; n<=nullity; n++)
      bas.set(npcols[n],n,T(1));
    for (int r=1; r<=rank; r++)
@@ -178,17 +178,17 @@ subspaceT<T> oldpkernel(const matT<T>& m1, const T& pr)   // using full echmodp
      for (int j=1; j<=nullity; j++)
        bas.set(i,j, mod(-m(r,npcols[j]),pr));
    }
-   return subspaceT<T>(bas, npcols, T(1));
+   return subZspace<T>(bas, npcols, T(1));
 }
 
 // using echmodp_uptri, with no back-substitution
 template<class T>
-subspaceT<T> pkernel(const matT<T>& m1, const T& pr)
+subZspace<T> pkernel(const Zmat<T>& m1, const T& pr)
 {
   long rank, nullity;
-  vecT<int> pcols,npcols;
-  matT<T> m = echmodp_uptri(m1,pcols,npcols, rank, nullity, pr);
-  matT<T> bas(m.ncols(),nullity);
+  Zvec<int> pcols,npcols;
+  Zmat<T> m = echmodp_uptri(m1,pcols,npcols, rank, nullity, pr);
+  Zmat<T> bas(m.ncols(),nullity);
   for(int j=nullity; j>0; j--)
     {
       int jj = npcols[j];
@@ -205,30 +205,30 @@ subspaceT<T> pkernel(const matT<T>& m1, const T& pr)
           bas(pcols[i],j) = mod(temp,pr);
         }
     }
-  return subspaceT<T>(bas, npcols, T(1));
+  return subZspace<T>(bas, npcols, T(1));
 }
 
 template<class T>
-subspaceT<T> pimage(const matT<T>& m, const T& pr)
+subZspace<T> pimage(const Zmat<T>& m, const T& pr)
 {
-  vecT<int> p,np;
+  Zvec<int> p,np;
   long rank, nullity;
-  const matT<T>& b = transpose(echmodp(transpose(m),p,np,rank,nullity,pr));
-  return subspaceT<T>(b,p,T(1));
+  const Zmat<T>& b = transpose(echmodp(transpose(m),p,np,rank,nullity,pr));
+  return subZspace<T>(b,p,T(1));
 }
 
 template<class T>
-subspaceT<T> peigenspace(const matT<T>& m1, const T& lambda, const T& pr)
+subZspace<T> peigenspace(const Zmat<T>& m1, const T& lambda, const T& pr)
 {
-  const matT<T>& m = addscalar(m1,-lambda);
+  const Zmat<T>& m = addscalar(m1,-lambda);
   return pkernel(m,pr);
 }
 
 template<class T>
-subspaceT<T> psubeigenspace(const matT<T>& m1, const T& l, const subspaceT<T>& s, const T& pr)
+subZspace<T> psubeigenspace(const Zmat<T>& m1, const T& l, const subZspace<T>& s, const T& pr)
 {
-  const matT<T>& m = prestrict(m1,s,pr);
-  const subspaceT<T>& ss = peigenspace(m, l*(denom(s)),pr);
+  const Zmat<T>& m = prestrict(m1,s,pr);
+  const subZspace<T>& ss = peigenspace(m, l*(denom(s)),pr);
   return pcombine(s,ss,pr);
 }
 
@@ -236,79 +236,79 @@ subspaceT<T> psubeigenspace(const matT<T>& m1, const T& l, const subspaceT<T>& s
 //basis as rational using modrat and clearing denominators
 
 template<class T>
-int lift(const subspaceT<T>& s, const T& pr, subspaceT<T>& ans)
+int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans)
 {
   T dd;
-  matT<T> m;
+  Zmat<T> m;
   int ok = liftmat(s.basis,pr,m,dd);
   if (!ok)
     cerr << "Failed to lift subspace from mod "<<pr<<endl;
-  ans = subspaceT<T>(m, pivots(s), dd);
+  ans = subZspace<T>(m, pivots(s), dd);
   return ok;
 }
 
 // Instantiate template functions for T=int
 
-template int dim<int>(const subspaceT<int>& s);
-template int denom<int>(const subspaceT<int>& s);
-template vecT<int> pivots<int>(const subspaceT<int>& s);
-template matT<int> basis<int>(const subspaceT<int>& s);
-template subspaceT<int> combine<int>(const subspaceT<int>& s1, const subspaceT<int>& s2);
-template matT<int> restrict_mat<int>(const matT<int>& m, const subspaceT<int>& s, int cr);
-template subspaceT<int> pcombine<int>(const subspaceT<int>& s1, const subspaceT<int>& s2, const int& pr);
-template matT<int> prestrict<int>(const matT<int>& m, const subspaceT<int>& s, const int& pr, int cr);
-template int lift<int>(const subspaceT<int>& s, const int& pr, subspaceT<int>& ans);
-template matT<int> expressvectors<int>(const matT<int>& m, const subspaceT<int>& s);
-template subspaceT<int> kernel<int>(const matT<int>& m, int method=0);
-template subspaceT<int> image<int>(const matT<int>& m, int method=0);
-template subspaceT<int> eigenspace<int>(const matT<int>& m, const int& lambda, int method=0);
-template subspaceT<int> subeigenspace<int>(const matT<int>& m, const int& l, const subspaceT<int>& s, int method=0);
-template subspaceT<int> oldpkernel<int>(const matT<int>& m, const int& pr);
-template subspaceT<int> pkernel<int>(const matT<int>& m, const int& pr);
-template subspaceT<int> pimage<int>(const matT<int>& m, const int& pr);
-template subspaceT<int> peigenspace<int>(const matT<int>& m, const int& lambda, const int& pr);
-template subspaceT<int> psubeigenspace<int>(const matT<int>& m, const int& l, const subspaceT<int>& s, const int& pr);
+template int dim<int>(const subZspace<int>& s);
+template int denom<int>(const subZspace<int>& s);
+template Zvec<int> pivots<int>(const subZspace<int>& s);
+template Zmat<int> basis<int>(const subZspace<int>& s);
+template subZspace<int> combine<int>(const subZspace<int>& s1, const subZspace<int>& s2);
+template Zmat<int> restrict_mat<int>(const Zmat<int>& m, const subZspace<int>& s, int cr);
+template subZspace<int> pcombine<int>(const subZspace<int>& s1, const subZspace<int>& s2, const int& pr);
+template Zmat<int> prestrict<int>(const Zmat<int>& m, const subZspace<int>& s, const int& pr, int cr);
+template int lift<int>(const subZspace<int>& s, const int& pr, subZspace<int>& ans);
+template Zmat<int> expressvectors<int>(const Zmat<int>& m, const subZspace<int>& s);
+template subZspace<int> kernel<int>(const Zmat<int>& m, int method=0);
+template subZspace<int> image<int>(const Zmat<int>& m, int method=0);
+template subZspace<int> eigenspace<int>(const Zmat<int>& m, const int& lambda, int method=0);
+template subZspace<int> subeigenspace<int>(const Zmat<int>& m, const int& l, const subZspace<int>& s, int method=0);
+template subZspace<int> oldpkernel<int>(const Zmat<int>& m, const int& pr);
+template subZspace<int> pkernel<int>(const Zmat<int>& m, const int& pr);
+template subZspace<int> pimage<int>(const Zmat<int>& m, const int& pr);
+template subZspace<int> peigenspace<int>(const Zmat<int>& m, const int& lambda, const int& pr);
+template subZspace<int> psubeigenspace<int>(const Zmat<int>& m, const int& l, const subZspace<int>& s, const int& pr);
 
 // Instantiate template functions for T=long
 
-template int dim<long>(const subspaceT<long>& s);
-template long denom<long>(const subspaceT<long>& s);
-template vecT<int> pivots<long>(const subspaceT<long>& s);
-template matT<long> basis<long>(const subspaceT<long>& s);
-template subspaceT<long> combine<long>(const subspaceT<long>& s1, const subspaceT<long>& s2);
-template matT<long> restrict_mat<long>(const matT<long>& m, const subspaceT<long>& s, int cr);
-template subspaceT<long> pcombine<long>(const subspaceT<long>& s1, const subspaceT<long>& s2, const long& pr);
-template matT<long> prestrict<long>(const matT<long>& m, const subspaceT<long>& s, const long& pr, int cr);
-template int lift<long>(const subspaceT<long>& s, const long& pr, subspaceT<long>& ans);
-template matT<long> expressvectors<long>(const matT<long>& m, const subspaceT<long>& s);
-template subspaceT<long> kernel<long>(const matT<long>& m, int method=0);
-template subspaceT<long> image<long>(const matT<long>& m, int method=0);
-template subspaceT<long> eigenspace<long>(const matT<long>& m, const long& lambda, int method=0);
-template subspaceT<long> subeigenspace<long>(const matT<long>& m, const long& l, const subspaceT<long>& s, int method=0);
-template subspaceT<long> oldpkernel<long>(const matT<long>& m, const long& pr);
-template subspaceT<long> pkernel<long>(const matT<long>& m, const long& pr);
-template subspaceT<long> pimage<long>(const matT<long>& m, const long& pr);
-template subspaceT<long> peigenspace<long>(const matT<long>& m, const long& lambda, const long& pr);
-template subspaceT<long> psubeigenspace<long>(const matT<long>& m, const long& l, const subspaceT<long>& s, const long& pr);
+template int dim<long>(const subZspace<long>& s);
+template long denom<long>(const subZspace<long>& s);
+template Zvec<int> pivots<long>(const subZspace<long>& s);
+template Zmat<long> basis<long>(const subZspace<long>& s);
+template subZspace<long> combine<long>(const subZspace<long>& s1, const subZspace<long>& s2);
+template Zmat<long> restrict_mat<long>(const Zmat<long>& m, const subZspace<long>& s, int cr);
+template subZspace<long> pcombine<long>(const subZspace<long>& s1, const subZspace<long>& s2, const long& pr);
+template Zmat<long> prestrict<long>(const Zmat<long>& m, const subZspace<long>& s, const long& pr, int cr);
+template int lift<long>(const subZspace<long>& s, const long& pr, subZspace<long>& ans);
+template Zmat<long> expressvectors<long>(const Zmat<long>& m, const subZspace<long>& s);
+template subZspace<long> kernel<long>(const Zmat<long>& m, int method=0);
+template subZspace<long> image<long>(const Zmat<long>& m, int method=0);
+template subZspace<long> eigenspace<long>(const Zmat<long>& m, const long& lambda, int method=0);
+template subZspace<long> subeigenspace<long>(const Zmat<long>& m, const long& l, const subZspace<long>& s, int method=0);
+template subZspace<long> oldpkernel<long>(const Zmat<long>& m, const long& pr);
+template subZspace<long> pkernel<long>(const Zmat<long>& m, const long& pr);
+template subZspace<long> pimage<long>(const Zmat<long>& m, const long& pr);
+template subZspace<long> peigenspace<long>(const Zmat<long>& m, const long& lambda, const long& pr);
+template subZspace<long> psubeigenspace<long>(const Zmat<long>& m, const long& l, const subZspace<long>& s, const long& pr);
 
 // Instantiate template functions for T=bigint
 
-template int dim<bigint>(const subspaceT<bigint>& s);
-template bigint denom<bigint>(const subspaceT<bigint>& s);
-template vecT<int> pivots<bigint>(const subspaceT<bigint>& s);
-template matT<bigint> basis<bigint>(const subspaceT<bigint>& s);
-template subspaceT<bigint> combine<bigint>(const subspaceT<bigint>& s1, const subspaceT<bigint>& s2);
-template matT<bigint> restrict_mat<bigint>(const matT<bigint>& m, const subspaceT<bigint>& s, int cr);
-template subspaceT<bigint> pcombine<bigint>(const subspaceT<bigint>& s1, const subspaceT<bigint>& s2, const bigint& pr);
-template matT<bigint> prestrict<bigint>(const matT<bigint>& m, const subspaceT<bigint>& s, const bigint& pr, int cr);
-template int lift<bigint>(const subspaceT<bigint>& s, const bigint& pr, subspaceT<bigint>& ans);
-template matT<bigint> expressvectors<bigint>(const matT<bigint>& m, const subspaceT<bigint>& s);
-template subspaceT<bigint> kernel<bigint>(const matT<bigint>& m, int method=0);
-template subspaceT<bigint> image<bigint>(const matT<bigint>& m, int method=0);
-template subspaceT<bigint> eigenspace<bigint>(const matT<bigint>& m, const bigint& lambda, int method=0);
-template subspaceT<bigint> subeigenspace<bigint>(const matT<bigint>& m, const bigint& l, const subspaceT<bigint>& s, int method=0);
-template subspaceT<bigint> oldpkernel<bigint>(const matT<bigint>& m, const bigint& pr);
-template subspaceT<bigint> pkernel<bigint>(const matT<bigint>& m, const bigint& pr);
-template subspaceT<bigint> pimage<bigint>(const matT<bigint>& m, const bigint& pr);
-template subspaceT<bigint> peigenspace<bigint>(const matT<bigint>& m, const bigint& lambda, const bigint& pr);
-template subspaceT<bigint> psubeigenspace<bigint>(const matT<bigint>& m, const bigint& l, const subspaceT<bigint>& s, const bigint& pr);
+template int dim<bigint>(const subZspace<bigint>& s);
+template bigint denom<bigint>(const subZspace<bigint>& s);
+template Zvec<int> pivots<bigint>(const subZspace<bigint>& s);
+template Zmat<bigint> basis<bigint>(const subZspace<bigint>& s);
+template subZspace<bigint> combine<bigint>(const subZspace<bigint>& s1, const subZspace<bigint>& s2);
+template Zmat<bigint> restrict_mat<bigint>(const Zmat<bigint>& m, const subZspace<bigint>& s, int cr);
+template subZspace<bigint> pcombine<bigint>(const subZspace<bigint>& s1, const subZspace<bigint>& s2, const bigint& pr);
+template Zmat<bigint> prestrict<bigint>(const Zmat<bigint>& m, const subZspace<bigint>& s, const bigint& pr, int cr);
+template int lift<bigint>(const subZspace<bigint>& s, const bigint& pr, subZspace<bigint>& ans);
+template Zmat<bigint> expressvectors<bigint>(const Zmat<bigint>& m, const subZspace<bigint>& s);
+template subZspace<bigint> kernel<bigint>(const Zmat<bigint>& m, int method=0);
+template subZspace<bigint> image<bigint>(const Zmat<bigint>& m, int method=0);
+template subZspace<bigint> eigenspace<bigint>(const Zmat<bigint>& m, const bigint& lambda, int method=0);
+template subZspace<bigint> subeigenspace<bigint>(const Zmat<bigint>& m, const bigint& l, const subZspace<bigint>& s, int method=0);
+template subZspace<bigint> oldpkernel<bigint>(const Zmat<bigint>& m, const bigint& pr);
+template subZspace<bigint> pkernel<bigint>(const Zmat<bigint>& m, const bigint& pr);
+template subZspace<bigint> pimage<bigint>(const Zmat<bigint>& m, const bigint& pr);
+template subZspace<bigint> peigenspace<bigint>(const Zmat<bigint>& m, const bigint& lambda, const bigint& pr);
+template subZspace<bigint> psubeigenspace<bigint>(const Zmat<bigint>& m, const bigint& l, const subZspace<bigint>& s, const bigint& pr);
