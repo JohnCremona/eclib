@@ -441,7 +441,7 @@ void newform::find_cuspidal_factors()
         }
       if(sign==0)  // do this only if sign = 0
         {
-	  type=3-content(bplusc-bminusc);
+	  type = int(3-content(bplusc-bminusc));
 	  if(verbose) cout<<"Lattice type = "<<type<<endl;
           if((type!=1)&&(type!=2))
             {

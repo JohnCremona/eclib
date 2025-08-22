@@ -62,8 +62,7 @@ public:
   newforms *nf;  // the "parent"
   int sign;   // 1/-1 for old-style newform, 0 for old-style h1newform
   vec bplus,bminus; // DUAL eigenvectors
-  scalar type;            // 2 for rectangular, 1 for triangular
-			  //  period lattice
+  int type;            // 2 for rectangular, 1 for non-rectangular period lattice
   long index;  // splitting index, -1 if not known
   vector<long> aplist, aqlist;
   long ap0;     // Eigenvalue of first "good" p

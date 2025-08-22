@@ -57,7 +57,8 @@ int main(void)
  cout << "Program hecketest." << endl;
  init_time();
  start_time();
- int n=2; 
+ scalar modulus(MODULUS);
+ int n=2;
  int plus=1;
  int verbose=0;
  cerr << "See the hecke matrices (0/1)? "; cin >> verbose;
@@ -74,7 +75,7 @@ int main(void)
  cout << ">>>Level " << n << "\t";
  homspace hplus(n,plus,0,0);
  int genus = hplus.h1dim();
- int den = hplus.h1denom();
+ scalar den = hplus.h1denom();
  bigint den2; den2 = den*den;
  cout << "Dimension = " << genus << "\n";
  cout << "denominator = " << den << "\n";
@@ -89,10 +90,10 @@ int main(void)
    smat conjmat = hplus.s_conj(1);
    cout<<" done."<<endl;
    cout << "Computing +1 eigenspace...  " << flush;
-   ssubspace h1plus = eigenspace(conjmat,den, scalar(MODULUS));
+   ssubspace h1plus = eigenspace(conjmat,den, modulus);
    cout<<" done, dimension = "<<dim(h1plus)<<endl;
    cout << "Computing -1 eigenspace...  " << flush;
-   ssubspace h1minus = eigenspace(conjmat,-den, scalar(MODULUS));
+   ssubspace h1minus = eigenspace(conjmat,-den, modulus);
    cout<<" done, dimension = "<<dim(h1minus)<<endl;
 
    int w_eigs=0;
@@ -118,14 +119,14 @@ int main(void)
           /*
 	  cout<<"Using modular matrix code..."<<flush;
 	  start_time();
-	  mult=dim(peigenspace(wq,e*den,MODULUS));
+	  mult=dim(peigenspace(wq,e*den, modulus));
 	  stop_time();
 	  show_time(cerr); cerr<<endl;
 	  cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;
 	  */
 	  cout<<"Using sparse matrix code..."<<endl;
 	  start_time();
-	  mult=dim(eigenspace(swq,e*den, MODULUS));
+	  mult=dim(eigenspace(swq,e*den, modulus));
 	  stop_time();
 	  show_time(cerr); cerr<<endl;
 	  cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;
@@ -133,7 +134,7 @@ int main(void)
       }
       wqlist[i] = to_mat_m(wq);
 #ifdef CHECK_COMMUTE
-      if (mult_mod_p(swq,swq,MODULUS) == smat::scalar_matrix(genus, den*den))
+      if (mult_mod_p(swq,swq,modulus) == smat::scalar_matrix(genus, den*den))
 	cout << "Involution!" << "\n";
       else
 	cout << " *** Not an involution...." << "\n";
@@ -193,7 +194,7 @@ int main(void)
 	  /*
 	  cout<<"Computing nullity, using my (modular) matrix code..."<<flush;
 	  start_time();
-	  nulty=dim(peigenspace(m,e,MODULUS));
+	  nulty=dim(peigenspace(m,e,modulus));
 	  stop_time();
 	  show_time(cerr); cerr<<endl;
 	  cout<<" nullity="<<nulty<<endl;
@@ -235,7 +236,7 @@ int main(void)
       cout<<"...done, sparsity =  "<<sparsity(MT); show_time(cerr); cerr<<endl;
       cout<<"Computing kernel, using my (modular) matrix code..."<<flush;
       start_time();
-      subspace  ker = pkernel(MT,MODULUS);
+      subspace  ker = pkernel(MT,modulus);
       nulty=dim(ker);
       int denker=denom(ker); // =1 for modular method, but set below
       stop_time();
@@ -249,7 +250,7 @@ int main(void)
 	  cout<<"lifting kernel..."<<flush;
 	  start_time();
 	  mat MTR;
-          int ok = liftmat(prestrict(m,ker,MODULUS),MODULUS,MTR,denker);
+          int ok = liftmat(prestrict(m,ker,modulus),modulus,MTR,denker);
           if (!ok)
             cout << "**!!!** failed to lift modular kernel\n" << endl;
 	  stop_time();
@@ -333,7 +334,7 @@ int main(void)
 
 	  cout<<"Computing nullity, using my (modular) matrix code..."<<flush;
 	  start_time();
-	  nulty1=dim(peigenspace(MTR,e,MODULUS));
+	  nulty1=dim(peigenspace(MTR,e,modulus));
 	  stop_time();
 	  show_time(cerr); cerr<<endl;
 	  cout<<" nullity="<<nulty1<<endl;
@@ -350,7 +351,7 @@ int main(void)
       cout<<"Total multiplicity of rational eigenvalues = "<<totalmult<<endl;
 #endif // TEST_EIGS
 #ifdef CHECK_COMMUTE
-      bigint P(MODULUS);
+      bigint P(modulus);
       for (int kp=firstq; kp<nq; kp++)
 	{if (matmulmodp(wqlist[kp],tplist[ip],P)!=matmulmodp(tplist[ip],wqlist[kp],P))
 	   {
@@ -368,6 +369,6 @@ int main(void)
    }      // end of if(genus>0)
  }       // end of if(n)
      }       // end of while(n>1) or while(n<limit)
- cout<<endl;
+ cerr<<endl;
 exit(0);
      }       // end of main()

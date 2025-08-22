@@ -287,9 +287,9 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   for (i=1; i<=ncoord; i++)
     {
       coordi = to_vec_m((h1->coord_vecs[i]).as_vec());
-      if(h1->cuspidal) coordi = to_vec_m(h1->cuspidalpart(to_vec_i(coordi)));
+      if(h1->cuspidal) coordi = to_vec_m(h1->cuspidalpart(to_vec(coordi)));
       mrowi = V*coordi;
-      rowi = to_vec_i(mrowi);
+      rowi = to_vec(mrowi);
       projcoord.setrow(i,rowi);
       coord_fac=gcd(coord_fac, (long)content(rowi));
     }
@@ -413,7 +413,7 @@ bigint inverse(const mat_m& a, mat_m& ainv)
 {
   long d = a.nrows();
   mat_m aug=colcat(a, mat_m::identity_matrix(d));
-  long rk, ny; vec pc,npc; bigint denom;
+  long rk, ny; vec_i pc,npc; bigint denom;
   mat_m ref = echelon(aug, pc, npc, rk, ny, denom);
   ainv = ref.slice(1,d,d+1,2*d);
   //  cout<<"Inverse = "<<denom<<"*"<<ainv<<endl;

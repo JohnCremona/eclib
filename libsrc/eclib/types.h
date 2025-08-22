@@ -35,6 +35,7 @@ typedef svec_l svec;
 typedef smat_l smat;
 typedef smat_l_elim smat_elim;
 typedef form_finder_l form_finder;
+#define to_vec to_vec_l
 #else
 #if (SCALAR==bigint)
 typedef bigint scalar;
@@ -46,6 +47,7 @@ typedef svec_m svec;
 typedef smat_m smat;
 typedef smat_m_elim smat_elim;
 typedef form_finder_m form_finder;
+#define to_vec to_vec_m
 #else
 typedef int scalar;
 typedef vec_i vec;
@@ -56,5 +58,6 @@ typedef svec_i svec;
 typedef smat_i smat;
 typedef smat_i_elim smat_elim;
 typedef form_finder_i form_finder;
+#define to_vec to_vec_i
 #endif
 #endif

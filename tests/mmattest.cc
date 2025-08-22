@@ -64,7 +64,7 @@ cout << "directsum(A,A) = " << directsum(a,a);
 cout << "Enter any number "; cin >> i;
 }
 {
-  mat sa = to_mat_i(a);
+  mat_i sa = to_mat_i(a);
   cout << "After shortening to a matrix of ints, A = " << sa;
 }
 mat_m b = a;

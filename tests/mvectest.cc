@@ -102,7 +102,7 @@ int main(void)
  make_primitive(w);
  cout << "After make_primitive(w), w = " << w << endl;
 
- vec sv = to_vec_i(v);
+ vec_i sv = to_vec_i(v);
  cout << "v shortened to a vector of ints: " << sv << endl;
 
  vec_m u(n);
