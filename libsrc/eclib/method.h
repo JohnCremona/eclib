@@ -27,9 +27,9 @@
 // Linear algebra options:  SCALAR_OPTION is 1 (int), 2 (long), or 3 (bigint)
 
 #ifndef SCALAR_OPTION    // So you can override the setting at compile time
-//#define SCALAR_OPTION 1  // int
+#define SCALAR_OPTION 1  // int
 //#define SCALAR_OPTION 2  // long
-#define SCALAR_OPTION 3  // bigint
+//#define SCALAR_OPTION 3  // bigint
 #endif
 
 // types.h presets scalar, vec, mat, subspace, ssubspace, svec, smat, smat_elim

@@ -26,9 +26,9 @@
 // SCALAR_OPTION may be set to 1 (int), 2 (long), or 3 (bigint) by user
 
 #ifndef SCALAR_OPTION
-//#define SCALAR_OPTION 1  // int
+#define SCALAR_OPTION 1  // int
 //#define SCALAR_OPTION 2  // long
-#define SCALAR_OPTION 3  // bigint
+//#define SCALAR_OPTION 3  // bigint
 #endif
 
 #if (SCALAR_OPTION==2) // long
