@@ -291,7 +291,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
       mrowi = V*coordi;
       rowi = to_vec(mrowi);
       projcoord.setrow(i,rowi);
-      coord_fac=gcd(coord_fac, (long)content(rowi));
+      coord_fac=gcd(coord_fac, content(rowi));
     }
   if(verbose>1) cout<<"content of projccord = "<<coord_fac<<endl;
   if(coord_fac>1)  projcoord /= coord_fac;

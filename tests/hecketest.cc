@@ -180,7 +180,7 @@ int main(void)
       cout<<"\nChecking for eigenvalues from "<<eigs<<endl;
       long i,j,k;
       long nulty, nulty1, totalmult=0;
-      SCALAR dummy;
+      scalar dummy;
       mat m = tplist[ip].shorten(dummy);
       //      if(verbose) cout<<"shortened matrix: \n"<<m<<endl;
       smat sm=smat(m);

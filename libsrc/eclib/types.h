@@ -23,9 +23,17 @@
  
 #include <eclib/smatrix_elim.h>
 
-// SCALAR may be set to int or long or bigint by user
+// SCALAR may be set to 0 (int), 1 (long), or 2 (bigint) by user
 
-#if (SCALAR==long)
+#ifndef SCALAR_OPTION
+#define SCALAR_OPTION 0 // int
+#endif
+
+#if (SCALAR_OPTION==1) // long
+#if !defined(scalar_type_defined)
+const string scalar_type = "long";
+#define scalar_type_defined
+#endif
 typedef long scalar;
 typedef vec_l vec;
 typedef mat_l mat;
@@ -37,7 +45,11 @@ typedef smat_l_elim smat_elim;
 typedef form_finder_l form_finder;
 #define to_vec to_vec_l
 #else
-#if (SCALAR==bigint)
+#if (SCALAR_OPTION==2) // bigint
+#if !defined(scalar_type_defined)
+const string scalar_type = "bigint";
+#define scalar_type_defined
+#endif
 typedef bigint scalar;
 typedef vec_m vec;
 typedef mat_m mat;
@@ -49,6 +61,11 @@ typedef smat_m_elim smat_elim;
 typedef form_finder_m form_finder;
 #define to_vec to_vec_m
 #else
+#if (SCALAR_OPTION==0) // int
+#if !defined(scalar_type_defined)
+const string scalar_type = "int";
+#define scalar_type_defined
+#endif
 typedef int scalar;
 typedef vec_i vec;
 typedef mat_i mat;
@@ -59,5 +76,11 @@ typedef smat_i smat;
 typedef smat_i_elim smat_elim;
 typedef form_finder_i form_finder;
 #define to_vec to_vec_i
+#else
+#if !defined(scalar_type_defined)
+const string scalar_type = "undefined";
+#define scalar_type_defined
+#endif
+#endif
 #endif
 #endif
