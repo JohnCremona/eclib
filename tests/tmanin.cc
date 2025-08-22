@@ -42,7 +42,7 @@ int main(void)
  long n=110, stopp;
  int output, verbose, sign=1;
 
- cout << "Program tmanin.  Using METHOD = " << METHOD << " to find newforms" << endl;
+ cout << "Program tmanin." << endl;
  cerr << "Verbose output? "; cin>>verbose;
  cerr << "How many primes for Hecke eigenvalues? ";
  cin  >> stopp; cerr << endl;

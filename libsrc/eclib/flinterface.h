@@ -23,7 +23,7 @@
 
 // This interface was written with help from Fredrik Johansson
 
-// This file will be included either with SCALAR_OPTION=1 or with SCALAR_OPTION=1
+// This file will be included either with SCALAR=int or with SCALAR=long
 
 #if FLINT
 
@@ -31,7 +31,7 @@
 //
 // FLINT==0: no FLINT support (or a version <2.3)
 // FLINT==1: FLINT support using 64-bit nmod_mat (if __FLINT_VERSION<3)
-//                     for both SCALAR_OPTION=1 (scalar=in) and 2 (scalar=long)
+//                     for both SCALAR=int and SCALAR=long
 //                 support using 32-bit hmod_mat (if __FLINT_VERSION>=3) when scalar=int
 //                         via Fredrik Stromberg's mini interface to gr_mat
 

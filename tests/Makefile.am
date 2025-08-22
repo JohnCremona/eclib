@@ -38,35 +38,35 @@ thilbert_SOURCES=thilbert.cc
 tp2points_SOURCES=tp2points.cc
 tilll_SOURCES=tilll.cc
 vectest1_SOURCES=vectest.cc
-vectest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
+vectest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=int
 vectest2_SOURCES=vectest.cc
-vectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+vectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=long
 vectest3_SOURCES=vectest.cc
-vectest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
+vectest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=bigint
 mattest1_SOURCES=mattest.cc
-mattest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
+mattest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=int
 mattest2_SOURCES=mattest.cc
-mattest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+mattest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=long
 mattest3_SOURCES=mattest.cc
-mattest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
+mattest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=bigint
 space1_SOURCES=space.cc
-space1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
+space1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=int
 space2_SOURCES=space.cc
-space2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+space2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=long
 space3_SOURCES=space.cc
-space3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
+space3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=bigint
 svectest1_SOURCES=svectest.cc
-svectest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
+svectest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=int
 svectest2_SOURCES=svectest.cc
-svectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+svectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=long
 svectest3_SOURCES=svectest.cc
-svectest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
+svectest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=bigint
 smattest1_SOURCES=smattest.cc
-smattest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
+smattest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=int
 smattest2_SOURCES=smattest.cc
-smattest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
+smattest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=long
 smattest3_SOURCES=smattest.cc
-smattest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
+smattest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR=bigint
 tcon2_SOURCES=tcon2.cc
 tlegcert_SOURCES=tlegcert.cc
 timing_SOURCES=timing.cc

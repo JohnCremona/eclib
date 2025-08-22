@@ -42,7 +42,7 @@
 int main(void)
 {
   int verbose,output,curve_output,n=130;
-  cout << "Program h1first.  Using METHOD = " << METHOD << endl;
+  cout << "Program h1first." << endl;
   cerr << "Verbose output? "; cin>>verbose;
   cerr << "Output updated newform data? "; cin>>output;
   cerr << "Output updated curve file? (0/1) ";  cin >> curve_output;

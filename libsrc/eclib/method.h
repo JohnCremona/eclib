@@ -24,37 +24,20 @@
 #if     !defined(_ECLIB_METHOD_H)
 #define _ECLIB_METHOD_H      1       //flags that this file has been included
 
-// Linear algebra options:
+// Linear algebra options:  SCALAR is int, long or bigint
 
-#ifndef METHOD     // So you can override the setting at compile time
-#define METHOD 2
-#endif
-//=0 for standard int arithmetic
-//=1 for long-long arithmetic (obsolete) 
-//=2 for ints with modular method (usually best in practice)
-//=3 for multi-length method (slower)
-//=4 for multi-length modular (not really used)
-//=5 for standard long arithmetic
-//=6 for longs with modular method
-
-#if (METHOD==0)||(METHOD==2)
-#define SCALAR_OPTION 1
-#endif
-#if (METHOD==5)||(METHOD==6)
-#define SCALAR_OPTION 2
-#endif
-#if (METHOD==3)||(METHOD==4)
-#define SCALAR_OPTION 3
+#ifndef SCALAR     // So you can override the setting at compile time
+#define SCALAR int
 #endif
 
 // types.h presets scalar, vec, mat, subspace, ssubspace, svec, smat, smat_elim
-// to be int/long/bigint and *_i/*_l/*_m according to SCALAR_OPTION
+// to be int/long/bigint and *_i/*_l/*_m according to SCALAR
 #include "types.h"
 
-#if (SCALAR_OPTION==3)
-#define MODULUS to_ZZ("6074000003")
-#else
+//#if (SCALAR==bigint)
+//#define MODULUS to_ZZ("6074000003")
+//#else
 #define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
-#endif
+//#endif
 
 #endif

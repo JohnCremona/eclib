@@ -38,23 +38,22 @@ int main(void)
 {
  init_time();
  start_time();
- long n=110, stopp, stopp0; 
+ long n=110, stopp, stopp0;
  long prec0=BITPREC0;
  int output, verbose;
 
- cout << "Program nfhpmcurve.  Using METHOD = " << METHOD 
-      << " to find newforms" << endl;
- cout << "Verbose output? "; cin>>verbose;
- cout << "How many primes for Hecke eigenvalues? ";
- cin  >> stopp0; cout << endl;
- output=1; 
- cout << "Output newforms to file? (0/1) ";  cin >> output;
+ cout << "Program nfhpmcurve." << endl;
+ cerr << "Verbose output? "; cin>>verbose;
+ cerr << "How many primes for Hecke eigenvalues? ";
+ cin  >> stopp0; cerr << endl;
+ output=1;
+ cerr << "Output newforms to file? (0/1) ";  cin >> output;
 #ifdef AUTOLOOP
  int limit;
- cout<<"Enter first and last N: ";cin>>n>>limit; n--;
+ cerr<<"Enter first and last N: ";cin>>n>>limit; n--;
  while (n<limit) { n++;
 #else
-     while (n>1) { cout<<"Enter level: "; cin>>n;
+     while (n>1) { cerr<<"Enter level: "; cin>>n;
 #endif
  if (n>1)
 {

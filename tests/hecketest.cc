@@ -54,7 +54,7 @@ vector<long> eigrange(long p)
 
 int main(void)
 {
- cout << "Program hecketest.  Using METHOD = " << METHOD << " to find newforms" << endl;
+ cout << "Program hecketest." << endl;
  init_time();
  start_time();
  int n=2; 

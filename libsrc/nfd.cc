@@ -282,17 +282,16 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   long ncoord = h1->coord_vecs.size()-1;
   projcoord.init(ncoord,dims);
   coord_fac=0;
-  vec_m mrowi(dims);
-  vec coordi(dimh);
+  vec_m mrowi(dims), coordi(dimh);
   vec rowi(dims);
   for (i=1; i<=ncoord; i++)
     {
-      coordi = (h1->coord_vecs[i]).as_vec();
-      if(h1->cuspidal) coordi = h1->cuspidalpart(coordi);
-      mrowi = V*to_vec_m(coordi);
+      coordi = to_vec_m((h1->coord_vecs[i]).as_vec());
+      if(h1->cuspidal) coordi = to_vec_m(h1->cuspidalpart(to_vec_i(coordi)));
+      mrowi = V*coordi;
       rowi = to_vec_i(mrowi);
       projcoord.setrow(i,rowi);
-      coord_fac=gcd(coord_fac, content(rowi));
+      coord_fac=gcd(coord_fac, (long)content(rowi));
     }
   if(verbose>1) cout<<"content of projccord = "<<coord_fac<<endl;
   if(coord_fac>1)  projcoord /= coord_fac;

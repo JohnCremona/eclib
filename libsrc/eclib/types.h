@@ -23,20 +23,9 @@
  
 #include <eclib/smatrix_elim.h>
 
-// SCALAR_OPTION may be set to 1 or 2 or 3 by user
+// SCALAR may be set to int or long or bigint by user
 
-#if (SCALAR_OPTION==1 || !defined(SCALAR_OPTION)) // scalar is int
-typedef int scalar;
-typedef vec_i vec;
-typedef mat_i mat;
-typedef subspace_i subspace;
-typedef ssubspace_i ssubspace;
-typedef svec_i svec;
-typedef smat_i smat;
-typedef smat_i_elim smat_elim;
-typedef form_finder_i form_finder;
-#else
-#if (SCALAR_OPTION==2) // scalar is long
+#if (SCALAR==long)
 typedef long scalar;
 typedef vec_l vec;
 typedef mat_l mat;
@@ -47,7 +36,7 @@ typedef smat_l smat;
 typedef smat_l_elim smat_elim;
 typedef form_finder_l form_finder;
 #else
-#if (SCALAR_OPTION==3) // scalar is bigint
+#if (SCALAR==bigint)
 typedef bigint scalar;
 typedef vec_m vec;
 typedef mat_m mat;
@@ -57,6 +46,15 @@ typedef svec_m svec;
 typedef smat_m smat;
 typedef smat_m_elim smat_elim;
 typedef form_finder_m form_finder;
-#endif
+#else
+typedef int scalar;
+typedef vec_i vec;
+typedef mat_i mat;
+typedef subspace_i subspace;
+typedef ssubspace_i ssubspace;
+typedef svec_i svec;
+typedef smat_i smat;
+typedef smat_i_elim smat_elim;
+typedef form_finder_i form_finder;
 #endif
 #endif
