@@ -1,5 +1,4 @@
-
-Subspace package test program
+Subspace test program with scalar type long
 
 Enter size of square matrix M: Enter entries of M:  M = 
 [[1,2,3],

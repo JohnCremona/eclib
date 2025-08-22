@@ -1,5 +1,4 @@
-
-Matrix package test program.
+Matrix test program with scalar type long.
 
 Enter size of a square matrix A: Enter entries of A: A = 
 [[1,2],

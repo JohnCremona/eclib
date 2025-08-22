@@ -1,4 +1,4 @@
-Test run of sparse vector package.
+Sparse vector test program with scalar type int.
 
 Enter n : Uninitialized new vec v = []
 Copy of v = []

@@ -25,7 +25,7 @@
 
 int main(void)
 {
- cout << "Test run of vector package.\n\n"; 
+  cout << "Vector test program with scalar type " << scalar_type << ".\n\n";
  int i,j,k,n;
  scalar one(1), two(2), three(3);
 

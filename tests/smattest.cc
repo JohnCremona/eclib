@@ -34,6 +34,7 @@ long starttime,stoptime;
 
 int main(void)
 { 
+  cout << "Sparse matrix test program with scalar type " << scalar_type << ".\n\n";
   cout << "enter 0 to exit\n";
   cout << "enter 1 to do all tests \n";
   cout << "enter 2 to operations \n"; 
@@ -51,7 +52,6 @@ int main(void)
     if( t == 1 )
       {
 	int nr, nc;
-	cout << "Test run of sparse matrix package.\n\n"; 
 	cout << "enter # of rows:\n";
 	cin >> nr;
 	cout << "enter # of colums:\n";

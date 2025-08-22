@@ -26,7 +26,7 @@
 
 int main(void)
 {
- cout << "Test run of sparse vector package.\n\n";
+ cout << "Sparse vector test program with scalar type " << scalar_type << ".\n\n";
  int i,j,n;
  scalar a, two(2), three(3);
  cout << "Enter n : "; cin >> n;

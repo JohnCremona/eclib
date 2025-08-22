@@ -26,7 +26,7 @@
 
 int main()
 {
-cout << "\nSubspace package test program\n\n";
+cout << "Subspace test program with scalar type " << scalar_type << "\n\n";
 
 int times,ntimes,r=0;
 

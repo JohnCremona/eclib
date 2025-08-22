@@ -31,7 +31,7 @@ int main(void)
 {
   init_time();
   start_time();
-  cout << "\nMatrix package test program.\n\n";
+  cout << "Matrix test program with scalar type " << scalar_type << ".\n\n";
 
   long i; int r;
   vec_i pc(1),npc(1);

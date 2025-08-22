@@ -1,3 +1,5 @@
+Sparse matrix test program with scalar type int.
+
 enter 0 to exit
 enter 1 to do all tests 
 enter 2 to operations 
@@ -11,8 +13,6 @@ enter 6 to multiply smat by smat
 enter> 
 enter 7 to find eigenspaces 
 enter> 
-Test run of sparse matrix package.
-
 enter # of rows:
 enter # of colums:
 Unitialized new smat sm = row[1] ={ values []   positions: []    }
