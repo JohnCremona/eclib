@@ -65,8 +65,8 @@ int main(void)
 	int cdim = hplus.h1cuspdim();
 	dims[plus+1]=dim;
 	cdims[plus+1]=cdim;
-	int d = hplus.h1denom();
-	int cd = hplus.h1cdenom();
+	scalar d = hplus.h1denom();
+	scalar cd = hplus.h1cdenom();
 	cout << "Sign = "; if (plus!=-1) cout<<" ";
 	cout << plus << ": ";
 	cout << "\tDimension = " << dim;

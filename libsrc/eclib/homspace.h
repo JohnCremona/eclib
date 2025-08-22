@@ -45,14 +45,15 @@ class homspace :public symbdata {
   //private:
 public:
   vector<int> coordindex, needed, freegens;
-  long rk,denom1,denom2;
+  long rk;
+  scalar denom1,denom2,denom3;
   ssubspace kern; // kernel(delta) basis
   smat tkernbas; // transpose of kernel(delta) basis
   vector<modsym> freemods;
 public:
   vector<svec> coord_vecs;
   mat projcoord; // # cols = # newforms after they are found
-  long dimension, denom3, ncusps, ncusps2;
+  long dimension, ncusps, ncusps2;
   int cuspidal;  // if 1 then compute cuspidal homology
 public:
   // Constructor (does all the work):
@@ -65,8 +66,8 @@ public:
 	   );
   long h1cuspdim() const {return dim(kern);}
   long h1dim() const {return dimension;}  // No confusion with subspace::dim
-  long h1denom() const {return denom1;}
-  long h1cdenom() const {return denom3;}
+  scalar h1denom() const {return denom1;}
+  scalar h1cdenom() const {return denom3;}
   long h1ncusps() const {return ncusps;}
   vector<long> eigrange(long i);
   long op_prime(int i);  // the i'th operator prime for Tp or Wq
@@ -91,7 +92,7 @@ public:
   svec zero_coords() const {return svec(rk);} // zero vector
   svec coords_from_index(int ind) const;
   vec proj_coords_from_index(int ind, const mat& m) const;
-  long nfproj_coords_from_index(int ind, const vec& bas) const;
+  scalar nfproj_coords_from_index(int ind, const vec& bas) const;
   svec coords(const symb& s) const;
   svec coords_cd(long c, long d) const;
   svec coords(long nn, long dd) const;
@@ -116,18 +117,18 @@ public:
   // vector.
   vec proj_coords_cd(long c, long d, const mat& m) const;
   vec proj_coords_cd(long c, long d) const {return proj_coords_cd(c,d,projcoord);}
-  long nfproj_coords_cd(long c, long d, const vec& bas) const;
+  scalar nfproj_coords_cd(long c, long d, const vec& bas) const;
   void add_proj_coords_cd(vec& v, long c, long d, const mat& m) const;
   void add_proj_coords_cd(vec& v, long c, long d) const {add_proj_coords_cd(v,c,d,projcoord);}
-  void add_nfproj_coords_cd(long& a, long c, long d, const vec& bas) const;
+  void add_nfproj_coords_cd(scalar& a, long c, long d, const vec& bas) const;
 
   vec proj_coords(long n, long d, const mat& m) const;
   vec proj_coords(long n, long d) const  {return proj_coords(n,d,projcoord);}
-  long nfproj_coords(long n, long d, const vec& bas) const;
+  scalar nfproj_coords(long n, long d, const vec& bas) const;
 
   void add_proj_coords(vec& v, long n, long d, const mat& m) const;
   void add_proj_coords(vec& v, long n, long d) const {add_proj_coords(v,n,d,projcoord);}
-  void add_nfproj_coords(long& aa, long n, long d, const vec& bas) const;
+  void add_nfproj_coords(scalar& aa, long n, long d, const vec& bas) const;
 
   vec cuspidalpart(const vec& v) const 
   {return v[pivots(kern)];}

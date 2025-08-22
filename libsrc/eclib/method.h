@@ -26,18 +26,16 @@
 
 // Linear algebra options:  SCALAR_OPTION is 1 (int), 2 (long), or 3 (bigint)
 
-#ifndef SCALAR_OPTION     // So you can override the setting at compile time
-#define SCALAR_OPTION 1   // int
+#ifndef SCALAR_OPTION    // So you can override the setting at compile time
+//#define SCALAR_OPTION 1  // int
+//#define SCALAR_OPTION 2  // long
+#define SCALAR_OPTION 3  // bigint
 #endif
 
 // types.h presets scalar, vec, mat, subspace, ssubspace, svec, smat, smat_elim
 // to be int/long/bigint and *_i/*_l/*_m according to SCALAR
 #include "types.h"
 
-#if (SCALAR_OPTION==3) // bigint
-#define MODULUS to_ZZ("6074000003")
-#else
 #define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
-#endif
 
 #endif

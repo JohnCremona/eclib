@@ -222,7 +222,7 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
 int newform::check_expand_contract()
 {
   int success=1;
-  long denom = nf->h1->h1denom();
+  scalar denom = nf->h1->h1denom();
   vec bplusx, bminusx, tvec;
   if (sign!=-1)
     {
@@ -251,7 +251,7 @@ int newform::check_expand_contract()
 
 void newform::fixup_eigs()
 {
-  long denom = nf->h1->h1denom();
+  scalar denom = nf->h1->h1denom();
   aqlist.resize(nf->npdivs);
   auto api=aplist.begin();
   auto pi=nf->plist.begin();
@@ -283,7 +283,7 @@ void newform::fixup_eigs()
 	  q=*pi++;
 	  if(nf->verbose) cout<<"Computing Wq for q="<<q<<"..."<<flush;
 	  smat Wq = nf->h1->s_heckeop_restricted(q,espace,1,0);
-	  long aq = Wq.elem(1,1) / piv;
+	  long aq = I2long(Wq.elem(1,1) / piv);
 	  if(nf->verbose) cout<<"aq ="<<aq<<endl;
 	  *aqi++=aq;
 	}
@@ -345,16 +345,16 @@ void newform::find_bsd_ratio()
 
   if(sign==-1) return;
 
-  pdot = (nf->mvp)*bplus; // should be negative since L(f,1)>=0
+  pdot = I2long((nf->mvp)*bplus); // should be negative since L(f,1)>=0
   if (pdot>0)
     // NB This will ensure that plus modular symbols have the right
     // sign for curves where L(E,1) is nonzero, but more work is
     // necessary for the plus symbols when L(Em1)=0, and for minus
     // symbols.  The additional work is done in find_matrix().
     {
-      coordsplus *= -1;
-      bplus *= -1;
-      pdot  *= -1;
+      coordsplus = -coordsplus;
+      bplus = -bplus;
+      pdot  = -pdot;
     }
   dp0=abs(pdot);
   // DO NOT scale pdot by denom: factor will cancel when used to compute ap
@@ -398,10 +398,12 @@ void newform::find_coords_plus_minus()
       if(sign!=+1)
         coordsminus[i]=dotmodp(cvi,bminus,scalar(MODULUS));
     }
-  contplus=content(coordsplus);
-  if (contplus>1) coordsplus/=contplus;
-  contminus=content(coordsminus);
-  if (contminus>1) coordsminus/=contminus;
+  scalar contp = content(coordsplus);
+  contplus = I2long(contp);
+  if (contplus>1) coordsplus/=contp;
+  scalar contm = content(coordsminus);
+  contminus = I2long(contm);
+  if (contminus>1) coordsminus/=contm;
 
   if(sign!=+1)
     {
@@ -430,18 +432,20 @@ void newform::find_cuspidal_factors()
       if(sign!=-1) // do this if sign = 0,1
         {
           bplusc=(nf->h1->tkernbas)*bplus;
-          cuspidalfactorplus = content(bplusc);
-          bplusc /= cuspidalfactorplus;
+          scalar cfp = content(bplusc);
+          cuspidalfactorplus = I2long(cfp);
+          bplusc /= cfp;
         }
       if(sign!=+1) // do this if sign = 0,-1
 	{
 	  bminusc=(nf->h1->tkernbas)*bminus;
-	  cuspidalfactorminus = content(bminusc);
-	  bminusc/= cuspidalfactorminus;
+          scalar cfm = content(bminusc);
+	  cuspidalfactorminus = I2long(cfm);
+	  bminusc/= cfm;
         }
       if(sign==0)  // do this only if sign = 0
         {
-	  type = int(3-content(bplusc-bminusc));
+	  type = (int)I2long((3-content(bplusc-bminusc)));
 	  if(verbose) cout<<"Lattice type = "<<type<<endl;
           if((type!=1)&&(type!=2))
             {
@@ -519,18 +523,18 @@ void newform::find_twisting_primes()
 	  //cout << "Trying lplus = " << l << "\n";
 	  auto  vi = nf->mvlplusvecs.find(l);
 	  if(vi==nf->mvlplusvecs.end())
-	    mplus = (nf->mvlplusvecs[l]=nf->h1->manintwist(l))*bplus;
+	    mplus = I2long((nf->mvlplusvecs[l]=nf->h1->manintwist(l))*bplus);
 	  else
-	    mplus = (vi->second)*bplus;
+	    mplus = I2long((vi->second)*bplus);
           // We force mplus>0 to fix the sign of the modular symbol to
           // agree with L(f*chi,1)>0, since L(f*chi,1) is real and a
           // positive multiple of mplus.  This uses the fact that the
           // Gauus sum is +sqrt(l).
           if (mplus<0)
             {
-              mplus *= -1;
-              bplus *= -1;
-              coordsplus *= -1;
+              mplus = -mplus;
+              bplus = -bplus;
+              coordsplus = -coordsplus;
             }
 	  if((denomplus>1)&&(mplus!=0))
 	    {
@@ -546,18 +550,18 @@ void newform::find_twisting_primes()
 	  //cout << "Trying lminus = " << l << "\n";
 	  auto vi = nf->mvlminusvecs.find(l);
 	  if(vi==nf->mvlminusvecs.end())
-	    mminus = (nf->mvlminusvecs[l]=nf->h1->manintwist(l))*bminus;
+	    mminus = I2long((nf->mvlminusvecs[l]=nf->h1->manintwist(l))*bminus);
 	  else
-	    mminus = (vi->second)*bminus;
+	    mminus = I2long((vi->second)*bminus);
           // We force mminus<0 to fix the sign of the modular symbol
           // to agree with L(f*chi,1)>0, since L(f*chi,1) is real and
           // a negative multiple of mminus.  This uses the fact that
           // the Gauus sum is +i*sqrt(l).
           if (mminus>0)
             {
-              mminus *= -1;
-              bminus *= -1;
-              coordsminus *= -1;
+              mminus = -mminus;
+              bminus = -bminus;
+              coordsminus = -coordsminus;
             }
 	  if((denomminus>1)&&(mminus!=0))
 	    {
@@ -599,7 +603,7 @@ void newform::find_matrix()
 		  //  cout<<"v="<<v<<endl;
                   if(sign!=-1)
                     {
-                      dotplus=v*bplus;
+                      dotplus = I2long(v*bplus);
                       if(::divides(denomplus,dotplus))
                         dotplus/=denomplus;
                       else
@@ -607,7 +611,7 @@ void newform::find_matrix()
                     }
                   if(sign!=+1)
                     {
-                      dotminus=v*bminus;
+                      dotminus = I2long(v*bminus);
                       if(::divides(denomminus,dotminus))
                         dotminus/=denomminus;
                       else
@@ -664,7 +668,7 @@ void newform::add_more_ap(int nap)
 	      piv*=nf->h1->h1denom();
 	      have_espace=1;
 	    }
-	  ap = (nf->h1->s_heckeop_restricted(p,espace,1,0)).elem(1,1) / piv;
+	  ap = I2long((nf->h1->s_heckeop_restricted(p,espace,1,0)).elem(1,1) / piv);
 	}
       aplist.push_back(ap);
       pr++;
@@ -785,11 +789,11 @@ void newform::sign_normalize()
         {
           if (verbose)
             cout<<"flipping sign for plus symbols"<<endl;
-          coordsplus *= -1;
-          bplus *= -1;
-          dotplus *= -1;
-          pdot *= -1;
-          mplus *= -1;
+          coordsplus = -coordsplus;
+          bplus = -bplus;
+          dotplus = -dotplus;
+          pdot = -pdot;
+          mplus = -mplus;
         }
     }
   if (sign!=+1)
@@ -798,10 +802,10 @@ void newform::sign_normalize()
         {
           if (verbose)
             cout<<"flipping sign for minus symbols"<<endl;
-          coordsminus *= -1;
-          dotminus *= -1;
-          bminus *= -1;
-          mminus *= -1;
+          coordsminus = -coordsminus;
+          dotminus = -dotminus;
+          bminus = -bminus;
+          mminus = -mminus;
         }
     }
   if (verbose>1)
@@ -1209,7 +1213,7 @@ void newforms::display_modular_symbol_map(int check) const
              }
            if(sign!=-1)
              {
-               long nrplus = sg*nflist[k].coordsplus[j];
+               long nrplus = I2long(sg*nflist[k].coordsplus[j]);
                long drplus = nflist[k].cuspidalfactorplus;
                rplus = rational(nrplus,drplus);
                if (check && (g==1))
@@ -1228,7 +1232,7 @@ void newforms::display_modular_symbol_map(int check) const
              }
            if(sign!=+1)
              {
-               long nrminus = sg*nflist[k].coordsminus[j];
+               long nrminus = I2long(sg*nflist[k].coordsminus[j]);
                long drminus = nflist[k].cuspidalfactorminus;
                rminus = rational(nrminus,drminus);
                if (check && (g==1))
@@ -1961,9 +1965,9 @@ vector<long> newforms::apvec(long p) //  computes a[p] for each newform
 // recover eigenvalue:
       //cout<<"Numerator =   "<< images[nflist[i].j0][i+1] <<endl;
       //cout<<"Denominator = "<< nflist[i].fac << endl;
-      long ap = images[nflist[i].j0][i+1]/nflist[i].fac;
+      long ap = I2long(images[nflist[i].j0][i+1]/nflist[i].fac);
       ap *= (sign==-1? nflist[i].contminus: nflist[i].contplus);
-      ap /= h1->h1denom();
+      ap /= I2long(h1->h1denom());
       apv[i]=ap;
       // check it is in range:
       if((ap>maxap)||(-ap>maxap))
@@ -2035,7 +2039,7 @@ void output_to_file_no_newforms(long n, int binflag, int smallflag)
 // for the i'th newform return the value of the modular symbol {0,r} (default) or {oo,r}
 rational newforms::plus_modular_symbol(const rational& r, long i, int base_at_infinity) const
 {
-  rational a(h1->nfproj_coords(num(r),den(r),nflist[i].coordsplus),
+  rational a(I2long(h1->nfproj_coords(num(r),den(r),nflist[i].coordsplus)),
 		  nflist[i].cuspidalfactorplus);
   // {oo,r} = {0,r}+{oo,0} and loverp={oo,0} (not {0,oo}!)
   if (base_at_infinity) a+=nflist[i].loverp;
@@ -2046,7 +2050,7 @@ rational newforms::plus_modular_symbol(const rational& r, long i, int base_at_in
 rational newforms::minus_modular_symbol(const rational& r, long i, int base_at_infinity) const
 {
   // Ignore the value of base_at_infinity as it does not affect the minus symbol
-  rational a(h1->nfproj_coords(num(r),den(r),nflist[i].coordsminus),
+  rational a(I2long(h1->nfproj_coords(num(r),den(r),nflist[i].coordsminus)),
 		  nflist[i].cuspidalfactorminus);
   a *= nflist[i].optimalityfactorminus;
   return a;
@@ -2058,11 +2062,11 @@ pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i,
   m.setcol(1,nflist[i].coordsplus);
   m.setcol(2,nflist[i].coordsminus);
   vec a = h1->proj_coords(num(r),den(r),m);
-  rational a1(a[1],nflist[i].cuspidalfactorplus);
+  rational a1(I2long(a[1]),nflist[i].cuspidalfactorplus);
   // {oo,r} = {0,r}+{oo,0} and loverp={oo,0} (not {0,oo}!)
   if (base_at_infinity) a1 += nflist[i].loverp;
   a1 *= nflist[i].optimalityfactorplus;
-  rational a2(a[2],nflist[i].cuspidalfactorminus);
+  rational a2(I2long(a[2]),nflist[i].cuspidalfactorminus);
   a2 *= nflist[i].optimalityfactorminus;
   return pair<rational,rational> ( a1, a2 );
 }

@@ -183,7 +183,7 @@ if (verbose>1)
       if (plusflag) check[rof(ij)] = 1;
       fix = coordindex[ij];
 #ifdef USE_SMATS
-      if(fix) newrel.add(abs(fix),(fix>0?1:-1));
+      if(fix) newrel.add(abs(fix),scalar(fix>0?1:-1));
 #else
       if (verbose>1)  cout << fix << " ";
       if (fix!=0) newrel[abs(fix)] += sign(fix);
@@ -442,12 +442,12 @@ vec homspace::proj_coords_from_index(int ind, const mat& m) const
  return vec(m.ncols());
 }
 
-long homspace::nfproj_coords_from_index(int ind, const vec& bas) const
+scalar homspace::nfproj_coords_from_index(int ind, const vec& bas) const
 {
  long i= coordindex[ind];
  if (i>0) return  bas[i];
  if (i<0) return -bas[-i];
- return 0;
+ return scalar(0);
 }
 
 svec homspace::coords(const symb& s) const
@@ -482,12 +482,12 @@ void homspace::add_proj_coords_cd(vec& v, long c, long d, const mat& m) const
   else if (n<0) v.sub_row(m,-n);
 }
 
-long homspace::nfproj_coords_cd(long c, long d, const vec& bas) const 
+scalar homspace::nfproj_coords_cd(long c, long d, const vec& bas) const 
 {
   return nfproj_coords_from_index(index2(c,d), bas);
 }
 
-void homspace::add_nfproj_coords_cd(long& a, long c, long d, const vec& bas) const 
+void homspace::add_nfproj_coords_cd(scalar& a, long c, long d, const vec& bas) const 
 {
   a += nfproj_coords_from_index(index2(c,d), bas);
 }
@@ -541,9 +541,9 @@ vec homspace::proj_coords(long nn, long dd, const mat& m) const
    return ans;
 }
 
-long homspace::nfproj_coords(long nn, long dd, const vec& bas) const
+scalar homspace::nfproj_coords(long nn, long dd, const vec& bas) const
 {
-  long ans = 0;
+  scalar ans(0);
   add_nfproj_coords(ans, nn, dd, bas);
   return ans;
 }
@@ -572,7 +572,7 @@ void homspace::add_proj_coords(vec& v, long nn, long dd, const mat& m) const
    }
 }
 
-void homspace::add_nfproj_coords(long& aa, long nn, long dd, const vec& bas) const
+void homspace::add_nfproj_coords(scalar& aa, long nn, long dd, const vec& bas) const
 {
    add_nfproj_coords_cd(aa,0,1,bas);
    long c=0, d=1, a=nn, b=dd;
@@ -1193,7 +1193,7 @@ vec homspace::maninvector(long p) const
 	  long p2=(p-1)>>1;
 	  for (int i=1; i<=p2; i++) { add_coords(tvec,i,p); }
 	  if(plusflag)
-	    tvec *=2;
+	    tvec *= scalar(2);
 	  else
 	    for (int i=1; i<=p2; i++) { add_coords(tvec,-i,p); }
 	}

@@ -27,8 +27,7 @@
 int main(void)
 {
  cout << "Test run of vector package.\n\n"; 
- int i,j,k;
- scalar n;
+ int i,j,k, n;
  cout << "Enter n : "; cin >> n;
  vec_m v;
  cout << "Uninitialized new vector v = " << v << endl;
@@ -80,7 +79,7 @@ int main(void)
 
  cout << "Subscript test\n";
  cout << "Enter length of subscript vector:";
- int m; cin >> m; vec index(m);
+ int m; cin >> m; vec_i index(m);
  cout << "Enter subscript vector:";
  cin >> index;
  vec_m vv = v[index];

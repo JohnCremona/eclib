@@ -31,8 +31,7 @@ int main(void)
   time(&starttime);
   cout << "\nMultiprecision matrix package test program.\n\n";
   {
-    long i;
-    scalar r;
+    long i, r;
     mat_m a,aug,ref;
     vec_i pc(1),npc(1); vec_m poly(1);
     {

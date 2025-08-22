@@ -29,7 +29,7 @@
 
 bigint inverse(const mat_m& a, mat_m& ainv);
 void showmatrix(const mat_m& m);
-void showmatrix(const mat& m);
+//void showmatrix(const mat& m);
 
 
 class nfd {

@@ -34,7 +34,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   h1=in_h1;
   long n = h1->modulus;
   long dimh = h1->h1dim();
-  long denh = h1->h1denom(); dH=denh;
+  long denh = I2long(h1->h1denom()); dH=denh;
   vector<long> badprimes = h1->plist;
   mat K = basis(h1->kern).as_mat();
   mat_m tp, tp1, m;
@@ -335,20 +335,12 @@ vec_m nfd::ap(long p)
 
   for(k=0; k<rk; k++)
     {
-      long Kkj = K(k+1,pivots(S)[1]);
+      bigint Kkj(K(k+1,pivots(S)[1]));
       if(Kkj!=0)
 	{
-	  bigint mKkj; mKkj = Kkj;
-	  // if(bad)
-	  //   {
-          //     continue;  // not yet implemented
-	  //   }
-	  // else
-	    {
-	      symb s = h1->symbol(h1->freegens[k]);
-	      for(l=0; l<matlist.size(); l++)
-                apvec += mKkj*to_vec_m(matlist[l](s,h1,projcoord));
-	    }
+          symb s = h1->symbol(h1->freegens[k]);
+          for(l=0; l<matlist.size(); l++)
+            apvec += Kkj*to_vec_m(matlist[l](s,h1,projcoord));
 	}
     }
   return apvec;
@@ -382,15 +374,14 @@ mat_m nfd::heckeop(long p)
       colj.init(dimh);
       for(k=0; k<rk; k++)
 	{
-	  long Kkj = K(k+1,pivots(S)[j+1]);
+	  bigint Kkj(K(k+1,pivots(S)[j+1]));
 	  if(Kkj!=0)
 	    {
-	      bigint mKkj; mKkj = Kkj;
 	      if(bad)
 		{
 		  vec vt = (h1->applyop(matlist,h1->freemods[k])).as_vec();
 		  if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		  colj += (mKkj*to_vec_m(vt));
+		  colj += (Kkj*to_vec_m(vt));
 		}
 	      else
 		{
@@ -399,7 +390,7 @@ mat_m nfd::heckeop(long p)
 		    {
 		      vec vt = (matlist[l](s,h1)).as_vec();
 		      if(h1->cuspidal) vt=h1->cuspidalpart(vt);
-		      colj += mKkj*to_vec_m(vt);
+		      colj += Kkj*to_vec_m(vt);
 		    }
 		}
 	    }
@@ -440,12 +431,12 @@ void showmatrix(const mat_m& m)
 #endif
 }
 
-void showmatrix(const mat& m)
-{
-#ifdef OUTPUT_PARI_STYLE
-  m.output_pari(cout);
-#else
-  cout<<m;
-#endif
-}
+// void showmatrix(const mat& m)
+// {
+// #ifdef OUTPUT_PARI_STYLE
+//   m.output_pari(cout);
+// #else
+//   cout<<m;
+// #endif
+// }
 
