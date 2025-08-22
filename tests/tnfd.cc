@@ -40,30 +40,27 @@ int main()
 {
   // init_time();
  cout << "Program tnfd." << endl;
-#ifdef MODULAR
- cout << "MODULUS for linear algebra = " << MODULUS << endl;
-#endif
- long n=1; 
+ long n=1;
  int plus=1;
  int verbose=1;
  int w_split=0;
  int mult_one=0;
  int one_p=0;
- cout << "Verbose output? (0/1) "; cin >> verbose;
+ cerr << "Verbose output? (0/1) "; cin >> verbose;
  // cout << "Plus space (0/1)? "; cin >> plus;
- while (cout<<"Enter level: ", cin>>n, n>1)
+ while (cerr<<"Enter level: ", cin>>n, n>1)
    {
      cout << ">>>Level " << n << "\t";
      homspace hplus(n,plus,0,0);
      int dimh = hplus.h1dim();
      cout << "dimension = " << dimh << endl;
 
-     cout << "Split into W-eigenspaces (0/1)? "; 
-     cin >> w_split;
-     cout << "Multiplicity 1 eigenspaces only? (0/1)? "; 
-     cin >> mult_one;
-     cout << "Use just one T_p (1) or a linear combination (0)? "; 
-     cin >> one_p;
+     cout << "Split into W-eigenspaces (0/1)? ";
+     cin >> w_split; cout<<endl;
+     cout << "Multiplicity 1 eigenspaces only (0/1)? ";
+     cin >> mult_one; cout<<endl;
+     cout << "Use just one T_p (1) or a linear combination (0)? ";
+     cin >> one_p; cout<<endl;
      nfd form = nfd(&hplus, one_p, w_split, mult_one, verbose);
      long dims = dim(form.S);
      if(dims==0) continue;

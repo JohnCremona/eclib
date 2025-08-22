@@ -1,7 +1,9 @@
 Program tnfd.
-MODULUS for linear algebra = 1073741789
-Verbose output? (0/1) Enter level: >>>Level 97	dimension = 8
-Split into W-eigenspaces (0/1)? Multiplicity 1 eigenspaces only? (0/1)? Use just one T_p (1) or a linear combination (0)? Computing T_p for p = 2...done.
+>>>Level 97	dimension = 8
+Split into W-eigenspaces (0/1)? 
+Multiplicity 1 eigenspaces only (0/1)? 
+Use just one T_p (1) or a linear combination (0)? 
+Computing T_p for p = 2...done.
 char poly = [-3 28 -54 -54 47 22 -13 -2 1]
 NTL char poly square-free factors = [[[-3 28 -54 -54 47 22 -13 -2 1] 1]]
 Factors of multiplicity 1 are:
@@ -104,4 +106,3 @@ a_89 = [-40,16,48,8]
 char poly = [ 1 4 6 4 1 ]
 w_97 = [0,0,0,0]
 
-Enter level: 

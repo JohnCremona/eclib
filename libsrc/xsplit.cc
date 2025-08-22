@@ -38,7 +38,6 @@ template<class T>
 Zvec<T> lift(const Zvec<T>& v)
 {
   Zvec<T> w;
-#ifdef MODULAR
   if ( lift(v,T(MODULUS),w) )
     return w;
   else
@@ -46,10 +45,6 @@ Zvec<T> lift(const Zvec<T>& v)
       cout << "Unable to lift eigenvector " << v << " from Z/" << MODULUS << " to Z" << endl;
       return v;
     }
-#else
-  w = b;
-  make_primitive(w);
-#endif
   return w;
 }
 

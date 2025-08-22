@@ -50,9 +50,6 @@ int main(void)
  cout << "Program nfhpcurve.  Using METHOD = " << METHOD 
       << " to find newforms" << endl;
  set_precision(BITPREC0);
-#ifdef MODULAR
- cout << "MODULUS for linear algebra = " << MODULUS << endl;
-#endif
  cout << "Verbose output? "; cin>>verbose;
  cout << "How many primes for Hecke eigenvalues? ";
  cin  >> stopp; cout << endl;

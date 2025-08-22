@@ -39,29 +39,26 @@ int main(void)
 {
  init_time();
  start_time();
- long n=110, stopp; 
+ long n=110, stopp;
  int output, verbose, sign=1;
 
  cout << "Program tmanin.  Using METHOD = " << METHOD << " to find newforms" << endl;
-#ifdef MODULAR
- cout << "MODULUS for linear algebra = " << MODULUS << endl;
-#endif
- cout << "Verbose output? "; cin>>verbose;
- cout << "How many primes for Hecke eigenvalues? ";
- cin  >> stopp; cout << endl;
- output=1; 
- cout << "Output Hecke eigenvalues to file? (0/1) ";  cin >> output;
- cout << "Sign? (-1/0/1) ";  cin >> sign;
+ cerr << "Verbose output? "; cin>>verbose;
+ cerr << "How many primes for Hecke eigenvalues? ";
+ cin  >> stopp; cerr << endl;
+ output=1;
+ cerr << "Output Hecke eigenvalues to file? (0/1) ";  cin >> output;
+ cerr << "Sign? (-1/0/1) ";  cin >> sign;
 #ifdef AUTOLOOP
  long limit;
- cout<<"Enter first and last N: ";cin>>n>>limit; n--;
+ cerr<<"Enter first and last N: ";cin>>n>>limit; n--;
  while (n<limit) { n++;
 #else
-     while (n>1) { cout<<"Enter level: "; cin>>n;
+     while (n>1) { cerr<<"Enter level: "; cin>>n;
 #endif
  if (n>1)
 {
-  cout << "\n>>>Level " << n;
+  cout << ">>>Level " << n;
   if(verbose)cout<<endl; else cout<< ":\t";
   newforms nf(n,verbose); 
   int noldap=25;

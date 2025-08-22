@@ -274,9 +274,9 @@ void newform::fixup_eigs()
       scalar piv;
       ssubspace espace;
       if(sign==-1)
-        espace=make1d(bminus,piv, MODULUS);
+        espace=make1d(bminus,piv, scalar(MODULUS));
       else
-        espace=make1d(bplus,piv, MODULUS);
+        espace=make1d(bplus,piv, scalar(MODULUS));
       piv*=denom;
       while(aqi!=aqlist.end()) // compute missing aq
 	{
@@ -394,9 +394,9 @@ void newform::find_coords_plus_minus()
     {
       cvi = nf->h1->coord_vecs[i];
       if(sign!=-1)
-        coordsplus[i]=dotmodp(cvi,bplus,MODULUS);
+        coordsplus[i]=dotmodp(cvi,bplus,scalar(MODULUS));
       if(sign!=+1)
-        coordsminus[i]=dotmodp(cvi,bminus,MODULUS);
+        coordsminus[i]=dotmodp(cvi,bminus,scalar(MODULUS));
     }
   contplus=content(coordsplus);
   if (contplus>1) coordsplus/=contplus;
@@ -658,9 +658,9 @@ void newform::add_more_ap(int nap)
 	  if(!have_espace)
 	    {
               if(sign==-1)
-                espace=make1d(bminus,piv, MODULUS);
+                espace=make1d(bminus,piv, scalar(MODULUS));
               else
-                espace=make1d(bplus,piv, MODULUS);
+                espace=make1d(bplus,piv, scalar(MODULUS));
 	      piv*=nf->h1->h1denom();
 	      have_espace=1;
 	    }

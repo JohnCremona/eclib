@@ -232,14 +232,14 @@ if (verbose>1)
        cout << "Computing kernel..."<<endl;
      }
 
-   vec pivs, npivs;
+   vec_i pivs, npivs;
 #ifdef USE_SMATS
-   smat_elim sme(relmat,MODULUS);
+   smat_elim sme(relmat, scalar(MODULUS));
    //relmat=smat(0,0); // clear space
-   int d1;
+   scalar d1;
    start_time();
    smat sp;
-   liftmat(sme.kernel(npivs,pivs),MODULUS,sp,d1);
+   liftmat(sme.kernel(npivs,pivs), scalar(MODULUS), sp, d1);
    stop_time();
    if (verbose) {cout<<"time to compute kernel = "; show_time(); cout<<endl;}
    denom1=d1;
@@ -350,11 +350,11 @@ if (verbose>1)
      }
 
    smat sdeltamat(deltamat);
-   kern=kernel(sdeltamat, MODULUS);
-   vec pivs, npivs;
-   int d2;
+   kern=kernel(sdeltamat, scalar(MODULUS));
+   vec_i pivs, npivs;
+   scalar d2;
    smat sk;
-   liftmat(smat_elim(sdeltamat, MODULUS).kernel(npivs,pivs),MODULUS,sk,d2);
+   liftmat(smat_elim(sdeltamat, scalar(MODULUS)).kernel(npivs,pivs), scalar(MODULUS),sk,d2);
    denom2=d2;
    tkernbas = transpose(kern.bas());         // dim(kern) x rank
    deltamat.init(0); // clear space.
@@ -636,7 +636,7 @@ smat homspace::s_calcop_restricted(string opname, long p, const matop& mlist,
        m.setrow(j,colj);
      }
   //  m = m*basis(s);
-  m = mult_mod_p(m,basis(s),MODULUS);
+  m = mult_mod_p(m,basis(s), scalar(MODULUS));
   if(!dual) m=transpose(m); // dual is default for restricted ops
   if (display) 
     {
@@ -928,7 +928,7 @@ mat homspace::conj_restricted(const subspace& s,
       svec colj   =  coords_cd(-sy.cee(),sy.dee());
       m.setrow(j,colj.as_vec());
     }
-  m = matmulmodp(m,basis(s),MODULUS);
+  m = matmulmodp(m,basis(s), scalar(MODULUS));
   if(!dual) m=transpose(m); // dual is default for restricted ops
   if (display) cout << "Matrix of conjugation = " << m;
   return m;
@@ -947,7 +947,7 @@ smat homspace::s_conj_restricted(const ssubspace& s,
       m.setrow(j,colj);
     }
   //  cout<<"m = "<<m<<" = "<<m.as_mat()<<endl;
-  m = mult_mod_p(m,basis(s),MODULUS);
+  m = mult_mod_p(m,basis(s), scalar(MODULUS));
   if(!dual) m=transpose(m); // dual is default for restricted ops
   if (display) cout << "Matrix of conjugation = " << m.as_mat();
   return m;
@@ -1207,8 +1207,8 @@ vec homspace::maninvector(long p) const
 vec homspace::manintwist(long p) const
 {
  svec sum = coords(0,p);                   // =0, but sets the right length.
- for (long i=1; i<p; i++) sum += legendre(i,p)*coords(i,p);
- if(cuspidal) return cuspidalpart(sum.as_vec()); 
+ for (long i=1; i<p; i++) sum += scalar(legendre(i,p))*coords(i,p);
+ if(cuspidal) return cuspidalpart(sum.as_vec());
  else return sum.as_vec();
 }
 

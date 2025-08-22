@@ -38,7 +38,7 @@ private:
   mat_m V;
   mat_m W,Winv,WinvV,Winv_scaled;
   mat projcoord;
-  long coord_fac;
+  scalar coord_fac;
   bigint Wdetnum, Wdetdenom;
   vector<bigint> minpol;  // min poly of alpha, field generator
 public:

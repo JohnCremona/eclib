@@ -44,9 +44,6 @@ int main(void)
 
  cout << "Program nfhpmcurve.  Using METHOD = " << METHOD 
       << " to find newforms" << endl;
-#ifdef MODULAR
- cout << "MODULUS for linear algebra = " << MODULUS << endl;
-#endif
  cout << "Verbose output? "; cin>>verbose;
  cout << "How many primes for Hecke eigenvalues? ";
  cin  >> stopp0; cout << endl;

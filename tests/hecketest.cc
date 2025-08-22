@@ -55,22 +55,19 @@ vector<long> eigrange(long p)
 int main(void)
 {
  cout << "Program hecketest.  Using METHOD = " << METHOD << " to find newforms" << endl;
-#ifdef MODULAR
- cout << "MODULUS for linear algebra = " << MODULUS << endl;
-#endif
  init_time();
  start_time();
  int n=2; 
  int plus=1;
  int verbose=0;
- cout << "See the hecke matrices (0/1)? "; cin >> verbose;
- cout << "Plus space (0/1)? "; cin >> plus;
+ cerr << "See the hecke matrices (0/1)? "; cin >> verbose;
+ cerr << "Plus space (0/1)? "; cin >> plus;
 #ifdef AUTOLOOP
      int limit; 
-     cout<<"Enter limit on level: ";cin>>limit;
+     cerr<<"Enter limit on level: ";cin>>limit;
      while (n<limit) { n++;
 #else
-     while (n>1) { cout<<"Enter level: "; cin>>n;
+     while (n>1) { cerr<<"Enter level: "; cin>>n;
 #endif
  if (n>1)
 {

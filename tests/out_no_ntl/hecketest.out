@@ -1,6 +1,5 @@
 Program hecketest.  Using METHOD = 2 to find newforms
-MODULUS for linear algebra = 1073741789
-See the hecke matrices (0/1)? Plus space (0/1)? Enter level: >>>Level 90	Dimension = 22
+>>>Level 90	Dimension = 22
 denominator = 1
 Computing conjmat...   done.
 Computing +1 eigenspace...   done, dimension = 22
@@ -225,4 +224,3 @@ Computing T_p for p = 19...Computed matrix  =
 [0,0,-2,4,-4,-1,1,2,0,-4,2,-3,0,3,-2,0,2,0,0,7,0,13]]
 
 done, sparsity = 0.582645. 
-Enter level: 

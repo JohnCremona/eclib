@@ -37,10 +37,6 @@
 //=5 for standard long arithmetic
 //=6 for longs with modular method
 
-#if (METHOD==2)||(METHOD==4)||(METHOD==6)
-#define MODULAR   // Causes linear algebra to be done modulo global MODULUS
-#endif
-
 #if (METHOD==0)||(METHOD==2)
 #define SCALAR_OPTION 1
 #endif
@@ -59,20 +55,6 @@
 #define MODULUS to_ZZ("6074000003")
 #else
 #define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
-#endif
-
-#include <eclib/subspace.h>
-
-#ifdef MODULAR
-#define EIGENSPACE(a,b) peigenspace(a,b,MODULUS)
-#define SUBEIGENSPACE(a,b,c) psubeigenspace(a,b,c,MODULUS)
-#define COMBINE(a,b) pcombine(a,b,MODULUS)
-#define RESTRICT(a,b) prestrict(a,b,MODULUS)
-#else
-#define EIGENSPACE(a,b) eigenspace(a,b)
-#define SUBEIGENSPACE(a,b,c) subeigenspace(a,b,c)
-#define COMBINE(a,b) combine(a,b)
-#define RESTRICT(a,b) restrict_mat(a,b)
 #endif
 
 #endif
