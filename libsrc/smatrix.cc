@@ -1048,7 +1048,7 @@ int liftmats_chinese(const sZmat<T>& m1, T pr1, const sZmat<T>& m2, T pr2,
   return 1;
 }
 
-float ran0( int& idum );
+#include "random.cc"
 
 template<class T>
 void random_fill_in( sZmat<T>& sm, int max, int seed )

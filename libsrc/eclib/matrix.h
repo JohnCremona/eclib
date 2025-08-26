@@ -24,7 +24,6 @@
 #if     !defined(_ECLIB_MATRIX_H)
 #define _ECLIB_MATRIX_H      1       //flags that this file has been included
 
-#include "marith.h"
 #include "vector.h"
 #include "limits.h" // MAX_INT gcc >= 4.3
 

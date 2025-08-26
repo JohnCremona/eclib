@@ -22,7 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <eclib/svector.h>
-#include <eclib/marith.h>
 
 // Instantiate sZvec template classes for T=int, long, bigint
 

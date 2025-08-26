@@ -21,9 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/marith.h>
 #include <eclib/vector.h>
-#include "random.cc"
 
 // Instantiate Zvec template classes for T=int, long, bigint
 
