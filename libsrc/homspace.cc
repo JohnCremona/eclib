@@ -599,7 +599,6 @@ svec homspace::applyop(const matop& mlist, const modsym& m) const
 }
 
 // copy of routine from ../procs/xsplit.cc:
-mat sparse_restrict(const mat& m, const subspace& s);
 smat restrict_mat(const smat& m, const subspace& s);
 
 mat homspace::calcop_restricted(string opname, long p, const matop& mlist, 

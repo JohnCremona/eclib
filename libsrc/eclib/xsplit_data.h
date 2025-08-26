@@ -33,12 +33,11 @@
 // Disable multithreading
 // #undef ECLIB_MULTITHREAD
 
-#ifdef ECLIB_MULTITHREAD 
+#ifdef ECLIB_MULTITHREAD
 #include <boost/thread/mutex.hpp>
 #endif
 
-// Header files for macros and custom data structures
-#include <eclib/types.h>
+#include <eclib/splitbase.h>
 
 // Forward declaration of classes ... prevents circular includes.
 // form_finder only required as pointer

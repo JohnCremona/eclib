@@ -26,52 +26,11 @@
 #ifndef _ECLIB_SMATRIX_ELIM_H
 #define _ECLIB_SMATRIX_ELIM_H 1       //flags that this file has been included
 
-#include "smatrix.h"
+#include "ssubspace.h"
 #include "subspace.h"
 
-inline int
-find( int X, const int* ptr, int ub, int lb = 0 ) {
-  if( ptr[ub] < X ) return ub;
-  while( ptr[lb] < X ) {
-    int i = (ub + lb)/2;
-    ptr[i] < X ? (lb = i+1) : (ub = i);
-  }
-  return lb;
-}
-
-class smat_elim_list {
-public:
-  static int listsize;
-  int maxsize;
-  int *list_array;
-  int num;
-  int index;
-  void put( int X)
-  {
-    if( num >= maxsize ) grow();
-    list_array[ num++ ] = X;
-  }
-  int find( int X, int ub, int lb = 0 );
-  void grow ();
-  int next()
-  {
-    if( index < num ) return( list_array[index++] ); else return -1;
-  }
-  smat_elim_list( int m = 10);
-  ~smat_elim_list( );
-  void clear( int m = 0);
-};
-
-class smat_elim_ordlist : public smat_elim_list {
-public:
-  void put( int X);
-  void put( smat_elim_list& L);     // L must be ordered
-  void remove( int X );
-  void remove( smat_elim_list& L );     // L must be ordered
-  smat_elim_ordlist( int m = 10) : smat_elim_list(m) {;}
-};
-
-ostream& operator<< (ostream&s, const smat_elim_list&);
+class smat_elim_list;
+class smat_elim_ordlist;
 
 template<class T>
 class sZmat_elim : public sZmat<T>{
@@ -122,9 +81,41 @@ public:
   // destructor:
   ~sZmat_elim();
 
-  friend ostream& operator<< (ostream&s, const smat_elim_list&);
-
 };
+
+class smat_elim_list {
+public:
+  static int listsize;
+  int maxsize;
+  int *list_array;
+  int num;
+  int index;
+  void put( int X)
+  {
+    if( num >= maxsize ) grow();
+    list_array[ num++ ] = X;
+  }
+  int find( int X, int ub, int lb = 0 );
+  void grow ();
+  int next()
+  {
+    if( index < num ) return( list_array[index++] ); else return -1;
+  }
+  smat_elim_list( int m = 10);
+  ~smat_elim_list( );
+  void clear( int m = 0);
+};
+
+class smat_elim_ordlist : public smat_elim_list {
+public:
+  void put( int X);
+  void put( smat_elim_list& L);     // L must be ordered
+  void remove( int X );
+  void remove( smat_elim_list& L );     // L must be ordered
+  smat_elim_ordlist( int m = 10) : smat_elim_list(m) {;}
+};
+
+ostream& operator<< (ostream&s, const smat_elim_list&);
 
 inline ostream& operator<< (ostream&s, const smat_elim_list& L)
 {
@@ -136,46 +127,14 @@ inline ostream& operator<< (ostream&s, const smat_elim_list& L)
   return s;
 }
 
-template<class T> inline Zvec<int> pivots(const ssubZspace<T>& s)  {return s.pivs();}
+inline int
+find( int X, const int* ptr, int ub, int lb = 0 ) {
+  if( ptr[ub] < X ) return ub;
+  while( ptr[lb] < X ) {
+    int i = (ub + lb)/2;
+    ptr[i] < X ? (lb = i+1) : (ub = i);
+  }
+  return lb;
+}
 
-template<class T>
-class ssubZspace {
-
-public:
-  // constructors
-  ssubZspace<T>(int n=0);
-  ssubZspace<T>(const sZmat<T>& b, const Zvec<int>& p, T mod);
-  ssubZspace<T>(const ssubZspace<T>& s);
-  // assignment
-  void operator=(const ssubZspace<T>& s);
-
-  // member functions & operators
-  inline void clear() { pivots.init(); basis=sZmat<T>(0,0);}
-  inline Zvec<int> pivs() const {return pivots;}  // the pivot vector
-  inline sZmat<T> bas() const {return basis;}   // the basis matrix
-  inline T mod() const {return modulus;}   // the (prime) modulus
-
-  // non-member (friend) functions and operators
-  friend ssubZspace<T> combine<>(const ssubZspace<T>& s1, const ssubZspace<T>& s2);
-  friend sZmat<T> restrict_mat<>(const sZmat<T>& m, const ssubZspace<T>& s);
-
-  // Implementation
-private:
-  T modulus;
-  Zvec<int> pivots;
-  sZmat<T> basis;
-};
-
-// Declarations of nonmember, nonfriend operators and functions:
-
-template<class T>
-ssubZspace<T> kernel(const sZmat<T>& sm, T m);
-template<class T>
-ssubZspace<T> eigenspace(const sZmat<T>& sm, T lambda, T m);
-template<class T>
-ssubZspace<T> subeigenspace(const sZmat<T>& sm, T l, const ssubZspace<T>& s, T m);
-
-// construction of a 1-dimensional sparse subspace from a vector:
-template<class T>
-ssubZspace<T> make1d(const Zvec<T>& bas, T& piv, T m);
 #endif

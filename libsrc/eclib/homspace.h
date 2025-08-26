@@ -25,7 +25,7 @@
 #define _ECLIB_HOMSPACE_H      1
                            //flags that this file has been included
 
-#include <eclib/method.h>
+#include <eclib/method.h>  // uses/sets SCALAR_OPTION to fix scalar type
 #include <eclib/symb.h>
 
 

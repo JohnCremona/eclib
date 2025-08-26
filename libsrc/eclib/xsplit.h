@@ -32,9 +32,7 @@
 #include <boost/thread/mutex.hpp>
 #endif
 
-#include <eclib/method.h>
 #include <eclib/xsplit_data.h>
-#include <eclib/splitbase.h>
 
 #ifdef ECLIB_MULTITHREAD
 #include <eclib/threadpool.h>

@@ -31,11 +31,10 @@
 //#define SCALAR_OPTION 3  // bigint
 #endif
 
+#undef scalar_type // since this file may be included more than once
+
 #if (SCALAR_OPTION==2) // long
-#if !defined(scalar_type_defined)
-const string scalar_type = "long";
-#define scalar_type_defined
-#endif
+#define scalar_type string("long")
 typedef long scalar;
 typedef vec_l vec;
 typedef mat_l mat;
@@ -48,10 +47,7 @@ typedef form_finder_l form_finder;
 #define to_vec to_vec_l
 #else
 #if (SCALAR_OPTION==3) // bigint
-#if !defined(scalar_type_defined)
-const string scalar_type = "bigint";
-#define scalar_type_defined
-#endif
+#define scalar_type string("bigint")
 typedef bigint scalar;
 typedef vec_m vec;
 typedef mat_m mat;
@@ -64,10 +60,7 @@ typedef form_finder_m form_finder;
 #define to_vec to_vec_m
 #else
 #if (SCALAR_OPTION==1) // int
-#if !defined(scalar_type_defined)
-const string scalar_type = "int";
-#define scalar_type_defined
-#endif
+#define scalar_type string("int")
 typedef int scalar;
 typedef vec_i vec;
 typedef mat_i mat;
@@ -79,10 +72,7 @@ typedef smat_i_elim smat_elim;
 typedef form_finder_i form_finder;
 #define to_vec to_vec_i
 #else
-#if !defined(scalar_type_defined)
-const string scalar_type = "undefined";
-#define scalar_type_defined
-#endif
+#define scalar_type string("undefined")
 #endif
 #endif
 #endif

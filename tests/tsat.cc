@@ -23,7 +23,6 @@
 //
 
 #include <eclib/interface.h>
-#include <eclib/method.h>
 #include <eclib/curve.h>
 #include <eclib/getcurve.h>
 #include <eclib/points.h>
