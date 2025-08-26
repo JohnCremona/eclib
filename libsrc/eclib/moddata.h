@@ -37,12 +37,12 @@ class level {
   friend class summer;  
 //protected:
 public:     // got tired of making everything friends...
- long modulus;
+ long N;
  int plusflag; int squarelevel;
  vector<long> plist,dlist,primelist;
  long p0;  // first good prime
  long npdivs,ndivs,sqfac,nap;
- long reduce(long res)const {res%=modulus; return (res<0)?modulus+res:res;}
+ long reduce(long res)const {res%=N; return (res<0)?N+res:res;}
 public:
  explicit level(long n, long neigs=20);
 };

@@ -28,7 +28,7 @@
 
 #include <eclib/types.h>
 
-const scalar modulus(PRIME30); // 1073741789 = max p s.t. p < 2^30
+const scalar modulus(DEFAULT_MODULUS); // 1073741789 = max p < 2^30
 
 long starttime,stoptime;
 

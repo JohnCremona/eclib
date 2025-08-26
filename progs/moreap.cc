@@ -59,7 +59,7 @@ int main(void)
  cin  >> stopp; cout << endl;
 #endif
   cout << "\n>>>Level " << n << "\t";
-  newforms nf(n,showforms); 
+  newforms nf(n, DEFAULT_MODULUS, showforms); 
   nf.createfromdata(1,0,0);
   if (showforms) nf.newforms::display();
 

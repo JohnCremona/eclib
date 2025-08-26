@@ -35,14 +35,14 @@ template class form_finderT<long>;
 template class form_finderT<bigint>;
 
 template<class T>
-Zvec<T> lift(const Zvec<T>& v)
+Zvec<T> lift(const Zvec<T>& v, T mod)
 {
   Zvec<T> w;
-  if ( lift(v,T(MODULUS),w) )
+  if ( lift(v, mod, w) )
     return w;
   else
     {
-      cout << "Unable to lift eigenvector " << v << " from Z/" << MODULUS << " to Z" << endl;
+      cout << "Unable to lift eigenvector " << v << " from Z/" << mod << " to Z" << endl;
       return v;
     }
   return w;
@@ -51,11 +51,13 @@ Zvec<T> lift(const Zvec<T>& v)
 // CLASS FORM_FINDER (was called splitter)
 
 template<class T>
-form_finderT<T>::form_finderT(splitter_base<T>* hh,
-                              int plus, int maxd, int mind, int dualflag, int bigmatsflag, int v)
-:h(hh), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v),
-gnfcount(0), maxdepth(maxd), mindepth(mind)
+form_finderT<T>::form_finderT(splitter_base<T>* hh, T mod,
+                              int plus, int maxd, int mind,
+                              int dualflag, int bigmatsflag, int v)
+  :h(hh), modulus(mod), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v),
+   gnfcount(0), maxdepth(maxd), mindepth(mind)
 {
+  //cout<<"In form_finder constructor, modulus="<<modulus<<", plusflag="<<plus<<", maxd="<<maxd<<", mind="<<mind<<", dualflag="<<dualflag<<", bigmatsflag="<<bigmatsflag<<endl;
   eclogger::setLevel( verbose );
   denom1 = h->matden();
   dimen  = h->matdim();
@@ -151,14 +153,14 @@ sZmat<T> form_finderT<T>::make_nested_submat(long ip, ff_data<T> &data)
       jlist = d->rel_space_->pivs()[jlist];
       d->parent_->child_ = d;
       d = d->parent_;
-      if(level) b = mult_mod_p(d->rel_space_->bas(), b, T(MODULUS));
+      if(level) b = mult_mod_p(d->rel_space_->bas(), b, modulus);
     }
 
   // now compute the matrix of images of the j'th generator for j in jlist
   ECLOG(2) << " basis done..." << flush;
   sZmat<T> m = h -> s_opmat_cols(ip, jlist, 0);
   ECLOG(2) << " sub-opmat done..." << flush;
-  m = mult_mod_p(m,b,T(MODULUS));
+  m = mult_mod_p(m,b,modulus);
   ECLOG(1) <<" opmat done."<<endl;
   return m;
 }
@@ -187,7 +189,7 @@ void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
   ECLOG(1) << "Increasing depth to " << depth+1 << ", "
            << "trying eig = " << eig << "..."
            << "after scaling, eig =  " << eig2 << "..." << endl;
-  ssubZspace<T> s(0);
+  ssubZspace<T> s(0, modulus);
 
   vector<int> submat_dim = dim(data.submat_);
   stringstream submat_dim_ss;
@@ -198,7 +200,7 @@ void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
 		                 << density(data.submat_) << ")..." << flush;
   ECLOG(3) << "submat = " << data.submat_ << flush;
 
-  s = eigenspace(data.submat_,eig2, T(DEFAULT_MODULUS)); // the relative eigenspace
+  s = eigenspace(data.submat_,eig2, modulus); // the relative eigenspace
 
   // Increment data usage counter for parent node
   data.increaseSubmatUsage();
@@ -299,6 +301,8 @@ void form_finderT<T>::make_basis( ff_data<T> &data ) {
   if( bigmats ) {
     ssubZspace<T>* s;
     s = data.abs_space_;  // only used when depth>0
+    cout<<"data.abs_space_ = (pointer) "<<data.abs_space_<<endl;
+    cout<<"s->modulus = "<<s->mod()<<endl;
     subconjmat = (depth) ? restrict_mat(data.conjmat_, *s) : data.conjmat_;
     // will only be a 2x2 in this case (genus 1 only!)
   }
@@ -315,11 +319,11 @@ void form_finderT<T>::make_basis( ff_data<T> &data ) {
     if(signeig<0) seig = -eig;
 
     if(depth) {
-      spm_rel = new ssubZspace<T>(eigenspace(subconjmat,seig, T(DEFAULT_MODULUS)));
+      spm_rel = new ssubZspace<T>(eigenspace(subconjmat,seig, modulus));
 	    //spm_abs  = new ssubZspace<T>(combine(*s,*spm_rel));
     }
     else {
-      spm_rel = new ssubZspace<T>(eigenspace(subconjmat,seig, T(DEFAULT_MODULUS)));
+      spm_rel = new ssubZspace<T>(eigenspace(subconjmat,seig, modulus));
       //spm_abs = spm_rel;
     }
 
@@ -355,10 +359,10 @@ Zvec<T> form_finderT<T>::make_basis2(ff_data<T> &data, const Zvec<T>& v)
   Zvec<T> w = v;
   while (level--)
     {
-      w = mult_mod_p(d->rel_space_->bas(), w, T(MODULUS));
+      w = mult_mod_p(d->rel_space_->bas(), w, modulus);
       d = d->parent_;
     }
-  return lift(w);
+  return lift(w, modulus);
 }
 
 template<class T>

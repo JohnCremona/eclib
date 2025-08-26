@@ -26,19 +26,20 @@
                            //flags that this file has been included
 
 #include <eclib/moddata.h>
+#include <eclib/method.h>
 
 class oldforms {
  public:
-  long noldclasses, nap, ntp;
-  long totalolddim;
+  long noldclasses, nap, ntp, totalolddim;
  private:
   const level* N;
+  scalar modulus;
   int plusflag;
   vector< vector<long> > oldformap;
   vector<long> oldclassdims, oldlevels;
   void getoldclasses(long d, int verbose);
  public:
-  oldforms(long intp, const level* iN, int verbose=0, int plus=1);   
+  oldforms(long intp, const level* iN, scalar mod, int verbose=0, int plus=1);
              //intp = input value of ntp = max. number of Tp to use
   ~oldforms(){;}
   long dimoldpart(vector<long> aplist) const;

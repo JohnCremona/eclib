@@ -33,7 +33,7 @@ class ssubZspace {
 
 public:
   // constructors
-  ssubZspace<T>(int n=0);
+  ssubZspace<T>(int n=0, T mod=DEFAULT_MODULUS);
   ssubZspace<T>(const sZmat<T>& b, const Zvec<int>& p, T mod);
   ssubZspace<T>(const ssubZspace<T>& s);
   // assignment

@@ -51,48 +51,49 @@
 
 template<class T>
 class form_finderT {
-  public:
-    form_finderT(splitter_base<T>* hh, int plus, int maxd, int mind=0,
-                int dualflag=1, int bigmatsflag=0, int v=0);
-    ~form_finderT(void);
+public:
+  form_finderT(splitter_base<T>* hh, T mod, int plus, int maxd, int mind=0,
+               int dualflag=1, int bigmatsflag=0, int v=0);
+  ~form_finderT(void);
 
-    void find();
-    void find(ff_data<T> &data);
-    void recover(vector< vector<long> > eigs);
-    void splitoff(const vector<long>& eigs);
-    void store(Zvec<T> bp, Zvec<T> bm, vector<long> eigs);
+  void find();
+  void find(ff_data<T> &data);
+  void recover(vector< vector<long> > eigs);
+  void splitoff(const vector<long>& eigs);
+  void store(Zvec<T> bp, Zvec<T> bm, vector<long> eigs);
 
-    Zvec<T>  getbasis( const ff_data<T> &data ) const {return data.bplus_;}
-    Zvec<T>  getbasisplus( const ff_data<T> &data ) const {return data.bplus_;}
-    Zvec<T>  getbasisminus( const ff_data<T> &data ) const {return data.bminus_;}
+  Zvec<T>  getbasis( const ff_data<T> &data ) const {return data.bplus_;}
+  Zvec<T>  getbasisplus( const ff_data<T> &data ) const {return data.bplus_;}
+  Zvec<T>  getbasisminus( const ff_data<T> &data ) const {return data.bminus_;}
 
-    friend class ff_data<T>;
+  friend class ff_data<T>;
 
-  protected:
-    splitter_base<T>* h;
+protected:
+  splitter_base<T>* h;
 
-    int            plusflag, dual, bigmats, verbose, targetdim;
-    int            gnfcount;                  // Global newform counter
-    long           maxdepth, mindepth, dimen;
-    T         denom1;
-    vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists
-    vector<Zvec<T>>    gbplus, gbminus;           // Vector to hold all bplus/bminus
+  int            plusflag, dual, bigmats, verbose, targetdim;
+  int            gnfcount;                  // Global newform counter
+  long           maxdepth, mindepth, dimen;
+  T              modulus; // prime modulus for linear algebra
+  T              denom1;
+  vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists
+  vector<Zvec<T>>    gbplus, gbminus;           // Vector to hold all bplus/bminus
 
-    ff_data<T>* root;                            // Always points to root data node
+  ff_data<T>* root;                            // Always points to root data node
 
-    void make_opmat(long i, ff_data<T> &data);   // Puts it in the_opmat
-    void make_submat(ff_data<T> &data);
-    sZmat<T> make_nested_submat(long ip, ff_data<T> &data);
-    void go_down(ff_data<T> &data, long eig, int last=0);
-    void go_up( ff_data<T> &data );
-    void make_basis(ff_data<T> &data);
-    Zvec<T> make_basis1(ff_data<T> &data);  // current space has dim. 1
-    Zvec<T> make_basis2(ff_data<T> &data, const Zvec<T>& v);  // current space has dim. >1 and
+  void make_opmat(long i, ff_data<T> &data);   // Puts it in the_opmat
+  void make_submat(ff_data<T> &data);
+  sZmat<T> make_nested_submat(long ip, ff_data<T> &data);
+  void go_down(ff_data<T> &data, long eig, int last=0);
+  void go_up( ff_data<T> &data );
+  void make_basis(ff_data<T> &data);
+  Zvec<T> make_basis1(ff_data<T> &data);  // current space has dim. 1
+  Zvec<T> make_basis2(ff_data<T> &data, const Zvec<T>& v);  // current space has dim. >1 and
                                                    // relative basis vector v
 
 #ifdef ECLIB_MULTITHREAD
-    threadpool   pool;                        // Job queue
-    boost::mutex store_lock;                  // Lock for store() function
+  threadpool   pool;                        // Job queue
+  boost::mutex store_lock;                  // Lock for store() function
 #endif
 };
 

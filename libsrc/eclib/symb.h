@@ -39,15 +39,15 @@ class symb {
    long dee() const        {return d;}
    long ceered() const        {return N->reduce(c);}
    long deered() const        {return N->reduce(d);}
-   long modulus() const       {return N->modulus;}
-   int operator==(const symb& s) const 
-  {return 0==((xmodmul(c,s.d,N->modulus)-xmodmul(s.c,d,N->modulus))%(N->modulus));}
-   int eq(const symb& s) const 
+   long level() const       {return N->N;}
+   int operator==(const symb& s) const
+  {return 0==((xmodmul(c,s.d,N->N)-xmodmul(s.c,d,N->N))%(N->N));}
+   int eq(const symb& s) const
        {return ((c==s.c)&&(d==s.d))||((c==-s.c)&&(d==-s.d));}
    symb normalize() const;
    friend ostream& operator<< (ostream&s, const symb&);
    long orbitlength() const
-     {long n=N->modulus, cr=N->reduce(c); cr=cr*cr; 
+     {long n=N->N, cr=N->reduce(c); cr=cr*cr;
      return n/N->gcd(cr);}
 };
 
@@ -93,7 +93,7 @@ class symbdata :public moddata {
     long rof(long i) const {symb s=symbol(i); return index2(s.dee(), s.cee());}
     long rsof(long i) const {symb s=symbol(i); return index2(-s.cee(),s.dee());}
     long sof(long i) const {symb s=symbol(i); return index2(-s.dee(), s.cee());}
-    long tof(long i) const {symb s=symbol(i); long c=s.cee(), d=s.dee(); return index2(c-d, c);} 
+    long tof(long i) const {symb s=symbol(i); long c=s.cee(), d=s.dee(); return index2(c-d, c);}
 };
 
 modsym jumpsymb(const symb& s1, const symb& s2);

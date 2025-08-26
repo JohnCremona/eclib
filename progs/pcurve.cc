@@ -72,7 +72,7 @@ int main(void)
 {
   cout << "N = " << n << endl;
 
-  newforms nf(n,detail);
+  newforms nf(n, DEFAULT_MODULUS, detail);
   int noldap=25;
   nf.createfromdata(1,noldap);
   int squarelevel=nf.squarelevel;

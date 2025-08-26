@@ -25,7 +25,7 @@
 #include <eclib/arith.h>
 
 level::level(long n, long neigs)
-  : modulus(n), plist(pdivs(n)), dlist(posdivs(n)), nap(neigs)
+  : N(n), plist(pdivs(n)), dlist(posdivs(n)), nap(neigs)
 {
   //cout<<"Creating a class level with n = " << n << endl;
   npdivs=plist.size();
@@ -35,7 +35,7 @@ level::level(long n, long neigs)
   while(primelist.size()<(unsigned)nap)
     {
       p=pr;
-      if (ndivides(p,modulus)) 
+      if (ndivides(p,N)) 
 	{
 	  if(p0==0) p0=p;
 	  primelist.push_back(p);
@@ -67,51 +67,51 @@ moddata::moddata(long n) :level(n)
 {
   //   cout << "In constructor moddata::moddata.\n";
  long x,nd,nnoninv;
- phi=psi=modulus;
+ phi=psi=N;
  for(long i=0; i<npdivs; i++)
    {  long p = plist[i];
       phi -= phi/p;
       psi += psi/p;
     }
  nsymb = psi;
- nsymb1 = 2*modulus-phi;
+ nsymb1 = 2*N-phi;
  nsymb2 = nsymb-nsymb1;
- invlist.resize(modulus);          //codes
- noninvlist.resize(modulus-phi);   //list of non-units
- noninvdlist.resize(modulus-phi);  //list of divisors for each nonunit
- gcdtable.resize(modulus);         //list of gcds mod N
- unitdivlist.resize(modulus);      //list of units s.t. u*res | N
+ invlist.resize(N);          //codes
+ noninvlist.resize(N-phi);   //list of non-units
+ noninvdlist.resize(N-phi);  //list of divisors for each nonunit
+ gcdtable.resize(N);         //list of gcds mod N
+ unitdivlist.resize(N);      //list of units s.t. u*res | N
  nnoninv=0;
- for (long i=0; i<modulus; i++)            //set up codes
- { long d = bezout_x(i,modulus,x);
+ for (long i=0; i<N; i++)            //set up codes
+ { long d = bezout_x(i,N,x);
    gcdtable[i]=d;
    if (d==1) {unitdivlist[i] = invlist[i] = reduce(x); }
    else
    {invlist[i]=-nnoninv;
     noninvlist[nnoninv]=i;
     noninvdlist[nnoninv]=-1;
-    if (d<modulus)
+    if (d<N)
     {
      for (nd=0; (nd<ndivs)&&(dlist[nd]!=d); nd++) ;
      noninvdlist[nnoninv]=nd;
     }
     nnoninv++;
-    if(::gcd(x,modulus)!=1) // adjust x so coprime to N
+    if(::gcd(x,N)!=1) // adjust x so coprime to N
       {
-	long m=modulus/d, mm, mpower, mmold,u,v;
+	long m=N/d, mm, mpower, mmold,u,v;
 	mpower=mm=m; mmold=1;
 	while(mm!=mmold) 
 	  {
-	    mpower=xmodmul(m,mpower,modulus); 
+	    mpower=xmodmul(m,mpower,N); 
 	    mmold=mm; 
-	    mm=::gcd(mpower,modulus);
+	    mm=::gcd(mpower,N);
 	  }
 
-	bezout(mm,modulus/mm,u,v);
+	bezout(mm,N/mm,u,v);
 	// Must be careful of overflow!
 	x = (x*v)%mm; 
-	x = (x*(modulus/mm))%modulus;
-	x = (x+(u*mm))%modulus;
+	x = (x*(N/mm))%N;
+	x = (x+(u*mm))%N;
       }
     unitdivlist[i]=x;
    }
@@ -121,7 +121,7 @@ moddata::moddata(long n) :level(n)
 
 void moddata::display() const
 {
- cout << "Level = " << modulus << "\n";
+ cout << "Level = " << N << "\n";
  cout << "Number of symbols = " << nsymb << "\n";
  cout << ndivs << " non-trivial divisors: " << dlist << endl;
  cout << npdivs << " prime divisors: " << plist << endl;

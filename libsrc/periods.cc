@@ -65,7 +65,7 @@ vector<long> resort_aplist(const level* iN,
 			   const vector<long>& primelist,
 			   const vector<long>& apl)
 {
-  long N = iN->modulus;
+  long N = iN->N;
 //Sort out the aplist, since apl has the W_q eigs first:
   long nap=apl.size();
   //  cout<<"resort_aplist(), using "<<nap<<" primes"<<endl;
@@ -102,7 +102,7 @@ vector<long> resort_aplist(const level* iN,
 
 void summer::initaplist(const level* iN, const vector<long>& apl)
 {
-  N = iN->modulus;
+  N = iN->N;
   primelist = primes(apl.size());   //First #apl primes, indexed from 0
 #ifdef NEW_OP_ORDER
   aplist=apl;
@@ -781,7 +781,6 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
 // Cannot just use trans_to_curve() as we need to fixc6...
 // which DOES use n and i
 {
-  long n = modulus;  // NOT redundant, used in fixc6
   long fac = sqfac;
   long fac6=(odd(fac)?fac:2*fac);
 //  if(fac>1) cout<<"factor = "<<fac<<endl;
@@ -815,7 +814,7 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   // adjusts so in the data files, start at 1
 
 #ifndef MPFP // Multi-Precision Floating Point
-  c4c6fixer(n,i,ic4,ic6);
+  c4c6fixer(N,i,ic4,ic6);
   if(verbose)
     {
       cout << "After fixing: \n";
@@ -826,7 +825,7 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   if(C.isnull()) return C;
   Curvedata CD(C,1);  // The 1 causes minimalization
   CurveRed CR(CD);
-  if (getconductor(CR) != n)
+  if (getconductor(CR) != N)
     {
       if (verbose)
         cout << "Constructed curve "<<C<<" has wrong conductor "<<getconductor(CR)<<endl;

@@ -45,6 +45,7 @@ typedef smat_l smat;
 typedef smat_l_elim smat_elim;
 typedef form_finder_l form_finder;
 #define to_vec to_vec_l
+#define to_mat to_mat_l
 #else
 #if (SCALAR_OPTION==3) // bigint
 #define scalar_type string("bigint")
@@ -58,6 +59,7 @@ typedef smat_m smat;
 typedef smat_m_elim smat_elim;
 typedef form_finder_m form_finder;
 #define to_vec to_vec_m
+#define to_mat to_mat_m
 #else
 #if (SCALAR_OPTION==1) // int
 #define scalar_type string("int")
@@ -71,6 +73,7 @@ typedef smat_i smat;
 typedef smat_i_elim smat_elim;
 typedef form_finder_i form_finder;
 #define to_vec to_vec_i
+#define to_mat to_mat_i
 #else
 #define scalar_type string("undefined")
 #endif

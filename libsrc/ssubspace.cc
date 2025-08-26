@@ -31,27 +31,27 @@ template class ssubZspace<long>;
 template class ssubZspace<bigint>;
 
 template<class T>
-ssubZspace<T>::ssubZspace(int n)
-  :pivots(Zvec<int>::iota(n)), basis(sZmat<T>::identity_matrix(n))
+ssubZspace<T>::ssubZspace(int n, T mod)
+  :modulus(mod), pivots(Zvec<int>::iota(n)), basis(sZmat<T>::identity_matrix(n))
 {}
 
 template<class T>
 ssubZspace<T>::ssubZspace(const sZmat<T>& b, const Zvec<int>& p, T mod)
-  :modulus(mod),pivots(p),basis(b)
+  :modulus(mod), pivots(p), basis(b)
 {}
 
 template<class T>
 ssubZspace<T>::ssubZspace(const ssubZspace<T>& s)
-  :modulus(s.modulus),pivots(s.pivots),basis(s.basis)
+  :modulus(s.modulus), pivots(s.pivots), basis(s.basis)
 {}
 
 // assignment
 template<class T>
 void ssubZspace<T>::operator=(const ssubZspace<T>& s) 
 {
+  modulus=s.modulus;
   pivots=s.pivots;
   basis=s.basis;
-  modulus=s.modulus;
 }
 
 // Definitions of nonmember, nonfriend operators and functions:
@@ -65,7 +65,7 @@ ssubZspace<T> combine(const ssubZspace<T>& s1, const ssubZspace<T>& s2)
  
 template<class T>
 sZmat<T> restrict_mat(const sZmat<T>& m, const ssubZspace<T>& s)
-{ 
+{ cout<<"In restrict_mat(), s.modulus = "<<s.modulus<<endl;
   return mult_mod_p(m.select_rows(pivots(s)),basis(s),s.modulus);
 }
 

@@ -36,6 +36,4 @@
 // to be int/long/bigint and *_i/*_l/*_m according to SCALAR
 #include "types.h"
 
-#define MODULUS DEFAULT_MODULUS  // (set in xmod.h) used for modular linear algebra
-
 #endif

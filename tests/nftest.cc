@@ -50,7 +50,7 @@ int main(void)
  if (n>1)
 {
  cout << ">>> Level " << n << " <<<\t";
- newforms nf(n,verbose);
+ newforms nf(n, DEFAULT_MODULUS, verbose);
  cout << "\nAfter constructor, about to createfromdata() \n";
  nf.createfromdata(1,25);
  int num = nf.n1ds;

@@ -60,7 +60,7 @@ int main(void)
 {
   cout << ">>>Level " << n;
   if(verbose)cout<<endl; else cout<< ":\t";
-  newforms nf(n,verbose); 
+  newforms nf(n, DEFAULT_MODULUS, verbose); 
   int noldap=25;
   nf.createfromscratch(sign,noldap);
 #ifdef LMFDB_ORDER

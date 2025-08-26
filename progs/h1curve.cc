@@ -87,7 +87,7 @@ int main(void)
 #endif
  if (n>1)
 {
- newforms nf(n,verb);
+ newforms nf(n, DEFAULT_MODULUS, verb);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
 #ifdef LMFDB_ORDER

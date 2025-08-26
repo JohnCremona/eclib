@@ -32,9 +32,9 @@
 nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 {
   h1=in_h1;
-  long n = h1->modulus;
+  long N = h1->N;
   long dimh = h1->h1dim();
-  long denh = I2long(h1->h1denom()); dH=denh;
+  dH = h1->h1denom();
   vector<long> badprimes = h1->plist;
   mat K = basis(h1->kern).as_mat();
   mat_m tp, tp1, m;
@@ -43,14 +43,14 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
   Hscales.resize(dimh+1);
   Hscales[0]=1;
-  for(i=1; i<=dimh; i++) Hscales[i]=Hscales[i-1]*denh;
+  for(i=1; i<=dimh; i++) Hscales[i]=Hscales[i-1]*dH;
 
 // Compute the desired linear combination of Tp:
 
   if(one_p) // Compute one Tp:
     {
       primevar pr;
-      while (n%pr==0) pr++;
+      while (N%pr==0) pr++;
       p=pr;
       cout << "Computing T_p for p = " << p << "..." << flush;
       tp = to_mat_m(transpose(h1->newheckeop(p,0)));
@@ -180,7 +180,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   while(looking)
     {
       cout<<"Enter factor number: "; cin>>j;
-      if((j<1)||(j>nf)) 
+      if((j<1)||(j>nf))
 	{cout<<"Must be between 1 and "<<nf<<endl; continue;}
       j--;
       if(factors[j].b!=1) {cout<<"Multiplicity>1!\n"; continue;}
@@ -196,7 +196,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	  m = addscalar(m,coeffs[i]);
 	  if(i) m = m*tp;
 	}
-      if(verbose) 
+      if(verbose)
 	{
 	  cout<<"(unscaled) min poly = [1 ";
 	  for(i=d-1; i>=0; i--) cout<<coeffs[i]<<" ";
@@ -204,20 +204,20 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	}
       cout<<"(rescaled) min poly = "<<factors[j].a<<endl;
       S = kernel(m);
-      if(dim(S)!=d) 
+      if(dim(S)!=d)
 	{
 	  cout<<"Problem: eigenspace has wrong dimension ("<<dim(S)<<")"
 	      <<endl;
 	}
       else looking=0;
     }
-  
-  //    if(verbose) 
+
+  //    if(verbose)
       cout<<"finished constructing S, now restricting T_p to S"<<endl;
 
       tp0 = restrict_mat(tp,S);
 
-  //  if(verbose) 
+  //  if(verbose)
       cout<<"done.  now combining S and SW"<<endl;
 
   if(w_split)// make S a subspace of H_1, not of the W-eigenspace
@@ -225,41 +225,39 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
       mat_m SWbasis=basis(SW);
       bigint  SWden; SWden=denom(SW);
       subspace_m mSW(SWbasis,pivots(SW),SWden);
-      S=combine(mSW,S);  
+      S=combine(mSW,S);
     }
 
   long dims=dim(S);
   dS=denom(S);
-  long sden=I2long(dS);
-  long sden2=sden*denh;
   dHS=dH*dS;
 
-  //  if(verbose) 
+  //  if(verbose)
     {
-      if(sden2>1) cout<<sden2<<"*";
+      if(dHS>1) cout<<dHS<<"*";
       cout<<"Matrix of T("<<p<<") restricted to S is ";
       showmatrix(tp0); cout<<endl;
     }
   // = matrix of T_p on irreducible subspace of dual space
 
-    //  if(verbose) 
+    //  if(verbose)
     {
       cout<<"The former poly is the min poly of alpha_1 = "
-	  <<sden2<<"*alpha"<<endl;
+	  <<dHS<<"*alpha"<<endl;
     }
   cout<<"The latter is the min poly of alpha, ";
   cout<<"which is the eigenvalue of T("<<p<<")"<<endl;
 
-  if(verbose) cout<<"Finished computing (dual) subspace S"<<endl;	 
-  if(verbose>1||(sden2>1))
+  if(verbose) cout<<"Finished computing (dual) subspace S"<<endl;
+  if(verbose>1||(dHS>1))
     {
-      cout<<"S has denom "<<sden<<", cumulative denom = "<<sden2<<endl;
+      cout<<"S has denom "<<dS<<", cumulative denom = "<<dHS<<endl;
     }
   V = transpose(basis(S)); // so V is dims x dimh
   Sscales.resize(dims+1);
   Sscales[0]=1;
-  for(i=1; i<=dims; i++) Sscales[i]=Sscales[i-1]*sden;
-  
+  for(i=1; i<=dims; i++) Sscales[i]=Sscales[i-1]*dS;
+
   mat_m A=transpose(tp0);
   W.init(dims,dims); Winv.init(dims,dims);
   vec_m v(dims);  v[1]=1; // so v=[1,0,...,0]
@@ -325,13 +323,14 @@ vec_m nfd::ap(long p)
 {
   mat K = basis(h1->kern).as_mat();
   long rk = K.nrows();
-  long k,l,n = h1->modulus, dims=dim(S);
+  long k,l, dims=dim(S);
+  long N = h1->N;
   vec_m apvec(dims);
-  int bad = ::divides(p,n);
+  int bad = ::divides(p,N);
   if(bad) return apvec; // temporary fix!
   matop matlist(p);
   // if(bad)
-  //   matlist=matop(p,n);
+  //   matlist=matop(p,N);
 
   for(k=0; k<rk; k++)
     {
@@ -355,13 +354,13 @@ mat_m nfd::heckeop(long p)
 {
   mat K = basis(h1->kern).as_mat();
   long rk = K.nrows();
-  long j,k,l,n = h1->modulus, dimh=h1->h1dim(), dims=dim(S);
-  int bad = ::divides(p,n);
+  long j,k,l,N = h1->N, dimh=h1->h1dim(), dims=dim(S);
+  int bad = ::divides(p,N);
   matop matlist(p);
   if(bad)
     {
       cout<<"q = "<<p<<"\t";
-      matlist=matop(p,n);
+      matlist=matop(p,N);
     }
   else
     {
@@ -370,7 +369,7 @@ mat_m nfd::heckeop(long p)
   mat_m TE(dimh,dims);
   vec_m colj(dimh);
   for (j=0; j<dims; j++)
-    { 
+    {
       colj.init(dimh);
       for(k=0; k<rk; k++)
 	{

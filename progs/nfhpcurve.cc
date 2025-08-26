@@ -91,7 +91,7 @@ int main(void)
       continue;
     }
   int plus=1;
-  newforms nf(n,verbose); 
+  newforms nf(n, DEFAULT_MODULUS, verbose);
   int noldap=25;
   nf.createfromscratch(plus,noldap);
 #ifdef LMFDB_ORDER

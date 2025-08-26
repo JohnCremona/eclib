@@ -96,7 +96,7 @@ int main(void)
  if(!sqfree) continue;
 #endif
 
- newforms nf(n,0);
+ newforms nf(n, DEFAULT_MODULUS, 0);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
 #ifdef LMFDB_ORDER

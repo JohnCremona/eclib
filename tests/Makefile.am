@@ -123,7 +123,6 @@ d2_SOURCES=d2.cc
 check_qrank: qrank_tests
 	@echo Running qrank checks...
 	for prog in $(QRANK_TESTS); do $(check_run); done
-	rm -f PRIMES 1
 
 ################ G0N #############################################
 
@@ -165,7 +164,7 @@ check_g0n: g0n_tests
 
 check:
 	$(MAKE) check_procs check_qcurves check_qrank check_g0n
-	rm -f *.testout PRIMES 1
+	rm -f *.testout
 
 
 check_PROGRAMS=$(PROCS_TESTS) $(QCURVES_TESTS) $(QRANK_TESTS) $(G0N_TESTS)

@@ -74,7 +74,7 @@ int main(void)
       cout << "Finished level "<<n<<endl;
       continue;
     }
-  newforms nf(n,verbose); 
+  newforms nf(n, DEFAULT_MODULUS, verbose);
   int noldap=25; // stopp0 must be at least this big!
   if (stopp0<noldap) stopp0=noldap;
   nf.createfromscratch(1,noldap);

@@ -44,6 +44,7 @@ class matop;  // fully defined below
 class homspace :public symbdata {
   //private:
 public:
+  scalar modulus; // for linear algebra on boundary matrices
   vector<int> coordindex, needed, freegens;
   long rk;
   scalar denom1,denom2,denom3;
@@ -58,6 +59,7 @@ public:
 public:
   // Constructor (does all the work):
   homspace(long n, // the level
+           scalar mod, // the prime modulus for linear algebra
 	   int hp, // plus-space flag (0 or 1 or -1)
 	   int hcusp, // cuspidal flag (0 or 1)
 	   int verbose // verbosity (0 : no output
@@ -130,12 +132,11 @@ public:
   void add_proj_coords(vec& v, long n, long d) const {add_proj_coords(v,n,d,projcoord);}
   void add_nfproj_coords(scalar& aa, long n, long d, const vec& bas) const;
 
-  vec cuspidalpart(const vec& v) const 
-  {return v[pivots(kern)];}
+  vec cuspidalpart(const vec& v) const {return v[pivots(kern)];}
 
   svec applyop(const matop& mlist, const rational& q) const;
   svec applyop(const matop& mlist, const modsym& m) const;
-  //  {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());} 
+  //  {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());}
 
   mat calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
   vec calcop_col(string opname, long p, int j, const matop& mlist, int display=0) const;

@@ -51,7 +51,7 @@ int main()
  while (cerr<<"Enter level: ", cin>>n, n>1)
    {
      cout << ">>>Level " << n << "\t";
-     homspace hplus(n,plus,0,0);
+     homspace hplus(n, DEFAULT_MODULUS, plus,0,0);
      int dimh = hplus.h1dim();
      cout << "dimension = " << dimh << endl;
 

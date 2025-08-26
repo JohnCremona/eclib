@@ -150,6 +150,7 @@ public:
 class newforms :public level, splitter_base<scalar>   {
   friend class newform;
 private:
+  scalar modulus;
   int verbose; long maxdepth, cuspidal, sign;
   int basisflag;  // is set, then use() only sets bases for newforms
 		  // already defined.
@@ -184,8 +185,11 @@ public:
   long n1ds, j1ds;
   vector<newform> nflist;
   vector<int> nf_subset;
-  newforms(long n, int disp)
-    :level(n), verbose(disp), of(0), h1(0), h1plus(0), h1minus(0), h1full(0) {;}
+  newforms(long n, scalar mod, int disp)
+    :level(n), modulus(mod), verbose(disp), of(0), h1(0), h1plus(0), h1minus(0), h1full(0)
+  {
+    ; //cout<<"In newforms constructor, level="<<n<<", modulus="<<mod<<", verbose="<<verbose<<endl;
+  }
   ~newforms(void);
   void display(void) const;
   void display_modular_symbol_map(int check=0) const;

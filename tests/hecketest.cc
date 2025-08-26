@@ -57,7 +57,7 @@ int main(void)
  cout << "Program hecketest." << endl;
  init_time();
  start_time();
- scalar modulus(MODULUS);
+ scalar modulus(DEFAULT_MODULUS);
  int n=2;
  int plus=1;
  int verbose=0;
@@ -73,7 +73,7 @@ int main(void)
  if (n>1)
 {
  cout << ">>>Level " << n << "\t";
- homspace hplus(n,plus,0,0);
+ homspace hplus(n, modulus, plus,0,0);
  int genus = hplus.h1dim();
  scalar den = hplus.h1denom();
  bigint den2; den2 = den*den;

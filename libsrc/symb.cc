@@ -36,7 +36,7 @@ symb symb::normalize() const
 #ifdef DEBUG_NORMALIZE
   cout<<"Normalizing symbol "<<(*this)<<endl;
 #endif
- long n=N->modulus;
+ long n=N->N;
  long u=N->unitdiv(c);
 #ifdef DEBUG_NORMALIZE
   cout<<"scaling by u =  "<<u<<endl;
@@ -90,7 +90,7 @@ void symblist::add(const symb& s, long start)
   if (num<maxnum)
     {
       list[num]=s;
-      long c = s.cee(), d=posmod(s.dee(),s.modulus()/c);
+      long c = s.cee(), d=posmod(s.dee(),s.level()/c);
       hashtable[pair<long,long>(c,d)]=num;
       num++;
       //      cout<<"Adding symbol "<<s<<" as special number "<<num<<endl;
@@ -104,7 +104,7 @@ void symblist::add(const symb& s, long start)
 
 long symblist::index(const symb& s, long start) const
 {
-  //  cout<<"index of "<<s;
+  // cout<<"index of "<<s;
  symb ss = s.normalize();
  long c = ss.cee(), d=ss.dee();
  auto j = hashtable.find(pair<long,long>(c,d));
@@ -137,7 +137,7 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
    { long c=dlist[ic];
      long start=specials.count();
      dstarts[ic]=start;
-     for (id=1; (id<modulus-phi)&&(specials.count()<nsymb2); id++)
+     for (id=1; (id<N-phi)&&(specials.count()<nsymb2); id++)
      { d = noninvlist[id];
        if (::gcd(d,c)==1)
        {  s = symb(c,d,this);
@@ -156,17 +156,24 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
 
 long symbdata::index2(long c, long d) const
 { long kd = code(d);
-// cout<<"index2("<<c<<":"<<d<<"):"<<endl;
+  // cout<<"index2("<<c<<":"<<d<<"):"<<endl;
   if (kd>0)                // d invertible, with inverse kd
-    return reduce(xmodmul(c,kd,modulus));   // (c:d) = (c*kd:1)
+    {
+      //      cout<<"d = "<<d<<" has code kd = "<<kd<< " so reducing c*kd = "<<c*kd<<" mod "<<N<<" --> "<<xmodmul(c,kd,N)<<"-->"<<reduce(xmodmul(c,kd,N))<<endl;
+      return reduce(xmodmul(c,kd,N));   // (c:d) = (c*kd:1)
+    }
   else
   { long kc = code(c);
     if (kc>0)              // (c:d) = (1:kc*d) if c invertible
-       return   modulus-code(xmodmul(kc,d,modulus));
+      {
+        //        cout<<"c = "<<c<<" has code kc = "<<kc<< " so reducing kc*d = "<<kc*d<<" mod "<<N<<" --> "<<xmodmul(kc,d,N)<<"-->"<<reduce(xmodmul(kc,d,N))<<endl;
+        return   N-code(xmodmul(kc,d,N));
+      }
     else
     {
      long start = dstarts[noninvdlist[-kc]];
      symb s(c,d,this);
+     //     cout<<"About to compute index of symbol "<<s<<" from start = "<<start<<" in list of specials, size "<<specials.count() << endl;
      long ind = specials.index(s,start);
      if(ind<0)
        {
@@ -178,8 +185,8 @@ long symbdata::index2(long c, long d) const
 }
 
 symb symbdata::symbol(long i) const
-{ if (i<modulus) return symb(i,1,this);
-  else if (i<nsymb1) return symb(1,noninvlist[i-modulus],this);
+{ if (i<N) return symb(i,1,this);
+  else if (i<nsymb1) return symb(1,noninvlist[i-N],this);
  else return specials[i-nsymb1]; // specials.item[i-nsymb1];
 }
 

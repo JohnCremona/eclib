@@ -59,7 +59,7 @@ int main(void)
 #endif
  if (n>1)
 {
- newforms nf(n,verbose);
+ newforms nf(n, DEFAULT_MODULUS, verbose);
  nf.createfromdata(1,25);
  int i, num = nf.n1ds;
  if(num>0){

@@ -79,17 +79,17 @@ int newforms::find_matrix(long i, long dmax, int&rp_known, bigfloat&x0, bigfloat
 
   for(d=nf_d; (d<dmax)||(!have_both); d++)
     {
-      if(gcd(modulus,d)!=1) continue;
+      if(gcd(N,d)!=1) continue;
       long d2=d/2;
       b1 = 1;
       if(d==nf_d) b1=nf_b;
       //      for(b=b1; (b<=d2)&&(!have_both); b++)
       for(b=b1; (b<=d2); b++)
 	{
-	  if(bezout(d,modulus*b,a,c)!=1) continue;
+	  if(bezout(d,N*b,a,c)!=1) continue;
 	  c=-c;
 	  if(verbose>1) 
-	    cout << "Matrix ("<<a<<","<<b<<";"<<modulus*c<<","<<d<<"):\n";
+	    cout << "Matrix ("<<a<<","<<b<<";"<<N*c<<","<<d<<"):\n";
 	  integrator.compute(a,b,c,d);
 	  bigfloat x = abs(integrator.rper());
 	  if(have_rp)
@@ -357,7 +357,7 @@ int newforms::find_lminus(long i, long lmax, const bigfloat& y1)
     {
       long ell = l;
       if(ell%4!=3) continue;
-      if(legendre(-modulus,ell)!=nflist[i].sfe) continue;  // skip this l
+      if(legendre(-N,ell)!=nflist[i].sfe) continue;  // skip this l
       lx.compute(ell);
       bigfloat y = abs(lx.scaled_value());
       if(verbose>1) cout<<"L(f,"<<ell<<",1) = "<<y<<"\n";

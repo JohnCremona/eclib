@@ -57,12 +57,12 @@ int main(void)
       cout << "Minimal curve = " << (Curve)(CR) << endl;
       cout<<endl;
 
-  // Construct newforms class (this does little work)
+  // Construct newforms class
   int sign=1;
 
   cout<<"Enter sign (1,-1,0 for both):"; cin>>sign;
 
-  newforms nf(n,verbose);
+  newforms nf(n, DEFAULT_MODULUS, verbose);
 
   // Create the newform from the curve (first create the homspace,
   // then split off the eigenspace)

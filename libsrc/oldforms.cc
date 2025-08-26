@@ -122,17 +122,13 @@ vector<CurveRed> get_curves(string filename, long N)
 
 // Implementation of oldforms member functions
 
-oldforms::oldforms(long intp, const level* iN, int verbose, int plus)
-{  
-   N=iN;
-   ntp=intp;
-   nap = ntp;
-   noldclasses = totalolddim = 0;
-   plusflag=plus;
+oldforms::oldforms(long intp, const level* iN, scalar mod, int verbose, int plus)
+  : noldclasses(0), nap(intp), ntp(intp), totalolddim(0), N(iN), modulus(mod), plusflag(plus)
+{
    for (const auto& M : N->dlist)
      {
        if(M<11) continue;
-       if(M==(N->modulus)) continue;
+       if(M==(N->N)) continue;
        getoldclasses(M,verbose);
      }
    if(verbose) cout<<"Finished getting oldclasses "<<endl;
@@ -141,11 +137,11 @@ oldforms::oldforms(long intp, const level* iN, int verbose, int plus)
 
 void oldforms::getoldclasses(long d, int verbose) 
 {
-  long n = N->modulus;
+  long n = N->N;
   if ((d>10) && (n>d))
     {
       if(verbose) cout << "Getting oldclasses for divisor M = " << d << "\n";
-      newforms olddata(d,verbose);
+      newforms olddata(d, modulus, verbose);
       string curve_file = curve_filename(d);
       if (file_exists(curve_file))
 	{
