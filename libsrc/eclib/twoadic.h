@@ -25,7 +25,7 @@
 #define _ECLIB_TWOADIC_H      1
                            //flags that this file has been included
 
-#include <eclib/marith.h>
+#include "marith.h"
 
 // Case 1 is A=0, B=0, x=2 (mod 4)
 // Case 2 is A=1, B=2, x=1 (mod 4)

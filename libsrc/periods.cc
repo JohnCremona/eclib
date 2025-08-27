@@ -20,10 +20,10 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 //
 //////////////////////////////////////////////////////////////////////////
-//
-#include <eclib/periods.h>
+
+#include "eclib/periods.h"
 #ifndef MPFP // Multi-Precision Floating Point
-#include <eclib/fixc6.h>
+#include "eclib/fixc6.h"
 #endif
 
 #define CHECK_PERIODS // check that curves constructed from periods

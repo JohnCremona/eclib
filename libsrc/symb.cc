@@ -21,7 +21,7 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/symb.h>
+#include "eclib/symb.h"
 
 // Friend of class symb:
 ostream& operator<< (ostream& s, const symb& sy)

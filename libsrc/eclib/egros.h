@@ -22,9 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-#include <eclib/bigrat.h>
-#include <eclib/curve.h>
 #include <set>
+#include "curve.h"
 
 // Test whether a curve with good reduction outside S and this j-invariant could exist
 // (using criteria from Cremona-Lingham)

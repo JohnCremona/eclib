@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_VECTOR_H)
 #define _ECLIB_VECTOR_H      1       //flags that this file has been included
 
-#include <eclib/marith.h>
+#include "marith.h"
 
 template<class T> class Zvec;
 template<class T> class sZvec;

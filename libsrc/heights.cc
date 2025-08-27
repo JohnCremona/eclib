@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/points.h>  // which includes curve.h
+#include "eclib/points.h"
 #ifdef MPFP  // use NTL to compute the determinant
 #include <NTL/mat_RR.h>
 #else

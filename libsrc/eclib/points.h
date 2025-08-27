@@ -27,9 +27,9 @@
 #ifndef _ECLIB_POINTS_
 #define _ECLIB_POINTS_
 
-#include <eclib/polys.h>
-#include <eclib/p2points.h>
-#include <eclib/divpol.h>
+#include "polys.h"
+#include "p2points.h"
+#include "divpol.h"
 
 //
 // class for  points on elliptic curves

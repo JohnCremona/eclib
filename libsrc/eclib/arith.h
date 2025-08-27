@@ -24,9 +24,7 @@
 #ifndef _ECLIB_ARITH_H
 #define _ECLIB_ARITH_H      1
                            //flags that this file has been included
-#include <eclib/interface.h>
-#include <cstring> // for memset gcc >= 4.3
-#include <eclib/xmod.h> // supercedes the macros which used to be here
+#include "xmod.h"
 
 /* Prime number class; adapted from Pari  */
 

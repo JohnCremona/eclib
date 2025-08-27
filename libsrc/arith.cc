@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/arith.h>
+#include "eclib/arith.h"
 
 /* Prime number procs; adapted from Pari  */
 

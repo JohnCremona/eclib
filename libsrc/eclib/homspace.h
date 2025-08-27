@@ -25,9 +25,9 @@
 #define _ECLIB_HOMSPACE_H      1
                            //flags that this file has been included
 
-#include <eclib/method.h>  // uses/sets SCALAR_OPTION to fix scalar type
-#include <eclib/symb.h>
-
+#include "method.h"  // uses/sets SCALAR_OPTION to fix scalar type
+#include "ssubspace.h"
+#include "symb.h"
 
 // If this is defined, the order of primes used for Wq and Tp
 // operators is the natural order 2, 3, 5, 7, ..., mixing good and bad

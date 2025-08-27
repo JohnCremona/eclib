@@ -26,7 +26,7 @@
 #define _ECLIB_GF_H_
 
 #include <NTL/ZZ_p.h>
-#include <eclib/marith.h>
+#include "marith.h"
 
 extern map<ZZ,ZZ_pContext> ZZ_pContextCache;
 

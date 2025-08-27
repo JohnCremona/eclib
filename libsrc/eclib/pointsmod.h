@@ -40,8 +40,8 @@
 #ifndef _ECLIB_POINTSMOD_H
 #define _ECLIB_POINTSMOD_H
 
-#include <eclib/points.h>
-#include <eclib/curvemod.h>
+#include "points.h"
+#include "curvemod.h"
 
 class ffmodq;
 

@@ -21,11 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/marith.h>
 #include <NTL/mat_ZZ.h>
 #include <NTL/mat_poly_ZZ.h>
 #include <NTL/ZZXFactoring.h>
-#include <eclib/nfd.h>
+#include "eclib/subspace.h"
+#include "eclib/nfd.h"
 
 #define OUTPUT_PARI_STYLE
 

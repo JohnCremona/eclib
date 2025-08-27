@@ -26,7 +26,7 @@
 #define _ECLIB_VERSION_H      1       //flags that this file has been included
 
 #include <string>
-#include <eclib/templates.h>
+#include "templates.h"
 
 // Return the current eclib version as a string, e.g. 'v20210317'
 

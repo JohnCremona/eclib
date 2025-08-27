@@ -23,7 +23,7 @@
 
 #include <sstream>
 #include <algorithm> // for reverse()
-#include <eclib/curvesort.h>
+#include "eclib/curvesort.h"
 
 int curvesort_BA[] = {1,0};
 int curvesort_ACB[] = {0,2,1};

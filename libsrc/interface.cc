@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/interface.h>
+#include "eclib/interface.h"
 
 int I2int(const bigint& x)
 {

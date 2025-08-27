@@ -21,11 +21,11 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/compproc.h>
-#include <eclib/twoadic.h>
-#include <eclib/mlocsol.h>
-#include <eclib/mglobsol.h>
-#include <eclib/mrank1.h>
+#include "eclib/compproc.h"
+#include "eclib/twoadic.h"
+#include "eclib/mlocsol.h"
+#include "eclib/mglobsol.h"
+#include "eclib/mrank1.h"
 
 #define USE_BIGINTS
 

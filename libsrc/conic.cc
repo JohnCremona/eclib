@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/marith.h>
-#include <eclib/conic.h>
-#include <eclib/legendre.h>
+#include "eclib/marith.h"
+#include "eclib/conic.h"
+#include "eclib/legendre.h"
 
 //#define DEBUG_CONIC
 //#define DEBUG_CONIC_2

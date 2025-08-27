@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/quadratic.h>
+#include "eclib/quadratic.h"
 
 void quadratic::transform(const unimod& m)
 {

@@ -24,7 +24,7 @@
 #ifndef _ECLIB_MQUARTIC_H
 #define _ECLIB_MQUARTIC_H
 
-#include <eclib/points.h>
+#include "points.h"
 
 inline bigint II(const bigint& a, const bigint& b, const bigint& c, 
 	  const bigint& d, const bigint& e)

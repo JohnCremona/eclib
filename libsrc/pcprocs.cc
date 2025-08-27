@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/periods.h>
-#include <eclib/pcprocs.h>
+#include "eclib/periods.h"
+#include "eclib/pcprocs.h"
 
 // Function used to test whether a denominator found by ratapprox() is
 // "trustworthy": always with multiprecision, but only if below

@@ -31,7 +31,7 @@
 #ifndef _ECLIB_SIEVE_SEARCH_H
 #define _ECLIB_SIEVE_SEARCH_H
 
-#include <eclib/interface.h>
+#include "interface.h"
 
 class point_processor { //An abstract class to be used as interface in qsieve
  public:

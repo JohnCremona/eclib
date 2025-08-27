@@ -21,6 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#if     !defined(_ECLIB_SSUBSPACE_H)
+#define _ECLIB_SSUBSPACE_H      1       //flags that this file has been included
 
 // The ssubZspace classes differ from the subZspace classes in two ways:
 // 1. the basis matrix is sparse (sZmat not Zmat);
@@ -69,3 +71,5 @@ ssubZspace<T> subeigenspace(const sZmat<T>& sm, T l, const ssubZspace<T>& s, T m
 // construction of a 1-dimensional sparse subspace from a vector:
 template<class T>
 ssubZspace<T> make1d(const Zvec<T>& bas, T& piv, T m);
+
+#endif

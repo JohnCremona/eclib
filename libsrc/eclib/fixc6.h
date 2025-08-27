@@ -42,7 +42,7 @@
 #define _ECLIB_FIXC6_H      1
                            //flags that this file has been included
 
-#include <eclib/interface.h>
+#include "interface.h"
 
 class fixc6 {
 

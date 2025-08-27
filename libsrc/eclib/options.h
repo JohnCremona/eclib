@@ -25,8 +25,8 @@
 #define _ECLIB_OPTIONS_H      1
                            //flags that this file has been included
 
-#include <eclib/GetOpt.h>
-#include <eclib/version.h>
+#include "GetOpt.h"
+#include "version.h"
 #include <iostream>
 
 

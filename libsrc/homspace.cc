@@ -23,12 +23,12 @@
 
 #define USE_SMATS // Warning:  no longer testing without this switched on!
 
-#include <eclib/cusp.h>
-#include <eclib/homspace.h>
-#include <eclib/timer.h>
+#include "eclib/cusp.h"
+#include "eclib/homspace.h"
+#include "eclib/timer.h"
 
 #ifdef USE_SMATS
-#include <eclib/smatrix_elim.h>
+#include "eclib/smatrix_elim.h"
 #endif
 
 const string W_opname("W");

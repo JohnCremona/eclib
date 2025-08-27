@@ -21,16 +21,15 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/mquartic.h>
-#include <eclib/hilbert.h>
-#include <eclib/conic.h>
-#include <eclib/mlocsol.h>
-#include <eclib/mglobsol.h>
-#include <eclib/transform.h>
-#include <eclib/minim.h>
-#include <eclib/reduce.h>
-#include <eclib/sqfdiv.h>
-#include <eclib/desc2.h>
+#include "eclib/hilbert.h"
+#include "eclib/conic.h"
+#include "eclib/mlocsol.h"
+#include "eclib/mglobsol.h"
+#include "eclib/transform.h"
+#include "eclib/minim.h"
+#include "eclib/reduce.h"
+#include "eclib/sqfdiv.h"
+#include "eclib/desc2.h"
 
 #ifndef QSIEVE_OPT
 #define QSIEVE_OPT 0 // uses Stoll's sieve

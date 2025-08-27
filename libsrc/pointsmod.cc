@@ -36,7 +36,7 @@
 // implementation is only for prime fields, but the same strategy
 // would work over arbitrary finite fields.
 
-#include <eclib/ffmod.h> // which includes pointsmod.h
+#include "eclib/ffmod.h"
 
 void set_order_point(pointmodq& P, const bigint& n)
 {P.set_order(n);}

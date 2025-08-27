@@ -25,8 +25,8 @@
 #define _ECLIB_OLDFORMS_H      1
                            //flags that this file has been included
 
-#include <eclib/moddata.h>
-#include <eclib/method.h>
+#include "moddata.h"
+#include "method.h"
 
 class oldforms {
  public:

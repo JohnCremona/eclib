@@ -24,8 +24,7 @@
 // Original version by Luiz Figueiredo
 
 #include <sys/times.h>
-#include <eclib/arith.h>
-
+#include <eclib/ssubspace.h>
 #include <eclib/types.h>
 
 const scalar modulus(DEFAULT_MODULUS); // 1073741789 = max p < 2^30

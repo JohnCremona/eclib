@@ -29,8 +29,8 @@
 // Last change : JC, Aug 19 2002, adapted for stdc++ library
 
 #include <stdlib.h> // for qsort
-#include <eclib/marith.h>
-#include <eclib/sieve_search.h>
+#include "eclib/marith.h"
+#include "eclib/sieve_search.h"
 
 //debug info printed out if DEBUG_QS is defined to 0; more info if defined to 1
 //#define DEBUG_FORBIDDEN

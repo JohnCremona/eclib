@@ -23,12 +23,12 @@
  
 #include <iomanip> // for setbase(), used for hex output of codes
 
-#include <eclib/bitspace.h>
-#include <eclib/mlocsol.h>
-#include <eclib/mglobsol.h>
-#include <eclib/mrank2.h>
-#include <eclib/sqfdiv.h>
-#include <eclib/desc2.h>
+#include "eclib/bitspace.h"
+#include "eclib/mlocsol.h"
+#include "eclib/mglobsol.h"
+#include "eclib/mrank2.h"
+#include "eclib/sqfdiv.h"
+#include "eclib/desc2.h"
 
 #ifndef QSIEVE_OPT
 #define QSIEVE_OPT 0 // uses Stoll's sieve

@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_MINIM_H)
 #define _ECLIB_MINIM_H      1       //flags that this file has been included
 
-#include <eclib/unimod.h>
+#include "unimod.h"
 
 bigint g_content(const bigint& ga, const bigint& gb, const bigint& gc, 
 		 const bigint& gd, const bigint& ge);

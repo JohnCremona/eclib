@@ -23,8 +23,8 @@
  
 // originally adapted from Elliptic.cc by Oisin McGuiness
 
-#include <eclib/points.h>  // which includes curve.h
-#include <eclib/cperiods.h>
+#include "eclib/points.h"
+#include "eclib/cperiods.h"
 #include <NTL/RR.h>   // for the realify_point() function
 
 //#define DEBUG_TORSION

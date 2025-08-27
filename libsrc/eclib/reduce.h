@@ -25,7 +25,7 @@
 #define _ECLIB_REDUCE_H      1
                            //flags that this file has been included
 
-#include <eclib/unimod.h>
+#include "unimod.h"
 
 // NB In both functions, the unimod m must hold the cumulative
 // transformation on entry. It will be updated to show the new

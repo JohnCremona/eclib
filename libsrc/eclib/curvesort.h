@@ -26,7 +26,7 @@
                            //flags that this file has been included
 
 #include <string>
-#include <eclib/templates.h>
+#include "templates.h"
 
 int booknumber0(int level, int form);  // permutes numbers starting from 0
 

@@ -28,7 +28,7 @@
 #define _ECLIB_TRANSFORM_H      1
                            //flags that this file has been included
 
-#include <eclib/unimod.h>
+#include "unimod.h"
 
 void apply_transform(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 		     const unimod& m);

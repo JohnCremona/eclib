@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/moddata.h>
-#include <eclib/arith.h>
+#include "eclib/moddata.h"
+#include "eclib/arith.h"
 
 level::level(long n, long neigs)
   : N(n), plist(pdivs(n)), dlist(posdivs(n)), nap(neigs)

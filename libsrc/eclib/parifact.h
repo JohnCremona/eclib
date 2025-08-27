@@ -26,7 +26,7 @@
                            //flags that this file has been included
 
 #include <string>
-#include <eclib/templates.h>
+#include "templates.h"
 
 string factor(const string n);
 int is_prime(const string p);

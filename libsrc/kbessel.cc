@@ -25,8 +25,8 @@
 #include <iostream>  // for debugging only
 #include <cmath>
 
-#include <eclib/templates.h>
-#include <eclib/kbessel.h>
+#include "eclib/templates.h"
+#include "eclib/kbessel.h"
 #ifndef M_LN2
 #define M_LN2   0.69314718055994530942
 #endif

@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/egros.h>
+#include "eclib/egros.h"
 
 // Test whether a curve with good reduction outside S and this j-invariant could exist
 // (using criteria from Cremona-Lingham)

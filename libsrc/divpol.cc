@@ -25,8 +25,8 @@
 // coefficients rather than a polynomial type to simplify the
 // NTL interface
 
-#include <eclib/polys.h>
-#include <eclib/divpol.h>
+#include "eclib/polys.h"
+#include "eclib/divpol.h"
 
 // The 2-divison polynomial (cubic in x)
 

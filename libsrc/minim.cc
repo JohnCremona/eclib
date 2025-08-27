@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/mquartic.h>
-#include <eclib/transform.h>
-#include <eclib/minim.h>
+#include "eclib/mquartic.h"
+#include "eclib/transform.h"
+#include "eclib/minim.h"
 
 //#define DEBUG_MINIM
 

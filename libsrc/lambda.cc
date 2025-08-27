@@ -1,4 +1,4 @@
-// lambda.h   Declarations of functions which compute Silverman's
+// lambda.cc   Implementations of functions which compute Silverman's finite set Lambda_bad for a curve
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
@@ -20,16 +20,14 @@
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
 // 
 //////////////////////////////////////////////////////////////////////////
- //            finite set Lambda_bad for a curve
 
 
 // N.B. (1) Uses my height normalization, double S's.
 // (3) Uses the local height normalization WITHOUT the log|Delta|
 // (2) Intended for use in computing Heegner points (not yet implemented)
 
-
-#include <eclib/points.h>
-#include <eclib/lambda.h>
+#include "eclib/points.h"
+#include "eclib/lambda.h"
 
 #define MAX_NUM_LAMBDA 1000
 

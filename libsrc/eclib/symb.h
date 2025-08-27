@@ -25,8 +25,8 @@
 #define _ECLIB_SYMB_H      1
                            //flags that this file has been included
 
-#include <eclib/moddata.h>
-#include <eclib/rat.h>
+#include "moddata.h"
+#include "rat.h"
 
 class symb {
  private:

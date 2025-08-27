@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/compproc.h> // for is_small, is_real
-#include <eclib/mequiv.h>
+#include "eclib/compproc.h" // for is_small, is_real
+#include "eclib/mequiv.h"
 
 int new_equiv( quartic& q1, quartic& q2, int info)
 {

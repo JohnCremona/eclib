@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/svector.h>
+#include "eclib/svector.h"
 
 // Instantiate sZvec template classes for T=int, long, bigint
 

@@ -24,7 +24,7 @@
 #ifndef _ECLIB_PERIODS_H
 #define _ECLIB_PERIODS_H      1
 
-#include <eclib/newforms.h>
+#include "newforms.h"
 
 class character {
 private:

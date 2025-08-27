@@ -25,7 +25,7 @@
 #define _ECLIB_REALROOTS_H      1
                            //flags that this file has been included
 
-#include <eclib/interface.h>
+#include "interface.h"
 
 bigfloat safe_sqrt(const bigfloat& x);
 bigfloat cube_root(const bigfloat& x);

@@ -25,8 +25,8 @@
 
 #include <NTL/ZZ_pXFactoring.h>
 
-#include <eclib/mlocsol.h>
-#include <eclib/hilbert.h>
+#include "eclib/mlocsol.h"
+#include "eclib/hilbert.h"
 
 int psquare(const bigint& aa, const bigint& p);  
 /* tests if aa is a p-adic square */

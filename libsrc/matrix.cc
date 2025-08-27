@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/matrix.h>
+#include "eclib/matrix.h"
 
 // Instantiate Zmat template classes for T=int, long, bigint
 

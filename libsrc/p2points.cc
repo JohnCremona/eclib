@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/p2points.h>
 #include <NTL/RR.h>   // for the realify_point() function
+#include "eclib/p2points.h"
 
 //
 // P2Point member functions

@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_BITSPACE_H)
 #define _ECLIB_BITSPACE_H      1       //flags that this file has been included
 
-#include <eclib/templates.h>
+#include "templates.h"
 
 class bitspace {
 private: 

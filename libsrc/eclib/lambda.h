@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_LAMBDA_H)
 #define _ECLIB_LAMBDA_H      1       //flags that this file has been included
 
-#include <eclib/curve.h>
+#include "curve.h"
 
 // N.B. (1) Uses my height normalization, double S's.
 // (3) Uses the local height normalization WITHOUT the log|Delta|

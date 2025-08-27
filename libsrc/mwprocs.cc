@@ -24,21 +24,14 @@
 
 //#define DEBUG_QSIEVE
 
-#include <eclib/interface.h>
-#include <eclib/compproc.h>
-#include <eclib/points.h>
-#include <eclib/polys.h>
-#include <eclib/curvemod.h>
-#include <eclib/pointsmod.h>
-#include <eclib/ffmod.h>
-#include <eclib/divpol.h>
-#include <eclib/tlss.h>
-#include <eclib/elog.h>
-#include <eclib/saturate.h>
-
-#include <eclib/sieve_search.h>
-
-#include <eclib/mwprocs.h>
+#include "eclib/interface.h"
+#include "eclib/compproc.h"
+#include "eclib/ffmod.h"
+#include "eclib/divpol.h"
+#include "eclib/tlss.h"
+#include "eclib/elog.h"
+#include "eclib/saturate.h"
+#include "eclib/mwprocs.h"
 
 //
 // some locally called general functions, belong in library maybe:

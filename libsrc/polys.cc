@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/polys.h>
+#include "eclib/polys.h"
 
 FqPoly reduce(const ZPoly& f, const galois_field& Fq)
 {

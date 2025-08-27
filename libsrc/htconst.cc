@@ -24,8 +24,8 @@
 // Here we implement (1) Silverman, (2) CPS (Cremona/Prickett/Siksek)
 // bounds on the difference between naive and canonical height.
 
-#include <eclib/mwprocs.h> // only needed for order_real_roots
-#include <eclib/htconst.h>
+#include "eclib/mwprocs.h"
+#include "eclib/htconst.h"
 
 #include <eclib/realroots.h>
 

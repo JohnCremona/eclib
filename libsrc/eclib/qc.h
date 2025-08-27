@@ -30,7 +30,7 @@
 // This is supposed to be on the given curve E: error printed if not.
 // The point is returned indirectly.
 
-#include <eclib/mquartic.h>
+#include "mquartic.h"
 
 void qc(quartic& g,
         const bigint& x0,  const bigint& y0,  const bigint& z0,

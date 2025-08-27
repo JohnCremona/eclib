@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_MRANK2_H)
 #define _ECLIB_MRANK2_H      1       //flags that this file has been included
 
-#include <eclib/descent.h>
+#include "descent.h"
 
 class rank2 : public rank12 { // class to do 2-descent via 2-isogeny
 private:

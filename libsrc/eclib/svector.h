@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_SVECTOR_H)
 #define _ECLIB_SVECTOR_H      1       //flags that this file has been included
 
-#include <eclib/vector.h>
+#include "vector.h"
 
 template<class T> int dim(const sZvec<T>& v);
 template<class T> T operator*(const Zvec<T>& v, const sZvec<T>& sv);

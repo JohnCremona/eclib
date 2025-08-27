@@ -24,8 +24,8 @@
 // NB This is used for proving that points are independent; now
 // largely obsolete, being superceded by general saturation algorithms
 
-#include <eclib/points.h>
-#include <eclib/sifter.h>
+#include "eclib/points.h"
+#include "eclib/sifter.h"
 
 sifter::sifter(Curvedata* EE, int na, int verb)
     :E(EE), rank(0), verbose(verb), num_aux(na)

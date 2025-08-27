@@ -28,13 +28,8 @@
 
 #include <stdexcept>
 
-// #include <eclib/compproc.h>
-// #include <eclib/points.h>
-// #include <eclib/mwprocs.h>
-// #include <eclib/mquartic.h>
-//#include <eclib/descent.h>
-#include <eclib/mrank1.h>
-#include <eclib/mrank2.h>
+#include "eclib/mrank1.h"
+#include "eclib/mrank2.h"
 
 #define PRE_SATURATION_SEARCH_LIMIT 8
 

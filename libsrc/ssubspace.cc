@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-#include <eclib/ssubspace.h>
+#include "eclib/ssubspace.h"
 
 // Instantiate ssubspace template classes for T=int, long, bigint
 

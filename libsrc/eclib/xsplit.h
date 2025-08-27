@@ -32,10 +32,10 @@
 #include <boost/thread/mutex.hpp>
 #endif
 
-#include <eclib/xsplit_data.h>
+#include "xsplit_data.h"
 
 #ifdef ECLIB_MULTITHREAD
-#include <eclib/threadpool.h>
+#include "threadpool.h"
 #endif
 
 // flags set on construction:

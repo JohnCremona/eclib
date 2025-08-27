@@ -25,7 +25,7 @@
 // ffmodq is the function field of an elliptic curve mod a prime q
 // (or more precisely the affine coordinate ring Fq[x,y])
 
-#include <eclib/ffmod.h>
+#include "eclib/ffmod.h"
 
 galois_field ffmodq::Fq;
 curvemodq ffmodq::E;

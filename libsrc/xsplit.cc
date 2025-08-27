@@ -26,9 +26,10 @@
 #define ECLIB_RECURSION_DIM_LIMIT 5821
 //#define ECLIB_MULTITHREAD_DEBUG
 
-#include <eclib/logger.h>
-#include <eclib/method.h>
-#include <eclib/xsplit.h>
+#include "eclib/logger.h"
+#include "eclib/method.h"
+#include "eclib/ssubspace.h"
+#include "eclib/xsplit.h"
 
 template class form_finderT<int>;
 template class form_finderT<long>;

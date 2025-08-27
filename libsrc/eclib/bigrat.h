@@ -24,8 +24,8 @@
 #if     !defined(_ECLIB_BIGRATIONAL_H)
 #define _ECLIB_BIGRATIONAL_H      1       //flags that this file has been included
 
-#include <eclib/rat.h>
-#include <eclib/marith.h>
+#include "rat.h"
+#include "marith.h"
 
 class bigrational {
 

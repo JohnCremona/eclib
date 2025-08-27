@@ -25,8 +25,8 @@
 #define _ECLIB_CUSP_H      1
                            //flags that this file has been included
 
-#include <eclib/moddata.h>
-#include <eclib/rat.h>
+#include "moddata.h"
+#include "rat.h"
 
 class cusplist {
  private:

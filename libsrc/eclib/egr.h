@@ -25,7 +25,7 @@
 #ifndef _ECLIB_EGR_H_
 #define _ECLIB_EGR_H_
 
-#include <eclib/curve.h>
+#include "curve.h"
 
 // class to handle component groups at primes of bad reduction etc
 

@@ -21,10 +21,10 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/compproc.h>
-#include <eclib/mquartic.h>
-#include <eclib/transform.h>
-#include <eclib/reduce.h>
+#include "eclib/compproc.h"
+#include "eclib/mquartic.h"
+#include "eclib/transform.h"
+#include "eclib/reduce.h"
 
 #define REDUCE_B
 //#define DEBUG_REDUCE

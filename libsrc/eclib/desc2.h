@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_DESC2_H)
 #define _ECLIB_DESC2_H      1       //flags that this file has been included
 
-#include <eclib/interface.h>
+#include "interface.h"
 
 int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 	  const vector<bigint>& plist, const vector<bigint>& supp, const vector<bigint>& bgens,

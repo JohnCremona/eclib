@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <iostream>
-#include <eclib/templates.h>
+#include "eclib/templates.h"
 
 string eclib_version()
 {

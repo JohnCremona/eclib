@@ -24,7 +24,7 @@
 #ifndef _ECLIB_MARITH_H
 #define _ECLIB_MARITH_H
 
-#include <eclib/arith.h>
+#include "arith.h"
 
 inline int is_zero(const bigint& x) {return IsZero(x);}
 inline int is_nonzero(const bigint& x) {return !IsZero(x);}

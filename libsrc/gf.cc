@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/gf.h>
+#include "eclib/gf.h"
 
 map<ZZ,ZZ_pContext> ZZ_pContextCache;
 

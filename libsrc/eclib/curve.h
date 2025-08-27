@@ -27,9 +27,8 @@
 #ifndef _ECLIB_ELLIPTIC_
 #define _ECLIB_ELLIPTIC_
 
-#include <eclib/marith.h>
-#include <eclib/bigrat.h>
 #include <map>
+#include "bigrat.h"
 
 class Curve; class Curvedata; class CurveRed;
 class Point;

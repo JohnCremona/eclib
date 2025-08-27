@@ -26,7 +26,7 @@
 
 #include <fstream>
 #include <cstring> // for gcc >= 4.3
-#include <eclib/curve.h>
+#include "curve.h"
 
 #define TTY "/dev/tty"
 

@@ -28,8 +28,8 @@
 #ifndef _ECLIB_SATURATE_H
 #define _ECLIB_SATURATE_H
 
-#include <eclib/matrix.h>
-#include <eclib/ffmod.h>
+#include "matrix.h"
+#include "ffmod.h"
 
 
 #ifndef MAX_REPEAT

@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_GETCURVE_H)
 #define _ECLIB_GETCURVE_H      1       //flags that this file has been included
 
-#include <eclib/curve.h>
+#include "curve.h"
 
 // Read in a curve as [a1,a2,a3,a4,a6] with ai integers:
 int getcurve(Curvedata& CD, int verb);

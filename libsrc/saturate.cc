@@ -21,11 +21,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/subspace.h>
-#include <eclib/saturate.h>
-#include <eclib/tlss.h>
-#include <eclib/htconst.h>
-#include <eclib/divpol.h>
+#include "eclib/subspace.h"
+#include "eclib/saturate.h"
+#include "eclib/tlss.h"
+#include "eclib/htconst.h"
+#include "eclib/divpol.h"
 
 // If point search bound is greater than this, output a warning
 // message and reduce to this value:

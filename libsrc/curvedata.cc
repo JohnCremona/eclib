@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-#include <eclib/curve.h>
-#include <eclib/cubic.h>
+#include "eclib/curve.h"
+#include "eclib/cubic.h"
 
 Curvedata::Curvedata(const bigint& aa1, const bigint& aa2, 
 		     const bigint& aa3, const bigint& aa4, 

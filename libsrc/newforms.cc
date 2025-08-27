@@ -22,9 +22,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <iomanip>
-#include <eclib/newforms.h>
-#include <eclib/periods.h>
-#include <eclib/curvesort.h>
+#include "eclib/newforms.h"
+#include "eclib/periods.h"
+#include "eclib/curvesort.h"
 
 // Functions for ordering newforms
 // (1) Old ordering (first aq, then ap for good p);
@@ -856,7 +856,7 @@ void newforms::makeh1(int s)
       if(!h1minus)
 	{
 	  if(verbose) cout<<"Constructing H1 (with sign=-1) ..."<<flush;
-	  h1minus = new homspace(N,modulus, -1, /*plusflag*/ 0 /*cuspidal*/, 0 /*verbose*/);
+	  h1minus = new homspace(N, modulus, -1, /*plusflag*/ 0 /*cuspidal*/, 0 /*verbose*/);
 	  if(verbose) cout<<"done"<<endl;
 	}
       h1 = h1minus;
@@ -867,7 +867,7 @@ void newforms::makeh1(int s)
       if(!h1full)
 	{
 	  if(verbose) cout<<"Constructing H1 (with sign=0) ..."<<flush;
-	  h1full = new homspace(N,modulus, 0 /*plusflag*/, 0 /*cuspidal*/, 0 /*verbose*/);
+	  h1full = new homspace(N, modulus, 0 /*plusflag*/, 0 /*cuspidal*/, 0 /*verbose*/);
 	  if(verbose) cout<<"done"<<endl;
 	}
       h1 = h1full;

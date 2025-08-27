@@ -24,8 +24,8 @@
 #ifndef _ECLIB_CPERIODS_H_
 #define _ECLIB_CPERIODS_H_
 
-#include <eclib/compproc.h>
-#include <eclib/curve.h>
+#include "compproc.h"
+#include "curve.h"
 
 #define TWOPI 2*Pi()
 #define TWOPIEYE bigcomplex(to_bigfloat(0), TWOPI)

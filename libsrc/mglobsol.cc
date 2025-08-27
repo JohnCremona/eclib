@@ -24,7 +24,7 @@
 // (1) simple search with function ratpoint()
 // (2) sieve-assisted search using class quartic_sieve
 
-#include <eclib/mglobsol.h>
+#include "eclib/mglobsol.h"
 
 int test(const bigint& x, const bigint& z, const bigint& y2, bigint&xx, bigint&yy, bigint&zz)
 {

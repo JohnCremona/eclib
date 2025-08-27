@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/compproc.h> 
+#include "eclib/compproc.h" 
  
 int is_real(const bigcomplex& z) {return(is_approx_zero(imag(z)));}
  

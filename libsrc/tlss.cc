@@ -26,7 +26,7 @@
 // discrete log a la Siksek when the p-torsion in E(F_q) is cyclic,
 // else use the Tate-Lichtenbaum pairing
 
-#include <eclib/tlss.h>
+#include "eclib/tlss.h"
 
 void TLSS::init(int  pp, int verb)
 {

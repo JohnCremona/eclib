@@ -37,7 +37,7 @@
 #include <boost/thread/mutex.hpp>
 #endif
 
-#include <eclib/splitbase.h>
+#include "splitbase.h"
 
 // Forward declaration of classes ... prevents circular includes.
 // form_finder only required as pointer

@@ -26,8 +26,7 @@
 #ifndef _ECLIB_SMATRIX_ELIM_H
 #define _ECLIB_SMATRIX_ELIM_H 1       //flags that this file has been included
 
-#include "ssubspace.h"
-#include "subspace.h"
+#include "smatrix.h"
 
 class smat_elim_list;
 class smat_elim_ordlist;

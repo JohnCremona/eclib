@@ -22,7 +22,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/timer.h>
+#include "eclib/timer.h"
 
 #ifndef CLK_TCK
 #define CLK_TCK	CLOCKS_PER_SEC

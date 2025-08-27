@@ -21,10 +21,8 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/curve.h>
-#include <eclib/polys.h>    // for nrootscubic
-#include <eclib/ffmod.h>
-#include <eclib/parifact.h> // for ellap
+#include "eclib/ffmod.h"
+#include "eclib/parifact.h" // for ellap
 
 ostream& operator<<(ostream& os, const Kodaira_code& c)
 {

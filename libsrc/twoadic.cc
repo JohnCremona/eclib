@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/twoadic.h>
+#include "eclib/twoadic.h"
 
 // The following due to Michael Stoll:
 

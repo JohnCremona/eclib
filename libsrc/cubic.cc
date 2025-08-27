@@ -22,11 +22,10 @@
 //////////////////////////////////////////////////////////////////////////
  //
 
-#include <eclib/realroots.h>
-#include <eclib/cubic.h>
-#include <eclib/marith.h>
-#include <eclib/polys.h>
 #include <cassert>
+#include "eclib/realroots.h"
+#include "eclib/cubic.h"
+#include "eclib/polys.h"
 
 bigint zero(0), one(1);
 

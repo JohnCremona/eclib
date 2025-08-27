@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/interface.h>
-#include <eclib/bitspace.h>
+#include "eclib/interface.h"
+#include "eclib/bitspace.h"
 
 bitspace::bitspace(long d)
 {

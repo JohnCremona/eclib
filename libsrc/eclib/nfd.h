@@ -24,7 +24,7 @@
 #ifndef _ECLIB_NFD_H
 #define _ECLIB_NFD_H      1
 
-#include <eclib/homspace.h>
+#include "homspace.h"
 
 bigint inverse(const mat_m& a, mat_m& ainv);
 void showmatrix(const mat_m& m);

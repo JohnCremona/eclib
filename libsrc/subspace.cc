@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/subspace.h>
+#include "eclib/subspace.h"
 
 // Instantiate subZspace template classes for T=int, long, bigint
 

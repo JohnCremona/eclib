@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/vector.h>
+#include "eclib/vector.h"
 
 // Instantiate Zvec template classes for T=int, long, bigint
 

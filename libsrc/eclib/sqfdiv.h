@@ -24,7 +24,7 @@
 #ifndef _ECLIB_SQFDIV_H
 #define _ECLIB_SQFDIV_H 1       //flags that this file has been included
 
-#include <eclib/marith.h>
+#include "marith.h"
 
 class sqfdiv {
   vector<bigint>* primebase;  // includes all relevant primes

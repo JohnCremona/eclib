@@ -25,11 +25,11 @@
 #define _ECLIB_NEWFORMS_H      1
                            //flags that this file has been included
 
-#include <eclib/cperiods.h>
-#include <eclib/xsplit.h> // for splitter_base class
-#include <eclib/curve.h>
-#include <eclib/oldforms.h>
-#include <eclib/homspace.h>
+#include "cperiods.h"
+#include "xsplit.h" // for splitter_base clase
+#include "curve.h"
+#include "oldforms.h"
+#include "homspace.h"
 
 class newforms;
 class jumps;

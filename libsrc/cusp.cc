@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/cusp.h>
+#include "eclib/cusp.h"
 
 // This function tests cusps for Gamma_0(N)-equivalence, unless
 // plusflag is +1 in which case it tests for equivalence under

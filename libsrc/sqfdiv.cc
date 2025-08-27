@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/bitspace.h>
-#include <eclib/sqfdiv.h>
+#include "eclib/bitspace.h"
+#include "eclib/sqfdiv.h"
 
 //#define DEBUG
 

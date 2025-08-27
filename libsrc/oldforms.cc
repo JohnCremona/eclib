@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/cperiods.h>
-#include <eclib/oldforms.h>
-#include <eclib/newforms.h>
+#include "eclib/cperiods.h"
+#include "eclib/newforms.h"
+#include "eclib/oldforms.h"
 
 inline int testbit(long a, long i) {return (a& (1<<i));}
 

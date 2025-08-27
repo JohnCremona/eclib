@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/elog.h>
-#include <eclib/polys.h>
+#include "eclib/elog.h"
+#include "eclib/polys.h"
 
 bigfloat ssqrt(const bigfloat& x)
 {

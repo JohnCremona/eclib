@@ -21,8 +21,8 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/isogs.h>
-#include <eclib/points.h>
+#include "eclib/isogs.h"
+#include "eclib/points.h"
 
 #define DEBUG
 

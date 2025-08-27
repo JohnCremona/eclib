@@ -23,7 +23,7 @@
  
 // Original version by Luiz Figueiredo
 
-#include <eclib/smatrix.h>
+#include "eclib/smatrix.h"
 
 // Instantiate sZmat template classes for T=int, long, bigint
 

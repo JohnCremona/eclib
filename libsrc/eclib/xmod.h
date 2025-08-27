@@ -26,7 +26,7 @@
 #ifndef _ECLIB_XMOD_H
 #define _ECLIB_XMOD_H      1
 
-#include <eclib/interface.h>
+#include "interface.h"
 
 // undefine this to use int/long/longlong arithmetic only
 
@@ -201,18 +201,9 @@ inline bigint xmodmul(const bigint& a, const bigint& b, const bigint& m) {return
 
 #endif // ifdef USE_DMOD
 
-#if(1)
-const int DEFAULT_MODULUS = BIGPRIME;
 // table of inverses of residues<20 modulo BIGPRIME:
+const int DEFAULT_MODULUS = BIGPRIME;
 static int table_invs[20] = {0,1, 536870895, 357913930, 805306342, 214748358, 178956965, 920350105, 402653171, 477218573, 107374179, 97612890, 626349377, 330382089, 997045947, 71582786, 738197480, 442128972, 775480181, 226050903};
-#else
-const int DEFAULT_MODULUS = 1073741783; //BIGPRIME-6;
-// table of inversers of residues<20 modulo 1073741783:
-static int table_invs[20] = {0, 1, 536870892, 357913928, 268435446,
- 644245070, 178956964, 460175050, 134217723, 835132498, 322122535,
- 780903115, 89478482, 743359696, 230087525, 930576212, 603979753,
- 884257939, 417566249, 395589078};
-#endif
 
 inline long invmod0(long aa)
 {
@@ -269,6 +260,5 @@ inline int invmod0(int aa)
  cout << "invmod0 called with " << a << " -- not invertible!\n";
  return 0;
 }
-
 
 #endif // ifndef _XMOD_H

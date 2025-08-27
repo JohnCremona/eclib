@@ -21,11 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/matrix.h>
-typedef mat_l mat;
-typedef long scalar;
-#include <eclib/points.h>
-#include <eclib/egr.h>
+#include "eclib/matrix.h"
+#include "eclib/points.h"
+#include "eclib/egr.h"
 
 //#define DEBUG_EGR
 //#define DEBUG_EGR_EXTRA
@@ -480,7 +478,7 @@ int ComponentGroups::egr_subgroup(vector<Point>& Plist, int real_too)
   return grprimes(Plist,plist);
 }
 
-bigint comp_map_image(const vector<int> moduli, const mat& image);
+bigint comp_map_image(const vector<long> moduli, const mat_l& image);
 
 //#undef DEBUG_EGR
 //#define DEBUG_EGR
@@ -526,7 +524,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
 #endif
 
   vector<vector<vector<int> > > imagematrix;
-  vector<int> moduli;
+  vector<long> moduli;
   int n=0;
 
   // Loop through bad primes (possibly including infinity), computing
@@ -551,7 +549,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
 
   // Compute the kernel
 
-  mat m(Plist.size(),n);
+  mat_l m(Plist.size(),n);
   unsigned int j=0, j1, j2, i;
   bigint imageorder=one;
   for(i=0; i<moduli.size(); i++) imageorder*=moduli[i];
@@ -690,10 +688,10 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
 
 //#define DEBUG_INDEX
 
-bigint comp_map_image(const vector<int> moduli, const mat& image)
+bigint comp_map_image(const vector<long> moduli, const mat_l& image)
 {
   bigint ans; ans=1;
-  mat m=image;
+  mat_l m=image;
 #ifdef DEBUG_INDEX
   cout<<"In comp_map_image, m="<<m;
   cout<<"moduli = "<<moduli<<endl;
@@ -703,7 +701,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
   if(np==0) return ans;
   for(j=1; j<=np; j++)
     {
-      scalar modulus=moduli[j-1];
+      long modulus=moduli[j-1];
 #ifdef DEBUG_INDEX
       cout<<"Working on column "<<j<<", modulus "<<modulus<<endl;
 #endif
@@ -712,7 +710,7 @@ bigint comp_map_image(const vector<int> moduli, const mat& image)
       cout<<"Column "<<j<<" = "<<m.col(j)<<endl;
 #endif
       for(i=1; (i<=npts); i++) m(i,j)=m(i,j)%modulus;
-      scalar g=0,gm;
+      long g=0,gm;
       for(i=1; (i<=npts)&&(g!=1); i++) g=gcd(g,m(i,j));
 #ifdef DEBUG_INDEX
       cout<<"Column gcd = "<<g<<endl;

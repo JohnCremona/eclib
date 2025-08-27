@@ -45,7 +45,7 @@ eclogger::eclogger() {}
  * Uses thread-safe fprintf, and flushes.
  */
 eclogger::~eclogger() {
-  //s << std::endl;
+  //s "< std::endl"
   fprintf( stdout, "%s", s.str().c_str() );  
   fflush( stdout );
 }

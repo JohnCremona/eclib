@@ -22,8 +22,8 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-#include <eclib/parifact.h>
-#include <eclib/pointsmod.h> // which includes <eclib/curvemod.h>
+#include "eclib/parifact.h"
+#include "eclib/pointsmod.h"
 
 // constructors 
 curvemodq::curvemodq(void) 

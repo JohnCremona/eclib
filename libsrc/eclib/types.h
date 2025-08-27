@@ -21,7 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/smatrix_elim.h>
+#include "smatrix_elim.h"
+#include "subspace.h"
+#include "ssubspace.h"
 
 // SCALAR_OPTION may be set to 1 (int), 2 (long), or 3 (bigint) by user
 
@@ -32,6 +34,8 @@
 #endif
 
 #undef scalar_type // since this file may be included more than once
+
+#define PRIME30  1073741789  // = largest p such that p < 2^30.
 
 #if (SCALAR_OPTION==2) // long
 #define scalar_type string("long")
@@ -49,6 +53,7 @@ typedef form_finder_l form_finder;
 #else
 #if (SCALAR_OPTION==3) // bigint
 #define scalar_type string("bigint")
+#define DEFAULT_MODULUS (long)PRIME30
 typedef bigint scalar;
 typedef vec_m vec;
 typedef mat_m mat;
@@ -63,6 +68,7 @@ typedef form_finder_m form_finder;
 #else
 #if (SCALAR_OPTION==1) // int
 #define scalar_type string("int")
+#define DEFAULT_MODULUS (int)PRIME30
 typedef int scalar;
 typedef vec_i vec;
 typedef mat_i mat;

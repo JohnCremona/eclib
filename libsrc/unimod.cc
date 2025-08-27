@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/unimod.h>
+#include "eclib/unimod.h"
 
 unimod operator*(const unimod& a, const unimod& b)
 {

@@ -30,8 +30,8 @@
 #ifndef _ECLIB_TLSS_
 #define _ECLIB_TLSS_
 
-#include <eclib/matrix.h>
-#include <eclib/ffmod.h>
+#include "matrix.h"
+#include "ffmod.h"
 
 class TLSS {
 private: 

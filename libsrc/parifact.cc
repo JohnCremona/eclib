@@ -21,9 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/parifact.h>
-#include <eclib/interface.h> // for getenv_with_default
-#include <pari/pari.h>
+#include "eclib/parifact.h"
+#include "eclib/interface.h" // for getenv_with_default
+#include "pari/pari.h"       // must be included after any NTL
 
 
 //#define DEBUG_GPFACT

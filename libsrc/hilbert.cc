@@ -21,8 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/hilbert.h>
-#include <eclib/marith.h>
+#include "eclib/hilbert.h"
 
 //#define DEBUG_HILBERT
 

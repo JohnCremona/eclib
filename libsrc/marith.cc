@@ -27,7 +27,7 @@
 // defined in parifact.h/cc)
 
 #include <sstream>
-#include <eclib/marith.h>
+#include "eclib/marith.h"
 
 // Utilities for debugging output -- for example, from gdb you can give the command
 //   p show(a)
