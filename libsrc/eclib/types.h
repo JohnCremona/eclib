@@ -21,9 +21,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "smatrix_elim.h"
-#include "subspace.h"
-#include "ssubspace.h"
+// #include "smatrix_elim.h"
+// #include "subspace.h"
+// #include "ssubspace.h"
+#include "vector.h"
 
 // SCALAR_OPTION may be set to 1 (int), 2 (long), or 3 (bigint) by user
 
@@ -53,7 +54,7 @@ typedef form_finder_l form_finder;
 #else
 #if (SCALAR_OPTION==3) // bigint
 #define scalar_type string("bigint")
-#define DEFAULT_MODULUS (long)PRIME30
+#define DEFAULT_MODULUS to_ZZ(PRIME30)
 typedef bigint scalar;
 typedef vec_m vec;
 typedef mat_m mat;

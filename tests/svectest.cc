@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/arith.h>
+#include <eclib/svector.h>
 #include <eclib/types.h>
 
 int main(void)

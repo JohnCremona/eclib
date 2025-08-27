@@ -26,6 +26,7 @@
                            //flags that this file has been included
 
 #include "method.h"  // uses/sets SCALAR_OPTION to fix scalar type
+#include "subspace.h"
 #include "ssubspace.h"
 #include "symb.h"
 

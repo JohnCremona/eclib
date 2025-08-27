@@ -26,6 +26,7 @@
                            //flags that this file has been included
 
 #include "cperiods.h"
+#include "method.h" // must be included before xsplit.h
 #include "xsplit.h" // for splitter_base clase
 #include "curve.h"
 #include "oldforms.h"

@@ -25,6 +25,7 @@
 
 #include <sys/times.h>
 #include <eclib/ssubspace.h>
+#include <eclib/smatrix_elim.h>
 #include <eclib/types.h>
 
 const scalar modulus(DEFAULT_MODULUS); // 1073741789 = max p < 2^30
