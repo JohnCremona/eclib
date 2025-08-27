@@ -66,7 +66,6 @@ quartic_points_SOURCES=quartic_points.cc
 check_qrank: qrank_progs
 	@echo Checking qrank programs...
 	for prog in $(QRANK_PROGS); do $(check_run); done
-	rm -f PRIMES 1
 
 ################ G0N (modular symbols programs) #################
 
@@ -114,7 +113,7 @@ check_g0n: g0n_progs
 
 check:
 	$(MAKE) check_procs check_qcurves check_qrank check_g0n
-	rm -f *.testout PRIMES 1
+	rm -f *.testout
 
 # When allprogs is disabled the only binary to be built and installed
 # is mwrank, but we want "make check" to build and test all.
