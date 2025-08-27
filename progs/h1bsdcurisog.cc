@@ -23,24 +23,8 @@
 //
 #include <fstream>
 #include <iomanip>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/oldforms.h>
-#include <eclib/homspace.h>
-#include <eclib/cperiods.h>
-#include <eclib/newforms.h>
 #include <eclib/periods.h>
-
 #include <eclib/points.h>
-#include <eclib/polys.h>
-#include <eclib/curvemod.h>
-#include <eclib/pointsmod.h>
-#include <eclib/ffmod.h>
-#include <eclib/divpol.h>
-#include <eclib/tlss.h>
-#include <eclib/elog.h>
-#include <eclib/saturate.h>
-#include <eclib/sieve_search.h>
 #include <eclib/mwprocs.h>
 #include <eclib/isogs.h>
 

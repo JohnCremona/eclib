@@ -22,15 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 //
-#include <eclib/interface.h>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/cusp.h>
-#include <eclib/homspace.h>
-#include <eclib/oldforms.h>
-#include <eclib/cperiods.h>
 #include <eclib/newforms.h>
-#include <eclib/curve.h>
 #include <eclib/getcurve.h>
 
 // defining to be 1 this causes display_modular_symbol_map() to be

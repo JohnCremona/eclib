@@ -21,9 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/cusp.h>
 #include <eclib/homspace.h>
 #include <eclib/timer.h>
 

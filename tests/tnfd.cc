@@ -22,14 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 //
-#include <iostream>
-#include <eclib/interface.h>
 #include <eclib/timer.h>
-#include <eclib/marith.h>
-#include <eclib/subspace.h>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/homspace.h>
 #include <eclib/nfd.h>
 
 #define OUTPUT_PARI_STYLE

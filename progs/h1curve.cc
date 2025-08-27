@@ -22,15 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
 //
 #include <fstream>
-#include <eclib/compproc.h>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/cusp.h>
-#include <eclib/homspace.h>
-#include <eclib/oldforms.h>
-#include <eclib/curve.h>     //from qcurves
-#include <eclib/cperiods.h>     //from qcurves, for computing conductors
-#include <eclib/newforms.h>
 #include <eclib/periods.h>
 
 #ifndef SINGLE   // so Makefile can override

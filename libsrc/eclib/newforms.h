@@ -26,7 +26,7 @@
                            //flags that this file has been included
 
 #include <eclib/cperiods.h>
-#include <eclib/xsplit.h>   // which includes method.h
+#include <eclib/xsplit.h> // for splitter_base class
 #include <eclib/curve.h>
 #include <eclib/oldforms.h>
 #include <eclib/homspace.h>

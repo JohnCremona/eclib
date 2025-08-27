@@ -21,8 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <time.h>
-#include <eclib/moddata.h>
 #include <eclib/oldforms.h>
 
 #define AUTOLOOP

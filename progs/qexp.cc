@@ -21,16 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-//
-#include <eclib/interface.h>
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/cusp.h>
-#include <eclib/homspace.h>
-#include <eclib/oldforms.h>
-#include <eclib/cperiods.h>
+
 #include <eclib/newforms.h>
-#include <eclib/curvesort.h>
+#include <eclib/curvesort.h> // for codeletter
 
 #define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output

@@ -21,20 +21,14 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include <eclib/interface.h>
-#include <eclib/timer.h>
+
 #include <NTL/mat_ZZ.h>
 #include <NTL/mat_poly_ZZ.h>
 #include <NTL/ZZXFactoring.h>
 #include <NTL/LLL.h>
 
-#include <eclib/moddata.h>
-#include <eclib/symb.h>
-#include <eclib/cusp.h>
+#include <eclib/timer.h>
 #include <eclib/homspace.h>
-#include <eclib/smatrix_elim.h>
-#include <eclib/matrix.h>
-#include <eclib/subspace.h>
 
 //#define AUTOLOOP
 //#define COMPARE_OLD

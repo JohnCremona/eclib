@@ -21,7 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <eclib/interface.h>
 #include <eclib/timer.h>
 #include <eclib/newforms.h>
 #include <eclib/pcprocs.h>   // for get_curve()

@@ -21,7 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <fstream>
 #include <iomanip>
 #include <eclib/arith.h>
 #include <eclib/moddata.h> // for nf_filename
