@@ -232,7 +232,7 @@ int newform::check_expand_contract()
       if (tvec!=bplus)
 	{
 	  success=0;
-	  cout<<"! bplus ="<<bplus<<" extends to "<<bplusx<<" which contracts to "<<tvec<<endl;
+	  cerr<<"! bplus ="<<bplus<<" extends to "<<bplusx<<" which contracts to "<<tvec<<endl;
 	}
     }
   if (sign!=+1)
@@ -243,7 +243,7 @@ int newform::check_expand_contract()
       if (tvec!=bminus)
 	{
 	  success=0;
-	  cout<<"! bminus="<<bminus<<"  extends to "<<bminusx<<" which contracts to "<<tvec<<endl;
+	  cerr<<"! bminus="<<bminus<<"  extends to "<<bminusx<<" which contracts to "<<tvec<<endl;
 	}
     }
   return success;
@@ -365,8 +365,8 @@ void newform::find_bsd_ratio()
 	{
 	  if(::divides(denomplus,dp0))  dp0/=denomplus;
 	  else
-	    cout<<"newform constructor error: dp0 not divisible by denomplus!"
-		<<endl;
+	    cerr<<"newform constructor error: dp0 not divisible by denomplus!\n"
+                <<"dp0 = "<<dp0<<", denomplus = "<<denomplus<<endl;
 	}
     }
   loverp = rational(dp0,np0);
@@ -540,8 +540,8 @@ void newform::find_twisting_primes()
 	    {
 	      if(::divides(denomplus,mplus))  mplus/=denomplus;
 	      else
-		cout<<"Warning in newform constructor: mplus not divisible by denomplus!"
-		    <<endl;
+		cerr<<"Warning in newform constructor: mplus="<<mplus
+                    <<" is not divisible by denomplus="<<denomplus<<"!" <<endl;
 	    }
 	}
       if((sign!=+1)&&(mminus==0)&&(l%4==3))
@@ -567,8 +567,8 @@ void newform::find_twisting_primes()
 	    {
 	      if(::divides(denomminus,mminus))  mminus/=denomminus;
 	      else
-		cout<<"Warning in newform constructor: mminus="<<mminus<<" is not divisible by denomminus="<<denomminus<<"!"
-		    <<endl;
+		cerr<<"Warning in newform constructor: mminus="<<mminus
+                    <<" is not divisible by denomminus="<<denomminus<<"!" <<endl;
 	    }
 	}
     }
@@ -607,7 +607,10 @@ void newform::find_matrix()
                       if(::divides(denomplus,dotplus))
                         dotplus/=denomplus;
                       else
-                        cout<<"Warning in find_matrix: dotplus not divisible by denomplus!"<<endl;
+                        {
+                          cerr<<"Warning in find_matrix: dotplus not divisible by denomplus!"<<endl;
+                          cerr<<"dotplus = "<<dotplus<<", denomplus = "<<denomplus<<endl;
+                        }
                     }
                   if(sign!=+1)
                     {
@@ -615,7 +618,10 @@ void newform::find_matrix()
                       if(::divides(denomminus,dotminus))
                         dotminus/=denomminus;
                       else
-                        cout<<"Warning in find_matrix: dotminus not divisible by denomminus!"<<endl;
+                        {
+                          cerr<<"Warning in find_matrix: dotminus not divisible by denomminus!"<<endl;
+                          cerr<<"dotminus = "<<dotminus<<", denomplus = "<<denomminus<<endl;
+                        }
                     }
                   found=(((dotplus!=0)||(sign==-1))&&
                          ((dotminus!=0)||(sign==+1)));
@@ -873,7 +879,7 @@ void newforms::makeh1(int s)
       h1 = h1full;
       return;
     }
-  cout<<"Error in makeh1(s): s = "<<s<<" should be one of 0,1,-1"<<endl;
+  cerr<<"Error in makeh1(s): s = "<<s<<" should be one of 0,1,-1"<<endl;
   return;
 }
 
@@ -1349,7 +1355,7 @@ void newforms::output_to_file(int binflag, int smallflag) const
       if (nap>=DEFAULT_SMALL_NAP) nap=DEFAULT_SMALL_NAP;
       else
 	{
-	  cout<<"Warning: small newforms output will only have" << nap
+	  cerr<<"Warning: small newforms output will only have" << nap
 	      << "a_p (at least " << DEFAULT_SMALL_NAP <<"required" << endl;
 	}
     }
