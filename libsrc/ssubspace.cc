@@ -64,7 +64,7 @@ ssubZspace<T> combine(const ssubZspace<T>& s1, const ssubZspace<T>& s2)
  
 template<class T>
 sZmat<T> restrict_mat(const sZmat<T>& m, const ssubZspace<T>& s)
-{ cout<<"In restrict_mat(), s.modulus = "<<s.modulus<<endl;
+{ //cout<<"In restrict_mat(), s.modulus = "<<s.modulus<<endl;
   return mult_mod_p(m.select_rows(pivots(s)),basis(s),s.modulus);
 }
 
