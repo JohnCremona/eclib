@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "eclib/types.h"
+#include "eclib/linalg.h"
 
 // Instantiate Zmat template classes for T=int, long, bigint
 

@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-#include <eclib/types.h>
+#include <eclib/linalg.h>
 #include <eclib/cperiods.h>
 #include <eclib/points.h>
 #include <eclib/sieve_search.h>

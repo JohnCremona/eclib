@@ -1,4 +1,7 @@
-// types.h: typedefs for scalar, vector, matrix types
+// linalg.h: typedefs for scalar, vector, matrix types
+//
+// Include this to use any of the vec/mat/svec/smat/subspace/ssubspace classes
+//
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona

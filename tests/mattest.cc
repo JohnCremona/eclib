@@ -23,7 +23,7 @@
  
 #include <iostream>
 #include <eclib/timer.h>
-#include <eclib/types.h>
+#include <eclib/linalg.h>
 
 const scalar modulus(default_modulus<scalar>());
 

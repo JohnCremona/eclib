@@ -25,7 +25,7 @@
 #define _ECLIB_OLDFORMS_H      1
                            //flags that this file has been included
 
-#include "types.h"  // uses/sets SCALAR_OPTION to fix scalar type and includes all LA headers
+#include "linalg.h"  // uses/sets SCALAR_OPTION to fix scalar type and includes all LA headers
 #include "moddata.h"
 
 class oldforms {

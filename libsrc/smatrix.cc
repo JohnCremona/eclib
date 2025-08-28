@@ -23,7 +23,7 @@
  
 // Original version by Luiz Figueiredo
 
-#include "eclib/types.h"
+#include "eclib/linalg.h"
 
 // Instantiate sZmat template classes for T=int, long, bigint
 

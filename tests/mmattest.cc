@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <time.h>
-#include <eclib/types.h>
+#include <eclib/linalg.h>
 
 int main(void)
 {

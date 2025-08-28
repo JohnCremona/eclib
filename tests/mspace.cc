@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/types.h>
+#include <eclib/linalg.h>
 
 const bigint modulus(default_modulus<bigint>());
 

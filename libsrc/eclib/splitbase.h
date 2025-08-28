@@ -24,7 +24,7 @@
 #if     !defined(_ECLIB_SPLITBASE_H)
 #define _ECLIB_SPLITBASE_H      1       //flags that this file has been included
 
-#include "types.h"
+#include "linalg.h"
 
 // The following class must be a base class of any class wishing to 
 // use the form_finder class; the using class must implement some or 
@@ -49,7 +49,7 @@
 //                              1-dimensional eigenspaces as found.
 //                             (basis2 will not be used when plusflag=1)
 
-#include "types.h"
+#include "linalg.h"
 
 template<class T>
 class splitter_base {

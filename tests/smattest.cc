@@ -24,7 +24,7 @@
 // Original version by Luiz Figueiredo
 
 #include <sys/times.h>
-#include <eclib/types.h>
+#include <eclib/linalg.h>
 
 const scalar modulus(default_modulus<scalar>());
 
