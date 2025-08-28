@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "eclib/matrix.h"
+#include "eclib/types.h"
 
 // Instantiate Zmat template classes for T=int, long, bigint
 
@@ -596,7 +596,7 @@ Zmat<T> echelon(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
   switch (method)
     {
     case 0: default: return echelon0(entries,pcols,npcols,rk,ny,d);
-    case 2: return echelonp(entries,pcols,npcols,rk,ny,d, T(DEFAULT_MODULUS));
+    case 2: return echelonp(entries,pcols,npcols,rk,ny,d, default_modulus<T>());
     }
 }
 

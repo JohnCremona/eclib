@@ -32,6 +32,8 @@
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
                           // otherwise, sorts newforms into Cremona order before output
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
   int verbose,output,curve_output,n=130;
@@ -58,7 +60,7 @@ int main(void)
         curve_filename="no";
       if(verbose) cout << "\n\n";
       cout << ">>>Level " << n << "<<<" << endl;
-      newforms nf(n, DEFAULT_MODULUS, verbose>1);
+      newforms nf(n, modulus, verbose>1);
       if(verbose)
         {
           cout << "Reading newform data from file..." << flush;

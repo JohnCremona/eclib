@@ -38,13 +38,14 @@
 #define DMAX 50  // Upper bound for d = (2,2) matrix entry used
 #define LMAX 200  // Upper bound twisting prime l-
 
+const scalar modulus(default_modulus<scalar>());
 
 int main(void)
 {
   initprimes("PRIMES",0);
   set_precision(80);
  long n=1;
- int dump=1, detail; 
+ int dump=1, detail;
  long maxn, dmax=DMAX;
  //#ifdef SINGLE
  detail=2;
@@ -55,7 +56,7 @@ int main(void)
  cerr << "Enter max scaling factor for periods: "; cin>>maxn;
 #ifdef AUTOLOOP
  long limit;
- cerr<<"Enter first and last N: ";cin>>n>>limit; 
+ cerr<<"Enter first and last N: ";cin>>n>>limit;
  n--; cout<<"\n";
  while (n<limit) { n++;
 #else
@@ -65,7 +66,7 @@ int main(void)
 {
   cout << "N = " << n << endl;
 
-  newforms nf(n, DEFAULT_MODULUS, detail);
+  newforms nf(n, modulus, detail);
   int noldap=25;
   nf.createfromdata(1,noldap);
   int squarelevel=nf.squarelevel;
@@ -109,7 +110,7 @@ int main(void)
      if(!have_both)
        cout<<"Problem!  find_matrix() returns 0!"<<endl;
 
-     if(detail) 
+     if(detail)
        {
 	 cout << "Minimal periods found: x0 = "<<x0<<", y0 = "<<y0<<"\n";
 	 cout << "Matrix ("<<nfi->a<<","<<nfi->b<<";"<<n*nfi->c<<","<<nfi->d<<"):\t";
@@ -119,10 +120,10 @@ int main(void)
 
 // STEP 3: Now we have nonzero integer multiples of real and imag
 // periods, we search for a sub-multiple of both which gives a genuine
-// curve.  
-     
-     long nx, ny; int type;  
-     long maxnx=maxn; 
+// curve.
+
+     long nx, ny; int type;
+     long maxnx=maxn;
      if(rp_known) maxnx=1;
      int found = get_curve(n, fac, maxnx, maxn, x0, y0, nx, ny, type, detail);
 
@@ -150,7 +151,7 @@ int main(void)
 		     <<" found for imaginary period!"<<endl;
 	       }
 	   }
-	 if(detail) 
+	 if(detail)
 	   {
 	     cout<<"Updated newform data:\n"; nfi->display();
 	     cout<<"test reconstruction of curve from updated data:"<<endl;

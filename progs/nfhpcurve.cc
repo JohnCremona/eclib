@@ -37,6 +37,8 @@
 #define BITPRECX  20  // step-size for increasing bit precision
 #define BITPRECMAX 300  // maximum bit precision
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
  init_time();
@@ -51,7 +53,7 @@ int main(void)
  cerr << "Verbose output? "; cin>>verbose;
  cerr << "How many primes for Hecke eigenvalues? ";
  cin  >> stopp; cerr << endl;
- output=curve_output=1; 
+ output=curve_output=1;
  cerr << "Output newforms to file? (0/1) ";  cin >> output;
  cerr << "Output curves to file? (0/1) ";  cin >> curve_output;
  ofstream curve_out;
@@ -90,7 +92,7 @@ int main(void)
       continue;
     }
   int plus=1;
-  newforms nf(n, DEFAULT_MODULUS, verbose);
+  newforms nf(n, modulus, verbose);
   int noldap=25;
   nf.createfromscratch(plus,noldap);
 #ifdef LMFDB_ORDER
@@ -103,7 +105,7 @@ int main(void)
   else          cout << nf.n1ds << " newform(s) found."<<endl;
   nf.addap(stopp);
 
-  long nnf = nf.n1ds, inf; 
+  long nnf = nf.n1ds, inf;
   if(nnf==0)
     {
       if(output) // output full nf data and small nf data
@@ -129,7 +131,7 @@ int main(void)
       nf.output_to_file(1,0);
       nf.output_to_file(1,1);
     }
-  long rootn=(long)(sqrt((double)n)+0.1); 
+  long rootn=(long)(sqrt((double)n)+0.1);
   int squarelevel=(n==rootn*rootn);
   cout<<"Computing "<<nnf<<" curves...\n";
 
@@ -146,7 +148,7 @@ int main(void)
   for(inf=0; inf<nnf; inf++)
    {
      if(success[inf]) continue;
-     if(verbose) 
+     if(verbose)
        cout<<"\n"<<"Form number "<<inf+1<<"\n";
      else cout<<(inf+1)<<" ";
      newform* nfi = &((nf.nflist)[inf]);
@@ -159,14 +161,14 @@ int main(void)
      if(!have_both)
        cout<<"Problem!  find_matrix() returns 0!"<<endl;
 
-     if(verbose) 
+     if(verbose)
        {
 	 cout << "Minimal periods found: x0 = "<<x0<<", y0 = "<<y0<<"\n";
 	 cout << "Matrix ("<<nfi->a<<","<<nfi->b<<";"<<n*nfi->c<<","<<nfi->d<<"):\t";
 	 cout << "dotplus = "<< nfi->dotplus << ", dotminus = "<< nfi->dotminus<< "\n";
 	 cout << "Searching for scaling factors.\n";
        }
-    
+
      long nx, ny;
      long maxnx=maxn; if(rp_known) maxnx=1;
      int found = get_curve(n, fac, maxnx, maxn, x0, y0, nx, ny, nfi->type, verbose);
@@ -273,7 +275,7 @@ int main(void)
               cout << "Now working with maxny =  " <<maxn<< endl;
             }
 #ifdef MPFP
-          if(bit_precision()<BITPRECMAX) 
+          if(bit_precision()<BITPRECMAX)
             {
               set_precision(bit_precision()+BITPRECX);
               cout << "Now working with bit precision "<<bit_precision()<< endl;
@@ -284,7 +286,7 @@ int main(void)
   }   // ends while(nsucc<nnf)
   delete[]success;
   delete[]curves;
-  
+
 }       // end of if(n>1)
      }  // end of while(n>1) or while(n<limit)
  }       // end of main()

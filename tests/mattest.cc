@@ -23,8 +23,9 @@
  
 #include <iostream>
 #include <eclib/timer.h>
-#include <eclib/matrix.h>
 #include <eclib/types.h>
+
+const scalar modulus(default_modulus<scalar>());
 
 int main(void)
 {
@@ -106,7 +107,7 @@ int main(void)
   cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
   cin>>method;
   cout << "\nUsing method " << method;
-  if(method==2) cout << " (modulus = " << DEFAULT_MODULUS << ")";
+  if(method==2) cout << " (modulus = " << modulus << ")";
   cout << endl;
   mat ref = echelon(aug, pc, npc, rk, ny, denom, method);
   cout << "Echelon matrix = " << ref;

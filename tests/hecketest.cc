@@ -51,7 +51,7 @@ int main(void)
  cout << "Program hecketest." << endl;
  init_time();
  start_time();
- scalar modulus(DEFAULT_MODULUS);
+ scalar modulus = default_modulus<scalar>();
  int n=2;
  int plus=1;
  int verbose=0;

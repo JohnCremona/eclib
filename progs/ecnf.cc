@@ -31,6 +31,8 @@
 // ones, even in their sign.
 #define DEBUG 0
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
   int verbose=0;
@@ -54,7 +56,7 @@ int main(void)
 
   cout<<"Enter sign (1,-1,0 for both):"; cin>>sign;
 
-  newforms nf(n, DEFAULT_MODULUS, verbose);
+  newforms nf(n, modulus, verbose);
 
   // Create the newform from the curve (first create the homspace,
   // then split off the eigenspace)

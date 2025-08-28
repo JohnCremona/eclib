@@ -42,6 +42,8 @@ vector<pair<int,int> > bad_ones; // holds bad (n,i) list
 
 int checkap(const level* iN, const newform& nf, CurveRed& CR, long pmax=100);
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
   int prec0 = 100;
@@ -78,7 +80,7 @@ int main(void)
 #endif
  if (n>1)
 {
- newforms nf(n, DEFAULT_MODULUS, verb);
+ newforms nf(n, modulus, verb);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
 #ifdef LMFDB_ORDER

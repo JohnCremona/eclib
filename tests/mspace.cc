@@ -21,10 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/subspace.h>
-const bigint MBIGPRIME=to_ZZ("6074000003");
-// will convert this string to an bigint
-//This is nearly the largest p such that (p/2)^2 < 2^63.
+#include <eclib/types.h>
+
+const bigint modulus(default_modulus<bigint>());
 
 int main()
 {
@@ -77,9 +76,9 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     subspace_m elambda = eigenspace(m,lambda);
     cout << "eigenspace for lambda = " << lambda << " has basis\n" << basis(elambda);
     cout << "with dimension " << dim(elambda) << endl;
-    cout << "\nNow repeating eigenspace calculation modulo " << MBIGPRIME << endl;
+    cout << "\nNow repeating eigenspace calculation modulo " << modulus << endl;
     subspace_m elp;
-    lift(peigenspace(m,lambda,MBIGPRIME),MBIGPRIME, elp);
+    lift(peigenspace(m,lambda,modulus),modulus, elp);
     cout << "eigenspace for lambda has basis\n" << basis(elp);
     cout << "with dimension " << dim(elp) << endl;
   }

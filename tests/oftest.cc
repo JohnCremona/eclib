@@ -25,6 +25,8 @@
 
 #define AUTOLOOP
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
  int n=11, limit; 
@@ -44,7 +46,7 @@ int main(void)
 	 moddata symbols(n);   // (not really needed except 
 	                       //that the level data gets initialized properly 
                                //which IS needed for oldforms)
-	 oldforms of(10,&symbols,DEFAULT_MODULUS,verbose);       // default args ntp=5, verbose=0
+	 oldforms of(10,&symbols, modulus,verbose);       // default args ntp=5, verbose=0
 	 of.display();
        }       // end of while()
 }       // end of main()

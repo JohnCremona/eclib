@@ -25,6 +25,8 @@
 
 //#define AUTOLOOP
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
  int n=1; 
@@ -53,7 +55,7 @@ int main(void)
  cin  >> stopp; cout << endl;
 #endif
   cout << "\n>>>Level " << n << "\t";
-  newforms nf(n, DEFAULT_MODULUS, showforms); 
+  newforms nf(n, modulus, showforms); 
   nf.createfromdata(1,0,0);
   if (showforms) nf.newforms::display();
 

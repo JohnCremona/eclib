@@ -25,7 +25,7 @@
 #define _ECLIB_ISOGS_H_
 
 #include "cperiods.h"  // which itself includes everything relevant
-#include "matrix.h"
+#include "types.h"
 
 // isogeny functions:
 

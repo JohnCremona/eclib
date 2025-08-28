@@ -27,8 +27,6 @@
 //#define ECLIB_MULTITHREAD_DEBUG
 
 #include "eclib/logger.h"
-#include "eclib/method.h"
-#include "eclib/ssubspace.h"
 #include "eclib/xsplit.h"
 
 template class form_finderT<int>;

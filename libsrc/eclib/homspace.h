@@ -25,9 +25,7 @@
 #define _ECLIB_HOMSPACE_H      1
                            //flags that this file has been included
 
-#include "method.h"  // uses/sets SCALAR_OPTION to fix scalar type
-#include "subspace.h"
-#include "ssubspace.h"
+#include "types.h"  // uses/sets SCALAR_OPTION to fix scalar type and includes all LA headers
 #include "symb.h"
 
 // If this is defined, the order of primes used for Wq and Tp

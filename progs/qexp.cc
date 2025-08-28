@@ -31,6 +31,8 @@
 #define NAP 25      // number of ap to output
 #define SEPCHAR "," // char to separate ap in output
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
   cerr<<"q-expansions of rational newforms";
@@ -52,7 +54,7 @@ int main(void)
 #endif
  if (n>1)
 {
- newforms nf(n, DEFAULT_MODULUS, verbose);
+ newforms nf(n, modulus, verbose);
  nf.createfromdata(1,25);
  int i, num = nf.n1ds;
  if(num>0){

@@ -33,6 +33,8 @@
 #define BITPRECX  20  // step-size for increasing bit precision
 #define BITPRECMAX 300  // maximum bit precision
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
  init_time();
@@ -73,7 +75,7 @@ int main(void)
       cout << "Finished level "<<n<<endl;
       continue;
     }
-  newforms nf(n, DEFAULT_MODULUS, verbose);
+  newforms nf(n, modulus, verbose);
   int noldap=25; // stopp0 must be at least this big!
   if (stopp0<noldap) stopp0=noldap;
   nf.createfromscratch(1,noldap);

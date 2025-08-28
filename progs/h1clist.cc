@@ -35,6 +35,8 @@
 #define CURVE_IS_ONE_FIELD // outputs      [a1,a2,a3,a4,a6]
                            // else outputs a1 a2 a3 a4 a6
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
   int prec0 = 100;
@@ -60,7 +62,7 @@ int main(void)
 #endif
  if (n>1)
 {
-  newforms nf(n, DEFAULT_MODULUS, 0);
+  newforms nf(n, modulus, 0);
   int noldap=25;
   nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
   int nnf = nf.n1ds;

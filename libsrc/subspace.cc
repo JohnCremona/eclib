@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "eclib/subspace.h"
+#include "eclib/types.h"
 
 // Instantiate subZspace template classes for T=int, long, bigint
 
@@ -84,8 +84,8 @@ Zmat<T> restrict_mat(const Zmat<T>& M, const subZspace<T>& S, int cr)
 
   if(cr) // optional check that S is invariant under M
     {
-      T m(DEFAULT_MODULUS);
-      int check = (S.denom*matmulmodp(M,B,m) == matmulmodp(B,A,m));
+      T modulus = default_modulus<T>();
+      int check = (S.denom*matmulmodp(M,B, modulus) == matmulmodp(B,A, modulus));
       if (!check)
         cerr<<"Error in restrict_mat: subspace not invariant!"<<endl;
     }

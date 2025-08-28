@@ -21,8 +21,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/subspace.h>
 #include <eclib/types.h>
+
+const scalar modulus(default_modulus<scalar>());
 
 int main()
 {
@@ -66,7 +67,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     scalar kerdenom = denom(ker);
     cout << "denom:  " << kerdenom  << "\n";
   }
-  scalar p(DEFAULT_MODULUS);
+  scalar p = modulus;
   cout << "Now compute kernel mod p, p = " << p << endl;
   {
     times=ntimes; subspace ker;

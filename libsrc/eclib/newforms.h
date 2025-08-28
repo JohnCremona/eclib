@@ -26,7 +26,7 @@
                            //flags that this file has been included
 
 #include "cperiods.h"
-#include "method.h" // must be included before xsplit.h
+#include "types.h"  // uses/sets SCALAR_OPTION to fix scalar type and includes all LA headers
 #include "xsplit.h" // for splitter_base clase
 #include "curve.h"
 #include "oldforms.h"

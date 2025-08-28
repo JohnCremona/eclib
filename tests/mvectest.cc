@@ -21,8 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <eclib/method.h>
-#include <eclib/vector.h>
+#include <eclib/types.h>
 
 int main(void)
 {

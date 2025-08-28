@@ -42,6 +42,8 @@
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
                           // otherwise, sorts newforms into Cremona order before output
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
   set_precision(100);
@@ -80,7 +82,7 @@ int main(void)
  if(!sqfree) continue;
 #endif
 
- newforms nf(n, DEFAULT_MODULUS, 0);
+ newforms nf(n, modulus, 0);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
 #ifdef LMFDB_ORDER

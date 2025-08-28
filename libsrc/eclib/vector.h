@@ -62,6 +62,8 @@ typedef sZmat_elim<bigint> smat_m_elim;
 typedef ssubZspace<bigint> ssubspace_m;
 typedef form_finderT<bigint> form_finder_m;
 
+template<class T> T default_modulus();
+
 template<class T> int dim(const Zvec<T>&);
 template<class T> T operator*(const Zvec<T>&, const Zvec<T>&);
 template<class T> T operator*(const sZvec<T>&, const Zvec<T>&);

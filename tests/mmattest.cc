@@ -22,8 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <time.h>
-#include <eclib/method.h>
-#include <eclib/matrix.h>
+#include <eclib/types.h>
 
 int main(void)
 {

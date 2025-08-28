@@ -27,6 +27,8 @@
 
 #define AUTOLOOP
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
   set_precision(60);
@@ -40,7 +42,7 @@ int main(void)
 #endif
  if (n>1)
 {
-  newforms nf(n, DEFAULT_MODULUS, 0);
+  newforms nf(n, modulus, 0);
  int noldap=25;
  nf.createfromdata(1,noldap,0); // do not create from scratch if data absent
  for(int xi=0; xi<nf.n1ds; xi++)

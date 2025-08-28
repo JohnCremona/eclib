@@ -13,7 +13,7 @@ Enter number of times to repeat kernel tests: kernel(m) has basis
 [1]]
 pivots: [3]
 denom:  1
-Now compute kernel mod p, p = 1073741789
+Now compute kernel mod p, p = 6074000003
 kernel(m) has basis
 
 [[1],

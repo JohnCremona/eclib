@@ -24,7 +24,6 @@
 //#define TEST
 //#define DUMP_DATA
 
-#include <eclib/matrix.h>
 #include <eclib/isogs.h>
 #include <eclib/getcurve.h>
 

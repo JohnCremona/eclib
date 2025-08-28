@@ -27,6 +27,8 @@
 //#define AUTOLOOP
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
 
+const scalar modulus(default_modulus<scalar>());
+
 int main(void)
 {
   int n=2;
@@ -43,7 +45,7 @@ int main(void)
  if (n>1)
 {
  cout << ">>> Level " << n << " <<<\t";
- newforms nf(n, DEFAULT_MODULUS, verbose);
+ newforms nf(n, modulus, verbose);
  cout << "\nAfter constructor, about to createfromdata() \n";
  nf.createfromdata(1,25);
  int num = nf.n1ds;

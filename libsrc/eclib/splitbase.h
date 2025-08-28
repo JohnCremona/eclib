@@ -49,9 +49,7 @@
 //                              1-dimensional eigenspaces as found.
 //                             (basis2 will not be used when plusflag=1)
 
-#include "smatrix_elim.h"
-#include "subspace.h"
-#include "ssubspace.h"
+#include "types.h"
 
 template<class T>
 class splitter_base {

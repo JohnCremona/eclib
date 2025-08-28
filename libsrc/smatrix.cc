@@ -23,7 +23,7 @@
  
 // Original version by Luiz Figueiredo
 
-#include "eclib/smatrix.h"
+#include "eclib/types.h"
 
 // Instantiate sZmat template classes for T=int, long, bigint
 
@@ -1095,7 +1095,7 @@ template<class T>
 sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s)
 {
   if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
-  return mult_mod_p(m.select_rows(pivots(s)),sZmat<T>(basis(s)), T(DEFAULT_MODULUS));
+  return mult_mod_p(m.select_rows(pivots(s)),sZmat<T>(basis(s)), default_modulus<T>());
 }
 
 #if FLINT
