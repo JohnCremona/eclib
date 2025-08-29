@@ -1,4 +1,4 @@
-Sparse matrix test program with scalar type long.
+Sparse matrix test program with scalar type long and modulus 1073741789.
 
 enter 0 to exit
 enter 1 to do all tests 

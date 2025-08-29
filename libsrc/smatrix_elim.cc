@@ -23,8 +23,7 @@
  
 // Original version by Luiz Figueiredo
 
-#include "eclib/ssubspace.h"
-#include "eclib/smatrix_elim.h"
+#include "eclib/linalg.h"
 
 // Instantiate sZmat_elim template classes for T=int, long, bigint
 

@@ -1,4 +1,4 @@
-// vector.cc: manage implementations of integer vector classes
+// vector.cc: implementations of integer vector classes
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include "eclib/vector.h"
+#include "eclib/linalg.h"
 
 // Instantiate Zvec template classes for T=int, long, bigint
 
@@ -451,11 +451,6 @@ vec_l to_vec_l(const vec_i& v)
   std::transform(vi.begin(), vi.end(), w.begin(), tolong);
   return vec_l(w);
 }
-
-// PRIME30 is (as defined in xmod.h) 1073741789,  the largest p such that p < 2^30
-template<> int default_modulus<int>() {return (int)1073741789;}
-template<> long default_modulus<long>() {return (long)1073741789;}
-template<> bigint default_modulus<bigint>() {return to_ZZ("6074000003");}
 
 // Instantiate Zvec template functions for T=int
 template int dim<int>(const Zvec<int>&);
