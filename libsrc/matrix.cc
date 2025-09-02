@@ -1445,8 +1445,6 @@ T det_via_ntl(const Zmat<T>& M, const T& pr)
   return mod(conv<T>(det), pr);
 }
 
-#if FLINT
-
 #include "eclib/flinterface.h"
 
 // FLINT has more than one type for modular matrices: standard in
@@ -1454,7 +1452,7 @@ T det_via_ntl(const Zmat<T>& M, const T& pr)
 // (unsigned long) while non-standard was hmod_mat_t, with entries
 // hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
 // wrapper.  We use the former when scalar=long and the latter when
-// scalar=int and the FLINT versin is at least 3.  The unsigned
+// scalar=int and the FLINT version is at least 3.  The unsigned
 // scalar types are #define'd as uscalar.
 
 template<class T>
@@ -1591,8 +1589,6 @@ template Zmat<int> ref_via_flint<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec
                                       long& rk, long& ny, const int& pr);
 template Zmat<long> ref_via_flint<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                         long& rk, long& ny, const long& pr);
-
-#endif // FLINT
 
 template<class T>
 Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)

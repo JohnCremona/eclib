@@ -51,9 +51,9 @@
 // (which is not currently templated).
 
 #ifndef SCALAR_OPTION
-//#define SCALAR_OPTION 1  // int
+#define SCALAR_OPTION 1  // int
 //#define SCALAR_OPTION 2  // long
-#define SCALAR_OPTION 3  // bigint
+//#define SCALAR_OPTION 3  // bigint
 #endif
 
 // #pragma message "The value of SCALAR_OPTION (after): " XSTR(SCALAR_OPTION)

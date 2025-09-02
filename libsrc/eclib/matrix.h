@@ -170,11 +170,7 @@ Zvec<T> apply(const Zmat<T>&, const Zvec<T>&);
 template<class T> Zmat<T> rref(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const T& pr)
 {
-#if FLINT
   return ref_via_flint(M, pcols, npcols, rk, ny, pr);
-#else
-  return ref_via_ntl(M, pcols, npcols, rk, ny, pr);
-#endif
 }
 
 // Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr

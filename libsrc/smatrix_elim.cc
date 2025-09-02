@@ -1265,7 +1265,6 @@ void sZmat_elim<T>::step5dense()
 #endif
   Zvec<int> pc,npc; long rk,ny;
 
-  // this will call ref_via_ntl() if FLINT, else ref_via_flint()
   dmat = rref(dmat,pc,npc,rk,ny,modulus);
 
 #if TRACE_DENSE

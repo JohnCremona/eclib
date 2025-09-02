@@ -141,10 +141,11 @@ CPPFLAGS_save="$CPPFLAGS"
 LDFLAGS_save="$LDFLAGS"
 CPPFLAGS="$CPPFLAGS $NTL_CFLAGS"
 LDFLAGS="$LDFLAGS $NTL_LDFLAGS"
+
 dnl We first check for NTL/ZZ.h with a plain c++ compiler.
 dnl if it fails we unset the cache, check if we have a c++11
-dnl capable compiler and try again with c++11 enabled, in case
-dnl NTL has been compiled with c++11 threads
+dnl capable compiler and try again with c++17 enabled, in case
+dnl NTL has been compiled with c++17 threads
 AC_CHECK_HEADER(NTL/ZZ.h, [],
     [AC_MSG_ERROR([Could not find NTL, you might want to use --with-ntl=<path> to point to its location])]
   )
@@ -157,40 +158,37 @@ AC_SUBST(NTL_LIBS)
 AC_SUBST(NTL_CFLAGS)
 AC_SUBST(NTL_LDFLAGS)
 
-dnl Find the FLINT Library and determine if it has the nmod_mat module
-dnl (in FLINT from version 2.3)
-dnl
-dnl First set defaults for when no suitable FLINT is found
-dnl
+dnl Find the FLINT Library
 AC_ARG_WITH(flint,
-  [AS_HELP_STRING([--with-flint=<path>],[prefix of FLINT installation.])],
-  [
-    if test "$withval" = "no"; then
-       want_flint=no
-    elif test "$withval" = "yes" -o "$withval" = ""; then
-        want_flint=yes
-        AC_CHECK_LIB([flint], [fmpz_init, nmod_mat_rref],
-        [FLINT_CFLAGS="-DFLINT=1";
-         FLINT_LIBS="-lflint";
-         AC_MSG_NOTICE([Building with FLINT support from system install])],
-        [AC_MSG_NOTICE([No suitable FLINT Library (version >=2.3) found])],
-        [])
-    else
-        want_flint=yes
-        FLINT_CFLAGS="-DFLINT=1 -I$withval/include"
-	FLINT_LDFLAGS="-L$withval/lib";
-        FLINT_LIBS="-lflint"
-    fi
-    ],
-    [want_flint=no]
+  [AS_HELP_STRING([--with-flint=<path>],
+                  [prefix of FLINT installation. e.g. /usr/local or /usr])],
+  [],
+  []
 )
 
+case "$with_flint" in
+  ""|yes)
+    FLINT_LDFLAGS=""
+    FLINT_CFLAGS=""
+    ;;
+  no)
+    AC_MSG_ERROR([Compiling without libflint impossible (but --without-flint given)])
+    ;;
+  *)
+    FLINT_LDFLAGS="-L${with_flint}/lib"
+    FLINT_CFLAGS="-I${with_flint}/include"
+    ;;
+esac
+
 if test "x$want_flint" = "xno"; then
-       FLINT_CFLAGS="-DFLINT=0"
-       FLINT_LDFLAGS=""
-       FLINT_LIBS=""
+       AC_MSG_ERROR([Compiling without flint impossible (but --without-ntl given)])
 fi
 
+AC_CHECK_HEADER(flint/flint.h, [],
+    [AC_MSG_ERROR([Could not find FLINT, you might want to use --with-flint=<path> to point to its location])]
+  )
+
+FLINT_LIBS="-lflint"
 AC_SUBST(FLINT_LIBS)
 AC_SUBST(FLINT_CFLAGS)
 AC_SUBST(FLINT_LDFLAGS)

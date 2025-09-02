@@ -1098,8 +1098,6 @@ sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s)
   return mult_mod_p(m.select_rows(pivots(s)),sZmat<T>(basis(s)), default_modulus<T>());
 }
 
-#if FLINT
-
 #include "eclib/flinterface.h"
 
 // FLINT has more than one type for modular matrices: standard in
@@ -1168,8 +1166,6 @@ sZmat<T> mult_mod_p_flint ( const sZmat<T>& A, const sZmat<T>& B, const T& pr )
   mod_mat_clear(C1);
   return C;
 }
-
-#endif
 
 // Instantiate sZmat template functions for T=int
 template vector<int> dim<int>(const sZmat<int>& A);

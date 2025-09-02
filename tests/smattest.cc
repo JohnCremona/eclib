@@ -26,13 +26,15 @@
 #include <sys/times.h>
 #include <eclib/linalg.h>
 
-const scalar modulus(default_modulus<scalar>());
-
 long starttime,stoptime;
 
 int main(void)
-{ 
-  cout << "Sparse matrix test program with scalar type " << scalar_type << ".\n\n";
+{
+  // if (scalar_type=="bigint")
+  //   set_default_modulus(to_ZZ("100000000000000000039"));
+  scalar modulus(default_modulus<scalar>());
+  cout << "Sparse matrix test program with scalar type " << scalar_type
+       << " and modulus " << modulus << ".\n\n";
   cout << "enter 0 to exit\n";
   cout << "enter 1 to do all tests \n";
   cout << "enter 2 to operations \n"; 
