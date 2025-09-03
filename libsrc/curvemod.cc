@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-#include "eclib/parifact.h"
+#include "eclib/pari_interface.h"
 #include "eclib/pointsmod.h"
 
 // constructors 

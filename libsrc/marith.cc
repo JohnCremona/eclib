@@ -25,6 +25,7 @@
 
 #include <sstream>
 #include "eclib/marith.h"
+#include <eclib/pari_interface.h>
 
 // Utilities for debugging output -- for example, from gdb you can give the command
 //   p show(a)
@@ -430,17 +431,13 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
   return plist;
 }
 
-#include <eclib/parifact.h>
-
 int
 is_prime(const bigint& n)
 {
   return is_prime_via_pari(n);
-  // ostringstream oss;
-  // oss<<n;
-  // return is_prime(oss.str().c_str());
 }
 
+#if(0)
 vector<bigint>
 read_vec_from_string(string vecstr)
 {
@@ -460,15 +457,12 @@ read_vec_from_string(string vecstr)
   //  cout<<"Finished reading from string"<<endl;
   return plist;
 }
+#endif
 
 vector<bigint>
 factor(const bigint& n, int proof=1)
 {
-  vector<bigint> plist = factor_via_pari(n);
-
-  // ostringstream oss;
-  // oss<<n;
-  // vector<bigint> plist =  read_vec_from_string(factor(oss.str()));
+  vector<bigint> plist = factor_via_pari(n).first;
 
   if(proof)
     for( const auto& p : plist)

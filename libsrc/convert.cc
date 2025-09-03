@@ -40,9 +40,11 @@ using namespace NTL;
 
 ZZ FLINT_to_NTL(const fmpz_t& a)  // from FLINT to NTL
 {
-  // deal with sign
+  if (fmpz_fits_si(a))
+    return ZZ(fmpz_get_si(a));
+
+  // deal with sign (a is certainly nonzero now)
   int sign_a = fmpz_sgn(a);
-  if (sign_a==0) return ZZ(0);
   fmpz_t aa; fmpz_init(aa);
   fmpz_abs(aa, a);
 
@@ -63,11 +65,9 @@ ZZ PARI_to_NTL(const GEN& a)  // from PARI to NTL
 {
   // if a fits in a long int it is easy:
   if (!is_bigint(a))
-    {
-      return ZZ(itos(a));
-    }
+    return ZZ(itos(a));
 
-  // deal with sign (a is certainly nonzero here)
+  // deal with sign (a is certainly nonzero now)
   int sign_a = signe(a);
   GEN aa = absi(a);
 
@@ -108,14 +108,15 @@ ZZ PARI_to_NTL(const GEN& a)  // from PARI to NTL
 
 fmpz_t* NTL_to_FLINT(const ZZ& a)  // from NTL to FLINT
 {
-  // deal with sign
-  int sign_a = sign(a);
-  if (sign_a==0)
+  if (IsZero(a))
     {
       fmpz_t* b = new fmpz_t[1];
       fmpz_init_set_si(b[0], 0);
       return b;
     }
+
+  // deal with sign (now a is nonzero)
+  int sign_a = sign(a);
   ZZ aa = abs(a);
 
 #ifdef DEBUG_CONVERT
@@ -180,10 +181,11 @@ fmpz_t* PARI_to_FLINT(const GEN& a)  // from PARI to FLINT
 
 GEN NTL_to_PARI(const ZZ& a)  // from NTL to PARI
 {
-  // deal with sign
-  int sign_a = sign(a);
-  if (sign_a==0) return stoi(0);
+  if (IsZero(a))
+    return stoi(0);
 
+  // deal with sign (now a is nonzero)
+  int sign_a = sign(a);
   ZZ aa = abs(a);
 
 #ifdef DEBUG_CONVERT
@@ -225,9 +227,11 @@ GEN NTL_to_PARI(const ZZ& a)  // from NTL to PARI
 
 GEN FLINT_to_PARI(const fmpz_t& a)  // from FLINT to PARI
 {
-  // deal with sign
+  if (fmpz_fits_si(a))
+    return stoi(fmpz_get_si(a));
+
+  // deal with sign (a is certainly nonzero now)
   int sign_a = fmpz_sgn(a);
-  if (sign_a==0) return stoi(0);
 
   fmpz_t aa; fmpz_init(aa);
   fmpz_abs(aa, a);

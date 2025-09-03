@@ -1,4 +1,4 @@
-/* parifact.cc: integer factorization using libpari, interface via strings */
+// pari_interface.cc: functions using libpari (integer factorization and ellap)
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
@@ -24,40 +24,45 @@
 #include <iostream>
 
 #include "eclib/interface.h"
-#include "eclib/parifact.h"
+#include "eclib/pari_interface.h"
 #include "eclib/pari_init.h"
 #include "eclib/convert.h"
 
 //#define DEBUG_GPFACT
 
-vector<bigint> factor_via_pari(const bigint& n)
+pair<vector<bigint>, vector<bigint>> factor_via_pari(const bigint& n)
 {
-  eclib_pari_init();
-  pari_sp av=avma;  // store pari stack pointer
+  vector<bigint> plist, elist;
+  if (n<2)
+    return {plist, elist};
 
-  vector<bigint> plist;
-  if (n<2) return plist;
 #ifdef DEBUG_GPFACT
   cout << "In factor_via_pari("<<n<<")\n";
 #endif
+
+  eclib_pari_init();
+  pari_sp av=avma;  // store pari stack pointer
+
   GEN pn = NTL_to_PARI(n);
 #ifdef DEBUG_GPFACT
   pari_printf(" - n as t_INT: %Ps\n", pn);
 #endif
-  pn = gel(Z_factor(pn), 1); // a t_VEC of primes
+  GEN fpn = Z_factor(pn);
 #ifdef DEBUG_GPFACT
-  pari_printf(" - plist as t_VEC: %Ps\n", pn);
+  pari_printf(" - factor(n) as t_MAT: %Ps\n", fpn);
 #endif
-  int np = lg(pn)-1;
-  plist.resize(np);
-  for(int i=0; i<np; i++)
-    plist[i] = PARI_to_NTL(gel(pn, i+1));
+  for(int i=1; i <= nbrows(fpn); i++)
+    {
+      plist.push_back(PARI_to_NTL(gcoeff(fpn, i, 1)));
+      elist.push_back(PARI_to_NTL(gcoeff(fpn, i, 2)));
+    }
 #ifdef DEBUG_GPFACT
   cout << " - plist as vector<bigint>: " << plist << endl;
+  cout << " - elist as vector<bigint>: " << elist << endl;
 #endif
 
   avma=av;         // restore pari stackpointer
-  return plist;
+  return {plist, elist};
 }
 
 int is_prime_via_pari(const bigint& p)
@@ -91,6 +96,25 @@ ellap(const bigint& a1, const bigint& a2, const bigint& a3, const bigint& a4, co
   return ap;
 }
 
+long
+ellap(long a1, long a2, long a3, long a4, long a6, long p)
+{
+  eclib_pari_init();
+  pari_sp av=avma;  // store pari stack pointer
+#ifdef DEBUG_ELLAP
+  std::cout<<"ellap called with ["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"], p="<<p<<endl;
+#endif
+  GEN ai = mkvecn(5, stoi(a1), stoi(a2), stoi(a3), stoi(a4), stoi(a6));
+  GEN pp = stoi(p);
+  long ap = itos(ellap(ellinit(ai, pp, 0), pp));
+#ifdef DEBUG_ELLAP
+  std::cout<<"ellap returns "<<ap<<endl;
+#endif
+  avma=av;         // restore pari stackpointer
+  return ap;
+}
+
+#if(0) // obsolete versions using string interface
 string
 factor(const string n)
 {
@@ -128,21 +152,4 @@ is_prime(const string p)
   avma=av;         // restore pari stackpointer
   return ans;
 }
-
-long
-ellap(long a1, long a2, long a3, long a4, long a6, long p)
-{
-  eclib_pari_init();
-  pari_sp av=avma;  // store pari stack pointer
-#ifdef DEBUG_ELLAP
-  std::cout<<"ellap called with ["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"], p="<<p<<endl;
 #endif
-  GEN ai = mkvecn(5, stoi(a1), stoi(a2), stoi(a3), stoi(a4), stoi(a6));
-  GEN pp = stoi(p);
-  long ap = itos(ellap(ellinit(ai, pp, 0), pp));
-#ifdef DEBUG_ELLAP
-  std::cout<<"ellap returns "<<ap<<endl;
-#endif
-  avma=av;         // restore pari stackpointer
-  return ap;
-}

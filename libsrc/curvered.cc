@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "eclib/ffmod.h"
-#include "eclib/parifact.h" // for ellap
+#include "eclib/pari_interface.h" // for ellap
 
 ostream& operator<<(ostream& os, const Kodaira_code& c)
 {
