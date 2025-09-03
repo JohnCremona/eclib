@@ -94,23 +94,12 @@ void curvemodq::set_group_order_via_legendre()
 
 void curvemodq::set_group_order()
 {
-  // if(((this->q)<100)||((this->q)==181)||((this->q)==331)||((this->q)==547))
-  //   {
-  //     set_group_order_via_legendre();
-  //     return;
-  //   }
-
-  long a1z = I2long(conv<ZZ>(a1));
-  long a2z = I2long(conv<ZZ>(a2));
-  long a3z = I2long(conv<ZZ>(a3));
-  long a4z = I2long(conv<ZZ>(a4));
-  long a6z = I2long(conv<ZZ>(a6));
-  long p = I2long(q);
-  order = 1+q-ellap(a1z,a2z,a3z,a4z,a6z,p);
-  // pointmodq P1, P2;
-  // bigint n1, n2, n;
-  // my_isomorphism_type(*this,n1,n2,P1,P2);
-  // order=n1*n2;
+  bigint a1z = conv<ZZ>(a1);
+  bigint a2z = conv<ZZ>(a2);
+  bigint a3z = conv<ZZ>(a3);
+  bigint a4z = conv<ZZ>(a4);
+  bigint a6z = conv<ZZ>(a6);
+  order = 1+q-ellap(a1z,a2z,a3z,a4z,a6z,q);
 }
 
 // Division poly functions:

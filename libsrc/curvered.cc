@@ -1052,21 +1052,13 @@ long CurveRed::ap(long p) const
 // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
 bigint CurveRed::ap(const bigint& p) const
 {
-  if (is_long(p))
-    return bigint(ap(I2long(p)));
-
-  // now p does not fit in a long. until we implement conversion from
-  // NTL ZZ to pari integers we use our own point-counting
-
-  static const bigint zero(0);
-  static const bigint one(1);
-  int f = min(2, ord_p_N(p));
-  switch (f) {
+  switch (min(2, ord_p_N(p))) {
     // Bad primes: return the p'th coefficient of the L-series
-  case 2: return zero;
+  case 2: return bigint(0);
   case 1: return bigint(-LocalRootNumber(p));
-  case 0: default: // good primes
-    return one + p - reduce_curve(*this,p).group_order();
+    // good primes
+  case 0: default:
+    return ellap(a1,a2,a3,a4,a6, p);
   }
 }
 

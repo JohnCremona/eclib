@@ -21,10 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <NTL/ZZXFactoring.h>
-
-// We use the pari C library for factoring (via a string interface
-// defined in parifact.h/cc)
+// We use the pari C library for factoring
 
 #include <sstream>
 #include "eclib/marith.h"
@@ -438,9 +435,10 @@ vector<bigint> pdivs_trial(const bigint& number, int trace)
 int
 is_prime(const bigint& n)
 {
-  ostringstream oss;
-  oss<<n;
-  return is_prime(oss.str().c_str());
+  return is_prime_via_pari(n);
+  // ostringstream oss;
+  // oss<<n;
+  // return is_prime(oss.str().c_str());
 }
 
 vector<bigint>
@@ -466,9 +464,12 @@ read_vec_from_string(string vecstr)
 vector<bigint>
 factor(const bigint& n, int proof=1)
 {
-  ostringstream oss;
-  oss<<n;
-  vector<bigint> plist =  read_vec_from_string(factor(oss.str()));
+  vector<bigint> plist = factor_via_pari(n);
+
+  // ostringstream oss;
+  // oss<<n;
+  // vector<bigint> plist =  read_vec_from_string(factor(oss.str()));
+
   if(proof)
     for( const auto& p : plist)
       {
