@@ -15,7 +15,7 @@ LIBS        = $(FLINT_LIBS) $(NTL_LIBS) $(PARI_LIBS) $(BOOST_LIBS) $(PTHREAD_LIB
 
 lib_LTLIBRARIES = libec.la
 
-PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/convert.h eclib/arith.h eclib/xmod.h eclib/modulus.h eclib/marith.h eclib/bigcomplex.h eclib/compproc.h eclib/vector.h eclib/matrix.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svector.h eclib/smatrix.h eclib/ssubspace.h eclib/smatrix_elim.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h eclib/xsplit_data.h eclib/threadpool.h eclib/logger.h eclib/linalg.h eclib/flinterface.h
+PROCS_DOTHS = eclib/interface.h eclib/templates.h eclib/pari_init.h eclib/convert.h eclib/arith.h eclib/xmod.h eclib/modulus.h eclib/marith.h eclib/bigcomplex.h eclib/compproc.h eclib/vector.h eclib/matrix.h eclib/subspace.h eclib/rat.h eclib/bigrat.h eclib/kbessel.h eclib/svector.h eclib/smatrix.h eclib/ssubspace.h eclib/smatrix_elim.h eclib/splitbase.h eclib/xsplit.h eclib/conic.h eclib/legendre.h eclib/quadratic.h eclib/unimod.h eclib/illl.h eclib/hilbert.h eclib/timer.h eclib/cubic.h eclib/gf.h eclib/polys.h eclib/realroots.h eclib/parifact.h eclib/p2points.h eclib/xsplit_data.h eclib/threadpool.h eclib/logger.h eclib/linalg.h eclib/flinterface.h
 
 QCURVES_DOTHS = eclib/curve.h eclib/points.h eclib/cperiods.h eclib/isogs.h eclib/reader.h eclib/mwprocs.h eclib/lambda.h eclib/sifter.h eclib/sieve_search.h eclib/htconst.h eclib/egr.h eclib/saturate.h eclib/divpol.h eclib/pointsmod.h eclib/curvemod.h eclib/ffmod.h eclib/tlss.h eclib/elog.h eclib/getcurve.h eclib/egros.h
 
@@ -25,7 +25,7 @@ G0N_DOTHS = eclib/periods.h eclib/cusp.h eclib/homspace.h eclib/newforms.h eclib
 
 DOTHS = $(PROCS_DOTHS) $(QCURVES_DOTHS) $(QRANK_DOTHS) $(G0N_DOTHS)
 
-PROCS_DOTCCS = interface.cc convert.cc unimod.cc modulus.cc arith.cc marith.cc compproc.cc vector.cc matrix.cc subspace.cc kbessel.cc svector.cc smatrix.cc ssubspace.cc smatrix_elim.cc xsplit.cc conic.cc legendre.cc quadratic.cc illl.cc hilbert.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc p2points.cc gf.cc xsplit_data.cc threadpool.cc logger.cc
+PROCS_DOTCCS = interface.cc pari_init.cc convert.cc unimod.cc modulus.cc arith.cc marith.cc compproc.cc vector.cc matrix.cc subspace.cc kbessel.cc svector.cc smatrix.cc ssubspace.cc smatrix_elim.cc xsplit.cc conic.cc legendre.cc quadratic.cc illl.cc hilbert.cc timer.cc cubic.cc polys.cc realroots.cc parifact.cc p2points.cc gf.cc xsplit_data.cc threadpool.cc logger.cc
 
 QCURVES_DOTCCS = curve.cc curvedata.cc curvered.cc points.cc cperiods.cc isogs.cc heights.cc mwprocs.cc lambda.cc sifter.cc sieve_search.cc htconst.cc egr.cc saturate.cc divpol.cc pointsmod.cc curvemod.cc ffmod.cc tlss.cc elog.cc getcurve.cc egros.cc
 

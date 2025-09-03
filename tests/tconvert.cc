@@ -21,27 +21,42 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <cassert>
 #include <eclib/interface.h>
 #include <eclib/convert.h>
-#include <cassert>
+#include <eclib/pari_init.h>
 
+std::ostream& operator<<(std::ostream& s, const fmpz_t& a);
 
-#define DEFAULT_PARI_SIZE 100000000
-#define DEFAULT_PARI_MAX_PRIME 1000000
+// Compiler cannot distinguish between fmpz_t (aka 'long int[1]') and GEN (aka 'long int*')
+//std::ostream& operator<<(std::ostream& s, const GEN& a);
 
-void eclib_pari_init(long max_prime=DEFAULT_PARI_MAX_PRIME)
+int test(const ZZ& a);
+
+int main()
 {
-  if (!avma) {
-    long pari_size = strtol(getenv_with_default("PARI_SIZE", "DEFAULT_PARI_SIZE").c_str(), NULL, 0);
-    if (pari_size==0) // e.g. syntax error in the environment variable PARI_SIZE
-      pari_size = DEFAULT_PARI_SIZE;
-#ifdef DEBUG_GPFACT
-    std::cout<<"calling pari_init with pari_size = "<<pari_size<<endl;
-#endif
-    // the first parameter is the maximum stack size in bytes
-    // the second parameter is the maximum precomputed prime
-    pari_init(pari_size, max_prime);
-  }
+  eclib_pari_init();
+
+  cout << "Testing conversions between types ZZ (NTL integers), fmpz_t (FLINT integers) and t_INT (PARI integers)" << endl;
+
+  ZZ a;
+  // cout << "Enter an integer a: "; cin >> a; cout << endl;
+  // if (test(a))
+  //   cout << "a = " << a << " PASSED" << endl << endl;
+  // else
+  //   cout << "a = " << a << " FAILED" << endl << endl;
+
+  ZZ a0 = to_ZZ(0);
+  ZZ a1 = to_ZZ("12345");
+  ZZ a2 = to_ZZ("-98765");
+  ZZ a3 = to_ZZ("-8472893749012374104710000000000000000000000000000000000001");
+  ZZ a4 = to_ZZ("83475623875628564398568356325856876198561566179865781346578165843561854643856198564189564184651856148356184654187561856148561856143856431851");
+
+  for (auto ai: {a0,a1,a2,a3,a4})
+    if (test(ai))
+      cout << "a = " << ai << " PASSED" << endl << endl;
+    else
+      cout << "a = " << ai << " FAILED" << endl << endl;
 }
 
 int test(const ZZ& a)
@@ -50,10 +65,8 @@ int test(const ZZ& a)
   cout << "a = " << a << " (as ZZ)" << endl;
 
   fmpz_t* b = NTL_to_FLINT(a);
-  char* st = fmpz_get_str(NULL, 10, b[0]);
-  cout << "a = " << std::string(st) << " (as fmpz_t)" << endl;
-  flint_free(st);
-  ZZ a2 = FLINT_to_NTL(*b);
+  cout << "a = " << b[0] << " (as fmpz_t)" << endl;
+  ZZ a2 = FLINT_to_NTL(b[0]);
   cout << "converting back to ZZ...\na = " << a2 << endl;
   if (a==a2)
     cout << "OK" <<endl;
@@ -79,9 +92,7 @@ int test(const ZZ& a)
   pari_printf("a = %Ps (as t_INT)\n", d);
   cout << "Converting from PARI back to FLINT\n";
   fmpz_t* e = PARI_to_FLINT(d);
-  char* st1 = fmpz_get_str(NULL, 10, e[0]);
-  cout << "a = " << std::string(st1) << " (as fmpz_t)" << endl;
-  flint_free(st1);
+  cout << "a = " << e[0] << " (as fmpz_t)" << endl;
   cout << "and then back from FLINT to NTL\n";
   ZZ f = FLINT_to_NTL(e[0]);
   cout << "a = " << f << " (as ZZ)" << endl;
@@ -95,46 +106,18 @@ int test(const ZZ& a)
   return 1;
 }
 
-int main()
+std::ostream& operator<<(std::ostream& s, const fmpz_t& a)
 {
-  eclib_pari_init();
-
-  cout << "Testing conversions between types ZZ (NTL integers), fmpz_t (FLINT integers) and t_INT (PARI integers)" << endl;
-
-  ZZ a;
-  // cout << "Enter an integer a: "; cin >> a; cout << endl;
-  // if (test(a))
-  //   cout << "a = " << a << " PASSED" << endl << endl;
-  // else
-  //   cout << "a = " << a << " FAILED" << endl << endl;
-
-  a = to_ZZ("12345");
-  if (test(a))
-    cout << "a = " << a << " PASSED" << endl << endl;
-  else
-    cout << "a = " << a << " FAILED" << endl << endl;
-
-  a = to_ZZ("-98765");
-  if (test(a))
-    cout << "a = " << a << " PASSED" << endl << endl;
-  else
-    cout << "a = " << a << " FAILED" << endl << endl;
-
-  a = to_ZZ("-8472893749012374104710000000000000000000000000000000000001");
-  if (test(a))
-    cout << "a = " << a << " PASSED" << endl << endl;
-  else
-    cout << "a = " << a << " FAILED" << endl << endl;
-
-  a = to_ZZ(0);
-  if (test(a))
-    cout << "a = " << a << " PASSED" << endl << endl;
-  else
-    cout << "a = " << a << " FAILED" << endl << endl;
-
-  a = to_ZZ("83475623875628564398568356325856876198561566179865781346578165843561854643856198564189564184651856148356184654187561856148561856143856431851");
-  if (test(a))
-    cout << "a = " << a << " PASSED" << endl << endl;
-  else
-    cout << "a = " << a << " FAILED" << endl << endl;
+  char* st = fmpz_get_str(NULL, 10, a);
+  s << std::string(st);
+  flint_free(st);
+  return s;
 }
+
+// std::ostream& operator<<(std::ostream& s, const GEN& a)
+// {
+//   char* st = pari_sprintf("%Ps", a);
+//   s << std::string(st);
+//   free(st);
+//   return s;
+// }
