@@ -26,6 +26,18 @@
 // FLINT support using 32-bit hmod_mat (if __FLINT_VERSION>=3) when
 //    scalar=int via Fredrik Stromberg's mini interface to gr_mat
 
+// What this interface provides:
+
+// uscalar: either hlimb_t (unsigned int) or mp_limb_t (unsigned long)
+// mod_mat:       either hmod_mat_t (uses unsigned ints) or nmod_mat_t (uses unsigned longs)
+// mod_mat_init:  either hmod_mat_init  or nmod_mat_init
+// mod_mat_clear: either hmod_mat_clear or nmod_mat_clear
+// mod_mat_entry: either hmod_mat_entry or nmod_mat_entry
+// mod_mat_nrows: either hmod_mat_nrows or nmod_mat_nrows
+// mod_mat_ncols: either hmod_mat_ncols or nmod_mat_ncols
+// mod_mat_rref:  either hmod_mat_rref  or nmod_mat_rref
+// mod_mat_mul:   either hmod_mat_mul   or nmod_mat_mul
+
 //#define TRACE_FLINT_RREF
 
 #include <gmp.h>
@@ -37,7 +49,6 @@
 #include <flint/nmod_mat.h>
 #include <flint/profiler.h>
 
-//#if (SCALAR_OPTION==1) //  using 32-bit int scalars
 #if !(defined(SCALAR_OPTION)) //  using 32-bit int scalars
 
 typedef unsigned int hlimb_t;
@@ -77,6 +88,8 @@ hmod_mat_mul(hmod_mat_t C, const hmod_mat_t A, const hmod_mat_t B);
 
 slong
 hmod_mat_rref(hmod_mat_t mat);
+
+//////////////////////////////////////////////////////////////////////////
 
 #undef uscalar
 #undef mod_mat
