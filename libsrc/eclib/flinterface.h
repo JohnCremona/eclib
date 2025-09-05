@@ -21,35 +21,28 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
+#if     !defined(_ECLIB_FLINTERFACE_H)
+#define _ECLIB_FLINTERFACE_H      1       //flags that this file has been included
+
 // This interface was written with help from Fredrik Johansson
 
-// FLINT support using 32-bit hmod_mat (if __FLINT_VERSION>=3) when
-//    scalar=int via Fredrik Stromberg's mini interface to gr_mat
+// Currently only used to provide ref_via_flint() for Zmat<int> and
+// Zmat<long> via FLINT's rref()
 
-// What this interface provides:
+// FLINT support using 32-bit hmod_mat for scalar=int via Fredrik
+// Stromberg's mini interface to gr_mat, or using 64-bit nmod_mat for
+// scalar=long, or using fmpx_mod_mat_y for scalar=bigint.
 
-// uscalar: either hlimb_t (unsigned int) or mp_limb_t (unsigned long)
-// mod_mat:       either hmod_mat_t (uses unsigned ints) or nmod_mat_t (uses unsigned longs)
-// mod_mat_init:  either hmod_mat_init  or nmod_mat_init
-// mod_mat_clear: either hmod_mat_clear or nmod_mat_clear
-// mod_mat_entry: either hmod_mat_entry or nmod_mat_entry
-// mod_mat_nrows: either hmod_mat_nrows or nmod_mat_nrows
-// mod_mat_ncols: either hmod_mat_ncols or nmod_mat_ncols
-// mod_mat_rref:  either hmod_mat_rref  or nmod_mat_rref
-// mod_mat_mul:   either hmod_mat_mul   or nmod_mat_mul
+// This wrapper interface provides the necessary hmod_mat functions
 
 //#define TRACE_FLINT_RREF
 
 #include <gmp.h>
 #include <flint/flint.h> // must include this first to set __FLINT_VERSION
 
-#include <flint/gr.h>
-#include <flint/gr_mat.h>
 #include <flint/nmod.h>
 #include <flint/nmod_mat.h>
 #include <flint/profiler.h>
-
-#if !(defined(SCALAR_OPTION)) //  using 32-bit int scalars
 
 typedef unsigned int hlimb_t;
 
@@ -89,46 +82,6 @@ hmod_mat_mul(hmod_mat_t C, const hmod_mat_t A, const hmod_mat_t B);
 slong
 hmod_mat_rref(hmod_mat_t mat);
 
-//////////////////////////////////////////////////////////////////////////
+#endif // _ECLIB_FLINTERFACE_H
 
-#undef uscalar
-#undef mod_mat
-#undef mod_mat_init
-#undef mod_mat_clear
-#undef mod_mat_entry
-#undef mod_mat_nrows
-#undef mod_mat_ncols
-#undef mod_mat_rref
-#undef mod_mat_mul
-#define uscalar hlimb_t // unsigned int
-#define mod_mat hmod_mat_t // uses unsigned ints
-#define mod_mat_init hmod_mat_init
-#define mod_mat_clear hmod_mat_clear
-#define mod_mat_entry hmod_mat_entry
-#define mod_mat_nrows hmod_mat_nrows
-#define mod_mat_ncols hmod_mat_ncols
-#define mod_mat_rref hmod_mat_rref
-#define mod_mat_mul hmod_mat_mul
-
-#else // scalar_is_long -- using 64-bit int scalars
-
-#undef uscalar
-#undef mod_mat
-#undef mod_mat_init
-#undef mod_mat_clear
-#undef mod_mat_entry
-#undef mod_mat_nrows
-#undef mod_mat_ncols
-#undef mod_mat_rref
-#undef mod_mat_mul
-#define uscalar mp_limb_t // unsigned long
-#define mod_mat nmod_mat_t // uses unsigned longs
-#define mod_mat_init nmod_mat_init
-#define mod_mat_clear nmod_mat_clear
-#define mod_mat_entry nmod_mat_entry
-#define mod_mat_nrows nmod_mat_nrows
-#define mod_mat_ncols nmod_mat_ncols
-#define mod_mat_rref nmod_mat_rref
-#define mod_mat_mul nmod_mat_mul
-
-#endif // SCALAR_OPTION==1
+// uscalar: either hlimb_t (unsigned int) or mp_limb_t (unsigned long)

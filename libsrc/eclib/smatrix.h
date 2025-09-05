@@ -90,7 +90,6 @@ public:
   friend sZvec<T> mult_mod_p<>( const sZvec<T>& v, const sZmat<T>& A, const T& p  );
   template<class T1>  friend sZmat<T1> operator* ( const sZmat<T1>& A, const sZmat<T1>& B );
   friend sZmat<T> mult_mod_p<> ( const sZmat<T>& A, const sZmat<T>& B, const T& p );
-  friend sZmat<T> mult_mod_p_flint<> ( const sZmat<T>& A, const sZmat<T>& B, const T& p );
   friend T maxabs<>( const sZmat<T>& A);
   friend sZmat<T> transpose<>(const sZmat<T>&);
   friend int operator==<>(const sZmat<T>&, const sZmat<T>&);

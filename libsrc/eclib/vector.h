@@ -160,7 +160,6 @@ template<class T> Zvec<T> mult_mod_p( const sZmat<T>& A, const Zvec<T>& v, const
 template<class T> sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p  );
 template<class T> sZmat<T> operator* ( const sZmat<T>& A, const sZmat<T>& B );
 template<class T> sZmat<T> mult_mod_p ( const sZmat<T>& A, const sZmat<T>& B, const T& p );
-template<class T> sZmat<T> mult_mod_p_flint ( const sZmat<T>& A, const sZmat<T>& B, const T& p );
 template<class T> T maxabs( const sZmat<T>& A);
 template<class T> sZmat<T> transpose(const sZmat<T>&);
 template<class T> int operator==(const sZmat<T>&, const sZmat<T>&);
@@ -191,6 +190,7 @@ public:
   Zvec(const Zvec<T>&);                       // copy constructor
   // member functions & operators
   void init(long n=0);                 // (re)-initializes
+  void clear();                        // sets all entries to 0
   Zvec& operator=(const Zvec<T>&);         // assignment
   T& operator[](long i);            // the i'th component
   T operator[](long i) const;       // the i'th component

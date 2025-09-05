@@ -21,6 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include "eclib/convert.h"
 #include "eclib/linalg.h"
 
 // Instantiate Zmat template classes for T=int, long, bigint
@@ -1445,150 +1446,6 @@ T det_via_ntl(const Zmat<T>& M, const T& pr)
   return mod(conv<T>(det), pr);
 }
 
-#include "eclib/flinterface.h"
-
-// FLINT has more than one type for modular matrices: standard in
-// FLINT-2.3..2.9 was nmod_mat_t with entries of type mp_limb_t
-// (unsigned long) while non-standard was hmod_mat_t, with entries
-// hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
-// wrapper.  We use the former when scalar=long and the latter when
-// scalar=int and the FLINT version is at least 3.  The unsigned
-// scalar types are #define'd as uscalar.
-
-template<class T>
-void mod_mat_from_mat(mod_mat& A, const Zmat<T>& M, const T& pr)
-{
-  long nr=M.nrows(), nc=M.ncols();
-
-  // copy of the modulus for FLINT
-  long ipr = I2long(pr);
-  uscalar p = (uscalar)ipr;
-
-  // create flint matrix copy of M:
-  mod_mat_init(A, nr, nc, p);
-  for(long i=0; i<nr; i++)
-    for(long j=0; j<nc; j++)
-      mod_mat_entry(A,i,j) = (uscalar)posmod(M(i+1,j+1),ipr);
-}
-
-template void mod_mat_from_mat<int>(mod_mat& A, const Zmat<int>& M, const int& pr);
-template void mod_mat_from_mat<long>(mod_mat& A, const Zmat<long>& M, const long& pr);
-
-template<class T>
-Zmat<T> mat_from_mod_mat(const mod_mat& A, const T& a) // scalar just to fix return type
-{
-  long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
-
-  // create matrix copy of A:
-  Zmat<T> M(nr, nc);
-  for(long i=0; i<nr; i++)
-    for(long j=0; j<nc; j++)
-      M(i+1,j+1) = mod_mat_entry(A,i,j);
-  return M;
-}
-
-template Zmat<int> mat_from_mod_mat<int>(const mod_mat& A, const int& a);
-template Zmat<long> mat_from_mod_mat<long>(const mod_mat& A, const long& a);
-
-template<class T>
-Zmat<T> ref_via_flint(const Zmat<T>& M, const T& pr)
-{
-  // create flint matrix copy of M:
-  mod_mat A;
-  mod_mat_from_mat(A,M,pr);
-
-  // reduce A to rref:
-#ifdef TRACE_FLINT_RREF
-  timeit_t t;
-  timeit_start(t);
-  long nc=M.ncols(), nr=mod_mat_nrows(A);
-  cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
-#endif
-  mod_mat_rref(A);
-#ifdef TRACE_FLINT_RREF
-  timeit_stop(t);
-  cerr<<" cpu = "<<(t->cpu)<<" ms, wall = "<<(t->wall)<<" ms"<<endl;
-#endif
-
-  // copy back to a new matrix for return:
-  Zmat<T> ans = mat_from_mod_mat(A, pr);
-
-  // clear the flint matrix and return:
-  mod_mat_clear(A);
-  return ans;
-}
-
-template Zmat<int> ref_via_flint<int>(const Zmat<int>& M, const int& pr);
-template Zmat<long> ref_via_flint<long>(const Zmat<long>& M, const long& pr);
-
-// The following function computes the reduced echelon form
-// of M modulo the prime pr, calling FLINT's nmod_mat_rref function.
-
-template<class T>
-Zmat<T> ref_via_flint(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, const T& pr)
-{
-  long nc=M.ncols();
-  long i, j, k;
-
-#ifdef TRACE_FLINT_RREF
-  cout << "In ref_via_flint(M) with M having "<<nr<<" rows and "<<nc<<" columns, using mod_mat and modulus "<<pr<<"."<<endl;
-  //  cout << "Size of  scalar = "<<8*sizeof(scalar)<<" bits"<<endl;
-  //  cout << "Size of uscalar = "<<8*sizeof(uscalar)<<" bits"<<endl;
-#endif
-
-  // create flint matrix copy of M:
-  mod_mat A;
-  mod_mat_from_mat(A,M,pr);
-
-#ifdef TRACE_FLINT_RREF
-  timeit_t t;
-  timeit_start(t);
-  long nr=M.nrows();
-  cerr<<"(nr,nc)=("<<nr<<","<<nc<<"): "<<flush;
-#endif
-
-  // reduce A to rref:
-  rk = mod_mat_rref(A);
-#ifdef TRACE_FLINT_RREF
-  timeit_stop(t);
-  cerr<<"rank = "<<rk<<". cpu = "<<(t->cpu)<<" ms, wall = "<<(t->wall)<<" ms"<<endl;
-#endif
-
-  // construct vectors of pivotal and non-pivotal columns
-  ny = nc-rk;
-  pcols.init(rk);
-  npcols.init(ny);
-  for (i = j = k = 0; i < rk; i++)
-    {
-      while (mod_mat_entry(A, i, j) == 0UL)
-        {
-          npcols[k+1] = j+1;
-          k++;
-          j++;
-        }
-      pcols[i+1] = j+1;
-      j++;
-    }
-  while (k < ny)
-    {
-      npcols[k+1] = j+1;
-      k++;
-      j++;
-    }
-
-  // copy back to a new matrix for return:
-  Zmat<T> ans = mat_from_mod_mat(A,pr).slice(rk,nc);
-
-  // clear the flint matrix and return:
-  mod_mat_clear(A);
-  return ans;
-}
-
-template Zmat<int> ref_via_flint<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                                      long& rk, long& ny, const int& pr);
-template Zmat<long> ref_via_flint<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                                        long& rk, long& ny, const long& pr);
 
 template<class T>
 Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)
@@ -1725,6 +1582,210 @@ mat_l to_mat_l(const mat_i& m)
   return mat_l(m.nrows(), m.ncols(), n);
 }
 
+///////////////////////////////////////////////////////////////////////////
+
+#include "eclib/flinterface.h"
+#include "flint/gr.h"
+#include "flint/gr_mat.h"
+#include <flint/fmpz_mod.h>
+#include <flint/fmpz_mod_mat.h>
+
+// FLINT has more than one type for modular matrices: standard in
+// FLINT-2.3..2.9 was nmod_mat_t with entries of type mp_limb_t
+// (unsigned long) while non-standard was hmod_mat_t, with entries
+// hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
+// wrapper.  We use the former when scalar=long and the latter when
+// scalar=int and the FLINT version is at least 3.  The unsigned
+// scalar types are #define'd as uscalar.
+
+// Implementation of wrapper functions declared in flinterface.h
+// written by Fredrik Johansson
+
+void
+hmod_mat_init(hmod_mat_t mat, slong rows, slong cols, hlimb_t n)
+{
+    gr_ctx_t ctx;
+    gr_ctx_init_nmod32(ctx, n);
+    gr_mat_init((gr_mat_struct *) mat, rows, cols, ctx);
+    nmod_init(&(mat->mod), n);
+}
+
+void
+hmod_mat_clear(hmod_mat_t mat)
+{
+    if (mat->entries)
+    {
+        flint_free(mat->entries);
+#if (__FLINT_VERSION==3)&&(__FLINT_VERSION_MINOR<3)
+        flint_free(mat->rows);
+#endif
+    }
+}
+
+void
+hmod_mat_mul(hmod_mat_t C, const hmod_mat_t A, const hmod_mat_t B)
+{
+    gr_ctx_t ctx;
+    gr_ctx_init_nmod32(ctx, C->mod.n);
+    GR_MUST_SUCCEED(gr_mat_mul((gr_mat_struct *) C, (gr_mat_struct *) A, (gr_mat_struct *) B, ctx));
+}
+
+slong
+hmod_mat_rref(hmod_mat_t mat)
+{
+    slong rank;
+    gr_ctx_t ctx;
+    gr_ctx_init_nmod32(ctx, mat->mod.n);
+    GR_MUST_SUCCEED(gr_mat_rref_lu(&rank, (gr_mat_struct *) mat, (gr_mat_struct *) mat, ctx));
+    return rank;
+}
+
+// create flint matrix (type hmod_mat_t) copy of a Zmat<int>:
+void mod_mat_from_mat(hmod_mat_t& A, const Zmat<int>& M, const int& pr)
+{
+  long nr=M.nrows(), nc=M.ncols();
+  hmod_mat_init(A, nr, nc, (hlimb_t)pr);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      hmod_mat_entry(A,i,j) = (hlimb_t)posmod(M(i+1,j+1),pr);
+}
+
+// create flint matrix (type nmod_mat_t) copy of a Zmat<long>:
+void mod_mat_from_mat(nmod_mat_t& A, const Zmat<long>& M, const long& pr)
+{
+  long nr=M.nrows(), nc=M.ncols();
+  nmod_mat_init(A, nr, nc, (mp_limb_t)pr);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      nmod_mat_entry(A,i,j) = (mp_limb_t)posmod(M(i+1,j+1),pr);
+}
+
+// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<bigint>:
+void mod_mat_from_mat(fmpz_mod_mat_t& A, fmpz_mod_ctx_t& mod, const Zmat<bigint>& M, const bigint& pr)
+{
+  long nr=M.nrows(), nc=M.ncols();
+  fmpz_mod_ctx_init(mod, *NTL_to_FLINT(pr));
+  fmpz_mod_mat_init(A, nr, nc, mod);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      fmpz_mod_mat_set_entry(A,i,j, *NTL_to_FLINT(posmod(M(i+1,j+1),pr)), mod);
+}
+
+Zmat<int> mat_from_mod_mat(const hmod_mat_t& A)
+{
+  long nr=hmod_mat_nrows(A), nc=hmod_mat_ncols(A);
+  Zmat<int> M(nr, nc);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      M(i+1,j+1) = (int)hmod_mat_entry(A,i,j);
+  return M;
+}
+
+Zmat<long> mat_from_mod_mat(const nmod_mat_t& A)
+{
+  long nr=nmod_mat_nrows(A), nc=nmod_mat_ncols(A);
+  Zmat<long> M(nr, nc);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      M(i+1,j+1) = (long)nmod_mat_entry(A,i,j);
+  return M;
+}
+
+Zmat<bigint> mat_from_mod_mat(const fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& mod)
+{
+  long nr=fmpz_mod_mat_nrows(A, mod), nc=fmpz_mod_mat_ncols(A, mod);
+  Zmat<bigint> M(nr, nc);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      {
+        fmpz_t Aij = {*fmpz_mod_mat_entry(A,i,j)};
+        M(i+1,j+1) = FLINT_to_NTL(Aij);
+      }
+  return M;
+}
+
+Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr)
+{
+  hmod_mat_t A;
+  mod_mat_from_mat(A,M,pr);
+  long rk = hmod_mat_rref(A);
+  Zmat<int> B = mat_from_mod_mat(A).slice(rk, M.ncols());
+  hmod_mat_clear(A);
+  return B;
+}
+
+Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr)
+{
+  nmod_mat_t A;
+  mod_mat_from_mat(A,M,pr);
+  long rk = nmod_mat_rref(A);
+  Zmat<long> B = mat_from_mod_mat(A).slice(rk, M.ncols());
+  nmod_mat_clear(A);
+  return B;
+}
+
+Zmat<bigint> ref_via_flint(const Zmat<bigint>& M, const bigint& pr)
+{
+  long nr=M.nrows(), nc=M.ncols();
+
+  fmpz_mod_ctx_t mod;
+  fmpz_mod_ctx_init(mod, *NTL_to_FLINT(pr));
+
+  fmpz_mod_mat_t A, R;
+  fmpz_mod_mat_init(A, nr, nc, mod);
+  fmpz_mod_mat_init(R, nr, nc, mod);
+
+  mod_mat_from_mat(A,mod,M,pr);
+
+  long rk = fmpz_mod_mat_rref(R, A, mod);
+  Zmat<bigint> B = mat_from_mod_mat(R, mod).slice(rk, nc);
+  fmpz_mod_mat_clear(A,mod);
+  fmpz_mod_mat_clear(R,mod);
+  fmpz_mod_ctx_clear(mod);
+  return B;
+}
+
+// The following function computes the reduced echelon form of M
+// modulo the prime pr, using the appropriate rref function from
+// FLINT.
+
+template<class T>
+Zmat<T> ref_via_flint(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                      long& rk, long& ny, const T& pr)
+{
+  Zmat<T> R = ref_via_flint(M, pr);
+
+  // construct vectors of pivotal and non-pivotal columns
+  rk = R.nrows();
+  ny = M.ncols()-rk;
+  pcols.init(rk);
+  npcols.init(ny);
+  long i, j, k;
+  T zero(0);
+  for (i = j = k = 1; i <= rk; i++)
+    {
+      while (R(i,j) == zero)
+        {
+          npcols[k] = j;
+          k++;
+          j++;
+        }
+      pcols[i] = j;
+      j++;
+    }
+  while (k <= ny)
+    {
+      npcols[k] = j;
+      k++;
+      j++;
+    }
+
+  return R;
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+
 // Instantiate Zmat template functions for T=int
 template void add_row_to_vec<int>(Zvec<int>& v, const Zmat<int>& m, long i);
 template void sub_row_to_vec<int>(Zvec<int>& v, const Zmat<int>& m, long i);
@@ -1749,6 +1810,8 @@ template Zmat<int> echmodp<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>&
 template Zmat<int> echmodp_uptri<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                                  long& rk, long& ny, const int& pr);
 template Zmat<int> ref_via_ntl<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                               long& rk, long& ny, const int& pr);
+template Zmat<int> ref_via_flint<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const int& pr);
 template Zmat<int> rref<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                         long& rk, long& ny, const int& pr);
@@ -1805,6 +1868,8 @@ template Zmat<long> echmodp_uptri<long>(const Zmat<long>& m, Zvec<int>& pcols, Z
                      long& rk, long& ny, const long& pr);
 template Zmat<long> ref_via_ntl<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const long& pr);
+template Zmat<long> ref_via_flint<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                         long& rk, long& ny, const long& pr);
 template Zmat<long> rref<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const long& pr);
 template long rank_via_ntl<long>(const Zmat<long>& M, const long& pr);
@@ -1859,6 +1924,8 @@ template Zmat<bigint> echmodp<bigint>(const Zmat<bigint>& m, Zvec<int>& pcols, Z
 template Zmat<bigint> echmodp_uptri<bigint>(const Zmat<bigint>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                      long& rk, long& ny, const bigint& pr);
 template Zmat<bigint> ref_via_ntl<bigint>(const Zmat<bigint>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                         long& rk, long& ny, const bigint& pr);
+template Zmat<bigint> ref_via_flint<bigint>(const Zmat<bigint>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const bigint& pr);
 template Zmat<bigint> rref<bigint>(const Zmat<bigint>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const bigint& pr);

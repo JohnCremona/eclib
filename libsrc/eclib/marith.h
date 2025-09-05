@@ -39,7 +39,6 @@ inline void lshift(const bigint& a, long i, bigint& c) {LeftShift(c,a,i);}
 #undef setbit
 #endif
 inline void setbit(bigint& a, int e) {SetBit(a,e);}
-inline long lg(const bigint& x) {return NumBits(x)-1;}
 
 // The following are not in NTL & need defining
 inline void longasI(long& a, const bigint& x) {a = I2long(x);}

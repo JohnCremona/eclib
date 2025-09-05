@@ -1098,75 +1098,6 @@ sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s)
   return mult_mod_p(m.select_rows(pivots(s)),sZmat<T>(basis(s)), default_modulus<T>());
 }
 
-#include "eclib/flinterface.h"
-
-// FLINT has more than one type for modular matrices: standard in
-// FLINT-2.3..2.9 was nmod_mat_t with entries of type mp_limb_t
-// (unsigned long) while non-standard was hmod_mat_t, with entries
-// hlimb_t (unsigned int).  From FLINT-3 the latter is emulated via a
-// wrapper.  We use the former when scalar=long and the latter when
-// scalar=int and the FLINT version is at least 3.  The unsigned
-// scalar types are #define'd as uscalar.
-
-template<class T>
-void mod_mat_from_smat(mod_mat& A, const sZmat<T>& M, T pr)
-{
-  long nr=M.nrows(), nc=M.ncols();
-  long i, j;
-
-  // copy of the modulus for FLINT
-  uscalar p = (uscalar)I2long(pr);
-
-  // create flint matrix copy of M:
-  mod_mat_init(A, nr, nc, p);
-  for(i=0; i<nr; i++)
-    for(j=0; j<nc; j++)
-      mod_mat_entry(A,i,j) = (uscalar)I2long(posmod(M.elem(i+1,j+1),pr));
-}
-
-template<class T>
-sZmat<T> smat_from_mod_mat(const mod_mat& A, const T& p) //scalar just to fix return type
-{
-  long nr=mod_mat_nrows(A), nc=mod_mat_ncols(A);
-
-  // create matrix copy of A:
-  sZmat<T> M(nr, nc);
-  long i, j;
-  for(i=0; i<nr; i++)
-    {
-      sZvec<T> rowi(nc);
-      for(j=0; j<nc; j++)
-        rowi.set(j+1, T(mod_mat_entry(A,i,j)));
-      M.setrow(i+1,rowi);
-    }
-  return M;
-}
-
-template<class T>
-sZmat<T> mult_mod_p_flint ( const sZmat<T>& A, const sZmat<T>& B, const T& pr )
-{
-  if( A.ncols() != B.nrows() )
-    {
-      cerr << "incompatible smats in operator *"<<endl;
-      return sZmat<T>();
-    }
-  mod_mat A1, B1, C1;
-  mod_mat_from_smat(A1,A,pr);
-  mod_mat_from_smat(B1,B,pr);
-  mod_mat_init(C1, A.nrows(), B.ncols(), I2long(pr));
-  // timer T;
-  // T.start();
-  mod_mat_mul(C1,A1,B1);
-  // T.stop();
-  // cout<<"mult_mod_p_flint time (size "<<dim(A)<<"x"<<dim(B)<<"): ";
-  // T.show();
-  sZmat<T> C = smat_from_mod_mat(C1, pr);
-  mod_mat_clear(A1);
-  mod_mat_clear(B1);
-  mod_mat_clear(C1);
-  return C;
-}
-
 // Instantiate sZmat template functions for T=int
 template vector<int> dim<int>(const sZmat<int>& A);
 template sZmat<int> transpose<int>( const sZmat<int>&);
@@ -1185,7 +1116,6 @@ template sZvec<int> mult_mod_p<int>( const sZmat<int>& A, const sZvec<int>& v, c
 template sZvec<int> mult_mod_p<int>( const sZvec<int>& v, const sZmat<int>& A, const int& p  );
 template sZmat<int> mult_mod_p<int>( const sZmat<int>&, const sZmat<int>&, const int&);
 template Zvec<int> mult_mod_p<int>( const sZmat<int>& A, const Zvec<int>& v, const int& p  );
-template sZmat<int> mult_mod_p_flint<int>( const sZmat<int>& A, const sZmat<int>& B, const int& p );
 template int maxabs<int>( const sZmat<int>& A);
 template int operator==<int>(const sZmat<int>&, const sZmat<int>&);
 template int eqmodp<int>(const sZmat<int>&, const sZmat<int>&, const int& p);
@@ -1216,7 +1146,6 @@ template sZvec<long> mult_mod_p<long>( const sZmat<long>& A, const sZvec<long>& 
 template sZvec<long> mult_mod_p<long>( const sZvec<long>& v, const sZmat<long>& A, const long& p  );
 template sZmat<long> mult_mod_p<long>( const sZmat<long>&, const sZmat<long>&, const long&);
 template Zvec<long> mult_mod_p<long>( const sZmat<long>& A, const Zvec<long>& v, const long& p  );
-template sZmat<long> mult_mod_p_flint<long>( const sZmat<long>& A, const sZmat<long>& B, const long& p );
 template long maxabs<long>( const sZmat<long>& A);
 template int operator==<long>(const sZmat<long>&, const sZmat<long>&);
 template int eqmodp<long>(const sZmat<long>&, const sZmat<long>&, const long& p);
@@ -1247,7 +1176,6 @@ template sZvec<bigint> mult_mod_p<bigint>( const sZmat<bigint>& A, const sZvec<b
 template sZvec<bigint> mult_mod_p<bigint>( const sZvec<bigint>& v, const sZmat<bigint>& A, const bigint& p  );
 template sZmat<bigint> mult_mod_p<bigint>( const sZmat<bigint>&, const sZmat<bigint>&, const bigint&);
 template Zvec<bigint> mult_mod_p<bigint>( const sZmat<bigint>& A, const Zvec<bigint>& v, const bigint& p  );
-template sZmat<bigint> mult_mod_p_flint<bigint>( const sZmat<bigint>& A, const sZmat<bigint>& B, const bigint& p );
 template bigint maxabs<bigint>( const sZmat<bigint>& A);
 template int operator==<bigint>(const sZmat<bigint>&, const sZmat<bigint>&);
 template int eqmodp<bigint>(const sZmat<bigint>&, const sZmat<bigint>&, const bigint& p);

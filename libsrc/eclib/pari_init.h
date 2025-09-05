@@ -26,7 +26,37 @@
                            //flags that this file has been included
 
 #include <iostream>
-#include <pari/pari.h>       // must be included after any NTL
+namespace PARI{
+  extern "C" {
+#include <pari/pari.h>
+  }
+#undef coeff // since pari defines this as a macro with 3 args but NTL as a function with 2
+#undef ulong // since pari defines this to be pari_ulong
+}
+
+using PARI::pari_sp;
+using PARI::avma;
+using PARI::itos;
+using PARI::stoi;
+using PARI::pari_printf;
+using PARI::ellinit;
+using PARI::ellap;
+using PARI::Z_factor;
+using PARI::nbrows;
+using PARI::isprime;
+using PARI::mkvecn;
+using PARI::GEN;
+using PARI::cgetg;
+using PARI::itou;
+using PARI::utoi;
+using PARI::absi;
+using PARI::negi;
+using PARI::is_bigint;
+using PARI::binary_2k;
+using PARI::fromdigits_2k;
+using PARI::pari_printf;
+using PARI::t_VEC;
+// NOT using PARI::signe, PARI::lg, PARI::gel which are macros
 
 #define DEFAULT_PARI_SIZE 100000000
 #define DEFAULT_PARI_MAX_PRIME 1000000

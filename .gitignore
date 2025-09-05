@@ -140,3 +140,4 @@ tests/twist
 tests/vectest1
 tests/vectest2
 tests/vectest3
+tests/tconvert

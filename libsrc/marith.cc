@@ -127,7 +127,8 @@ static int carresmod43[]={1,1,0,0,1,0,1,0,0,1,1,1,0,1,1,1,1,1,0,0,0,
 
 int sqrtnr(bigint& root, const bigint& n)
 {
-  long l = 1+(lg(n)>>1);
+  long lgn = NumBits(n)-1;
+  long l = 1+(lgn>>1);
   //  cout << "n = " << n << ", l = " << l << endl;
   bigint y;
   root=1; root<<=l;  // first approx, > sqrt(n)

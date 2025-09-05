@@ -50,6 +50,12 @@ void Zvec<T>::init(long n)     // (re)-initializes
 }
 
 template<class T>
+void Zvec<T>::clear()
+{
+  entries.assign(entries.size(), T(0));
+}
+
+template<class T>
 Zvec<T>& Zvec<T>::operator=(const Zvec<T>& v)    // assignment
 {
  if (this==&v) return *this;

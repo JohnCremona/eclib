@@ -552,7 +552,7 @@ bigfloat lower_height_bound(const Curvedata& CD, int egr)
   bigfloat lambda=CHC.get_value(); // assumes egr
   if (!egr)
     {
-      long c = I2long(global_Tamagawa_exponent(CR, 1)); // 1 means include R
+      bigfloat c = I2bigfloat(global_Tamagawa_exponent(CR, 1)); // 1 means include R
       lambda /= (c*c);
     }
   return lambda;

@@ -27,10 +27,6 @@
 #include "eclib/homspace.h"
 #include "eclib/timer.h"
 
-#ifdef USE_SMATS
-#include "eclib/smatrix_elim.h"
-#endif
-
 const string W_opname("W");
 const string T_opname("T");
 
@@ -156,12 +152,11 @@ if (verbose>1)
      }
    {
 #ifdef USE_SMATS
-   smat relmat((int)maxnumrel,(int)ngens);
+   smat relmat(maxnumrel,ngens);
    svec newrel(ngens);
 #else
    mat relmat(maxnumrel,ngens);
    vec newrel(ngens);
-   if (verbose) cout << "successfully allocated "<<endl;
 #endif
    int numrel = 0;
    long ij; int fix;
@@ -169,55 +164,34 @@ if (verbose>1)
    std::fill(check.begin(), check.end(), 0);
    for (k=0; k<nsymb; k++)
      {
-     if (check[k]==0)
-   {
-#ifdef USE_SMATS
-     newrel.clear();
-#else
-     for (j=1; j<=ngens; j++) newrel[j]=0;
-#endif
-     rel[2]=tof(rel[1]=tof(rel[0]=k));
-     if (verbose>1)   cout << "Relation: " << rel[0]<<" "<<rel[1]<<" "<<rel[2]<<" --> ";
-     for (j=0; j<3; j++)
-     {ij = rel[j];
-      check[ij] = 1;
-      if (plusflag) check[rof(ij)] = 1;
-      fix = coordindex[ij];
-#ifdef USE_SMATS
-      if(fix) newrel.add(abs(fix),scalar(fix>0?1:-1));
-#else
-      if (verbose>1)  cout << fix << " ";
-      if (fix!=0) newrel[abs(fix)] += sign(fix);
-#endif
+       if (check[k]) continue;
+       newrel.clear();
+       rel[2]=tof(rel[1]=tof(rel[0]=k));
+       if (verbose>1)
+         cout << "Relation: " << rel[0]<<" "<<rel[1]<<" "<<rel[2]<<" --> ";
+       for (j=0; j<3; j++)
+         {
+           ij = rel[j];
+           check[ij] = 1;
+           if (plusflag) check[rof(ij)] = 1;
+           fix = coordindex[ij];
+           if(fix!=0)
+             newrel.add(abs(fix),scalar(fix>0?1:-1));
+         }
+       if(verbose>1)
+         cout<<newrel<<"\n";
+       if (content(newrel)!=0)
+         {
+           numrel++;
+           make_primitive(newrel);
+           if(numrel<=maxnumrel)
+             relmat.setrow(numrel,newrel);
+           else
+             cout<<"Too many 3-term relations (numrel="<<numrel
+                 <<", maxnumrel="<<maxnumrel<<")"<<endl;
+         }
      }
-#ifdef USE_SMATS
-     if(verbose>1) cout<<newrel<<"\n";
-#else
-     if(verbose>1) cout<<"\n";
-#endif
-#ifdef USE_SMATS
-     if(newrel.size()!=0) 
-       {
-	 numrel++;
-	 make_primitive(newrel);
-	 if(numrel<=maxnumrel)
-	   relmat.setrow(numrel,newrel);
-	 else 
-	   cout<<"Too many 3-term relations (numrel="<<numrel
-	       <<", maxnumrel="<<maxnumrel<<")"<<endl;
-       }
-#else
-     if (verbose>1)  cout << newrel << "\n";
-     long h = content(newrel);
-     if (h!=0)
-     {  if (h>1) newrel/=h;
-	if(numrel<maxnumrel)
-	  relmat.setrow(++numrel,newrel);
-	else cout<<"Too many 3-term relations!"<<endl;
-     }
-#endif
-    }
-     }
+
    if (verbose)
      {
        cout << "Finished 3-term relations: numrel = "<<numrel<<" ( maxnumrel = "<<maxnumrel<<")"<<endl;
@@ -228,43 +202,28 @@ if (verbose>1)
        cout << "relmat has "<< get_population(relmat)<<" nonzero entries (density = "<<density(relmat)<<")"<<endl;
 #endif
 
-       if(verbose>1) 
+       if(verbose>1)
          cout << "relmat = " << relmat.as_mat().slice(numrel,ngens) << endl;
        cout << "Computing kernel..."<<endl;
      }
 
    vec_i pivs, npivs;
+   coord_vecs.resize(ngens+1); // 0'th is unused
 #ifdef USE_SMATS
    smat_elim sme(relmat, modulus);
-   //relmat=smat(0,0); // clear space
-   scalar d1;
-   start_time();
    smat sp;
-   liftmat(sme.kernel(npivs,pivs), modulus, sp, d1);
-   stop_time();
-   if (verbose) {cout<<"time to compute kernel = "; show_time(); cout<<endl;}
-   denom1=d1;
-   if(verbose>1)
-     {
-       cout << "kernel of relmat = " << sp.as_mat() << endl;
-       cout << "pivots = "<<pivs << endl;
-       cout << "denom = "<<d1 << endl;
-     }
+   liftmat(sme.kernel(npivs,pivs), modulus, sp, denom1);
    rk = sp.ncols();
-   coord_vecs.resize(ngens+1); // 0'th is unused
    for(i=1; i<=ngens; i++)
      coord_vecs[i]=sp.row(i);
-   //sp=smat(0,0); // clear space
 #else
    subspace sp = kernel(relmat);
+   mat coord = basis(sp);
    rk = dim(sp);
-   coord = basis(sp);
    pivs = pivots(sp);
    denom1 = denom(sp);
-   for(i=1; i<=ngens; i++) 
+   for(i=1; i<=ngens; i++)
      coord_vecs[i]=svec(coord.row(i));
-   sp.clear(); 
-   relmat.init(); newrel.init();
 #endif
 
    //   cout<<"ngens = "<<ngens<<endl;

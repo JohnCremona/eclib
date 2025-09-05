@@ -38,6 +38,14 @@ using std::endl;
 
 using namespace NTL;
 
+#if FLINT_LONG_LONG
+typedef unsigned long long int ulong;
+typedef long long int slong;
+#else
+typedef unsigned long int ulong;
+typedef long int slong;
+#endif
+
 ZZ FLINT_to_NTL(const fmpz_t& a)  // from FLINT to NTL
 {
   if (fmpz_fits_si(a))
@@ -164,7 +172,7 @@ fmpz_t* PARI_to_FLINT(const GEN& a)  // from PARI to FLINT
   // convert this to an array of ulongs
   int n = lg(digits)-1;
   ulong* limbs = new ulong[n];
-  for (int i=1; i<lg(digits); i++)
+  for (int i=1; i<=n; i++)
     {
       limbs[n-i] = itou(gel(digits,i));
     }

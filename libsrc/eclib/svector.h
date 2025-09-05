@@ -108,6 +108,7 @@ public:
   friend int operator!=<>(const sZvec<T>& v1, const Zvec<T>& v2);
   friend int operator==<>(const Zvec<T>& v1, const sZvec<T>& v2);
   friend int operator!=<>(const Zvec<T>& v1, const sZvec<T>& v2);
+  friend int trivial<>(const Zvec<T>&);
   friend sZmat<T> transpose<>(const sZmat<T>&);
   friend sZmat<T> operator*<> ( const sZmat<T>&, const sZmat<T>&);
   friend T content<>(const sZvec<T>& v);

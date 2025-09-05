@@ -32,7 +32,10 @@ template<> bigint default_modulus<bigint>() { return modulus_factory_bigint.get_
 
 template<> modulus_factory<int>::modulus_factory()    :modulus(1073741789) { ; }
 template<> modulus_factory<long>::modulus_factory()   :modulus(1073741789) { ; }
-template<> modulus_factory<bigint>::modulus_factory() :modulus(to_ZZ("6074000003")) { ; }
+template<> modulus_factory<bigint>::modulus_factory()
+  //  :modulus(to_ZZ("6074000003"))
+   :modulus(to_ZZ("1000000000000000000000000000057"))
+{ ; }
 
 template<class T> T modulus_factory<T>::set_modulus(const T& new_modulus)
 {

@@ -30,14 +30,17 @@
 #include <flint/flint.h> // must include this first to set __FLINT_VERSION
 #include <flint/fmpz.h>
 #include <NTL/ZZ.h>
-#include <pari/pari.h>
+#include "pari_init.h"
 
-NTL::ZZ FLINT_to_NTL  (const fmpz_t& a);   // from FLINT to NTL
-NTL::ZZ PARI_to_NTL   (const GEN& a);      // from PARI to NTL
-fmpz_t* NTL_to_FLINT  (const NTL::ZZ& a);  // from NTL to FLINT
-fmpz_t* PARI_to_FLINT (const GEN& a);      // from PARI to FLINT
-GEN     NTL_to_PARI   (const NTL::ZZ& a);  // from NTL to PARI
-GEN     FLINT_to_PARI (const fmpz_t& a);   // from FLINT to PARI
+using NTL::ZZ;
+using PARI::GEN;
+
+ZZ FLINT_to_NTL  (const fmpz_t& a);   // from FLINT to NTL
+ZZ PARI_to_NTL   (const GEN& a);      // from PARI to NTL
+fmpz_t* NTL_to_FLINT  (const ZZ& a);  // from NTL to FLINT
+fmpz_t* PARI_to_FLINT (const GEN& a); // from PARI to FLINT
+GEN NTL_to_PARI   (const ZZ& a);      // from NTL to PARI
+GEN FLINT_to_PARI (const fmpz_t& a);  // from FLINT to PARI
 
 #endif
 
