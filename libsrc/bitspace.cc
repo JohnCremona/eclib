@@ -62,3 +62,32 @@ void bitspace::augment(unsigned long v, long piv)
   dim++;
 }
 
+// return the dot product (0/1) of a and b bitwise, with 0<=a,b<2^r
+int dotbits(long a, long b, int r)
+{
+  int x=0;
+  for (int i=0; i<r; i++)
+    x ^= (bit(a,i)*bit(b,i));
+  return x;
+}
+
+// return list of bits of a
+vector<int> bits(long a, int r)
+{
+  vector<int> ans(r);
+  for(int i=0; i<r; i++)
+    ans[i] = bit(a,i);
+  // assert (a==from_bits(ans,r));
+  return ans;
+}
+
+// recover a from its bit vector of length r
+long from_bits(const vector<int>& aa, int r)
+{
+  long a=0;
+  for(int i=0; i<r; i++)
+    if (aa[i])
+      a |= (1<<i); // sets the i'th bit to 1
+  // assert (aa==bits(a,r));
+  return a;
+}

@@ -247,6 +247,59 @@ int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans)
   return ok;
 }
 
+// return a basis for the orthogonal complement of a<2^r (viewed as a bit vector of length r)
+vector<long> dotperp(long a, int r)
+{
+  if (a==0) // trivial special case
+    {
+      vector<long> ans(r);
+      for (int i=0; i<r; i++)
+        ans[i] = 1<<i;
+      return ans;
+    }
+  else
+    {
+      mat_i m(1,r);
+      for (int j=1; j<=r; j++)
+        m.set(1,j,bit(a,j-1));
+      subspace_i ker = pkernel(m,2); // right kernel mod 2
+      // assert (dim(ker)==r-1);
+      mat_i bas = basis(ker);
+      vector<long> ans(r-1, 0);
+      for (int i=0; i<r-1; i++)
+        {
+          vec_i coli = bas.col(i+1);
+          for (int j=0; j<r; j++)
+            if (coli[j+1])
+              ans[i] |= 1<<j;
+        }
+      return ans;
+    }
+}
+
+// return a basis for the orthogonal complement of the span of a in alist (viewed as bit vectors of length r)
+vector<long> dotperp(const vector<long>& alist, int r)
+{
+  int s = alist.size();
+  mat_i m(s,r);
+  for (int i=1; i<=s; i++)
+    for (int j=1; j<=r; j++)
+      m.set(i,j,bit(alist[i-1],j-1));
+  subspace_i ker = pkernel(m,2); // right kernel mod 2
+  // assert (dim(ker)==r-s);
+  mat_i bas = basis(ker);
+  vector<long> ans(r-s, 0);
+  for (int i=0; i<r-s; i++)
+    {
+      vec_i coli = bas.col(i+1);
+      for (int j=0; j<r; j++)
+        if (coli[j+1])
+          ans[i] |= 1<<j;
+    }
+  return ans;
+}
+
+
 // Instantiate template functions for T=int
 
 template int dim<int>(const subZspace<int>& s);

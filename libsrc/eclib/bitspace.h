@@ -54,4 +54,17 @@ public:
 inline int testbit(long a, long i) {return (a& (1<<i));}
 inline int setbit( long& a, long i) {return (a|=(1<<i));}
 
+// return the dot product (0/1) of a and b bitwise, with 0<=a,b<2^r
+int dotbits(long a, long b, int r);
+// return list of bits of a
+vector<int> bits(long a, int r);
+// recover a from its bit vector of length r
+long from_bits(const vector<int>& aa, int r);
+inline long from_bits(const vector<int>& aa) {return from_bits(aa, aa.size());}
+
+// return a basis for the orthogonal complement of a<2^r (viewed as a bit vector of length r)
+vector<long> dotperp(long a, int r);
+// return a basis for the orthogonal complement of the span of a in alist (viewed as bit vectors of length r)
+vector<long> dotperp(const vector<long>& alist, int r);
+
 #endif

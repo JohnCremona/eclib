@@ -243,4 +243,6 @@ long squarefree_part(long d);
 // return list of integers from first to last inclusive
 vector<long> range(long first, long last);
 
+void sqrt_mod_p(long & x, long a, long p);
+
 #endif

@@ -100,5 +100,9 @@ inline Zvec<int> pivots(const subZspace<T>& s) {return s.pivots;}     // the piv
 template<class T>
 inline Zmat<T> basis(const subZspace<T>& s) {return s.basis;}       // the basis matrix
 
+// return a basis for the orthogonal complement of a<2^r (viewed as a bit vector of length r)
+vector<long> dotperp(long a, int r);
+// return a basis for the orthogonal complement of the span of a in alist (viewed as bit vectors of length r)
+vector<long> dotperp(const vector<long>& alist, int r);
 
 #endif

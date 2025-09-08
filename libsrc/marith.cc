@@ -305,6 +305,13 @@ int modsqrt(const bigint& a, const vector<bigint>& bplist, bigint& x)
   return 1;
 }
 
+void sqrt_mod_p(long & x, long a, long p) // declared in arith.h
+{
+  bigint rr, amodp(posmod(a,p)), pp(p);
+  sqrt_mod_p(rr, amodp, pp);
+  x = I2long(rr);
+}
+
 //
 // bigint divisor lists etc
 //
