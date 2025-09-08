@@ -1446,7 +1446,6 @@ T det_via_ntl(const Zmat<T>& M, const T& pr)
   return mod(conv<T>(det), pr);
 }
 
-
 template<class T>
 Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)
 {
@@ -1471,6 +1470,26 @@ Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)
      cerr << "Incompatible sizes in mat product"<<endl;
    }
  return m3;
+}
+
+template<class T>
+Zvec<T> matvecmulmodp(const Zmat<T>& M, const Zvec<T>& v, const T& pr)
+{
+  int m=M.nro, n=M.nco;
+  if (n!=dim(v))
+   {
+     cerr << "Incompatible sizes in mat*vec product: "<<m<<"x"<<n<<" and "<<dim(v)<<endl;
+     return Zvec<T>(m);
+   }
+  vector<T> ve = v.get_entries(), w;
+  for (auto a=M.entries.begin(); a!=M.entries.end(); a+=n)
+    {
+      T wi(0);
+      for (int j=0; j<n; j++)
+        wi = xmod(wi +xmodmul(a[j],ve[j], pr), pr);
+      w.push_back(wi);
+    }
+  return Zvec<T>(w);
 }
 
 template<class T>
@@ -1819,6 +1838,7 @@ template long rank_via_ntl<int>(const Zmat<int>& M, const int& pr);
 template int det_via_ntl<int>(const Zmat<int>& M, const int& pr);
 template Zmat<int> transpose<int>(const Zmat<int>& m);
 template Zmat<int> matmulmodp<int>(const Zmat<int>&, const Zmat<int>&, const int& pr);
+template Zvec<int> matvecmulmodp<int>(const Zmat<int>&, const Zvec<int>&, const int& pr);
 template long population<int>(const Zmat<int>& m); // #nonzero entries
 template int maxabs<int>(const Zmat<int>& m); // max entry
 template double sparsity<int>(const Zmat<int>& m); // #nonzero entries/#entries
@@ -1876,6 +1896,7 @@ template long rank_via_ntl<long>(const Zmat<long>& M, const long& pr);
 template long det_via_ntl<long>(const Zmat<long>& M, const long& pr);
 template Zmat<long> transpose<long>(const Zmat<long>& m);
 template Zmat<long> matmulmodp<long>(const Zmat<long>&, const Zmat<long>&, const long& pr);
+template Zvec<long> matvecmulmodp<long>(const Zmat<long>&, const Zvec<long>&, const long& pr);
 template long population<long>(const Zmat<long>& m); // #nonzero entries
 template long maxabs<long>(const Zmat<long>& m); // max entry
 template double sparsity<long>(const Zmat<long>& m); // #nonzero entries/#entries
@@ -1933,6 +1954,7 @@ template long rank_via_ntl<bigint>(const Zmat<bigint>& M, const bigint& pr);
 template bigint det_via_ntl<bigint>(const Zmat<bigint>& M, const bigint& pr);
 template Zmat<bigint> transpose<bigint>(const Zmat<bigint>& m);
 template Zmat<bigint> matmulmodp<bigint>(const Zmat<bigint>&, const Zmat<bigint>&, const bigint& pr);
+template Zvec<bigint> matvecmulmodp<bigint>(const Zmat<bigint>&, const Zvec<bigint>&, const bigint& pr);
 template long population<bigint>(const Zmat<bigint>& m); // #nonzero entries
 template bigint maxabs<bigint>(const Zmat<bigint>& m); // max entry
 template double sparsity<bigint>(const Zmat<bigint>& m); // #nonzero entries/#entries

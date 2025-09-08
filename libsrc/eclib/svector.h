@@ -32,6 +32,7 @@ template<class T> T dotmodp(const Zvec<T>& v, const sZvec<T>& sv, const T& pr);
 template<class T> int operator!=(const sZvec<T>& v1, const Zvec<T>& v2);
 template<class T> int operator==(const Zvec<T>& v1, const sZvec<T>& v2);
 template<class T> int operator!=(const Zvec<T>& v1, const sZvec<T>& v2);
+template<class T> int trivial(const sZvec<T>&);
 
 
 template<class T>
@@ -108,7 +109,7 @@ public:
   friend int operator!=<>(const sZvec<T>& v1, const Zvec<T>& v2);
   friend int operator==<>(const Zvec<T>& v1, const sZvec<T>& v2);
   friend int operator!=<>(const Zvec<T>& v1, const sZvec<T>& v2);
-  friend int trivial<>(const Zvec<T>&);
+  friend int trivial<>(const sZvec<T>&);
   friend sZmat<T> transpose<>(const sZmat<T>&);
   friend sZmat<T> operator*<> ( const sZmat<T>&, const sZmat<T>&);
   friend T content<>(const sZvec<T>& v);
@@ -163,6 +164,12 @@ template<class T>
 inline int operator!=(const sZvec<T>& v1, const sZvec<T>& v2)
 {
   return !(v1==v2);
+}
+
+template<class T>
+inline int trivial(const sZvec<T>& v)
+{
+  return v.entries.size()==0;
 }
 
 #endif

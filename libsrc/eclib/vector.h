@@ -116,6 +116,7 @@ template<class T> int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd)
 template<class T> int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans);
 template<class T> subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
 template<class T> Zmat<T> matmulmodp(const Zmat<T>&, const Zmat<T>&, const T& pr);
+template<class T> Zvec<T> matvecmulmodp(const Zmat<T>&, const Zvec<T>&, const T& pr);
 template<class T> long population(const Zmat<T>& m);
 template<class T> T maxabs(const Zmat<T>& m);
 template<class T> double sparsity(const Zmat<T>& m);

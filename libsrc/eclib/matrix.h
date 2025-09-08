@@ -117,6 +117,7 @@ public:
   friend subZspace<T> pcombine<>(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
   friend Zmat prestrict<>(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr);
   friend Zmat matmulmodp<>(const Zmat<T>&, const Zmat<T>&, const T& pr);
+  friend Zvec<T> matvecmulmodp<>(const Zmat<T>&, const Zvec<T>&, const T& pr);
   friend long population<>(const Zmat<T>& m); // #nonzero entries
   friend T maxabs<>(const Zmat<T>& m); // max entry
   friend double sparsity<>(const Zmat<T>& m); // #nonzero entries/#entries
