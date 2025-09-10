@@ -36,14 +36,14 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   mat m(r,r);
   cout << "Enter entries of M: ";
   cin >> m;
-  cout << " M = " << m;
+  cout << " M = \n" << m << endl;
   cout << "Trace(M) = " << m.trace() << endl;
 /*
   int i;
   mat mpower=m;
   for (i=2; i<=r; i++)
     {mpower=mpower*m;
-     cout << "m^" << i << " = " << mpower;
+     cout << "m^" << i << " = \n" << mpower << endl;
      cout << "Trace(m^" << i << ") = " << mpower.trace() << endl;
    }
   {
@@ -61,7 +61,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     times=ntimes;
     while(times--) ker = kernel(m);
     mat kerbasis = basis(ker);
-    cout << "kernel(m) has basis\n" << kerbasis;
+    cout << "kernel(m) has basis\n" << kerbasis << endl;
     vec_i kerpivs = pivots(ker);
     cout << "pivots: " << kerpivs << "\n";
     scalar kerdenom = denom(ker);
@@ -73,7 +73,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     times=ntimes; subspace ker;
     while(times--) ker = pkernel(m, p);
     mat kerbasis = basis(ker);
-    cout << "kernel(m) has basis\n" << kerbasis;
+    cout << "kernel(m) has basis\n" << kerbasis << endl;
     vec_i kerpivs = pivots(ker);
     cout << "pivots: " << kerpivs << "\n";
     subspace oldker;

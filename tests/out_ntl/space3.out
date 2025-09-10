@@ -7,7 +7,6 @@ Enter size of square matrix M: Enter entries of M:  M =
 Trace(M) = 15
 
 Enter number of times to repeat kernel tests: kernel(m) has basis
-
 [[1],
 [-2],
 [1]]
@@ -15,7 +14,6 @@ pivots: [3]
 denom:  1
 Now compute kernel mod p, p = 1000000000000000000000000000057
 kernel(m) has basis
-
 [[1],
 [-2],
 [1]]

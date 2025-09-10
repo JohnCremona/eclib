@@ -16,15 +16,12 @@ Enter factor number: Degree = 4
 finished constructing S, now restricting T_p to S
 done.  now combining S and SW
 4*Matrix of T(2) restricted to S is [-4,8,4,0;0,4,0,8;-4,4,8,-4;-4,8,4,4]
-
 The former poly is the min poly of alpha_1 = 4*alpha
 The latter is the min poly of alpha, which is the eigenvalue of T(2)
 Finished computing (dual) subspace S
 S has denom 4, cumulative denom = 4
 W     = [1,-4,0,-256;0,8,16,512;0,4,16,320;0,0,48,256]
-
 W^(-1)= (1/128)*[128,-64,256,-64;0,176,-320,48;0,16,-32,8;0,-3,6,-1]
-
 Basis for Hecke eigenvalues, in terms of powers of alpha:
 (1/8)*[2,0,0,0]
 (1/8)*[-1,11,4,-3]

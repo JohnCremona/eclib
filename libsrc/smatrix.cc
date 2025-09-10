@@ -972,6 +972,13 @@ int liftmat(const sZmat<T>& mm, T pr, sZmat<T>& m, T& dd)
         T v = m.val[nr][nc];
         if (abs(v) < lim) continue;
 	int ok = modrat(v,pr,n,d);
+        if (trace>1)
+          {
+            if (ok)
+              cout<<"entry "<<v<<" lifts OK to "<<n<<"/"<<d<<endl;
+            else
+              cout<<"entry "<<v<<" fails to lift, using "<<n<<"/"<<d<<endl;
+          }
         T newdd=lcm(abs(d),dd);
         if (newdd!=dd)
           {

@@ -101,7 +101,7 @@ int main(void)
 	{
 	  cout<<"Computed matrix "; 
 	  if(den>1) cout<<" (scaled by "<<den<<") ";
-	  cout<<" = "<<wq<<endl;
+	  cout<<" = \n"<<wq<<endl<<endl;
 	  //	  wq.output_pretty();
 	}
       if(w_eigs) {
@@ -157,7 +157,7 @@ int main(void)
 	{
 	  cout<<"Computed matrix "; 
 	  if(den>1) cout<<" (scaled by "<<den<<") ";
-	  cout<<" = "<<tp<<endl;
+	  cout<<" = \n"<<tp<<endl<<endl;
 	  //	  tp.output_pretty();
 	}
       tplist[ip] = tp;

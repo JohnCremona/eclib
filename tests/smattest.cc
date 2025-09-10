@@ -67,7 +67,7 @@ int main(void)
 	mat a(r,r);
 	cout << "Enter entries of A: "; 
 	cin >> a;
-	cout << "A = " << a;
+	cout << "A = \n" << a << endl;
 	smat sm1(a);
 	cout << "smat from matrix A = " << endl << sm1 << endl;
 	cout << "Enter any number "; cin >> i;
@@ -213,10 +213,10 @@ int main(void)
 	mat m(row, col);
 	cin >> m;
 	mat sm_as_m = sm.as_mat();
-	cout << "the smat is (as a matrix) \n"<<sm_as_m<<endl;
+	cout << "the smat is (as a matrix)\n"<<sm_as_m<<endl;
 	cout << "the matrix is \n"<<m<<endl;
 	mat sm_times_m = sm*m;
-	cout << " the product matrix is: \n" << sm_times_m << endl;
+	cout << "the product matrix is:\n" << sm_times_m << endl;
 	if(sm_times_m==sm_as_m*m)
 	  cout<<"Correct\n";
 	else
@@ -466,7 +466,7 @@ int main(void)
 	cout << "Enter entries of A: "<< endl; 
 	cin >> A;
 	cout << "A = \n"<<A <<endl;
-	cout << "A (as matrix) = "; A.as_mat().output_pari(); cout <<endl;
+	cout << "A (as matrix) = \n"; A.as_mat().output_pari(); cout <<endl;
 	ssubspace ker = kernel(A, modulus);
 	cout << "ker(A) has dimension " << dim(ker) << endl;
 	cout << "basis =  " << basis(ker) << endl;

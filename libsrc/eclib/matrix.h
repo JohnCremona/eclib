@@ -168,6 +168,10 @@ Zmat<T> addscalar(const Zmat<T>&, const T&);
 template<class T>
 Zvec<T> apply(const Zmat<T>&, const Zvec<T>&);
 
+// Assigns d*A^-1 to Ainv and returns d, assuming A square and det(A) nonzero
+template<class T>
+T inverse(const Zmat<T>& A, Zmat<T>& Ainv);
+
 template<class T> Zmat<T> rref(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const T& pr)
 {

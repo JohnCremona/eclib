@@ -37,7 +37,7 @@ int main(void)
       cout << "Enter size of a square matrix A: "; cin >> r;
       a.init(r,r);
       cout << "Enter entries of A: "; cin >> a;
-      cout << "A = " << a;
+      cout << "A = \n" << a << endl;
     }
 
     {
@@ -46,63 +46,63 @@ int main(void)
       matlist[0] = a;
       matlist[1] = bigint(2)*a;
       matlist[2] = bigint(3)*a;
-      cout << " A=" << matlist[0];
-      cout << "2A=" << matlist[1];
-      cout << "3A=" << matlist[2];
+      cout << " A=\n" << matlist[0] << endl;
+      cout << "2A=\n" << matlist[1] << endl;
+      cout << "3A=\n" << matlist[2] << endl;
     }
 
 {
 for (i=1; i<=r; i++)
  cout << "row(A,"<<i<<") = " << a.row(i) << endl;
-cout << "A = " << a;
+cout << "A = \n" << a << endl;
 for (int j=1; j<=r; j++)
  cout << "col(A,"<<j<<") = " << a.col(j) << endl;
-cout << "A = " << a;
-cout << "directsum(A,A) = " << directsum(a,a);
+cout << "A = \n" << a << endl;
+cout << "directsum(A,A) = \n" << directsum(a,a) << endl;
 cout << "Enter any number "; cin >> i;
 }
 {
   mat_i sa = to_mat_i(a);
-  cout << "After shortening to a matrix of ints, A = " << sa;
+  cout << "After shortening to a matrix of ints, A = \n" << sa << endl;
 }
 mat_m b = a;
 {
-cout << "B = A = " << b;
+cout << "B = A = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
 cout << "B==A?" << (b==a) << endl;
 cout << "B!=A?" << (b!=a) << endl;
 b+=a;
-cout << "after B+:=A, A = " << a << "and B = " << b;
+cout << "after B+:=A, A = \n" << a << "\nand B = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
 }
 {
 b-=a;
-cout << "after B-:=A, A = " << a << "and B = " << b;
+cout << "after B-:=A, A = \n" << a << "\nand B = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
 bigint two; two=2;
 b*=two;
-cout << "after B*:=2, A = " << a << "and B = " << b;
+cout << "after B*:=2, A = \n" << a << "\nand B = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
 b/=two;
-cout << "after B/:=2, A = " << a << "and B = " << b;
+cout << "after B/:=2, A = \n" << a << "\nand B = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
 }
 {
-cout << "A+B=" << (a+b);
-cout << "Now A = " << a << "and B = " << b;
+cout << "A+B=\n" << (a+b) << endl;
+cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
-cout << "A-B=" << (a-b);
-cout << "Now A = " << a << "and B = " << b;
+cout << "A-B=\n" << (a-b) << endl;
+cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
-cout << "A*B=" << (a*b);
-cout << "Now A = " << a << "and B = " << b;
+cout << "A*B=\n" << (a*b) << endl;
+cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
 }
 {
 cout << "Enter any number "; cin >> i;
-cout << "-A=" << (-a);
-cout << "Now A = " << a;
-cout << "-A=" << (-a);
-cout << "Now A = " << a;
+cout << "-A=\n" << (-a) << endl;
+cout << "Now A = \n" << a << endl;
+cout << "-A=\n" << (-a) << endl;
+cout << "Now A = \n" << a << endl;
 cout << "Enter any number "; cin >> i;
 }
 {
@@ -112,7 +112,7 @@ cout << "det(A) = " << a.determinant() << endl;
 }
 {
   aug = colcat(a, mat_m::identity_matrix(r));
-  cout << "Augmented matrix = " << aug << endl;
+  cout << "Augmented matrix = \n" << aug << endl << endl;
 }
 
 long rk, ny;
@@ -122,7 +122,7 @@ int method;
 cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
 cin>>method;
 ref = echelon(aug, pc, npc, rk, ny, denom, method);
-cout << "Echelon matrix = " << ref;
+cout << "Echelon matrix = \n" << ref << endl;
 cout << "pivotal columns: " << pc << endl;
 cout << "nonpivotal columns: " << npc << endl;
 cout << "Denom = " << denom << endl;

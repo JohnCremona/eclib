@@ -373,47 +373,7 @@ long invmod(long a, long p)
 
 //#define DEBUG_MODRAT
 
-// Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
-void gauss_reduce(long a0, long b0, long c0, long d0,
-                  long& a, long& b, long& c, long& d)
-{
-  a=a0; b=b0; c=c0; d=d0;
-#ifdef DEBUG_MODRAT
-  cout<<"Initial (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
-#endif
-  long P = a*a+b*b, Q = a*c+b*d, R = c*c+d*d, t=1;
-  while (t)
-    {
-#ifdef DEBUG_MODRAT
-      cout<<"(a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
-      cout<<"(P,Q,R) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
-#endif
-      t = rounded_division(Q,P);
-      if (t)
-        {
-#ifdef DEBUG_MODRAT
-          cout<<"Shift by "<<t<<endl;
-#endif
-          c -= t*a;
-          d -= t*b;
-          Q -= t*P;
-          R = c*c+d*d;
-        }
-      if (R<P)
-        {
-#ifdef DEBUG_MODRAT
-          cout<<"Invert"<<endl;
-#endif
-          t = -a; a = c; c = t;
-          t = -b; b = d; d = t;
-          t = P; P = R; R = t; Q=-Q;
-          t = 1;
-        }
-    }
-#ifdef DEBUG_MODRAT
-  cout<<"Final (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
-#endif
-}
+// implementation of gauss_reduce() is now in marith since it uses bigints
 
 // Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
 int modrat(int n, int m, int& a, int& b)

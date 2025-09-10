@@ -49,9 +49,9 @@ int main(){
       vector<CurveRed> crs=cl.getcurves();
       vector<Curve> cs;
       for(unsigned int i=0; i<crs.size(); i++) cs.push_back((Curve)(crs[i]));
-      cout<<cs<<"\t";
-      cl.getmatrix().output_pari(cout); 
-      cout<<endl;
+      cout<<cs<<"\n";
+      cl.getmatrix().output_pari(cout);
+      cout<<endl<<endl;
 #ifdef TEST
       vector<CurveRed> curves = cl.getcurves();
       cout << "Curve list via getcurves(): " << curves << endl;

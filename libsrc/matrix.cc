@@ -285,7 +285,7 @@ template<class T>
 void Zmat<T>::output(ostream& s) const
 {
   auto mij=entries.begin();
-  s << "\n[";
+  s << "[";
   long nr=nro;
   while(nr--)
     {
@@ -294,14 +294,14 @@ void Zmat<T>::output(ostream& s) const
       while(nc--) {s<<(*mij++); if(nc) s<<",";}
       s<<"]"; if(nr) s<<",\n";
     }
-  s << "]\n";
+  s << "]";
 }
 
 template<class T>
 void Zmat<T>::output_pari(ostream& s) const
 {
   auto mij=entries.begin();
-  s << "\n[";
+  s << "[";
   long nr=nro;
   while(nr--)
     {
@@ -309,15 +309,14 @@ void Zmat<T>::output_pari(ostream& s) const
       while(nc--) {s<<(*mij++); if(nc) s<<",";}
       if(nr) s<<";";
     }
-  s << "]\n";
+  s << "]";
 }
 
 template<class T>
 long ndigits(const T& a)
 {
-  int digits = 0;
-  T aa(a);
-  if (aa < 0) digits = 1; // for the '-'
+  int digits = (a<=0); // for the '-' or 0
+  T aa(abs(a));
   while (is_nonzero(aa)) { aa /= 10; digits++; }
   return digits;
 }
@@ -968,6 +967,18 @@ Zvec<T> apply(const Zmat<T>& m, const Zvec<T>& v)    // same as *(mat, vec)
   return m*v;
 }
 
+// Assigns d*A^-1 to Ainv and returns d, assuming A square and det(A) nonzero
+template<class T>
+T inverse(const Zmat<T>& A, Zmat<T>& Ainv)
+{
+  long d = A.nrows();
+  Zmat<T> aug=colcat(A, Zmat<T>::identity_matrix(d));
+  long rk, ny; Zvec<int> pc,npc; T denom;
+  Zmat<T> ref = echelon(aug, pc, npc, rk, ny, denom, 0);
+  Ainv = ref.slice(1,d,d+1,2*d);
+  return denom;
+}
+
 template<class T>
 void Zmat<T>::reduce_mod_p(const T& p)
 {
@@ -1461,7 +1472,7 @@ Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)
              T m1ik = *a++;
              std::transform(b, b+p, c, c,
                             [pr,m1ik] (const T& m2kj, const T& m3ij)
-                            {return xmod(xmodmul(m1ik,m2kj,pr)+m3ij, pr);});
+                            {return mod(xmodmul(m1ik,m2kj,pr)+m3ij, pr);});
            }
        }
    }
@@ -1858,6 +1869,7 @@ template Zmat<int> echelon<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>&
                           long& rk, long& ny, int& d, int method=0);
 template Zmat<int> addscalar<int>(const Zmat<int>&, const int&);
 template Zvec<int> apply<int>(const Zmat<int>&, const Zvec<int>&);
+template int inverse<int>(const Zmat<int>&, Zmat<int>&);
 template int liftmat<int>(const Zmat<int>& mm, const int& pr, Zmat<int>& m, int& dd);
 
 template void Zvec<int>::sub_row(const Zmat<int>& m, int i);
@@ -1916,6 +1928,7 @@ template Zmat<long> echelon<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<in
                           long& rk, long& ny, long& d, int method=0);
 template Zmat<long> addscalar<long>(const Zmat<long>&, const long&);
 template Zvec<long> apply<long>(const Zmat<long>&, const Zvec<long>&);
+template long inverse<long>(const Zmat<long>&, Zmat<long>&);
 template int liftmat<long>(const Zmat<long>& mm, const long& pr, Zmat<long>& m, long& dd);
 
 template void Zvec<long>::sub_row(const Zmat<long>& m, int i);
@@ -1974,6 +1987,7 @@ template Zmat<bigint> echelon<bigint>(const Zmat<bigint>& m, Zvec<int>& pcols, Z
                           long& rk, long& ny, bigint& d, int method=0);
 template Zmat<bigint> addscalar<bigint>(const Zmat<bigint>&, const bigint&);
 template Zvec<bigint> apply<bigint>(const Zmat<bigint>&, const Zvec<bigint>&);
+template bigint inverse<bigint>(const Zmat<bigint>&, Zmat<bigint>&);
 template int liftmat<bigint>(const Zmat<bigint>& mm, const bigint& pr, Zmat<bigint>& m, bigint& dd);
 
 template void Zvec<bigint>::sub_row(const Zmat<bigint>& m, int i);

@@ -38,13 +38,13 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   mat_m m(r,r);
   cout << "Enter entries of M: ";
   cin >> m;
-  cout << " M = " << m;
+  cout << " M = \n" << m << endl;
   cout << "Trace(M) = " << m.trace() << endl;
   //
   mat_m mpower=m;
   for (i=2; i<=r; i++)
     {mpower=mpower*m;
-     cout << "m^" << i << " = " << mpower;
+     cout << "m^" << i << " = \n" << mpower << endl;
      cout << "Trace(m^" << i << ") = " << mpower.trace() << endl;
    }
 //
@@ -58,7 +58,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   {
     subspace_m ker = kernel(m);
     mat_m kerbasis = basis(ker);
-    cout << "kernel(m) has basis\n" << kerbasis;
+    cout << "kernel(m) has basis\n" << kerbasis << endl;
     vec_i kerpivs = pivots(ker);
     cout << "pivots: " << kerpivs << "\n";
     bigint kerdenom = denom(ker);
@@ -66,7 +66,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   }
   {
     subspace_m im = image(m);
-    cout << "image(m) has basis\n" << basis(im);
+    cout << "image(m) has basis\n" << basis(im) << endl;
     cout << "pivots: " << pivots(im) << "\n";
     cout << "denom:  " << denom(im)  << "\n";
   }
@@ -74,12 +74,12 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     bigint lambda;
     cout << "Enter lambda: "; cin >> lambda;
     subspace_m elambda = eigenspace(m,lambda);
-    cout << "eigenspace for lambda = " << lambda << " has basis\n" << basis(elambda);
+    cout << "eigenspace for lambda = " << lambda << " has basis\n" << basis(elambda) << endl;
     cout << "with dimension " << dim(elambda) << endl;
     cout << "\nNow repeating eigenspace calculation modulo " << modulus << endl;
     subspace_m elp;
     lift(peigenspace(m,lambda,modulus),modulus, elp);
-    cout << "eigenspace for lambda has basis\n" << basis(elp);
+    cout << "eigenspace for lambda has basis\n" << basis(elp) << endl;
     cout << "with dimension " << dim(elp) << endl;
   }
 }

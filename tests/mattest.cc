@@ -40,10 +40,10 @@ int main(void)
   cout << "Enter size of a square matrix A: "; cin >> r;
   mat a(r,r);
   cout << "Enter entries of A: "; cin >> a;
-  cout << "A = " << a;
-  cout << "Using A.output(cout): ";  a.output(cout);
-  cout << "Using A.output_pari(cout): ";  a.output_pari(cout);
-  cout << "Using A.output_pretty(cout): \n";  a.output_pretty(cout);
+  cout << "A = \n" << a << endl;
+  cout << "Using A.output(cout): \n";  a.output(cout); cout<<endl;
+  cout << "Using A.output_pari(cout): \n";  a.output_pari(cout); cout<<endl;
+  cout << "Using A.output_pretty(cout): \n";  a.output_pretty(cout);// cout<<endl;
 
   cout << "Enter any number "; cin >> i;
   cout << "Creating an array of 3 matrices\n";
@@ -51,55 +51,55 @@ int main(void)
   matlist[0] = a;
   matlist[1] = two*a;
   matlist[2] = three*a;
-  cout << " A=" << matlist[0];
-  cout << "2A=" << matlist[1];
-  cout << "3A=" << matlist[2];
+  cout << " A=\n" << matlist[0] << endl;
+  cout << "2A=\n" << matlist[1] << endl;
+  cout << "3A=\n" << matlist[2] << endl;
 
   for (i=1; i<=r; i++)
     cout << "row(A,"<<i<<") = " << a.row(i) << endl;
-  cout << "A = " << a;
+  cout << "A = \n" << a << endl;
   for (int j=1; j<=r; j++)
     cout << "col(A,"<<j<<") = " << a.col(j) << endl;
-  cout << "A = " << a;
-  cout << "directsum(A,A) = " << directsum(a,a);
+  cout << "A = \n" << a << endl;
+  cout << "directsum(A,A) = \n" << directsum(a,a) << endl;
   cout << "Enter any number "; cin >> i;
 
   mat b = a;
-  cout << "B = A = " << b;
+  cout << "B = A = \n" << b << endl;
   cout << "Enter any number "; cin >> i;
   cout << "B==A?" << (b==a) << endl;
   cout << "B!=A?" << (b!=a) << endl;
   b+=a;
-  cout << "after B+:=A, A = " << a << "and B = " << b;
+  cout << "after B+:=A, A = \n" << a << "\nand B = \n" << b << endl;
   cout << "Enter any number "; cin >> i;
   b-=a;
-  cout << "after B-:=A, A = " << a << "and B = " << b;
+  cout << "after B-:=A, A = \n" << a << "\nand B = \n" << b << endl;
   cout << "Enter any number "; cin >> i;
   b*=two;
-  cout << "after B*:=2, A = " << a << "and B = " << b;
+  cout << "after B*:=2, A = \n" << a << "\nand B = \n" << b << endl;
   cout << "Enter any number "; cin >> i;
   b/=two;
-  cout << "after B/:=2, A = " << a << "and B = " << b;
+  cout << "after B/:=2, A = \n" << a << "\nand B = \n" << b << endl;
   cout << "Enter any number "; cin >> i;
-  cout << "A+B=" << (a+b);
-  cout << "Now A = " << a << "and B = " << b;
+  cout << "A+B=\n" << (a+b) << endl;
+  cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
   cout << "Enter any number "; cin >> i;
-  cout << "A-B=" << (a-b);
-  cout << "Now A = " << a << "and B = " << b;
+  cout << "A-B=\n" << (a-b) << endl;
+  cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
   cout << "Enter any number "; cin >> i;
-  cout << "A*B=" << (a*b);
-  cout << "Now A = " << a << "and B = " << b;
+  cout << "A*B=\n" << (a*b) << endl;
+  cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
   cout << "Enter any number "; cin >> i;
-  cout << "-A=" << (-a);
-  cout << "Now A = " << a;
-  cout << "-A=" << (-a);
-  cout << "Now A = " << a;
+  cout << "-A=\n" << (-a) << endl;
+  cout << "Now A = \n" << a << endl;
+  cout << "-A=\n" << (-a) << endl;
+  cout << "Now A = \n" << a << endl;
   cout << "Enter any number "; cin >> i;
   vector<scalar> cp = a.charpoly();
   cout << "char. poly. of A has coefficients " << cp << endl;
   cout << "det(A) = " << a.determinant() << endl;
   mat aug = colcat(a,mat::identity_matrix(r));
-  cout << "Augmented matrix = " << aug << endl;
+  cout << "Augmented matrix = \n" << aug << endl << endl;
 
   long rk, ny;
   scalar denom;
@@ -110,7 +110,7 @@ int main(void)
   if(method==2) cout << " (modulus = " << modulus << ")";
   cout << endl;
   mat ref = echelon(aug, pc, npc, rk, ny, denom, method);
-  cout << "Echelon matrix = " << ref;
+  cout << "Echelon matrix = \n" << ref << endl;
   cout << "pivotal columns: " << pc << endl;
   cout << "nonpivotal columns: " << npc << endl;
   cout << "Denom = " << denom << endl;
@@ -129,7 +129,7 @@ int main(void)
       cout << "A has inverse ";
       if (denom>1)
         cout << "(1/" << denom << ")*";
-      cout << ainv;
+      cout << endl << ainv << endl;
       cout << "Check: A.A^(-1) = I ?";
       if (a*ainv == mat::scalar_matrix(r,denom))
         cout << " True!";
@@ -139,6 +139,6 @@ int main(void)
     }
 
   stop_time();
-  // commented out for sutomatice tests:
+  // commented out for automatic tests:
   //cout << "cpu time = "; show_time(); cout << endl;
 }

@@ -26,11 +26,6 @@
 
 #include "homspace.h"
 
-bigint inverse(const mat_m& a, mat_m& ainv);
-void showmatrix(const mat_m& m);
-//void showmatrix(const mat& m);
-
-
 class nfd {
 private:
   mat_m tp0;  // a defining matrix

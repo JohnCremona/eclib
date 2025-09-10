@@ -236,7 +236,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
     {
       if(dHS>1) cout<<dHS<<"*";
       cout<<"Matrix of T("<<p<<") restricted to S is ";
-      showmatrix(tp0); cout<<endl;
+      tp0.output_pari(cout); cout<<endl;
     }
   // = matrix of T_p on irreducible subspace of dual space
 
@@ -267,11 +267,11 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   WinvV = Winv*V;
   if(verbose)
     {
-      cout<<"W     = ";showmatrix(W); cout<<endl;
-      cout<<"W^(-1)= (1/"<<Wdetnum<<")*";showmatrix(Winv);cout<<endl;
+      cout<<"W     = ";W.output_pari(cout); cout<<endl;
+      cout<<"W^(-1)= (1/"<<Wdetnum<<")*";Winv.output_pari(cout);cout<<endl;
       if(verbose>1)
 	{
-	  cout<<"WinvV = ";showmatrix(WinvV);cout<<endl;
+	  cout<<"WinvV = ";WinvV.output_pari(cout);cout<<endl;
 	}
     }
 
@@ -398,44 +398,3 @@ mat_m nfd::heckeop(long p)
     }
   return transpose(V*TE);
 }
-
-bigint inverse(const mat_m& a, mat_m& ainv)
-{
-  long d = a.nrows();
-  mat_m aug=colcat(a, mat_m::identity_matrix(d));
-  long rk, ny; vec_i pc,npc; bigint denom;
-  mat_m ref = echelon(aug, pc, npc, rk, ny, denom);
-  ainv = ref.slice(1,d,d+1,2*d);
-  //  cout<<"Inverse = "<<denom<<"*"<<ainv<<endl;
-  return denom;
-}
-
-void showmatrix(const mat_m& m)
-{
-#ifdef OUTPUT_PARI_STYLE
-  long i,j, nc=m.ncols(),nr=m.nrows();
-  cout << "[";
-  for(i=0; i<nr; i++)
-    {
-      if(i) cout<<";";
-      for(j=0; j<nc; j++) 
-	{ 
-	  if(j) cout<<","; 
-	  cout<<m(i+1,j+1);
-	}
-    }
-  cout << "]\n";
-#else
-  cout<<m;
-#endif
-}
-
-// void showmatrix(const mat& m)
-// {
-// #ifdef OUTPUT_PARI_STYLE
-//   m.output_pari(cout);
-// #else
-//   cout<<m;
-// #endif
-// }
-

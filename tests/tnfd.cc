@@ -25,7 +25,6 @@
 #include <eclib/timer.h>
 #include <eclib/nfd.h>
 
-#define OUTPUT_PARI_STYLE
 //#define DEBUG
 //#define COMPARE_OLD
 
@@ -75,8 +74,9 @@ int main()
 	     if(den>1) cout<<den<<"*";
 	     cout<<"Matrix of ";
 	     if(bad) cout<<"W("; else cout<<"T(";
-	     cout <<p<<") = "; 
-	     showmatrix(tp);
+	     cout <<p<<") = "<<flush;
+	     tp.output_pari(cout);
+             cout << endl;
 	     vector<bigint> cptp = tp.charpoly();
 	     for(i=0; i<dims; i++)
 	       {

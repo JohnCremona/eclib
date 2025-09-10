@@ -1042,22 +1042,29 @@ long gcd(const bigint& a, long b)
   return I2long(gcd( a, bb ));
 }
 
+//#define DEBUG_GAUSS
 // Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
 void gauss_reduce(const bigint& a0, const bigint& b0, const bigint& c0, const bigint& d0,
                   bigint& a, bigint& b, bigint& c, bigint& d)
 {
   a=a0; b=b0; c=c0; d=d0;
-  // cout<<"Initial (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
-  bigint P = a*a+b*b, Q = a*c+b*d, R = c*c+d*d, one(1), t;
-  t = one; // any nonzero will do
+#ifdef DEBUG_GAUSS
+  cout<<"In gauss_reduce, initial v=(a,b) = ("<<a<<","<<b<<")"<<"; w=(c,d) = ("<<c<<","<<d<<")"<<endl;
+  cout<<"ad-bc = "<<a*d-b*c<<endl;
+#endif
+  bigint P = a*a+b*b, Q = a*c+b*d, R = c*c+d*d, one(1), t(1);
   while (!is_zero(t))
     {
-      // cout<<"(a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
-      // cout<<"(P,Q,R) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
+#ifdef DEBUG_GAUSS
+      cout<<"v=(a,b) = ("<<a<<","<<b<<")"<<"; w=(c,d) = ("<<c<<","<<d<<")"<<endl;
+      cout<<"(P,Q,R) = (v.v,v.w,w.w) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
+#endif
       t = rounded_division(Q,P);
       if (!is_zero(t))
         {
-          // cout<<"Shift by "<<t<<endl;
+#ifdef DEBUG_GAUSS
+          cout<<"Shift by t="<<t<<": (v,w) <-- (v,w-tv)" << endl;
+#endif
           c -= t*a;
           d -= t*b;
           Q -= t*P;
@@ -1065,14 +1072,21 @@ void gauss_reduce(const bigint& a0, const bigint& b0, const bigint& c0, const bi
         }
       if (R<P)
         {
-          // cout<<"Invert"<<endl;
+#ifdef DEBUG_GAUSS
+          cout<<"Invert: (v,w) <-- (w,-v)"<<endl;
+#endif
           t = -a; a = c; c = t;
           t = -b; b = d; d = t;
           t = P; P = R; R = t;
+          Q = -Q;
           t = one;
         }
     }
-  // cout<<"Final (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+#ifdef DEBUG_GAUSS
+  cout<<"Final (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+  cout<<"(P,Q,R) = (v.v,v.w,w.w) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
+  cout<<"ad-bc = "<<a*d-b*c<<endl;
+#endif
 }
 
 int modrat(const bigint& n, const bigint& m,
@@ -1084,6 +1098,53 @@ int modrat(const bigint& n, const bigint& m,
   bigint lim = sqrt(m>>1);
   return (abs(a) <= lim) && (abs(b) <= lim);
 }
+
+// Version of gauss_reduce() for long ints, implemented here since it uses bigints for P, Q, R
+
+// Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
+void gauss_reduce(long a0, long b0, long c0, long d0,
+                  long& a, long& b, long& c, long& d)
+{
+  a=a0; b=b0; c=c0; d=d0;
+#ifdef DEBUG_GAUSS
+  cout<<"Initial (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+#endif
+  bigint P(a*a+b*b), Q(a*c+b*d), R(c*c+d*d), tt;
+  long t = 1;
+  while (t)
+    {
+#ifdef DEBUG_GAUSS
+      cout<<"(a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+      cout<<"(P,Q,R) = ("<<P<<","<<Q<<","<<R<<")"<<endl;
+#endif
+      tt = I2long(rounded_division(Q,P));
+      t = I2long(t);
+      if (t)
+        {
+#ifdef DEBUG_GAUSS
+          cout<<"Shift by "<<t<<endl;
+#endif
+          c -= t*a;
+          d -= t*b;
+          Q -= tt*P;
+          R = c*c+d*d;
+        }
+      if (R<P)
+        {
+#ifdef DEBUG_GAUSS
+          cout<<"Invert"<<endl;
+#endif
+          t = -a; a = c; c = t;
+          t = -b; b = d; d = t;
+          tt = P; P = R; R = tt; Q=-Q;
+          t = 1;
+        }
+    }
+#ifdef DEBUG_GAUSS
+  cout<<"Final (a,b) = ("<<a<<","<<b<<")"<<"; (c,d) = ("<<c<<","<<d<<")"<<endl;
+#endif
+}
+
 
 // Find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p) and
 // assign roots to a list of these. A stupid search is good enough

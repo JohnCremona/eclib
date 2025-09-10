@@ -80,14 +80,26 @@ Zmat<T> restrict_mat(const Zmat<T>& M, const subZspace<T>& S, int cr)
 {
   if(dim(S)==M.nro) return M; // trivial special case, s is whole space
   const Zmat<T>& B = S.basis;
+  // cerr<<"In restrict_mat() with M =\n" << M <<"\n and basis(S) = \n"<<B<<endl;
+  // cerr<<"rowsubmat(M, S.pivots) =\n"<<rowsubmat(M, S.pivots)<<endl;
   Zmat<T> A = rowsubmat(M, S.pivots) * B;
+  // cerr<<"A            =\n"<< A << endl;
 
   if(cr) // optional check that S is invariant under M
     {
       T modulus = default_modulus<T>();
-      int check = (S.denom*matmulmodp(M,B, modulus) == matmulmodp(B,A, modulus));
-      if (!check)
-        cerr<<"Error in restrict_mat: subspace not invariant!"<<endl;
+      Zmat<T>
+        RHS = matmulmodp(B,A, modulus),
+        LHS = matmulmodp(M,B, modulus);
+      LHS *= S.denom;
+      LHS.reduce_mod_p(modulus);
+      if (LHS!=RHS)
+        {
+          cerr<<"Error in restrict_mat: subspace not invariant!"<<endl;
+          cerr<<"denom(S)*M*B =\n"<< LHS << endl;
+          cerr<<"B*A          =\n"<< RHS << endl;
+          cerr<<"(using modulus "<<modulus<<")"<<endl;
+        }
     }
   return A;
 }
