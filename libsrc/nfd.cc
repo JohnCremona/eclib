@@ -29,21 +29,22 @@
 
 #define OUTPUT_PARI_STYLE
 
-nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
+nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
 {
-  h1=in_h1;
-  long N = h1->N;
-  long dimh = h1->h1dim();
-  dH = h1->h1denom();
-  vector<long> badprimes = h1->plist;
-  mat K = basis(h1->kern).as_mat();
+  H1=h1;
+  N = H1->N;
+  dimH = H1->h1dim();
+  dH = H1->h1denom();
+  vector<long> badprimes = H1->plist;
+  K = basis(H1->kern).as_mat();
+  rk = K.nrows();
   mat_m tp, tp1, m;
   long d, i,j, p;
   bigint ap1;
 
-  Hscales.resize(dimh+1);
+  Hscales.resize(dimH+1);
   Hscales[0]=1;
-  for(i=1; i<=dimh; i++) Hscales[i]=Hscales[i-1]*dH;
+  for(i=1; i<=dimH; i++) Hscales[i]=Hscales[i-1]*dH;
 
 // Compute the desired linear combination of Tp:
 
@@ -53,12 +54,12 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
       while (N%pr==0) pr++;
       p=pr;
       cout << "Computing T_p for p = " << p << "..." << flush;
-      tp = to_mat_m(transpose(h1->newheckeop(p,0)));
+      tp = to_mat_m(transpose(H1->newheckeop(p,0)));
       cout<<"done."<<endl;
     }
   else
     {
-      tp.init(dimh,dimh); // zero matrix
+      tp.init(dimH,dimH); // zero matrix
       while(1)
 	{
 	  cout<<"Enter a (good) prime (or 1 for id, 0 to stop): "; cin>>p;
@@ -71,7 +72,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	  else
 	    {
 	      cout << "Computing T_p for p = " << p << "..." << flush;
-	      tp1 = to_mat_m(transpose(h1->newheckeop(p,0)));
+	      tp1 = to_mat_m(transpose(H1->newheckeop(p,0)));
 	      cout<<"done."<<endl;
 	      cout<<"coefficient of T_"<<p<<": "; cin>>ap1;
 	      if(ap1!=1) tp1*=ap1;
@@ -82,20 +83,20 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
 // Compute the appropriate W-eigenspace and restrict to it
 
-  subspace_m SW(dimh);
-  int dimsw=dimh;
+  subspace_m SW(dimH);
+  int dimSW=dimH;
   if(w_split)
     {
       int nq = badprimes.size();
-      for(i=0; (i<nq)&&(dimsw>0); i++)
+      for(i=0; (i<nq)&&(dimSW>0); i++)
 	{
 	  long q = badprimes[i];
 	  bigint eq;
 	  cout<<"Enter eigenvalue of W("<<q<<"): ";
 	  cin>>eq;
 	  eq *=dH;
-	  mat_m wq = to_mat_m(transpose(h1->heckeop(q,0)));
-	  if(dimsw<dimh)
+	  mat_m wq = to_mat_m(transpose(H1->heckeop(q,0)));
+	  if(dimSW<dimH)
 	    {
 	      SW=subeigenspace(wq,eq,SW);
 	    }
@@ -103,38 +104,38 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 	    {
 	      SW=eigenspace(wq,eq);
 	    }
-	  dimsw=dim(SW);
-	  cout<<"eigenspace now has dimension "<<dimsw<<endl;
+	  dimSW=dim(SW);
+	  cout<<"eigenspace now has dimension "<<dimSW<<endl;
 	}
-      if(dimsw<dimh) tp = restrict_mat(tp,SW);
+      if(dimSW<dimH) tp = restrict_mat(tp,SW);
     }
-  if(dimsw==0)
+  if(dimSW==0)
     {
       cout<<"This W-eigenspace is trivial!"<<endl;
       return;
     }
 
   mat_ZZ ntl_tp;
-  ntl_tp.SetDims(dimsw,dimsw);
-  for(i=1; i<=dimsw; i++)
-    for(j=1; j<=dimsw; j++)
+  ntl_tp.SetDims(dimSW,dimSW);
+  for(i=1; i<=dimSW; i++)
+    for(j=1; j<=dimSW; j++)
       ntl_tp(i,j)=tp(i,j);
 
   bigint swden=denom(SW);
-  Sscales.resize(dimsw+1);
+  Sscales.resize(dimSW+1);
   Sscales[0]=1;
-  for(i=1; i<=dimsw; i++) Sscales[i]=Sscales[i-1]*swden;
+  for(i=1; i<=dimSW; i++) Sscales[i]=Sscales[i-1]*swden;
 
 // Compute char poly of restriction of tp to this subspace:
 
   ZZX ntl_cptp; ZZ cont;
   CharPoly(ntl_cptp, ntl_tp);
   vec_pair_ZZX_long factors;
-  //  SetCoeff(ntl_cptp,dimsw,1);
-  for(i=0; i<dimsw; i++)
+  //  SetCoeff(ntl_cptp,dimSW,1);
+  for(i=0; i<dimSW; i++)
     {
       bigint temp = coeff(ntl_cptp,i);
-      divide_exact(temp,Hscales[dimsw-i]*Sscales[dimsw-i],temp);
+      divide_exact(temp,Hscales[dimSW-i]*Sscales[dimSW-i],temp);
       SetCoeff(ntl_cptp,i,temp);
     }
   cout<<"char poly = "<<ntl_cptp<<endl;
@@ -213,12 +214,12 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
     }
 
   //    if(verbose)
-      cout<<"finished constructing S, now restricting T_p to S"<<endl;
+  cout<<"finished constructing S, now restricting T_p to S"<<endl;
 
-      tp0 = restrict_mat(tp,S);
+  tp0 = restrict_mat(tp,S);
 
   //  if(verbose)
-      cout<<"done.  now combining S and SW"<<endl;
+  cout<<"done.  now combining S and SW"<<endl;
 
   if(w_split)// make S a subspace of H_1, not of the W-eigenspace
     {
@@ -228,7 +229,8 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
       S=combine(mSW,S);
     }
 
-  long dims=dim(S);
+  Kcol = K.col(pivots(S)[1]);
+  dimS=dim(S);
   dS=denom(S);
   dHS=dH*dS;
 
@@ -253,16 +255,16 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
     {
       cout<<"S has denom "<<dS<<", cumulative denom = "<<dHS<<endl;
     }
-  V = transpose(basis(S)); // so V is dims x dimh
-  Sscales.resize(dims+1);
+  V = transpose(basis(S)); // so V is dimS x dimH
+  Sscales.resize(dimS+1);
   Sscales[0]=1;
-  for(i=1; i<=dims; i++) Sscales[i]=Sscales[i-1]*dS;
+  for(i=1; i<=dimS; i++) Sscales[i]=Sscales[i-1]*dS;
 
   mat_m A=transpose(tp0);
-  W.init(dims,dims); Winv.init(dims,dims);
-  vec_m v(dims);  v[1]=1; // so v=[1,0,...,0]
+  W.init(dimS,dimS); Winv.init(dimS,dimS);
+  vec_m v(dimS);  v[1]=1; // so v=[1,0,...,0]
   W.setcol(1,v);
-  for(i=2; i<=dims; i++) {v = A*v; W.setcol(i,v);}
+  for(i=2; i<=dimS; i++) {v = A*v; W.setcol(i,v);}
   Wdetnum = inverse(W,Winv);
   WinvV = Winv*V;
   if(verbose)
@@ -277,15 +279,15 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
 // compute projcoord, precomputed projections of the modular symbol basis
 
-  long ncoord = h1->coord_vecs.size()-1;
-  projcoord.init(ncoord,dims);
+  long ncoord = H1->coord_vecs.size()-1;
+  projcoord.init(ncoord,dimS);
   coord_fac=0;
-  vec_m mrowi(dims), coordi(dimh);
-  vec rowi(dims);
+  vec_m mrowi(dimS), coordi(dimH);
+  vec rowi(dimS);
   for (i=1; i<=ncoord; i++)
     {
-      coordi = to_vec_m((h1->coord_vecs[i]).as_vec());
-      if(h1->cuspidal) coordi = to_vec_m(h1->cuspidalpart(to_vec(coordi)));
+      coordi = to_vec_m((H1->coord_vecs[i]).as_vec());
+      if(H1->cuspidal) coordi = to_vec_m(H1->cuspidalpart(to_vec(coordi)));
       mrowi = V*coordi;
       rowi = to_vec(mrowi);
       projcoord.setrow(i,rowi);
@@ -299,7 +301,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 
   Winv_scaled=Winv;
   bigint g; g=content(Winv_scaled.row(1));
-  for(i=2; i<=dims; i++)
+  for(i=2; i<=dimS; i++)
     {
       Winv_scaled.multrow(i,Hscales[i-1]*Sscales[i-1]);
       g=gcd(g,content(Winv_scaled.row(i)));
@@ -310,7 +312,7 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
   g = gcd(Wdetnum,Wdetdenom);
   if(g>1) {Wdetnum/=g; Wdetdenom/=g;}
   cout<<"Basis for Hecke eigenvalues, in terms of powers of alpha:"<<endl;
-  for(i=1; i<=dims; i++)
+  for(i=1; i<=dimS; i++)
     {
       cout<<"("<<Wdetdenom<<"/"<<Wdetnum<<")*";
       cout<<Winv_scaled.col(i)<<endl;
@@ -321,11 +323,8 @@ nfd::nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose)
 // denominator of content
 vec_m nfd::ap(long p)
 {
-  mat K = basis(h1->kern).as_mat();
-  long rk = K.nrows();
-  long k,l, dims=dim(S);
-  long N = h1->N;
-  vec_m apvec(dims);
+  long k,l;
+  vec_m apvec(dimS);
   int bad = ::divides(p,N);
   if(bad) return apvec; // temporary fix!
   matop matlist(p);
@@ -334,12 +333,12 @@ vec_m nfd::ap(long p)
 
   for(k=0; k<rk; k++)
     {
-      bigint Kkj(K(k+1,pivots(S)[1]));
-      if(Kkj!=0)
+      bigint Kk1(Kcol[k+1]);
+      if(Kk1!=0)
 	{
-          symb s = h1->symbol(h1->freegens[k]);
+          symb s = H1->symbol(H1->freegens[k]);
           for(l=0; l<matlist.size(); l++)
-            apvec += Kkj*to_vec_m(matlist[l](s,h1,projcoord));
+            apvec += Kk1*to_vec_m(matlist[l](s,H1,projcoord));
 	}
     }
   return apvec;
@@ -347,14 +346,12 @@ vec_m nfd::ap(long p)
 
 mat_m nfd::oldheckeop(long p)
 {
-  return restrict_mat(transpose(to_mat_m(h1->newheckeop(p,0))),S);
+  return restrict_mat(transpose(to_mat_m(H1->newheckeop(p,0))),S);
 }
 
 mat_m nfd::heckeop(long p)
 {
-  mat K = basis(h1->kern).as_mat();
-  long rk = K.nrows();
-  long j,k,l,N = h1->N, dimh=h1->h1dim(), dims=dim(S);
+  long j,k,l;
   int bad = ::divides(p,N);
   matop matlist(p);
   if(bad)
@@ -366,11 +363,11 @@ mat_m nfd::heckeop(long p)
     {
       cout<<"p = "<<p<<"\t";
     }
-  mat_m TE(dimh,dims);
-  vec_m colj(dimh);
-  for (j=0; j<dims; j++)
+  mat_m TE(dimH,dimS);
+  vec_m colj(dimH);
+  for (j=0; j<dimS; j++)
     {
-      colj.init(dimh);
+      colj.init(dimH);
       for(k=0; k<rk; k++)
 	{
 	  bigint Kkj(K(k+1,pivots(S)[j+1]));
@@ -378,17 +375,17 @@ mat_m nfd::heckeop(long p)
 	    {
 	      if(bad)
 		{
-		  vec vt = (h1->applyop(matlist,h1->freemods[k])).as_vec();
-		  if(h1->cuspidal) vt=h1->cuspidalpart(vt);
+		  vec vt = (H1->applyop(matlist,H1->freemods[k])).as_vec();
+		  if(H1->cuspidal) vt=H1->cuspidalpart(vt);
 		  colj += (Kkj*to_vec_m(vt));
 		}
 	      else
 		{
-		  symb s = h1->symbol(h1->freegens[k]);
+		  symb s = H1->symbol(H1->freegens[k]);
 		  for(l=0; l<matlist.size(); l++)
 		    {
-		      vec vt = (matlist[l](s,h1)).as_vec();
-		      if(h1->cuspidal) vt=h1->cuspidalpart(vt);
+		      vec vt = (matlist[l](s,H1)).as_vec();
+		      if(H1->cuspidal) vt=H1->cuspidalpart(vt);
 		      colj += Kkj*to_vec_m(vt);
 		    }
 		}

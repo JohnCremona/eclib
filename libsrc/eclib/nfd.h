@@ -28,9 +28,8 @@
 
 class nfd {
 private:
-  mat_m tp0;  // a defining matrix
-  mat_m V;
-  mat_m W,Winv,WinvV,Winv_scaled;
+  mat_m tp0,  // a defining matrix
+    V, W, Winv, WinvV, Winv_scaled;
   mat projcoord;
   scalar coord_fac;
   bigint Wdetnum, Wdetdenom;
@@ -39,10 +38,15 @@ public:
   vector<bigint> Hscales;
   vector<bigint> Sscales;
   subspace_m S;   // the basis
-  homspace* h1; // the ambient modular symbol space
-  bigint dH, dS, dHS;
+  long N;         // the level
+  homspace* H1; // the ambient modular symbol space
+  mat K;    // basis of ker(delta) on h1
+  vec Kcol; // one column of K
+  int rk;   // #rows of K
+  int dimH, dimS; // dimensions of H1 and S
+  bigint dH, dS, dHS; // denominators of H1, S (relative) and S (absolute)
   nfd(void) {;}
-  nfd(homspace* in_h1, int one_p, int w_split, int mult_one, int verbose=0);
+  nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose=0);
   void display(void) const;
   mat_m oldheckeop(long p);
   mat_m heckeop(long p);
