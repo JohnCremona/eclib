@@ -21,10 +21,11 @@ check_run = echo -n "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_di
 
 ################ PROCS #############################################
 
-PROCS_TESTS = smattest1 smattest2 smattest3 comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 vectest3 mattest1 mattest2 mattest3 space1 space2 space3 svectest1 svectest2 svectest3 tcon2 tlegcert timing threading tversion tconvert
+PROCS_TESTS = smattest1 smattest2 smattest3 comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 vectest3 mattest1 mattest2 mattest3 space1 space2 space3 svectest1 svectest2 svectest3 tcon2 tlegcert timing threading tversion tconvert flint_test
 PROCS_TESTS_SUFFIXED = $(PROCS_TESTS:=$(EXEEXT))
 procs_tests: $(PROCS_TESTS_SUFFIXED)
 
+flint_test_SOURCES=flint_test.cc
 tconvert_SOURCES=tconvert.cc
 ptest_SOURCES=ptest.cc
 mptest_SOURCES=mptest.cc
