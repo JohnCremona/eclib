@@ -1,22 +1,29 @@
 Subspace test program with scalar type long
 
 Enter size of square matrix M: Enter entries of M:  M = 
-[[1,2,3],
-[4,5,6],
-[7,8,9]]
+[[1,2,3,0],
+[4,5,6,0],
+[7,8,9,0],
+[0,0,0,0]]
 Trace(M) = 15
 
 Enter number of times to repeat kernel tests: kernel(m) has basis
-[[1],
-[-2],
-[1]]
-pivots: [3]
+[[1,0],
+[-2,0],
+[1,0],
+[0,1]]
+pivots: [3,4]
 denom:  1
+v = [1,0,0,0] is NOT in the kernel and m*v = [1,4,7,0] --OK
+v = [0,1,0,0] is NOT in the kernel and m*v = [2,5,8,0] --OK
+v = [0,0,1,0] is NOT in the kernel and m*v = [3,6,9,0] --OK
+v = [0,0,0,1] IS in the kernel and m*v = [0,0,0,0] --OK
 Now compute kernel mod p, p = 1073741789
 kernel(m) has basis
-[[1],
-[-2],
-[1]]
-pivots: [3]
+[[1,0],
+[-2,0],
+[1,0],
+[0,1]]
+pivots: [3,4]
 !!! Agrees  with old version !!!
 Enter size of square matrix M: 

@@ -66,6 +66,17 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     cout << "pivots: " << kerpivs << "\n";
     scalar kerdenom = denom(ker);
     cout << "denom:  " << kerdenom  << "\n";
+    // test of inclusion of vectors in subspace:
+    for (int i=1; i<=r; i++)
+      {
+        vec v = vec::unit_vector(r,i);
+        int isin = ker.contains(v);
+        cout << "v = " << v << (isin?" IS ":" is NOT ")<<"in the kernel";
+        if (trivial(m*v)==isin)
+          cout <<" and m*v = "<<m*v<<" --OK"<<endl;
+        else
+          cout <<" but m*v = "<<m*v<<" --WRONG"<<endl;
+      }
   }
   scalar p = modulus;
   cout << "Now compute kernel mod p, p = " << p << endl;

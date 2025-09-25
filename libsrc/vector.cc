@@ -126,7 +126,7 @@ Zvec<T> Zvec<T>::slice(long first, long last) const       // returns subvector
 template<class T>
 Zvec<T> Zvec<T>::operator[](const Zvec<int>& index) const  // returns v[index[j]]
 {
-  Zvec<T> w(dim(index));
+  Zvec<T> w(index.dim());
   const vector<int>& vi = index.get_entries();
   std::transform(vi.begin(), vi.end(), w.entries.begin(),
                  [this](const int& i) {return entries.at(i-1);});
@@ -136,7 +136,7 @@ Zvec<T> Zvec<T>::operator[](const Zvec<int>& index) const  // returns v[index[j]
 template<class T>
 Zvec<T> Zvec<T>::operator[](const Zvec<long>& index) const  // returns v[index[j]]
 {
-  Zvec<T> w(dim(index));
+  Zvec<T> w(index.dim());
   const vector<long>& vi = index.get_entries();
   std::transform(vi.begin(), vi.end(), w.entries.begin(),
                  [this](const int& i) {return entries.at(i-1);});
@@ -180,6 +180,14 @@ Zvec<T> Zvec<T>::iota(long n)
 {
   Zvec<T> v(n);
   std::iota(v.entries.begin(), v.entries.end(), T(1));
+  return v;
+}
+
+template<class T>
+Zvec<T> Zvec<T>::unit_vector(long n, long i)
+{
+  Zvec<T> v(n);
+  v.set(i, T(1));
   return v;
 }
 
@@ -292,7 +300,7 @@ Zvec<T> express(const Zvec<T>& v, const Zvec<T>& v1, const Zvec<T>& v2)
 template<class T>
 int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans)
 {
-  long i0, i, j, d = dim(v);
+  long i0, i, j, d = v.dim();
   T nu, de;
   T lim = sqrt(pr>>1)-1;
   T maxallowed = 10*lim;

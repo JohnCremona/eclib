@@ -40,6 +40,28 @@ void subZspace<T>::operator=(const subZspace<T>& s)
   denom=s.denom;
 }
 
+template<class T>
+int subZspace<T>::contains(const Zvec<T>& v) const           // does this contain v?
+{
+  if (v.dim() != basis.nrows()) return 0;
+  return basis*v[pivots]==denom*v;
+}
+
+template<class T>
+int subZspace<T>::contains(const subZspace<T>& s) const      // does this contain s?
+{
+  // check ambient spaces are the same:
+  if (basis.nrows()!=s.basis.nrows())
+    return 0;
+  // check dim(s) <= dim:
+  if (basis.ncols()<s.basis.ncols())
+    return 0;
+  for(int j=1; j<=s.basis.ncols(); j++)
+    if (!contains(s.basis.col(j)))
+      return 0;
+  return 1;
+}
+
 // Definitions of nonmember, nonfriend operators and functions:
 
 template<class T>

@@ -43,9 +43,11 @@ public:
   inline T den() const {return denom;}     // the denominator
   inline Zvec<int> pivs() const {return pivots;} // the pivot vector
   inline Zmat<T> bas() const {return basis;}   // the basis matrix
+  inline int dim() const {return basis.ncols();}
+  int contains(const Zvec<T>& v) const;            // does this contain v?
+  int contains(const subZspace<T>& s) const;       // does this contain s?
 
   // non-member (friend) functions and operators
-  friend int dim<>(const subZspace<T>& s);      // the dimension
   friend T denom<>(const subZspace<T>& s);   // the denominator
   friend Zvec<int> pivots<>(const subZspace<T>& s);// the pivot vector
   friend Zmat<T> basis<>(const subZspace<T>& s) ;// the basis matrix
@@ -90,9 +92,8 @@ subZspace<T> peigenspace(const Zmat<T>& m, const T& lambda, const T& pr);
 template<class T>
 subZspace<T> psubeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s, const T& pr);
 
-
 template<class T>
-inline int dim(const subZspace<T>& s) {return s.basis.ncols();}  // the dimension
+inline int dim(const subZspace<T>& s) {return s.dim();}  // the dimension
 template<class T>
 inline T denom(const subZspace<T>& s) {return s.denom;}    // the denominator
 template<class T>

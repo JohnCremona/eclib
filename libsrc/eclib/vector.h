@@ -192,7 +192,8 @@ public:
   // member functions & operators
   void init(long n=0);                 // (re)-initializes
   void clear();                        // sets all entries to 0
-  Zvec& operator=(const Zvec<T>&);         // assignment
+  Zvec& operator=(const Zvec<T>&);     // assignment
+  inline int dim() const {return entries.size();}
   T& operator[](long i);            // the i'th component
   T operator[](long i) const;       // the i'th component
   Zvec& operator+=(const Zvec<T>&);
@@ -212,8 +213,8 @@ public:
   T sub(long i) const;                    // same as v[i] (no ref)
   const vector<T> get_entries()const {return entries;}
   static Zvec iota(long n);              // (1,2,...,n)
+  static Zvec unit_vector(long n, long i); // 1 in i'th position of n
   // non-member (friend) functions and operators
-  friend int dim<>(const Zvec<T>&);                  // the dimension
   friend T operator*<>(const Zvec<T>&, const Zvec<T>&);   // dot product
   friend T operator*<>(const sZvec<T>&, const Zvec<T>&);
   friend T content<>(const Zvec<T>&);
@@ -256,7 +257,7 @@ template<class T> int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans);  //lift
 
 // inline function definitions
 
-template<class T> inline int dim(const Zvec<T>& v) {return v.entries.size();}
+template<class T> inline int dim(const Zvec<T>& v) {return v.dim();}
 template<class T> inline int operator!=(const Zvec<T>& v, const Zvec<T>& w) { return !(v==w);}
 template<class T> inline Zvec<T> operator+(const Zvec<T>& v) { return v;}
 template<class T> inline Zvec<T> operator-(const Zvec<T>& v) { return T(-1)*v;}
