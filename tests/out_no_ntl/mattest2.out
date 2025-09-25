@@ -11,7 +11,7 @@ Using A.output_pari(cout):
 Using A.output_pretty(cout): 
 [1 2]
 [3 4]
-Enter any number Creating an array of 3 matrices
+Creating an array of 3 matrices
  A=
 [[1,2],
 [3,4]]
@@ -36,10 +36,15 @@ directsum(A,A) =
 [3,4,0,0],
 [0,0,1,2],
 [0,0,3,4]]
-Enter any number B = A = 
+Is A zero? no
+Z=A-A=
+[[0,0],
+[0,0]]
+Is Z zero? yes
+B = A = 
 [[1,2],
 [3,4]]
-Enter any number B==A?1
+B==A?1
 B!=A?0
 after B+:=A, A = 
 [[1,2],
@@ -47,25 +52,25 @@ after B+:=A, A =
 and B = 
 [[2,4],
 [6,8]]
-Enter any number after B-:=A, A = 
+after B-:=A, A = 
 [[1,2],
 [3,4]]
 and B = 
 [[1,2],
 [3,4]]
-Enter any number after B*:=2, A = 
+after B*:=2, A = 
 [[1,2],
 [3,4]]
 and B = 
 [[2,4],
 [6,8]]
-Enter any number after B/:=2, A = 
+after B/:=2, A = 
 [[1,2],
 [3,4]]
 and B = 
 [[1,2],
 [3,4]]
-Enter any number A+B=
+A+B=
 [[2,4],
 [6,8]]
 Now A = 
@@ -74,7 +79,7 @@ Now A =
 and B = 
 [[1,2],
 [3,4]]
-Enter any number A-B=
+A-B=
 [[0,0],
 [0,0]]
 Now A = 
@@ -83,7 +88,7 @@ Now A =
 and B = 
 [[1,2],
 [3,4]]
-Enter any number A*B=
+A*B=
 [[7,10],
 [15,22]]
 Now A = 
@@ -92,7 +97,7 @@ Now A =
 and B = 
 [[1,2],
 [3,4]]
-Enter any number -A=
+-A=
 [[-1,-2],
 [-3,-4]]
 Now A = 
@@ -104,14 +109,28 @@ Now A =
 Now A = 
 [[1,2],
 [3,4]]
-Enter any number char. poly. of A has coefficients [ -2 -5 1 ]
+char. poly. of A has coefficients [ -2 -5 1 ]
 det(A) = -2
 Augmented matrix = 
 [[1,2,1,0],
 [3,4,0,1]]
 
-Which echelon method? (0=standard,1=longlong,2=modular) 
+
 Using method 0
+Echelon matrix = 
+[[2,0,-4,2],
+[0,2,3,-1]]
+pivotal columns: [1,2]
+nonpivotal columns: [3,4]
+Denom = 2
+Rank = 2
+Nullity = 0
+A has inverse (1/2)*
+[[-4,2],
+[3,-1]]
+Check: A.A^(-1) = I ? True!
+
+Using method 2 (modulus = 1073741789)
 Echelon matrix = 
 [[2,0,-4,2],
 [0,2,3,-1]]

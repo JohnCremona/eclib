@@ -76,6 +76,7 @@ progs/reduce_cubics
 progs/reduce_quartics
 progs/solve_conic
 progs/solve_legendre
+tests/flint_test
 tests/allisog
 tests/bigrattest
 tests/checkgens

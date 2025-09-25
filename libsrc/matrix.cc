@@ -162,9 +162,16 @@ void Zmat<T>::multrow(long r, const T& scal)
 template<class T>
 void Zmat<T>::divrow(long r, const T& scal)
 {
-  if (is_zero(scal)||is_one(scal)) return;
+  if (::is_zero(scal)||::is_one(scal)) return;
   auto mij = entries.begin()+(r-1)*nco;
   std::transform(mij, mij+nco, mij, [scal](const T& x) {return x / scal;});
+}
+
+template<class T>
+int Zmat<T>::is_zero() const
+{
+  return std::all_of(entries.begin(), entries.end(),
+                     [](const T& x) {return ::is_zero(x);});
 }
 
 template<class T>
@@ -192,7 +199,7 @@ template<class T>
 void Zmat<T>::make_primitive()
 {
   T g = content();
-  if (is_zero(g)||is_one(g)) return;
+  if (::is_zero(g)||is_one(g)) return;
   std::transform(entries.begin(), entries.end(), entries.begin(),
                  [g](const T& x) {return x / g;});
 }
@@ -216,7 +223,7 @@ void Zmat<T>::operator*=(const T& scal)
 {
   if (is_one(scal))
     return;
-  if (is_zero(scal))
+  if (::is_zero(scal))
     std::fill(entries.begin(), entries.end(), T(0));
   else
     std::transform(entries.begin(), entries.end(), entries.begin(),
@@ -226,7 +233,7 @@ void Zmat<T>::operator*=(const T& scal)
 template<class T>
 void Zmat<T>::operator/=(const T& scal)
 {
-  if (is_zero(scal)||is_one(scal)) return;
+  if (::is_zero(scal)||is_one(scal)) return;
   std::transform(entries.begin(), entries.end(), entries.begin(),
                  [scal](const T& x) {return x / scal;});
 }
@@ -620,7 +627,7 @@ void conservative_elim(vector<T>& m, long nc, long r1, long r2, long pos)
   cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
   cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
 #endif
-  if (is_one(p)&&is_zero(q))
+  if (is_one(p)&&::is_zero(q))
     return;
   // generic function to make y (entry in row2) 0
   std::function<T (const T&, const T&)>
@@ -639,7 +646,7 @@ void conservative_elim(vector<T>& m, long nc, long r1, long r2, long pos)
     }
   else  // p!=1
     {
-      if(is_zero(q))
+      if(::is_zero(q))
         f = [p,q](const T& x, const T& y) {return p*y;};
       if(is_one(q))
         f = [p,q](const T& x, const T& y) {return p*y - x;};
@@ -664,7 +671,7 @@ void elim(vector<T>& m, long nc, long r1, long r2, long pos)
   cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
   cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
 #endif
-  if (is_one(p)&&is_zero(q))
+  if (is_one(p)&&::is_zero(q))
     return;
   // generic function to make y (entry in row2) 0
   std::function<T (const T&, const T&)>
@@ -875,7 +882,7 @@ long Zmat<T>::rank() const
       for (long r2=r+1; (r2<=nr)&&(!is_one(mmin)); r2++)
         {
           T mr2c = abs(m(r2,c));
-          if ((is_nonzero(mr2c)) && ((mr2c<mmin) || (is_zero(mmin))))
+          if ((is_nonzero(mr2c)) && ((mr2c<mmin) || (::is_zero(mmin))))
             {
               mmin=mr2c;
               rmin=r2;
@@ -991,11 +998,10 @@ template<class T>
 void elimp(Zmat<T>& m, long r1, long r2, long pos, const T& pr)
 {
   long nc=m.nco;
-  auto mr1 = m.entries.begin() + (r1-1)*nc + (pos-1);
-  auto mr2 = m.entries.begin() + (r2-1)*nc + (pos-1);
-  T p = mod(*mr1,pr), q=mod(*mr2,pr);
+  auto mr1 = m.entries.begin() + (r1-1)*nc;
+  auto mr2 = m.entries.begin() + (r2-1)*nc;
+  T p = mod(mr1[pos-1],pr), q=mod(mr2[pos-1],pr);
   if(q==0) {return;} // nothing to do
-  nc -= (pos-1); // first pos-1 entries are assumed 0 already
   // generic function to make y (entry in row2) 0
   std::function<T (const T&, const T&)>
     f = [pr,p,q](const T& x, const T& y) {return mod(xmodmul(p,y,pr)-xmodmul(q,x,pr), pr);};
@@ -1029,11 +1035,10 @@ void elimp1(Zmat<T>& m, long r1, long r2, long pos, const T& pr)
 //same as elimp except assumes pivot is 1
 {
   long nc=m.nco;
-  auto mr1 = m.entries.begin() + (r1-1)*nc + (pos-1);
-  auto mr2 = m.entries.begin() + (r2-1)*nc + (pos-1);
-  T q=mod(*mr2,pr);
-  if(is_zero(q)) return;
-  nc -= (pos-1); // first pos-1 entries are assumed 0 already
+  auto mr1 = m.entries.begin() + (r1-1)*nc;
+  auto mr2 = m.entries.begin() + (r2-1)*nc;
+  T q=mod(mr2[pos-1],pr);
+  if(::is_zero(q)) return;
   // generic function to make y (entry in row2) 0
   std::function<T (const T&, const T&)>
     f = [pr,q](const T& x, const T& y) {return mod(y-xmodmul(q,x,pr), pr);};
@@ -1097,19 +1102,30 @@ Zmat<T> echelonp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
  cout << "Finished first stage; rk = " << rk;
  cout << ", ny = " << ny << "\n";
  cout << "Back substitution.\n";
+ cout << m << endl;
 #endif /* TRACE */
  pcols  =  pcols.slice(1,rk);
  npcols =  npcols.slice(1,ny);    // truncate index vectors
  if (ny>0)
  {
    for (long r1=1; r1<=rk; r1++)
-     for (long r2=r+1; r2<=rk; r2++)
-       elimp(m,r2,r1,pcols[r2],pr);
+     for (long r2=r1+1; r2<=rk; r2++)
+       {
+         elimp(m,r2,r1,pcols[r2],pr);
+#ifdef TRACE
+         cout << "r1="<<r1<<", r2="<<r2<<", pos="<<pcols[r2]<<endl<<m << endl;
+#endif /* TRACE */
+       }
    for (long r1=1; r1<=rk; r1++)
      {
        T fac = xmod(invmod(m(r1,pcols[r1]),pr),pr);
        for (long c=1; c<=nc; c++)
-         m(r1,c)=xmodmul(fac,m(r1,c),pr);
+         {
+           m(r1,c)=mod(xmodmul(fac,m(r1,c),pr),pr);
+#ifdef TRACE
+           cout << "r1="<<r1<<", c="<<c<<", pos="<<pcols[r1]<<endl<<m << endl;
+#endif /* TRACE */
+         }
      }
  }
  else
@@ -1118,8 +1134,8 @@ Zmat<T> echelonp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
        m(i,j)=(j==pcols[i]);    // 0 or 1 !
 
 #ifdef TRACE
- cout << "Finished second stage.\n Echelon mat mod "<<pr<<" is:\n";
- cout << m;
+ cout << "Finished second stage.\nEchelon mat mod "<<pr<<" is:\n";
+ cout << m << endl;
  cout << "Now lifting back to Q.\n";
 #endif /* TRACE */
  T dd(1);
@@ -1152,9 +1168,9 @@ Zmat<T> echelonp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
    }
  dd=abs(dd);
 #ifdef TRACE
- cout << "Numerator mat = " << nmat;
- cout << "Denominator mat = " << dmat;
- cout << "Common denominator = " << dd << "\n";
+ cout << "Numerator mat = " << nmat << endl;
+ cout << "Denominator mat = " << dmat << endl;
+ cout << "Common denominator = " << dd << endl;
 #endif /* TRACE */
  for (long i=1; i<=rk; i++)
    for (long j=1; j<=nc; j++)
@@ -1184,7 +1200,7 @@ Zmat<T> echmodp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols, lon
      T mmin(*mij);
      long rmin = r;
      mij += nc;
-     for (long r2=r+1; (r2<=nr)&&(is_zero(mmin)); r2++, mij+=nc)
+     for (long r2=r+1; (r2<=nr)&&(::is_zero(mmin)); r2++, mij+=nc)
        {
 	 T mr2c(*mij);
 	 if (is_nonzero(mr2c))
@@ -1193,7 +1209,7 @@ Zmat<T> echmodp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols, lon
              rmin=r2;
            }
        }
-     if (is_zero(mmin))
+     if (::is_zero(mmin))
        npcols[++ny] = c;
      else
        {

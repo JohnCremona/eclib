@@ -45,7 +45,6 @@ int main(void)
   cout << "Using A.output_pari(cout): \n";  a.output_pari(cout); cout<<endl;
   cout << "Using A.output_pretty(cout): \n";  a.output_pretty(cout);// cout<<endl;
 
-  cout << "Enter any number "; cin >> i;
   cout << "Creating an array of 3 matrices\n";
   vector<mat> matlist(3);
   matlist[0] = a;
@@ -62,39 +61,33 @@ int main(void)
     cout << "col(A,"<<j<<") = " << a.col(j) << endl;
   cout << "A = \n" << a << endl;
   cout << "directsum(A,A) = \n" << directsum(a,a) << endl;
-  cout << "Enter any number "; cin >> i;
+  cout << "Is A zero? " << (a.is_zero()?"yes":"no") << endl;
 
+  mat z = a-a;
+  cout << "Z=A-A=\n"<<z<<endl;
+  cout << "Is Z zero? " << (z.is_zero()?"yes":"no") << endl;
   mat b = a;
   cout << "B = A = \n" << b << endl;
-  cout << "Enter any number "; cin >> i;
   cout << "B==A?" << (b==a) << endl;
   cout << "B!=A?" << (b!=a) << endl;
   b+=a;
   cout << "after B+:=A, A = \n" << a << "\nand B = \n" << b << endl;
-  cout << "Enter any number "; cin >> i;
   b-=a;
   cout << "after B-:=A, A = \n" << a << "\nand B = \n" << b << endl;
-  cout << "Enter any number "; cin >> i;
   b*=two;
   cout << "after B*:=2, A = \n" << a << "\nand B = \n" << b << endl;
-  cout << "Enter any number "; cin >> i;
   b/=two;
   cout << "after B/:=2, A = \n" << a << "\nand B = \n" << b << endl;
-  cout << "Enter any number "; cin >> i;
   cout << "A+B=\n" << (a+b) << endl;
   cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
-  cout << "Enter any number "; cin >> i;
   cout << "A-B=\n" << (a-b) << endl;
   cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
-  cout << "Enter any number "; cin >> i;
   cout << "A*B=\n" << (a*b) << endl;
   cout << "Now A = \n" << a << "\nand B = \n" << b << endl;
-  cout << "Enter any number "; cin >> i;
   cout << "-A=\n" << (-a) << endl;
   cout << "Now A = \n" << a << endl;
   cout << "-A=\n" << (-a) << endl;
   cout << "Now A = \n" << a << endl;
-  cout << "Enter any number "; cin >> i;
   vector<scalar> cp = a.charpoly();
   cout << "char. poly. of A has coefficients " << cp << endl;
   cout << "det(A) = " << a.determinant() << endl;
@@ -103,9 +96,11 @@ int main(void)
 
   long rk, ny;
   scalar denom;
-  int method=0;
-  cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
-  cin>>method;
+  // int method=0;
+  // cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
+  // cin>>method;
+  for (auto method: {0, 2})
+    {
   cout << "\nUsing method " << method;
   if(method==2) cout << " (modulus = " << modulus << ")";
   cout << endl;
@@ -137,7 +132,7 @@ int main(void)
         cout << " False!";
       cout << endl;
     }
-
+    } // loop over methods
   stop_time();
   // commented out for automatic tests:
   //cout << "cpu time = "; show_time(); cout << endl;

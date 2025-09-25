@@ -71,6 +71,7 @@ public:
   T trace() const;
   vector<T> charpoly() const;
   T determinant() const;
+  int is_zero() const;
   void output(ostream&s=cout) const;
   void output_pari(ostream&s=cout) const;
   void output_pretty(ostream&s=cout) const;
