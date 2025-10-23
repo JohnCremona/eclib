@@ -12,9 +12,6 @@ eclib.pc
 autom4te.cache
 ar-lib
 compile
-m4/*
-!m4/ax_*
-libsrc/Makefile.jc
 */.deps
 */.libs
 */*.o
@@ -24,6 +21,8 @@ bin/*
 include/*
 lib/*
 share/*
+notes/*
+data/*
 newforms
 progs/newforms
 progs/smallnf
@@ -82,6 +81,7 @@ tests/checkgens
 tests/comptest
 tests/conductor
 tests/d2
+tests/flint_test
 tests/hecketest
 tests/homtest
 tests/mattest1
@@ -109,6 +109,7 @@ tests/svectest3
 tests/tate
 tests/tbessel
 tests/tcon2
+tests/tconvert
 tests/tcurve
 tests/tdivpol
 tests/tegr
