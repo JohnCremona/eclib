@@ -95,18 +95,9 @@ class subspace_i; class subspace_l; class subspace_m;
 #undef smat
 #undef smat_elim
 
-// conversions between vectors of different scalar types
-
 vec_m to_vec_m(const vec_i& v);
 vec_m to_vec_m(const vec_l& v);
-inline vec_m to_vec_m(const vec_m& v) {return v;}
-
-vec_l to_vec_l(const vec_i& v);
-inline vec_l to_vec_l(const vec_l& v) {return v;}
-vec_l to_vec_l(const vec_m& v);
-
-inline vec_i to_vec_i(const vec_i& v) {return v;}
-vec_i to_vec_i(const vec_l& v);
 vec_i to_vec_i(const vec_m& v);
+vec_l to_vec_l(const vec_m& v);
 
 #endif

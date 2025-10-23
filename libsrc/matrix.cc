@@ -94,28 +94,10 @@ mat_i to_mat_i(const mat_m& m)
   return mat_i(m.nrows(), m.ncols(), n);
 }
 
-mat_i to_mat_i(const mat_l& m)
-{
-  const vector<long> & mij = m.get_entries();
-  auto toint = [](const long& a) {return int(a);};
-  vector<int> n(mij.size());
-  std::transform(mij.begin(), mij.end(), n.begin(), toint);
-  return mat_i(m.nrows(), m.ncols(), n);
-}
-
 mat_l to_mat_l(const mat_m& m)
 {
   const vector<bigint> & mij = m.get_entries();
   auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
-  vector<long> n(mij.size());
-  std::transform(mij.begin(), mij.end(), n.begin(), tolong);
-  return mat_l(m.nrows(), m.ncols(), n);
-}
-
-mat_l to_mat_l(const mat_i& m)
-{
-  const vector<int> & mij = m.get_entries();
-  auto tolong = [](const int& a) {return long(a);};
   vector<long> n(mij.size());
   std::transform(mij.begin(), mij.end(), n.begin(), tolong);
   return mat_l(m.nrows(), m.ncols(), n);
