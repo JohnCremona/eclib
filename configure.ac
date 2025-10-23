@@ -66,22 +66,26 @@ AX_CXX_COMPILE_STDCXX([17],,mandatory)
 # define ECLIB_MULTITHREAD=1.
 #
 # Boost 1.35.0+ required for Asio (1.25.0 for Thread)
-#AX_BOOST_BASE([1.35.0], [
+AX_BOOST_BASE([1.35.0], [
 #AX_BOOST_SYSTEM
-#AX_BOOST_ASIO
-#AX_BOOST_THREAD
-#])
+AX_BOOST_ASIO
+AX_BOOST_THREAD
+])
 
-BOOST_REQUIRE([1.35.0])
+#BOOST_REQUIRE([1.35.0])
 
-if [test "$boost" = "yes"]; then
+#if [test "$boost" = "yes"]; then
+#   AC_DEFINE([ECLIB_MULTITHREAD],[1],[Define if multithreading available and requested])
+#fi
+if [test "$ax_cv_boost_asio"   = "yes"] &&
+   [test "$ax_cv_boost_thread" = "yes"]; then
    AC_DEFINE([ECLIB_MULTITHREAD],[1],[Define if multithreading available and requested])
 fi
 
 AX_PTHREAD
 
 # Check for libraries
-# The following AC_ARG_WITH section were written by Volker Braun
+# The following AC_ARG_WITH section were originally written by Volker Braun
 
 dnl Find PARI
 AC_ARG_WITH(pari,
