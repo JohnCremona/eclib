@@ -44,7 +44,7 @@ int main()
 #endif
   cin.flags( cin.flags() | ios::dec );
   
-  bigint zero; zero=0;
+  ZZ zero; zero=0;
   int alldesc=0, verb=0, selmer_only=0; 
   cout << "Verbose? "; cin >> verb;
   initprimes("PRIMES",0);
@@ -59,15 +59,15 @@ int main()
   while (getquartic(g))
     {
 
-      bigint I = g.getI(), J=g.getJ();
+      ZZ I = g.getI(), J=g.getJ();
       Curvedata IJ_curve(zero,zero,zero,-27*I,-27*J,0);
-      bigint tr_u,tr_r,tr_s,tr_t;
+      ZZ tr_u,tr_r,tr_s,tr_t;
       Curvedata E = IJ_curve.minimalize(tr_u,tr_r,tr_s,tr_t);
 
-      bigint d1=g.geta(), c=g.getcc(), d2=g.gete();
-      bigint d = d1*d2, cdash = -2*c, ddash = sqr(c)-4*d;
-      vector<bigint> plist = pdivs(6*d*ddash);
-      vector<bigint> supp  = support(ddash);
+      ZZ d1=g.geta(), c=g.getcc(), d2=g.gete();
+      ZZ d = d1*d2, cdash = -2*c, ddash = sqr(c)-4*d;
+      vector<ZZ> plist = pdivs(6*d*ddash);
+      vector<ZZ> supp  = support(ddash);
 
       long mask=0;
 
@@ -82,7 +82,7 @@ int main()
 
       cout << "Checking local solublity at primes " << plist << ":\n";
       int els, els1;
-      bigint two(2);
+      ZZ two(2);
       els = els1 = qpsoluble(g,two);
       if(!els1) cout << "Not locally soluble at p = 2\n";
       for (const auto& p : plist)
@@ -99,7 +99,7 @@ int main()
       cout << "Everywhere locally soluble.\n";
       cout<<"------------------------------------------\n";
 
-      bigint x,y,z,x2,xz,z2;
+      ZZ x,y,z,x2,xz,z2;
 
       int res = desc2(c,d1,d2,plist,supp,supp,mask,hlim,x,y,z,verb,selmer_only,alldesc);
 
@@ -132,7 +132,7 @@ int main()
 
 int getquartic(quartic& g)  // special version for a*x^4+c*x^2+e quartics
 {
-  bigint a, b, c, d, e;
+  ZZ a, b, c, d, e;
   
   cout << "Enter quartic coefficients (a,0,c,0,e) or just a c e " << endl;
   char ch=0; cin>>ch;

@@ -127,7 +127,7 @@ void sifter::vecout(const vector<int>& v)
   cout<<endl;
 }
 
-vector<int> sifter::eps(const bigint& x, const bigint& z2)
+vector<int> sifter::eps(const ZZ& x, const ZZ& z2)
 {
   vector<int> ans;
   ans.reserve(max_dim_im);
@@ -159,13 +159,13 @@ void sifter::process(const vector<Point>& Plist)
 
 void sifter::process(const Point& P)
 {
-  bigint x0,y0,z0;  P.getcoordinates(x0,y0,z0); //P=[x0:y0:z0] on E
-  bigint z=gcd(x0,z0); x0/=z;                // =[x0/z2,y0/z0] now, z0=z^3
-  bigint z2=z*z;
-  bigint x = (36)*x0+r*z2;
+  ZZ x0,y0,z0;  P.getcoordinates(x0,y0,z0); //P=[x0:y0:z0] on E
+  ZZ z=gcd(x0,z0); x0/=z;                // =[x0/z2,y0/z0] now, z0=z^3
+  ZZ z2=z*z;
+  ZZ x = (36)*x0+r*z2;
 #ifdef DEBUG
-  bigint y = (216)*y0+(36)*s*x0*z+t*z0;   // (x/z^2,y/z^3) is on E_{I,J}
-  bigint check = y*y-(x*x*x-27*I*x*z2*z2-27*J*z0*z0);
+  ZZ y = (216)*y0+(36)*s*x0*z+t*z0;   // (x/z^2,y/z^3) is on E_{I,J}
+  ZZ check = y*y-(x*x*x-27*I*x*z2*z2-27*J*z0*z0);
   if(is_zero(check))
     {
       if(verbose)
@@ -230,7 +230,7 @@ void sifter::process(const Point& P)
     }
 }
 
-int sifter::code(const bigint& x, const bigint& z2, int i)
+int sifter::code(const ZZ& x, const ZZ& z2, int i)
 {
   long p = auxs[i], theta, alpha, beta;
   int j, ans; int eps[3];

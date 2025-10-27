@@ -1,4 +1,4 @@
-Sparse vector test program with scalar type bigint.
+Sparse vector test program with scalar type ZZ.
 
 Enter n : Uninitialized new vec v = []
 Copy of v = []

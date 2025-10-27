@@ -32,12 +32,12 @@ curvemodq::curvemodq(void)
   //  cout<<"In curvemodq default constructor, Fq = "<<Fq<<endl;
 }
 
-curvemodq::curvemodq(const Curve& E, const bigint& qq)
+curvemodq::curvemodq(const Curve& E, const ZZ& qq)
 {
-  static const bigint zero(0);
+  static const ZZ zero(0);
   q=qq; Fq=new galois_field(q);
   //  cout<<"In curvemodq constructor, Fq = "<<Fq<<endl;
-  bigint A1,A2,A3,A4,A6;
+  ZZ A1,A2,A3,A4,A6;
   E.getai(A1,A2,A3,A4,A6);
   GFSetZ(a1,A1);
   GFSetZ(a2,A2);
@@ -74,7 +74,7 @@ void curvemodq::operator=(const curvemodq& C) // assignment
 
 void curvemodq::set_group_order_via_legendre()  
 {
-  static const bigint zero(0), one(1);
+  static const ZZ zero(0), one(1);
   // Do NOT make these static as the modulus might change!
   gf_element two=to_ZZ_p(2);
   gf_element four=two+two;
@@ -83,7 +83,7 @@ void curvemodq::set_group_order_via_legendre()
   gf_element b2 = a1*a1 + four*a2; 
   gf_element b4 = two*a4 + a1*a3;
   gf_element b6 = a3*a3 + four*a6; 
-  bigint ix; NewGF(*Fq,x); NewGF(*Fq,d);
+  ZZ ix; NewGF(*Fq,x); NewGF(*Fq,d);
   for(ix=zero; ix<q; ix++)
     {
       GFSetZ(x,ix);
@@ -94,11 +94,11 @@ void curvemodq::set_group_order_via_legendre()
 
 void curvemodq::set_group_order()
 {
-  bigint a1z = conv<ZZ>(a1);
-  bigint a2z = conv<ZZ>(a2);
-  bigint a3z = conv<ZZ>(a3);
-  bigint a4z = conv<ZZ>(a4);
-  bigint a6z = conv<ZZ>(a6);
+  ZZ a1z = NTL::conv<ZZ>(a1),
+    a2z = NTL::conv<ZZ>(a2),
+    a3z = NTL::conv<ZZ>(a3),
+    a4z = NTL::conv<ZZ>(a4),
+    a6z = NTL::conv<ZZ>(a6);
   order = 1+q-ellap(a1z,a2z,a3z,a4z,a6z,q);
 }
 

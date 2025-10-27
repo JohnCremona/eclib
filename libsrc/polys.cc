@@ -23,6 +23,9 @@
  
 #include "eclib/polys.h"
 
+using NTL::vec_pair_ZZX_long;
+using NTL::vec_ZZ_p;
+
 FqPoly reduce(const ZPoly& f, const galois_field& Fq)
 {
   NewFqPoly(Fq,fmodq);
@@ -47,7 +50,7 @@ vector<gf_element> roots(const FqPoly& f)
 }
 
 
-vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint q)
+vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ q)
 {
   galois_field Fq(q);
   NewFqPoly(Fq,f);
@@ -56,7 +59,7 @@ vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint q)
   for (i=0; i<=deg; i++) SetCoeff(f,i,ZtoGF(Fq,coeffs[i]));
 
   vector<gf_element> r = roots(f);
-  vector<bigint>ans;
+  vector<ZZ>ans;
   for(i=0; i<r.size(); i++) ans.push_back(LiftGF(r[i]));
 
   sort(ans.begin(),ans.end());
@@ -102,13 +105,13 @@ vector<bigrational> roots(const ZPoly& f)
 
 // Return the list of *integral* roots of an integral polynomial.
 // Intended for monic polys, but that is not a requirement
-vector<bigint> introots(const ZPoly& f)
+vector<ZZ> introots(const ZPoly& f)
 {
 #ifdef TRACE_ROOTS
   cout<<"Finding integer roots of polynomial f =  "<<f<<endl;
 #endif
   vector<bigrational> ratroots = roots(f);
-  vector<bigint> ans;
+  vector<ZZ> ans;
   if (ratroots.size()==0)
     return ans;
   for( const auto& r : ratroots)
@@ -118,7 +121,7 @@ vector<bigint> introots(const ZPoly& f)
   return ans;
 }
 
-vector<bigrational> roots(const vector<bigint>& coeffs)
+vector<bigrational> roots(const vector<ZZ>& coeffs)
 {
 #ifdef TRACE_ROOTS
   cout<<"Finding rational roots of polynomial f with coefficients "<<coeffs<<endl;
@@ -146,7 +149,7 @@ vector<bigrational> roots(const vector<bigint>& coeffs)
 //
 // With NTL we factor the polynomial in Z[X] and pick out degree 1 factors
 
-vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c)
+vector<ZZ> Introotscubic(const ZZ& a, const ZZ& b, const ZZ& c)
 {
   ZZX f;
   SetCoeff(f,3);   // sets it to 1
@@ -156,9 +159,9 @@ vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c)
   return introots(f);
 }
 
-vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c, const bigint& d)
+vector<ZZ> Introotsquartic(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d)
 {
-  ZZX f; vec_pair_ZZX_long factors; bigint cont;
+  ZZX f; vec_pair_ZZX_long factors; ZZ cont;
   SetCoeff(f,4);   // sets it to 1
   SetCoeff(f,3,a);
   SetCoeff(f,2,b);
@@ -168,12 +171,12 @@ vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c
 }
 
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
-int nrootscubic(const bigint& b, const bigint& c, const bigint& d, const bigint& p)
+int nrootscubic(const ZZ& b, const ZZ& c, const ZZ& d, const ZZ& p)
 {
-  vector<bigint> coeffs;
+  vector<ZZ> coeffs;
   coeffs.push_back(d);
   coeffs.push_back(c);
   coeffs.push_back(b);
-  coeffs.push_back(bigint(1));
+  coeffs.push_back(ZZ(1));
   return rootsmod(coeffs,p).size();
 }

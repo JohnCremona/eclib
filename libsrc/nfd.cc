@@ -21,11 +21,12 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 
-#include <NTL/mat_ZZ.h>
-#include <NTL/mat_poly_ZZ.h>
-#include <NTL/ZZXFactoring.h>
 #include "eclib/subspace.h"
 #include "eclib/nfd.h"
+
+using NTL::vec_pair_ZZX_long;
+using NTL::deg;
+using NTL::coeff;
 
 #define OUTPUT_PARI_STYLE
 
@@ -40,7 +41,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
   rk = K.nrows();
   mat_m tp, tp1, m;
   long d, i,j, p;
-  bigint ap1;
+  ZZ ap1;
 
   Hscales.resize(dimH+1);
   Hscales[0]=1;
@@ -91,7 +92,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
       for(i=0; (i<nq)&&(dimSW>0); i++)
 	{
 	  long q = badprimes[i];
-	  bigint eq;
+	  ZZ eq;
 	  cout<<"Enter eigenvalue of W("<<q<<"): ";
 	  cin>>eq;
 	  eq *=dH;
@@ -121,7 +122,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
     for(j=1; j<=dimSW; j++)
       ntl_tp(i,j)=tp(i,j);
 
-  bigint swden=denom(SW);
+  ZZ swden=denom(SW);
   Sscales.resize(dimSW+1);
   Sscales[0]=1;
   for(i=1; i<=dimSW; i++) Sscales[i]=Sscales[i-1]*swden;
@@ -134,7 +135,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
   //  SetCoeff(ntl_cptp,dimSW,1);
   for(i=0; i<dimSW; i++)
     {
-      bigint temp = coeff(ntl_cptp,i);
+      ZZ temp = coeff(ntl_cptp,i);
       divide_exact(temp,Hscales[dimSW-i]*Sscales[dimSW-i],temp);
       SetCoeff(ntl_cptp,i,temp);
     }
@@ -177,7 +178,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
 // select subspace:
 
   int looking=1;
-  vector<bigint> coeffs;
+  vector<ZZ> coeffs;
   while(looking)
     {
       cout<<"Enter factor number: "; cin>>j;
@@ -224,7 +225,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
   if(w_split)// make S a subspace of H_1, not of the W-eigenspace
     {
       mat_m SWbasis=basis(SW);
-      bigint  SWden; SWden=denom(SW);
+      ZZ  SWden; SWden=denom(SW);
       subspace_m mSW(SWbasis,pivots(SW),SWden);
       S=combine(mSW,S);
     }
@@ -300,7 +301,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
   Wdetnum*=dHS;
 
   Winv_scaled=Winv;
-  bigint g; g=content(Winv_scaled.row(1));
+  ZZ g; g=content(Winv_scaled.row(1));
   for(i=2; i<=dimS; i++)
     {
       Winv_scaled.multrow(i,Hscales[i-1]*Sscales[i-1]);
@@ -333,7 +334,7 @@ vec_m nfd::ap(long p)
 
   for(k=0; k<rk; k++)
     {
-      bigint Kk1(Kcol[k+1]);
+      ZZ Kk1(Kcol[k+1]);
       if(Kk1!=0)
 	{
           symb s = H1->symbol(H1->freegens[k]);
@@ -370,7 +371,7 @@ mat_m nfd::heckeop(long p)
       colj.init(dimH);
       for(k=0; k<rk; k++)
 	{
-	  bigint Kkj(K(k+1,pivots(S)[j+1]));
+	  ZZ Kkj(K(k+1,pivots(S)[j+1]));
 	  if(Kkj!=0)
 	    {
 	      if(bad)

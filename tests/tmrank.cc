@@ -26,7 +26,7 @@
 #include <eclib/version.h>
 #include <eclib/timer.h>
 
-bigint a1,a2,a3,a4,a6;
+ZZ a1,a2,a3,a4,a6;
 Curve C;
 Curvedata CD;
 int verbose=0;

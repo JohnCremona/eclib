@@ -37,7 +37,7 @@ int main()
   cout<<"Solving ax^2 + by^2 + cz^2 = 0\n";
   cout<<"Using method "<<CONIC_METHOD<<endl<<endl;
 
-  bigint a,b,c,x,y,z,zero; zero=0;
+  ZZ a,b,c,x,y,z,zero; zero=0;
   quadratic qx, qy, qz;
 
   while(1) 

@@ -27,9 +27,9 @@
 
 //Kraus' conditions:
 
-int valid_invariants(const bigint& c4, const bigint& c6)  
+int valid_invariants(const ZZ& c4, const ZZ& c6)  
 {
-  bigint disc = c4*c4*c4 - c6*c6;
+  ZZ disc = c4*c4*c4 - c6*c6;
   if (sign(disc)==0) return 0;
   if (ndiv(1728,disc)) return 0;  // need c4^3-c6^2=1728D, with D|=0
   long x6= mod(c6,27);
@@ -41,15 +41,15 @@ int valid_invariants(const bigint& c4, const bigint& c6)
   return ((x6==0) || (x6==8));    //      c6 = 0,8 (mod 32).
 }
 
-void c4c6_to_ai(const bigint& c4, const bigint& c6, 
-                bigint& a1, bigint& a2, bigint& a3, bigint& a4, 
-                bigint& a6, 
-                bigint& b2, bigint& b4, bigint& b6, bigint& b8)
+void c4c6_to_ai(const ZZ& c4, const ZZ& c6, 
+                ZZ& a1, ZZ& a2, ZZ& a3, ZZ& a4, 
+                ZZ& a6, 
+                ZZ& b2, ZZ& b4, ZZ& b6, ZZ& b8)
 {
 //  cout<<"In c4c6_to_ai() with c4="<<c4<<" and c6="<<c6<<endl;
-  bigint I12; I12=12;
+  ZZ I12; I12=12;
   b2 = mod(-c6,I12);               //  cout<<"...b2="<<b2<<endl;
-  const bigint& b22 = b2*b2;
+  const ZZ& b22 = b2*b2;
   b4 = (b22-c4)/24;                //  cout<<"...b4="<<b4<<endl;
   b6 = (-b2*b22+36*b2*b4-c6)/216;  //  cout<<"...b6="<<b6<<endl;
   b8 = (b2*b6 - b4*b4) / 4;        //  cout<<"...b8="<<b8<<endl;
@@ -63,25 +63,25 @@ void c4c6_to_ai(const bigint& c4, const bigint& c6,
   //      <<", a4="<<a4<<", a6="<<a6<<endl;
 }
 
-void c4c6_to_ai(const bigint& c4, const bigint& c6, 
-                bigint& a1, bigint& a2, bigint& a3, bigint& a4, 
-                bigint& a6)
+void c4c6_to_ai(const ZZ& c4, const ZZ& c6, 
+                ZZ& a1, ZZ& a2, ZZ& a3, ZZ& a4, 
+                ZZ& a6)
 {
-  bigint b2, b4, b6, b8;
+  ZZ b2, b4, b6, b8;
   c4c6_to_ai(c4,c6,a1,a2,a3,a4,a6,b2,b4,b6,b8);
 }
 
-void minimise_c4c6(const bigint& c4, const bigint& c6, const bigint& discr, 
-                   bigint& newc4, bigint& newc6, bigint& newdiscr, bigint& u)
+void minimise_c4c6(const ZZ& c4, const ZZ& c6, const ZZ& discr, 
+                   ZZ& newc4, ZZ& newc6, ZZ& newdiscr, ZZ& u)
 {
   long a,b;
   u = 1; int u_is_1 = 1;
   newc4=c4; newc6=c6;
-  const bigint& c62 = sqr(c6);
+  const ZZ& c62 = sqr(c6);
   newdiscr = (sqr(c4)*c4-c62)/1728; // this must be set before returning
-  bigint g=gcd(c4,c6); if(is_one(g)) return;
+  ZZ g=gcd(c4,c6); if(is_one(g)) return;
   g = gcd( c62, newdiscr );  if(is_one(g)) return;
-  const vector<bigint>& p_list = pdivs(g);
+  const vector<ZZ>& p_list = pdivs(g);
 //  cout<<"g = "<<g<<endl;
   for (const auto& p : p_list)
   {
@@ -102,7 +102,7 @@ void minimise_c4c6(const bigint& c4, const bigint& c6, const bigint& discr,
 //    cout<<"With p="<<p<<", final d = "<<d<<", u="<<u<<endl;
   }
   if(u_is_1) return;
-  bigint u2, u4, u6, u12;
+  ZZ u2, u4, u6, u12;
   mulx(u,u,u2); mulx(u2,u2,u4); mulx(u2,u4,u6); mulx(u6,u6,u12);
   newc4 = c4 / u4;
   newc6 = c6 / u6;
@@ -110,7 +110,7 @@ void minimise_c4c6(const bigint& c4, const bigint& c6, const bigint& discr,
 }
 
 //constructor for curve with invariants as argument
-Curve::Curve(const bigint& c4, const bigint& c6)
+Curve::Curve(const ZZ& c4, const ZZ& c6)
 {
   if (valid_invariants(c4, c6))
     {
@@ -127,8 +127,8 @@ Curve::Curve(const bigint& c4, const bigint& c6)
 
 Curve::Curve(const bigrational& j) // one curve with this j-invariant
 {
-  bigint n = num(j);
-  bigint m = n-1728*den(j);
+  ZZ n = num(j);
+  ZZ m = n-1728*den(j);
   a1=0; a2=0;
   if (is_zero(n)) // j=0, make 27a3
     {
@@ -166,7 +166,7 @@ void Curve::input(istream& is)
   case '{':
         {
 	  //  cout<<"Reading {c4,c6}...\n";
-         bigint c4, c6;
+         ZZ c4, c6;
          is >> c4 >> c; 
 	 if(c!=',')
 	   {
@@ -181,10 +181,10 @@ void Curve::input(istream& is)
 	   }
          if (valid_invariants(c4, c6))
            {
-             const bigint& b2 = bigint(mod(-c6,12));
-             const bigint& b22 = b2*b2;
-             const bigint& b4 = (b22-c4)/24;
-             const bigint& b6 = (-b2*b22+36*b2*b4-c6)/216;
+             const ZZ& b2 = ZZ(mod(-c6,12));
+             const ZZ& b22 = b2*b2;
+             const ZZ& b4 = (b22-c4)/24;
+             const ZZ& b6 = (-b2*b22+36*b2*b4-c6)/216;
              a1 = (odd(b2) ? 1 : 0);
              a3 = (odd(b6) ? 1 : 0);
              a2 = (b2-a1*a1)/4;

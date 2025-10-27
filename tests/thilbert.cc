@@ -30,8 +30,8 @@
 
 int main()
 {
-  bigint a,b,x0,y0,z0; int resp, res, checkres;
-  bigint zero, one;  zero=0; one=1;
+  ZZ a,b,x0,y0,z0; int resp, res, checkres;
+  ZZ zero, one;  zero=0; one=1;
 #ifdef AUTO
   long la,lb,abmax;
   cout<<"Enter max for a,b: "; cin>>abmax;
@@ -57,7 +57,7 @@ int main()
     res = res|resp;
     checkres = checkres^resp;
 
-    vector<bigint> plist = vector_union(pdivs(a),pdivs(b));
+    vector<ZZ> plist = vector_union(pdivs(a),pdivs(b));
     for ( const auto& p : plist)
       {
 	if(p==2) continue;
@@ -69,7 +69,7 @@ int main()
     cout<<"\nGlobal symbol = " << res << endl;
     cout<<"Check (should be 0) = " << checkres << endl;
 
-    bigint p;
+    ZZ p;
     int gres = global_hilbert(a,b,plist,p);
     if(res==gres)
       cout<<"--agrees with single call to global_hilbert()\n";

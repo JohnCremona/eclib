@@ -29,7 +29,7 @@
 int main()
 {
   initprimes("PRIMES");
-  bigint disc;
+  ZZ disc;
   int verbose=0, include_reducibles=1, gl2=0;
   cerr << "Verbosity level (0, 1 or 2): ";
   cin >> verbose;

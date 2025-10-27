@@ -29,7 +29,7 @@
 #include <gmp.h>
 #include <flint/flint.h> // must include this first to set __FLINT_VERSION
 #include <flint/fmpz.h>
-#include <NTL/ZZ.h>
+#include "interface.h"
 #include "pari_init.h"
 
 using NTL::ZZ;

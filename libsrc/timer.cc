@@ -30,8 +30,8 @@
 
 double starttime,stoptime;
 void init_time() { ;}
-void start_time() { starttime = GetTime();}
-void stop_time()  { stoptime  = GetTime();}
+void start_time() { starttime = NTL::GetTime();}
+void stop_time()  { stoptime  = NTL::GetTime();}
 void show_time(ostream& s) 
 {
   s<<" ("<<(stoptime-starttime)<<" seconds)" << flush; 

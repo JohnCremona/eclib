@@ -54,7 +54,7 @@ class pointmodq{
   gf_element X ; // inhomogeneous coordinates
   gf_element Y ; //
   int is0flag;  // set iff it's the point at infinity
-  bigint order; // 0 if not set
+  ZZ order; // 0 if not set
   curvemodq E;                  //  the curve it's on
 
 public:
@@ -67,7 +67,7 @@ public:
       if(!on_curve())
 	cout<<"Error!  ("<<x<<","<<y<<") is not on "<<(EE)<<endl;
     }
-  pointmodq(const bigint&x, const bigint&y, const curvemodq& EE) 
+  pointmodq(const ZZ&x, const ZZ&y, const curvemodq& EE) 
     :X(to_ZZ_p(x)), Y(to_ZZ_p(y)), is0flag(0), order(0), E(EE)
     {
       if(!on_curve())
@@ -116,10 +116,10 @@ public:
   int set_x_coordinate(const gf_element& x);
 
   // order: get_order() computes if not yet set
-  void set_order(const bigint& n) {order=n;} // use with caution!
-  bigint get_order();
-  bigint get_order(const bigint& lower, const bigint& upper); //if bounds known
-  bigint get_order(const bigint& mult); // use if multiple of order known
+  void set_order(const ZZ& n) {order=n;} // use with caution!
+  ZZ get_order();
+  ZZ get_order(const ZZ& lower, const ZZ& upper); //if bounds known
+  ZZ get_order(const ZZ& mult); // use if multiple of order known
 
   // addition of points, etc
   pointmodq operator+(const pointmodq & Q) const ; // add Q to this
@@ -137,8 +137,8 @@ public:
       *this =  (*this)-P;
     }
   friend pointmodq operator*(long, const pointmodq&) ; // n*P
-  friend pointmodq operator*(const bigint&, const pointmodq&) ; // n*P
-  friend bigint order_point(pointmodq& P); // not const as may set the order
+  friend pointmodq operator*(const ZZ&, const pointmodq&) ; // n*P
+  friend ZZ order_point(pointmodq& P); // not const as may set the order
   friend galois_field base_field(const pointmodq& P);
 
   friend class ffmodq;
@@ -155,13 +155,13 @@ inline galois_field base_field(const pointmodq& P)
   return galois_field((P.get_curve()).get_modulus());
 }
 
-inline bigint order_point(pointmodq& P) // not const as may set the order
+inline ZZ order_point(pointmodq& P) // not const as may set the order
 { return P.get_order();}
 
 pointmodq reduce_point(const Point& P,  const curvemodq& Emodq);
 
 class curvemodqbasis : public curvemodq { 
-  bigint n1,n2,n;           // n=n1*n2 = #E(Fq)
+  ZZ n1,n2,n;           // n=n1*n2 = #E(Fq)
   pointmodq P1,P2;          // basis for E(F_q)
   void set_basis();         // computes basis  
   int lazy_flag;            // if 1, only computes a "lazy basis"
@@ -174,7 +174,7 @@ class curvemodqbasis : public curvemodq {
   {
     set_basis();
   }
-  curvemodqbasis(const Curve& E, const bigint& q, int lazy=0) 
+  curvemodqbasis(const Curve& E, const ZZ& q, int lazy=0) 
     :curvemodq(reduce_curve(E,q)) 
   {
     lazy_flag=lazy;
@@ -183,8 +183,8 @@ class curvemodqbasis : public curvemodq {
 
   //  ~curvemodqbasis(void) {;}
 
-  bigint get_order() {return n;}
-  bigint get_exponent() {return n1;}
+  ZZ get_order() {return n;}
+  ZZ get_exponent() {return n1;}
   pointmodq get_gen(int i);
 
   vector<pointmodq> get_pbasis(int p);
@@ -195,24 +195,24 @@ class curvemodqbasis : public curvemodq {
   friend class TLSS;
 };
 
-bigint my_bg_algorithm(const pointmodq& PP,
+ZZ my_bg_algorithm(const pointmodq& PP,
 		    const pointmodq& QQ,
-                    const bigint& lower,
-		    const bigint& upper,
+                    const ZZ& lower,
+		    const ZZ& upper,
 		    bool info=false);
 
-void set_hasse_bounds(const bigint& q, bigint& l, bigint& u);
-bigint my_order_point(const pointmodq& PP);
-bigint my_order_point(const pointmodq& PP, 
-		   const bigint& lower, const bigint& upper);
-bigint my_order_point(const pointmodq& PP, const bigint& mult);
+void set_hasse_bounds(const ZZ& q, ZZ& l, ZZ& u);
+ZZ my_order_point(const pointmodq& PP);
+ZZ my_order_point(const pointmodq& PP, 
+		   const ZZ& lower, const ZZ& upper);
+ZZ my_order_point(const pointmodq& PP, const ZZ& mult);
 
 // returns minimal m>0 s.t. m*Q is in <P> with m*Q=a*P.  Special case:
 // if <Q> and <P> are disjoint, then m=order(Q) and a=0.
-bigint linear_relation( pointmodq& P, pointmodq& Q, bigint& a);
+ZZ linear_relation( pointmodq& P, pointmodq& Q, ZZ& a);
 
 // Replace P (of order ordP) with a point whose order is lcm(ordP,order(Q))
-void merge_points_1(pointmodq& PP, bigint& ordP, pointmodq& Q);
+void merge_points_1(pointmodq& PP, ZZ& ordP, pointmodq& Q);
 
 // Given independent generators P1,P2 with orders n1, n2 and n2|n1,
 // and a new point Q: 
@@ -222,8 +222,8 @@ void merge_points_1(pointmodq& PP, bigint& ordP, pointmodq& Q);
 //
 // (2) Else replace P1 as with merge_points_1 and reset P2
 
-void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2, 
-		    const bigint& n2target, pointmodq& Q);
+void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2, 
+		    const ZZ& n2target, pointmodq& Q);
 
 inline bool less(const gf_element& a, const gf_element& b)
 {
@@ -231,15 +231,15 @@ inline bool less(const gf_element& a, const gf_element& b)
 }
 
 // find a point of "large" order
-void one_generator(curvemodq& Cq, bigint& n1, pointmodq& P1);
+void one_generator(curvemodq& Cq, ZZ& n1, pointmodq& P1);
 
 // find full Z-basis
 void my_isomorphism_type(curvemodq& C, 
-			 bigint& n1, bigint& n2, pointmodq& P1, pointmodq& P2);
+			 ZZ& n1, ZZ& n2, pointmodq& P1, pointmodq& P2);
 void my_isomorphism_type_new(curvemodq& Cq, 
-    		     bigint& n1, bigint& n2, pointmodq& P1, pointmodq& P2);
+    		     ZZ& n1, ZZ& n2, pointmodq& P1, pointmodq& P2);
 
-void set_order_point(pointmodq& P, const bigint& n);
+void set_order_point(pointmodq& P, const ZZ& n);
 
 
 #endif // #define _POINTSMOD_

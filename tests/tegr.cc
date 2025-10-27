@@ -65,11 +65,11 @@ int main()
   //  bigfloat reg = regulator(points);
   //  cout<<"Regulator = "<<reg<<endl;
 
-  bigint tam = global_Tamagawa_exponent(CR, 1); // 1 means real too
+  ZZ tam = global_Tamagawa_exponent(CR, 1); // 1 means real too
   cout<<"Tamagawa exponent = "<<tam<<endl;
 
   vector<Point> egr_points=points;
-  bigint egri = egr_index(egr_points);
+  ZZ egri = egr_index(egr_points);
   cout<<"Index of egr subgroup = "<<egri<<endl;
   }
 }

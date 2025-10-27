@@ -111,7 +111,7 @@ vector<int> TLSS::map1point(const Point& P) const
   if(rank==1)
     {
       pointmodq P1=Pi[0];
-      bigint n1 = Emodq.n1; // order of relevant cyclic factor if known
+      ZZ n1 = Emodq.n1; // order of relevant cyclic factor if known
       if(n1==0) n1 = Emodq.n; // else full group order if not
       Pmodq = I2long(n1/p) * Pmodq;
       if(Pmodq.is_zero()) return ans;
@@ -120,7 +120,7 @@ vector<int> TLSS::map1point(const Point& P) const
       cout<<"after multiplying by "<<I2long(n1/p)<<", get "<<Pmodq<<endl;
       cout<<"finding discrete log (mod "<<p<<") of "<<Pmodq<<" w.r.t. "<<P1<<endl;
 #endif
-      ans[0] = I2long(my_bg_algorithm(P1, Pmodq, bigint(0), bigint(p)));
+      ans[0] = I2long(my_bg_algorithm(P1, Pmodq, ZZ(0), ZZ(p)));
 #ifdef debugTL
       cout << "...done: dlog = " << ans[0] << endl;
       if(ans[0]*P1 != Pmodq)

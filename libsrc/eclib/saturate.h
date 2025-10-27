@@ -52,7 +52,7 @@ const long SAT_MAX_PRIME = 100000;
 // We can recover the curve from the points, unless the list is empty
 // in which case the bound is 1.
 
-bigint index_bound(vector<Point>& points, int egr=1, int verbose=0);
+ZZ index_bound(vector<Point>& points, int egr=1, int verbose=0);
 
 class saturator {
 private:
@@ -62,19 +62,19 @@ private:
   vector<Point> Plistx;  // the points plus p-cotorsion
   vector<Point> AllTorsion; // all torsion on E
   ZPoly pdivpol;            // p-division poly (not always used)
-  bigint the_index_bound;     // set initially, but may get reduced
+  ZZ the_index_bound;     // set initially, but may get reduced
   vector<long> tam_primes;  // primes dividing any Tamagawa index
   int rank;             // = #Plistx
-  bigint disc;          // discriminant of E
-  vector<bigint> badp;  // E's bad primes
+  ZZ disc;          // discriminant of E
+  vector<ZZ> badp;  // E's bad primes
   long p;                // current prime to saturate at
   int log_index;         // current points have index p^log_index in original
   primevar qvar;          // loops over possible sieving primes q
-  map<bigint, curvemodqbasis> Emodq;
-  map<bigint, bigint> Emodq_order;
+  map<ZZ, curvemodqbasis> Emodq;
+  map<ZZ, ZZ> Emodq_order;
   int newq;                // =1 iff we are using q not yet cached
-  map<bigint,int> q_tally;   // key=q, value = count of number of times q used
-  bigint maxq;               // largest q used
+  map<ZZ,int> q_tally;   // key=q, value = count of number of times q used
+  ZZ maxq;               // largest q used
   int maxp;                  // p for which largest q used
   int egr_flag;              // 1 if we are using the EGR subgroup
 
@@ -98,21 +98,21 @@ public:
       tam_primes = tamagawa_primes(C, 1); // 1 means include 2 if E(R) has 2 components
       badp = getbad_primes(*E);
       maxq = 0;
-      the_index_bound = bigint(0); // means not set
+      the_index_bound = ZZ(0); // means not set
     }
   ~saturator() {; }
 
   // initialize point list
   void set_points(const vector<Point>& PP) {
     Plist = PP;
-    the_index_bound = bigint(0);
+    the_index_bound = ZZ(0);
   }
 
   // initialize index bound
   void set_index_bound();
 
   // return current index bound (compute if necessary)
-  bigint get_index_bound();
+  ZZ get_index_bound();
 
   // test whether p is greater than the saturation index and not a Tamagawa prime
   int trivially_saturated(long p);

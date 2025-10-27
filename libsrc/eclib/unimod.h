@@ -31,20 +31,20 @@ class unimod {
   friend class cubic;
   friend class scaled_unimod;
 protected:
-  bigint m11, m12, m21, m22;
+  ZZ m11, m12, m21, m22;
 public:
   unimod() :m11(1), m12(0), m21(0), m22(1) {;}
-  unimod(const bigint& a11, const bigint& a12,
-	 const bigint& a21, const bigint& a22)
+  unimod(const ZZ& a11, const ZZ& a12,
+	 const ZZ& a21, const ZZ& a22)
     :m11(a11), m12(a12), m21(a21), m22(a22) {;}
   unimod(const unimod& m) :m11(m.m11), m12(m.m12), m21(m.m21), m22(m.m22) {;}
   void reset()
     {m11=1; m12=0; m21=0; m22=1;}
-  void set(const bigint& a11, const bigint& a12,
-	   const bigint& a21, const bigint& a22)
+  void set(const ZZ& a11, const ZZ& a12,
+	   const ZZ& a21, const ZZ& a22)
     {m11=a11; m12=a12; m21=a21; m22=a22;}
   void operator=(const unimod& m) {m11=m.m11; m12=m.m12; m21=m.m21; m22=m.m22;}
-  bigint operator()(int i, int j) const
+  ZZ operator()(int i, int j) const
     {
       if(i==1) {if(j==1) return m11; else return m12;}
       else     {if(j==1) return m21; else return m22;}
@@ -55,10 +55,10 @@ public:
 	  m21*a.m11 + m22*a.m21,  m21*a.m12 + m22*a.m22);
     }
   friend unimod operator*(const unimod& a, const unimod& b);
-  bigint scale_factor() const {bigint ans; ans=1; return ans;}
-  bigint det() const {return (m11*m22-m12*m21);}
-  void x_shift(const bigint& a) {m12 += (a*m11); m22 += (a*m21);}
-  void y_shift(const bigint& a) {m11 += (a*m12); m21 += (a*m22);}
+  ZZ scale_factor() const {ZZ ans; ans=1; return ans;}
+  ZZ det() const {return (m11*m22-m12*m21);}
+  void x_shift(const ZZ& a) {m12 += (a*m11); m22 += (a*m21);}
+  void y_shift(const ZZ& a) {m11 += (a*m12); m21 += (a*m22);}
   void negate() {m11*=-1; m12*=-1;m21*=-1; m22*=-1;}
   void seminegate() {m12*=-1;m22*=-1;}
   unimod inverse() // return inverse matrix
@@ -68,7 +68,7 @@ public:
       return ans;
     }
   void invert() // multiples by [0,1; -1,0]
-    {  bigint temp = -m11; m11 = m12; m12 = temp;
+    {  ZZ temp = -m11; m11 = m12; m12 = temp;
               temp = -m21; m21 = m22; m22 = temp;
     }
   void output(ostream& os=cout) const
@@ -80,28 +80,28 @@ public:
 
 class scaled_unimod : public unimod {
 private:
-  bigint m00;
+  ZZ m00;
 public:
   scaled_unimod() :unimod(), m00(1) {;}
-  scaled_unimod(const bigint& a00, 
-		const bigint& a11, const bigint& a12, 
-		const bigint& a21, const bigint& a22) 
+  scaled_unimod(const ZZ& a00, 
+		const ZZ& a11, const ZZ& a12, 
+		const ZZ& a21, const ZZ& a22) 
     :unimod(a11,a12,a21,a22), m00(a00) {;}
   scaled_unimod(const scaled_unimod& m) :unimod(m), m00(m.m00) {;}
   explicit scaled_unimod(const unimod& m) :unimod(m), m00(1) {;}
   void reset()  {m00=1; m11=1; m12=0; m21=0; m22=1;}
-  void set(const bigint& a00, 
-	   const bigint& a11, const bigint& a12, 
-	   const bigint& a21, const bigint& a22) 
+  void set(const ZZ& a00, 
+	   const ZZ& a11, const ZZ& a12, 
+	   const ZZ& a21, const ZZ& a22) 
     {m00=a00; m11=a11; m12=a12; m21=a21; m22=a22;}
-  void set(const bigint& a11, const bigint& a12, 
-	   const bigint& a21, const bigint& a22) 
+  void set(const ZZ& a11, const ZZ& a12, 
+	   const ZZ& a21, const ZZ& a22) 
     {m00=1; m11=a11; m12=a12; m21=a21; m22=a22;}
   void operator=(const scaled_unimod& m) 
     {m00=m.m00; m11=m.m11; m12=m.m12; m21=m.m21; m22=m.m22;}
   void operator=(const unimod& m) 
     {m00=1; m11=m.m11; m12=m.m12; m21=m.m21; m22=m.m22;}
-  bigint scale_factor() const {return m00;}
+  ZZ scale_factor() const {return m00;}
   void operator*=(const scaled_unimod& a)
     { 
       set(m00*a.m00,
@@ -115,9 +115,9 @@ public:
 	  m21*a.m11 + m22*a.m21,  m21*a.m12 + m22*a.m22);
     }
   friend scaled_unimod operator*(const scaled_unimod& a, const scaled_unimod& b);
-  void x_scale(const bigint& c) {m11*=c; m21*=c;}
-  void y_scale(const bigint& c) {m12*=c; m22*=c;}
-  void u_scale(const bigint& c) {m00*=c;}
+  void x_scale(const ZZ& c) {m11*=c; m21*=c;}
+  void y_scale(const ZZ& c) {m12*=c; m22*=c;}
+  void u_scale(const ZZ& c) {m00*=c;}
   void output(ostream& os=cout) const
     {
       unimod::output(os);

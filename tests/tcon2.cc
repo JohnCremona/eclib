@@ -34,7 +34,7 @@
 int main()
 {
   initprimes("PRIMES",VERBOSITY);
-  bigint a,b,c,d,x0,y0,z0;
+  ZZ a,b,c,d,x0,y0,z0;
   cin >> a >> b >> c >> d;
   int res = solve_conic(a,b,c,d,x0,y0,z0,CONIC_METHOD);
   if(!res) {x0=y0=z0=0;}

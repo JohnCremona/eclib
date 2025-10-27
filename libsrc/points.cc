@@ -25,7 +25,6 @@
 
 #include "eclib/points.h"
 #include "eclib/cperiods.h"
-#include <NTL/RR.h>   // for the realify_point() function
 
 //#define DEBUG_TORSION
 
@@ -39,8 +38,8 @@
 // "back" means use reverse transform
 
 Point transform(const Point& P, Curvedata* newc, 
-		const bigint& u, 
-		const bigint& r, const bigint& s, const bigint& t, 
+		const ZZ& u, 
+		const ZZ& r, const ZZ& s, const ZZ& t, 
 		int back)
 {
   if(P.is_zero()) return Point(newc);
@@ -94,28 +93,28 @@ Point Point::operator+(const Point& Q) const // P + Q
   // we now have genuine work to do
   // let's set up some local variables to avoid repeated references
   // coefficients
-  bigint A1,A2,A3,A4,A6;  E->getai(A1,A2,A3,A4,A6);
+  ZZ A1,A2,A3,A4,A6;  E->getai(A1,A2,A3,A4,A6);
   // coordinates of P
-  const bigint& X1 = X ;
-  const bigint& Y1 = Y ;
-  const bigint& Z1 = Z ;
+  const ZZ& X1 = X ;
+  const ZZ& Y1 = Y ;
+  const ZZ& Z1 = Z ;
   // coordinates of Q
-  const bigint& X2 = Q.X ;
-  const bigint& Y2 = Q.Y ;
-  const bigint& Z2 = Q.Z ;
-  const bigint& Z12 = Z1 * Z2 ;
+  const ZZ& X2 = Q.X ;
+  const ZZ& Y2 = Q.Y ;
+  const ZZ& Z2 = Q.Z ;
+  const ZZ& Z12 = Z1 * Z2 ;
 
-  const bigint& L = - Y2 * Z1 + Y1 * Z2 ;    /* lambda */
-  const bigint& M = - X2 * Z1 + X1 * Z2 ;    /* mu    */
-  const bigint& N = - Y1 * X2 + Y2 * X1 ;    /* nu   */
+  const ZZ& L = - Y2 * Z1 + Y1 * Z2 ;    /* lambda */
+  const ZZ& M = - X2 * Z1 + X1 * Z2 ;    /* mu    */
+  const ZZ& N = - Y1 * X2 + Y2 * X1 ;    /* nu   */
 
-  const bigint& Mz =  M * M * Z12  ;
+  const ZZ& Mz =  M * M * Z12  ;
 
-  const bigint& t = L * L * Z12 + M * ( A1 * L * Z12 - M * (A2 * Z12
+  const ZZ& t = L * L * Z12 + M * ( A1 * L * Z12 - M * (A2 * Z12
                                         + X1 * Z2 + X2 * Z1 ) )  ;
-  const bigint& newX =  M * t ;
-  const bigint& newY = - (  t * (L + A1 * M) +   Mz * (N + A3 * M )) ;
-  const bigint& newZ = M * Mz ;
+  const ZZ& newX =  M * t ;
+  const ZZ& newY = - (  t * (L + A1 * M) +   Mz * (N + A3 * M )) ;
+  const ZZ& newZ = M * Mz ;
   ans.init(E, newX, newY, newZ);
   return ans;
 }
@@ -132,25 +131,25 @@ Point Point::twice(void) const // doubles P
   // do trivial cases
   Point ans(E);
   if( Z==0) return ans;
-  bigint A1,A2,A3,A4,A6;  E->getai(A1,A2,A3,A4,A6);
+  ZZ A1,A2,A3,A4,A6;  E->getai(A1,A2,A3,A4,A6);
   Point minusthis = -(*this);
   if(eq(*this,minusthis)) return ans;   // order 2
 
-  const bigint& Zsq = Z * Z ;
+  const ZZ& Zsq = Z * Z ;
   
-  const bigint& L = 3 * X * X  +  2 * A2 * X * Z  +  
+  const ZZ& L = 3 * X * X  +  2 * A2 * X * Z  +  
                                      A4 * Zsq  -  A1 * Y * Z ;
-  const bigint& M = 2 * Y  +  A1 * X  +  A3 * Z ;
+  const ZZ& M = 2 * Y  +  A1 * X  +  A3 * Z ;
         
-  const bigint& Mz = M * Z ;
-  const bigint& N =  - X * X * X -A3 * Y * Zsq  + A4 * X *Zsq  +  
+  const ZZ& Mz = M * Z ;
+  const ZZ& N =  - X * X * X -A3 * Y * Zsq  + A4 * X *Zsq  +  
     2 * A6 * Z *Zsq ;
         
-  const bigint& t  = L * L  +  Mz * ( A1 * L  -  M * ( A2 * Z  + 2 * X ) );  
+  const ZZ& t  = L * L  +  Mz * ( A1 * L  -  M * ( A2 * Z  + 2 * X ) );  
 
-  const bigint& newX = t * Mz ;
-  const bigint& newY = - ( L * t +  Mz * ( A1 * t+ M * ( N  + A3 * Mz * Z) ) );
-  const bigint& newZ = Mz * Mz * Mz;
+  const ZZ& newX = t * Mz ;
+  const ZZ& newY = - ( L * t +  Mz * ( A1 * t+ M * ( N  + A3 * Mz * Z) ) );
+  const ZZ& newZ = Mz * Mz * Mz;
 
   ans.init(E, newX, newY, newZ) ;
   return ans;
@@ -197,7 +196,7 @@ int order(Point& p)
 {
   // ASSUME that point is valid; check before calling if unknown
   if (p.ord) {return p.ord;}
-  bigint eight, z=p.getZ(); eight=8;
+  ZZ eight, z=p.getZ(); eight=8;
   if (is_zero(z))  {p.ord = 1; return 1; }
   if (z>eight)     {p.ord =-1; return -1;}
   Point q = p;  long ord=1;
@@ -219,7 +218,7 @@ int order(Point& p, vector<Point>& multiples)
   if (p.is_zero()) {p.ord=1; return 1; }
   multiples.push_back(p);
   Point q = p;
-  bigint eight; eight=8;
+  ZZ eight; eight=8;
   while ( (!q.is_zero()) && (q.getZ()<=eight) 
 	                 && (multiples.size()<13) ) // 12 is max poss order
   { 
@@ -248,9 +247,9 @@ int Point::isvalid() const // P on its curve ?
   if((sign(X)==0)&&(sign(Z)==0)) return 1 ;
   else
     {
-      bigint A1,A2,A3,A4,A6;    E->getai(A1,A2,A3,A4,A6);
-      const bigint& Lhs = Y*Z*(Y + A1*X + A3*Z) ;
-      const bigint& Rhs = A6*pow(Z,3) + X*(A4*Z*Z + X*(A2*Z + X)) ;
+      ZZ A1,A2,A3,A4,A6;    E->getai(A1,A2,A3,A4,A6);
+      const ZZ& Lhs = Y*Z*(Y + A1*X + A3*Z) ;
+      const ZZ& Rhs = A6*pow(Z,3) + X*(A4*Z*Z + X*(A2*Z + X)) ;
       return Lhs == Rhs ;
     }
 }
@@ -259,11 +258,11 @@ int Point::isvalid() const // P on its curve ?
 vector<Point> points_from_x(Curvedata &E, const bigrational& x)
 {
   //  cout<<"Trying to construct points with x="<<x<<endl;
-  bigint a1,a2,a3,a4,a6,b2,b4,b6,b8;
+  ZZ a1,a2,a3,a4,a6,b2,b4,b6,b8;
   E.getai(a1,a2,a3,a4,a6);
   E.getbi(b2,b4,b6,b8);
   vector<Point> ans;
-  bigint xn = num(x), xd2=den(x), xd, xd4, s, t, yn;
+  ZZ xn = num(x), xd2=den(x), xd, xd4, s, t, yn;
   //  cout<<"xd2 = "<<xd2<<endl;
   if(isqrt(xd2,xd)) // xd2=xd^2
     {
@@ -275,7 +274,7 @@ vector<Point> points_from_x(Curvedata &E, const bigrational& x)
         {
           //          cout<<"t = "<<t<<endl;
           yn = t - (a1*xn+a3*xd2)*xd;
-          divide_exact(yn,bigint(2),yn);
+          divide_exact(yn,ZZ(2),yn);
           //          cout<<"yn = "<<yn<<endl;
           Point P(E,xn*xd,yn,xd2*xd);
           //          cout<<"point="<<P<<endl;
@@ -296,7 +295,7 @@ struct Point_comparer {
     Point P(P0), Q(Q0); // take copies as args must be const but order() requires non-const
     int s = order(P)-order(Q);
     if(s) return (s<0); // true if P has smaller order
-    bigint t = P.getZ()-Q.getZ();
+    ZZ t = P.getZ()-Q.getZ();
     if(!is_zero(t)) return (t<0); // true if P has smaller Z (denominator)
     t = P.getX()-Q.getX();
     if(!is_zero(t)) return (t<0); // true if P has smaller X
@@ -347,7 +346,7 @@ Point make_tor_pt(Curvedata& E, Cperiods& per,
 #ifdef DEBUG_TORSION
   cout<<"(x,y) = ("<<(cx)<<","<<(cy)<<")\n";
 #endif
-  bigint x=Iround(real(cx)), y=Iround(real(cy));
+  ZZ x=Iround(real(cx)), y=Iround(real(cy));
   Point P(E, x, y);
   return P;
 }
@@ -358,8 +357,8 @@ vector<Point> two_torsion(Curvedata& E, int exact)
 #ifdef DEBUG_TORSION
   cout<<"\nIn two_torsion() with curve "<<(Curve)E<<"\n";
 #endif
-  bigint a1, a2, a3, a4, a6, b2, b4, b6, b8;
-  static const bigint zero(0), one(1), eight(8), sixteen(16);
+  ZZ a1, a2, a3, a4, a6, b2, b4, b6, b8;
+  static const ZZ zero(0), one(1), eight(8), sixteen(16);
   E.getai(a1,a2,a3,a4,a6);
   E.getbi(b2,b4,b6,b8);
   int scaled=0;
@@ -373,7 +372,7 @@ vector<Point> two_torsion(Curvedata& E, int exact)
     {
       b2=a2; b4=a4; b6=a6;
     }
-  vector<bigint> xlist = Introotscubic(b2,b4,b6);
+  vector<ZZ> xlist = Introotscubic(b2,b4,b6);
   vector<Point> two_tors;
   if (!exact)
     two_tors.push_back(Point(E)) ;     // zero point
@@ -395,14 +394,14 @@ vector<Point> two_torsion(Curvedata& E, int exact)
 // a point in E[3], possibly with y not rational.  If y is rational
 // then these x will in fact be multiples of 3 since rational
 // 3-torsion is integral
-vector<bigint> three_torsion_x(Curvedata& E)
+vector<ZZ> three_torsion_x(Curvedata& E)
 {
 #ifdef DEBUG_TORSION
   cout<<"\nIn three_torsion_x() with curve "<<(Curve)E<<"\n";
 #endif
-  bigint b2, b4, b6, b8;
+  ZZ b2, b4, b6, b8;
   E.getbi(b2,b4,b6,b8);
-  vector<bigint> xlist = Introotsquartic(b2,9*b4,27*b6,27*b8);
+  vector<ZZ> xlist = Introotsquartic(b2,9*b4,27*b6,27*b8);
   // NB The implementation of Introosquartic() in marith.cc does not
   // fix the order of the roots, which depends on the order of the
   // factors in NTL's Z[X] factorization routine.  HENCE the order of
@@ -426,11 +425,11 @@ vector<Point> three_torsion(Curvedata& E, int exact)
 #ifdef DEBUG_TORSION
   cout<<"\nIn three_torsion() with curve "<<(Curve)E<<"\n";
 #endif
-  static const bigint two(2);
-  bigint a1, a2, a3, a4, a6, b2, b4, b6, b8, d, rd;
+  static const ZZ two(2);
+  ZZ a1, a2, a3, a4, a6, b2, b4, b6, b8, d, rd;
   E.getai(a1,a2,a3,a4,a6);
   E.getbi(b2,b4,b6,b8);
-  vector<bigint> xlist = three_torsion_x(E);
+  vector<ZZ> xlist = three_torsion_x(E);
   vector<Point> three_tors;
   if (!exact)
     three_tors.push_back(Point(E)) ;     // zero point
@@ -474,7 +473,7 @@ vector<Point> m_torsion(Curvedata& E, long m, int exact)
 
   // Now m is at least 3, m-torsion points are integral.
   // Compute the integer roots of the m-division polynomial
-  vector<bigint> xs = introots(division_polynomial(&E, m));
+  vector<ZZ> xs = introots(division_polynomial(&E, m));
 #ifdef DEBUG_TORSION
   cout<<" integer roots of m-division polynomial: "<<xs<<"\n";
 #endif
@@ -628,11 +627,11 @@ int Point::is_on_real_identity_component() const
     return 1;
   if(getconncomp(*E)==1) // there is only one component
     return 1;
-  bigint b2 = getb2(*E), b4 = getb4(*E);
-  bigint FD = 6*X*X + b2*X*Z + b4*Z*Z;
+  ZZ b2 = getb2(*E), b4 = getb4(*E);
+  ZZ FD = 6*X*X + b2*X*Z + b4*Z*Z;
   if (sign(FD)<0)
     return 0;
-  bigint FDD = 12*X + b2*Z;
+  ZZ FDD = 12*X + b2*Z;
   if (sign(FDD)<0)  // assumes Z>0
     return 0;
   return 1;
@@ -648,27 +647,27 @@ int Point::has_good_reduction(long p) const
   if(p==0)
     return is_on_real_identity_component();
 
-  bigint pp(p);
+  ZZ pp(p);
   return has_good_reduction(pp);
 }
 
-int Point::has_good_reduction(const bigint& p) const
+int Point::has_good_reduction(const ZZ& p) const
 {
   if(div(p, Z))  // identity is nonsingular
     return 1;
   if(::is_zero(p))
     return is_on_real_identity_component();
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   E->getai(a1,a2,a3,a4,a6);
-  bigint FY = 2*Y + a1*X + a3*Z; // no need for factor of Z
+  ZZ FY = 2*Y + a1*X + a3*Z; // no need for factor of Z
   int ok = ndiv(p, FY);
   if (!ok)
     {
-      bigint FX = a1*Y*Z - (3*X*X + 2*a2*X*Z + a4*Z*Z);
+      ZZ FX = a1*Y*Z - (3*X*X + 2*a2*X*Z + a4*Z*Z);
       ok = ndiv(p, FX);
       if (!ok)
         {
-          bigint FZ = Y*(Y + a1*X + 2*a3*Z) - (a2*X*X + 2*a4*X*Z + 3*a6*Z*Z);
+          ZZ FZ = Y*(Y + a1*X + 2*a3*Z) - (a2*X*X + 2*a4*X*Z + 3*a6*Z*Z);
           ok = ndiv(p, FZ);
         }
     }
@@ -680,16 +679,16 @@ int Point::has_good_reduction(const bigint& p) const
 // the identity component over the reals if check_real=1); else return
 // 0 and put the first prime of bad reduction into p0.
 
-int Point::has_good_reduction(const vector<bigint>& plist, bigint& p0, int check_real) const
+int Point::has_good_reduction(const vector<ZZ>& plist, ZZ& p0, int check_real) const
 {
-  static const bigint zero(0);
+  static const ZZ zero(0);
   if (check_real)
     if (!is_on_real_identity_component())
       {
         p0 = zero;
         return 0;
       }
-  auto it = std::find_if(plist.begin(), plist.end(), [this](const bigint& p) {return !has_good_reduction(p);});
+  auto it = std::find_if(plist.begin(), plist.end(), [this](const ZZ& p) {return !has_good_reduction(p);});
   if (it==plist.end())
     return 1;
   else

@@ -250,8 +250,8 @@ int get_curve(long n, long fac, long maxnx, long maxny,
                 cout<<"c4 = "<<c4<<endl;
                 cout<<"c6 = "<<c6<<endl;
               }
-	    bigint ic4 = fac*Iround(real(c4)/fac);
-	    bigint ic6 = fac6*Iround(real(c6)/fac6);
+	    ZZ ic4 = fac*Iround(real(c4)/fac);
+	    ZZ ic6 = fac6*Iround(real(c6)/fac6);
             if (detail>1)
               {
                 cout<<"ic4 = "<<ic4<<endl;
@@ -277,7 +277,7 @@ int get_curve(long n, long fac, long maxnx, long maxny,
 		Curve C(ic4,ic6);
 		Curvedata CD(C,1);
 		CurveRed CR(CD);
-		bigint cond = getconductor(CR);
+		ZZ cond = getconductor(CR);
 		if(cond==n)
 		  {
 		    if(detail)cout<<"Curve is ";

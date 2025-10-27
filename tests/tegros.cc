@@ -32,20 +32,20 @@ int main(void)
   //the_primes.init(25000000);
   Curve E;
 
-  const vector<bigint> S5 = {bigint(2), bigint(3), bigint(5)};
-  const vector<bigint> S23 = {bigint(2), bigint(3)};
-  const vector<bigint> S35 = {bigint(3), bigint(5)};
-  const vector<bigint> S11 = {bigint(11)};
+  const vector<ZZ> S5 = {ZZ(2), ZZ(3), ZZ(5)};
+  const vector<ZZ> S23 = {ZZ(2), ZZ(3)};
+  const vector<ZZ> S35 = {ZZ(3), ZZ(5)};
+  const vector<ZZ> S11 = {ZZ(11)};
 
-  vector<bigint> Q_S5_2 = twist_factors(S5,2);
+  vector<ZZ> Q_S5_2 = twist_factors(S5,2);
   cout << "Q("<<S5<<", 2) = "<<Q_S5_2<<" has "<<Q_S5_2.size() << " elements (should be "<<2*pow(2,S5.size())<<")\n";
-  vector<bigint> Q_S5_4 = twist_factors(S5,4);
+  vector<ZZ> Q_S5_4 = twist_factors(S5,4);
   cout << "Q("<<S5<<", 4) has "<<Q_S5_4.size() << " elements (should be "<<2*pow(4,S5.size())<<")\n";
-  vector<bigint> Q_S5_6 = twist_factors(S5,6);
+  vector<ZZ> Q_S5_6 = twist_factors(S5,6);
   cout << "Q("<<S5<<", 6) has "<<Q_S5_6.size() << " elements (should be "<<2*pow(6,S5.size())<<")\n";
   cout<<endl;
 
-  bigrational j(to_ZZ("272223782641"), bigint(164025));
+  bigrational j(to_ZZ("272223782641"), ZZ(164025));
   cout<<"Curves with good reduction outside "<<S5<<" and j = "<<j;
   if (is_j_possible(j,S5))
     cout <<" do exist"<<endl;
@@ -65,12 +65,12 @@ int main(void)
 
   cout << "Elliptic curves with conductor a power of 11, from their known j-invariants" << endl;
   vector<bigrational> j11 = {
-    bigrational(bigint(-122023936), bigint(161051)),
-    bigrational(to_ZZ("-52893159101157376"), bigint(11)),
-    bigrational(bigint(-4096), bigint(11)),
-    bigrational(bigint(-121)),
-    bigrational(bigint(-32768)),
-    bigrational(bigint(-24729001))
+    bigrational(ZZ(-122023936), ZZ(161051)),
+    bigrational(to_ZZ("-52893159101157376"), ZZ(11)),
+    bigrational(ZZ(-4096), ZZ(11)),
+    bigrational(ZZ(-121)),
+    bigrational(ZZ(-32768)),
+    bigrational(ZZ(-24729001))
   };
   vector<CurveRed> egr_11;
   for (auto ji: j11)
@@ -88,13 +88,13 @@ int main(void)
     cout << "conductor " << E1.conductor() << "\t" << (Curve)E1 << "\tj = " << j_invariant(E1) << endl;
   cout << endl;
 
-  vector<bigint> N_j_0, N_j_1728;
+  vector<ZZ> N_j_0, N_j_1728;
   vector<CurveRed> E_j_0, E_j_1728;
   for (int n=1; n<=100; n++)
     {
       if (!is_valid_conductor(n)) continue;
-      bigint N(n);
-      vector<bigint> S = pdivs(N);
+      ZZ N(n);
+      vector<ZZ> S = pdivs(N);
       if (is_N_possible_j_0(N, S))
         {
           N_j_0.push_back(N);

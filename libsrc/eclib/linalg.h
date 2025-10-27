@@ -41,7 +41,7 @@
 #include "ssubspace.h"
 #include "smatrix_elim.h"
 
-// SCALAR_OPTION may be set to 1 (int), 2 (long), or 3 (bigint) by the
+// SCALAR_OPTION may be set to 1 (int), 2 (long), or 3 (ZZ) by the
 // user.  This determines whether vec, mat, ... default to vec_i,
 // mat_i, ... or vac_l, mat_l, ..., or vec_m, mat_m, ... in user code.
 // The default value set here is what these abbreviations mean when
@@ -53,7 +53,7 @@
 #ifndef SCALAR_OPTION
 #define SCALAR_OPTION 1  // int
 //#define SCALAR_OPTION 2  // long
-//#define SCALAR_OPTION 3  // bigint
+//#define SCALAR_OPTION 3  // ZZ
 #endif
 
 // #pragma message "The value of SCALAR_OPTION (after): " XSTR(SCALAR_OPTION)
@@ -77,10 +77,10 @@ typedef form_finder_l form_finder;
 #define to_vec to_vec_l
 #define to_mat to_mat_l
 #else
-#if (SCALAR_OPTION==3) // bigint
+#if (SCALAR_OPTION==3) // ZZ
 // #pragma message "In branch with SCALAR_OPTION 3"
-#define scalar_type string("bigint")
-typedef bigint scalar;
+#define scalar_type string("ZZ")
+typedef ZZ scalar;
 typedef vec_m vec;
 typedef mat_m mat;
 typedef subspace_m subspace;

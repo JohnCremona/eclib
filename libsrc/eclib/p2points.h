@@ -31,41 +31,41 @@
 // class for  points in P^2(Q), used as base for points on elliptic curves etc.
 //
 class P2Point;
-P2Point scale(const P2Point& P, const bigint& u, int back=0); 
+P2Point scale(const P2Point& P, const ZZ& u, int back=0); 
 P2Point scale(const P2Point& P, long u=1, int back=0); 
 P2Point shift(const P2Point& P,
-      const bigint& r, const bigint& s, const bigint& t, 
+      const ZZ& r, const ZZ& s, const ZZ& t, 
       int back=0); 
 P2Point transform(const P2Point& P,
-			   const bigint& u, 
-			   const bigint& r, const bigint& s, const bigint& t, 
+			   const ZZ& u, 
+			   const ZZ& r, const ZZ& s, const ZZ& t, 
 			   int back=0); 
 
 class P2Point{
   friend class Point;
-  bigint X ; // homogeneous coordinates
-  bigint Y ;
-  bigint Z ;
+  ZZ X ; // homogeneous coordinates
+  ZZ Y ;
+  ZZ Z ;
   void reduce(); //divide out coordinate gcd
 public:
   // constructors
   P2Point(void) :X(0), Y(0), Z(0) {}      // not a real point
-  P2Point(const bigint& x, const bigint& y, const bigint& z)
+  P2Point(const ZZ& x, const ZZ& y, const ZZ& z)
     : X(x), Y(y), Z(z)
     { reduce(); }
-  P2Point(const bigint& x, const bigint& y, long z)
+  P2Point(const ZZ& x, const ZZ& y, long z)
     : X(x), Y(y), Z(z)
     { reduce(); }
-  P2Point(const bigint& x, long y, long z)
+  P2Point(const ZZ& x, long y, long z)
     : X(x), Y(y), Z(z)
     { reduce(); }
   P2Point(long x, long y, long z)
     : X(x), Y(y), Z(z)
     { reduce(); }
-  P2Point(const bigint& x, const bigint& y)
+  P2Point(const ZZ& x, const ZZ& y)
     : X(x), Y(y), Z(1)
     { ; } // no need to reduce 
-  /* The following creates ambiguities owing to the bigint->bigrational coercion
+  /* The following creates ambiguities owing to the ZZ->bigrational coercion
   P2Point(const bigrational& x, const bigrational& y)
     : X(num(x)*den(y)), Y(num(y)*den(x)), Z(den(x)*den(y))
     { reduce(); }
@@ -108,32 +108,32 @@ public:
   friend int eq(const P2Point&P, const P2Point&Q);
 
   // assignment (p.init(.) is quicker than p=P2Point(.) for existing p)
-  void init(const bigint& x, const bigint& y, const bigint& z)
+  void init(const ZZ& x, const ZZ& y, const ZZ& z)
   {X=x; Y=y; Z=z; reduce(); }
-  void init(const bigint& x, const bigint& y)
-  {X=x; Y=y; Z = bigint(1); }
+  void init(const ZZ& x, const ZZ& y)
+  {X=x; Y=y; Z = ZZ(1); }
   void operator=(const P2Point& Q) // P1 = P2
     { X=Q.X ; Y=Q.Y; Z=Q.Z;  }
 
   // Coordinate transforms useful for elliptic curve points 
-  friend P2Point scale(const P2Point& P, const bigint& u, int back); 
+  friend P2Point scale(const P2Point& P, const ZZ& u, int back); 
   friend P2Point scale(const P2Point& P, long u, int back); 
   friend P2Point shift(const P2Point& P,
-		       const bigint& r, const bigint& s, const bigint& t, 
+		       const ZZ& r, const ZZ& s, const ZZ& t, 
 		       int back); 
   friend P2Point transform(const P2Point& P,
-			   const bigint& u, 
-			   const bigint& r, const bigint& s, const bigint& t, 
+			   const ZZ& u, 
+			   const ZZ& r, const ZZ& s, const ZZ& t, 
 			   int back); 
 
-  void getcoordinates(bigint& x, bigint& y, bigint& z) const
+  void getcoordinates(ZZ& x, ZZ& y, ZZ& z) const
     {x=X; y=Y; z=Z; }
   void getaffinecoordinates(bigrational& x, bigrational& y) const
   {x=bigrational(X,Z); y=bigrational(Y,Z); }
   void getrealcoordinates(bigfloat&x, bigfloat& y) const;
-  bigint getX() const {return X; }
-  bigint getY() const {return Y; }
-  bigint getZ() const {return Z; }
+  ZZ getX() const {return X; }
+  ZZ getY() const {return Y; }
+  ZZ getZ() const {return Z; }
   int isintegral() const { return is_one(Z); }
   int isinfinite() const { return is_zero(Z); }
   int isfinite() const { return is_nonzero(Z); }

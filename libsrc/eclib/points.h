@@ -37,8 +37,8 @@
 
 class Point;
 Point transform(const Point& p,  Curvedata* newc, 
-			 const bigint& u, 
-			 const bigint& r, const bigint& s, const bigint& t, 
+			 const ZZ& u, 
+			 const ZZ& r, const ZZ& s, const ZZ& t, 
 			 int back=0); 
 
 class Point : public P2Point { 
@@ -56,22 +56,22 @@ public:
   explicit Point(Curvedata *EE)      // set to point at infinity
     : P2Point(0,1,0), E(EE), ord(1), height(to_bigfloat(0.0))
     { ; }
-  Point(Curvedata &EE, const bigint& x, const bigint& y, const bigint& z)
+  Point(Curvedata &EE, const ZZ& x, const ZZ& y, const ZZ& z)
     : P2Point(x,y,z), E(&EE), ord(0), height(to_bigfloat(-1.0))
     { ; }
   Point(Curvedata &EE, const P2Point& P)
     : P2Point(P), E(&EE), ord(0), height(to_bigfloat(-1.0))
     { ; }
-  Point(Curvedata *EE, const bigint& x, const bigint& y, const bigint& z)
+  Point(Curvedata *EE, const ZZ& x, const ZZ& y, const ZZ& z)
     : P2Point(x,y,z), E(EE), ord(0), height(to_bigfloat(-1.0))
     { ; }
   Point(Curvedata *EE, const P2Point& p)
     : P2Point(p), E(EE), ord(0), height(to_bigfloat(-1.0))
     { ; }
-  Point(Curvedata &EE, const bigint& x, const bigint& y)
+  Point(Curvedata &EE, const ZZ& x, const ZZ& y)
     : P2Point(x,y), E(&EE), ord(0), height(to_bigfloat(-1.0))
     { ; }
-  Point(Curvedata *EE, const bigint& x, const bigint& y)
+  Point(Curvedata *EE, const ZZ& x, const ZZ& y)
     : P2Point(x,y), E(EE), ord(0), height(to_bigfloat(-1.0))
     { ; }
   Point(const Point& Q)
@@ -100,23 +100,23 @@ public:
 
   // assignment (p.init(.) is quicker than p=Point(.) for existing p)
   void init(Curvedata &EE,
-            const bigint& x, const bigint& y, const bigint& z)
+            const ZZ& x, const ZZ& y, const ZZ& z)
     {E=&EE; X=x; Y=y; Z=z; reduce(); ord=0; height=-1.0; }
   void init(Curvedata *EE,
-            const bigint& x, const bigint& y, const bigint& z)
+            const ZZ& x, const ZZ& y, const ZZ& z)
     {E=EE; X=x; Y=y; Z=z; reduce(); ord=0; height=-1.0; }
   void init(Curvedata &EE,
-            const bigint& x, const bigint& y)
+            const ZZ& x, const ZZ& y)
     {E=&EE; X=x; Y=y; Z = 1; ord=0; height=-1.0; }
   void init(Curvedata *EE,
-            const bigint& x, const bigint& y)
+            const ZZ& x, const ZZ& y)
     {E=EE; X=x; Y=y; Z = 1; ord=0; height=-1.0; }
   void operator=(const Point& Q) // P1 = P2
     { E=Q.E; X=Q.X ; Y=Q.Y; Z=Q.Z; ord=Q.ord; height=Q.height; }
 
   friend Point transform(const Point& p,  Curvedata* newc, 
-			 const bigint& u, 
-			 const bigint& r, const bigint& s, const bigint& t, 
+			 const ZZ& u, 
+			 const ZZ& r, const ZZ& s, const ZZ& t, 
 			 int back); 
 
   void operator+=(const Point&) ; // P1 += P2 ; order and height unknown
@@ -136,7 +136,7 @@ public:
                         // also create and return list of multiples
   friend bigfloat height(Point& P);    //calculate and set if not set
   friend bigfloat realheight(const Point& P);
-  friend bigfloat pheight(const Point& P, const bigint& p);
+  friend bigfloat pheight(const Point& P, const ZZ& p);
 
   vector<Point> division_points(int m); // list of Q s.t. n*Q=this
 
@@ -148,9 +148,9 @@ public:
   int is_on_egg() const {return !is_on_real_identity_component();}
 // return 1 if P mod p is nonsingular (or for p=0 if it is on the real identity component):
   int has_good_reduction(long p) const;
-  int has_good_reduction(const bigint& p) const;
+  int has_good_reduction(const ZZ& p) const;
   // return 1 if P has good reduction at all p in list, if not then p0 holds first bad prime
-  int has_good_reduction(const vector<bigint>& plist, bigint& p0, int check_real=0) const;
+  int has_good_reduction(const vector<ZZ>& plist, ZZ& p0, int check_real=0) const;
 
 }; // end of point class
 
@@ -177,7 +177,7 @@ bigfloat regulator(vector<Point>& points);  // not a const array; heights get se
 // N.B. Don't make the params const here
 
 vector<Point> two_torsion(Curvedata& E, int exact=0);
-vector<bigint> three_torsion_x(Curvedata& E);
+vector<ZZ> three_torsion_x(Curvedata& E);
 vector<Point> three_torsion(Curvedata& E, int exact=0);
 
 // List m-torsion points, i.e. points in E[m], or points of exact order m if exact==1

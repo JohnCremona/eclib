@@ -27,14 +27,14 @@
 
 //#define DEBUG_MINIM
 
-bigint root_p(const bigint& a, const bigint& b, const bigint& c, 
-		 const bigint& d, const bigint& e, const bigint& p)
+ZZ root_p(const ZZ& a, const ZZ& b, const ZZ& c, 
+		 const ZZ& d, const ZZ& e, const ZZ& p)
 // assuming p|I, p|J, returns the unique alpha mod p 
 // modulo which quartic has a root of multiplicity at least 3
 // returns -1 if multiple root is at infinity (if a=b=0 mod p)
 // (program does not actaully use this dubious feature)
 {
-  static const bigint zero(0), one(1);
+  static const ZZ zero(0), one(1);
   if(div(p,a)&&div(p,b)) return -one;
   if(div(p,e)&&div(p,d)) return zero;
 
@@ -48,9 +48,9 @@ bigint root_p(const bigint& a, const bigint& b, const bigint& c,
       if(div(p,a)) return mod(-b*e,p);
       else         return mod(-a*d,p);
     }
-  bigint b2=sqr(b);
-  bigint ac=a*c;
-  bigint p_seminv = mod(3*b2-8*ac,p);
+  ZZ b2=sqr(b);
+  ZZ ac=a*c;
+  ZZ p_seminv = mod(3*b2-8*ac,p);
   if(is_zero(p_seminv)) // quadruple root
     {
       return mod(-b*invmod(4*a,p),p);
@@ -61,24 +61,24 @@ bigint root_p(const bigint& a, const bigint& b, const bigint& c,
 	{
 	  return mod(-c*invmod(3*b,p),p);
 	}
-      bigint t=invmod(4*a*p_seminv,p);
-      bigint r_seminv = b*b2+8*sqr(a)*d-4*ac*b;
-      bigint alpha = mod((3*r_seminv-b*p_seminv)*t,p);
+      ZZ t=invmod(4*a*p_seminv,p);
+      ZZ r_seminv = b*b2+8*sqr(a)*d-4*ac*b;
+      ZZ alpha = mod((3*r_seminv-b*p_seminv)*t,p);
       return alpha;
     }
 }
 
-int minim_p(bigint& a, bigint& b, bigint& c, 
-	      bigint& d, bigint& e, const bigint& p,
+int minim_p(ZZ& a, ZZ& b, ZZ& c, 
+	      ZZ& d, ZZ& e, const ZZ& p,
 	      scaled_unimod& m)
 // assuming p^4|I, p^6|J, (or stronger conditions when p=2 or p=3)
 // returns an equivalent quartic with invariants divided by p^4, p^6;
 // m holds the transformation matrix, must be initialized (say with identity)
 // returns success, can be 0 only for p=2
 {
-  static const bigint three(3), nine(9), twentyseven(27);
-  bigint a0,b0,c0,d0,e0,r;
-  bigint p2=sqr(p), temp;
+  static const ZZ three(3), nine(9), twentyseven(27);
+  ZZ a0,b0,c0,d0,e0,r;
+  ZZ p2=sqr(p), temp;
 
   int p_is_2   = (p==2);
   int p_is_3 = (p==3);
@@ -127,7 +127,7 @@ int minim_p(bigint& a, bigint& b, bigint& c,
 	  if(ndiv(p,e0)||ndiv(p,d0)) // mult root is finite and not zero
         	                     // find it and shift it to 0
 	    {
-	      bigint alpha = root_p(a0,b0,c0,d0,e0,p);
+	      ZZ alpha = root_p(a0,b0,c0,d0,e0,p);
 #ifdef DEBUG_MINIM
 	      cout<<"Multiple root is at "<<alpha<<" mod "<<p<<"\n";
 	      cout<<"Shifting to 0...\n";
@@ -145,7 +145,7 @@ int minim_p(bigint& a, bigint& b, bigint& c,
       divide_exact(b,p,b0); // b0=b/p;
       if(ndiv(p2,a)&&ndiv(p,b0))
 	{
-	  bigint gamma = mod(-a0*invmod(b0,p),p);
+	  ZZ gamma = mod(-a0*invmod(b0,p),p);
 #ifdef DEBUG_MINIM
 	  cout<<"Triple root case, shifting fourth root to infinity\n";
 	  cout<<"(gamma = "<<gamma<<")\n";
@@ -190,7 +190,7 @@ int minim_p(bigint& a, bigint& b, bigint& c,
       if(ndiv(p,e)||ndiv(p,d)) // mult root finite and not zero
 	                       // find it and shift it to 0
 	{
-	  bigint alpha = root_p(a,b,c,d,e,p);
+	  ZZ alpha = root_p(a,b,c,d,e,p);
 #ifdef DEBUG_MINIM
 	  cout<<"Multiple root is at "<<alpha<<" mod "<<p<<"\n";
 	  cout<<"Shifting to 0...\n";
@@ -207,7 +207,7 @@ int minim_p(bigint& a, bigint& b, bigint& c,
   // if ndiv(p,b) must now shift second root to infty
   if(ndiv(p,a)&&ndiv(p,b))
     {
-      bigint gamma = mod(-a*invmod(b,p),p);
+      ZZ gamma = mod(-a*invmod(b,p),p);
 #ifdef DEBUG_MINIM
       cout<<"Triple root case, shifting fourth root to infinity\n";
       cout<<"(gamma = "<<gamma<<")\n";
@@ -217,7 +217,7 @@ int minim_p(bigint& a, bigint& b, bigint& c,
     }
   if(div(p,a)) // triple root case
     {
-      bigint beta; beta=0;
+      ZZ beta; beta=0;
       if(p_is_3)
 	{
 	  long vpi = val(3,12*a*e-3*b*d+c*c);
@@ -255,7 +255,7 @@ int minim_p(bigint& a, bigint& b, bigint& c,
 	  divide_exact(b, three,b0); // b0=b/3;
 	  if(ndiv(p,b0))
 	    {
-	      bigint beta = 3 * mod(-b0*invmod(a,p),p);
+	      ZZ beta = 3 * mod(-b0*invmod(a,p),p);
 #ifdef DEBUG_MINIM
 	      cout<<"fixing b to be divisible by 9\n";
 	      cout<<"(beta = "<<beta<<")\n";
@@ -297,15 +297,15 @@ int is_nonmin(int smallp, long vpi, long vpj, long vpd, int assume_locsol)
   return (vpi>3)&&(vpj>5);
 }
 
-void minim_all(bigint& ga, bigint& gb, bigint& gc, bigint& gd, bigint& ge, 
-	       bigint& I, bigint& J, const vector<bigint>& plist,
+void minim_all(ZZ& ga, ZZ& gb, ZZ& gc, ZZ& gd, ZZ& ge, 
+	       ZZ& I, ZZ& J, const vector<ZZ>& plist,
 	       scaled_unimod& m,
 	       int assume_locsol, int verb)
 {
   unsigned long i; long j;
   for(i=0; i<plist.size(); i++)
     {
-      bigint p=plist[i];
+      ZZ p=plist[i];
       long smallp=1;            // these save testing a (possibly big) p 
       if (p==2) smallp=2;       // all the time
       else if (p==3) smallp=3;
@@ -350,8 +350,8 @@ void minim_all(bigint& ga, bigint& gb, bigint& gc, bigint& gd, bigint& ge,
 	  cout<<"("<<ga<<","<<gb<<","<<gc<<","<<gd<<","<<ge<<")"<<endl;
 	  cout<<"transform = "<<m<<endl;
 	}
-      bigint newI = II(ga,gb,gc,gd,ge);
-      bigint newJ = JJ(ga,gb,gc,gd,ge);
+      ZZ newI = II(ga,gb,gc,gd,ge);
+      ZZ newJ = JJ(ga,gb,gc,gd,ge);
       if((I!=newI)||(J!=newJ))
 	{
 	  cout<<"Error in previous step: wrong I, J.  New quartic has\n";

@@ -26,7 +26,7 @@
 #include <eclib/polys.h>
 #include <eclib/cubic.h>
 
-void output_cubics(const bigint& disc, int include_reducibles=1, int gl2=0, int verbose=0)
+void output_cubics(const ZZ& disc, int include_reducibles=1, int gl2=0, int verbose=0)
 {
   vector<cubic> glist = reduced_cubics(disc, include_reducibles, gl2, verbose);
   if (glist.size()==0)
@@ -49,7 +49,7 @@ void output_cubics(const bigint& disc, int include_reducibles=1, int gl2=0, int 
 int main()
 {
   initprimes("PRIMES");
-  bigint disc, absdisc, maxdisc;
+  ZZ disc, absdisc, maxdisc;
   int verbose=0, include_reducibles=1, gl2=0, single=0;
 
   cerr << "Verbosity level (0, 1 or 2): ";

@@ -23,47 +23,49 @@
  
 //#define DEBUG_NEW_LOCSOL
 
-#include <NTL/ZZ_pXFactoring.h>
-
 #include "eclib/mlocsol.h"
 #include "eclib/hilbert.h"
 
-int psquare(const bigint& aa, const bigint& p);  
+using NTL::vec_pair_ZZ_pX_long;
+using NTL::pair_ZZ_pX_long;
+using NTL::ZZ_pX;
+
+int psquare(const ZZ& aa, const ZZ& p);  
 /* tests if aa is a p-adic square */
 
-int lemma6(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const bigint& e, 
-	   const bigint& p, int nu,const bigint& x);
+int lemma6(const ZZ& a,const ZZ& b,const ZZ& c,const ZZ& d,const ZZ& e, 
+	   const ZZ& p, int nu,const ZZ& x);
 
 /* returns -1 for insoluble, 0 for undecided, +1 for soluble --- odd p */
 
-int lemma7(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const bigint& e, 
-	   const bigint& p, int nu, const bigint& x);
+int lemma7(const ZZ& a,const ZZ& b,const ZZ& c,const ZZ& d,const ZZ& e, 
+	   const ZZ& p, int nu, const ZZ& x);
 
 /* returns -1 for insoluble, 0 for undecided, +1 for soluble --- p=2 */
 
-int zpsoluble(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const bigint& e, 
-	      const bigint& p, int pzp);
+int zpsoluble(const ZZ& a,const ZZ& b,const ZZ& c,const ZZ& d,const ZZ& e, 
+	      const ZZ& p, int pzp);
 
 /* Checks for solublility in Zp, or in pZp if "pzp" is 1 */
 
-int psquare(const bigint& aa, const bigint& p)  /* tests if aa is a p-adic square */
+int psquare(const ZZ& aa, const ZZ& p)  /* tests if aa is a p-adic square */
 {
   if (is_zero(aa)) return 1;
   long v = val(p,aa);
   if (odd(v)) return 0;
-  bigint a(aa); while(v--) a/=p;
+  ZZ a(aa); while(v--) a/=p;
   if(p==2) return posmod(a,8)==1;
   else     return legendre(a,p) == 1 ;
 }  /* of psquare */
  
 
-int lemma6(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const bigint& e, 
-	   const bigint& p, int nu, const bigint& x)
+int lemma6(const ZZ& a,const ZZ& b,const ZZ& c,const ZZ& d,const ZZ& e, 
+	   const ZZ& p, int nu, const ZZ& x)
 // returns -1 for insoluble, 0 for undecided, +1 for soluble --- odd p 
 {
-   bigint gx = (((a*x+b)*x+c)*x+d)*x+e;
+   ZZ gx = (((a*x+b)*x+c)*x+d)*x+e;
    if (psquare(gx,p)) return +1;
-   bigint gdashx = ((4*a*x+3*b)*x+2*c)*x+d;
+   ZZ gdashx = ((4*a*x+3*b)*x+2*c)*x+d;
    long lambda = val(p,gx);
    if(is_zero(gdashx))
 // then effectively mu = infinity
@@ -78,15 +80,15 @@ int lemma6(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const
    return -1;
 }  /* end of lemma6 */
 
-int lemma7(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const bigint& e, 
-	   const bigint& p, int nu, const bigint& x)
+int lemma7(const ZZ& a,const ZZ& b,const ZZ& c,const ZZ& d,const ZZ& e, 
+	   const ZZ& p, int nu, const ZZ& x)
 // returns -1 for insoluble, 0 for undecided, +1 for soluble --- p=2 
 {
-   bigint gx = (((a*x+b)*x+c)*x+d)*x+e;
+   ZZ gx = (((a*x+b)*x+c)*x+d)*x+e;
    if (psquare(gx,p)) return +1;
-   bigint gdashx = ((4*a*x+3*b)*x+2*c)*x+d;
+   ZZ gdashx = ((4*a*x+3*b)*x+2*c)*x+d;
    long lambda = val(p,gx);
-   bigint oddgx = gx;
+   ZZ oddgx = gx;
    if (oddgx==0) oddgx= 1;
       else while (even(oddgx)) oddgx /= 2;
    int odd4 = (posmod(oddgx,4)==1);
@@ -105,8 +107,8 @@ int lemma7(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const
    return -1;
 }  /* end of lemma7 */
 
-int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const bigint& e, 
-	  const bigint& p, const bigint& x0, long nu)
+int zpsol(const ZZ& a,const ZZ& b,const ZZ& c,const ZZ& d,const ZZ& e, 
+	  const ZZ& p, const ZZ& x0, long nu)
 // Checks for solublility in Zp with x=x0 (mod p^nu)
 // Fully recursive (depth-first) version
 {
@@ -118,7 +120,7 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
  if(result==-1) return 0;
 //else result==0, so refine to look modulo p^(nu+1):
 // But before we do a depth-first recursive search, we try all residues 
- bigint i, x=x0, pnu=pow(p,nu);
+ ZZ i, x=x0, pnu=pow(p,nu);
  if(nu==0)
    {
      for(i=0; i<p; ++i, x+=pnu)
@@ -135,25 +137,25 @@ int zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const 
  return 0;
 }
 
-int qpsoluble(const quartic& g, const bigint& p)
+int qpsoluble(const quartic& g, const ZZ& p)
 { 
-  static const bigint zero(0);
-  bigint a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
+  static const ZZ zero(0);
+  ZZ a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
   if (zpsol(a,b,c,d,e,p,zero,0)) return 1;
   else return zpsol(e,d,c,b,a,p,zero,1);
 } /* end of qpsoluble */
 
-int qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
-	      const bigint& e, const bigint& p)
+int qpsoluble(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d, 
+	      const ZZ& e, const ZZ& p)
 { 
-  static const bigint zero(0);
+  static const ZZ zero(0);
   if (zpsol(a,b,c,d,e,p,zero,0)) return 1;
   else return zpsol(e,d,c,b,a,p,zero,1);
 } /* end of qpsoluble */
 
-int qpsoluble(const bigint& a, const bigint& c, const bigint& e, const bigint& p)
+int qpsoluble(const ZZ& a, const ZZ& c, const ZZ& e, const ZZ& p)
 { 
-  static const bigint zero(0);
+  static const ZZ zero(0);
   if (zpsol(a,zero,c,zero,e,p,zero,0)) return 1;
   else return zpsol(e,zero,c,zero,a,p,zero,1);
 } /* end of qpsoluble */
@@ -163,8 +165,8 @@ int Rsoluble(const quartic& g)
   return ((g.gettype()>1)|| is_positive(g.geta()));
 }
 
-int Rsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,  
-	      const bigint& e)
+int Rsoluble(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,  
+	      const ZZ& e)
 {
   quartic g(a,b,c,d,e);
   return Rsoluble(g);
@@ -173,28 +175,28 @@ int Rsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
 
 //#define CHECK_LOC_SOL 1
 
-int locallysoluble(const quartic& g, const vector<bigint>& plist, bigint& badp)
+int locallysoluble(const quartic& g, const vector<ZZ>& plist, ZZ& badp)
 {
-  bigint a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
+  ZZ a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
   return locallysoluble(a,b,c,d,e,plist,badp);
 }
 
-int locallysoluble(const bigint& a, const bigint& c, const bigint& e, 
-		   const vector<bigint>& plist, bigint& badp)
+int locallysoluble(const ZZ& a, const ZZ& c, const ZZ& e, 
+		   const vector<ZZ>& plist, ZZ& badp)
 {
-  static const bigint zero(0);
-  bigint d = c*c-4*a*e;
+  static const ZZ zero(0);
+  ZZ d = c*c-4*a*e;
   if(global_hilbert(a,d,plist,badp)) return 0;
   return locallysoluble(a,zero,c,zero,e,plist,badp);
 }
 
-int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
-		   const bigint& e, const vector<bigint>& plist, bigint& badp)
+int locallysoluble(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
+		   const ZZ& e, const vector<ZZ>& plist, ZZ& badp)
 {
   // First check R-solubility
   if (!Rsoluble(a,b,c,d,e))
     {
-      badp = bigint(0);
+      badp = ZZ(0);
       return 0;
     }
   if(is_zero(b)&&is_zero(d)) // do a quick Hilbert check:
@@ -202,7 +204,7 @@ int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigi
       return 0;
 
   return std::all_of(plist.begin(), plist.end(),
-                     [&badp, a,b,c,d,e] (const bigint& p) {badp=p; return new_qpsoluble(a,b,c,d,e,p,0);});
+                     [&badp, a,b,c,d,e] (const ZZ& p) {badp=p; return new_qpsoluble(a,b,c,d,e,p,0);});
 }  /* end of locallysoluble */
 
 /* Samir Siksek's Local Solubility Test for odd p */
@@ -215,21 +217,21 @@ int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigi
 //#define CROSS_OVER_P 100
 //#define CROSS_OVER_P 7 // for testing only!
 
-int new_qpsoluble(const quartic& g, const bigint& p, int verbose)
+int new_qpsoluble(const quartic& g, const ZZ& p, int verbose)
 {
-  bigint a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
+  ZZ a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
   return new_qpsoluble(a,b,c,d,e,p,verbose);
 }
 
-int new_qpsoluble_ace(const bigint& a, const bigint& c, const bigint& e, 
-		      const bigint& p, int verbose)
+int new_qpsoluble_ace(const ZZ& a, const ZZ& c, const ZZ& e, 
+		      const ZZ& p, int verbose)
 {
-  bigint b; b=0;
+  ZZ b; b=0;
   return new_qpsoluble(a,b,c,b,e,p,verbose);
 }
 
-int new_qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
-			const bigint& e, const bigint& p, int verbose)
+int new_qpsoluble(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d, 
+			const ZZ& e, const ZZ& p, int verbose)
 {
   int verb;
 #ifdef DEBUG_NEW_LOCSOL
@@ -254,21 +256,17 @@ int new_qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigin
   else return new_zpsol(e,d,c,b,a,p,verbose);
 } /* end of new_qpsoluble */
 
-int new_zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,const bigint& e, const bigint& p, int verbose)
+int new_zpsol(const ZZ& a,const ZZ& b,const ZZ& c,const ZZ& d,const ZZ& e, const ZZ& p, int verbose)
 {
-  vector<bigint> coeff = {a, b, c, d, e};
+  vector<ZZ> coeff = {a, b, c, d, e};
   return local_sol(p,coeff,verbose);
 }
 
 /* Samir's Local Solubility Test for odd p */
 
-#define Factorization vec_pair_ZZ_pX_long
-#define Term pair_ZZ_pX_long
-#define Poly ZZ_pX
-
-Factorization fact_c(vector<bigint> c, int verbose=0)
+vec_pair_ZZ_pX_long fact_c(vector<ZZ> c, int verbose=0)
 {
-  Poly f;
+  ZZ_pX f;
   for (long i=0; i<5; i++)
     SetCoeff(f,i,to_ZZ_p(c[i]));
   if(verbose) cout<<"Factorizing "<<f<<" after making monic: ";
@@ -278,7 +276,7 @@ Factorization fact_c(vector<bigint> c, int verbose=0)
   return  CanZass(f, verbose);
 }
 
-int local_sol(const bigint& p, vector<bigint> c, int verbose)
+int local_sol(const ZZ& p, vector<ZZ> c, int verbose)
 {
   ZZ_p::init(p);
   if (verbose)
@@ -288,11 +286,11 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
        cout << c[0] << "      p=" << p << endl;
     }
 
-  bigint r[2],t;
+  ZZ r[2],t;
   long fl,i;
-  bigint p2=sqr(p);
-  Term term;
-  Poly F;
+  ZZ p2=sqr(p);
+  pair_ZZ_pX_long term;
+  ZZ_pX F;
 
   int zeromodp=1;
   for (i=0; (i<5) && zeromodp; i++) {zeromodp=div(p,c[i]);}
@@ -301,14 +299,14 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
       if (verbose) cout << "f is 0 mod p: Case II" << endl;
       zeromodp=1;
       for (i=0; (i<5) && zeromodp; i++) { zeromodp=div(p2,c[i]); }
-      vector<bigint> dd(5);
+      vector<ZZ> dd(5);
       if (zeromodp)
          { for (i=0; i<5; i++)   { dd[i]=c[i]/p2; }
 	   if (verbose) cout << "f is 0 mod p^2, recursing" << endl;
            return local_sol(p,dd,verbose);
          }
       for (i=0; i<5; i++) { dd[i]=c[i]/p; }
-      Factorization fact_f=fact_c(dd);
+      vec_pair_ZZ_pX_long fact_f=fact_c(dd);
       // Is there a non-repeated root
       if (verbose) cout << "Factorization of f/p = "<<fact_f << endl;
       for (i=0; i<fact_f.length(); i++)
@@ -326,14 +324,14 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
       /* Go thru each repeated root and make the
          required transformation
       */
-      vector<bigint> d(5);
+      vector<ZZ> d(5);
       fl=0;
       for (i=0; i<fact_f.length() && (!fl); i++)
         { term=fact_f[i];
           F=term.a;
           long e=term.b;
           if ((deg(F)==1) && (e!=1))
-            { bigint rt=-rep(ConstTerm(F));
+            { ZZ rt=-rep(ConstTerm(F));
               if (verbose)
 		cout << "Repeated Root=" << rt << ", recursing"<<endl;
  // Using f(pX+r)/p^2
@@ -349,7 +347,7 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
     }
 // CASE I
   if (verbose) cout << "f is not 0 mod p: Case I" << endl;
-  bigint unit;
+  ZZ unit;
   zeromodp=1;
   for (i=4; i>=0 && zeromodp; i--)
      { unit=c[i];
@@ -362,7 +360,7 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
 
   // Factorize f
 
-  Factorization fact_f=fact_c(c);
+  vec_pair_ZZ_pX_long fact_f=fact_c(c);
   long nc=fact_f.length();
   // Check if of the form unit*g^2
   if (verbose) cout << "Factorization of f = "<< fact_f << endl;
@@ -397,7 +395,7 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
     }
   if(verbose)
     cout<<"f = unit*g^2 where unit="<<unit<<", g="<<F<<endl;
-  bigint te,g0,g1,g2;
+  ZZ te,g0,g1,g2;
   g2=rep(coeff(F,0)); // lift to ZZ
   g1=rep(coeff(F,1));
   g0=0;
@@ -405,7 +403,7 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
   if (verbose) 
     cout << "g = " << g0 << " " << g1 << " " << g2 << endl;
   // Now determine h
-  bigint h0,h1,h2,h3,h4;
+  ZZ h0,h1,h2,h3,h4;
   h4=(c[4]-unit*g0*g0)/p;
   h3=(c[3]-2*unit*g1*g0)/p;
   h2=(c[2]-2*unit*g2*g0-unit*g1*g1)/p;
@@ -418,7 +416,7 @@ int local_sol(const bigint& p, vector<bigint> c, int verbose)
   /* For each root which is also a root of h
      transform the equations and call again
   */
-  vector<bigint> d(5);
+  vector<ZZ> d(5);
   fl=0;
   for (i=0; i<num_r && !fl; i++)
     { te=(((h4*r[i]+h3)*r[i]+h2)*r[i])%p;

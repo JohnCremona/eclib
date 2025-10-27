@@ -35,7 +35,7 @@ fixc6::fixc6()
   ifstream datafile("fixc6.data");
   if (!datafile) return;
 
-  long n=1; int i; bigint c4,c6;
+  long n=1; int i; ZZ c4,c6;
   while(n) 
     {
       datafile>>n>>i>>c6;
@@ -54,7 +54,7 @@ fixc6::fixc6()
 #endif // MPFP
 } // end of constructor
 
-void fixc6::operator()(long N, int i, bigint& c4, bigint& c6)
+void fixc6::operator()(long N, int i, ZZ& c4, ZZ& c6)
 {
   pair<long,int> key(N,i+1);
   auto j = fixc6table.find(key);
@@ -64,7 +64,7 @@ void fixc6::operator()(long N, int i, bigint& c4, bigint& c6)
   return;
 }
 
-map< pair<long,int>, bigint > fixc6::fixc6table;
-map< pair<long,int>, bigint > fixc6::fixc4table;
+map< pair<long,int>, ZZ > fixc6::fixc6table;
+map< pair<long,int>, ZZ > fixc6::fixc4table;
 fixc6 c4c6fixer;  // the one and only instance of the class
 

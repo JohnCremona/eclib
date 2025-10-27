@@ -27,38 +27,38 @@
 #include "marith.h"
 
 class sqfdiv {
-  vector<bigint>* primebase;  // includes all relevant primes
-  bigint d;                // product of current subset
+  vector<ZZ>* primebase;  // includes all relevant primes
+  ZZ d;                // product of current subset
   long np;                  // number in current subset
   int positive;             // flag for sign
   long factor;              // counts log_2 of saving index since initialisation
-  vector<bigint> subgp;       // subgp factored out (complete)
-  vector<bigint> gens;        // generators of latter
+  vector<ZZ> subgp;       // subgp factored out (complete)
+  vector<ZZ> gens;        // generators of latter
   long nsub, maxnsub, ngens, maxngens;       // current, max number in subgp
   vector<long> pivs;
 public:
-  sqfdiv(const bigint& dd, int posd, vector<bigint>* plist);
-  void usediv(const bigint& e);  
-  vector<bigint> getdivs() const;
-  vector<bigint> getsupp(int bothsigns=0) const;
-  vector<bigint> getsubgp() {return vector<bigint>(subgp.begin(),subgp.begin()+nsub);}
+  sqfdiv(const ZZ& dd, int posd, vector<ZZ>* plist);
+  void usediv(const ZZ& e);  
+  vector<ZZ> getdivs() const;
+  vector<ZZ> getsupp(int bothsigns=0) const;
+  vector<ZZ> getsubgp() {return vector<ZZ>(subgp.begin(),subgp.begin()+nsub);}
   long getfactor() {return factor;}
   void display();
 };
 
-bigint sqfred(const bigint& a, const vector<bigint>& plist);
+ZZ sqfred(const ZZ& a, const vector<ZZ>& plist);
 
-inline bigint sqfred(const bigint& a) { return sqfred(a,pdivs(a));}
+inline ZZ sqfred(const ZZ& a) { return sqfred(a,pdivs(a));}
 
-bigint sqfmul(const bigint& a, const bigint& b);
+ZZ sqfmul(const ZZ& a, const ZZ& b);
 
-bigint makenum(const vector<bigint>& supp, long mask);
+ZZ makenum(const vector<ZZ>& supp, long mask);
 
-long makeindex(const vector<bigint>& supp, const bigint& n, bigint& n0);
+long makeindex(const vector<ZZ>& supp, const ZZ& n, ZZ& n0);
 
 // support(n) is like pdivs(n) but includes -1 always 
 // (except for n=0, but it should never be called with 0)
 
-vector<bigint> support(const bigint& n);
+vector<ZZ> support(const ZZ& n);
 
 #endif

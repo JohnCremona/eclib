@@ -45,8 +45,8 @@
 #define MAX_R 5   // will not attempt to list all coset reps
                   // for 2E(Q) in E(Q) if rank is more than this
 
-void rank2::makepoint(const bigint& c,const bigint& d1,const bigint& d2,
-	       const bigint& x, const bigint& y, const bigint& z, 
+void rank2::makepoint(const ZZ& c,const ZZ& d1,const ZZ& d2,
+	       const ZZ& x, const ZZ& y, const ZZ& z, 
 	       int which)
 {
   Point P(ee);
@@ -75,7 +75,7 @@ void rank2::makepoint(const bigint& c,const bigint& d1,const bigint& d2,
 	  if(!Q.isvalid()) {cout << " --warning: NOT on curve! " ;}
 	  cout << endl;
 	}
-      const bigint& xz=x*z, x2=x*x, z2=z*z;
+      const ZZ& xz=x*z, x2=x*x, z2=z*z;
       if(sign(xz)!=0) P.init(ee,2*y*y*xz,y*(d1*x2*x2-d2*z2*z2),pow(2*xz,3));
       if(verbose) 
 	{
@@ -89,20 +89,20 @@ void rank2::makepoint(const bigint& c,const bigint& d1,const bigint& d2,
   if(order(P)<0)  {pointlist.push_back(P); npoints++;} // else torsion so ignore
 }
 
-int rank2::testquartic(const bigint& c,const bigint& d1,const bigint& d2,int which)
+int rank2::testquartic(const ZZ& c,const ZZ& d1,const ZZ& d2,int which)
 {
   // creates quartic (d1,0,c,0,d2), assumed els, and tries to find a rational point
   // returns +1 if rational point found (handled my makepoint())
   //          0 if undecided
-  static const bigint zero(0);
-  static const bigint one(1);
+  static const ZZ zero(0);
+  static const ZZ one(1);
   quartic q(d1,  zero, c,  zero, d2);
   if (verbose) cout<<q<<": ";
 
-  bigint x,y,z;
+  ZZ x,y,z;
 
   // First a quick search for a small point:
-  if (ratpoint(q,one,bigint(lim1),x,y,z))
+  if (ratpoint(q,one,ZZ(lim1),x,y,z))
     { 
       makepoint(c,d1,d2,x,y,z,which);
       return 1;
@@ -125,7 +125,7 @@ int rank2::testquartic(const bigint& c,const bigint& d1,const bigint& d2,int whi
   return 0;
 }  /* end of testquartic*/
  
-int rank2::second_descent(const bigint& c, const bigint& d1, const bigint& d2, int which)
+int rank2::second_descent(const ZZ& c, const ZZ& d1, const ZZ& d2, int which)
   // creates quartic (d1,0,c,0,d2), assumed els, and tries to find a rational point
   // by second descent (after testquartic() has failed using direct search)
   // returns +1 if rational point found (handled by makepoint())
@@ -133,7 +133,7 @@ int rank2::second_descent(const bigint& c, const bigint& d1, const bigint& d2, i
   //         -1 if no rational point exists (proved by second descent)
 {
   int res, verb=verbose; if(verb) verb--;  // reduced verbosity level within desc2()
-  bigint x,y,z;
+  ZZ x,y,z;
   if(verbose) cout<<"d1="<<d1<<": "<<flush;
   if(which)
     res = desc2(c,d1,d2,badprimes, supp0, elsgens0, mask0,  lim2,x,y,z,verb);
@@ -164,9 +164,9 @@ int rank2::second_descent(const bigint& c, const bigint& d1, const bigint& d2, i
 // S^(phi)(E')   if which==0
 // S^(phi')(E)   if which==1
 
-void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
+void rank2::find_elsgens(int which, const ZZ& c, const ZZ& d)
 {
-  static const bigint zero(0);
+  static const ZZ zero(0);
   if (verbose>1) 
     {
       if(which) cout<<"\n";
@@ -175,7 +175,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
       cout<<"= "<<c<<", d"; if(which) cout<<"'";
       cout<<"= "<<d<<")"<<endl;
     }
-  bigint ddash = c*c-4*d;
+  ZZ ddash = c*c-4*d;
   int posd1, istep=1;
   if (sign(ddash)< 0) 
     posd1=1; 
@@ -184,7 +184,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
   if(posd1) istep=2;  // this will skip negative d1
   
   int extra2torsion=0;
-  bigint ee2, ee3;
+  ZZ ee2, ee3;
   if(which)
     {
       if(d_is_sq)
@@ -204,8 +204,8 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 	}      
     }
 
-  bigint d1, d2, badp;
-  const vector<bigint>& supp = (which? supp1 : supp0);
+  ZZ d1, d2, badp;
+  const vector<ZZ>& supp = (which? supp1 : supp0);
   long ns = supp.size();
   if(verbose>1)
     {
@@ -221,7 +221,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
     }
 
   long mask=0, maxn=long(1)<<ns, index, j, nelsgens=0;
-  vector<bigint> elsgens;
+  vector<ZZ> elsgens;
 
 // use all torsion: added 24/6/02
 // Find and process torsion
@@ -256,7 +256,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 // the 2-torsion points which is not the multiple of T1
     {
       T2=(ntorsion/4)*T1;
-      bigint xT2=T2.getX();
+      ZZ xT2=T2.getX();
       if(xT2==zero) 
 	T2.init(ee,ee2,zero); 
       else 
@@ -277,7 +277,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
   cout<<"Processing generating torsion points"<<endl;  
 #endif
   
-  bigint d1x;
+  ZZ d1x;
   for(it=0; it<ntorsion; it++)
     {
       Point T = torsion[it];
@@ -384,7 +384,7 @@ void rank2::find_elsgens(int which, const bigint& c, const bigint& d)
 // phi'(S^2(E)) in S^(phi)(E')   if which==0
 // phi(S^2(E')) in S^(phi')(E)   if which==1
 
-void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
+void rank2::find_els2gens(int which, const ZZ& c, const ZZ& d)
 {
   if (verbose>1)
     {
@@ -400,14 +400,14 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
       cout<<")"<<endl;
     }
 
-  const vector<bigint>& elsgens = (which? elsgens1: elsgens0);
+  const vector<ZZ>& elsgens = (which? elsgens1: elsgens0);
   long nelsgens        = (which? els1: els0);
   long nt2gens         = (which? nt2gens1: nt2gens0);
 
-  bigint d1, d2, badp, x,y,z;
+  ZZ d1, d2, badp, x,y,z;
   unsigned long els2mask; long index;
   long maxn = long(1)<<nelsgens, nels2gens=0, els2piv;
-  vector<bigint> els2gens;
+  vector<ZZ> els2gens;
   bitspace els2_space(nelsgens);
 
 // first record the torsion contribution:
@@ -496,19 +496,19 @@ void rank2::find_els2gens(int which, const bigint& c, const bigint& d)
     }
 }
 
-void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
+void rank2::find_glsgens(int which, const ZZ& c, const ZZ& d)
 {
-  const vector<bigint>& elsgens = (which? els2gens1: els2gens0);
+  const vector<ZZ>& elsgens = (which? els2gens1: els2gens0);
   long nelsgens        = (which? els21: els20);
   long nt2gens         = (which? nt2gens1: nt2gens0);
-  vector<bigint> gls_gens;
+  vector<ZZ> gls_gens;
   bitspace gls_space(nelsgens);
   long glspiv, maxn = long(1)<<nelsgens;
   long nglsgens=0;
   unsigned long glsmask;
   long index, stage, nstages=1; if(do_second_descent) nstages=2;
   long shortfall1, shortfall2;
-  bigint d1, d2;
+  ZZ d1, d2;
   int res;
   
 // first record the torsion contribution:
@@ -693,10 +693,10 @@ void rank2::find_glsgens(int which, const bigint& c, const bigint& d)
     }
 }
  
-void rank2::local_descent(const bigint& x0)
+void rank2::local_descent(const ZZ& x0)
 {
-  bigint c,d,cdash,ddash,disc,rootd;
-  static const bigint zero(0), two(2), minusone(-1);
+  ZZ c,d,cdash,ddash,disc,rootd;
+  static const ZZ zero(0), two(2), minusone(-1);
 
   c =  3 * x0 + s2;
   d = x0*(c+s2) + s4;
@@ -827,8 +827,8 @@ void rank2::local_descent(const bigint& x0)
 rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
   : rank12(ec,verb,sel,l1,l2,0,second)
 {
-  static const bigint zero(0), one(1), eight(8);
-  bigint a1, a2, a3, a4, a6;
+  static const ZZ zero(0), one(1), eight(8);
+  ZZ a1, a2, a3, a4, a6;
   ec->getai(a1,a2,a3,a4,a6);
   fullnpoints = npoints = 0;
   rank = 0;            // default value if failure occurs
@@ -846,7 +846,7 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
     { s2=a2; s4=a4; s6=a6;
     }
 
-  vector<bigint> xlist = Introotscubic(s2,s4,s6);
+  vector<ZZ> xlist = Introotscubic(s2,s4,s6);
   ntwo_torsion = xlist.size();
   if (ntwo_torsion==0)
     { 
@@ -864,7 +864,7 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
   two_torsion.resize(ntwo_torsion);
   for(n=0; n<ntwo_torsion; n++)
     {
-      bigint ei = xlist[n];
+      ZZ ei = xlist[n];
       if(scaled) two_torsion[n].init(the_curve,2*ei,-a1*ei-4*a3, eight);
       else two_torsion[n].init(the_curve,ei, zero, one);
       if(verbose)
@@ -926,7 +926,7 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
     {
 
       // Redo the best local descent if necessary
-      bigint x0=xlist[best_isogeny];
+      ZZ x0=xlist[best_isogeny];
       if(rerun_needed) 
 	{
 	  if(verbose) cout<<"Rerunning the local descent for isogeny number "
@@ -936,10 +936,10 @@ rank2::rank2(Curvedata* ec, int verb, int sel, long l1, long l2, int second)
 	  local_descent(x0);
 	}
 
-  bigint c =  3 * x0 + s2;
-  bigint d = x0*(c+s2) + s4;
-  bigint cdash = - 2 * c;
-  bigint ddash = c*c -  4*d;
+  ZZ c =  3 * x0 + s2;
+  ZZ d = x0*(c+s2) + s4;
+  ZZ cdash = - 2 * c;
+  ZZ ddash = c*c -  4*d;
 
   if(verbose)
     {
@@ -1116,7 +1116,7 @@ cout<<"els21 = "<<els21<<endl;
 void rank2::makegens()
 {
   Curvedata ee_min;
-  bigint u, r, s, t, x, y, z; int i;
+  ZZ u, r, s, t, x, y, z; int i;
   ee_min=ee.minimalize(u,r,s,t);
   if(verbose)
     {
@@ -1161,8 +1161,8 @@ void rank2::listgens()
     }
 }
 
-void rank2::listgens(Curvedata* CD_orig, const bigint& u, const bigint& r, 
-		     const bigint& s, const bigint& t)
+void rank2::listgens(Curvedata* CD_orig, const ZZ& u, const ZZ& r, 
+		     const ZZ& s, const ZZ& t)
 {
   long i;
   cout << "List of generators of E(Q)/2E(Q) (mod torsion) for E = " 
@@ -1244,8 +1244,8 @@ void rank2::listpoints()
   cout<<"\n\n";
 }
 
-void rank2::listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r, 
-		                           const bigint& s, const bigint& t)
+void rank2::listpoints(Curvedata* CD_orig, const ZZ& u, const ZZ& r, 
+		                           const ZZ& s, const ZZ& t)
 {
   makepoints();
   cout << "Points on original curve E = " << (Curve)(*CD_orig) 

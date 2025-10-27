@@ -29,15 +29,15 @@
 
 // Function for naive search, no sieving:
 
-int ratpoint(const quartic& g, const bigint& min, const bigint& max, bigint& xx, bigint&yy, bigint& zz);
+int ratpoint(const quartic& g, const ZZ& min, const ZZ& max, ZZ& xx, ZZ&yy, ZZ& zz);
 
 // class for fancier sieve-assisted search
 
 class quartic_sieve : public point_processor {
 private:
   quartic *g;
-  bigint a,b,c,d,e,roota,roote;
-  bigint pu,pv,pw;   // coords of point found
+  ZZ a,b,c,d,e,roota,roote;
+  ZZ pu,pv,pw;   // coords of point found
   int verbose, easy, use_stoll;
   long ulim;
   int num_aux;
@@ -45,7 +45,7 @@ private:
   vector<vector<int>> xgood_mod_aux, squares;
   long nwprimes;
   long npoints, maxnpoints;
-  int process(const bigint& x, const bigint& y, const bigint& z) override
+  int process(const ZZ& x, const ZZ& y, const ZZ& z) override
   {pu=x; pv=y; pw=z; npoints++;
   //cout<<"[x,y,z]=["<<x<<","<<y<<","<<z<<"]\n";
   return (npoints>=maxnpoints);
@@ -58,7 +58,7 @@ public:
   long stoll_search(double h_lim, int posxonly=0);
   long search_range(int lower, bigfloat lower_bound, 
 		   int upper, bigfloat upper_bound, int posxonly=0);
-  void getpoint(bigint& x, bigint& y, bigint& z) {x=pu;y=pv;z=pw;}
+  void getpoint(ZZ& x, ZZ& y, ZZ& z) {x=pu;y=pv;z=pw;}
 };
 
 #endif

@@ -32,11 +32,11 @@ private:
     V, W, Winv, WinvV, Winv_scaled;
   mat projcoord;
   scalar coord_fac;
-  bigint Wdetnum, Wdetdenom;
-  vector<bigint> minpol;  // min poly of alpha, field generator
+  ZZ Wdetnum, Wdetdenom;
+  vector<ZZ> minpol;  // min poly of alpha, field generator
 public:
-  vector<bigint> Hscales;
-  vector<bigint> Sscales;
+  vector<ZZ> Hscales;
+  vector<ZZ> Sscales;
   subspace_m S;   // the basis
   long N;         // the level
   homspace* H1; // the ambient modular symbol space
@@ -44,7 +44,7 @@ public:
   vec Kcol; // one column of K
   int rk;   // #rows of K
   int dimH, dimS; // dimensions of H1 and S
-  bigint dH, dS, dHS; // denominators of H1, S (relative) and S (absolute)
+  ZZ dH, dS, dHS; // denominators of H1, S (relative) and S (absolute)
   nfd(void) {;}
   nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose=0);
   void display(void) const;

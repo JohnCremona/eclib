@@ -32,8 +32,8 @@ int main(){
 
 while (getcurve(ai,verbose))
 {
-  bigint c4,c6,twist2;
-  bigint v;
+  ZZ c4,c6,twist2;
+  ZZ v;
   long twist=1;
 
   Curvedata D(Curvedata(ai,v),1);

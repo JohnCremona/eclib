@@ -36,7 +36,7 @@ int main(){
 
   initprimes("PRIMES",0);
 	
-  bigint v;
+  ZZ v;
   vector<bigrational> ai(5);
 
   while (getcurve(ai,verbose))

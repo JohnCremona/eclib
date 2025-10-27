@@ -44,8 +44,8 @@ int main(void)
       cout << "Creating an array of 3 matrices\n";
       vector<mat_m> matlist(3);
       matlist[0] = a;
-      matlist[1] = bigint(2)*a;
-      matlist[2] = bigint(3)*a;
+      matlist[1] = ZZ(2)*a;
+      matlist[2] = ZZ(3)*a;
       cout << " A=\n" << matlist[0] << endl;
       cout << "2A=\n" << matlist[1] << endl;
       cout << "3A=\n" << matlist[2] << endl;
@@ -79,7 +79,7 @@ cout << "Enter any number "; cin >> i;
 b-=a;
 cout << "after B-:=A, A = \n" << a << "\nand B = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
-bigint two; two=2;
+ZZ two; two=2;
 b*=two;
 cout << "after B*:=2, A = \n" << a << "\nand B = \n" << b << endl;
 cout << "Enter any number "; cin >> i;
@@ -106,7 +106,7 @@ cout << "Now A = \n" << a << endl;
 cout << "Enter any number "; cin >> i;
 }
 {
-vector<bigint> cp = a.charpoly();
+vector<ZZ> cp = a.charpoly();
 cout << "char. poly. of A has coefficients " << cp << endl;
 cout << "det(A) = " << a.determinant() << endl;
 }
@@ -116,7 +116,7 @@ cout << "det(A) = " << a.determinant() << endl;
 }
 
 long rk, ny;
-bigint denom;
+ZZ denom;
 {
 int method;
 cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";

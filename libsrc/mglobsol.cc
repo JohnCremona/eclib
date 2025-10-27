@@ -26,23 +26,23 @@
 
 #include "eclib/mglobsol.h"
 
-int test(const bigint& x, const bigint& z, const bigint& y2, bigint&xx, bigint&yy, bigint&zz)
+int test(const ZZ& x, const ZZ& z, const ZZ& y2, ZZ&xx, ZZ&yy, ZZ&zz)
 {
-  bigint y;
+  ZZ y;
   int ans = isqrt(y2,y);
   if (ans) { xx=x; yy=y; zz=z; }
   return ans;
 }
 
-int ratpoint(const quartic& g, const bigint& min, const bigint& max, bigint& xx, bigint&yy, bigint& zz)
-{ bigint a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
-  bigint n,sx,gg; int found = 0;
+int ratpoint(const quartic& g, const ZZ& min, const ZZ& max, ZZ& xx, ZZ&yy, ZZ& zz)
+{ ZZ a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
+  ZZ n,sx,gg; int found = 0;
   // Check for rational points at 0 or infinity:
   if(isqrt(a,n)) {xx=1; yy=n; zz=0; return 1;}
   if(isqrt(e,n)) {xx=0; yy=n; zz=1; return 1;}
-  bigint x,x2,x3,x4,z,z2,z3,z4,ax4,bx3z,cx2z2,dxz3,ez4;
-  static const bigint zero(0);
-  static const bigint one(1);
+  ZZ x,x2,x3,x4,z,z2,z3,z4,ax4,bx3z,cx2z2,dxz3,ez4;
+  static const ZZ zero(0);
+  static const ZZ one(1);
   for (n=min; (n<=max) && (!found); ++n)
     { 
       if (n==1) 
@@ -311,7 +311,7 @@ long quartic_sieve::search(double h_lim, long maxnpts, int posxonly)
 long quartic_sieve::stoll_search(double h_lim, int posxonly) 
 {
   //  cout<<"In quartic_sieve::stoll_search()"<<endl;
-  vector<bigint> coef(5);
+  vector<ZZ> coef(5);
   coef[0]=e; coef[1]=d; coef[2]=c; coef[3]=b; coef[4]=a;
   qsieve s(this, 4, coef, to_bigfloat(h_lim), verbose);
   // Find and set search intervals
@@ -402,9 +402,9 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 //  cout<<"e="<<e<<"\n";
 #endif
 // declare other loop variables
-  bigint w2,w3,w4, aw,bw,cw,dw,ew;
+  ZZ w2,w3,w4, aw,bw,cw,dw,ew;
   long i, paw,pbw,pcw,pdw,pew, u, w, aux;
-  bigint vsq, v;
+  ZZ vsq, v;
 
 //
 // MAIN LOOP on w (denominator)
@@ -474,7 +474,7 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 	{
 
 // some preliminary calculations of multiples of w etc.
-	  w2 = sqr(bigint(w));  w3 = w*w2; w4 = w2*w2;
+	  w2 = sqr(ZZ(w));  w3 = w*w2; w4 = w2*w2;
 	  aw = a; bw = b*w; cw = c*w2; dw = d*w3; ew = e*w4;
 
 	  for ( i=0; i < num_aux; i++)
@@ -556,11 +556,11 @@ long quartic_sieve::search_range(int lower, bigfloat lower_bound,
 
 	  if(!w_vars_set)
 	    {
-	      w2 = sqr(bigint(w));  w3 = w*w2; w4 = w2*w2;
+	      w2 = sqr(ZZ(w));  w3 = w*w2; w4 = w2*w2;
 	      aw = a; bw = b*w; cw = c*w2; dw = d*w3; ew = e*w4;
 	      w_vars_set=1;
 	    }
-	  bigint f=aw; f*=u; f+=bw; f*=u; f+=cw; f*=u; f+=dw; f*=u; f+=ew;
+	  ZZ f=aw; f*=u; f+=bw; f*=u; f+=cw; f*=u; f+=dw; f*=u; f+=ew;
 	  if(isqrt(f,v))
 	    {
 #ifdef DEBUG_RANGES

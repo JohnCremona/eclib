@@ -35,7 +35,7 @@
 #include "linalg.h"
 
 // dot product of b[i] and b[j] with weights from b[0]:
-bigint sdot(const vector<vec_m>& b, int i, int j);
+ZZ sdot(const vector<vec_m>& b, int i, int j);
 
 // LLL-reduce the vectors b[1],...,b[n] in place.
 

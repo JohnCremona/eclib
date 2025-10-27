@@ -31,7 +31,7 @@
 
 // FLINT support using 32-bit hmod_mat for scalar=int via Fredrik
 // Stromberg's mini interface to gr_mat, or using 64-bit nmod_mat for
-// scalar=long, or using fmpx_mod_mat_y for scalar=bigint.
+// scalar=long, or using fmpx_mod_mat_y for scalar=ZZ.
 
 // This wrapper interface provides the necessary hmod_mat functions
 

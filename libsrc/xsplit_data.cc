@@ -27,7 +27,7 @@
 
 template class ff_data<int>;
 template class ff_data<long>;
-template class ff_data<bigint>;
+template class ff_data<ZZ>;
 
 /**
  * ff_data()

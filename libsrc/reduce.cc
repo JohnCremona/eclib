@@ -32,12 +32,12 @@
 //#define DEBUG_FIRSTSTEP
 //#define USE_OLD_BSD  // to use bsd-reduction for type 3 (worse!)
 
-void reduce_b(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void reduce_b(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	      unimod& m)
 {
-  bigint a4=a<<2;
-  bigint bmod4a = mod(b,a4);
-  bigint alpha;
+  ZZ a4=a<<2;
+  ZZ bmod4a = mod(b,a4);
+  ZZ alpha;
   divide_exact((bmod4a-b),a4,alpha);
   if(is_zero(alpha)) return;
   xshift(alpha,a,b,c,d,e,m);
@@ -46,7 +46,7 @@ void reduce_b(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 
 bigfloat show(bigfloat x) {cout<<x<<endl; return x;}
 
-vector<bigfloat> types12_covar(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
+vector<bigfloat> types12_covar(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
                                const bigfloat& xH, const bigfloat& phi)
 {
   // The following covariant quadratic is the unique real quadratic factor
@@ -123,12 +123,12 @@ vector<bigfloat> type3_covar(const bigfloat& xa, const bigfloat& xb, const bigfl
 }
 
 // Compute the quadratic covariant of a real quartic:
-vector<bigfloat> quadratic_covariant(const bigint& a, const bigint& b, const bigint& c, const bigint& d, const bigint& e)
+vector<bigfloat> quadratic_covariant(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d, const ZZ& e)
 {
-  bigint ii = II(a,b,c,d,e);
-  bigint jj = JJ(a,b,c,d,e);
-  bigint disc = 4*pow(ii,3)-sqr(jj);
-  bigint  H = H_invariant(a,b,c), R = R_invariant(a,b,c,d);
+  ZZ ii = II(a,b,c,d,e);
+  ZZ jj = JJ(a,b,c,d,e);
+  ZZ disc = 4*pow(ii,3)-sqr(jj);
+  ZZ  H = H_invariant(a,b,c), R = R_invariant(a,b,c,d);
   bigfloat xH = I2bigfloat(H);
   bigfloat xii = I2bigfloat(ii), xjj=I2bigfloat(jj);
   bigcomplex c1(to_bigfloat(0)), c2(-3*xii), c3(xjj);
@@ -200,7 +200,7 @@ vector<bigfloat> quadratic_covariant(const bigint& a, const bigint& b, const big
   return hcoeffs;
 }
 
-void reduce(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void reduce(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	    unimod& m)
      // Construct a covariant quadratic, and reduce this
 {
@@ -218,9 +218,9 @@ void reduce(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 
 #ifdef REDUCE_B
   // Now reduce b so -2a < b <= 2a:
-  bigint newa4=a<<2;
-  bigint bmod4a = mod(b,newa4);
-  bigint alpha;
+  ZZ newa4=a<<2;
+  ZZ bmod4a = mod(b,newa4);
+  ZZ alpha;
   divide_exact((bmod4a-b),newa4,alpha);
   if(!is_zero(alpha))
     {
@@ -237,12 +237,12 @@ void reduce(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
 // Finds a good unimodular matrix (a,b;c,d)
 // which raises z=x0+i*y0 when y0 is small
 int first_step(const bigfloat& x0, const bigfloat& y0,
-	       bigint& a, bigint& b, bigint& c, bigint& d);
+	       ZZ& a, ZZ& b, ZZ& c, ZZ& d);
 
 // Finds a unimodular matrix (a,b;c,d)
 // which raises z=x0+i*y0 so im(z)>h
 int one_step(const bigfloat& x0, const bigfloat& y0, const bigfloat& h,
-	     bigint& a, bigint& b, bigint& c, bigint& d);
+	     ZZ& a, ZZ& b, ZZ& c, ZZ& d);
 
 unimod reduce_quad_1(const bigfloat& b, const bigfloat& c);
 unimod reduce_quad_2(const bigfloat& b, const bigfloat& c);
@@ -275,7 +275,7 @@ unimod reduce_quad_1(const bigfloat& bb, const bigfloat& cc)
 
   // Special first step: should raise so Im(z)>height
   bigfloat h(to_bigfloat(0.1));
-  bigint ma, mb, mc, md;
+  ZZ ma, mb, mc, md;
   ma=1; mb=0; mc=0; md=1;
   one_step(xz,yz,h,ma,mb,mc,md);
 #ifdef DEBUG_REDUCE_QUAD
@@ -303,7 +303,7 @@ unimod reduce_quad_1(const bigfloat& bb, const bigfloat& cc)
   cout << "modulus^2          = " << az << endl;
 #endif
 
-  bigint s = Iround(xz);
+  ZZ s = Iround(xz);
   bigfloat xk=I2bigfloat(s);
   m1.x_shift(s);
 
@@ -368,7 +368,7 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
   // Preliminary step shifts real part of root to [-1/2,1/2]
   //    gives better stability in low precision
 
-  bigint s = Iround(xz);
+  ZZ s = Iround(xz);
   bigfloat xk=I2bigfloat(s);
   unimod m1; // default constructor initializes to identity
   m1.x_shift(s);
@@ -392,7 +392,7 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
   // First stage: crude but guaranteed to double im(z):
 
   bigfloat a11, a12, a21, a22;
-  bigint m11, m12, m21, m22;
+  ZZ m11, m12, m21, m22;
   static bigfloat one(to_bigfloat(1));
   int changed=1;
   first_step(xz, yz, m11, m12, m21, m22);
@@ -470,7 +470,7 @@ unimod reduce_quad_2(const bigfloat& b, const bigfloat& c)
 }
 
 int first_step(const bigfloat& x0, const bigfloat& y0,
-	       bigint& a, bigint& b, bigint& c, bigint& d)
+	       ZZ& a, ZZ& b, ZZ& c, ZZ& d)
 // Finds a good unimodular matrix (a,b;c,d)
 // which raises z=x0+i*y0 when y0 is small
 {
@@ -490,7 +490,7 @@ int first_step(const bigfloat& x0, const bigfloat& y0,
       return 0;
     }
   d=-Iround(xc*x0);
-  bigint g = bezout(-c,d,b,a); // a*d-b*c=g, may be >1
+  ZZ g = bezout(-c,d,b,a); // a*d-b*c=g, may be >1
   if(g>1) {c/=g; d/=g;}
 #ifdef DEBUG_FIRSTSTEP
   cout<<"first_step returns (a,b;c,d) = ("<<a<<","<<b<<";"<<c<<","<<d<<")"<<endl;
@@ -499,14 +499,14 @@ int first_step(const bigfloat& x0, const bigfloat& y0,
 }
 
 int one_step(const bigfloat& x0, const bigfloat& y0, const bigfloat& h,
-	     bigint& a, bigint& b, bigint& c, bigint& d)
+	     ZZ& a, ZZ& b, ZZ& c, ZZ& d)
 // Finds a good unimodular matrix (a,b;c,d)
 // which raises z=x0+i*y0
 {
 #ifdef DEBUG_ONESTEP
   cout<<"In one_step with x0="<<x0<<", y0="<<y0<<endl;
 #endif
-  bigint k, newc, newd;
+  ZZ k, newc, newd;
   bigfloat x(x0), s0(y0/h);
   bigfloat xk, x2, s1, s2, s=to_bigfloat(1), news;
   int i, ans=0;

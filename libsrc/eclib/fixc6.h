@@ -30,7 +30,7 @@
 // the value.
 
 // The fixc6 class has two static data members, of type map<
-// pair<long,int>, bigint> such that an entry ((N,i),c6) or ((N,i),c4)
+// pair<long,int>, ZZ> such that an entry ((N,i),c6) or ((N,i),c4)
 // says that the c6 or c4 value for form i at level N is c6 or c4.  Of
 // course, for most (N,i) pairs this is blank -- and we must avoid
 // inserting wrong dummy entries of the form ((N,i),0).
@@ -46,13 +46,13 @@
 
 class fixc6 {
 
-  static map< pair<long,int>, bigint > fixc4table;
-  static map< pair<long,int>, bigint > fixc6table;
+  static map< pair<long,int>, ZZ > fixc4table;
+  static map< pair<long,int>, ZZ > fixc6table;
 
 public:
 
   fixc6();  // global initializer, see fixc6.cc
-  void operator()(long N, int i, bigint& c4, bigint& c6);  
+  void operator()(long N, int i, ZZ& c4, ZZ& c6);  
 // look up value, changes c4 and/or c6 if there's an entry in the table,
 // otherwise leaves unchanged
 

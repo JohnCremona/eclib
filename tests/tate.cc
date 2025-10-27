@@ -32,7 +32,7 @@ int main(void)
   line(80);
         
   int verb=1;
-  bigint v;
+  ZZ v;
   vector<bigrational> ai(5);
 
   while (getcurve(ai,verb))

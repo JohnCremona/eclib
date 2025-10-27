@@ -25,25 +25,25 @@
 
 void quadratic::transform(const unimod& m)
 {
-  bigint newq0 = eval(m.m11, m.m21);
-  bigint newq2 = eval(m.m12, m.m22);
+  ZZ newq0 = eval(m.m11, m.m21);
+  ZZ newq2 = eval(m.m12, m.m22);
   coeffs[1] = 2 * (coeffs[0]*m.m11*m.m12 + coeffs[2]*m.m21*m.m22) 
                + coeffs[1] * (m.m11*m.m22+m.m12*m.m21);
   coeffs[0] = newq0;
   coeffs[2] = newq2;
 }
 
-void quadratic::x_shift(const bigint& a, unimod& m)
+void quadratic::x_shift(const ZZ& a, unimod& m)
 {
-  const bigint& aq0=a*coeffs[0];
+  const ZZ& aq0=a*coeffs[0];
   coeffs[2]+= (aq0+coeffs[1])*a;
   coeffs[1]+= 2*aq0;
   m.x_shift(a);
 }
 
-void quadratic::y_shift(const bigint& a, unimod& m)
+void quadratic::y_shift(const ZZ& a, unimod& m)
 {
-  const bigint& aq2=a*coeffs[2];
+  const ZZ& aq2=a*coeffs[2];
   coeffs[0]+= (aq2+coeffs[1])*a;
   coeffs[1]+= 2*aq2;
   m.y_shift(a);
@@ -64,7 +64,7 @@ void quadratic::reduce(unimod& m)
       coeffs[2]=-coeffs[2]; 
       coeffs[1]=-coeffs[1];
     }
-  bigint a = roundover(-coeffs[1],2*coeffs[0]);
+  ZZ a = roundover(-coeffs[1],2*coeffs[0]);
   x_shift(a,m);
   int reduced = (coeffs[0]<=coeffs[2]);
   while(!reduced)
@@ -79,9 +79,9 @@ void quadratic::reduce(unimod& m)
   //  cout<<"  of determinant "<<m.det()<<endl;
 }
 
-bigint resultant(const quadratic& q1, const quadratic& q2)
+ZZ resultant(const quadratic& q1, const quadratic& q2)
 {
-  const bigint&
+  const ZZ&
     a1=q1.coeffs[0], b1=q1.coeffs[1], c1=q1.coeffs[2],
     a2=q2.coeffs[0], b2=q2.coeffs[1], c2=q2.coeffs[2];
   return

@@ -128,7 +128,7 @@ inline vector<long> sqfreedivs(long n)
   return sqfreedivs(n, pdivs(n));
 }
 
-// utilities for compatibility with bigint args
+// utilities for compatibility with ZZ args
 inline int odd(const int& a) {return a&1;}
 inline int even(const int& a) {return !(a&1);}
 inline int odd(const long& a) {return a&1;}

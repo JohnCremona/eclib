@@ -31,9 +31,6 @@
 #include "gf.h"
 #include "bigrat.h"
 
-#include <NTL/ZZ_pX.h>
-#include <NTL/ZZ_pXFactoring.h>
-
 #define ZPoly ZZX
 #define PolyCoeff(f,i) coeff((f),(i))
 #define ZPolySetX(f) SetX(f);
@@ -51,24 +48,24 @@
 #define FqPolyAssignX(f) SetX(f)
 #define GetField(f) (galois_field(ZZ_p::modulus()))
 
-vector<bigint> rootsmod(const vector<bigint>& coeffs, bigint p);
+vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ p);
 vector<gf_element> roots(const FqPoly& f);
-vector<bigrational> roots(const vector<bigint>& coeffs);
+vector<bigrational> roots(const vector<ZZ>& coeffs);
 vector<bigrational> roots(const ZPoly& f);
-vector<bigint> introots(const ZPoly& f);
+vector<ZZ> introots(const ZPoly& f);
 
-vector<bigint> Introotscubic(const bigint& a, const bigint& b, const bigint& c);
-vector<bigint> Introotsquartic(const bigint& a, const bigint& b, const bigint& c,
-                            const bigint& d);
+vector<ZZ> Introotscubic(const ZZ& a, const ZZ& b, const ZZ& c);
+vector<ZZ> Introotsquartic(const ZZ& a, const ZZ& b, const ZZ& c,
+                            const ZZ& d);
 
 
 
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
-int nrootscubic(const bigint& bb, const bigint& cc, const bigint& dd, const bigint& p);
+int nrootscubic(const ZZ& bb, const ZZ& cc, const ZZ& dd, const ZZ& p);
 
 FqPoly reduce(const ZPoly& f, const galois_field& Fq);
 
-inline FqPoly reduce(const ZPoly& f, const bigint& q)
+inline FqPoly reduce(const ZPoly& f, const ZZ& q)
 {return reduce(f,galois_field(q));}
 
 

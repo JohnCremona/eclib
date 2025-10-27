@@ -30,7 +30,7 @@ mat_m mmat_from_flint_mat(const fmpz_mat_t& A)
 }
 
 // mat_m echelon_via_flint(const mat_m& m1, vec_i& pc, vec_i& npc,
-//                 long& rk, long& ny, bigint& d)
+//                 long& rk, long& ny, ZZ& d)
 // {
 
 // }

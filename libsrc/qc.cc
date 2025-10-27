@@ -26,15 +26,15 @@
 //#define DEBUG
 
 void qc(quartic& g,
-        const bigint& x0,  const bigint& y0,  const bigint& z0,
+        const ZZ& x0,  const ZZ& y0,  const ZZ& z0,
         Curvedata * E, 
 	Curvedata* IJ_curve, 
-	const bigint& tr_u, const bigint& tr_r, 
-	const bigint& tr_s, const bigint& tr_t,  
+	const ZZ& tr_u, const ZZ& tr_r, 
+	const ZZ& tr_s, const ZZ& tr_t,  
 	Point& P, int verbose)
 {
-  bigint aa,bb,cc,dd,ee,p,q,r,t,xp,yp,zp;
-  bigint a=g.a, b=g.b, c=g.c, d=g.d, e=g.e;
+  ZZ aa,bb,cc,dd,ee,p,q,r,t,xp,yp,zp;
+  ZZ a=g.a, b=g.b, c=g.c, d=g.d, e=g.e;
 
 #ifdef DEBUG
   cout << "In qc(...) with:\n";
@@ -45,14 +45,14 @@ void qc(quartic& g,
   cout << "Quartic = (a,b,c,d,e) = ("<<a<<", "<<b<<", "<<c<<", "<<d<<", "<<e<<")\n";
 #endif
 
-  bigint z02=sqr(z0); 
+  ZZ z02=sqr(z0); 
 
   if(isqrt(a,q)) {z02=1;}  // else z0=0 which sets zp=0 below
   else if(isqrt(e,q)){t=a; a=e; e=t; t=b; b=d; d=t; }
     else 
       {
-	const bigint& z03=z0*z02;  const bigint& z04=sqr(z02);
-	const bigint& x02=sqr(x0); const bigint& x03=x0*x02;
+	const ZZ& z03=z0*z02;  const ZZ& z04=sqr(z02);
+	const ZZ& x02=sqr(x0); const ZZ& x03=x0*x02;
 	q=y0;
 	e=z04*a;
 	dd=z03*(4*a*x0 + b*z0);

@@ -227,7 +227,7 @@ int main(void)
 	      curve_out<<n<<" "<<code<<" 1 ";
 	      if(verbose) cout<<n<<" "<<code<<" 1 ";
 	      Curve C = curves[inf];
-	      bigint a1,a2,a3,a4,a6;
+	      ZZ a1,a2,a3,a4,a6;
 	      C.getai(a1,a2,a3,a4,a6);
 	      curve_out<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";
               if(verbose) cout<<"["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"]";

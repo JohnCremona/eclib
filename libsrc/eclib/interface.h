@@ -68,25 +68,46 @@ const double LOG_10_2=0.30102999566398114L;
 
 // integers and rationals
 
-// Some of the following were defined for compatibility with LiDIA, which is no longer supported
-
+// All NTL includes are here, except for mat_lzz_p.h (only used in
+// libsrc/matrix.cc) and ZZ_limbs (only used in libsrc/convert.cc)
 #include <NTL/ZZ.h>
+#include <NTL/ZZX.h>
 #include <NTL/ZZXFactoring.h>
-using namespace NTL;
+#include <NTL/RR.h>
+#include <NTL/mat_RR.h>
+#include <NTL/ZZ_p.h>
+#include <NTL/ZZ_pX.h>
+#include <NTL/ZZ_pXFactoring.h>
+#include <NTL/mat_ZZ.h>
+#include <NTL/mat_ZZ_p.h>
+#include <NTL/mat_poly_ZZ.h>
 
-typedef ZZ bigint;
+// much used NTL classes and functions:
+using NTL::ZZ;
+using NTL::ZZX;
+using NTL::mat_ZZ;
+using NTL::RR;
+using NTL::zz_p;
+using NTL::ZZ_p;
+using NTL::ZZ_pContext;
+using NTL::ZZ_pX;
+using NTL::mat_zz_p;
+using NTL::mat_ZZ_p;
 
-inline int is_long(const bigint& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
-inline int is_int(const bigint& a) {return (a<=MAXINT)&&(a>=MININT);}
-int I2int(const bigint& x);    // too long to inline
-long I2long(const bigint& x);  // too long to inline
+using NTL::to_ZZ;
+using NTL::to_ZZ_p;
+using NTL::to_RR;
+
+inline int is_long(const ZZ& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
+inline int is_int(const ZZ& a) {return (a<=MAXINT)&&(a>=MININT);}
+int I2int(const ZZ& x);    // too long to inline
+long I2long(const ZZ& x);  // too long to inline
 
 
 // Reals and Complexes
 
 #ifdef MPFP
 
-#include <NTL/RR.h>
 typedef RR bigfloat;
 RR Pi();
 RR Euler();
@@ -144,13 +165,13 @@ inline int is_approx_zero(const bigcomplex& z)
 inline RR to_bigfloat(const int& n) {return to_RR(n);}
 inline RR to_bigfloat(const long& n) {return to_RR(n);}
 inline RR to_bigfloat(const double& x) {return to_RR(x);}
-inline RR I2bigfloat(const bigint& x) { return to_RR(x);}
-inline double I2double(const bigint& x) {return to_double(x);}
+inline RR I2bigfloat(const ZZ& x) { return to_RR(x);}
+inline double I2double(const ZZ& x) {return to_double(x);}
 inline int doublify(const bigfloat& x, double& d){ d=to_double(x); return 0;}
 int longify(const bigfloat& x, long& a, int rounding=0);
 inline int is_real_zero(bigfloat x) {return IsZero(x);}
 inline int is_complex_zero(bigcomplex z) {return IsZero(z.real()) && IsZero(z.imag());}
-inline void Iasb(bigint& a, bigfloat x) {RoundToZZ(a,x);}
+inline void Iasb(ZZ& a, bigfloat x) {RoundToZZ(a,x);}
 inline void Iasb(long& a, bigfloat x) {ZZ n; RoundToZZ(n,x); a=I2long(n);}
 istream& operator>>(istream& is, bigcomplex& z);
 inline bigcomplex pow(const bigcomplex& a, int e)  {return (to_RR(e)*a.log()).exp();}
@@ -191,8 +212,8 @@ inline double power(double x, long n) {return pow(x,n);}
 inline double to_bigfloat(const int& n) {return double(n);}
 inline double to_bigfloat(const long& n) {return double(n);}
 inline double to_bigfloat(const double& x) {return x;}
-inline double I2double(const bigint& x) {return to_double(x);}
-inline double I2bigfloat(const bigint& x) { return to_double(x);}
+inline double I2double(const ZZ& x) {return to_double(x);}
+inline double I2bigfloat(const ZZ& x) { return to_double(x);}
 
 // complexes
 

@@ -41,14 +41,14 @@ class curvemodq  {
 
 protected:
   galois_field* Fq;           // pointer to ground field
-  bigint q;                   //  the modulus
+  ZZ q;                   //  the modulus
   gf_element a1,a2,a3,a4,a6;  //  the coefficients mod q
-  bigint order;               // number of points (0 if not set)
+  ZZ order;               // number of points (0 if not set)
 
 public:
   // constructors 
   curvemodq(void);
-  curvemodq(const Curve& E, const bigint& qq);
+  curvemodq(const Curve& E, const ZZ& qq);
   ~curvemodq();
   curvemodq(const curvemodq& C); // copy constructor
   void operator=(const curvemodq& C); // assignment
@@ -71,18 +71,18 @@ public:
   // random point
   pointmodq random_point(); // defined in pointsmod.cc
 
-  bigint get_modulus() const { return q; }
+  ZZ get_modulus() const { return q; }
 
   void set_group_order_via_legendre(); 
   void set_group_order();
-  bigint group_order() {if(is_zero(order)) set_group_order(); return order;}
+  ZZ group_order() {if(is_zero(order)) set_group_order(); return order;}
   
   friend class galois_field;
   friend class ffmodq;
   friend class pointmodq;
   friend class TLSS;
   friend galois_field get_field(const curvemodq& C);
-  friend bigint get_modulus(const curvemodq& E);
+  friend ZZ get_modulus(const curvemodq& E);
   };
 
 inline ostream& operator<<(ostream& os, const curvemodq& C)
@@ -93,13 +93,13 @@ inline ostream& operator<<(ostream& os, const curvemodq& C)
 
   // just a wrapper round the constructor, (originally for for LiDIA-compatibility):
 
-inline curvemodq reduce_curve(const Curve& E, const bigint& q)
+inline curvemodq reduce_curve(const Curve& E, const ZZ& q)
 {
   return curvemodq(E,q);
 }
 
 inline galois_field get_field(const curvemodq& C) { return galois_field(C.q); }
-inline bigint get_modulus(const curvemodq& C) { return C.q; }
+inline ZZ get_modulus(const curvemodq& C) { return C.q; }
 
 FqPoly div_pol_odd(const curvemodq& C, int n); 
 FqPoly makepdivpol(const curvemodq& C, int p);

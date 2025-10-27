@@ -29,7 +29,7 @@ vector<long> eqplist;
 
 int getquartic(quartic& g, int verbose)
 {
-  bigint a, b, c, d, e;
+  ZZ a, b, c, d, e;
   
   if(verbose)  cout << "Enter quartic coefficients a,b,c,d,e ?" << endl;
   char ch; cin>>ch;
@@ -61,7 +61,7 @@ int main()
   cout<<endl<<endl;
   if (nq<1) {return 0;}
   vector<quartic> glist(nq);
-  vector<bigint> dlist;
+  vector<ZZ> dlist;
   int i,j;
 
   for(i=0; i<nq; i++)

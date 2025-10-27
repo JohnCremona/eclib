@@ -25,11 +25,11 @@
 
 #include "eclib/linalg.h"
 
-// Instantiate sZmat_elim template classes for T=int, long, bigint
+// Instantiate sZmat_elim template classes for T=int, long, ZZ
 
 template class sZmat_elim<int>;
 template class sZmat_elim<long>;
-template class sZmat_elim<bigint>;
+template class sZmat_elim<ZZ>;
 
 //#define TRACE_LISTS
 //#define TRACE_FIND
@@ -676,7 +676,7 @@ sZmat<T> sZmat_elim<T>::old_kernel( Zvec<int>& pc, Zvec<int>& npc)
       axv = aux_val;
       *pos++ = count;
 
-      // Using memmove only works when scalar is int or long, not bigint
+      // Using memmove only works when scalar is int or long, not ZZ
       for( n = 0; n < count; n++ ) { *pos++ = *axp++; *vali++ = *axv++; }
       // size_t nbytes = count*sizeof(int);
       // memmove(pos,axp,nbytes);
@@ -1336,6 +1336,6 @@ template ssubZspace<int> kernel<int>(const sZmat<int>& sm, int m);
 template int sZmat<long>::rank(long mod);
 template ssubZspace<long> kernel<long>(const sZmat<long>& sm, long m);
 
-// Instantiate template functions for T=bigint
-template int sZmat<bigint>::rank(bigint mod);
-template ssubZspace<bigint> kernel<bigint>(const sZmat<bigint>& sm, bigint m);
+// Instantiate template functions for T=ZZ
+template int sZmat<ZZ>::rank(ZZ mod);
+template ssubZspace<ZZ> kernel<ZZ>(const sZmat<ZZ>& sm, ZZ m);

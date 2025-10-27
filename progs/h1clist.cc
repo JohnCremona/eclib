@@ -106,8 +106,8 @@ int main(void)
      Curve C;
      Curvedata CD;
      CurveRed CR;
-     bigint nc; int nt;
-     bigint a1,a2,a3,a4,a6;
+     ZZ nc; int nt;
+     ZZ a1,a2,a3,a4,a6;
      prec = prec0-delta_prec;
      while (C.isnull() && (prec<maxprec))
        {

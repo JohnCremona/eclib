@@ -22,11 +22,9 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include "eclib/points.h"
-#ifdef MPFP  // use NTL to compute the determinant
-#include <NTL/mat_RR.h>
-#else
-#define MAX_RANK_REG 50 // cannot ask for regulator of more than 50 points.
-#endif
+using NTL::mat_RR;
+
+#define MAX_RANK_REG 50 // cannot ask for regulator of more than 50 points if not using NTL's RR
 
 //#define DEBUG_HEIGHT
 
@@ -55,14 +53,14 @@ bigfloat height(Point& P)
   // pheight() if the curve is minimal at p
 
   Curvedata* E = P.E;
-  vector<bigint> bad_p = getbad_primes(*E);
+  vector<ZZ> bad_p = getbad_primes(*E);
   Curvedata Emin;
   Point Pmin(Emin); // assigns Pmin.E to a pointer to Emin
   // NB the is_minimal function returns 0 when minimization has not
   // been done; the curve may still be minimal
   if (!is_minimal(*E))
     {
-      bigint u, r, s, t;
+      ZZ u, r, s, t;
       Emin = E->minimalize(u,r,s,t);
       Pmin = transform(P, &Emin, u, r, s, t);
       bad_p = getbad_primes(Emin);
@@ -77,7 +75,7 @@ bigfloat height(Point& P)
   //   and so the contribution is log(denom(x(P))) = 2*log(zroot).
   //   This avoids factorizing the denominator.
 
-  const bigint& zroot = gcd(Pmin.getX(),Pmin.getZ());   // = cube root of Z
+  const ZZ& zroot = gcd(Pmin.getX(),Pmin.getZ());   // = cube root of Z
   bigfloat h = realheight(Pmin);
 #ifdef DEBUG_HEIGHT
   cout<<" - real height = "<<h<<"\n";
@@ -122,7 +120,7 @@ bigfloat height(Point& P)
 
 #undef DEBUG_HEIGHT
 
-bigfloat pheight(const Point& P, const bigint& pr)
+bigfloat pheight(const Point& P, const ZZ& pr)
 // NB The local height at p will only be correctly computed by
 // pheight() if the curve is minimal at p
 {
@@ -131,7 +129,7 @@ cout<<"In pheight with P = "<<P<<" and pr = "<<pr<<endl;
 cout<<I2double(pr)<<"\n";
 cout<<"(as a bigfloat, pr = "<<I2bigfloat(pr)<<")"<<endl;
 #endif
-  bigint a1,a2,a3,a4,a6,b2,b4,b6,b8,c4,c6,discr;
+  ZZ a1,a2,a3,a4,a6,b2,b4,b6,b8,c4,c6,discr;
   P.E->getai(a1,a2,a3,a4,a6);
   P.E->getbi(b2,b4,b6,b8);
   P.E->getci(c4,c6);
@@ -140,17 +138,17 @@ cout<<"(as a bigfloat, pr = "<<I2bigfloat(pr)<<")"<<endl;
 #ifdef DEBUG_HEIGHT
 cout<<"n = val(pr, discr) = " << n << endl;
 #endif
-  bigint x,y,z;
+  ZZ x,y,z;
   P.getcoordinates(x,y,z);
-  const bigint& zroot = gcd(x,z); // = cube root of z
+  const ZZ& zroot = gcd(x,z); // = cube root of z
   long vpz = 3*val(pr,zroot);
 #ifdef DEBUG_HEIGHT
 cout<<"vpz = val(pr, z) = " << vpz << endl;
 #endif
-  const bigint& x2 = x*x;
-  const bigint& z2 = z*z;
-  const bigint& xz = x*z;
-  const bigint& yz = y*z;
+  const ZZ& x2 = x*x;
+  const ZZ& z2 = z*z;
+  const ZZ& xz = x*z;
+  const ZZ& yz = y*z;
   long a = val(pr, 3*x2 + 2*a2*xz + a4*z2 - a1*yz) - 2*vpz;
   long b = val(pr, 2*y + a1*x + a3*z) - vpz;
   long c = val(pr, 3*x2*x2 + b2*x2*xz + 3*b4*x2*z2 + 3*b6*xz*z2 + b8*z2*z2)
@@ -213,7 +211,7 @@ bigfloat realheight(const bigfloat& x, const Curvedata* E)
   set_bit_precision(new_prec); // does not change output precision
 #endif
 
-  bigint bb2,bb4,bb6,bb8;
+  ZZ bb2,bb4,bb6,bb8;
   E->getbi(bb2,bb4,bb6,bb8);
   bigfloat b2 = I2bigfloat(bb2), b4 = I2bigfloat(bb4), 
            b6 = I2bigfloat(bb6), b8 = I2bigfloat(bb8);

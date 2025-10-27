@@ -1,4 +1,4 @@
-// mspace.cc: test program for subspace class with bigint scalars
+// mspace.cc: test program for subspace class with ZZ scalars
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2023 John Cremona
@@ -23,7 +23,7 @@
  
 #include <eclib/linalg.h>
 
-const bigint modulus(default_modulus<bigint>());
+const ZZ modulus(default_modulus<ZZ>());
 
 int main()
 {
@@ -49,7 +49,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
    }
 //
   {
-    vector<bigint> cp = m.charpoly();
+    vector<ZZ> cp = m.charpoly();
     cout << "char. poly. of m has coefficients " << cp << endl;
   }
   cout << "det(M) = " << m.determinant() << endl;
@@ -61,7 +61,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     cout << "kernel(m) has basis\n" << kerbasis << endl;
     vec_i kerpivs = pivots(ker);
     cout << "pivots: " << kerpivs << "\n";
-    bigint kerdenom = denom(ker);
+    ZZ kerdenom = denom(ker);
     cout << "denom:  " << kerdenom  << "\n";
   }
   {
@@ -71,7 +71,7 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     cout << "denom:  " << denom(im)  << "\n";
   }
   {
-    bigint lambda;
+    ZZ lambda;
     cout << "Enter lambda: "; cin >> lambda;
     subspace_m elambda = eigenspace(m,lambda);
     cout << "eigenspace for lambda = " << lambda << " has basis\n" << basis(elambda) << endl;

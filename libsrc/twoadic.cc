@@ -88,9 +88,9 @@ The condition in the code comes from Hensel's lemma and implies the
 conditions given above.
 */
 
-long try1(bigint poly[4])
+long try1(ZZ poly[4])
 { long c, v, sq, j, k;
- bigint mc; 
+ ZZ mc; 
   /* see if we can lift to obtain a zero of poly.      */
   /* the condition is  val(poly[0]) > 2*val(poly[1]).  */
 #ifdef SHOW_POLY      
@@ -124,14 +124,14 @@ long try1(bigint poly[4])
   return 0;
 refine:
   /* now we must refine */
-  { bigint newpoly[4];
+  { ZZ newpoly[4];
     /* construct poly(2x) */
     for(j = 0; j < 4; j++) newpoly[j] = poly[j]<<j;
     if(try1(newpoly)) return 1; /* success with 2x */
     /* construct poly(2x+1) */
     for(j = 0; j < 4; j++) newpoly[j] = poly[j];
     for(j = 0; j < 4; j++)
-    { bigint h = newpoly[3];
+    { ZZ h = newpoly[3];
       for(k = 2; k >= j; k--) h = newpoly[k] += h;
       newpoly[j] <<= j;
     }
@@ -264,12 +264,12 @@ long case2(long a, long b) // A=4a+1, B=4b+2
     }
 }
 
-// bigint versions of case1() and case2():
+// ZZ versions of case1() and case2():
 
-long case1(bigint a, bigint b) // A=4a, B=4b
+long case1(ZZ a, ZZ b) // A=4a, B=4b
 {
   //  cout<<"In case1() with a="<<a<<", b="<<b<<endl;
-  bigint c=a+3, d=2*a+b+2;
+  ZZ c=a+3, d=2*a+b+2;
 // The polynomial in 4x+2 is (16, 24, 4*c, d)
   long d8=posmod(d,8), c2=posmod(c,2);
   long d4=d8&3;
@@ -301,9 +301,9 @@ long case1(bigint a, bigint b) // A=4a, B=4b
     }
 }
 
-long case2(bigint a, bigint b) // A=4a+1, B=4b+2
+long case2(ZZ a, ZZ b) // A=4a+1, B=4b+2
 {
-  bigint c=a+1, d=a+b+1;
+  ZZ c=a+1, d=a+b+1;
   // The polynomial in 4x+1 is (16, 12, 4*c, d)
   long d8=posmod(d,8), c2=posmod(c,2);
   long d4=d8&3;

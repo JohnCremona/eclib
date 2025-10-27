@@ -31,7 +31,7 @@
 
 int getquartic(quartic& g)
 {
-  bigint a, b, c, d, e;
+  ZZ a, b, c, d, e;
   
   cout << "Enter quartic coefficients a,b,c,d,e ?" << endl;
   char ch; cin>>ch;
@@ -67,16 +67,16 @@ int main()
       double hlim;
       cout << "Limit on height? "; cin >> hlim;
 
-      bigint I = g.getI(), J=g.getJ(), zero(0);
+      ZZ I = g.getI(), J=g.getJ(), zero(0);
       Curvedata IJ_curve(zero,zero,zero,-27*I,-27*J,0);
-      bigint tr_u,tr_r,tr_s,tr_t;
+      ZZ tr_u,tr_r,tr_s,tr_t;
       Curvedata E = IJ_curve.minimalize(tr_u,tr_r,tr_s,tr_t);
 
       cout << "I = " << I << ", J = " << J << "\n";
       cout << "Minimal model for Jacobian: " << (Curve)E << endl;
 
-      bigint badp;
-      vector<bigint> plist = pdivs(6*g.getdisc());
+      ZZ badp;
+      vector<ZZ> plist = pdivs(6*g.getdisc());
       unsigned int i, els, els1;
 
       cout << "Checking local solublity in R:\n";
@@ -84,7 +84,7 @@ int main()
       if(!els) cout << "Not locally soluble over R\n";
 
       cout << "Checking local solublity at primes " << plist << ":\n";
-      els1 = qpsoluble(g,bigint(2));
+      els1 = qpsoluble(g,ZZ(2));
       if(!els1) cout << "Not locally soluble at p = 2\n";
       els = els&els1;
 
@@ -103,7 +103,7 @@ int main()
 
       if(qs.search(hlim))
 	{
-	  bigint x, y, z;
+	  ZZ x, y, z;
 	  qs.getpoint(x,y,z);
 	  cout << "(x:y:z) = (" << x << ":" << y << ":" << z << ")\n";
 	  Point P;

@@ -44,7 +44,7 @@ int main()
 
   cout << "\nMultiplication-by-n maps (x coordinate):\n\n";
 
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   E.getai(a1,a2,a3,a4,a6);
   for( int n : {2,3,5,7})
     {
@@ -56,9 +56,9 @@ int main()
 #if(1)
   cout << "\nTesting division of points:\n";
 
-  Point P0(C, bigint(0),bigint(2)) ;
-  Point P1(C, bigint(1),bigint(0)) ;
-  Point P2(C, bigint(2),bigint(0)) ;
+  Point P0(C, ZZ(0),ZZ(2)) ;
+  Point P1(C, ZZ(1),ZZ(0)) ;
+  Point P2(C, ZZ(2),ZZ(0)) ;
 
   vector<Point> Plist = {P0, P1, P2, P0+P1, P0+P2, P1+P2, P0+P1+P2};
   for ( const auto& P : Plist)

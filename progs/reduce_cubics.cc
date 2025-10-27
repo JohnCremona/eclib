@@ -30,7 +30,7 @@
 int main()
 {
   initprimes("PRIMES");
-  bigint a, b, c, d, disc;
+  ZZ a, b, c, d, disc;
   unimod m;
 
   while(cout << "Enter cubic coeffs a, b, c, d: ",

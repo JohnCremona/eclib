@@ -30,13 +30,13 @@ int main(){
 #endif
   initprimes("PRIMES",1);
   Curve E;
-  bigint u, r, s, t;
+  ZZ u, r, s, t;
 
   while (cerr<<"Input a curve: ", cin>>E, !E.isnull())
   {
     Curvedata C(E, 0);
     cout<<"Curve "<< E <<endl;
-    vector<bigint> badp = getbad_primes(C);
+    vector<ZZ> badp = getbad_primes(C);
 
     Curvedata Emin = C.minimalize(u,r,s,t);
     int is_min = is_one(abs(u)); // then E was already minimal, no adjustments needed
@@ -64,8 +64,8 @@ int main(){
 
           cout << "Local heights:\n";
           bigfloat gh = to_bigfloat(0);
-	  bigint d = gcd(Pmin.getZ(),Pmin.getX());
-          vector<bigint> pdivsz=pdivs(d);
+	  ZZ d = gcd(Pmin.getZ(),Pmin.getX());
+          vector<ZZ> pdivsz=pdivs(d);
 	  for ( const auto& q : pdivsz)
             {
 	      cout << q << ":\t\t"  << flush;
@@ -108,9 +108,9 @@ int main(){
   E = Curve(0, 0, 1, -7, 6);
   Curvedata C(E, 0);
   cout << "\n\nTesting points on the curve " << E << endl;
-  Point P0(C, bigint(0),bigint(2));
-  Point P1(C, bigint(1),bigint(0));
-  Point P2(C, bigint(2),bigint(0));
+  Point P0(C, ZZ(0),ZZ(2));
+  Point P1(C, ZZ(1),ZZ(0));
+  Point P2(C, ZZ(2),ZZ(0));
   cout << "The points are P0 = " << P0 << 
     ", P1 = " << P1 << ", and P2 = " << P2 << endl;
   if (!P0.isvalid()) cout << "P0 is not on the curve!\n";

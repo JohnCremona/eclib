@@ -3,7 +3,7 @@ This eclib version is 20250627
 
 Configure options and compilation date:
 
-eclib version 20250627, using NTL bigints and NTL real and complex multiprecision floating point
+eclib version 20250627, using NTL ZZs and NTL real and complex multiprecision floating point
 
 Testing comparison of version date and various (year, month, day) date triples:
 

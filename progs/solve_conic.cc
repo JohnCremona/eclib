@@ -39,7 +39,7 @@ int main()
   cout<<"Solving ax^2 + bxz + cz^2 = dy^2\n";
   cout<<"Using method "<<CONIC_METHOD<<endl<<endl;
 
-  bigint a,b,c,d,x0,y0,z0,disc;
+  ZZ a,b,c,d,x0,y0,z0,disc;
   quadratic q, qx, qy, qz;
 
   while(1) {
@@ -66,17 +66,17 @@ int main()
       cout << "y = ["<<qy[0]<<","<<qy[1]<<","<<qy[2]<<"]*[u^2,uv,v^2]\n";
       cout << "z = ["<<qz[0]<<","<<qz[1]<<","<<qz[2]<<"]*[u^2,uv,v^2]\n";
       
-      bigint dqx = qx.disc();
+      ZZ dqx = qx.disc();
       cout<<"disc(qx) = "<<dqx;
       if(dqx==4*c*d) cout<<" = 4cd\n";
       else cout<<" --NOT equal to 4cd = " << (4*c*d) <<endl;
-      bigint dqz = qz.disc();
+      ZZ dqz = qz.disc();
       cout<<"disc(qz) = "<<dqz;
       if(dqz==4*a*d) cout<<" = 4ad\n";
       else cout<<" --NOT equal to 4ad = " << (4*a*d) <<endl;
-      bigint result = resultant(qx,qz);
+      ZZ result = resultant(qx,qz);
       cout<<"resultant(qx,qz)   = "<<result;
-      bigint res2 = sqr(d)*q.disc();
+      ZZ res2 = sqr(d)*q.disc();
       if(result==res2) cout<<" = d^2(b^2-4ac)\n";
       else cout<<" --NOT equal to d^2(b^2-4ac) = "<<res2<<endl;
       if(testparamsol(a,b,c,d,qx,qy,qz,0))

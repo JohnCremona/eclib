@@ -28,12 +28,12 @@
 // In all the functions below, the value of the Hilbert symbol is 0 or
 // 1 (as an int) rather than +1 or -1, for efficiency;  
 
-int local_hilbert(const bigint& a, const bigint& b, const bigint& p)
+int local_hilbert(const ZZ& a, const ZZ& b, const ZZ& p)
 {
-  static const bigint zero(0);
-  static const bigint  two(2);
+  static const ZZ zero(0);
+  static const ZZ  two(2);
   long alpha, beta;
-  bigint u,v;
+  ZZ u,v;
   int ans;
 
   if(is_zero(a)) {cout<<"Error in local_hilbert(): a==0\n"; return -1;}
@@ -68,7 +68,7 @@ int local_hilbert(const bigint& a, const bigint& b, const bigint& p)
   return ans;
 }
 
-int global_hilbert(const bigint& a, const bigint& b, const vector<bigint>& plist, bigint& badp)
+int global_hilbert(const ZZ& a, const ZZ& b, const vector<ZZ>& plist, ZZ& badp)
 {
 #ifdef DEBUG_HILBERT
   cout<<"In global_hilbert("<<a<<","<<b<<"), plist = "<<plist<<endl;
@@ -82,23 +82,23 @@ int global_hilbert(const bigint& a, const bigint& b, const vector<bigint>& plist
   cout<<"Passed local condition at infinity..."<<endl;
 #endif
   return std::any_of(plist.begin(), plist.end(),
-                     [a,b,&badp] (const bigint& p) {badp=p;return local_hilbert(a,b,p);});
+                     [a,b,&badp] (const ZZ& p) {badp=p;return local_hilbert(a,b,p);});
 }
 
-int global_hilbert(const bigint& a, const bigint& b, bigint& badp)
+int global_hilbert(const ZZ& a, const ZZ& b, ZZ& badp)
 {
-  vector<bigint> plist=vector_union(pdivs(a),pdivs(b));
+  vector<ZZ> plist=vector_union(pdivs(a),pdivs(b));
   return global_hilbert(a,b,plist,badp);
 }
 
-int global_hilbert(const quadratic& q, const bigint& d, bigint& badp)
+int global_hilbert(const quadratic& q, const ZZ& d, ZZ& badp)
 {
-  bigint D = q.disc();
-  vector<bigint> plist = vector_union(pdivs(D),pdivs(d));
+  ZZ D = q.disc();
+  vector<ZZ> plist = vector_union(pdivs(D),pdivs(d));
   return global_hilbert(q[0]*d,D,plist,badp);
 }
 
-int global_hilbert(const quadratic& q, const bigint& d, const vector<bigint>& plist, bigint& badp)
+int global_hilbert(const quadratic& q, const ZZ& d, const vector<ZZ>& plist, ZZ& badp)
 {
   return global_hilbert(q[0]*d,q.disc(),plist,badp);
 }

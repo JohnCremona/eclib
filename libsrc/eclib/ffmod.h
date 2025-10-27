@@ -64,7 +64,7 @@ public:
       FqPolyAssign0(h2);
     }
 
-  explicit ffmodq(const bigint& c)
+  explicit ffmodq(const ZZ& c)
     {
       init_h1h2();
       FqPolyAssignZ(h1,c);

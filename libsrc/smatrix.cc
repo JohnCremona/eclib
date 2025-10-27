@@ -25,11 +25,11 @@
 
 #include "eclib/linalg.h"
 
-// Instantiate sZmat template classes for T=int, long, bigint
+// Instantiate sZmat template classes for T=int, long, ZZ
 
 template class sZmat<int>;
 template class sZmat<long>;
-template class sZmat<bigint>;
+template class sZmat<ZZ>;
 
 template<class T>
 void showrow(int*pos, T*val) // for debugging
@@ -1165,32 +1165,32 @@ template int liftmat<long>(const sZmat<long>& mm, long pr, sZmat<long>& m, long&
 template int liftmats_chinese<long>(const sZmat<long>& mm1, long pr1, const sZmat<long>& mm2, long pr2, sZmat<long>& m, long& dd);
 template sZmat<long> restrict_mat(const sZmat<long>& m, const subZspace<long>& s);
 
-// Instantiate sZmat template functions for T=bigint
-template vector<int> dim<bigint>(const sZmat<bigint>& A);
-template sZmat<bigint> transpose<bigint>( const sZmat<bigint>&);
-template sZmat<bigint> operator*<bigint>( const sZmat<bigint>&, const sZmat<bigint>&);
-template sZvec<bigint> operator*<bigint>( const sZmat<bigint>& A, const sZvec<bigint>& v );
-template sZvec<bigint> operator*<bigint>( const sZvec<bigint>& v, const sZmat<bigint>& A );
-template Zvec<bigint> operator* <bigint>( const sZmat<bigint>& m, const Zvec<bigint>& v);
-template sZmat<bigint> operator+<bigint>(const sZmat<bigint>&);
-template sZmat<bigint> operator-<bigint>(const sZmat<bigint>&);
-template sZmat<bigint> operator+<bigint>(const sZmat<bigint>& m1, const sZmat<bigint>& m2);
-template sZmat<bigint> operator-<bigint>(const sZmat<bigint>& m1, const sZmat<bigint>& m2);
-template sZmat<bigint> operator*<bigint>(bigint, const sZmat<bigint>& m);
-template sZmat<bigint> operator/<bigint>(const sZmat<bigint>& m, bigint scal);
-template int operator!=<bigint>(const sZmat<bigint>& sm1, const sZmat<bigint>& sm2);
-template sZvec<bigint> mult_mod_p<bigint>( const sZmat<bigint>& A, const sZvec<bigint>& v, const bigint& p  );
-template sZvec<bigint> mult_mod_p<bigint>( const sZvec<bigint>& v, const sZmat<bigint>& A, const bigint& p  );
-template sZmat<bigint> mult_mod_p<bigint>( const sZmat<bigint>&, const sZmat<bigint>&, const bigint&);
-template Zvec<bigint> mult_mod_p<bigint>( const sZmat<bigint>& A, const Zvec<bigint>& v, const bigint& p  );
-template bigint maxabs<bigint>( const sZmat<bigint>& A);
-template int operator==<bigint>(const sZmat<bigint>&, const sZmat<bigint>&);
-template int eqmodp<bigint>(const sZmat<bigint>&, const sZmat<bigint>&, const bigint& p);
-template ostream& operator<<<bigint>(ostream&s, const sZmat<bigint>&);
-template istream& operator>><bigint>(istream&s, sZmat<bigint>&);
-template int get_population<bigint>(const sZmat<bigint>& );
-template double density<bigint>(const sZmat<bigint>& m);
-template void random_fill_in<bigint>( sZmat<bigint>&, int, int );
-template int liftmat<bigint>(const sZmat<bigint>& mm, bigint pr, sZmat<bigint>& m, bigint& dd);
-template int liftmats_chinese<bigint>(const sZmat<bigint>& mm1, bigint pr1, const sZmat<bigint>& mm2, bigint pr2, sZmat<bigint>& m, bigint& dd);
-template sZmat<bigint> restrict_mat(const sZmat<bigint>& m, const subZspace<bigint>& s);
+// Instantiate sZmat template functions for T=ZZ
+template vector<int> dim<ZZ>(const sZmat<ZZ>& A);
+template sZmat<ZZ> transpose<ZZ>( const sZmat<ZZ>&);
+template sZmat<ZZ> operator*<ZZ>( const sZmat<ZZ>&, const sZmat<ZZ>&);
+template sZvec<ZZ> operator*<ZZ>( const sZmat<ZZ>& A, const sZvec<ZZ>& v );
+template sZvec<ZZ> operator*<ZZ>( const sZvec<ZZ>& v, const sZmat<ZZ>& A );
+template Zvec<ZZ> operator* <ZZ>( const sZmat<ZZ>& m, const Zvec<ZZ>& v);
+template sZmat<ZZ> operator+<ZZ>(const sZmat<ZZ>&);
+template sZmat<ZZ> operator-<ZZ>(const sZmat<ZZ>&);
+template sZmat<ZZ> operator+<ZZ>(const sZmat<ZZ>& m1, const sZmat<ZZ>& m2);
+template sZmat<ZZ> operator-<ZZ>(const sZmat<ZZ>& m1, const sZmat<ZZ>& m2);
+template sZmat<ZZ> operator*<ZZ>(ZZ, const sZmat<ZZ>& m);
+template sZmat<ZZ> operator/<ZZ>(const sZmat<ZZ>& m, ZZ scal);
+template int operator!=<ZZ>(const sZmat<ZZ>& sm1, const sZmat<ZZ>& sm2);
+template sZvec<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>& A, const sZvec<ZZ>& v, const ZZ& p  );
+template sZvec<ZZ> mult_mod_p<ZZ>( const sZvec<ZZ>& v, const sZmat<ZZ>& A, const ZZ& p  );
+template sZmat<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>&, const sZmat<ZZ>&, const ZZ&);
+template Zvec<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>& A, const Zvec<ZZ>& v, const ZZ& p  );
+template ZZ maxabs<ZZ>( const sZmat<ZZ>& A);
+template int operator==<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&);
+template int eqmodp<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&, const ZZ& p);
+template ostream& operator<<<ZZ>(ostream&s, const sZmat<ZZ>&);
+template istream& operator>><ZZ>(istream&s, sZmat<ZZ>&);
+template int get_population<ZZ>(const sZmat<ZZ>& );
+template double density<ZZ>(const sZmat<ZZ>& m);
+template void random_fill_in<ZZ>( sZmat<ZZ>&, int, int );
+template int liftmat<ZZ>(const sZmat<ZZ>& mm, ZZ pr, sZmat<ZZ>& m, ZZ& dd);
+template int liftmats_chinese<ZZ>(const sZmat<ZZ>& mm1, ZZ pr1, const sZmat<ZZ>& mm2, ZZ pr2, sZmat<ZZ>& m, ZZ& dd);
+template sZmat<ZZ> restrict_mat(const sZmat<ZZ>& m, const subZspace<ZZ>& s);

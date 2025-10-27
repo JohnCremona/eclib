@@ -30,9 +30,9 @@
 
 //#define DEBUG_GPFACT
 
-pair<vector<bigint>, vector<bigint>> factor_via_pari(const bigint& n)
+pair<vector<ZZ>, vector<ZZ>> factor_via_pari(const ZZ& n)
 {
-  vector<bigint> plist, elist;
+  vector<ZZ> plist, elist;
   if (n<2)
     return {plist, elist};
 
@@ -57,15 +57,15 @@ pair<vector<bigint>, vector<bigint>> factor_via_pari(const bigint& n)
       elist.push_back(PARI_to_NTL(gcoeff(fpn, i, 2)));
     }
 #ifdef DEBUG_GPFACT
-  cout << " - plist as vector<bigint>: " << plist << endl;
-  cout << " - elist as vector<bigint>: " << elist << endl;
+  cout << " - plist as vector<ZZ>: " << plist << endl;
+  cout << " - elist as vector<ZZ>: " << elist << endl;
 #endif
 
   avma=av;         // restore pari stackpointer
   return {plist, elist};
 }
 
-int is_prime_via_pari(const bigint& p)
+int is_prime_via_pari(const ZZ& p)
 {
   eclib_pari_init();
   pari_sp av=avma;  // store pari stack pointer
@@ -78,8 +78,8 @@ int is_prime_via_pari(const bigint& p)
 
 //#define DEBUG_ELLAP
 
-bigint
-ellap(const bigint& a1, const bigint& a2, const bigint& a3, const bigint& a4, const bigint& a6, const bigint& p)
+ZZ
+ellap(const ZZ& a1, const ZZ& a2, const ZZ& a3, const ZZ& a4, const ZZ& a6, const ZZ& p)
 {
   eclib_pari_init();
   pari_sp av=avma;  // store pari stack pointer
@@ -88,7 +88,7 @@ ellap(const bigint& a1, const bigint& a2, const bigint& a3, const bigint& a4, co
 #endif
   GEN ai = mkvecn(5, NTL_to_PARI(a1), NTL_to_PARI(a2), NTL_to_PARI(a3), NTL_to_PARI(a4), NTL_to_PARI(a6));
   GEN pp = NTL_to_PARI(p);
-  bigint ap = PARI_to_NTL(ellap(ellinit(ai, pp, 0), pp));
+  ZZ ap = PARI_to_NTL(ellap(ellinit(ai, pp, 0), pp));
 #ifdef DEBUG_ELLAP
   std::cout<<"ellap returns "<<ap<<endl;
 #endif

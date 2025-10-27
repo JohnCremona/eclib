@@ -26,10 +26,10 @@
 
 #include "interface.h"
 
-int desc2(const bigint& c, const bigint& d1, const bigint& d2,
-	  const vector<bigint>& plist, const vector<bigint>& supp, const vector<bigint>& bgens,
+int desc2(const ZZ& c, const ZZ& d1, const ZZ& d2,
+	  const vector<ZZ>& plist, const vector<ZZ>& supp, const vector<ZZ>& bgens,
 	  long mask,  double hlim,
-	  bigint& x, bigint& y, bigint& z, int verb, int selmer_only=0, int alldesc=0);
+	  ZZ& x, ZZ& y, ZZ& z, int verb, int selmer_only=0, int alldesc=0);
 // Works on homogeneous space (d1,0,c,0,d2)
 // Returns 
 //   -1 if it certainly has no points (if no ELS descendents)

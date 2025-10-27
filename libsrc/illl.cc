@@ -26,9 +26,9 @@
 //#define DEBUG_LLL
 //#define TRACE_LLL
 
-bigint sdot(const vector<vec_m>& b, int i, int j)
+ZZ sdot(const vector<vec_m>& b, int i, int j)
 {
-  bigint ans(0);
+  ZZ ans(0);
   const vec_m& g=b[0], bi=b[i], bj=b[j];
   int n=dim(g);
   for(int k=1; k<=n; k++)
@@ -36,7 +36,7 @@ bigint sdot(const vector<vec_m>& b, int i, int j)
   return ans;
 }
 
-void show(const int n, const vector<vec_m>& b, const vector<vector<bigint>>& lambda, const vector<bigint>& d)
+void show(const int n, const vector<vec_m>& b, const vector<vector<ZZ>>& lambda, const vector<ZZ>& d)
 {
   int i=0, j;
   cout<<"Vectors:\n";
@@ -61,7 +61,7 @@ void show(const int n, const vector<vec_m>& b, const vector<vector<bigint>>& lam
 }
 
 void redi(const int n, const int k, const int l,
-          vector<vec_m>& b, vector<vector<bigint>>& lambda, const vector<bigint>& d)
+          vector<vec_m>& b, vector<vector<ZZ>>& lambda, const vector<ZZ>& d)
 {
 #ifdef TRACE_LLL
   cout<<"R"<<k;
@@ -71,7 +71,7 @@ void redi(const int n, const int k, const int l,
   show(n,b,lambda,d);
 #endif
   int i;
-  bigint lkl=lambda[k-1][l-1], dl=d[l], q;
+  ZZ lkl=lambda[k-1][l-1], dl=d[l], q;
   nearest(q,lkl,dl); // nearest integer to lkl/dl
   if(is_zero(q))
     return;
@@ -85,7 +85,7 @@ void redi(const int n, const int k, const int l,
 }
 
 void swapi(const int n, const int k, const int kmax,
-	   vector<vec_m>& b, vector<vector<bigint>>& lambda, vector<bigint>& d)
+	   vector<vec_m>& b, vector<vector<ZZ>>& lambda, vector<ZZ>& d)
 {
 #ifdef TRACE_LLL
   cout<<"S"<<k<<endl;
@@ -94,7 +94,7 @@ void swapi(const int n, const int k, const int kmax,
   cout<<"In swapi with k="<<k<<", kmax="<<kmax<<endl;
   show(n,b,lambda,d);
 #endif
-  bigint t, lam, bb, dk=d[k], dk1=d[k-1];
+  ZZ t, lam, bb, dk=d[k], dk1=d[k-1];
   int i, j;
   std::swap(b[k-1],b[k]);
   for(j=1; j<=k-2; j++)
@@ -120,11 +120,11 @@ void swapi(const int n, const int k, const int kmax,
 
 
 void step3(const int n, int& k, const int kmax,
-	   vector<vec_m>& b, vector<vector<bigint>>& lambda, vector<bigint>& d)
+	   vector<vec_m>& b, vector<vector<ZZ>>& lambda, vector<ZZ>& d)
 {
   redi(n,k,k-1,b,lambda,d);
-  bigint lhs = 4*(d[k]*d[k-2]+sqr(lambda[k-1][k-2]));
-  bigint rhs = 3*sqr(d[k-1]);
+  ZZ lhs = 4*(d[k]*d[k-2]+sqr(lambda[k-1][k-2]));
+  ZZ rhs = 3*sqr(d[k-1]);
 #ifdef DEBUG_LLL
   cout<<"lhs="<<lhs<<", rhs="<<rhs<<endl;
 #endif
@@ -151,22 +151,22 @@ void step3(const int n, int& k, const int kmax,
 void lll_reduce(const int n, vector<vec_m>& b)
 {
   int i, j, k, kmax;
-  bigint u;
-  vector<bigint> d(n+1);
-  vector<vector<bigint>> lambda(n, vector<bigint>(n));
+  ZZ u;
+  vector<ZZ> d(n+1);
+  vector<vector<ZZ>> lambda(n, vector<ZZ>(n));
 
   k=2; kmax=1;
   d[0]=1; d[1]=sdot(b,1,1);
 
   while(k<=n)
     {
-      vector<bigint>& lambda_k = lambda[k-1];
+      vector<ZZ>& lambda_k = lambda[k-1];
       if(k>kmax)
 	{
 	  kmax=k;
 	  for(j=1; j<=k; j++)
 	    {
-	      vector<bigint>& lambda_j = lambda[j-1];
+	      vector<ZZ>& lambda_j = lambda[j-1];
 	      u=sdot(b,k,j);
 	      for(i=1; i<j; i++)
 		{

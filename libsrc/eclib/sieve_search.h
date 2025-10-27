@@ -35,7 +35,7 @@
 
 class point_processor { //An abstract class to be used as interface in qsieve
  public:
-  virtual int process(const bigint& x,const bigint& y,const bigint& z)=0;
+  virtual int process(const ZZ& x,const ZZ& y,const ZZ& z)=0;
   // where x/z is the point found and y the square root of f(a,b);
   // #!# different if the degree is even or odd, poly monic or not;
   // true homogeneous coordinates are [a*b^n-1:y:b^n] where n=degree/2 if 
@@ -50,7 +50,7 @@ class point_printer : public point_processor {
  public:
   point_printer() {};
   ~point_printer() {};
-  int process(const bigint& xx, const bigint& yy, const bigint& zz) override
+  int process(const ZZ& xx, const ZZ& yy, const ZZ& zz) override
   {cout<<"x= "<<xx<<" y= "<<yy<<" z= "<<zz<<" is a point."<<endl; return 0;}
 };
 
@@ -59,7 +59,7 @@ class point_counter : public point_processor {
  public:
   point_counter() {tally=0;};
   ~point_counter() {};
-  int process(const bigint& xx, const bigint& yy, const bigint& zz) override
+  int process(const ZZ& xx, const ZZ& yy, const ZZ& zz) override
     {tally++; return 0;}
   int get_tally() {return tally;}
 };
@@ -97,7 +97,7 @@ typedef struct {long p; bit_array *ptr;} sieve_spec;
 
 
 class qsieve {
-  bigint c[QS_MAX_DEGREE+1];
+  ZZ c[QS_MAX_DEGREE+1];
   point_processor* curve;
   int degree;
   int verbose;
@@ -132,8 +132,8 @@ class qsieve {
   sieve_spec sieves[QS_NUM_PRIMES];
 
   long coeffs_mod_p[QS_NUM_PRIMES][QS_MAX_DEGREE+1];
-  bigint bc[QS_MAX_DEGREE+1]; //The coefficients of f, multiplied by powers of b
-  bigint fff, tmp, tmp2;   //Some multi-precision integer variables 
+  ZZ bc[QS_MAX_DEGREE+1]; //The coefficients of f, multiplied by powers of b
+  ZZ fff, tmp, tmp2;   //Some multi-precision integer variables 
   long sieve_primes1;  //The number of primes used for the first sieving stage
   long sieve_primes2; //The number of primes used for the both sieving stages
   bit_array *survivors;
@@ -179,10 +179,10 @@ class qsieve {
 
  public:
   qsieve() {;}
-  qsieve(point_processor* acurve, int deg, vector<bigint> coeff, int verb=0);
-  qsieve(point_processor* acurve, int deg, vector<bigint> coeff, bigfloat h_limx, 
+  qsieve(point_processor* acurve, int deg, vector<ZZ> coeff, int verb=0);
+  qsieve(point_processor* acurve, int deg, vector<ZZ> coeff, bigfloat h_limx, 
 	 int verb=0); 
-//qsieve(point_processor* acurve, int deg, vector<bigint> coeff, double h_lim, 
+//qsieve(point_processor* acurve, int deg, vector<ZZ> coeff, double h_lim, 
 //       double up, double low, int verb=1);
   ~qsieve();
 

@@ -23,7 +23,7 @@
  
 #include "eclib/interface.h"
 
-int I2int(const bigint& x)
+int I2int(const ZZ& x)
 {
   if(IsZero(x)) return 0;
   if(!is_int(x)) 
@@ -42,7 +42,7 @@ int I2int(const bigint& x)
 }
 
 
-long I2long(const bigint& x) 
+long I2long(const ZZ& x) 
 {
   if(IsZero(x)) return 0;
   if(!is_long(x))
@@ -202,7 +202,7 @@ RR atan(const RR& x)   // translated from LiDIA
   }
   setprec(t);
   mul(y, y, tmp);
-  y*=power2_RR(f);
+  y *= NTL::power2_RR(f);
 
   if (u) {
     a=Pi()/to_RR(2);
@@ -308,7 +308,7 @@ istream& operator>>(istream& is, bigcomplex& z)
 // return value is 1 for success, else 0
 int longify(const bigfloat& x, long& a, int rounding)
 {
-  bigint z = (rounding==0? RoundToZZ(x): (rounding==1? CeilToZZ(x): FloorToZZ(x)));
+  ZZ z = (rounding==0? RoundToZZ(x): (rounding==1? CeilToZZ(x): FloorToZZ(x)));
   if(!is_long(z))
     {
       cerr<<"Attempt to convert "<<x<<" to long fails!"<<endl;

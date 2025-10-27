@@ -59,7 +59,7 @@ int main()
      long dims = dim(form.S);
      if(dims==0) continue;
 
-     bigint den=form.dHS;
+     ZZ den=form.dHS;
      int i, ip, nap=5;
      cout<<"Number of ap? ";  cin>>nap;
      primevar pr;
@@ -77,10 +77,10 @@ int main()
 	     cout <<p<<") = "<<flush;
 	     tp.output_pari(cout);
              cout << endl;
-	     vector<bigint> cptp = tp.charpoly();
+	     vector<ZZ> cptp = tp.charpoly();
 	     for(i=0; i<dims; i++)
 	       {
-		 bigint temp = cptp[i];
+		 ZZ temp = cptp[i];
 		 divide_exact(temp,form.Hscales[dims-i],temp);
 		 divide_exact(temp,form.Sscales[dims-i],temp);
 		 cptp[i]=temp;

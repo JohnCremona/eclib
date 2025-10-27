@@ -55,10 +55,10 @@ ostream& operator<<(ostream& os, const Kodaira_code& c)
 //
 // subroutines -- not general purpose (.cc only)
 
-bigint root(const bigint& aa, int e, const bigint & p)
+ZZ root(const ZZ& aa, int e, const ZZ & p)
 // the e'th root of aa, mod p
 {
-  bigint a = aa%p, r, b, xe(e);
+  ZZ a = aa%p, r, b, xe(e);
   if (is_zero(a)) return a;
   if (e==2)
     {
@@ -70,25 +70,25 @@ bigint root(const bigint& aa, int e, const bigint & p)
       power_mod(b, r, xe, p);
       if (b==a) return r;
     }
-  return bigint(0);
+  return ZZ(0);
 }
 
 // test if quadratic aX^2 + bX + c = 0 (mod p) has roots
-int rootsexist(const bigint& aa, const bigint& bb, const bigint& cc, const bigint& p)
+int rootsexist(const ZZ& aa, const ZZ& bb, const ZZ& cc, const ZZ& p)
 {
   if (even(p)) return is_zero((aa*bb*cc)%p);
-  const bigint& a = aa % p;
+  const ZZ& a = aa % p;
   if (is_zero(a)) return 1;
-  const bigint& b = bb % p;
-  const bigint& c = cc % p;
+  const ZZ& b = bb % p;
+  const ZZ& c = cc % p;
   if (is_zero(c)) return 1;
   return legendre(b*b - 4*a*c, p) >= 0;      //ie true if legendre(d,p)=0,1
 }
 
 //monic version
-int rootsexist(const bigint& bb, const bigint& cc, const bigint& p)
+int rootsexist(const ZZ& bb, const ZZ& cc, const ZZ& p)
 {
-  static const bigint one(1);
+  static const ZZ one(1);
   return rootsexist(one,bb,cc,p);
 }
 
@@ -119,14 +119,14 @@ CurveRed::CurveRed(const Curvedata& E)
   : Curvedata(E, 1), //minimalize in constructor
     N(1)
 {
-  static const bigint one(1), three(3), twelve(12);
+  static const ZZ one(1), three(3), twelve(12);
   // constructor stuff
   if (discr==0) {N = 0; return; }
   factor_discr(); // will only do anything if not already factored
 
   // local variables
   Curvedata C(*this);
-  bigint temp, r, s, t, b, c, bb, cc, bc, d, w, x, mx, my,
+  ZZ temp, r, s, t, b, c, bb, cc, bc, d, w, x, mx, my,
           a2t, a3t, a4t, a6t, zero;
   int c_p=1, sw, loop, ix, iy;
   zero=0;
@@ -140,7 +140,7 @@ CurveRed::CurveRed(const Curvedata& E)
     int ord_p_discr = val(p,discr);
     int ord_p_j = ord_p_discr - 3*val(p,c4);
     if (ord_p_j < 0) ord_p_j = 0;
-    bigint halfmodp = (p+1) >>1;
+    ZZ halfmodp = (p+1) >>1;
     int pdiv2 = even(p);
     int pdiv3 = (p==3);
 
@@ -182,7 +182,7 @@ CurveRed::CurveRed(const Curvedata& E)
        continue; } // Type III
     else if ( val(p,C.b6) < 3 )
       {temp = -(C.a6/p)/p;
-      bigint temp2 = C.a3/p;
+      ZZ temp2 = C.a3/p;
       if ( rootsexist(temp2,temp,p) ) c_p = 3;
       else c_p = 1;
       reduct_array[p] = Reduction_type
@@ -333,12 +333,12 @@ CurveRed::CurveRed(const Curvedata& E)
 // (1) conductor
 // (2) list of ap for p < NP_SORT
 // (3) a1,a2,a3,4,a6
-vector<bigint> CurveRed::sort_key(const int NP_SORT) const
+vector<ZZ> CurveRed::sort_key(const int NP_SORT) const
 {
-  vector<bigint> key;
+  vector<ZZ> key;
   key.push_back(N);
   for(primevar pr(NP_SORT); pr.ok(); ++pr)
-    key.push_back(bigint(ap(pr)));
+    key.push_back(ZZ(ap(pr)));
   key.push_back(a1);
   key.push_back(a2);
   key.push_back(a3);
@@ -350,17 +350,17 @@ vector<bigint> CurveRed::sort_key(const int NP_SORT) const
 
 // The local Tamagawa exponent -- same as Tamagawa number unless the
 // component group is (2,2).  Use p=0 for reals
-bigint local_Tamagawa_exponent(const CurveRed& c, const bigint& p)
+ZZ local_Tamagawa_exponent(const CurveRed& c, const ZZ& p)
 {
-  static const bigint one(1), two(2), four(4);
-  if (is_zero(p)) return bigint(c.conncomp);
+  static const ZZ one(1), two(2), four(4);
+  if (is_zero(p)) return ZZ(c.conncomp);
   auto ri = c.reduct_array.find(p);
   if (ri == c.reduct_array.end())
     return one;
   Reduction_type info = ri->second;
   int cp = info.c_p;
   if (cp!=4)
-    return bigint(cp);
+    return ZZ(cp);
   // see if we have C4 or C2xC2
   int code = info.Kcode.code;
   return (code%20==1? two: four); // Type I*m, m even: [2,2], else 4
@@ -372,18 +372,18 @@ bigint local_Tamagawa_exponent(const CurveRed& c, const bigint& p)
 // So (with no further knowledge of the MW group) we know that m*P
 // is in the good-reduction subgroup for all P, with this m.
 
-bigint global_Tamagawa_exponent(const CurveRed& c, int real_too)
+ZZ global_Tamagawa_exponent(const CurveRed& c, int real_too)
 {
-  static const bigint one(1);
-  static const bigint two(2);
-  bigint ans = ((real_too && (getconncomp(c)==2))? two: one);
+  static const ZZ one(1);
+  static const ZZ two(2);
+  ZZ ans = ((real_too && (getconncomp(c)==2))? two: one);
 
   for( const auto&  ri : c.reduct_array)
     {
       Reduction_type info = ri.second;
       int code = info.Kcode.code;
       int ep = (code%20==1? 2: info.c_p); // Type I*m, m even: [2,2]
-      ans = lcm(ans,bigint(ep));
+      ans = lcm(ans,ZZ(ep));
     }
   return ans;
 }
@@ -391,9 +391,9 @@ bigint global_Tamagawa_exponent(const CurveRed& c, int real_too)
 // Tamagawa primes: primes dividing any Tamagawa number
 vector<long> tamagawa_primes(const CurveRed& C, int real_too)
 {
-  vector<bigint> T = pdivs(global_Tamagawa_exponent(C, real_too));
+  vector<ZZ> T = pdivs(global_Tamagawa_exponent(C, real_too));
   vector<long> t(T.size());
-  std::transform(T.begin(), T.end(), t.begin(), [](const bigint& x) {return I2long(x);});
+  std::transform(T.begin(), T.end(), t.begin(), [](const ZZ& x) {return I2long(x);});
   return t;
 }
 
@@ -406,58 +406,58 @@ vector<long> tamagawa_primes(const CurveRed& C, int real_too)
 // which is impossible without removing the "const" qualifier from the
 // CurveRed argument!
 
-int CurveRed::ord_p_discr(const bigint& p) const
+int CurveRed::ord_p_discr(const ZZ& p) const
 {
   auto ri = reduct_array.find(p);
   return (ri==reduct_array.end()? 0 : (ri->second).ord_p_discr);
 }
 
-int CurveRed::ord_p_N(const bigint& p) const
+int CurveRed::ord_p_N(const ZZ& p) const
 {
   auto ri = reduct_array.find(p);
   return (ri==reduct_array.end()? 0 : (ri->second).ord_p_N);
 }
 
-int CurveRed::ord_p_j_denom(const bigint& p) const
+int CurveRed::ord_p_j_denom(const ZZ& p) const
 {
   auto ri = reduct_array.find(p);
   return (ri==reduct_array.end()? 0 : (ri->second).ord_p_j_denom);
 }
 
-int CurveRed::c_p(const bigint& p) const
+int CurveRed::c_p(const ZZ& p) const
 {
   auto ri = reduct_array.find(p);
   return (ri==reduct_array.end()? 1 : (ri->second).c_p);
 }
 
-vector<bigint> CurveRed::all_cp() const
+vector<ZZ> CurveRed::all_cp() const
 {
-  vector<bigint> allcp(reduct_array.size());
-  auto cp = [] (const pair<bigint,Reduction_type>& x) {return bigint(x.second.c_p);};
+  vector<ZZ> allcp(reduct_array.size());
+  auto cp = [] (const pair<ZZ,Reduction_type>& x) {return ZZ(x.second.c_p);};
   std::transform(reduct_array.begin(), reduct_array.end(), allcp.begin(), cp);
   return allcp;
 }
 
-bigint CurveRed::prodcp() const
+ZZ CurveRed::prodcp() const
 {
-  static const bigint one(1);
-  vector<bigint> allcp = all_cp();
+  static const ZZ one(1);
+  vector<ZZ> allcp = all_cp();
   return std::accumulate(allcp.begin(), allcp.end(), one, std::multiplies<>());
 }
 
 // The local Tamagawa number.  Use p=0 for reals
-bigint local_Tamagawa_number(const CurveRed& c, const bigint& p)
+ZZ local_Tamagawa_number(const CurveRed& c, const ZZ& p)
 {
-  return bigint(is_zero(p)? getconncomp(c): getc_p(c,p));
+  return ZZ(is_zero(p)? getconncomp(c): getc_p(c,p));
 }
 
 // The global Tamagawa number, = product of local ones.
-bigint global_Tamagawa_number(const CurveRed& c, int real_too)
+ZZ global_Tamagawa_number(const CurveRed& c, int real_too)
 {
-  return bigint(prodcp(c) * (real_too ? getconncomp(c) : 1));
+  return ZZ(prodcp(c) * (real_too ? getconncomp(c) : 1));
 }
 
-Kodaira_code getKodaira_code(const CurveRed& c, const bigint& p)
+Kodaira_code getKodaira_code(const CurveRed& c, const ZZ& p)
 {
   auto ri = c.reduct_array.find(p);
   return (ri==c.reduct_array.end()? Kodaira_code() : (ri->second).Kcode);
@@ -513,7 +513,7 @@ void CurveRed::display(ostream& os)
 // Reduction_type::local_root_number field, computing them if not
 // already set (i.e. field contains 0)
 
-int CurveRed::LocalRootNumber(const bigint& p) const
+int CurveRed::LocalRootNumber(const ZZ& p) const
 {
   if(is_zero(p)) return -1;  // the infinite prime
   auto ri = reduct_array.find(p);
@@ -523,13 +523,13 @@ int CurveRed::LocalRootNumber(const bigint& p) const
 
 int CurveRed::GlobalRootNumber() const
 {
-  auto rn = [](const std::pair<bigint,Reduction_type>& ri){return (ri.second).local_root_number;};
+  auto rn = [](const std::pair<ZZ,Reduction_type>& ri){return (ri.second).local_root_number;};
   return std::transform_reduce(reduct_array.cbegin(), reduct_array.cend(),
                                -1, std::multiplies<>(), rn);
 }
 
-int kro(const bigint& d, const bigint& n);
-int kro(const bigint& d, long n);
+int kro(const ZZ& d, const ZZ& n);
+int kro(const ZZ& d, long n);
 int kro(long d, long n);
 int kro_m1(long x); // kronecker(-1,x) with x>0 odd
 int kro_p2(long x); // kronecker(2,x) with x>0 odd
@@ -540,14 +540,14 @@ int kro_3(long x); // kronecker(x,3)
 
 void CurveRed::setLocalRootNumber2()
 {
-  static const bigint two(2);
+  static const ZZ two(2);
   auto ri = reduct_array.find(two);
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   int kod = PariKodairaCode(info.Kcode);
   int n2  = neron(2,kod);
 
-  bigint mu,mv; long u,v; int v4,v6;
+  ZZ mu,mv; long u,v; int v4,v6;
 
   if (is_zero(c4)) {v4=12; u=0;}
   else {mu=c4; v4=divide_out(mu,two); u = posmod(mu,64);}
@@ -567,7 +567,7 @@ void CurveRed::setLocalRootNumber2()
       return;
     }
 
-  bigint tmp = discr;
+  ZZ tmp = discr;
   divide_out(tmp,two);
   long d1=posmod(tmp,64);
 
@@ -727,14 +727,14 @@ void CurveRed::setLocalRootNumber2()
 
 void CurveRed::setLocalRootNumber3()
 {
-  static const bigint three(3);
+  static const ZZ three(3);
   auto ri = reduct_array.find(three);
   if(ri==reduct_array.end()) return;
   Reduction_type& info = ri->second;
   int kod = PariKodairaCode(info.Kcode);
   int n2  = neron(3,kod);
 
-  bigint mu,mv; long u,v; int v4;
+  ZZ mu,mv; long u,v; int v4;
 
   if (is_zero(c4)) {
     v4=12;
@@ -755,7 +755,7 @@ void CurveRed::setLocalRootNumber3()
     v = posmod(mv,81);
   }
 
-  bigint tmp = discr;
+  ZZ tmp = discr;
   divide_out(tmp,three);
   long d1=posmod(tmp,81);
   long r6 = posmod(v,9);
@@ -825,7 +825,7 @@ void CurveRed::setLocalRootNumber3()
 // number" or local factor in the sign of the functional equation of
 // L(E,s).
 
-void CurveRed::setLocalRootNumber_not_2_or_3(const bigint& p)
+void CurveRed::setLocalRootNumber_not_2_or_3(const ZZ& p)
 {
   auto ri = reduct_array.find(p);
   if(ri==reduct_array.end()) return;
@@ -865,7 +865,7 @@ void CurveRed::setLocalRootNumber_not_2_or_3(const bigint& p)
 // p=2, p=3, and p>=5.
 //
 
-void CurveRed::setLocalRootNumber(const bigint& p)
+void CurveRed::setLocalRootNumber(const ZZ& p)
 {
   if (is_zero(p)) return;
   if (p==2) setLocalRootNumber2();
@@ -874,12 +874,12 @@ void CurveRed::setLocalRootNumber(const bigint& p)
 }
 
 
-int kro(const bigint& d, const bigint& n)
+int kro(const ZZ& d, const ZZ& n)
 {
   return kronecker(d,n);
 }
 
-int kro(const bigint& d, long n)
+int kro(const ZZ& d, long n)
 {
   return kronecker(d,n);
 }
@@ -933,7 +933,7 @@ int PariKodairaCode(Kodaira_code Kod)
 
 int CurveRed::neron(long p, int kod)
 {
-  bigint d=discr;
+  ZZ d=discr;
   int v4=val(p,c4);
   int v6=val(p,c6);
   int vd=val(p,d);
@@ -1035,7 +1035,7 @@ int CurveRed::neron(long p, int kod)
 // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
 long CurveRed::ap(long p) const
 {
-  bigint P(p);
+  ZZ P(p);
   int f = min(2, ord_p_N(P));
 
   switch (f) {
@@ -1050,12 +1050,12 @@ long CurveRed::ap(long p) const
 
 // Trace of Frobenius (via pari) if p good
 // (or 0 for additive reduction, +1 for split multiplicative, -1 for nonsplit)
-bigint CurveRed::ap(const bigint& p) const
+ZZ CurveRed::ap(const ZZ& p) const
 {
   switch (min(2, ord_p_N(p))) {
     // Bad primes: return the p'th coefficient of the L-series
-  case 2: return bigint(0);
-  case 1: return bigint(-LocalRootNumber(p));
+  case 2: return ZZ(0);
+  case 1: return ZZ(-LocalRootNumber(p));
     // good primes
   case 0: default:
     return ellap(a1,a2,a3,a4,a6, p);
@@ -1063,10 +1063,10 @@ bigint CurveRed::ap(const bigint& p) const
 }
 
 // Quadratic twist of an elliptic curve (returns minimal model)
-CurveRed QuadraticTwist(const CurveRed& E, const bigint& D)
+CurveRed QuadraticTwist(const CurveRed& E, const ZZ& D)
 {
-  static bigint zero(0);
-  bigint c4, c6, D2=D*D;
+  static ZZ zero(0);
+  ZZ c4, c6, D2=D*D;
   E.getci(c4, c6);
   Curvedata ED(zero, zero, zero,-27*D2*c4,-54*D*D2*c6, 1); // 1 means minimise
   return CurveRed(ED);
@@ -1074,7 +1074,7 @@ CurveRed QuadraticTwist(const CurveRed& E, const bigint& D)
 
 // Given a list of elliptic curves E, and one discriminant D, return the
 // list of twists of the curves by D
-vector<CurveRed> QuadraticTwists(const vector<CurveRed>& EE, const bigint& D)
+vector<CurveRed> QuadraticTwists(const vector<CurveRed>& EE, const ZZ& D)
 {
   vector<CurveRed> ans;
   std::transform(EE.begin(), EE.end(), std::back_inserter(ans),
@@ -1088,7 +1088,7 @@ vector<CurveRed> QuadraticTwists(const vector<CurveRed>& EE, const bigint& D)
 // -p if p=3 (mod 4)
 // -4, 8 and -8 if p=2
 
-vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, const bigint& p)
+vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, const ZZ& p)
 {
   long p4 = posmod(p,4);
   if (p4==1)
@@ -1096,7 +1096,7 @@ vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, const bigint& p)
   if (p4==3)
     return QuadraticTwists(EE,-p);
   vector<CurveRed> ans;
-  static const vector<bigint> D2 = {bigint(-4), bigint(-8), bigint(8)};
+  static const vector<ZZ> D2 = {ZZ(-4), ZZ(-8), ZZ(8)};
   for (auto D: D2)
     {
       vector<CurveRed> ans1 = QuadraticTwists(EE,D);
@@ -1110,7 +1110,7 @@ vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, const bigint& p)
 // list of all quadratic twists of the curves by discriminants supported on
 // those primes (including the original curves)
 
-vector<CurveRed> AllTwists(const vector<CurveRed>& EE, const vector<bigint>& PP)
+vector<CurveRed> AllTwists(const vector<CurveRed>& EE, const vector<ZZ>& PP)
 {
   vector<CurveRed> ans = EE;
   for (auto p: PP)

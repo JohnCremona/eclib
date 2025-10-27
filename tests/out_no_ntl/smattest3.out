@@ -1,4 +1,4 @@
-Sparse matrix test program with scalar type bigint and modulus 1000000000000000000000000000057.
+Sparse matrix test program with scalar type ZZ and modulus 1000000000000000000000000000057.
 
 enter 0 to exit
 enter 1 to do all tests 

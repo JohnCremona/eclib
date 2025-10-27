@@ -25,9 +25,9 @@
 #include "eclib/curve.h"
 #include "eclib/cubic.h"
 
-Curvedata::Curvedata(const bigint& aa1, const bigint& aa2, 
-		     const bigint& aa3, const bigint& aa4, 
-		     const bigint& aa6, int min_on_init)
+Curvedata::Curvedata(const ZZ& aa1, const ZZ& aa2, 
+		     const ZZ& aa3, const ZZ& aa4, 
+		     const ZZ& aa6, int min_on_init)
   : Curve(aa1,aa2,aa3,aa4,aa6),
     b2(a1*a1 + 4*a2), b4(2*a4 + a1*a3), b6(a3*a3 + 4*a6),
     minimal_flag(0), ntorsion(0)
@@ -52,17 +52,17 @@ Curvedata::Curvedata(const bigint& aa1, const bigint& aa2,
 }
 
 //#define DEBUG_Q_INPUT
-Curvedata::Curvedata(const vector<bigrational>& qai, bigint& scale)
+Curvedata::Curvedata(const vector<bigrational>& qai, ZZ& scale)
 : minimal_flag(0), ntorsion(0)
 {
-  static const bigint one(1);
+  static const ZZ one(1);
   bigrational qa1(qai[0]), qa2(qai[1]), qa3(qai[2]), qa4(qai[3]), qa6(qai[4]);
   scale = one;
   a1=num(qa1);  a2=num(qa2);  a3=num(qa3);  a4=num(qa4);  a6=num(qa6);
 #ifdef DEBUG_Q_INPUT
   cout<<"In Curvedata constructor with ["<<qa1<<","<<qa2<<","<<qa3<<","<<qa4<<","<<qa6<<"]"<<endl;
 #endif
-  vector<bigint> plist=pdivs(den(qa1));
+  vector<ZZ> plist=pdivs(den(qa1));
   plist=vector_union(plist,pdivs(den(qa2)));
   plist=vector_union(plist,pdivs(den(qa3)));
   plist=vector_union(plist,pdivs(den(qa4)));
@@ -85,9 +85,9 @@ Curvedata::Curvedata(const vector<bigrational>& qai, bigint& scale)
 #endif
       if(e>0)
 	{
-	  bigint pe=pow(p,e);
+	  ZZ pe=pow(p,e);
 	  scale *= pe;
-	  bigint pei=pe;
+	  ZZ pei=pe;
 	  a1*=pei; pei*=pe;
 	  a2*=pei; pei*=pe;
 	  a3*=pei; pei*=pe;
@@ -160,7 +160,7 @@ Curvedata::Curvedata(const Curvedata& c, int min_on_init)
   if (min_on_init) minimalize(); 
 }
 
-Curvedata::Curvedata(const bigint& cc4, const bigint& cc6, int min_on_init)
+Curvedata::Curvedata(const ZZ& cc4, const ZZ& cc6, int min_on_init)
   :minimal_flag(0), discr_factored(0), ntorsion(0)
 {
   if (valid_invariants(cc4, cc6))
@@ -214,7 +214,7 @@ void Curvedata::minimalize()
   
 // else we are ready for Laska-Kraus-Connell reduction
 
-  bigint newc4, newc6, newdiscr, u;
+  ZZ newc4, newc6, newdiscr, u;
   //cout<<"minimising c4, c6 = "<<c4<<", "<<c6<<"\n";
   minimise_c4c6(c4,c6,discr,newc4,newc6,newdiscr,u);
   //cout<<"minimal c4, c6 = "<<newc4<<", "<<newc6<<"\t"<<"( u = "<<u<<")\n";
@@ -227,7 +227,7 @@ void Curvedata::minimalize()
     { 
       if(u>1) // trim list of bad primes
 	{
-	  vector<bigint> new_bad_primes;
+	  vector<ZZ> new_bad_primes;
           for (const auto& p : the_bad_primes)
 	    {
 	      if(div(p,discr))
@@ -245,7 +245,7 @@ void Curvedata::minimalize()
   minimal_flag = 1;
 }
 
-Curvedata Curvedata::minimalize(bigint& u, bigint& r, bigint& s, bigint& t) const
+Curvedata Curvedata::minimalize(ZZ& u, ZZ& r, ZZ& s, ZZ& t) const
 {
   if (minimal_flag) 
     {
@@ -255,7 +255,7 @@ Curvedata Curvedata::minimalize(bigint& u, bigint& r, bigint& s, bigint& t) cons
     }
   // else we use Laska-Kraus-Connell reduction
 
-  bigint newc4, newc6, newdiscr, u2;
+  ZZ newc4, newc6, newdiscr, u2;
   //cout<<"minimising c4, c6 = "<<c4<<", "<<c6<<"\n";
   minimise_c4c6(c4,c6,discr,newc4,newc6,newdiscr,u);
   //cout<<"minimal c4, c6 = "<<newc4<<", "<<newc6<<"\t"<<"( u = "<<u<<")\n";
@@ -270,7 +270,7 @@ Curvedata Curvedata::minimalize(bigint& u, bigint& r, bigint& s, bigint& t) cons
   return newc;
 }
 
-void Curvedata::transform(const bigint& r, const bigint& s, const bigint& t)   //NB u=1;
+void Curvedata::transform(const ZZ& r, const ZZ& s, const ZZ& t)   //NB u=1;
 {
   a6 += r*(a4 + r*(a2 + r)) - t*(a3 + r*a1 + t);
   a4 += -s*a3 + 2*r*a2 - (t + r*s)*a1 + 3*r*r - 2*s*t;
@@ -316,9 +316,9 @@ void Curvedata::output(ostream& os) const
   else os<<"#torsion not yet computed"<<endl;
 }
 
-Curvedata opt_x_shift(const Curvedata& C, bigint& k)
+Curvedata opt_x_shift(const Curvedata& C, ZZ& k)
 {
-  bigint b2,b4,b6,b8,four(4),zero(0);
+  ZZ b2,b4,b6,b8,four(4),zero(0);
   C.getbi(b2,b4,b6,b8);
   cubic b_cubic(four,b2,2*b4,b6);
   k = b_cubic.shift_reduce();

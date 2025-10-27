@@ -26,25 +26,25 @@
 
 #include "points.h"
 
-inline bigint II(const bigint& a, const bigint& b, const bigint& c, 
-	  const bigint& d, const bigint& e)
+inline ZZ II(const ZZ& a, const ZZ& b, const ZZ& c, 
+	  const ZZ& d, const ZZ& e)
 {
   return 12*a*e - 3*b*d + c*c;
 }
 
-inline bigint JJ(const bigint& a, const bigint& b, const bigint& c, 
-	  const bigint& d, const bigint& e)
+inline ZZ JJ(const ZZ& a, const ZZ& b, const ZZ& c, 
+	  const ZZ& d, const ZZ& e)
 {
   return (72*a*e + 9*b*d - 2*sqr(c)) * c - 27*(a*sqr(d) + sqr(b)*e);
 }
 
-inline bigint H_invariant(const bigint& a, const bigint& b, const bigint& c)
+inline ZZ H_invariant(const ZZ& a, const ZZ& b, const ZZ& c)
 {
   return 8*a*c - 3*sqr(b);
 }
 
-inline bigint R_invariant(const bigint& a, const bigint& b, const bigint& c, 
-		 const bigint& d)
+inline ZZ R_invariant(const ZZ& a, const ZZ& b, const ZZ& c, 
+		 const ZZ& d)
 {
   return pow(b,3) + 8*d*sqr(a) - 4*a*b*c;
 }
@@ -54,36 +54,36 @@ class quartic {
 public:
      // constructors
         quartic();
-        quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
-		const bigint& qd, const bigint& qe, 
+        quartic(const ZZ& qa, const ZZ& qb, const ZZ& qc, 
+		const ZZ& qd, const ZZ& qe, 
                 const vector<bigcomplex>& qr,	int qt,
-		const bigint& qi,const bigint& qj,const bigint& qdisc);
-        quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
-		const bigint& qd, const bigint& qe);
+		const ZZ& qi,const ZZ& qj,const ZZ& qdisc);
+        quartic(const ZZ& qa, const ZZ& qb, const ZZ& qc, 
+		const ZZ& qd, const ZZ& qe);
   // latter calls set_roots_and_type()
         quartic(const quartic& q);
   // member functions & operators
         void set_roots_and_type();
-	void assign(const bigint& qa, const bigint& qb, const bigint& qc, 
-		    const bigint& qd, const bigint& qe, 
+	void assign(const ZZ& qa, const ZZ& qb, const ZZ& qc, 
+		    const ZZ& qd, const ZZ& qe, 
 		    const vector<bigcomplex>& qr,    int qt,
-		    const bigint& qi,const bigint& qj,
-		    const bigint& qdisc);
-	void assign(const bigint& qa, const bigint& qb, const bigint& qc, 
-		    const bigint& qd, const bigint& qe);
+		    const ZZ& qi,const ZZ& qj,
+		    const ZZ& qdisc);
+	void assign(const ZZ& qa, const ZZ& qb, const ZZ& qc, 
+		    const ZZ& qd, const ZZ& qe);
   // latter calls set_roots_and_type()
         void operator=(const quartic& q);
-        bigint geta() const {return a;}
-        bigint getb() const {return b;}
-        bigint getcc() const {return c;} //NB "getc" is a standard macro
-        bigint getd() const {return d;}
-        bigint gete() const {return e;}
-	void getcoeffs(bigint& xa, bigint& xb, bigint& xc, bigint& xd, bigint& xe) const {xa=a; xb=b; xc=c; xd=d; xe=e;}
+        ZZ geta() const {return a;}
+        ZZ getb() const {return b;}
+        ZZ getcc() const {return c;} //NB "getc" is a standard macro
+        ZZ getd() const {return d;}
+        ZZ gete() const {return e;}
+	void getcoeffs(ZZ& xa, ZZ& xb, ZZ& xc, ZZ& xd, ZZ& xe) const {xa=a; xb=b; xc=c; xd=d; xe=e;}
         int gettype() const {return type;}
-        bigint getI() const {return ii;}
-        bigint getJ() const {return jj;}
-        bigint getH() const {return H_invariant(a,b,c);}
-        bigint getdisc() const {return disc;}
+        ZZ getI() const {return ii;}
+        ZZ getJ() const {return jj;}
+        ZZ getH() const {return H_invariant(a,b,c);}
+        ZZ getdisc() const {return disc;}
         vector<bigcomplex> getroots(void) const {return roots;}
         void doubleup()
           {
@@ -95,10 +95,10 @@ public:
         friend ostream& operator<<(ostream& s, const quartic& q);
 	friend int new_equiv( quartic& q1, quartic& q2, int info);
 	friend void qc(quartic& g,
-		       const bigint& x0,  const bigint& y0,  const bigint& z0,
+		       const ZZ& x0,  const ZZ& y0,  const ZZ& z0,
 		       Curvedata * E, Curvedata* IJ_curve, 
-		       const bigint& tr_u, const bigint& tr_r, 
-		       const bigint& tr_s, const bigint& tr_t,  
+		       const ZZ& tr_u, const ZZ& tr_r, 
+		       const ZZ& tr_s, const ZZ& tr_t,  
 		       Point& P, int verbose);
 	void dump(ostream& s) const
 	  {
@@ -109,12 +109,12 @@ public:
 	  }
 // Implementation
 private:
-       bigint a,b,c,d,e; // coefficients
+       ZZ a,b,c,d,e; // coefficients
        vector<bigcomplex> roots; // 4 roots, created in all constructors
        int type;       // 1, 2 or 3
-       bigint ii,jj,disc;
+       ZZ ii,jj,disc;
 // The following are used by new_equiv:  (NB p = -H)
-       bigint p, r, psq, asq;
+       ZZ p, r, psq, asq;
        void make_zpol();
        int have_zpol;
        unsigned long equiv_code;
@@ -128,6 +128,6 @@ inline ostream& operator<<(ostream& s, const quartic& q)
  return s;
 }
 
-quartic make_quartic(const bigint& a, const bigint& b, const bigint& c, const bigint& d, const bigint& e);
+quartic make_quartic(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d, const ZZ& e);
 
 #endif

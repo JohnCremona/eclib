@@ -37,12 +37,12 @@ int main()
   cout << "After P=P2Point(2,4,-6), P="<<P<<endl;
   Q=P;
   cout << "After Q=P, Q="<<Q<<endl;
-  Q=transform(P,bigint(3),bigint(4),bigint(5),bigint(6),0);
+  Q=transform(P,ZZ(3),ZZ(4),ZZ(5),ZZ(6),0);
   cout << "After Q=transform(P,3,4,5,6,0), Q="<<Q<<endl;
-  R=transform(Q,bigint(3),bigint(4),bigint(5),bigint(6),1);
+  R=transform(Q,ZZ(3),ZZ(4),ZZ(5),ZZ(6),1);
   cout << "After R=transform(Q,3,4,5,6,1), R="<<R<<endl;
   cout << "R==P? "<< (R==P) <<endl;
-  bigint x,y,z; bigrational X,Y;  bigfloat rx,ry;
+  ZZ x,y,z; bigrational X,Y;  bigfloat rx,ry;
   P.getcoordinates(x,y,z);
   cout<<"Projective coordinates of P are X="<<x<<", Y="<<y<<", Z="<<z<<endl;
   P.getaffinecoordinates(X,Y);

@@ -163,7 +163,7 @@ int main(void)
 	 cout << "Curve = \t";
 	 cout << (Curve)CD << "\t";
 	 CurveRed CR(CD);
-	 bigint nc = getconductor(CR);
+	 ZZ nc = getconductor(CR);
 	 cout << "N = " << getconductor(CR) << endl;
        }
      else cout<<"No curve found\n";

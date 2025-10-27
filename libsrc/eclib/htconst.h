@@ -57,8 +57,8 @@ bigfloat lower_height_bound(const Curvedata& CD, int egr);
 class point_min_height_finder : public point_processor {
   Curvedata *E;
   ComponentGroups CG;  // used if egr_flag to test for egr
-  bigint a1,a2,a3,a4,a6; 
-  vector<bigint> c;
+  ZZ a1,a2,a3,a4,a6; 
+  vector<ZZ> c;
   int iso, egr_flag, verbose;
   bigfloat min_ht;
   Point Pmin;
@@ -66,7 +66,7 @@ class point_min_height_finder : public point_processor {
  public:
   explicit point_min_height_finder(Curvedata* EE, int egr=0, int verb=0);
   ~point_min_height_finder() {};
-  int process(const bigint& x, const bigint& y, const bigint& z) override;
+  int process(const ZZ& x, const ZZ& y, const ZZ& z) override;
   void search(bigfloat h_lim);
   bigfloat get_min_ht() const {return min_ht;}
   Point get_min_ht_point() const {return Pmin;}

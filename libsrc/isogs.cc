@@ -44,7 +44,7 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
   if(ell==2) return twoisog(CR,verbose);
   if(ell==3) return threeisog(CR,verbose);
   bigcomplex x,X,y,Y,z;
-  bigint a1,a2,a3,a4,a6, b2,b4,b6,b8;
+  ZZ a1,a2,a3,a4,a6, b2,b4,b6,b8;
   CR.getai(a1,a2,a3,a4,a6);
   CR.getbi(b2,b4,b6,b8);
   bigfloat ra1=I2bigfloat(a1),ra2=I2bigfloat(a2),ra3=I2bigfloat(a3),
@@ -53,7 +53,7 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
   // b8 isn't used
   if (verbose>1)
     cout<<"\nra1: "<<ra1<<"\tra2: "<<ra2<<"\tra3: "<<ra3<<"\tra4: "<<ra4<<"\tra6: "<<ra6<<"\nrb2: "<<rb2<<"\trb4: "<<rb4<<"\trb6: "<<rb6<<endl;
-  bigint conductor = getconductor(CR);
+  ZZ conductor = getconductor(CR);
   bigcomplex w1, w2;  cp.getwi(w1, w2);
   int type = cp.getwRI(w1,w2);
   long subgroup, nsubgroups = 2;
@@ -62,7 +62,7 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
 
   // other loop variables:
   bigcomplex t, w, ti, ui;
-  bigint ell1, ad4, ad6, lad4, lad6;
+  ZZ ell1, ad4, ad6, lad4, lad6;
   bigfloat rad4, rad6;
   bigfloat xell(to_bigfloat(ell));
   static bigfloat two(to_bigfloat(2));
@@ -72,10 +72,10 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
   static bigfloat six(to_bigfloat(6));
   static bigfloat seven(to_bigfloat(7));
   ell1 = ell;
-  bigint ell2 = sqr(ell1);
-  bigint ell3 = ell1*ell2;
-  bigint ell4 = ell2*ell2;
-  bigint ell6 = ell2*ell4;
+  ZZ ell2 = sqr(ell1);
+  ZZ ell3 = ell1*ell2;
+  ZZ ell4 = ell2*ell2;
+  ZZ ell6 = ell2*ell4;
 
   for (subgroup = 1; subgroup <= nsubgroups; subgroup++)
   {
@@ -112,7 +112,7 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
     ad4 = Iround(rad4);
     ad6 = Iround(rad6);
     if (verbose>1)
-      cout<<"bigint values are "<<ad4<<" and "<<ad6<<endl;
+      cout<<"ZZ values are "<<ad4<<" and "<<ad6<<endl;
 
     if ( close(I2bigfloat(ad4) , rad4 , EPS1) &&  
 	 close(I2bigfloat(ad6) , rad6 , EPS1) )
@@ -144,7 +144,7 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
 	lad4 = Iround(rad4);
 	lad6 = Iround(rad6);
 	if (verbose>1)
-	  cout<<"bigint values are "<<lad4<<" and "<<lad6<<endl;
+	  cout<<"ZZ values are "<<lad4<<" and "<<lad6<<endl;
 	if ( close(I2bigfloat(lad4) , rad4 , EPS1) &&
 	     close(I2bigfloat(lad6) , rad6 , EPS1) )
 	  { 
@@ -171,57 +171,57 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
   return ans;
 }
 
-int semistable(CurveRed& CR, const bigint& p)
+int semistable(CurveRed& CR, const ZZ& p)
 {
   return CR.ord_p_N(p) < 2;
 }
 
 int semistable(CurveRed& CR)
 {
-  vector<bigint> plist = getbad_primes(CR);
+  vector<ZZ> plist = getbad_primes(CR);
   return std::all_of(plist.begin(), plist.end(),
-                     [&CR] (const bigint& p) {return semistable(CR, p);});
+                     [&CR] (const ZZ& p) {return semistable(CR, p);});
 }
 
-int comprat(const bigint& n1, const bigint& d1,
-	    const bigint& n2, const bigint& d2)
+int comprat(const ZZ& n1, const ZZ& d1,
+	    const ZZ& n2, const ZZ& d2)
 {
   return n1*d2==n2*d1;
 }
 
 vector<long> getelllist(CurveRed& CR)
 {
-  static const bigint j11a(-32768);
-  static const bigint j11b(-121);
-  static const bigint j11c(-24729001);
+  static const ZZ j11a(-32768);
+  static const ZZ j11b(-121);
+  static const ZZ j11c(-24729001);
 
-  static const bigint nj17a(-297756989);
-  static const bigint dj17a(2);
-  static const bigint nj17b(-882216989);
-  static const bigint dj17b(131072);
+  static const ZZ nj17a(-297756989);
+  static const ZZ dj17a(2);
+  static const ZZ nj17b(-882216989);
+  static const ZZ dj17b(131072);
 
-  static const bigint j37a(-9317);
-  static const bigint j37b = to_ZZ("-162677523113838677");
+  static const ZZ j37a(-9317);
+  static const ZZ j37b = to_ZZ("-162677523113838677");
 
-  static const bigint j19(-884736);
-  static const bigint j43(-884736000);
-  static const bigint j67 = to_ZZ("-147197952000");
-  static const bigint j163 = to_ZZ("-262537412640768000");
+  static const ZZ j19(-884736);
+  static const ZZ j43(-884736000);
+  static const ZZ j67 = to_ZZ("-147197952000");
+  static const ZZ j163 = to_ZZ("-262537412640768000");
 
-  static const bigint one(1);
+  static const ZZ one(1);
 
   vector<long> ans; ans.reserve(4);
   ans.push_back(2);
   ans.push_back(3);
   ans.push_back(5);
   ans.push_back(7);
-  bigint N = getconductor(CR);
+  ZZ N = getconductor(CR);
   if(!semistable(CR))
     {
       ans.push_back(13);
-      bigint njay=pow(getc4(CR),3);
-      bigint djay=getdiscr(CR);
-      bigint g=gcd(njay,djay);
+      ZZ njay=pow(getc4(CR),3);
+      ZZ djay=getdiscr(CR);
+      ZZ g=gcd(njay,djay);
       if(!is_one(g)) {njay/=g; djay/=g;}
       if(djay<0) {djay=-djay; njay=-njay;} // Thanks to Mark Watkins
       if(is_one(djay))
@@ -453,17 +453,17 @@ vector<CurveRed> twoisog(const CurveRed& CR, int verbose)
   vector<Point> tt = two_torsion(CD);  // include [0:1:0]
   vector<CurveRed> ans;
   if(tt.size()==1) return ans;
-  bigint a1,a2,a3,a4,a6,b2,b4,b6,b8;
+  ZZ a1,a2,a3,a4,a6,b2,b4,b6,b8;
   CR.getai(a1,a2,a3,a4,a6);
   CR.getbi(b2,b4,b6,b8);
   unsigned int i;
   for(i=1; i<tt.size(); i++)
     {
       Point T = tt[i];
-      bigint x = (4*T.getX())/T.getZ();  // =4x(T)
-      bigint t = 3*x*x+2*b2*x+8*b4;
+      ZZ x = (4*T.getX())/T.getZ();  // =4x(T)
+      ZZ t = 3*x*x+2*b2*x+8*b4;
       if(verbose) cout<<"t = "<<t<<endl;
-      bigint w = x*t;
+      ZZ w = x*t;
       if(verbose) cout<<"w = "<<w<<endl;
       Curve E(2*a1, 4*a2, 8*a3, 16*a4-5*t, 64*a6-4*b2*t-7*w);
       if(verbose) 
@@ -484,19 +484,19 @@ vector<CurveRed> threeisog(const CurveRed& CR, int verbose)
   if(verbose>1) cout<<"In threeisog with CR = "<<CR<<endl;
   Curvedata CD((Curvedata)CR);
   if(verbose>1) cout<<"In threeisog with CD = "<<CD<<endl;
-  vector<bigint> xt3 = three_torsion_x(CD);
+  vector<ZZ> xt3 = three_torsion_x(CD);
   if(verbose>1) cout<<"xt3 = "<<xt3<<endl;
   vector<CurveRed> ans;
   if(xt3.size()==0) return ans;
-  bigint a1,a2,a3,a4,a6,b2,b4,b6,b8;
+  ZZ a1,a2,a3,a4,a6,b2,b4,b6,b8;
   CR.getai(a1,a2,a3,a4,a6);
   CR.getbi(b2,b4,b6,b8);
   for(unsigned int i=0; i<xt3.size(); i++)
     {
-      bigint x = xt3[i];  // = 3*x-coord
-      bigint t = (2*x+b2)*x+3*b4;
+      ZZ x = xt3[i];  // = 3*x-coord
+      ZZ t = (2*x+b2)*x+3*b4;
       if(verbose) cout<<"t = "<<t<<endl;
-      bigint w = ((10*x+6*b2)*x+27*b4)*x+27*b6;
+      ZZ w = ((10*x+6*b2)*x+27*b4)*x+27*b6;
       if(verbose) cout<<"w = "<<w<<endl;
       Curve E(3*a1, 9*a2, 27*a3, 81*a4-135*t, 729*a6-243*b2*t-189*w);
       if(verbose) 

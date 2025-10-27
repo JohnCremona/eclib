@@ -46,16 +46,16 @@ int main()
   while (getquartic(g))
     {
       cout<<"Quartic is "<<g<<endl;
-      bigint I = g.getI(), J=g.getJ();
+      ZZ I = g.getI(), J=g.getJ();
       cout<<"I = "<<I<<"\nJ = "<<J<<endl;
-      bigint ga=g.geta(), gb=g.getb(), gc=g.getcc(), gd=g.getd(), ge=g.gete();
-      bigint p, badp;
-      vector<bigint> plist = pdivs(g.getdisc());
+      ZZ ga=g.geta(), gb=g.getb(), gc=g.getcc(), gd=g.getd(), ge=g.gete();
+      ZZ p, badp;
+      vector<ZZ> plist = pdivs(g.getdisc());
       cout<<"Bad primes: "<<plist<<endl;
       scaled_unimod m;
 
       cout << "Attempting to minimize the quartic.\n";
-      bigint newa(ga), newb(gb), newc(gc), newd(gd), newe(ge);
+      ZZ newa(ga), newb(gb), newc(gc), newd(gd), newe(ge);
       cout << "First partial minimization without assuming local solvability:\n";
       minim_all(newa,newb,newc,newd,newe,I,J,plist,m,0,1);
       quartic newg(newa,newb,newc,newd,newe);
@@ -109,7 +109,7 @@ int main()
 
 int getquartic(quartic& g)
 {
-  bigint a, b, c, d, e;
+  ZZ a, b, c, d, e;
   
   cout << "Enter quartic coefficients a,b,c,d,e ?" << endl;
   char ch; cin>>ch;

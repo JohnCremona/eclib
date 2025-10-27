@@ -46,7 +46,7 @@ protected:
   long num_aux;
   long rank, rank_bound, selmer_rank;
   Curvedata IJ_curve;  // [0,0,0,-27*I,-27*J]
-  bigint tr_u,tr_r,tr_s,tr_t;  // transformation from latter to minimal curve
+  ZZ tr_u,tr_r,tr_s,tr_t;  // transformation from latter to minimal curve
   long lim1, lim2;
 public:
 
@@ -81,8 +81,8 @@ public:
   //
   virtual void listpoints()=0;
   virtual void listpoints(Curvedata* CD_orig, 
-			  const bigint& u, const bigint& r, 
-			  const bigint& s, const bigint& t)=0;
+			  const ZZ& u, const ZZ& r, 
+			  const ZZ& s, const ZZ& t)=0;
   virtual vector<Point> getgens() const =0;
   virtual vector<Point> getpoints() =0;
 };
@@ -96,8 +96,8 @@ private: rank12 * r12;  // does all the work
   mw* mwbasis;
   vector<bigrational> qai;  // Coefficients of initial curve
   Curvedata e_orig, e_min;
-  bigint u,r,s,t; // transform between e_orig and e_min
-  bigint v;       // scaling factor needed to make input curve integral
+  ZZ u,r,s,t; // transform between e_orig and e_min
+  ZZ v;       // scaling factor needed to make input curve integral
   void do_the_descent(long firstlim, long secondlim, long n_aux, 
 		      int second_descent); //  (called by constructors)  
 public:

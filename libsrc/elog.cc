@@ -34,7 +34,7 @@ bigfloat ssqrt(const bigfloat& x)
   return sqrt(x);
 }
 
-void boundedratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxden);
+void boundedratapprox(bigfloat x, ZZ& a, ZZ& b, const ZZ& maxden);
 
 
 // Given an elliptic curve and its (precomputed) periods, and a point
@@ -53,7 +53,7 @@ void boundedratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxden);
 
 bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& x, const bigfloat& y)
 {
-  bigint za1,za2,za3,za4,za6;
+  ZZ za1,za2,za3,za4,za6;
   E.getai(za1,za2,za3,za4,za6);
   bigfloat ra1=I2bigfloat(za1);
   bigfloat ra2=I2bigfloat(za2);
@@ -196,7 +196,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
 
 vector<bigcomplex> ellztopoint(Curvedata& E,  const Cperiods& per, const bigcomplex& z)
 {
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   E.getai(a1,a2,a3,a4,a6);
   bigfloat ra1=I2bigfloat(a1);
   bigfloat ra2=I2bigfloat(a2);
@@ -222,7 +222,7 @@ vector<bigcomplex> ellztopoint(Curvedata& E,  const Cperiods& per, const bigcomp
 // User supplies a denominator for the point; if it doesn't work, the
 // Point returned is 0 on the curve
 
-Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const bigint& den)
+Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const ZZ& den)
 {
   if(is_complex_zero(z)) {return Point(E);}
 #ifdef DEBUG_EZP
@@ -231,7 +231,7 @@ Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const 
   vector<bigcomplex> CP = ellztopoint(E,per,z);
   Point P(E);
   bigcomplex cx=CP[0];
-  bigint nx,ny,dx,dy;
+  ZZ nx,ny,dx,dy;
   boundedratapprox(real(cx),nx,dx,den);
 #ifdef DEBUG_EZP
   cout<<"Rounded x = "<<nx<<"/"<<dx<<endl;
@@ -290,12 +290,12 @@ vector<Point> division_points_by2(Curvedata& E,  const Point& P)
 #endif
   if(P.is_zero()) return two_torsion(E);
 
-  bigint b2,b4,b6,b8;
+  ZZ b2,b4,b6,b8;
   E.getbi(b2,b4,b6,b8);
-  bigint xPn=P.getX(), xPd=P.getZ();
-  bigint g = gcd(xPn,xPd); xPn/=g; xPd/=g;
+  ZZ xPn=P.getX(), xPd=P.getZ();
+  ZZ g = gcd(xPn,xPd); xPn/=g; xPd/=g;
   // quartic coefficients:
-  vector<bigint> q = {xPd, -4*xPn, -(b4*xPd+b2*xPn), -2*(b6*xPd+b4*xPn), -(b8*xPd+b6*xPn)};
+  vector<ZZ> q = {xPd, -4*xPn, -(b4*xPd+b2*xPn), -2*(b6*xPd+b4*xPn), -(b8*xPd+b6*xPn)};
 #ifdef DEBUG_DIVBY2
   cout<<"Looking for rational roots of "<<q<<endl;
 #endif
@@ -333,7 +333,7 @@ vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one
   long original_prec, new_prec;
   if (!zero_flag)
     {
-      bigint den = P.getZ();
+      ZZ den = P.getZ();
       long nbits = I2long(Iceil(log(I2bigfloat(den))/log(to_bigfloat(2.0))));
 #ifdef DEBUG_DIVPT
       cout<<"den=      "<<den<<" with "<<nbits<<" bits"<<endl;
@@ -385,7 +385,7 @@ vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P
   Point Q(E);
 
   bigcomplex z(to_bigfloat(0)), w;
-  bigint den(1);
+  ZZ den(1);
   int zero_flag = P.is_zero();
   if(zero_flag)
     {
@@ -562,12 +562,12 @@ vector<Point> torsion_points(Curvedata& E, const Cperiods& per, int m)
   return division_points(E,per,P,m);
 }
 
-void boundedratapprox(bigfloat x, bigint& a, bigint& b, const bigint& maxden)
+void boundedratapprox(bigfloat x, ZZ& a, ZZ& b, const ZZ& maxden)
 {
 #ifdef DEBUG_EZP
   cout<<"bounded ratapprox of "<<x<<" (maxden = "<<maxden<<", x*maxden = "<<(x*I2bigfloat(maxden))<<")"<<endl;
 #endif
-  bigint c, x0, x1, x2, y0, y1, y2;
+  ZZ c, x0, x1, x2, y0, y1, y2;
   bigfloat rc, xx, diff, eps = to_bigfloat(1.0)/I2bigfloat(maxden);
   xx = x; x0 = 0; x1 = 1; y0 = 1; y1 = 0;
   diff = 1; c=x2=y2=0;

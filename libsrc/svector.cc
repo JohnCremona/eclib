@@ -23,11 +23,11 @@
 
 #include "eclib/linalg.h"
 
-// Instantiate sZvec template classes for T=int, long, bigint
+// Instantiate sZvec template classes for T=int, long, ZZ
 
 template class sZvec<int>;
 template class sZvec<long>;
-template class sZvec<bigint>;
+template class sZvec<ZZ>;
 
 // Definitions of member operators and functions:
 
@@ -587,37 +587,37 @@ template sZvec<long> operator/<long>(const sZvec<long>& v, const long& scal);
 // template int operator!=<long>(const sZvec<long>& v1, const sZvec<long>& v2);
 
 // Instantiate sZvec template functions for T=long
-template bigint operator*<bigint>(const sZvec<bigint>&, const sZvec<bigint>&);
-template bigint operator*<bigint>(const sZvec<bigint>&, const Zvec<bigint>&);
-template bigint content<bigint>(const sZvec<bigint>& v);
-template bigint make_primitive<bigint>(sZvec<bigint>& v);
-template bigint dotmodp<bigint>(const sZvec<bigint>& v, const Zvec<bigint>& w, const bigint& pr);
-template bigint dotmodp<bigint>(const sZvec<bigint>& v, const sZvec<bigint>& w, const bigint& pr);
-template int dim<bigint>(const sZvec<bigint>& v);
-template int eqmodp<bigint>(const sZvec<bigint>&, const sZvec<bigint>&, const bigint& p);
-template ostream& operator<< <bigint>(ostream&s, const sZvec<bigint>&);
-template bigint operator*<bigint>(const Zvec<bigint>& v, const sZvec<bigint>& sv);
-template bigint dotmodp<bigint>(const Zvec<bigint>& v, const sZvec<bigint>& sv, const bigint& pr);
-template sZvec<bigint> operator+<bigint>(const sZvec<bigint>& v1, const sZvec<bigint>& v2);
-template sZvec<bigint> operator-<bigint>(const sZvec<bigint>& v1, const sZvec<bigint>& v2);
-template int operator==<bigint>(const sZvec<bigint>& v1, const sZvec<bigint>& v2);
-template int operator!=<bigint>(const sZvec<bigint>& v1, const sZvec<bigint>& v2);
-template int operator==<bigint>(const sZvec<bigint>& v1, const Zvec<bigint>& v2);
-template int operator!=<bigint>(const sZvec<bigint>& v1, const Zvec<bigint>& v2);
-template int operator==<bigint>(const Zvec<bigint>& v1, const sZvec<bigint>& v2);
-template int operator!=<bigint>(const Zvec<bigint>& v1, const sZvec<bigint>& v2);
-template sZvec<bigint> operator+<bigint>(const sZvec<bigint>& v);
-template sZvec<bigint> operator-<bigint>(const sZvec<bigint>& v);
-// template sZvec<bigint> operator+<bigint>(const sZvec<bigint>& v1, const sZvec<bigint>& v2);
-// template sZvec<bigint> operator-<bigint>(const sZvec<bigint>& v1, const sZvec<bigint>& v2);
-template sZvec<bigint> operator*<bigint>(const bigint& scal, const sZvec<bigint>& v);
-template sZvec<bigint> operator/<bigint>(const sZvec<bigint>& v, const bigint& scal);
-// template int operator==<bigint>(const sZvec<bigint>& v1, const sZvec<bigint>& v2);
-// template int operator!=<bigint>(const sZvec<bigint>& v1, const sZvec<bigint>& v2);
-// template sZmat<bigint> transpose<bigint>(const sZmat<bigint>&);
-// template sZmat<bigint> operator* <bigint>( const sZmat<bigint>&, const sZmat<bigint>&);
-// template sZvec<bigint> operator* <bigint>( const sZmat<bigint>& A, const sZvec<bigint>& v );
-// template sZvec<bigint> operator* <bigint>( const sZvec<bigint>& v, const sZmat<bigint>& A );
-// template sZvec<bigint> mult_mod_p<bigint>( const sZmat<bigint>& A, const sZvec<bigint>& v, const bigint& p  );
-// template sZvec<bigint> mult_mod_p<bigint>( const sZvec<bigint>& v, const sZmat<bigint>& A, const bigint& p  );
-// template sZmat<bigint> mult_mod_p<bigint>( const sZmat<bigint>&, const sZmat<bigint>&, const bigint&);
+template ZZ operator*<ZZ>(const sZvec<ZZ>&, const sZvec<ZZ>&);
+template ZZ operator*<ZZ>(const sZvec<ZZ>&, const Zvec<ZZ>&);
+template ZZ content<ZZ>(const sZvec<ZZ>& v);
+template ZZ make_primitive<ZZ>(sZvec<ZZ>& v);
+template ZZ dotmodp<ZZ>(const sZvec<ZZ>& v, const Zvec<ZZ>& w, const ZZ& pr);
+template ZZ dotmodp<ZZ>(const sZvec<ZZ>& v, const sZvec<ZZ>& w, const ZZ& pr);
+template int dim<ZZ>(const sZvec<ZZ>& v);
+template int eqmodp<ZZ>(const sZvec<ZZ>&, const sZvec<ZZ>&, const ZZ& p);
+template ostream& operator<< <ZZ>(ostream&s, const sZvec<ZZ>&);
+template ZZ operator*<ZZ>(const Zvec<ZZ>& v, const sZvec<ZZ>& sv);
+template ZZ dotmodp<ZZ>(const Zvec<ZZ>& v, const sZvec<ZZ>& sv, const ZZ& pr);
+template sZvec<ZZ> operator+<ZZ>(const sZvec<ZZ>& v1, const sZvec<ZZ>& v2);
+template sZvec<ZZ> operator-<ZZ>(const sZvec<ZZ>& v1, const sZvec<ZZ>& v2);
+template int operator==<ZZ>(const sZvec<ZZ>& v1, const sZvec<ZZ>& v2);
+template int operator!=<ZZ>(const sZvec<ZZ>& v1, const sZvec<ZZ>& v2);
+template int operator==<ZZ>(const sZvec<ZZ>& v1, const Zvec<ZZ>& v2);
+template int operator!=<ZZ>(const sZvec<ZZ>& v1, const Zvec<ZZ>& v2);
+template int operator==<ZZ>(const Zvec<ZZ>& v1, const sZvec<ZZ>& v2);
+template int operator!=<ZZ>(const Zvec<ZZ>& v1, const sZvec<ZZ>& v2);
+template sZvec<ZZ> operator+<ZZ>(const sZvec<ZZ>& v);
+template sZvec<ZZ> operator-<ZZ>(const sZvec<ZZ>& v);
+// template sZvec<ZZ> operator+<ZZ>(const sZvec<ZZ>& v1, const sZvec<ZZ>& v2);
+// template sZvec<ZZ> operator-<ZZ>(const sZvec<ZZ>& v1, const sZvec<ZZ>& v2);
+template sZvec<ZZ> operator*<ZZ>(const ZZ& scal, const sZvec<ZZ>& v);
+template sZvec<ZZ> operator/<ZZ>(const sZvec<ZZ>& v, const ZZ& scal);
+// template int operator==<ZZ>(const sZvec<ZZ>& v1, const sZvec<ZZ>& v2);
+// template int operator!=<ZZ>(const sZvec<ZZ>& v1, const sZvec<ZZ>& v2);
+// template sZmat<ZZ> transpose<ZZ>(const sZmat<ZZ>&);
+// template sZmat<ZZ> operator* <ZZ>( const sZmat<ZZ>&, const sZmat<ZZ>&);
+// template sZvec<ZZ> operator* <ZZ>( const sZmat<ZZ>& A, const sZvec<ZZ>& v );
+// template sZvec<ZZ> operator* <ZZ>( const sZvec<ZZ>& v, const sZmat<ZZ>& A );
+// template sZvec<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>& A, const sZvec<ZZ>& v, const ZZ& p  );
+// template sZvec<ZZ> mult_mod_p<ZZ>( const sZvec<ZZ>& v, const sZmat<ZZ>& A, const ZZ& p  );
+// template sZmat<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>&, const sZmat<ZZ>&, const ZZ&);

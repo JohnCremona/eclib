@@ -114,7 +114,7 @@ const int HALF_BIGPRIME = BIGPRIME>>1; // = 536870894;
 const int TWO_BIGPRIME = 2147483578; // 2*BIGPRIME
 const int64_t INV_BIGPRIME = 4294967436LL; // = 2^32+140 = [2^62/p]
 
-inline bigint xmod(const bigint& a, const bigint& m) {return a%m;}
+inline ZZ xmod(const ZZ& a, const ZZ& m) {return a%m;}
 inline int xmod(int a, int m) {return a%m;}
 inline long xmod(long a, long m) {return a%m;}
 
@@ -197,7 +197,7 @@ inline long xmodmul(long a, long b, long m)
   return ((long)( ( (int64_t)(a)*(int64_t)(b) ) % (int64_t)(m) ))%m;
 }
 
-inline bigint xmodmul(const bigint& a, const bigint& b, const bigint& m) {return (a*b)%m;}
+inline ZZ xmodmul(const ZZ& a, const ZZ& b, const ZZ& m) {return (a*b)%m;}
 
 #endif // ifdef USE_DMOD
 

@@ -23,11 +23,11 @@
  
 #include "eclib/linalg.h"
 
-// Instantiate ssubspace template classes for T=int, long, bigint
+// Instantiate ssubspace template classes for T=int, long, ZZ
 
 template class ssubZspace<int>;
 template class ssubZspace<long>;
-template class ssubZspace<bigint>;
+template class ssubZspace<ZZ>;
 
 template<class T>
 ssubZspace<T>::ssubZspace(int n, T mod)
@@ -114,12 +114,12 @@ template ssubZspace<long> combine<long>(const ssubZspace<long>& s1, const ssubZs
 template ssubZspace<long> eigenspace<long>(const sZmat<long>& sm, long lambda, long m);
 template ssubZspace<long> subeigenspace<long>(const sZmat<long>& sm, long l, const ssubZspace<long>& s, long m);
 
-// Instantiate template functions for T=bigint
-template ssubZspace<bigint> make1d<bigint>(const Zvec<bigint>& bas, bigint&piv, bigint m);
-template sZmat<bigint> restrict_mat<bigint>(const sZmat<bigint>& m, const ssubZspace<bigint>& s);
-template int dim<bigint>(const ssubZspace<bigint>& s);
-template Zvec<int> pivots<bigint>(const ssubZspace<bigint>& s);
-template sZmat<bigint> basis<bigint>(const ssubZspace<bigint>& s);
-template ssubZspace<bigint> combine<bigint>(const ssubZspace<bigint>& s1, const ssubZspace<bigint>& s2);
-template ssubZspace<bigint> eigenspace<bigint>(const sZmat<bigint>& sm, bigint lambda, bigint m);
-template ssubZspace<bigint> subeigenspace<bigint>(const sZmat<bigint>& sm, bigint l, const ssubZspace<bigint>& s, bigint m);
+// Instantiate template functions for T=ZZ
+template ssubZspace<ZZ> make1d<ZZ>(const Zvec<ZZ>& bas, ZZ&piv, ZZ m);
+template sZmat<ZZ> restrict_mat<ZZ>(const sZmat<ZZ>& m, const ssubZspace<ZZ>& s);
+template int dim<ZZ>(const ssubZspace<ZZ>& s);
+template Zvec<int> pivots<ZZ>(const ssubZspace<ZZ>& s);
+template sZmat<ZZ> basis<ZZ>(const ssubZspace<ZZ>& s);
+template ssubZspace<ZZ> combine<ZZ>(const ssubZspace<ZZ>& s1, const ssubZspace<ZZ>& s2);
+template ssubZspace<ZZ> eigenspace<ZZ>(const sZmat<ZZ>& sm, ZZ lambda, ZZ m);
+template ssubZspace<ZZ> subeigenspace<ZZ>(const sZmat<ZZ>& sm, ZZ l, const ssubZspace<ZZ>& s, ZZ m);

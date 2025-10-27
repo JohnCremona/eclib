@@ -36,9 +36,9 @@ int main(){
   Curvedata cd(c,1);
 
   cout << "Testing some points:\n";
-  Point P0(cd, bigint(0),bigint(2)) ;
-  Point P1(cd, bigint(1),bigint(0)) ;
-  Point P2(cd, bigint(2),bigint(0)) ;
+  Point P0(cd, ZZ(0),ZZ(2)) ;
+  Point P1(cd, ZZ(1),ZZ(0)) ;
+  Point P2(cd, ZZ(2),ZZ(0)) ;
   cout << "The points are P0 = " << P0 << 
     ", P1 = " << P1 << ", and P2 = " << P2 << endl ;
   cout << "Now in Pari format:\n";

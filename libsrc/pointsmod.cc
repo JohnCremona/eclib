@@ -38,7 +38,7 @@
 
 #include "eclib/ffmod.h"
 
-void set_order_point(pointmodq& P, const bigint& n)
+void set_order_point(pointmodq& P, const ZZ& n)
 {P.set_order(n);}
 
 pointmodq::pointmodq(const gf_element&x, const curvemodq& EE)  // a point with X=x or oo if none
@@ -56,7 +56,7 @@ int pointmodq::set_x_coordinate(const gf_element& x)
   gf_element a1,a2,a3,a4,a6; E.get_ai(a1,a2,a3,a4,a6);
   //  cout<<"E = "<<E<<endl;
   //  cout<<"Trying x = "<<x<<endl;
-  const bigint q=E.q;
+  const ZZ q=E.q;
   gf_element b2 = a1*a1 + four*a2; 
   gf_element b4 = two*a4 + a1*a3;
   gf_element b6 = a3*a3 + four*a6; 
@@ -80,19 +80,19 @@ int pointmodq::set_x_coordinate(const gf_element& x)
   return 1;
 }
 
-bigint pointmodq::get_order()
+ZZ pointmodq::get_order()
 {
   if(::is_zero(order)) order=my_order_point(*this);
   return order;
 }
 
-bigint pointmodq::get_order(const bigint& mult)
+ZZ pointmodq::get_order(const ZZ& mult)
 {
   if(::is_zero(order)) order=my_order_point(*this,mult);
   return order;
 }
 
-bigint pointmodq::get_order(const bigint& lower, const bigint& upper)
+ZZ pointmodq::get_order(const ZZ& lower, const ZZ& upper)
 {
   if(::is_zero(order)) order=my_order_point(*this,lower,upper);
   return order;
@@ -199,15 +199,15 @@ pointmodq operator*(long n, const pointmodq& P)  // n*P
   return (negative? -ans : ans);
 }
 
-// calculates nP for bigint n
-pointmodq operator*(const bigint& n, const pointmodq& P)  // n*P
+// calculates nP for ZZ n
+pointmodq operator*(const ZZ& n, const pointmodq& P)  // n*P
 {
-  static bigint one(1);
-  static bigint two(2);
+  static ZZ one(1);
+  static ZZ two(2);
   pointmodq ans(P.get_curve());
   if(P.is0flag || is_zero(n)) return ans;
   int negative = (is_negative(n)) ;
-  bigint nn = n;
+  ZZ nn = n;
   if(negative) nn = - n ;
   if(nn == one) {
     return (negative? -P : P);
@@ -443,15 +443,15 @@ const int debug_iso_type=DEBUG_ISO_TYPE;
 const int debug_iso_type=0;
 #endif
 
-bigint my_bg_algorithm(const pointmodq& PP,
+ZZ my_bg_algorithm(const pointmodq& PP,
 		    const pointmodq& QQ,
-                    const bigint& lower,
-		    const bigint& upper,
+                    const ZZ& lower,
+		    const ZZ& upper,
 		    bool info)
 {
   //  cout<<"In my_bg_algorithm() with P="<<PP<<", Q="<<QQ<<", bounds "<<lower<<","<<upper<<endl;
-  const bigint zero(0);
-  const bigint minus_one(-1); // return value on failure
+  const ZZ zero(0);
+  const ZZ minus_one(-1); // return value on failure
   if (PP.is_zero() && !QQ.is_zero()) return minus_one;
 
   if ((is_zero(lower)) && QQ.is_zero()) return zero;
@@ -472,12 +472,12 @@ bigint my_bg_algorithm(const pointmodq& PP,
   pointmodq H, H2, H3;
 
   long i;
-  bigint number_baby, number_giant, j, h;
+  ZZ number_baby, number_giant, j, h;
 
   if (info)
     cout<<"\nBabystep Giantstep algorithm: "<<flush;
   
-  if (upper - lower < bigint(30))    // for very small intervals
+  if (upper - lower < ZZ(30))    // for very small intervals
     {
       if (info)
         cout<<"\nTesting "<<(upper - lower) <<" possibilities ... "
@@ -501,7 +501,7 @@ bigint my_bg_algorithm(const pointmodq& PP,
   if (h > MAX_BG_STEPS) h = MAX_BG_STEPS;
   number_baby=h;
   
-  map<bigint,long> HT;
+  map<ZZ,long> HT;
   
   H2 = Q-lower*P;
   H = pointmodq(P.get_curve());
@@ -541,7 +541,7 @@ bigint my_bg_algorithm(const pointmodq& PP,
   if (info)
     cout << ", #Giantsteps = " << number_giant << ") " << endl;
   
-  bigint step_size = number_baby; 
+  ZZ step_size = number_baby; 
 
   for (j = 0; j <= number_giant; j++)
     {
@@ -576,14 +576,14 @@ bigint my_bg_algorithm(const pointmodq& PP,
   return minus_one;
 }
 
-bigint my_order_point(const pointmodq& P, const bigint& mult)
+ZZ my_order_point(const pointmodq& P, const ZZ& mult)
 {
-  vector<bigint> plist = pdivs(mult);
-  bigint ans(1);
+  vector<ZZ> plist = pdivs(mult);
+  ZZ ans(1);
   if(P.is_zero()) return ans;
   for( const auto& p : plist)
     {
-      bigint m = mult;
+      ZZ m = mult;
       divide_out(m,p);
       pointmodq Q = m*P;
       while(!Q.is_zero()) {Q=p*Q; ans*=p;}
@@ -591,15 +591,15 @@ bigint my_order_point(const pointmodq& P, const bigint& mult)
   return ans;
 }
 
-bigint my_order_point(const pointmodq& P, const bigint& lower, const bigint& upper)
+ZZ my_order_point(const pointmodq& P, const ZZ& lower, const ZZ& upper)
 {
   return my_order_point(P,my_bg_algorithm(P,pointmodq(P.get_curve()),lower,upper));
 }
 
-bigint my_order_point(const pointmodq& P)
+ZZ my_order_point(const pointmodq& P)
 {
-  bigint q = get_field(P.get_curve()).characteristic();
-  bigint lower, upper;
+  ZZ q = get_field(P.get_curve()).characteristic();
+  ZZ lower, upper;
   set_hasse_bounds(q,lower,upper);
   return my_order_point(P,lower,upper);
 }
@@ -607,11 +607,11 @@ bigint my_order_point(const pointmodq& P)
 // returns minimal m>0 s.t. m*Q is in <P> with m*Q=a*P; n is assumed
 // to be the order of P.  Special case: if <Q> and <P> are disjoint,
 // then m=order(Q) and a=0.  On input, m holds order(Q) if known, else 0
-bigint linear_relation( pointmodq& P,  pointmodq& Q, bigint& a)
+ZZ linear_relation( pointmodq& P,  pointmodq& Q, ZZ& a)
 {
-  static bigint zero(0);
-  static bigint one(1);
-  bigint n = order_point(P), m = order_point(Q), g,n1,m1,h;
+  static ZZ zero(0);
+  static ZZ one(1);
+  ZZ n = order_point(P), m = order_point(Q), g,n1,m1,h;
   int debug_linear_relation=0;
   if(debug_linear_relation)
     cout<<"In linear_relation() with P = "<<P<<" of order "<<n
@@ -625,7 +625,7 @@ bigint linear_relation( pointmodq& P,  pointmodq& Q, bigint& a)
   if(debug_linear_relation)
     cout<<"P1 = "<<P1<<" and Q1 = "<<Q1<<endl;
   h=g;           // holds h s.t. h*Q1 is in <P1>
-  vector<bigint> dlist = posdivs(g);
+  vector<ZZ> dlist = posdivs(g);
   sort(dlist.begin(),dlist.end());
   a=-1;
   for(unsigned int i=0; (i<dlist.size())&&(a==-1); i++)
@@ -646,9 +646,9 @@ bigint linear_relation( pointmodq& P,  pointmodq& Q, bigint& a)
   return m;
 }
 
-void set_hasse_bounds(const bigint& q, bigint& l, bigint& u)
+void set_hasse_bounds(const ZZ& q, ZZ& l, ZZ& u)
 {
-  static const bigint one(1);
+  static const ZZ one(1);
   sqrt(u, q << 2);
   l = q + one - u;    // lower bound of Hasse interval
   if (is_negative(l))  l=one;
@@ -658,13 +658,13 @@ void set_hasse_bounds(const bigint& q, bigint& l, bigint& u)
 // Given positive integers m,n, replace them by divisors which are
 // coprime and have the same lcm
 //#define DEBUG 1
-bigint tidy_lcm(bigint& m, bigint& n)
+ZZ tidy_lcm(ZZ& m, ZZ& n)
 {
 #ifdef DEBUG
-  bigint m0=m, n0=n;
+  ZZ m0=m, n0=n;
 #endif
-  bigint g=gcd(m,n);
-  bigint l=m*n/g;  // = lcm(m,n)
+  ZZ g=gcd(m,n);
+  ZZ l=m*n/g;  // = lcm(m,n)
   g=gcd(m,n/g);  // divisible by primes dividing n to a higher power than m
   while(!is_one(g)) {m/=g; g=gcd(m,g);}
   n=l/m;
@@ -678,7 +678,7 @@ bigint tidy_lcm(bigint& m, bigint& n)
       return l;
     }
   cout<<"Error in tidy_lcm("<<m0<<","<<n0<<")"<<endl;
-  return bigint(0);
+  return ZZ(0);
 #else
   return l;
 #endif
@@ -688,7 +688,7 @@ bigint tidy_lcm(bigint& m, bigint& n)
 // replaces P with a point of order lcm(ordP,order(Q)) (and updates
 // ordP)
 
-void merge_points_1(pointmodq& P, bigint& ordP,  pointmodq& Q)
+void merge_points_1(pointmodq& P, ZZ& ordP,  pointmodq& Q)
 {
   // First easy case:  order(Q) divides order(P), do nothing
 
@@ -697,7 +697,7 @@ void merge_points_1(pointmodq& P, bigint& ordP,  pointmodq& Q)
       if(debug_iso_type>1)  cout<<"Order(Q) divides order(P)" <<endl;
       return;
     }
-  bigint ordQ = order_point(Q);
+  ZZ ordQ = order_point(Q);
   if(debug_iso_type>1)  cout<<"Order(Q) = "<< ordQ <<endl;
 
   // Second easy case:  order(P) divides order(Q), swap P & Q
@@ -712,8 +712,8 @@ void merge_points_1(pointmodq& P, bigint& ordP,  pointmodq& Q)
   // General case:
   // Construct a point whose order is lcm(ordP, ordQ):
 
-  bigint nP=ordP, nQ=ordQ;
-  bigint nPQ=tidy_lcm(nP,nQ);
+  ZZ nP=ordP, nQ=ordQ;
+  ZZ nPQ=tidy_lcm(nP,nQ);
   // Now (1) nP*nQ = lcm(ordP,ordQ)
   //     (2) gcd(nP,nQ)=1
   //     (3) nP|ordP and nQ|ordQ
@@ -740,8 +740,8 @@ void merge_points_1(pointmodq& P, bigint& ordP,  pointmodq& Q)
 // order n1, but this assumption must be revised if using Q reveals a
 // point of order greater than P1
 
-void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2, 
-		    bigint& n2target, pointmodq& Q)
+void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2, 
+		    ZZ& n2target, pointmodq& Q)
 {
   // Case 1: Q cannot improve if its order divides n2:
 
@@ -758,7 +758,7 @@ void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2,
   // Case 2: P1 needs updating and we discard P2
       if(debug_iso_type>0)  
 	cout<<"Order(Q) does not divide n1="<<n1<<", updating P1" <<endl;
-      bigint oldn1=n1;
+      ZZ oldn1=n1;
       merge_points_1(P1,n1,Q);
       n2target=(n2target*oldn1)/n1;
       if(debug_iso_type>0)  
@@ -774,8 +774,8 @@ void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2,
   // we can apply the Weil Pairing of order n2target
   Q1 = n2target*Q;
   Q2 = n2target*P1;  // has exact order n1/n2target
-  bigint a = my_bg_algorithm(Q2,Q1,bigint(0),n1/n2target);
-  if(a==bigint(-1)) // dlog failed, n1 must be wrong
+  ZZ a = my_bg_algorithm(Q2,Q1,ZZ(0),n1/n2target);
+  if(a==ZZ(-1)) // dlog failed, n1 must be wrong
   {
       if(debug_iso_type) 
       {
@@ -822,12 +822,12 @@ void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2,
       cerr<<"order((n1/n2target)*P1) = "<<Q1<<" is "<<order_point(Q1)<<endl;
       cerr<<"order(Q) =                "<<Q<<" is "<<order_point(Q2)<<endl;
   }
-  bigint m = order(zeta);
+  ZZ m = order(zeta);
   if(debug_iso_type)  cout<<"order = "<< m <<endl;
   // Compare this with n2 to see if we have gained:
-  bigint l = lcm(n2,m);
+  ZZ l = lcm(n2,m);
   if(l==n2) return; // no gain
-  bigint ordQ = my_order_point(Q,n2target);
+  ZZ ordQ = my_order_point(Q,n2target);
   Q1 = (ordQ/m)*Q;   // of order m
   if(l==m) // replace P2, n2 by Q1, m
     {
@@ -838,7 +838,7 @@ void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2,
   // Now P2,Q1 have orders n2,m & both are independent of P1,
   // so we combine them to get a point of order l=lcm(n2,m)
   // still independent of P1
-  bigint n2d=n2, md=m;
+  ZZ n2d=n2, md=m;
   l = tidy_lcm(n2d,md);
   P2 = (n2/n2d)*P2 + (m/md)*Q1; // of order n2d*md=l
   n2 = l;
@@ -852,23 +852,23 @@ void merge_points_2(pointmodq& P1, bigint& n1, pointmodq& P2, bigint& n2,
 // returns list of integers n2 such that
 // (1) lower <= n1*n2 <= upper
 // (2) n2|gcd(n1,q-1)
-vector<bigint> n2list(const bigint& n1, 
-		      const bigint& lower, const bigint& upper, 
-		      const bigint& q)
+vector<ZZ> n2list(const ZZ& n1, 
+		      const ZZ& lower, const ZZ& upper, 
+		      const ZZ& q)
 {
-  bigint n2min = lower/n1, n2max = upper/n1, n2,  g = gcd(n1,q-1);
+  ZZ n2min = lower/n1, n2max = upper/n1, n2,  g = gcd(n1,q-1);
   if(n2min*n1<lower) n2min++;
-  vector<bigint> ans;
+  vector<ZZ> ans;
   for(n2=n2min; n2<=n2max; n2++) if(div(n2,g)) ans.push_back(n2);
   return ans;
 }
 
 // find a point of "large" order
-void one_generator(curvemodq& Cq, bigint& n1, pointmodq& P1)
+void one_generator(curvemodq& Cq, ZZ& n1, pointmodq& P1)
 {
   galois_field Fq = get_field(Cq);
-  bigint q = Fq.characteristic();
-  bigint upper, lower; // bounds on group order
+  ZZ q = Fq.characteristic();
+  ZZ upper, lower; // bounds on group order
   set_hasse_bounds(q,lower,upper);
   if(debug_iso_type)
     cout<<"Lower and upper bounds on group order: ["
@@ -894,11 +894,11 @@ void one_generator(curvemodq& Cq, bigint& n1, pointmodq& P1)
 
 // find full Z-basis
 void my_isomorphism_type(curvemodq& Cq,
-			 bigint& n1, bigint& n2, pointmodq& P1, pointmodq& P2)
+			 ZZ& n1, ZZ& n2, pointmodq& P1, pointmodq& P2)
 {
   galois_field Fq = get_field(Cq);
-  bigint q = Fq.characteristic();
-  bigint upper, lower; // bounds on group order
+  ZZ q = Fq.characteristic();
+  ZZ upper, lower; // bounds on group order
   set_hasse_bounds(q,lower,upper);
   if(debug_iso_type)
     cout<<"Lower and upper bounds on group order: ["
@@ -914,14 +914,14 @@ void my_isomorphism_type(curvemodq& Cq,
 	    <<lower<<" since prime field size <100 or =181, 331, 547"<<endl;
     }
 
-  bigint ordP, ordP2, ordQ;
+  ZZ ordP, ordP2, ordQ;
 
   pointmodq P = Cq.random_point();
   if(debug_iso_type) cout<<"P = "<<P<<":\t"<<flush;
   ordP = group_order_known? my_order_point(P,lower) : my_order_point(P,lower,upper);
   if(debug_iso_type) cout<<"Order(P) = "<< ordP <<endl;
 
-  vector<bigint> quotlist=n2list(ordP,lower,upper,q);
+  vector<ZZ> quotlist=n2list(ordP,lower,upper,q);
   if(debug_iso_type)
     cout<<"Possible n2 values if n1 = "<<ordP<<": "<<quotlist<<endl;
 
@@ -947,7 +947,7 @@ void my_isomorphism_type(curvemodq& Cq,
 
   P1 = P; n1 = ordP;
   P2 = pointmodq(Cq); n2 = 1;
-  bigint quot=quotlist[0]; // the only value in the list
+  ZZ quot=quotlist[0]; // the only value in the list
   if(quot==1) // then there is no ambiguity (thanks to the special
 	      // cases dealt with where the grou order is computed in
 	      // advance)
@@ -1017,11 +1017,11 @@ void my_isomorphism_type(curvemodq& Cq,
 
 // find full Z-basis
 void my_isomorphism_type_new(curvemodq& Cq, 
-			 bigint& n1, bigint& n2, pointmodq& P1, pointmodq& P2)
+			 ZZ& n1, ZZ& n2, pointmodq& P1, pointmodq& P2)
 {
   galois_field Fq = get_field(Cq);
-  bigint q = Fq.characteristic();
-  bigint upper, lower; // bounds on group order
+  ZZ q = Fq.characteristic();
+  ZZ upper, lower; // bounds on group order
   set_hasse_bounds(q,lower,upper);
   if(debug_iso_type)
     cout<<"Lower and upper bounds on group order: ["
@@ -1039,8 +1039,8 @@ void my_isomorphism_type_new(curvemodq& Cq,
     }
 
   pointmodq P(Cq), P3;
-  P1=P; P2=P; n1=n2=bigint(1);
-  bigint m,a, oldn1;
+  P1=P; P2=P; n1=n2=ZZ(1);
+  ZZ m,a, oldn1;
 
   // At all stages the current subgroup is generated by P1, P2 with
   // orders n1,n2 which are disjoint.  We stop when n1*n2 >= lower
@@ -1052,7 +1052,7 @@ void my_isomorphism_type_new(curvemodq& Cq,
       count++;
       pointmodq Q = Cq.random_point();
       if(debug_iso_type) cout<<"Q = "<<Q<<":\t"<<flush;
-      bigint ordQ = group_order_known? my_order_point(Q,lower) : my_order_point(Q,lower,upper);
+      ZZ ordQ = group_order_known? my_order_point(Q,lower) : my_order_point(Q,lower,upper);
       if(debug_iso_type) cout<<"Order(Q) = "<< ordQ <<endl;
       // although ordQ is not referenced again in this function, we
       // have set Q's order which is used

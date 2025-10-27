@@ -42,7 +42,7 @@
 #define val8(a,s) (((a)&(0xFF<<(s))) ? val4(a,s) : val4(a,(s)+8))
 #define val16(a) (((a)&0xFFFF) ? val8(a,0) : val8(a,16))
 inline long val(long a){long r = (a) ? val16(a) : HIGH;  return r;}
-inline long val(bigint a){long r = (a==0) ? HIGH: val(2,a);  return r;}
+inline long val(ZZ a){long r = (a==0) ? HIGH: val(2,a);  return r;}
 
 // try1(poly), with poly a deg 3 polynomial in x, determines if 
 // there is a 2-adic integer a such that poly(a) is a square    
@@ -58,11 +58,11 @@ inline long val(bigint a){long r = (a==0) ? HIGH: val(2,a);  return r;}
 
 
 long try1(long poly[4]);
-long try1(bigint poly[4]);
+long try1(ZZ poly[4]);
 long case1(long a, long b); // A=4a, B=4b
 long case2(long a, long b); // A=4a+1, B=4b+2
 
-long case1(bigint a, bigint b); // A=4a, B=4b
-long case2(bigint a, bigint b); // A=4a+1, B=4b+2
+long case1(ZZ a, ZZ b); // A=4a, B=4b
+long case2(ZZ a, ZZ b); // A=4a+1, B=4b+2
 
 #endif

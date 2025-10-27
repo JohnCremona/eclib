@@ -1544,7 +1544,7 @@ vector<long> eiglist(CurveRed& C, int nap)
   vector<long> ans;
   for(primevar pr(nap); pr.ok(); pr++)
     {
-      long p=pr; bigint pp(p);
+      long p=pr; ZZ pp(p);
       if(N%p==0)
 	ans.push_back(LocalRootNumber(C,pp));
       else
@@ -2087,7 +2087,7 @@ vector<int> newforms::showcurves(vector<int> forms, int verbose, string filename
   int output_curves = (filename!="no");
   if (output_curves) curve_out.open(filename.c_str());
   bigfloat rperiod;
-  bigint a1,a2,a3,a4,a6, NC;
+  ZZ a1,a2,a3,a4,a6, NC;
   vector<int> badcurves; // will hold the indices of forms for which we fail to find a curve
 
   for( const auto& inf : forms)

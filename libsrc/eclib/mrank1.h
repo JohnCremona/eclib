@@ -41,10 +41,10 @@ private:
   long twoadic_index, global_index;
   long bsd_npairs; // only for testing
              // 1, 2 or 4: local/global index of "small" quartics
-  bigint c4, c6, d1728, ii, jj, disc;
+  ZZ c4, c6, d1728, ii, jj, disc;
   long Imod2, Jmod2;
   bigfloat xii, xjj;
-  vector<bigint> plist, dlist;
+  vector<ZZ> plist, dlist;
   vector<long> eqplist;  // primes used for equiv-sieving
   long n0, n1, n2, rank_B;
 //
@@ -65,8 +65,8 @@ private:
   void show_eps_vec(const vector<long>& vec);
 
   // process latest quartic found
-  void addquartic(const bigint& a, const bigint& b, const bigint& c,
-		  const bigint& d, const bigint& e);
+  void addquartic(const ZZ& a, const ZZ& b, const ZZ& c,
+		  const ZZ& d, const ZZ& e);
   void getquartics();
   void getquartics1();
   void gettype(int t);
@@ -82,8 +82,8 @@ public:
 //
   void sortpoints();
   void listpoints();
-  void listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r,
-		                      const bigint& s, const bigint& t);
+  void listpoints(Curvedata* CD_orig, const ZZ& u, const ZZ& r,
+		                      const ZZ& s, const ZZ& t);
   vector<Point> getgens() const;
   vector<Point> getpoints();
   long getselmerprime() const {return selmer_rank;}

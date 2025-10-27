@@ -44,7 +44,7 @@ int main()
   initprimes("PRIMES",0);
 
   bigfloat ht_limit;
-  bigint u,r,s,t;
+  ZZ u,r,s,t;
   int verbose = 1, modopt=0, pp=1;
   long blength, rank, maxrank;
   cerr<<"\nenter search limit: ";      cin>>ht_limit;
@@ -52,7 +52,7 @@ int main()
   cerr<<"process points found (1) or just list them (0): "; cin>>pp;
   //  cout<<"moduli option (0 (Stoll)/ 1/2/3)?";      cin >> modopt;
   int verb=1;
-  bigint v;
+  ZZ v;
   vector<bigrational> ai(5);
 
   while (getcurve(ai,verb))

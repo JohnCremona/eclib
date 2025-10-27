@@ -84,7 +84,7 @@ int main()
   cerr<<"maximum prime p to saturate at (or -1 for automatic)? ", cin>>pmax;
   if (pmax>0)
     {
-      pmax = NextPrime(pmax);
+      pmax = NTL::NextPrime(pmax);
       cout<<"\nSaturating at primes from " <<pmin <<" up to "<<pmax<<endl;
     }
   else

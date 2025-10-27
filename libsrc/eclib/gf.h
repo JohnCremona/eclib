@@ -25,7 +25,6 @@
 #ifndef _ECLIB_GF_H_
 #define _ECLIB_GF_H_
 
-#include <NTL/ZZ_p.h>
 #include "marith.h"
 
 extern map<ZZ,ZZ_pContext> ZZ_pContextCache;
@@ -35,7 +34,7 @@ class galois_field {
  public:
   galois_field(void);
   explicit galois_field(const ZZ& qq);
-  bigint characteristic() const {return q;}
+  ZZ characteristic() const {return q;}
 };
 
 typedef ZZ_p gf_element;
@@ -46,7 +45,7 @@ typedef ZZ_p gf_element;
 #define LiftGF(name) rep(name)
 #define GFrandomize(name) random(name)
 
-inline gf_element ZtoGF(const galois_field& F, const bigint& a)
+inline gf_element ZtoGF(const galois_field& F, const ZZ& a)
 {
   return to_ZZ_p(a);
 }
@@ -59,7 +58,7 @@ inline gf_element ItoGF(const galois_field& F, int a)
 // NB Here caller must ensure that a is a square;  q odd
 inline gf_element sqrt(const galois_field& F, const gf_element& a)
 {
-  bigint rd;  
+  ZZ rd;  
   sqrt_mod_p(rd,rep(a),F.characteristic());
   return ZtoGF(F,rd);
 }
@@ -67,7 +66,7 @@ inline gf_element sqrt(const galois_field& F, const gf_element& a)
 // Returns 1 if a is a square (root in r), else 0
 inline int sqrt(const galois_field& F, const gf_element& a, gf_element& r)
 {
-  bigint rd = to_ZZ(0),  repa=rep(a),  q = F.characteristic();  
+  ZZ rd = to_ZZ(0),  repa=rep(a),  q = F.characteristic();  
   switch(legendre(repa,q))
     {
     case -1: return 0;
@@ -86,17 +85,17 @@ inline gf_element root_of_unity(const galois_field& F, int n)
   qm1/=n;
   while(1)
     {
-      ZZ_p mu = random_ZZ_p(); 
+      ZZ_p mu = NTL::random_ZZ_p(); 
       if(mu==to_ZZ_p(0)) continue;
       power(mu,mu,qm1);
       if(mu!=to_ZZ_p(1))  return mu;
     }
 }
 
-inline bigint order(const gf_element& z)
+inline ZZ order(const gf_element& z)
 {
   gf_element one=to_ZZ_p(1);
-  gf_element zn=z;  bigint n(1);
+  gf_element zn=z;  ZZ n(1);
   while (zn!=one) {zn*=z; n+=1;}
   return n;
 }

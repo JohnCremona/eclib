@@ -37,7 +37,7 @@ private:
 
 extern modulus_factory<int> modulus_factory_int;
 extern modulus_factory<long> modulus_factory_long;
-extern modulus_factory<bigint> modulus_factory_bigint;
+extern modulus_factory<ZZ> modulus_factory_ZZ;
 
 template<class T> T default_modulus();
 template<class T> T set_default_modulus(const T& new_modulus); // returns old modulus

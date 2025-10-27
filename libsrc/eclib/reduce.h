@@ -33,16 +33,16 @@
 
 // Full reduction via covariant quadratic:
 
-void reduce(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void reduce(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	    unimod& m);
 
 // Simple shift to minimise b:
 
-void reduce_b(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void reduce_b(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	      unimod& m);
 
 // Compute the quadratic covariant of a real quartic:
-vector<bigfloat> quadratic_covariant(const bigint& a, const bigint& b, const bigint& c, const bigint& d, const bigint& e);
+vector<bigfloat> quadratic_covariant(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d, const ZZ& e);
 
 // Given a pos. def. quadratic x^2+b*x+c, returns a unimod which
 // reduces it (whose inverse takes its root into the fundamental

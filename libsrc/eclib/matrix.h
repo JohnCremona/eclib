@@ -181,12 +181,12 @@ template<class T> Zmat<T> rref(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& np
 
 // Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
 template<class T>
-mat_zz_p mat_zz_p_from_mat(const Zmat<T>& M, const T& pr);
+mat_ZZ_p mat_ZZ_p_from_mat(const Zmat<T>& M, const T& pr);
 
 // Construct a mat (T type same as pr) from an NTL mat_lzz_p
 
 template<class T>
-Zmat<T> mat_from_mat_zz_p(const mat_zz_p& A, const T& pr); // type of T fixes return type
+Zmat<T> mat_from_mat_ZZ_p(const mat_ZZ_p& A, const T& pr); // type of T fixes return type
 
 // conversions between matrices of different scalar types
 

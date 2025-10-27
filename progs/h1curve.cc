@@ -120,7 +120,7 @@ int main(void)
      Curve C;
      Curvedata CD;
      CurveRed CR;
-     bigint nc;
+     ZZ nc;
      prec = prec0-delta_prec;
      set_precision(prec);
      C = Curve();
@@ -165,7 +165,7 @@ int main(void)
          cout<<endl;
        }
 #ifdef SINGLE
-     bigint c6=getc6(CD),  c4=getc4(CD);
+     ZZ c6=getc6(CD),  c4=getc4(CD);
      char* f = new char[20];
 #ifdef FIXC6_OUTPUT_TO_SUBDIR
      sprintf(f,"fixc6/fixc6.%ld",n);

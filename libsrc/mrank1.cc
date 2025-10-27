@@ -119,14 +119,14 @@ void rank1::show_eps_vec(const vector<long>& v)
 }
 
  // process latest quartic found
-void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
-		       const bigint& d, const bigint& e)
+void rank1::addquartic(const ZZ& a, const ZZ& b, const ZZ& c,
+		       const ZZ& d, const ZZ& e)
 {
-  static bigint one(1);
+  static ZZ one(1);
   long firsti, i, oldnumber=0, thisnumber, nfl;
   char ab;
   int trivial=0, newone=1, gls=0, els=0;
-  bigint x,y,z, badp; 	  Point Ptemp;
+  ZZ x,y,z, badp; 	  Point Ptemp;
   int btype = 0;
   int pivtype=-1; // set to 0 for \infty, 1 for odd prime, 2 for 2
   if (type==1) // then we have an egg point, i.e. \infty is pivotal
@@ -204,7 +204,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 
       if(selmer_only)
 	{
-	  gls = ratpoint(thisq, one,bigint(lim1),x,y,z);
+	  gls = ratpoint(thisq, one,ZZ(lim1),x,y,z);
 	  if(gls) els=1;
 	  else els=locallysoluble(thisq,plist,badp);
           if(verbose)
@@ -215,7 +215,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 	}
       else
 
-      if (ratpoint(thisq, one,bigint(lim1),x,y,z))
+      if (ratpoint(thisq, one,ZZ(lim1),x,y,z))
 	{
 	  gls=els=1;
 	  if (verbose) cout<<"(x:y:z) = ("<<x<<" : "<<y<<" : "<<z<<")\n";
@@ -395,7 +395,7 @@ void rank1::addquartic(const bigint& a, const bigint& b, const bigint& c,
 
 void rank1::getquartics()
 {
-  static bigint two(2), three(3);
+  static ZZ two(2), three(3);
   nquarticsa = 0; nfirstlota = 0;
   nquarticsb = 0; nfirstlotb = 0;
   have_eggpoint = 0;
@@ -449,8 +449,8 @@ void rank1::getquartics()
 #if LARGE_Q>2
       else // use 2-adic refinement to determine index (case 1)
 	{
-	  bigint a = -27*ii/4;
-	  bigint b = -27*jj/4;
+	  ZZ a = -27*ii/4;
+	  ZZ b = -27*jj/4;
 	  if(verbose>1)
 	    cout<<"Case 1 with a = I/4 = "<<a<<", b = J/4 = "<<b<<endl;
 	  twoadic_index = npairs = 1 + case1(a,b);
@@ -477,8 +477,8 @@ void rank1::getquartics()
 #if LARGE_Q>2
       else  // use 2-adic refinement to determine index (case 2)
 	{
-	  bigint a = -7-27*(ii-1)/4;
-	  bigint b = -14-27*(jj-2)/4;
+	  ZZ a = -7-27*(ii-1)/4;
+	  ZZ b = -14-27*(jj-2)/4;
 	  if(verbose>1)
 	    cout<<"Case 2 with a = (I-1)/4 = "<<a<<", b = (J-2)/4 = "<<b<<endl;
 	  twoadic_index = npairs = 1 + case2(a,b);
@@ -517,9 +517,9 @@ void rank1::getquartics()
     }
 #endif // LARGE_Q==1 or >1
 
-  vector<bigint> plist0 = getbad_primes(*the_curve); // sorted by construction
+  vector<ZZ> plist0 = getbad_primes(*the_curve); // sorted by construction
   // now make sure 2 and 3 are in the list of primes
-  vector<bigint> p23 = {two, three};
+  vector<ZZ> p23 = {two, three};
   set_union(plist0.begin(),plist0.end(),p23.begin(),p23.end(),back_inserter(plist));
 //   cout<<"\nplist0 = "<<plist0<<", p23="<<p23<<endl;
 //   cout<<"\tplist = "<<plist<<endl;
@@ -612,7 +612,7 @@ void rank1::getquartics1()
   if (verbose)
     cout<<"Looking for quartics with I = "<< ii << ", J = " << jj << endl;
 
-  static bigint zero(0);
+  static ZZ zero(0);
   IJ_curve = Curvedata(zero,zero,zero,-27*ii,-27*jj,0);  // don't minimise
 
   if (posdisc)
@@ -644,11 +644,11 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
   long c,cstep,cmod3;
   int a_is_odd, b_is_odd, a_div_by_4;
   int a_positive;
-  bigint I48=48*ii, J64=64*jj;
-  static const bigint m27(-27);
+  ZZ I48=48*ii, J64=64*jj;
+  static const ZZ m27(-27);
   static const bigfloat root27=sqrt(to_bigfloat(27));
   static const bigfloat zero=to_bigfloat(0);
-  bigint rsq, r, rem, h, d, e, ee;
+  ZZ rsq, r, rem, h, d, e, ee;
   bigfloat r1, r2, r3, xr;
   long efactor;
   bigcomplex c1;
@@ -1183,17 +1183,17 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			}
 		      if(!ok) continue;
 
-		      bigint biga(a);
-		      bigint biga8=biga<<3;
-		      bigint bigb(b);
-		      bigint bigbsq=sqr(bigb);
-		      bigint bigbb3=3*bigbsq;
+		      ZZ biga(a);
+		      ZZ biga8=biga<<3;
+		      ZZ bigb(b);
+		      ZZ bigbsq=sqr(bigb);
+		      ZZ bigbb3=3*bigbsq;
 		      h = biga8*c-bigbb3;
 
 #ifdef USE_BIGINTS
-// use bigints from now on
-		      bigint asq=sqr(biga);
-		      bigint cub = h*(sqr(h)-asq*I48)+biga*asq*J64;
+// use ZZs from now on
+		      ZZ asq=sqr(biga);
+		      ZZ cub = h*(sqr(h)-asq*I48)+biga*asq*J64;
 		      ok = ::divides(cub,m27,rsq,rem);
 		      if(!ok)
 			{
@@ -1214,12 +1214,12 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 #ifdef DEBUG_AH
 		      cout<<"; r = "<<r<<" "<<flush;
 #endif
-		       bigint bigc(c);
-		       bigint bigcsq = bigc*bigc;
-		       bigint ii_cc = ii-bigcsq;
+		       ZZ bigc(c);
+		       ZZ bigcsq = bigc*bigc;
+		       ZZ ii_cc = ii-bigcsq;
 #ifdef USE_BIGINTS
-		       bigint temp = bigb*(bigbsq-4*biga*bigc);
-		       // must compute as bigints
+		       ZZ temp = bigb*(bigbsq-4*biga*bigc);
+		       // must compute as ZZs
 #else
 		       bigfloat xc=c, xb=b;
 		       bigfloat xcc=xc*xc, xbb=xb*xb;
@@ -1235,7 +1235,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			   <<sb3<<","<<c<<","<<temp<<flush;
 #endif
 #ifdef USE_BIGINTS
-			 bigint aa8 = 8*asq;
+			 ZZ aa8 = 8*asq;
 			 ok = ::divides(r-temp,aa8,d,rem);
 #ifdef DEBUG_AH
 			 cout<<"; aa8,d,rem = "<<aa8<<","<<d<<","<<rem<<flush;
@@ -1252,7 +1252,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			 cout<<"\n ii,b3,d,ee = "<<ii<<","<<sb3<<","
 			   <<d<<","<<ee;
 #endif
-			 bigint a12=12*biga;
+			 ZZ a12=12*biga;
 			 ok = ::divides(ee,a12,e,rem);
 #ifdef DEBUG_AH
 			 cout<<"\n ee,a12,e,rem = "<<ee<<","<<a12<<","<<
@@ -1285,7 +1285,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 // Now we have a quartic
 // Check the invariants are right (for debugging only):
 			 bigb=sb;
-			 bigint iiabcde = II(biga,bigb,bigc,d,e);
+			 ZZ iiabcde = II(biga,bigb,bigc,d,e);
 
 			 if ( ii != iiabcde )
 			   {
@@ -1295,7 +1295,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 			     cout << " has wrong I-invariant "<<iiabcde<<", not "<<ii<<endl;
 			     continue;
 			   }
-			 bigint jjabcde = JJ(biga,bigb,bigc,d,e);
+			 ZZ jjabcde = JJ(biga,bigb,bigc,d,e);
 			 if (jj != jjabcde)
 			   {
 			     cout<<"Error: constructed quartic ";
@@ -1306,8 +1306,8 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 // And finally when disc>0 check that the type is correct
 			 if(posdisc)
 			   {
-			     bigint habcde = biga8*bigc-bigbb3;
-			     bigint qabcde = habcde*habcde-16*biga*biga*ii;
+			     ZZ habcde = biga8*bigc-bigbb3;
+			     ZZ qabcde = habcde*habcde-16*biga*biga*ii;
 			                // =3*Q
 			     if(type==1)
 			       {
@@ -1397,7 +1397,7 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   : rank12(ec,verb,sel,lim1,lim2,n_aux,1)
 {
-  static bigint zero(0);
+  static ZZ zero(0);
   traceequiv=0;
   success=1; // the default!
   if(num_aux==-1) num_aux=DEFAULT_NAUX;
@@ -1405,7 +1405,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
     {
       cout << "Using (a,b,c) search with (a,h) sieve and algebraic method\n";
 #ifdef USE_BIGINTS
-      cout << "(with bigints to solve the syzygy)\n";
+      cout << "(with ZZs to solve the syzygy)\n";
 #else
       cout << "(with bigfloats to solve the syzygy)\n";
 #endif
@@ -1423,11 +1423,11 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   // Set up the transformation [u,r,s,t] from the minimal model to the model
   // [0,0,0,-27*c4,-54*c6]; from these we will later obtain (by simple scaling)
   // the transformations to the IJ-curve for various I,J
-  bigint a1,a2,a3,a4,a6,b2=getb2(*the_curve);
+  ZZ a1,a2,a3,a4,a6,b2=getb2(*the_curve);
   the_curve->getai(a1,a2,a3,a4,a6);
   tr_u=6; tr_r=3*b2; tr_s=3*a1; tr_t=108*a3;
 
-  vector<bigint> ir = Introotscubic( zero,-27*c4,-54*c6);
+  vector<ZZ> ir = Introotscubic( zero,-27*c4,-54*c6);
   n0=ir.size()+1;
 
   long e0,e1,e2;
@@ -1609,14 +1609,14 @@ void showpoint(Point P)
   cout << P << ", height = " << h << endl;
 }
 
-void showpoint(Point P, Curvedata* CD, const bigint& u, const bigint& r,
-	                               const bigint& s, const bigint& t)
+void showpoint(Point P, Curvedata* CD, const ZZ& u, const ZZ& r,
+	                               const ZZ& s, const ZZ& t)
 {
   showpoint(transform(P,CD,u,r,s,t,1));
 }
 
-void rank1::listpoints(Curvedata* CD_orig, const bigint& u, const bigint& r,
-		       const bigint& s, const bigint& t)
+void rank1::listpoints(Curvedata* CD_orig, const ZZ& u, const ZZ& r,
+		       const ZZ& s, const ZZ& t)
 {
   int explanation_needed = (npoints1>0)&&(npoints2>0);
   if(explanation_needed)
@@ -1715,7 +1715,7 @@ vector<Point> rank1::getpoints()
 // reps for the subgroup A in pointlist1 and
 // gens for the complementary subgroup B in pointlist2
 {
-  static bigint zero(0), one(1);
+  static ZZ zero(0), one(1);
   long np = (1+npoints1) << npoints2;
   vector<Point> ans;
   long j, k, ip=1+npoints1;

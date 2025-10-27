@@ -44,9 +44,9 @@ void show_version(ostream& os)
 {
   os << "eclib version " << VERSION << ", ";
 #ifdef NO_MPFP
-  os << "using NTL bigints but no multiprecision floating point";
+  os << "using NTL ZZs but no multiprecision floating point";
 #else
-  os << "using NTL bigints and NTL real and complex multiprecision floating point";
+  os << "using NTL ZZs and NTL real and complex multiprecision floating point";
 #endif
   os << endl;
 }

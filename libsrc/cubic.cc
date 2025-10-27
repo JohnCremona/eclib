@@ -27,7 +27,7 @@
 #include "eclib/cubic.h"
 #include "eclib/polys.h"
 
-bigint zero(0), one(1);
+ZZ zero(0), one(1);
 
 // comparison operator for sorting
 int operator<(const cubic& F1, const cubic& F2)
@@ -35,25 +35,25 @@ int operator<(const cubic& F1, const cubic& F2)
   return std::lexicographical_compare(F1.coeffs.begin(), F1.coeffs.end(), F2.coeffs.begin(), F2.coeffs.end());
 }
 
-vector<bigint> transform_helper(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
+vector<ZZ> transform_helper(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
                                 const unimod& m)
 {
-  bigint m112=sqr(m(1,1)); bigint m113=m112*m(1,1);
-  bigint m212=sqr(m(2,1)); bigint m213=m212*m(2,1);
-  bigint m222=sqr(m(2,2)); bigint m223=m222*m(2,2);
-  bigint m122=sqr(m(1,2)); bigint m123=m122*m(1,2);
+  ZZ m112=sqr(m(1,1)); ZZ m113=m112*m(1,1);
+  ZZ m212=sqr(m(2,1)); ZZ m213=m212*m(2,1);
+  ZZ m222=sqr(m(2,2)); ZZ m223=m222*m(2,2);
+  ZZ m122=sqr(m(1,2)); ZZ m123=m122*m(1,2);
 
-  bigint A = m113*a + m(2,1)*m112*b + m212*m(1,1)*c + m213*d;
-  bigint B = 3*m(1,2)*m112*a + (m(2,2)*m112 + 2*m(2,1)*m(1,2)*m(1,1))*b
+  ZZ A = m113*a + m(2,1)*m112*b + m212*m(1,1)*c + m213*d;
+  ZZ B = 3*m(1,2)*m112*a + (m(2,2)*m112 + 2*m(2,1)*m(1,2)*m(1,1))*b
     + (2*m(2,2)*m(2,1)*m(1,1) + m212*m(1,2))*c + 3*m(2,2)*m212*d;
-  bigint C = 3*m122*m(1,1)*a + (2*m(2,2)*m(1,2)*m(1,1) + m(2,1)*m122)*b
+  ZZ C = 3*m122*m(1,1)*a + (2*m(2,2)*m(1,2)*m(1,1) + m(2,1)*m122)*b
     + (m222*m(1,1) + 2*m(2,2)*m(2,1)*m(1,2))*c + 3*m222*m(2,1)*d;
-  bigint D = m123*a + m(2,2)*m122*b + m222*m(1,2)*c + m223*d;
+  ZZ D = m123*a + m(2,2)*m122*b + m222*m(1,2)*c + m223*d;
 
   return {A,B,C,D};
 }
 
-vector<bigint> transform_helper(const vector<bigint>& abcd, const unimod& m)
+vector<ZZ> transform_helper(const vector<ZZ>& abcd, const unimod& m)
 {
   return transform_helper(abcd[0],abcd[1],abcd[2],abcd[3],m);
 }
@@ -94,7 +94,7 @@ void cubic::normalise(unimod& m)
       // h0=h2, i.e. C1=0.  The covariant is const*(X^2+Y^2) if also
       // h1=0, i.e. C4=0, or const*(X^2+XY+Y^2) if also h1=h0,
       // i.e. C2=0.
-      bigint C1=j_c1(), C2=j_c2(), C4=j_c4();
+      ZZ C1=j_c1(), C2=j_c2(), C4=j_c4();
       nautos = (C1==0? (C4==0? 4: (C2==0? 6: 2)): 2);
 #ifdef DEBUG_NORMALISE
       cout<<"Covariant quantities are C1="<<C1<<", C2="<<C2<<", C3="<<j_c3()<<", C4="<<C4<<endl;
@@ -105,7 +105,7 @@ void cubic::normalise(unimod& m)
       // Coeffs of covariant are [P,Q,R].  We have extra autos if P=R.
       // The covariant is const*(X^2+Y^2) if also Q=0, or
       // const*(X^2+XY+Y^2) if also Q=R.
-      bigint P=p_semi(), Q=q_semi(), R=r_semi();
+      ZZ P=p_semi(), Q=q_semi(), R=r_semi();
       nautos = (P==R? (Q==0? 4: (Q==R? 6: 2)): 2);
 #ifdef DEBUG_NORMALISE
       cout<<"Hessian coefficients are P="<<P<<", Q="<<Q<<", R="<<R<<endl;
@@ -190,21 +190,21 @@ int cubic::gl2_equivalent_in_list(const vector<cubic>& Glist) const
 // NB rootsmod requires a non-constant polynomial
 
 // affine roots of F mod q, assuming leading coefficient a() is nonzero:
-vector<bigint> cubic::roots_mod(const bigint& q) const
+vector<ZZ> cubic::roots_mod(const ZZ& q) const
 {
-  bigint aq(a()%q), bq(b()%q), cq(c()%q), dq(d()%q);
+  ZZ aq(a()%q), bq(b()%q), cq(c()%q), dq(d()%q);
   if (is_zero(aq) && is_zero(bq) && is_zero(cq))
     return {};
   return rootsmod({dq,cq,bq,aq}, q);
 }
 
 // Return 1 iff F has a projective root mod q:
-int cubic::has_roots_mod(const bigint& q) const
+int cubic::has_roots_mod(const ZZ& q) const
 {
   return div(q,a()) || (roots_mod(q).size() > 0);
 }
 
-void cubic::x_shift(const bigint& e, unimod& m)
+void cubic::x_shift(const ZZ& e, unimod& m)
 {
   coeffs[3] += e*(c()+e*(  b()+  e*a()));
   coeffs[2] +=        e*(2*b()+3*e*a());
@@ -212,7 +212,7 @@ void cubic::x_shift(const bigint& e, unimod& m)
   m.x_shift(e);
 }
 
-void cubic::y_shift(const bigint& e, unimod& m)
+void cubic::y_shift(const ZZ& e, unimod& m)
 {
   coeffs[0] += e*(b()+e*(  c()+  e*d()));
   coeffs[1] +=        e*(2*c()+3*e*d());
@@ -244,26 +244,26 @@ void cubic::seminegate(unimod& m)
 // The quantity called C_1 in the paper, = Norm(h2-h0) and should be
 // NON-NEGATIVE for a reduced form:
 
-bigint cubic::j_c1() const
+ZZ cubic::j_c1() const
 {
-  bigint a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
-  bigint b2=sqr(b);
-  bigint b3=b*b2;
-  bigint b4=b*b3;
-  bigint b5=b*b4;
-  bigint b6=b*b5;
-  bigint a2=sqr(a);
-  bigint a3=a*a2;
-  bigint a4=a*a3;
-  bigint c2=sqr(c);
-  bigint c3=c*c2;
-  bigint c4=c*c3;
-  bigint c5=c*c4;
-  bigint c6=c*c5;
-  bigint d2=sqr(d);
-  bigint d3=d*d2;
-  bigint d4=d*d3;
-  bigint ac=a*c, bd=b*d;
+  ZZ a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
+  ZZ b2=sqr(b);
+  ZZ b3=b*b2;
+  ZZ b4=b*b3;
+  ZZ b5=b*b4;
+  ZZ b6=b*b5;
+  ZZ a2=sqr(a);
+  ZZ a3=a*a2;
+  ZZ a4=a*a3;
+  ZZ c2=sqr(c);
+  ZZ c3=c*c2;
+  ZZ c4=c*c3;
+  ZZ c5=c*c4;
+  ZZ c6=c*c5;
+  ZZ d2=sqr(d);
+  ZZ d3=d*d2;
+  ZZ d4=d*d3;
+  ZZ ac=a*c, bd=b*d;
   return - 108*b3*a2*d - 3*b4*c2 + 54*a2*c4 + 18*b5*d + 243*a2*d2*b2 -
     54*b3*ac*d - 162*bd*c2*a2 - 54*a3*c3 + 486*a3*bd*c + 3*c4*b2 -
       18*c5*a + 54*c3*a*bd - 243*d2*a2*c2 + 162*d2*ac*b2 + 2*c6 -
@@ -275,26 +275,26 @@ bigint cubic::j_c1() const
 // The quantity called C_2 in the paper, = Norm(h0-h1) and should be
 // NON-NEGATIVE for a reduced form:
 
-bigint cubic::j_c2() const
+ZZ cubic::j_c2() const
 {
-  bigint a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
-  bigint b2=sqr(b);
-  bigint b3=b*b2;
-  bigint b4=b*b3;
-  bigint b5=b*b4;
-  bigint b6=b*b5;
-  bigint a2=sqr(a);
-  bigint a3=a*a2;
-  bigint a4=a*a3;
-  bigint c2=sqr(c);
-  bigint c3=c*c2;
-  bigint c4=c*c3;
-  bigint c5=c*c4;
-  bigint c6=c*c5;
-  bigint d2=sqr(d);
-  bigint d3=d*d2;
-  bigint d4=d*d3;
-  bigint ac=a*c, bd=b*d;
+  ZZ a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
+  ZZ b2=sqr(b);
+  ZZ b3=b*b2;
+  ZZ b4=b*b3;
+  ZZ b5=b*b4;
+  ZZ b6=b*b5;
+  ZZ a2=sqr(a);
+  ZZ a3=a*a2;
+  ZZ a4=a*a3;
+  ZZ c2=sqr(c);
+  ZZ c3=c*c2;
+  ZZ c4=c*c3;
+  ZZ c5=c*c4;
+  ZZ c6=c*c5;
+  ZZ d2=sqr(d);
+  ZZ d3=d*d2;
+  ZZ d4=d*d3;
+  ZZ ac=a*c, bd=b*d;
 
   return 108*b3*a2*d - 12*b4*c2 + 216*a2*c4 + 72*b5*d + 486*a3*c2*d
     - 270*a2*c3*b + 90*b3*c2*a + 972*a2*d2*b2 - 216*b3*ac*d -
@@ -308,25 +308,25 @@ bigint cubic::j_c2() const
 // The quantity called C_3 in the paper, = Norm(h0+h1) and should be
 // POSITIVE for a reduced form:
 
-bigint cubic::j_c3() const
+ZZ cubic::j_c3() const
 {
-  bigint a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
-  bigint b2=b*b;
-  bigint b3=b*b2;
-  bigint b4=b*b3;
-  bigint b5=b*b4;
-  bigint b6=b*b5;
-  bigint a2=a*a;
-  bigint a3=a*a2;
-  bigint a4=a*a3;
-  bigint c2=c*c;
-  bigint c3=c*c2;
-  bigint c4=c*c3;
-  bigint c5=c*c4;
-  bigint c6=c*c5;
-  bigint d2=d*d;
-  bigint d3=d*d2;
-  bigint d4=d*d3;
+  ZZ a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
+  ZZ b2=b*b;
+  ZZ b3=b*b2;
+  ZZ b4=b*b3;
+  ZZ b5=b*b4;
+  ZZ b6=b*b5;
+  ZZ a2=a*a;
+  ZZ a3=a*a2;
+  ZZ a4=a*a3;
+  ZZ c2=c*c;
+  ZZ c3=c*c2;
+  ZZ c4=c*c3;
+  ZZ c5=c*c4;
+  ZZ c6=c*c5;
+  ZZ d2=d*d;
+  ZZ d3=d*d2;
+  ZZ d4=d*d3;
 
   return 108*b3*a2*d - 12*b4*c2 + 216*a2*c4 + 72*b5*d - 486*a3*c2*d +
     270*a2*c3*b - 90*b3*c2*a + 972*a2*d2*b2 - 216*b3*c*a*d - 648*b*c2*a2*d
@@ -338,17 +338,17 @@ bigint cubic::j_c3() const
 // The quantity C_4 (not in the paper), = Norm(h1)/8 and should be
 // NON-NEGATIVE for a reduced form with C1=0 (i.e. when h0=h2 we want h1>=0).
 
-bigint cubic::j_c4() const
+ZZ cubic::j_c4() const
 {
-  bigint a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
-  bigint b2=b*b;
-  bigint b3=b*b2;
-  bigint b4=b*b3;
-  bigint a2=a*a;
-  bigint c2=c*c;
-  bigint c3=c*c2;
-  bigint c4=c2*c2;
-  bigint d2=d*d;
+  ZZ a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
+  ZZ b2=b*b;
+  ZZ b3=b*b2;
+  ZZ b4=b*b3;
+  ZZ a2=a*a;
+  ZZ c2=c*c;
+  ZZ c3=c*c2;
+  ZZ c4=c2*c2;
+  ZZ d2=d*d;
 
   return 27*d*c3*a2 + (27*d2*b3 - 54*d*c2*b2 + 9*c4*b)*a + 9*d*c*b4 - 2*c3*b3;
 }
@@ -374,11 +374,11 @@ int cubic::is_hessian_reduced() const
 // for positive discriminant only
 // The condition is -P < Q <= P < R or 0 <= Q <= P=R.
 {
-  bigint P = p_semi();
-  bigint R = r_semi();
+  ZZ P = p_semi();
+  ZZ R = r_semi();
   if (P>R) return 0;
   // now P<=R
-  bigint Q = q_semi();
+  ZZ Q = q_semi();
   if (Q>P) return 0;
   // now Q<=P<=R
   if (P==R) return (Q>=0);
@@ -387,7 +387,7 @@ int cubic::is_hessian_reduced() const
 
 void cubic::hess_reduce(unimod& m)
 {
-  int s=1;  bigint k;
+  int s=1;  ZZ k;
   m.reset();
 #ifdef DEBUG_REDUCE
   cout<<"Using hess_reduce() on "<<(*this)<<endl;
@@ -426,7 +426,7 @@ void cubic::hess_reduce(unimod& m)
 
 void cubic::mathews_reduce(unimod& m)
 {
-  int s=1;  bigint k; bigfloat alpha;
+  int s=1;  ZZ k; bigfloat alpha;
   m.reset();
   while(s)
     {
@@ -448,7 +448,7 @@ void cubic::mathews_reduce(unimod& m)
       cout << "Shift by "<<k<<": "<<(*this)<<endl;
 #endif
         }
-      bigint plus1, minus1;  plus1=1; minus1=-1;
+      ZZ plus1, minus1;  plus1=1; minus1=-1;
       while(mat_c2()>0)
 	{
 	  s=1; x_shift(plus1,m);
@@ -471,31 +471,31 @@ int cubic::is_jc_reduced() const // for negative discriminant only
 {
   if (is_zero(a())) // we want the quadratic form (b,c,d) to be reduced
     {
-      bigint b(coeffs[1]), c(coeffs[2]), d(coeffs[3]);
+      ZZ b(coeffs[1]), c(coeffs[2]), d(coeffs[3]);
       if (b==d)
         return ((0<=c) && (c<=b));
       else
         return ((-b<c) && (c<=b) && (b<d));
     }
-  bigint C1 =  j_c1();
+  ZZ C1 =  j_c1();
   if (C1<0) return 0;
   // now C1>=0, i.e. h0<=h2
-  bigint C2 = j_c2();
+  ZZ C2 = j_c2();
   if (C2<0) return 0;
   // now C1, C2 >=0, i.e. h1<=h0<=h2
   if (is_zero(C1)) // i.e. h0=h2
     {
-      bigint C4 =  j_c4(); // = N(h1)/8, not in JCM paper
+      ZZ C4 =  j_c4(); // = N(h1)/8, not in JCM paper
       return (C4>=0); // i.e. h1 >= 0
     }
-  bigint C3 =  j_c3();
+  ZZ C3 =  j_c3();
   return (C3>0); // i.e. h1 > -h0
 }
 
 void cubic::jc_reduce(unimod& m)
 {
-  int s=1;   bigint k, jc2, jc3;
-  bigint plus1(one), minus1(-one);
+  int s=1;   ZZ k, jc2, jc3;
+  ZZ plus1(one), minus1(-one);
 
   bigfloat alpha, ra, rb, rc, h0, h1;
 
@@ -518,7 +518,7 @@ void cubic::jc_reduce(unimod& m)
 
   if (is_zero(a()))
     {
-      bigint bb=b(), cc=c(), q,r;
+      ZZ bb=b(), cc=c(), q,r;
       if (bb<0)
         {
           bb = -bb;
@@ -652,9 +652,9 @@ void cubic::jc_reduce(unimod& m)
 }
 
   // Just shifts x:
-bigint cubic::shift_reduce()
+ZZ cubic::shift_reduce()
 {
-  unimod m; bigint k;
+  unimod m; ZZ k;
   if(is_positive(disc()))
     {
       k = roundover(-q_semi(),2*p_semi());
@@ -715,11 +715,11 @@ vector<bigrational> cubic::rational_roots() const
 }
 
 
-vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles, int gl2, int verbose)
+vector<cubic> reduced_cubics(const ZZ& disc, int include_reducibles, int gl2, int verbose)
 {
-  bigint a, b, c, d;
-  bigint amax, bmin, bmax, a2, b2, b3, b4, cmin, cmax, r;
-  bigint P, U, absU, U2, Ud, Db2;
+  ZZ a, b, c, d;
+  ZZ amax, bmin, bmax, a2, b2, b3, b4, cmin, cmax, r;
+  ZZ P, U, absU, U2, Ud, Db2;
   int sU;
   bigfloat i3a, a23, ra2, rb2, D, D2, D3, D32, D4, Pmax, Pmin;
 

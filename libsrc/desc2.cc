@@ -35,10 +35,10 @@
 #define QSIEVE_OPT 0 // uses Stoll's sieve
 #endif
 
-int process_d3(const quadratic& q0, const bigint& d3, 
-	       const vector<bigint>& plist, const vector<bigint>& factorbase, double hlim,
+int process_d3(const quadratic& q0, const ZZ& d3, 
+	       const vector<ZZ>& plist, const vector<ZZ>& factorbase, double hlim,
 	       const quadratic& q1, const quadratic& q3,
-	       bigint& x, bigint& y, bigint& z, int verb, int selmer_only=0);
+	       ZZ& x, ZZ& y, ZZ& z, int verb, int selmer_only=0);
 // Processes an individual d3
 // Returns -1 if not els
 //          0 if els but no point found
@@ -50,10 +50,10 @@ int process_d3(const quadratic& q0, const bigint& d3,
 // that both q1=d3 and q3=d3 are soluble (but this does not yet imply
 // that they are simultaneously soluble).
 
-int desc2(const bigint& c, const bigint& d1, const bigint& d2,
-	  const vector<bigint>& plist, const vector<bigint>& supp, const vector<bigint>& bgens,
+int desc2(const ZZ& c, const ZZ& d1, const ZZ& d2,
+	  const vector<ZZ>& plist, const vector<ZZ>& supp, const vector<ZZ>& bgens,
 	  long mask,  double hlim,
-	  bigint& x, bigint& y, bigint& z, int verb, int selmer_only, int alldesc)
+	  ZZ& x, ZZ& y, ZZ& z, int verb, int selmer_only, int alldesc)
 // Works on homogeneous space (d1,0,c,0,d2) (assumed ELS)
 // Returns 
 //   -1 if it certainly has no points (if no ELS descendents)
@@ -79,10 +79,10 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
       cout<<"Using desc2("<<d1<<","<<c<<","<<d2<<")\n";
       cout<<"supp="<<supp<<"; mask="<<mask<<"; bgens="<<bgens<<endl;
     }
-  bigint x0,z0,d0, p, result;
-  bigint d = d1*d2, cdash = -2*c, ddash = sqr(c)-4*d;
-  static const bigint one(1);
-  static const bigint two(2);
+  ZZ x0,z0,d0, p, result;
+  ZZ d = d1*d2, cdash = -2*c, ddash = sqr(c)-4*d;
+  static const ZZ one(1);
+  static const ZZ two(2);
   int add2tosupp = (val(2,ddash)==4);  
   if(add2tosupp) add2tosupp = (find(supp.begin(),supp.end(),two)==supp.end());  
 // For we are on E' and the original d was odd
@@ -98,7 +98,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 
   if(!res) {cout<<"solve_conic failed -- should not happen!\n"; return -1;}
   x0=q1[0]; z0=q3[0];
-  vector<bigint> factorbase = plist;
+  vector<ZZ> factorbase = plist;
   int factorbase_enlarged=0;
 
   // We only need to factorize x0, z0 if some d3 passes the Hilbert
@@ -129,7 +129,7 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
   // Step 4: For all square-free divisors of the resultant, attempt to
   //         form a descendent quartic
 
-  bigint d3, keepd3, s0, t0, u0, s1, t1, u1;
+  ZZ d3, keepd3, s0, t0, u0, s1, t1, u1;
   int looking=1, found=0, hres;
 
   for(id3=0; (id3<nd3)&&(looking||alldesc); id3++) // must start at 0
@@ -256,10 +256,10 @@ int desc2(const bigint& c, const bigint& d1, const bigint& d2,
 }  // end of desc2()
 
 
-int process_d3(const quadratic& q0, const bigint& d3, 
-	       const vector<bigint>& plist, const vector<bigint>& factorbase, double hlim,
+int process_d3(const quadratic& q0, const ZZ& d3, 
+	       const vector<ZZ>& plist, const vector<ZZ>& factorbase, double hlim,
 	       const quadratic& q1, const quadratic& q3,
-	       bigint& x, bigint& y, bigint& z, int verb, int selmer_only)
+	       ZZ& x, ZZ& y, ZZ& z, int verb, int selmer_only)
 // Processes an individual d3
 // Returns -1 if not els
 //          0 if els but no point found
@@ -274,10 +274,10 @@ int process_d3(const quadratic& q0, const bigint& d3,
   int xverb=verb>1;
   if(verb) cout<<"Processing d3 = "<<d3<<": \t";
   //  if(xverb) cout<<"\nplist = "<<plist<<"\n";
-  bigint s1,u1,t1,ga,gb,gc,gd,ge,cont;
-  bigint p,ggI,ggJ,ggD;
-  static const bigint one(1), zero(0);
-  vector<bigint> ggbadp, ggextrap;
+  ZZ s1,u1,t1,ga,gb,gc,gd,ge,cont;
+  ZZ p,ggI,ggJ,ggD;
+  static const ZZ one(1), zero(0);
+  vector<ZZ> ggbadp, ggextrap;
   quadratic Q1, Q2, Q3;
   int resd3 = solve_conic_param(q1,d3,factorbase,Q1,Q2,Q3);
 
@@ -331,7 +331,7 @@ int process_d3(const quadratic& q0, const bigint& d3,
       ga/=cont; gb/=cont; gc/=cont; gd/=cont; ge/=cont;
     }
 	  
-  bigint ga0=ga, gb0=gb, gc0=gc, gd0=gd, ge0=ge;
+  ZZ ga0=ga, gb0=gb, gc0=gc, gd0=gd, ge0=ge;
   quartic gg(ga,gb,gc,gd,ge);
   ggI = gg.getI();
   ggJ = gg.getJ();
@@ -405,7 +405,7 @@ int process_d3(const quadratic& q0, const bigint& d3,
       cout<<"Now reducing gg...\n";
     }
   int better=1, ired;
-  bigint oldga(ga), oldgb(gb), oldgc(gc), oldgd(gd), oldge(ge);
+  ZZ oldga(ga), oldgb(gb), oldgc(gc), oldgd(gd), oldge(ge);
   unimod n;
   for(ired=0; (ired<5)&&better; ired++)
     {
@@ -459,20 +459,20 @@ int process_d3(const quadratic& q0, const bigint& d3,
       show_xyz(x,y,z);
       cout<<"...mapping this point back to original quartic...\n";
     }
-  bigint x3 = m(1,1)*x+m(1,2)*z;
-  bigint z3 = m(2,1)*x+m(2,2)*z;
-  bigint fac = gcd(x3,z3); if(fac>1) {x3/=fac; z3/=fac;}
+  ZZ x3 = m(1,1)*x+m(1,2)*z;
+  ZZ z3 = m(2,1)*x+m(2,2)*z;
+  ZZ fac = gcd(x3,z3); if(fac>1) {x3/=fac; z3/=fac;}
   //	  cout<<"x3="<<x3<<"\n";
   //	  cout<<"z3="<<z3<<"\t should lie on original quartic\n";
-  bigint q1xz = Q1(x3,z3);
-  bigint q3xz = Q3(x3,z3);
+  ZZ q1xz = Q1(x3,z3);
+  ZZ q3xz = Q3(x3,z3);
   fac=gcd(q1xz,q3xz); if(fac>1) {q1xz/=fac; q3xz/=fac;}
   
-  bigint x2 = abs(q1(q1xz,q3xz));
-  bigint z2 = abs(q3(q1xz,q3xz));
+  ZZ x2 = abs(q1(q1xz,q3xz));
+  ZZ z2 = abs(q3(q1xz,q3xz));
   //NB These abs() are OK because x2,z2 do have the same sign
   fac=gcd(x2,z2);  if(fac>1) {x2/=fac; z2/=fac;}
-  bigint y2 = q0(x2,z2);
+  ZZ y2 = q0(x2,z2);
   
   if(isqrt(x2,x)&&isqrt(z2,z)&&isqrt(y2,y))
     {

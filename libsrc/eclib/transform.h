@@ -30,36 +30,36 @@
 
 #include "unimod.h"
 
-void apply_transform(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void apply_transform(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 		     const unimod& m);
 
-void apply_transform(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void apply_transform(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 		     const scaled_unimod& m);
 
-int check_transform(const bigint& a, const bigint& b, const bigint& c, 
-		    const bigint& d, const bigint& e,
+int check_transform(const ZZ& a, const ZZ& b, const ZZ& c, 
+		    const ZZ& d, const ZZ& e,
 		    const unimod& m,
-		    const bigint& xa, const bigint& xb, const bigint& xc, 
-		    const bigint& xd, const bigint& xe);
+		    const ZZ& xa, const ZZ& xb, const ZZ& xc, 
+		    const ZZ& xd, const ZZ& xe);
 
-int check_transform(const bigint& a, const bigint& b, const bigint& c, 
-		    const bigint& d, const bigint& e,
+int check_transform(const ZZ& a, const ZZ& b, const ZZ& c, 
+		    const ZZ& d, const ZZ& e,
 		    const scaled_unimod& m,
-		    const bigint& xa, const bigint& xb, const bigint& xc, 
-		    const bigint& xd, const bigint& xe);
+		    const ZZ& xa, const ZZ& xb, const ZZ& xc, 
+		    const ZZ& xd, const ZZ& xe);
 
-void xshift(const bigint& alpha,
-	    const bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void xshift(const ZZ& alpha,
+	    const ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	    unimod& m);
 
-void zshift(const bigint& gamma,
-	    bigint& a, bigint& b, bigint& c, bigint& d, const bigint& e,
+void zshift(const ZZ& gamma,
+	    ZZ& a, ZZ& b, ZZ& c, ZZ& d, const ZZ& e,
 	    unimod& m);
 
-void m_invert(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void m_invert(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	      unimod& m);
 
-void m_invert(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void m_invert(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	      scaled_unimod& m);
 
 #endif

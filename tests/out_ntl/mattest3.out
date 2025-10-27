@@ -1,4 +1,4 @@
-Matrix test program with scalar type bigint.
+Matrix test program with scalar type ZZ.
 
 Enter size of a square matrix A: Enter entries of A: A = 
 [[1,2],

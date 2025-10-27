@@ -42,7 +42,7 @@ void saturator::reset_points(const vector<Point>& PP)
   TLrank=0;
   qvar.init(); qvar++; qvar++;   // skip past 2 and 3
   stuck_counter=0;
-  the_index_bound = bigint(0);
+  the_index_bound = ZZ(0);
 }
 
 // initialize index bound
@@ -52,7 +52,7 @@ void saturator::set_index_bound()
 }
 
 // return current index bound (compute if necessary)
-bigint saturator::get_index_bound()
+ZZ saturator::get_index_bound()
 {
   if (is_zero(the_index_bound))
     set_index_bound();
@@ -111,7 +111,7 @@ int saturator::test_saturation_extra(int pp, int ms)
 void saturator::nextq()
 {
   int ntp=0;
-  TLSS sieve; bigint q;
+  TLSS sieve; ZZ q;
   while (ntp==0) /* (ntp<2) */
     {
       qvar++; q=qvar; 
@@ -136,7 +136,7 @@ void saturator::nextq()
 
       // First just check the order of E mod q, skip this q if not a multiple of p
 
-      bigint order_mod_q;
+      ZZ order_mod_q;
       auto Eqoi = Emodq_order.find(q);
       if(Eqoi==Emodq_order.end())
 	{
@@ -291,7 +291,7 @@ int saturator::enlarge()
   // a factor of p, but not necessarily so.  For simplicity we just
   // recompute the index bound.
 
-  bigint old_index_bound = the_index_bound;
+  ZZ old_index_bound = the_index_bound;
   set_index_bound();
   if(verbose)
     {
@@ -423,7 +423,7 @@ int saturator::saturate(vector<long>& unsat, long& index,
   while(pr.value()<sat_low_bd) pr++;
   int p=pr.value();
 
-  bigint ib = get_index_bound();
+  ZZ ib = get_index_bound();
   if(verbose)
     {
       cout<<"Saturation index bound ";
@@ -588,12 +588,12 @@ int saturate_points(Curvedata& C, vector<Point>& points,
 // points
 //
 
-bigint index_bound(vector<Point>& points,
+ZZ index_bound(vector<Point>& points,
 		   int egr, int verbose)
 {
   int npts = points.size();
   if (npts==0)
-    return bigint(1);
+    return ZZ(1);
 
   Curvedata C = Curvedata(points[0].getcurve(), 0);
   if(verbose)
@@ -630,8 +630,8 @@ bigint index_bound(vector<Point>& points,
 #endif
   // no need to use egr_reg in next line since we multiply by index
   bigfloat ib = index*sqrt(reg*pow(gamma/lambda,npts));
-  bigint ans = Ifloor(ib+0.1);  // be careful about rounding errors!
-  if(ans<2) ans=bigint(1);  // In case 0.9999 has rounded down to 0
+  ZZ ans = Ifloor(ib+0.1);  // be careful about rounding errors!
+  if(ans<2) ans=ZZ(1);  // In case 0.9999 has rounded down to 0
   if(verbose)
     cout<<"Saturation index bound " << ib << ", rounds down to "<<ans<<endl;
   return ans;
@@ -642,7 +642,7 @@ bigint index_bound(vector<Point>& points,
 #if(0)
   // Find optimally x-shifted curve for better point searching...
 
-  bigint x_shift;
+  ZZ x_shift;
   Curvedata C_opt = opt_x_shift(*C,x_shift);
   int shift_flag = !is_zero(x_shift);
   if(shift_flag&&verbose) 
@@ -682,8 +682,8 @@ bigint index_bound(vector<Point>& points,
   //  cout<<"Before shifting, newpoints = "<<newpoints<<endl;
   if(shift_flag) 
     for(unsigned int i=0; i<newpoints.size(); i++)
-      newpoints[i] = transform(newpoints[i],C,bigint(1),
-			   x_shift,bigint(0),bigint(0),1);
+      newpoints[i] = transform(newpoints[i],C,ZZ(1),
+			   x_shift,ZZ(0),ZZ(0),1);
   //  cout<<"After shifting, newpoints = "<<newpoints<<endl;
   Point Pmin = pmh.get_min_ht_point();
   if(lambda==0)

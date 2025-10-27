@@ -81,9 +81,9 @@ int main(){
   Curvedata cd(c,1);
 
   cout << "Testing some points:\n";
-  Point P0(cd, bigint(0),bigint(2)) ;
-  Point P1(cd, bigint(1),bigint(0)) ;
-  Point P2(cd, bigint(2),bigint(0)) ;
+  Point P0(cd, ZZ(0),ZZ(2)) ;
+  Point P1(cd, ZZ(1),ZZ(0)) ;
+  Point P2(cd, ZZ(2),ZZ(0)) ;
 
   cout << "The points are P0 = " << P0 << 
     ", P1 = " << P1 << ", and P2 = " << P2 << endl ;
@@ -99,9 +99,9 @@ int main(){
   Curvedata cd(c,1);
 
   cout << "Testing some points:\n";
-  Point P0(cd, bigint(0),bigint(2)) ;
-  Point P1(cd, bigint(1),bigint(2)) ;
-  Point P2(cd, bigint(12),bigint(41)) ;
+  Point P0(cd, ZZ(0),ZZ(2)) ;
+  Point P1(cd, ZZ(1),ZZ(2)) ;
+  Point P2(cd, ZZ(12),ZZ(41)) ;
 
   cout << "The points are P0 = " << P0 << 
     ", P1 = " << P1 << ", and P2 = " << P2 << endl ;
@@ -116,7 +116,7 @@ int main(){
   Curve c(1,0,0,5355560,to_ZZ("7740216896");
   Curvedata cd(c,1);
 
-  Point P0(cd, bigint(-248),bigint(80104)) ;
+  Point P0(cd, ZZ(-248),ZZ(80104)) ;
 
   cout << "The point is P0 = " << P0 << endl ;
 
@@ -165,10 +165,10 @@ int main(){
   //cout << "Periods: "<<cp3<<endl;
   cout<<endl;
 
-  Point Q(cd3,bigint(-8),bigint(51));
+  Point Q(cd3,ZZ(-8),ZZ(51));
   cout << "The point Q is = " << Q << endl ;
   test1(cd3,cp3,Q);
-  Point P3(cd3, bigint(8),bigint(-3)) ;
+  Point P3(cd3, ZZ(8),ZZ(-3)) ;
   cout << "The point P3 is = " << P3 << endl ;
 
   test1(cd3,cp3,P3);

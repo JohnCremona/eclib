@@ -104,7 +104,7 @@ void eiperiods(bigcomplex e1, bigcomplex e2, bigcomplex e3,
 
 //#define DEBUG_CUBIC
 
-vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bigint& c3) 
+vector<bigcomplex> solve_nonsingular_cubic(const ZZ& c1, const ZZ& c2, const ZZ& c3) 
 //Returns an array of 3 complex roots.
 {
 #ifdef DEBUG_CUBIC
@@ -117,8 +117,8 @@ vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, c
     two(to_bigfloat(2)), one(to_bigfloat(1));
   bigfloat third = one/three;
   bigcomplex w =  bigcomplex(to_bigfloat(-1), sqrt(three))/two;
-  bigint p3=  3*c2 - c1*c1;
-  bigint q = c1*(2*sqr(c1)-9*c2)+27*c3;
+  ZZ p3=  3*c2 - c1*c1;
+  ZZ q = c1*(2*sqr(c1)-9*c2)+27*c3;
   bigfloat rq=I2bigfloat(q), rp3=I2bigfloat(p3);
   vector<bigcomplex> roots(3);
   long i;
@@ -157,7 +157,7 @@ vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, c
       //NB It is important to compute d EXACTLY and then convert to
       //floating point, rather than work with f.p. values for q and
       //p3, since otherwise bad cancellation can occur!
-      bigint d =  q*q+ 4*p3*sqr(p3);
+      ZZ d =  q*q+ 4*p3*sqr(p3);
       bigfloat rd=I2bigfloat(d);
       bigcomplex t1cubed = (sqrt(bigcomplex(rd)) - rq)/two;
       bigcomplex t2cubed = (sqrt(bigcomplex(rd)) + rq)/two;
@@ -227,7 +227,7 @@ vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, c
 // Gets the 3 2-division points given the coefficients 
 void getei(const Curvedata& E, bigcomplex& e1, bigcomplex& e2, bigcomplex& e3)
 {
-  bigint b2,b4,b6,b8;    
+  ZZ b2,b4,b6,b8;    
   E.getbi(b2,b4,b6,b8);
 
 #ifdef DEBUG

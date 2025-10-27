@@ -28,41 +28,41 @@
 
 // Checks for solublility in Qp:
 
-int qpsoluble(const quartic& g, const bigint& p); 
-int qpsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
-	      const bigint& e, const bigint& p);
-int qpsoluble(const bigint& a, const bigint& c, const bigint& e, const bigint& p);
+int qpsoluble(const quartic& g, const ZZ& p); 
+int qpsoluble(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d, 
+	      const ZZ& e, const ZZ& p);
+int qpsoluble(const ZZ& a, const ZZ& c, const ZZ& e, const ZZ& p);
 // latter assumes b=d=0
 
 int Rsoluble(const quartic& g);
-int Rsoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d,  
-	      const bigint& e);
+int Rsoluble(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,  
+	      const ZZ& e);
 
 
 // Checks for local solubility in Qp for all p in plist; 
 //if not, badp will hold the first p for which NOT soluble in Qp:
 
-int locallysoluble(const quartic& g, const vector<bigint>& plist, bigint& badp);
-int locallysoluble(const bigint& a, const bigint& b, const bigint& c, const bigint& d, 
-	      const bigint& e, const vector<bigint>& plist, bigint& badp);
-int locallysoluble(const bigint& a, const bigint& c, const bigint& e, 
-		   const vector<bigint>& plist, bigint& badp);
+int locallysoluble(const quartic& g, const vector<ZZ>& plist, ZZ& badp);
+int locallysoluble(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d, 
+	      const ZZ& e, const vector<ZZ>& plist, ZZ& badp);
+int locallysoluble(const ZZ& a, const ZZ& c, const ZZ& e, 
+		   const vector<ZZ>& plist, ZZ& badp);
 // latter assumes b=d=0
 
 
 /* Samir Siksek's Local Solubility Test for odd p */
 
-int local_sol(const bigint& p, vector<bigint> c, int verbose=0);
+int local_sol(const ZZ& p, vector<ZZ> c, int verbose=0);
 
  // Checks for solublility in Qp 
-int new_qpsoluble(const quartic& g, const bigint& p, int verbose=0);
-int new_qpsoluble(const bigint& a, const bigint& b, const bigint& c, 
-		  const bigint& d, const bigint& e, 
-		  const bigint& p, int verbose=0);
-int new_qpsoluble(const bigint& a, const bigint& c, const bigint& e, 
-		  const bigint& p, int verbose=0);
+int new_qpsoluble(const quartic& g, const ZZ& p, int verbose=0);
+int new_qpsoluble(const ZZ& a, const ZZ& b, const ZZ& c, 
+		  const ZZ& d, const ZZ& e, 
+		  const ZZ& p, int verbose=0);
+int new_qpsoluble(const ZZ& a, const ZZ& c, const ZZ& e, 
+		  const ZZ& p, int verbose=0);
 
-int new_zpsol(const bigint& a,const bigint& b,const bigint& c,const bigint& d,
-	      const bigint& e, const bigint& p, int verbose=0);
+int new_zpsol(const ZZ& a,const ZZ& b,const ZZ& c,const ZZ& d,
+	      const ZZ& e, const ZZ& p, int verbose=0);
 
 #endif

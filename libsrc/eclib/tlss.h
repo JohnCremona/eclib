@@ -37,8 +37,8 @@ class TLSS {
 private: 
   int p;                // the prime to saturate at.
   int rank;             // p-rank of E mod q (0,1,2)
-  bigint q;             // the modulus
-  bigint q1p;           //  = (q-1)/p;
+  ZZ q;             // the modulus
+  ZZ q1p;           //  = (q-1)/p;
 
   galois_field Fq;          // F_q
   vector<gf_element> mu_p;  // all p'th roots mod q

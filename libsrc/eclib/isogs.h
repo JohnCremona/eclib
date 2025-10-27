@@ -39,7 +39,7 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp,
 			  // of curves ell-isogenous to CR
 
 
-int semistable(CurveRed& CR, const bigint& p);
+int semistable(CurveRed& CR, const ZZ& p);
 int semistable(CurveRed& CR);
 
 vector<long> getelllist(CurveRed& CR); 

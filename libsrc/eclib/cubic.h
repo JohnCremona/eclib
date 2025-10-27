@@ -30,7 +30,7 @@
 //
 // Notation: g(x,z) is replaced by g(m11*x+m12*z,m21*x+m22*z)
 //
-// Stored as bigint* arrays g of size 4 representing 
+// Stored as ZZ* arrays g of size 4 representing 
 //         g[0]*x^3+g[1]*x^2+g[2]*x+g[3]
 
 class unimod;
@@ -38,38 +38,38 @@ class unimod;
 class cubic {
   friend class unimod;
 private:
-  vector<bigint> coeffs;  // will always have length 4
+  vector<ZZ> coeffs;  // will always have length 4
 public:
   cubic()
-  {coeffs.resize(4, bigint(0));}
-  cubic(const  bigint& a, const bigint& b, const bigint& c, const bigint& d) 
+  {coeffs.resize(4, ZZ(0));}
+  cubic(const  ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d) 
     :coeffs({a,b,c,d}) {;}
   cubic(long a, long b, long c, long d)
-    :coeffs({bigint(a),bigint(b),bigint(c),bigint(d)}) {;}
-  explicit cubic(const vector<bigint>& abcd)
+    :coeffs({ZZ(a),ZZ(b),ZZ(c),ZZ(d)}) {;}
+  explicit cubic(const vector<ZZ>& abcd)
     :coeffs(abcd) {;}
   cubic(const  cubic& q)
     :coeffs(q.coeffs) {;}
   int operator==(const cubic& g) const
   {return (coeffs==g.coeffs);}
-  inline bigint coeff(int i)
+  inline ZZ coeff(int i)
   {if((i>=0)&&(i<=3)) return coeffs[i]; else return coeffs[0];}
-  inline bigint operator[](int i) const
+  inline ZZ operator[](int i) const
   {if((i>=0)&&(i<=3)) return coeffs[i]; else return coeffs[0];}
-  inline bigint a(void) const {return coeffs[0];}
-  inline bigint b(void) const {return coeffs[1];}
-  inline bigint c(void) const {return coeffs[2];}
-  inline bigint d(void) const {return coeffs[3];}
-  inline void set_coeff(int i, const bigint& a)
+  inline ZZ a(void) const {return coeffs[0];}
+  inline ZZ b(void) const {return coeffs[1];}
+  inline ZZ c(void) const {return coeffs[2];}
+  inline ZZ d(void) const {return coeffs[3];}
+  inline void set_coeff(int i, const ZZ& a)
     {if((i>=0)&&(i<=3)) coeffs[i]=a;}
-  inline bigint eval(const bigint& x, const bigint& z) const
-    { bigint x2=sqr(x), z2=sqr(z);
+  inline ZZ eval(const ZZ& x, const ZZ& z) const
+    { ZZ x2=sqr(x), z2=sqr(z);
       return a()*x*x2 + b()*x2*z + c()*x*z2 + d()*z*z2;}
-  inline bigint eval(const bigint& x) const
-    { bigint x2=sqr(x);
+  inline ZZ eval(const ZZ& x) const
+    { ZZ x2=sqr(x);
       return a()*x*x2 + b()*x2 + c()*x + d();}
-  inline bigint disc() const
-    { bigint b2=sqr(b()), c2=sqr(c()), ac=a()*c(), bd=b()*d();
+  inline ZZ disc() const
+    { ZZ b2=sqr(b()), c2=sqr(c()), ac=a()*c(), bd=b()*d();
       return -27*sqr(a()*d()) + 18*ac*bd - 4*ac*c2 -4*bd*b2 + b2*c2;
     }
   inline void output(ostream& os=cout) const
@@ -85,8 +85,8 @@ public:
   friend cubic transform(const cubic& F, const unimod& m);
 
   // In the next 4 functions, m already holds a unimod and is updated:
-  void x_shift(const bigint& e, unimod& m);
-  void y_shift(const bigint& e, unimod& m);
+  void x_shift(const ZZ& e, unimod& m);
+  void y_shift(const ZZ& e, unimod& m);
   void invert(unimod& m); // apply [0,-1;1,0]
   void negate(unimod& m); // apply [-1,0;0,-1]
   void seminegate(unimod& m); // apply [1,0;0,-1] (det=-1)
@@ -112,27 +112,27 @@ public:
   int gl2_equivalent_in_list(const vector<cubic>& Glist) const;
 
   // affine roots of F mod q, assuming leading coefficient a() is nonzero:
-  vector<bigint> roots_mod(const bigint& q) const;
+  vector<ZZ> roots_mod(const ZZ& q) const;
 
   // Return 1 iff F has a projective root mod q:
-  int has_roots_mod(const bigint& q) const;
+  int has_roots_mod(const ZZ& q) const;
 
   // Mathews quantities for use when disc<0:
-  bigint mat_c1() const
+  ZZ mat_c1() const
     { return d()*(d()-b())+a()*(c()-a());}
-  bigint mat_c2() const
+  ZZ mat_c2() const
     {  return a()*d() - (a()+b())*(a()+b()+c());}
-  bigint mat_c3() const
+  ZZ mat_c3() const
     {  return a()*d() + (a()-b())*(a()-b()+c());}
 
   // P, Q, R: coefficients of the Hessian, used for reduction when disc>0
-  bigint p_semi() const
+  ZZ p_semi() const
     {  return sqr(b())-3*a()*c(); }
-  bigint q_semi() const
+  ZZ q_semi() const
     {  return b()*c()-9*a()*d(); }
-  bigint r_semi() const
+  ZZ r_semi() const
     {  return sqr(c())-3*b()*d(); }
-  bigint u_semi() const
+  ZZ u_semi() const
     {  return 2*b()*sqr(b()) + 27*sqr(a())*d() - 9*a()*b()*c();}
 
   // jc_reduce uses the algebraic real quadratic covariant with coeffs
@@ -141,16 +141,16 @@ public:
 
   // jc_c1() is the quantity denoted C1=N(h2-h0) in the paper, its
   // sign is sign(h2-h0) so is >=0 for a reduced form:
-  bigint j_c1() const;
+  ZZ j_c1() const;
   // jc_c2() is the quantity denoted C2=N(h0-h1) in the paper, its
   // sign is sign(h0-h1) so is >=0 for a reduced form:
-  bigint j_c2() const;
+  ZZ j_c2() const;
   // jc_c3() is the quantity denoted C3=N(h0+h1) in the paper, its
   // sign is sign(h1+h0) so is >0 for a reduced form:
-  bigint j_c3() const;
+  ZZ j_c3() const;
   // jc_c4() is not in the paper, its sign is sign(h1) so is >=0 for a
   // reduced form with C1=0, i.e. with h0=h1:
-  bigint j_c4() const;
+  ZZ j_c4() const;
 
   bigcomplex hess_root() const;
   bigfloat real_root() const;  // requires disc<0
@@ -160,14 +160,14 @@ public:
   int is_jc_reduced() const; // for negative discriminant only
   void jc_reduce(unimod& m);
   // Just shifts x, returns the shift amount:
-  bigint shift_reduce();
+  ZZ shift_reduce();
   vector<bigrational> rational_roots() const;
   int is_reducible() const
   {return ((a()==0) || (rational_roots().size()>0));}
   int is_irreducible() const
   {return ((a()!=0) && (rational_roots().size()==0));}
 
-  bigint content() const
+  ZZ content() const
   {
     return gcd(gcd(gcd(coeffs[0], coeffs[1]), coeffs[2]), coeffs[3]);
   }
@@ -176,7 +176,7 @@ public:
     return content()==1;
   }
   // divide by a constant factor (which should divide all the coefficients)
-  cubic operator/(const bigint& g) const
+  cubic operator/(const ZZ& g) const
   {
     return cubic(coeffs[0]/g, coeffs[1]/g, coeffs[2]/g, coeffs[3]/g);
   }
@@ -197,10 +197,10 @@ inline ostream& operator<<(ostream& os, const cubic& g)
 // (1) All reduced cubics with a single discriminant (positive or negative):
 // Set include_reducibles=0 to omit reducible cubics and any with a=0
 // Set gl2=1 to get GL(2,Z)-inequivalent cubics (default is SL(2,Z))
-vector<cubic> reduced_cubics(const bigint& disc, int include_reducibles=1, int gl2=0, int verbose=0);
+vector<cubic> reduced_cubics(const ZZ& disc, int include_reducibles=1, int gl2=0, int verbose=0);
 
 // All reduced cubics with discriminant in range (0,maxdisc] if maxdisc>0 or [maxdisc,0) if maxdisc<0
 // (not yet implemented)
-vector<cubic> reduced_cubics_range(const bigint& maxdisc, int verbose=0);
+vector<cubic> reduced_cubics_range(const ZZ& maxdisc, int verbose=0);
 
 #endif

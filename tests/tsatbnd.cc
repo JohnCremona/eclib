@@ -78,18 +78,18 @@ int main()
 
       bigfloat reg = regulator(points);
       cout << "Regulator of input points: " << reg << endl;
-      bigint egri = egr_index(points);
+      ZZ egri = egr_index(points);
       cout << "Subgroup of EGR points has index " << egri << endl;
 
       cout<< "\n Images of points in component groups at bad primes and R\n\n";
       cout<< "p   Group   Image(s)" <<endl;
-      bigint u, r, s, t;
+      ZZ u, r, s, t;
       Curvedata Cmin = C.minimalize(u,r,s,t);
       vector<Point> points_min(points.size());
       std::transform(points.begin(), points.end(), points_min.begin(),
                      [&Cmin, u, r, s, t] (const Point& Pi) {return transform(Pi, &Cmin, u, r, s, t);});
       CurveRed CR(Cmin);
-      vector<bigint> plist = getbad_primes(CR);
+      vector<ZZ> plist = getbad_primes(CR);
       ComponentGroups CG(CR);
       vector<vector<int> >  ims;
       for( const auto& p : plist)
@@ -100,26 +100,26 @@ int main()
             cout<<im;
           cout<<endl;
         }
-      bigint p(0);
+      ZZ p(0);
       cout<<"R "<< CG.ComponentGroup(p)<<"  ";
       ims = MapPointsToComponentGroup(CG, points_min,  p);
       for( const auto&  im : ims)
         cout<<im;
       cout<<endl<<endl;
 
-      bigint tam_prod = global_Tamagawa_number(CR, 1); // include real place
-      bigint tam_exp = global_Tamagawa_exponent(CR, 1); //
+      ZZ tam_prod = global_Tamagawa_number(CR, 1); // include real place
+      ZZ tam_exp = global_Tamagawa_exponent(CR, 1); //
       cout << "Global Tamagawa number:   " << tam_prod <<endl;
       cout << "Global Tamagawa exponent: " << tam_exp <<endl;
 
       bigfloat lambda_egr = lower_height_bound(CR, 1);
       cout << "lower height bound (egr points): "<< lambda_egr <<endl;
-      bigint egr_bound = index_bound(points, 1, verbose);
+      ZZ egr_bound = index_bound(points, 1, verbose);
       cout << "bound on saturation index (egr points): "<< egr_bound <<endl;
 
       bigfloat lambda_all = lower_height_bound(CR, 0);
       cout << "lower height bound (all points): "<< lambda_all <<endl;
-      bigint all_bound = index_bound(points, 0, verbose);
+      ZZ all_bound = index_bound(points, 0, verbose);
       cout << "bound on saturation index (all points): "<< all_bound <<endl;
     }
 }

@@ -23,11 +23,11 @@
  
 #include "eclib/linalg.h"
 
-// Instantiate Zvec template classes for T=int, long, bigint
+// Instantiate Zvec template classes for T=int, long, ZZ
 
 template class Zvec<int>;
 template class Zvec<long>;
-template class Zvec<bigint>;
+template class Zvec<ZZ>;
 
 // Definitions of member operators and functions:
 
@@ -417,23 +417,23 @@ T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr)
 vec_m to_vec_m(const vec_i& v)
 {
   const vector<int> & vi = v.get_entries();
-  vector<bigint> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), [](const int& x) {return bigint(x);});
+  vector<ZZ> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), [](const int& x) {return ZZ(x);});
   return vec_m(w);
 }
 
 vec_m to_vec_m(const vec_l& v)
 {
   const vector<long> & vi = v.get_entries();
-  vector<bigint> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), [](const long& x) {return bigint(x);});
+  vector<ZZ> w(vi.size());
+  std::transform(vi.begin(), vi.end(), w.begin(), [](const long& x) {return ZZ(x);});
   return vec_m(w);
 }
 
 vec_i to_vec_i(const vec_m& v)
 {
-  const vector<bigint> & vi = v.get_entries();
-  auto toint = [](const bigint& a) {return is_int(a)? I2int(a) : int(0);};
+  const vector<ZZ> & vi = v.get_entries();
+  auto toint = [](const ZZ& a) {return is_int(a)? I2int(a) : int(0);};
   vector<int> w(vi.size());
   std::transform(vi.begin(), vi.end(), w.begin(), toint);
   return vec_i(w);
@@ -450,8 +450,8 @@ vec_i to_vec_i(const vec_l& v)
 
 vec_l to_vec_l(const vec_m& v)
 {
-  const vector<bigint> & vi = v.get_entries();
-  auto tolong = [](const bigint& a) {return is_long(a)? I2long(a) : long(0);};
+  const vector<ZZ> & vi = v.get_entries();
+  auto tolong = [](const ZZ& a) {return is_long(a)? I2long(a) : long(0);};
   vector<long> w(vi.size());
   std::transform(vi.begin(), vi.end(), w.begin(), tolong);
   return vec_l(w);
@@ -496,17 +496,17 @@ template istream& operator>><long> (istream&s, Zvec<long>&);
 template void swapvec<long>(Zvec<long>& v, Zvec<long>& w);
 template int lift(const Zvec<long>& v, const long& pr, Zvec<long>& ans);
 
-// Instantiate Zvec template functions for T=bigint
-template int dim<bigint>(const Zvec<bigint>&);
-template bigint operator*<bigint>(const Zvec<bigint>&, const Zvec<bigint>&);
-template bigint content<bigint>(const Zvec<bigint>&);
-template bigint maxabs<bigint>(const Zvec<bigint>&);
-template int operator==<bigint>(const Zvec<bigint>&, const Zvec<bigint>&);
-template int operator!=<bigint>(const Zvec<bigint>&, const Zvec<bigint>&);
-template int trivial<bigint>(const Zvec<bigint>&);                  // is v all 0
-template int member<bigint>(const bigint& a, const Zvec<bigint>& v);//tests if a=v[i] for some i
-template Zvec<bigint> reverse<bigint>(const Zvec<bigint>& order);
-template ostream& operator<<<bigint> (ostream&s, const Zvec<bigint>&);
-template istream& operator>><bigint> (istream&s, Zvec<bigint>&);
-template void swapvec<bigint>(Zvec<bigint>& v, Zvec<bigint>& w);
-template int lift(const Zvec<bigint>& v, const bigint& pr, Zvec<bigint>& ans);
+// Instantiate Zvec template functions for T=ZZ
+template int dim<ZZ>(const Zvec<ZZ>&);
+template ZZ operator*<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
+template ZZ content<ZZ>(const Zvec<ZZ>&);
+template ZZ maxabs<ZZ>(const Zvec<ZZ>&);
+template int operator==<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
+template int operator!=<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
+template int trivial<ZZ>(const Zvec<ZZ>&);                  // is v all 0
+template int member<ZZ>(const ZZ& a, const Zvec<ZZ>& v);//tests if a=v[i] for some i
+template Zvec<ZZ> reverse<ZZ>(const Zvec<ZZ>& order);
+template ostream& operator<<<ZZ> (ostream&s, const Zvec<ZZ>&);
+template istream& operator>><ZZ> (istream&s, Zvec<ZZ>&);
+template void swapvec<ZZ>(Zvec<ZZ>& v, Zvec<ZZ>& w);
+template int lift(const Zvec<ZZ>& v, const ZZ& pr, Zvec<ZZ>& ans);

@@ -46,8 +46,8 @@ int main(void)
    cout << "AGM(" << a << "," << b << ") = "<<flush;
    c = cagm(a,b);
    cout << c << "\n\n";
-   bigint ia,ib,ic,id,ie; long nr;
-   vector<bigint> roots;
+   ZZ ia,ib,ic,id,ie; long nr;
+   vector<ZZ> roots;
 
    cout << "Enter Integer coefficients of a (monic) cubic:";
    cin>>ia>>ib>>ic;

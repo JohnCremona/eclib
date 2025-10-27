@@ -33,11 +33,11 @@
 #include "mquartic.h"
 
 void qc(quartic& g,
-        const bigint& x0,  const bigint& y0,  const bigint& z0,
+        const ZZ& x0,  const ZZ& y0,  const ZZ& z0,
         Curvedata * E,  
 	Curvedata* IJ_curve, 
-	const bigint& tr_u, const bigint& tr_r, 
-	const bigint& tr_s, const bigint& tr_t,  
+	const ZZ& tr_u, const ZZ& tr_r, 
+	const ZZ& tr_s, const ZZ& tr_t,  
 	Point& P, int verbose=0);
 
 #endif

@@ -27,12 +27,12 @@
 
 #include "interface.h"
 
-pair<vector<bigint>, vector<bigint>> factor_via_pari(const bigint& n);
+pair<vector<ZZ>, vector<ZZ>> factor_via_pari(const ZZ& n);
 
-int is_prime_via_pari(const bigint& p);
+int is_prime_via_pari(const ZZ& p);
 
 long ellap(long a1, long a2, long a3, long a4, long a6, long p);
-bigint ellap(const bigint& a1, const bigint& a2, const bigint& a3, const bigint& a4, const bigint& a6, const bigint& p);
+ZZ ellap(const ZZ& a1, const ZZ& a2, const ZZ& a3, const ZZ& a4, const ZZ& a6, const ZZ& p);
 
 #if(0) // obsolete versions using string interface
 #include <string>

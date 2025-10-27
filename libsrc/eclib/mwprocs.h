@@ -44,7 +44,7 @@ private:
   bigfloat reg;
   int verbose, process_points;
   bigfloat& mat_entry(int i, int j);
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   int iso;
   saturator satsieve;
 public:
@@ -52,8 +52,8 @@ public:
 
  // processing of new points, with saturation at primes up to sat
  // (default MAXSATPRIME,  none if sat==0)
-  int process(const bigint& x, const bigint& y, const bigint& z) override;
-  int process(const bigint& x, const bigint& y, const bigint& z, int sat);
+  int process(const ZZ& x, const ZZ& y, const ZZ& z) override;
+  int process(const ZZ& x, const ZZ& y, const ZZ& z, int sat);
  // as returned by ms's sieve; the point is (x/z,y/z^(3/2)) and z is square
   int process(const Point& P, int sat=MAXSATPRIME);
   int process(const vector<Point>& Plist, int sat=MAXSATPRIME);
@@ -75,8 +75,8 @@ inline bigfloat& mw::mat_entry(int i, int j)
 class sieve {
 private:
   Curvedata *E;
-  bigint a1,a2,a3,a4,a6;
-  bigint d1,d2,d3,d4,d6,c2,c3,c4,c6;
+  ZZ a1,a2,a3,a4,a6;
+  ZZ d1,d2,d3,d4,d6,c2,c3,c4,c6;
   long a,c;
   mw * mwbasis;
   int verbose, posdisc, firstnl;

@@ -49,10 +49,10 @@ int main(void)
  cout << "w==v: " << (w==v) << endl;
  cout << "w!=v: " << (w!=v) << endl;
  cout << "Enter i : "; cin >> i;
- bigint two; two=2;
+ ZZ two; two=2;
  w*=two;
  cout << "After w*=2, w = " << w << endl;
- cout << "3*v = " << (bigint(3)*v) << endl;
+ cout << "3*v = " << (ZZ(3)*v) << endl;
  cout << "Now v = " << v << endl;
  cout << "v+w = " << v+w << endl;
  cout << "Now v = " << v << endl;
@@ -71,7 +71,7 @@ int main(void)
  for (i=1; i<=n; i++) cout << "v[" << i << "] = " << v[i] << endl;
 
  cout << "Member test: Enter a test number: " ;
- bigint vi;
+ ZZ vi;
  cin >> vi; cout << vi;
  if (member(vi,v)) cout << " IS "; else cout << " IS NOT ";
  cout << "a member of v." << endl;
@@ -85,7 +85,7 @@ int main(void)
  cout << "The sub-vector is " << vv << endl;
 
  cout << "Change one entry of v.  Index?"; cin >> i;
- cout << "New entry?"; bigint x; cin >> x;
+ cout << "New entry?"; ZZ x; cin >> x;
  v[i]=x;
  cout << "New entry: v[" << i << "] = " << v[i] << endl;
  cout << "Now v = " << v << endl;

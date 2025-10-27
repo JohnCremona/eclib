@@ -49,7 +49,7 @@ int main(void)
   set_precision(100);
 
  long n=2, hlim1=10, hlim2=15;
- bigint nn;
+ ZZ nn;
  int verbose=0;
 #ifndef RANK_ZERO_ONLY
  cerr << "See detail (0/1)? "; cin >> verbose;
@@ -100,8 +100,8 @@ int main(void)
      rational loverp = nfi.loverp;
      // loverp = L(f,1)/x where the period lattice is [x,yi] or [2x,x+yi], so in BSD we want L(f,1)/2x
      loverp /= 2;
-     bigint nloverp; nloverp=abs(num(loverp));
-     bigint dloverp; dloverp=abs(den(loverp));
+     ZZ nloverp; nloverp=abs(num(loverp));
+     ZZ dloverp; dloverp=abs(den(loverp));
      bigfloat lf1 = nfi.special_value();
 #ifdef DEBUG_BSD
 	 cout<<"\nL^{(r)}(f,1)/r!: " << lf1 << "\n";
@@ -159,7 +159,7 @@ int main(void)
 #endif
 	 cout << pcp << "\t";
 
-	 bigint cond = getconductor(CRi);
+	 ZZ cond = getconductor(CRi);
 
 	 Cperiods CPi(CDi); bigcomplex wR,wRI;
 	 CPi.getwRI(wR,wRI);
@@ -201,7 +201,7 @@ int main(void)
                      {
                        cout<<" ***!!!*** analytic Sha not integral: " << SS;
                      }
-                   bigint xS(S), rS;
+                   ZZ xS(S), rS;
                    if (!isqrt(xS, rS))
                      {
                        cout<< " ***!!!*** analytic Sha not a square: " << SS;

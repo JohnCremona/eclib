@@ -25,11 +25,11 @@
 
 // Test whether a curve with good reduction outside S and this j-invariant could exist
 // (using criteria from Cremona-Lingham)
-int is_j_possible(const bigrational& j, const vector<bigint>& S)
+int is_j_possible(const bigrational& j, const vector<ZZ>& S)
 {
-  static const bigint three(3);
-  bigint nj(num(j)), dj(den(j));
-  bigint mj = nj-1728*dj;
+  static const ZZ three(3);
+  ZZ nj(num(j)), dj(den(j));
+  ZZ mj = nj-1728*dj;
   if (is_zero(mj)) // j==1728: Cremona-Lingham Prop. 4.1
     return 1;
   if (is_zero(nj)) // j==0: Cremona-Lingham Prop. 4.1
@@ -43,14 +43,14 @@ int is_j_possible(const bigrational& j, const vector<bigint>& S)
 }
 
 // Return integers representing QQ(S,n)
-vector<bigint> twist_factors(const vector<bigint>& S, int n)
+vector<ZZ> twist_factors(const vector<ZZ>& S, int n)
 // only intended for n=2,4,6
 {
-  static const bigint one(1);
-  vector<bigint> wlist = {one,-one};
+  static const ZZ one(1);
+  vector<ZZ> wlist = {one,-one};
   for (auto p: S)
     {
-      vector<bigint> ppowers = {one};
+      vector<ZZ> ppowers = {one};
       for (int i=1; i<n; i++)
         ppowers.push_back(ppowers[i-1]*p);
       wlist = multiply_lists(wlist, ppowers);
@@ -60,13 +60,13 @@ vector<bigint> twist_factors(const vector<bigint>& S, int n)
 
 // Return list of curves with good reduction outside S and j=1728
 // using Cremona-Lingham Prop.4.2 and the remark following
-vector<CurveRed> egros_from_j_1728(const vector<bigint>& S)
+vector<CurveRed> egros_from_j_1728(const vector<ZZ>& S)
 {
-  static const bigint zero(0);
-  static const bigint two(2);
+  static const ZZ zero(0);
+  static const ZZ two(2);
   vector<CurveRed> Elist;
   int no2 = std::find(S.begin(), S.end(), two) == S.end();
-  vector<bigint> wlist = twist_factors(S, 4);
+  vector<ZZ> wlist = twist_factors(S, 4);
   for (auto w: wlist)
     {
       if (no2) w *= 4;
@@ -82,17 +82,17 @@ vector<CurveRed> egros_from_j_1728(const vector<bigint>& S)
 
 // Return list of curves with good reduction outside S and j=1728
 // using Cremona-Lingham Prop.4.1 and the remark following
-vector<CurveRed> egros_from_j_0(const vector<bigint>& S)
+vector<CurveRed> egros_from_j_0(const vector<ZZ>& S)
 {
-  static const bigint zero(0);
-  static const bigint two(2);
-  static const bigint three(3);
+  static const ZZ zero(0);
+  static const ZZ two(2);
+  static const ZZ three(3);
   vector<CurveRed> Elist;
   int no3 = std::find(S.begin(), S.end(), three) == S.end();
   if (no3)
     return Elist;
   int no2 = std::find(S.begin(), S.end(), two) == S.end();
-  vector<bigint> wlist = twist_factors(S, 6);
+  vector<ZZ> wlist = twist_factors(S, 6);
   for (auto w: wlist)
     {
       if (no2) w *= 16;
@@ -106,11 +106,11 @@ vector<CurveRed> egros_from_j_0(const vector<bigint>& S)
   return Elist;
 }
 
-vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S)
+vector<CurveRed> egros_from_j(const bigrational& j, const vector<ZZ>& S)
 {
-  static const bigint zero(0);
-  static const bigint two(2);
-  static const bigint three(3);
+  static const ZZ zero(0);
+  static const ZZ two(2);
+  static const ZZ three(3);
 
   vector<CurveRed> Elist;
 
@@ -118,8 +118,8 @@ vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S)
   if (!is_j_possible(j, S))
     return Elist;
 
-  bigint n = num(j);
-  bigint m = n-1728*den(j);
+  ZZ n = num(j);
+  ZZ m = n-1728*den(j);
 
  // Call special function if j=1728:
   if (is_zero(m))
@@ -131,9 +131,9 @@ vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S)
 
   // Now j is not 0 or 1728, we take quadratic twists of a base curve:
 
-  vector<bigint> Sx = S;
-  vector<bigint> Sy = pdivs(n*m*(n-m));
-  vector<bigint> extra_primes;
+  vector<ZZ> Sx = S;
+  vector<ZZ> Sy = pdivs(n*m*(n-m));
+  vector<ZZ> extra_primes;
   for (auto p: Sy)
     {
       if (std::find(Sx.begin(), Sx.end(), p) == Sx.end())
@@ -142,10 +142,10 @@ vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S)
           extra_primes.push_back(p);
         }
     }
-  vector<bigint> wlist = twist_factors(Sx, 2);
+  vector<ZZ> wlist = twist_factors(Sx, 2);
 
-  bigint a4 = -3*n*m;
-  bigint a6 = -2*n*m*m;  // the base curve [0,0,0,a4,a6] has the right j-invariant
+  ZZ a4 = -3*n*m;
+  ZZ a6 = -2*n*m*m;  // the base curve [0,0,0,a4,a6] has the right j-invariant
 
   // We'll test twists of [0,0,0,a4,a6], whose discriminant is
   // 1728n^2m^3(n-m). For primes p>3 not in S we already have
@@ -156,7 +156,7 @@ vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S)
   // 'extra' primes p (not in S) with ord_p(n)=3(6) we must have ord_p(w) odd,
   // while for p with ord_p(m)=2(4) we must have ord_p(w) odd.
 
-  vector<bigint> a4a6primes;
+  vector<ZZ> a4a6primes;
   for (auto p: extra_primes)
     {
       if ((p==two) || (p==three))
@@ -176,8 +176,8 @@ vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S)
 
       if (no2)
         w *= 16;
-      bigint w2 = w*w;
-      bigint w3 = w*w2;
+      ZZ w2 = w*w;
+      ZZ w3 = w*w2;
       Curve E(zero,zero,zero,w2*a4,w3*a6);
       Curvedata Emin(E, 1);
       CurveRed Ered(Emin);
@@ -188,14 +188,14 @@ vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S)
   return Elist;
 }
 
-int conductor_exponent_bound(const bigint& p)
+int conductor_exponent_bound(const ZZ& p)
 {
-  static const bigint two(2);
-  static const bigint three(3);
+  static const ZZ two(2);
+  static const ZZ three(3);
   return (p==two? 8 : (p==three? 5 : 2));
 }
 
-int is_N_possible_helper(const bigint& N, const vector<bigint>& support)
+int is_N_possible_helper(const ZZ& N, const vector<ZZ>& support)
 {
   for (auto p: support)
     {
@@ -208,17 +208,17 @@ int is_N_possible_helper(const bigint& N, const vector<bigint>& support)
 // Test whether N is a possible conductor for j=0: 3|N, no p||N and
 // usual bounds on ord_p(N)
 
-int is_N_possible_j_0(const bigint& N, const vector<bigint>& support)
+int is_N_possible_j_0(const ZZ& N, const vector<ZZ>& support)
 {
-  static const bigint three(3);
+  static const ZZ three(3);
   return div(three,N) and is_N_possible_helper(N,support);
 }
 
 // Test whether N is a possible conductor for j=1728: 2|N, no p||N and
 // usual bounds on ord_p(N)
 
-int is_N_possible_j_1728(const bigint& N, const vector<bigint>& support)
+int is_N_possible_j_1728(const ZZ& N, const vector<ZZ>& support)
 {
-  static const bigint two(2);
+  static const ZZ two(2);
   return div(two,N) and is_N_possible_helper(N,support);
 }

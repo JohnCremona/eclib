@@ -31,7 +31,7 @@
 
 #define MAX_NUM_LAMBDA 1000
 
-vector<bigfloat> lambda_bad_1(const bigint& p, long kcode, long npd, long& nlambda)
+vector<bigfloat> lambda_bad_1(const ZZ& p, long kcode, long npd, long& nlambda)
 {
   bigfloat logp = log(I2bigfloat(p)), n=to_bigfloat(npd);
 
@@ -75,8 +75,8 @@ vector<bigfloat> lambda_bad(CurveRed& C, long& nlambda, int verbose)
   vector<bigfloat> ans;
   nlambda = 1;
   ans.push_back(to_bigfloat(0));
-  bigint discr = getdiscr(C);
-  vector<bigint> plist = getbad_primes(C);
+  ZZ discr = getdiscr(C);
+  vector<ZZ> plist = getbad_primes(C);
   long i, j, nl, nnl;
   for (const auto& p : plist)
     {
@@ -105,18 +105,18 @@ vector<bigfloat> lambda_bad(CurveRed& C, long& nlambda, int verbose)
   return ans;
 }
 
-int make_point_from_x(Curvedata* CD, const bigint& xa, const bigint& xd, Point* P)
+int make_point_from_x(Curvedata* CD, const ZZ& xa, const ZZ& xd, Point* P)
 {
-  bigint a(xa),b,c,d(xd);
+  ZZ a(xa),b,c,d(xd);
   if(d<0) {a=-a; d=-d;}
   if(!isqrt(d,c)) return 0;
-  bigint b2,b4,b6,b8;
+  ZZ b2,b4,b6,b8;
   CD->getbi(b2,b4,b6,b8);
-  bigint d2=d*d;
-  bigint d3=d2*d;
-  bigint e,e2 = ((4*a+b2*d)*a + 2*b4*d2)*a + b6*d3;
+  ZZ d2=d*d;
+  ZZ d3=d2*d;
+  ZZ e,e2 = ((4*a+b2*d)*a + 2*b4*d2)*a + b6*d3;
   if(!isqrt(e2,e)) return 0;
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   CD->getai(a1,a2,a3,a4,a6);
   b = (e-a1*a*c-a3*c*d)/2;
   *P = Point(CD,a*c,b,c*d);
@@ -125,14 +125,14 @@ int make_point_from_x(Curvedata* CD, const bigint& xa, const bigint& xd, Point* 
 
 int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P)
 {
-  static const bigint ten(10);
-  bigint a,b,c,d;
+  static const ZZ ten(10);
+  ZZ a,b,c,d;
 //cout<<"In ratapprox2 with x = " << x << endl;
-  bigint x0, x1, x2, y0, y1, y2;
+  ZZ x0, x1, x2, y0, y1, y2;
   bigfloat xx, diff, xc;
   xx = x; x0 = 0; x1 = 1; y0 = 1; y1 = 0;
   diff = 1;
-  bigint maxdenom = pow(ten,maxdd);
+  ZZ maxdenom = pow(ten,maxdd);
   while ( !is_approx_zero(diff) && (y2<maxdenom))
     { c = Iround( xx ); xc=I2bigfloat(c);
       x2 = x0 + c*x1; x0 = x1; x1 = x2;
@@ -148,13 +148,13 @@ int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P)
     {::negate(a); ::negate(d); }
 
   if(!isqrt(d,c)) return 0;
-  bigint b2,b4,b6,b8;
+  ZZ b2,b4,b6,b8;
   CD->getbi(b2,b4,b6,b8);
-  bigint d2=d*d;
-  bigint d3=d2*d;
-  bigint e,e2 = ((4*a+b2*d)*a + 2*b4*d2)*a + b6*d3;
+  ZZ d2=d*d;
+  ZZ d3=d2*d;
+  ZZ e,e2 = ((4*a+b2*d)*a + 2*b4*d2)*a + b6*d3;
   if(!isqrt(e2,e)) return 0;
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   CD->getai(a1,a2,a3,a4,a6);
   b = (e-a1*a*c-a3*c*d)/2;
   *P = Point(CD,a*c,b,c*d);
@@ -168,7 +168,7 @@ int make_point_from_x_and_ht(Curvedata* CD, vector<bigfloat> lambdas, const bigf
     {
       bigfloat logd = (ht-rh-(lam))/2;
       bigfloat approxd = exp(logd);
-      bigint xa, xd2, xd = Iround(approxd);
+      ZZ xa, xd2, xd = Iround(approxd);
       if(xd>0) 
 	{
 	  xd2 = xd*xd;
@@ -176,7 +176,7 @@ int make_point_from_x_and_ht(Curvedata* CD, vector<bigfloat> lambdas, const bigf
 	  if(make_point_from_x(CD,xa,xd2,P)) return 1;
 	}
 
-      bigint xdx; long id, delta=10;
+      ZZ xdx; long id, delta=10;
       for(id=1;id<=delta;id++)
 	{
 	  xdx=xd+delta;

@@ -76,11 +76,11 @@ int main(void)
     }
 
   cout <<"Testing construction from a non-integral model:\n";
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   E.getai(a1,a2,a3,a4,a6);
   bigrational qa1(a1),qa2(a2),qa3(a3),qa4(a4),qa6(a6);
-  bigint s(60), scale;
-  bigint si=s;
+  ZZ s(60), scale;
+  ZZ si=s;
   qa1/=si; si*=s;
   qa2/=si; si*=s;
   qa3/=si; si*=s;
@@ -114,7 +114,7 @@ int main(void)
   for (auto p: plist)
     {
       cout << "p = "<<p<<": ";
-      vector<CurveRed> E0plist = PrimeTwists(E0list, bigint(p));
+      vector<CurveRed> E0plist = PrimeTwists(E0list, ZZ(p));
       for (auto E0p: E0plist)
         cout<<"\tTwist is "<<(Curve)E0p<<"\tconductor "<<E0p.conductor()<<endl;
     }

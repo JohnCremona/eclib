@@ -43,31 +43,31 @@
 // 4:  Uses factorization-free reduction from legendre.cc (best)
 // 5:  Uses LLL method from legendre.cc
 
-int solve_conic(const quadratic& q, const bigint& d,
-		bigint& x, bigint& y, bigint& z, int method)
+int solve_conic(const quadratic& q, const ZZ& d,
+		ZZ& x, ZZ& y, ZZ& z, int method)
 {
   return solve_conic(q[0],q[1],q[2],d,x,y,z,method);
 }
 
-int solve_conic(const quadratic& q, const bigint& d,
-		       const vector<bigint>& factorbase,
-		       bigint& x, bigint& y, bigint& z, int method)
+int solve_conic(const quadratic& q, const ZZ& d,
+		       const vector<ZZ>& factorbase,
+		       ZZ& x, ZZ& y, ZZ& z, int method)
 {
   return solve_conic(q[0],q[1],q[2],d,factorbase,x,y,z,method);
 }
 
-int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
-                bigint& x, bigint& y, bigint& z, int method)
+int solve_conic(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
+                ZZ& x, ZZ& y, ZZ& z, int method)
 {
-  vector<bigint> factorbase = pdivs(2*d);
+  vector<ZZ> factorbase = pdivs(2*d);
   factorbase=vector_union(factorbase,pdivs(a));
   factorbase=vector_union(factorbase,pdivs((is_zero(b)? c : b*b-4*a*c)));
   return solve_conic(a,b,c,d,factorbase,x,y,z,method);
 }
 
-int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
-		const vector<bigint>& factorbase,
-                bigint& x, bigint& y, bigint& z, int method)
+int solve_conic(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
+		const vector<ZZ>& factorbase,
+                ZZ& x, ZZ& y, ZZ& z, int method)
      // Solves axx+bxz+czz=dyy for (x,y,z) not (0,0,0) and returns 1
      // or returns 0 if not possible
      // Should have a, c, d, bb-4ac non-zero
@@ -77,8 +77,8 @@ int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint&
       int use_lll=0;
       if(method==5) use_lll=1;
       if(is_zero(b)) return legendre_solve(a,-d,c,factorbase,x,y,z,use_lll);
-      bigint aa=sqr(b)-4*a*c, bb=a*d;
-      bigint one, zero; one=1; zero=0;
+      ZZ aa=sqr(b)-4*a*c, bb=a*d;
+      ZZ one, zero; one=1; zero=0;
       if(!legendre_solve(one,-aa,-bb,factorbase,x,z,y,use_lll))  return 0;
 #ifdef DEBUG_CONIC
       testsol(one,zero,-aa,bb,x,y,z,1);
@@ -97,8 +97,8 @@ int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint&
       verb=1;
 #endif // DEBUG_CONIC
 //All this function does is complete the square (if nec.) and pass to the next
-      bigint aa, bb, xx, yy, zz, a1,a2,b1,b2;
-      vector<bigint> aplist, bplist, cplist, dplist;
+      ZZ aa, bb, xx, yy, zz, a1,a2,b1,b2;
+      vector<ZZ> aplist, bplist, cplist, dplist;
 
       int nondiag=!is_zero(b);
       bb=a*d;
@@ -128,18 +128,18 @@ int solve_conic(const bigint& a, const bigint& b, const bigint& c, const bigint&
     }
 }
 
-int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
-			     const bigint& b, const vector<bigint>& bplist,
-			     bigint& x, bigint& y, bigint& z,
+int solve_conic_diag_nontriv(const ZZ& a, const vector<ZZ>& aplist,
+			     const ZZ& b, const vector<ZZ>& bplist,
+			     ZZ& x, ZZ& y, ZZ& z,
 			     int method);
      // Solves xx-azz=byy for (x,y,z) not (0,0,0) and returns 1
      // or returns 0 if not possible
      // Should have a, b non-zero square-free, their prime divisors in aplist, bplist 
      // Here |b| >= |a|, |b| >=2, a!=1
 
-int solve_conic_diag(const bigint& a, const vector<bigint>& aplist,
-		     const bigint& b, const vector<bigint>& bplist,
-		     bigint& x, bigint& y, bigint& z,
+int solve_conic_diag(const ZZ& a, const vector<ZZ>& aplist,
+		     const ZZ& b, const vector<ZZ>& bplist,
+		     ZZ& x, ZZ& y, ZZ& z,
 		     int method)
      // Solves xx-azz=byy for (x,y,z) not (0,0,0) and returns 1
      // or returns 0 if not possible
@@ -147,7 +147,7 @@ int solve_conic_diag(const bigint& a, const vector<bigint>& aplist,
      //
      // Here trivial cases are dealt with, non-trivial passed on
 {
-  static const bigint one(1), minusone(-1);
+  static const ZZ one(1), minusone(-1);
 #ifdef DEBUG_CONIC
   cout << "In solve_conic_diag with a = " << a << ", b = " << b << endl;
 #endif // DEBUG_CONIC
@@ -210,9 +210,9 @@ int solve_conic_diag(const bigint& a, const vector<bigint>& aplist,
   return solve_conic_diag_nontriv(a,aplist,b,bplist,x,y,z,method);
 }
 
-int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
-			     const bigint& b, const vector<bigint>& bplist,
-			     bigint& x, bigint& y, bigint& z,
+int solve_conic_diag_nontriv(const ZZ& a, const vector<ZZ>& aplist,
+			     const ZZ& b, const vector<ZZ>& bplist,
+			     ZZ& x, ZZ& y, ZZ& z,
 			     int method)
      // Solves xx-azz=byy for (x,y,z) not (0,0,0) and returns 1
      // or returns 0 if not possible
@@ -220,8 +220,8 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
      // Here |b| > |a|, |b| >=2, a!=1
 {
   if(method<3) {
-  bigint x0, t, t0, t1, x1, y1, z1;  
-  vector<bigint> tplist;
+  ZZ x0, t, t0, t1, x1, y1, z1;  
+  vector<ZZ> tplist;
   int res = modsqrt(a,bplist,x0); // Solves x^2=a mod b, returns success/fail
   if(!res) 
     {
@@ -232,11 +232,11 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
     }
   
   t=b;
-  bigint newt = (sqr(x0)-a)/b;
+  ZZ newt = (sqr(x0)-a)/b;
 #ifdef DEBUG_CONIC
   cout<<"x0 = "<<x0<<", t = "<<newt<<endl;
 #endif // DEBUG_CONIC
-  bigint m11, m21, m33, temp, fac;
+  ZZ m11, m21, m33, temp, fac;
   m11=1; m33=1;
   switch(method)
     {
@@ -269,11 +269,11 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
       cout<<"Before lattice reduction, x0="<<x0<<", t="<<newt<<endl;
       long count=0;
 #endif // DEBUG_REDUCE
-      bigint absa=abs(a);
-      bigint u1, v1, u2, v2, w;
+      ZZ absa=abs(a);
+      ZZ u1, v1, u2, v2, w;
       u1=1; v2=1;
-      bigint n1=absa+sqr(x0), dot=b*x0, n2;
-      bigint alpha = roundover(dot, n1);  // nearest int to quotient
+      ZZ n1=absa+sqr(x0), dot=b*x0, n2;
+      ZZ alpha = roundover(dot, n1);  // nearest int to quotient
       int reduced = is_zero(alpha);
       if(!reduced)
 	{
@@ -337,7 +337,7 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
   if(is_one(t0))
     {
       x=m11; y=t1; z=m21;
-      bigint g = cancel1(x,y,z);
+      ZZ g = cancel1(x,y,z);
       int verb=0;
 #ifdef DEBUG_CONIC
       verb=1;
@@ -366,7 +366,7 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
   z =  m21*x1 +   m11*z1;
   y =  m33*y1;
 
-  bigint g = cancel1(x,y,z);
+  ZZ g = cancel1(x,y,z);
   int verb=0;
 #ifdef DEBUG_CONIC
   verb=1;
@@ -383,7 +383,7 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
 }      // end of if(method<3)
   else // method==3
     {
-      bigint x0, t, t0, t1, x1, y1, z1;  int res; vector<bigint> tplist;
+      ZZ x0, t, t0, t1, x1, y1, z1;  int res; vector<ZZ> tplist;
       res = modsqrt(a,bplist,x0); // Solves x^2=a mod b, returns success/fail
       if(!res) 
 	{
@@ -396,7 +396,7 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
   // Always have v ^2 - a*u ^2  = b*c
   //             vv^2 - a*uu^2  = c*newc
 
-      bigint u, v, temp, c, uu, vv, nor, newc;
+      ZZ u, v, temp, c, uu, vv, nor, newc;
       u=1; v=x0;
       c = (x0*x0-a)/b;
       vv = mod(-x0,c), uu=1;
@@ -444,7 +444,7 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
       z =  u*x1 +   v*z1;
       y =  t0*t1*y1;
 
-      bigint g = cancel1(x,y,z);
+      ZZ g = cancel1(x,y,z);
 #ifdef DEBUG_CONIC
       cout << "...returns (after cancelling "<<g<<") ";  show_xyz(x,y,z);
 #endif // DEBUG_CONIC_2
@@ -452,10 +452,10 @@ int solve_conic_diag_nontriv(const bigint& a, const vector<bigint>& aplist,
     } // end of method==3
 }     // end of solve_conic_diag_nontriv()
 
-bigint cancel1(bigint& x, bigint& y, bigint& z)
+ZZ cancel1(ZZ& x, ZZ& y, ZZ& z)
      // cancels common factors only
 {
-  bigint g=gcd(x,y);
+  ZZ g=gcd(x,y);
   if(!is_one(g)) 
     {
       g=gcd(g,z);
@@ -464,7 +464,7 @@ bigint cancel1(bigint& x, bigint& y, bigint& z)
   return g;
 }
 
-void cancel(bigint& x, bigint& y, bigint& z)
+void cancel(ZZ& x, ZZ& y, ZZ& z)
      // cancels common factors and leaves z>=0 or z=0 and x>=0
 {
   cancel1(x,y,z);
@@ -476,8 +476,8 @@ void cancel(bigint& x, bigint& y, bigint& z)
   return;
 }
 
-int testsol(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
-                const bigint& x, const bigint& y, const bigint& z, int verb)
+int testsol(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
+                const ZZ& x, const ZZ& y, const ZZ& z, int verb)
 {
   int triv = is_zero(x) && is_zero(y) && is_zero(z);
   if(triv)
@@ -485,7 +485,7 @@ int testsol(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
       if(verb) cout << "Trivial solution!\n";
       return 0;
     }
-  bigint t = a*x*x+b*x*z+c*z*z-d*y*y;
+  ZZ t = a*x*x+b*x*z+c*z*z-d*y*y;
   if(is_zero(t))
     {
       if(verb) cout << "Solution OK!\n";
@@ -499,28 +499,28 @@ int testsol(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
 
 }
 
-int testlocsol(const bigint& a, 
-	       const bigint& b, 
-	       const bigint& c)
+int testlocsol(const ZZ& a, 
+	       const ZZ& b, 
+	       const ZZ& c)
 // tests if ax^2+by^2+cz^2=0 is soluble, where a, b, c are pairwise
 // coprime and square-free
 {
-  vector<bigint> alist=pdivs(a);
-  vector<bigint> blist=pdivs(b);
-  vector<bigint> clist=pdivs(c);
+  vector<ZZ> alist=pdivs(a);
+  vector<ZZ> blist=pdivs(b);
+  vector<ZZ> clist=pdivs(c);
   return testlocsol(a,alist,b,blist,c,clist);
 } 
 
-int testlocsol(const bigint& a, const vector<bigint>& alist, 
-	       const bigint& b, const vector<bigint>& blist, 
-	       const bigint& c, const vector<bigint>& clist) 
+int testlocsol(const ZZ& a, const vector<ZZ>& alist, 
+	       const ZZ& b, const vector<ZZ>& blist, 
+	       const ZZ& c, const vector<ZZ>& clist) 
 // tests if ax^2+by^2+cz^2=0 is soluble, where a, b, c are pairwise
 // coprime and square-free, their prime factors being in alist etc.
 {
   int as=sign(a), bs=sign(b), cs=sign(c);
   if((as==bs)&&(bs==cs))
     return 0;
-  auto test = [](const vector<bigint>& plist, const bigint& m)
+  auto test = [](const vector<ZZ>& plist, const ZZ& m)
               {
                 return !std::any_of(plist.begin(), plist.end(),
                                     [m](const auto& p)
@@ -532,14 +532,14 @@ int testlocsol(const bigint& a, const vector<bigint>& alist,
   return test(clist, -a*b) && test(alist, -b*c) && test(blist, -a*c);
 }
 
-int testlocsol(const bigint& a, const vector<bigint>& alist,
-	       const bigint& b, const vector<bigint>& blist)
+int testlocsol(const ZZ& a, const vector<ZZ>& alist,
+	       const ZZ& b, const vector<ZZ>& blist)
 // tests if ax^2+by^2=z^2 is soluble, where a, b are
 // square-free, their prime factors being in alist and blist.
 {
   // Avoid any factorization and gcd computation using the primes given
-  bigint a0(1), b0(1), c(-1);
-  vector<bigint> a0list, b0list, clist;
+  ZZ a0(1), b0(1), c(-1);
+  vector<ZZ> a0list, b0list, clist;
   long sa=sign(a), sb=sign(b);
   if((sa<0)&&(sb<0))
     {
@@ -575,10 +575,10 @@ void testmodsqrt()
 {
   long i,m;
   int res, ok=1;
-  bigint a,mm,x;
+  ZZ a,mm,x;
   cout << "Enter a modulus m: ";
   cin >> m; mm=m;
-  vector<bigint> plist=pdivs(mm);
+  vector<ZZ> plist=pdivs(mm);
   vector<int> flag(m,0);
   for(i=0; i<=m/2; i++) flag[(i*i)%m]=1;
   for(i=0; i<m; i++)
@@ -609,8 +609,8 @@ void testmodsqrt()
 
 void testsqf()
 {
-  bigint a,m,m1,m2;
-  vector<bigint> plist;
+  ZZ a,m,m1,m2;
+  vector<ZZ> plist;
   while(cout << "Enter a nonzero integer m: ",  cin >> m, m!=0)
     {
       sqfdecomp(m,m1,m2,plist,TRACE_FACTORIZATION);
@@ -624,7 +624,7 @@ void testsqf()
 
 void testcancel()
 {
-  bigint x,y,z;
+  ZZ x,y,z;
   cout << "Enter x, y, z to be cancelled: ";
   cin >> x >> y >> z;
   cout << "Before: (x:y:z) = ("<<x<<":"<<y<<":"<<z<<")\n";
@@ -632,25 +632,25 @@ void testcancel()
   cout << "After:  (x:y:z) = ("<<x<<":"<<y<<":"<<z<<")\n";
 }
 
-int solve_conic_param(const quadratic& q, const bigint& d,
-			     const vector<bigint>& factorbase,
+int solve_conic_param(const quadratic& q, const ZZ& d,
+			     const vector<ZZ>& factorbase,
 			     quadratic& qx, quadratic& qy, quadratic& qz, 
 			     int method, int verb)
 {
   return solve_conic_param(q[0],q[1],q[2],d,factorbase,qx,qy,qz,method,verb);
 }
 
-int solve_conic_param(const quadratic& q, const bigint& d,
+int solve_conic_param(const quadratic& q, const ZZ& d,
 			     quadratic& qx, quadratic& qy, quadratic& qz, 
 			     int method, int verb)
 {
   return solve_conic_param(q[0],q[1],q[2],d,qx,qy,qz,method,verb);
 }
 
-int solve_conic_param(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
+int solve_conic_param(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
                 quadratic& qx, quadratic& qy, quadratic& qz, int method, int verb)
 {
-  vector<bigint> factorbase = pdivs(2*d);
+  vector<ZZ> factorbase = pdivs(2*d);
   if(is_zero(b))
     {
       factorbase=vector_union(factorbase,pdivs(a));
@@ -658,15 +658,15 @@ int solve_conic_param(const bigint& a, const bigint& b, const bigint& c, const b
     }
   else
     {
-      bigint disc = b*b-4*a*c;
+      ZZ disc = b*b-4*a*c;
       factorbase=vector_union(factorbase,pdivs(a));
       factorbase=vector_union(factorbase,pdivs(disc));
     }
   return solve_conic_param(a,b,c,d,factorbase,qx,qy,qz,method,verb);
 }
 
-int solve_conic_param(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
-		const vector<bigint>& factorbase,
+int solve_conic_param(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
+		const vector<ZZ>& factorbase,
                 quadratic& qx, quadratic& qy, quadratic& qz, int method, int verb)
      // Solves axx+bxz+czz=dyy for (x,y,z) not (0,0,0) and returns 1
      // or returns 0 if not possible
@@ -675,9 +675,9 @@ int solve_conic_param(const bigint& a, const bigint& b, const bigint& c, const b
      //   with leading coeffs qx[0],qy[0],qz[0] one solution
 {
   if(verb) cout<<"In solve_conic_param() with (a,b,c,d)=("<<a<<","<<b<<","<<c<<","<<d<<"),\nfactorbase="<<factorbase<<"...\n";
-  bigint disc = b*b-4*a*c, x0, y0, z0;
+  ZZ disc = b*b-4*a*c, x0, y0, z0;
 
-  bigint delta, zero, one; zero=0; one=1;
+  ZZ delta, zero, one; zero=0; one=1;
   if(isqrt(disc,delta)) // case where discrim is square
     {
       if(verb) cout<<"disc="<<disc<<" is square, root = "<<delta<<endl;
@@ -697,8 +697,8 @@ int solve_conic_param(const bigint& a, const bigint& b, const bigint& c, const b
 	  cout<<"original z coeffs: ["<<qz<<"\n";
 	  testparamsol(a,b,c,d,qx,qy,qz,verb);
 	}
-      bigint a1=gcd(a,qx[2]);  bigint a2=a*a/a1;
-      bigint t;
+      ZZ a1=gcd(a,qx[2]);  ZZ a2=a*a/a1;
+      ZZ t;
       if(divide_exact(qx[0],a2,t)) {qx.set_coeff(0,t);} else
 	cout<<"Problem: "<<a2<<" ndiv qx[0] = "<<qx[0]<<endl;
       if(divide_exact(qx[1],a,t))  {qx.set_coeff(1,t);} else
@@ -757,10 +757,10 @@ int solve_conic_param(const bigint& a, const bigint& b, const bigint& c, const b
   // We adjust them to remove factors 4*y0^2, 4*y0^2, 16*y0^4
   // (new version 27/7/98)
 
-  bigint s,t;
-  bigint g = bezout(x0,z0,s,t);
-  bigint fac = 2*y0; bigint fac2=sqr(fac);
-  bigint e = (x0*(2*t*a-s*b) + z0*(t*b-2*c*s)) % (2*(sqr(y0)));
+  ZZ s,t;
+  ZZ g = bezout(x0,z0,s,t);
+  ZZ fac = 2*y0; ZZ fac2=sqr(fac);
+  ZZ e = (x0*(2*t*a-s*b) + z0*(t*b-2*c*s)) % (2*(sqr(y0)));
   if(verb) 
     cout<<"Shifting by e = " << e << " and dividing out by factor "<<fac<<endl;
       
@@ -789,12 +789,12 @@ int solve_conic_param(const bigint& a, const bigint& b, const bigint& c, const b
   return 1;
 }
 
-int testparamsol(const bigint& a, const bigint& b, const bigint& c, const bigint& d,
+int testparamsol(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
                 const quadratic& qx, const quadratic& qy, const quadratic& qz, int verb)
      // Tests to see if a given parametrization is a solution
 {
   int ok;
-  bigint coeff;
+  ZZ coeff;
   // x^4 coefficient:
   coeff = a*sqr(qx[0]) + b*qx[0]*qz[0] + c*sqr(qz[0]) - d*sqr(qy[0]);
   ok=is_zero(coeff);
@@ -838,19 +838,19 @@ int testparamsol(const bigint& a, const bigint& b, const bigint& c, const bigint
   if(verb) 
     {
       cout<<"Parametric solution is correct!\n";
-      bigint discx = qx.disc();
+      ZZ discx = qx.disc();
       cout<<"x-disc = "<<discx<<"\n";
-      bigint discy = qy.disc();
+      ZZ discy = qy.disc();
       cout<<"y-disc = "<<discy<<"\n";
-      bigint discz = qz.disc();
+      ZZ discz = qz.disc();
       cout<<"z-disc = "<<discz<<"\n";
-      bigint res = resultant(qx,qz);
+      ZZ res = resultant(qx,qz);
       cout<<"resultant = "<<res<<"\n";
     }
   return 1;
 }
 
-void conic_mordell_reduce(const bigint& a, const bigint& b, const bigint& c, bigint& x0, bigint& y0, bigint& z0, int verb)
+void conic_mordell_reduce(const ZZ& a, const ZZ& b, const ZZ& c, ZZ& x0, ZZ& y0, ZZ& z0, int verb)
      // Given a>0, b>0, c<0, abc square-free and ax^2+by^2+cz^2=0
      // reduces x, y, z in place using Mordell's method (page 48)
      // to achieve Holzer's bounds |z|<=sqrt(ab) etc.
@@ -861,7 +861,7 @@ void conic_mordell_reduce(const bigint& a, const bigint& b, const bigint& c, big
   // it suffices to chack that |z| < sqrt(ab).
   int ok = (sqr(z0)<=(a*b));
   //  if(ok) return;
-  bigint zero; zero=0;
+  ZZ zero; zero=0;
   if(verb)
     {
       bigfloat xlim = sqrt(I2bigfloat(b)*I2bigfloat(-c));
@@ -886,8 +886,8 @@ void conic_mordell_reduce(const bigint& a, const bigint& b, const bigint& c, big
       if(verb) 
 	cout<<"Holzer's conditions fail, reducing the solution using Mordell's method...\n";
       steps++;
-      bigint d,g,gxy,xx,yy,zz,u,v,newx0,newy0,newz0;
-      bigint x00=x0, y00=y0, c0=c;
+      ZZ d,g,gxy,xx,yy,zz,u,v,newx0,newy0,newz0;
+      ZZ x00=x0, y00=y0, c0=c;
       gxy=abs(gcd(x0,y0)); int fix=0;
       if(gxy>1) {fix=1; x00/=gxy; y00/=gxy; c0/=sqr(gxy);}
       int c_parity;
@@ -975,12 +975,12 @@ void conic_mordell_reduce(const bigint& a, const bigint& b, const bigint& c, big
     }
 }
 
-void conic_diag_reduce(const bigint& a, const bigint& b, bigint& x, bigint& y, bigint& z, int verb)
+void conic_diag_reduce(const ZZ& a, const ZZ& b, ZZ& x, ZZ& y, ZZ& z, int verb)
   // As above but with a,b square-free only, and x,y,z satisfying
   // x^2-az^2=by^2.   
   // Calls conic_mordell_reduce() or new_legendre_reduce()
 {
-  bigint zero, one; zero=0; one=1;
+  ZZ zero, one; zero=0; one=1;
   int debug=0;
 #ifdef DEBUG_CONIC
   debug=1;
@@ -999,8 +999,8 @@ void conic_diag_reduce(const bigint& a, const bigint& b, bigint& x, bigint& y, b
       else  {icase=3;}     // a>0, b<0
     }
 
-  bigint c = gcd(a,b);  y*=c; z*=c;
-  bigint g = gcd(x,c), a0=a/c, b0=b/c;
+  ZZ c = gcd(a,b);  y*=c; z*=c;
+  ZZ g = gcd(x,c), a0=a/c, b0=b/c;
   if(g>1) {x/=g; y/=g; z/=g;}
   if(debug) 
     {
@@ -1042,14 +1042,14 @@ void conic_diag_reduce(const bigint& a, const bigint& b, bigint& x, bigint& y, b
     }
 }
 
-int testsol(const quadratic& q, const bigint& d,
-		  const bigint& x, const bigint& y, const bigint& z, 
+int testsol(const quadratic& q, const ZZ& d,
+		  const ZZ& x, const ZZ& y, const ZZ& z, 
 		  int verb)
 {
   return testsol(q[0],q[1],q[2],d,x,y,z,verb);
 }
 
-int testparamsol(const quadratic& q, const bigint& d,
+int testparamsol(const quadratic& q, const ZZ& d,
 			const quadratic& qx, const quadratic& qy, const quadratic& qz, 
 			int verb)
 {
@@ -1058,27 +1058,27 @@ int testparamsol(const quadratic& q, const bigint& d,
 
 // Output utilities:
 
-void show_xyz(const bigint& x, const bigint& y, const bigint& z)
+void show_xyz(const ZZ& x, const ZZ& y, const ZZ& z)
 {
   cout << "(x:y:z) = ("<<x<<":"<<y<<":"<<z<<")";
 }
-void show_cert(const bigint& p, const bigint& q, const bigint& r)
+void show_cert(const ZZ& p, const ZZ& q, const ZZ& r)
 {
   cout<<"Certificate: ("<<p<<", "<<q<<", "<<r<<")";
 }
-void show_eqn(const bigint& a, const bigint& b, const bigint& c)
+void show_eqn(const ZZ& a, const ZZ& b, const ZZ& c)
 {
   cout<<"(a,b,c) = ("<<a<<", "<<b<<", "<<c<<")";
 }
-void show_eqn_cert(const bigint& a, const bigint& b, const bigint& c,
-		   const bigint& p, const bigint& q, const bigint& r)
+void show_eqn_cert(const ZZ& a, const ZZ& b, const ZZ& c,
+		   const ZZ& p, const ZZ& q, const ZZ& r)
 {
   show_eqn(a,b,c);cout<<endl;
   show_cert(p,q,r);cout<<endl;
 }
-void show_all(const bigint& a, const bigint& b, const bigint& c,
-	      const bigint& p, const bigint& q, const bigint& r,
-	      const bigint& x, const bigint& y, const bigint& z)
+void show_all(const ZZ& a, const ZZ& b, const ZZ& c,
+	      const ZZ& p, const ZZ& q, const ZZ& r,
+	      const ZZ& x, const ZZ& y, const ZZ& z)
 {
   show_eqn(a,b,c);cout<<endl;
   show_cert(p,q,r);cout<<endl;

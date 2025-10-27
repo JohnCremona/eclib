@@ -62,19 +62,19 @@
 //#define CHECK_LEM3
 #define USE_SMALL_P
 
-void lem3(const bigint& a, const bigint& b,
-	  bigint& m1, bigint& m2, bigint& m3, bigint& c1, bigint& c2);
+void lem3(const ZZ& a, const ZZ& b,
+	  ZZ& m1, ZZ& m2, ZZ& m3, ZZ& c1, ZZ& c2);
 
 
-void minv(const bigint& a1, const bigint& a2, 
-	  const bigint& b1, const bigint& b2, 
-	  const bigint& c1, const bigint& c2, 
-	  bigint& xmin, bigint& ymin)
+void minv(const ZZ& a1, const ZZ& a2, 
+	  const ZZ& b1, const ZZ& b2, 
+	  const ZZ& c1, const ZZ& c2, 
+	  ZZ& xmin, ZZ& ymin)
 {
-  bigint x=a1, y=a2, xx=b1, yy=b2;
-  bigint n1 = c1*sqr(x)  + c2*sqr(y);
-  bigint dot= c1*x*xx    + c2*y*yy;
-  bigint alpha; 
+  ZZ x=a1, y=a2, xx=b1, yy=b2;
+  ZZ n1 = c1*sqr(x)  + c2*sqr(y);
+  ZZ dot= c1*x*xx    + c2*y*yy;
+  ZZ alpha; 
   nearest(alpha,dot, n1);  // nearest int to quotient dot/n1
   int reduced = is_zero(alpha);
   if(!reduced)
@@ -82,7 +82,7 @@ void minv(const bigint& a1, const bigint& a2,
       xx-=alpha*x;
       yy-=alpha*y;
     }
-  bigint n2 = c1*sqr(xx) + c2*sqr(yy);
+  ZZ n2 = c1*sqr(xx) + c2*sqr(yy);
   reduced=(n2>=n1);
   while(!reduced)
     {
@@ -111,11 +111,11 @@ void minv(const bigint& a1, const bigint& a2,
 }
 
 // (e+f*i) is (a+b*i) mod (c+d*i) in Z[i]
-void GIreduce(const bigint& a, const bigint& b, const bigint& c, 
-	      const bigint& d, bigint& e, bigint& f)
+void GIreduce(const ZZ& a, const ZZ& b, const ZZ& c, 
+	      const ZZ& d, ZZ& e, ZZ& f)
 {
-  bigint n = sqr(c)+sqr(d);
-  bigint q1, q2;
+  ZZ n = sqr(c)+sqr(d);
+  ZZ q1, q2;
   nearest(q1,a*c+b*d,n); 
   nearest(q2,b*c-a*d,n);
   e = a - c*q1 + d*q2;
@@ -123,12 +123,12 @@ void GIreduce(const bigint& a, const bigint& b, const bigint& c,
 }
 
 // (e+f*i) = gcd ( (a+b*i) , (c+d*i) ) in Z[i]
-void GIgcd(const bigint& a, const bigint& b, const bigint& c, 
-	   const bigint& d, bigint& e, bigint& f)
+void GIgcd(const ZZ& a, const ZZ& b, const ZZ& c, 
+	   const ZZ& d, ZZ& e, ZZ& f)
 {
   int cont=1;
   if(is_zero(c)&&is_zero(d)) {e=a;f=b;cont=0;}
-  bigint x1=a, y1=b, x2=c, y2=d, x3, y3, g;
+  ZZ x1=a, y1=b, x2=c, y2=d, x3, y3, g;
   while(cont)
     {
       GIreduce(x1,y1,x2,y2,x3,y3);
@@ -143,11 +143,11 @@ void GIgcd(const bigint& a, const bigint& b, const bigint& c,
 
 // Solve Legendre's equation when ab=1:
 
-void lem1plus(const bigint& a, const bigint& b, const bigint& c, 
-	  const bigint& n, const bigint& p, const bigint& q, 
-	  bigint& x, bigint& y, bigint& z)
+void lem1plus(const ZZ& a, const ZZ& b, const ZZ& c, 
+	  const ZZ& n, const ZZ& p, const ZZ& q, 
+	  ZZ& x, ZZ& y, ZZ& z)
 {
-  static bigint one, zero; one=1; zero=0;
+  static ZZ one, zero; one=1; zero=0;
   GIgcd(q,one,c,zero,x,y); z=1;
   if(b==-one) {y=-y;}  // So we have qx=-y, qy=x (mod c)
 #ifdef DEBUG_LEM1
@@ -165,9 +165,9 @@ void lem1plus(const bigint& a, const bigint& b, const bigint& c,
 //  satisfying y=qx (mod c) where q^2=1 (mod c))
 //
 
-void lem1minus(const bigint& a, const bigint& b, const bigint& c, 
-	       const bigint& n, const bigint& p, const bigint& q, 
-	       bigint& x, bigint& y, bigint& z)
+void lem1minus(const ZZ& a, const ZZ& b, const ZZ& c, 
+	       const ZZ& n, const ZZ& p, const ZZ& q, 
+	       ZZ& x, ZZ& y, ZZ& z)
 {
 #ifdef DEBUG_LEM1
   cout<<"lem1minus: ab=-1, c="<<c<<" and q="<<q<<endl;
@@ -177,14 +177,14 @@ void lem1minus(const bigint& a, const bigint& b, const bigint& c,
     {
       z=0; x=1; y=a; return;
     }
-  bigint absc=abs(c);
+  ZZ absc=abs(c);
   if((q==-1)||(q==absc-1))
     {
       z=0; x=1; y=-a; return;
     }
-  bigint cplus=gcd(q-1,c);
-  bigint cminus=gcd(q+1,c);
-  bigint d=cplus*cminus;
+  ZZ cplus=gcd(q-1,c);
+  ZZ cminus=gcd(q+1,c);
+  ZZ d=cplus*cminus;
   z = d/absc;  // = 1 or 2
   if(d==absc)        {x=(cminus-cplus)/2;}
   else if(d==2*absc) {x=cminus/2-cplus;}
@@ -207,14 +207,14 @@ void lem1minus(const bigint& a, const bigint& b, const bigint& c,
 
 // Solve Legendre's equation when |ab|=1 or |bc|=1 or |ca|=1:
 
-void lem1(const bigint& a, const bigint& b, const bigint& c, 
-	  const bigint& n, const bigint& p, const bigint& q, 
-	  bigint& x, bigint& y, bigint& z)
+void lem1(const ZZ& a, const ZZ& b, const ZZ& c, 
+	  const ZZ& n, const ZZ& p, const ZZ& q, 
+	  ZZ& x, ZZ& y, ZZ& z)
 {
 #ifdef DEBUG_LEM1
   cout<<"lem1 called with (a,b,c)=("<<a<<","<<b<<","<<c<<")"<<endl;
 #endif // DEBUG_LEM1
-  const bigint& bc=b*c;
+  const ZZ& bc=b*c;
   if(bc==-1) 
     {
       lem1minus(b,c,a,p,q,n,y,z,x);
@@ -226,7 +226,7 @@ void lem1(const bigint& a, const bigint& b, const bigint& c,
       return;
     }
   
-  const bigint& ab=a*b;
+  const ZZ& ab=a*b;
   if(ab==-1) 
     {
       lem1minus(a,b,c,n,p,q,x,y,z);
@@ -238,7 +238,7 @@ void lem1(const bigint& a, const bigint& b, const bigint& c,
       return;
     }
   
-  const bigint& ca=c*a;
+  const ZZ& ca=c*a;
   if(ca==-1) 
     {
       lem1minus(c,a,b,q,n,p,z,x,y);
@@ -257,16 +257,16 @@ void lem1(const bigint& a, const bigint& b, const bigint& c,
 // returns 0 if not soluble
 int level;
 
-int legendre_solve(const bigint& a, const bigint& b, const bigint& c, 
-		   bigint& x, bigint& y, bigint& z, int use_lll)
+int legendre_solve(const ZZ& a, const ZZ& b, const ZZ& c, 
+		   ZZ& x, ZZ& y, ZZ& z, int use_lll)
 {
-  vector<bigint> factorbase = vector_union(vector_union(pdivs(a),pdivs(b)),pdivs(c));
+  vector<ZZ> factorbase = vector_union(vector_union(pdivs(a),pdivs(b)),pdivs(c));
   return legendre_solve(a,b,c,factorbase,x,y,z,use_lll);
 }
 
-int legendre_solve(const bigint& a, const bigint& b, const bigint& c, 
-		   const vector<bigint>& factorbase,
-		   bigint& x, bigint& y, bigint& z, int use_lll)
+int legendre_solve(const ZZ& a, const ZZ& b, const ZZ& c, 
+		   const vector<ZZ>& factorbase,
+		   ZZ& x, ZZ& y, ZZ& z, int use_lll)
 {
 #ifdef DEBUG_LEGENDRE  
   cout<<"Starting to solve Legendre equation with coeffs "
@@ -283,7 +283,7 @@ int legendre_solve(const bigint& a, const bigint& b, const bigint& c,
 //
 // Step 2: Reduce to pairwise coprime coefficients
 //
-  bigint a1=a, b1=b, c1=c, g, n,p,q, xfac, yfac, zfac;
+  ZZ a1=a, b1=b, c1=c, g, n,p,q, xfac, yfac, zfac;
   xfac=1; yfac=1; zfac=1;
   int ntry=3;
   while(ntry>0) {
@@ -309,8 +309,8 @@ int legendre_solve(const bigint& a, const bigint& b, const bigint& c,
 //
 // Step 3: Reduce to square-free coefficients
 //         NB Here is the only place where factorization is done! 
-  bigint a2,a3,b2,b3,c2,c3;
-  vector<bigint> apdivs=factorbase, bpdivs=factorbase, cpdivs=factorbase;
+  ZZ a2,a3,b2,b3,c2,c3;
+  vector<ZZ> apdivs=factorbase, bpdivs=factorbase, cpdivs=factorbase;
   sqfdecomp(a1,apdivs,a2,a3); yfac*=a3; zfac*=a3;
   sqfdecomp(b1,bpdivs,b2,b3); xfac*=b3; zfac*=b3; 
   sqfdecomp(c1,cpdivs,c2,c3); xfac*=c3; yfac*=c3; 
@@ -354,7 +354,7 @@ int legendre_solve(const bigint& a, const bigint& b, const bigint& c,
     }
   else // use JC+Rusin's factorization-free reduction
     {
-      bigint u;
+      ZZ u;
 #ifdef DEBUG_LEGENDRE  
       level=0;
 #endif // DEBUG_LEGENDRE
@@ -416,9 +416,9 @@ int legendre_solve(const bigint& a, const bigint& b, const bigint& c,
 //
 // All this does is sort the coeffs and pass to lem4()
 //
-void legendre_solve_cert(const bigint& a, const bigint& b, const bigint& c, 
-		    const bigint& n, const bigint& p, const bigint& q, 
-		    bigint& x, bigint& y, bigint& z)
+void legendre_solve_cert(const ZZ& a, const ZZ& b, const ZZ& c, 
+		    const ZZ& n, const ZZ& p, const ZZ& q, 
+		    ZZ& x, ZZ& y, ZZ& z)
 {
 #ifdef DEBUG_LEGENDRE  
     cout<<"Solving Legendre's equation with coefficients ";
@@ -433,7 +433,7 @@ void legendre_solve_cert(const bigint& a, const bigint& b, const bigint& c,
 #endif // CHECK_CERTS
 
 // Check if any coeff is a square (up to sign):
-    bigint absa=abs(a), absb=abs(b), absc=abs(c), aa, bb, cc;
+    ZZ absa=abs(a), absb=abs(b), absc=abs(c), aa, bb, cc;
 //
     if(isqrt(absb,bb))  // then |b| = bb^2 with bb>1, so
       {               // we can reduce b with lem2
@@ -498,9 +498,9 @@ static int permtable[6][4] = {{0,1,2,3}, {0,1,3,2}, {0,2,1,3}, {0,2,3,1}, {0,3,1
 //
 // All this does is sort the coeffs and pass to lem4_1()
 //
-int legendre_solve_cert_1(const bigint& a, const bigint& b, const bigint& c, 
-		    const bigint& n, const bigint& p, const bigint& q, 
-		    bigint& x, bigint& y, bigint& z, bigint& u)
+int legendre_solve_cert_1(const ZZ& a, const ZZ& b, const ZZ& c, 
+		    const ZZ& n, const ZZ& p, const ZZ& q, 
+		    ZZ& x, ZZ& y, ZZ& z, ZZ& u)
 {
 #ifdef DEBUG_LEGENDRE  
   level++;
@@ -514,7 +514,7 @@ int legendre_solve_cert_1(const bigint& a, const bigint& b, const bigint& c,
 #endif // CHECK_CERTS
 
 // Check if any coeff is a square (up to sign):
-    bigint absa=abs(a), absb=abs(b), absc=abs(c);
+    ZZ absa=abs(a), absb=abs(b), absc=abs(c);
 //
     if(isqrt(absb,u))  // then |b| = u^2 with u>1, so we return
       {
@@ -565,8 +565,8 @@ int legendre_solve_cert_1(const bigint& a, const bigint& b, const bigint& c,
 }
 
 //Ensure that input is valid
-int checkin(const bigint& a,const bigint& b,const bigint& c,
-	    const bigint& n,const bigint& p,const bigint& q)
+int checkin(const ZZ& a,const ZZ& b,const ZZ& c,
+	    const ZZ& n,const ZZ& p,const ZZ& q)
 {
   int sa=sign(a), sb=sign(b), sc=sign(c);
   if((sa==0)||(sb==0)||(sc==0))
@@ -591,14 +591,14 @@ int checkin(const bigint& a,const bigint& b,const bigint& c,
 }
 
 // Check that purported solution is OK
-int check_leg(const bigint& a, const bigint& b, const bigint& c,
-	      const bigint& x, const bigint& y, const bigint& z)
+int check_leg(const ZZ& a, const ZZ& b, const ZZ& c,
+	      const ZZ& x, const ZZ& y, const ZZ& z)
 {
 #ifdef DEBUG_LEGENDRE  
   cout<<"Checking solution "; show_xyz(x,y,z); 
   cout<<" for (a,b,c) = ("<<a<<","<<b<<","<<c<<"): ";
 #endif // DEBUG_LEGENDRE
-  bigint rhs=a*sqr(x)+b*sqr(y)+c*sqr(z);
+  ZZ rhs=a*sqr(x)+b*sqr(y)+c*sqr(z);
   if(is_zero(rhs)) 
     {
 #ifdef DEBUG_LEGENDRE  
@@ -618,9 +618,9 @@ int check_leg(const bigint& a, const bigint& b, const bigint& c,
 }
 
 // Check that purported solution is OK & in correct lattice
-int check_leg(const bigint& a, const bigint& b, const bigint& c,
-	      const bigint& n, const bigint& p, const bigint& q, 
-	      const bigint& x, const bigint& y, const bigint& z)
+int check_leg(const ZZ& a, const ZZ& b, const ZZ& c,
+	      const ZZ& n, const ZZ& p, const ZZ& q, 
+	      const ZZ& x, const ZZ& y, const ZZ& z)
 {
   if(check_leg(a,b,c,x,y,z))
     {
@@ -643,8 +643,8 @@ int check_leg(const bigint& a, const bigint& b, const bigint& c,
   else return 0;
 }
 
-void legendre_reduce(const bigint& a, const bigint& b, const bigint& c, 
-		     bigint& x0, bigint& y0, bigint& z0, int verb)
+void legendre_reduce(const ZZ& a, const ZZ& b, const ZZ& c, 
+		     ZZ& x0, ZZ& y0, ZZ& z0, int verb)
      // Given a, b, c,  and ax^2+by^2+cz^2=0
      // reduces x, y, z in place using Mordell's method (page 48)
      // to achieve Holzer's bounds |z|<=sqrt(ab) etc.
@@ -694,8 +694,8 @@ void legendre_reduce(const bigint& a, const bigint& b, const bigint& c,
 }
 
 // Finds a certificate or returns 0 if none exists:
-int make_certificate(const bigint& a, const bigint& b, const bigint& c, 
-		     bigint& n, bigint& p, bigint& q)
+int make_certificate(const ZZ& a, const ZZ& b, const ZZ& c, 
+		     ZZ& n, ZZ& p, ZZ& q)
 {
   if(!sqrt_mod_m(n,-b*c,abs(a))) return 1;
   if(!sqrt_mod_m(p,-a*c,abs(b))) return 2;
@@ -703,10 +703,10 @@ int make_certificate(const bigint& a, const bigint& b, const bigint& c,
   return 0;
 }
 
-int make_certificate(const bigint& a, const vector<bigint>& apdivs, 
-		     const bigint& b, const vector<bigint>& bpdivs, 
-		     const bigint& c, const vector<bigint>& cpdivs, 
-		     bigint& n, bigint& p, bigint& q)
+int make_certificate(const ZZ& a, const vector<ZZ>& apdivs, 
+		     const ZZ& b, const vector<ZZ>& bpdivs, 
+		     const ZZ& c, const vector<ZZ>& cpdivs, 
+		     ZZ& n, ZZ& p, ZZ& q)
 {
   if(!sqrt_mod_m(n,-b*c,abs(a),apdivs)) return 1;
   if(!sqrt_mod_m(p,-a*c,abs(b),bpdivs)) return 2;
@@ -716,10 +716,10 @@ int make_certificate(const bigint& a, const vector<bigint>& apdivs,
 
 // Check to see if  b is congruent to  +- c  mod a  (assumed positive!)
 //  if not, how much to divide  a  by to ensure that congruence holds?
-bigint should(const bigint& a, const bigint& b, const bigint& c)
+ZZ should(const ZZ& a, const ZZ& b, const ZZ& c)
 {
-  bigint u=gcd(a,b-c);
-  bigint v=gcd(a,b+c);
+  ZZ u=gcd(a,b-c);
+  ZZ v=gcd(a,b+c);
   if(u>v) return a/u; else return a/v;
 }
 
@@ -729,12 +729,12 @@ bigint should(const bigint& a, const bigint& b, const bigint& c)
 // Throughout: [x,y] has norm n1
 //             [xx,yy] has norm n2 & inner prod = dot.
 
-void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c, 
-		      const bigint& k1, const bigint& k2, const bigint& k3, 
-		      bigint& x, bigint& y, bigint& z)
+void legendre_via_lll(const ZZ& a, const ZZ& b, const ZZ& c, 
+		      const ZZ& k1, const ZZ& k2, const ZZ& k3, 
+		      ZZ& x, ZZ& y, ZZ& z)
 {
   int i;
-  bigint g,u,v,adash,bdash,bc=b*c, alpha, beta, gamma; 
+  ZZ g,u,v,adash,bdash,bc=b*c, alpha, beta, gamma; 
   g = bezout(b,c,u,v);
   if(g!=1) {cout<<"b and c not coprime!\n"; return;}
   g = bezout(a,bc,adash,bdash); 
@@ -760,7 +760,7 @@ void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c,
   int oddn1 = odd(bc);
   int oddn2 = odd((sqr(a*beta)+a*b)/bc);
   int oddn3 = odd((a*sqr(alpha*beta+gamma)+b*sqr(alpha)+c)/(a*bc));
-  static bigint two; two=2;
+  static ZZ two; two=2;
 
   if(oddn1)
     {
@@ -812,7 +812,7 @@ void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c,
       case 12: xyz=b3+b2+b1; break;
       }
       x=xyz[1]; y=xyz[2]; z=xyz[3];
-      bigint fxyz = a*sqr(x)+b*sqr(y)+c*sqr(z);
+      ZZ fxyz = a*sqr(x)+b*sqr(y)+c*sqr(z);
       if(fxyz==0)
 	{
 	  if(i)
@@ -836,16 +836,16 @@ void legendre_via_lll(const bigint& a, const bigint& b, const bigint& c,
 // with discriminants -4bc, -4ac, -4ab.  Here a, b, c are assumed
 // pairwise coprime but not square-free, and a>0, b>0, c<0.
 
-void legendre_param(const bigint& a, const bigint& b, const bigint& c, 
-		    const bigint& x0, const bigint& y0, const bigint& z0, 
+void legendre_param(const ZZ& a, const ZZ& b, const ZZ& c, 
+		    const ZZ& x0, const ZZ& y0, const ZZ& z0, 
 		    quadratic& qx, quadratic& qy, quadratic& qz)
 {
-  bigint a1=a, y1=y0, z1=z0, u, v, e;
-  bigint g=abs(gcd(y0,z0));
-  static bigint zero; zero=0;
+  ZZ a1=a, y1=y0, z1=z0, u, v, e;
+  ZZ g=abs(gcd(y0,z0));
+  static ZZ zero; zero=0;
   int scale = (g>1);
   if(scale) {a1/=sqr(g); y1/=g; z1/=g;}
-  bigint z12=sqr(z1);
+  ZZ z12=sqr(z1);
   
   qx.set( a1*x0, 2*b*y1,  -b*x0);
   qy.set(-a1*y1, 2*a1*x0,  b*y1);
@@ -902,8 +902,8 @@ void legendre_param(const bigint& a, const bigint& b, const bigint& c,
 #endif // DEBUG_LEGENDRE_PARAM
 }
 
-void new_legendre_reduce(const bigint& a, const bigint& b, const bigint& c, 
-			 bigint& x0, bigint& y0, bigint& z0, int verb)
+void new_legendre_reduce(const ZZ& a, const ZZ& b, const ZZ& c, 
+			 ZZ& x0, ZZ& y0, ZZ& z0, int verb)
      // Given a, b, c,  ax^2+by^2+cz^2=0
      // reduces x, y, z in place using quadratics
 {
@@ -918,7 +918,7 @@ void new_legendre_reduce(const bigint& a, const bigint& b, const bigint& c,
       //      cout<<"using quadratic parametrization\n";
     }
   int sa=sign(a), sb=sign(b), sc=sign(c);
-  bigint test;
+  ZZ test;
   int which, ok;
   if( ((sa<0)&&(sb>0)&&(sc>0)) || ((sa>0)&&(sb<0)&&(sc<0)) )
     {
@@ -954,9 +954,9 @@ void new_legendre_reduce(const bigint& a, const bigint& b, const bigint& c,
       cout<<qy<<endl;
       cout<<qz<<endl;
     }
-  bigint newx0 = abs(qx[0]);
-  bigint newy0 = abs(qy[0]);
-  bigint newz0 = abs(qz[0]);
+  ZZ newx0 = abs(qx[0]);
+  ZZ newy0 = abs(qy[0]);
+  ZZ newz0 = abs(qz[0]);
   cancel(newx0,newy0,newz0);
   if(verb)
     {
@@ -995,13 +995,13 @@ void new_legendre_reduce(const bigint& a, const bigint& b, const bigint& c,
 // NOTATION NOW AGREES WITH PAPER!
 // (except aa=a', bb=b', cc=c')
 //
-int lem4x_1(const bigint& a, const bigint& b, const bigint& c, 
-	   const bigint& k1, const bigint& k2, const bigint& k3, 
-	   bigint& x, bigint& y, bigint& z, bigint& u);
+int lem4x_1(const ZZ& a, const ZZ& b, const ZZ& c, 
+	   const ZZ& k1, const ZZ& k2, const ZZ& k3, 
+	   ZZ& x, ZZ& y, ZZ& z, ZZ& u);
 
-int lem4_1(const bigint& a, const bigint& b, const bigint& c, 
-	  const bigint& k1, const bigint& k2, const bigint& k3, 
-	  bigint& x, bigint& y, bigint& z, bigint& u)
+int lem4_1(const ZZ& a, const ZZ& b, const ZZ& c, 
+	  const ZZ& k1, const ZZ& k2, const ZZ& k3, 
+	  ZZ& x, ZZ& y, ZZ& z, ZZ& u)
 #ifdef DEBUG_LEGENDRE
 {
   cout<<"lem4 at level "<<level<<" called with ";show_eqn_cert(a,b,c,k1,k2,k3);
@@ -1012,16 +1012,16 @@ int lem4_1(const bigint& a, const bigint& b, const bigint& c,
   return res;
 }
 
-int lem4x_1(const bigint& a, const bigint& b, const bigint& c, 
-	   const bigint& k1, const bigint& k2, const bigint& k3, 
-	   bigint& x, bigint& y, bigint& z, bigint& u)
+int lem4x_1(const ZZ& a, const ZZ& b, const ZZ& c, 
+	   const ZZ& k1, const ZZ& k2, const ZZ& k3, 
+	   ZZ& x, ZZ& y, ZZ& z, ZZ& u)
 #endif // DEBUG_LEGENDRE
 {
-  bigint aa,bb,cc,gamma,alpha,d1,d2,d,e,w,w1,w2,t,bc,u2;
-  bigint w1star,w2star,gammastar,gammafactor;
-  bigint x1,y1,z1;
-  bigint k1dash, k2dash, k3dash;
-  static bigint zero, one; zero=0; one=1;
+  ZZ aa,bb,cc,gamma,alpha,d1,d2,d,e,w,w1,w2,t,bc,u2;
+  ZZ w1star,w2star,gammastar,gammafactor;
+  ZZ x1,y1,z1;
+  ZZ k1dash, k2dash, k3dash;
+  static ZZ zero, one; zero=0; one=1;
   int res;
 //
 // We have |a|>=|b|>=|c| and none are squares.  If |b|=|c|=1 call lem1
@@ -1109,8 +1109,8 @@ int lem4x_1(const bigint& a, const bigint& b, const bigint& c,
   if(gcd(d2,w1)!=1) cout<<"***(d2,w1) not coprime\n";
 #endif  
 
-  bigint n1, n2, n3, cc1, cc2;
-  bigint m1=c/d1, m2=b/d2;
+  ZZ n1, n2, n3, cc1, cc2;
+  ZZ m1=c/d1, m2=b/d2;
   // cout<<"a, gamma, bc = "<<a<<", "<<gamma<<", "<<bc<<endl;
 
   lem3(a,aa,n1,n2,n3,cc1,cc2);
@@ -1189,10 +1189,10 @@ int lem4x_1(const bigint& a, const bigint& b, const bigint& c,
 //
 //  Make new certificate
 //
-      bigint inv_w2_mod_n2 = invmod(w2star, n2);
-      bigint inv_w1_mod_d2 = invmod(w1star, d2);
-      bigint inv_w2_mod_d1 = invmod(w2star, d1);
-      bigint aaa=invmod(a*gammastar,bc);
+      ZZ inv_w2_mod_n2 = invmod(w2star, n2);
+      ZZ inv_w1_mod_d2 = invmod(w1star, d2);
+      ZZ inv_w2_mod_d1 = invmod(w2star, d1);
+      ZZ aaa=invmod(a*gammastar,bc);
       k1dash=chrem(-b*w1star*inv_w2_mod_n2, -k1 ,n2,n3);
       k2dash=chrem(k3*w1star*aaa, k2*w2star*aaa, m1, m2);
       k3dash=chrem( k2*aa*gammastar*inv_w1_mod_d2, 
@@ -1244,7 +1244,7 @@ int lem4x_1(const bigint& a, const bigint& b, const bigint& c,
     }
 #endif // CHECK_ALL
 #ifdef CHECK_INDEX
-  bigint det_factor=gamma*aa;
+  ZZ det_factor=gamma*aa;
   cout<<"Mapping solution back, reduced det = "<<det_factor<<" = "<<gamma<<"*"<<aa;
   if(abs(gamma)>1) cout<<"\t***!!!***";
   cout<<endl;
@@ -1328,9 +1328,9 @@ int lem4x_1(const bigint& a, const bigint& b, const bigint& c,
 #endif // REDUCE_INTERMEDIATES
 
 #ifdef DEBUG_LEGENDRE  
-  bigint f1=should(abs(a),k1*z,b*y);
-  bigint f2=should(abs(b),k2*x,c*z);
-  bigint f3=should(abs(c),k3*y,a*x);
+  ZZ f1=should(abs(a),k1*z,b*y);
+  ZZ f2=should(abs(b),k2*x,c*z);
+  ZZ f3=should(abs(c),k3*y,a*x);
   if( (f1!=1) || (f2!=1) || (f3!=1) )
     cout<<"    Found factor (lattice-deviation); ["
 	<<f1<<","<<f2<<","<<f3<<"]"<<endl;
@@ -1340,8 +1340,8 @@ int lem4x_1(const bigint& a, const bigint& b, const bigint& c,
 
 bigfloat sqr(const bigfloat& x) {return x*x;}
 
-bigfloat holzer_measure(const bigint& a, const bigint& b, const bigint& c, 
-			const bigint& x, const bigint& y, const bigint& z)
+bigfloat holzer_measure(const ZZ& a, const ZZ& b, const ZZ& c, 
+			const ZZ& x, const ZZ& y, const ZZ& z)
 // max{|a|x^2,|b|y^2,|c|z^2}/|abc|   ( < 1 for a Holzer-reduced solution)
 {
   bigfloat ax2=I2bigfloat(abs(a)*sqr(x)),
@@ -1364,12 +1364,12 @@ int nsmallp=8;
 static long smallp[8]={2, 3, 5, 7, 11, 13, 17, 19};
 static long smallpsq[8]={4, 9, 25, 49, 121, 169, 289, 361};
 
-void lem3(const bigint& a, const bigint& b,
-	  bigint& m1, bigint& m2, bigint& m3, bigint& c1, bigint& c2)
+void lem3(const ZZ& a, const ZZ& b,
+	  ZZ& m1, ZZ& m2, ZZ& m3, ZZ& c1, ZZ& c2)
 {
   m1=a; m2=b; m3=1; c1=1; c2=1;
   if((a==0)||(b==0)) return;  // shouldn't happen
-  int i;  long p, psq, r; bigint d,q;
+  int i;  long p, psq, r; ZZ d,q;
 #ifdef USE_SMALL_P
   for(i=0; i<nsmallp; i++)
     {
@@ -1424,17 +1424,17 @@ void lem3(const bigint& a, const bigint& b,
 }
 
 //Peel off a known square factor  u  from coefficient  a
-void lem2a(const bigint& a, const bigint& b, const bigint& c, 
-	   const bigint& n, const bigint& p, const bigint& q, 
-	   const bigint& u,
-	   bigint& x, bigint& y, bigint& z)
+void lem2a(const ZZ& a, const ZZ& b, const ZZ& c, 
+	   const ZZ& n, const ZZ& p, const ZZ& q, 
+	   const ZZ& u,
+	   ZZ& x, ZZ& y, ZZ& z)
 {
 #ifdef DEBUG_LEGENDRE
   cout<<"lem2a called with (a,b,c)=(" <<a<<","<<b<<","<<c<<"), " 
       <<" and u = "<<u<<endl;
 #endif // DEBUG_LEGENDRE
   x=y=z=0;
-  bigint u2=sqr(u), a1, r;
+  ZZ u2=sqr(u), a1, r;
   if((!::divides(a,u2,a1,r))||((u2<=1)))
     {
       cout<<"lem2a wrongly called with (a,b,c)=("
@@ -1442,9 +1442,9 @@ void lem2a(const bigint& a, const bigint& b, const bigint& c,
       cout<<" and u = "<<u<<endl;
       return;
     }
-  bigint n1 = n%a1;
-  bigint p1 = (p*invmod(u,b))%b;
-  bigint q1 = (q*invmod(u,c))%c;
+  ZZ n1 = n%a1;
+  ZZ p1 = (p*invmod(u,b))%b;
+  ZZ q1 = (q*invmod(u,c))%c;
   legendre_solve_cert(a1,b,c,n1,p1,q1,x,y,z);
   y *= u; z *= u;
 //
@@ -1466,10 +1466,10 @@ void lem2a(const bigint& a, const bigint& b, const bigint& c,
 }
 
 //Peel off a known square factor  u  from coefficient  b
-void lem2b(const bigint& a, const bigint& b, const bigint& c, 
-	   const bigint& n, const bigint& p, const bigint& q, 
-	   const bigint& u,
-	   bigint& x, bigint& y, bigint& z)
+void lem2b(const ZZ& a, const ZZ& b, const ZZ& c, 
+	   const ZZ& n, const ZZ& p, const ZZ& q, 
+	   const ZZ& u,
+	   ZZ& x, ZZ& y, ZZ& z)
 {
 #ifdef DEBUG_LEGENDRE
   cout<<"lem2b called with (a,b,c)=("<<a<<","<<b<<","<<c<<"), " 
@@ -1479,10 +1479,10 @@ void lem2b(const bigint& a, const bigint& b, const bigint& c,
 }
 
 //Peel off a known square factor  u  from coefficient  c
-void lem2c(const bigint& a, const bigint& b, const bigint& c, 
-	   const bigint& n, const bigint& p, const bigint& q, 
-	   const bigint& u,
-	   bigint& x, bigint& y, bigint& z)
+void lem2c(const ZZ& a, const ZZ& b, const ZZ& c, 
+	   const ZZ& n, const ZZ& p, const ZZ& q, 
+	   const ZZ& u,
+	   ZZ& x, ZZ& y, ZZ& z)
 {
 #ifdef DEBUG_LEGENDRE
   cout<<"lem2c called with (a,b,c)=("<<a<<","<<b<<","<<c<<"), " 
@@ -1500,13 +1500,13 @@ void lem2c(const bigint& a, const bigint& b, const bigint& c,
 //
 // This routine assumes |a|>=|b|>=|c| (else use legendre_solve_cert())
 //
-void lem4x(const bigint& a, const bigint& b, const bigint& c, 
-	   const bigint& n, const bigint& p, const bigint& q, 
-	   bigint& x, bigint& y, bigint& z);
+void lem4x(const ZZ& a, const ZZ& b, const ZZ& c, 
+	   const ZZ& n, const ZZ& p, const ZZ& q, 
+	   ZZ& x, ZZ& y, ZZ& z);
 
-void lem4(const bigint& a, const bigint& b, const bigint& c, 
-	  const bigint& n, const bigint& p, const bigint& q, 
-	  bigint& x, bigint& y, bigint& z)
+void lem4(const ZZ& a, const ZZ& b, const ZZ& c, 
+	  const ZZ& n, const ZZ& p, const ZZ& q, 
+	  ZZ& x, ZZ& y, ZZ& z)
 #ifdef DEBUG_LEGENDRE
 {
   cout<<"lem4 called with ";show_eqn_cert(a,b,c,n,p,q);
@@ -1514,13 +1514,13 @@ void lem4(const bigint& a, const bigint& b, const bigint& c,
   cout<<"lem4 returns "; show_xyz(x,y,z); cout<<endl;
 }
 
-void lem4x(const bigint& a, const bigint& b, const bigint& c, 
-	   const bigint& n, const bigint& p, const bigint& q, 
-	   bigint& x, bigint& y, bigint& z)
+void lem4x(const ZZ& a, const ZZ& b, const ZZ& c, 
+	   const ZZ& n, const ZZ& p, const ZZ& q, 
+	   ZZ& x, ZZ& y, ZZ& z)
 #endif // DEBUG_LEGENDRE
 {
-  bigint aa,bb,cc,alpha,beta,d1,d2,u,d,e,k,k1,k2,t,bc;
-  static bigint one, zero; one=1; zero=0;
+  ZZ aa,bb,cc,alpha,beta,d1,d2,u,d,e,k,k1,k2,t,bc;
+  static ZZ one, zero; one=1; zero=0;
 //
 // We have |a|>=|b|>=|c| and none are squares.  If |b|=|c|=1 call lem1
 //
@@ -1550,9 +1550,9 @@ void lem4x(const bigint& a, const bigint& b, const bigint& c,
 #endif  
 
   // 12 (?) chances to find a square factor of abc follow...
-  bigint  betab=gcd(beta,b);
+  ZZ  betab=gcd(beta,b);
   if(betab>1) {TL2(4) lem2b(a,b,c,n,p,q,betab,x,y,z); return;}
-  bigint betac=gcd(beta,c);
+  ZZ betac=gcd(beta,c);
   if(betac>1) {TL2(5) lem2c(a,b,c,n,p,q,betac,x,y,z); return;}
 
   // From this point beta=1, 
@@ -1608,8 +1608,8 @@ void lem4x(const bigint& a, const bigint& b, const bigint& c,
 #endif  
 
 #define AGREE_PAPER
-  bigint aa1, aa2, aa3, cc1, cc2;
-  bigint m1=c/d1, m2=b/d2, aaa=invmod(a*alpha,bc);
+  ZZ aa1, aa2, aa3, cc1, cc2;
+  ZZ m1=c/d1, m2=b/d2, aaa=invmod(a*alpha,bc);
   // cout<<"a, alpha, bc, aaa = "<<a<<", "<<alpha<<", "<<bc<<", "<<aaa<<endl;
 #ifdef AGREE_PAPER // else Rusin's code
   lem3(a,aa,aa3,aa1,aa2,cc1,cc2);
@@ -1688,16 +1688,16 @@ void lem4x(const bigint& a, const bigint& b, const bigint& c,
 //
 //  Make new certificate
 //
-  bigint n1=chrem(-b*k1*invmod(k2, aa1), 
+  ZZ n1=chrem(-b*k1*invmod(k2, aa1), 
 		  -n ,aa1,aa2);
 // cout<<"p,q="<<p<<", "<<q<<endl;
 // cout<<"k1, k2="<<k1<<", "<<k2<<endl;
 // cout<<"aaa="<<aaa<<endl;
 // cout<<"m1, m2="<<m1<<", "<<m2<<endl;
 
-  bigint p1=chrem(q*k1*aaa, 
+  ZZ p1=chrem(q*k1*aaa, 
 		  p*k2*aaa, m1, m2);
-  bigint q1=chrem( p*aa*alpha*invmod(k1,d2), 
+  ZZ q1=chrem( p*aa*alpha*invmod(k1,d2), 
 		  -q*aa*alpha*invmod(k2,d1), d2, d1);
 
 #else // Rusin's code
@@ -1761,9 +1761,9 @@ void lem4x(const bigint& a, const bigint& b, const bigint& c,
 //
 //  Make new certificate
 //
-  bigint n1=chrem(c*k2*invmod(k1, aa1),n ,aa1,aa2);
-  bigint p1=chrem(q*k1*invmod(aaa,m1), -p*k2*invmod(aaa,m2), m1, m2);
-  bigint q1=chrem(-p*aa*alpha*invmod(k1,d2), 
+  ZZ n1=chrem(c*k2*invmod(k1, aa1),n ,aa1,aa2);
+  ZZ p1=chrem(q*k1*invmod(aaa,m1), -p*k2*invmod(aaa,m2), m1, m2);
+  ZZ q1=chrem(-p*aa*alpha*invmod(k1,d2), 
 		  q*aa*alpha*invmod(k2,d1), d2, d1);
 #endif // AGREE_PAPER
 
@@ -1776,8 +1776,8 @@ void lem4x(const bigint& a, const bigint& b, const bigint& c,
       cout<<"New certificate is wrong|\n";
     }
 #endif // CHECK_ALL
-  bigint x1,y1,z1;
-  bigint det_factor=alpha*aa;
+  ZZ x1,y1,z1;
+  ZZ det_factor=alpha*aa;
   legendre_solve_cert(aa,bb,cc,n1,p1,q1,x1,y1,z1);
 #ifdef CHECK_ALL
   if(!CHECK_LEG(aa,bb,cc,n1,p1,q1,x1,y1,z1)) 
@@ -1845,9 +1845,9 @@ void lem4x(const bigint& a, const bigint& b, const bigint& c,
 #endif // WATCH_REDUCTION  
 
 #ifdef DEBUG_LEGENDRE  
-  bigint f1=should(abs(a),n*z,b*y);
-  bigint f2=should(abs(b),p*x,c*z);
-  bigint f3=should(abs(c),q*y,a*x);
+  ZZ f1=should(abs(a),n*z,b*y);
+  ZZ f2=should(abs(b),p*x,c*z);
+  ZZ f3=should(abs(c),q*y,a*x);
   if( (f1!=1) || (f2!=1) || (f3!=1) )
     cout<<"    Found factor (lattice-deviation); ["
 	<<f1<<","<<f2<<","<<f3<<"]"<<endl;

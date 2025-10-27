@@ -30,8 +30,8 @@ int new_equiv( quartic& q1, quartic& q2, int info)
     {
       cout<<"Checking equivalence of " << q1 << " and " << q2 << "\n";
     }
-  const bigint& ii=q1.ii;
-  const bigint& jj=q1.jj;
+  const ZZ& ii=q1.ii;
+  const ZZ& jj=q1.jj;
   if (!(ii==q2.ii && jj==q2.jj && q1.disc==q2.disc && q1.type== q2.type))
     { 
       if (info) 
@@ -53,24 +53,24 @@ int new_equiv( quartic& q1, quartic& q2, int info)
 
   q1.make_zpol();
   q2.make_zpol();
-  const bigint& p1=q1.p;      const bigint& p2=q2.p;
-  const bigint& r1=q1.r;      const bigint& r2=q2.r;
-  const bigint& p1sq=q1.psq;  const bigint& p2sq=q2.psq;
-  const bigint& a1=q1.a;      const bigint& a2=q2.a;
-  const bigint& a1sq=q1.asq;  const bigint& a2sq=q2.asq;
-  const bigint& a1a2=a1*a2;
-  const bigint& p1p2=p1*p2;
-  const bigint& p = (32*a1a2*ii + p1p2)/3;
-  const bigint& s = (-256*jj*a1a2*(a1*p2+a2*p1) 
+  const ZZ& p1=q1.p;      const ZZ& p2=q2.p;
+  const ZZ& r1=q1.r;      const ZZ& r2=q2.r;
+  const ZZ& p1sq=q1.psq;  const ZZ& p2sq=q2.psq;
+  const ZZ& a1=q1.a;      const ZZ& a2=q2.a;
+  const ZZ& a1sq=q1.asq;  const ZZ& a2sq=q2.asq;
+  const ZZ& a1a2=a1*a2;
+  const ZZ& p1p2=p1*p2;
+  const ZZ& p = (32*a1a2*ii + p1p2)/3;
+  const ZZ& s = (-256*jj*a1a2*(a1*p2+a2*p1) 
 	       + 64*ii*(p1sq*a2sq+p2sq*a1sq+p1p2*a1a2)
 	       - p1sq*p2sq) / 27;
-  const bigint& r = r1*r2;
+  const ZZ& r = r1*r2;
   if(info) cout<<"u-poly = [1,0, " << -2*p<< ", "<<-8*r<<", "<<s<<"]\n";
 
   // Compute the integral roots of "u-poly",  q1 and q2 are equivalent if there are any
 
-  static const bigint zero(0);
-  vector<bigint> upolroots = Introotsquartic(zero,-2*p, -8*r, s);
+  static const ZZ zero(0);
+  vector<ZZ> upolroots = Introotsquartic(zero,-2*p, -8*r, s);
   if (upolroots.size()>0)
     {
       if(info) cout<<"Root u = "<<upolroots[0]<<endl;
@@ -84,16 +84,16 @@ int new_equiv( quartic& q1, quartic& q2, int info)
 }
 
 
-int testd(const bigint& a, const bigint& b, const bigint& c, 
-	  const bigint& d, const bigint& e, const bigint& as, 
-	  const bigint& bs, const bigint& cs, const bigint& ds, 
-	  const bigint& es, const bigint& dd, const bigint& al, 
-	  const bigint& be, const bigint& ga, const bigint& de, 
+int testd(const ZZ& a, const ZZ& b, const ZZ& c, 
+	  const ZZ& d, const ZZ& e, const ZZ& as, 
+	  const ZZ& bs, const ZZ& cs, const ZZ& ds, 
+	  const ZZ& es, const ZZ& dd, const ZZ& al, 
+	  const ZZ& be, const ZZ& ga, const ZZ& de, 
 	  int info);
 
 bigcomplex crossratio(const bigcomplex& x1,const bigcomplex& x2,const bigcomplex& x3,const bigcomplex& x4);
 
-int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>& dlist, int info);
+int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<ZZ>& dlist, int info);
 
 int allperms[24][4] =
                  {{0,1,2,3},{1,0,2,3},{0,1,3,2},{1,0,3,2},  // Up to here for Type III
@@ -104,20 +104,20 @@ int allperms[24][4] =
                   {3,0,1,2},{3,0,2,1},{3,1,0,2},{3,1,2,0},}; // All for Type II
 
 
-int testd(const bigint& a, const bigint& b, const bigint& c, 
-	  const bigint& d, const bigint& e, const bigint& as, 
-	  const bigint& bs, const bigint& cs, const bigint& ds, 
-	  const bigint& es, const bigint& dd, const bigint& al, 
-	  const bigint& be, const bigint& ga, const bigint& de, 
+int testd(const ZZ& a, const ZZ& b, const ZZ& c, 
+	  const ZZ& d, const ZZ& e, const ZZ& as, 
+	  const ZZ& bs, const ZZ& cs, const ZZ& ds, 
+	  const ZZ& es, const ZZ& dd, const ZZ& al, 
+	  const ZZ& be, const ZZ& ga, const ZZ& de, 
 	  int info)
 {
- bigint d2 = dd*dd;
- bigint al2=al*al, al3=al2*al, al4=al3*al;
- bigint ga2=ga*ga, ga3=ga2*ga, ga4=ga3*ga;
- bigint temp = ga4*es + al*ga3*ds + al2*ga2*cs + al3*ga*bs + al4*as - d2*a;
+ ZZ d2 = dd*dd;
+ ZZ al2=al*al, al3=al2*al, al4=al3*al;
+ ZZ ga2=ga*ga, ga3=ga2*ga, ga4=ga3*ga;
+ ZZ temp = ga4*es + al*ga3*ds + al2*ga2*cs + al3*ga*bs + al4*as - d2*a;
  if (!is_zero(temp)) return 0;
- bigint de2=de*de, de3=de2*de, de4=de3*de;
- bigint be2=be*be, be3=be2*be, be4=be3*be;
+ ZZ de2=de*de, de3=de2*de, de4=de3*de;
+ ZZ be2=be*be, be3=be2*be, be4=be3*be;
  temp = de4*es + be*de3*ds + be2*de2*cs + be3*de*bs + be4*as - d2*e;
  if (!is_zero(temp)) return 0;
  temp = 4*ga3*de*es + (3*al*ga2*de+be*ga3)*ds
@@ -141,7 +141,7 @@ bigcomplex crossratio(const bigcomplex& x1,const bigcomplex& x2,const bigcomplex
  return ((x1-x3)*(x2-x4))/((x1-x4)*(x2-x3));  
 }
 
-int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>& dlist, int info)
+int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<ZZ>& dlist, int info)
 {
    vector<bigcomplex> x = q1->getroots();
    vector<bigcomplex> y = q2->getroots();
@@ -209,11 +209,11 @@ int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>
        bigfloat rscaler = floor(rscale+0.5);
        if(abs(rscale-rscaler)<0.001)
 	 {
-	   bigint al = Iround(rscale*alpha),
+	   ZZ al = Iround(rscale*alpha),
 	   be = Iround(rscale*beta ),
 	   ga = Iround(rscale*gamma),
 	   de = Iround(rscale*delta);
-	   bigint ddet = abs(al*de-be*ga);
+	   ZZ ddet = abs(al*de-be*ga);
 	   if(d==ddet)
 	     {
 	       if (info)
@@ -232,10 +232,10 @@ int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<bigint>
  }    // of rootsequiv()
 
 
-int equiv(const quartic* q1, const quartic* q2, const vector<bigint>& dlist, int info)
+int equiv(const quartic* q1, const quartic* q2, const vector<ZZ>& dlist, int info)
 {
-   bigint iiq1 = q1->getI(), jjq1 = q1->getJ(), discq1 = q1->getdisc();
-   bigint iiq2 = q2->getI(), jjq2 = q2->getJ(), discq2 = q2->getdisc();
+   ZZ iiq1 = q1->getI(), jjq1 = q1->getJ(), discq1 = q1->getdisc();
+   ZZ iiq2 = q2->getI(), jjq2 = q2->getJ(), discq2 = q2->getdisc();
    int typeq1 = q1->gettype(), typeq2 = q2->gettype();
    if(info)
      {

@@ -30,7 +30,7 @@
 
 // Returns [m] for cyclic of order m, [2,2] for 2*2 (type I*m, m even)
 
-vector<int> ComponentGroups::ComponentGroup(const bigint& p) const
+vector<int> ComponentGroups::ComponentGroup(const ZZ& p) const
 {
   vector<int> ans(1);
   if(p==0) ans[0]=conncomp; // 1 or 2
@@ -49,7 +49,7 @@ vector<int> ComponentGroups::ComponentGroup(const bigint& p) const
 
 // Returns 1 iff P and Q have same image in the component group at p:
 //
-int ComponentGroups::InSameComponent(const Point& P, const Point& Q, const bigint& p) const
+int ComponentGroups::InSameComponent(const Point& P, const Point& Q, const ZZ& p) const
 {
   if(P==Q) return 1;
   return (P-Q).has_good_reduction(p);
@@ -60,7 +60,7 @@ int ComponentGroups::InSameComponent(const Point& P, const Point& Q, const bigin
 // Returns a such that P mod pr maps to +a or -a mod m in the
 // component group
 
-long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p, int m) const
+long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const ZZ& p, int m) const
 {
 #ifdef DEBUG_EGR
   cout<<"In ImageInComponentGroup_Im_pm() with point "
@@ -68,8 +68,8 @@ long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p
       <<", m="<<m<<"..."<<flush;
 #endif
   if(P.has_good_reduction(p)) return 0;
-  bigint x, y, z; P.getcoordinates(x,y,z);
-  bigint zroot = gcd(x,z); // = cube root of z
+  ZZ x, y, z; P.getcoordinates(x,y,z);
+  ZZ zroot = gcd(x,z); // = cube root of z
   long ans = val(p, 2*y + a1*x + a3*z) - 3*val(p,zroot);
 #ifdef DEBUG_EGR
   cout<<"ImageInComponentGroup_Im_pm() first gives ans = "<<ans<<endl;
@@ -85,7 +85,7 @@ long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const bigint& p
 // group is cyclic of order m, using full Tate curve formula.
 // Returns a such that P mod pr maps to a mod m in the component group
 
-long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, int m) const
+long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const ZZ& p, int m) const
 {
 #ifdef DEBUG_EGR
   cout<<"In ImageInComponentGroup_Im() with point "
@@ -97,19 +97,19 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
   long N = m;  // to match the write-up
   //  long N2=(N+1)/2;  // =N/2 rounded up
   long N2=N;
-  bigint pN = pow(p,N2);
-  bigint c4inv = invmod(c4,pN);
-  bigint x0 = c4inv*(18*b6-b2*b4);
-  bigint y0 = c4inv*(a1*a1*a1*a4 - 2*a1*a1*a2*a3 + 4*a1*a2*a4 + 3*a1*a3*a3 - 36*a1*a6 - 8*a2*a2*a3 + 24*a3*a4);
+  ZZ pN = pow(p,N2);
+  ZZ c4inv = invmod(c4,pN);
+  ZZ x0 = c4inv*(18*b6-b2*b4);
+  ZZ y0 = c4inv*(a1*a1*a1*a4 - 2*a1*a1*a2*a3 + 4*a1*a2*a4 + 3*a1*a3*a3 - 36*a1*a6 - 8*a2*a2*a3 + 24*a3*a4);
   x0 = x0 % pN;
   y0 = y0 % pN;
 #ifdef DEBUG_EGR_EXTRA
   cout<<"c4inv = "<<c4inv<<endl;
   cout<<"x0 = "<<x0<<", y0="<<y0<<endl;
 #endif
-  bigint d2 = b2+12*x0;
-  bigint d;  sqrt_mod_p_power(d,d2,p,N2);
-  bigint alpha1 = (d-a1);
+  ZZ d2 = b2+12*x0;
+  ZZ d;  sqrt_mod_p_power(d,d2,p,N2);
+  ZZ alpha1 = (d-a1);
   if(odd(alpha1))
     {
       if(p==2)
@@ -118,14 +118,14 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
       else alpha1+=pN; // saves inverting 2 mod pN
     }
   alpha1/=2;
-  bigint alpha2 = (-a1-alpha1);
+  ZZ alpha2 = (-a1-alpha1);
 #ifdef DEBUG_EGR_EXTRA
   cout<<"alpha1 = "<<alpha1<<", alpha2="<<alpha2<<endl;
 #endif
 
-  bigint x, y, z, w1, w2;
+  ZZ x, y, z, w1, w2;
   P.getcoordinates(x,y,z);
-  bigint zinv = invmod(z,pN);
+  ZZ zinv = invmod(z,pN);
   x=(x*zinv-x0) %pN;
   y=(y*zinv-y0) %pN;
   w1 = (y - alpha1*x) %pN;
@@ -165,7 +165,7 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const bigint& p, i
   return ans;
 }
 
-long ComponentGroups::ImageInComponentGroup(const Point&P, const bigint& p, vector<int> grp) const
+long ComponentGroups::ImageInComponentGroup(const Point&P, const ZZ& p, vector<int> grp) const
 {
   int ans=0;      // the default
 #ifdef DEBUG_EGR
@@ -217,7 +217,7 @@ long ComponentGroups::ImageInComponentGroup(const Point&P, const bigint& p, vect
 //
 // Since ComponentGroups are small we use nothing fancy here...
 
-int ComponentGroups::OrderInComponentGroup(const Point& P, const bigint& p, const vector<int>& grp)
+int ComponentGroups::OrderInComponentGroup(const Point& P, const ZZ& p, const vector<int>& grp)
 {
 #ifdef DEBUG_EGR
   cout<<"In OrderInComponentGroup() with point "
@@ -247,7 +247,7 @@ int ComponentGroups::OrderInComponentGroup(const Point& P, const bigint& p, cons
 // the subgroup of the original with good reduction at p, returning
 // the index
 
-int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
+int ComponentGroups::gr1prime(vector<Point>& Plist, const ZZ& p)
 {
   int j,k,m,n,n0,n1,npts=Plist.size();
 #ifdef DEBUG_EGR
@@ -450,13 +450,13 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const bigint& p)
 // replaces the (independent) points with a new set which spans the
 // subgroup of the original with good reduction at all p in plist,
 // returning the overall index
-int ComponentGroups::grprimes(vector<Point>& Plist, const vector<bigint>& plist)
+int ComponentGroups::grprimes(vector<Point>& Plist, const vector<ZZ>& plist)
 {
 #ifdef DEBUG_EGR
   cout<<"in grprimes with plist="<<plist<<endl;
 #endif
   int m = std::accumulate(plist.begin(), plist.end(), 1,
-                          [this, &Plist] (int m, const bigint& p) {return m*gr1prime(Plist,p);});
+                          [this, &Plist] (int m, const ZZ& p) {return m*gr1prime(Plist,p);});
 #ifdef DEBUG_EGR
   cout<<" grprimes returns index "<<m<<endl;
 #endif
@@ -468,9 +468,9 @@ int ComponentGroups::grprimes(vector<Point>& Plist, const vector<bigint>& plist)
 // returning the overall index
 int ComponentGroups::egr_subgroup(vector<Point>& Plist, int real_too)
 {
-  static const bigint zero(0);
+  static const ZZ zero(0);
   if(Plist.size()==0) return 1;
-  vector<bigint> plist = the_bad_primes;
+  vector<ZZ> plist = the_bad_primes;
   if(real_too && (conncomp==2)) plist.push_back(zero);
 #ifdef DEBUG_EGR
   cout<<"Using primes "<<plist<<endl;
@@ -478,14 +478,14 @@ int ComponentGroups::egr_subgroup(vector<Point>& Plist, int real_too)
   return grprimes(Plist,plist);
 }
 
-bigint comp_map_image(const vector<long> moduli, const mat_l& image);
+ZZ comp_map_image(const vector<long> moduli, const mat_l& image);
 
 //#undef DEBUG_EGR
 //#define DEBUG_EGR
 
-bigint egr_index(const vector<Point>& Plist, int real_too)
+ZZ egr_index(const vector<Point>& Plist, int real_too)
 {
-  static const bigint zero(0), one(1);
+  static const ZZ zero(0), one(1);
   if(Plist.size()==0) return one;;
 
   // Compute minimal model and map points to it if necessary
@@ -496,7 +496,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
   Point P0 = Plist[0];
   Curve E = P0.getcurve();
   Curvedata E_orig = Curvedata(E, 0); // don't minimise yet
-  bigint u, r, s, t;
+  ZZ u, r, s, t;
   Curvedata Emin = E_orig.minimalize(u,r,s,t);
   int is_min = is_one(u) && is_zero(r) && is_zero(s) && is_zero(t);
   // then E was already reduced and minimal, no adjustments needed
@@ -517,7 +517,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
   // Construct the ComponentGroups class from the minimal model
 
   ComponentGroups CGS(Emin);
-  vector<bigint> plist = getbad_primes(CGS);
+  vector<ZZ> plist = getbad_primes(CGS);
   if(real_too && (getconncomp(CGS)==2)) plist.push_back(zero);
 #ifdef DEBUG_EGR
   cout<<"Using primes "<<plist<<endl;
@@ -551,7 +551,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
 
   mat_l m(Plist.size(),n);
   unsigned int j=0, j1, j2, i;
-  bigint imageorder=one;
+  ZZ imageorder=one;
   for(i=0; i<moduli.size(); i++) imageorder*=moduli[i];
   for(j1=0; j1<plist.size(); j1++)
     for(j2=0; j2<imagematrix[j1][0].size(); j2++)
@@ -583,7 +583,7 @@ bigint egr_index(const vector<Point>& Plist, int real_too)
 // least one P_i is not in the connected component)
 //
 
-vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const vector<Point>& Plist,  const bigint& p)
+vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const vector<Point>& Plist,  const ZZ& p)
 {
   int n=Plist.size();
   vector<vector<int> > images;
@@ -688,9 +688,9 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
 
 //#define DEBUG_INDEX
 
-bigint comp_map_image(const vector<long> moduli, const mat_l& image)
+ZZ comp_map_image(const vector<long> moduli, const mat_l& image)
 {
-  bigint ans; ans=1;
+  ZZ ans; ans=1;
   mat_l m=image;
 #ifdef DEBUG_INDEX
   cout<<"In comp_map_image, m="<<m;

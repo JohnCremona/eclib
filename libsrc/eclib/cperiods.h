@@ -146,7 +146,7 @@ public:
   vector<bigcomplex> ellztopoint(const bigcomplex& z, const bigcomplex& a1, const bigcomplex& a2, const bigcomplex& a3);
 };  // end of class Cperiods def'n
 
-vector<bigcomplex> solve_nonsingular_cubic(const bigint& c1, const bigint& c2, const bigint& c3);
+vector<bigcomplex> solve_nonsingular_cubic(const ZZ& c1, const ZZ& c2, const ZZ& c3);
 // Gets the 3 2-division points given the coefficients
 void getei(const Curvedata& E, bigcomplex& e1, bigcomplex& e2, bigcomplex& e3);
 // Reorders 3 complex nos so real parts are decreasing

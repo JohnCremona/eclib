@@ -28,12 +28,12 @@
 #include "eclib/marith.h"
 #include "eclib/transform.h"
 
-bigint g_content(const bigint& ga, const bigint& gb, const bigint& gc, 
-		 const bigint& gd, const bigint& ge)
+ZZ g_content(const ZZ& ga, const ZZ& gb, const ZZ& gc, 
+		 const ZZ& gd, const ZZ& ge)
      // returns largest SQUARE which divides all
 {
   // first find the content:
-  bigint ans=abs(ga);
+  ZZ ans=abs(ga);
   if(ans==1) return ans;
   ans=gcd(ans,gb);
   if(ans==1) return ans;
@@ -45,40 +45,40 @@ bigint g_content(const bigint& ga, const bigint& gb, const bigint& gc,
   if(ans==1) return ans;
   // if content non-trivial, get its divisors whose square divides
   // (as we alreasy have this function to hand...)
-  vector<bigint> cdivs = sqdivs(ans);
+  vector<ZZ> cdivs = sqdivs(ans);
   // and return the last in the list, which is the biggest:
   return cdivs[(cdivs.size())-1];
 }
 
-void apply_transform(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void apply_transform(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 		     const unimod& m)
 {
-  bigint m11=m(1,1), m12=m(1,2), m21=m(2,1), m22=m(2,2);
-  bigint m112=sqr(m11); bigint m113=m112*m11; bigint m114=m113*m11;
-  bigint m212=sqr(m21); bigint m213=m212*m21; bigint m214=m213*m21;
-  bigint m222=sqr(m22); bigint m223=m222*m22; bigint m224=m223*m22;
-  bigint m122=sqr(m12); bigint m123=m122*m12; bigint m124=m123*m12;
+  ZZ m11=m(1,1), m12=m(1,2), m21=m(2,1), m22=m(2,2);
+  ZZ m112=sqr(m11); ZZ m113=m112*m11; ZZ m114=m113*m11;
+  ZZ m212=sqr(m21); ZZ m213=m212*m21; ZZ m214=m213*m21;
+  ZZ m222=sqr(m22); ZZ m223=m222*m22; ZZ m224=m223*m22;
+  ZZ m122=sqr(m12); ZZ m123=m122*m12; ZZ m124=m123*m12;
 
-  bigint newa = m214*e + m11*m213*d + m112*m212*c + m113*m21*b + m114*a;
-  bigint newe = m224*e + m12*m223*d + m122*m222*c + m123*m22*b + m124*a;
-  bigint newb = 4*m213*m22*e + (3*m11*m212*m22+m12*m213)*d
+  ZZ newa = m214*e + m11*m213*d + m112*m212*c + m113*m21*b + m114*a;
+  ZZ newe = m224*e + m12*m223*d + m122*m222*c + m123*m22*b + m124*a;
+  ZZ newb = 4*m213*m22*e + (3*m11*m212*m22+m12*m213)*d
     + 2*(m112*m21*m22+m11*m12*m212) * c
     + (3*m112*m12*m21+m113*m22)*b + 4*m113*m12*a;
-  bigint newd = 4*m21*m223*e + (3*m12*m21*m222+m11*m223)*d
+  ZZ newd = 4*m21*m223*e + (3*m12*m21*m222+m11*m223)*d
     + 2*(m122*m21*m22+m11*m12*m222)*c
     + (m123*m21+ 3*m11*m122*m22)*b + 4*m11*m123*a;
-  bigint newc = 6*m212*m222*e + 3*(m12*m212*m22+m11*m21*m222) * d
+  ZZ newc = 6*m212*m222*e + 3*(m12*m212*m22+m11*m21*m222) * d
     + (m122*m212+ 4*m11*m12*m21*m22+m112*m222) * c
     + 3*(m11*m122*m21+m112*m12*m22) * b + 6*m112*m122*a;
 
   a=newa; b=newb; c=newc; d=newd; e=newe;
 }
 
-void apply_transform(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void apply_transform(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 		     const scaled_unimod& m)
 {
   apply_transform(a,b,c,d,e,(unimod)m);
-  bigint u2=sqr(m.scale_factor());
+  ZZ u2=sqr(m.scale_factor());
   if(u2>1)
     {
       divide_exact(a,u2,a);
@@ -89,8 +89,8 @@ void apply_transform(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
     }
 }
 
-void xshift(const bigint& alpha,
-	    const bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void xshift(const ZZ& alpha,
+	    const ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	    unimod& m)
 {
   e += alpha*(d+alpha*(  c+alpha*(  b+  alpha*a)));
@@ -100,8 +100,8 @@ void xshift(const bigint& alpha,
   m.x_shift(alpha);
 }
 
-void zshift(const bigint& gamma,
-	    bigint& a, bigint& b, bigint& c, bigint& d, const bigint& e,
+void zshift(const ZZ& gamma,
+	    ZZ& a, ZZ& b, ZZ& c, ZZ& d, const ZZ& e,
 	    unimod& m)
 {
   a += gamma*(b+gamma*(  c+gamma*(  d+  gamma*e)));
@@ -111,27 +111,27 @@ void zshift(const bigint& gamma,
   m.y_shift(gamma);
 }
 
-void m_invert(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void m_invert(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	      unimod& m)
 {
   swap(a,e); swap(b,d); ::negate(b); ::negate(d);
   m.invert();
 }
 
-void m_invert(bigint& a, bigint& b, bigint& c, bigint& d, bigint& e,
+void m_invert(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
 	      scaled_unimod& m)
 {
   swap(a,e); swap(b,d); ::negate(b); ::negate(d);
   m.invert();
 }
 
-int check_transform(const bigint& a, const bigint& b, const bigint& c, 
-		    const bigint& d, const bigint& e,
+int check_transform(const ZZ& a, const ZZ& b, const ZZ& c, 
+		    const ZZ& d, const ZZ& e,
 		    const unimod& m,
-		    const bigint& xa, const bigint& xb, const bigint& xc, 
-		    const bigint& xd, const bigint& xe)
+		    const ZZ& xa, const ZZ& xb, const ZZ& xc, 
+		    const ZZ& xd, const ZZ& xe)
 {
-  bigint aa(a), bb(b), cc(c), dd(d), ee(e);
+  ZZ aa(a), bb(b), cc(c), dd(d), ee(e);
   apply_transform(aa,bb,cc,dd,ee,m);
   if(aa!=xa) return 0;
   if(bb!=xb) return 0;
@@ -141,13 +141,13 @@ int check_transform(const bigint& a, const bigint& b, const bigint& c,
   return 1;
 }
 
-int check_transform(const bigint& a, const bigint& b, const bigint& c, 
-		    const bigint& d, const bigint& e,
+int check_transform(const ZZ& a, const ZZ& b, const ZZ& c, 
+		    const ZZ& d, const ZZ& e,
 		    const scaled_unimod& m,
-		    const bigint& xa, const bigint& xb, const bigint& xc, 
-		    const bigint& xd, const bigint& xe)
+		    const ZZ& xa, const ZZ& xb, const ZZ& xc, 
+		    const ZZ& xd, const ZZ& xe)
 {
-  bigint aa(a), bb(b), cc(c), dd(d), ee(e);
+  ZZ aa(a), bb(b), cc(c), dd(d), ee(e);
   apply_transform(aa,bb,cc,dd,ee,m);
   if(aa!=xa) return 0;
   if(bb!=xb) return 0;

@@ -49,7 +49,7 @@ int main()
   cout<<endl;
 
   vec_m shortest=b[1];
-  bigint min_length=sdot(b,1,1);
+  ZZ min_length=sdot(b,1,1);
   for(int i=1; i<=n; i++)
     cout<<"Square length of vector "<<i<<" is "<<sdot(b,i,i)<<endl;
 
@@ -63,8 +63,8 @@ int main()
 	  for(int k=1; ok&&(k>-2); k--)
 	    {
 	      if((i==0)&&(j==0)&&(k==0)) {ok=0;break;}
-	      vec_m v=bigint(i)*b[1]+bigint(j)*b[2]+bigint(k)*b[3];
-	      bigint norm = sqr(v[1])+sqr(v[2])+sqr(v[3]);
+	      vec_m v=ZZ(i)*b[1]+ZZ(j)*b[2]+ZZ(k)*b[3];
+	      ZZ norm = sqr(v[1])+sqr(v[2])+sqr(v[3]);
 	      cout<<"("<<i<<","<<j<<","<<k<<"): "<<v<<", norm = "<<norm<<endl;
 	      if(norm<min_length) {min_length=norm; shortest=v; better=1;}
 	    }

@@ -40,7 +40,7 @@
 // unlikely to be called by anything but find_inf:
 vector<bigcomplex> roots_of_cubic(const Curve& E)
 {
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   E.getai(a1,a2,a3,a4,a6);
 
   bigfloat ra1=I2bigfloat(a1),
@@ -182,18 +182,18 @@ mw::mw(Curvedata *EE, int verb, int pp, int maxr)
 // NB We cannot use the default parameter mechanism as this must fit
 // the template for the virtual function declared in class
 // point_processor!
-int mw::process(const bigint& x, const bigint& y, const bigint& z)
+int mw::process(const ZZ& x, const ZZ& y, const ZZ& z)
 {
   return process(x,y,z,MAXSATPRIME);
 }
 
-int mw::process(const bigint& x, const bigint& y, const bigint& z, int sat)
+int mw::process(const ZZ& x, const ZZ& y, const ZZ& z, int sat)
 {
 #ifdef DEBUG
   cout<<"mw::process with x = "<< x <<", y = "<<y<<", z = "<<z<<endl;
 #endif
-  bigint rz; isqrt(z,rz);
-  bigint x1=x*rz, y1=y, z1=z*rz;
+  ZZ rz; isqrt(z,rz);
+  ZZ x1=x*rz, y1=y, z1=z*rz;
   if(iso)
     {
       y1 -= (a1*x1+4*a3*z1);
@@ -583,14 +583,14 @@ int mw::saturate(long& index, vector<long>& unsat, long sat_bd, long sat_low_bd)
   // decided to let the user do some searching if relevant instead
 #if(0)
   vector<Point> pts;
-  bigint ib = index_bound(E,basis,pts,0,(verbose>1));
+  ZZ ib = index_bound(E,basis,pts,0,(verbose>1));
   // Must make sure that the new points have the correct Curvedata pointer!
   for(unsigned int i=0; i<pts.size(); i++)
     pts[i].init(E,getX(pts[i]),getY(pts[i]),getZ(pts[i]));
   bigfloat oldreg = reg;
   int oldrank=rank;
   process(pts,0); //no saturation here!  This may update basis
-  bigint ind = Iround(sqrt(oldreg/reg));
+  ZZ ind = Iround(sqrt(oldreg/reg));
   if(verbose&&(ind>1))
     {
       cout<<"after search, gained index "<<ind
@@ -646,7 +646,7 @@ void mw::search(bigfloat h_lim, int moduli_option, int verb)
     }
   else // use Stoll's sieve, Sophie Labour's conversion:
     {
-      vector<bigint> c(4);
+      vector<ZZ> c(4);
       E -> getai(a1,a2,a3,a4,a6);
       iso = !((a1==0)&&(a3==0));
       if(iso)
@@ -830,7 +830,7 @@ void sieve::search(bigfloat h_lim)
     {
       // some preliminary calculations of multiples of c etc.
       csq = c*c /* long */;
-      c2 = csq  /* bigint */;
+      c2 = csq  /* ZZ */;
       c3 = c*c2; c4 = c2*c2; c6 = c2*c4;
       d1 = a1*c; d2 = a2*c2; d3 = a3*c3; d4 = a4*c4; d6 = a6*c6;
 
@@ -977,7 +977,7 @@ void sieve::search_range(bigfloat xmin, bigfloat xmax, bigfloat h_lim)
 
       // some preliminary calculations of multiples of c etc.
       csq = c*c /* long */;
-      c2 = csq  /* bigint */;
+      c2 = csq  /* ZZ */;
       c3 = c*c2; c4 = c2*c2; c6 = c2*c4;
       d1 = a1*c; d2 = a2*c2; d3 = a3*c3; d4 = a4*c4; d6 = a6*c6;
 
@@ -1038,7 +1038,7 @@ cout<<"amin = " << amin << ", amax = " << amax <<  endl;
 
 void sieve::a_search(const long& amin, const long& amax)
 {
-  bigint pb,qb,db,rdb,rdb2,b,ac;
+  ZZ pb,qb,db,rdb,rdb2,b,ac;
   long i, a=amin;
   a--;
   if (verbose) cout<<"sieve::search: trying c = "<<c<<"\t"
@@ -1098,7 +1098,7 @@ void sieve::a_search(const long& amin, const long& amax)
 
 void sieve::a_simple_search(const long& amin, const long& amax)
 {
-  bigint pb,qb,db,rdb,rdb2,b,ac;
+  ZZ pb,qb,db,rdb,rdb2,b,ac;
   long a;
   if (verbose) cout<<"sieve::search: trying c = "<<c<<"\t"
                    <<"("<<amin<<" <= a <= "<<amax<<")\n";

@@ -53,14 +53,14 @@ typedef sZmat_elim<long> smat_l_elim;
 typedef ssubZspace<long> ssubspace_l;
 typedef form_finderT<long> form_finder_l;
 
-typedef Zvec<bigint> vec_m;
-typedef Zmat<bigint> mat_m;
-typedef subZspace<bigint> subspace_m;
-typedef sZvec<bigint> svec_m;
-typedef sZmat<bigint> smat_m;
-typedef sZmat_elim<bigint> smat_m_elim;
-typedef ssubZspace<bigint> ssubspace_m;
-typedef form_finderT<bigint> form_finder_m;
+typedef Zvec<ZZ> vec_m;
+typedef Zmat<ZZ> mat_m;
+typedef subZspace<ZZ> subspace_m;
+typedef sZvec<ZZ> svec_m;
+typedef sZmat<ZZ> smat_m;
+typedef sZmat_elim<ZZ> smat_m_elim;
+typedef ssubZspace<ZZ> ssubspace_m;
+typedef form_finderT<ZZ> form_finder_m;
 
 
 template<class T> int dim(const Zvec<T>&);

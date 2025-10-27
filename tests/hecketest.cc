@@ -22,11 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
-#include <NTL/mat_ZZ.h>
-#include <NTL/mat_poly_ZZ.h>
-#include <NTL/ZZXFactoring.h>
-#include <NTL/LLL.h>
-
 #include <eclib/timer.h>
 #include <eclib/homspace.h>
 
@@ -70,7 +65,7 @@ int main(void)
  homspace hplus(n, modulus, plus,0,0);
  int genus = hplus.h1dim();
  scalar den = hplus.h1denom();
- bigint den2; den2 = den*den;
+ ZZ den2; den2 = den*den;
  cout << "Dimension = " << genus << "\n";
  cout << "denominator = " << den << "\n";
  vector<long> badprimes = hplus.plist;
@@ -315,17 +310,6 @@ int main(void)
 	  show_time(cerr); cerr<<endl;
 	  cout<<"det="<<detM<<endl;
 
-	  /*
-	  cout<<"Computing rank, using NTL's LLL..."<<flush;
-	  start_time();
-	  mat_ZZ M2; M2=Msub;
-	  r=image(detM,M2); // NB image() changes its 2nd arg!
-	  stop_time();
-	  show_time(cerr); cerr<<endl;
-	  nulty1 = nulty-r;
-	  cout<<" nullity="<<nulty1<<endl;
-	  */
-
 	  cout<<"Computing nullity, using my (modular) matrix code..."<<flush;
 	  start_time();
 	  nulty1=dim(peigenspace(MTR,e,modulus));
@@ -345,7 +329,7 @@ int main(void)
       cout<<"Total multiplicity of rational eigenvalues = "<<totalmult<<endl;
 #endif // TEST_EIGS
 #ifdef CHECK_COMMUTE
-      bigint P(modulus);
+      ZZ P(modulus);
       for (int kp=firstq; kp<nq; kp++)
 	{if (matmulmodp(wqlist[kp],tplist[ip],P)!=matmulmodp(tplist[ip],wqlist[kp],P))
 	   {

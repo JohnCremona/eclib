@@ -82,7 +82,7 @@ vector<bigcomplex> ellztopoint(Curvedata& E,  const Cperiods& per, const bigcomp
 // User supplies a denominator for the point; if it doesn't work, the
 // Point returned is 0 on the curve
 
-Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const bigint& den);
+Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const ZZ& den);
 
 // Returns a (possibly empty) vector of solutions to m*Q=P
 

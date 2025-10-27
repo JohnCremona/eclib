@@ -21,7 +21,6 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-#include <NTL/RR.h>   // for the realify_point() function
 #include "eclib/p2points.h"
 
 //
@@ -31,7 +30,7 @@
 void P2Point::reduce(void)
 {
   if(Z==1) return;   // integral point, no work needed
-  bigint d = gcd(gcd(X, Y), Z);
+  ZZ d = gcd(gcd(X, Y), Z);
   if(sign(d)==0){
     return ;
   }
@@ -52,10 +51,10 @@ void P2Point::reduce(void)
 
 istream& operator>>(istream & is, P2Point& P)
 {
-  static const bigint zero(0), one(1);
+  static const ZZ zero(0), one(1);
   char c;
   is>>c;  // swallow first bracket
-  bigint x,y,dx,dy;
+  ZZ x,y,dx,dy;
   is >> x >> c; // swallow comma or colon
   switch(c) {
   case ',':
@@ -113,11 +112,11 @@ void P2Point::getrealcoordinates(bigfloat&x, bigfloat& y) const
 }
 
 // Coordinate transforms useful for elliptic curve points 
-P2Point scale(const P2Point& P, const bigint& u, int back)
+P2Point scale(const P2Point& P, const ZZ& u, int back)
 {
   if(is_one(u)) return P;
-  bigint u2=u*u;
-  bigint u3=u*u2;
+  ZZ u2=u*u;
+  ZZ u3=u*u2;
   if(back)
     return P2Point(u2*P.X,u3*P.Y,P.Z);
   else
@@ -127,11 +126,11 @@ P2Point scale(const P2Point& P, const bigint& u, int back)
 P2Point scale(const P2Point& P, long u, int back)
 {
   if(u==1) return P;
-  return scale(P,bigint(u),back);
+  return scale(P,ZZ(u),back);
 }
 
 P2Point shift(const P2Point& P,
-	      const bigint& r, const bigint& s, const bigint& t, 
+	      const ZZ& r, const ZZ& s, const ZZ& t, 
 	      int back)
 {
   if(back)
@@ -141,8 +140,8 @@ P2Point shift(const P2Point& P,
 }
 
 P2Point transform(const P2Point& P,
-		  const bigint& u, 
-		  const bigint& r, const bigint& s, const bigint& t, 
+		  const ZZ& u, 
+		  const ZZ& r, const ZZ& s, const ZZ& t, 
 		  int back)
 {
   if(back)

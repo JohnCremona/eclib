@@ -35,7 +35,7 @@ int main(){
   int showpoints; cin >> showpoints;
   initprimes("PRIMES",0);
   vector<bigrational> ai(5);
-  bigint u, r, s, t, v;
+  ZZ u, r, s, t, v;
   int verb=1;
 
   while (getcurve(ai,verb))

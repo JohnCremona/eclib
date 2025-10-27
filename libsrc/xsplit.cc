@@ -31,7 +31,7 @@
 
 template class form_finderT<int>;
 template class form_finderT<long>;
-template class form_finderT<bigint>;
+template class form_finderT<ZZ>;
 
 template<class T>
 Zvec<T> lift(const Zvec<T>& v, T mod)

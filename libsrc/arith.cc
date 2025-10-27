@@ -373,7 +373,7 @@ long invmod(long a, long p)
 
 //#define DEBUG_MODRAT
 
-// implementation of gauss_reduce() is now in marith since it uses bigints
+// implementation of gauss_reduce() is now in marith since it uses ZZs
 
 // Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
 int modrat(int n, int m, int& a, int& b)

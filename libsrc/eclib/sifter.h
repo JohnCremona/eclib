@@ -34,8 +34,8 @@
 class sifter {
 private: 
   Curvedata *E;
-  bigint I, J, disc;
-  bigint r,s,t;    // tranforms E to E_{I,J} (u=6)
+  ZZ I, J, disc;
+  ZZ r,s,t;    // tranforms E to E_{I,J} (u=6)
   int rank;
   int verbose;
 
@@ -46,8 +46,8 @@ private:
   vector<vector<long>> thetamod;
 public:
   sifter(Curvedata* EE, int na, int verb=0);
-  int code(const bigint& x, const bigint& z2, int i);
-  vector<int> eps(const bigint& x, const bigint& z2);
+  int code(const ZZ& x, const ZZ& z2, int i);
+  vector<int> eps(const ZZ& x, const ZZ& z2);
   void process(const Point& P);
   void process(const vector<Point>& Plist);
   int getrank() {return rank;}

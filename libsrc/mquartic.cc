@@ -33,10 +33,10 @@ quartic::quartic()
   //cout<<"Quartic constructor #1: " << this << endl;
 }
 
-quartic::quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
-		 const bigint& qd, const bigint& qe, 
+quartic::quartic(const ZZ& qa, const ZZ& qb, const ZZ& qc, 
+		 const ZZ& qd, const ZZ& qe, 
 		 const vector<bigcomplex>& qr,	 int qt,
-		 const bigint& qi,const bigint& qj,const bigint& qdisc)
+		 const ZZ& qi,const ZZ& qj,const ZZ& qdisc)
 :a(qa),b(qb),c(qc),d(qd),e(qe),
  roots(qr), type(qt),ii(qi),jj(qj),disc(qdisc),
  have_zpol(0), equiv_code(0)
@@ -44,8 +44,8 @@ quartic::quartic(const bigint& qa, const bigint& qb, const bigint& qc,
   //cout<<"Quartic constructor #2: " << this << ", roots="<<roots<< endl;
 }
 
-quartic::quartic(const bigint& qa, const bigint& qb, const bigint& qc, 
-		 const bigint& qd, const bigint& qe)
+quartic::quartic(const ZZ& qa, const ZZ& qb, const ZZ& qc, 
+		 const ZZ& qd, const ZZ& qe)
   :a(qa),b(qb),c(qc),d(qd),e(qe), have_zpol(0), equiv_code(0)
 {
   roots.resize(4);
@@ -59,11 +59,11 @@ void quartic::set_roots_and_type()
   ii = II(a,b,c,d,e);
   jj = JJ(a,b,c,d,e);
   disc = 4*pow(ii,3)-sqr(jj);
-  bigint  H = H_invariant(a,b,c), R = R_invariant(a,b,c,d);
-  bigint Q = H*H-16*a*a*ii;  // = 3*Q really
+  ZZ  H = H_invariant(a,b,c), R = R_invariant(a,b,c,d);
+  ZZ Q = H*H-16*a*a*ii;  // = 3*Q really
   bigfloat xH = I2bigfloat(H);
 #ifdef DEBUG_ROOTS
-  bigint diff = -H*H*H + 48*a*a*ii*H - 64*a*a*a*jj - 27*R*R;
+  ZZ diff = -H*H*H + 48*a*a*ii*H - 64*a*a*a*jj - 27*R*R;
   cout<<"H = "<<H<<", R = "<<R<<", diff = "<<diff<<endl;
   if(is_zero(diff)) cout<<"Syzygy satisfied.\n";
   else cout<<"Syzygy NOT satisfied.\n";
@@ -204,18 +204,18 @@ quartic::quartic(const quartic& q)
 
 // member functions & operators
 
-void quartic::assign(const bigint& qa, const bigint& qb, const bigint& qc, 
-		     const bigint& qd, const bigint& qe)
+void quartic::assign(const ZZ& qa, const ZZ& qb, const ZZ& qc, 
+		     const ZZ& qd, const ZZ& qe)
 {
   have_zpol=0; equiv_code=0;
   a=qa; b=qb; c=qc; d=qd; e=qe; 
   set_roots_and_type();
 }
 
-void quartic::assign(const bigint& qa, const bigint& qb, const bigint& qc, 
-		     const bigint& qd, const bigint& qe, 
+void quartic::assign(const ZZ& qa, const ZZ& qb, const ZZ& qc, 
+		     const ZZ& qd, const ZZ& qe, 
 		     const vector<bigcomplex>& qr,	     int qt,
-		     const bigint& qi,const bigint& qj,const bigint& qdisc)
+		     const ZZ& qi,const ZZ& qj,const ZZ& qdisc)
 { 
   have_zpol=0; equiv_code=0;
   a=qa; b=qb; c=qc; d=qd; e=qe;
@@ -242,9 +242,9 @@ int quartic::trivial() const // Checks for a rational root
 
 vector<bigrational> quartic::rational_roots() const // returns rational roots
 {
-  bigint num;
+  ZZ num;
   int i, start = (type==1)? 5 : (type==2)? 1 : 3;
-  bigint ac = a*c, a2d = a*a*d, a3e = a*a*a*e;
+  ZZ ac = a*c, a2d = a*a*d, a3e = a*a*a*e;
   bigfloat ra = I2bigfloat(a);
   vector<bigrational> ans;
   for (i = start; i<=4 ; i++)
@@ -259,7 +259,7 @@ vector<bigrational> quartic::rational_roots() const // returns rational roots
 void quartic::make_zpol()
 {
   if(have_zpol) return;
-  bigint b2 = sqr(b);
+  ZZ b2 = sqr(b);
   asq=sqr(a);
   p = -H_invariant(a,b,c);
   psq = sqr(p);

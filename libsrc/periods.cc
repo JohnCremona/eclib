@@ -799,8 +799,8 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
   bigfloat rc4 = real(c4), rc6 = real(c6);
   if(verbose)
     cout << "c4 = " << rc4 << "\nc6 = " << rc6 << endl;
-  bigint ic4 = fac*Iround(rc4/fac);
-  bigint ic6 = fac6*Iround(rc6/fac6);
+  ZZ ic4 = fac*Iround(rc4/fac);
+  ZZ ic6 = fac6*Iround(rc6/fac6);
   if(verbose)
     {
       cout << "After rounding";
@@ -926,11 +926,11 @@ bigfloat Glarge(int r, bigfloat x) // Cohen's Gamma_r(x) for large x
 bigfloat Q(int r, bigfloat x)  // Q_r(x) polynomial from AMEC p.44
 {
 #ifdef MPFP // Multi-Precision Floating Point
-  static const bigint nz2=to_ZZ("3772654005711327105320428325461179161744295822071095339706353540767904529098322739007189721774317982928833");
+  static const ZZ nz2=to_ZZ("3772654005711327105320428325461179161744295822071095339706353540767904529098322739007189721774317982928833");
   bigfloat zeta2; MakeRR(zeta2,nz2,-350);
-  static const bigint nz3=to_ZZ("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
+  static const ZZ nz3=to_ZZ("2756915843737840912679655856873838262816890298077497105924627168570887325226967786076589016002130138897164");
   bigfloat zeta3; MakeRR(zeta3,nz3,-350);
-  static const bigint nz4=to_ZZ("2482306838570394152367457601777793352247775704274910416102594171643891396599068147834147756326957412925856");
+  static const ZZ nz4=to_ZZ("2482306838570394152367457601777793352247775704274910416102594171643891396599068147834147756326957412925856");
   bigfloat zeta4; MakeRR(zeta4,nz4,-350);
 #else
  static const bigfloat zeta2 = 1.6449340668482264364724151666460251892189499;

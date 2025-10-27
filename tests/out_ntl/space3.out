@@ -1,4 +1,4 @@
-Subspace test program with scalar type bigint
+Subspace test program with scalar type ZZ
 
 Enter size of square matrix M: Enter entries of M:  M = 
 [[1,2,3,0],

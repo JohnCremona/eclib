@@ -37,7 +37,7 @@ int main(void)
 {
   int verbose=0;
   vector<bigrational> ai(5);
-  bigint v;
+  ZZ v;
 
   // Read in curves, minimise and construct CurveRed (needed for
   // conductor and Traces of Frobenius etc.)
@@ -45,7 +45,7 @@ int main(void)
     {
       Curvedata CD(ai,v);
       CurveRed CR(CD);
-      bigint N = getconductor(CR);
+      ZZ N = getconductor(CR);
       int n = I2int(N);
       cout << ">>> Level = conductor = " << n << " <<<" << endl;
       cout << "Minimal curve = " << (Curve)(CR) << endl;

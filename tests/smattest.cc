@@ -30,7 +30,7 @@ long starttime,stoptime;
 
 int main(void)
 {
-  // if (scalar_type=="bigint")
+  // if (scalar_type=="ZZ")
   //   set_default_modulus(to_ZZ("100000000000000000039"));
   scalar modulus(default_modulus<scalar>());
   cout << "Sparse matrix test program with scalar type " << scalar_type

@@ -116,7 +116,7 @@ gf_element ffmodq::evaluate(const pointmodq& P) const
 // vertical(P) has divisor (P)+(-P)-2(0)
 ffmodq vertical(const pointmodq& P)
 {
-  static const bigint one(1);
+  static const ZZ one(1);
   if(P.is_zero())
     {
       ffmodq g(one); return g;
@@ -129,7 +129,7 @@ ffmodq vertical(const pointmodq& P)
 // tangent(P) has divisor 2(P)+(-2P)-3(0)
 ffmodq tangent(const pointmodq& P)
 {
-  static const bigint one(1);
+  static const ZZ one(1);
   if(P.is_zero())
     {
       ffmodq g(one); return g;
@@ -184,7 +184,7 @@ ffmodq chord(const pointmodq& P, const pointmodq& Q)
 
 ffmodq weil_pol(const pointmodq& T, int m)
 {
-  static const bigint one(1);
+  static const ZZ one(1);
   ffmodq h(one);
   switch(m) {
   case 2: return vertical(T);

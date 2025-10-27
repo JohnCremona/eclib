@@ -40,7 +40,7 @@ double logplus(double x)
 
 double hj(const Curvedata& CD, double& realjay)
 {
-  bigint c4, c6, njay, djay;
+  ZZ c4, c6, njay, djay;
   c4=getc4(CD);
   c6=getc6(CD);
   njay = pow(c4,3);
@@ -63,8 +63,8 @@ double hj(const Curvedata& CD, double& realjay)
 double silverman_bound(const Curvedata& CD)
 {
   static double log2 = log(2.0);
-  bigint b2 = getb2(CD);
-  bigint delta = getdiscr(CD);
+  ZZ b2 = getb2(CD);
+  ZZ delta = getdiscr(CD);
   double realjay;
   double hjay = hj(CD,realjay);
 
@@ -106,7 +106,7 @@ double cps_bound(const Curvedata& CD)
   cout<<"cps_real = "<<bd<<endl;
 #endif
   CurveRed CR(CD);
-  vector<bigint> plist = getbad_primes((Curvedata&)CD);
+  vector<ZZ> plist = getbad_primes((Curvedata&)CD);
   for( const auto& q : plist)
     {
       if(getc_p(CR,q)==1)
@@ -569,7 +569,7 @@ bigfloat lower_height_bound_search(const Curvedata& CD, const bigfloat& reg)
 {
   int verbose=0;
   // Find optimally x-shifted curve for better point searching...
-  bigint x_shift;
+  ZZ x_shift;
   Curvedata C_opt = opt_x_shift(CD,x_shift);
   int shift_flag = !is_zero(x_shift);
   if(shift_flag&&verbose) 
@@ -639,7 +639,7 @@ bigfloat Gamma_n_plus_half(long n) // Gamma(n+1/2) = (2n)!sqrt(pi) / (4^n*n!)
   // cout<<"factorial(2*n) = "<< factorial(2*n) <<endl;
   // cout<<"2^(2*n) = "<< power2_RR(2*n) <<endl;
   // cout<<"sqrt(pi) = "<< sqrt(Pi()) <<endl;
-  return sqrt(Pi()) * factorial(2*n) / (power2_RR(2*n) * factorial(n));
+  return sqrt(Pi()) * factorial(2*n) / (NTL::power2_RR(2*n) * factorial(n));
 }
 
 static long gam_tab[9] = {1, 1, 4, 2, 4, 8, 64, 64, 256};
@@ -696,10 +696,10 @@ point_min_height_finder::point_min_height_finder(Curvedata* EE, int egr, int ver
     }
 }
 
-int point_min_height_finder::process(const bigint& x, const bigint& y, const bigint& z) 
+int point_min_height_finder::process(const ZZ& x, const ZZ& y, const ZZ& z) 
 {
-  bigint rz; isqrt(z,rz);
-  bigint x1=x*rz, y1=y, z1=z*rz;
+  ZZ rz; isqrt(z,rz);
+  ZZ x1=x*rz, y1=y, z1=z*rz;
   if(iso)
     {
       y1 -= (a1*x1+4*a3*z1);
@@ -710,7 +710,7 @@ int point_min_height_finder::process(const bigint& x, const bigint& y, const big
   if(P.isvalid())
     {
       if(order(P)<0) {
-      int egr=1; bigint p0;
+      int egr=1; ZZ p0;
       if(egr_flag) egr=CG.HasGoodReduction(P,p0);
       if(egr)
 	{
@@ -880,7 +880,7 @@ Interval01 operator+(const Interval01& I, const bigfloat& shift)
 
 long exponent(CurveRed& CR, long p)
 {
-  bigint pp(p);
+  ZZ pp(p);
   int ord_p_N = getord_p_N(CR, pp);
 
   if (ord_p_N>1)

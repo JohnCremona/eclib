@@ -12,19 +12,19 @@ b = [ 10 20 30 ]
 end of output of b
 After b=a, b = 
 [ 10 20 30 ]
-bigint versions of divisor functions:
+ZZ versions of divisor functions:
 
-bigint prime factors of 420:
+ZZ prime factors of 420:
 [ 2 3 5 7 ]
- with posdivs (bigint version) 
+ with posdivs (ZZ version) 
 [ 1 2 4 3 6 12 5 10 20 15 30 60 7 14 28 21 42 84 35 70 140 105 210 420 ]
-and alldivs (bigint version) 
+and alldivs (ZZ version) 
 [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
 making a copy of iqlist
  reuse iqlist for sqdivs
 iqlist (should be sqdivs) [ 1 2 ]
 iplist (should be alldivs) [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
-making an vector<bigint> of iplist (alldivs)
+making an vector<ZZ> of iplist (alldivs)
 stream output: [ 1 -1 2 -2 4 -4 3 -3 6 -6 12 -12 5 -5 10 -10 20 -20 15 -15 30 -30 60 -60 7 -7 14 -14 28 -28 21 -21 42 -42 84 -84 35 -35 70 -70 140 -140 105 -105 210 -210 420 -420 ]
 irary(7) is -3	irary[3] is -2
 
@@ -47,15 +47,15 @@ L*[2^e for e in [ 0 1 2 3 ]]: [ 1 2 3 4 5 2 4 6 8 10 4 8 12 16 20 8 16 24 32 40 
 
 Test of sqrt and isqrt
 
-Enter a positive bigint a (999 to stop): a = 123, sign(a) = 1
+Enter a positive ZZ a (999 to stop): a = 123, sign(a) = 1
 a = 123, sqrt(a) = 11 (rounded down)
 a is not a square
 
-Enter a positive bigint a (999 to stop): a = 121, sign(a) = 1
+Enter a positive ZZ a (999 to stop): a = 121, sign(a) = 1
 a = 121, sqrt(a) = 11 (rounded down)
 a is a square with exact square root 11
 
-Enter a positive bigint a (999 to stop): 
+Enter a positive ZZ a (999 to stop): 
 
 Test of sqrt mod p
 Enter a prime p: 23
@@ -161,7 +161,7 @@ sqrt(98 mod p) = 11	---OK
 First 100 OK
 Enter a prime p: 0
 
-Enter a bigint m (0 to stop): m = 420
+Enter a ZZ m (0 to stop): m = 420
 m has 4 prime divisors: [ 2 3 5 7 ]
 with exponents [ 2 1 1 1 ]
 factorback recovers 420 (should be 420)
@@ -170,7 +170,7 @@ m has 24 positive divisors: [ 1 2 4 3 6 12 5 10 20 15 30 60 7 14 28 21 42 84 35 
 m has 2 positive divisors whose square divides m: [ 1 2 ]
 m has 16 positive square-free divisors: [ 1 2 3 6 5 10 15 30 7 14 21 42 35 70 105 210 ]
 
-Enter a bigint m (0 to stop): 
+Enter a ZZ m (0 to stop): 
 
 Test of divisor iterator class
 1: OK

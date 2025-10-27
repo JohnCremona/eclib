@@ -22,7 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 
-// Stored as bigint* arrays q of size 3 representing q[0]*x^2+q[1]*x+q[2]
+// Stored as ZZ* arrays q of size 3 representing q[0]*x^2+q[1]*x+q[2]
 
 #ifndef _ECLIB_QUADRATIC_H
 #define _ECLIB_QUADRATIC_H      1 //flags that this file has been included
@@ -32,28 +32,28 @@
 class quadratic {
   friend class unimod;
 private:
-  vector<bigint> coeffs;
+  vector<ZZ> coeffs;
 public:
-  void set(const  bigint& a, const bigint& b, const bigint& c) {coeffs = {a, b, c};}
-  quadratic() { bigint zero(0); coeffs={zero,zero,zero};}
-  quadratic(const  bigint& a, const bigint& b, const bigint& c) :coeffs({a, b, c}) {;}
-  quadratic(long a, long b, long c)  :coeffs({bigint(a), bigint(b), bigint(c)}) {;}
-  explicit quadratic(const  bigint* q) :coeffs({q[0], q[1], q[2]}) {;}
+  void set(const  ZZ& a, const ZZ& b, const ZZ& c) {coeffs = {a, b, c};}
+  quadratic() { ZZ zero(0); coeffs={zero,zero,zero};}
+  quadratic(const  ZZ& a, const ZZ& b, const ZZ& c) :coeffs({a, b, c}) {;}
+  quadratic(long a, long b, long c)  :coeffs({ZZ(a), ZZ(b), ZZ(c)}) {;}
+  explicit quadratic(const  ZZ* q) :coeffs({q[0], q[1], q[2]}) {;}
   quadratic(const  quadratic& q) :coeffs(q.coeffs) {;}
   void operator=(const quadratic& q)  {coeffs = q.coeffs;}
-  bigint eval(const bigint& x, const bigint& z) const
+  ZZ eval(const ZZ& x, const ZZ& z) const
     {return coeffs[0]*sqr(x) + coeffs[1]*x*z + coeffs[2]*sqr(z);}
-  bigint operator()(const bigint& x, const bigint& z) const
+  ZZ operator()(const ZZ& x, const ZZ& z) const
     {return coeffs[0]*sqr(x) + coeffs[1]*x*z + coeffs[2]*sqr(z);}
-  bigint eval(const bigint& x) const
+  ZZ eval(const ZZ& x) const
     {return coeffs[0]*sqr(x) + coeffs[1]*x + coeffs[2];}
-  bigint operator()(const bigint& x) const
+  ZZ operator()(const ZZ& x) const
     {return coeffs[0]*sqr(x) + coeffs[1]*x + coeffs[2];}
-  bigint coeff(int i) const {return coeffs[i];}
-  bigint operator[](int i) const  {return coeffs[i];}
-  void set_coeff(int i, const bigint& a) {if((i>=0)&&(i<=2)) coeffs[i]=a;}
-  friend bigint resultant(const quadratic& q1, const quadratic& q2);
-  bigint disc() const  {return sqr(coeffs[1])-4*coeffs[0]*coeffs[2];}
+  ZZ coeff(int i) const {return coeffs[i];}
+  ZZ operator[](int i) const  {return coeffs[i];}
+  void set_coeff(int i, const ZZ& a) {if((i>=0)&&(i<=2)) coeffs[i]=a;}
+  friend ZZ resultant(const quadratic& q1, const quadratic& q2);
+  ZZ disc() const  {return sqr(coeffs[1])-4*coeffs[0]*coeffs[2];}
   void output(ostream& os=cout) const
     {
       os<<"["<<coeffs[0]<<","<<coeffs[1]<<","<<coeffs[2]<<"]";
@@ -61,13 +61,13 @@ public:
   friend ostream& operator<<(ostream& os, const quadratic& q);
   void transform(const unimod& m);
   // In the next 4 functions, m already holds a unimod and is updated:
-  void x_shift(const bigint& a, unimod& m);
-  void y_shift(const bigint& a, unimod& m);
+  void x_shift(const ZZ& a, unimod& m);
+  void y_shift(const ZZ& a, unimod& m);
   void invert(unimod& m);
   void reduce(unimod& m);
 };
 
-bigint resultant(const quadratic& q1, const quadratic& q2);
+ZZ resultant(const quadratic& q1, const quadratic& q2);
 
 inline ostream& operator<<(ostream& os, const quadratic& q)
 {

@@ -23,16 +23,16 @@
  
 #include "eclib/modulus.h"
 
-// Instantiate/specialise modulus_factory template classes for T=int, long, bigint
+// Instantiate/specialise modulus_factory template classes for T=int, long, ZZ
 
 // PRIME30 is (as defined in xmod.h) 1073741789,  the largest p such that p < 2^30
 template<> int default_modulus<int>()       { return modulus_factory_int.get_modulus();}
 template<> long default_modulus<long>()     { return modulus_factory_long.get_modulus();}
-template<> bigint default_modulus<bigint>() { return modulus_factory_bigint.get_modulus();}
+template<> ZZ default_modulus<ZZ>() { return modulus_factory_ZZ.get_modulus();}
 
 template<> modulus_factory<int>::modulus_factory()    :modulus(1073741789) { ; }
 template<> modulus_factory<long>::modulus_factory()   :modulus(1073741789) { ; }
-template<> modulus_factory<bigint>::modulus_factory()
+template<> modulus_factory<ZZ>::modulus_factory()
   //  :modulus(to_ZZ("6074000003"))
    :modulus(to_ZZ("1000000000000000000000000000057"))
 { ; }
@@ -46,11 +46,11 @@ template<class T> T modulus_factory<T>::set_modulus(const T& new_modulus)
 
 modulus_factory<int> modulus_factory_int;
 modulus_factory<long> modulus_factory_long;
-modulus_factory<bigint> modulus_factory_bigint;
+modulus_factory<ZZ> modulus_factory_ZZ;
 
 template class modulus_factory<int>;
 template class modulus_factory<long>;
-template class modulus_factory<bigint>;
+template class modulus_factory<ZZ>;
 
 template<>
 int set_default_modulus<int>(const int& new_modulus)
@@ -65,7 +65,7 @@ long set_default_modulus<long>(const long& new_modulus)
 }
 
 template<>
-bigint set_default_modulus<bigint>(const bigint& new_modulus)
+ZZ set_default_modulus<ZZ>(const ZZ& new_modulus)
 {
-  return modulus_factory_bigint.set_modulus(new_modulus);
+  return modulus_factory_ZZ.set_modulus(new_modulus);
 }

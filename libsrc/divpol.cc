@@ -21,7 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
-// NB the external interface uses a simple vector<bigint> of
+// NB the external interface uses a simple vector<ZZ> of
 // coefficients rather than a polynomial type to simplify the
 // NTL interface
 
@@ -30,8 +30,8 @@
 
 // The 2-divison polynomial (cubic in x)
 
-ZPoly div_pol_2(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
-                const bigint& a6)
+ZPoly div_pol_2(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+                const ZZ& a6)
 {
   ZPoly ans;
   SetDegree(ans,3);
@@ -48,10 +48,10 @@ ZPoly div_pol_2(const bigint& a1,const bigint& a2,const bigint& a3,const bigint&
 
 // The poly itself is found recursively
 
-ZPoly div_pol_odd(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
-                  const bigint& a6, int n)
+ZPoly div_pol_odd(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+                  const ZZ& a6, int n)
 {
-  static const bigint four(4);
+  static const ZZ four(4);
   ZPoly X; ZPolySetX(X);
   ZPoly f1 = X*(X*(X+a2)+a4)+a6;
   ZPoly f2 = a1*X+a3;
@@ -104,23 +104,23 @@ ZPoly div_pol_odd(const bigint& a1,const bigint& a2,const bigint& a3,const bigin
   }
 }
 
-ZPoly div_pol(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
-              const bigint& a6,int n)
+ZPoly div_pol(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+              const ZZ& a6,int n)
 {
   return (n==2? div_pol_2(a1,a2,a3,a4,a6) :  div_pol_odd(a1,a2,a3,a4,a6,n));
 }
 
 ZPoly division_polynomial(Curvedata* E, int p)
 {
-  bigint a1,a2,a3,a4,a6;
+  ZZ a1,a2,a3,a4,a6;
   E->getai(a1,a2,a3,a4,a6);
   return (p==2? div_pol_2(a1,a2,a3,a4,a6) :  div_pol_odd(a1,a2,a3,a4,a6,p));
 }
 
 // Numerator of the multiplication-by-n map on the x-coordinate
 
-ZPoly mul_by_n_num(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
-                   const bigint& a6, int n)
+ZPoly mul_by_n_num(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+                   const ZZ& a6, int n)
 {
   ZPoly X; ZPolySetX(X);
   ZPoly P_2 = div_pol_2(a1,a2,a3,a4,a6);
@@ -134,8 +134,8 @@ ZPoly mul_by_n_num(const bigint& a1,const bigint& a2,const bigint& a3,const bigi
 
 // Denominator of the multiplication-by-n map on the x-coordinate
 
-ZPoly mul_by_n_den(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
-                   const bigint& a6, int n)
+ZPoly mul_by_n_den(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+                   const ZZ& a6, int n)
 {
   ZPoly P_n = div_pol_odd(a1,a2,a3,a4,a6,n);
   return (n%2==1? P_n * P_n : P_n * P_n * div_pol_2(a1,a2,a3,a4,a6));
@@ -143,10 +143,10 @@ ZPoly mul_by_n_den(const bigint& a1,const bigint& a2,const bigint& a3,const bigi
 
 // Polynomial whose roots are x(Q) for Q satisfying n*Q=P, where x(P)=xP/zP
 
-ZPoly division_points_X_pol(const bigint& a1,const bigint& a2,const bigint& a3,const bigint& a4,
-                            const bigint& a6,
+ZPoly division_points_X_pol(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+                            const ZZ& a6,
                             int n,
-                            const bigint& xP, const bigint& zP)
+                            const ZZ& xP, const ZZ& zP)
 {
   ZPoly numpoly = mul_by_n_num(a1, a2, a3, a4, a6, n);
   ZPoly denpoly = mul_by_n_den(a1, a2, a3, a4, a6, n);

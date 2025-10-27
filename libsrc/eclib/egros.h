@@ -27,20 +27,20 @@
 
 // Test whether a curve with good reduction outside S and this j-invariant could exist
 // (using criteria from Cremona-Lingham)
-int is_j_possible(const bigrational& j, const vector<bigint>& S);
+int is_j_possible(const bigrational& j, const vector<ZZ>& S);
 
 // Return integers representing QQ(S,n)
-vector<bigint> twist_factors(const vector<bigint>& S, int n); // only intended for n=2,4,6
+vector<ZZ> twist_factors(const vector<ZZ>& S, int n); // only intended for n=2,4,6
 
 // Return list of curves with good reduction outside S and j=1728
-vector<CurveRed> egros_from_j_1728(const vector<bigint>& S);
+vector<CurveRed> egros_from_j_1728(const vector<ZZ>& S);
 // Return list of curves with good reduction outside S and j=0
-vector<CurveRed> egros_from_j_0(const vector<bigint>& S);
+vector<CurveRed> egros_from_j_0(const vector<ZZ>& S);
 // Return list of curves with good reduction outside S and any fixed j
-vector<CurveRed> egros_from_j(const bigrational& j, const vector<bigint>& S);
+vector<CurveRed> egros_from_j(const bigrational& j, const vector<ZZ>& S);
 
 // Test whether N is a possible conductor for j=0
-int is_N_possible_j_0(const bigint& N, const vector<bigint>& support);
+int is_N_possible_j_0(const ZZ& N, const vector<ZZ>& support);
 
 // Test whether N is a possible conductor for j=1728
-int is_N_possible_j_1728(const bigint& N, const vector<bigint>& support);
+int is_N_possible_j_1728(const ZZ& N, const vector<ZZ>& support);
