@@ -27,11 +27,11 @@ ZZ_pX reduce(const ZZX& f, const galois_field& Fq)
 {
   ZZ_pX fmodq;
   for(int i=0; i<=deg(f); i++)
-    SetCoeff(fmodq,i,ZtoGF(Fq,coeff(f,i)));
+    SetCoeff(fmodq,i, to_ZZ_p(coeff(f,i)));
   return fmodq;
 }
 
-vector<gf_element> roots(const ZZ_pX& f)
+vector<ZZ_p> roots(const ZZ_pX& f)
 {
   // make f monic:
   ZZ_pX f1=f;
@@ -40,7 +40,7 @@ vector<gf_element> roots(const ZZ_pX& f)
   ZZ_pX X; SetX(X); 
   ZZ_pX g = PowerXMod(ZZ_p::modulus(),f1)-X;
   vec_ZZ_p r; FindRoots(r,GCD(f1,g)); 
-  vector<gf_element>ans;
+  vector<ZZ_p>ans;
   for(int i=0; i<r.length(); i++) ans.push_back(r[i]);
   return ans;
 }
@@ -50,12 +50,11 @@ vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ q)
   galois_field Fq(q);
   ZZ_pX f;
   unsigned long i, deg = coeffs.size()-1;
-  for (i=0; i<=deg; i++) SetCoeff(f,i,ZtoGF(Fq,coeffs[i]));
+  for (i=0; i<=deg; i++) SetCoeff(f,i, to_ZZ_p(coeffs[i]));
 
-  vector<gf_element> r = roots(f);
-  vector<ZZ>ans;
-  for(i=0; i<r.size(); i++) ans.push_back(LiftGF(r[i]));
-
+  vector<ZZ_p> r = roots(f);
+  vector<ZZ> ans(r.size());
+  std::transform(r.begin(), r.end(), ans.begin(), [](ZZ_p ri) {return rep(ri);});
   sort(ans.begin(),ans.end());
   return ans;
 }

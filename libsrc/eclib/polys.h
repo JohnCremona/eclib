@@ -33,7 +33,7 @@
 #include "vector.h"
 
 vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ p);
-vector<gf_element> roots(const ZZ_pX& f);
+vector<ZZ_p> roots(const ZZ_pX& f);
 vector<bigrational> roots(const vector<ZZ>& coeffs);
 vector<bigrational> roots(const ZZX& f);
 vector<ZZ> introots(const ZZX& f);

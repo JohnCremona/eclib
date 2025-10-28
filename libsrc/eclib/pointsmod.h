@@ -51,8 +51,8 @@ class ffmodq;
 class galois_field;
 
 class pointmodq{ 
-  gf_element X ; // inhomogeneous coordinates
-  gf_element Y ; //
+  ZZ_p X ; // inhomogeneous coordinates
+  ZZ_p Y ; //
   int is0flag;  // set iff it's the point at infinity
   ZZ order; // 0 if not set
   curvemodq E;                  //  the curve it's on
@@ -61,7 +61,7 @@ public:
   // constructors 
   pointmodq(void) :E() {}
   explicit pointmodq(const curvemodq& EE ) :is0flag(1), order(1), E(EE) {} //  the point at oo
-  pointmodq(const gf_element&x, const gf_element&y, const curvemodq& EE) 
+  pointmodq(const ZZ_p&x, const ZZ_p&y, const curvemodq& EE) 
     :X(x), Y(y), is0flag(0), order(0), E(EE)
     {
       if(!on_curve())
@@ -73,7 +73,7 @@ public:
       if(!on_curve())
 	cout<<"Error!  ("<<x<<","<<y<<") is not on "<<(EE)<<endl;
     }
-  pointmodq(const gf_element&x, const curvemodq& EE);  // a point with X=x or oo if none
+  pointmodq(const ZZ_p&x, const curvemodq& EE);  // a point with X=x or oo if none
   pointmodq(const pointmodq& P ) :X(P.X), Y(P.Y), is0flag(P.is0flag), order(P.order), E(P.E) {;}
 
   // assignment
@@ -81,12 +81,12 @@ public:
 
   // access
   int is_zero() const { return is0flag;}
-  gf_element get_x() const 
+  ZZ_p get_x() const 
     {
       if (is0flag){return to_ZZ_p(0);} 
       return X;
     }
-  gf_element get_y() const 
+  ZZ_p get_y() const 
     {
       if (is0flag){return to_ZZ_p(1);} 
       return Y;
@@ -113,7 +113,7 @@ public:
       return (Y*(Y+(E.a1)*X+(E.a3))-(X*(X*(X+(E.a2))+(E.a4))+(E.a6)))==to_ZZ_p(0);
     }
   // make a point with given x & return true, or return false if none
-  int set_x_coordinate(const gf_element& x);
+  int set_x_coordinate(const ZZ_p& x);
 
   // order: get_order() computes if not yet set
   void set_order(const ZZ& n) {order=n;} // use with caution!
@@ -188,7 +188,7 @@ class curvemodqbasis : public curvemodq {
   pointmodq get_gen(int i);
 
   vector<pointmodq> get_pbasis(int p);
-  vector<pointmodq> get_pbasis_from_roots(int p,  const vector<gf_element>& xi);
+  vector<pointmodq> get_pbasis_from_roots(int p,  const vector<ZZ_p>& xi);
   vector<pointmodq> get_pbasis_via_divpol(int p);
   vector<pointmodq> get_pbasis_via_divpol(int p, const ZZX& pdivpol);
 
@@ -225,9 +225,9 @@ void merge_points_1(pointmodq& PP, ZZ& ordP, pointmodq& Q);
 void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2, 
 		    const ZZ& n2target, pointmodq& Q);
 
-inline bool less(const gf_element& a, const gf_element& b)
+inline bool less(const ZZ_p& a, const ZZ_p& b)
 {
-  return LiftGF(a)<LiftGF(b);
+  return rep(a) < rep(b);
 }
 
 // find a point of "large" order

@@ -36,7 +36,7 @@ void ffmodq::init(const curvemodq& EE)
 {
   E = EE;
   Fq = get_field(EE);
-  NewGF(Fq,a1);  NewGF(Fq,a2);  NewGF(Fq,a3);  NewGF(Fq,a4);  NewGF(Fq,a6);
+  ZZ_p a1, a2, a3, a4, a6;
   E.get_ai(a1,a2,a3,a4,a6);
   // set f1, f2:
   ZZ_pX X;
@@ -85,13 +85,12 @@ ffmodq ffmodq::operator/(const ffmodq& b) const
 }
 
 // this is because of a one-time bug in gf_polynomial::operator():
-gf_element evaluate(const ZZ_pX& f, const gf_element& value)
+ZZ_p evaluate(const ZZ_pX& f, const ZZ_p& value)
 {
   int d = deg(f);
   if (d == 0) return coeff(f,0);
 
-  NewGF(galois_field(ZZ_p::modulus()), result);
-  GFSetZ(result,0);
+  ZZ_p result = to_ZZ_p(0);
 
   if (d < 0) return result;
 
@@ -100,10 +99,10 @@ gf_element evaluate(const ZZ_pX& f, const gf_element& value)
   return result;
 }
 
-gf_element ffmodq::evaluate(const pointmodq& P) const
+ZZ_p ffmodq::evaluate(const pointmodq& P) const
 {
   //  cout<<"In ffmodq::operator() with this = "<<(*this)<<", P="<<P<<endl;
-  gf_element x=P.get_x(), y=P.get_y();
+  ZZ_p x=P.get_x(), y=P.get_y();
   if(P.is_zero()) 
     {cerr<<"ffmodq error: attempt to evaluate at "<<P<<endl; return x;}
   //  cout<<"x="<<x<<", y="<<y<<endl;
@@ -136,17 +135,17 @@ ffmodq tangent(const pointmodq& P)
       ffmodq g(one);
       return g;
     }
-  gf_element x=P.get_x(), y=P.get_y();
-  gf_element a1,a2,a3,a4,a6;
+  ZZ_p x=P.get_x(), y=P.get_y();
+  ZZ_p a1,a2,a3,a4,a6;
   P.get_curve().get_ai(a1,a2,a3,a4,a6);
-  gf_element dyf=y+y+a1*x+a3;
+  ZZ_p dyf=y+y+a1*x+a3;
   ZZ_pX h1;
   SetX(h1);
   // test for 2P=0:
   if(dyf==0) return ffmodq(h1-x);
 
-  gf_element dxf=a1*y-(3*x*x+2*a2*x+a4);
-  gf_element slope=-dxf/dyf;
+  ZZ_p dxf=a1*y-(3*x*x+2*a2*x+a4);
+  ZZ_p slope=-dxf/dyf;
   h1=-y-slope*(h1-x);
   ZZ_pX h2(1);
   return ffmodq(h1,h2);
@@ -159,12 +158,12 @@ ffmodq chord(const pointmodq& P, const pointmodq& Q)
   if(P.is_zero()) return vertical(Q);
   if(Q.is_zero()) return vertical(P);
 
-  const gf_element& xP = P.get_x();
-  const gf_element& yP = P.get_y();
-  const gf_element& xQ = Q.get_x();
-  const gf_element& yQ = Q.get_y();
-  gf_element ydiff=yP-yQ;
-  gf_element xdiff=xP-xQ;
+  const ZZ_p& xP = P.get_x();
+  const ZZ_p& yP = P.get_y();
+  const ZZ_p& xQ = Q.get_x();
+  const ZZ_p& yQ = Q.get_y();
+  ZZ_p ydiff=yP-yQ;
+  ZZ_p xdiff=xP-xQ;
   if(xdiff==0)
     {
       if(ydiff==0)
@@ -176,7 +175,7 @@ ffmodq chord(const pointmodq& P, const pointmodq& Q)
 	  return vertical(P);
 	}
     }
-  gf_element slope=ydiff/xdiff;
+  ZZ_p slope=ydiff/xdiff;
   ZZ_pX h1;
   SetX(h1);
   ZZ_pX h2(1);
@@ -237,11 +236,8 @@ void ffmodq::output(ostream& os) const
 
 // "Unsafe" version only called internally when S,T,and m*S are nonzero:
 
-gf_element evaluate_weil_pol_0(const pointmodq& T, int m, const pointmodq& S)
+ZZ_p evaluate_weil_pol_0(const pointmodq& T, int m, const pointmodq& S)
 {
-  gf_element a = T.get_x(); // just to set the field
-  GFSetZ(a,1);
-
   if(m==2) // easy case
     {
       return S.get_x()-T.get_x();
@@ -253,7 +249,8 @@ gf_element evaluate_weil_pol_0(const pointmodq& T, int m, const pointmodq& S)
 
   pointmodq  kT = pointmodq(T.get_curve());
   pointmodq  T2 = T;
-  gf_element a2 = a; // =1
+  ZZ_p a = to_ZZ_p(1);
+  ZZ_p a2 = a;
 
   ffmodq h;
   int k=m;
@@ -303,13 +300,12 @@ gf_element evaluate_weil_pol_0(const pointmodq& T, int m, const pointmodq& S)
   return a;
 }
 
-gf_element evaluate_weil_pol(const pointmodq& T, int m, const pointmodq& S)
+ZZ_p evaluate_weil_pol(const pointmodq& T, int m, const pointmodq& S)
 {
-  gf_element a = T.get_x(); // just to set the field
-  GFSetZ(a,1);
+  ZZ_p a = to_ZZ_p(1);
   if(T.is_zero()||S.is_zero()) return a;
 
-  if(!(m*S).is_zero()) 
+  if(!(m*S).is_zero())
     return evaluate_weil_pol_0(T,m,S);
 
   pointmodq R=T.get_curve().random_point();
@@ -318,10 +314,9 @@ gf_element evaluate_weil_pol(const pointmodq& T, int m, const pointmodq& S)
   return evaluate_weil_pol_0(T,m,R+S)/evaluate_weil_pol_0(T,m,R);
 }
 
-gf_element weil_pairing(const pointmodq& S, const pointmodq& T, int m)
+ZZ_p weil_pairing(const pointmodq& S, const pointmodq& T, int m)
 {
-  gf_element a = T.get_x(); // just to set the field
-  GFSetZ(a,0); // for return on error condition 
+  ZZ_p a = to_ZZ_p(0); // for return on error condition
   // cout<<"Evaluating Weil Pairing of order "<<m<<" on "<<S<<" and "<<T<<endl;
   if(!(m*T).is_zero())
     {
@@ -334,7 +329,7 @@ gf_element weil_pairing(const pointmodq& S, const pointmodq& T, int m)
       return a;
     }
 
-  GFSetZ(a,1); // for return if trivial
+  a = to_ZZ_p(1); // for return if trivial
   if(T.is_zero()||S.is_zero()) return a;
   if(T==S) return a;
   if(m==2) return -a;

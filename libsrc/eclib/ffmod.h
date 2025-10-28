@@ -57,7 +57,7 @@ public:
       h2 = to_ZZ_p(0);
     }
 
-  explicit ffmodq(const gf_element& c)
+  explicit ffmodq(const ZZ_p& c)
     {
       init_h1h2();
       h1 = c;
@@ -105,8 +105,8 @@ public:
   ffmodq operator/(const ffmodq& b) const;
 
   //  evaluation at a point:
-  gf_element evaluate(const pointmodq& P) const;
-  gf_element operator()(const pointmodq& P) const {return this->evaluate(P);}
+  ZZ_p evaluate(const pointmodq& P) const;
+  ZZ_p operator()(const pointmodq& P) const {return this->evaluate(P);}
 
   //  vertical line through a point:
   friend ffmodq vertical(const pointmodq& P);
@@ -128,9 +128,9 @@ public:
 
 ffmodq weil_pol(const pointmodq& T, int m);
 
-gf_element evaluate_weil_pol(const pointmodq& T, int m, const pointmodq& S);
+ZZ_p evaluate_weil_pol(const pointmodq& T, int m, const pointmodq& S);
 
-gf_element weil_pairing(const pointmodq& S, const pointmodq& T, int m);
+ZZ_p weil_pairing(const pointmodq& S, const pointmodq& T, int m);
 
 inline ostream& operator<<(ostream& os, const ffmodq& f)
 {

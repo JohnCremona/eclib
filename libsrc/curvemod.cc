@@ -39,11 +39,11 @@ curvemodq::curvemodq(const Curve& E, const ZZ& qq)
   //  cout<<"In curvemodq constructor, Fq = "<<Fq<<endl;
   ZZ A1,A2,A3,A4,A6;
   E.getai(A1,A2,A3,A4,A6);
-  GFSetZ(a1,A1);
-  GFSetZ(a2,A2);
-  GFSetZ(a3,A3);
-  GFSetZ(a4,A4);
-  GFSetZ(a6,A6);
+  a1 = to_ZZ_p(A1);
+  a2 = to_ZZ_p(A2);
+  a3 = to_ZZ_p(A3);
+  a4 = to_ZZ_p(A4);
+  a6 = to_ZZ_p(A6);
   order=zero;
 }
 
@@ -72,21 +72,21 @@ void curvemodq::operator=(const curvemodq& C) // assignment
   order=C.order;
 }
 
-void curvemodq::set_group_order_via_legendre()  
+void curvemodq::set_group_order_via_legendre()
 {
   static const ZZ zero(0), one(1);
   // Do NOT make these static as the modulus might change!
-  gf_element two=to_ZZ_p(2);
-  gf_element four=two+two;
+  ZZ_p two=to_ZZ_p(2);
+  ZZ_p four=two+two;
   if(!is_zero(order)) return; // order already set!
   order=one;  // point at infinity
-  gf_element b2 = a1*a1 + four*a2; 
-  gf_element b4 = two*a4 + a1*a3;
-  gf_element b6 = a3*a3 + four*a6; 
-  ZZ ix; NewGF(*Fq,x); NewGF(*Fq,d);
+  ZZ_p b2 = a1*a1 + four*a2;
+  ZZ_p b4 = two*a4 + a1*a3;
+  ZZ_p b6 = a3*a3 + four*a6;
+  ZZ ix; ZZ_p x, d;
   for(ix=zero; ix<q; ix++)
     {
-      GFSetZ(x,ix);
+      x = to_ZZ_p(ix);
       d = ((four*x+b2)*x+(two*b4))*x+b6;
       order+=(1+legendre(rep(d),q));
     }
@@ -108,13 +108,13 @@ ZZ_pX makepdivpol(const curvemodq& C, int p)
 {
   if(p==2)
     {
-      gf_element a1,a2,a3,a4,a6;
+      ZZ_p a1,a2,a3,a4,a6;
       C.get_ai(a1,a2,a3,a4,a6);
       ZZ_pX f;
       SetCoeff(f,0,a3*a3 + 4*a6);
       SetCoeff(f,1,2*(2*a4 + a1*a3));
       SetCoeff(f,2,a1*a1 + 4*a2);
-      SetCoeff(f,3,ItoGF(get_field(C),4));
+      SetCoeff(f,3, to_ZZ_p(4));
       return f;
     }
 
@@ -140,11 +140,11 @@ ZZ_pX div_pol_odd_rec(const curvemodq& C, int n)
 {
   const galois_field Fq=get_field(C);
   ZZ_pX X; SetX(X);
-  gf_element a1,a2,a3,a4,a6;
+  ZZ_p a1,a2,a3,a4,a6;
   C.get_ai(a1,a2,a3,a4,a6);
   ZZ_pX f1 = X*(X*(X+a2)+a4)+a6;
   ZZ_pX f2 = a1*X+a3;
-  ZZ_pX psi24=(ItoGF(Fq,4)*f1+f2*f2); psi24*=psi24;
+  ZZ_pX psi24=(to_ZZ_p(4)*f1+f2*f2); psi24*=psi24;
   ZZ_pX ans;
   switch(n) {
   case 0:

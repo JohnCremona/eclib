@@ -42,7 +42,7 @@ class curvemodq  {
 protected:
   galois_field* Fq;           // pointer to ground field
   ZZ q;                   //  the modulus
-  gf_element a1,a2,a3,a4,a6;  //  the coefficients mod q
+  ZZ_p a1,a2,a3,a4,a6;  //  the coefficients mod q
   ZZ order;               // number of points (0 if not set)
 
 public:
@@ -54,7 +54,7 @@ public:
   void operator=(const curvemodq& C); // assignment
   
   // access
-  void get_ai(gf_element& aa1, gf_element& aa2, gf_element& aa3, gf_element& aa4, gf_element& aa6) const
+  void get_ai(ZZ_p& aa1, ZZ_p& aa2, ZZ_p& aa3, ZZ_p& aa4, ZZ_p& aa6) const
     {
       aa1=a1; aa2=a2; aa3=a3; aa4=a4; aa6=a6;
     }

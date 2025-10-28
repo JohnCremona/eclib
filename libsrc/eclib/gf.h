@@ -37,34 +37,16 @@ class galois_field {
   ZZ characteristic() const {return q;}
 };
 
-typedef ZZ_p gf_element;
-
-#define NewGF(field,name) gf_element name
-#define GFinit(field,name) name=to_ZZ_p(0)
-#define GFSetZ(name,Zvalue) name=to_ZZ_p(Zvalue)
-#define LiftGF(name) rep(name)
-#define GFrandomize(name) random(name)
-
-inline gf_element ZtoGF(const galois_field& F, const ZZ& a)
-{
-  return to_ZZ_p(a);
-}
-
-inline gf_element ItoGF(const galois_field& F, int a)
-{
-  return to_ZZ_p(a);
-}
-
 // NB Here caller must ensure that a is a square;  q odd
-inline gf_element sqrt(const galois_field& F, const gf_element& a)
+inline ZZ_p sqrt(const galois_field& F, const ZZ_p& a)
 {
-  ZZ rd;  
+  ZZ rd;
   sqrt_mod_p(rd,rep(a),F.characteristic());
-  return ZtoGF(F,rd);
+  return to_ZZ_p(rd);
 }
 
 // Returns 1 if a is a square (root in r), else 0
-inline int sqrt(const galois_field& F, const gf_element& a, gf_element& r)
+inline int sqrt(const galois_field& F, const ZZ_p& a, ZZ_p& r)
 {
   ZZ rd = to_ZZ(0),  repa=rep(a),  q = F.characteristic();  
   switch(legendre(repa,q))
@@ -73,12 +55,12 @@ inline int sqrt(const galois_field& F, const gf_element& a, gf_element& r)
     case 1:
       sqrt_mod_p(rd,repa,q); // & carry through to next lines
     case 0: 
-      r= ZtoGF(F,rd);
+      r= to_ZZ_p(rd);
     }
   return 1;
 }
 
-inline gf_element root_of_unity(const galois_field& F, int n)
+inline ZZ_p root_of_unity(const galois_field& F, int n)
 {
   ZZ qm1 = F.characteristic()-1;
   if(qm1%n !=0) return to_ZZ_p(0);
@@ -92,21 +74,20 @@ inline gf_element root_of_unity(const galois_field& F, int n)
     }
 }
 
-inline ZZ order(const gf_element& z)
+inline ZZ order(const ZZ_p& z)
 {
-  gf_element one=to_ZZ_p(1);
-  gf_element zn=z;  ZZ n(1);
+  ZZ_p one=to_ZZ_p(1);
+  ZZ_p zn=z;  ZZ n(1);
   while (zn!=one) {zn*=z; n+=1;}
   return n;
 }
 
-inline vector<gf_element> roots_of_unity(const galois_field& Fq, int p)
+inline vector<ZZ_p> roots_of_unity(const galois_field& Fq, int p)
 {
-  gf_element mu = root_of_unity(Fq,p); // =0 if p ndiv q-1
-  vector<gf_element>mu_p;
+  ZZ_p mu = root_of_unity(Fq,p); // =0 if p ndiv q-1
+  vector<ZZ_p>mu_p;
   mu_p.resize(p);
-  // GFinit(Fq,mu_p[0]);
-  GFSetZ(mu_p[0],1);
+  mu_p[0] = to_ZZ_p(1);
   for(int i=1; i<p; i++) mu_p[i]=mu_p[i-1]*mu;
   return mu_p;
 }

@@ -134,18 +134,18 @@ vector<int> TLSS::map1point(const Point& P) const
 
   // else apply TL maps
 
-  gf_element xP=Pmodq.get_x();
-  gf_element yP=Pmodq.get_y();
-  gf_element lambda, mu, t;
-  gf_element a1,a2,a3,a4,a6;
+  ZZ_p xP=Pmodq.get_x();
+  ZZ_p yP=Pmodq.get_y();
+  ZZ_p lambda, mu, t;
+  ZZ_p a1,a2,a3,a4,a6;
   Emodq.get_ai(a1,a2,a3,a4,a6);
-  gf_element b2 = a1*a1 + 4*a2;
-  gf_element b4 = 2*a4 + a1*a3;
+  ZZ_p b2 = a1*a1 + 4*a2;
+  ZZ_p b4 = 2*a4 + a1*a3;
 
   for(i=0; i<rank; i++)
     {  
       const pointmodq& T = Pi[i];
-      gf_element xT=T.get_x(), yT=T.get_y();
+      ZZ_p xT=T.get_x(), yT=T.get_y();
 #ifdef debugTL
       cout<<"(xT,yT)=("<<xT<<","<<yT<<")"<<endl;
 #endif
@@ -188,7 +188,7 @@ vector<int> TLSS::map1point(const Point& P) const
 #ifdef debugTL
 	cout<<"t="<<t<<endl;
 	cout<<"mu = "<<mu<<endl;
-	gf_element t2, mu2;
+	ZZ_p t2, mu2;
 	if(!(p*Pmodq).is_zero()) t2 = evaluate_weil_pol(T,p,Pmodq);
 	else
 	  {

@@ -41,26 +41,26 @@
 void set_order_point(pointmodq& P, const ZZ& n)
 {P.set_order(n);}
 
-pointmodq::pointmodq(const gf_element&x, const curvemodq& EE)  // a point with X=x or oo if none
+pointmodq::pointmodq(const ZZ_p&x, const curvemodq& EE)  // a point with X=x or oo if none
   : order(0), E(EE)
 {
   set_x_coordinate(x);
 }
 
 // make a point with given x & return true, or return false if none
-int pointmodq::set_x_coordinate(const gf_element& x)
+int pointmodq::set_x_coordinate(const ZZ_p& x)
 {
   is0flag=1; order=0;
-  gf_element two=to_ZZ_p(2);
-  gf_element four=to_ZZ_p(4);
-  gf_element a1,a2,a3,a4,a6; E.get_ai(a1,a2,a3,a4,a6);
+  ZZ_p two=to_ZZ_p(2);
+  ZZ_p four=to_ZZ_p(4);
+  ZZ_p a1,a2,a3,a4,a6; E.get_ai(a1,a2,a3,a4,a6);
   //  cout<<"E = "<<E<<endl;
   //  cout<<"Trying x = "<<x<<endl;
   const ZZ q=E.q;
-  gf_element b2 = a1*a1 + four*a2; 
-  gf_element b4 = two*a4 + a1*a3;
-  gf_element b6 = a3*a3 + four*a6; 
-  gf_element d = ((four*x+b2)*x+(two*b4))*x+b6;
+  ZZ_p b2 = a1*a1 + four*a2; 
+  ZZ_p b4 = two*a4 + a1*a3;
+  ZZ_p b6 = a3*a3 + four*a6; 
+  ZZ_p d = ((four*x+b2)*x+(two*b4))*x+b6;
   switch(legendre(rep(d),q)) // NTL has no modular sqrt!?
     {
     case -1: return 0;
@@ -113,14 +113,14 @@ pointmodq pointmodq::operator+(const pointmodq& Q) const // add Q to this
   pointmodq ans(Q.get_curve()); // initialized to oo
   if(is0flag) return Q;
   if(Q.is0flag) return *this;
-  gf_element XQ=Q.X, YQ=Q.Y;
+  ZZ_p XQ=Q.X, YQ=Q.Y;
   if(X==XQ) 
     {
       if(Y==YQ)	return this->twice();
       else      return ans;             // =oo
     }
-  gf_element lambda = (Y-YQ)/(X-XQ);
-  gf_element mu     =  Y-lambda*X;
+  ZZ_p lambda = (Y-YQ)/(X-XQ);
+  ZZ_p mu     =  Y-lambda*X;
   ans.X = lambda*(lambda+(E.a1))-(E.a2)-X-XQ;
   ans.Y = lambda*(ans.X)+mu;
   ans.is0flag=0;
@@ -154,13 +154,13 @@ pointmodq pointmodq::twice(void) const // doubles P
   pointmodq ans(E);
   if(is0flag) return ans;
   // Do NOT make these static as the modulus might change!
-  gf_element two=to_ZZ_p(2);
-  gf_element three=to_ZZ_p(3);
-  gf_element a1,a2,a3,a4,a6; E.get_ai(a1,a2,a3,a4,a6);
-  gf_element den = two*Y+a1*X+a3;
+  ZZ_p two=to_ZZ_p(2);
+  ZZ_p three=to_ZZ_p(3);
+  ZZ_p a1,a2,a3,a4,a6; E.get_ai(a1,a2,a3,a4,a6);
+  ZZ_p den = two*Y+a1*X+a3;
   if(den==0) return ans;
-  gf_element lambda=(three*X*X+two*a2*X+a4-a1*Y)/den;
-  gf_element mu    = Y-lambda*X;
+  ZZ_p lambda=(three*X*X+two*a2*X+a4-a1*Y)/den;
+  ZZ_p mu    = Y-lambda*X;
   ans.X = lambda*(lambda+a1)-a2-two*X;
   ans.Y = lambda*(ans.X)+mu;
   ans.is0flag=0;
@@ -230,7 +230,7 @@ pointmodq operator*(const ZZ& n, const pointmodq& P)  // n*P
 
 pointmodq curvemodq::random_point()
 {
-  gf_element x;
+  ZZ_p x;
   pointmodq ans(*this);
   while(ans.is_zero())
     {
@@ -244,11 +244,13 @@ pointmodq reduce_point(const Point& P,  const curvemodq& Emodq)
 {
   //  cout<<"Reducing "<<P<<" mod q -> "<<flush;
   galois_field Fq = get_field(Emodq);
-  NewGF(Fq,x);  NewGF(Fq,y);  NewGF(Fq,z);
-  GFSetZ(z,P.getZ());
-  if(IsZero(z)) return pointmodq(Emodq);
-  GFSetZ(x,P.getX()); x/=z; 
-  GFSetZ(y,P.getY()); y/=z; 
+  ZZ_p z = to_ZZ_p(P.getZ()),
+    x = to_ZZ_p(P.getX()),
+    y = to_ZZ_p(P.getY());
+  if(IsZero(z))
+    return pointmodq(Emodq);
+  x/=z;
+  y/=z;
   //  cout<<"("<<x<<","<<y<<")"<<endl;
   return pointmodq(x,y,Emodq);
 }
@@ -282,13 +284,13 @@ void curvemodqbasis::set_basis()
 	  <<" mod "<<::get_modulus(*this)<<endl;
 
       long m = I2long(n2);
-      gf_element mu = weil_pairing(Q1,P2,m);
+      ZZ_p mu = weil_pairing(Q1,P2,m);
       cout<<"Weil pairing of generators = "<<mu<<endl;
-      gf_element mupow; power(mupow,mu,m);
+      ZZ_p mupow; power(mupow,mu,m);
       if (mupow==mu/mu)
 	{
 	  cout<<"OK, that's a "<<m<<"'th root of unity";
-	  gf_element mupower = mu, one=mu/mu;
+	  ZZ_p mupower = mu, one=mu/mu;
 	  int i=1;
 	  while(mupower!=one) {mupower*=mu; i++;}
 	  cout<<" of exact order "<<i;
@@ -344,7 +346,7 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p)
 #ifdef DEBUG_PBASIS  
   cout<<p<<"-division poly mod "<<get_modulus()<<" = "<<pdivpol<<endl;
 #endif
-  vector<gf_element> xi = roots(pdivpol);
+  vector<ZZ_p> xi = roots(pdivpol);
 #ifdef DEBUG_PBASIS  
   cout<<"roots of "<<p<<"-div pol mod "<<get_modulus()<<":  "<<xi<<endl;
 #endif
@@ -358,11 +360,11 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p, const ZZX& pdivpo
   galois_field Fq = get_field(*this);
   ZZ_pX pdivpolmodq;
   long i, d = deg(pdivpol);
-  for (i=0; i<=d; i++) SetCoeff(pdivpolmodq,i,ZtoGF(Fq,coeff(pdivpol,i)));
+  for (i=0; i<=d; i++) SetCoeff(pdivpolmodq,i, to_ZZ_p(coeff(pdivpol,i)));
 #ifdef DEBUG_PBASIS  
   cout<<p<<"-division poly mod "<<get_modulus()<<" = "<<pdivpolmodq<<endl;
 #endif
-  vector<gf_element> xi = roots(pdivpolmodq);
+  vector<ZZ_p> xi = roots(pdivpolmodq);
 #ifdef DEBUG_PBASIS  
   cout<<"roots of "<<p<<"-div pol mod "<<get_modulus()<<":  "<<xi<<endl;
 #endif
@@ -370,7 +372,7 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p, const ZZX& pdivpo
 }
 
 //#define DEBUG_PBASIS
-vector<pointmodq> curvemodqbasis::get_pbasis_from_roots(int p,  const vector<gf_element>& xi)
+vector<pointmodq> curvemodqbasis::get_pbasis_from_roots(int p,  const vector<ZZ_p>& xi)
 {
   vector<pointmodq> ans;
   if(xi.size()==0)
@@ -403,7 +405,7 @@ vector<pointmodq> curvemodqbasis::get_pbasis_from_roots(int p,  const vector<gf_
 	{
 	  // store x-coords of multiples of p
 	  ans.push_back(P);
-	  vector<gf_element> xjp;   
+	  vector<ZZ_p> xjp;   
 	  pointmodq Q=P;
 	  for(i=0; i<p12; i++)
 	    {
@@ -524,7 +526,7 @@ ZZ my_bg_algorithm(const pointmodq& PP,
         } // H==H2 case
   
       if (!H.is_zero()) // store [x(H),i] in table
-	HT[LiftGF(H.get_x())]=i;
+	HT[rep(H.get_x())]=i;
     }
 
   // Now for all i up to number_baby we have a table of pairs [x(i*P),i]
@@ -556,7 +558,7 @@ ZZ my_bg_algorithm(const pointmodq& PP,
       
       // look in table to see if H2= i*P for a suitable i
 
-      auto HTi = HT.find(LiftGF(H2.get_x()));
+      auto HTi = HT.find(rep(H2.get_x()));
       if(HTi!=HT.end())
 	{
 	  i = HTi->second;
@@ -810,7 +812,7 @@ void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2,
       cout<<"order((n1/n2target)*P1) = "<<Q1<<" is "<<order_point(Q1)<<endl;
       cout<<"order(Q) =                "<<Q<<" is "<<order_point(Q)<<endl;
     }
-  gf_element zeta = weil_pairing(Q1,Q,I2long(n2target));
+  ZZ_p zeta = weil_pairing(Q1,Q,I2long(n2target));
   if(debug_iso_type)  cout<<"zeta = "<< zeta <<endl;
   if(IsZero(zeta))
   {
@@ -984,11 +986,11 @@ void my_isomorphism_type(curvemodq& Cq,
       // Now x2divpos will have as roots the two other x-coords of
       // 2-division points _unless_ P1 is not of maximal order in
       // which case it may be irreducible.
-      gf_element a1=coeff(x2divpol,1);
-      gf_element d =a1*a1-ItoGF(Fq,16)*coeff(x2divpol,0), rd;
+      ZZ_p a1=coeff(x2divpol,1);
+      ZZ_p d =a1*a1-to_ZZ_p(16)*coeff(x2divpol,0), rd;
       if(sqrt(Fq,d,rd))
 	{
-	  P2.set_x_coordinate((sqrt(Fq,d)-a1)/ItoGF(Fq,8));
+	  P2.set_x_coordinate((sqrt(Fq,d)-a1)/to_ZZ_p(8));
 	  if(debug_iso_type)
 	    cout<<"New 2-torsion point "<<P2<<endl;
 	  n2=2;

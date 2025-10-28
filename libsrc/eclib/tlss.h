@@ -41,7 +41,7 @@ private:
   ZZ q1p;           //  = (q-1)/p;
 
   galois_field Fq;          // F_q
-  vector<gf_element> mu_p;  // all p'th roots mod q
+  vector<ZZ_p> mu_p;  // all p'th roots mod q
   curvemodqbasis Emodq;     // E over F_q (including its structure)
   vector<pointmodq> Pi;    // basis for p-torsion of E(F_q) (length = rank = 0,1,2)
   vector<ffmodq> TLpolys;   // in the function field Fq(E)
