@@ -439,15 +439,6 @@ vec_i to_vec_i(const vec_m& v)
   return vec_i(w);
 }
 
-vec_i to_vec_i(const vec_l& v)
-{
-  const vector<long> & vi = v.get_entries();
-  auto toint = [](const long& a) {return int(a);};
-  vector<int> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), toint);
-  return vec_i(w);
-}
-
 vec_l to_vec_l(const vec_m& v)
 {
   const vector<ZZ> & vi = v.get_entries();

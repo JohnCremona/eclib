@@ -188,19 +188,10 @@ mat_ZZ_p mat_ZZ_p_from_mat(const Zmat<T>& M, const T& pr);
 template<class T>
 Zmat<T> mat_from_mat_ZZ_p(const mat_ZZ_p& A, const T& pr); // type of T fixes return type
 
-// conversions between matrices of different scalar types
-
-mat_m to_mat_m(const mat_i& m);
-mat_m to_mat_m(const mat_l& m);
-inline mat_m to_mat_m(const mat_m& m) {return m;}
-
-mat_i to_mat_i(const mat_m& m);
-mat_i to_mat_i(const mat_l& m);
-inline mat_i to_mat_i(const mat_i& m) {return m;}
-
-mat_l to_mat_l(const mat_m& m);
-mat_l to_mat_l(const mat_m& m);
-inline mat_l to_mat_l(const mat_l& m) {return m;}
+mat_m to_mat_m(const mat_i& v);
+mat_m to_mat_m(const mat_l& v);
+mat_i to_mat_i(const mat_m& v);
+mat_l to_mat_l(const mat_m& v);
 
 #endif
 

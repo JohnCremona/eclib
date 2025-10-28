@@ -282,18 +282,9 @@ template<class T> inline void elim1(const Zvec<T>& a, Zvec<T>& b, long pos)
 template<class T> inline void elim2(const Zvec<T>& a, Zvec<T>& b, long pos, const T& lastpivot)
 { ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}
 
-// conversions between vectors of different scalar types
-
 vec_m to_vec_m(const vec_i& v);
 vec_m to_vec_m(const vec_l& v);
-inline vec_m to_vec_m(const vec_m& v) {return v;}
-
-vec_l to_vec_l(const vec_i& v);
-inline vec_l to_vec_l(const vec_l& v) {return v;}
-vec_l to_vec_l(const vec_m& v);
-
-inline vec_i to_vec_i(const vec_i& v) {return v;}
-vec_i to_vec_i(const vec_l& v);
 vec_i to_vec_i(const vec_m& v);
+vec_l to_vec_l(const vec_m& v);
 
 #endif
