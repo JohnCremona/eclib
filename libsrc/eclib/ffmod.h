@@ -38,11 +38,11 @@ class ffmodq{
   // static members defining the function field:
   static galois_field Fq;        //  the constant field
   static curvemodq E;            //  the curve mod q
-  static FqPoly f1, f2;          //  f2=a1*x+a3, f2=x^3+a2*x^2+a4*x+a6
+  static ZZ_pX f1, f2;          //  f2=a1*x+a3, f2=x^3+a2*x^2+a4*x+a6
   static void init(const curvemodq& EE); // set Fq, E, f1, f2
 
   // data defining one element of th function field:
-  FqPoly h1, h2;                 //  for h1+y*h2
+  ZZ_pX h1, h2;                 //  for h1+y*h2
 
 
 public:
@@ -53,38 +53,38 @@ public:
   ffmodq(void)
     {
       init_h1h2();
-      FqPolyAssign0(h1);
-      FqPolyAssign0(h2);
+      h1 = to_ZZ_p(0);
+      h2 = to_ZZ_p(0);
     }
 
   explicit ffmodq(const gf_element& c)
     {
       init_h1h2();
-      FqPolyAssignGF(h1,c);
-      FqPolyAssign0(h2);
+      h1 = c;
+      h2 = to_ZZ_p(0);
     }
 
   explicit ffmodq(const ZZ& c)
     {
       init_h1h2();
-      FqPolyAssignZ(h1,c);
-      FqPolyAssign0(h2);
+      h1 = to_ZZ_p(c);
+      h2 = to_ZZ_p(0);
     }
 
-  explicit ffmodq(const FqPoly& hh1)
+  explicit ffmodq(const ZZ_pX& hh1)
     {
       init_h1h2();
-      h1=hh1;
-      FqPolyAssign0(h2);
+      h1 = hh1;
+      h2 = to_ZZ_p(0);
     }
 
-  ffmodq(const FqPoly& hh1, const FqPoly& hh2) :h1(hh1), h2(hh2) {}
+  ffmodq(const ZZ_pX& hh1, const ZZ_pX& hh2) :h1(hh1), h2(hh2) {}
 
   //  initialization
   void init_h1h2(void)
     {
-      FqPolySetField(h1,Fq);
-      FqPolySetField(h2,Fq);
+      // ZZ_pXSetField(h1,Fq);
+      // ZZ_pXSetField(h2,Fq);
     }
 
   // equality test
@@ -98,10 +98,10 @@ public:
   ffmodq operator+(const ffmodq& b) const;
   ffmodq operator-(const ffmodq& b) const;
   ffmodq operator*(const ffmodq& b) const;
-  ffmodq operator*(const FqPoly& h) const;
+  ffmodq operator*(const ZZ_pX& h) const;
 
   //  division
-  ffmodq operator/(const FqPoly& h) const;
+  ffmodq operator/(const ZZ_pX& h) const;
   ffmodq operator/(const ffmodq& b) const;
 
   //  evaluation at a point:

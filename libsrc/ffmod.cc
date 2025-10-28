@@ -29,8 +29,8 @@
 
 galois_field ffmodq::Fq;
 curvemodq ffmodq::E;
-FqPoly ffmodq::f1;
-FqPoly ffmodq::f2;
+ZZ_pX ffmodq::f1;
+ZZ_pX ffmodq::f2;
 
 void ffmodq::init(const curvemodq& EE)
 {
@@ -39,8 +39,8 @@ void ffmodq::init(const curvemodq& EE)
   NewGF(Fq,a1);  NewGF(Fq,a2);  NewGF(Fq,a3);  NewGF(Fq,a4);  NewGF(Fq,a6);
   E.get_ai(a1,a2,a3,a4,a6);
   // set f1, f2:
-  NewFqPoly(Fq,X);
-  FqPolyAssignX(X);
+  ZZ_pX X;
+  SetX(X);
   f1 = X*(X*(X+a2)+a4)+a6;
   f2 = a1*X+a3;
 }
@@ -65,32 +65,32 @@ ffmodq ffmodq::operator*(const ffmodq& b) const
   return ffmodq(h1*b.h1 + f1*h2*b.h2 , h1*b.h2 + h2*b.h1 - f2*h2*b.h2);
 }
 
-ffmodq ffmodq::operator*(const FqPoly& h) const
+ffmodq ffmodq::operator*(const ZZ_pX& h) const
 {
   return ffmodq(h*h1 , h*h2 );
 }
 
-ffmodq ffmodq::operator/(const FqPoly& h) const
+ffmodq ffmodq::operator/(const ZZ_pX& h) const
 {
-  FqPoly g1 = h1; g1/=h;
-  FqPoly g2 = h2; g2/=h;
+  ZZ_pX g1 = h1; g1/=h;
+  ZZ_pX g2 = h2; g2/=h;
   return ffmodq(g1, g2);
 }
 
 ffmodq ffmodq::operator/(const ffmodq& b) const
 {
-  if(Degree(b.h2)==-1) return (*this)/b.h1;
+  if(deg(b.h2)==-1) return (*this)/b.h1;
   cerr<<"ffmodq error:  division by general elements not implemented!"<<endl;
   return ffmodq();
 }
 
 // this is because of a one-time bug in gf_polynomial::operator():
-gf_element evaluate(const FqPoly& f, const gf_element& value)
+gf_element evaluate(const ZZ_pX& f, const gf_element& value)
 {
-  int d = Degree(f);
+  int d = deg(f);
   if (d == 0) return coeff(f,0);
 
-  NewGF(GetField(f),result);
+  NewGF(galois_field(ZZ_p::modulus()), result);
   GFSetZ(result,0);
 
   if (d < 0) return result;
@@ -119,10 +119,11 @@ ffmodq vertical(const pointmodq& P)
   static const ZZ one(1);
   if(P.is_zero())
     {
-      ffmodq g(one); return g;
+      ffmodq g(one);
+      return g;
     }
-  NewFqPoly(base_field(P),h1);
-  FqPolyAssignX(h1);
+  ZZ_pX h1;
+  SetX(h1);
   return ffmodq(h1-(P.get_x()));
 }
 
@@ -132,22 +133,22 @@ ffmodq tangent(const pointmodq& P)
   static const ZZ one(1);
   if(P.is_zero())
     {
-      ffmodq g(one); return g;
+      ffmodq g(one);
+      return g;
     }
   gf_element x=P.get_x(), y=P.get_y();
   gf_element a1,a2,a3,a4,a6;
   P.get_curve().get_ai(a1,a2,a3,a4,a6);
   gf_element dyf=y+y+a1*x+a3;
-  NewFqPoly(base_field(P),h1);
-  FqPolyAssignX(h1);
+  ZZ_pX h1;
+  SetX(h1);
   // test for 2P=0:
   if(dyf==0) return ffmodq(h1-x);
 
   gf_element dxf=a1*y-(3*x*x+2*a2*x+a4);
   gf_element slope=-dxf/dyf;
   h1=-y-slope*(h1-x);
-  NewFqPoly(base_field(P),h2);
-  FqPolyAssign1(h2);
+  ZZ_pX h2(1);
   return ffmodq(h1,h2);
 }
 
@@ -173,11 +174,12 @@ ffmodq chord(const pointmodq& P, const pointmodq& Q)
       else
 	{
 	  return vertical(P);
-	}    
+	}
     }
   gf_element slope=ydiff/xdiff;
-  NewFqPoly(base_field(P),h1); FqPolyAssignX(h1);
-  NewFqPoly(base_field(P),h2); FqPolyAssign1(h2);
+  ZZ_pX h1;
+  SetX(h1);
+  ZZ_pX h2(1);
   h1=-yP-slope*(h1-xP);
   return ffmodq(h1,h2);
 }
@@ -203,11 +205,11 @@ ffmodq weil_pol(const pointmodq& T, int m)
   }
 #if(0)
   // Check:
-  FqPoly h1 = h.h1, h2=h.h2;
-  FqPoly f1 = h.f1, f2=h.f2;
-  FqPoly t = f1*h2*h2+f2*h1*h2-h1*h1;
+  ZZ_pX h1 = h.h1, h2=h.h2;
+  ZZ_pX f1 = h.f1, f2=h.f2;
+  ZZ_pX t = f1*h2*h2+f2*h1*h2-h1*h1;
   // that should equal const*(x-x(T))^m
-  FqPoly u;
+  ZZ_pX u;
   power(u,vertical(T).h1,m);
   u = coeff(t,m)*u;
   if(t==u) 

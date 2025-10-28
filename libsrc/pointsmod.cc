@@ -340,7 +340,7 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p)
 {
   vector<pointmodq> ans;
   if((n%p)!=0) return ans;
-  FqPoly pdivpol = makepdivpol(*this, p);
+  ZZ_pX pdivpol = makepdivpol(*this, p);
 #ifdef DEBUG_PBASIS  
   cout<<p<<"-division poly mod "<<get_modulus()<<" = "<<pdivpol<<endl;
 #endif
@@ -356,9 +356,8 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p, const ZZX& pdivpo
   vector<pointmodq> ans;
   if((n%p)!=0) return ans;
   galois_field Fq = get_field(*this);
-  NewFqPoly(Fq,pdivpolmodq);
+  ZZ_pX pdivpolmodq;
   long i, d = deg(pdivpol);
-  // SetDegree(pdivpolmodq,d);
   for (i=0; i<=d; i++) SetCoeff(pdivpolmodq,i,ZtoGF(Fq,coeff(pdivpol,i)));
 #ifdef DEBUG_PBASIS  
   cout<<p<<"-division poly mod "<<get_modulus()<<" = "<<pdivpolmodq<<endl;
@@ -975,8 +974,8 @@ void my_isomorphism_type(curvemodq& Cq,
       pointmodq T = (ordP/2)*P1; // the one we have already
       if(debug_iso_type)
 	cout<<"Existing 2-torsion point "<<T<<endl;
-      NewFqPoly(Fq,f);  FqPolyAssignX(f);  f=f-T.get_x();
-      FqPoly x2divpol = makepdivpol(Cq,2);
+      ZZ_pX f;  SetX(f);  f=f-T.get_x();
+      ZZ_pX x2divpol = makepdivpol(Cq,2);
       if(debug_iso_type)
 	cout<<"2-division poly = "<<x2divpol<<endl;
       divide(x2divpol,x2divpol,f);

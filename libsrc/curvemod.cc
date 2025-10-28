@@ -104,14 +104,13 @@ void curvemodq::set_group_order()
 
 // Division poly functions:
 
-FqPoly makepdivpol(const curvemodq& C, int p)
+ZZ_pX makepdivpol(const curvemodq& C, int p)
 {
   if(p==2)
     {
       gf_element a1,a2,a3,a4,a6;
       C.get_ai(a1,a2,a3,a4,a6);
-      NewFqPoly(get_field(C),f);
-      // SetDegree(f,3);
+      ZZ_pX f;
       SetCoeff(f,0,a3*a3 + 4*a6);
       SetCoeff(f,1,2*(2*a4 + a1*a3));
       SetCoeff(f,2,a1*a1 + 4*a2);
@@ -130,30 +129,29 @@ FqPoly makepdivpol(const curvemodq& C, int p)
 
 // The poly itself is found recursively
  
-FqPoly div_pol_odd_rec(const curvemodq& C, int n);
+ZZ_pX div_pol_odd_rec(const curvemodq& C, int n);
 
-FqPoly div_pol_odd(const curvemodq& C, int n)
+ZZ_pX div_pol_odd(const curvemodq& C, int n)
 {
   return div_pol_odd_rec(C,n);
 }
 
-FqPoly div_pol_odd_rec(const curvemodq& C, int n)
+ZZ_pX div_pol_odd_rec(const curvemodq& C, int n)
 {
   const galois_field Fq=get_field(C);
-  NewFqPoly(Fq,X);  FqPolyAssignX(X);
+  ZZ_pX X; SetX(X);
   gf_element a1,a2,a3,a4,a6;
   C.get_ai(a1,a2,a3,a4,a6);
-  FqPoly f1 = X*(X*(X+a2)+a4)+a6;
-  FqPoly f2 = a1*X+a3;
-  FqPoly psi24=(ItoGF(Fq,4)*f1+f2*f2); psi24*=psi24;
-  NewFqPoly(Fq,ans);
+  ZZ_pX f1 = X*(X*(X+a2)+a4)+a6;
+  ZZ_pX f2 = a1*X+a3;
+  ZZ_pX psi24=(ItoGF(Fq,4)*f1+f2*f2); psi24*=psi24;
+  ZZ_pX ans;
   switch(n) {
-  case 0: 
-    FqPolyAssign0(ans); return ans;
-  case 1: case 2: 
-    FqPolyAssign1(ans); return ans;
+  case 0:
+    ans = to_ZZ_p(0); return ans;
+  case 1: case 2:
+    ans = to_ZZ_p(1); return ans;
   case 3:
-    // SetDegree(ans,4);
     SetCoeff(ans,4,3);
     SetCoeff(ans,3,a1*a1+4*a2);
     SetCoeff(ans,2,3*a1*a3+6*a4);
@@ -161,7 +159,6 @@ FqPoly div_pol_odd_rec(const curvemodq& C, int n)
     SetCoeff(ans,0,a1*a1*a6-a1*a3*a4+a2*a3*a3+4*a2*a6-a4*a4);
     return ans;
   case 4:
-    // SetDegree(ans,6);
     SetCoeff(ans,6,2);
     SetCoeff(ans,5,a1*a1+4*a2);
     SetCoeff(ans,4,5*a1*a3+10*a4);
@@ -175,9 +172,9 @@ FqPoly div_pol_odd_rec(const curvemodq& C, int n)
     if(n%2==1)
       {
 	int m=(n-1)/2;
-	FqPoly t1=div_pol_odd_rec(C,m);
+	ZZ_pX t1=div_pol_odd_rec(C,m);
 	t1=div_pol_odd_rec(C,m+2)*t1*t1*t1;
-	FqPoly t2=div_pol_odd_rec(C,m+1);
+	ZZ_pX t2=div_pol_odd_rec(C,m+1);
 	t2=div_pol_odd_rec(C,m-1)*t2*t2*t2;
 	if(m%2==1) return t1-psi24*t2;
 	return psi24*t1-t2;
@@ -185,9 +182,9 @@ FqPoly div_pol_odd_rec(const curvemodq& C, int n)
     else // n is even, n=2m:
       {
 	int m=n/2;
-	FqPoly t1=div_pol_odd_rec(C,m-1);
+	ZZ_pX t1=div_pol_odd_rec(C,m-1);
 	t1=div_pol_odd_rec(C,m+2)*t1*t1;
-	FqPoly t2=div_pol_odd_rec(C,m+1);
+	ZZ_pX t2=div_pol_odd_rec(C,m+1);
 	t2=div_pol_odd_rec(C,m-2)*t2*t2;
 	return div_pol_odd_rec(C,m)*(t1-t2);
       }

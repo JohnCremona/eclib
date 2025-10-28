@@ -34,7 +34,6 @@ ZZX div_pol_2(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
                 const ZZ& a6)
 {
   ZZX ans;
-  // SetDegree(ans,3);
   SetCoeff(ans,3,4);
   SetCoeff(ans,2,a1*a1+4*a2);
   SetCoeff(ans,1,2*a1*a3+4*a4);
@@ -59,15 +58,12 @@ ZZX div_pol_odd(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
   ZZX ans;
   switch(n) {
   case 0: 
-    // SetDegree(ans,0);
     SetCoeff(ans,0,0);
     return ans;
   case 1: case 2: 
-    // SetDegree(ans,0);
     SetCoeff(ans,0,1);
     return ans;
   case 3:
-    // SetDegree(ans,4);
     SetCoeff(ans,4,3);
     SetCoeff(ans,3,a1*a1+4*a2);
     SetCoeff(ans,2,3*a1*a3+6*a4);
@@ -75,7 +71,6 @@ ZZX div_pol_odd(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
     SetCoeff(ans,0,a1*a1*a6-a1*a3*a4+a2*a3*a3+4*a2*a6-a4*a4);
     return ans;
   case 4:
-    // SetDegree(ans,6);
     SetCoeff(ans,6,2);
     SetCoeff(ans,5,a1*a1+4*a2);
     SetCoeff(ans,4,5*a1*a3+10*a4);

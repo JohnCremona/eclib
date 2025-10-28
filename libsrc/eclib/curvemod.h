@@ -101,8 +101,8 @@ inline curvemodq reduce_curve(const Curve& E, const ZZ& q)
 inline galois_field get_field(const curvemodq& C) { return galois_field(C.q); }
 inline ZZ get_modulus(const curvemodq& C) { return C.q; }
 
-FqPoly div_pol_odd(const curvemodq& C, int n); 
-FqPoly makepdivpol(const curvemodq& C, int p);
+ZZ_pX div_pol_odd(const curvemodq& C, int n); 
+ZZ_pX makepdivpol(const curvemodq& C, int p);
 
 
 #endif // #define _CURVEMOD_

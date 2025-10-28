@@ -23,19 +23,18 @@
  
 #include "eclib/polys.h"
 
-FqPoly reduce(const ZZX& f, const galois_field& Fq)
+ZZ_pX reduce(const ZZX& f, const galois_field& Fq)
 {
-  NewFqPoly(Fq,fmodq);
-  // SetDegree(fmodq,Degree(f));
-  for(int i=0; i<=Degree(f); i++)
+  ZZ_pX fmodq;
+  for(int i=0; i<=deg(f); i++)
     SetCoeff(fmodq,i,ZtoGF(Fq,coeff(f,i)));
   return fmodq;
 }
 
-vector<gf_element> roots(const FqPoly& f)
+vector<gf_element> roots(const ZZ_pX& f)
 {
   // make f monic:
-  FqPoly f1=f;
+  ZZ_pX f1=f;
   MakeMonic(f1);
   // reduce to distinct roots case:
   ZZ_pX X; SetX(X); 
@@ -46,13 +45,11 @@ vector<gf_element> roots(const FqPoly& f)
   return ans;
 }
 
-
 vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ q)
 {
   galois_field Fq(q);
-  NewFqPoly(Fq,f);
+  ZZ_pX f;
   unsigned long i, deg = coeffs.size()-1;
-  // SetDegree(f,deg);
   for (i=0; i<=deg; i++) SetCoeff(f,i,ZtoGF(Fq,coeffs[i]));
 
   vector<gf_element> r = roots(f);
@@ -176,4 +173,268 @@ int nrootscubic(const ZZ& b, const ZZ& c, const ZZ& d, const ZZ& p)
   coeffs.push_back(b);
   coeffs.push_back(ZZ(1));
   return rootsmod(coeffs,p).size();
+}
+
+// factor a primitive (e.g. monic) polynomial
+vec_pair_ZZX_long factor(const ZZX& f)
+{
+  vec_pair_ZZX_long factors;
+  ZZ cont;
+  factor(cont,factors,f);
+  ::sort(factors.begin(), factors.end(), fact_cmp);
+  return factors;
+}
+
+factor_comparison fact_cmp;
+poly_comparison poly_cmp;
+factor_modp_comparison fact_modp_cmp;
+poly_modp_comparison poly_modp_cmp;
+
+// pretty output for integer polynomials
+string monomial_string(int i, const string& var)
+{
+  ostringstream s;
+  if (i>0) s << var;
+  if (i>1) s << "^" << i;
+  return s.str();
+}
+
+string polynomial_string(const vector<ZZ>& coeffs, const string& var)
+{
+  //  cout<<"\npolynomial_string("<<coeffs<<")\n";
+  if (std::all_of(coeffs.begin(), coeffs.end(), [](const ZZ&c){return IsZero(c);}))
+    return "0";
+  int d = coeffs.size()-1;
+  ZZ c;
+  ostringstream s;
+  if (d==0)
+    {
+      s << coeffs[0];
+      return s.str();
+    }
+  // All non-constant terms:
+  for (int i=d; i>0; i--)
+    {
+      c = coeffs[i];
+      if (c==0)
+        continue;
+      if (c>1)
+        {
+          if (i<d) // no + needed on leading term
+            s << "+";
+          s << c << "*";
+        }
+      else if (c==1 && i<d) s << "+";
+      else if (c==-1) s << "-";
+      else if (c<-1) s << "-" << abs(c) << "*";
+      s << monomial_string(i, var);
+      //cout<<" - after i="<<i<<": "<<s.str()<<endl;
+    }
+  // Constant term:
+  c = coeffs[0];
+  if (c>0) s << "+" << c;
+  else if (c<0) s << "-" <<abs(c);
+  //cout<<" - after i=0: "<<s.str()<<endl;
+
+  return s.str();
+}
+
+string polynomial_string(const Zvec<ZZ> coeffs, const string& var)
+{
+  if (trivial(coeffs))
+    return "0";
+  int d = dim(coeffs); // one less than 'degree'
+  vector<ZZ> co(d);
+  for(int i=0; i<d; i++)
+    co[i] = coeffs[i+1];
+  return polynomial_string(co, var);
+}
+
+vector<ZZ> coeffs(const ZZX& p)
+{
+  int d = deg(p);
+  vector<ZZ> v(d+1);
+  for(int i=0; i<=d; i++)
+    v[i] = coeff(p, i);
+  return v;
+}
+
+vector<ZZ> coeffs(const ZZ_pX& p)
+{
+  int d = deg(p);
+  vector<ZZ> v(d+1);
+  for(int i=0; i<=d; i++)
+    v[i] = rep(coeff(p, i));
+  return v;
+}
+
+string polynomial_string(const ZZX& p, const string& var)
+{
+  return polynomial_string(coeffs(p), var);
+}
+
+string polynomial_string(const ZZ_pX& p, const string& var)
+{
+  return polynomial_string(coeffs(p), var);
+}
+
+// display factors of a polynomaial:
+void display_factor(const pair_ZZX_long& f)
+{
+  ZZX p = f.a;
+  string pol = polynomial_string(p);
+  int d = deg(p), e = f.b;
+  cout << "(degree " << d << ")\t"
+       << pol
+       << "\t to power " << e;
+  //cout << " (coefficients " << p << ")";
+}
+
+void display_factors(const ZZX& f)
+{
+  ZZ cont; vec_pair_ZZX_long factors;
+  factor(cont, factors, f);
+  ::sort(factors.begin(), factors.end(), fact_cmp);
+  long nf = factors.length();
+  for(int i=0; i<nf; i++)
+    {
+      cout << (i+1) << ":\t";
+      display_factor(factors[i]);
+      cout<<endl;
+    }
+}
+
+void display_factor(const pair_ZZ_pX_long& f)
+{
+  ZZ_pX p = f.a;
+  string pol = polynomial_string(p);
+  int d = deg(p), e = f.b;
+  cout << "(degree " << d << ")\t"
+       << pol
+       << "\t to power " << e;
+  //cout << " (coefficients " << p << ")";
+}
+
+void display_factors(const ZZ_pX& f)
+{
+  vec_pair_ZZ_pX_long factors = berlekamp(f);
+  ::sort(factors.begin(), factors.end(), fact_modp_cmp);
+  long nf = factors.length();
+  for(int i=0; i<nf; i++)
+    {
+      cout << (i+1) << ":\t";
+      display_factor(factors[i]);
+      cout<<endl;
+    }
+}
+
+// return f(X/c)*c^d: multiply coeff(f,i) by c^(d-i)
+ZZX scale_poly_up(const ZZX& f, const ZZ& c)
+{
+  if (c==1) return f;
+  ZZX g = f;
+  ZZ cpow(1);
+  long d = deg(f);
+  for (int i=0; i<=d; i++)
+    {
+      SetCoeff(g, d-i, cpow*coeff(g, d-i));
+      if (i<d)
+        cpow *= c;
+    }
+  return g;
+}
+
+// return f(c*X)/c^d: divide coeff(f,i) by c^(d-i)
+// NB only use when divisions are exact
+ZZX scale_poly_down(const ZZX& f, const ZZ& c)
+{
+  if (c==1) return f;
+  ZZX g = f;
+  ZZ cpow(1);
+  long d = deg(f);
+  for (int i=0; i<=d; i++)
+    {
+      SetCoeff(g, d-i, coeff(g, d-i)/cpow);
+      if (i<d)
+        cpow *= c;
+    }
+  return g;
+}
+
+// return f(X) mod m
+ZZX reduce_poly(const ZZX& f, const ZZ& m)
+{
+  if (m==0) return f;
+  ZZX g = f;
+  long d = deg(f);
+  for (int i=0; i<=d; i++)
+    SetCoeff(g, d-i, mod(coeff(g, d-i), m));
+  return g;
+}
+
+// Coprime test
+int AreCoprime(const ZZX& f, const ZZX& g)
+{
+  return deg(GCD(f, g)) == 0;
+}
+
+// Squarefree test
+int IsSquareFree(const ZZX& f)
+{
+  return AreCoprime(f, diff(f));
+}
+
+// Irreducibility test (ignoring content)
+int IsIrreducible(const ZZX& f)
+{
+  ZZ cont; vec_pair_ZZX_long factors;
+  factor(cont, factors, f);
+  return factors.length()==1;
+}
+
+// return f(X^2)
+ZZX XtoX2(const ZZX& f)
+{
+  int n = deg(f);
+  ZZX f2(2*n, LeadCoeff(f));
+  for (int i=0; i<n; i++)
+    SetCoeff(f2, 2*i, coeff(f,i));
+  return f2;
+}
+
+// write f(x) = f0(X^2)+X*f1(X^2)
+void parity_split(const ZZX& f, ZZX& f0, ZZX& f1)
+{
+  int n = deg(f);
+  // if n is even, deg(f0)=n/2 and deg(f1)<=(n-2)/2
+  // if n is odd, deg(f0)<=(n-1)/2 and deg(f1)=(n-1)/2
+  // so both have degree <=n/2
+  f0.SetLength(1 + n/2); // reserve enough space
+  f1.SetLength(1 + n/2); // reserve enough space
+  for (int i=0; i<=n; i++)
+    {
+      if (i%2) // i odd
+        SetCoeff(f1, (i-1)/2, coeff(f,i));
+      else // i even
+        SetCoeff(f0, i/2, coeff(f,i));
+    }
+  f0.normalize(); // strip any leading 0s
+  f1.normalize(); // strip any leading 0s
+  if (! (f==XtoX2(f0)+LeftShift(XtoX2(f1),1)))
+    cout << "parity_split of " << polynomial_string(f) << " gives \n"
+         << "f0 = "<< polynomial_string(f0) << "\n"
+         << "f1 = "<< polynomial_string(f1) << "\n"
+         << " --> " << polynomial_string(XtoX2(f0)+LeftShift(XtoX2(f1),1)) << endl;
+}
+
+// assuming f irreducible:
+// return 0 if f(x^2) is irreducible; else
+// return 1 and set g where f(x^2)=g(x)g(-x) (*-1 if degree odd)
+int is_square(const ZZX& f, ZZX& g)
+{
+  vec_pair_ZZX_long factors = factor(XtoX2(f));
+  if (factors.length()==1)
+    return 0;
+  g = factors[0].a;
+  return 1;
 }

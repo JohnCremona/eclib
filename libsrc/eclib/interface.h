@@ -82,6 +82,7 @@ const double LOG_10_2=0.30102999566398114L;
 #include <NTL/mat_ZZ_p.h>
 #include <NTL/mat_poly_ZZ.h>
 #include <NTL/mat_poly_ZZ_p.h>
+#include <NTL/LLL.h>
 
 // much used NTL classes and functions:
 using NTL::bit;
