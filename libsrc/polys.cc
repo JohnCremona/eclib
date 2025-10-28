@@ -238,7 +238,7 @@ string polynomial_string(const vector<ZZ>& coeffs, const string& var)
   return s.str();
 }
 
-string polynomial_string(const Zvec<ZZ> coeffs, const string& var)
+string polynomial_string(const Zvec<ZZ>& coeffs, const string& var)
 {
   if (trivial(coeffs))
     return "0";
