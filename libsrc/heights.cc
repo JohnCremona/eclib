@@ -22,7 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include "eclib/points.h"
-using NTL::mat_RR;
 
 #define MAX_RANK_REG 50 // cannot ask for regulator of more than 50 points if not using NTL's RR
 

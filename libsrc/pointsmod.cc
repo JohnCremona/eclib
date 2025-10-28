@@ -351,14 +351,14 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p)
   return get_pbasis_from_roots(p,xi);
 }
 
-vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p, const ZPoly& pdivpol)
+vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p, const ZZX& pdivpol)
 {
   vector<pointmodq> ans;
   if((n%p)!=0) return ans;
   galois_field Fq = get_field(*this);
   NewFqPoly(Fq,pdivpolmodq);
   long i, d = deg(pdivpol);
-  SetDegree(pdivpolmodq,d);
+  // SetDegree(pdivpolmodq,d);
   for (i=0; i<=d; i++) SetCoeff(pdivpolmodq,i,ZtoGF(Fq,coeff(pdivpol,i)));
 #ifdef DEBUG_PBASIS  
   cout<<p<<"-division poly mod "<<get_modulus()<<" = "<<pdivpolmodq<<endl;
@@ -985,8 +985,8 @@ void my_isomorphism_type(curvemodq& Cq,
       // Now x2divpos will have as roots the two other x-coords of
       // 2-division points _unless_ P1 is not of maximal order in
       // which case it may be irreducible.
-      gf_element a1=PolyCoeff(x2divpol,1);
-      gf_element d =a1*a1-ItoGF(Fq,16)*PolyCoeff(x2divpol,0), rd;
+      gf_element a1=coeff(x2divpol,1);
+      gf_element d =a1*a1-ItoGF(Fq,16)*coeff(x2divpol,0), rd;
       if(sqrt(Fq,d,rd))
 	{
 	  P2.set_x_coordinate((sqrt(Fq,d)-a1)/ItoGF(Fq,8));

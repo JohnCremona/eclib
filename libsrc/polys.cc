@@ -23,15 +23,12 @@
  
 #include "eclib/polys.h"
 
-using NTL::vec_pair_ZZX_long;
-using NTL::vec_ZZ_p;
-
-FqPoly reduce(const ZPoly& f, const galois_field& Fq)
+FqPoly reduce(const ZZX& f, const galois_field& Fq)
 {
   NewFqPoly(Fq,fmodq);
-  SetDegree(fmodq,Degree(f));
+  // SetDegree(fmodq,Degree(f));
   for(int i=0; i<=Degree(f); i++)
-    SetCoeff(fmodq,i,ZtoGF(Fq,PolyCoeff(f,i)));
+    SetCoeff(fmodq,i,ZtoGF(Fq,coeff(f,i)));
   return fmodq;
 }
 
@@ -55,7 +52,7 @@ vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ q)
   galois_field Fq(q);
   NewFqPoly(Fq,f);
   unsigned long i, deg = coeffs.size()-1;
-  SetDegree(f,deg);
+  // SetDegree(f,deg);
   for (i=0; i<=deg; i++) SetCoeff(f,i,ZtoGF(Fq,coeffs[i]));
 
   vector<gf_element> r = roots(f);
@@ -67,14 +64,14 @@ vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ q)
 }
 
 //#define TRACE_ROOTS
-vector<bigrational> roots(const ZPoly& f)
+vector<bigrational> roots(const ZZX& f)
 {
 #ifdef TRACE_ROOTS
   cout<<"Finding rational roots of polynomial f =  "<<f<<endl;
 #endif
   vector<bigrational> ans;
   int i;
-  ZPoly g;
+  ZZX g;
   bigrational root;
   ZZ c;
   vec_pair_ZZX_long factors;
@@ -105,7 +102,7 @@ vector<bigrational> roots(const ZPoly& f)
 
 // Return the list of *integral* roots of an integral polynomial.
 // Intended for monic polys, but that is not a requirement
-vector<ZZ> introots(const ZPoly& f)
+vector<ZZ> introots(const ZZX& f)
 {
 #ifdef TRACE_ROOTS
   cout<<"Finding integer roots of polynomial f =  "<<f<<endl;

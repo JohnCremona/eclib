@@ -45,7 +45,7 @@ void TLSS::init(int  pp, int verb)
   if(rank==2) init_tlpolys();
 }
 
-void TLSS::init(int  pp, const ZPoly& pdivpol, int verb)
+void TLSS::init(int  pp, const ZZX& pdivpol, int verb)
 {
   verbose=verb;
   p=pp;

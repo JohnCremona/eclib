@@ -602,7 +602,7 @@ vector<Point> Point::division_points(int m) // list of Q s.t. n*Q=this
 
   // Now in the non-torsion case
 
-  ZPoly pol = division_points_X_pol(E->a1,E->a2,E->a3,E->a4,E->a6, m, X, Z);
+  ZZX pol = division_points_X_pol(E->a1,E->a2,E->a3,E->a4,E->a6, m, X, Z);
 #ifdef DEBUG_DIVISION_POINTS
   cout << "division poly = " << pol << endl;
 #endif

@@ -88,15 +88,15 @@ ffmodq ffmodq::operator/(const ffmodq& b) const
 gf_element evaluate(const FqPoly& f, const gf_element& value)
 {
   int d = Degree(f);
-  if (d == 0) return PolyCoeff(f,0);
+  if (d == 0) return coeff(f,0);
 
   NewGF(GetField(f),result);
   GFSetZ(result,0);
 
   if (d < 0) return result;
 
-  result = PolyCoeff(f,d);
-  for (int i = d-1; i >= 0; i--) result = result*value + PolyCoeff(f,i);
+  result = coeff(f,d);
+  for (int i = d-1; i >= 0; i--) result = result*value + coeff(f,i);
   return result;
 }
 
@@ -209,7 +209,7 @@ ffmodq weil_pol(const pointmodq& T, int m)
   // that should equal const*(x-x(T))^m
   FqPoly u;
   power(u,vertical(T).h1,m);
-  u = PolyCoeff(t,m)*u;
+  u = coeff(t,m)*u;
   if(t==u) 
     ;//	cout<<"weil_pol("<<T<<","<<m<<") = "<<h<<" checks OK"<<endl;
   else

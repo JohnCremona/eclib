@@ -24,10 +24,6 @@
 #include "eclib/subspace.h"
 #include "eclib/nfd.h"
 
-using NTL::vec_pair_ZZX_long;
-using NTL::deg;
-using NTL::coeff;
-
 #define OUTPUT_PARI_STYLE
 
 nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)

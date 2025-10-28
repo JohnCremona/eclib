@@ -26,10 +26,6 @@
 #include "eclib/mlocsol.h"
 #include "eclib/hilbert.h"
 
-using NTL::vec_pair_ZZ_pX_long;
-using NTL::pair_ZZ_pX_long;
-using NTL::ZZ_pX;
-
 int psquare(const ZZ& aa, const ZZ& p);  
 /* tests if aa is a p-adic square */
 

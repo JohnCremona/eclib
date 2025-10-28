@@ -61,7 +61,7 @@ private:
   vector<Point> Plistp;  // the p-cotorsion
   vector<Point> Plistx;  // the points plus p-cotorsion
   vector<Point> AllTorsion; // all torsion on E
-  ZPoly pdivpol;            // p-division poly (not always used)
+  ZZX pdivpol;            // p-division poly (not always used)
   ZZ the_index_bound;     // set initially, but may get reduced
   vector<long> tam_primes;  // primes dividing any Tamagawa index
   int rank;             // = #Plistx

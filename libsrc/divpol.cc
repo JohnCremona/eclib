@@ -30,11 +30,11 @@
 
 // The 2-divison polynomial (cubic in x)
 
-ZPoly div_pol_2(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+ZZX div_pol_2(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
                 const ZZ& a6)
 {
-  ZPoly ans;
-  SetDegree(ans,3);
+  ZZX ans;
+  // SetDegree(ans,3);
   SetCoeff(ans,3,4);
   SetCoeff(ans,2,a1*a1+4*a2);
   SetCoeff(ans,1,2*a1*a3+4*a4);
@@ -48,22 +48,26 @@ ZPoly div_pol_2(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
 
 // The poly itself is found recursively
 
-ZPoly div_pol_odd(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+ZZX div_pol_odd(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
                   const ZZ& a6, int n)
 {
   static const ZZ four(4);
-  ZPoly X; ZPolySetX(X);
-  ZPoly f1 = X*(X*(X+a2)+a4)+a6;
-  ZPoly f2 = a1*X+a3;
-  ZPoly psi24=(four*f1+f2*f2); psi24*=psi24;
-  ZPoly ans;
+  ZZX X; SetX(X);
+  ZZX f1 = X*(X*(X+a2)+a4)+a6;
+  ZZX f2 = a1*X+a3;
+  ZZX psi24=(four*f1+f2*f2); psi24*=psi24;
+  ZZX ans;
   switch(n) {
   case 0: 
-    SetDegree(ans,0); SetCoeff(ans,0,0); return ans;
+    // SetDegree(ans,0);
+    SetCoeff(ans,0,0);
+    return ans;
   case 1: case 2: 
-    SetDegree(ans,0); SetCoeff(ans,0,1); return ans;
+    // SetDegree(ans,0);
+    SetCoeff(ans,0,1);
+    return ans;
   case 3:
-    SetDegree(ans,4);
+    // SetDegree(ans,4);
     SetCoeff(ans,4,3);
     SetCoeff(ans,3,a1*a1+4*a2);
     SetCoeff(ans,2,3*a1*a3+6*a4);
@@ -71,7 +75,7 @@ ZPoly div_pol_odd(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
     SetCoeff(ans,0,a1*a1*a6-a1*a3*a4+a2*a3*a3+4*a2*a6-a4*a4);
     return ans;
   case 4:
-    SetDegree(ans,6);
+    // SetDegree(ans,6);
     SetCoeff(ans,6,2);
     SetCoeff(ans,5,a1*a1+4*a2);
     SetCoeff(ans,4,5*a1*a3+10*a4);
@@ -85,9 +89,9 @@ ZPoly div_pol_odd(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
     if(n%2==1)
       {
 	int m=(n-1)/2;
-	ZPoly t1=div_pol_odd(a1,a2,a3,a4,a6,m);
+	ZZX t1=div_pol_odd(a1,a2,a3,a4,a6,m);
 	t1=div_pol_odd(a1,a2,a3,a4,a6,m+2)*t1*t1*t1;
-	ZPoly t2=div_pol_odd(a1,a2,a3,a4,a6,m+1);
+	ZZX t2=div_pol_odd(a1,a2,a3,a4,a6,m+1);
 	t2=div_pol_odd(a1,a2,a3,a4,a6,m-1)*t2*t2*t2;
 	if(m%2==1) return t1-psi24*t2;
 	return psi24*t1-t2;
@@ -95,22 +99,22 @@ ZPoly div_pol_odd(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
     else // n is even, n=2m:
       {
 	int m=n/2;
-	ZPoly t1=div_pol_odd(a1,a2,a3,a4,a6,m-1);
+	ZZX t1=div_pol_odd(a1,a2,a3,a4,a6,m-1);
 	t1=div_pol_odd(a1,a2,a3,a4,a6,m+2)*t1*t1;
-	ZPoly t2=div_pol_odd(a1,a2,a3,a4,a6,m+1);
+	ZZX t2=div_pol_odd(a1,a2,a3,a4,a6,m+1);
 	t2=div_pol_odd(a1,a2,a3,a4,a6,m-2)*t2*t2;
 	return div_pol_odd(a1,a2,a3,a4,a6,m)*(t1-t2);
       }
   }
 }
 
-ZPoly div_pol(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+ZZX div_pol(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
               const ZZ& a6,int n)
 {
   return (n==2? div_pol_2(a1,a2,a3,a4,a6) :  div_pol_odd(a1,a2,a3,a4,a6,n));
 }
 
-ZPoly division_polynomial(Curvedata* E, int p)
+ZZX division_polynomial(Curvedata* E, int p)
 {
   ZZ a1,a2,a3,a4,a6;
   E->getai(a1,a2,a3,a4,a6);
@@ -119,37 +123,37 @@ ZPoly division_polynomial(Curvedata* E, int p)
 
 // Numerator of the multiplication-by-n map on the x-coordinate
 
-ZPoly mul_by_n_num(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+ZZX mul_by_n_num(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
                    const ZZ& a6, int n)
 {
-  ZPoly X; ZPolySetX(X);
-  ZPoly P_2 = div_pol_2(a1,a2,a3,a4,a6);
-  ZPoly P_n = div_pol_odd(a1,a2,a3,a4,a6,n);
-  ZPoly P_nplus1 = div_pol_odd(a1,a2,a3,a4,a6,n+1);
-  ZPoly P_nminus1 = div_pol_odd(a1,a2,a3,a4,a6,n-1);
-  ZPoly A = X * P_n * P_n;
-  ZPoly B = P_nminus1 * P_nplus1;
+  ZZX X; SetX(X);
+  ZZX P_2 = div_pol_2(a1,a2,a3,a4,a6);
+  ZZX P_n = div_pol_odd(a1,a2,a3,a4,a6,n);
+  ZZX P_nplus1 = div_pol_odd(a1,a2,a3,a4,a6,n+1);
+  ZZX P_nminus1 = div_pol_odd(a1,a2,a3,a4,a6,n-1);
+  ZZX A = X * P_n * P_n;
+  ZZX B = P_nminus1 * P_nplus1;
   return (n%2==0? A * P_2 - B : A - P_2 * B);
 }
 
 // Denominator of the multiplication-by-n map on the x-coordinate
 
-ZPoly mul_by_n_den(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+ZZX mul_by_n_den(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
                    const ZZ& a6, int n)
 {
-  ZPoly P_n = div_pol_odd(a1,a2,a3,a4,a6,n);
+  ZZX P_n = div_pol_odd(a1,a2,a3,a4,a6,n);
   return (n%2==1? P_n * P_n : P_n * P_n * div_pol_2(a1,a2,a3,a4,a6));
 }
 
 // Polynomial whose roots are x(Q) for Q satisfying n*Q=P, where x(P)=xP/zP
 
-ZPoly division_points_X_pol(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
+ZZX division_points_X_pol(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
                             const ZZ& a6,
                             int n,
                             const ZZ& xP, const ZZ& zP)
 {
-  ZPoly numpoly = mul_by_n_num(a1, a2, a3, a4, a6, n);
-  ZPoly denpoly = mul_by_n_den(a1, a2, a3, a4, a6, n);
+  ZZX numpoly = mul_by_n_num(a1, a2, a3, a4, a6, n);
+  ZZX denpoly = mul_by_n_den(a1, a2, a3, a4, a6, n);
   //cout << "numpoly = " << numpoly << endl;
   //cout << "denpoly = " << numpoly << endl;
   return zP * numpoly - xP * denpoly;

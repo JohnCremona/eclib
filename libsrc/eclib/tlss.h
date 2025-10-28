@@ -52,7 +52,7 @@ public:
   TLSS(void) :Emodq() {;}
   void assign(const curvemodqbasis& E) {Emodq=E; Fq=get_field(Emodq); q=Fq.characteristic(); }
   void init(int pp, int verb=0);
-  void init(int pp, const ZPoly& pdivpol, int verb=0);
+  void init(int pp, const ZZX& pdivpol, int verb=0);
   ~TLSS() {; }
   
   // apply map to P, result in (ntp*)[0..p-1]:

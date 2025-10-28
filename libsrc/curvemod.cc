@@ -111,7 +111,7 @@ FqPoly makepdivpol(const curvemodq& C, int p)
       gf_element a1,a2,a3,a4,a6;
       C.get_ai(a1,a2,a3,a4,a6);
       NewFqPoly(get_field(C),f);
-      SetDegree(f,3);
+      // SetDegree(f,3);
       SetCoeff(f,0,a3*a3 + 4*a6);
       SetCoeff(f,1,2*(2*a4 + a1*a3));
       SetCoeff(f,2,a1*a1 + 4*a2);
@@ -153,7 +153,7 @@ FqPoly div_pol_odd_rec(const curvemodq& C, int n)
   case 1: case 2: 
     FqPolyAssign1(ans); return ans;
   case 3:
-    SetDegree(ans,4);
+    // SetDegree(ans,4);
     SetCoeff(ans,4,3);
     SetCoeff(ans,3,a1*a1+4*a2);
     SetCoeff(ans,2,3*a1*a3+6*a4);
@@ -161,7 +161,7 @@ FqPoly div_pol_odd_rec(const curvemodq& C, int n)
     SetCoeff(ans,0,a1*a1*a6-a1*a3*a4+a2*a3*a3+4*a2*a6-a4*a4);
     return ans;
   case 4:
-    SetDegree(ans,6);
+    // SetDegree(ans,6);
     SetCoeff(ans,6,2);
     SetCoeff(ans,5,a1*a1+4*a2);
     SetCoeff(ans,4,5*a1*a3+10*a4);

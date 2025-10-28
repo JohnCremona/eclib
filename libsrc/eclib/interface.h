@@ -81,22 +81,32 @@ const double LOG_10_2=0.30102999566398114L;
 #include <NTL/mat_ZZ.h>
 #include <NTL/mat_ZZ_p.h>
 #include <NTL/mat_poly_ZZ.h>
+#include <NTL/mat_poly_ZZ_p.h>
 
 // much used NTL classes and functions:
+using NTL::bit;
 using NTL::ZZ;
 using NTL::ZZX;
 using NTL::mat_ZZ;
+using NTL::mat_RR;
 using NTL::RR;
 using NTL::zz_p;
 using NTL::ZZ_p;
 using NTL::ZZ_pContext;
+using NTL::vec_ZZ_p;
 using NTL::ZZ_pX;
 using NTL::mat_zz_p;
 using NTL::mat_ZZ_p;
+using NTL::pair_ZZX_long;
+using NTL::vec_pair_ZZX_long;
+using NTL::vec_pair_ZZ_pX_long;
+using NTL::pair_ZZ_pX_long;
 
 using NTL::to_ZZ;
 using NTL::to_ZZ_p;
 using NTL::to_RR;
+using NTL::deg;
+using NTL::coeff;
 
 inline int is_long(const ZZ& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
 inline int is_int(const ZZ& a) {return (a<=MAXINT)&&(a>=MININT);}

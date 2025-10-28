@@ -24,8 +24,6 @@
 #include "eclib/interface.h"
 #include "eclib/bitspace.h"
 
-using NTL::bit;
-
 bitspace::bitspace(long d)
 {
   if(d<0)

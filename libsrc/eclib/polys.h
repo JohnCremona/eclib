@@ -31,10 +31,7 @@
 #include "gf.h"
 #include "bigrat.h"
 
-#define ZPoly ZZX
-#define PolyCoeff(f,i) coeff((f),(i))
-#define ZPolySetX(f) SetX(f);
-#define SetDegree(f,d)
+// #define SetDegree(f,d)
 #define Degree(f) deg((f))
 
 #define FqPoly ZZ_pX
@@ -51,8 +48,8 @@
 vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ p);
 vector<gf_element> roots(const FqPoly& f);
 vector<bigrational> roots(const vector<ZZ>& coeffs);
-vector<bigrational> roots(const ZPoly& f);
-vector<ZZ> introots(const ZPoly& f);
+vector<bigrational> roots(const ZZX& f);
+vector<ZZ> introots(const ZZX& f);
 
 vector<ZZ> Introotscubic(const ZZ& a, const ZZ& b, const ZZ& c);
 vector<ZZ> Introotsquartic(const ZZ& a, const ZZ& b, const ZZ& c,
@@ -63,9 +60,9 @@ vector<ZZ> Introotsquartic(const ZZ& a, const ZZ& b, const ZZ& c,
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
 int nrootscubic(const ZZ& bb, const ZZ& cc, const ZZ& dd, const ZZ& p);
 
-FqPoly reduce(const ZPoly& f, const galois_field& Fq);
+FqPoly reduce(const ZZX& f, const galois_field& Fq);
 
-inline FqPoly reduce(const ZPoly& f, const ZZ& q)
+inline FqPoly reduce(const ZZX& f, const ZZ& q)
 {return reduce(f,galois_field(q));}
 
 
