@@ -133,7 +133,6 @@ string polynomial_string(const Zvec<ZZ>& coeffs, const string& var="X");
 string polynomial_string(const ZZX& p, const string& var="X");
 string polynomial_string(const ZZ_pX& p, const string& var="X");
 
-
 // factor a primitive (e.g. monic) polynomial
 NTL::vec_pair_ZZX_long factor(const ZZX& f);
 
