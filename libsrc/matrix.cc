@@ -1588,10 +1588,6 @@ template mat_m to_mat_m(const Zmat<int>& M);
 template mat_m to_mat_m(const Zmat<long>& M);
 template mat_m to_mat_m(const Zmat<ZZ>& M);
 
-int to_int(const int& i) {return i;}
-int to_int(const long& i) {return i;}
-// NTL has a to_int function for ZZ -> int
-
 template<class T>
 mat_i to_mat_i(const Zmat<T>& M)
 {
@@ -1604,10 +1600,6 @@ mat_i to_mat_i(const Zmat<T>& M)
 template mat_i to_mat_i(const Zmat<int>& M);
 template mat_i to_mat_i(const Zmat<long>& M);
 template mat_i to_mat_i(const Zmat<ZZ>& M);
-
-long to_long(const int& i) {return i;}
-long to_long(const long& i) {return i;}
-// NTL has a to_long function for ZZ -> long
 
 template<class T>
 mat_l to_mat_l(const Zmat<T>& M)

@@ -414,48 +414,41 @@ T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr)
   return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), T(0), a, m);
 }
 
-vec_m to_vec_m(const vec_i& v)
+template<class T>
+vec_m to_vec_m(const Zvec<T>& V)
 {
-  const vector<int> & vi = v.get_entries();
-  vector<ZZ> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), [](const int& x) {return ZZ(x);});
+  const vector<T> & Vi = V.get_entries();
+  vector<ZZ> w(Vi.size());
+  std::transform(Vi.begin(), Vi.end(), w.begin(), [](const T& x) {return to_ZZ(x);});
   return vec_m(w);
 }
+template vec_m to_vec_m<int>(const Zvec<int>& M);
+template vec_m to_vec_m<long>(const Zvec<long>& M);
+template vec_m to_vec_m<ZZ>(const Zvec<ZZ>& M);
 
-vec_m to_vec_m(const vec_l& v)
+template<class T>
+vec_i to_vec_i(const Zvec<T>& V)
 {
-  const vector<long> & vi = v.get_entries();
-  vector<ZZ> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), [](const long& x) {return ZZ(x);});
-  return vec_m(w);
-}
-
-vec_i to_vec_i(const vec_m& v)
-{
-  const vector<ZZ> & vi = v.get_entries();
-  auto toint = [](const ZZ& a) {return is_int(a)? I2int(a) : int(0);};
-  vector<int> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), toint);
+  const vector<T> & Vi = V.get_entries();
+  vector<int> w(Vi.size());
+  std::transform(Vi.begin(), Vi.end(), w.begin(), [](const T& x) {return to_int(x);});
   return vec_i(w);
 }
+template vec_i to_vec_i<int>(const Zvec<int>& M);
+template vec_i to_vec_i<long>(const Zvec<long>& M);
+template vec_i to_vec_i<ZZ>(const Zvec<ZZ>& M);
 
-vec_l to_vec_l(const vec_m& v)
+template<class T>
+vec_l to_vec_l(const Zvec<T>& V)
 {
-  const vector<ZZ> & vi = v.get_entries();
-  auto tolong = [](const ZZ& a) {return is_long(a)? I2long(a) : long(0);};
-  vector<long> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), tolong);
+  const vector<T> & Vi = V.get_entries();
+  vector<long> w(Vi.size());
+  std::transform(Vi.begin(), Vi.end(), w.begin(), [](const T& x) {return to_long(x);});
   return vec_l(w);
 }
-
-vec_l to_vec_l(const vec_i& v)
-{
-  const vector<int> & vi = v.get_entries();
-  auto tolong = [](const int& a) {return long(a);};
-  vector<long> w(vi.size());
-  std::transform(vi.begin(), vi.end(), w.begin(), tolong);
-  return vec_l(w);
-}
+template vec_l to_vec_l<int>(const Zvec<int>& M);
+template vec_l to_vec_l<long>(const Zvec<long>& M);
+template vec_l to_vec_l<ZZ>(const Zvec<ZZ>& M);
 
 // Instantiate Zvec template functions for T=int
 template int dim<int>(const Zvec<int>&);

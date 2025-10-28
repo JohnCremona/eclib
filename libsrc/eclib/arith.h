@@ -245,4 +245,12 @@ vector<long> range(long first, long last);
 
 void sqrt_mod_p(long & x, long a, long p);
 
+inline int to_int(const int& i) {return i;}
+inline int to_int(const long& i) {return i;}
+// NTL has a to_int function for ZZ -> int
+inline long to_long(const int& i) {return i;}
+inline long to_long(const long& i) {return i;}
+// NTL has a to_long function for ZZ -> long
+
+
 #endif

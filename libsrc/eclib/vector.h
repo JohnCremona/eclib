@@ -282,9 +282,12 @@ template<class T> inline void elim1(const Zvec<T>& a, Zvec<T>& b, long pos)
 template<class T> inline void elim2(const Zvec<T>& a, Zvec<T>& b, long pos, const T& lastpivot)
 { ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}
 
-vec_m to_vec_m(const vec_i& v);
-vec_m to_vec_m(const vec_l& v);
-vec_i to_vec_i(const vec_m& v);
-vec_l to_vec_l(const vec_m& v);
+// convert between matrices over different integer types
+template<class T>
+vec_m to_vec_m(const Zvec<T>& V);
+template<class T>
+vec_i to_vec_i(const Zvec<T>& V);
+template<class T>
+vec_l to_vec_l(const Zvec<T>& V);
 
 #endif
