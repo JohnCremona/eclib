@@ -120,7 +120,7 @@ int main(void)
      else
        cout << "*** Does NOT commute with all previous Wq." << endl;
      cout << "Factored char poly:"<<endl;
-     display_factors(charpoly(Wq));
+     display_factors(scaled_charpoly(Wq, Den));
      Wqlist.push_back(Wq);
    }
 
@@ -153,7 +153,7 @@ int main(void)
      else
        cout << "*** Does NOT commute with all Tp." << endl;
      cout << "Factored char poly:"<<endl;
-     display_factors(charpoly(Tp));
+     display_factors(scaled_charpoly(Tp, Den));
      Tplist.push_back(Tp);
    } // end of primes loop
  }       // end of if(n)
