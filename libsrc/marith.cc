@@ -629,6 +629,34 @@ void sqfdecomp(const ZZ& a, vector<ZZ>& plist, ZZ& a1, ZZ& a2)
   plist=aplist;
 }
 
+// test for squarefree
+int is_squarefree(const ZZ& a)
+{
+  vector<ZZ> plist = pdivs(a);
+  return std::all_of(plist.begin(), plist.end(), [a](const ZZ& p){return val(p,a)==1;});
+}
+
+// (positive) squarefree part of a nonzero integer
+ZZ squarefree_part(const ZZ& a)
+{
+  vector<ZZ> plist = pdivs(a);
+  ZZ ans(1);
+  std::for_each(plist.begin(), plist.end(), [a, &ans](const ZZ& p){if(val(p,a)&1) ans*=p;});
+  // for (const auto& p : plist)
+  //   {
+  //     long e = val(p,a);
+  //     if (e&1) {ans *= p;}
+  //   }
+  return ans;
+}
+
+// squarefree product of two squarefree integers (with signs)
+ZZ squarefree_product(const ZZ& a, const ZZ& b)
+{
+  ZZ g = gcd(a,b);
+  return (a/g)*(b/g);
+}
+
 // Given a, b, lem3 returns m1 etc so that a=c1^2*m1*m12, b=c2^2*m2*m12 
 // with m1, m2, m12 pairwise coprime.   At all  times these equations hold, 
 // and at each step the product m1*m2*m12 is decreased by a factor d, 

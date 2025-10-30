@@ -128,9 +128,8 @@ int main()
   cout << "L*[2^e for e in "<<ee<<"]: "<< L2e << endl;
 
   cout<<"\n\nTest of sqrt and isqrt\n";
-  ZZ astop; astop=999;
   ZZ aaa,roota;
-  while (cout << "\nEnter a positive ZZ a (999 to stop): ", cin >> aaa, aaa!=astop) 
+  while (cerr << "\nEnter a positive ZZ a (0 to stop): ", cin >> aaa, is_positive(aaa))
    {
      int res = sign(aaa);
      cout << "a = " << aaa << ", sign(a) = " << res << "\n";
@@ -139,12 +138,16 @@ int main()
      res = isqrt(aaa,roota);
      if(res) cout << "a is a square with exact square root " << roota << "\n";
      else cout << "a is not a square\n";
+     res = is_squarefree(aaa);
+     if (res) cout << "a is squarefree\n";
+     else cout << "a is not squarefree, its squarefree part is " << squarefree_part(aaa) << endl;
    }
 
   cout<<"\n\nTest of sqrt mod p\n";
   ZZ bb,p,r;
-  while(cout << "Enter a prime p: ", cin>>p, cout<<p<<endl, is_positive(p))
+  while(cerr << "Enter a prime p: ", cin>>p , is_positive(p))
     {
+      cout<<"p = "<<p<<endl;
       int nbad=0; long x;
       for(x=1; x<100; x++)
 	{
@@ -162,12 +165,12 @@ int main()
 	      cout << x<< " is not a quadratic residue mod p!\n";
 	    }
 	}
-      if(nbad==0) cout << "First 100 OK"<<endl;
+      if(nbad==0) cout << "OK"<<endl;
       else cout << nbad << " wrong ones out of first 100"<<endl;
     }
 
  ZZ m;
- while (cout << "\nEnter a ZZ m (0 to stop): ", cin >> m, sign(m)!=0) 
+ while (cerr << "\nEnter a ZZ m (0 to stop): ", cin >> m, sign(m)!=0) 
    {
      cout << "m = " << m << endl;
      vector<ZZ> plist=pdivs(m);
@@ -180,17 +183,34 @@ int main()
      vector<ZZ> dlist=alldivs(m,plist);
      cout << "m has " << dlist.size() << " divisors: " << dlist << endl;
      dlist = posdivs(m,plist);
-     cout << "m has " << dlist.size() 
+     cout << "m has " << dlist.size()
           << " positive divisors: " << dlist << endl;
      dlist = sqdivs(m,plist);
-     cout << "m has " << dlist.size() 
+     cout << "m has " << dlist.size()
           << " positive divisors whose square divides m: " << dlist << endl;
      dlist = sqfreedivs(m,plist);
-     cout << "m has " << dlist.size() 
+     cout << "m has " << dlist.size()
           << " positive square-free divisors: " << dlist << endl;
- }
+     cout << "m has squarefree part " << squarefree_part(m) << endl;
+     int res = is_squarefree(m);
+     if (res)
+       cout << "m is squarefree" << endl;
+     else
+       cout << "m is not squarefree, its squarefree part is " << squarefree_part(m) << endl;
+   }
 
  cout<<endl;
+
+ // Test squarefree product
+ ZZ a1, a2, a3, b1, b2, b3;
+ cerr << "Enter two nonzero integers: ";
+ cin >> a1 >> a2;
+ b1 = squarefree_part(a1);
+ b2 = squarefree_part(a2);
+ b3 = squarefree_product(b1,b2);
+ cout << a1 << " and " << a2
+      << " have squarefree parts " << b1 << " and " << b2
+      << " with squarefree product " << b3 << endl;
 
  // test divisor iterator
  cout << "\nTest of divisor iterator class" <<endl;

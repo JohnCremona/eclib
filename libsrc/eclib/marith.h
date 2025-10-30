@@ -155,6 +155,15 @@ void sqfdecomp(const ZZ& a, vector<ZZ>& plist, ZZ& a1, ZZ& a2);
     // a must be non-zero, computes square-free a1 and a2>0 such that a=a1*a2^2
     // plist already holds prime factors of a
 
+// test for squarefree
+int is_squarefree(const ZZ& a);
+
+// (positive) squarefree part of a nonzero integer
+ZZ squarefree_part(const ZZ& a);
+
+// squarefree product of two squarefree integers (with signs)
+ZZ squarefree_product(const ZZ& a, const ZZ& b);
+
 // Given a, b, lem3 returns m1 etc so that a=c1^2*m1*m12, b=c2^2*m2*m12 
 // with m1, m2, m12 pairwise coprime.   At all  times these equations hold, 
 // and at each step the product m1*m2*m12 is decreased by a factor d, 
