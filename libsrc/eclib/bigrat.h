@@ -74,8 +74,8 @@ public:
         bigrational& operator*=(const ZZ&);
         bigrational& operator/=(const bigrational&);
         bigrational& operator/=(const ZZ&);
-        bigrational operator+();
-        bigrational operator-();
+        bigrational operator+() const;
+        bigrational operator-() const;
         friend ZZ floor(const bigrational& r);
         friend ZZ ceil(const bigrational& r);
         operator bigfloat();  // conversion operator
@@ -117,12 +117,12 @@ inline void bigrational::operator=(const bigrational& q) {n=q.n; d=q.d;}
 inline void bigrational::operator=(const ZZ& a) {n=a; d=ZZ(1);}
 inline void bigrational::operator=(const rational& q) {n=ZZ(q.n); d=ZZ(q.d);}
 
-inline bigrational bigrational::operator+()
+inline bigrational bigrational::operator+() const
 {
         return *this;
 }
 
-inline bigrational bigrational::operator-()
+inline bigrational bigrational::operator-() const
 {
         return bigrational(-n, d);
 }
