@@ -5,5 +5,10 @@ q = 2/3 has denominator 3 and numerator 2
 Enter a rational (either n or n/d): q = 123456789/234567890 has denominator 234567890 and numerator 123456789
 floor(q) = 0
 ceil(q) = 1
+q is not a square
+Enter a rational (either n or n/d): q = 7591014978797761/383533056 has denominator 383533056 and numerator 7591014978797761
+floor(q) = 19792335
+ceil(q) = 19792336
+q is a square with root 87126431/19584
 Enter three rationals separated by whitespace: q1 = 111111111111/2222222222222	q2 = 33333333333/4444444444444	q3 = 185185185185185/22222222222
 Enter three rationals in the format [q1:q2:q3]: [q1:q2:q3] = [1/2:3/4:5/6]

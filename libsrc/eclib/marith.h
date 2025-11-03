@@ -85,6 +85,7 @@ ZZ Iceil(bigfloat x);
 ZZ posmod(const ZZ& a, const ZZ& b);  // a mod b in range 0--(b-1)
 long posmod(const ZZ& a, long b);
 int isqrt(const ZZ& a, ZZ& root);
+inline int is_square(const ZZ& a, ZZ& root) {return isqrt(a, root);}
 int divide_exact(const ZZ& aa, const ZZ& bb, ZZ& c);
      // c = a/b with error message if remainder is non-zero
 long divide_out(ZZ& a, const ZZ& d);

@@ -83,6 +83,13 @@ public:
         int is_zero() const {return ::is_zero(n);}
         int is_1728() const {return ::is_zero(n-1728*d);}
 
+        int is_square(bigrational& r) const
+  {
+    ZZ x;
+    if (!isqrt(n*d, x)) return 0;
+    r = bigrational(x,d); // sqrt(n/d) = sqrt(n*d)/d
+    return 1;
+  }
   // Implementation
 private:
         ZZ n, d;

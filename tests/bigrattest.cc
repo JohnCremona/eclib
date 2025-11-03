@@ -30,15 +30,25 @@ int main(void)
  ZZ n(4), d(6), g;
  g = gcd(n,d);
  cout << "gcd(" << n << "," << d << ") = " << g << "\n";
- bigrational q = bigrational(n,d);
+ bigrational q = bigrational(n,d), r;
  cout << "q = " << q << " has denominator " << den(q) << \
          " and numerator " <<  num(q) << "\n";
- cout << "Enter a rational (either n or n/d): ";
- cin>>q;
- cout << "q = " << q << " has denominator " << den(q) <<	\
-   " and numerator " <<  num(q) << "\n";
- cout<<"floor(q) = "<<floor(q)<<endl;
- cout<<"ceil(q) = "<<ceil(q)<<endl;
+
+ for (int i=0; i<2; i++)
+   {
+     cout << "Enter a rational (either n or n/d): ";
+     cin>>q;
+     cout << "q = " << q << " has denominator " << den(q) <<	\
+       " and numerator " <<  num(q) << "\n";
+     cout<<"floor(q) = "<<floor(q)<<endl;
+     cout<<"ceil(q) = "<<ceil(q)<<endl;
+
+     int res = q.is_square(r);
+     if (res)
+       cout << "q is a square with root " << r << endl;
+     else
+       cout << "q is not a square" << endl;
+   }
 
  bigrational q1,q2,q3;
  cout << "Enter three rationals separated by whitespace: ";
