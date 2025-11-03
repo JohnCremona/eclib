@@ -26,7 +26,7 @@
 
 int main(void)
 {
- cout << "Test run of bigrational number procs.\n\n";
+ cout << "Test run of bigrational numbers.\n\n";
  ZZ n(4), d(6), g;
  g = gcd(n,d);
  cout << "gcd(" << n << "," << d << ") = " << g << "\n";
@@ -36,12 +36,13 @@ int main(void)
 
  for (int i=0; i<2; i++)
    {
-     cout << "Enter a rational (either n or n/d): ";
+     cerr << "Enter a rational (either n or n/d): ";
      cin>>q;
      cout << "q = " << q << " has denominator " << den(q) <<	\
        " and numerator " <<  num(q) << "\n";
      cout<<"floor(q) = "<<floor(q)<<endl;
      cout<<"ceil(q) = "<<ceil(q)<<endl;
+     cout<<"-q = "<< -q <<endl;
 
      int res = q.is_square(r);
      if (res)
@@ -51,13 +52,13 @@ int main(void)
    }
 
  bigrational q1,q2,q3;
- cout << "Enter three rationals separated by whitespace: ";
+ cerr << "Enter three rationals separated by whitespace: ";
  cin>>q1>>q2>>q3;
  cout << "q1 = " << q1 << "\t";
  cout << "q2 = " << q2 << "\t";
  cout << "q3 = " << q3 << "\n";
 
- cout << "Enter three rationals in the format [q1:q2:q3]: ";
+ cerr << "Enter three rationals in the format [q1:q2:q3]: ";
  char c;
  cin>>c>>q1>>c>>q2>>c>>q3>>c;
  cout << "[q1:q2:q3] = [" << q1 << ":";
