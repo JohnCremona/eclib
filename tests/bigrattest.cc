@@ -32,7 +32,7 @@ int main(void)
  cout << "gcd(" << n << "," << d << ") = " << g << "\n";
  bigrational q = bigrational(n,d), r;
  cout << "q = " << q << " has denominator " << den(q) << \
-         " and numerator " <<  num(q) << "\n";
+         " and numerator " <<  num(q) << "\n\n";
 
  for (int i=0; i<2; i++)
    {
@@ -50,6 +50,10 @@ int main(void)
      else
        cout << "q is not a square" << endl;
      cout << "Square-free part of q is " << q.squarefree_part() << endl;
+     bigrational q1, q2;
+     sqfdecomp(q, q1, q2);
+     cout << "q = q1 * q2^2 with squarefree q1 = " << q1 << " and positive q2 = " << q2 << endl;
+     cout << endl;
    }
 
  bigrational q1,q2,q3;
@@ -58,6 +62,7 @@ int main(void)
  cout << "q1 = " << q1 << "\t";
  cout << "q2 = " << q2 << "\t";
  cout << "q3 = " << q3 << "\n";
+ cout << endl;
 
  cerr << "Enter three rationals in the format [q1:q2:q3]: ";
  char c;

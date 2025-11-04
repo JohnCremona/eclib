@@ -103,6 +103,8 @@ public:
         bigrational squarefree_part() const {return bigrational(::squarefree_part(n), ::squarefree_part(d));}
         friend inline bigrational squarefree_product(const bigrational& r, const bigrational& s)
         {return (r*s).squarefree_part();}
+        // For a non-zero, computes square-free a1 and a2>0 such that a=a1*a2^2
+        friend void sqfdecomp(const bigrational& a, bigrational& a1, bigrational& a2);
 
   // Implementation
 private:
@@ -319,4 +321,12 @@ inline bigrational prime_to_S_part(const bigrational& x,  const vector<ZZ>& S)
   return bigrational(prime_to_S_part(num(x), S), prime_to_S_part(den(x), S));
 }
 
+inline void sqfdecomp(const bigrational& a, bigrational& a1, bigrational& a2)
+{
+  if (a.is_zero())
+    return;
+  vector<ZZ> plist;
+  sqfdecomp(a.n, a1.n, a2.n, plist);
+  sqfdecomp(a.d, a1.d, a2.d, plist);
+}
 #endif

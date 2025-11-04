@@ -2,17 +2,23 @@ Test run of bigrational numbers.
 
 gcd(4,6) = 2
 q = 2/3 has denominator 3 and numerator 2
+
 q = 123456789/234567890 has denominator 234567890 and numerator 123456789
 floor(q) = 0
 ceil(q) = 1
 -q = -123456789/234567890
 q is not a square
 Square-free part of q is 13717421/234567890
+q = q1 * q2^2 with squarefree q1 = 13717421/234567890 and positive q2 = 3
+
 q = 7591014978797761/383533056 has denominator 383533056 and numerator 7591014978797761
 floor(q) = 19792335
 ceil(q) = 19792336
 -q = -7591014978797761/383533056
 q is a square with root 87126431/19584
 Square-free part of q is 1
+q = q1 * q2^2 with squarefree q1 = 1 and positive q2 = 87126431/19584
+
 q1 = 111111111111/2222222222222	q2 = 33333333333/4444444444444	q3 = 185185185185185/22222222222
+
 [q1:q2:q3] = [1/2:3/4:5/6]
