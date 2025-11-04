@@ -636,23 +636,20 @@ int is_squarefree(const ZZ& a)
   return std::all_of(plist.begin(), plist.end(), [a](const ZZ& p){return val(p,a)==1;});
 }
 
-// (positive) squarefree part of a nonzero integer
+// squarefree part of a nonzero integer (with same sign)
 ZZ squarefree_part(const ZZ& a)
 {
+  if (is_zero(a)) return a;
   vector<ZZ> plist = pdivs(a);
-  ZZ ans(1);
+  ZZ ans(sign(a));
   std::for_each(plist.begin(), plist.end(), [a, &ans](const ZZ& p){if(val(p,a)&1) ans*=p;});
-  // for (const auto& p : plist)
-  //   {
-  //     long e = val(p,a);
-  //     if (e&1) {ans *= p;}
-  //   }
   return ans;
 }
 
 // squarefree product of two squarefree integers (with signs)
 ZZ squarefree_product(const ZZ& a, const ZZ& b)
 {
+  if (is_zero(a) || is_zero(b)) return ZZ(0);
   ZZ g = gcd(a,b);
   return (a/g)*(b/g);
 }

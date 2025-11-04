@@ -49,6 +49,7 @@ int main(void)
        cout << "q is a square with root " << r << endl;
      else
        cout << "q is not a square" << endl;
+     cout << "Square-free part of q is " << q.squarefree_part() << endl;
    }
 
  bigrational q1,q2,q3;

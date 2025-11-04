@@ -100,6 +100,9 @@ public:
            r = bigrational(x,d);
          return res;
         }
+        bigrational squarefree_part() const {return bigrational(::squarefree_part(n), ::squarefree_part(d));}
+        friend inline bigrational squarefree_product(const bigrational& r, const bigrational& s)
+        {return (r*s).squarefree_part();}
 
   // Implementation
 private:

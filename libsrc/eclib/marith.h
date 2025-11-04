@@ -159,7 +159,7 @@ void sqfdecomp(const ZZ& a, vector<ZZ>& plist, ZZ& a1, ZZ& a2);
 // test for squarefree
 int is_squarefree(const ZZ& a);
 
-// (positive) squarefree part of a nonzero integer
+// squarefree part of a nonzero integer (with same sign)
 ZZ squarefree_part(const ZZ& a);
 
 // squarefree product of two squarefree integers (with signs)
