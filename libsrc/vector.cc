@@ -214,15 +214,16 @@ int trivial(const Zvec<T>& v)
 template<class T>
 ostream& operator<<(ostream& s, const Zvec<T>& v)
 {
-  s << "[";
-  long i=0;
-  for ( const auto& vi : v.entries)
-    {
-      if(i++)
-        s<<",";
-      s<<vi;
-    }
-  s << "]";
+  vec_out(s, v.entries, "[", "]", ",");
+  // s << "[";
+  // long i=0;
+  // for ( const auto& vi : v.entries)
+  //   {
+  //     if(i++)
+  //       s<<",";
+  //     s<<vi;
+  //   }
+  // s << "]";
   return s;
 }
 

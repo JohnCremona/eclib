@@ -66,25 +66,42 @@ using std::sort;
 using std::abs;
 using std::setw;
 
+template <class T >
+inline void vec_out(ostream& os, const vector<T>& v,
+                    string pre="[ ", string post=" ]", string sep=" ")
+{
+  os << pre;
+  if (!v.empty())
+    {
+      copy(v.begin(),--v.end(), ostream_iterator<T>(os, sep.c_str()));
+      os << v.back(); // avoids putting a separator after the last element
+    }
+  os << post;
+}
+
+template <class T >
+inline void vec_out(ostream& os, const vector<T>& v,
+                    unsigned int n, // if size>n>0, only output n items + "..."
+                    string pre="[ ", string post=" ]", string sep=" ")
+{
+  unsigned int m=v.size();
+  if ((n==0)||(n>=m))
+    {
+      vec_out(os, v, pre, post, sep);
+    }
+  else
+    {
+      vector<T> w(n);
+      copy(v.begin(), v.begin()+n, w.begin());
+      vec_out(os, w, pre, sep + "..." + post, sep);
+    }
+}
 
 template <class T >
 inline ostream& operator<<(ostream& os, const vector<T>& v)
 {
-  os <<"[ ";
-  copy(v.begin(),v.end(), ostream_iterator<T>(os, " "));
-  os << "]";
+  vec_out(os, v);
   return os;
-}
-
-template <class T >
-inline void vec_out(ostream& os, const vector<T>& v, unsigned int n=0)
-{
-  unsigned int m=v.size();  bool trunc=0;
-  if((n>0)&&(m>n)) {m=n; trunc=1;}
-  os <<"[ ";
-  copy(v.begin(),v.begin()+m, ostream_iterator<T>(os, " "));
-  if(trunc) os << "...";
-  os << "]";
 }
 
 template <class T >

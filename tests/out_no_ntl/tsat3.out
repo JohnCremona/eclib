@@ -1,9 +1,9 @@
 
 24129181 = [0,0,1,-68799,-1969790]
 rank =  2
-torsion group structure =  [ ] (torsion rank 0)
+torsion group structure =  [  ] (torsion rank 0)
 Input non-torsion points: [ [-1870:9257:8] [-197:1984:1] ]
-Input torsion points: [ ]
+Input torsion points: [  ]
 Saturation complete --input points were saturated
 Generator 1 is [-1870:9257:8]; height 2.00839
 Generator 2 is [-197:1984:1]; height 0.182405

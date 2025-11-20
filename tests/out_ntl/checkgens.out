@@ -1,8 +1,8 @@
-268605a1	[0,0,1,1032,2673]:	r = 1	torsion group structure =  [ ] (torsion rank 0).
+268605a1	[0,0,1,1032,2673]:	r = 1	torsion group structure =  [  ] (torsion rank 0).
 P = [41:337:1] OK, order=oo, height=0.59990651734770452119201067743.
-268605b1	[0,0,1,14802,-4767741]:	r = 1	torsion group structure =  [ ] (torsion rank 0).
+268605b1	[0,0,1,14802,-4767741]:	r = 1	torsion group structure =  [  ] (torsion rank 0).
 P = [52199:344443:343] OK, order=oo, height=4.8009119417025658580313798627.
-268605c1	[1,-1,0,-450,2781]:	r = 2	torsion group structure =  [ ] (torsion rank 0).
+268605c1	[1,-1,0,-450,2781]:	r = 2	torsion group structure =  [  ] (torsion rank 0).
 P = [-154:585:8] OK, order=oo, height=2.4620339650023437699163975371.
 P = [76:597:1] OK, order=oo, height=1.9744004986562372890973350171.
 268605d1	[1,-1,0,-1194,15983]:	r = 1	torsion group structure =  [ 2 ] (torsion rank 1).
@@ -31,6 +31,6 @@ P = [5510:-2755:8] OK, order=2, height=0.
 268605e4	[1,-1,0,-359754,-73128097]:	r = 1	torsion group structure =  [ 2 ] (torsion rank 1).
 P = [265770428:14415192911:85184] OK, order=oo, height=8.5829151366781123251964064488.
 P = [-3514:1757:8] OK, order=2, height=0.
-268605f1	[0,0,1,-110937,14226165]:	r = 1	torsion group structure =  [ ] (torsion rank 0).
+268605f1	[0,0,1,-110937,14226165]:	r = 1	torsion group structure =  [  ] (torsion rank 0).
 P = [1554:631:8] OK, order=oo, height=1.9389206422900754768913015595.
-268605g1	[0,0,1,-747,8255]:	r = 0	torsion group structure =  [ ] (torsion rank 0).
+268605g1	[0,0,1,-747,8255]:	r = 0	torsion group structure =  [  ] (torsion rank 0).
