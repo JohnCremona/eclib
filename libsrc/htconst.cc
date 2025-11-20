@@ -639,7 +639,7 @@ bigfloat Gamma_n_plus_half(long n) // Gamma(n+1/2) = (2n)!sqrt(pi) / (4^n*n!)
   // cout<<"factorial(2*n) = "<< factorial(2*n) <<endl;
   // cout<<"2^(2*n) = "<< power2_RR(2*n) <<endl;
   // cout<<"sqrt(pi) = "<< sqrt(Pi()) <<endl;
-  return sqrt(Pi()) * factorial(2*n) / (NTL::power2_RR(2*n) * factorial(n));
+  return sqrt(Pi()) * factorial(2*n) / (power2_RR(2*n) * factorial(n));
 }
 
 static long gam_tab[9] = {1, 1, 4, 2, 4, 8, 64, 64, 256};

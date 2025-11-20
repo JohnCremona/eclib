@@ -215,23 +215,32 @@ template<class T>
 ostream& operator<<(ostream& s, const Zvec<T>& v)
 {
   vec_out(s, v.entries, "[", "]", ",");
-  // s << "[";
-  // long i=0;
-  // for ( const auto& vi : v.entries)
-  //   {
-  //     if(i++)
-  //       s<<",";
-  //     s<<vi;
-  //   }
-  // s << "]";
   return s;
 }
 
+// Two possible input modes:
+// (1) entries separated by whitespace e.g. "1 2 3"
+// (2) same as default output, e.g. "[1,2,3]"
+// In both cases the size of v must be already set.
 template<class T>
 istream& operator>>(istream& s, Zvec<T>& v)
 {
-  for (T& vi : v.entries)
-    s>>vi;
+  char c;
+  s >> skipws; // skip whitespace
+  s >> c;
+  switch (c) {
+  case '[':
+    // Read the entries + one char (separator commas or final ']')
+    for (T& vi : v.entries)
+      s>>vi>>c;
+    break;
+  default:
+    // put back the first non-whitespace char
+    s.unget();
+    // read the entries
+    for (T& vi : v.entries)
+      s>>vi;
+  }
   return s;
 }
 

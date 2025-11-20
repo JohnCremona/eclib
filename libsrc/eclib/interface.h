@@ -188,6 +188,7 @@ istream& operator>>(istream& is, bigcomplex& z);
 inline bigcomplex pow(const bigcomplex& a, int e)  {return (to_RR(e)*a.log()).exp();}
 inline bigcomplex pow(const bigcomplex& a, long e)  {return (to_RR(e)*a.log()).exp();}
 inline bigcomplex pow(const bigcomplex& a, const RR& e)  {return (e*a.log()).exp();}
+using NTL::power2_RR;
 
 //////////////////////////////////////////////////////////////////
 #else  // C doubles and libg++ Complexes
@@ -204,7 +205,7 @@ inline int is_approx_zero(double x) {return fabs(x)<1e-11;}
 inline int sign(double x) {return (double(0) < x) - (x < double(0));}
 
 // We cannot set internal bit precision in this mode, so we just set the output decimal precision
-inline void set_precision(long n) {cout.precision(min(14,long(LOG_10_2*n)));}
+inline void set_precision(long n) {cout.precision(min(long(14),long(LOG_10_2*n)));}
 inline void set_precision(const string prompt)  {cout.precision(14);}
 #define Pi()    (double)(3.1415926535897932384626433832795028841)
 #define Euler() (double)(0.57721566490153286060651209008240243104)

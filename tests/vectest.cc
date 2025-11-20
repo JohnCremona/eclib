@@ -30,7 +30,7 @@ int main(void)
  scalar one(1), two(2), three(3);
 
  cout << "iota(10) = " << vec::iota(10) << endl;
- cout << "Enter n : "; cin >> n;
+ cerr << "Enter n : "; cin >> n;
  vec v;
  cout << "Uninitialized new vec v = " << v << endl;
  vec v2(v);
@@ -39,19 +39,18 @@ int main(void)
  cout << "Initialized new vec v = " << v << endl;
  vec v3(v);
  cout << "Copy of v = " << v3 << endl;
- cout << "Enter new entries of v: ";
+ cerr << "Enter new entries of v: ";
  cin >> v;
  cout << "Now v = " << v << endl;
 
  vec w(3);
  cout << "w = " << w <<  endl;
  w = v;
- cout << "After w=v, " << endl;
+ cout << "After w=v," << endl;
  cout << "Now v = " << v << endl;
  cout << "Now w = " << w << endl;
  cout << "w==v: " << (w==v) << endl;
  cout << "w!=v: " << (w!=v) << endl;
- cout << "Enter i : "; cin >> i;
  w*=two;
  cout << "After w*=2, w = " << w << endl;
  cout << "3*v = " << (three*v) << endl;
@@ -69,34 +68,38 @@ int main(void)
  cout << "+w  = " << +w  << endl;
  cout << "v = " << v << "; w = " << w << endl;
 
- cout << "Elements of v: \n";
+ cout << "Elements of v:\n";
  for (i=1; i<=n; i++) cout << "v[" << i << "] = " << v[i] << endl;
 
- cout << "Member test: Enter a test number: " ;
+ cout << "Member test\n";
+ cerr<< "Enter a test number: " ;
  scalar vi;
  cin >> vi; cout << vi;
  if (member(vi,v)) cout << " IS "; else cout << " IS NOT ";
  cout << "a member of v." << endl;
 
  cout << "Subscript test\n";
- cout << "Enter length of subscript vec:";
+ cerr << "Enter length of subscript vec:";
  int m; cin >> m; vec_i index(m);
- cout << "Enter subscript vector:";
+ cerr << "Enter subscript vector:";
  cin >> index;
  vec vv = v[index];
- cout << "The sub-vector is " << vv << endl;
+ cout << "The sub-vector is v" << index << " = " << vv << endl;
 
- cout << "Change one entry of v.  Index?"; cin >> i;
- cout << "New entry?"; scalar x; cin >> x;
+ cout << "Change one entry of v.\n";
+ cerr << "Index? "; cin >> i;
+ cerr << "New entry? "; scalar x; cin >> x;
  v[i]=x;
  cout << "New entry: v[" << i << "] = " << v[i] << endl;
  cout << "Now v = " << v << endl;
 
- cout << "Initial slice; length? "; cin >> j;
- cout << "Slice = " << v.slice(j) << endl;
+ cout << "Initial slice.\n";
+ cerr << "length? "; cin >> j;
+ cout << "Slice to index " << j << " = " << v.slice(j) << endl;
  cout << "Now v = " << v << endl;
- cout << "General slice; beginning, end? "; cin >> j >> k;
- cout << "Slice = " << v.slice(j,k) << endl;
+ cout << "General slice.\n";
+ cerr << "beginning, end? "; cin >> j >> k;
+ cout << "Slice from index " << j << " to " << k << " = " << v.slice(j,k) << endl;
  cout << "Now v = " << v << endl;
  cout << "w = " << w << "; content(w) = " << content(w) << endl;
  make_primitive(w);

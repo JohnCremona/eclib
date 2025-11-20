@@ -21,21 +21,18 @@ det(M) = 0
 rank(M) = 2
 nullity(M) = 1
 kernel(m) has basis
-
 [[1],
 [-2],
 [1]]
 pivots: [3]
 denom:  1
 image(m) has basis
-
 [[1,0],
 [0,1],
 [-1,2]]
 pivots: [1,2]
 denom:  1
 Enter lambda: eigenspace for lambda = 1 has basis
-
 [[],
 [],
 []]
@@ -43,7 +40,6 @@ with dimension 0
 
 Now repeating eigenspace calculation modulo 1000000000000000000000000000057
 eigenspace for lambda has basis
-
 [[],
 [],
 []]
@@ -68,21 +64,18 @@ det(M) = 0
 rank(M) = 2
 nullity(M) = 1
 kernel(m) has basis
-
 [[1],
 [-2],
 [1]]
 pivots: [3]
 denom:  1
 image(m) has basis
-
 [[1,0],
 [0,1],
 [-1,2]]
 pivots: [1,2]
 denom:  1
 Enter lambda: eigenspace for lambda = 0 has basis
-
 [[1],
 [-2],
 [1]]
@@ -90,7 +83,6 @@ with dimension 1
 
 Now repeating eigenspace calculation modulo 1000000000000000000000000000057
 eigenspace for lambda has basis
-
 [[1],
 [-2],
 [1]]
