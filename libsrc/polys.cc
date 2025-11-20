@@ -198,9 +198,9 @@ string monomial_string(int i, const string& var)
   return s.str();
 }
 
-string polynomial_string(const vector<ZZ>& coeffs, const string& var)
+string str(const vector<ZZ>& coeffs, const string& var)
 {
-  //  cout<<"\npolynomial_string("<<coeffs<<")\n";
+  //  cout<<"\nstr("<<coeffs<<")\n";
   if (std::all_of(coeffs.begin(), coeffs.end(), [](const ZZ&c){return IsZero(c);}))
     return "0";
   int d = coeffs.size()-1;
@@ -238,7 +238,7 @@ string polynomial_string(const vector<ZZ>& coeffs, const string& var)
   return s.str();
 }
 
-string polynomial_string(const Zvec<ZZ>& coeffs, const string& var)
+string str(const Zvec<ZZ>& coeffs, const string& var)
 {
   if (trivial(coeffs))
     return "0";
@@ -246,7 +246,7 @@ string polynomial_string(const Zvec<ZZ>& coeffs, const string& var)
   vector<ZZ> co(d);
   for(int i=0; i<d; i++)
     co[i] = coeffs[i+1];
-  return polynomial_string(co, var);
+  return str(co, var);
 }
 
 vector<ZZ> coeffs(const ZZX& p)
@@ -267,21 +267,21 @@ vector<ZZ> coeffs(const ZZ_pX& p)
   return v;
 }
 
-string polynomial_string(const ZZX& p, const string& var)
+string str(const ZZX& p, const string& var)
 {
-  return polynomial_string(coeffs(p), var);
+  return str(coeffs(p), var);
 }
 
-string polynomial_string(const ZZ_pX& p, const string& var)
+string str(const ZZ_pX& p, const string& var)
 {
-  return polynomial_string(coeffs(p), var);
+  return str(coeffs(p), var);
 }
 
 // display factors of a polynomaial:
 void display_factor(const pair_ZZX_long& f)
 {
   ZZX p = f.a;
-  string pol = polynomial_string(p);
+  string pol = str(p);
   int d = deg(p), e = f.b;
   cout << "(degree " << d << ")\t"
        << pol
@@ -306,7 +306,7 @@ void display_factors(const ZZX& f)
 void display_factor(const pair_ZZ_pX_long& f)
 {
   ZZ_pX p = f.a;
-  string pol = polynomial_string(p);
+  string pol = str(p);
   int d = deg(p), e = f.b;
   cout << "(degree " << d << ")\t"
        << pol
@@ -420,10 +420,10 @@ void parity_split(const ZZX& f, ZZX& f0, ZZX& f1)
   f0.normalize(); // strip any leading 0s
   f1.normalize(); // strip any leading 0s
   if (! (f==XtoX2(f0)+LeftShift(XtoX2(f1),1)))
-    cout << "parity_split of " << polynomial_string(f) << " gives \n"
-         << "f0 = "<< polynomial_string(f0) << "\n"
-         << "f1 = "<< polynomial_string(f1) << "\n"
-         << " --> " << polynomial_string(XtoX2(f0)+LeftShift(XtoX2(f1),1)) << endl;
+    cout << "parity_split of " << str(f) << " gives \n"
+         << "f0 = "<< str(f0) << "\n"
+         << "f1 = "<< str(f1) << "\n"
+         << " --> " << str(XtoX2(f0)+LeftShift(XtoX2(f1),1)) << endl;
 }
 
 // assuming f irreducible:

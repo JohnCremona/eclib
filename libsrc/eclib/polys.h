@@ -128,10 +128,10 @@ extern poly_modp_comparison poly_modp_cmp;
 
 vector<ZZ> coeffs(const ZZX& p);
 vector<ZZ> coeffs(const ZZ_pX& p);
-string polynomial_string(const vector<ZZ>& coeffs, const string& var="X");
-string polynomial_string(const Zvec<ZZ>& coeffs, const string& var="X");
-string polynomial_string(const ZZX& p, const string& var="X");
-string polynomial_string(const ZZ_pX& p, const string& var="X");
+string str(const vector<ZZ>& coeffs, const string& var="X");
+string str(const Zvec<ZZ>& coeffs, const string& var="X");
+string str(const ZZX& p, const string& var="X");
+string str(const ZZ_pX& p, const string& var="X");
 
 // factor a primitive (e.g. monic) polynomial
 NTL::vec_pair_ZZX_long factor(const ZZX& f);
