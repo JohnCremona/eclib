@@ -1557,9 +1557,10 @@ int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd)
 template<class T>
 T maxabs(const Zmat<T>& m) // max entry
 {
-  T a(0);
-  std::for_each(m.entries.begin(), m.entries.end(), [&a](const T& x) {return max(a,abs(x));});
-  return a;
+  return m.entries.empty()?
+    T(0) :
+    std::accumulate(m.entries.begin(), m.entries.end(), T(0),
+                    [](const T& x, const T& y) {return max(x,abs(y));});
 }
 
 template<class T>
