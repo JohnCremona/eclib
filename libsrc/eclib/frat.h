@@ -270,6 +270,7 @@ public:
     if (b) a = RAT(rnd, den());
     return b;
   }
+  friend int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b);
 };
 
 
@@ -325,5 +326,14 @@ inline int sign(const RAT& r)
 inline RAT max(const RAT& a, const RAT& b) {return (a>=b? a : b);}
 inline RAT min(const RAT& a, const RAT& b) {return (a<=b? a : b);}
 
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
+inline int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b)
+{
+  RAT q;
+  int res = fmpq_reconstruct_fmpz(q.q, n.z, m.z);
+  a = q.num();
+  b = q.den();
+  return res;
+}
 
 #endif

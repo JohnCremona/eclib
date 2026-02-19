@@ -198,6 +198,7 @@ inline long xmodmul(long a, long b, long m)
 }
 
 inline ZZ xmodmul(const ZZ& a, const ZZ& b, const ZZ& m) {return (a*b)%m;}
+inline INT xmodmul(const INT& a, const INT& b, const INT& m) {return (a*b)%m;}
 
 #endif // ifdef USE_DMOD
 

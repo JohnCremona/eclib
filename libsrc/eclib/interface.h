@@ -109,6 +109,11 @@ using NTL::to_RR;
 using NTL::deg;
 using NTL::coeff;
 
+// INT type is an interface to FLINT's fmpz
+#include "int.h"
+// RAT type is an interface to FLINT's fmpq
+#include "frat.h"
+
 inline int is_long(const ZZ& a) {return (a<=MAXLONG)&&(a>=MINLONG);}
 inline int is_int(const ZZ& a) {return (a<=MAXINT)&&(a>=MININT);}
 int I2int(const ZZ& x);    // too long to inline

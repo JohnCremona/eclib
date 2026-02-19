@@ -25,6 +25,7 @@
 #define _ECLIB_MODULUS_H      1       //flags that this file has been included
 
 #include "marith.h"
+#include "int.h"
 
 template<class T> class modulus_factory {
 public:
@@ -38,6 +39,7 @@ private:
 extern modulus_factory<int> modulus_factory_int;
 extern modulus_factory<long> modulus_factory_long;
 extern modulus_factory<ZZ> modulus_factory_ZZ;
+extern modulus_factory<INT> modulus_factory_INT;
 
 template<class T> T default_modulus();
 template<class T> T set_default_modulus(const T& new_modulus); // returns old modulus

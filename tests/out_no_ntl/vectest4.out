@@ -1,0 +1,52 @@
+Vector test program with scalar type INT.
+
+iota(10) = [1,2,3,4,5,6,7,8,9,10]
+Uninitialized new vec v = []
+Copy of v = []
+Initialized new vec v = [0,0,0]
+Copy of v = [0,0,0]
+Now v = [1,3,5]
+w = [0,0,0]
+After w=v,
+Now v = [1,3,5]
+Now w = [1,3,5]
+w==v: 1
+w!=v: 0
+After w*=2, w = [2,6,10]
+3*v = [3,9,15]
+Now v = [1,3,5]
+v+w = [3,9,15]
+Now v = [1,3,5]
+v-w = [-1,-3,-5]
+Now v = [1,3,5]
+v*w = 70
+Now v = [1,3,5]
+w/2 = [1,3,5]
+Now w = [2,6,10]
+-v  = [-1,-3,-5]
++v  = [1,3,5]
++w  = [2,6,10]
+v = [1,3,5]; w = [2,6,10]
+Elements of v:
+v[1] = 1
+v[2] = 3
+v[3] = 5
+Member test
+100 IS NOT a member of v.
+Subscript test
+The sub-vector is v[3,1] = [5,1]
+Change one entry of v.
+New entry: v[1] = 99
+Now v = [99,3,5]
+Initial slice.
+Slice to index 2 = [99,3]
+Now v = [99,3,5]
+General slice.
+Slice from index 2 to 3 = [3,5]
+Now v = [99,3,5]
+w = [2,6,10]; content(w) = 2
+After make_primitive(w), w = [1,3,5]
+u = [0,0,0]
+After swapvec(u,v):
+u = [99,3,5]
+v = [0,0,0]

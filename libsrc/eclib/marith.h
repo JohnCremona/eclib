@@ -44,7 +44,8 @@ inline void setbit(ZZ& a, int e) {SetBit(a,e);}
 inline void longasI(long& a, const ZZ& x) {a = I2long(x);}
 inline void negate(ZZ& a) {a=-a;}
 inline void sqrt(ZZ& a, const ZZ& b) {SqrRoot(a,b);}
-inline ZZ sqrt(const ZZ& a) {ZZ b; sqrt(b,a); return b;}
+inline ZZ sqrt(const ZZ& a)  {return SqrRoot(a);}
+inline ZZ isqrt(const ZZ& a) {return SqrRoot(a);}
 inline void square(ZZ& a, const ZZ& b) {sqr(a,b);}
 inline ZZ gcd(const ZZ& a, const ZZ& b) {return GCD(a,b);}
 inline ZZ lcm(const ZZ& a, const ZZ& b)

@@ -26,7 +26,7 @@
 int main(void)
 {
   cout << "Vector test program with scalar type " << scalar_type << ".\n\n";
- int i,j,k,n;
+ long i,j,k,n;
  scalar one(1), two(2), three(3);
 
  cout << "iota(10) = " << vec::iota(10) << endl;
@@ -81,10 +81,12 @@ int main(void)
  cout << "Subscript test\n";
  cerr << "Enter length of subscript vec:";
  int m; cin >> m; vec_i index(m);
+ cerr << "m = " << m << endl;
  cerr << "Enter subscript vector:";
  cin >> index;
+ cerr << "index = " << index << endl;
  vec vv = v[index];
- cout << "The sub-vector is v" << index << " = " << vv << endl;
+ cout << "The sub-vector is v" << index << " = " <<flush << vv << endl;
 
  cout << "Change one entry of v.\n";
  cerr << "Index? "; cin >> i;

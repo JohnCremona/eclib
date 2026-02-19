@@ -11,7 +11,7 @@ MPFP_SWITCH=
 endif
 
 LDFLAGS_BOOST = $(BOOST_LDFLAGS) $(BOOST_ASIO_LDFLAGS) $(BOOST_THREAD_LDFLAGS)
-BOOST_LIBS = $(BOOST_ASIO_LIB) $(BOOST_THREAD_LIB) 
+BOOST_LIBS = $(BOOST_ASIO_LIB) $(BOOST_THREAD_LIB)
 
 AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(FLINT_CFLAGS) $(NTL_CFLAGS) $(PARI_CFLAGS) $(BOOST_CPPFLAGS) $(MPFP_SWITCH) $(PTHREAD_CFLAGS)
 AM_LDFLAGS         = $(FLINT_LDFLAGS) $(NTL_LDFLAGS) $(PARI_LDFLAGS) $(LDFLAGS_BOOST) $(PTHREAD_CFLAGS) $(PTHREAD_LDFLAGS)
@@ -21,7 +21,7 @@ check_run = echo -n "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_di
 
 ################ PROCS #############################################
 
-PROCS_TESTS = smattest1 smattest2 smattest3 comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 vectest3 mattest1 mattest2 mattest3 space1 space2 space3 svectest1 svectest2 svectest3 tcon2 tlegcert timing threading tversion tconvert flint_test
+PROCS_TESTS = smattest1 smattest2 smattest3 comptest rattest bigrattest ptest mptest tbessel mvectest mmattest mspace thilbert tp2points tilll vectest1 vectest2 vectest3 vectest4 mattest1 mattest2 mattest3 space1 space2 space3 svectest1 svectest2 svectest3 tcon2 tlegcert timing threading tversion tconvert flint_test
 PROCS_TESTS_SUFFIXED = $(PROCS_TESTS:=$(EXEEXT))
 procs_tests: $(PROCS_TESTS_SUFFIXED)
 
@@ -45,6 +45,8 @@ vectest2_SOURCES=vectest.cc
 vectest2_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=2
 vectest3_SOURCES=vectest.cc
 vectest3_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=3
+vectest4_SOURCES=vectest.cc
+vectest4_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=4
 mattest1_SOURCES=mattest.cc
 mattest1_CPPFLAGS=${AM_CPPFLAGS} -DSCALAR_OPTION=1
 mattest2_SOURCES=mattest.cc

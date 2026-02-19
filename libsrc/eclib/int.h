@@ -19,6 +19,7 @@ public:
   explicit INT(long a) {fmpz_init_set_si(z, a); }
   INT(const INT& a) {fmpz_init_set(z, a.z);}
   explicit INT(fmpz_t a) {fmpz_init_set(z, a);}
+  explicit INT(std::string s);
   // Destructor:
   ~INT() {fmpz_clear(z);}
   INT& operator=(int a) {fmpz_set_si(z, a); return *this;}
@@ -52,6 +53,8 @@ public:
   INT operator^(int e) const {INT b; fmpz_pow_ui(b.z,z,e); return b;}
   INT operator^(long e) const {INT b; fmpz_pow_ui(b.z,z,e); return b;}
   INT operator<<(long e) const {INT b; fmpz_mul_2exp(b.z, z, e); return b;} // mult by 2^e
+  INT operator>>(long e) const {INT b; fmpz_fdiv_q_2exp(b.z, z, e); return b;} // (floor) div by 2^e
+  void operator ++() {fmpz_add_si(z,z,1);}
   void operator +=(const INT& a) {fmpz_add(z,z,a.z);}
   void operator +=(int a) {fmpz_add_si(z,z,a);}
   void operator +=(long a) {fmpz_add_si(z,z,a);}
@@ -65,6 +68,7 @@ public:
   void operator /=(int a) {fmpz_divexact_si(z,z,a);}
   void operator /=(long a) {fmpz_divexact_si(z,z,a);}
   void operator<<=(long e) {fmpz_mul_2exp(z, z, e);} // mult by 2^e in place
+  void operator>>=(long e) {fmpz_fdiv_q_2exp(z, z, e);} // (floor) mult by 2^e in place
   int is_zero() const {return fmpz_is_zero(z);}
   int is_nonzero() const {return !fmpz_is_zero(z);}
   int is_one() const {return fmpz_is_one(z);}
@@ -100,6 +104,7 @@ public:
   friend class RAT;
   friend class REAL;
   friend void make_mat( fmpz_mat_t A, const std::vector<std::vector<INT>>& M);
+  friend int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b);
 };
 
 inline int sign(const INT& a) {return a.sign();}
@@ -164,5 +169,9 @@ INT rounded_division(const INT& a, const INT& b, int round_down=1);
 std::vector<INT> pdivs(const INT& a);
 std::vector<INT> sqdivs(const INT& a);
 INT sqrt_mod_p(const INT& a, const INT& p);
+
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
+// (defined as an inline function in frat.h as it uses RAT type).
+//int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b);
 
 #endif

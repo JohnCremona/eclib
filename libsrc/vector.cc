@@ -28,6 +28,7 @@
 template class Zvec<int>;
 template class Zvec<long>;
 template class Zvec<ZZ>;
+template class Zvec<INT>;
 
 // Definitions of member operators and functions:
 
@@ -225,22 +226,33 @@ ostream& operator<<(ostream& s, const Zvec<T>& v)
 template<class T>
 istream& operator>>(istream& s, Zvec<T>& v)
 {
+  cout << "Reading into vector v = " << v << endl;
   char c;
   s >> skipws; // skip whitespace
   s >> c;
+  cout << "First character read: " << c << endl;
   switch (c) {
   case '[':
+    cout << "That was [" << endl;
     // Read the entries + one char (separator commas or final ']')
     for (T& vi : v.entries)
-      s>>vi>>c;
+      {
+        s>>vi>>c;
+      cout << "Read entry " << vi << " and character " << c << endl;
+      }
     break;
   default:
     // put back the first non-whitespace char
+    cout << "That was not [ so putting it back" << endl;
     s.unget();
     // read the entries
     for (T& vi : v.entries)
+      {
       s>>vi;
+      cout << "Read entry " << vi << endl;
+      }
   }
+  cout << "Finally v = " << v << endl;
   return s;
 }
 
@@ -312,7 +324,7 @@ int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans)
 {
   long i0, i, j, d = v.dim();
   T nu, de;
-  T lim = sqrt(pr>>1)-1;
+  T lim = isqrt(pr>>1)-1;
   T maxallowed = 10*lim;
 #ifdef DEBUG_LIFT
   cout<<"Lifting vector v = "<<v<<" mod "<<pr<<" (lim = "<<lim<<")"<<endl;
@@ -504,3 +516,20 @@ template ostream& operator<<<ZZ> (ostream&s, const Zvec<ZZ>&);
 template istream& operator>><ZZ> (istream&s, Zvec<ZZ>&);
 template void swapvec<ZZ>(Zvec<ZZ>& v, Zvec<ZZ>& w);
 template int lift(const Zvec<ZZ>& v, const ZZ& pr, Zvec<ZZ>& ans);
+
+// Instantiate Zvec template functions for T=INT
+template int dim<INT>(const Zvec<INT>&);
+template INT operator*<INT>(const Zvec<INT>&, const Zvec<INT>&);
+template INT content<INT>(const Zvec<INT>&);
+template INT maxabs<INT>(const Zvec<INT>&);
+template int operator==<INT>(const Zvec<INT>&, const Zvec<INT>&);
+template int operator!=<INT>(const Zvec<INT>&, const Zvec<INT>&);
+template int trivial<INT>(const Zvec<INT>&);                  // is v all 0
+template int member<INT>(const INT& a, const Zvec<INT>& v);//tests if a=v[i] for some i
+template Zvec<INT> reverse<INT>(const Zvec<INT>& order);
+template ostream& operator<<<INT> (ostream&s, const Zvec<INT>&);
+template istream& operator>><INT> (istream&s, Zvec<INT>&);
+template void swapvec<INT>(Zvec<INT>& v, Zvec<INT>& w);
+//#if(0)
+template int lift(const Zvec<INT>& v, const INT& pr, Zvec<INT>& ans);
+//#endif

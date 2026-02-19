@@ -3,6 +3,12 @@
 #include <assert.h>
 #include "eclib/int.h"
 
+INT::INT(std::string s)
+{
+  fmpz_init(z);
+  fmpz_set_str(z, s.c_str(), 10);
+}
+
 std::ostream& operator<<(std::ostream& s, const INT& a)
 {
   char* st = fmpz_get_str(NULL, 10, a.z);
@@ -13,9 +19,12 @@ std::ostream& operator<<(std::ostream& s, const INT& a)
 
 std::istream& operator>>(std::istream& s, INT& x)
 {
+  std::cout << "Reading into an INT..." << std::endl;
   std::string n;
   s>>n;
+  std::cout << ".. read string " << n << std::endl;
   fmpz_set_str(x.z, n.c_str(), 10);
+  std::cout << "fmpz_set_str() gives value " << x << std::endl;
   return s;
 }
 

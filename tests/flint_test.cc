@@ -1,7 +1,7 @@
 #include "eclib/xsplit.h"   // which includes linalg.h
 #include "eclib/frat.h"
 
-void testINT(INT a)
+void testINT(INT a, int factor=1)
 {
   cout<<"a = "<<a;
   cout<<", -a = "<<-a;
@@ -13,8 +13,11 @@ void testINT(INT a)
   cout<<", sign(a) = "<<sign(a);
   cout<<endl;
   INT b = (a^8) - 1;
-  cout<<"b = a^4-1 = "<<b;
-  cout<<", prime factors: "<<pdivs(b);
+  cout<<"b = a^8-1 = "<<b;
+  if (factor)
+    cout<<", prime factors: "<<pdivs(b);
+  else
+    cout<<" (not being factored)" << endl;
   cout<<endl;
 }
 
@@ -79,6 +82,11 @@ int main ()
     {
       cout<<" does not fit in a long int!"<<endl;
     }
+
+  // Test ofconstruction from a string
+  INT big("847538457305748064257802375802345784320765208455280452806202");
+  cout << "INT constructed from string: " << big << endl;
+  testINT(big, 0); // don't factor big^8-1 
 
   RAT half(1,2);
   cout << "one half = " << half <<", rounds to "<<half.round()<<", floor="<<half.floor()<<", ceil="<<half.ceil()<<", recip="<<half.recip()<<endl;

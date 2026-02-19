@@ -62,6 +62,15 @@ typedef sZmat_elim<ZZ> smat_m_elim;
 typedef ssubZspace<ZZ> ssubspace_m;
 typedef form_finderT<ZZ> form_finder_m;
 
+typedef Zvec<INT> vec_I;
+// typedef Zmat<INT> mat_I;
+// typedef subZspace<INT> subspace_I;
+// typedef sZvec<INT> svec_I;
+// typedef sZmat<INT> smat_I;
+// typedef sZmat_elim<INT> smat_I_elim;
+// typedef ssubZspace<INT> ssubspace_I;
+// typedef form_finderT<INT> form_finder_I;
+
 
 template<class T> int dim(const Zvec<T>&);
 template<class T> T operator*(const Zvec<T>&, const Zvec<T>&);
