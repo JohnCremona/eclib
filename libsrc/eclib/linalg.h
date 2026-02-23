@@ -115,13 +115,13 @@ typedef INT scalar;
 typedef vec_I vec;
 typedef mat_I mat;
 typedef subspace_I subspace;
-// typedef ssubspace_I ssubspace;
+typedef ssubspace_I ssubspace;
 typedef svec_I svec;
-// typedef smat_I smat;
-// typedef smat_I_elim smat_elim;
+typedef smat_I smat;
+typedef smat_I_elim smat_elim;
 // typedef form_finder_i form_finder;
 #define to_vec to_vec_I
-// #define to_mat to_mat_I
+#define to_mat to_mat_I
 #else
 #pragma message "In branch with SCALAR_OPTION not 1, 2, 3, or 4"
 #define scalar_type string("undefined")

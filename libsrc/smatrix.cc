@@ -30,6 +30,7 @@
 template class sZmat<int>;
 template class sZmat<long>;
 template class sZmat<ZZ>;
+template class sZmat<INT>;
 
 template<class T>
 void showrow(int*pos, T*val) // for debugging
@@ -951,7 +952,7 @@ template<class T>
 int liftmat(const sZmat<T>& mm, T pr, sZmat<T>& m, T& dd)
 { int trace=0;
   T n,d; long nr,nc; dd=1;
-  T lim = sqrt(pr>>1);
+  T lim = isqrt(pr>>1);
   m = mm;
   m.reduce_mod_p(pr);
   if(trace)
@@ -1194,3 +1195,33 @@ template void random_fill_in<ZZ>( sZmat<ZZ>&, int, int );
 template int liftmat<ZZ>(const sZmat<ZZ>& mm, ZZ pr, sZmat<ZZ>& m, ZZ& dd);
 template int liftmats_chinese<ZZ>(const sZmat<ZZ>& mm1, ZZ pr1, const sZmat<ZZ>& mm2, ZZ pr2, sZmat<ZZ>& m, ZZ& dd);
 template sZmat<ZZ> restrict_mat(const sZmat<ZZ>& m, const subZspace<ZZ>& s);
+
+// Instantiate sZmat template functions for T=INT
+template vector<int> dim<INT>(const sZmat<INT>& A);
+template sZmat<INT> transpose<INT>( const sZmat<INT>&);
+template sZmat<INT> operator*<INT>( const sZmat<INT>&, const sZmat<INT>&);
+template sZvec<INT> operator*<INT>( const sZmat<INT>& A, const sZvec<INT>& v );
+template sZvec<INT> operator*<INT>( const sZvec<INT>& v, const sZmat<INT>& A );
+template Zvec<INT> operator* <INT>( const sZmat<INT>& m, const Zvec<INT>& v);
+template sZmat<INT> operator+<INT>(const sZmat<INT>&);
+template sZmat<INT> operator-<INT>(const sZmat<INT>&);
+template sZmat<INT> operator+<INT>(const sZmat<INT>& m1, const sZmat<INT>& m2);
+template sZmat<INT> operator-<INT>(const sZmat<INT>& m1, const sZmat<INT>& m2);
+template sZmat<INT> operator*<INT>(INT, const sZmat<INT>& m);
+template sZmat<INT> operator/<INT>(const sZmat<INT>& m, INT scal);
+template int operator!=<INT>(const sZmat<INT>& sm1, const sZmat<INT>& sm2);
+template sZvec<INT> mult_mod_p<INT>( const sZmat<INT>& A, const sZvec<INT>& v, const INT& p  );
+template sZvec<INT> mult_mod_p<INT>( const sZvec<INT>& v, const sZmat<INT>& A, const INT& p  );
+template sZmat<INT> mult_mod_p<INT>( const sZmat<INT>&, const sZmat<INT>&, const INT&);
+template Zvec<INT> mult_mod_p<INT>( const sZmat<INT>& A, const Zvec<INT>& v, const INT& p  );
+template INT maxabs<INT>( const sZmat<INT>& A);
+template int operator==<INT>(const sZmat<INT>&, const sZmat<INT>&);
+template int eqmodp<INT>(const sZmat<INT>&, const sZmat<INT>&, const INT& p);
+template ostream& operator<<<INT>(ostream&s, const sZmat<INT>&);
+template istream& operator>><INT>(istream&s, sZmat<INT>&);
+template int get_population<INT>(const sZmat<INT>& );
+template double density<INT>(const sZmat<INT>& m);
+template void random_fill_in<INT>( sZmat<INT>&, int, int );
+template int liftmat<INT>(const sZmat<INT>& mm, INT pr, sZmat<INT>& m, INT& dd);
+template int liftmats_chinese<INT>(const sZmat<INT>& mm1, INT pr1, const sZmat<INT>& mm2, INT pr2, sZmat<INT>& m, INT& dd);
+template sZmat<INT> restrict_mat(const sZmat<INT>& m, const subZspace<INT>& s);

@@ -30,6 +30,7 @@
 template class sZmat_elim<int>;
 template class sZmat_elim<long>;
 template class sZmat_elim<ZZ>;
+template class sZmat_elim<INT>;
 
 //#define TRACE_LISTS
 //#define TRACE_FIND
@@ -1339,3 +1340,7 @@ template ssubZspace<long> kernel<long>(const sZmat<long>& sm, long m);
 // Instantiate template functions for T=ZZ
 template int sZmat<ZZ>::rank(ZZ mod);
 template ssubZspace<ZZ> kernel<ZZ>(const sZmat<ZZ>& sm, ZZ m);
+
+// Instantiate template functions for T=INT
+template int sZmat<INT>::rank(INT mod);
+template ssubZspace<INT> kernel<INT>(const sZmat<INT>& sm, INT m);

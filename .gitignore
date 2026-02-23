@@ -102,6 +102,7 @@ tests/rattest
 tests/smattest1
 tests/smattest2
 tests/smattest3
+tests/smattest4
 tests/space1
 tests/space2
 tests/space3

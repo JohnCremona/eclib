@@ -28,6 +28,7 @@
 template class ssubZspace<int>;
 template class ssubZspace<long>;
 template class ssubZspace<ZZ>;
+template class ssubZspace<INT>;
 
 template<class T>
 ssubZspace<T>::ssubZspace(int n, T mod)
@@ -123,3 +124,13 @@ template sZmat<ZZ> basis<ZZ>(const ssubZspace<ZZ>& s);
 template ssubZspace<ZZ> combine<ZZ>(const ssubZspace<ZZ>& s1, const ssubZspace<ZZ>& s2);
 template ssubZspace<ZZ> eigenspace<ZZ>(const sZmat<ZZ>& sm, ZZ lambda, ZZ m);
 template ssubZspace<ZZ> subeigenspace<ZZ>(const sZmat<ZZ>& sm, ZZ l, const ssubZspace<ZZ>& s, ZZ m);
+
+// Instantiate template functions for T=INT
+template ssubZspace<INT> make1d<INT>(const Zvec<INT>& bas, INT&piv, INT m);
+template sZmat<INT> restrict_mat<INT>(const sZmat<INT>& m, const ssubZspace<INT>& s);
+template int dim<INT>(const ssubZspace<INT>& s);
+template Zvec<int> pivots<INT>(const ssubZspace<INT>& s);
+template sZmat<INT> basis<INT>(const ssubZspace<INT>& s);
+template ssubZspace<INT> combine<INT>(const ssubZspace<INT>& s1, const ssubZspace<INT>& s2);
+template ssubZspace<INT> eigenspace<INT>(const sZmat<INT>& sm, INT lambda, INT m);
+template ssubZspace<INT> subeigenspace<INT>(const sZmat<INT>& sm, INT l, const ssubZspace<INT>& s, INT m);

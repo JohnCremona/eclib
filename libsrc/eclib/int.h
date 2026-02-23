@@ -175,6 +175,22 @@ std::vector<INT> pdivs(const INT& a);
 std::vector<INT> sqdivs(const INT& a);
 INT sqrt_mod_p(const INT& a, const INT& p);
 
+inline INT addmod(const INT& a, const INT& b, const INT& m)
+{
+  if (is_zero(a)) return b;
+  if (is_zero(b)) return a;
+  return mod(a+b,m);
+}
+
+inline INT xmm(const INT& a, const INT& b, const INT& m)
+{
+  if (is_one(a)) return b;
+  if (is_one(b)) return a;
+  if (is_one(-a)) return -b;
+  if (is_one(-b)) return -a;
+  return (a*b) % m;
+}
+
 // Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
 // (defined as an inline function in frat.h as it uses RAT type).
 //int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b);

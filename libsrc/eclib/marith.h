@@ -183,20 +183,19 @@ ZZ chrem(const ZZ& a1, const ZZ& a2,
 
 ZZ mod(const ZZ& a, const ZZ& b);     // a mod b in range +- half b
 long mod(const ZZ& a, long b);
-
 inline ZZ addmod(const ZZ& a, const ZZ& b, const ZZ& m)
 {
-  if (is_zero(a)) return b;
-  if (is_zero(b)) return a;
+  if (IsZero(a)) return b;
+  if (IsZero(b)) return a;
   return mod(a+b,m);
 }
 
 inline ZZ xmm(const ZZ& a, const ZZ& b, const ZZ& m)
 {
-  if (a==1) return b;
-  if (a==-1) return -b;
-  if (b==1) return a;
-  if (b==-1) return -a;
+  if (IsOne(a)) return b;
+  if (IsOne(b)) return a;
+  if (IsOne(-a)) return -b;
+  if (IsOne(-b)) return -a;
   return (a*b) % m;
 }
 
