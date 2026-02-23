@@ -530,6 +530,5 @@ template Zvec<INT> reverse<INT>(const Zvec<INT>& order);
 template ostream& operator<<<INT> (ostream&s, const Zvec<INT>&);
 template istream& operator>><INT> (istream&s, Zvec<INT>&);
 template void swapvec<INT>(Zvec<INT>& v, Zvec<INT>& w);
-//#if(0)
 template int lift(const Zvec<INT>& v, const INT& pr, Zvec<INT>& ans);
-//#endif
+

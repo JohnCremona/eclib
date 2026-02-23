@@ -116,7 +116,7 @@ typedef vec_I vec;
 // typedef mat_I mat;
 // typedef subspace_I subspace;
 // typedef ssubspace_I ssubspace;
-// typedef svec_I svec;
+typedef svec_I svec;
 // typedef smat_I smat;
 // typedef smat_I_elim smat_elim;
 // typedef form_finder_i form_finder;

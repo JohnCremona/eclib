@@ -107,6 +107,7 @@ tests/space3
 tests/svectest1
 tests/svectest2
 tests/svectest3
+tests/svectest4
 tests/tate
 tests/tbessel
 tests/tcon2
