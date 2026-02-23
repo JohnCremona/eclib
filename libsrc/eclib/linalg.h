@@ -114,7 +114,7 @@ typedef form_finder_i form_finder;
 typedef INT scalar;
 typedef vec_I vec;
 typedef mat_I mat;
-// typedef subspace_I subspace;
+typedef subspace_I subspace;
 // typedef ssubspace_I ssubspace;
 typedef svec_I svec;
 // typedef smat_I smat;

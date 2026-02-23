@@ -28,6 +28,7 @@
 template class subZspace<int>;
 template class subZspace<long>;
 template class subZspace<ZZ>;
+template class subZspace<INT>;
 
 // definitions of member operators and functions:
 
@@ -399,3 +400,25 @@ template subZspace<ZZ> pkernel<ZZ>(const Zmat<ZZ>& m, const ZZ& pr);
 template subZspace<ZZ> pimage<ZZ>(const Zmat<ZZ>& m, const ZZ& pr);
 template subZspace<ZZ> peigenspace<ZZ>(const Zmat<ZZ>& m, const ZZ& lambda, const ZZ& pr);
 template subZspace<ZZ> psubeigenspace<ZZ>(const Zmat<ZZ>& m, const ZZ& l, const subZspace<ZZ>& s, const ZZ& pr);
+
+// Instantiate template functions for T=INT
+
+template int dim<INT>(const subZspace<INT>& s);
+template INT denom<INT>(const subZspace<INT>& s);
+template Zvec<int> pivots<INT>(const subZspace<INT>& s);
+template Zmat<INT> basis<INT>(const subZspace<INT>& s);
+template subZspace<INT> combine<INT>(const subZspace<INT>& s1, const subZspace<INT>& s2);
+template Zmat<INT> restrict_mat<INT>(const Zmat<INT>& m, const subZspace<INT>& s, int cr);
+template subZspace<INT> pcombine<INT>(const subZspace<INT>& s1, const subZspace<INT>& s2, const INT& pr);
+template Zmat<INT> prestrict<INT>(const Zmat<INT>& m, const subZspace<INT>& s, const INT& pr, int cr);
+template int lift<INT>(const subZspace<INT>& s, const INT& pr, subZspace<INT>& ans);
+template Zmat<INT> expressvectors<INT>(const Zmat<INT>& m, const subZspace<INT>& s);
+template subZspace<INT> kernel<INT>(const Zmat<INT>& m, int method=0);
+template subZspace<INT> image<INT>(const Zmat<INT>& m, int method=0);
+template subZspace<INT> eigenspace<INT>(const Zmat<INT>& m, const INT& lambda, int method=0);
+template subZspace<INT> subeigenspace<INT>(const Zmat<INT>& m, const INT& l, const subZspace<INT>& s, int method=0);
+template subZspace<INT> oldpkernel<INT>(const Zmat<INT>& m, const INT& pr);
+template subZspace<INT> pkernel<INT>(const Zmat<INT>& m, const INT& pr);
+template subZspace<INT> pimage<INT>(const Zmat<INT>& m, const INT& pr);
+template subZspace<INT> peigenspace<INT>(const Zmat<INT>& m, const INT& lambda, const INT& pr);
+template subZspace<INT> psubeigenspace<INT>(const Zmat<INT>& m, const INT& l, const subZspace<INT>& s, const INT& pr);

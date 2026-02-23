@@ -105,6 +105,7 @@ tests/smattest3
 tests/space1
 tests/space2
 tests/space3
+tests/space4
 tests/svectest1
 tests/svectest2
 tests/svectest3
