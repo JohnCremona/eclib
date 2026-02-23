@@ -71,18 +71,28 @@ int main ()
   cout<<"Is "<<a2<<" square? "<<a2.is_square()<<endl;
   INT s = a2.isqrt();
   cout<<"(a square root is "<<s<<")"<<endl;
-  cout<<"Enter an integer: "<<flush;
-  cin >> a;
-  cout<<"   value entered: "<<a<<endl;
-  if (a.is_long())
-    {
-      cout<<" as a long int: "<<I2long(a)<<endl;
-    }
-  else
-    {
-      cout<<" does not fit in a long int!"<<endl;
-    }
 
+  for (int i=0; i<2; i++)
+    {
+      cout<<"Enter an integer: "<<flush;
+      cin >> a;
+      cout<<"   value entered: "<<a;
+      if (a.is_long())
+        {
+          cout<<" - as a long int: "<<I2long(a)<<endl;
+        }
+      else
+        {
+          cout<<" - does not fit in a long int"<<endl;
+        }
+    }
+  cout << "Enter three integers separated by whitespace: " << flush;
+  cin >> a >> b >> c;
+  cout << "Values entered: " << a << " " << b << " " << c << endl;
+  cout << "Enter three integers separated by commas: " << flush;
+  char ch;
+  cin >> a >> ws >> ch >> b >> ch >> c;
+  cout << "Values entered: " << a << " " << b << " " << c << endl;
   // Test ofconstruction from a string
   INT big("847538457305748064257802375802345784320765208455280452806202");
   cout << "INT constructed from string: " << big << endl;

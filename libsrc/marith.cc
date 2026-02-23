@@ -445,28 +445,6 @@ is_prime(const ZZ& n)
   return is_prime_via_pari(n);
 }
 
-#if(0)
-vector<ZZ>
-read_vec_from_string(string vecstr)
-{
-  //  cout<<"parsing output string "<<vecstr<<endl;
-  vector<ZZ> plist;
-  istringstream vecin(vecstr);
-  ZZ p;
-  char c;
-  vecin>>skipws>>c; // swallow leading "["
-  while(c!=']')
-    {
-      vecin>>p;
-      //      cout<<"Reading p="<<p<<" from string"<<endl;
-      plist.push_back(p);
-      vecin>>skipws>>c; // swallow ",", but it might turn out to be "]"
-    }
-  //  cout<<"Finished reading from string"<<endl;
-  return plist;
-}
-#endif
-
 vector<ZZ>
 factor(const ZZ& n, int proof=1)
 {

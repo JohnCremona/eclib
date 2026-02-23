@@ -19,12 +19,50 @@ std::ostream& operator<<(std::ostream& s, const INT& a)
 
 std::istream& operator>>(std::istream& s, INT& x)
 {
-  std::cout << "Reading into an INT..." << std::endl;
-  std::string n;
-  s>>n;
-  std::cout << ".. read string " << n << std::endl;
-  fmpz_set_str(x.z, n.c_str(), 10);
-  std::cout << "fmpz_set_str() gives value " << x << std::endl;
+  // std::cout << "Reading into an INT..." << std::endl;
+  x = 0;
+  int digit = 0, neg = 0;
+  char c;
+  s >> std::ws;
+  c = s.peek();
+  if (c=='-')
+    {
+      neg = 1;
+    }
+  else if (c=='+')
+    {
+      ;
+    }
+  else
+    {
+      digit = c - '0';
+      // std::cout << "First character read was " << c << ", digit = " <<digit << std::endl;
+      if ((digit<0) || (digit>9))
+        {
+          std::cerr << "Invalid input character to INT: " << c << std::endl;
+          return s;
+        }
+      x = digit;
+      // std::cout << "Setting x to " << x << std::endl;
+    }
+  // std::cout << "First character read was " << c << ", neg = " << neg << ", digit = "
+  //           << digit << ", so far x = " << x << std::endl;
+  s.get();
+  c = s.peek();
+  digit = c - '0';
+  while ((digit>=0) && (digit<=9))
+    {
+      x *= 10;
+      x += digit;
+      // std::cout << "Next character read was " << c << ", digit = " << digit
+      //           << ", so far x = " << x << std::endl;
+      s.get();
+      c = s.peek();
+      digit = c - '0';
+    }
+  if (neg)
+    x = -x;
+  // std::cout << "Final character read was " << c << ", final x = " << x << std::endl;
   return s;
 }
 

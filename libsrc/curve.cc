@@ -159,7 +159,7 @@ void Curve::input(istream& is)
            // seperators and terminators must then be present
            // (any nonnumeric will do after the first { or [ )
            // else assumes a1 a2 a3 a4 a6 separated by whitespace
-  is>>skipws;
+  is>>ws;
   is>>c;
   //  cout<<"First char read = "<<c<<"\n";
   switch (c) {

@@ -56,7 +56,6 @@ using std::numeric_limits;
 using std::ostream_iterator;
 using std::complex;
 using std::ws;
-using std::skipws;
 using std::map;
 using std::unordered_map;
 using std::min;

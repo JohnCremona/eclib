@@ -297,10 +297,22 @@ inline ostream& operator<<(ostream& s, const RAT& q)
 
 inline istream& operator>> (istream& is, RAT& r)
 {
-  std::string n;
-  is>>n;
-  fmpq_set_str(r.q, n.c_str(), 10);
-  fmpq_canonicalise(r.q);
+  INT n,d(1);
+  is>>n>>ws;
+  if(!is.eof())
+    {
+      char c;
+      is.get(c);
+      if(c=='/')
+	{
+	  is>>d;
+	}
+      else
+	{
+	  is.putback(c);
+	}
+    }
+  r = RAT(n,d);
   return is;
 }
 

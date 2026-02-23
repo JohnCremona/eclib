@@ -226,33 +226,33 @@ ostream& operator<<(ostream& s, const Zvec<T>& v)
 template<class T>
 istream& operator>>(istream& s, Zvec<T>& v)
 {
-  cout << "Reading into vector v = " << v << endl;
+  // cout << "Reading into vector v = " << v << endl;
   char c;
-  s >> skipws; // skip whitespace
+  s >> ws; // skip whitespace
   s >> c;
-  cout << "First character read: " << c << endl;
+  // cout << "First character read: " << c << endl;
   switch (c) {
   case '[':
-    cout << "That was [" << endl;
+    // cout << "That was [" << endl;
     // Read the entries + one char (separator commas or final ']')
     for (T& vi : v.entries)
       {
-        s>>vi>>c;
-      cout << "Read entry " << vi << " and character " << c << endl;
+        s>>ws>>vi>>ws>>c;
+        // cout << "Read entry " << vi << " and character " << c << endl;
       }
     break;
   default:
     // put back the first non-whitespace char
-    cout << "That was not [ so putting it back" << endl;
+    // cout << "That was not [ so putting it back" << endl;
     s.unget();
     // read the entries
     for (T& vi : v.entries)
       {
-      s>>vi;
-      cout << "Read entry " << vi << endl;
+        s>>ws>>vi;
+        // cout << "Read entry " << vi << endl;
       }
   }
-  cout << "Finally v = " << v << endl;
+  // cout << "Finally v = " << v << endl;
   return s;
 }
 

@@ -276,7 +276,7 @@ inline ostream& operator<<(ostream& s, const bigrational& q)
 inline istream& operator>> (istream& is, bigrational& r)
 {
   ZZ n,d(1);
-  is>>n;
+  is>>n>>ws;
   if(!is.eof())
     {
       char c;

@@ -274,7 +274,7 @@ inline ostream& operator<<(ostream& s, const rational& q)
 inline istream& operator>> (istream& is, rational& r)
 {
   long n,d=1;
-  is>>n;
+  is>>n>>ws;
   if(!is.eof()) 
     {
       char c;
