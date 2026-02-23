@@ -29,12 +29,16 @@
 template<> int default_modulus<int>()       { return modulus_factory_int.get_modulus();}
 template<> long default_modulus<long>()     { return modulus_factory_long.get_modulus();}
 template<> ZZ default_modulus<ZZ>() { return modulus_factory_ZZ.get_modulus();}
+template<> INT default_modulus<INT>() { return modulus_factory_INT.get_modulus();}
 
 template<> modulus_factory<int>::modulus_factory()    :modulus(1073741789) { ; }
 template<> modulus_factory<long>::modulus_factory()   :modulus(1073741789) { ; }
 template<> modulus_factory<ZZ>::modulus_factory()
   //  :modulus(to_ZZ("6074000003"))
    :modulus(to_ZZ("1000000000000000000000000000057"))
+{ ; }
+template<> modulus_factory<INT>::modulus_factory()
+   :modulus(INT("1000000000000000000000000000057"))
 { ; }
 
 template<class T> T modulus_factory<T>::set_modulus(const T& new_modulus)
@@ -47,10 +51,12 @@ template<class T> T modulus_factory<T>::set_modulus(const T& new_modulus)
 modulus_factory<int> modulus_factory_int;
 modulus_factory<long> modulus_factory_long;
 modulus_factory<ZZ> modulus_factory_ZZ;
+modulus_factory<INT> modulus_factory_INT;
 
 template class modulus_factory<int>;
 template class modulus_factory<long>;
 template class modulus_factory<ZZ>;
+template class modulus_factory<INT>;
 
 template<>
 int set_default_modulus<int>(const int& new_modulus)
@@ -68,4 +74,10 @@ template<>
 ZZ set_default_modulus<ZZ>(const ZZ& new_modulus)
 {
   return modulus_factory_ZZ.set_modulus(new_modulus);
+}
+
+template<>
+INT set_default_modulus<INT>(const INT& new_modulus)
+{
+  return modulus_factory_INT.set_modulus(new_modulus);
 }

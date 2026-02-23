@@ -63,7 +63,7 @@ typedef ssubZspace<ZZ> ssubspace_m;
 typedef form_finderT<ZZ> form_finder_m;
 
 typedef Zvec<INT> vec_I;
-// typedef Zmat<INT> mat_I;
+typedef Zmat<INT> mat_I;
 // typedef subZspace<INT> subspace_I;
 typedef sZvec<INT> svec_I;
 // typedef sZmat<INT> smat_I;

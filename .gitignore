@@ -88,6 +88,7 @@ tests/homtest
 tests/mattest1
 tests/mattest2
 tests/mattest3
+tests/mattest4
 tests/mhcount
 tests/mmattest
 tests/modtest

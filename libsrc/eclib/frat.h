@@ -342,9 +342,12 @@ inline RAT min(const RAT& a, const RAT& b) {return (a<=b? a : b);}
 inline int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b)
 {
   RAT q;
-  int res = fmpq_reconstruct_fmpz(q.q, n.z, m.z);
+  // cout << "modrat("<<n<<","<<m<<")..."<<flush;
+  INT rn = n%m;
+  int res = fmpq_reconstruct_fmpz(q.q, rn.z, m.z);
   a = q.num();
   b = q.den();
+  // cout << "... returns a="<<a<<", b="<<b<<endl;
   return res;
 }
 

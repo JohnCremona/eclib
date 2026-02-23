@@ -22,6 +22,9 @@ public:
   explicit INT(std::string s);
   // Destructor:
   ~INT() {fmpz_clear(z);}
+  // Access internal fmpz_t:
+  void get_fmpz(fmpz_t& x) const { fmpz_init_set(x, z);}
+  //
   INT& operator=(int a) {fmpz_set_si(z, a); return *this;}
   INT& operator=(long a) {fmpz_set_si(z, a); return *this;}
   INT& operator=(const INT& a) {fmpz_set(z, a.z); return *this;}
@@ -84,6 +87,7 @@ public:
   friend INT fmms(const INT& a, const INT& b, const INT& c, const INT& d); // a*b-c*d
   friend INT mod(const INT& a, const INT& b); // a mod b in range (-b/2,b/2]
   friend INT gcd(const INT& a, const INT& b);
+  friend INT lcm(const INT& a, const INT& b);
   friend INT bezout(const INT& a, const INT& b, INT& x, INT& y);
   friend int compare(const INT& a, const INT& b);
   friend int compare(const INT& a, int b);
@@ -121,6 +125,7 @@ inline INT posmod(const INT& a, const INT& b) {return a%b;} // in range [0,|b|)
 inline INT posmod(const INT& a, long b) {return INT(a%b);} // in range [0,|b|)
 inline INT mod(const INT& a, const INT& b) {INT c; fmpz_smod(c.z,a.z,b.z); return c;} // in range (-|b|/2,|b|/2-1]
 inline INT gcd(const INT& a, const INT& b) {INT c; fmpz_gcd(c.z,a.z,b.z); return c;}
+inline INT lcm(const INT& a, const INT& b) {INT c; fmpz_lcm(c.z,a.z,b.z); return c;}
 inline INT bezout(const INT& a, const INT& b, INT& x, INT& y) {INT c; fmpz_xgcd_canonical_bezout(c.z, x.z, y.z, a.z, b.z); return c;}
 inline int compare(const INT& a, const INT& b) {return fmpz_cmp(a.z,b.z);}
 inline int compare(const INT& a, int b) {return fmpz_cmp_si(a.z,b);}
