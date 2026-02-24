@@ -194,6 +194,8 @@ template<class T>
 mat_i to_mat_i(const Zmat<T>& M);
 template<class T>
 mat_l to_mat_l(const Zmat<T>& M);
+template<class T>
+mat_I to_mat_I(const Zmat<T>& M);
 
 // convert an eclib Zmat to an NTL mat_ZZ:
 template<class T>

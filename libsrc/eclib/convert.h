@@ -36,12 +36,18 @@ using NTL::ZZ;
 using PARI::GEN;
 
 ZZ FLINT_to_NTL  (const fmpz_t& a);   // from FLINT to NTL
-ZZ to_ZZ         (const INT& a);      // from INT to ZZ
 ZZ PARI_to_NTL   (const GEN& a);      // from PARI to NTL
 fmpz_t* NTL_to_FLINT  (const ZZ& a);  // from NTL to FLINT
 fmpz_t* PARI_to_FLINT (const GEN& a); // from PARI to FLINT
 GEN NTL_to_PARI   (const ZZ& a);      // from NTL to PARI
 GEN FLINT_to_PARI (const fmpz_t& a);  // from FLINT to PARI
+
+ZZ to_ZZ         (const INT& a);      // from INT to ZZ
+
+inline INT to_INT(const int& x) {return INT(x);}
+inline INT to_INT(const long& x) {return INT(x);}
+inline INT to_INT(const ZZ& x) {return INT(*NTL_to_FLINT(x));}
+inline INT to_INT(const GEN& x) {return INT(*PARI_to_FLINT(x));}
 
 #endif
 

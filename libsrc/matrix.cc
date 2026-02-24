@@ -1616,6 +1616,18 @@ template mat_l to_mat_l(const Zmat<int>& M);
 template mat_l to_mat_l(const Zmat<long>& M);
 template mat_l to_mat_l(const Zmat<ZZ>& M);
 
+template<class T>
+mat_I to_mat_I(const Zmat<T>& M)
+{
+  const vector<T> & Mij = M.get_entries();
+  vector<INT> entries(Mij.size());
+  std::transform(Mij.begin(), Mij.end(), entries.begin(), [](const T& x) {return to_INT(x);});
+  return mat_I(M.nrows(), M.ncols(), entries);
+}
+template mat_I to_mat_I(const Zmat<int>& M);
+template mat_I to_mat_I(const Zmat<long>& M);
+template mat_I to_mat_I(const Zmat<ZZ>& M);
+
 ///////////////////////////////////////////////////////////////////////////
 
 #include "eclib/flinterface.h"
