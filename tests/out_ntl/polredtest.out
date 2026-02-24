@@ -1,0 +1,22 @@
+Program polredtest: conversions between ZZX and t_POL and reduction of polynomials.
+f = X^2+100
+ -as a t_POL: x^2 + 100
+ -back to ZZX: X^2+100
+ OK 
+Applying polredabs...
+... reduced polynomial is g = X^2+1 -- polynomial has been reduced
+A root of f is a = 10*b where g(b)=0
+f = X^2-5
+ -as a t_POL: x^2 - 5
+ -back to ZZX: X^2-5
+ OK 
+Applying polredabs...
+... reduced polynomial is g = X^2-X-1 -- polynomial has been reduced
+A root of f is a = 2*b-1 where g(b)=0
+f = 55*X^3+44*X^2+33*X+22
+ -as a t_POL: 55*x^3 + 44*x^2 + 33*x + 22
+ -back to ZZX: 55*X^3+44*X^2+33*X+22
+ OK 
+Applying polredabs...
+... reduced polynomial is g = X^3+5*X-14 -- polynomial has been reduced
+A root of f is a = (-b^2+b-6) / 10 where g(b)=0

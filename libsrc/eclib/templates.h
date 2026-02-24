@@ -131,4 +131,12 @@ int startswith(const vector<T>& a, const vector<T>& b, long l, long from=0)
   return equal(a.begin()+from,a.begin()+from+l,b.begin()+from);
 }
 
+template <class T>
+inline istream& operator>>(istream& s, vector<T>& v)
+{
+  if (v.size())
+    std::copy_n(std::istream_iterator<T>(s), v.size(), v.begin());
+  return s;
+}
+
 #endif

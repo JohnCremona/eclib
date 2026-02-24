@@ -26,8 +26,7 @@
 
 #include "eclib/mwprocs.h"
 #include "eclib/htconst.h"
-
-#include <eclib/realroots.h>
+#include "eclib/realroots.h"
 
 // Code for Silverman bound
 

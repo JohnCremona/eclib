@@ -30,7 +30,7 @@ Foundation, 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 // #else
 // char *alloca ();
 // #endif
-#include <eclib/GetOpt.h>
+#include "eclib/GetOpt.h"
 
 char* GetOpt::nextchar = 0;
 int GetOpt::first_nonopt = 0;

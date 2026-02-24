@@ -1321,7 +1321,7 @@ Zmat<T> echmodp_uptri(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcol
 
 #include <NTL/mat_lzz_p.h>
 #ifdef TRACE_NTL_REF
-#include <eclib/timer.h>
+#include "eclib/timer.h"
 #endif
 
 // Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
