@@ -1881,12 +1881,13 @@ mat_ZZ mat_to_mat_ZZ(Zmat<T> A)
   ntl_A.SetDims(d,d);
   for(int i=1; i<=d; i++)
     for(int j=1; j<=d; j++)
-      ntl_A(i,j)=NTL::conv<ZZ>(A(i,j));
+      ntl_A(i,j) = to_ZZ(A(i,j));
   return ntl_A;
 }
 template mat_ZZ mat_to_mat_ZZ<int>(Zmat<int> A);
 template mat_ZZ mat_to_mat_ZZ<long>(Zmat<long> A);
 template mat_ZZ mat_to_mat_ZZ<ZZ>(Zmat<ZZ> A);
+template mat_ZZ mat_to_mat_ZZ<INT>(Zmat<INT> A);
 
 template<class T>
 mat_ZZ_p mat_to_mat_ZZ_p(Zmat<T> A)

@@ -152,7 +152,7 @@ class newforms :public level, splitter_base<scalar>   {
   friend class newform;
 private:
   scalar modulus;
-  int verbose; long maxdepth, cuspidal, sign;
+  int verbose, maxdepth, cuspidal, sign;
   int basisflag;  // is set, then use() only sets bases for newforms
 		  // already defined.
   mat opmat(int i, int d, int v=0)

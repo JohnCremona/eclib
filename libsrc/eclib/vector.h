@@ -69,7 +69,7 @@ typedef sZvec<INT> svec_I;
 typedef sZmat<INT> smat_I;
 typedef sZmat_elim<INT> smat_I_elim;
 typedef ssubZspace<INT> ssubspace_I;
-// typedef form_finderT<INT> form_finder_I;
+typedef form_finderT<INT> form_finder_I;
 
 
 template<class T> int dim(const Zvec<T>&);

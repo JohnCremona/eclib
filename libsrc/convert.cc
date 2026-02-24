@@ -69,6 +69,13 @@ ZZ FLINT_to_NTL(const fmpz_t& a)  // from FLINT to NTL
   return (sign_a<0? -b : b);
 }
 
+ZZ to_ZZ     (const INT& a)      // from INT to ZZ
+{
+  fmpz_t z;
+  a.get_fmpz(z);
+  return FLINT_to_NTL(z);
+}
+
 ZZ PARI_to_NTL(const GEN& a)  // from PARI to NTL
 {
   // if a fits in a long int it is easy:

@@ -891,8 +891,8 @@ void newforms::createfromscratch(int s, long ntp)
   of = new oldforms(ntp,h1, modulus, (verbose>1),sign); // h1 provides the level*
   if(verbose>1) of->display();
   maxdepth = of->nap;
-  long mindepth = npdivs; // must include at least one good p, and it
-			  // is cheap to continue recursing after
+  int mindepth = npdivs; // must include at least one good p, and it
+                         // is cheap to continue recursing after
 			  // reaching dimension 1.
   n1ds = 0;
   int upperbound = h1->dimension-(of->totalolddim);

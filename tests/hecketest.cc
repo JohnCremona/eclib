@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 
+#include <eclib/convert.h>
 #include <eclib/timer.h>
 #include <eclib/homspace.h>
 #include <eclib/polys.h>
@@ -65,7 +66,7 @@ int main(void)
  scalar den = hplus.h1denom();
  ZZ Den = to_ZZ(den);
  cout << "Dimension = " << genus << "\n";
- cout << "denominator = " << den << "\n";
+ cout << "denominator = " << Den << "\n";
  vector<long> badprimes = hplus.plist;
  int nq = badprimes.size();
  if (genus==0)

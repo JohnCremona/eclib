@@ -119,7 +119,7 @@ typedef ssubspace_I ssubspace;
 typedef svec_I svec;
 typedef smat_I smat;
 typedef smat_I_elim smat_elim;
-// typedef form_finder_i form_finder;
+typedef form_finder_I form_finder;
 #define to_vec to_vec_I
 #define to_mat to_mat_I
 #else

@@ -73,7 +73,7 @@ protected:
 
   int            plusflag, dual, bigmats, verbose, targetdim;
   int            gnfcount;                  // Global newform counter
-  long           maxdepth, mindepth, dimen;
+  int            maxdepth, mindepth, dimen;
   T              modulus; // prime modulus for linear algebra
   T              denom1;
   vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists
