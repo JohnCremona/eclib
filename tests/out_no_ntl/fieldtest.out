@@ -1,0 +1,81 @@
+Program fieldtest: test program for classes Field, FieldElement, FieldIso
+
+Input format for a field: either Q or a variable name followed by
+ a list of coefficients of a monic irreducible defining polynomial (constant term first)
+ e.g. i [1 0 1]  for Q(i)
+Default constructor:
+F = Q
+Q
+F is Q? 1
+min poly = X
+generator name = 
+generator = 1
+0 in F is 0
+1 in F is 1
+-1 in F is -1
+2 in F is 2
+-2 in F is -2
+Applying polredabs...
+Identity automorphism of Q
+Reduced field is Q
+
+F = Q(i) = Q[X]/(X^2+1)
+Q(i) with defining polynomial X^2+1 (of degree 2 and discriminant -4)
+F is Q? 0
+min poly = X^2+1
+generator name = i
+generator = i
+0 in F is 0
+1 in F is 1
+-1 in F is -1
+2 in F is 2
+-2 in F is -2
+Applying polredabs...
+Identity automorphism of Q(i) = Q[X]/(X^2+1)
+Reduced field is Q(i) with defining polynomial X^2+1 (of degree 2 and discriminant -4)
+
+F = Q(a) = Q[X]/(X^2+9)
+Q(a) with defining polynomial X^2+9 (of degree 2 and discriminant -36)
+F is Q? 0
+min poly = X^2+9
+generator name = a
+generator = a
+0 in F is 0
+1 in F is 1
+-1 in F is -1
+2 in F is 2
+-2 in F is -2
+Applying polredabs...
+Isomorphism from Q(a) = Q[X]/(X^2+9) to Q(a0) = Q[X]/(X^2+1) mapping a to 3*a0
+Reduced field is Q(a0) with defining polynomial X^2+1 (of degree 2 and discriminant -4)
+
+F = Q(b) = Q[X]/(X^2+33*X+22)
+Q(b) with defining polynomial X^2+33*X+22 (of degree 2 and discriminant 1001)
+F is Q? 0
+min poly = X^2+33*X+22
+generator name = b
+generator = b
+0 in F is 0
+1 in F is 1
+-1 in F is -1
+2 in F is 2
+-2 in F is -2
+Applying polredabs...
+Isomorphism from Q(b) = Q[X]/(X^2+33*X+22) to Q(b0) = Q[X]/(X^2-X-250) mapping b to -b0-16
+Reduced field is Q(b0) with defining polynomial X^2-X-250 (of degree 2 and discriminant 1001)
+
+F = Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336)
+Q(c) with defining polynomial X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336 (of degree 16 and discriminant 373806240249576772806216528619898703598888444336604916579875358039683351624857517597410047102529448513647466376971300765141262477234072742526976)
+F is Q? 0
+min poly = X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336
+generator name = c
+generator = c
+0 in F is 0
+1 in F is 1
+-1 in F is -1
+2 in F is 2
+-2 in F is -2
+Applying polredabs...
+Isomorphism from Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336) to Q(c0) = Q[X]/(X^16-20*X^13-70*X^12+76*X^11+200*X^10-296*X^9+5311*X^8-15548*X^7+22808*X^6-30984*X^5+38754*X^4-31428*X^3+16200*X^2-4860*X+729) mapping c to (8515537569225205*c0^15+2154158749277180*c0^14-521130839509137*c0^13-171430586743748828*c0^12-640096784261549264*c0^11+506753176966059218*c0^10+1927616175477565195*c0^9-2024676056672845270*c0^8+44489599786657518048*c0^7-121065980758500891378*c0^6+157993634703675254785*c0^5-212708086779409620698*c0^4+263113230020112670401*c0^3-181693559170675694322*c0^2+68429147561094867534*c0-11842867458532251306)/741644554801867308
+Reduced field is Q(c0) with defining polynomial X^16-20*X^13-70*X^12+76*X^11+200*X^10-296*X^9+5311*X^8-15548*X^7+22808*X^6-30984*X^5+38754*X^4-31428*X^3+16200*X^2-4860*X+729 (of degree 16 and discriminant 381568774073100322516916942298963355496680713083726189553878249563602652353732114628214784)
+

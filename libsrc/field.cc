@@ -6,10 +6,15 @@
 
 //#define DEBUG_ARITH
 
-Field* FieldQQ = new Field();
+const Field* FieldQQ = new Field();
 
+//#define DEBUG_FIELD_CONSTRUCTOR
 Field::Field(const ZZX& p, string a, int verb)
 {
+#ifdef DEBUG_FIELD_CONSTRUCTOR
+  cout << "In Field constructor with poly " << ::str(p) << ", name = " << a << endl;
+  verb = 1;
+#endif
   if (IsMonic(p) && IsIrreducible(p))
     {
       // Set A to be the companion matrix of p.  The function
@@ -23,7 +28,18 @@ Field::Field(const ZZX& p, string a, int verb)
         }
       m(d,d) = -coeff(p, d-1);
       // Finally call the other constructor
+#ifdef DEBUG_FIELD_CONSTRUCTOR
+  cout << "Calling the other Field constructor " << endl;
+#endif
       *this = Field(m, ZZ(1), a, verb);
+    }
+  else
+    {
+      cerr << "Error: poly should be monic and irreducible" << endl;
+#ifdef DEBUG_FIELD_CONSTRUCTOR
+      display_factors(p);
+#endif
+      *this = Field();
     }
 }
 
@@ -36,6 +52,7 @@ Field::Field() // defaults to Q
   denom = B(1,1) = Bdet = Bdet1 = Bdet2 = Bdet3 = ZZ(1);
   Binv = B;
   var = ""; // will not be used anyway
+  SetX(minpoly);
 }
 
 Field::Field(const mat_m& m, const ZZ& den, string a, int verb)
@@ -121,12 +138,47 @@ string Field::str(int raw) const
   return s.str();
 }
 
+//#define DEBUG_FIELD_INPUT
+istream& operator>>(istream& s, Field* F)
+{
+#ifdef DEBUG_FIELD_INPUT
+  cout << "In operator>>(istream& s, Field* F)..." << endl;
+#endif
+  string var;
+  s >> var;
+#ifdef DEBUG_FIELD_INPUT
+  cout << "- input var = " <<var << endl;
+#endif
+  if (var=="Q")
+    {
+#ifdef DEBUG_FIELD_INPUT
+      cout << "- setting F to QQ" << endl;
+#endif
+      *F = Field();
+    }
+  else
+    {
+      ZZX f;
+      s >> f;
+#ifdef DEBUG_FIELD_INPUT
+      cout << "- not QQ" <<endl;
+      cout << "- input f = " << ::str(f) << endl;
+#endif
+      *F = Field(f, var);
+#ifdef DEBUG_FIELD_INPUT
+      cout << *F << endl;
+      F->display();
+#endif
+    }
+  return s;
+}
+
 istream& operator>>(istream& s, Field** F)
 {
   string var;
   s >> var;
   if (var=="Q")
-    *F = FieldQQ;
+    *F = (Field*)FieldQQ;
   else
     {
       ZZX f;
@@ -199,9 +251,8 @@ void Field::display(ostream&s, int raw) const
       s << "Q" << endl;
       return;
     }
-  s << "Q(" << var << ") with defining polynomial "<< fpol <<" (of degree "<<d
-    << " and discriminant " << discriminant(minpoly) << ")";
-  s << endl;
+  s << "Q(" << var << ") with defining polynomial "<< ::str(minpoly) <<" (of degree "<<d
+    << " and discriminant " << discriminant(minpoly) << ")" << endl;
   if(raw && !isQ())
     {
       s << "   Raw basis with respect to alpha-power basis:\n";
@@ -885,8 +936,9 @@ string FieldIso::str(int raw) const
             s << "Automorphism of " << domain->str();
           else
             s << "Isomorphism from " << domain->str() << " to " << codomain->str();
-          s << " with matrix\n" << isomat;
-          if (!IsOne(denom)) s << "/ "<< denom;
+          // s << " with matrix\n" << isomat;
+          // if (!IsOne(denom)) s << "/ "<< denom;
+          s << " mapping " << domain->gen() << " to " << operator()(domain->gen());
         }
     }
   return s.str();

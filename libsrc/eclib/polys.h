@@ -137,10 +137,10 @@ string str(const ZZ_pX& p, const string& var="X");
 NTL::vec_pair_ZZX_long factor(const ZZX& f);
 
 // display factors of a polynomial:
-void display_factors(const ZZX& f);
+void display_factors(const ZZX& f, ostream&s = cout);
 
 // display factors of a polynomial mod p:
-void display_factors(const ZZ_pX& f);
+void display_factors(const ZZ_pX& f, ostream&s = cout);
 
 // return f(X/c)*c^d
 ZZX scale_poly_up(const ZZX& f, const ZZ& c);

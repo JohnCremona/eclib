@@ -278,18 +278,18 @@ string str(const ZZ_pX& p, const string& var)
 }
 
 // display factors of a polynomaial:
-void display_factor(const pair_ZZX_long& f)
+void display_factor(const pair_ZZX_long& f, ostream&s)
 {
   ZZX p = f.a;
   string pol = str(p);
   int d = deg(p), e = f.b;
-  cout << "(degree " << d << ")\t"
-       << pol
-       << "\t to power " << e;
-  //cout << " (coefficients " << p << ")";
+  s << "(degree " << d << ")\t"
+    << pol
+    << "\t to power " << e;
+  //s << " (coefficients " << p << ")";
 }
 
-void display_factors(const ZZX& f)
+void display_factors(const ZZX& f, ostream&s)
 {
   ZZ cont; vec_pair_ZZX_long factors;
   factor(cont, factors, f);
@@ -297,33 +297,33 @@ void display_factors(const ZZX& f)
   long nf = factors.length();
   for(int i=0; i<nf; i++)
     {
-      cout << (i+1) << ":\t";
-      display_factor(factors[i]);
-      cout<<endl;
+      s << (i+1) << ":\t";
+      display_factor(factors[i], s);
+      s << endl;
     }
 }
 
-void display_factor(const pair_ZZ_pX_long& f)
+void display_factor(const pair_ZZ_pX_long& f, ostream&s)
 {
   ZZ_pX p = f.a;
   string pol = str(p);
   int d = deg(p), e = f.b;
-  cout << "(degree " << d << ")\t"
-       << pol
-       << "\t to power " << e;
-  //cout << " (coefficients " << p << ")";
+  s << "(degree " << d << ")\t"
+    << pol
+    << "\t to power " << e;
+  //s << " (coefficients " << p << ")";
 }
 
-void display_factors(const ZZ_pX& f)
+void display_factors(const ZZ_pX& f, ostream&s)
 {
   vec_pair_ZZ_pX_long factors = berlekamp(f);
   ::sort(factors.begin(), factors.end(), fact_modp_cmp);
   long nf = factors.length();
   for(int i=0; i<nf; i++)
     {
-      cout << (i+1) << ":\t";
-      display_factor(factors[i]);
-      cout<<endl;
+      s << (i+1) << ":\t";
+      display_factor(factors[i], s);
+      s << endl;
     }
 }
 
@@ -386,6 +386,8 @@ int IsSquareFree(const ZZX& f)
 // Irreducibility test (ignoring content)
 int IsIrreducible(const ZZX& f)
 {
+  if (!IsSquareFree(f))
+    return 0;
   ZZ cont; vec_pair_ZZX_long factors;
   factor(cont, factors, f);
   return factors.length()==1;

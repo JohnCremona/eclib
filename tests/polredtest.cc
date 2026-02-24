@@ -4,7 +4,8 @@
 
 int main()
 {
-  cout << "Program polredtest: conversions between ZZX and t_POL and reduction of polynomials." << endl;
+  cout << "Program polredtest: conversions between ZZX and t_POL and reduction of polynomials."
+       << endl << endl;
 
   eclib_pari_init();
   int d;
@@ -48,6 +49,12 @@ int main()
           else
             cout << "A root of f is a = (" << str(h, "b") << ") / " << den << " where g(b)=0" << endl;
         }
+      else
+        {
+          cout << "f is reducible:\n";
+          display_factors(f);
+        }
+      cout << endl;
     }
   exit(0);
 }

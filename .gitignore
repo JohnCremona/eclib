@@ -149,3 +149,4 @@ tests/vectest3
 tests/vectest4
 tests/tconvert
 tests/polredtest
+tests/fieldtest

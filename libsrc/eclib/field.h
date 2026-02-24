@@ -11,7 +11,7 @@ class Field;
 class FieldIso;
 class FieldElement;
 
-extern Field* FieldQQ;
+extern const Field* FieldQQ;
 
 // Divide through by gcd of content(M) and d
 void cancel_mat(mat_m& M, ZZ& d);
@@ -51,7 +51,7 @@ public:
   FieldElement gen() const;
   FieldElement element(const vec_m& c, const ZZ& d=to_ZZ(1), int raw=0) const;
   int degree() const {return d;}
-  int isQ() const {return this==FieldQQ;}
+  int isQ() const {return this==FieldQQ || d==1;}
   ZZX poly() const {return minpoly;}
   mat_m basis() const {return Binv;} // columns are Bfactor * coeffs of basis w.r.t. a-powers
   //  ZZ basis_factor() const {return Bdet;}
@@ -63,6 +63,7 @@ public:
   // String for pretty output, like "Q" or "Q(i) = Q[X]/(X^2+1)", or
   // (if raw) raw output, suitable for re-input, like "Q" or "i [1 0 1]":
   string str(int raw=0) const;
+  friend istream& operator>>(istream& s, Field* F);
   friend istream& operator>>(istream& s, Field** F);
 
   // Apply polredabs to the defining polynomial, define a new field
