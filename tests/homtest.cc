@@ -58,7 +58,7 @@ int main(void)
             cout<<"Computing sign="<<plus<<" space"<<endl;
           }
 	start_time();
-	homspace hplus(n, modulus, plus, cuspidal,verbose);
+	homspace hplus(n, modulus, plus,verbose);
 	stop_time();
 	int dim = hplus.h1dim();
 	int cdim = hplus.h1cuspdim();

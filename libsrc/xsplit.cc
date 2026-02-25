@@ -116,12 +116,9 @@ void form_finderT<T>::make_submat( ff_data<T> &data ) {
     if( data.submat_.nrows() == 0 ) // else we have it already
       {
         if( depth == 0 )
-          data.submat_ = h -> s_opmat(depth,1,verbose);
+          data.submat_ = h -> s_opmat(depth,dual,verbose);
         else
-          {
-            //data.submat_ = h -> s_opmat_restricted(depth,*(data.abs_space_),1,verbose);
-            data.submat_ = make_nested_submat(depth,data);
-          }
+          data.submat_ = make_nested_submat(depth,data);
       }
   }
 }

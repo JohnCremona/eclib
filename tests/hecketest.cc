@@ -61,7 +61,7 @@ int main(void)
  if (n>1)
 {
  cout << ">>>Level " << n << "\t";
- homspace hplus(n, modulus, plus,0,0);
+ homspace hplus(n, modulus, plus, 0);
  int genus = hplus.h1dim();
  scalar den = hplus.h1denom();
  ZZ Den = to_ZZ(den);
@@ -73,7 +73,7 @@ int main(void)
    continue; // to next level
 
  cout << "Computing conjmat...  " << flush;
- smat conjmat = hplus.s_conj(1);
+ smat conjmat = hplus.s_conj(0,1);
  cout<<" done."<<endl;
  cout << "Computing +1 eigenspace...  " << flush;
  ssubspace h1plus = eigenspace(conjmat,den, modulus);
@@ -84,11 +84,11 @@ int main(void)
 
  vector<mat_ZZ> Wqlist;
  int w_eigs=0;
- cout<<"Compute W-eigenspaces? "; cin>>w_eigs;
+ cerr<<"Compute W-eigenspaces? "; cin>>w_eigs;
  for ( auto q: badprimes)
    {
-     cout << "Computing W("<<q<<")...  " << flush;
-     mat wq = hplus.heckeop(q,verbose);
+     cout << "Computing W_"<<q<<"...  " << flush;
+     mat wq = hplus.heckeop(q,0,1);
      mat_ZZ Wq = mat_to_mat_ZZ(wq);
      cout << "done, sparsity = "<<sparsity(wq)<<". " << endl;
      if(verbose)
@@ -126,7 +126,7 @@ int main(void)
    }
 
  int np=5,ip=0;
- cout<<"How many T_p? "; cin>>np;
+ cerr<<"How many T_p? "; cin>>np;
  vector<mat_ZZ> Tplist;
  for (primevar pr(np+nq); pr.ok()&&ip<np; pr++, ip++)
    {
@@ -134,7 +134,7 @@ int main(void)
      int p=pr;
      cout << "\nComputing T_p for p = " << p << "..." << flush;
      start_time();
-     mat tp = hplus.newheckeop(p,verbose);
+     mat tp = hplus.newheckeop(p,0,1);
      mat_ZZ Tp = mat_to_mat_ZZ(tp);
      if(verbose)
        {

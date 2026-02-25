@@ -103,8 +103,7 @@ class homspace :public symbdata {
   //private:
 public:
   scalar modulus; // for linear algebra on boundary matrices
-  vector<int> coordindex, needed, freegens;
-  long rk;
+  vector<int> coordindex, freegens;
   scalar denom1,denom2,denom3;
   ssubspace kern; // kernel(delta) basis
   smat tkernbas; // transpose of kernel(delta) basis
@@ -112,20 +111,18 @@ public:
 public:
   vector<svec> coord_vecs;
   mat projcoord; // # cols = # newforms after they are found
-  long dimension, ncusps, ncusps2;
-  int cuspidal;  // if 1 then compute cuspidal homology
+  long dimension, cuspidal_dimension, ncusps;
 public:
   // Constructor (does all the work):
   homspace(long n, // the level
            scalar mod, // the prime modulus for linear algebra
 	   int hp, // plus-space flag (0 or 1 or -1)
-	   int hcusp, // cuspidal flag (0 or 1)
 	   int verbose // verbosity (0 : no output
 	               //	     1 : basic short output
 	               //            2 : lots of detail)
 	   );
-  long h1cuspdim() const {return dim(kern);}
-  long h1dim() const {return dimension;}  // No confusion with subspace::dim
+  long h1cuspdim() const {return cuspidal_dimension;}
+  long h1dim() const {return dimension;}
   scalar h1denom() const {return denom1;}
   scalar h1cdenom() const {return denom3;}
   long h1ncusps() const {return ncusps;}
@@ -141,15 +138,15 @@ public:
   smat s_opmat_cols(int i, const vec_i& jlist, int verb=0);
   smat s_opmat_restricted(int i,const ssubspace& s, int dual,int verb=0);
 
-  // Extend a dual vector of length rk to one of length nsymb:
+  // Extend a dual vector of length dimension to one of length nsymb:
   vec extend_coords(const vec& v);
-  // Contract a dual vector of length nsymb to one of length rk:
+  // Contract a dual vector of length nsymb to one of length dimension:
   vec contract_coords(const vec& v);
 
 public:
   // The next functions express M- & modular symbols in terms of the
-  // basis for H_1(X_0(N);cusps;Z) of dimension rk
-  svec zero_coords() const {return svec(rk);} // zero vector
+  // basis for H_1(X_0(N);cusps;Z) of dimension dimension
+  svec zero_coords() const {return svec(dimension);} // zero vector
   svec coords_from_index(int ind) const;
   vec proj_coords_from_index(int ind, const mat& m) const;
   scalar nfproj_coords_from_index(int ind, const vec& bas) const;
@@ -196,21 +193,23 @@ public:
   svec applyop(const matop& mlist, const modsym& m) const;
   //  {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());}
 
-  mat calcop(const matop& T, int dual, int display=0) const;
+  mat calcop(const matop& T, int cuspidal, int dual, int display=0) const;
+  mat calcop(const gmatop& T, int cuspidal, int dual, int display=0) const;
   vec calcop_col(int j, const matop& T, int display=0) const;
   mat calcop_cols(const vec_i& jlist, const matop& T, int display=0) const;
   mat calcop_restricted(const matop& T, const subspace& s, int dual, int display=0) const;
 
-  smat s_calcop(const matop& T, int dual, int display=0) const;
+  smat s_calcop(const matop& T, int cuspidal, int dual, int display=0) const;
   svec s_calcop_col(int j, const matop& T, int display=0) const;
   smat s_calcop_cols(const vec_i& jlist, const matop& T, int display=0) const;
   smat s_calcop_restricted(const matop& T, const ssubspace& s, int dual, int display=0) const;
 
-public:
+  ZZX charpoly(const matop& T, int cuspidal) const;
+  ZZX charpoly(const gmatop& T, int cuspidal) const;
 
-  mat heckeop(long p, int dual, int display=0) const
+  mat heckeop(long p, int cuspidal, int dual, int display=0) const
   {
-    return calcop(matop(p,N),dual,display);
+    return calcop(matop(p,N), cuspidal, dual,display);
   }
   vec heckeop_col(long p, int j, int display=0) const
   {
@@ -224,9 +223,9 @@ public:
   {
     return calcop_restricted(matop(p,N),s,dual,display);
   }
-  smat s_heckeop(long p, int dual, int display=0) const
+  smat s_heckeop(long p, int cuspidal, int dual, int display=0) const
   {
-    return s_calcop(matop(p,N),dual,display);
+    return s_calcop(matop(p,N),cuspidal,dual,display);
   }
   svec s_heckeop_col(long p, int j, int display=0) const
   {
@@ -241,21 +240,21 @@ public:
     return s_calcop_restricted(matop(p,N),s,dual,display);
   }
 
-  mat newheckeop(long p, int dual, int display=0) const;
-  mat wop(long q, int dual, int display=0) const
+  mat newheckeop(long p, int cuspidal, int dual, int display=0) const;
+  mat wop(long q, int cuspidal, int dual, int display=0) const
   {
-    return calcop(matop(q,N),dual,display);
+    return calcop(matop(q,N),cuspidal,dual,display);
   }
-  smat s_wop(long q, int dual, int display=0) const
+  smat s_wop(long q, int cuspidal, int dual, int display=0) const
   {
-    return s_calcop(matop(q,N),dual,display);
+    return s_calcop(matop(q,N),cuspidal,dual,display);
   }
-  mat fricke(int dual, int display=0) const;
-  mat conj(int dual, int display=0) const;
+  mat fricke(int cuspidal, int dual, int display=0) const;
+  mat conj(int cuspidal, int dual, int display=0) const;
   vec conj_col(int j, int display=0) const;
   mat conj_cols(const vec_i& jlist, int display=0) const;
   mat conj_restricted(const subspace& s, int dual,int display=0) const;
-  smat s_conj(int dual, int display=0) const;
+  smat s_conj(int cuspidal, int dual, int display=0) const;
   svec s_conj_col(int j, int display=0) const;
   smat s_conj_cols(const vec_i& jlist, int display=0) const;
   smat s_conj_restricted(const ssubspace& s, int dual, int display=0) const;
@@ -268,5 +267,55 @@ public:
   friend class jumps;
   friend class newforms;
 };
+
+// Return true iff T's new poly is squarefree and coprime to its old poly
+int test_splitting_operator(const long& N, const gmatop& T, const scalar& mod, int verbose=0);
+
+///////////////////////////////////////////////////////////////////////////////////////////
+// functions for caching homspaces, full Hecke matrices, full and new Hecke polynomials
+///////////////////////////////////////////////////////////////////////////////////////////
+
+// Utilities for creating keys
+
+string Nkey(const long& N);
+string NPkey(const long& N, const long& P);
+string NTkey(const long& N, const matop& T);
+string NTkey(const long& N, const gmatop& T);
+
+// Dicts (i.e. maps) holding various caches (declared in homspace.cc)
+// Keys are strings encoding level, operator label created from above utilities
+
+extern map<string,homspace*> H1_dict;  // Key: Nkey(N)
+extern map<string, mat> full_mat_dict; // Key: Nkey(N)-T.name(). Value: matrix of T
+                                       // on full space
+extern map<string, ZZX> poly_dict;          // char polys on full space
+extern map<string, ZZX> cuspidal_poly_dict; // char polys of restriction to cuspidal subspace
+extern map<string, ZZX> new_poly_dict;      // char polys of restriction to new subspace
+extern map<string, ZZX> new_cuspidal_poly_dict; // char polys of restriction to new cuspidal subspace
+
+// Functions to retrieve a value from one of these dicts given its
+// key, computing and storing it if the key is not already there:
+
+// from H1_dict
+homspace* get_homspace(const long& N, scalar mod);
+
+// from full_mat_dict
+mat get_full_mat(const long& N,  const matop& T, const scalar& mod);
+mat get_full_mat(const long& N,  const gmatop& T, const scalar& mod);
+
+// from one of poly_dict, cuspidal_poly_dict depending on cuspidal flag
+ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod);
+inline ZZX get_poly(const long& N,  const matop& T, int cuspidal, const scalar& mod)
+{return get_poly(N, gmatop(T), cuspidal, mod);}
+
+// from one of new_poly_dict, new_cuspidal_poly_dict depending on cuspidal flag
+
+ZZX get_new_poly(const long& N, const gmatop& T, int cuspidal, const scalar& mod);
+inline ZZX get_new_poly(const long& N, const matop& T, int cuspidal, const scalar& mod)
+{return get_new_poly(N, gmatop(T), cuspidal, mod);}
+
+// Functions to output and re-input poly dicts
+void output_poly_dict(ostream& os, map<string, ZZX> D);
+map<string, ZZX> input_poly_dict(istream& is);
 
 #endif

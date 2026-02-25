@@ -427,45 +427,42 @@ void newform::find_cuspidal_factors()
   cuspidalfactorplus=1;
   cuspidalfactorminus=1;
 
-  if(!(nf->h1->cuspidal))
+  if(sign!=-1) // do this if sign = 0,1
     {
-      if(sign!=-1) // do this if sign = 0,1
+      bplusc=(nf->h1->tkernbas)*bplus;
+      scalar cfp = content(bplusc);
+      cuspidalfactorplus = I2long(cfp);
+      bplusc /= cfp;
+    }
+  if(sign!=+1) // do this if sign = 0,-1
+    {
+      bminusc=(nf->h1->tkernbas)*bminus;
+      scalar cfm = content(bminusc);
+      cuspidalfactorminus = I2long(cfm);
+      bminusc/= cfm;
+    }
+  if(sign==0)  // do this only if sign = 0
+    {
+      type = (int)I2long((3-content(bplusc-bminusc)));
+      if(verbose) cout<<"Lattice type = "<<type<<endl;
+      if((type!=1)&&(type!=2))
         {
-          bplusc=(nf->h1->tkernbas)*bplus;
-          scalar cfp = content(bplusc);
-          cuspidalfactorplus = I2long(cfp);
-          bplusc /= cfp;
+          cerr<<"Error: lattice type computed to be "<<type<<", should be 1 or 2!"<<endl;
         }
-      if(sign!=+1) // do this if sign = 0,-1
-	{
-	  bminusc=(nf->h1->tkernbas)*bminus;
-          scalar cfm = content(bminusc);
-	  cuspidalfactorminus = I2long(cfm);
-	  bminusc/= cfm;
-        }
-      if(sign==0)  // do this only if sign = 0
-        {
-	  type = (int)I2long((3-content(bplusc-bminusc)));
-	  if(verbose) cout<<"Lattice type = "<<type<<endl;
-          if((type!=1)&&(type!=2))
-            {
-              cerr<<"Error: lattice type computed to be "<<type<<", should be 1 or 2!"<<endl;
-            }
-        }
+    }
 
-      if(verbose&&(cuspidalfactorplus*cuspidalfactorminus>1))
-	{
-          if(sign!=-1)
-            {
-              cout<<"cuspidalfactorplus  = "<<cuspidalfactorplus<<endl;
-              if(verbose>2) cout<<"bplusc = "<<bplusc<<endl;
-            }
-	  if(sign!=+1)
-            {
-              cout<<"cuspidalfactorminus = "<<cuspidalfactorminus<<endl;
-              if(verbose>2) cout<<"bminusc = "<<bminusc<<endl;
-            }
-	}
+  if(verbose&&(cuspidalfactorplus*cuspidalfactorminus>1))
+    {
+      if(sign!=-1)
+        {
+          cout<<"cuspidalfactorplus  = "<<cuspidalfactorplus<<endl;
+          if(verbose>2) cout<<"bplusc = "<<bplusc<<endl;
+        }
+      if(sign!=+1)
+        {
+          cout<<"cuspidalfactorminus = "<<cuspidalfactorminus<<endl;
+          if(verbose>2) cout<<"bminusc = "<<bminusc<<endl;
+        }
     }
 }
 
@@ -851,7 +848,7 @@ void newforms::makeh1(int s)
       if(!h1plus)
 	{
 	  if(verbose) cout<<"Constructing H1 (with sign=+1) ..."<<flush;
-	  h1plus = new homspace(N, modulus, 1 /*plusflag*/,  0 /*cuspidal*/,  0 /*verbose*/);
+	  h1plus = new homspace(N, modulus, 1 /*plusflag*/,  0 /*verbose*/);
 	  if(verbose) cout<<"done"<<endl;
 	}
       h1 = h1plus;
@@ -862,7 +859,7 @@ void newforms::makeh1(int s)
       if(!h1minus)
 	{
 	  if(verbose) cout<<"Constructing H1 (with sign=-1) ..."<<flush;
-	  h1minus = new homspace(N, modulus, -1, /*plusflag*/ 0 /*cuspidal*/, 0 /*verbose*/);
+	  h1minus = new homspace(N, modulus, -1, /*plusflag*/ 0 /*verbose*/);
 	  if(verbose) cout<<"done"<<endl;
 	}
       h1 = h1minus;
@@ -873,7 +870,7 @@ void newforms::makeh1(int s)
       if(!h1full)
 	{
 	  if(verbose) cout<<"Constructing H1 (with sign=0) ..."<<flush;
-	  h1full = new homspace(N, modulus, 0 /*plusflag*/, 0 /*cuspidal*/, 0 /*verbose*/);
+	  h1full = new homspace(N, modulus, 0 /*plusflag*/, 0 /*verbose*/);
 	  if(verbose) cout<<"done"<<endl;
 	}
       h1 = h1full;
@@ -1039,8 +1036,8 @@ long newforms::dimoldpart(const vector<long> l)
   return of->dimoldpart(l);
 }
 
-// if(!cuspidal) we really should check here that the basis vector b1
-// is in ker(delta), by checking that b1*h1->deltamat == 0
+// We really should check here that the basis vector b1 is in
+// ker(delta), by checking that b1*h1->deltamat == 0
 
 void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
 {

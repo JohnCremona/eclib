@@ -23,6 +23,7 @@
  
 // Original version by Luiz Figueiredo
 
+#include <assert.h>
 #include "eclib/linalg.h"
 
 // Instantiate sZmat template classes for T=int, long, ZZ
@@ -681,6 +682,9 @@ sZmat<T> operator* ( const sZmat<T>& A, const sZmat<T>& B )
   if( A.nco != B.nro )
     {
       cerr << "incompatible smats in operator *"<<endl;
+      cerr << "A is " << A.nro << "x" << A.nco <<endl;
+      cerr << "B is " << B.nro << "x" << B.nco <<endl;
+      assert(0);
     }
   else
     {
@@ -698,6 +702,9 @@ sZmat<T> mult_mod_p ( const sZmat<T>& A, const sZmat<T>& B, const T& p )
   if( A.nco != B.nro )
     {
       cerr << "incompatible smats in operator *"<<endl;
+      cerr << "A is " << A.nro << "x" << A.nco <<endl;
+      cerr << "B is " << B.nro << "x" << B.nco <<endl;
+      assert(0);
     }
   else
     {
