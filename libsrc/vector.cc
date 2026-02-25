@@ -21,6 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include "eclib/convert.h"
 #include "eclib/linalg.h"
 
 // Instantiate Zvec template classes for T=int, long, ZZ
@@ -447,6 +448,7 @@ vec_m to_vec_m(const Zvec<T>& V)
 template vec_m to_vec_m<int>(const Zvec<int>& M);
 template vec_m to_vec_m<long>(const Zvec<long>& M);
 template vec_m to_vec_m<ZZ>(const Zvec<ZZ>& M);
+template vec_m to_vec_m<INT>(const Zvec<INT>& M);
 
 template<class T>
 vec_i to_vec_i(const Zvec<T>& V)
@@ -471,6 +473,18 @@ vec_l to_vec_l(const Zvec<T>& V)
 template vec_l to_vec_l<int>(const Zvec<int>& M);
 template vec_l to_vec_l<long>(const Zvec<long>& M);
 template vec_l to_vec_l<ZZ>(const Zvec<ZZ>& M);
+
+template<class T>
+vec_I to_vec_I(const Zvec<T>& V)
+{
+  const vector<T> & Vi = V.get_entries();
+  vector<INT> w(Vi.size());
+  std::transform(Vi.begin(), Vi.end(), w.begin(), [](const T& x) {return to_INT(x);});
+  return vec_I(w);
+}
+template vec_I to_vec_I<int>(const Zvec<int>& M);
+template vec_I to_vec_I<long>(const Zvec<long>& M);
+template vec_I to_vec_I<ZZ>(const Zvec<ZZ>& M);
 
 // Instantiate Zvec template functions for T=int
 template int dim<int>(const Zvec<int>&);

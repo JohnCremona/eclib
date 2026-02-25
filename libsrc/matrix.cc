@@ -1589,6 +1589,7 @@ mat_m to_mat_m(const Zmat<T>& M)
 template mat_m to_mat_m(const Zmat<int>& M);
 template mat_m to_mat_m(const Zmat<long>& M);
 template mat_m to_mat_m(const Zmat<ZZ>& M);
+template mat_m to_mat_m(const Zmat<INT>& M);
 
 template<class T>
 mat_i to_mat_i(const Zmat<T>& M)
@@ -1911,13 +1912,14 @@ mat_ZZ_p mat_to_mat_ZZ_p(Zmat<T> A)
   ntl_A.SetDims(d,d);
   for(int i=1; i<=d; i++)
     for(int j=1; j<=d; j++)
-      ntl_A(i,j)=NTL::conv<ZZ_p>(A(i,j));
+      ntl_A(i,j) = NTL::conv<ZZ_p>(to_ZZ(A(i,j)));
   return ntl_A;
 }
 
 template mat_ZZ_p mat_to_mat_ZZ_p<int>(Zmat<int> A);
 template mat_ZZ_p mat_to_mat_ZZ_p<long>(Zmat<long> A);
 template mat_ZZ_p mat_to_mat_ZZ_p<ZZ>(Zmat<ZZ> A);
+template mat_ZZ_p mat_to_mat_ZZ_p<INT>(Zmat<INT> A);
 
 // compute char poly of A:
 ZZX charpoly(const mat_ZZ& A)
