@@ -1,7 +1,7 @@
 // mglobsol.h: declaration of class quartic_sieve and functions for quartic solubility testing
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2023 John Cremona
+// Copyright 1990-2026 John Cremona
 // 
 // This file is part of the eclib package.
 // 

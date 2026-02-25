@@ -1,7 +1,7 @@
 // tlegcert.cc: test program for solving legendre equations with certificates
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2023 John Cremona
+// Copyright 1990-2026 John Cremona
 // 
 // This file is part of the eclib package.
 // 

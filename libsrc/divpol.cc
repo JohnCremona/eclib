@@ -1,7 +1,7 @@
 // divpol.cc: implementations of functions for division polynomials
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2023 John Cremona
+// Copyright 1990-2026 John Cremona
 // 
 // This file is part of the eclib package.
 // 

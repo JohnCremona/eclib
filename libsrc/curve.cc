@@ -1,7 +1,7 @@
 // curve.cc: implementations of elliptic curve class Curve
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2023 John Cremona
+// Copyright 1990-2026 John Cremona
 // 
 // This file is part of the eclib package.
 // 

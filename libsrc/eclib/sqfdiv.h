@@ -1,7 +1,7 @@
 // sqfdiv.h : declaration of class sqfdiv for managing square-free divisors
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2023 John Cremona
+// Copyright 1990-2026 John Cremona
 // 
 // This file is part of the eclib package.
 // 

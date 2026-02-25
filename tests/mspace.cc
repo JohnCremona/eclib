@@ -1,7 +1,7 @@
 // mspace.cc: test program for subspace class with ZZ scalars
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2023 John Cremona
+// Copyright 1990-2026 John Cremona
 // 
 // This file is part of the eclib package.
 // 

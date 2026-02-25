@@ -1,7 +1,7 @@
 // timer.cc:  implementations of timer functions
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2023 John Cremona
+// Copyright 1990-2026 John Cremona
 //                     Marcus Mo     (timer class)
 // 
 // This file is part of the eclib package.

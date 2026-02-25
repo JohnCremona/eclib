@@ -1,7 +1,7 @@
 // FILE TNFD.CC:  test program for nfd (d-dimensional newform) class
 //////////////////////////////////////////////////////////////////////////
 //
-// Copyright 1990-2023 John Cremona
+// Copyright 1990-2026 John Cremona
 // 
 // This file is part of the eclib package.
 // 
