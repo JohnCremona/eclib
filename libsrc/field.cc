@@ -289,10 +289,7 @@ FieldElement Field::element(const vec_m& c, const ZZ& d, int raw) const
 
 FieldElement Field::rational(const bigrational& x) const
 {
-  if (isQ())
-    return FieldElement(x);
-  else
-    return FieldElement(this, x.num(), x.den());
+  return FieldElement(this, x.num(), x.den());
 }
 
 FieldElement Field::rational(const ZZ& x) const

@@ -73,7 +73,7 @@ public:
   // name.
   FieldIso reduction_isomorphism(string newvar) const;
 
-  // Return an iso from this=Q(a) to Q(b) where B is in this field and generates
+  // Return an iso from this=Q(a) to Q(b) where b is in this field and generates
   FieldIso change_generator(const FieldElement& b) const;
 
   // Return an iso from this=Q(a) to Q(b) where b^2=r, optionally
@@ -145,25 +145,41 @@ public:
 
   FieldElement operator+(const FieldElement& b) const; // add
   FieldElement operator+(const ZZ& b) const {return operator+(FieldElement(F,b));} // add
+  FieldElement operator+(const int& b) const {return operator+(FieldElement(F,to_ZZ(b)));} // add
+  FieldElement operator+(const long& b) const {return operator+(FieldElement(F,to_ZZ(b)));} // add
   void operator+=(const FieldElement& b); // add b to this
   void operator+=(const ZZ& b) { operator+=(FieldElement(F,b));} // add b
+  void operator+=(const int& b) { operator+=(FieldElement(F,to_ZZ(b)));} // add b
+  void operator+=(const long& b) { operator+=(FieldElement(F,to_ZZ(b)));} // add b
 
   FieldElement operator-(const FieldElement& b) const; // subtract
   FieldElement operator-(const ZZ& b) const {return operator-(FieldElement(F,b));} // subtract
+  FieldElement operator-(const int& b) const {return operator-(FieldElement(F,to_ZZ(b)));} // subtract
+  FieldElement operator-(const long& b) const {return operator-(FieldElement(F,to_ZZ(b)));} // subtract
   void operator-=(const FieldElement& b); // subtract b from this
   void operator-=(const ZZ& b) { operator-=(FieldElement(F,b));} // subtract b
+  void operator-=(const int& b) { operator-=(FieldElement(F,to_ZZ(b)));} // subtract b
+  void operator-=(const long& b) { operator-=(FieldElement(F,to_ZZ(b)));} // subtract b
   FieldElement operator-() const;                           // unary minus
 
   FieldElement operator*(const FieldElement& b) const; // product
   FieldElement operator*(const ZZ& b) const {return operator*(FieldElement(F,b));} // product
+  FieldElement operator*(const int& b) const {return operator*(FieldElement(F,to_ZZ(b)));} // product
+  FieldElement operator*(const long& b) const {return operator*(FieldElement(F,to_ZZ(b)));} // product
   void operator*=(const FieldElement& b); // multiply by b
   void operator*=(const ZZ& b) { operator*=(FieldElement(F,b));} // multiply by b
+  void operator*=(const int& b) { operator*=(FieldElement(F,to_ZZ(b)));} // multiply by b
+  void operator*=(const long& b) { operator*=(FieldElement(F,to_ZZ(b)));} // multiply by b
 
   FieldElement inverse() const; // raise error if zero      // inverse
   FieldElement operator/(const FieldElement& b) const; // divide (raise error if b is zero)
   FieldElement operator/(const ZZ& b) const {return operator/(FieldElement(F,b));} // divide
+  FieldElement operator/(const int& b) const {return operator/(FieldElement(F,to_ZZ(b)));} // divide
+  FieldElement operator/(const long& b) const {return operator/(FieldElement(F,to_ZZ(b)));} // divide
   void operator/=(const FieldElement& b);                        // divide by b
   void operator/=(const ZZ& b) { operator/=(FieldElement(F,b));} // divide by b
+  void operator/=(const int& b) { operator/=(FieldElement(F,to_ZZ(b)));} // divide by b
+  void operator/=(const long& b) { operator/=(FieldElement(F,to_ZZ(b)));} // divide by b
   void negate(); // negate in place
 
   // NB for a in F, either [Q(sqrt(a))=Q(a)] or [Q(sqrt(a)):Q(a)]=2.
