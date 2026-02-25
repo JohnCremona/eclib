@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #define USE_SMATS // Warning:  no longer testing without this switched on!
@@ -27,33 +27,51 @@
 #include "eclib/homspace.h"
 #include "eclib/timer.h"
 
-const string W_opname("W");
-const string T_opname("T");
+svec mat22::operator()(const symb& s, const homspace* h)const
+{
+  long u=s.ceered(),v=s.deered();
+  return h->coords_cd(a*u+c*v,b*u+d*v);
+}
+
+vec mat22::operator()(const symb& s, const homspace* h, const mat& m)const
+{
+  long u=s.cee(),v=s.dee();
+  return h->proj_coords_cd(a*u+c*v,b*u+d*v,m);
+}
+
+string opname(const long& p, const long& n=1)
+{
+  ostringstream ans;
+  ans << (n%p ? "T" : "W") << "_" << p;
+  return ans.str();
+}
 
 matop::matop(long a, long b, long c, long d)
 {
   mats.push_back(mat22(a,b,c,d));
+  the_name = "generic";
 }
 
 matop::matop(long p, long n)
 {
- if (p==n)
-   {
-     mats.push_back(mat22(0,-1,n,0));
-     return;
-   }
- if ((n%p)==0)   // W involution, 1 term
-   {
+  the_name = opname(p, n); // W_p or T_p
+  if (p==n)
+    {
+      mats.push_back(mat22(0,-1,n,0));
+      return;
+    }
+  if ((n%p)==0)   // W involution, 1 term
+    {
       long u,v,a,b;
       for (u=1, v=n; v%p==0; v/=p, u*=p) ;
       bezout(u,v,a,b);
       mats.push_back(mat22(u*a,-b,n,u));
       return;
-   }
- // else  Hecke operator, p+1 terms
+    }
+  // else  Hecke operator, p+1 terms
   {
     mats.resize(p+1);
-    long j, p2 = p>>1; 
+    long j, p2 = p>>1;
     for (j=0; j<p; j++) mats[j] = mat22(1,j-p2,0,p);
     mats[p] = mat22(p,0,0,1);
   }
@@ -77,7 +95,7 @@ if (plusflag!=0)
   for (j=0; j<nsymb; j++)
   {if (check[j]==0)
    { rel[0]=j;
-     if (plusflag==-1) 
+     if (plusflag==-1)
        rel[1]=rof(j);
      else
        rel[1]=rsof(j);
@@ -140,9 +158,9 @@ if (verbose>1)
 }}
 //
 // 3-term relations
- 
+
 //   long maxnumrel = 20+(2*ngens)/3;
- long maxnumrel = ngens+10;  
+ long maxnumrel = ngens+10;
 
    if (verbose)
      {
@@ -227,14 +245,14 @@ if (verbose>1)
 #endif
 
    //   cout<<"ngens = "<<ngens<<endl;
-   if (verbose) 
+   if (verbose)
      {
        cout << "rk = " << rk << endl;
-       if (verbose>1) 
+       if (verbose>1)
 	 {
 	   //       cout << "coord:\n" ; coord.output_pretty();
 	   cout << "coord_vecs:\n";
-           for(i=1; i<=ngens; i++) 
+           for(i=1; i<=ngens; i++)
              cout<<i<<": "<<coord_vecs[i].as_vec()<<"\n";
 	   cout << "pivots = " << pivs <<endl;
 	 }
@@ -374,7 +392,7 @@ vec homspace::extend_coords(const vec& v)
   return ans;
 }
 
-  // Contract a dual vector of length nsymb to one of length rk: 
+  // Contract a dual vector of length nsymb to one of length rk:
 vec homspace::contract_coords(const vec& v)
 {
   //  cout<<"Contracting vector "<<v<<endl;
@@ -425,29 +443,29 @@ svec homspace::coords_cd(long c, long d) const
   return coords_from_index(index2(c,d));
 }
 
-void homspace::add_coords_cd(svec& v, long c, long d) const 
+void homspace::add_coords_cd(svec& v, long c, long d) const
 {
   v += coords_from_index(index2(c,d));
 }
 
-vec homspace::proj_coords_cd(long c, long d, const mat& m) const 
+vec homspace::proj_coords_cd(long c, long d, const mat& m) const
 {
   return proj_coords_from_index(index2(c,d), m);
 }
 
-void homspace::add_proj_coords_cd(vec& v, long c, long d, const mat& m) const 
+void homspace::add_proj_coords_cd(vec& v, long c, long d, const mat& m) const
 {
   long n = coordindex[index2(c,d)];
   if (n>0) v.add_row(m,n);
   else if (n<0) v.sub_row(m,-n);
 }
 
-scalar homspace::nfproj_coords_cd(long c, long d, const vec& bas) const 
+scalar homspace::nfproj_coords_cd(long c, long d, const vec& bas) const
 {
   return nfproj_coords_from_index(index2(c,d), bas);
 }
 
-void homspace::add_nfproj_coords_cd(scalar& a, long c, long d, const vec& bas) const 
+void homspace::add_nfproj_coords_cd(scalar& a, long c, long d, const vec& bas) const
 {
   a += nfproj_coords_from_index(index2(c,d), bas);
 }
@@ -544,151 +562,144 @@ void homspace::add_nfproj_coords(scalar& aa, long nn, long dd, const vec& bas) c
    }
 }
 
-svec homspace::applyop(const matop& mlist, const rational& q) const
+svec homspace::applyop(const matop& T, const rational& q) const
 { svec ans(rk);
-  long i=mlist.size();
-  while (i--) add_coords(ans,mlist[i](q));
+  long i=T.size();
+  while (i--) add_coords(ans,T[i](q));
   return ans;
 }
 
-svec homspace::applyop(const matop& mlist, const modsym& m) const
+svec homspace::applyop(const matop& T, const modsym& m) const
 { svec ans(rk);
-  long i=mlist.size();
-  while (i--)  ans += coords((mlist[i])(m));
+  long i=T.size();
+  while (i--)  ans += coords((T[i])(m));
   return ans;
 }
 
-mat homspace::calcop_restricted(string opname, long p, const matop& mlist, 
-				const subspace& s, int dual, int display) const
+mat homspace::calcop_restricted(const matop& T,	const subspace& s, int dual, int display) const
 {
   long d=dim(s);
   mat m(d,rk);
-  for (long j=0; j<d; j++) 
-     { 
+  for (long j=0; j<d; j++)
+     {
        long jj = pivots(s)[j+1]-1;
-       svec colj = applyop(mlist,freemods[jj]);
+       svec colj = applyop(T,freemods[jj]);
        m.setrow(j+1,colj.as_vec());
      }
   m = (smat(m)*smat(basis(s))).as_mat();
   if(!dual) m=transpose(m); // dual is default for restricted ops
-  if (display) 
+  if (display)
     {
-      cout << "Matrix of " << opname << "(" << p << ") = ";
+      cout << "Matrix of " << T.name() << " = ";
       if (dimension>1) cout << "\n";
       m.output_pretty();
     }
   return m;
 }
 
-smat homspace::s_calcop_restricted(string opname, long p, const matop& mlist, 
-				   const ssubspace& s, int dual, int display) const
+smat homspace::s_calcop_restricted(const matop& T, const ssubspace& s, int dual, int display) const
 {
   long d=dim(s);
   smat m(d,rk);
-  for (long j=1; j<=d; j++) 
-     { 
+  for (long j=1; j<=d; j++)
+     {
        long jj = pivots(s)[j];
-       svec colj = applyop(mlist,freemods[jj-1]);
+       svec colj = applyop(T,freemods[jj-1]);
        m.setrow(j,colj);
      }
   //  m = m*basis(s);
   m = mult_mod_p(m,basis(s), modulus);
   if(!dual) m=transpose(m); // dual is default for restricted ops
-  if (display) 
+  if (display)
     {
-      cout << "Matrix of " << opname << "(" << p << ") = ";
+      cout << "Matrix of " << T.name() << " = ";
       if (dimension>1) cout << "\n";
       cout<<m<<endl;
     }
   return m;
 }
 
-mat homspace::calcop(string opname, long p, const matop& mlist, 
-		     int dual, int display) const
+mat homspace::calcop(const matop& T, int dual, int display) const
 {
   mat m(rk,rk);
   for (long j=0; j<rk; j++) if (needed[j])
-     { svec colj = applyop(mlist,freemods[j]);
+     { svec colj = applyop(T,freemods[j]);
        m.setcol(j+1,colj.as_vec());
      }
   if(cuspidal) m = restrict_mat(smat(m),kern).as_mat();
   if(dual) {  m=transpose(m);}
-  if (display) 
+  if (display)
     {
-      cout << "Matrix of " << opname << "(" << p << ") = ";
+      cout << "Matrix of " << T.name() << " = ";
       if (dimension>1) cout << "\n";
       m.output_pretty();
     }
   return m;
 }
 
-vec homspace::calcop_col(string opname, long p, int j, const matop& mlist,
-                         int display) const
+vec homspace::calcop_col(int j, const matop& T, int display) const
 {
   // j counts from 1
-  vec colj = applyop(mlist,freemods[j-1]).as_vec();
+  vec colj = applyop(T,freemods[j-1]).as_vec();
   if (display)
     {
-      cout << "Image of "<<j<<"-th generator under " << opname << "(" << p << ") = "
+      cout << "Image of "<<j<<"-th generator under " << T.name() << " = "
            << colj << endl;
     }
   return colj;
 }
 
-mat homspace::calcop_cols(string opname, long p, const vec_i& jlist, const matop& mlist,
-                         int display) const
+mat homspace::calcop_cols(const vec_i& jlist, const matop& T, int display) const
 {
   int i, d = dim(jlist);
   mat m(d,rk);
   for (i=1; i<=d; i++)
     {
-      m.setrow(i, applyop(mlist,freemods[jlist[i]-1]).as_vec());
+      m.setrow(i, applyop(T,freemods[jlist[i]-1]).as_vec());
     }
   return m;
 }
 
-svec homspace::s_calcop_col(string opname, long p, int j, const matop& mlist,
-                         int display) const
+svec homspace::s_calcop_col(int j, const matop& T,
+                            int display) const
 {
   // j counts from 1
-  svec colj = applyop(mlist,freemods[j-1]);
+  svec colj = applyop(T,freemods[j-1]);
   if (display)
     {
-      cout << "Image of "<<j<<"-th generator under " << opname << "(" << p << ") = "
+      cout << "Image of "<<j<<"-th generator under " << T.name() << " = "
            << colj.as_vec() << endl;
     }
   return colj;
 }
 
-smat homspace::s_calcop_cols(string opname, long p, const vec_i& jlist, const matop& mlist,
-                         int display) const
+smat homspace::s_calcop_cols(const vec_i& jlist, const matop& T, int display) const
 {
   int i, d = dim(jlist);
   smat m(d,rk);
   for (i=1; i<=d; i++)
     {
-      m.setrow(i, applyop(mlist,freemods[jlist[i]-1]));
+      m.setrow(i, applyop(T,freemods[jlist[i]-1]));
     }
   return m;
 }
 
-smat homspace::s_calcop(string opname, long p, const matop& mlist, 
-			int dual, int display) const
+smat homspace::s_calcop(const matop& T, int dual, int display) const
 {
   smat m(rk,rk);
   for (long j=0; j<rk; j++) if (needed[j])
-     { svec colj = applyop(mlist,freemods[j]);
+     { svec colj = applyop(T,freemods[j]);
        m.setrow(j+1,colj);
      }
-  if(cuspidal) 
-    {  
+  if(cuspidal)
+    {
       m = restrict_mat(transpose(m),kern);
       if(dual) m = transpose(m);
     }
   else if(!dual) {m=transpose(m);}
-  if (display) 
+  if (display)
     {
-      cout << "Matrix of " << opname << "(" << p << ") = ";
+      cout << "Matrix of " << T.name() << " = ";
       if (dimension>1) cout << "\n";
       cout<<m.as_mat();
     }
@@ -697,73 +708,15 @@ smat homspace::s_calcop(string opname, long p, const matop& mlist,
 
 /* NOTE: heckeop actually only returns the Hecke operator for p not dividing
    the level.  For p that divide the level it actually computes the Atkin-Lehner
-   operator. 
+   operator.
 */
 
-mat homspace::heckeop(long p, int dual, int display) const
-{
- matop matlist(p,N);
- string name = ((N%p) ? T_opname : W_opname);
- return calcop(name,p,matlist,dual,display);
-}
- 
-smat homspace::s_heckeop(long p, int dual, int display) const
-{
- matop matlist(p,N);
- string name = ((N%p) ? T_opname : W_opname);
- return s_calcop(name,p,matlist,dual,display);
-}
- 
-vec homspace::heckeop_col(long p, int j, int display) const
-{
- matop matlist(p,N);
- string name = ((N%p) ? T_opname : W_opname);
- return calcop_col(name,p,j,matlist,display);
-}
-
-mat homspace::heckeop_cols(long p, const vec_i& jlist, int display) const
-{
- matop matlist(p,N);
- string name = ((N%p) ? T_opname : W_opname);
- return calcop_cols(name,p,jlist,matlist,display);
-}
-
-svec homspace::s_heckeop_col(long p, int j, int display) const
-{
- matop matlist(p,N);
- string name = ((N%p) ? T_opname : W_opname);
- return s_calcop_col(name,p,j,matlist,display);
-}
-
-smat homspace::s_heckeop_cols(long p, const vec_i& jlist, int display) const
-{
- matop matlist(p,N);
- string name = ((N%p) ? T_opname : W_opname);
- return s_calcop_cols(name,p,jlist,matlist,display);
-}
-
-mat homspace::heckeop_restricted(long p,const subspace& s, 
-				 int dual, int display) const
-{
- matop matlist(p,N);
- string name = ((N%p) ? T_opname : W_opname);
- return calcop_restricted(name,p,matlist,s,dual,display);
-}
- 
-smat homspace::s_heckeop_restricted(long p,const ssubspace& s, 
-				    int dual, int display) const
-{
- matop matlist(p,N);
- string name = ((N%p) ? T_opname : W_opname);
- return s_calcop_restricted(name,p,matlist,s,dual,display);
-}
- 
 mat homspace::newheckeop(long p, int dual, int display) const
 {
   if(::divides(p,N)) return wop(p,display);
   matop hmats(p); // constructs H-matrices
   long j, nmats=hmats.size();
-  svec colj(rk);    mat m(rk,rk); 
+  svec colj(rk);    mat m(rk,rk);
   for (j=0; j<rk; j++) if (needed[j])
     {  symb s = symbol(freegens[j]);
        colj = hmats[0](s,this);
@@ -773,27 +726,15 @@ mat homspace::newheckeop(long p, int dual, int display) const
      }
   if(cuspidal) m = restrict_mat(smat(m),kern).as_mat();
   if(dual) m=transpose(m);
-  if (display) 
+  if (display)
     {
-      cout << "Matrix of T(" << p << ") = ";
+      cout << opname(p,N) << " = ";
       if (dimension>1) cout << "\n";
       m.output_pretty();
     }
   return m;
 }
 
-mat homspace::wop(long q, int dual, int display) const
-{
- matop matlist(q,N);
- return calcop(W_opname,q,matlist,dual,display);
-}
- 
-smat homspace::s_wop(long q, int dual, int display) const
-{
- matop matlist(q,N);
- return s_calcop(W_opname,q,matlist,dual,display);
-}
- 
 mat homspace::conj(int dual, int display) const
 {
  mat m(rk,rk);
@@ -860,8 +801,8 @@ smat homspace::s_conj(int dual, int display) const
     svec colj   =  coords_cd(-s.cee(),s.dee());
     m.setrow(j,colj);
  }
- if(cuspidal) 
-   {  
+ if(cuspidal)
+   {
      m = restrict_mat(transpose(m),kern);
      if(dual) m = transpose(m);
    }
@@ -872,13 +813,13 @@ smat homspace::s_conj(int dual, int display) const
 
 // Computes matrix of conjugation restricted to a DUAL subspace; here
 // the ambient space of s must be H_1(-;cusps) of dimension rk
-mat homspace::conj_restricted(const subspace& s, 
+mat homspace::conj_restricted(const subspace& s,
 			      int dual, int display) const
 {
   long d = dim(s);
   mat m(d,rk);
-  for (long j=1; j<=d; j++) 
-    {  
+  for (long j=1; j<=d; j++)
+    {
       long jj=pivots(s)[j];
       symb sy = symbol(freegens[jj-1]);
       svec colj   =  coords_cd(-sy.cee(),sy.dee());
@@ -890,13 +831,13 @@ mat homspace::conj_restricted(const subspace& s,
   return m;
 }
 
-smat homspace::s_conj_restricted(const ssubspace& s, 
+smat homspace::s_conj_restricted(const ssubspace& s,
 				 int dual, int display) const
 {
   long d = dim(s);
   smat m(d,rk);
-  for (long j=1; j<=d; j++) 
-    {  
+  for (long j=1; j<=d; j++)
+    {
       long jj=pivots(s)[j];
       symb sy = symbol(freegens[jj-1]);
       svec colj   =  coords_cd(-sy.cee(),sy.dee());
@@ -911,8 +852,7 @@ smat homspace::s_conj_restricted(const ssubspace& s,
 
 mat homspace::fricke(int dual, int display) const
 {
- matop frickelist(N,N);
- return calcop(W_opname,N,frickelist,dual,display);
+ return calcop(matop(N,N),dual,display);
 }
 
 long homspace::op_prime(int i)  // the i'th operator prime for Tp or Wq
@@ -929,15 +869,15 @@ long homspace::op_prime(int i)  // the i'th operator prime for Tp or Wq
 mat homspace::opmat(int i, int dual, int v)
 {
   if(i==-1) return conj(dual,v);
-  if((i<0)||(i>=nap)) 
+  if((i<0)||(i>=nap))
     {
       cerr<<"Error in homspace::opmat(): called with i = " << i << endl;
       return mat(dimension);  // shouldn't happen
     }
   long p = op_prime(i);
-  if(v) 
+  if(v)
     {
-      cout<<"Computing " << ((::divides(p,N)) ? W_opname : T_opname) <<"("<<p<<")..."<<flush;
+      cout<<"Computing " << opname(p,N) << "..."<<flush;
       mat ans = heckeop(p,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -956,8 +896,7 @@ vec homspace::opmat_col(int i, int j, int v)
   long p = op_prime(i);
   if(v)
     {
-      cout<<"Computing col "<<j<<" of " << ((::divides(p,N)) ? W_opname : T_opname)
-          <<"("<<p<<")..."<<flush;
+      cout<<"Computing col "<<j<<" of " << opname(p,N) << "..."<<flush;
     }
   vec ans = heckeop_col(p,j,0); // Automatically chooses W or T
   if(v)
@@ -979,8 +918,7 @@ mat homspace::opmat_cols(int i, const vec_i& jlist, int v)
   long p = op_prime(i);
   if(v)
     {
-      cout<<"Computing "<<d<<" cols of " << ((::divides(p,N)) ? W_opname : T_opname)
-          <<"("<<p<<")..."<<flush;
+      cout<<"Computing "<<d<<" cols of " << opname(p,N) << "..."<<flush;
     }
   mat ans = heckeop_cols(p,jlist,0); // Automatically chooses W or T
   if(v)
@@ -1001,8 +939,7 @@ svec homspace::s_opmat_col(int i, int j, int v)
   long p = op_prime(i);
   if(v)
     {
-      cout<<"Computing col "<<j<<" of " << ((::divides(p,N)) ? W_opname : T_opname)
-          <<"("<<p<<")..."<<flush;
+      cout<<"Computing col "<<j<<" of " << opname(p,N) << "..."<<flush;
     }
   svec ans = s_heckeop_col(p,j,0); // Automatically chooses W or T
   if(v)
@@ -1024,8 +961,7 @@ smat homspace::s_opmat_cols(int i, const vec_i& jlist, int v)
   long p = op_prime(i);
   if(v)
     {
-      cout<<"Computing "<<d<<" cols of " << ((::divides(p,N)) ? W_opname : T_opname)
-          <<"("<<p<<")..."<<flush;
+      cout<<"Computing "<<d<<" cols of " << opname(p,N) << "..."<<flush;
     }
   smat ans = s_heckeop_cols(p,jlist,0); // Automatically chooses W or T
   if(v)
@@ -1038,15 +974,15 @@ smat homspace::s_opmat_cols(int i, const vec_i& jlist, int v)
 smat homspace::s_opmat(int i, int dual, int v)
 {
   if(i==-1) return s_conj(dual,v);
-  if((i<0)||(i>=nap)) 
+  if((i<0)||(i>=nap))
     {
       cerr<<"Error in homspace::s_opmat(): called with i = " << i << endl;
       return smat(dimension);  // shouldn't happen
     }
   long p = op_prime(i);
-  if(v) 
+  if(v)
     {
-      cout<<"Computing " << ((::divides(p,N)) ? W_opname : T_opname) <<"("<<p<<")..."<<flush;
+      cout<<"Computing " << opname(p,N) << "..."<<flush;
       smat ans = s_heckeop(p,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -1057,17 +993,16 @@ smat homspace::s_opmat(int i, int dual, int v)
 mat homspace::opmat_restricted(int i, const subspace& s, int dual, int v)
 {
   if(i==-1) return conj_restricted(s,dual,v);
-  if((i<0)||(i>=nap)) 
+  if((i<0)||(i>=nap))
     {
-      cerr<<"Error in homspace::opmat_restricted(): called with i = " 
+      cerr<<"Error in homspace::opmat_restricted(): called with i = "
 	  << i << endl;
       return mat(dim(s));  // shouldn't happen
     }
   long p = op_prime(i);
-  if(v) 
+  if(v)
     {
-      cout<<"Computing " << ((::divides(p,N)) ? W_opname : T_opname) <<"("<<p
-	  <<") restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
+      cout<<"Computing " << opname(p,N) <<" restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
       mat ans = heckeop_restricted(p,s,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -1078,17 +1013,16 @@ mat homspace::opmat_restricted(int i, const subspace& s, int dual, int v)
 smat homspace::s_opmat_restricted(int i, const ssubspace& s, int dual, int v)
 {
   if(i==-1) return s_conj_restricted(s,dual,v);
-  if((i<0)||(i>=nap)) 
+  if((i<0)||(i>=nap))
     {
-      cerr<<"Error in homspace::s_opmat_restricted(): called with i = " 
+      cerr<<"Error in homspace::s_opmat_restricted(): called with i = "
 	  << i << endl;
       return smat(dim(s));  // shouldn't happen
     }
   long p = op_prime(i);
-  if(v) 
+  if(v)
     {
-      cout<<"Computing " << ((::divides(p,N)) ? W_opname : T_opname) <<"("<<p
-	  <<") restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
+      cout<<"Computing " << opname(p,N) <<" restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
       smat ans = s_heckeop_restricted(p,s,dual,(v>2)); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -1121,7 +1055,7 @@ static long pm1[]={-1,1};
 vector<long> T_eigrange(long p)
 {
   long aplim=3, four_p=p<<2;
-  while (aplim*aplim<=four_p) aplim++; 
+  while (aplim*aplim<=four_p) aplim++;
   aplim--;
   vector<long> ans(1+2*aplim);
   iota(ans.begin(),ans.end(),-aplim);
@@ -1168,71 +1102,17 @@ vec homspace::manintwist(long p) const
  else return sum.as_vec();
 }
 
-#if(0) // no longer used
-vec homspace::projmaninvector(long p) const  // Will only work after "proj"
-{
-  long i,p2;
-  vec tvec = proj_coords(0,p);             // =0, but sets the right length.
-  if (plusflag==-1) return tvec;
-  if (p==2) 
-    add_proj_coords(tvec,1,2);
-  else
-    { 
-      p2=(p-1)>>1;
-      for (i=1; i<=p2; i++) { add_proj_coords(tvec,i,p); }
-      if(plusflag)   
-	tvec *=2;
-      else
-	for (i=1; i<=p2; i++) { add_proj_coords(tvec,-i,p); }
-    }
-  return tvec;
-}
-
-vec homspace::projmaninvector(long p, const mat& m) const
-{
-  long i,p2;
-  vec tvec = proj_coords(0,p,m);       // =0, but sets the right length.
-  if (plusflag==-1) return tvec;
-  if (p==2) 
-    add_proj_coords(tvec,1,2,m);
-  else
-    { 
-      p2=(p-1)>>1;
-      for (i=1; i<=p2; i++) { add_proj_coords(tvec,i,p,m); }
-      if(plusflag)   
-	tvec *=2;
-      else
-	for (i=1; i<=p2; i++) { add_proj_coords(tvec,-i,p,m); }
-    }
-  return tvec;
-}
-
-vec homspace::newhecke(long p, long n, long d) const
-                                     // Will only work after "proj"
-{ vec tvec = proj_coords(p*n,d);
-// cout<<"newhecke starts: tvec = "<<tvec<<endl; 
- long p2 = p>>1, dp = d*p, k;
-  for (k=1+p2-p; k<=p2; k++) 
-    {
-      add_proj_coords(tvec,n+d*k,dp);
-      // cout<<"tvec = "<<tvec<<endl; 
-    }
-  // cout<<"newhecke returns: tvec = "<<tvec<<endl; 
-  return tvec;
-}
-#endif // no longer used
-
 matop::matop(long p)
 {
-
   //    case 31: nmats = 106; break;
   //    case 37: nmats = 128; break;
   //    case 41: nmats = 146; break;
   //    case 43: nmats = 154; break;
   //    case 47: nmats = 170; break;
 
+  the_name = opname(p);
   switch (p) {
-  case 2: 
+  case 2:
     mats.resize(4);
     mats[0]=mat22(2,0,0,1); mats[1]=mat22(2,1,0,1);
     mats[2]=mat22(1,0,1,2); mats[3]=mat22(1,0,0,2);

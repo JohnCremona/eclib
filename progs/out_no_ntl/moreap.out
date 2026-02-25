@@ -24,7 +24,7 @@ Making form_finder (nap=100)...Recovering eigenspace bases with form_finder...
 Form number 1 with eigs -2 -1 1 -2 -1 4 -2 0 -1 0 ...
 Entering form_finder, depth = 0, dimension 2
 restarting at depth = 0, dimension 2
-Computing T(2)...done.
+Computing T_2...done.
  eig -2 gives new subspace at depth 1 of dimension 1
 Filling in data for for newform #1: bases...type and cuspidal factors...cuspidalfactorplus  = 5
 coords...denomplus   = 5

@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #ifndef _ECLIB_HOMSPACE_H
@@ -37,8 +37,67 @@
 // permutation of eigenvalues needs to be done.
 #define NEW_OP_ORDER
 
-class mat22;  // fully defined below
-class matop;  // fully defined below
+class homspace;
+
+class mat22 {  //2x2 matrix for linear fractional transformations
+private:
+  long a,b,c,d;
+public:
+  mat22(long ia=0, long ib=0, long ic=0, long id=0)
+    :a(ia),b(ib),c(ic),d(id){;}
+  mat22(const mat22& m) :a(m.a),b(m.b),c(m.c),d(m.d)
+  {;}
+  void operator=(const mat22& m)
+  {a=m.a; b=m.b; c=m.c; d=m.d;}
+  void show(ostream& s) const
+  {s << "[" << a << "," << b << ";"<< c << "," << d << "]";}
+  rational operator()(const rational& q)const
+  {
+    long n=num(q),de=den(q);
+    return rational(a*n+b*de,c*n+d*de);
+  }
+  modsym operator()(const modsym& m)const
+  {
+    return modsym((*this)(m.alpha()),(*this)(m.beta()));
+  }
+  svec operator()(const symb& s, const homspace* h)const;
+  vec operator()(const symb& s, const homspace* h, const mat& m)const;
+};
+
+class matop {  // formal sum of 2x2 matrices representing
+private:
+  vector<mat22> mats;
+  string the_name;
+public:
+  matop(long p, long n);   // constructor for hecke ops
+  explicit matop(long p);  // constructor for heilbronn matrices
+  matop(long a, long b, long c, long d);  // constructor for a single matrix
+  long size() const {return mats.size();}
+  mat22 operator[](long i) const {return mats[i];}
+  string name() const  {return the_name;}
+};
+
+inline ostream& operator<< (ostream& s, const mat22& m)
+{
+   m.show(s);
+   return s;
+}
+
+// a gmatop is a linear combination of matops
+class gmatop {
+ public:
+  vector<matop> ops;
+  vector<scalar> coeffs;
+  gmatop() {;}
+  explicit gmatop(const vector<matop>& Tlist, const vector<scalar> clist)
+    :ops(Tlist), coeffs(clist)  {;}
+  explicit gmatop(const vector<matop>& Tlist)
+    :ops(Tlist), coeffs(vector<scalar>(Tlist.size(), scalar(1)))  {;}
+  explicit gmatop(const matop& T)
+    :ops({T}), coeffs({scalar(1)})  {;}
+  void set_coeff(int i, const scalar& c) {coeffs[i] = c;}
+  string name() const;
+};
 
 class homspace :public symbdata {
   //private:
@@ -84,7 +143,7 @@ public:
 
   // Extend a dual vector of length rk to one of length nsymb:
   vec extend_coords(const vec& v);
-  // Contract a dual vector of length nsymb to one of length rk: 
+  // Contract a dual vector of length nsymb to one of length rk:
   vec contract_coords(const vec& v);
 
 public:
@@ -137,31 +196,60 @@ public:
   svec applyop(const matop& mlist, const modsym& m) const;
   //  {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());}
 
-  mat calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
-  vec calcop_col(string opname, long p, int j, const matop& mlist, int display=0) const;
-  mat calcop_cols(string opname, long p, const vec_i& jlist, const matop& mlist, int display=0) const;
-  mat calcop_restricted(string opname, long p, const matop& mlist, const subspace& s, int dual, int display=0) const;
+  mat calcop(const matop& T, int dual, int display=0) const;
+  vec calcop_col(int j, const matop& T, int display=0) const;
+  mat calcop_cols(const vec_i& jlist, const matop& T, int display=0) const;
+  mat calcop_restricted(const matop& T, const subspace& s, int dual, int display=0) const;
 
-  smat s_calcop(string opname, long p, const matop& mlist, int dual, int display=0) const;
-  svec s_calcop_col(string opname, long p, int j, const matop& mlist, int display=0) const;
-  smat s_calcop_cols(string opname, long p, const vec_i& jlist, const matop& mlist, int display=0) const;
-  smat s_calcop_restricted(string opname, long p, const matop& mlist, const ssubspace& s, int dual, int display=0) const;
+  smat s_calcop(const matop& T, int dual, int display=0) const;
+  svec s_calcop_col(int j, const matop& T, int display=0) const;
+  smat s_calcop_cols(const vec_i& jlist, const matop& T, int display=0) const;
+  smat s_calcop_restricted(const matop& T, const ssubspace& s, int dual, int display=0) const;
 
 public:
 
-  mat heckeop(long p, int dual, int display=0) const;
-  vec heckeop_col(long p, int j, int display=0) const;
-  mat heckeop_cols(long p, const vec_i& jlist, int display=0) const;
-  mat heckeop_restricted(long p, const subspace& s, int dual, int display=0) const;
-
-  smat s_heckeop(long p, int dual, int display=0) const;
-  svec s_heckeop_col(long p, int j, int display=0) const;
-  smat s_heckeop_cols(long p, const vec_i& jlist, int display=0) const;
-  smat s_heckeop_restricted(long p, const ssubspace& s, int dual, int display=0) const;
+  mat heckeop(long p, int dual, int display=0) const
+  {
+    return calcop(matop(p,N),dual,display);
+  }
+  vec heckeop_col(long p, int j, int display=0) const
+  {
+    return calcop_col(j,matop(p,N),display);
+  }
+  mat heckeop_cols(long p, const vec_i& jlist, int display=0) const
+  {
+    return calcop_cols(jlist,matop(p,N),display);
+  }
+  mat heckeop_restricted(long p, const subspace& s, int dual, int display=0) const
+  {
+    return calcop_restricted(matop(p,N),s,dual,display);
+  }
+  smat s_heckeop(long p, int dual, int display=0) const
+  {
+    return s_calcop(matop(p,N),dual,display);
+  }
+  svec s_heckeop_col(long p, int j, int display=0) const
+  {
+    return s_calcop_col(j,matop(p,N),display);
+  }
+  smat s_heckeop_cols(long p, const vec_i& jlist, int display=0) const
+  {
+    return s_calcop_cols(jlist,matop(p,N),display);
+  }
+  smat s_heckeop_restricted(long p, const ssubspace& s, int dual, int display=0) const
+  {
+    return s_calcop_restricted(matop(p,N),s,dual,display);
+  }
 
   mat newheckeop(long p, int dual, int display=0) const;
-  mat wop(long q, int dual, int display=0) const;
-  smat s_wop(long q, int dual, int display=0) const;
+  mat wop(long q, int dual, int display=0) const
+  {
+    return calcop(matop(q,N),dual,display);
+  }
+  smat s_wop(long q, int dual, int display=0) const
+  {
+    return s_calcop(matop(q,N),dual,display);
+  }
   mat fricke(int dual, int display=0) const;
   mat conj(int dual, int display=0) const;
   vec conj_col(int j, int display=0) const;
@@ -180,61 +268,5 @@ public:
   friend class jumps;
   friend class newforms;
 };
-
-class mat22 {  //2x2 matrix for linear fractional transformations
-  friend class homspace;
-private: 
-  long a,b,c,d;
-public: 
-  mat22(long ia=0, long ib=0, long ic=0, long id=0) 
-    :a(ia),b(ib),c(ic),d(id){;}
-  mat22(const mat22& m) :a(m.a),b(m.b),c(m.c),d(m.d) 
-  {;}
-  void operator=(const mat22& m) 
-  {a=m.a; b=m.b; c=m.c; d=m.d;}
-  void show(ostream& s) const
-  {s << "[" << a << "," << b << ";"<< c << "," << d << "]";}
-  rational operator()(const rational& q)const 
-  {
-    long n=num(q),de=den(q); 
-    return rational(a*n+b*de,c*n+d*de);
-  }
-  modsym operator()(const modsym& m)const
-  {
-    return modsym((*this)(m.alpha()),(*this)(m.beta()));
-  }
-  svec operator()(const symb& s, const homspace* h)const 
-  {
-    long u=s.ceered(),v=s.deered(); 
-    return h->coords_cd(a*u+c*v,b*u+d*v);
-  }
-  vec operator()(const symb& s, const homspace* h, const mat& m)const 
-  {
-    long u=s.cee(),v=s.dee(); 
-    return h->proj_coords_cd(a*u+c*v,b*u+d*v,m);
-  }
-};
-
-class matop {  // formal sum of 2x2 matrices
-private: vector<mat22> mats;
-public: 
-  matop(long p, long n);   // constructor for hecke ops
-  explicit matop(long p);  // constructor for heilbronn matrices
-  matop(long a, long b, long c, long d);  // constructor for a single matrix
-  long size() const {return mats.size();}
-  mat22 operator[](long i) const {return mats[i];}
-  friend matop degen_mat(long d);
-};
-
-inline matop degen_mat(long d)
-{
-  return matop(d,0,0,1);
-}
-
-inline ostream& operator<< (ostream& s, const mat22& m)
-{
-   m.show(s);
-   return s;
-}  
 
 #endif
