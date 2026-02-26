@@ -140,7 +140,7 @@ check_qrank: qrank_tests
 
 ################ G0N #############################################
 
-G0N_TESTS = modtest homtest hecketest mhcount tmanin nftest oftest# tnfd 
+G0N_TESTS = modtest homtest hecketest mhcount tmanin nftest oftest newhecke# tnfd 
 G0N_TESTS_SUFFIXED = $(G0N_TESTS:=$(EXEEXT))
 g0n_tests: $(G0N_TESTS_SUFFIXED)
 
@@ -150,6 +150,7 @@ g0n_tests: $(G0N_TESTS_SUFFIXED)
 modtest_SOURCES=modtest.cc
 homtest_SOURCES=homtest.cc
 hecketest_SOURCES=hecketest.cc
+newhecke_SOURCES=newhecke.cc
 nftest_SOURCES=nftest.cc
 mhcount_SOURCES=mhcount.cc
 oftest_SOURCES=oftest.cc

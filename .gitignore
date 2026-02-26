@@ -82,7 +82,7 @@ tests/checkgens
 tests/comptest
 tests/conductor
 tests/d2
-tests/flint_test
+tests/newhecke
 tests/hecketest
 tests/homtest
 tests/mattest1
@@ -150,3 +150,4 @@ tests/vectest4
 tests/tconvert
 tests/polredtest
 tests/fieldtest
+tests/flint_test

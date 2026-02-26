@@ -679,10 +679,20 @@ mat homspace::calcop(const gmatop& T, int cuspidal, int dual, int display) const
   return m;
 }
 
+//#define DEBUG_CHARPOL
 ZZX homspace::charpoly(const matop& T, int cuspidal) const
 {
   ZZ den = to_ZZ(cuspidal? denom3: denom1);
-  return scaled_charpoly(mat_to_mat_ZZ(calcop(T,cuspidal,0,0)), den);
+#ifdef DEBUG_CHARPOL
+  cout << "Computing charpoly of " << T.name();
+  if (cuspidal) cout << " on cuspidal subspace";
+  else  cout << " on full space";
+  mat M = calcop(T,cuspidal,0);
+  cout << "Matrix: "; output_flat_matrix(M); cout << endl;
+  cout << "denominator: " << den << endl;
+  cout << "scaled char poly: " << scaled_charpoly(mat_to_mat_ZZ(M),den) << endl;
+#endif
+  return scaled_charpoly(mat_to_mat_ZZ(calcop(T,cuspidal,0)), den);
 }
 
 ZZX homspace::charpoly(const gmatop& T, int cuspidal) const
@@ -1601,18 +1611,18 @@ string Nkey(const long& N)
 
 string NPkey(const long& N, const long& p)
 {
-  return to_string(N) + "-" + to_string(p);
+  return to_string(N) + ":" + to_string(p);
 }
 
 string NTkey(const long& N, const matop& T)
 {
-  return to_string(N) + "-" + T.name();
+  return to_string(N) + ":" + T.name();
 }
 
 // identical code to previous
 string NTkey(const long& N, const gmatop& T)
 {
-  return to_string(N) + "-" + T.name();
+  return to_string(N) + ":" + T.name();
 }
 
 // cache of homspaces keyed by level
@@ -1649,12 +1659,35 @@ map<string, ZZX> input_poly_dict(istream& is)
   return D;
 }
 
+//#define DEBUG_GET_HOMSPACE
+// Return cached (pointer to) homspace at level N, computing and and
+// caching it first, for N>1
 homspace* get_homspace(const long& N, scalar mod)
 {
   string Nlabel = to_string(N);
   if (H1_dict.find(Nlabel) != H1_dict.end())
-    return H1_dict[Nlabel];
+    {
+#ifdef DEBUG_GET_HOMSPACE
+      cout << "Getting homspace at level " << N << " from cache " << endl;
+#endif
+      return H1_dict[Nlabel];
+    }
+  if (N<2)
+    {
+#ifdef DEBUG_GET_HOMSPACE
+      cout << "Not computing homspace at level " << N << " as we know it is zero" << endl;
+#endif
+      return NULL;
+    }
+#ifdef DEBUG_GET_HOMSPACE
+  cout << "Computing homspace at level " << N << endl;
+#endif
   homspace* H = new homspace(N, mod, 1, 0); // sign=+1, verbose=0
+#ifdef DEBUG_GET_HOMSPACE
+  cout << "Caching homspace at level " << N << endl;
+  cout << "dim = " << H->h1dim() << ", denom = " << H-> h1denom() << endl;
+  cout << "cdim = " << H->h1cuspdim() << ", cdenom = " << H-> h1cdenom() << endl;
+#endif
   H1_dict[Nlabel] = H;
   return H;
 }
@@ -1665,6 +1698,8 @@ homspace* get_homspace(const long& N, scalar mod)
 // Value is matrix of T on the full space (not restricted to cuspidal subspace)
 mat get_full_mat(const long& N,  const matop& T, const scalar& mod)
 {
+  if (N<2)
+    return mat(0,0);
   string NT = NTkey(N,T);
 #ifdef DEBUG_GET_FULL_MAT
   cout << "In get_full_mat() with matop key " << NT << endl;
@@ -1684,6 +1719,8 @@ mat get_full_mat(const long& N,  const matop& T, const scalar& mod)
   full_mat_dict[NT] = M;
 #ifdef DEBUG_GET_FULL_MAT
   cout << "caching and returning matrix of " << NT << endl;
+  output_flat_matrix(M);
+  cout << endl;
 #endif
   return M;
 }
@@ -1692,6 +1729,8 @@ mat get_full_mat(const long& N,  const matop& T, const scalar& mod)
 // Value is matrix of T on the full space (not restricted to cuspidal subspace)
 mat get_full_mat(const long& N,  const gmatop& T, const scalar& mod)
 {
+  if (N<2)
+    return mat(0,0);
   string NT = NTkey(N,T);
 #ifdef DEBUG_GET_FULL_MAT
   cout << "In get_full_mat() with gmatop key " << NT << endl;
@@ -1740,9 +1779,16 @@ mat get_full_mat(const long& N,  const gmatop& T, const scalar& mod)
 // from either poly_dict, cuspidal_poly_dict depending on cuspidal flag
 ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
 {
+  if (N<2)
+    {
+      ZZX pol;
+      set(pol); // sets to 1
+      return pol;
+    }
+
   string NT = NTkey(N,T);
 #ifdef DEBUG_GET_POLY
-  cout << "In get_poly(), N = " << label(N) << ", T = " << T.name()
+  cout << "In get_poly(), N = " << N << ", T = " << T.name()
        << ", cuspidal = " << cuspidal
        << ", mod = " << mod
        <<endl;
@@ -1774,7 +1820,7 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
 #ifdef DEBUG_GET_POLY
   cout << "Full matrix M of size " << M.nrows() << " obtained from get_full_mat()" << endl;
   cout << "den =  " << den << endl;
-  //  output_flat_matrix(M);  cout << endl;
+  output_flat_matrix(M);  cout << endl;
 #endif
   if (cuspidal)
     {
@@ -1782,8 +1828,10 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
       M = restrict_mat(smat(M),H->kern).as_mat();  // cuspidal_dimension x cuspidal_dimension
 #ifdef DEBUG_GET_POLY
       cout << "Cuspidal case" << endl;
-      cout << "Restricted M to cuspidal subspace" << endl;
-      cout << "(which has denominator " << den << ")" << endl;
+      cout << "Restricted M to cuspidal subspace"
+           << " (which has denominator " << den << "):" << endl;
+      output_flat_matrix(M);
+      cout << endl;
 #endif
     }
   ZZX full_poly =  scaled_charpoly(mat_to_mat_ZZ(M), to_ZZ(den));
@@ -1809,7 +1857,7 @@ ZZX get_new_poly(const long& N, const gmatop& T, int cuspidal, const scalar& mod
       new_poly_cache[NT] = new_poly;
       return new_poly;
     }
-  vector<long> DD = alldivs(N);
+  vector<long> DD = posdivs(N);
   for( auto D : DD)
     {
       if (D==N)
@@ -1818,7 +1866,7 @@ ZZX get_new_poly(const long& N, const gmatop& T, int cuspidal, const scalar& mod
       if (deg(new_poly_D)==0)
         continue;
       long M = N/D;
-      int m = alldivs(M).size();
+      int m = posdivs(M).size();
       for (int i=0; i<m; i++)
         {
           //essentially new_poly /= new_poly_D // but checking divisibility
@@ -1832,6 +1880,7 @@ ZZX get_new_poly(const long& N, const gmatop& T, int cuspidal, const scalar& mod
               cout << "Dividing " << str(new_poly) << " by " << str(new_poly_D)
                    << " gives quotient " << str(quo) <<", remainder "<< str(rem) << endl;
               cout << "Old multiplicities are smaller than expected."<<endl;
+              exit(1);
             }
         }
       if (deg(new_poly)==0) // nothing left, new dimension must be 0
