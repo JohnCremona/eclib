@@ -26,6 +26,7 @@
 #include "eclib/cusp.h"
 #include "eclib/homspace.h"
 #include "eclib/timer.h"
+#include "eclib/polys.h"
 
 svec mat22::operator()(const symb& s, const homspace* h)const
 {
@@ -1586,4 +1587,283 @@ matop::matop(long p)
 	    }
 	}
   }
+}
+
+// Functions for caching homspaces, full Hecke polynomials and new Hecke polynomials
+// Keys are strings of the form Nlabel (for homspace) or Nlabel-Plabel (for Hecke polynomials)
+
+using std::to_string;
+
+string Nkey(const long& N)
+{
+  return to_string(N);
+}
+
+string NPkey(const long& N, const long& p)
+{
+  return to_string(N) + "-" + to_string(p);
+}
+
+string NTkey(const long& N, const matop& T)
+{
+  return to_string(N) + "-" + T.name();
+}
+
+// identical code to previous
+string NTkey(const long& N, const gmatop& T)
+{
+  return to_string(N) + "-" + T.name();
+}
+
+// cache of homspaces keyed by level
+map<string,homspace*> H1_dict;
+
+// cache of operator matrices keyed by level and opname, not restricted to cuspidal
+map<string, mat> full_mat_dict;
+
+// cache of operator charpolys keyed by level and opname, not restricted to cuspidal
+map<string, ZZX> poly_dict;
+// cache of operator charpolys keyed by level and opname, restricted to cuspidal
+map<string, ZZX> cuspidal_poly_dict;
+// cache of operator new charpolys keyed by level and opname, not restricted to cuspidal
+map<string, ZZX> new_poly_dict;
+// cache of operator new charpolys keyed by level and opname, restricted to cuspidal
+map<string, ZZX> new_cuspidal_poly_dict;
+
+void output_poly_dict(ostream& os, map<string, ZZX> D)
+{
+  for (auto key_pol: D)
+    os<<key_pol.first<<" "<< str(key_pol.second) << endl;
+}
+
+map<string, ZZX> input_poly_dict(istream& is)
+{
+  map<string, ZZX> D;
+  string key;
+  ZZX poly;
+  while (!is.eof())
+    {
+      is >> key >> poly;
+      D[key] = poly;
+    }
+  return D;
+}
+
+homspace* get_homspace(const long& N, scalar mod)
+{
+  string Nlabel = to_string(N);
+  if (H1_dict.find(Nlabel) != H1_dict.end())
+    return H1_dict[Nlabel];
+  homspace* H = new homspace(N, mod, 1, 0); // sign=+1, verbose=0
+  H1_dict[Nlabel] = H;
+  return H;
+}
+
+//#define DEBUG_GET_FULL_MAT
+
+// Key is label(N)-T.name()
+// Value is matrix of T on the full space (not restricted to cuspidal subspace)
+mat get_full_mat(const long& N,  const matop& T, const scalar& mod)
+{
+  string NT = NTkey(N,T);
+#ifdef DEBUG_GET_FULL_MAT
+  cout << "In get_full_mat() with matop key " << NT << endl;
+#endif
+  if (full_mat_dict.find(NT) != full_mat_dict.end())
+    {
+#ifdef DEBUG_GET_FULL_MAT
+      cout << "key " << NT << " is in full_mat_dict, returning cached matrix" << endl;
+#endif
+      return full_mat_dict[NT];
+    }
+#ifdef DEBUG_GET_FULL_MAT
+  cout << "key " << NT << " not in full_mat_dict, computing matrix" << endl;
+#endif
+  homspace* H = get_homspace(N, mod);
+  mat M = H->calcop(T,0,0); // cuspidal=0, dual=0
+  full_mat_dict[NT] = M;
+#ifdef DEBUG_GET_FULL_MAT
+  cout << "caching and returning matrix of " << NT << endl;
+#endif
+  return M;
+}
+
+// Key is label(N)-T.name()
+// Value is matrix of T on the full space (not restricted to cuspidal subspace)
+mat get_full_mat(const long& N,  const gmatop& T, const scalar& mod)
+{
+  string NT = NTkey(N,T);
+#ifdef DEBUG_GET_FULL_MAT
+  cout << "In get_full_mat() with gmatop key " << NT << endl;
+#endif
+  if (full_mat_dict.find(NT) != full_mat_dict.end())
+    {
+#ifdef DEBUG_GET_FULL_MAT
+      cout << "key " << NT << " is in full_mat_dict, returning cached matrix" << endl;
+#endif
+      return full_mat_dict[NT];
+    }
+#ifdef DEBUG_GET_FULL_MAT
+  cout << "key " << NT << " not in full_mat_dict, computing matrix" << endl;
+#endif
+  int d = get_homspace(N, mod)->h1dim();
+  mat M(d,d);
+  if (d)
+    {
+      auto ci = T.coeffs.begin();
+      auto Ti = T.ops.begin();
+      while (ci!=T.coeffs.end())
+        {
+          scalar c = *ci++;
+          if (c !=0 )
+            {
+              mat Mi = get_full_mat(N, *Ti, mod);
+              if (c!=1)
+                Mi *= c;
+              M += Mi;
+            }
+          ++Ti;
+        }
+    }
+  // We do not need to add to the dict if this gmatop consist of a
+  // single matop, since that will have been done in the loop.
+  if (full_mat_dict.find(NT) == full_mat_dict.end())
+    full_mat_dict[NT] = M;
+#ifdef DEBUG_GET_FULL_MAT
+  cout << "caching and returning matrix of " << NT << endl;
+#endif
+  return M;
+}
+
+//#define DEBUG_GET_POLY
+
+// from either poly_dict, cuspidal_poly_dict depending on cuspidal flag
+ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
+{
+  string NT = NTkey(N,T);
+#ifdef DEBUG_GET_POLY
+  cout << "In get_poly(), N = " << label(N) << ", T = " << T.name()
+       << ", cuspidal = " << cuspidal
+       << ", mod = " << mod
+       <<endl;
+  cout << "key = " << NT << endl;
+#endif
+  auto poly_cache = (cuspidal?
+                     cuspidal_poly_dict:
+                     poly_dict);
+  auto new_poly_cache = (cuspidal?
+                         new_cuspidal_poly_dict:
+                         new_poly_dict);
+  if (poly_cache.find(NT) != poly_cache.end())
+    {
+#ifdef DEBUG_GET_POLY
+      cout << "key is in cache, returning " << str(poly_cache[NT]) << endl;
+#endif
+      return poly_cache[NT];
+    }
+
+  homspace* H = get_homspace(N, mod);
+  scalar den = (cuspidal? H->h1cdenom() :H->h1denom());
+#ifdef DEBUG_GET_POLY
+  cout << "Homspace for level " << N << " obtained from get_homspace()" << endl;
+  cout << "den =  " << den << endl;
+  cout << "About to call get_full_mat()"<< endl;
+#endif
+
+  mat M = get_full_mat(N, T, mod);  // dimension x dimension
+#ifdef DEBUG_GET_POLY
+  cout << "Full matrix M of size " << M.nrows() << " obtained from get_full_mat()" << endl;
+  cout << "den =  " << den << endl;
+  //  output_flat_matrix(M);  cout << endl;
+#endif
+  if (cuspidal)
+    {
+      // H->kern is the subspace ker(delta) of the full space
+      M = restrict_mat(smat(M),H->kern).as_mat();  // cuspidal_dimension x cuspidal_dimension
+#ifdef DEBUG_GET_POLY
+      cout << "Cuspidal case" << endl;
+      cout << "Restricted M to cuspidal subspace" << endl;
+      cout << "(which has denominator " << den << ")" << endl;
+#endif
+    }
+  ZZX full_poly =  scaled_charpoly(mat_to_mat_ZZ(M), to_ZZ(den));
+  poly_cache[NT] = full_poly;
+  if (deg(full_poly)==0)
+    new_poly_cache[NT] = full_poly;
+  return full_poly;
+}
+
+// from either new_poly_dict or new_cuspidal_poly_dict depending on cuspidal flag
+ZZX get_new_poly(const long& N, const gmatop& T, int cuspidal, const scalar& mod)
+{
+  string NT = NTkey(N,T);
+  auto new_poly_cache = (cuspidal?
+                         new_cuspidal_poly_dict:
+                         new_poly_dict);
+  if (new_poly_cache.find(NT) != new_poly_cache.end())
+    return new_poly_cache[NT];
+
+  ZZX new_poly = get_poly(N, T, cuspidal, mod);
+  if (deg(new_poly)==0)
+    {
+      new_poly_cache[NT] = new_poly;
+      return new_poly;
+    }
+  vector<long> DD = alldivs(N);
+  for( auto D : DD)
+    {
+      if (D==N)
+        continue;
+      ZZX new_poly_D = get_new_poly(D, T, cuspidal, mod);
+      if (deg(new_poly_D)==0)
+        continue;
+      long M = N/D;
+      int m = alldivs(M).size();
+      for (int i=0; i<m; i++)
+        {
+          //essentially new_poly /= new_poly_D // but checking divisibility
+          ZZX quo, rem;
+          DivRem(quo, rem, new_poly, new_poly_D);
+          if (IsZero(rem))
+            new_poly = quo;
+          else
+            {
+              cout << "Problem in get_new_poly("<<NT<<"), D="<<D<<endl;
+              cout << "Dividing " << str(new_poly) << " by " << str(new_poly_D)
+                   << " gives quotient " << str(quo) <<", remainder "<< str(rem) << endl;
+              cout << "Old multiplicities are smaller than expected."<<endl;
+            }
+        }
+      if (deg(new_poly)==0) // nothing left, new dimension must be 0
+        break;
+    } // end of loop over divisors
+  new_poly_cache[NT] = new_poly;
+  return new_poly;
+}
+
+// Return true iff T's new poly is squarefree and coprime to its old poly
+int test_splitting_operator(const long& N, const gmatop& T, const scalar& mod, int verbose)
+{
+  if (verbose)
+    cout << "Testing " << T.name() << "..." << flush;
+  ZZX f_new = get_new_poly(N, T, 1, mod); // cuspidal=1, triv_char=0
+  if (!IsSquareFree(f_new))
+    {
+      if (verbose>1)
+        cout << "\n NO: new Hecke polynomial "<<str(f_new)<<" is not squarefree" << endl;
+      return 0;
+    }
+  ZZX f_full = get_poly(N, T, 0, mod); // cuspidal=0, triv_char=0
+  ZZX f_old = f_full / f_new;
+  if (!AreCoprime(f_new, f_old))
+    {
+      if (verbose>1)
+        cout << "\n NO: new Hecke polynomial "<<str(f_new)
+             <<" is not coprime to old Hecke polynomial "<<str(f_old)<<endl
+             <<" (full polynomial is "<<str(f_full)<<")"<<endl;
+      return 0;
+    }
+  if (verbose>1)
+    cout << "\n YES: new Hecke polynomial is squarefree and coprime to old Hecke polynomial" << endl;
+  return 1;
 }

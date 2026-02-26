@@ -278,7 +278,7 @@ int test_splitting_operator(const long& N, const gmatop& T, const scalar& mod, i
 // Utilities for creating keys
 
 string Nkey(const long& N);
-string NPkey(const long& N, const long& P);
+string NPkey(const long& N, const long& p);
 string NTkey(const long& N, const matop& T);
 string NTkey(const long& N, const gmatop& T);
 
