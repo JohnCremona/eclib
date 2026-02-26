@@ -197,19 +197,20 @@ public:
   void output_to_file(int binflag=1, int smallflag=0) const;
   void set_sign(int s) {sign=s;}
   int  get_sign() {return sign;}
-  void makeh1(int s);
+  void makeh1(int s); // sign s = 0,+1, or -1
 // add newform with basis b1, eiglist l to current list (b2 not used):
   void use(const vec& b1, const vec& b2, const vector<long> l);
 
   // find newforms using homology; ntp is number of eigenvalues to use
   // for oldforms, *not* the number computed via homology (use addap()
-  // for that):
+  // for that).  sign s = 0,+1, or -1
   void createfromscratch(int s, long ntp);
 
   // read newforms from file, if it exists, otherwise (perhaps) revert
   // to createfromscratch; if small_data_ok is set then we only need
   // the eigenvalues so are content with a small version of the file
-  // (fewer ap and no additional data):
+  // (fewer ap and no additional data).  sign s = 0,+1, or -1.  ntp
+  // only relevant if create_from_scratch_if_absent=1.
   void createfromdata(int s, long ntp, int create_from_scratch_if_absent=1,
 		      int small_data_ok=0);
 

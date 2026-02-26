@@ -915,8 +915,8 @@ long homspace::op_prime(int i)  // the i'th operator prime for Tp or Wq
 }
 
 mat homspace::opmat(int i, int dual, int v)
-{v=1;
-  if(i==-1) return conj(dual,v);
+{
+  if(i==-1) return conj(0,dual,v);
   if((i<0)||(i>=nap))
     {
       cerr<<"Error in homspace::opmat(): called with i = " << i << endl;
@@ -925,7 +925,7 @@ mat homspace::opmat(int i, int dual, int v)
   long p = op_prime(i);
   if(v)
     cout<<"Computing " << opname(p,N) << "..."<<flush;
-  mat ans = heckeop(p,0,dual,0); // Automatically chooses W or T
+  mat ans = heckeop(p,0,dual,v); // Automatically chooses W or T
   if(v)
     cout<<"done."<<endl;
   return ans;
@@ -1015,7 +1015,7 @@ smat homspace::s_opmat_cols(int i, const vec_i& jlist, int v)
 
 smat homspace::s_opmat(int i, int dual, int v)
 {
-  if(i==-1) return s_conj(dual,v);
+  if(i==-1) return s_conj(0,dual,v);
   if((i<0)||(i>=nap))
     {
       cerr<<"Error in homspace::s_opmat(): called with i = " << i << endl;
@@ -1025,11 +1025,11 @@ smat homspace::s_opmat(int i, int dual, int v)
   if(v)
     {
       cout<<"Computing " << opname(p,N) << "..."<<flush;
-      smat ans = s_heckeop(p,dual,0); // Automatically chooses W or T
+      smat ans = s_heckeop(p,0,dual,v>1); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
     }
-  else return s_heckeop(p,dual,0); // Automatically chooses W or T
+  else return s_heckeop(p,0,dual,0); // Automatically chooses W or T
 }
 
 mat homspace::opmat_restricted(int i, const subspace& s, int dual, int v)
@@ -1065,7 +1065,7 @@ smat homspace::s_opmat_restricted(int i, const ssubspace& s, int dual, int v)
   if(v)
     {
       cout<<"Computing " << opname(p,N) <<" restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
-      smat ans = s_heckeop_restricted(p,s,dual,(v>2)); // Automatically chooses W or T
+      smat ans = s_heckeop_restricted(p,s,dual,v); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
     }

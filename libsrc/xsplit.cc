@@ -3,25 +3,25 @@
 //
 // Copyright 1990-2026 John Cremona
 //                     Marcus Mo     (parallel code)
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #define ECLIB_INT_NUM_THREADS 8
 #define ECLIB_RECURSION_DIM_LIMIT 5821
 //#define ECLIB_MULTITHREAD_DEBUG
@@ -71,11 +71,11 @@ form_finderT<T>::form_finderT(splitter_base<T>* hh, T mod,
   // form_finder class is a friend of ff_data class
   // so may access private members
   root -> subdim_ = dimen;
- 
+
   targetdim = 1;
   if( !plusflag ) {           // full conjmat not needed when plusflag is true
     targetdim=2;
-    if( bigmats ) root -> conjmat_ = h -> s_opmat(-1,dual); 
+    if( bigmats ) root -> conjmat_ = h -> s_opmat(-1,dual);
   }
 }
 
@@ -83,15 +83,15 @@ template<class T>
 form_finderT<T>::~form_finderT(void) {
   // Decendants of root node will be recursively deleted
   // if they have not already been deleted during find()
-  // All dynamically created objects (subspaces) held 
+  // All dynamically created objects (subspaces) held
   // in each data node will also be deleted.
   delete root;
 }
 
 // This is only used when bigmats==1 and we compute opmats on the entire ambient space:
 template<class T>
-void form_finderT<T>::make_opmat(long i, ff_data<T> &data) { 
-  data.the_opmat_ = h -> s_opmat(i,dual,verbose); 
+void form_finderT<T>::make_opmat(long i, ff_data<T> &data) {
+  data.the_opmat_ = h -> s_opmat(i,dual,verbose);
 }
 
 template<class T>
@@ -99,7 +99,7 @@ void form_finderT<T>::make_submat( ff_data<T> &data ) {
   // Cache current data node depth
   long depth = data.depth_;
 
-  if( bigmats ) { 
+  if( bigmats ) {
     // fetch the_opmat from file, or compute
     make_opmat(depth,data);
 
@@ -176,11 +176,11 @@ void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
   long depth = data.depth_;
 
   // Locate required child w.r.t test eigenvalue
-  ff_data<T> *child = data.child( eig ); 
+  ff_data<T> *child = data.child( eig );
 
   // Set new depth
   child -> depth_ = depth + 1;
-   
+
   T eig2 = eig*denom1;
 
   ECLOG(1) << "Increasing depth to " << depth+1 << ", "
@@ -208,7 +208,7 @@ void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
   //    && ( dim(s) > 0 )
   //    && ( data.submat_.nrows() > 1000 )
   //    && ( data.submatUsage_ == data.numChildren_ ) ) {
-  //  data.submat_ = smat(0,0); 
+  //  data.submat_ = smat(0,0);
   //}
 
   ECLOG(1) << "done (dim = " << dim(s) << ")"<<endl;
@@ -220,15 +220,15 @@ void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
   // else
   //   child -> abs_space_ = new ssubZspace<T>(combine( *(data.abs_space_),s ));
   // ECLOG(1) << "done." << endl;
-  
+
   depth++; // Local depth increment (does not effect data nodes)
 
   child -> subdim_ = dim( *(child -> rel_space_) );
 
-  ECLOG(1) << "Eigenvalue " << eig 
+  ECLOG(1) << "Eigenvalue " << eig
            << " has multiplicity " << child -> subdim_ << endl;
   if(child -> subdim_>0) {
-    ECLOG(0) << " eig " << eig 
+    ECLOG(0) << " eig " << eig
              << " gives new subspace at depth " << depth
              << " of dimension " << child -> subdim_ << endl;
   }
@@ -240,10 +240,10 @@ void form_finderT<T>::go_up( ff_data<T> &data ) {
   ff_data<T> *parent = data.parent_;
 
 #ifdef ECLIB_MULTITHREAD
-  // Lock parent node with scoped lock 
+  // Lock parent node with scoped lock
   boost::mutex::scoped_lock lock( parent -> go_up_lock_ );
 #ifdef ECLIB_MULTITHREAD_DEBUG
-  ECLOG(1) << "in go_up for eig=" << data.eigenvalue_ 
+  ECLOG(1) << "in go_up for eig=" << data.eigenvalue_
            << " depth=" << data.depth_
            <<" status=" << data.status_ << std::endl;
 #endif
@@ -256,7 +256,7 @@ void form_finderT<T>::go_up( ff_data<T> &data ) {
 
 #ifdef ECLIB_MULTITHREAD
   lock.unlock();
-  
+
   // Only last child to complete will execute the following (Detects if parent is root node)
   if( parent -> complete() && parent -> parent_ != NULL ) go_up( *parent );
 #endif
@@ -271,7 +271,7 @@ void form_finderT<T>::make_basis( ff_data<T> &data ) {
 
   if( subdim != targetdim ) {
     cout << "error in form_finder::make_basis with eiglist = ";
-    for(int i=0; i<depth; i++) 
+    for(int i=0; i<depth; i++)
       cout << eiglist[i] << ",";
     cout << "\nfinal subspace has dimension " << subdim << endl;
     cout << "aborting this branch!" << endl;
@@ -375,16 +375,16 @@ void form_finderT<T>::recover(vector< vector<long> > eigs) {
     if(verbose) {
 	    cout << "Form number " << iform+1 << " with eigs ";
 
-      int n = eigs[iform].size(); 
+      int n = eigs[iform].size();
       if(n>10) n = 10;
 
-	    copy(eigs[iform].begin(), eigs[iform].begin() + n, 
-	       ostream_iterator<long>(cout, " ")); 
+	    copy(eigs[iform].begin(), eigs[iform].begin() + n,
+	       ostream_iterator<long>(cout, " "));
 	    cout << "..." << endl;
 	  }
- 
+
     splitoff(eigs[iform]);
-  }  
+  }
   // Clears all nodes.  This cannot be done automatically since we
   // don't know how many eigs lists were to be splt off.
   root -> eraseChildren();
@@ -398,17 +398,17 @@ void form_finderT<T>::splitoff(const vector<long>& eigs) {
 
   // Temporary variables
   long depth  = current -> depth_;
-  long subdim = current -> subdim_; 
+  long subdim = current -> subdim_;
 
   if( verbose ) {
-    cout << "Entering form_finder, depth = " << depth 
+    cout << "Entering form_finder, depth = " << depth
          << ", dimension " << subdim << endl;
   }
- 
+
   // Walk down nodes (if any already created) for common branches
   while( current -> numChildren_ > 0
          && current -> child(eigs[depth]) != NULL ) {
- 
+
     // Update current node pointer
     current = current -> child(eigs[depth]);
 
@@ -416,20 +416,20 @@ void form_finderT<T>::splitoff(const vector<long>& eigs) {
     depth  = current -> depth_;
     subdim = current -> subdim_;
     if (verbose) {
-      cout << "...increasing depth to " << depth 
+      cout << "...increasing depth to " << depth
            << ", dimension " << subdim << endl;
     }
   }
-  
+
   // Current node is new branch point
   // We trim all sub-branches ...
   current -> eraseChildren();
-  
+
   if( verbose ) {
     cout << "restarting at depth = " << depth << ", "
          << "dimension " << subdim << endl;
   }
-  
+
   // ... and grow a new branch down to required depth.
   while( (subdim > targetdim) && (depth < maxdepth) ) {
     // Get number of possible eigenvalues
@@ -440,13 +440,13 @@ void form_finderT<T>::splitoff(const vector<long>& eigs) {
 
     // Create new child node
     ff_data<T> *child = new ff_data<T>( this );
-    
+
     // Configure data node ancestry
     current -> addChild( eigs[depth], *child );
- 
+
     // Create submat for current node
     make_submat( *current );
-    
+
     // Proceed to go down
     go_down(*current,eigs[depth],1);
 
@@ -458,7 +458,7 @@ void form_finderT<T>::splitoff(const vector<long>& eigs) {
 
   // Creating newforms
   make_basis(*current);
-  h->use(current->bplus_,current->bminus_,eigs); 
+  h->use(current->bplus_,current->bminus_,eigs);
 
   return;
 }
@@ -475,14 +475,14 @@ void form_finderT<T>::find() {
   s << getenv("ECLIB_EXT_NUM_THREADS");
   if( !s.str().empty() ) eclib_num_threads = atoi(s.str().c_str());
 
-  // Start job queue. We keep job queue local to ensure threads are 
+  // Start job queue. We keep job queue local to ensure threads are
   // not kept busy for longer than necessary.
   pool.start( eclib_num_threads, verbose );
 #endif
 
   // Proceed in recursive find, passing a node through
   find( *root );
-  
+
 #ifdef ECLIB_MULTITHREAD
   // Join all threads in threadpool to wait for all jobs to finish
   // Or detect when all branches of the tree has been traversed
@@ -513,12 +513,12 @@ void form_finderT<T>::find( ff_data<T> &data ) {
   stringstream subeiglist_ss;
   std::copy(subeiglist.begin(),subeiglist.end(),ostream_iterator<long>(subeiglist_ss," "));
 
-  ECLOG(0) << "In form_finder, depth = " << depth 
+  ECLOG(0) << "In form_finder, depth = " << depth
            << ", aplist = [ " << subeiglist_ss.str() << "];\t"
            << "dimsofar=" << subdim
            << ", dimold=" << dimold
            << ", dimnew=" << subdim-dimold << "\n";
- 
+
   if( dimold == subdim ) {
     data.setStatus( ALL_OLD );     // Set status of current node
     ECLOG(0) << "Abandoning a common eigenspace of dimension " << subdim
@@ -526,16 +526,16 @@ void form_finderT<T>::find( ff_data<T> &data ) {
     return;   // This branch of the recursion ends: all is old
   }
 
-  if( ( subdim == targetdim ) && ( depth > mindepth ) ) { 
+  if( ( subdim == targetdim ) && ( depth > mindepth ) ) {
     data.setStatus( FOUND_NEW );   // Set status of current node
     make_basis( data );
     store(data.bplus_,data.bminus_,subeiglist);
     return;
   }
 
-  if( depth == maxdepth ) { 
+  if( depth == maxdepth ) {
     data.setStatus( MAX_DEPTH );
-    if(1) {       // we want to see THIS message whatever the verbosity level! 
+    if(1) {       // we want to see THIS message whatever the verbosity level!
       cout << "\nFound a " << subdim << "D common eigenspace\n";
       cout << "Abandoning, even though oldforms only make up ";
       cout << dimold << "D of this." << endl;
@@ -545,7 +545,7 @@ void form_finderT<T>::find( ff_data<T> &data ) {
 
   // Pass data node through to make_submat()
   // NOTE originally called in go_down(), but relocated here since
-  // it only needs to be called once per node. 
+  // it only needs to be called once per node.
   make_submat(data);
 
   // The recursive part:
@@ -555,17 +555,17 @@ void form_finderT<T>::find( ff_data<T> &data ) {
   stringstream t_eigs_ss;
   std::copy(t_eigs.begin(),t_eigs.end(),ostream_iterator<long>(t_eigs_ss," "));
 
-  ECLOG(0) << "Testing eigenvalues [ " << t_eigs_ss.str() 
+  ECLOG(0) << "Testing eigenvalues [ " << t_eigs_ss.str()
            << "] at level " << (depth+1) << endl;
 
   // Set children counter
   data.setChildren( t_eigs );
 
-  while( apvar != t_eigs.end() ) { 
+  while( apvar != t_eigs.end() ) {
     ECLOG(1) << "Going down with ap = " << (*apvar) <<endl;
     long eig = *apvar++;
 
-    // Initiate new data node, passing a constant reference of the current 
+    // Initiate new data node, passing a constant reference of the current
     // form_finder object to the data class constructor
     ff_data<T> *child = new ff_data<T>( this );
 
@@ -583,16 +583,16 @@ void form_finderT<T>::find( ff_data<T> &data ) {
       if( child -> subdim_ > 0 ) find( *child );
       //if( child -> status_ != INTERNAL || child -> subdim_ == 0 ) go_up( *child );
     }
-#else   
+#else
     // Pass through current data node and new test eigenvalue to go_down()
     go_down( data, eig, apvar==t_eigs.end() );
-    
-    // We pass new child node to find() 
+
+    // We pass new child node to find()
     if( child -> subdim_ > 0 ) find( *child );
 
     go_up( *child );
 #endif
-  }  
+  }
 
 #ifndef ECLIB_MULTITHREAD
   ECLOG(0) << "Finished at level " << (depth+1) << endl;

@@ -56,7 +56,7 @@ int main(void)
 #endif
   cout << "\n>>>Level " << n << "\t";
   newforms nf(n, modulus, showforms); 
-  nf.createfromdata(1,0,0);
+  nf.createfromdata(1,0,0); // sign=+1, ntp=0, create_from_scratch_if_absent=0
   if (showforms) nf.newforms::display();
 
   nnf = nf.n1ds;
