@@ -41,6 +41,10 @@ int main()
  if(pi==plist.end()) cout<<"NOT in the list"<<endl;
  else    cout<<p<<" is list item "<<(pi-plist.begin())<<" (counting from 0)"<<endl;
 
+ long x = 5*11*31;
+ cout << "First 10 primes coprime to " << x << " = 5*11*31: "
+      << the_primes.getfirst(10,x) << endl;
+
  vector<long> v(10);
  iota(v.begin(),v.end(),1);
  cout<<"iota(10): "<<v<<endl;
@@ -108,4 +112,13 @@ int main()
        }
    }
  cout << endl;
+
+ int dim = 2;
+ int bound = 2;
+ vector<vector<int>> combos = all_linear_combinations(dim, bound);
+ cout << "All " << combos.size() << " linear combinations (up to sign) of length " << dim
+      << " with coefficients bounded by " << bound
+      << endl;
+ for (auto combo: combos) cout << combo <<endl;
+
 }  /* main() */

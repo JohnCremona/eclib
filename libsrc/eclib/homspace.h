@@ -71,6 +71,7 @@ private:
 public:
   matop(long p, long n);   // constructor for hecke ops
   explicit matop(long p);  // constructor for heilbronn matrices
+  matop() {;}
   matop(long a, long b, long c, long d);  // constructor for a single matrix
   long size() const {return mats.size();}
   mat22 operator[](long i) const {return mats[i];}
@@ -110,6 +111,7 @@ public:
   vector<modsym> freemods;
 public:
   vector<svec> coord_vecs;
+  mat coord;     // # cols = dimension
   mat projcoord; // # cols = # newforms after they are found
   long dimension, cuspidal_dimension, ncusps;
 public:
@@ -173,25 +175,42 @@ public:
   // vector = unique column of a matrix, such as a newform's coordplus
   // vector.
   vec proj_coords_cd(long c, long d, const mat& m) const;
-  vec proj_coords_cd(long c, long d) const {return proj_coords_cd(c,d,projcoord);}
+  vec proj_coords_cd(long c, long d) const
+  {return proj_coords_cd(c,d,projcoord);}
   scalar nfproj_coords_cd(long c, long d, const vec& bas) const;
   void add_proj_coords_cd(vec& v, long c, long d, const mat& m) const;
-  void add_proj_coords_cd(vec& v, long c, long d) const {add_proj_coords_cd(v,c,d,projcoord);}
+  void add_proj_coords_cd(vec& v, long c, long d) const
+  {add_proj_coords_cd(v,c,d,projcoord);}
   void add_nfproj_coords_cd(scalar& a, long c, long d, const vec& bas) const;
 
-  vec proj_coords(long n, long d, const mat& m) const;
-  vec proj_coords(long n, long d) const  {return proj_coords(n,d,projcoord);}
+  vec proj_coords(long n, long d, const mat& bas) const;
+  vec proj_coords(const rational& r, const mat& bas) const
+  {return proj_coords(num(r), den(r), bas);}
+  vec proj_coords(long n, long d) const
+  {return proj_coords(n,d, projcoord);}
+  vec proj_coords(const rational& r) const
+  {return proj_coords(num(r), den(r), projcoord);}
   scalar nfproj_coords(long n, long d, const vec& bas) const;
 
-  void add_proj_coords(vec& v, long n, long d, const mat& m) const;
-  void add_proj_coords(vec& v, long n, long d) const {add_proj_coords(v,n,d,projcoord);}
+  void add_proj_coords(vec& v, long n, long d, const mat& bas) const;
+  void add_proj_coords(vec& v, const rational& r, const mat& bas) const
+  {add_proj_coords(v, num(r), den(r), bas);}
+  void add_proj_coords(vec& v, long n, long d) const
+  {add_proj_coords(v,n,d,projcoord);}
   void add_nfproj_coords(scalar& aa, long n, long d, const vec& bas) const;
 
   vec cuspidalpart(const vec& v) const {return v[pivots(kern)];}
 
-  svec applyop(const matop& mlist, const rational& q) const;
-  svec applyop(const matop& mlist, const modsym& m) const;
-  //  {return applyop(mlist,m.beta())-applyop(mlist,m.alpha());}
+  svec applyop(const matop& T, const rational& q) const;
+  svec applyop(const matop& T, const modsym& m) const;
+
+  vec applyop_proj(const matop& T, const rational& q, const mat& bas) const;
+  vec applyop_proj(const matop& T, const modsym& m, const mat& bas) const
+  {return applyop_proj(T, m.beta(), bas) - applyop_proj(T, m.alpha(), bas);}
+  vec applyop_proj(const matop& T, const rational& q) const
+  {return applyop_proj(T, q, projcoord);}
+  vec applyop_proj(const matop& T, const modsym& m) const
+  {return applyop_proj(T, m, projcoord);};
 
   mat calcop(const matop& T, int cuspidal, int dual, int display=0) const;
   mat calcop(const gmatop& T, int cuspidal, int dual, int display=0) const;

@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #ifndef _ECLIB_ARITH_H
 #define _ECLIB_ARITH_H      1
                            //flags that this file has been included
@@ -44,7 +44,7 @@ public:
   ~primeclass();
   void init(long maxnum); // called in constructor, or to make more primes
   long number(long n) ; // returns n'th prime (n=1 gives p=2)
-  vector<long> getfirst(long n); // return primes 2..p_n as vector<long>
+  vector<long> getfirst(long n, long m=0); // return first n primes, or first n coprime to m if m>0
   void reset(void);
   int at_end(void);
   int advance(void);
@@ -70,11 +70,11 @@ private:
         byteptr ndiff;     /* pointer to next diff*/
         long maxindex;     /* max index */
 public:
-        primevar(long max=the_primes.NPRIMES, long i=1) 
-          {maxindex=max; ind=i; val=the_primes.number(i); 
+        primevar(long max=the_primes.NPRIMES, long i=1)
+          {maxindex=max; ind=i; val=the_primes.number(i);
            ndiff=the_primes.pdiffptr+i;}
-        void init(long max=the_primes.NPRIMES, long i=1) 
-          {maxindex=max; ind=i; val=the_primes.number(i); 
+        void init(long max=the_primes.NPRIMES, long i=1)
+          {maxindex=max; ind=i; val=the_primes.number(i);
            ndiff=the_primes.pdiffptr+i;}
         void operator++() {if ((ind++)<=maxindex) { val+=*ndiff++;}}
         void operator++(int) {if ((ind++)<=maxindex) { val+=*ndiff++;}}
@@ -86,10 +86,10 @@ public:
 };
 
 
-/* Usage of primevar: 
+/* Usage of primevar:
 ---To loop through first n primes:
 
-   long p; 
+   long p;
    for(primevar pr(n); pr.ok(); pr++) {p=pr; ... ;}  // or:
    for(pr.init(n); pr.ok(); pr++) {p=pr; ... ;}  // iff pr is existing primevar
 
@@ -103,6 +103,8 @@ public:
 
 long primdiv(long);        /* returns first prime divisor */
 vector<long> pdivs(long);      /* list of prime divisors */
+long divide_out(long& a, long d);
+// divides a by d as many times as possible returning number of times (but 0 if a=0 or d=1)
 
 vector<long> posdivs(long, const vector<long>& plist);  // all positive divisors
 inline vector<long> posdivs(long n)
@@ -206,7 +208,7 @@ int modrat(int n, int m, int& a, int& b);
 
 long val(long factor, long number); // order of factor in number
 
-inline int divides(long factor,long number) 
+inline int divides(long factor,long number)
 {
   return (factor==0) ? (number==0) : (number%factor==0);
 }
@@ -252,5 +254,10 @@ inline long to_long(const int& i) {return i;}
 inline long to_long(const long& i) {return i;}
 // NTL has a to_long function for ZZ -> long
 
+// Return a list of all vectors of length dim which are primitive,
+// with all entries <= bound (in absolute value), modulo
+// multiplication by -1 (the first nonzero entry in each will be
+// positive).
+vector<vector<int>> all_linear_combinations(int dim, int bound);
 
 #endif

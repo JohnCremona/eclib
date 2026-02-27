@@ -259,9 +259,10 @@ if (verbose>1)
    dimension = sp.ncols();
    for(i=1; i<=ngens; i++)
      coord_vecs[i]=sp.row(i);
+   coord = sp.as_mat();
 #else
    subspace sp = kernel(relmat);
-   mat coord = basis(sp);
+   coord = basis(sp);
    dimension = dim(sp);
    pivs = pivots(sp);
    denom1 = denom(sp);
@@ -586,7 +587,14 @@ svec homspace::applyop(const matop& T, const rational& q) const
 svec homspace::applyop(const matop& T, const modsym& m) const
 { svec ans(dimension);
   long i=T.size();
-  while (i--)  ans += coords((T[i])(m));
+  while (i--)  ans += coords(T[i](m));
+  return ans;
+}
+
+vec homspace::applyop_proj(const matop& T, const rational& q, const mat& bas) const
+{ vec ans(dimension);
+  long i=T.size();
+  while (i--) add_proj_coords(ans,T[i](q), bas);
   return ans;
 }
 
@@ -1601,8 +1609,6 @@ matop::matop(long p)
 
 // Functions for caching homspaces, full Hecke polynomials and new Hecke polynomials
 // Keys are strings of the form Nlabel (for homspace) or Nlabel-Plabel (for Hecke polynomials)
-
-using std::to_string;
 
 string Nkey(const long& N)
 {

@@ -37,6 +37,7 @@
 #include <iomanip>
 
 using std::string;
+using std::to_string;
 using std::vector;
 using std::cout;
 using std::cerr;

@@ -122,16 +122,21 @@ long primeclass::number(long n)
   return p_val;
 }
 
-vector<long> primeclass::getfirst (long n)  /* returns list of first n primes */
+// return first n primes, or first n coprime to m if m>0
+vector<long> primeclass::getfirst (long n, long m)
 {
 //  cout << "In primeclass::getfirst("<<n<<")"<<endl;
-  vector<long> ans;
+  vector<long> ans; ans.reserve(n);
   reset();
   int ok=1;
-  for (long i=0; (i<n)&&ok; i++)
+  for (long i=0; (i<n)&&ok; )
     {
       ok=advance();
-      ans.push_back(p_val);
+      if (m==0 || !divides(p_val,m))
+        {
+          ans.push_back(p_val);
+          i++;
+        }
     }
   if(!ok)
     {
@@ -153,20 +158,18 @@ long prime_pi(long p)
 long primdiv(long aa)
 {
  primevar pr;
- long p=0;
  long a = labs(aa);
- while (pr.ok() && p==0)
+ while (pr.ok())
    {
      long q=pr; ++pr;
-     if (a%q==0) p = q;
-     else if (q*q>a) p=a;   // N.B. this causes a=1 to return 1.  Beware!
+     if (a%q==0)
+       return q;
+     if (q*q>a)
+       return a;   // N.B. this causes a=1 to return 1.  Beware!
    }
- if (p==0) {p=a;
-            cout<<"No prime divisor found for "<<aa<<" so assuming prime!\n";
-           }
- return p;
+ cout<<"No prime divisor found for "<<aa<<" so assuming prime!\n";
+ return a;
 }
-
 
 vector<long> pdivs(long aa)
 {vector<long> plist;
@@ -174,12 +177,12 @@ vector<long> pdivs(long aa)
  long a = abs(aa);
  while ( (a>1) && (pr.ok()))
  { long p = pr; ++pr;
- if (a%p==0) 
+ if (a%p==0)
    {
      plist.push_back(p);
      while (a%p==0) a/=p;      //divide out by all the p's in a
    }
- else if (p*p>a) 
+ else if (p*p>a)
    {
      plist.push_back(a); a=1;
    }
@@ -189,6 +192,15 @@ vector<long> pdivs(long aa)
  return plist;
 }
 
+// divides a by d as many times as possible returning number of times (but 0 if a=0 or d=1)
+long divide_out(long& a, long d)
+{
+  if ((a==0) || (abs(d)<=1))
+    return 0;
+  long q, r, count=0;
+  while(::divrem(a,d,q,r)) {a=q; count++;}
+  return count;
+}
 
 vector<long> posdivs(long a, const vector<long>& plist)
 {
@@ -643,6 +655,66 @@ vector<long> range(long first, long last)
 {
   vector<long> ans(last-first+1);
   std::iota(ans.begin(), ans.end(), first);
+  return ans;
+}
+
+//#define DEBUG_COMBOS
+// Return a list of all vectors of length dim which are primitive,
+// with all entries <= bound (in absolute value), modulo
+// multiplication by -1 (the first nonzero entry in each will be
+// positive).
+vector<vector<int>> all_linear_combinations(int dim, int bound)
+{
+#ifdef DEBUG_COMBOS
+  cout << "In all_linear_combinations("<<dim<<","<<bound<<")\n";
+#endif
+  if (dim<1) return {};
+  if (dim==1)
+    {
+      vector<vector<int>> ans(bound);
+      for (int i=1; i<=bound; i++) ans[i-1] = {i};
+      cout << "all_linear_combinations("<<dim<<","<<bound<<")  returns \n";
+      for (auto combo: ans) cout << combo <<endl;
+      return ans;
+    }
+  vector<int> v(dim,0);
+  v[0] = 1;
+  vector<vector<int>> ans = {v};
+  // recurse
+  vector<vector<int>> ans1 = all_linear_combinations(dim-1, bound);
+#ifdef DEBUG_COMBOS
+  cout << "Recursion of all_linear_combinations("<<dim-1<<","<<bound<<")  returns \n";
+  for (auto combo: ans1) cout << combo <<endl;
+#endif
+  for (auto v1: ans1)
+    {
+      int maxv1 = * std::max_element(v1.begin(), v1.end(), [](int a, int b){return abs(a)<abs(b);});
+      int max_scale = bound / maxv1; // round down
+      v = v1;
+      v.insert(v.begin(), 0);
+      ans.push_back(v);
+#ifdef DEBUG_COMBOS
+      cout << "("<<dim<<","<<bound<<"): appending " << v << "\n";
+#endif
+      for (int b=-max_scale; b<=max_scale; b++)
+        {
+          if (b==0)
+            continue;
+          vector<int> vb = v;
+          std::transform(v.begin(), v.end(), vb.begin(), [b](int c){return b*c;});
+          for (int a=1; a<=bound; a++)
+            {
+              if (gcd(a,b)==1)
+                {
+                  vb[0] = a;
+                  ans.push_back(vb);
+#ifdef DEBUG_COMBOS
+                  cout << "("<<dim<<","<<bound<<"): appending " << vb << "\n";
+#endif
+                }
+            }
+        }
+    }
   return ans;
 }
 
