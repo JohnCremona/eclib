@@ -658,25 +658,48 @@ vector<long> range(long first, long last)
   return ans;
 }
 
+// return max absolute value of elements
+int maxabs(const vector<int>& v)
+{
+  return max( *std::max_element(v.begin(), v.end()),
+              - *std::min_element(v.begin(), v.end()));
+}
+
+// return sum of absolute values elements
+int wt(const vector<int>& v)
+{
+  return std::accumulate(v.begin(), v.end(), 0, [](int a, int b){return abs(a)+abs(b);});
+}
+
+// Sorting function for primitive integer vectors: (1) compare
+// weights; (2) compare max absolute value; (3) reverse lex.
+
+struct
+{
+  bool operator()(const vector<int>& a, const vector<int>& b) const
+  {
+    int wta = wt(a), wtb = wt(b);
+    if (wta != wtb) return (wta<wtb);
+    wta = maxabs(a); wtb = maxabs(b);
+    if (wta != wtb) return (wta<wtb);
+    return a > b; // reverse lex order of vectors of same weight
+  }
+}
+  weighted_comparison;
+
 //#define DEBUG_COMBOS
+
 // Return a list of all vectors of length dim which are primitive,
 // with all entries <= bound (in absolute value), modulo
 // multiplication by -1 (the first nonzero entry in each will be
 // positive).
-vector<vector<int>> all_linear_combinations(int dim, int bound)
+vector<vector<int>> all_linear_combinations(int dim, int bound, int sorted)
 {
 #ifdef DEBUG_COMBOS
   cout << "In all_linear_combinations("<<dim<<","<<bound<<")\n";
 #endif
   if (dim<1) return {};
-  if (dim==1)
-    {
-      vector<vector<int>> ans(bound);
-      for (int i=1; i<=bound; i++) ans[i-1] = {i};
-      cout << "all_linear_combinations("<<dim<<","<<bound<<")  returns \n";
-      for (auto combo: ans) cout << combo <<endl;
-      return ans;
-    }
+  if (dim==1) return {{1}};
   vector<int> v(dim,0);
   v[0] = 1;
   vector<vector<int>> ans = {v};
@@ -688,10 +711,13 @@ vector<vector<int>> all_linear_combinations(int dim, int bound)
 #endif
   for (auto v1: ans1)
     {
-      int maxv1 = * std::max_element(v1.begin(), v1.end(), [](int a, int b){return abs(a)<abs(b);});
+      int maxv1 = maxabs(v1);
       int max_scale = bound / maxv1; // round down
       v = v1;
-      v.insert(v.begin(), 0);
+#ifdef DEBUG_COMBOS
+      cout << "("<<dim<<","<<bound<<"): working on " << v << ", scale bound = " << max_scale << "\n";
+#endif
+      v.insert(v.begin(), 0); // append 0 at the front
       ans.push_back(v);
 #ifdef DEBUG_COMBOS
       cout << "("<<dim<<","<<bound<<"): appending " << v << "\n";
@@ -700,13 +726,17 @@ vector<vector<int>> all_linear_combinations(int dim, int bound)
         {
           if (b==0)
             continue;
+          // multiply through by b
           vector<int> vb = v;
           std::transform(v.begin(), v.end(), vb.begin(), [b](int c){return b*c;});
+#ifdef DEBUG_COMBOS
+          cout << "("<<dim<<","<<bound<<"): scaling by " << b << " gives " << vb << "\n";
+#endif
           for (int a=1; a<=bound; a++)
             {
               if (gcd(a,b)==1)
                 {
-                  vb[0] = a;
+                  vb[0] = a;  // change front entry to a (if coprime to b)
                   ans.push_back(vb);
 #ifdef DEBUG_COMBOS
                   cout << "("<<dim<<","<<bound<<"): appending " << vb << "\n";
@@ -714,6 +744,18 @@ vector<vector<int>> all_linear_combinations(int dim, int bound)
                 }
             }
         }
+    }
+  if (sorted)
+    {
+#ifdef DEBUG_COMBOS
+      cout << "("<<dim<<","<<bound<<"): result before sorting:\n";
+      for (auto combo: ans) cout << combo <<endl;
+#endif
+      std::sort(ans.begin(), ans.end(), weighted_comparison);
+#ifdef DEBUG_COMBOS
+      cout << "("<<dim<<","<<bound<<"): result after sorting:\n";
+      for (auto combo: ans) cout << combo <<endl;
+#endif
     }
   return ans;
 }

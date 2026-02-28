@@ -258,6 +258,9 @@ inline long to_long(const long& i) {return i;}
 // with all entries <= bound (in absolute value), modulo
 // multiplication by -1 (the first nonzero entry in each will be
 // positive).
-vector<vector<int>> all_linear_combinations(int dim, int bound);
+
+// If sorted=1, sort the result first by weight, then
+// lexicographically.
+vector<vector<int>> all_linear_combinations(int dim, int bound, int sorted=0);
 
 #endif

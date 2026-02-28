@@ -113,11 +113,11 @@ int main()
    }
  cout << endl;
 
- int dim = 2;
+ int dim = 3;
  int bound = 2;
- vector<vector<int>> combos = all_linear_combinations(dim, bound);
+ vector<vector<int>> combos = all_linear_combinations(dim, bound, 1); // sorted
  cout << "All " << combos.size() << " linear combinations (up to sign) of length " << dim
-      << " with coefficients bounded by " << bound
+      << " with coefficients bounded by " << bound << " (sorted)"
       << endl;
  for (auto combo: combos) cout << combo <<endl;
 
