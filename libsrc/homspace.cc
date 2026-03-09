@@ -34,10 +34,10 @@ svec mat22::operator()(const symb& s, const homspace* h)const
   return h->coords_cd(a*u+c*v,b*u+d*v);
 }
 
-vec mat22::operator()(const symb& s, const homspace* h, const mat& m)const
+vec mat22::operator()(const symb& s, const homspace* h, const mat& bas)const
 {
   long u=s.cee(),v=s.dee();
-  return h->proj_coords_cd(a*u+c*v,b*u+d*v,m);
+  return h->proj_coords_cd(a*u+c*v,b*u+d*v, bas);
 }
 
 string opname(const long& p, const long& n=1)
@@ -163,7 +163,8 @@ if (plusflag==0)
 
 // end of 2-term relations
 if (verbose)
-{cout << "After 2-term relations, ngens = "<<ngens<<"\n";
+{
+  cout << "After 2-term relations, ngens = "<<ngens<<"\n";
 // Compare with predicted value:
 /*
  int nu2=(::divides((long)4,N)?0:1);
@@ -298,10 +299,7 @@ if (verbose>1)
    std::for_each(dlist.begin(), dlist.end(),
                  [&maxncusps, this] (const long& d)
                  {
-                   long dd = ::gcd(d,N/d); // compute phi(dd):
-                   std::for_each(plist.begin(), plist.end(),
-                                 [&dd] (const long& p) {if ((dd%p)==0) dd=dd*(p-1)/p;});
-                   maxncusps += dd;
+                   maxncusps += euler_phi(::gcd(d,N/d), plist);
                  });
    if (verbose) cout << "Number of cusps is "<<maxncusps<<endl;
 
@@ -427,12 +425,12 @@ svec homspace::coords_from_index(int ind) const
  return zero_coords();
 }
 
-vec homspace::proj_coords_from_index(int ind, const mat& m) const
+vec homspace::proj_coords_from_index(int ind, const mat& bas) const
 {
  long i= coordindex[ind];
- if (i>0) return  m.row(i);
- if (i<0) return -m.row(-i);
- return vec(m.ncols());
+ if (i>0) return  bas.row(i);
+ if (i<0) return -bas.row(-i);
+ return vec(bas.ncols());
 }
 
 scalar homspace::nfproj_coords_from_index(int ind, const vec& bas) const
@@ -463,16 +461,19 @@ void homspace::add_coords_cd(svec& v, long c, long d) const
   v += coords_from_index(index2(c,d));
 }
 
-vec homspace::proj_coords_cd(long c, long d, const mat& m) const
+vec homspace::proj_coords_cd(long c, long d, const mat& bas) const
 {
-  return proj_coords_from_index(index2(c,d), m);
+  return proj_coords_from_index(index2(c,d), bas);
 }
 
-void homspace::add_proj_coords_cd(vec& v, long c, long d, const mat& m) const
+void homspace::add_proj_coords_cd(vec& v, long c, long d, const mat& bas) const
 {
+  // cout << "In add_proj_coords_cd(v,c,d,bas) with v = "<<v<<", (c:d)=("<<c<<":"<<d<<")"<<endl;
   long n = coordindex[index2(c,d)];
-  if (n>0) v.add_row(m,n);
-  else if (n<0) v.sub_row(m,-n);
+  // cout << "(c:d) --> " << n <<endl;
+  if (n>0) v.add_row(bas,n);
+  else if (n<0) v.sub_row(bas,-n);
+  // cout << "New v = " << v << endl;
 }
 
 scalar homspace::nfproj_coords_cd(long c, long d, const vec& bas) const
@@ -527,10 +528,10 @@ void homspace::add_coords(svec& vv, const modsym& m) const
 }
 
 
-vec homspace::proj_coords(long nn, long dd, const mat& m) const
+vec homspace::proj_coords(long nn, long dd, const mat& bas) const
 {
-   vec ans = vec(m.ncols());
-   add_proj_coords(ans, nn, dd, m);
+   vec ans = vec(bas.ncols());
+   add_proj_coords(ans, nn, dd, bas);
    return ans;
 }
 
@@ -553,15 +554,18 @@ void homspace::add_coords(svec& v, long nn, long dd) const
      }
 }
 
-void homspace::add_proj_coords(vec& v, long nn, long dd, const mat& m) const
+void homspace::add_proj_coords(vec& v, long nn, long dd, const mat& bas) const
 {
-   add_proj_coords_cd(v,0,1,m);
-   long c=0, d=1, a=nn, b=dd;
+  // cout << "In add_proj_coords(v,n,d,bas) with v = " << v << ", n/d = "<<nn<<"/"<<dd<<endl;
+  add_proj_coords_cd(v,0,1,bas);
+  // cout << "After one step, v = " << v <<endl;
+  long c=0, d=1, a=nn, b=dd;
    while (b)
    {
      long f=b; b=mod(a,b); long q=(a-b)/f; a= -f;
      long e=d; d=-c; c=q*c+e;
-     add_proj_coords_cd(v,c,d,m);
+     add_proj_coords_cd(v,c,d,bas);
+     // cout << "After another step, v = " << v <<endl;
    }
 }
 
@@ -592,7 +596,7 @@ svec homspace::applyop(const matop& T, const modsym& m) const
 }
 
 vec homspace::applyop_proj(const matop& T, const rational& q, const mat& bas) const
-{ vec ans(dimension);
+{ vec ans(bas.ncols());
   long i=T.size();
   while (i--) add_proj_coords(ans,T[i](q), bas);
   return ans;

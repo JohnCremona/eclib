@@ -69,6 +69,12 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 
   // compute projcoord, precomputed projections the basis of S
   projcoord = nsp->H1->coord * basis(S);
+  if(verbose)
+    {
+      cout << "H1->coord = " << nsp->H1->coord << endl;
+      cout << "basis(S)  = " << basis(S) << endl;
+      cout << "projcoord = " << projcoord << endl;
+    }
 
   // Compute Hecke field basis (expressing the basis on which we will
   // express eigenvalues w.r.t. the power basis on the roots of f)
@@ -118,9 +124,11 @@ string Newform::label() const
 // eigenvalue of a general principal operator:
 FieldElement Newform::eig(const matop& T)
 {
-  //      cout << "Matrix of "<<T.name()<<" is\n" << nsp->H1->calcop_restricted(T, S, 0, 0) << endl;
-  vec_m apv = to_vec_m(nsp->H1->applyop_proj(T, nsp->H1->freemods[pivots(S)[1] -1], projcoord)); // 1: proj to S
-  //      cout << "ap vector = " << apv <<endl;
+  // cout << "Matrix of "<<T.name()<<" is\n" << nsp->H1->calcop_restricted(T, S, 0, 0) << endl;
+  // cout << "nsp->H1->freemods[pivots(S)[1] -1] = " << nsp->H1->freemods[pivots(S)[1] -1] <<endl;
+  // cout << "applyop_proj("<<T.name()<<") to this with projcoord gives \n";
+  vec_m apv = to_vec_m(nsp->H1->applyop_proj(T, nsp->H1->freemods[pivots(S)[1] -1], projcoord));
+  // cout << "ap vector = " << apv <<endl;
   static const ZZ one(1);
   if (F0->isQ())
     {
@@ -560,7 +568,11 @@ void Newform::compute_eigs(int ntp, int verbose)
       p = pr;
       pr++;
       if (!divides(p,N)) // compute AL eigs separately, later
-        aPmap[p] = ap(p);
+        {
+          if (verbose) cout << "Computing a_p for p = " << p << "..." << flush;
+          aPmap[p] = ap(p);
+          if (verbose) cout << "done, a_p = " << aPmap[p] << endl;
+        }
     }
   maxP = p; // record last prime
 } // end of compute_eigs
@@ -648,7 +660,7 @@ void Newform::display_aP() const
       cout << "No aP known" << endl;
       return;
     }
-  cout << "aP for first " << aPmap.size() << " primes:" << endl;
+  cout << "a_p for first " << aPmap.size() << " primes:" << endl;
   for (auto x : aPmap)
     {
       FieldElement aP = x.second;
@@ -932,6 +944,16 @@ int Newspace::input_from_file(const long& level, int verb)
     }
   fdata.close();
   return 1;
+}
+
+// output basis for the Hecke field and character of all newforms
+void Newspace::display_newforms(int aP, int AL, int traces) const
+{
+  for ( auto& F : newforms)
+    {
+      F.display(aP, AL, traces);
+      cout<<endl;
+    }
 }
 
 // Return a list of the degrees of the Hecke fields

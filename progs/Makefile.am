@@ -69,7 +69,7 @@ check_qrank: qrank_progs
 
 ################ G0N (modular symbols programs) #################
 
-G0N_PROGS = ecnf nfhpcurve nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist
+G0N_PROGS = ecnf nfhpcurve nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist makensp
 G0N_PROGS_SUFFIXED = $(G0N_PROGS:=$(EXEEXT))
 g0n_progs: $(G0N_PROGS_SUFFIXED)
 
@@ -87,27 +87,23 @@ h1first_SOURCES=h1first.cc
 moreap_SOURCES=moreap.cc
 qexp_SOURCES=qexp.cc
 aplist_SOURCES=aplist.cc
+makensp_SOURCES=makensp.cc
 
-# This is the name of a directory which will be used for newform
-# input/output in the "make check" tests and removed afterwards.
-# This does not work without the export!
+# These are the names of a directories which will be used for newform,
+# newspace and curve input/output in the "make check" tests and
+# removed afterwards.
 
 export NF_DIR:=nftmp
 export SNF_DIR:=snftmp
 export TCURVE_DIR:=tcurves
+export NSP_DIR:=nsptmp
 
 check_g0n: g0n_progs
 	@echo Checking g0n programs...
-	rm -rf $(NF_DIR)
-	rm -rf $(SNF_DIR)
-	rm -rf $(TCURVE_DIR)
-	mkdir $(NF_DIR)
-	mkdir $(SNF_DIR)
-	mkdir $(TCURVE_DIR)
+	rm -rf $(NF_DIR) $(SNF_DIR) $(TCURVE_DIR) $(NSP_DIR)
+	mkdir $(NF_DIR) $(SNF_DIR) $(TCURVE_DIR) $(NSP_DIR)
 	for prog in $(G0N_PROGS); do $(check_run); done
-	rm -rf $(NF_DIR)
-	rm -rf $(SNF_DIR)
-	rm -rf $(TCURVE_DIR)
+	rm -rf $(NF_DIR) $(SNF_DIR) $(TCURVE_DIR) $(NSP_DIR)
 
 #################################################################################
 

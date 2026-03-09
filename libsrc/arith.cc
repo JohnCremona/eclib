@@ -192,6 +192,15 @@ vector<long> pdivs(long aa)
  return plist;
 }
 
+long euler_phi(long n, const vector<long> plist)
+{
+  if (n==0) return 0;
+  long phi = abs(n);
+  std::for_each(plist.begin(), plist.end(),
+                [&phi, n] (const long& p) {if (divides(p,n)) phi = (phi*(p-1))/p;});
+  return phi;
+}
+
 // divides a by d as many times as possible returning number of times (but 0 if a=0 or d=1)
 long divide_out(long& a, long d)
 {

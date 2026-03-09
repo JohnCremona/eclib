@@ -32,14 +32,14 @@ const scalar modulus(default_modulus<scalar>());
 int main(void)
 {
   init_time();
- int n=1; 
+ int n=1;
  int plus=1;
  int verbose=0;
  int cuspidal=0;
  vector<long> dims(3), cdims(3);
  // cout << "Verbose? "; cin >> verbose;
  // cout << "Plus space, minus space or full space (+1,-1,0)? "; cin >> plus;
- int s,limit; 
+ int s,limit;
 #ifdef AUTOLOOP
   cout<<"Enter first and last levels: ";cin>>n>>limit; n--;
   while (n<limit) { n++;

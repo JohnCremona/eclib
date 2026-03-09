@@ -61,6 +61,7 @@ progs/h1curve
 progs/h1first
 progs/indep_test
 progs/list_cubics
+progs/makensp
 progs/moreap
 progs/mwrank
 progs/nfcount

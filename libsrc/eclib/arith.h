@@ -130,6 +130,11 @@ inline vector<long> sqfreedivs(long n)
   return sqfreedivs(n, pdivs(n));
 }
 
+// Euler phi function.  The first version requires plist to contain
+// all the prime dividing n, not necessarily only those primes.
+long euler_phi(long n, const vector<long> plist);
+inline long euler_phi(long n) {return euler_phi(n, pdivs(n));}
+
 // utilities for compatibility with ZZ args
 inline int odd(const int& a) {return a&1;}
 inline int even(const int& a) {return !(a&1);}
