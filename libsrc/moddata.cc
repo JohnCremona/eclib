@@ -2,40 +2,41 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #include "eclib/moddata.h"
 #include "eclib/arith.h"
 
 level::level(long n, long neigs)
-  : N(n), plist(pdivs(n)), dlist(posdivs(n)), nap(neigs)
+  : N(n), plist(pdivs(n)), nap(neigs)
 {
-  //cout<<"Creating a class level with n = " << n << endl;
+  // cout<<"Creating a class level with n = " << n << endl;
   npdivs=plist.size();
+  dlist = posdivs(n, plist);
   ndivs=dlist.size();
   primelist=plist;
   primevar pr; long p; p0=0;
   while(primelist.size()<(unsigned)nap)
     {
       p=pr;
-      if (ndivides(p,N)) 
+      if (ndivides(p,N))
 	{
 	  if(p0==0) p0=p;
 	  primelist.push_back(p);
@@ -43,7 +44,7 @@ level::level(long n, long neigs)
       ++pr;
     }
   sqfac=1;
-  for(long ip=0; ip<npdivs; ip++) 
+  for(long ip=0; ip<npdivs; ip++)
     {
       p = plist[ip];
       if(::divides(p*p,n)) sqfac*=p;
@@ -65,7 +66,7 @@ long bezout_x(long aa, long bb, long& xx)
 
 moddata::moddata(long n) :level(n)
 {
-  //   cout << "In constructor moddata::moddata.\n";
+ // cout << "In constructor moddata::moddata.\n";
  long x,nd,nnoninv;
  phi=psi=N;
  for(long i=0; i<npdivs; i++)
@@ -100,16 +101,16 @@ moddata::moddata(long n) :level(n)
       {
 	long m=N/d, mm, mpower, mmold,u,v;
 	mpower=mm=m; mmold=1;
-	while(mm!=mmold) 
+	while(mm!=mmold)
 	  {
-	    mpower=xmodmul(m,mpower,N); 
-	    mmold=mm; 
+	    mpower=xmodmul(m,mpower,N);
+	    mmold=mm;
 	    mm=::gcd(mpower,N);
 	  }
 
 	bezout(mm,N/mm,u,v);
 	// Must be careful of overflow!
-	x = (x*v)%mm; 
+	x = (x*v)%mm;
 	x = (x*(N/mm))%N;
 	x = (x+(u*mm))%N;
       }

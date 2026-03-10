@@ -104,8 +104,9 @@ void symblist::add(const symb& s, long start)
 
 long symblist::index(const symb& s, long start) const
 {
-  // cout<<"index of "<<s;
+ // cout<<"index of "<<s;
  symb ss = s.normalize();
+ // cout<<" = "<<ss;
  long c = ss.cee(), d=ss.dee();
  auto j = hashtable.find(pair<long,long>(c,d));
  if(j==hashtable.end())
@@ -128,8 +129,8 @@ symb symblist::item(long n) const
 //Member functions for class symbdata:
 symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
 {
-  //   cout << "In constructor symbdata::symbdata.\n";
-  //   cout << "nsymb2 = " << nsymb2 << "\n";
+  // cout << "In constructor symbdata::symbdata.\n";
+  // cout << "nsymb2 = " << nsymb2 << "\n";
  if (nsymb2>0)
  { long ic,id,d; symb s;
 //N.B. dlist include d=1 at 0 and d=mod at end, which we don't want here
@@ -155,29 +156,36 @@ symbdata::symbdata(long n) :moddata(n),specials(nsymb2)
 }
 
 long symbdata::index2(long c, long d) const
-{ long kd = code(d);
-  // cout<<"index2("<<c<<":"<<d<<"):"<<endl;
+{
+  if (N==1) return 0;
+  long kd = code(d);
+  // cout<<"index2("<<c<<":"<<d<<"): code(d) = "<<kd<<endl;
   if (kd>0)                // d invertible, with inverse kd
     {
-      //      cout<<"d = "<<d<<" has code kd = "<<kd<< " so reducing c*kd = "<<c*kd<<" mod "<<N<<" --> "<<xmodmul(c,kd,N)<<"-->"<<reduce(xmodmul(c,kd,N))<<endl;
+      // cout<<"d = "<<d<<" has code kd = "<<kd<< " so reducing c*kd = "<<c*kd<<" mod "<<N
+      //     <<" --> "<<xmodmul(c,kd,N)<<"-->"<<reduce(xmodmul(c,kd,N))<<endl;
       return reduce(xmodmul(c,kd,N));   // (c:d) = (c*kd:1)
     }
   else
   { long kc = code(c);
+    // cout<<"index2("<<c<<":"<<d<<"): code(c) = "<<kc<<endl;
     if (kc>0)              // (c:d) = (1:kc*d) if c invertible
       {
-        //        cout<<"c = "<<c<<" has code kc = "<<kc<< " so reducing kc*d = "<<kc*d<<" mod "<<N<<" --> "<<xmodmul(kc,d,N)<<"-->"<<reduce(xmodmul(kc,d,N))<<endl;
+        // cout<<"c = "<<c<<" has code kc = "<<kc<< " so reducing kc*d = "<<kc*d<<" mod "<<N
+        //     <<" --> "<<xmodmul(kc,d,N)<<"-->"<<reduce(xmodmul(kc,d,N))<<endl;
         return   N-code(xmodmul(kc,d,N));
       }
     else
     {
+     // cout<<"index2("<<c<<":"<<d<<"): kc = kd = 0"<<endl;
      long start = dstarts[noninvdlist[-kc]];
      symb s(c,d,this);
-     //     cout<<"About to compute index of symbol "<<s<<" from start = "<<start<<" in list of specials, size "<<specials.count() << endl;
+     // cout<<"About to compute index of symbol "<<s<<" from start = "<<start
+     //     <<" in list of specials, size "<<specials.count() << endl;
      long ind = specials.index(s,start);
      if(ind<0)
        {
-	 cout<<"error in index(): symbol "<<s<<" not in list!"<<endl;
+	 cerr<<"error in index(): symbol "<<s<<" not in list!"<<endl;
        }
      return nsymb1+ind;
     }
@@ -185,9 +193,12 @@ long symbdata::index2(long c, long d) const
 }
 
 symb symbdata::symbol(long i) const
-{ if (i<N) return symb(i,1,this);
-  else if (i<nsymb1) return symb(1,noninvlist[i-N],this);
- else return specials[i-nsymb1]; // specials.item[i-nsymb1];
+{ if (i<N)
+    return symb(i,1,this);
+  else if (i<nsymb1)
+    return symb(1,noninvlist[i-N],this);
+  else
+    return specials[i-nsymb1];
 }
 
 void symbdata::display() const
@@ -198,10 +209,11 @@ void symbdata::display() const
 
 void symbdata::check(void) const
 {
-  int ok=1; symb s;
-  for (long i=0; i<nsymb; i++)
+  int i, j, ok=1; symb s;
+  for (i=0; i<nsymb; i++)
     {
-      long j = index(s=symbol(i));
+      s=symbol(i);
+      j = index(s);
       if (i!=j)
         {
           cout << i << "-->" << s << "-->" << j << "\n";

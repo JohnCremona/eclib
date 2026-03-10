@@ -2,10 +2,10 @@ Program makensp: constructing newforms of arbitrary dimension.
 
 
 >>>> Level 11
-Found 1 homological newform at level 11 of dimension 1
+Found 1 newform at level 11 of dimension 1
 Full eigensystems
 
-Newform #1 (11-a)
+Newform #1 (11a)
  - Dimension: 1
  - Sign of functional equation = +1
  - Hecke field k_f = Q

@@ -44,9 +44,9 @@ int main(void)
   cout<<"Enter first and last levels: ";cin>>n>>limit; n--;
   while (n<limit) { n++;
 #else
-  while (n>1) { cout<<"Enter level: "; cin>>n;
+  while (n>0) { cout<<"Enter level: "; cin>>n;
 #endif
- if (n>1)
+ if (n>0)
 {
   {
     cout << "\n>>>Level " << n << "\n";
