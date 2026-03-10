@@ -311,7 +311,7 @@ if (verbose>1)
 	 }
      }
    long ncusps_seen = cusps.count();
-   if (ncusps!=ncusps_seen)
+   if (verbose&&(ncusps!=ncusps_seen))
      cerr << "image of delta only sees " << ncusps_seen
           << " cusps out of " << ncusps << endl;
    if(verbose)
@@ -320,7 +320,7 @@ if (verbose>1)
        if(verbose>1) {cusps.display(); cout<<endl;}
        cout << "About to compute matrix of delta"<<endl;
      }
-   mat deltamat=mat(ncusps,dimension);  // should make this sparse
+   mat deltamat=mat(ncusps,dimension);  // could make this sparse
 
    for (i=0; i<dimension; i++)
      {
@@ -1666,9 +1666,17 @@ map<string, ZZX> input_poly_dict(istream& is)
 
 //#define DEBUG_GET_HOMSPACE
 // Return cached (pointer to) homspace at level N, computing and and
-// caching it first, for N>1
+// caching it first, for N>0
 homspace* get_homspace(const long& N, scalar mod)
 {
+  if (N<1)
+    {
+#ifdef DEBUG_GET_HOMSPACE
+      cout << "Not computing homspace at level " << N << " -- should be positive" << endl;
+#endif
+      return NULL;
+    }
+
   string Nlabel = to_string(N);
   if (H1_dict.find(Nlabel) != H1_dict.end())
     {
@@ -1677,13 +1685,7 @@ homspace* get_homspace(const long& N, scalar mod)
 #endif
       return H1_dict[Nlabel];
     }
-  if (N<2)
-    {
-#ifdef DEBUG_GET_HOMSPACE
-      cout << "Not computing homspace at level " << N << " as we know it is zero" << endl;
-#endif
-      return NULL;
-    }
+
 #ifdef DEBUG_GET_HOMSPACE
   cout << "Computing homspace at level " << N << endl;
 #endif

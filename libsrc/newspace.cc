@@ -205,7 +205,7 @@ FieldElement Newform::compute_aM(const long& M)
   // Now  e>=2, use recursion
   M1 = M/p;
   FieldElement a = aP*aMlist[M1];
-  return (divides(p,N)? a : a + F->rational(p) * aMlist[M1/p]);
+  return (divides(p,N)? a : a - F->rational(p) * aMlist[M1/p]);
 }
 
 // coefficient in F of integral ideal M from aMmap or computed (and
@@ -653,7 +653,9 @@ void Newform::display(int aP, int AL, int traces) const
   if (traces)
     {
       cout << endl;
-      cout << "First " << trace_list.size() << " traces: " << trace_list << endl;
+      cout << "First " << trace_list.size()-1 << " traces: "; // << trace_list << endl;
+      copy(trace_list.begin()+1, trace_list.end(), ostream_iterator<ZZ>(cout, ", "));
+      cout << "..." << endl;
     }
 }
 
@@ -710,7 +712,7 @@ map<long, int> Newform::AL_eigs(int ntp, int verbose)
 // the directory if it does not yet exist
 string newspaces_directory(int create_if_necessary)
 {
-  string dirname = getenv_with_default("NS_DIR", "newspaces");
+  string dirname = getenv_with_default("NSP_DIR", "newspaces");
   if (create_if_necessary)
     {
       int res = std::system(("mkdir -p "+dirname).c_str());
@@ -847,11 +849,11 @@ int Newform::input_from_file(int verb)
   if (verb>1)
     {
       cout << "After reading eQ, before reading aP:" << endl;
-      display();
+      display(0, 1, 0);
     }
 
   // aP
-  long P;
+  long P; maxP=0;
   FieldElement aP(F->zero());
   // read whitespace, so if there are no aP on file it does not try to read any
   fdata >> ws;
@@ -866,11 +868,19 @@ int Newform::input_from_file(int verb)
         cout << "--> P = " << P
              << ": a_P = " << aP
              << endl;
+      if ((P>maxP) && !divides(P,N)) maxP = P;
     }
+  if (verb>1)
+    {
+      cout << "After reading aP from " << fname <<":" << endl;
+      display(1,1,0);
+    }
+  // compute a_m and traces from a_p
+  compute_coefficients();
   if (verb)
     {
       cout << "After reading everything from " << fname <<":" << endl;
-      display();
+      display(1,1,1);
     }
   return 1;
 }

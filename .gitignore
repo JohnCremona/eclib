@@ -25,6 +25,7 @@ notes/*
 data/*
 newforms
 progs/newforms
+progs/newspaces
 progs/smallnf
 progs/curves
 tests/newforms
@@ -61,6 +62,7 @@ progs/h1curve
 progs/h1first
 progs/indep_test
 progs/list_cubics
+progs/listnsp
 progs/makensp
 progs/moreap
 progs/mwrank

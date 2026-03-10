@@ -69,7 +69,7 @@ check_qrank: qrank_progs
 
 ################ G0N (modular symbols programs) #################
 
-G0N_PROGS = ecnf nfhpcurve nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist makensp
+G0N_PROGS = ecnf nfhpcurve nfhpmcurve h1first h1clist h1bsdcurisog qexp h1bsd h1curve pcurve checkap moreap nfcount aplist makensp listnsp
 G0N_PROGS_SUFFIXED = $(G0N_PROGS:=$(EXEEXT))
 g0n_progs: $(G0N_PROGS_SUFFIXED)
 
@@ -88,6 +88,7 @@ moreap_SOURCES=moreap.cc
 qexp_SOURCES=qexp.cc
 aplist_SOURCES=aplist.cc
 makensp_SOURCES=makensp.cc
+listnsp_SOURCES=listnsp.cc
 
 # These are the names of a directories which will be used for newform,
 # newspace and curve input/output in the "make check" tests and
