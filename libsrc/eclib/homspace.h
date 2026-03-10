@@ -113,7 +113,7 @@ public:
   vector<svec> coord_vecs;
   mat coord;     // # cols = dimension
   mat projcoord; // # cols = # newforms after they are found
-  long dimension, cuspidal_dimension, ncusps;
+  long dimension, cuspidal_dimension;
 public:
   // Constructor (does all the work):
   homspace(long n, // the level

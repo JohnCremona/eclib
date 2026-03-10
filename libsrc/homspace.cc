@@ -294,16 +294,9 @@ if (verbose>1)
   pivs.init();  npivs.init();
    }
 
-   // Compute the number of cusps
-   long maxncusps = 0;
-   std::for_each(dlist.begin(), dlist.end(),
-                 [&maxncusps, this] (const long& d)
-                 {
-                   maxncusps += euler_phi(::gcd(d,N/d), plist);
-                 });
-   if (verbose) cout << "Number of cusps is "<<maxncusps<<endl;
+   if (verbose) cout << "Number of cusps is " << ncusps << endl;
 
-   cusplist cusps(maxncusps, this);
+   cusplist cusps(ncusps, this);
 
    for (i=0; i<dimension; i++)
      {
@@ -317,11 +310,13 @@ if (verbose>1)
              k = cusps.index(c);   //adds automatically if new
 	 }
      }
-   ncusps=cusps.count();
-
+   long ncusps_seen = cusps.count();
+   if (ncusps!=ncusps_seen)
+     cerr << "image of delta only sees " << ncusps_seen
+          << " cusps out of " << ncusps << endl;
    if(verbose)
      {
-       cout << "ncusps = " << ncusps << endl;
+       cout << "Number of cusps in image(delta) = " << ncusps_seen << endl;
        if(verbose>1) {cusps.display(); cout<<endl;}
        cout << "About to compute matrix of delta"<<endl;
      }

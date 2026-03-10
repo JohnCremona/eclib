@@ -51,6 +51,10 @@ level::level(long n, long neigs)
     }
   long rootn=(long)(sqrt((double)n)+0.1); // rounded down
   squarelevel=(n==rootn*rootn);
+  ncusps = 0;
+  for(long d: dlist)
+    ncusps += euler_phi(gcd(d,N/d), plist);
+  // cout<<"Number of cusps at level " << N << " is " << ncusps << endl;
 }
 
 long bezout_x(long aa, long bb, long& xx)

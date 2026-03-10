@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #ifndef _ECLIB_MODDATA_H
@@ -31,17 +31,17 @@ class level {
   friend class symb;
   friend class cusplist;
   friend class oldforms;
-  friend class eigdata;  
-  friend class newform;  
-  friend class h1newform;  
-  friend class summer;  
+  friend class eigdata;
+  friend class newform;
+  friend class h1newform;
+  friend class summer;
 //protected:
 public:     // got tired of making everything friends...
  long N;
  int plusflag; int squarelevel;
  vector<long> plist,dlist,primelist;
  long p0;  // first good prime
- long npdivs,ndivs,sqfac,nap;
+ long npdivs,ndivs,sqfac,nap, ncusps;
  long reduce(long res)const {res%=N; return (res<0)?N+res:res;}
 public:
  explicit level(long n, long neigs=20);
