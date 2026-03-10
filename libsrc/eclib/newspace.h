@@ -47,8 +47,8 @@ private:
   Field* F;    // pointer to the Hecke field (reduced)
   FieldIso Fiso; // isomorphism from F0 to F (possibly identity)
 
-  subspace S; // irreducible subspace of modular symbol space
-  scalar denom_abs; // absolute denominator of S
+  subspace_m S; // irreducible subspace of modular symbol space
+  ZZ denom_abs; // absolute denominator of S
   mat projcoord; // used to computed eigenvalues of any operator
 
   int self_twist_flag; // -1 for unknown, 0 for no, 1 for yes

@@ -36,13 +36,6 @@ vector<ZZ> show(const vector<ZZ>& a) {cout<<a<<endl; return a;}
 
 // integers and rationals
 
-ZZ bezout(const ZZ& aa, const ZZ& bb, ZZ& xx, ZZ& yy)
-{ZZ ans; XGCD(ans,xx,yy,aa,bb); return ans;}
-int divides(const ZZ& a, const ZZ& b, ZZ& q, ZZ& r)
-  { DivRem(q,r,a,b); return IsZero(r);}
-int divides(const ZZ& a, long b, ZZ& q, long& r)
-  { r=DivRem(q,a,b); return (r==0);}
-
 // For b>0, rounded_division(a,b) = q such that a/b = q + r/b with -1/2 <= r/b < 1/2
 ZZ rounded_division(const ZZ& a, const ZZ& b)
 {

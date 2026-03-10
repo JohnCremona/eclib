@@ -28,26 +28,32 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       // X^i by dH^(d-i):
 
       cout << "Finding kernel of f(T)..."<<endl;
+      cout << " f = " << fstring <<endl;
+      cout << "denH = " << nsp->dH << endl;
+      cout << "scale_poly_up(f, to_ZZ(nsp->dH)) = " << scale_poly_up(f, to_ZZ(nsp->dH)) << endl;
+      cout << "T = nsp->T_mat = " << nsp->T_mat << endl;
+      cout << "f(T) = " << to_mat(evaluate(scale_poly_up(f, to_ZZ(nsp->dH)), nsp->T_mat)) << endl;
     }
-  S = kernel(to_mat(evaluate(scale_poly_up(f, to_ZZ(nsp->dH)), nsp->T_mat)));
+  S = kernel(evaluate(scale_poly_up(f, to_ZZ(nsp->dH)), nsp->T_mat));
+  // cout << "S = ker(f(T)) has basis " << basis(S) << endl;
   if(dim(S)!=d)
     {
       cout<<"Problem: eigenspace has wrong dimension "<<dim(S)<<", not "<<d<<endl;
       exit(1);
     }
-  denom_abs=(nsp->dH)*denom(S);
+  denom_abs=to_ZZ(nsp->dH)*denom(S);
   if (verbose)
     {
       cout<<"Finished constructing subspace S of dimension "<<d
           <<", absolute denom = "<<denom_abs<<endl;
       cout<<"Computing A, the restriction of T..." <<flush;
     }
-  mat A = transpose(restrict_mat(to_mat(nsp->T_mat),S));
+  mat_m A = transpose(restrict_mat(nsp->T_mat,S));
   if(verbose)
     cout<<"done. Checking its char poly..."<<endl;
 
   // Check that (scaled) charpoly(A) = f
-  ZZX cpA = scaled_charpoly(mat_to_mat_ZZ(A), to_ZZ(denom_abs));
+  ZZX cpA = scaled_charpoly(mat_to_mat_ZZ(A), denom_abs);
   if (cpA != f)
     {
       cout<<endl;
@@ -68,7 +74,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     }
 
   // compute projcoord, precomputed projections the basis of S
-  projcoord = nsp->H1->coord * basis(S);
+  projcoord = nsp->H1->coord * to_mat(basis(S));
   if(verbose)
     {
       cout << "H1->coord = " << nsp->H1->coord << endl;
@@ -87,7 +93,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   else
     {
       string var = codeletter(index-1);
-      F0 = new Field(to_mat_m(A), to_ZZ(denom_abs), var, verbose>1);
+      F0 = new Field(A, denom_abs, var, verbose>1);
       Fiso = F0->reduction_isomorphism(var);
       F = (Field*)Fiso.codom();
       if (Fiso.is_nontrivial() && verbose)
@@ -118,7 +124,7 @@ Newform::Newform(Newspace* x, int i, int verbose)
 
 string Newform::label() const
 {
-  return nsp->level_label + string("-") + lab;
+  return nsp->level_label + lab;
 }
 
 // eigenvalue of a general principal operator:

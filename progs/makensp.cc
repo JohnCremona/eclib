@@ -1,7 +1,8 @@
 // FILE MAKENSP.CC:  create newspace and d-dimensional newforms
 ///////////////////////////////////////////////////////////////
 
-#define AUTOLOOP
+//#define AUTOLOOP
+
 #include "eclib/newspace.h"
 #include "eclib/pari_init.h"
 
@@ -58,7 +59,7 @@ int main()
       int nnf = NS.nforms();
       if (verbose && nnf)
         cout << "Splitting using " << NS.splitopname() << endl;
-      cout << "Found " << nnf << " homological newform";
+      cout << "Found " << nnf << " newform";
       if (nnf!=1) cout << "s";
       cout << " at level " << n;
       if (nnf)

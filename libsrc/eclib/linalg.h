@@ -26,7 +26,7 @@
 
 // #define XSTR(x) STR(x)
 // #define STR(x) #x
-// #ifdef SCALR_OPTION
+// #ifdef SCALAR_OPTION
 // #pragma message "The value of SCALAR_OPTION (before): " XSTR(SCALAR_OPTION)
 // #else
 // #pragma message "SCALAR_OPTION (before) is undefined"

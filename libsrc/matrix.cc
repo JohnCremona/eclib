@@ -166,7 +166,14 @@ void Zmat<T>::divrow(long r, const T& scal)
 {
   if (::is_zero(scal)||::is_one(scal)) return;
   auto mij = entries.begin()+(r-1)*nco;
-  std::transform(mij, mij+nco, mij, [scal](const T& x) {return x / scal;});
+  std::transform(mij, mij+nco, mij, [r,scal](const T& x)
+  {
+    T q,rem;
+    if (divrem(x,scal,q,rem)) return q;
+    cerr << "Error in dividing row " << r << " by " << scal << endl;
+    exit(1);
+    return T(0);
+  });
 }
 
 template<class T>
@@ -280,6 +287,7 @@ Zmat<T> operator*(const Zmat<T>& m1, const Zmat<T>& m2)
  else
    {
      cerr << "Incompatible sizes in mat product"<<endl;
+     exit(1);
    }
  return m3;
 }
@@ -415,7 +423,10 @@ Zmat<T> colcat(const Zmat<T>& a, const Zmat<T>& b)
        }
    }
  else
-   cerr << "colcat: matrices have different number of rows!" << endl;
+   {
+     cerr << "colcat: matrices have different number of rows!" << endl;
+     exit(1);
+   }
  return c;
 }
 
@@ -431,7 +442,10 @@ Zmat<T> rowcat(const Zmat<T>& a, const Zmat<T>& b)
    std::copy(b.entries.begin(), b.entries.end(), cij);
  }
  else
-   cerr << "rowcat: matrices have different number of columns!" << endl;
+   {
+     cerr << "rowcat: matrices have different number of columns!" << endl;
+     exit(1);
+   }
  return c;
 }
 
@@ -529,7 +543,10 @@ Zvec<T> operator*(const Zmat<T>& m, const Zvec<T>& v)
        }
    }
  else
-   cerr << "Incompatible sizes in *(mat,vec)"<<endl;
+   {
+     cerr << "Incompatible sizes in *(mat,vec)"<<endl;
+     exit(1);
+   }
  return w;
 }
 
@@ -611,23 +628,27 @@ Zmat<T> echelon(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
 
 //#define DEBUG_ECH_0
 
-//N.B. if(q==0) the following multiplies row r2 by p, which looks
-//redundant.  However, it is important to keep this in as in echelon0
-//we must guarentee divisibility by "lastpivot".  We do not want to keep
-//computing contents of rows as this is slower.
-// Used in forward elimination in echelon0
+// Setting p = m[r1,pos] !=0 and q = m[r2,pos], this transform
+// changes row m[r2,] to p*m[r2,]-q*m[r1,].
+
+// N.B. if(q==0) this just multiplies row r2 by p, which looks
+// redundant.  However, it is important to keep this in as in echelon0
+// we must guarentee divisibility by "lastpivot".  We do not want to
+// keep computing contents of rows as this is slower.  Used in forward
+// elimination in echelon0.
 
 template<class T>
 void conservative_elim(vector<T>& m, long nc, long r1, long r2, long pos)
 {
-  auto mr1=m.begin() + r1*nc + pos;
-  auto mr2=m.begin() + r2*nc + pos;
+  auto mr1 = m.begin() + r1*nc + pos;
+  auto mr2 = m.begin() + r2*nc + pos;
   T p = *mr1, q = *mr2;
   nc -= pos;
 #ifdef DEBUG_ECH_0
-  cout<<"In conservative_elim with p = "<<p<<" and q = " << q << endl;
-  cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
-  cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
+  cout<<"In conservative_elim, eliminating column " << pos << ", rows " << r1 << " and " << r2 << endl;
+  cout<<" p = "<<p<<" and q = " << q << endl;
+  cout<<" row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
+  cout<<" row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
 #endif
   if (is_one(p)&&::is_zero(q))
     return;
@@ -656,6 +677,11 @@ void conservative_elim(vector<T>& m, long nc, long r1, long r2, long pos)
         f = [p,q](const T& x, const T& y) {return p*y + x;};
     }
   std::transform(mr1, mr1+nc, mr2, mr2, f);
+#ifdef DEBUG_ECH_0
+  cout << "After elimination:\n";
+  cout<<"row 1: "; for(long n=0; n<nc; n++) cout<<*(mr1+n)<<",";  cout<<endl;
+  cout<<"row 2: "; for(long n=0; n<nc; n++) cout<<*(mr2+n)<<",";  cout<<endl;
+#endif
 }
 
 // This version does not multiply row r1 by p unnecessarily.  Used in
@@ -711,13 +737,13 @@ void clear(vector<T>& row, long col1, long col2)
     std::for_each(row1, row2, [g](T& x) {x/=g;});
 }
 
-//#ifndef DEBUG_ECH_0
-//#define DEBUG_ECH_0
-//#endif
+// #ifndef DEBUG_ECH_0
+// #define DEBUG_ECH_0
+// #endif
 
 #ifdef DEBUG_ECH_0
 template<class T>
-void show(vector<T> m, long nr, long nc)
+void show(const vector<T>& m, long nr, long nc)
 {
   auto mij = m.begin();
   for(long i=0; i<nr; i++)
@@ -731,15 +757,17 @@ void show(vector<T> m, long nr, long nc)
 
 template<class T>
 Zmat<T> echelon0(const Zmat<T>& entries, Zvec<int>& pc, Zvec<int>& npc,
-             long& rk, long& ny, T& d)
+                 long& rk, long& ny, T& d)
 {
-#ifdef DEBUG_ECH_0
-  cout<<"In echelon0 with matrix:\n"<<entries<<endl;
-#endif
   rk=0; ny=0;
   T lastpivot(1);
   long r=0, nc=entries.nco, nr=entries.nro;
-  vector<T> m = entries.entries;
+  Zmat<T> m1 = entries;  //m1.make_primitive();
+#ifdef DEBUG_ECH_0
+  cout<<"Scalar type = " << scalar_type << endl;
+  cout<<"In echelon0 with matrix:\n"<<entries<<endl;
+#endif
+  vector<T>& m = m1.entries;
   vector<int> pcols(nc), npcols(nc);
   for (long c=0; (c<nc)&&(r<nr); c++)
     {
@@ -777,16 +805,31 @@ Zmat<T> echelon0(const Zmat<T>& entries, Zvec<int>& pc, Zvec<int>& npc,
           {
 #ifdef DEBUG_ECH_0
 	    cout<<"Eliminating from row "<<r3<<endl;
-            cout<<"Before, m is\n"; show(m,nr,nc);
+            cout<<"Before, m is\n"<<m1<<endl;
+            // show(m,nr,nc);
 #endif
             conservative_elim(m,nc,r,r3,c);
 #ifdef DEBUG_ECH_0
-            cout<<"After, m is\n"; show(m,nr,nc);
+            cout<<"After, m is\n"<<m1<<endl;
+            // show(m,nr,nc);
 #endif
 	    if(lastpivot>1)
 	      {
+#ifdef DEBUG_ECH_0
+                cout<<" Dividing row "<<r3<<" by previous pivot " << lastpivot << "..." << endl;
+#endif
 		auto mi1 = m.begin()+r3*nc;
-                std::transform(mi1, mi1+nc, mi1, [lastpivot]( const T& x) {return x/lastpivot;});
+                std::transform(mi1, mi1+nc, mi1,
+                               [lastpivot]( const T& x)
+                               {T q,r;
+                                 if(divrem(x,lastpivot,q,r)) return q;
+                                 cerr<<"Error in echelon0: entry "<<x<<" is not divisible by "<<lastpivot<<endl;
+                                 exit(1);
+                                 return q;});
+#ifdef DEBUG_ECH_0
+                cout<<"...after dividing, m is\n"<<m1<<endl;
+                // show(m,nr,nc);
+#endif
               }
           }
          lastpivot=piv;
@@ -796,7 +839,8 @@ Zmat<T> echelon0(const Zmat<T>& entries, Zvec<int>& pc, Zvec<int>& npc,
          r++;
        }
 #ifdef DEBUG_ECH_0
-      cout<<"Current mat is:\n";show(m,nr,nc);
+      cout<<"Current mat is:\n"<<m1<<endl;
+      // show(m,nr,nc);
 #endif
     }
   for (long c = rk+ny; c<nc; c++) npcols[ny++] = c;
@@ -937,6 +981,7 @@ vector<T> Zmat<T>::charpoly() const
   if (!(b==t*id))
     {
       cerr << "Error in charpoly: final b = " << (b-t*id) << endl;
+      exit(1);
     }
   return clist;
 }
@@ -1165,7 +1210,10 @@ Zmat<T> echelonp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
          if (ok)
            dd=(dd*d1)/gcd(dd,d1);
          else
-           cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q"<<endl;
+           {
+             cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q"<<endl;
+             exit(1);
+           }
        }
    }
  dd=abs(dd);
@@ -1497,6 +1545,7 @@ Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)
  else
    {
      cerr << "Incompatible sizes in mat product"<<endl;
+     exit(1);
    }
  return m3;
 }
@@ -1508,6 +1557,7 @@ Zvec<T> matvecmulmodp(const Zmat<T>& M, const Zvec<T>& v, const T& pr)
   if (n!=dim(v))
    {
      cerr << "Incompatible sizes in mat*vec product: "<<m<<"x"<<n<<" and "<<dim(v)<<endl;
+     exit(1);
      return Zvec<T>(m);
    }
   vector<T> ve = v.get_entries(), w;
@@ -1530,8 +1580,7 @@ int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd)
          << mm
          << "Now lifting back to Q." << endl;
 
-  T n,d;
-  T lim = isqrt(pr>>1);
+  T n,d, lim = isqrt(pr>>1);
   m = mm;
   m.reduce_mod_p(pr);
   if (maxabs(m) < lim) return 1;
