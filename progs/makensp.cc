@@ -75,7 +75,7 @@ int main()
     if (!NS.ok())
       {
         cout << "Failed to find a splitting operator using linear combnations of " << maxnp
-             << " operators with coefficients up to" << maxc
+             << " operators with coefficients up to " << maxc
              << endl;
         continue; // to next level
       }

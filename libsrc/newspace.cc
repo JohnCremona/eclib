@@ -4,6 +4,8 @@
 #include <assert.h>
 #include "eclib/newspace.h"
 
+const int POLREDABS_DEGREE_UPPER_BOUND = 20;
+
 newform_comparison newform_cmp;
 
 // When this is set, use the old spaces info read in from file, with
@@ -30,12 +32,11 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       cout << "Finding kernel of f(T)..."<<endl;
       cout << " f = " << fstring <<endl;
       cout << "denH = " << nsp->dH << endl;
-      cout << "scale_poly_up(f, to_ZZ(nsp->dH)) = " << scale_poly_up(f, to_ZZ(nsp->dH)) << endl;
-      cout << "T = nsp->T_mat = " << nsp->T_mat << endl;
-      cout << "f(T) = " << to_mat(evaluate(scale_poly_up(f, to_ZZ(nsp->dH)), nsp->T_mat)) << endl;
     }
-  S = kernel(evaluate(scale_poly_up(f, to_ZZ(nsp->dH)), nsp->T_mat));
-  // cout << "S = ker(f(T)) has basis " << basis(S) << endl;
+  mat_m fT = evaluate(scale_poly_up(f, to_ZZ(nsp->dH)), nsp->T_mat);
+  if (verbose>1)
+    cout << "Computing ker(f(T)) where f(T) = \n" << fT << endl;
+  S = kernel(fT);
   if(dim(S)!=d)
     {
       cout<<"Problem: eigenspace has wrong dimension "<<dim(S)<<", not "<<d<<endl;
@@ -75,7 +76,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 
   // compute projcoord, precomputed projections the basis of S
   projcoord = nsp->H1->coord * to_mat(basis(S));
-  if(verbose)
+  if(verbose>1)
     {
       cout << "H1->coord = " << nsp->H1->coord << endl;
       cout << "basis(S)  = " << basis(S) << endl;
@@ -94,12 +95,28 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     {
       string var = codeletter(index-1);
       F0 = new Field(A, denom_abs, var, verbose>1);
-      Fiso = F0->reduction_isomorphism(var);
-      F = (Field*)Fiso.codom();
-      if (Fiso.is_nontrivial() && verbose)
+      if (d>POLREDABS_DEGREE_UPPER_BOUND)
         {
-          cout << "[replacing original Hecke field with polynomial " << ::str(F0->poly())
-               << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
+          if (verbose)
+            cout << "Not applying polredabs to field " << *F0
+                 << " as degree is greater than set bound of "
+                 << POLREDABS_DEGREE_UPPER_BOUND <<endl;
+          F = F0;
+          Fiso = FieldIso(F0);
+        }
+      else
+        {
+          if (verbose)
+            cout << "Applying polredabs to field " << *F0 << endl;
+          Fiso = F0->reduction_isomorphism(var);
+          F = (Field*)Fiso.codom();
+          if (verbose)
+            cout << "Reduced field is " << *F << endl;
+          if (Fiso.is_nontrivial() && verbose)
+            {
+              cout << "[replacing original Hecke field with polynomial " << ::str(F0->poly())
+                   << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
+            }
         }
     }
   if (verbose)
@@ -361,7 +378,7 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
   set(f_old); // set = 1
   for (auto D: Ndivs) // Ndivs contains all *proper* D|N
     {
-      const Newspace* NSD = get_Newspace(D, verbose);
+      const Newspace* NSD = get_Newspace(D, verbose>1);
       if (NSD->nforms()==0)
         continue;
       long M = N/D;
@@ -405,7 +422,7 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
   // cache this new poly
   string NT = NTkey(N,T);
   if (verbose)
-    cout<<"Caching new cuspidal poly for " << NT << ": " << str(f_new) << endl;
+    cout<<"Caching new cuspidal poly for " << NT <<endl; // << ": " << str(f_new) << endl;
   new_cuspidal_poly_dict[NT] = f_new;
   return f_new;
 }
@@ -424,8 +441,8 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
   f_new = new_cuspidal_poly(Plist, coeffs, T);
   if (!IsSquareFree(f_new))
     {
-      if (verbose>1)
-        cout << "\n NO: new Hecke polynomial "<<str(f_new)
+      if (verbose>0)
+        cout << "\n NO: new Hecke polynomial " // <<str(f_new)
              << " for " << T.name() << " is not squarefree" << endl;
       return 0;
     }
@@ -440,14 +457,21 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
   ZZX f_other = f_full / f_new;
   if (!AreCoprime(f_new, f_other))
     {
-      if (verbose>1)
-        cout << "\n NO: new Hecke polynomial "<<str(f_new)
-             << " for " << T.name()
-             <<" is not coprime to old Hecke polynomial * Eisenstein polynomial"<<str(f_other)<<endl
-             <<" (full polynomial is "<<str(f_full)<<")"<<endl;
+      if (verbose>0)
+        {
+          cout << "\n NO: new Hecke polynomial " // <<str(f_new)
+               << " for " << T.name()
+               << " is not coprime to old Hecke polynomial * Eisenstein polynomial ";
+          if (verbose>1)
+            {
+              cout << str(f_other)<<endl
+                   << " (full polynomial is "<<str(f_full)<<")";
+            }
+          cout <<endl;
+        }
       return 0;
     }
-  if (verbose>1)
+  if (verbose>0)
     cout << "\n YES: new Hecke polynomial for " << T.name()
          << " is squarefree and coprime to old * Eisenstein Hecke polynomial" << endl;
   return 1;
@@ -466,8 +490,10 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
 void Newspace::find_T(int maxnp, int maxc)
 {
   split_ok = 0;
-  // fill Plist with the first maxnp good primes
-  vector<long> Plist = the_primes.getfirst(maxnp, N);
+  // fill Plist with the first maxnp good primes >= 20
+  vector<long> Plist = the_primes.getfirst(maxnp, N, 20);
+  if (verbose)
+    cout << "Trying linear combinations of T_p for p in " << Plist << endl;
   vector<matop> TPlist(maxnp);
   std::transform(Plist.begin(), Plist.end(), TPlist.begin(),
                  [this](long p){return matop(p,N);});
@@ -475,11 +501,10 @@ void Newspace::find_T(int maxnp, int maxc)
   vector<vector<int>> lincombs = all_linear_combinations(ops.size(), maxc);
   if (verbose)
     {
-      cout << "Trying linear combinations with coefficients up to "<<maxc
-           <<" of " << ops.size() << " operators";
-      if (verbose>1)
+      cout << "Trying linear combinations with coefficients up to "<<maxc;
+      if (verbose)
         {
-          cout << " (";
+          cout << " of (";
           for (auto T: ops)
             cout << " " << T.name();
           cout << ")";
