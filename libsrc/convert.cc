@@ -64,6 +64,7 @@ ZZ FLINT_to_NTL(const fmpz_t& a)  // from FLINT to NTL
   // construct ZZ from limbs
   ZZ b;
   ZZ_limbs_set(b, (ZZ_limb_t*)limbs, n);
+  delete[] limbs;
 
   // return with sign
   return (sign_a<0? -b : b);
@@ -118,6 +119,7 @@ ZZ PARI_to_NTL(const GEN& a)  // from PARI to NTL
   ZZ_limbs_set(b, limbs, n);
 
   // return with sign
+  delete[] limbs;
   return (sign_a<0? -b : b);
 }
 
@@ -157,6 +159,7 @@ fmpz_t* NTL_to_FLINT(const ZZ& a)  // from NTL to FLINT
   // adjust sign if necessary
   if (sign_a<0)
     fmpz_neg(b[0],b[0]);
+
   return b;
 }
 
@@ -191,6 +194,8 @@ fmpz_t* PARI_to_FLINT(const GEN& a)  // from PARI to FLINT
   // adjust sign if necessary
   if (sign_a<0)
     fmpz_neg(b[0],b[0]);
+
+  delete[] limbs;
   return b;
 }
 
@@ -262,11 +267,13 @@ GEN FLINT_to_PARI(const fmpz_t& a)  // from FLINT to PARI
     {
       gel(v,i) = utoi(limbs[n-i]);
     }
+  delete[] limbs;
 
   // construct t_INT from limbs
   GEN b = fromdigits_2k(v, FLINT_BITS);
 
   // return with sign
+
   return (sign_a<0? negi(b): b);
 }
 

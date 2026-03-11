@@ -1060,7 +1060,8 @@ FieldIso Field::reduction_isomorphism(string newvar) const
     cout << " / " << denhpowmax;
   cout << endl;
 #endif
-  return FieldIso(this, Fred, M, denhpowmax, 0); // 0: not the identity
+  FieldIso iso(this, Fred, M, denhpowmax, 0); // 0: not the identity
+  return iso;
 }
 
 //#define DEBUG_CHANGE_GEN
@@ -1158,6 +1159,7 @@ FieldIso Field::change_generator(const FieldElement& b) const
       cerr << "iso(b) = " << isob << " with minpoly " << ::str(isob.minpoly()) << "\n";
       exit(1);
     }
+  delete b_field;
   return iso;
 }
 

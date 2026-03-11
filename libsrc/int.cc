@@ -107,7 +107,6 @@ std::vector<INT> pdivs(const INT& a)
   for (int i =0; i< f->num; i++)
     {
       INT p(f->p + i);
-      //fmpz_set(p.z, f->p + i);
       ans.push_back(p);
     }
   fmpz_factor_clear(f);
@@ -125,12 +124,13 @@ std::vector<INT> sqdivs(const INT& a)
   for (slong i =0; i< f->num; i++)
     {
       INT p;
-      fmpz_init_set(p.z, f->p + i);
+      fmpz_set(p.z, f->p + i);
       plist.push_back(p);
       int e = (f->exp[i])/2;
       elist.push_back(e);
       nd *= (1+e);
     }
+  fmpz_factor_clear(f);
   std::vector<INT> dlist(1, INT(1));
   dlist.resize(nd);
   nd = 1;
@@ -163,7 +163,10 @@ long invmod(const INT&a, long p)
   fmpz_init(b);
   int r = fmpz_invmod(b, a.z, P);
   assert (r);
-  return (long)fmpz_get_si(b);
+  long ans(fmpz_get_si(b));
+  fmpz_clear(b);
+  fmpz_clear(P);
+  return ans;
 }
 
 long I2long(const INT& a)

@@ -36,6 +36,7 @@ private:
   vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1
 public:
   //Field(const ZZX& p);
+  ~Field() {minpoly.kill();}
   Field(); // defaults to Q
   explicit Field(const mat_m& m, const ZZ& den = to_ZZ(1), string a="a", int verb=0);
   explicit Field(const ZZX& p, string a="a", int verb=0);

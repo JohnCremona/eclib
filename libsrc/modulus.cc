@@ -31,10 +31,11 @@ template<> long default_modulus<long>()     { return modulus_factory_long.get_mo
 template<> ZZ default_modulus<ZZ>() { return modulus_factory_ZZ.get_modulus();}
 template<> INT default_modulus<INT>() { return modulus_factory_INT.get_modulus();}
 
-const int default_modulus_int = 1073741789;
-const long default_modulus_long = 1073741789;
-const ZZ default_modulus_ZZ = to_ZZ("1000000000000000000000000000057");
-const INT default_modulus_INT = INT("1000000000000000000000000000057");
+const int default_modulus_int(1073741789);
+const long default_modulus_long(1073741789);
+const string bigprime("1000000000000000000000000000057");
+const ZZ default_modulus_ZZ(to_ZZ(bigprime.c_str()));
+const INT default_modulus_INT(bigprime);
 
 template<> modulus_factory<int>::modulus_factory()    :modulus(default_modulus_int) { ; }
 template<> modulus_factory<long>::modulus_factory()   :modulus(default_modulus_long) { ; }

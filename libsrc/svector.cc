@@ -57,26 +57,21 @@ template<class T>
 T sZvec<T>::elem(int i)  const   // returns i'th entry
 {
   auto vi = entries.find(i);
-  if(vi==entries.end()) return T(0);
-  return vi->second;
+  return (vi==entries.end()? T(0) : vi->second);
 }
 
 template<class T>
 void sZvec<T>::set(int i, const T& a)
 {
-  if(is_nonzero(a)) entries[i]=a;
+  entries.erase(i);
+  if(is_nonzero(a))
+    entries.insert({i,a});
 }
 
 template<class T>
 void sZvec<T>::erase(int i)
 {
-  auto vi = entries.find(i);
-  if(vi==entries.end())
-    {
-      cerr<<"Error in svec::erase(): cannot delete missing entry #"<<i
-	  <<" from v = "<<(*this)<<endl;
-    }
-  else entries.erase(vi);
+  entries.erase(i);
 }
 
 template<class T>
@@ -92,15 +87,11 @@ template<class T>
 void sZvec<T>::add(int i, const T& a)   // adds a to i'th entry
 {
   if(is_zero(a)) return;
-  auto  vi = entries.find(i);
+  auto vi = entries.find(i);
   if(vi==entries.end())
     entries[i]=a;
   else
-    {
-      T sum = (vi->second)+a;
-      if(is_zero(sum)) entries.erase(vi);
-      else (vi->second)=sum;
-    }
+    set(i, (vi->second)+a);
 }
 
 template<class T>
@@ -119,11 +110,7 @@ void sZvec<T>::add_mod_p(int i, const T& aa, const T& p)
   if(vi==entries.end())
     entries[i]=a;
   else
-    {
-      T sum = mod((vi->second)+a,p);
-      if(is_zero(sum)) entries.erase(vi);
-      else (vi->second)=sum;
-    }
+    set(i, mod((vi->second)+a, p));
 }
 
 template<class T>
