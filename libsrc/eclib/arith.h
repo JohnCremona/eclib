@@ -44,7 +44,7 @@ public:
   ~primeclass();
   void init(long maxnum); // called in constructor, or to make more primes
   long number(long n) ; // returns n'th prime (n=1 gives p=2)
-  vector<long> getfirst(long n, long m=0); // return first n primes, or first n coprime to m if m>0
+  vector<long> getfirst(long n, long m=1, long minp=2); // return first n primes >=minp and coprime to m
   void reset(void);
   int at_end(void);
   int advance(void);

@@ -123,25 +123,22 @@ long primeclass::number(long n)
 }
 
 // return first n primes, or first n coprime to m if m>0
-vector<long> primeclass::getfirst (long n, long m)
+vector<long> primeclass::getfirst (long n, long m, long minp)
 {
 //  cout << "In primeclass::getfirst("<<n<<")"<<endl;
   vector<long> ans; ans.reserve(n);
   reset();
   int ok=1;
-  for (long i=0; (i<n)&&ok; )
+  while ((p_val<minp) && ok)
+    ok = advance();
+  while ((ans.size()<n) && ok)
     {
+      if ((m==1) || !divides(p_val,m))
+        ans.push_back(p_val);
       ok=advance();
-      if (m==0 || !divides(p_val,m))
-        {
-          ans.push_back(p_val);
-          i++;
-        }
     }
   if(!ok)
-    {
-      cerr<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
-    }
+    cerr<<"Not enough primes in primeclass.getfirst("<<n<<") !"<<endl;
   return ans;
 }
 
