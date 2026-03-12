@@ -23,6 +23,7 @@
 //
 
 #include <eclib/convert.h>
+#include <eclib/linalg.h>
 #include <eclib/timer.h>
 #include <eclib/homspace.h>
 #include <eclib/polys.h>

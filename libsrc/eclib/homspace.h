@@ -26,6 +26,7 @@
                            //flags that this file has been included
 
 #include "linalg.h"  // uses/sets SCALAR_OPTION to fix scalar type and includes all LA headers
+#include "convert.h"
 #include "symb.h"
 
 // If this is defined, the order of primes used for Wq and Tp

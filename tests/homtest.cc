@@ -21,18 +21,23 @@
 // 
 //////////////////////////////////////////////////////////////////////////
 //
-#include <eclib/homspace.h>
-#include <eclib/timer.h>
+
+#include "eclib/homspace.h"
+//#define SHOW_TIMES
+#ifdef SHOW_TIMES
+#include "eclib/timer.h"
+#endif
 
 #define AUTOLOOP
-//#define SHOW_TIMES
 
 const scalar modulus(default_modulus<scalar>());
 
 int main(void)
 {
-  init_time();
- int n=1;
+#ifdef SHOW_TIMES
+ init_time();
+#endif
+ long n=1;
  int plus=1;
  int verbose=0;
  int cuspidal=0;
@@ -57,9 +62,13 @@ int main(void)
           {
             cout<<"Computing sign="<<plus<<" space"<<endl;
           }
+#ifdef SHOW_TIMES
 	start_time();
+#endif
 	homspace hplus(n, modulus, plus,verbose);
+#ifdef SHOW_TIMES
 	stop_time();
+#endif
 	int dim = hplus.h1dim();
 	int cdim = hplus.h1cuspdim();
 	dims[plus+1]=dim;
@@ -92,8 +101,10 @@ int main(void)
       cout<<"\t****************Cuspidal dimensions inconsistent for level "<<n<<" ***************"<<endl;
   }
   cout<<endl;
-  //  stop_time();
-  //  show_time();
+#ifdef SHOW_TIMES
+  stop_time();
+  show_time();
+#endif
 }       // end of if(n)
 }       // end of while()
 }       // end of main()

@@ -25,9 +25,9 @@
 #define _ECLIB_NEWFORMS_H      1
                            //flags that this file has been included
 
-#include "cperiods.h"
 #include "linalg.h"  // uses/sets SCALAR_OPTION to fix scalar type and includes all LA headers
 #include "xsplit.h" // for splitter_base clase
+#include "cperiods.h"
 #include "curve.h"
 #include "oldforms.h"
 #include "homspace.h"
