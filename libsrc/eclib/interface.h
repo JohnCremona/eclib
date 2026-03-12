@@ -167,7 +167,7 @@ inline void set_bit_precision(long n)
   {RR::SetPrecision(n);}
 
 // Prompt user for precision
-inline void set_precision(const string prompt)
+inline void set_precision(const string& prompt)
   {long n; cerr<<prompt<<": "; cin>>n; set_precision(n);}
 
 // read current precision converted to decimal (approximately)

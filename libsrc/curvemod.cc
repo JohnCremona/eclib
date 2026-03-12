@@ -1,32 +1,32 @@
-// curvemod.cc: implementation of class curvemodq for elliptic curve mod q 
+// curvemod.cc: implementation of class curvemodq for elliptic curve mod q
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 
 #include "eclib/pari_interface.h"
 #include "eclib/pointsmod.h"
 
-// constructors 
-curvemodq::curvemodq(void) 
+// constructors
+curvemodq::curvemodq(void)
 {
   Fq=0;
   //  cout<<"In curvemodq default constructor, Fq = "<<Fq<<endl;
@@ -47,28 +47,28 @@ curvemodq::curvemodq(const Curve& E, const ZZ& qq)
   order=zero;
 }
 
-curvemodq::~curvemodq() 
+curvemodq::~curvemodq()
 {
   //  cout<<"In curvemodq destructor, Fq = "<<Fq<<endl;
   if(Fq) delete Fq;
 }
 
 curvemodq::curvemodq(const curvemodq& C) // copy constructor
+  : q(C.q),
+    a1(C.a1), a2(C.a2), a3(C.a3), a4(C.a4), a6(C.a6),
+    order(C.order)
 {
-  q=C.q; 
   Fq = new galois_field(q); // Not enough to copy the pointer
   //  cout<<"In curvemodq copy constructor, Fq = "<<Fq<<endl;
-  a1=C.a1; a2=C.a2; a3=C.a3; a4=C.a4; a6=C.a6; 
-  order=C.order;
 }
 
 void curvemodq::operator=(const curvemodq& C) // assignment
 {
-  q=C.q; 
+  q=C.q;
   delete Fq;
   Fq = new galois_field(q); // Not enough to copy the pointer
   //  cout<<"In curvemodq operator=, Fq = "<<Fq<<endl;
-  a1=C.a1; a2=C.a2; a3=C.a3; a4=C.a4; a6=C.a6; 
+  a1=C.a1; a2=C.a2; a3=C.a3; a4=C.a4; a6=C.a6;
   order=C.order;
 }
 
@@ -128,7 +128,7 @@ ZZ_pX makepdivpol(const curvemodq& C, int p)
 // odd n)
 
 // The poly itself is found recursively
- 
+
 ZZ_pX div_pol_odd_rec(const curvemodq& C, int n);
 
 ZZ_pX div_pol_odd(const curvemodq& C, int n)
@@ -190,4 +190,3 @@ ZZ_pX div_pol_odd_rec(const curvemodq& C, int n)
       }
   }
 }
-

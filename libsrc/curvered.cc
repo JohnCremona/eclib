@@ -128,7 +128,7 @@ CurveRed::CurveRed(const Curvedata& E)
   Curvedata C(*this);
   ZZ temp, r, s, t, b, c, bb, cc, bc, d, w, x, mx, my,
           a2t, a3t, a4t, a6t, zero;
-  int c_p=1, sw, loop, ix, iy;
+  int cp=1, sw, loop, ix, iy;
   zero=0;
   // main loop - for each of the prime divisors of the discriminant.
   // Because the curve is minimal, Tate's algorithm reduce-loop is not needed
@@ -137,8 +137,8 @@ CurveRed::CurveRed(const Curvedata& E)
 
   for (const auto& p : the_bad_primes)
     {
-    int ord_p_discr = val(p,discr);
-    int ord_p_j = ord_p_discr - 3*val(p,c4);
+    int ord_p_d = val(p,discr);
+    int ord_p_j = ord_p_d - 3*val(p,c4);
     if (ord_p_j < 0) ord_p_j = 0;
     ZZ halfmodp = (p+1) >>1;
     int pdiv2 = even(p);
@@ -167,26 +167,26 @@ CurveRed::CurveRed(const Curvedata& E)
     // test for Types In, II, III, IV
     if ( ndiv(p,c4) )
       {temp=-C.a2;
-       if (rootsexist(C.a1,temp,p) ) c_p = ord_p_discr;
-       else { if ( odd(ord_p_discr) ) c_p = 1; else c_p = 2; }
+       if (rootsexist(C.a1,temp,p) ) cp = ord_p_d;
+       else { if ( odd(ord_p_d) ) cp = 1; else cp = 2; }
        reduct_array[p] = Reduction_type
-         (ord_p_discr, 1, ord_p_j, 10*ord_p_discr, c_p);
-       continue; }  // Type In (n=ord_p_discr)
+         (ord_p_d, 1, ord_p_j, 10*ord_p_d, cp);
+       continue; }  // Type In (n=ord_p_d)
     else if ( val(p,C.a6) < 2 )
       {reduct_array[p] = Reduction_type
-         (ord_p_discr, ord_p_discr, ord_p_j, 2, 1);
+         (ord_p_d, ord_p_d, ord_p_j, 2, 1);
        continue; } // Type II
     else if ( val(p,C.b8) < 3 )
       {reduct_array[p] = Reduction_type
-         (ord_p_discr, ord_p_discr - 1, ord_p_j, 3, 2);
+         (ord_p_d, ord_p_d - 1, ord_p_j, 3, 2);
        continue; } // Type III
     else if ( val(p,C.b6) < 3 )
       {temp = -(C.a6/p)/p;
       ZZ temp2 = C.a3/p;
-      if ( rootsexist(temp2,temp,p) ) c_p = 3;
-      else c_p = 1;
+      if ( rootsexist(temp2,temp,p) ) cp = 3;
+      else cp = 1;
       reduct_array[p] = Reduction_type
-	(ord_p_discr, ord_p_discr - 2, ord_p_j, 4, c_p);
+	(ord_p_d, ord_p_d - 2, ord_p_j, 4, cp);
       continue; } // Type IV
 
     // else change coords so that p|C.a1,C.a2, p^2|C.a3,C.a4, p^3|C.a6
@@ -221,7 +221,7 @@ CurveRed::CurveRed(const Curvedata& E)
     case 1:
       //Three distinct roots - Type I*0
       reduct_array[p] = Reduction_type
-        (ord_p_discr, ord_p_discr - 4, ord_p_j, 1, 1+nrootscubic(b,c,d,p) );
+        (ord_p_d, ord_p_d - 4, ord_p_j, 1, 1+nrootscubic(b,c,d,p) );
       break;
 
     case 2:
@@ -261,19 +261,19 @@ CurveRed::CurveRed(const Curvedata& E)
               ix++;       // and stay in loop
              }
            else
-             {if ( rootsexist(a2t,a4t,a6t,p) ) c_p = 4;
-              else c_p = 2;
+             {if ( rootsexist(a2t,a4t,a6t,p) ) cp = 4;
+              else cp = 2;
               loop = 0; }  // and exit loop
           }
         else
           { temp = -a6t;
-	    if ( rootsexist(a3t,temp,p) ) c_p = 4;
-           else c_p = 2;
+	    if ( rootsexist(a3t,temp,p) ) cp = 4;
+           else cp = 2;
            loop = 0; }
       }
       reduct_array[p] = Reduction_type
-        (ord_p_discr, ord_p_discr - ix - iy + 1, ord_p_j,
-         10 * (ix + iy) - 49, c_p );
+        (ord_p_d, ord_p_d - ix - iy + 1, ord_p_j,
+         10 * (ix + iy) - 49, cp );
       break;  // Type I*m
 
     case 3:
@@ -293,10 +293,10 @@ CurveRed::CurveRed(const Curvedata& E)
       if ( ndiv(p,temp ) )
         {
 	  temp = -a6t;
-	  if ( rootsexist(a3t,temp,p) ) c_p = 3;
-	  else c_p = 1;
+	  if ( rootsexist(a3t,temp,p) ) cp = 3;
+	  else cp = 1;
 	  reduct_array[p] = Reduction_type
-	    (ord_p_discr, ord_p_discr - 6, ord_p_j, 5, c_p);
+	    (ord_p_d, ord_p_d - 6, ord_p_j, 5, cp);
 	  break; }
 
       // change coords so that p^3|C.a3, p^5|C.a6
@@ -307,11 +307,11 @@ CurveRed::CurveRed(const Curvedata& E)
       // test for types III*, II*
       if ( val(p,C.a4) < 4 )
         {reduct_array[p] = Reduction_type
-           (ord_p_discr, ord_p_discr - 7, ord_p_j, 6, 2);
+           (ord_p_d, ord_p_d - 7, ord_p_j, 6, 2);
          break; }  // Type III*
       else if ( val(p,C.a6) < 6 )
         {reduct_array[p] = Reduction_type
-           (ord_p_discr, ord_p_discr - 8, ord_p_j, 7, 1);
+           (ord_p_d, ord_p_d - 8, ord_p_j, 7, 1);
          break; } // Type II*
 
       else
@@ -321,9 +321,10 @@ CurveRed::CurveRed(const Curvedata& E)
       // one would divide each ai by p^i and start again
     };  // end switch
   }     // end primes for-loop
-  N = one;
-  for( const auto& ri : reduct_array)
-    N *= pow((ri.first), (ri.second).ord_p_N);
+
+  N = std::accumulate(reduct_array.begin(), reduct_array.end(), one,
+                      [](const ZZ& n, const std::pair<ZZ,Reduction_type>& x)
+                      {return n * pow((x.first), (x.second).ord_p_N);});
   for (auto p: the_bad_primes)
     setLocalRootNumber(p);
   return;

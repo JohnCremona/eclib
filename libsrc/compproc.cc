@@ -2,40 +2,40 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
-#include "eclib/compproc.h" 
- 
+
+#include "eclib/compproc.h"
+
 int is_real(const bigcomplex& z) {return(is_approx_zero(imag(z)));}
- 
+
 int is_small(bigfloat x) {return is_approx_zero(x);}
 int is_small(const bigcomplex& z){return is_approx_zero(z);}
 
 void orderreal(bigfloat& e1, bigfloat& e2, bigfloat& e3)  // puts in decreasing order
-{ 
+{
   bigfloat t;
   if      (e1 < e3) {t=e1; e1=e3; e3=t;}      //swap(e1,e3);
   if      (e1 < e2) {t=e1; e1=e2; e2=t;}      //swap(e1,e2);
   else if (e2 < e3) {t=e2; e2=e3; e3=t;}      //swap(e2,e3);
 }
- 
+
 //#define DEBUG_CAGM
 
 bigcomplex cagm(const bigcomplex& a, const bigcomplex& b)
@@ -47,12 +47,12 @@ bigcomplex cagm(const bigcomplex& a, const bigcomplex& b)
   static bigfloat two=to_bigfloat(2);
   bigfloat theta, piby2=Pi()/two;
   while (1)
-    { 
+    {
       oldx=x;
       x=(x+y)/two;
       y= sqrt(oldx*y);
       theta = arg(y/x);
-      if ((theta>piby2) || (theta<=-piby2)) y=-y;   
+      if ((theta>piby2) || (theta<=-piby2)) y=-y;
 #ifdef DEBUG_CAGM
       cout<<"Relative error = "<<abs((x-y)/x)<<endl;
 #endif
@@ -67,8 +67,8 @@ bigcomplex normalize(bigcomplex& w1, bigcomplex& w2)
    if (tau.imag() < 0) { w1=-w1 ; tau=-tau ; }
    w1=w1-w2*round(tau.real());
    tau=w1/w2;
- 
-   for (int i=1;i<50 && (abs(tau)<1);i++)  
+
+   for (int i=1;i<50 && (abs(tau)<1);i++)
 // {Just to stop infinite loop due to rounding}
    { w3=-w1; w1=w2; w2=w3; tau=w1/w2;
     w1=w1-w2*round(tau.real());
@@ -85,8 +85,8 @@ bigcomplex normalize(bigcomplex& w1, bigcomplex& w2)
        }
    return tau;
 }
- 
-void getc4c6(const bigcomplex& w1, const bigcomplex& w2, 
+
+void getc4c6(const bigcomplex& w1, const bigcomplex& w2,
 	     bigcomplex& c4, bigcomplex &c6)
 {
   bigcomplex tau= w1/w2;
@@ -97,13 +97,13 @@ void getc4c6(const bigcomplex& w1, const bigcomplex& w2,
   bigfloat nx = x, ny=y;
   bigcomplex f = two*pi/w2;
   bigcomplex f2 = f*f;
-  bigcomplex f4=f2*f2;
-  
+  bigcomplex f4 = f2*f2;
+
+  bigcomplex qpower;
   bigcomplex term   = bigcomplex(one);
-  bigcomplex qpower = bigcomplex(one);
   bigcomplex sum4   = bigcomplex(zero);
   bigcomplex sum6   = bigcomplex(zero);
-  
+
   bigfloat n, n2;
 
   for (n=1;
@@ -124,14 +124,14 @@ void getc4c6(const bigcomplex& w1, const bigcomplex& w2,
   c4= (one +  to_bigfloat(240)*sum4)*f4;
   c6= (one -  to_bigfloat(504)*sum6)*f4*f2;
 }
- 
+
 bigcomplex discriminant(const bigcomplex& b, const bigcomplex& c, const bigcomplex& d)
 {
     bigcomplex bb = b*b, cc = c*c, bc = b*c;
-    return to_bigfloat(27)*d*d - bc*bc +  to_bigfloat(4)*bb*b*d 
+    return to_bigfloat(27)*d*d - bc*bc +  to_bigfloat(4)*bb*b*d
       -  to_bigfloat(18)*bc*d +  to_bigfloat(4)*c*cc;
 }
- 
+
 
 bigcomplex cube_root(const bigcomplex& z)
 {
@@ -158,8 +158,8 @@ cout << "In solvecubic with c1 = "<<c1<<", c2 = "<<c2<<", c3 = "<<c3<<"\n";
 cout << "p3 = "<<p3<<", -c1/3 = "<<mc1over3<<"\n";
 #endif
    vector<bigcomplex> roots(3);
- 
-   if (is_real_zero(abs(disc))) 
+
+   if (is_real_zero(abs(disc)))
      {if (is_real_zero(abs(p3)))     // triple root
         {roots[0]=roots[1]=roots[2]= mc1over3;
         }
@@ -170,10 +170,10 @@ cout << "p3 = "<<p3<<", -c1/3 = "<<mc1over3<<"\n";
      }
    else              // distinct roots
      {
-      bigcomplex q = (((mc1over3+c1)*mc1over3 +c2)*mc1over3 +c3); 
+      bigcomplex q = (((mc1over3+c1)*mc1over3 +c2)*mc1over3 +c3);
                     // = F(mc1over3);
       if (is_approx_zero(abs(p3)))       // pure cubic
-        { 
+        {
 	  roots[0]=-cube_root(q);
           roots[1]=w*roots[0];
           roots[2]=w*roots[1];
@@ -267,13 +267,13 @@ vector<bigcomplex> solverealquartic(const bigfloat& a, const bigfloat& b, const 
   bigfloat  H = 8*a*c - 3*b*b, R = b*b*b + 8*d*a*a - 4*a*b*c;
   bigfloat  Q = H*H-16*a*a*ii;  // = 3*Q really
   int type;
-  if(disc<0) 
+  if(disc<0)
     {type=3;}       // 2 real roots
-  else 
+  else
     {
-      if((H<0)&&(Q>0)) 
+      if((H<0)&&(Q>0))
 	{type=2;}   // 4 real roots
-      else 
+      else
 	{type=1;}   // 0 real roots
     }
   bigcomplex c1(to_bigfloat(0)), c2(-3*ii), c3(jj);
@@ -289,8 +289,8 @@ vector<bigcomplex> solverealquartic(const bigfloat& a, const bigfloat& b, const 
 #ifdef DEBUG
   cout<<"Roots of cubic are:\n"<<cphi<<endl;
 #endif
-  
-  if(type<3) 
+
+  if(type<3)
     {
 #ifdef DEBUG
       cout<<"Positive discriminant\n";
@@ -299,8 +299,8 @@ vector<bigcomplex> solverealquartic(const bigfloat& a, const bigfloat& b, const 
       bigfloat phi1 = real(cphi[0]);
       bigfloat phi2 = real(cphi[1]);
       bigfloat phi3 = real(cphi[2]);
-      if(a>0)      orderreal(phi1,phi2,phi3); 
-      else         orderreal(phi3,phi2,phi1); 
+      if(a>0)      orderreal(phi1,phi2,phi3);
+      else         orderreal(phi3,phi2,phi1);
 #ifdef DEBUG
       cout<<"phi = "<<phi1<<", "<<phi2<<", "<<phi3<<"\n";
 #endif
@@ -349,18 +349,18 @@ vector<bigcomplex> solverealquartic(const bigfloat& a, const bigfloat& b, const 
       cout<<"Negative discriminant\nType 3\n";
 #endif
       bigfloat realphi;       // will hold the real root, which will be cphi[2]
-      if (is_real(cphi[1])) 
+      if (is_real(cphi[1]))
 	{
 	  realphi=real(cphi[1]);
 	  cphi[1]=cphi[2];
 	  cphi[2]=realphi;
 	}
-      else 
-	if (is_real(cphi[2])) 
+      else
+	if (is_real(cphi[2]))
 	  {
 	    realphi=real(cphi[2]);
 	  }
-	else 
+	else
 	  {
 	    realphi=real(cphi[0]);
 	    cphi[0]=cphi[2];
@@ -399,7 +399,7 @@ vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const 
   bigcomplex a4=a/four;
   vector<bigcomplex> roots(4);
   if(is_complex_zero(d))
-    { 
+    {
       roots[0]= zero;
       vector<bigcomplex> cuberoots=solvecubic(a,b,c);
       roots[1] = cuberoots[0];
@@ -411,7 +411,7 @@ vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const 
 	p = b -  three*a*a / eight;
 	q = ((a / two) * (a*a4 - b)) + c;
 	r = ((x256*d) - (x64*a*c) + (x16*a*a*b) - (three*a*a*a*a)) / x256;
-	if( is_approx_zero(q) ) 
+	if( is_approx_zero(q) )
 	  {
 	    bigcomplex s = sqrt(p*p - four*r);
 	    roots[0] =  sqrt((-p + s) / two) - a4;
@@ -421,7 +421,7 @@ vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const 
 	  }
       else
 	{
-	  vector<bigcomplex> aaroots= 
+	  vector<bigcomplex> aaroots=
 	    solvecubic(-p / two,-r,((p * r) / two - (q * q) / eight));
 	  aa = aaroots[0];
 	  if( is_approx_zero(aa) ) aa=zero;
@@ -461,7 +461,7 @@ vector<bigcomplex> solvequartic(const bigcomplex& a, const bigcomplex& b, const 
   return roots;
 }
 
-void quadsolve(const bigfloat& p, const bigfloat& q, 
+void quadsolve(const bigfloat& p, const bigfloat& q,
 	       bigcomplex& root1, bigcomplex& root2)
 {
   static bigfloat two = to_bigfloat(2);
@@ -471,4 +471,3 @@ void quadsolve(const bigfloat& p, const bigfloat& q,
   root1 = ( rootdisc-p)/ two;
   root2 = (-rootdisc-p)/ two;
 }
-

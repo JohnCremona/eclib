@@ -246,29 +246,29 @@ void cubic::seminegate(unimod& m)
 
 ZZ cubic::j_c1() const
 {
-  ZZ a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
-  ZZ b2=sqr(b);
-  ZZ b3=b*b2;
-  ZZ b4=b*b3;
-  ZZ b5=b*b4;
-  ZZ b6=b*b5;
-  ZZ a2=sqr(a);
-  ZZ a3=a*a2;
-  ZZ a4=a*a3;
-  ZZ c2=sqr(c);
-  ZZ c3=c*c2;
-  ZZ c4=c*c3;
-  ZZ c5=c*c4;
-  ZZ c6=c*c5;
-  ZZ d2=sqr(d);
-  ZZ d3=d*d2;
-  ZZ d4=d*d3;
-  ZZ ac=a*c, bd=b*d;
-  return - 108*b3*a2*d - 3*b4*c2 + 54*a2*c4 + 18*b5*d + 243*a2*d2*b2 -
-    54*b3*ac*d - 162*bd*c2*a2 - 54*a3*c3 + 486*a3*bd*c + 3*c4*b2 -
-      18*c5*a + 54*c3*a*bd - 243*d2*a2*c2 + 162*d2*ac*b2 + 2*c6 -
+  ZZ a1 = coeffs[0], b1=coeffs[1], c1=coeffs[2], d1=coeffs[3];
+  ZZ b2=sqr(b1);
+  ZZ b3=b1*b2;
+  ZZ b4=b1*b3;
+  ZZ b5=b1*b4;
+  ZZ b6=b1*b5;
+  ZZ a2=sqr(a1);
+  ZZ a3=a1*a2;
+  ZZ a4=a1*a3;
+  ZZ c2=sqr(c1);
+  ZZ c3=c1*c2;
+  ZZ c4=c1*c3;
+  ZZ c5=c1*c4;
+  ZZ c6=c1*c5;
+  ZZ d2=sqr(d1);
+  ZZ d3=d1*d2;
+  ZZ d4=d1*d3;
+  ZZ ac=a1*c1, bd=b1*d1;
+  return - 108*b3*a2*d1 - 3*b4*c2 + 54*a2*c4 + 18*b5*d1 + 243*a2*d2*b2 -
+    54*b3*ac*d1 - 162*bd*c2*a2 - 54*a3*c3 + 486*a3*bd*c1 + 3*c4*b2 -
+      18*c5*a1 + 54*c3*a1*bd - 243*d2*a2*c2 + 162*d2*ac*b2 + 2*c6 -
 	729*a4*d2 - 2*b6 + 18*b4*ac - 27*a2*b2*c2 + 729*d4*a2 + 54*b3*d3 +
-	  108*c3*d2*a - 18*c4*bd + 27*d2*c2*b2 - 486*d3*ac*b - 54*d2*b4;
+	  108*c3*d2*a1 - 18*c4*bd + 27*d2*c2*b2 - 486*d3*ac*b1 - 54*d2*b4;
 
 }
 
@@ -277,32 +277,32 @@ ZZ cubic::j_c1() const
 
 ZZ cubic::j_c2() const
 {
-  ZZ a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
-  ZZ b2=sqr(b);
-  ZZ b3=b*b2;
-  ZZ b4=b*b3;
-  ZZ b5=b*b4;
-  ZZ b6=b*b5;
-  ZZ a2=sqr(a);
-  ZZ a3=a*a2;
-  ZZ a4=a*a3;
-  ZZ c2=sqr(c);
-  ZZ c3=c*c2;
-  ZZ c4=c*c3;
-  ZZ c5=c*c4;
-  ZZ c6=c*c5;
-  ZZ d2=sqr(d);
-  ZZ d3=d*d2;
-  ZZ d4=d*d3;
-  ZZ ac=a*c, bd=b*d;
+  ZZ a1 = coeffs[0], b1=coeffs[1], c1=coeffs[2], d1=coeffs[3];
+  ZZ b2=sqr(b1);
+  ZZ b3=b1*b2;
+  ZZ b4=b1*b3;
+  ZZ b5=b1*b4;
+  ZZ b6=b1*b5;
+  ZZ a2=sqr(a1);
+  ZZ a3=a1*a2;
+  ZZ a4=a1*a3;
+  ZZ c2=sqr(c1);
+  ZZ c3=c1*c2;
+  ZZ c4=c1*c3;
+  ZZ c5=c1*c4;
+  ZZ c6=c1*c5;
+  ZZ d2=sqr(d1);
+  ZZ d3=d1*d2;
+  ZZ d4=d1*d3;
+  ZZ ac=a1*c1, bd=b1*d1;
 
-  return 108*b3*a2*d - 12*b4*c2 + 216*a2*c4 + 72*b5*d + 486*a3*c2*d
-    - 270*a2*c3*b + 90*b3*c2*a + 972*a2*d2*b2 - 216*b3*ac*d -
-      648*bd*c2*a2 + 54*a3*c3 - 486*a3*bd*c + 16*c3*b3 - 216*d2*b3*a -
-	72*d*b4*c - 72*c4*b*a - 216*d*c3*a2 + 432*d*b2*a*c2 
+  return 108*b3*a2*d1 - 12*b4*c2 + 216*a2*c4 + 72*b5*d1 + 486*a3*c2*d1
+    - 270*a2*c3*b1 + 90*b3*c2*a1 + 972*a2*d2*b2 - 216*b3*ac*d1 -
+    648*bd*c2*a2 + 54*a3*c3 - 486*a3*bd*c1 + 16*c3*b3 - 216*d2*b3*a1 -
+    72*d1*b4*c1 - 72*c4*b1*a1 - 216*d1*c3*a2 + 432*d1*b2*a1*c2
     + 729*a4*d2 + 2*b6
-	  - 18*b4*ac + 27*a2*b2*c2 - 6*b5*c + 648*b2*c*a2*d 
-    - 162*a*d*b4 -  1458*a3*d2*b;
+    - 18*b4*ac + 27*a2*b2*c2 - 6*b5*c1 + 648*b2*c1*a2*d1
+    - 162*a1*d1*b4 -  1458*a3*d2*b1;
 }
 
 // The quantity called C_3 in the paper, = Norm(h0+h1) and should be
@@ -310,29 +310,29 @@ ZZ cubic::j_c2() const
 
 ZZ cubic::j_c3() const
 {
-  ZZ a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
-  ZZ b2=b*b;
-  ZZ b3=b*b2;
-  ZZ b4=b*b3;
-  ZZ b5=b*b4;
-  ZZ b6=b*b5;
-  ZZ a2=a*a;
-  ZZ a3=a*a2;
-  ZZ a4=a*a3;
-  ZZ c2=c*c;
-  ZZ c3=c*c2;
-  ZZ c4=c*c3;
-  ZZ c5=c*c4;
-  ZZ c6=c*c5;
-  ZZ d2=d*d;
-  ZZ d3=d*d2;
-  ZZ d4=d*d3;
+  ZZ a1 = coeffs[0], b1=coeffs[1], c1=coeffs[2], d1=coeffs[3];
+  ZZ b2=b1*b1;
+  ZZ b3=b1*b2;
+  ZZ b4=b1*b3;
+  ZZ b5=b1*b4;
+  ZZ b6=b1*b5;
+  ZZ a2=a1*a1;
+  ZZ a3=a1*a2;
+  ZZ a4=a1*a3;
+  ZZ c2=c1*c1;
+  ZZ c3=c1*c2;
+  ZZ c4=c1*c3;
+  ZZ c5=c1*c4;
+  ZZ c6=c1*c5;
+  ZZ d2=d1*d1;
+  ZZ d3=d1*d2;
+  ZZ d4=d1*d3;
 
-  return 108*b3*a2*d - 12*b4*c2 + 216*a2*c4 + 72*b5*d - 486*a3*c2*d +
-    270*a2*c3*b - 90*b3*c2*a + 972*a2*d2*b2 - 216*b3*c*a*d - 648*b*c2*a2*d
-      + 54*a3*c3 - 486*a3*d*c*b - 16*c3*b3 + 216*d2*b3*a + 72*d*b4*c +
-	72*c4*b*a + 216*d*c3*a2 - 432*d*b2*a*c2 + 729*a4*d2 + 2*b6 - 18*b4*a*c
-	  + 27*a2*b2*c2 + 6*b5*c - 648*b2*c*a2*d + 162*a*d*b4 + 1458*a3*d2*b;
+  return 108*b3*a2*d1 - 12*b4*c2 + 216*a2*c4 + 72*b5*d1 - 486*a3*c2*d1 +
+    270*a2*c3*b1 - 90*b3*c2*a1 + 972*a2*d2*b2 - 216*b3*c1*a1*d1 - 648*b1*c2*a2*d1
+    + 54*a3*c3 - 486*a3*d1*c1*b1 - 16*c3*b3 + 216*d2*b3*a1 + 72*d1*b4*c1 +
+    72*c4*b1*a1 + 216*d1*c3*a2 - 432*d1*b2*a1*c2 + 729*a4*d2 + 2*b6 - 18*b4*a1*c1
+    + 27*a2*b2*c2 + 6*b5*c1 - 648*b2*c1*a2*d1 + 162*a1*d1*b4 + 1458*a3*d2*b1;
 }
 
 // The quantity C_4 (not in the paper), = Norm(h1)/8 and should be
@@ -340,17 +340,17 @@ ZZ cubic::j_c3() const
 
 ZZ cubic::j_c4() const
 {
-  ZZ a = coeffs[0], b=coeffs[1], c=coeffs[2], d=coeffs[3];
-  ZZ b2=b*b;
-  ZZ b3=b*b2;
-  ZZ b4=b*b3;
-  ZZ a2=a*a;
-  ZZ c2=c*c;
-  ZZ c3=c*c2;
+  ZZ a1 = coeffs[0], b1=coeffs[1], c1=coeffs[2], d1=coeffs[3];
+  ZZ b2=b1*b1;
+  ZZ b3=b1*b2;
+  ZZ b4=b1*b3;
+  ZZ a2=a1*a1;
+  ZZ c2=c1*c1;
+  ZZ c3=c1*c2;
   ZZ c4=c2*c2;
-  ZZ d2=d*d;
+  ZZ d2=d1*d1;
 
-  return 27*d*c3*a2 + (27*d2*b3 - 54*d*c2*b2 + 9*c4*b)*a + 9*d*c*b4 - 2*c3*b3;
+  return 27*d1*c3*a2 + (27*d2*b3 - 54*d1*c2*b2 + 9*c4*b1)*a1 + 9*d1*c1*b4 - 2*c3*b3;
 }
 
 //#define DEBUG_REDUCE
@@ -471,11 +471,11 @@ int cubic::is_jc_reduced() const // for negative discriminant only
 {
   if (is_zero(a())) // we want the quadratic form (b,c,d) to be reduced
     {
-      ZZ b(coeffs[1]), c(coeffs[2]), d(coeffs[3]);
-      if (b==d)
-        return ((0<=c) && (c<=b));
+      ZZ b1(coeffs[1]), c1(coeffs[2]), d1(coeffs[3]);
+      if (b1==d1)
+        return ((0<=c1) && (c1<=b1));
       else
-        return ((-b<c) && (c<=b) && (b<d));
+        return ((-b1<c1) && (c1<=b1) && (b1<d1));
     }
   ZZ C1 =  j_c1();
   if (C1<0) return 0;

@@ -76,9 +76,9 @@ inline ZZ_p root_of_unity(const galois_field& F, int n)
 
 inline ZZ order(const ZZ_p& z)
 {
-  ZZ_p one=to_ZZ_p(1);
+  ZZ_p z1 = to_ZZ_p(1);
   ZZ_p zn=z;  ZZ n(1);
-  while (zn!=one) {zn*=z; n+=1;}
+  while (zn!=z1) {zn*=z; n+=1;}
   return n;
 }
 
