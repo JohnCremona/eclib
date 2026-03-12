@@ -1782,6 +1782,7 @@ void mod_mat_from_mat(fmpz_mod_mat_t& A, fmpz_mod_ctx_t& mod, const Zmat<INT>& M
         Aij.get_fmpz(tmp);
         fmpz_mod_mat_set_entry(A,i,j, tmp, mod);
       }
+  fmpz_clear(tmp);
 }
 
 Zmat<int> mat_from_mod_mat(const hmod_mat_t& A)

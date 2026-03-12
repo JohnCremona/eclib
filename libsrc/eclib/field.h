@@ -35,7 +35,6 @@ private:
   mat_m C;        // dxd companion matrix with min.poly. minpoly
   vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1
 public:
-  //Field(const ZZX& p);
   ~Field() {minpoly.kill();}
   Field(); // defaults to Q
   explicit Field(const mat_m& m, const ZZ& den = to_ZZ(1), string a="a", int verb=0);
