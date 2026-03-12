@@ -35,7 +35,7 @@ friend class Zvec<T>;
 friend class sZmat_elim<T>;
 public:
   // constructors
-  Zmat(long nr=0, long nc=0)   :nro(nr), nco(nc) {entries.resize(nr*nc, T(0));}
+  explicit Zmat(long nr=0, long nc=0)   :nro(nr), nco(nc) {entries.resize(nr*nc, T(0));}
   Zmat(long nr, long nc, const vector<T>& ent) : nro(nr), nco(nc), entries(ent) {}
   Zmat(const Zmat<T>& m)   :nro(m.nro), nco(m.nco), entries(m.entries) {}
 

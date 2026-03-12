@@ -25,10 +25,10 @@
 #ifndef _NEWSPACE_H
 #define _NEWSPACE_H      1
 
-#include "eclib/homspace.h"
-#include "eclib/curvesort.h" // for codeletter
-#include "eclib/polys.h"     // for poly_cmp
-#include "eclib/field.h"
+#include "homspace.h"
+#include "curvesort.h" // for codeletter
+#include "polys.h"     // for poly_cmp
+#include "field.h"
 
 class Newform;
 class Newspace;

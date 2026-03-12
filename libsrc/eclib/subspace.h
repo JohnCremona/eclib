@@ -31,9 +31,9 @@ class subZspace {
 
 public:
   // constructors
-  subZspace(int n=0) :denom(1),pivots(Zvec<int>::iota(n)),basis(Zmat<T>::identity_matrix(n)) {}
-  subZspace(const Zmat<T>& b, const Zvec<int>& p, const T& d) :denom(d),pivots(p),basis(b) {}
-  subZspace(const subZspace<T>& s) :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
+  explicit subZspace(int n=0) :denom(1),pivots(Zvec<int>::iota(n)),basis(Zmat<T>::identity_matrix(n)) {}
+  explicit subZspace(const Zmat<T>& b, const Zvec<int>& p, const T& d) :denom(d),pivots(p),basis(b) {}
+  explicit subZspace(const subZspace<T>& s) :denom(s.denom),pivots(s.pivots),basis(s.basis) {}
 
   // assignment
   void operator=(const subZspace<T>& s);

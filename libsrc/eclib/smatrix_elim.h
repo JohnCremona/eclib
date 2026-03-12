@@ -76,7 +76,7 @@ public:
   void elim( int row1, int row2, T v2 );
   // constructor:
   explicit sZmat_elim( const sZmat<T>& sm, T mod) : sZmat<T>( sm ), modulus(mod) { init(); };
-  sZmat_elim( int r = 0,int c = 0 );
+  explicit sZmat_elim( int r = 0,int c = 0 );
   // destructor:
   ~sZmat_elim();
 
@@ -100,7 +100,7 @@ public:
   {
     if( index < num ) return( list_array[index++] ); else return -1;
   }
-  smat_elim_list( int m = 10);
+  explicit smat_elim_list( int m = 10);
   ~smat_elim_list( );
   void clear( int m = 0);
 };
@@ -111,7 +111,7 @@ public:
   void put( smat_elim_list& L);     // L must be ordered
   void remove( int X );
   void remove( smat_elim_list& L );     // L must be ordered
-  smat_elim_ordlist( int m = 10) : smat_elim_list(m) {;}
+  explicit smat_elim_ordlist( int m = 10) : smat_elim_list(m) {;}
 };
 
 ostream& operator<< (ostream&s, const smat_elim_list&);

@@ -44,7 +44,7 @@ class mat22 {  //2x2 matrix for linear fractional transformations
 private:
   long a,b,c,d;
 public:
-  mat22(long ia=0, long ib=0, long ic=0, long id=0)
+  explicit mat22(long ia=0, long ib=0, long ic=0, long id=0)
     :a(ia),b(ib),c(ic),d(id){;}
   mat22(const mat22& m) :a(m.a),b(m.b),c(m.c),d(m.d)
   {;}

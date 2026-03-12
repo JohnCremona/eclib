@@ -55,7 +55,7 @@
 // modulus < 2^27 is ok, and the default modulus PRIME27 is the
 // largest such prime.
 
-#include "math.h" // for floor()
+#include <math.h> // for floor()
 #define XMOD_METHOD "doubles"
 
 const int BIGPRIME =  PRIME27;

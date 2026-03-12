@@ -34,7 +34,7 @@ class cusplist {
     vector<rational> list;
   int cuspeq(const rational& c1, const rational& c2, int plusflag=0) const;
  public:
-  cusplist(long n=0, const moddata* iN=0) :N(iN) {list.reserve(n);}
+  explicit cusplist(long n=0, const moddata* iN=0) :N(iN) {list.reserve(n);}
   long index(const rational& a);
   long index_1(const rational& a);
   long index_2(const rational& a);

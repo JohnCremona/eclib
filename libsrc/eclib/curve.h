@@ -84,7 +84,7 @@ public:
   Curve(const Curve& c)
     : a1(c.a1), a2(c.a2), a3(c.a3), a4(c.a4), a6(c.a6)
       {}
-  Curve(const bigrational& j); // one curve with this j-invariant
+  explicit Curve(const bigrational& j); // one curve with this j-invariant
   void operator=(const Curve& c)
     { a1=c.a1; a2=c.a2; a3=c.a3; a4=c.a4; a6=c.a6; }
 // no destructor is needed
@@ -198,7 +198,7 @@ class  Kodaira_code {
 public:
   int code;
 //
-  Kodaira_code(int k = 0) : code(k) {;}
+  explicit Kodaira_code(int k = 0) : code(k) {;}
   Kodaira_code(const Kodaira_code& c) : code(c.code) {;}
   void operator=(int k) {code=k;}
   void operator=(const Kodaira_code& c) {code=c.code;}
@@ -227,7 +227,7 @@ public:
   int c_p;
   int local_root_number;
 //
-  Reduction_type(int opd=0, int opN=0, int opj=0, int kc=1, int cp=1, int rno=0)
+  explicit Reduction_type(int opd=0, int opN=0, int opj=0, int kc=1, int cp=1, int rno=0)
     : ord_p_discr(opd), ord_p_N(opN), ord_p_j_denom(opj), Kcode(kc), c_p(cp), local_root_number(rno)
     {}
 };
@@ -311,8 +311,8 @@ public:
 
 // Here the CurveRed parameter is not const since a call to
 // LocalRootNumber may have to compute and store it
-inline ZZ Trace_Frob(CurveRed& c, const ZZ& p) {return c.ap(p);}
-inline long Trace_Frob(CurveRed& c, const long& p) {return c.ap(p);}
+inline ZZ Trace_Frob(const CurveRed& c, const ZZ& p) {return c.ap(p);}
+inline long Trace_Frob(const CurveRed& c, const long& p) {return c.ap(p);}
 
 inline int getord_p_discr(const CurveRed& c, const ZZ& p) {return c.ord_p_discr(p);}
 inline int getord_p_N(const CurveRed& c, const ZZ& p) {return c.ord_p_N(p);}

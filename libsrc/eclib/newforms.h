@@ -155,26 +155,26 @@ private:
   int verbose, maxdepth, cuspidal, sign;
   int basisflag;  // is set, then use() only sets bases for newforms
 		  // already defined.
-  mat opmat(int i, int d, int v=0)
+  mat opmat(int i, int d, int v=0) override
   {return h1->opmat(i,d,v);}
   vec opmat_col(int i, int j, int v=0)
   {return h1->opmat_col(i,j,v);}
   mat opmat_cols(int i, const vec_i& jlist, int v=0)
   {return h1->opmat_cols(i,jlist,v);}
-  mat opmat_restricted(int i, const subspace& s, int d, int v=0)
+  mat opmat_restricted(int i, const subspace& s, int d, int v=0) override
   {return h1->opmat_restricted(i,s,d,v);}
-  smat s_opmat(int i, int d, int v=0)
+  smat s_opmat(int i, int d, int v=0) override
   {return h1->s_opmat(i,d,v);}
   svec s_opmat_col(int i, int j, int v=0)
   {return h1->s_opmat_col(i,j,v);}
   smat s_opmat_cols(int i, const vec_i& jlist, int v=0)
   {return h1->s_opmat_cols(i,jlist,v);}
-  smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0)
+  smat s_opmat_restricted(int i, const ssubspace& s, int d, int v=0) override
   {return h1->s_opmat_restricted(i,s,d,v);}
-  long matdim(void)  {return h1->dimension;}
-  scalar matden(void)  {return h1->denom1;}
-  vector<long> eigrange(int i) {return h1->eigrange(i);}
-  long dimoldpart(const vector<long> l);
+  long matdim(void) override  {return h1->dimension;}
+  scalar matden(void) override  {return h1->denom1;}
+  vector<long> eigrange(int i) override {return h1->eigrange(i);}
+  long dimoldpart(const vector<long> l) override;
 protected:
   vec mvp;
   map<long,vec> mvlplusvecs, mvlminusvecs;
@@ -199,7 +199,7 @@ public:
   int  get_sign() {return sign;}
   void makeh1(int s); // sign s = 0,+1, or -1
 // add newform with basis b1, eiglist l to current list (b2 not used):
-  void use(const vec& b1, const vec& b2, const vector<long> l);
+  void use(const vec& b1, const vec& b2, const vector<long> l) override;
 
   // find newforms using homology; ntp is number of eigenvalues to use
   // for oldforms, *not* the number computed via homology (use addap()

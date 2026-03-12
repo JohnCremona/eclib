@@ -32,7 +32,7 @@ private:
   vector<int> chartable;
   void init();
 public:
-  character(long m=1);
+  explicit character(long m=1);
   void reset(long m);
   long modulus(void) {return modul;}
   int operator()(long n) {return chartable[n%modul];}

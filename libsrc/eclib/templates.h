@@ -68,7 +68,7 @@ using std::setw;
 
 template <class T >
 inline void vec_out(ostream& os, const vector<T>& v,
-                    string pre="[ ", string post=" ]", string sep=" ")
+                    const string& pre="[ ", const string& post=" ]", const string& sep=" ")
 {
   os << pre;
   if (!v.empty())
@@ -82,7 +82,7 @@ inline void vec_out(ostream& os, const vector<T>& v,
 template <class T >
 inline void vec_out(ostream& os, const vector<T>& v,
                     unsigned int n, // if size>n>0, only output n items + "..."
-                    string pre="[ ", string post=" ]", string sep=" ")
+                    const string& pre="[ ", const string& post=" ]", const string& sep=" ")
 {
   unsigned int m=v.size();
   if ((n==0)||(n>=m))

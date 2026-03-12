@@ -32,6 +32,8 @@ class bigrational {
 public:
         // constructors
         bigrational() : n(0), d(1) {;}
+        explicit bigrational(int x) : n(x), d(1) {;}
+        explicit bigrational(long x) : n(x), d(1) {;}
         explicit bigrational(const ZZ& x) : n(x), d(1) {;}
         bigrational(const ZZ& x, const ZZ& y) : n(x), d(y) { cancel();}
         bigrational(const bigrational& q) :n(q.n), d(q.d) {;}

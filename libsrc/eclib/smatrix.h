@@ -44,7 +44,7 @@ protected:
 public:
   // constructors
 
-  sZmat<T> (int nr=0, int nc=0);
+  explicit sZmat<T> (int nr=0, int nc=0);
   sZmat<T> (const sZmat<T>&);                  // copy constructor
   explicit sZmat<T> (const Zmat<T> &);         // conversion constructor
   ~sZmat<T>();                             // destructor

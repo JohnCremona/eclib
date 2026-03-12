@@ -215,8 +215,7 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
   find_matrix();
 
   // Set default values for optimalityfactrplus/minus (will be reset if constructing from curves)
-  optimalityfactorplus  = 1;
-  optimalityfactorminus = 1;
+  optimalityfactorplus  =  optimalityfactorminus = 1;
 }
 
 int newform::check_expand_contract()

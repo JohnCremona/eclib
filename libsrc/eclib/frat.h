@@ -318,16 +318,16 @@ inline istream& operator>> (istream& is, RAT& r)
 
 inline INT RAT::floor() const
 {
-  INT q, r;
-  divrem(num(), den(), q, r);
-  return q;
+  INT quo, rem;
+  divrem(num(), den(), quo, rem);
+  return quo;
 }
 
 inline INT RAT::ceil() const
 {
-  INT q, r;
-  divrem(num(), den(), q, r);
-  return (is_zero(r)? q : q+1);
+  INT quo, rem;
+  divrem(num(), den(), quo, rem);
+  return (is_zero(rem)? quo : quo+1);
 }
 
 inline int sign(const RAT& r)

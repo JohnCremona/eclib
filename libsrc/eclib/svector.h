@@ -48,7 +48,7 @@ protected:
 public:
      // constructors
 
-  sZvec<T> (int dim=0) :d(dim) {;}
+  explicit sZvec<T> (int dim=0) :d(dim) {;}
   explicit sZvec<T> (const Zvec<T> &);                  // conversion constructor
 
   // member functions & operators

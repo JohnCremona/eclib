@@ -70,7 +70,7 @@ private:
         byteptr ndiff;     /* pointer to next diff*/
         long maxindex;     /* max index */
 public:
-        primevar(long max=the_primes.NPRIMES, long i=1)
+        explicit primevar(long max=the_primes.NPRIMES, long i=1)
           {maxindex=max; ind=i; val=the_primes.number(i);
            ndiff=the_primes.pdiffptr+i;}
         void init(long max=the_primes.NPRIMES, long i=1)

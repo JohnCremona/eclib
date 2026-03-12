@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #if     !defined(_ECLIB_RATIONAL_H)
 #define _ECLIB_RATIONAL_H      1       //flags that this file has been included
 
@@ -30,9 +30,11 @@ class rational {
   friend class bigrational;
 public:
         // constructors
-        rational(long num_val=0, long den_val=1);
-        rational(const rational& q);
-        void operator=(const rational& q);
+        explicit rational(long num_val=0, long den_val=1) : n(num_val), d(den_val) {cancel();}
+
+        rational(const rational& q) :n(q.n), d(q.d) {;}
+        rational& operator=(const rational& q) {n=q.n; d=q.d; return *this;}
+        rational& operator=(long x) {n=x; d=1; return *this;}
 
         // rational manipulations
         void cancel();                           // cancel *this in situ
@@ -55,7 +57,9 @@ public:
         friend rational operator/(const rational&, long);
         friend rational operator/(long, const rational&);
         friend int operator==(const rational&, const rational&);
+        friend int operator==(const rational&, const long&);
         friend int operator!=(const rational&, const rational&);
+        friend int operator!=(const rational&, const long&);
         friend ostream& operator<< (ostream&s, const rational&);
         friend istream& operator>> (istream& is, rational& r);
         rational& operator+=(const rational&);
@@ -66,8 +70,8 @@ public:
         rational& operator*=(long);
         rational& operator/=(const rational&);
         rational& operator/=(long);
-        rational operator+() const;
-        rational operator-() const;
+        rational operator+() const {return *this;}
+        rational operator-() const {return rational(-n,d);}
         friend long floor(const rational& r);
         friend long ceil(const rational& r);
         operator double();  // conversion operator
@@ -88,26 +92,6 @@ inline void rational::cancel()                     // cancel *this in situ
  if (g>1) {n/=g; d/=g;}
  if (d<0) {n=-n; d=-d;}
 }
-
-inline rational::rational(long num_val, long den_val)
-{
-  n=num_val; d=den_val;
-  (*this).cancel(); 
-}
-
-inline rational::rational(const rational& q) :n(q.n), d(q.d) {;}
-inline void rational::operator=(const rational& q) {n=q.n; d=q.d;}
-
-inline rational rational::operator+() const
-{
-        return *this;
-}
-
-inline rational rational::operator-() const
-{
-        return rational(-n, d);
-}
-
 
 // Definitions of compound-assignment operator member functions
 
@@ -255,9 +239,14 @@ inline int operator==(const rational& q1, const rational& q2)
         return q1.n*q2.d == q2.n*q1.d;
 }
 
+inline int operator==(const rational& q1, const long& q2)
+{
+  return q1.d==1 && q1.n == q2;
+}
+
 inline int operator!=(const rational& q1, const rational& q2)
 {
-        return q1.n*q2.d != q2.n*q1.d;
+  return !(q1==q2);
 }
 
 inline ostream& operator<<(ostream& s, const rational& q)
@@ -275,7 +264,7 @@ inline istream& operator>> (istream& is, rational& r)
 {
   long n,d=1;
   is>>n>>ws;
-  if(!is.eof()) 
+  if(!is.eof())
     {
       char c;
       is.get(c);

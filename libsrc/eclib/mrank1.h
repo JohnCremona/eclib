@@ -81,15 +81,15 @@ public:
 // n_aux=-1 causes default to be used (depends on method)
 //
   void sortpoints();
-  void listpoints();
+  void listpoints() override;
   void listpoints(Curvedata* CD_orig, const ZZ& u, const ZZ& r,
-		                      const ZZ& s, const ZZ& t);
-  vector<Point> getgens() const;
-  vector<Point> getpoints();
-  long getselmerprime() const {return selmer_rank;}
-  long getselmerphi() const {return selmer_rank;}
-  long getselmerphiprime() const {return selmer_rank;}
-  Curvedata getEprime() const {return *the_curve;}
+		                      const ZZ& s, const ZZ& t) override;
+  vector<Point> getgens() const override;
+  vector<Point> getpoints() override;
+  long getselmerprime() const override {return selmer_rank;}
+  long getselmerphi() const override {return selmer_rank;}
+  long getselmerphiprime() const override {return selmer_rank;}
+  Curvedata getEprime() const override {return *the_curve;}
 };
 
 #endif

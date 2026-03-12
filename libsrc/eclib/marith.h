@@ -281,7 +281,7 @@ protected:
 public:
   // constructors
   divisor_iterator(const vector<ZZ>& P, const vector<long>& E);
-  divisor_iterator(const ZZ& N);
+  explicit divisor_iterator(const ZZ& N);
   divisor_iterator();
 
   // increment if possible
