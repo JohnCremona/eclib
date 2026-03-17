@@ -268,4 +268,20 @@ inline long to_long(const long& i) {return i;}
 // lexicographically.
 vector<vector<int>> all_linear_combinations(int dim, int bound, int sorted=0);
 
+// Class to generate the same one at a time so not sorted):
+class BoundedWeightVectorGenerator {
+public:
+  BoundedWeightVectorGenerator(int length, int weight);
+  int at_last();  // test if vec is last
+  void advance(); // advance to the next vector
+  int valid();    // test if the current vector is valid, i.e.
+                  // (i) gcd=1 // (ii) first nonzero is positive
+  vector<int> next();  // retrieve the next vector
+private:
+    int length;
+    int weight;
+    vector<int> vec;
+};
+
+
 #endif

@@ -766,4 +766,55 @@ vector<vector<int>> all_linear_combinations(int dim, int bound, int sorted)
   return ans;
 }
 
+BoundedWeightVectorGenerator::BoundedWeightVectorGenerator(int length, int weight)
+  : length(length), weight(weight)
+{
+  vec.resize(length, 0);
+}
+
+// test if vec is last
+int BoundedWeightVectorGenerator::at_last() {
+  return std::all_of(vec.begin(), vec.end(), [this](const int& vi){return vi==-weight;});
+}
+
+// advance to the next vector
+void BoundedWeightVectorGenerator::advance() {
+  if (at_last())
+    {
+      return; // No more vectors to generate
+    }
+  //cout<<"Advancing from " << vec << " to " << flush;
+  for (auto& vi: vec) // order 0,1,-1,2,-2,...,w,-w
+    {
+      if (vi==-weight)
+        vi=0;
+      else   // c -> -c if c>0 or c -> 1-c if c<0
+        {
+          vi = -vi;
+          if (vi>=0) ++vi;
+          break;
+        }
+    }
+  //cout << vec << endl;
+}
+
+// test if the current vector is valid, i.e.
+// (i) gcd=1 // (ii) first nonzero is positive
+int BoundedWeightVectorGenerator::valid() {
+  auto it = std::find_if(vec.begin(), vec.end(), [this](const int& vi){return vi!=0;});
+  if (it==vec.end()) return 0; // vec is all 0
+  if (*it<0) return 0;         // first is negative
+  int c = std::accumulate(vec.begin(), vec.end(), 0,
+                          [](int a, int b) {return std::gcd(a,b);});
+  return (c==1);
+}
+
+// retrieve the next vector (or empty vector if there are no more)
+vector<int> BoundedWeightVectorGenerator::next() {
+  advance();
+  while (!valid() && !at_last()) advance();
+  if (valid()) return vec;
+  return {};
+}
+
 /* END OF FILE */

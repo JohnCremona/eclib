@@ -1,4 +1,5 @@
-// FILE POLREDTEST.CC: test program for functions for reducing ZZX polynomials (polredabs) via libpari
+// FILE POLREDTEST.CC: test program for functions for reducing ZZX
+//                     polynomials (polredabs/polredbest) via libpari
 
 #include "eclib/polred.h"
 
@@ -36,18 +37,24 @@ int main()
 
       if (IsIrreducible(f))
         {
-          cout << "Applying polredabs..." << endl;
-          ZZX h;
-          g = polredabs(f, h, den);
-          cout << "... reduced polynomial is g = " << str(g);
-          if (f==g)
-            cout << " -- no change"<< endl;
-          else
-            cout << " -- polynomial has been reduced"<< endl;
-          if (den==1)
-            cout << "A root of f is a = " << str(h, "b") << " where g(b)=0" << endl;
-          else
-            cout << "A root of f is a = (" << str(h, "b") << ") / " << den << " where g(b)=0" << endl;
+          for (int canonical: {0,1})
+            {
+              if (canonical)
+                cout << "Applying polredabs..." << endl;
+              else
+                cout << "Applying polredbest..." << endl;
+              ZZX h;
+              g = polred(f, h, den, canonical);
+              cout << "... reduced polynomial is g = " << str(g);
+              if (f==g)
+                cout << " -- no change"<< endl;
+              else
+                cout << " -- polynomial has been reduced"<< endl;
+              if (den==1)
+                cout << "A root of f is a = " << str(h, "b") << " where g(b)=0" << endl;
+              else
+                cout << "A root of f is a = (" << str(h, "b") << ") / " << den << " where g(b)=0" << endl;
+            }
         }
       else
         {

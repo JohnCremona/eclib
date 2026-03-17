@@ -1000,12 +1000,12 @@ vector<FieldElement> FieldIso::operator()(const vector<FieldElement>& x) const
 
 //#define DEBUG_REDUCE
 
-// Apply polredabs to the defining polynomial, define a new field
-// with that poly and return an isomorphism from this to that.  If
-// the poly was already polredabsed, or if F is QQ, return the
-// identity. Otherwise a new Field is created with provided variable
-// name.
-FieldIso Field::reduction_isomorphism(string newvar) const
+// Apply polredabs (if canonical) or polredbest to the defining
+// polynomial, define a new field with that poly and return an
+// isomorphism from this to that.  If the poly was already
+// polredabsed, or if F is QQ, return the identity. Otherwise a new
+// Field is created with provided variable name.
+FieldIso Field::reduction_isomorphism(string newvar, int canonical) const
 {
 #ifdef DEBUG_REDUCE
   cout << "In Field::reduction_isomorphism(), minpoly = " << ::str(minpoly) << endl;
@@ -1018,7 +1018,8 @@ FieldIso Field::reduction_isomorphism(string newvar) const
       return FieldIso(this); // identity
     }
   ZZX h; ZZ denh;
-  ZZX g = polredabs(minpoly, h, denh);
+  ZZX g = polred(minpoly, h, denh, canonical);
+
   if (minpoly==g)
     {
 #ifdef DEBUG_REDUCE
@@ -1164,8 +1165,10 @@ FieldIso Field::change_generator(const FieldElement& b) const
 }
 
 // Return an iso from this=Q(a) to Q(b) where b^2=r, optionally
-// applying polredabs to the codomain.  sqrt_r is set to sqrt(r) in
-// the codomain, so sqrt_r^2 = image of r
+// applying polredabs (if reduce=2) or polredbest (if reduce=1) to the
+// codomain.  sqrt_r is set to sqrt(r) in the codomain, so sqrt_r^2 =
+// image of r.
+
 //#define DEBUG_SQRT_EMBEDDING
 FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, FieldElement& sqrt_r, int reduce) const
 {
@@ -1245,9 +1248,11 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, FieldElemen
   if (reduce)
     {
 #ifdef DEBUG_SQRT_EMBEDDING
-  cout << " reducing..." << endl;
+      cout << " reducing via "
+           << (reduce>1? "polredabs" : "polredbest")
+           << "..." << endl;
 #endif
-  FieldIso red = F_sqrt_rss->reduction_isomorphism(newvar);
+      FieldIso red = F_sqrt_rss->reduction_isomorphism(newvar, reduce>1);
 #ifdef DEBUG_SQRT_EMBEDDING
   cout << " third map (reduction isomorphism) is" << red << endl;
 #endif

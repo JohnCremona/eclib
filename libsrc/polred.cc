@@ -11,7 +11,7 @@ using PARI::content0;
 using PARI::gdiv;
 using PARI::gen_1;
 using PARI::RgX_renormalize_lg;
-using PARI::polredabs;
+using PARI::polredbest;
 using PARI::polredabs0;
 using PARI::nf_ORIG;
 using PARI::lift;
@@ -64,19 +64,25 @@ GEN ZZX_to_t_POL(const ZZX& f)
   return P;
 }
 
-// polredabs of an *irreducible* polynomial in Z[X]
-// (1) return monic integral g defining the same field as f
-ZZX polredabs(const ZZX& f)
+// polredabs (if canonical) or polredbest of an *irreducible*
+// polynomial in Z[X] (1) return monic integral g defining the same
+// field as f
+ZZX polred(const ZZX& f, int canonical)
 {
   if (!IsIrreducible(f))
     {
-      cerr << "polredabs() called with f = " << str(f) << " which is reducible" << endl;
+      cerr << "polred() called with f = " << str(f) << " which is reducible" << endl;
       return f;
     }
   pari_sp av = avma;
-  GEN G = polredabs(ZZX_to_t_POL(f));
+  GEN G = (canonical?
+           polredabs0(ZZX_to_t_POL(f), 0) :
+           polredbest(ZZX_to_t_POL(f), 0));
 #ifdef DEBUG_POLY
-  pari_printf("polredabs(f) returns %Ps\n", G);
+  if (canonical)
+    pari_printf("polredabs0(f, 0) returns %Ps\n", G);
+  else
+    pari_printf("polredbest(f, 0) returns %Ps\n", G);
 #endif
   ZZ d;
   ZZX g = t_POL_to_ZZX(G, d); // d will be 1
@@ -87,17 +93,22 @@ ZZX polredabs(const ZZX& f)
 
 // (2) also sets h such that a=h(b) (so f(h(b))=0) where f(a)=g(b)=0
 
-ZZX polredabs(const ZZX& f, ZZX& h, ZZ& d)
+ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
 {
   if (!IsIrreducible(f))
     {
-      cerr << "polredabs() called with f = " << str(f) << " which is reducible" << endl;
+      cerr << "polred() called with f = " << str(f) << " which is reducible" << endl;
       return f;
     }
   pari_sp av = avma;
-  GEN G_H = polredabs0(ZZX_to_t_POL(f), nf_ORIG);
+  GEN G_H = (canonical?
+             polredabs0(ZZX_to_t_POL(f), nf_ORIG) :
+             polredbest(ZZX_to_t_POL(f), nf_ORIG));
 #ifdef DEBUG_POLY
-  pari_printf("polredabs0(f,nf_ORIG) returns [G, H] = %Ps\n", G_H);
+  if (canonical)
+    pari_printf("polredabs0(f,nf_ORIG) returns [G, H] = %Ps\n", G_H);
+  else
+    pari_printf("polredbest(f,nf_ORIG) returns [G, H] = %Ps\n", G_H);
 #endif
   GEN G = gel(G_H,1);
 #ifdef DEBUG_POLY

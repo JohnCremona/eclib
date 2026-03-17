@@ -50,6 +50,7 @@ private:
   subspace_m S; // irreducible subspace of modular symbol space
   ZZ denom_abs; // absolute denominator of S
   mat projcoord; // used to computed eigenvalues of any operator
+  modsym key_symbol; // nsp->H1->freemods[pivots(S)[1] -1]
 
   int self_twist_flag; // -1 for unknown, 0 for no, 1 for yes
   INT CMD;            // =D if this is self-twist by unramified disc D<0 dividing Quad::disc, else 0
@@ -110,8 +111,8 @@ public:
   // in aMmap) using multiplicative relations.
   FieldElement aM(const long& M);
 
-  // eigenvalue of a (good) prime from aPmap if P is in there;
-  // otherwise either compute and cache it.
+  // eigenvalue of a prime from eQmap or aPmap if P is in there;
+  // otherwise compute it.
   FieldElement eig_P(const long& P);
   // Principal eigenvalue of a linear combination of the above:
   FieldElement eig_lin_comb(const vector<long>& Plist, const vector<scalar>& coeffs, int verb=0);

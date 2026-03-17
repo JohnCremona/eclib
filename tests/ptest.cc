@@ -121,4 +121,20 @@ int main()
       << endl;
  for (auto combo: combos) cout << combo <<endl;
 
+ BoundedWeightVectorGenerator combo_generator(dim, bound);
+ int ncombos = 0;
+ cout << "All linear combinations (up to sign) of length " << dim
+      << " with coefficients bounded by " << bound << " (generated one by one)"
+      << endl;
+ while (!combo_generator.at_last())
+   {
+     vector<int> vec = combo_generator.next();
+     if (combo_generator.at_last())
+       break;
+     cout << vec << endl;
+     ncombos++;
+   }
+ if (ncombos!=combos.size())
+   cout << "Error: sequential generator computes " << ncombos
+        << " vectors, but static generator computes " << combos.size() << endl;
 }  /* main() */

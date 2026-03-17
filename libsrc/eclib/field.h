@@ -66,19 +66,20 @@ public:
   friend istream& operator>>(istream& s, Field* F);
   friend istream& operator>>(istream& s, Field** F);
 
-  // Apply polredabs to the defining polynomial, define a new field
-  // with that poly and return an isomorphism from this to that.  If
-  // the poly was already polredabsed, or if F is QQ, return the
-  // identity. Otherwise a new Field is created with provided variable
-  // name.
-  FieldIso reduction_isomorphism(string newvar) const;
+  // Apply polredabs (if canonical) or polredbest to the defining
+  // polynomial, define a new field with that poly and return an
+  // isomorphism from this to that.  If the poly was already
+  // polredabsed, or if F is QQ, return the identity. Otherwise a new
+  // Field is created with provided variable name.
+  FieldIso reduction_isomorphism(string newvar, int canonical=0) const;
 
   // Return an iso from this=Q(a) to Q(b) where b is in this field and generates
   FieldIso change_generator(const FieldElement& b) const;
 
   // Return an iso from this=Q(a) to Q(b) where b^2=r, optionally
-  // applying polredabs to the codomain.  sqrt_r is set to sqrt(r) in
-  // the codomain, so sqrt_r^2 = image of r
+  // applying polredabs (if reduce=2) or polredbest (if reduce=1) to
+  // the codomain.  sqrt_r is set to sqrt(r) in the codomain, so
+  // sqrt_r^2 = image of r
   FieldIso sqrt_embedding(const FieldElement& r, string newvar, FieldElement& sqrt_r, int reduce=1) const;
 };
 

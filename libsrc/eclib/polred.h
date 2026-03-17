@@ -17,8 +17,17 @@ ZZX t_POL_to_ZZX(GEN P, ZZ& d);
 GEN ZZX_to_t_POL(const ZZX& f);
 
 // polredabs of an *irreducible* polynomial in Z[X]
+
+// These use pari's polredabs0() function with flag=0 or flag=nf_ORIG
+// respectively when canonical=1: "Expensive but provide canonical
+// representatives", so slow if degree large (say 20 or more). If
+// canonical=0 (default), use polredbest() instead: "Fast, generally
+// best. Possibly smaller discriminant (!)"
+
 // (1) return monic integral g defining the same field as f
-ZZX polredabs(const ZZX& f);
+ZZX polred(const ZZX& f, int canonical=0);
 // (2) also sets h such that a=h(b)/d (so f(h(b)/d)=0) where f(a)=g(b)=0
-ZZX polredabs(const ZZX& f, ZZX& h, ZZ& d);
+ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical=0);
+
+
 #endif

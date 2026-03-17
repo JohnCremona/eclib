@@ -4,7 +4,10 @@
 #include <assert.h>
 #include "eclib/newspace.h"
 
-const int POLREDABS_DEGREE_UPPER_BOUND = 20;
+// Degree bound: fields of degree up to this will be reduced via
+// polredabs (giving a canonical defining polynomial); above this only
+// polredbest will be used.
+const int POLREDABS_DEGREE_UPPER_BOUND = 15;
 
 newform_comparison newform_cmp;
 
@@ -43,6 +46,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       exit(1);
     }
   denom_abs=to_ZZ(nsp->dH)*denom(S);
+  key_symbol = nsp->H1->freemods[pivots(S)[1] -1];
   if (verbose)
     {
       cout<<"Finished constructing subspace S of dimension "<<d
@@ -95,28 +99,26 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     {
       string var = codeletter(index-1);
       F0 = new Field(A, denom_abs, var, verbose>1);
-      if (d>POLREDABS_DEGREE_UPPER_BOUND)
+      int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
+      if (verbose)
         {
-          if (verbose)
-            cout << "Not applying polredabs to field " << *F0
-                 << " as degree is greater than set bound of "
-                 << POLREDABS_DEGREE_UPPER_BOUND <<endl;
-          F = F0;
-          Fiso = FieldIso(F0);
-        }
-      else
-        {
-          if (verbose)
-            cout << "Applying polredabs to field " << *F0 << endl;
-          Fiso = F0->reduction_isomorphism(var);
-          F = (Field*)Fiso.codom();
-          if (verbose)
-            cout << "Reduced field is " << *F << endl;
-          if (Fiso.is_nontrivial() && verbose)
+          cout << "Applying "
+               << (canonical? "polredabs": "polredbest")
+               << " to field " << *F0 << endl;
+          if (!canonical)
             {
-              cout << "[replacing original Hecke field with polynomial " << ::str(F0->poly())
-                   << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
+              cout << "Not applying polredabs as degree is greater than "
+                   << POLREDABS_DEGREE_UPPER_BOUND <<endl;
             }
+        }
+      Fiso = F0->reduction_isomorphism(var, canonical);
+      F = (Field*)Fiso.codom();
+      if (verbose)
+        cout << "Reduced field is " << *F << endl;
+      if (Fiso.is_nontrivial() && verbose)
+        {
+          cout << "[replacing original Hecke field with polynomial " << ::str(F0->poly())
+               << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
         }
     }
   if (verbose)
@@ -148,9 +150,10 @@ string Newform::label() const
 FieldElement Newform::eig(const matop& T)
 {
   // cout << "Matrix of "<<T.name()<<" is\n" << nsp->H1->calcop_restricted(T, S, 0, 0) << endl;
-  // cout << "nsp->H1->freemods[pivots(S)[1] -1] = " << nsp->H1->freemods[pivots(S)[1] -1] <<endl;
+  // cout << "key_symbol = " << key_symbol <<endl;
   // cout << "applyop_proj("<<T.name()<<") to this with projcoord gives \n";
-  vec_m apv = to_vec_m(nsp->H1->applyop_proj(T, nsp->H1->freemods[pivots(S)[1] -1], projcoord));
+
+  vec_m apv = to_vec_m(nsp->H1->applyop_proj(T, key_symbol, projcoord));
   // cout << "ap vector = " << apv <<endl;
   static const ZZ one(1);
   if (F0->isQ())
@@ -176,14 +179,19 @@ int Newform::eps(const matop& T) // T should be a scalar +- identity
   exit(1);
 }
 
-// eigenvalue of a (good) prime from aPmap if P is in there;
-// otherwise either raise an error (if stored_only=1) or (not yet
-// implemented) compute it.
+// eigenvalue of a prime from eQmap or aPmap if P is in there;
+// otherwise compute it.
 FieldElement Newform::eig_P(const long& P)
 {
-  auto it = aPmap.find(P);
-  if (it!=aPmap.end())
-    return it->second;
+  // If P is bad, return AL eigenvalue
+  auto it1 = eQmap.find(P);
+  if (it1!=eQmap.end())
+    return F->rational(it1->second);
+  // If P is good and in aPmap, return stored Tp eigenvalue
+  auto it2 = aPmap.find(P);
+  if (it2!=aPmap.end())
+    return it2->second;
+  // If P is good and not in aPmap, compute, store and return Tp eigenvalue
   FieldElement aP = ap(P);
   aPmap[P] = aP;
   return aP;
@@ -442,8 +450,11 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
   if (!IsSquareFree(f_new))
     {
       if (verbose>0)
-        cout << "\n NO: new Hecke polynomial " // <<str(f_new)
-             << " for " << T.name() << " is not squarefree" << endl;
+        {
+          cout << "\n NO: new Hecke polynomial " // <<str(f_new)
+               << " for " << T.name() << " is not squarefree" << endl;
+          display_factors(f_new);
+        }
       return 0;
     }
   // f_full is the char poly of T on the full space (not just the
@@ -482,23 +493,25 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
 // subspace is squarefree and coprime to its char polys on the
 // oldspace and non-cuspidal subspace.
 //
-// This function manages the linear combinations, withe the validity
+// This function manages the linear combinations, with the validity
 // testing done by valid_splitting_combo().
 //
 // Set split_ok=1 if successful else 0.
 
 void Newspace::find_T(int maxnp, int maxc)
 {
-  split_ok = 0;
-  // fill Plist with the first maxnp good primes >= 20
-  vector<long> Plist = the_primes.getfirst(maxnp, N, 20);
+  split_ok = 0; int minp = 2;
+  // fill Plist with the first maxnp good primes >= minp
+  vector<long> Plist = the_primes.getfirst(maxnp, N, minp);
   if (verbose)
     cout << "Trying linear combinations of T_p for p in " << Plist << endl;
-  vector<matop> TPlist(maxnp);
-  std::transform(Plist.begin(), Plist.end(), TPlist.begin(),
+  vector<matop> ops(maxnp);
+  // insert maxnp T_P into ops:
+  std::transform(Plist.begin(), Plist.end(), ops.begin(),
                  [this](long p){return matop(p,N);});
-  vector<matop> ops = TPlist;
-  vector<vector<int>> lincombs = all_linear_combinations(ops.size(), maxc);
+
+  BoundedWeightVectorGenerator combo_generator(ops.size(), maxc);
+  //vector<vector<int>> lincombs = all_linear_combinations(ops.size(), maxc, 1);
   if (verbose)
     {
       cout << "Trying linear combinations with coefficients up to "<<maxc;
@@ -513,8 +526,11 @@ void Newspace::find_T(int maxnp, int maxc)
     }
   gmatop T_op;
   ZZX f;
-  for (auto lc: lincombs)
+  while (!combo_generator.at_last())    //for (auto lc: lincombs)
     {
+      vector<int> lc = combo_generator.next();
+      if (combo_generator.at_last())
+        break;
       vector<scalar> ilc(lc.size());
       std::transform(lc.begin(), lc.end(), ilc.begin(), [](int c){return scalar(c);});
       T_op = gmatop(ops, ilc);
@@ -766,8 +782,9 @@ void Newform::set_index(int i)
   {
     index = i;
     lab = codeletter(i-1);
-    // On creation from scratch, F0 exists and F is a polredabs
-    // isomorphic field, but after reading from a file only F is set.
+    // On creation from scratch, F0 exists and F is a
+    // polredabs/polredbest isomorphic field, but after reading from a
+    // file only F is set.
     if (F0!=NULL) F0->set_var(lab+string("0"));
     F->set_var(lab);
   }

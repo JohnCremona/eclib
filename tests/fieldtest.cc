@@ -46,8 +46,8 @@ void test_field(const Field& F)
   cout << "2 in F is " << F.two() << endl;
   cout << "-2 in F is " << F.minus_two() << endl;
 
-  cout << "Applying polredabs..." << endl;
-  FieldIso iso = F.reduction_isomorphism(F.get_var()+"0");
+  cout << "Applying polred..." << endl;
+  FieldIso iso = F.reduction_isomorphism(F.get_var()+"0", 1);
   cout << iso << endl;
   cout << "Reduced field is ";
   iso.codom()->display();
@@ -89,7 +89,7 @@ void test_field(const Field& F)
       cout << "b = " << b << (sq? " is" : " is not") << " a square in F" << endl;
     }
   cout << "adjoining sqrt(b) to F..."<<endl;
-  FieldIso emb = F.sqrt_embedding(b, "r", r, 1); // reduce=1
+  FieldIso emb = F.sqrt_embedding(b, "r", r, 1); // reduce=1 for polredbest
   cout << emb << endl;
   Field Frootb = *(iso.codom());
   FieldElement eb = emb(b);
