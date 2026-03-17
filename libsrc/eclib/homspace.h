@@ -99,6 +99,7 @@ class gmatop {
     :ops({T}), coeffs({scalar(1)})  {;}
   void set_coeff(int i, const scalar& c) {coeffs[i] = c;}
   string name() const;
+  int is_simple() const {return ops.size()==1 && coeffs[0]==1;}
 };
 
 class homspace :public symbdata {

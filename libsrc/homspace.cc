@@ -1842,9 +1842,12 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
 #endif
     }
   ZZX full_poly =  scaled_charpoly(mat_to_mat_ZZ(M), to_ZZ(den));
-  poly_cache[NT] = full_poly;
-  if (deg(full_poly)==0)
-    new_poly_cache[NT] = full_poly;
+  if (T.is_simple())
+    {
+      poly_cache[NT] = full_poly;
+      if (deg(full_poly)==0)
+        new_poly_cache[NT] = full_poly;
+    }
   return full_poly;
 }
 
@@ -1893,7 +1896,8 @@ ZZX get_new_poly(const long& N, const gmatop& T, int cuspidal, const scalar& mod
       if (deg(new_poly)==0) // nothing left, new dimension must be 0
         break;
     } // end of loop over divisors
-  new_poly_cache[NT] = new_poly;
+  if (T.is_simple())
+    new_poly_cache[NT] = new_poly;
   return new_poly;
 }
 
