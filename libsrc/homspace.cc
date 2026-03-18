@@ -1773,10 +1773,11 @@ mat get_full_mat(const long& N,  const gmatop& T, const scalar& mod)
     }
   // We do not need to add to the dict if this gmatop consist of a
   // single matop, since that will have been done in the loop.
-  if (full_mat_dict.find(NT) == full_mat_dict.end())
-    full_mat_dict[NT] = M;
+  // if (full_mat_dict.find(NT) == full_mat_dict.end())
+  //   full_mat_dict[NT] = M;
 #ifdef DEBUG_GET_FULL_MAT
-  cout << "caching and returning matrix of " << NT << endl;
+  //  cout << "caching and returning matrix of " << NT << endl;
+  cout << "returning matrix of " << NT << endl;
 #endif
   return M;
 }

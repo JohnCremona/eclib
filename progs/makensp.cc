@@ -72,7 +72,7 @@ int main()
     // Hecke operators with coefficients up to maxc:
     int maxnp = 10, maxc = 20, minp=10;
     Newspace NS(H1, maxnp, maxc, minp, verbose);
-    if (!NS.ok())
+    if (cdim>0 && !NS.ok())
       {
         cout << "Failed to find a splitting operator using linear combinations of " << maxnp
              << " operators T_p for p >= " << minp <<" with coefficients up to " << maxc
