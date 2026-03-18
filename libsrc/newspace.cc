@@ -2,6 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
+#include <random>
 #include "eclib/newspace.h"
 
 // Degree bound: fields of degree up to this will be reduced via
@@ -32,9 +33,12 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       // evaluate dH^d*f(X/dH) at T; that is, we scale the coefficient of
       // X^i by dH^(d-i):
 
-      cout << "Finding kernel of f(T)..."<<endl;
-      cout << " f = " << fstring <<endl;
-      cout << "denH = " << nsp->dH << endl;
+      if (verbose>1)
+        {
+          cout << "Finding kernel of f(T)..."<<endl;
+          cout << " f = " << fstring <<endl;
+          cout << "denH = " << nsp->dH << endl;
+        }
     }
   mat_m fT = evaluate(scale_poly_up(f, to_ZZ(nsp->dH)), nsp->T_mat);
   if (verbose>1)
@@ -290,7 +294,7 @@ ZZX Newform::char_pol_lin_comb(const vector<long>& Plist, const vector<scalar>& 
   return eig_lin_comb(Plist, coeffs, verb).charpoly();
 }
 
-Newspace::Newspace(homspace* h1, int maxnp, int maxc, int verb)
+Newspace::Newspace(homspace* h1, int maxnp, int maxc, int minp, int verb)
   : verbose(verb), H1(h1)
 {
   N = H1->N;
@@ -315,7 +319,7 @@ Newspace::Newspace(homspace* h1, int maxnp, int maxc, int verb)
     }
 
   // Find the splitting operator
-  find_T(maxnp, maxc);
+  find_T(maxnp, maxc, minp);
   // Construct the newforms if that succeeded
   if (split_ok)
     {
@@ -427,11 +431,13 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
       exit(1);
     }
 
-  // cache this new poly
-  string NT = NTkey(N,T);
-  if (verbose)
-    cout<<"Caching new cuspidal poly for " << NT <<endl; // << ": " << str(f_new) << endl;
-  new_cuspidal_poly_dict[NT] = f_new;
+  if (T.is_simple()) // cache this new poly
+    {
+      string NT = NTkey(N,T);
+      if (verbose)
+        cout<<"Caching new cuspidal poly for " << NT <<endl; // << ": " << str(f_new) << endl;
+      new_cuspidal_poly_dict[NT] = f_new;
+    }
   return f_new;
 }
 
@@ -453,7 +459,7 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
         {
           cout << "\n NO: new Hecke polynomial " // <<str(f_new)
                << " for " << T.name() << " is not squarefree" << endl;
-          display_factors(f_new);
+          // display_factors(f_new);
         }
       return 0;
     }
@@ -489,7 +495,7 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
 }
 
 // Find a linear combination T of up to maxnp operators T_P with
-// coefficients up to maxc, whose char poly on the new cuspidal
+// coefficients up to maxc, for good p>=minp, whose char poly on the new cuspidal
 // subspace is squarefree and coprime to its char polys on the
 // oldspace and non-cuspidal subspace.
 //
@@ -498,9 +504,22 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
 //
 // Set split_ok=1 if successful else 0.
 
-void Newspace::find_T(int maxnp, int maxc)
+static vector<int> random_vector(size_t size, int minv, int maxv)
 {
-  split_ok = 0; int minp = 2;
+  // We use static in order to instantiate the random engine and the
+  // distribution once only.  It may provoke some thread-safety
+  // issues.
+  static std::uniform_int_distribution<int> distribution(minv, maxv);
+  static std::default_random_engine generator;
+
+  std::vector<int> v(size);
+  std::generate(v.begin(), v.end(), []() { return distribution(generator); });
+  return v;
+}
+
+void Newspace::find_T(int maxnp, int maxc, int minp)
+{
+  split_ok = 0;
   // fill Plist with the first maxnp good primes >= minp
   vector<long> Plist = the_primes.getfirst(maxnp, N, minp);
   if (verbose)
@@ -510,8 +529,8 @@ void Newspace::find_T(int maxnp, int maxc)
   std::transform(Plist.begin(), Plist.end(), ops.begin(),
                  [this](long p){return matop(p,N);});
 
-  BoundedWeightVectorGenerator combo_generator(ops.size(), maxc);
-  //vector<vector<int>> lincombs = all_linear_combinations(ops.size(), maxc, 1);
+  BoundedWeightVectorGenerator combo_generator(maxnp, maxc);
+  //vector<vector<int>> lincombs = all_linear_combinations(maxnp, maxc, 1);
   if (verbose)
     {
       cout << "Trying linear combinations with coefficients up to "<<maxc;
@@ -526,11 +545,20 @@ void Newspace::find_T(int maxnp, int maxc)
     }
   gmatop T_op;
   ZZX f;
-  while (!combo_generator.at_last())    //for (auto lc: lincombs)
-    {
-      vector<int> lc = combo_generator.next();
-      if (combo_generator.at_last())
-        break;
+
+  //  while (!combo_generator.at_last())  // To use all linear combos:
+  for (int i=0; i<1000; i++)              // To use random linear combos:
+  {
+    // Using all linear combos:
+    // vector<int> lc = combo_generator.next();
+    // if (combo_generator.at_last())
+    //   break;
+
+    // using random linear combos:
+    vector<int> lc = random_vector(maxnp, -maxc,maxc);
+
+    if (std::count(lc.begin(), lc.end(), 0) > maxnp-6)
+        continue;
       vector<scalar> ilc(lc.size());
       std::transform(lc.begin(), lc.end(), ilc.begin(), [](int c){return scalar(c);});
       T_op = gmatop(ops, ilc);

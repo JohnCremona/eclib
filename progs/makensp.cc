@@ -70,17 +70,17 @@ int main()
     // The Newspace constructor looks for a suitable splitting
     // operator which is a linear combination of up to maxnp prime
     // Hecke operators with coefficients up to maxc:
-    int maxnp = 10, maxc = 2;
-    Newspace NS(H1, maxnp, maxc, verbose);
+    int maxnp = 10, maxc = 20, minp=10;
+    Newspace NS(H1, maxnp, maxc, minp, verbose);
     if (!NS.ok())
       {
-        cout << "Failed to find a splitting operator using linear combnations of " << maxnp
-             << " operators with coefficients up to " << maxc
+        cout << "Failed to find a splitting operator using linear combinations of " << maxnp
+             << " operators T_p for p >= " << minp <<" with coefficients up to " << maxc
              << endl;
         continue; // to next level
       }
     int nnf = NS.nforms();
-    if (nnf)
+    if (nnf && verbose)
       cout << "Splitting using " << NS.splitopname() << endl;
     cout << nnf << " newform";
     if (nnf!=1) cout << "s";

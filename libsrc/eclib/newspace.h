@@ -219,18 +219,18 @@ private:
                             const gmatop &T, ZZX& f_new);
 
   // Find a linear combination T of up to maxnp operators T_P with
-  // coefficients up to maxc, whose char poly on the newspace is
+  // coefficients up to maxc, for good p>=minp, whose char poly on the newspace is
   // squarefree and coprime to its char poly on the oldspace.  Set
   // split_ok=1 if successful else 0.
-  void find_T(int maxnp, int maxc);
+  void find_T(int maxnp, int maxc, int minp);
 
 public:
   vector<Newform> newforms; // the newforms
   Newspace(void) :verbose(0) {;}
   // constructor from a homspace, looking for a splitting operator
-  // using linear combinations of up to maxnp primes, coefficients up
-  // to maxc
-  Newspace(homspace* h1, int maxnp, int maxc, int verb=0);
+  // using linear combinations of up to maxnp primes >=minp,
+  // coefficients up to maxc
+  Newspace(homspace* h1, int maxnp, int maxc, int minp=2, int verb=0);
   int split_ok; // records whether the constructor was able to find a splitting operator
 
   // constructor from file
