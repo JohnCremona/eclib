@@ -37,7 +37,7 @@ public:
   // constructors
   explicit ssubZspace<T>(int n=0, T mod=default_modulus<T>());
   explicit ssubZspace<T>(const sZmat<T>& b, const Zvec<int>& p, T mod);
-  explicit ssubZspace<T>(const ssubZspace<T>& s);
+  ssubZspace<T>(const ssubZspace<T>& s);
   // assignment
   void operator=(const ssubZspace<T>& s);
 

@@ -417,7 +417,7 @@ string FieldElement::str(int raw) const
 // x must be initialised with a Field before input to x
 istream& operator>>(istream& s, FieldElement& x)
 {
-  if (x.field()==FieldQQ)
+  if (x.field()->isQ())
     s >> x.val;
   else
     s >> x.coords >> x.denom;
@@ -426,20 +426,12 @@ istream& operator>>(istream& s, FieldElement& x)
 
 int FieldElement::operator==(const FieldElement& b) const
 {
-  if (F->isQ())
-    {
-      return val==b.val;
-    }
-  return F==b.F && denom==b.denom && coords==b.coords;
+  return in_same_field(b) && (F->isQ()? val==b.val : (denom==b.denom) && (coords==b.coords));
 }
 
 int FieldElement::operator!=(const FieldElement& b) const
 {
-  if (F->isQ())
-    {
-      return val!=b.val;
-    }
-  return (F!=b.F) || (denom!=b.denom) || (coords!=b.coords);
+  return (!in_same_field(b)) || (F->isQ()? val!=b.val : (denom!=b.denom) || (coords!=b.coords));
 }
 
 mat_m FieldElement::matrix() const // ignores denom, not used for Q
@@ -526,7 +518,7 @@ bigrational FieldElement::trace() const
 // add b to this
 void FieldElement::operator+=(const FieldElement& b)
 {
-  if (F!=b.F)
+  if (!in_same_field(b))
     {
       cerr << "Attempt to add elements of different fields!" << endl;
       cerr << "In operator += with this = " << (*this) << " in field " << (*F)
@@ -547,7 +539,7 @@ void FieldElement::operator+=(const FieldElement& b)
 
 FieldElement FieldElement::operator+(const FieldElement& b) const
 {
-  if (F!=b.F)
+  if (!in_same_field(b))
     {
       cerr << "Attempt to add elements of different fields!" << endl;
       exit(1);
@@ -568,7 +560,7 @@ FieldElement FieldElement::operator-() const
 // subtract b
 void FieldElement::operator-=(const FieldElement& b)
 {
-  if (F!=b.F)
+  if (!in_same_field(b))
     {
       cerr << "Attempt to subtract elements of different fields!" << endl;
       exit(1);
@@ -587,7 +579,7 @@ void FieldElement::operator-=(const FieldElement& b)
 
 FieldElement FieldElement::operator-(const FieldElement& b) const
 {
-  if (F!=b.F)
+  if (!in_same_field(b))
     {
       cerr << "Attempt to subtract elements of different fields!" << endl;
       exit(1);
@@ -600,12 +592,12 @@ FieldElement FieldElement::operator-(const FieldElement& b) const
 
 void FieldElement::operator*=(const FieldElement& b) // multiply by b
 {
-  if (F!=b.F)
+  if (!in_same_field(b))
     {
       cerr << "Attempt to multiply elements of different fields!" << endl;
       cerr << "LHS field: "; F->display(); cerr << endl;
       cerr << "RHS field: "; b.F->display(); cerr << endl;
-      assert(F==b.F);
+      exit(1);
     }
   if (is_zero()) return;
   if (b.is_zero()) {*this = b; return;}
@@ -621,7 +613,7 @@ void FieldElement::operator*=(const FieldElement& b) // multiply by b
 
 FieldElement FieldElement::operator*(const FieldElement& b) const
 {
-  if (F!=b.F)
+  if (!in_same_field(b))
     {
       cerr << "Attempt to multiply elements of different fields!" << endl;
       cerr << "LHS field: "; F->display(); cerr << endl;
@@ -661,7 +653,7 @@ void FieldElement::operator/=(const FieldElement& b)      // divide by b
       cerr << "Attempt to divide by zero!" << endl;
       exit(1);
     }
-  if (F!=b.F)
+  if (!in_same_field(b))
     {
       cerr << "Attempt to divide elements of different fields!" << endl;
       exit(1);
@@ -683,7 +675,7 @@ FieldElement FieldElement::operator/(const FieldElement& b) const // raise error
       cerr << "Attempt to divide by zero!" << endl;
       exit(1);
     }
-  if (F!=b.F)
+  if (!in_same_field(b))
     {
       cerr << "Attempt to divide elements of different fields!" << endl;
       exit(1);
@@ -970,7 +962,7 @@ FieldIso FieldIso::inverse() const
 FieldElement FieldIso::operator()(const FieldElement& x) const
 {
   if (id_flag) return x;
-  if (x.field()==domain)
+  if ((x.field()==domain) || (*x.field()==*domain))
     {
       if (x.field()->isQ())
         return codomain->rational(x.val);

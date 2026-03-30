@@ -53,6 +53,8 @@ public:
   int degree() const {return d;}
   int isQ() const {return this==FieldQQ || d==1;}
   ZZX poly() const {return minpoly;}
+  int operator==(const Field& F) const {return d==F.d && (d==1 || minpoly==F.minpoly);}
+  int operator!=(const Field& F) const {return d!=F.d || (d!=1 && minpoly!=F.minpoly);}
   mat_m basis() const {return Binv;} // columns are Bfactor * coeffs of basis w.r.t. a-powers
   //  ZZ basis_factor() const {return Bdet;}
   mat_m inv_basis() const {return B;} // columns are coeffs of a-powers w.r.t. basis
@@ -106,7 +108,7 @@ public:
   FieldElement()
     :F(FieldQQ) {;}
   explicit FieldElement(const Field* HF)
-    :F(HF), coords(vec_m(HF->d)), denom(to_ZZ(1))  {if (HF==FieldQQ) val = bigrational(0);}
+    :F(HF), coords(vec_m(HF->d)), denom(to_ZZ(1))  {if (HF->d==1) val = bigrational(0);}
   // raw means the given coords are w.r.t. the B-basis
   FieldElement(const Field* HF, const vec_m& c, const ZZ& d=to_ZZ(1), int raw=0);
   // creation from a rational (general F)
@@ -141,6 +143,7 @@ public:
   bigrational get_val() const {return val;}
   vec_m get_coords() const {return coords;}
   ZZ get_denom() const {return denom;}
+  int in_same_field(const FieldElement& b) const {return (F==b.F) || (*F==*b.F);}
   int operator==(const FieldElement& b) const;
   int operator!=(const FieldElement& b) const;
 
