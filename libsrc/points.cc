@@ -394,7 +394,7 @@ vector<Point> two_torsion(Curvedata& E, int exact)
 // a point in E[3], possibly with y not rational.  If y is rational
 // then these x will in fact be multiples of 3 since rational
 // 3-torsion is integral
-vector<ZZ> three_torsion_x(Curvedata& E)
+vector<ZZ> three_torsion_x(const Curvedata& E)
 {
 #ifdef DEBUG_TORSION
   cout<<"\nIn three_torsion_x() with curve "<<(Curve)E<<"\n";
@@ -481,13 +481,15 @@ vector<Point> m_torsion(Curvedata& E, long m, int exact)
   // accumulate the points with each x-coorindate:
   for( const auto& xi : xs)
     {
-      vector<Point> Ps = points_from_x(E, bigrational(xi));
+      vector<Point> allP = points_from_x(E, bigrational(xi));
 #ifdef DEBUG_TORSION
-      cout<<" x = "<<xi<< " gives points "<<Ps<<" of order dividing "<<m<<": "<<Ps<<"\n";
+      cout<<" x = "<<xi<< " gives points "<<allP<<" of order dividing "<<m<<": "<<allP<<"\n";
 #endif
-      for (auto P : Ps)
+      // std::copy_if(allP.begin(), allP.end(), std::back_inserter(m_tors),
+      //              [exact, m](Point& P){return ((!exact) || (order(P)==m));});
+      for (auto P : allP)
         {
-          if ((!exact)||(order(P)==m))
+          if ((!exact) || (order(P)==m))
             m_tors.push_back(P);
         }
     }

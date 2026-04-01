@@ -71,13 +71,13 @@ vector<long> resort_aplist(const level* iN,
   //  cout<<"resort_aplist(), using "<<nap<<" primes"<<endl;
   vector<long> aplist;
   aplist.reserve(nap);
-  long ip = iN->npdivs;
+  long jp = iN->npdivs;
   for(long i=0; i<nap; i++)
     { long p = primelist[i];
     auto pi = find(iN->plist.begin(),iN->plist.end(),p);
     if(pi==iN->plist.end()) // then p is good
       {
-	aplist.push_back( apl[ip++]);
+	aplist.push_back( apl[jp++]);
 // 	cout << "i = "<<i<<",\tp = " << p << "\ta_p = " << aplist[i] << endl;
       }
     else // p is bad
@@ -185,23 +185,23 @@ void summer::add(long n, long pindex, long y, long z)
   //    cout<<"In add() with n="<<n<<",\tpindex="<<pindex<<",\ty="<<y
   //        <<",\tz="<<z<<endl;
 
- long x,p,pn,ip,istart=pindex;
+ long x,p,pn,jp,istart=pindex;
   int triv = (y==0);
   if ( ! triv ) { use(n,y); istart=0; }
 
-  ip=istart;
-  p=primelist[ip];
+  jp=istart;
+  p=primelist[jp];
   if(triv&&(p>rootlimit)) return;
 
-  for(pn=n*p; (ip<=pindex) && (pn<=limit); ip++)
+  for(pn=n*p; (jp<=pindex) && (pn<=limit); jp++)
     {
-      p=primelist[ip];
+      p=primelist[jp];
       pn=p*n;
       if(pn<=limit)
 	{
-	  x = y * aplist[ip];
-	  if ( (ip==pindex)  && (N%p)) { x -=  p*z; }   // x = a[pn]
-	  add(pn,ip,x,y);
+	  x = y * aplist[jp];
+	  if ( (jp==pindex)  && (N%p)) { x -=  p*z; }   // x = a[pn]
+	  add(pn,jp,x,y);
 	}
     }
 }
@@ -216,23 +216,23 @@ void summer::add2357(long n, long pindex, long y, long z)
       <<",\tz="<<z<<endl;
 #endif
 
- long x,p,pn,ip,istart=pindex;
+ long x,p,pn,jp,istart=pindex;
   int triv = (y==0);
   if ( ! triv ) { use2357(n,y); istart=4; } // skip 2,3,5,7
 
-  ip=istart;
-  p=primelist[ip];
+  jp=istart;
+  p=primelist[jp];
   if(triv&&(p>rootlimit)) return;
 
-  for(pn=n*p; (ip<=pindex) && (pn<=limit); ip++)
+  for(pn=n*p; (jp<=pindex) && (pn<=limit); jp++)
     {
-      p=primelist[ip];
+      p=primelist[jp];
       pn=p*n;
       if(pn<=limit)
 	{
-	  x = y * aplist[ip];
-	  if ( (ip==pindex)  && (N%p)) { x -=  p*z; }   // x = a[pn]
-	  add2357(pn,ip,x,y);
+	  x = y * aplist[jp];
+	  if ( (jp==pindex)  && (N%p)) { x -=  p*z; }   // x = a[pn]
+	  add2357(pn,jp,x,y);
 	}
     }
 }
@@ -304,32 +304,32 @@ void summer::sumit()
 #endif
 
   use2357(1,1);
-  unsigned long ip=4; long p=11,ap;
+  unsigned long jp=4; long p=11,ap;
 #ifdef TRACE_USE
-  cout<<"Using primes with indices "<<ip<<" to "<<primelist.size()
+  cout<<"Using primes with indices "<<jp<<" to "<<primelist.size()
       <<" and less than "<<rootlimit<<endl;
 #endif
-  while( (ip+1<primelist.size()) && (p<rootlimit)  )
+  while( (jp+1<primelist.size()) && (p<rootlimit)  )
   {
-    ap=aplist[ip];
+    ap=aplist[jp];
 #ifdef TRACE_USE
-    cout<<"Using prime("<<ip<<") = "<<p<<", ap = "<<ap<<endl;
+    cout<<"Using prime("<<jp<<") = "<<p<<", ap = "<<ap<<endl;
 #endif
-    add2357(p,ip,ap,1);
-    p=primelist[++ip];
+    add2357(p,jp,ap,1);
+    p=primelist[++jp];
   }
 #ifdef TRACE_USE
   cout<<endl;
 #endif
 #ifdef TRACE_USE
-  cout<<"Using primes with indices "<<ip<<" to "<<primelist.size()
+  cout<<"Using primes with indices "<<jp<<" to "<<primelist.size()
       <<" and less than "<<limit<<endl;
 #endif
-  while( (ip+1<primelist.size()) && (p<=limit)  )
+  while( (jp+1<primelist.size()) && (p<=limit)  )
   {
-    ap=aplist[ip];
+    ap=aplist[jp];
 #ifdef TRACE_USE
-    cout<<"Using prime("<<ip<<") = "<<p<<", ap = "<<ap<<endl;
+    cout<<"Using prime("<<jp<<") = "<<p<<", ap = "<<ap<<endl;
 #endif
     if(ap!=0)
       {
@@ -344,7 +344,7 @@ void summer::sumit()
 	    m++; n+=p;
 	  }
       }
-    p=primelist[++ip];
+    p=primelist[++jp];
   }
 }
 

@@ -33,11 +33,11 @@ ZZX t_POL_to_ZZX(GEN P, ZZ& d)
 #ifdef DEBUG_POLY
   pari_printf(" P1 = %Ps and content  = %Ps\n", P1, cont);
 #endif
-  ZZ num = PARI_to_NTL(PARI::numerator(cont,gen_1)); // numerator of content
-  d = PARI_to_NTL(PARI::denominator(cont,gen_1));    // denominator of content
+  ZZ n = PARI_to_NTL(PARI::numerator(cont,gen_1)); // numerator of content
+  d = PARI_to_NTL(PARI::denominator(cont,gen_1));  // denominator of content
   ZZX f;
   for (int i=0; i<=deg; i++)
-    SetCoeff(f, i, num * PARI_to_NTL(gel(P1, i+2)));
+    SetCoeff(f, i, n * PARI_to_NTL(gel(P1, i+2)));
 #ifdef DEBUG_POLY
   if (d==1)
     cout << " Result is " << str(f) << endl;

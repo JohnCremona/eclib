@@ -48,7 +48,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
   if(one_p) // Compute one Tp:
     {
       primevar pr;
-      while (N%pr==0) pr++;
+      while (N%pr==0) ++pr;
       p=pr;
       cout << "Computing T_p for p = " << p << "..." << flush;
       tp = to_mat_m(transpose(H1->newheckeop(p,0)));
@@ -279,7 +279,7 @@ nfd::nfd(homspace* h1, int one_p, int w_split, int mult_one, int verbose)
   long ncoord = H1->coord_vecs.size()-1;
   projcoord.init(ncoord,dimS);
   coord_fac=0;
-  vec_m mrowi(dimS), coordi(dimH);
+  vec_m mrowi, coordi;
   vec rowi(dimS);
   for (i=1; i<=ncoord; i++)
     {

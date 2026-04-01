@@ -94,7 +94,7 @@ public:
 	long nrootsmod(long p) const;
         friend ostream& operator<<(ostream& s, const quartic& q);
 	friend int new_equiv( quartic& q1, quartic& q2, int info);
-	friend void qc(quartic& g,
+	friend void qc(const quartic& g,
 		       const ZZ& x0,  const ZZ& y0,  const ZZ& z0,
 		       Curvedata * E, Curvedata* IJ_curve, 
 		       const ZZ& tr_u, const ZZ& tr_r, 

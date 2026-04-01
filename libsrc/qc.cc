@@ -2,39 +2,39 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/qc.h"
 
 //#define DEBUG
 
-void qc(quartic& g,
+void qc(const quartic& g,
         const ZZ& x0,  const ZZ& y0,  const ZZ& z0,
-        Curvedata * E, 
-	Curvedata* IJ_curve, 
-	const ZZ& tr_u, const ZZ& tr_r, 
-	const ZZ& tr_s, const ZZ& tr_t,  
+        Curvedata * E,
+	Curvedata* IJ_curve,
+	const ZZ& tr_u, const ZZ& tr_r,
+	const ZZ& tr_s, const ZZ& tr_t,
 	Point& P, int verbose)
 {
   ZZ aa,bb,cc,dd,ee,p,q,r,t,xp,yp,zp;
-  ZZ a=g.a, b=g.b, c=g.c, d=g.d, e=g.e;
+  ZZ a=g.geta(), b=g.getb(), c=g.getcc(), d=g.getd(), e=g.gete();
 
 #ifdef DEBUG
   cout << "In qc(...) with:\n";
@@ -45,11 +45,11 @@ void qc(quartic& g,
   cout << "Quartic = (a,b,c,d,e) = ("<<a<<", "<<b<<", "<<c<<", "<<d<<", "<<e<<")\n";
 #endif
 
-  ZZ z02=sqr(z0); 
+  ZZ z02=sqr(z0);
 
   if(isqrt(a,q)) {z02=1;}  // else z0=0 which sets zp=0 below
   else if(isqrt(e,q)){t=a; a=e; e=t; t=b; b=d; d=t; }
-    else 
+    else
       {
 	const ZZ& z03=z0*z02;  const ZZ& z04=sqr(z02);
 	const ZZ& x02=sqr(x0); const ZZ& x03=x0*x02;
@@ -89,5 +89,3 @@ void qc(quartic& g,
   else
     if(verbose) cout << "\n\theight = " << height(P)<< endl;
 }
-
-

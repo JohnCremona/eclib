@@ -353,7 +353,7 @@ int newforms::find_lminus(long i, long lmax, const bigfloat& y1)
   long nry, dry;
   lfchi lx(this,&(nflist[i]));
   long mm=0;
-  for(primevar l; ((l<lmax)||(lmax==0))&&(mm==0); l++)
+  for(primevar l; ((l<lmax)||(lmax==0))&&(mm==0); ++l)
     {
       long ell = l;
       if(ell%4!=3) continue;

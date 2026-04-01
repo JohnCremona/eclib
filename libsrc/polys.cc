@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/polys.h"
 
 ZZ_pX reduce(const ZZX& f, const galois_field& Fq)
@@ -37,9 +37,9 @@ vector<ZZ_p> roots(const ZZ_pX& f)
   ZZ_pX f1=f;
   MakeMonic(f1);
   // reduce to distinct roots case:
-  ZZ_pX X; SetX(X); 
+  ZZ_pX X; SetX(X);
   ZZ_pX g = PowerXMod(ZZ_p::modulus(),f1)-X;
-  vec_ZZ_p r; FindRoots(r,GCD(f1,g)); 
+  vec_ZZ_p r; FindRoots(r,GCD(f1,g));
   vector<ZZ_p>ans;
   for(int i=0; i<r.length(); i++) ans.push_back(r[i]);
   return ans;
@@ -166,12 +166,8 @@ vector<ZZ> Introotsquartic(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d)
 // find the number of roots of X^3 + bX^2 + cX + d = 0 (mod p)
 int nrootscubic(const ZZ& b, const ZZ& c, const ZZ& d, const ZZ& p)
 {
-  vector<ZZ> coeffs;
-  coeffs.push_back(d);
-  coeffs.push_back(c);
-  coeffs.push_back(b);
-  coeffs.push_back(ZZ(1));
-  return rootsmod(coeffs,p).size();
+  vector<ZZ> co = {d, c, b, ZZ(1)};
+  return rootsmod(co,p).size();
 }
 
 // factor a primitive (e.g. monic) polynomial

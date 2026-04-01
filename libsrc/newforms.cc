@@ -105,7 +105,7 @@ vector<long> eiglist(const newform& f, int oldorder)
       while(api!=f.aplist.end())
 	{
 	  if(ndivides(pr,N)) *eigsi++ = *api;
-	  api++; pr++;
+	  ++api; ++pr;
 	}
     }
   else
@@ -115,7 +115,7 @@ vector<long> eiglist(const newform& f, int oldorder)
       while((aqi!=f.aqlist.end())&&(eigsi!=eigs.end()))
 	{
 	  if(::divides(pr.value(),N)) *eigsi = (*aqi++);
-	  eigsi++; pr++;
+	  eigsi++; ++pr;
 	}
     }
   /*
@@ -221,13 +221,13 @@ newform::newform(const vec& vplus, const vec& vminus, const vector<long>& ap, ne
 int newform::check_expand_contract()
 {
   int success=1;
-  scalar denom = nf->h1->h1denom();
+  scalar hd = nf->h1->h1denom();
   vec bplusx, bminusx, tvec;
   if (sign!=-1)
     {
       bplusx= nf->h1->extend_coords(bplus);
       tvec = nf->h1->contract_coords(bplusx);
-      tvec /= denom;
+      tvec /= hd;
       if (tvec!=bplus)
 	{
 	  success=0;
@@ -238,7 +238,7 @@ int newform::check_expand_contract()
     {
       bminusx= nf->h1->extend_coords(bminus);
       tvec = nf->h1->contract_coords(bminusx);
-      tvec /= denom;
+      tvec /= hd;
       if (tvec!=bminus)
 	{
 	  success=0;
@@ -250,7 +250,7 @@ int newform::check_expand_contract()
 
 void newform::fixup_eigs()
 {
-  scalar denom = nf->h1->h1denom();
+  scalar hd = nf->h1->h1denom();
   aqlist.resize(nf->npdivs);
   auto api=aplist.begin();
   auto pi=nf->plist.begin();
@@ -259,14 +259,14 @@ void newform::fixup_eigs()
   long N = nf->N;
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
-      q=pr.value(); pr++;
+      q=pr.value(); ++pr;
       if(::divides(q,N))
 	{
 	  *aqi++=*api;
 	  *api=(::divides(q*q,N)? 0: -*api);
 	  pi++;
 	}
-      api++;
+      ++api;
     }
   if(aqi!=aqlist.end()) // compute missing aq
     {
@@ -276,7 +276,7 @@ void newform::fixup_eigs()
         espace=make1d(bminus,piv, nf->modulus);
       else
         espace=make1d(bplus,piv, nf->modulus);
-      piv*=denom;
+      piv*=hd;
       while(aqi!=aqlist.end()) // compute missing aq
 	{
 	  q=*pi++;
@@ -307,8 +307,8 @@ void newform::unfix_eigs()
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
       if(::divides(pr.value(),N)) *api=*aqi++;
-      api++;
-      pr++;
+      ++api;
+      ++pr;
     }
 }
 
@@ -326,8 +326,8 @@ void newform::refix_eigs()
 	  *api=(::divides(q*q,N)? 0: -*api);
 	  ip++;
 	}
-      api++;
-      pr++;
+      ++api;
+      ++pr;
     }
 }
 
@@ -337,7 +337,7 @@ void newform::find_bsd_ratio()
 
   primevar pr;
   auto api = aplist.begin();
-  while(pr.value()!=nf->p0) {pr++; api++;}
+  while(pr.value()!=nf->p0) {++pr; ++api;}
   ap0=*api;
   np0 = 1 + (nf->p0) - ap0;
   if(nf->verbose) cout<<"ap0 = "<<ap0<<"\tnp0 = "<<np0<<endl;
@@ -504,10 +504,10 @@ void newform::find_twisting_primes()
   long N = nf->N;
   for (primevar lvar; lvar.ok() &&
 	 (((sign!=-1)&&(mplus==0)) ||
-	  ((sign!=+1)&&(mminus==0))); lvar++)
+	  ((sign!=+1)&&(mminus==0))); ++lvar)
     {
       //cout << "Trying l = " << lvar << endl;
-      while (N%lvar==0) {lvar++;}
+      while (N%lvar==0) {++lvar;}
       long l = lvar;
       //cout << "Trying l = " << l << endl;
       if (legendre(-N,l)!=sfe) continue;
@@ -673,7 +673,7 @@ void newform::add_more_ap(int nap)
 	  ap = I2long((nf->h1->s_heckeop_restricted(p,espace,1,0)).elem(1,1) / piv);
 	}
       aplist.push_back(ap);
-      pr++;
+      ++pr;
     }
   if(verbose>1) cout<<"aplist = "<<aplist<<endl;
 }
@@ -753,18 +753,18 @@ void newform::find_optimality_factors(const CurveRed& E, int i)
 
   // Now we find rational approximations to the rations x0/xE and
   // y0/yE.  These will have very small numerators and denominators.
-  long n,d;
+  long nn,dd;
   if (sign!=-1)
     {
-      ratapprox(x0/xE,n,d,163);
-      optimalityfactorplus = rational(n,d);
-      if (verbose) cout << "x-ratio (optimalityfactorplus) = " << (x0/xE) << " = " <<n<<"/"<<d<<" = "<<optimalityfactorplus << endl;
+      ratapprox(x0/xE,nn,dd,163);
+      optimalityfactorplus = rational(nn,dd);
+      if (verbose) cout << "x-ratio (optimalityfactorplus) = " << (x0/xE) << " = " <<nn<<"/"<<dd<<" = "<<optimalityfactorplus << endl;
     }
   if (sign!=+1)
     {
-      ratapprox(y0/yE,n,d,163);
-      optimalityfactorminus = rational(n,d);
-      if (verbose) cout << "y-ratio (optimalityfactorminus) = " << (y0/yE) << " = " <<n<<"/"<<d<<" = "<< optimalityfactorminus << endl;
+      ratapprox(y0/yE,nn,dd,163);
+      optimalityfactorminus = rational(nn,dd);
+      if (verbose) cout << "y-ratio (optimalityfactorminus) = " << (y0/yE) << " = " <<nn<<"/"<<dd<<" = "<< optimalityfactorminus << endl;
     }
 }
 
@@ -777,7 +777,7 @@ void newform::find_optimality_factors(const CurveRed& E, int i)
 void newform::sign_normalize()
 {
   int verbose = (nf->verbose);
-  int sign = (nf->sign);
+  int s = (nf->sign);
 
   periods_direct integrator(nf, this);
   integrator.compute();
@@ -785,7 +785,7 @@ void newform::sign_normalize()
   bigfloat y0 = integrator.iper();
   if(verbose>1)
     cout<<"integral over {0,"<<b<<"/"<<d<<"} = ("<<x0<<")+i*("<<y0<<")"<<endl;
-  if (sign!=-1)
+  if (s!=-1)
     {
       if (dotplus*x0<0)
         {
@@ -798,7 +798,7 @@ void newform::sign_normalize()
           mplus = -mplus;
         }
     }
-  if (sign!=+1)
+  if (s!=+1)
     {
       if (dotminus*y0<0)
         {
@@ -813,18 +813,18 @@ void newform::sign_normalize()
   if (verbose>1)
     {
       cout<<"Approximate numerical values:"<<endl;
-      if (sign==0)
+      if (s==0)
         {
           cout<<"x = "<<(x0/dotplus)<<endl;
           cout<<"y = "<<(y0/dotminus)<<endl;
           cout<<"integral over {0,"<<b<<"/"<<d<<"} = ("<<x0<<")+i*("<<y0<<")"<<endl;
         }
-      if (sign==+1)
+      if (s==+1)
         {
           cout<<"x = "<<(x0/dotplus)<<endl;
           cout<<"integral over {0,"<<b<<"/"<<d<<"} has real      part "<<x0<<endl;
         }
-      if (sign==-1)
+      if (s==-1)
         {
           cout<<"y = "<<(y0/dotminus)<<endl;
           cout<<"integral over {0,"<<b<<"/"<<d<<"} has imaginary part "<<x0<<endl;
@@ -1489,7 +1489,7 @@ void newforms::createfromdata(int s, long ntp,
   long ntotal = 16*n1ds;
   int* batch_i = new int[ntotal];
   datafile.read((char*)batch_i,ntotal*sizeof(int));
-  int *batch_i_ptr = batch_i;
+  int const* batch_i_ptr = batch_i;
   for(j=0; j<16; j++)
     for(i=0; i<n1ds; i++)
       data[i][j]=*batch_i_ptr++;
@@ -1500,7 +1500,7 @@ void newforms::createfromdata(int s, long ntp,
   ntotal = npdivs*n1ds;
   short* batch = new short[ntotal];
   datafile.read((char*)batch,ntotal*sizeof(short));
-  short *batchptr = batch;
+  short const* batchptr = batch;
   for(j=0; j<npdivs; j++)
     for(i=0; i<n1ds; i++)
       aq[i][j]=*batchptr++;
@@ -1538,7 +1538,7 @@ vector<long> eiglist(CurveRed& C, int nap)
 {
   long N = I2long(getconductor(C));
   vector<long> ans;
-  for(primevar pr(nap); pr.ok(); pr++)
+  for(primevar pr(nap); pr.ok(); ++pr)
     {
       long p=pr; ZZ pp(p);
       if(N%p==0)
@@ -1556,7 +1556,7 @@ vector<long> aqlist(vector<long> aplist, long N)
   //cout << "Setting aq of size "<<naq<<endl;
   auto api = aplist.begin();
   vector<long> aq(naq);
-  for(primevar pr; (iq<naq)&&pr.ok(); pr++)
+  for(primevar pr; (iq<naq)&&pr.ok(); ++pr)
     {
       long p=pr;
       if (N%p==0)
@@ -1564,7 +1564,7 @@ vector<long> aqlist(vector<long> aplist, long N)
 	  //cout << "Setting aq["<<p<<"] = "<<*api<<endl;
 	  aq[iq++] = *api;
 	}
-      api++;
+      ++api;
     }
   return aq;
 }
@@ -1688,7 +1688,7 @@ void newforms::createfromolddata()
   short* batch = new short[ntotal];
   eigsfile.read((char*)batch,ntotal*sizeof(short));
   eigsfile.close();
-  short* batchptr = batch;
+  short const* batchptr = batch;
   for(j=0; j<nap; j++)
     for(i=0; i<n1ds; i++)
       ap[i][j]=*batchptr++;
@@ -1703,7 +1703,7 @@ void newforms::createfromolddata()
     {
       long q = plist[j];
       int q2divN = ::divides(q*q,N);
-      while((long)pr!=q) {pr++; k++;}
+      while((long)pr!=q) {++pr; k++;}
       for(i=0; i<n1ds; i++)
 	{
 	  a = ap[i][k];
@@ -1989,7 +1989,7 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
   if(verbose>1)  // output the ap already known...
     {
       long j=0;
-      for(primevar pr(nflist[0].aplist.size()); pr.ok(); pr++, j++)
+      for(primevar pr(nflist[0].aplist.size()); pr.ok(); ++pr, j++)
         {
           long p = pr;
           if(ndivides(p,N)) cout<<"p="; else cout<<"q=";
@@ -2001,7 +2001,7 @@ void newforms::addap(long last) // adds ap for primes up to the last'th prime
         }
     }
   // Now compute and output the rest of the ap...
-  for(primevar pr(last,1+nflist[0].aplist.size()); pr.ok(); pr++)
+  for(primevar pr(last,1+nflist[0].aplist.size()); pr.ok(); ++pr)
     {
       long p = pr;
       vector<long> apv=apvec(p);

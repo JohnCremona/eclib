@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 // curvemodqbasis is derived from curvemodq (see file curvemod.h) and
@@ -57,9 +57,9 @@ int pointmodq::set_x_coordinate(const ZZ_p& x)
   //  cout<<"E = "<<E<<endl;
   //  cout<<"Trying x = "<<x<<endl;
   const ZZ q=E.q;
-  ZZ_p b2 = a1*a1 + four*a2; 
+  ZZ_p b2 = a1*a1 + four*a2;
   ZZ_p b4 = two*a4 + a1*a3;
-  ZZ_p b6 = a3*a3 + four*a6; 
+  ZZ_p b6 = a3*a3 + four*a6;
   ZZ_p d = ((four*x+b2)*x+(two*b4))*x+b6;
   switch(legendre(rep(d),q)) // NTL has no modular sqrt!?
     {
@@ -99,10 +99,10 @@ ZZ pointmodq::get_order(const ZZ& lower, const ZZ& upper)
 }
 
 void pointmodq::output(ostream& os) const
-{ 
-  if(is0flag) 
-    os<<"oo mod "<<(E.q); 
-  else 
+{
+  if(is0flag)
+    os<<"oo mod "<<(E.q);
+  else
     os<<"("<<X<<","<<Y<<") mod "<<(E.q);
 }
 
@@ -114,7 +114,7 @@ pointmodq pointmodq::operator+(const pointmodq& Q) const // add Q to this
   if(is0flag) return Q;
   if(Q.is0flag) return *this;
   ZZ_p XQ=Q.X, YQ=Q.Y;
-  if(X==XQ) 
+  if(X==XQ)
     {
       if(Y==YQ)	return this->twice();
       else      return ans;             // =oo
@@ -125,7 +125,7 @@ pointmodq pointmodq::operator+(const pointmodq& Q) const // add Q to this
   ans.Y = lambda*(ans.X)+mu;
   ans.is0flag=0;
   ans.order=0;
-  if(!(ans.on_curve())) 
+  if(!(ans.on_curve()))
     {
       cerr<<"error in pointmodq::operator+() adding "<<(*this)<<" to "<<Q<<endl;
       return *this;
@@ -157,15 +157,15 @@ pointmodq pointmodq::twice(void) const // doubles P
   ZZ_p two=to_ZZ_p(2);
   ZZ_p three=to_ZZ_p(3);
   ZZ_p a1,a2,a3,a4,a6; E.get_ai(a1,a2,a3,a4,a6);
-  ZZ_p den = two*Y+a1*X+a3;
-  if(den==0) return ans;
-  ZZ_p lambda=(three*X*X+two*a2*X+a4-a1*Y)/den;
+  ZZ_p d = two*Y+a1*X+a3;
+  if(d==0) return ans;
+  ZZ_p lambda=(three*X*X+two*a2*X+a4-a1*Y)/d;
   ZZ_p mu    = Y-lambda*X;
   ans.X = lambda*(lambda+a1)-a2-two*X;
   ans.Y = lambda*(ans.X)+mu;
   ans.is0flag=0;
   ans.order=0;
-  if(!(ans.on_curve())) 
+  if(!(ans.on_curve()))
     {
       cerr<<"\nerror in pointmodq::twice() with P = "<<(*this)<<": "<<(ans)<<" not on "<<E<<endl;
       return *this;
@@ -190,7 +190,7 @@ pointmodq operator*(long n, const pointmodq& P)  // n*P
   }
   // now n >= 3
   if(n&1) ans = P ;    // (else ans is still 0 from initialization)
-  pointmodq  Q = P ; 
+  pointmodq  Q = P ;
   while(n > 1){
     Q = Q.twice() ; // 2^k P
     n /= 2 ;
@@ -219,7 +219,7 @@ pointmodq operator*(const ZZ& n, const pointmodq& P)  // n*P
   }
   // now nn >= 3
   if(odd(nn)) ans = P ;    // (else ans is still 0 from initialization)
-  pointmodq  Q = P ; 
+  pointmodq  Q = P ;
   while(nn > one){
     Q = Q.twice() ; // 2^k P
     nn >>= 1 ;
@@ -243,7 +243,6 @@ pointmodq curvemodq::random_point()
 pointmodq reduce_point(const Point& P,  const curvemodq& Emodq)
 {
   //  cout<<"Reducing "<<P<<" mod q -> "<<flush;
-  galois_field Fq = get_field(Emodq);
   ZZ_p z = to_ZZ_p(P.getZ()),
     x = to_ZZ_p(P.getX()),
     y = to_ZZ_p(P.getY());
@@ -257,7 +256,7 @@ pointmodq reduce_point(const Point& P,  const curvemodq& Emodq)
 
 //#define DEBUG_ISO_TYPE 0
 
-void curvemodqbasis::set_basis() 
+void curvemodqbasis::set_basis()
 {
   ffmodq::init(*this); // to initialize the class: sets global ffmodq::E, Fq, f1, f2
   P1=pointmodq(*this);
@@ -301,14 +300,14 @@ void curvemodqbasis::set_basis()
 	cout<<"WRONG, that's NOT a "<<m<<"'th root of unity"<<endl;
     }
 #endif //  DEBUG_ISO_TYPE
-  if(n1!=order_point(P1)) 
+  if(n1!=order_point(P1))
     {
       cout<<"Error in isomorphism_type("<<(*this)<<") mod "<<::get_modulus((curvemodq)*this)
 	  <<": n1 = "<<n1
 	  <<" but point P1 = "<<P1<<" has order "<<order_point(P1)<<endl;
       n=n1=1; //  to prevent this reduction being used
     }
-  if(n2!=order_point(P2)) 
+  if(n2!=order_point(P2))
     {
       cout<<"Error in isomorphism_type("<<(*this)<<") mod "<<::get_modulus((curvemodq)*this)
 	  <<": n2 = "<<n2
@@ -343,11 +342,11 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p)
   vector<pointmodq> ans;
   if((n%p)!=0) return ans;
   ZZ_pX pdivpol = makepdivpol(*this, p);
-#ifdef DEBUG_PBASIS  
+#ifdef DEBUG_PBASIS
   cout<<p<<"-division poly mod "<<get_modulus()<<" = "<<pdivpol<<endl;
 #endif
   vector<ZZ_p> xi = roots(pdivpol);
-#ifdef DEBUG_PBASIS  
+#ifdef DEBUG_PBASIS
   cout<<"roots of "<<p<<"-div pol mod "<<get_modulus()<<":  "<<xi<<endl;
 #endif
   return get_pbasis_from_roots(p,xi);
@@ -357,15 +356,14 @@ vector<pointmodq> curvemodqbasis::get_pbasis_via_divpol(int p, const ZZX& pdivpo
 {
   vector<pointmodq> ans;
   if((n%p)!=0) return ans;
-  galois_field Fq = get_field(*this);
   ZZ_pX pdivpolmodq;
   long i, d = deg(pdivpol);
   for (i=0; i<=d; i++) SetCoeff(pdivpolmodq,i, to_ZZ_p(coeff(pdivpol,i)));
-#ifdef DEBUG_PBASIS  
+#ifdef DEBUG_PBASIS
   cout<<p<<"-division poly mod "<<get_modulus()<<" = "<<pdivpolmodq<<endl;
 #endif
   vector<ZZ_p> xi = roots(pdivpolmodq);
-#ifdef DEBUG_PBASIS  
+#ifdef DEBUG_PBASIS
   cout<<"roots of "<<p<<"-div pol mod "<<get_modulus()<<":  "<<xi<<endl;
 #endif
   return get_pbasis_from_roots(p,xi);
@@ -377,7 +375,7 @@ vector<pointmodq> curvemodqbasis::get_pbasis_from_roots(int p,  const vector<ZZ_
   vector<pointmodq> ans;
   if(xi.size()==0)
     {
-#ifdef DEBUG_PBASIS  
+#ifdef DEBUG_PBASIS
       //      cout<<"no "<<p<<"-division points mod "<<get_modulus()<<endl;
 #endif
       return ans;
@@ -390,12 +388,12 @@ vector<pointmodq> curvemodqbasis::get_pbasis_from_roots(int p,  const vector<ZZ_
 	  pointmodq P(*this);
 	  if(P.set_x_coordinate(xi[i])) ans.push_back(P);
 	}
-#ifdef DEBUG_PBASIS  
-      cout<<"basis for 2-division points mod "<<get_modulus()<<": "<<ans<<endl;    
+#ifdef DEBUG_PBASIS
+      cout<<"basis for 2-division points mod "<<get_modulus()<<": "<<ans<<endl;
 #endif
       return ans;
     }
-  // p is now odd  
+  // p is now odd
   unsigned int p12 = (p-1)/2, p212 = (p*p-1)/2;
   if(xi.size()==p212) // might have full p-torsion...
     {
@@ -405,7 +403,7 @@ vector<pointmodq> curvemodqbasis::get_pbasis_from_roots(int p,  const vector<ZZ_
 	{
 	  // store x-coords of multiples of p
 	  ans.push_back(P);
-	  vector<ZZ_p> xjp;   
+	  vector<ZZ_p> xjp;
 	  pointmodq Q=P;
 	  for(i=0; i<p12; i++)
 	    {
@@ -426,9 +424,9 @@ vector<pointmodq> curvemodqbasis::get_pbasis_from_roots(int p,  const vector<ZZ_
 	{
 	  pointmodq P(*this);
 	  if(P.set_x_coordinate(xi[i])) ans.push_back(P);
-	}      
+	}
     }
-#ifdef DEBUG_PBASIS  
+#ifdef DEBUG_PBASIS
   cout<<"basis for "<<p<<"-division points mod "<<get_modulus()<<": "<<ans<<endl;
 #endif
   return ans;
@@ -477,12 +475,12 @@ ZZ my_bg_algorithm(const pointmodq& PP,
 
   if (info)
     cout<<"\nBabystep Giantstep algorithm: "<<flush;
-  
+
   if (upper - lower < ZZ(30))    // for very small intervals
     {
       if (info)
         cout<<"\nTesting "<<(upper - lower) <<" possibilities ... "
-                 <<flush; 
+                 <<flush;
       H=lower*P;
       h=lower;
       if (H == Q) return h;
@@ -492,27 +490,27 @@ ZZ my_bg_algorithm(const pointmodq& PP,
           h++;
           if (H == Q)  return h;
         }
-      while (h <= upper); 
+      while (h <= upper);
       return minus_one;
     }
-  
+
   //**** otherwise we use the Babystep Giantstep idea **************
-  
+
   h = 1 + sqrt((upper - lower));  // compute number of babysteps
   if (h > MAX_BG_STEPS) h = MAX_BG_STEPS;
   number_baby=h;
-  
+
   map<ZZ,long> HT;
-  
+
   H2 = Q-lower*P;
   H = pointmodq(P.get_curve());
 
   //****** Babysteps, store [x(i * P),i]  *********************
-  
+
   if (info)
     cout << " (#Babysteps = " << number_baby << flush;
-  
-  for (i = 1; i <= number_baby; i++) 
+
+  for (i = 1; i <= number_baby; i++)
     {
       H+=P;  // H = i*P and H2 = Q-lower*P
 
@@ -524,7 +522,7 @@ ZZ my_bg_algorithm(const pointmodq& PP,
 #endif
           return (lower + i);
         } // H==H2 case
-  
+
       if (!H.is_zero()) // store [x(H),i] in table
 	HT[rep(H.get_x())]=i;
     }
@@ -536,13 +534,13 @@ ZZ my_bg_algorithm(const pointmodq& PP,
   // We will subtract H from H2 repeatedly, so H2=Q-lower*P-j*H in the loop
 
   //****** Giantsteps ***************************************************/
-  
+
   number_giant = 1+((upper - lower)/(number_baby));
-  
+
   if (info)
     cout << ", #Giantsteps = " << number_giant << ") " << endl;
-  
-  ZZ step_size = number_baby; 
+
+  ZZ step_size = number_baby;
 
   for (j = 0; j <= number_giant; j++)
     {
@@ -554,8 +552,8 @@ ZZ my_bg_algorithm(const pointmodq& PP,
           assert(h*P == Q);
 #endif
 	  if (h <= upper) return h; else return minus_one;
-        }  
-      
+        }
+
       // look in table to see if H2= i*P for a suitable i
 
       auto HTi = HT.find(rep(H2.get_x()));
@@ -563,7 +561,7 @@ ZZ my_bg_algorithm(const pointmodq& PP,
 	{
 	  i = HTi->second;
 	  H3=i*P;
-	  if (H3 == H2) 
+	  if (H3 == H2)
 	    {
 	      h = lower + i + j * step_size;
 #ifdef DEBUG
@@ -621,7 +619,7 @@ ZZ linear_relation( pointmodq& P,  pointmodq& Q, ZZ& a)
   if(debug_linear_relation) cout<<"gcd = "<<g<<endl;
   if(g==one) {a=zero; return g /* =1 */;}
   n1=n/g; m1=m/g;
-  pointmodq P1=n1*P; // both of exact order g: 
+  pointmodq P1=n1*P; // both of exact order g:
   pointmodq Q1=m1*Q; // now see if Q1 is a mult of P1
   if(debug_linear_relation)
     cout<<"P1 = "<<P1<<" and Q1 = "<<Q1<<endl;
@@ -638,7 +636,7 @@ ZZ linear_relation( pointmodq& P,  pointmodq& Q, ZZ& a)
   a=a*n1;
   m=h*m1;
   // debugging:
-  if(m*Q!=a*P) 
+  if(m*Q!=a*P)
     {
       cerr<<"Error in linear relation with P="<<P<<", n="<<n<<", Q="<<
 	Q<<": returns a="<<a<<" and m="<<m<<endl;
@@ -653,7 +651,7 @@ void set_hasse_bounds(const ZZ& q, ZZ& l, ZZ& u)
   sqrt(u, q << 2);
   l = q + one - u;    // lower bound of Hasse interval
   if (is_negative(l))  l=one;
-  u = q + one + u;    // upper bound of Hasse interval  
+  u = q + one + u;    // upper bound of Hasse interval
 }
 
 // Given positive integers m,n, replace them by divisors which are
@@ -722,15 +720,15 @@ void merge_points_1(pointmodq& P, ZZ& ordP,  pointmodq& Q)
   // these orders are coprime so the sum of the points
   // has order nP*nQ=lcm(ordP,ordQ) as required:
 
-  P = (ordP/nP)*P + (ordQ/nQ)*Q; 
+  P = (ordP/nP)*P + (ordQ/nQ)*Q;
   ordP = nPQ;
-  if(debug_iso_type) 
+  if(debug_iso_type)
     {
       cout<<"Changed P = "<<P<<":\t order(P) = "<<nPQ<<endl;
       if(order_point(P)!=nPQ) cout<<"that's wrong!"<<endl;
     }
   set_order_point(P,nPQ);
-}	
+}
 
 // merge_points_2: given independent points P1, P2 of orders n1,n2,
 // and another point Q, EITHER (unusual) replaces P1 with a point of
@@ -741,7 +739,7 @@ void merge_points_1(pointmodq& P, ZZ& ordP,  pointmodq& Q)
 // order n1, but this assumption must be revised if using Q reveals a
 // point of order greater than P1
 
-void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2, 
+void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2,
 		    ZZ& n2target, pointmodq& Q)
 {
   // Case 1: Q cannot improve if its order divides n2:
@@ -757,12 +755,12 @@ void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2,
   if(!(Q2.is_zero()))
     {
   // Case 2: P1 needs updating and we discard P2
-      if(debug_iso_type>0)  
+      if(debug_iso_type>0)
 	cout<<"Order(Q) does not divide n1="<<n1<<", updating P1" <<endl;
       ZZ oldn1=n1;
       merge_points_1(P1,n1,Q);
       n2target=(n2target*oldn1)/n1;
-      if(debug_iso_type>0)  
+      if(debug_iso_type>0)
 	cout<<"New P1 has order " <<n1<<", assuming group structure "
 	    <<n1<<"*"<<n2target<<endl;
       if(n2>1) {P2 = pointmodq(P2.get_curve()); n2=1;}
@@ -778,14 +776,14 @@ void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2,
   ZZ a = my_bg_algorithm(Q2,Q1,ZZ(0),n1/n2target);
   if(a==ZZ(-1)) // dlog failed, n1 must be wrong
   {
-      if(debug_iso_type) 
+      if(debug_iso_type)
       {
 	  cout<<"Dlog of "<<Q1<<" w.r.t. "<<Q2<<" (order "<<n1/n2target
 	      <<") does not exist, so current n1 must be too small"<<endl;
       }
       return;
   }
-  if(debug_iso_type) 
+  if(debug_iso_type)
     {
       cout<<"Dlog of "<<Q1<<" w.r.t. "<<Q2<<" (order "<<n1/n2target<<") is "<<a<<endl;
       cout<<"Check: a*Q2-Q1 =  "<<a*Q2-Q1<<" ( should be zero)"<<endl;
@@ -796,7 +794,7 @@ void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2,
       if(debug_iso_type) cout<<"Q-a*P1 = "<<Q<<", no use"<<endl;
       return;
     }
-  if(debug_iso_type) 
+  if(debug_iso_type)
     {
       cout<<"Replacing Q by Q-a*P1 = "<<Q<<" where a = "<< a << endl;
       cout<<"whose order divides n2target; computing Weil pairing of order "
@@ -807,7 +805,7 @@ void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2,
   // (as for P2).  We now use the Weil pairing of P1 and Q, which is
   // an n2target'th root of unity
   Q1 = (n1/n2target)*P1;
-  if(debug_iso_type) 
+  if(debug_iso_type)
     {
       cout<<"order((n1/n2target)*P1) = "<<Q1<<" is "<<order_point(Q1)<<endl;
       cout<<"order(Q) =                "<<Q<<" is "<<order_point(Q)<<endl;
@@ -843,7 +841,7 @@ void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2,
   l = tidy_lcm(n2d,md);
   P2 = (n2/n2d)*P2 + (m/md)*Q1; // of order n2d*md=l
   n2 = l;
-  if(debug_iso_type) 
+  if(debug_iso_type)
     {
       cout<<"Changed P2 = "<<P2<<":\t order(P2) = "<<n2<<endl;
       if(order_point(P2)!=n2) cout<<"that's wrong!"<<endl;
@@ -853,8 +851,8 @@ void merge_points_2(pointmodq& P1, ZZ& n1, pointmodq& P2, ZZ& n2,
 // returns list of integers n2 such that
 // (1) lower <= n1*n2 <= upper
 // (2) n2|gcd(n1,q-1)
-vector<ZZ> n2list(const ZZ& n1, 
-		      const ZZ& lower, const ZZ& upper, 
+vector<ZZ> n2list(const ZZ& n1,
+		      const ZZ& lower, const ZZ& upper,
 		      const ZZ& q)
 {
   ZZ n2min = lower/n1, n2max = upper/n1, n2,  g = gcd(n1,q-1);
@@ -867,8 +865,7 @@ vector<ZZ> n2list(const ZZ& n1,
 // find a point of "large" order
 void one_generator(curvemodq& Cq, ZZ& n1, pointmodq& P1)
 {
-  galois_field Fq = get_field(Cq);
-  ZZ q = Fq.characteristic();
+  ZZ q = Cq.get_modulus();
   ZZ upper, lower; // bounds on group order
   set_hasse_bounds(q,lower,upper);
   if(debug_iso_type)
@@ -882,11 +879,11 @@ void one_generator(curvemodq& Cq, ZZ& n1, pointmodq& P1)
 
   int n;
   for(n=1; ((n<=10)&&(2*n1<=upper));  n++)
-    { 
+    {
       pointmodq Q = Cq.random_point();
       if(debug_iso_type>1)  cout<<"Q = "<<Q<<":\t"<<flush;
       merge_points_1(P1,n1,Q);
-      if(debug_iso_type>1)  
+      if(debug_iso_type>1)
 	{
 	  cout<<"now P1 = "<<P1<<":\tof order "<<n1<<endl;
 	}
@@ -898,7 +895,7 @@ void my_isomorphism_type(curvemodq& Cq,
 			 ZZ& n1, ZZ& n2, pointmodq& P1, pointmodq& P2)
 {
   galois_field Fq = get_field(Cq);
-  ZZ q = Fq.characteristic();
+  ZZ q = Cq.get_modulus();
   ZZ upper, lower; // bounds on group order
   set_hasse_bounds(q,lower,upper);
   if(debug_iso_type)
@@ -1010,18 +1007,17 @@ void my_isomorphism_type(curvemodq& Cq,
       merge_points_2(P1,n1,P2,n2,quot,Q);
       if(debug_iso_type) cout<<"Group order now "<<(n1*n2)<<endl;
     }
-  if(debug_iso_type) 
+  if(debug_iso_type)
     cout<<"Finished: group structure ("<<n1<<","<<n2<<") with "
 	<<"generators "<<P1<<","<<P2<<endl;
   return;
 }
 
 // find full Z-basis
-void my_isomorphism_type_new(curvemodq& Cq, 
+void my_isomorphism_type_new(curvemodq& Cq,
 			 ZZ& n1, ZZ& n2, pointmodq& P1, pointmodq& P2)
 {
-  galois_field Fq = get_field(Cq);
-  ZZ q = Fq.characteristic();
+  ZZ q = Cq.get_modulus();
   ZZ upper, lower; // bounds on group order
   set_hasse_bounds(q,lower,upper);
   if(debug_iso_type)
@@ -1062,12 +1058,12 @@ void my_isomorphism_type_new(curvemodq& Cq,
 
       if(Q1.is_zero()) // P1,n1 will not change but we may increase n2
 	{
-	  if(debug_iso_type) 
+	  if(debug_iso_type)
 	    cout<<"Case 1: n2 may increase"<<endl;
 	  //	  if(count>5)
 	    {
 	  m = linear_relation(P1,Q,a);
-	  if(debug_iso_type) 
+	  if(debug_iso_type)
 	    cout<<"linear relation gives m="<<m<<", a="<<a<<endl;
 	  if(m>1)
 	    {
@@ -1090,7 +1086,7 @@ void my_isomorphism_type_new(curvemodq& Cq,
 		  merge_points_1(P2,n2,Q);
 		  if(debug_iso_type)
 		    {
-		      if(n2>a) 
+		      if(n2>a)
 			cout<<"Replacing second generator by "<<P2<<" of order "
 			    <<n2<<", gaining index "<<n2/a<<endl
 			    <<"Group order now "<<n1*n2<<"="<<n1<<"*"<<n2<<endl;
@@ -1101,7 +1097,7 @@ void my_isomorphism_type_new(curvemodq& Cq,
 	}
       else // Q1 nonzero: n1 will increase
 	{
-	  if(debug_iso_type) 
+	  if(debug_iso_type)
 	    cout<<"Case 2: n1 may increase"<<endl;
 	  oldn1=n1;
 	  if(n2>1)
@@ -1123,23 +1119,23 @@ void my_isomorphism_type_new(curvemodq& Cq,
 	  if(n2>1)
 	    {
 	      m = linear_relation(P1,P3,a);
-	      if(debug_iso_type) 
+	      if(debug_iso_type)
 		cout<<"linear relation gives m="<<m<<", a="<<a<<endl;
 	      P3=P3-(a/m)*P1;
 	      set_order_point(P3,m);
-	      if(debug_iso_type) 
+	      if(debug_iso_type)
 		cout<<"First  P2 component ="<<P3<<endl;
 	      if(m==n2) {P2=P3;} else
 		{
 		  m = linear_relation(P1,P2,a);
-		  if(debug_iso_type) 
+		  if(debug_iso_type)
 		    cout<<"linear relation gives m="<<m<<", a="<<a<<endl;
 		  P2=P2-(a/m)*P1;
 		  set_order_point(P2,m);
-		  if(debug_iso_type) 
+		  if(debug_iso_type)
 		    cout<<"Second  P2 component ="<<P2<<endl;
 		  merge_points_1(P2,m,P3);
-		  if(debug_iso_type) 
+		  if(debug_iso_type)
 		    cout<<"Combined P2 component ="<<P2<<endl;
 		}
 	    }

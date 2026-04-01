@@ -177,7 +177,7 @@ bigfloat regulator(vector<Point>& points);  // not a const array; heights get se
 // N.B. Don't make the params const here
 
 vector<Point> two_torsion(Curvedata& E, int exact=0);
-vector<ZZ> three_torsion_x(Curvedata& E);
+vector<ZZ> three_torsion_x(const Curvedata& E);
 vector<Point> three_torsion(Curvedata& E, int exact=0);
 
 // List m-torsion points, i.e. points in E[m], or points of exact order m if exact==1
