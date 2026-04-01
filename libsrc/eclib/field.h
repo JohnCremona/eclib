@@ -11,7 +11,7 @@ class Field;
 class FieldIso;
 class FieldElement;
 
-extern const Field* FieldQQ;
+extern const Field FieldQQ;
 
 // Divide through by gcd of content(M) and d
 void cancel_mat(mat_m& M, ZZ& d);
@@ -51,7 +51,7 @@ public:
   FieldElement gen() const;
   FieldElement element(const vec_m& c, const ZZ& d=to_ZZ(1), int raw=0) const;
   int degree() const {return d;}
-  int isQ() const {return this==FieldQQ || d==1;}
+  int isQ() const {return d==1;}
   ZZX poly() const {return minpoly;}
   int operator==(const Field& F) const {return d==F.d && (d==1 || minpoly==F.minpoly);}
   int operator!=(const Field& F) const {return d!=F.d || (d!=1 && minpoly!=F.minpoly);}
@@ -65,8 +65,7 @@ public:
   // String for pretty output, like "Q" or "Q(i) = Q[X]/(X^2+1)", or
   // (if raw) raw output, suitable for re-input, like "Q" or "i [1 0 1]":
   string str(int raw=0) const;
-  friend istream& operator>>(istream& s, Field* F);
-  friend istream& operator>>(istream& s, Field** F);
+  friend istream& operator>>(istream& s, Field& F);
 
   // Apply polredabs (if canonical) or polredbest to the defining
   // polynomial, define a new field with that poly and return an
@@ -106,7 +105,7 @@ private:
   bigrational val;
 public:
   FieldElement()
-    :F(FieldQQ) {;}
+    :F(&FieldQQ) {;}
   explicit FieldElement(const Field* HF)
     :F(HF), coords(vec_m(HF->d)), denom(to_ZZ(1))  {if (HF->d==1) val = bigrational(0);}
   // raw means the given coords are w.r.t. the B-basis
@@ -116,7 +115,7 @@ public:
     :F(HF), coords(a*vec_m::unit_vector(HF->d, 1)), denom(d), val(bigrational(a,d)) { cancel();}
   // creation from a rational (F=Q)
   explicit FieldElement(const bigrational& r)
-    :F(FieldQQ), val(r) {;}
+    :F(&FieldQQ), val(r) {;}
   // creation from a rational (general F)
   FieldElement(const Field* HF, const bigrational& r)
     :F(HF), coords(r.num()*vec_m::unit_vector(HF->d, 1)), denom(r.den()), val(r) {;}
@@ -126,7 +125,7 @@ public:
   // output, suitable for re-input:
   string str(int raw=0) const;
 
-  const Field* field() const {return F;}
+  const Field* field_ptr() const {return F;}
   mat_m matrix() const; // ignores denom
   // NB Since we do not have polynomials with rational coefficients,
   // both charpoly and minpoly are scaled to be primitive rather than
@@ -230,7 +229,7 @@ private:
 public:
   // Dummy constructor
   FieldIso()
-    :domain(FieldQQ), codomain(FieldQQ), isomat(mat_m::identity_matrix(1)), denom(ZZ(1)), id_flag(1) {;}
+    :domain(&FieldQQ), codomain(&FieldQQ), isomat(mat_m::identity_matrix(1)), denom(ZZ(1)), id_flag(1) {;}
   // Constructor from a known matrix
   FieldIso(const Field* F1, const Field* F2, const mat_m& M, const ZZ& d = ZZ(1), int id=-1)
     :domain(F1), codomain(F2), isomat(M), denom(d), id_flag(id)

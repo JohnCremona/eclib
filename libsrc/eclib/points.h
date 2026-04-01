@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 // originally adapted from Elliptic.h by Oisin McGuiness
 
 // allow for multiple includes
@@ -36,12 +36,12 @@
 //
 
 class Point;
-Point transform(const Point& p,  Curvedata* newc, 
-			 const ZZ& u, 
-			 const ZZ& r, const ZZ& s, const ZZ& t, 
-			 int back=0); 
+Point transform(const Point& p,  Curvedata* newc,
+			 const ZZ& u,
+			 const ZZ& r, const ZZ& s, const ZZ& t,
+			 int back=0);
 
-class Point : public P2Point { 
+class Point : public P2Point {
   Curvedata *E;    // pointer to the curve that the point is on
   int ord;         // order: 0 if not calculated yet, -1 if infinite
   bigfloat height; // -1.0 if not calculated yet, 0.0 for torsion point
@@ -90,7 +90,7 @@ public:
     return is;
   }
 
-  // test of equality of points        
+  // test of equality of points
   int operator==(const Point& Q) const
   {
     if(E != Q.E) return 0 ;      // different curves!
@@ -114,10 +114,10 @@ public:
   void operator=(const Point& Q) // P1 = P2
     { E=Q.E; X=Q.X ; Y=Q.Y; Z=Q.Z; ord=Q.ord; height=Q.height; }
 
-  friend Point transform(const Point& p,  Curvedata* newc, 
-			 const ZZ& u, 
-			 const ZZ& r, const ZZ& s, const ZZ& t, 
-			 int back); 
+  friend Point transform(const Point& p,  Curvedata* newc,
+			 const ZZ& u,
+			 const ZZ& r, const ZZ& s, const ZZ& t,
+			 int back);
 
   void operator+=(const Point&) ; // P1 += P2 ; order and height unknown
   void operator-=(const Point&) ; // P1 -= P2 ; ditto

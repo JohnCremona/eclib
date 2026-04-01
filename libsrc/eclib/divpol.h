@@ -49,7 +49,7 @@ ZZX div_pol_2(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
 ZZX div_pol(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
               const ZZ& a6,int n);
 
-ZZX division_polynomial(Curvedata* EE, int p);
+ZZX division_polynomial(const Curvedata* EE, int p);
 
 // Numerator and denominator of the multiplication-by-n map on the x-coordinate
 

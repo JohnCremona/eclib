@@ -19,7 +19,7 @@ public:
   explicit INT(long a) {fmpz_init_set_si(z, a); }
   INT(const INT& a) {fmpz_init_set(z, a.z);}
   explicit INT(fmpz_t a) {fmpz_init_set(z, a);}
-  explicit INT(std::string s);
+  explicit INT(const std::string& s);
   // Destructor:
   ~INT() {fmpz_clear(z);}
   // Access internal fmpz_t:

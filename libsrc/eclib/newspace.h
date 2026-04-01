@@ -43,8 +43,8 @@ private:
   int index;       // index (starting from 1) of this newforms in the list of all
   string lab;      // label suffix (a,b,c,...)
   int d;      // dim(S)
-  Field* F0;   // pointer to the Hecke field (original)
-  Field* F;    // pointer to the Hecke field (reduced)
+  Field F0;   // Hecke field (original)
+  Field F;    // Hecke field (reduced)
   FieldIso Fiso; // isomorphism from F0 to F (possibly identity)
 
   subspace_m S; // irreducible subspace of modular symbol space
@@ -68,8 +68,6 @@ private:
   // List of traces of coefficients in F, indexed by integers M.
   vector<ZZ> trace_list;
 
-  // Compute eigenvalue of one operator T
-  FieldElement compute_one_eig(const matop& T, int verbose=0);
   // Fill dict eQmap, if triv_char; if aPmap not already filled, first
   // compute ntp aP
   void compute_AL_eigs(int ntp=10, int verbose=0);
@@ -119,10 +117,10 @@ public:
   // Characteristic polynomial of such a linear combination:
   ZZX char_pol_lin_comb(const vector<long>& Plist, const vector<scalar>& coeffs, int verb=0);
 
-  Field* field(int original=0) const {return (original? F0: F);}
+  Field field(int original=0) const {return (original? F0: F);}
   // Return the degree of the Hecke field
   int dimension() const {return d;}
-  ZZX poly(int original=0) const {return (original? F0->poly(): F->poly());}
+  ZZX poly(int original=0) const {return (original? F0.poly(): F.poly());}
   string label_suffix() const {return lab;}
   string label() const;
 
@@ -236,7 +234,7 @@ public:
   // constructor from file
   explicit Newspace(const long& level, int verb=0);
 
-  mat_m heckeop(long& P, int cuspidal=0, int dual=0);
+  mat_m heckeop(const long& P, int cuspidal=0, int dual=0);
   mat_m heckeop(const matop& T, int cuspidal=0, int dual=0) const;
   mat_m heckeop(const gmatop& T, int cuspidal=0, int dual=0) const;
 

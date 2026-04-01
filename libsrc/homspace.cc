@@ -71,14 +71,14 @@ string gmatop::name() const
 }
 
 matop::matop(long a, long b, long c, long d)
+  :mats({mat22(a,b,c,d)}), the_name("generic")
 {
-  mats.push_back(mat22(a,b,c,d));
-  the_name = "generic";
+  ;
 }
 
 matop::matop(long p, long n)
+  :the_name(opname(p, n)) // W_p or T_p
 {
-  the_name = opname(p, n); // W_p or T_p
   if (p==n)
     {
       mats.push_back(mat22(0,-1,n,0));
@@ -305,9 +305,9 @@ if (verbose>1)
 	 {
 	   rational c = (j==1 ? m.beta() : m.alpha());
            if (plusflag==-1)
-	     k = cusps.index_1(c);   //adds automatically if new, ignores if [c]=[-c]
+	     cusps.index_1(c); // adds automatically if new, ignores if [c]=[-c]
            else
-             k = cusps.index(c);   //adds automatically if new
+             cusps.index(c);   // adds automatically if new
 	 }
      }
    long ncusps_seen = cusps.count();
@@ -689,23 +689,23 @@ mat homspace::calcop(const gmatop& T, int cuspidal, int dual, int display) const
 //#define DEBUG_CHARPOL
 ZZX homspace::charpoly(const matop& T, int cuspidal) const
 {
-  ZZ den = to_ZZ(cuspidal? denom3: denom1);
+  ZZ Tden = to_ZZ(cuspidal? denom3: denom1);
 #ifdef DEBUG_CHARPOL
   cout << "Computing charpoly of " << T.name();
   if (cuspidal) cout << " on cuspidal subspace";
   else  cout << " on full space";
   mat M = calcop(T,cuspidal,0);
   cout << "Matrix: "; output_flat_matrix(M); cout << endl;
-  cout << "denominator: " << den << endl;
-  cout << "scaled char poly: " << scaled_charpoly(mat_to_mat_ZZ(M),den) << endl;
+  cout << "denominator: " << Tden << endl;
+  cout << "scaled char poly: " << scaled_charpoly(mat_to_mat_ZZ(M), Tden) << endl;
 #endif
-  return scaled_charpoly(mat_to_mat_ZZ(calcop(T,cuspidal,0)), den);
+  return scaled_charpoly(mat_to_mat_ZZ(calcop(T,cuspidal,0)), Tden);
 }
 
 ZZX homspace::charpoly(const gmatop& T, int cuspidal) const
 {
-  ZZ den = to_ZZ(cuspidal? denom3: denom1);
-  return scaled_charpoly(mat_to_mat_ZZ(calcop(T,cuspidal,0)), den);
+  ZZ Tden = to_ZZ(cuspidal? denom3: denom1);
+  return scaled_charpoly(mat_to_mat_ZZ(calcop(T,cuspidal,0)), Tden);
 }
 
 vec homspace::calcop_col(int j, const matop& T, int display) const
@@ -1159,6 +1159,7 @@ vec homspace::manintwist(long p) const
 }
 
 matop::matop(long p)
+  : the_name(opname(p))
 {
   //    case 31: nmats = 106; break;
   //    case 37: nmats = 128; break;
@@ -1166,7 +1167,6 @@ matop::matop(long p)
   //    case 43: nmats = 154; break;
   //    case 47: nmats = 170; break;
 
-  the_name = opname(p);
   switch (p) {
   case 2:
     mats.resize(4);
@@ -1721,7 +1721,7 @@ mat get_full_mat(const long& N,  const matop& T, const scalar& mod)
 #ifdef DEBUG_GET_FULL_MAT
   cout << "key " << NT << " not in full_mat_dict, computing matrix" << endl;
 #endif
-  homspace* H = get_homspace(N, mod);
+  const homspace* H = get_homspace(N, mod);
   mat M = H->calcop(T,0,0); // cuspidal=0, dual=0
   full_mat_dict[NT] = M;
 #ifdef DEBUG_GET_FULL_MAT
@@ -1817,17 +1817,17 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
     }
 
   homspace* H = get_homspace(N, mod);
-  scalar den = (cuspidal? H->h1cdenom() :H->h1denom());
+  scalar hden = (cuspidal? H->h1cdenom() :H->h1denom());
 #ifdef DEBUG_GET_POLY
   cout << "Homspace for level " << N << " obtained from get_homspace()" << endl;
-  cout << "den =  " << den << endl;
+  cout << "den =  " << hden << endl;
   cout << "About to call get_full_mat()"<< endl;
 #endif
 
   mat M = get_full_mat(N, T, mod);  // dimension x dimension
 #ifdef DEBUG_GET_POLY
   cout << "Full matrix M of size " << M.nrows() << " obtained from get_full_mat()" << endl;
-  cout << "den =  " << den << endl;
+  cout << "den =  " << hden << endl;
   output_flat_matrix(M);  cout << endl;
 #endif
   if (cuspidal)
@@ -1837,12 +1837,12 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
 #ifdef DEBUG_GET_POLY
       cout << "Cuspidal case" << endl;
       cout << "Restricted M to cuspidal subspace"
-           << " (which has denominator " << den << "):" << endl;
+           << " (which has denominator " << hden << "):" << endl;
       output_flat_matrix(M);
       cout << endl;
 #endif
     }
-  ZZX full_poly =  scaled_charpoly(mat_to_mat_ZZ(M), to_ZZ(den));
+  ZZX full_poly =  scaled_charpoly(mat_to_mat_ZZ(M), to_ZZ(hden));
   if (T.is_simple())
     {
       poly_cache[NT] = full_poly;

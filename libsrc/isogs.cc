@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/isogs.h"
 #include "eclib/points.h"
 
@@ -29,7 +29,7 @@
 #ifdef MPFP
 #define EPS1 0.0001
 #else
-#define EPS1 0.1 // slower than 0.001 but doesn't miss so many isogenies 
+#define EPS1 0.1 // slower than 0.001 but doesn't miss so many isogenies
                  // when in ordinary double precision...
 #endif
 
@@ -49,7 +49,7 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
   CR.getbi(b2,b4,b6,b8);
   bigfloat ra1=I2bigfloat(a1),ra2=I2bigfloat(a2),ra3=I2bigfloat(a3),
          ra4=I2bigfloat(a4),ra6=I2bigfloat(a6),
-         rb2=I2bigfloat(b2),rb4=I2bigfloat(b4),rb6=I2bigfloat(b6); 
+         rb2=I2bigfloat(b2),rb4=I2bigfloat(b4),rb6=I2bigfloat(b6);
   // b8 isn't used
   if (verbose>1)
     cout<<"\nra1: "<<ra1<<"\tra2: "<<ra2<<"\tra3: "<<ra3<<"\tra4: "<<ra4<<"\tra6: "<<ra6<<"\nrb2: "<<rb2<<"\trb4: "<<rb4<<"\trb6: "<<rb6<<endl;
@@ -89,11 +89,11 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
     for (iz=1; iz <= ilim; iz++)
       { cp.XY_coords(X, Y, to_bigfloat(iz)*z);
 	if(ell==2) Y=to_bigfloat(0);  // fix to avoid q(z)=-q(tau) awkward case
-//Must convert from Y^2=4X^3 + ... model to our minimal model:	
+//Must convert from Y^2=4X^3 + ... model to our minimal model:
 	x = X - (ra1*ra1 + 4*ra2)/12;
 	y = (Y - ra1*x - ra3)/two;
 	if (verbose>2)
-	  cout<<"i = "<<iz<<":  i*z = " << to_bigfloat(iz)*z 
+	  cout<<"i = "<<iz<<":  i*z = " << to_bigfloat(iz)*z
 	      << "\n x = "<<x<<"\n  y = "<<y<<endl ;
 	if (ell==2) ti = three*x*x + two*ra2*x + ra4 - ra1*y;
 	else ti = six*x*x + rb2*x + rb4;
@@ -114,22 +114,22 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
     if (verbose>1)
       cout<<"ZZ values are "<<ad4<<" and "<<ad6<<endl;
 
-    if ( close(I2bigfloat(ad4) , rad4 , EPS1) &&  
+    if ( close(I2bigfloat(ad4) , rad4 , EPS1) &&
 	 close(I2bigfloat(ad6) , rad6 , EPS1) )
       {
 	Curve newcurve(a1,a2,a3,ad4,ad6);
 	if(verbose>0) cout << "Testing curve " << newcurve << endl;
 	Curvedata newCD(newcurve,1);
 	if ((Curve)CR == (Curve)newCD)
-	  continue; 
+	  continue;
 	// cout<<" ## Warning! curve possibly "<<ell<<"-isogenous to itself"<<endl;
 	else
 	  {
 	    CurveRed newCR(newCD);
 	    if (conductor==getconductor(newCR))
-	      { 
+	      {
 		ans.push_back(newCR);
-		if (verbose>1) 
+		if (verbose>1)
 		  cout<<"new curve:\n"<<(Curve)newCD<<endl;
 	      }
 	  }
@@ -147,19 +147,19 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
 	  cout<<"ZZ values are "<<lad4<<" and "<<lad6<<endl;
 	if ( close(I2bigfloat(lad4) , rad4 , EPS1) &&
 	     close(I2bigfloat(lad6) , rad6 , EPS1) )
-	  { 
+	  {
 	    Curve newcurve(ell*a1,ell2*a2,ell3*a3,lad4,lad6);
 	    if(verbose>0) cout << "Testing curve " << newcurve << endl;
 	    Curvedata newCD(newcurve,1);
 	    if ((Curve)CR == (Curve)newCD)
 	      cout<<" ## Warning! curve possibly "<<ell<<"-isogenous to itself"<<endl;
-	    else 
+	    else
 	      {
 		CurveRed newCR(newCD);
 		if (conductor==getconductor(newCR))
-		  { 
+		  {
 		    ans.push_back(newCR);
-		    if (verbose>1) 
+		    if (verbose>1)
 		      cout<<"new curve:\n"<<(Curve)newCD<<endl;
 		  }
 	      }
@@ -171,12 +171,12 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp, long ell, int verbose)
   return ans;
 }
 
-int semistable(CurveRed& CR, const ZZ& p)
+int semistable(const CurveRed& CR, const ZZ& p)
 {
   return CR.ord_p_N(p) < 2;
 }
 
-int semistable(CurveRed& CR)
+int semistable(const CurveRed& CR)
 {
   vector<ZZ> plist = getbad_primes(CR);
   return std::all_of(plist.begin(), plist.end(),
@@ -208,39 +208,30 @@ vector<long> getelllist(CurveRed& CR)
   static const ZZ j67 = to_ZZ("-147197952000");
   static const ZZ j163 = to_ZZ("-262537412640768000");
 
-  static const ZZ one(1);
+  vector<long> ans = {2,3,5,7};
+  if(semistable(CR))
+    return ans;
 
-  vector<long> ans; ans.reserve(4);
-  ans.push_back(2);
-  ans.push_back(3);
-  ans.push_back(5);
-  ans.push_back(7);
-  ZZ N = getconductor(CR);
-  if(!semistable(CR))
+  ans.push_back(13);
+  ZZ njay=pow(getc4(CR),3);
+  ZZ djay=getdiscr(CR);
+  ZZ g=gcd(njay,djay);
+  if(!is_one(g)) {njay/=g; djay/=g;}
+  if(djay<0) {djay=-djay; njay=-njay;}
+  if(is_one(djay))
     {
-      ans.push_back(13);
-      ZZ njay=pow(getc4(CR),3);
-      ZZ djay=getdiscr(CR);
-      ZZ g=gcd(njay,djay);
-      if(!is_one(g)) {njay/=g; djay/=g;}
-      if(djay<0) {djay=-djay; njay=-njay;} // Thanks to Mark Watkins
-      if(is_one(djay))
-	{
-	  if((njay==j11a)||(njay==j11b)||(njay==j11c)) ans.push_back(11); 
-	  else {if((njay==j37a)||(njay==j37b))         ans.push_back(37); 
-	  else {if(njay==j19)                          ans.push_back(19); 
-	  else {if(njay==j43)                          ans.push_back(43); 
-	  else {if(njay==j67)                          ans.push_back(67); 
-	  else {if(njay==j163)                         ans.push_back(163); 
-	  }}}}}
-	}  // end if integral cases
-      else // check with j17a, j17b
-	{
-	  if(div(17,N))
-	    if(comprat(njay,djay,nj17a,dj17a)||
-	       comprat(njay,djay,nj17b,dj17b)) ans.push_back(17);
-	}
-    }
+      if((njay==j11a)||(njay==j11b)||(njay==j11c)) {ans.push_back(11); return ans;}
+      if((njay==j37a)||(njay==j37b))               {ans.push_back(37); return ans;}
+      if(njay==j19)                                {ans.push_back(19); return ans;}
+      if(njay==j43)                                {ans.push_back(43); return ans;}
+      if(njay==j67)                                {ans.push_back(67); return ans;}
+      if(njay==j163)                               {ans.push_back(163); return ans;}
+      return ans;
+    }  // end if integral cases
+  // check with j17a, j17b
+  if(div(17, getconductor(CR)))
+    if(comprat(njay,djay,nj17a,dj17a)|| comprat(njay,djay,nj17b,dj17b))
+      ans.push_back(17);
   return ans;
 }
 
@@ -260,8 +251,8 @@ IsogenyClass::IsogenyClass(CurveRed& C, int verbose)
       cout << "Curve is ";if(!ss)cout<<"NOT ";cout<<"semistable."<<endl;
     }
   nell = llist.size();
-  curves.push_back(C); 
-  fromlist.push_back(0); 
+  curves.push_back(C);
+  fromlist.push_back(0);
   isoglist.push_back(0);
   matij = vector<long>(MAXNCURVES*MAXNCURVES,0); // initialized to 0
 }
@@ -318,8 +309,8 @@ void IsogenyClass::process(long i)  // process i'th curve
   if(i==0) // reset llist to good l only;
     {
       vector<long> goodllist;
-      for(long ii=0; ii<nell; ii++) 
-	if(lworks[ii]) 
+      for(long ii=0; ii<nell; ii++)
+	if(lworks[ii])
 	  goodllist.push_back(llist[ii]);
       nell=goodllist.size();
       llist=goodllist;
@@ -336,7 +327,7 @@ void IsogenyClass::grow(void)       // does the work
 {
   if(verb) cout << "Trying l values: " << llist << endl;
 // N.B. ncurves will increase as more curves are found
-  for (ndone=0, ncurves=1; ndone<ncurves; ndone++) 
+  for (ndone=0, ncurves=1; ndone<ncurves; ndone++)
     {
 //       cout << "After processing "<<ndone<<" curve(s), :";
 //       display(cout);
@@ -379,7 +370,7 @@ void IsogenyClass::displaymat(ostream& os)const
   os<<endl;
 }
 
-void IsogenyClass::dumpdata(ostream& os, long rank)  
+void IsogenyClass::dumpdata(ostream& os, long rank)
 // output for textab to input
 {
   os << ncurves << "\n";
@@ -388,7 +379,7 @@ void IsogenyClass::dumpdata(ostream& os, long rank)
   for (ic=0; ic<ncurves; ic++)
     {
       CurveRed& C = curves[ic];
-      os << C.a1 << sep << C.a2 << sep << C.a3 << sep << C.a4 << sep 
+      os << C.a1 << sep << C.a2 << sep << C.a3 << sep << C.a4 << sep
          << C.a6 << sep ;
       os << rank << sep;
 //cout << "C.ntorsion = " << C.ntorsion << endl;
@@ -409,11 +400,11 @@ void IsogenyClass::dumpdata(ostream& os, long rank)
       for(il=0; il<nell; il++)
 	{
 	  long ell = llist[il];
-	  for(jc=0, nj=0; jc<ncurves; jc++) 
+	  for(jc=0, nj=0; jc<ncurves; jc++)
 	    if(mat_entry(ic,jc)==ell) nj++;
 	  os << nj << sep;   // # of ell-isogenous curves
 	  os << llist[il] << sep;
-	  for(jc=0; jc<ncurves; jc++) 
+	  for(jc=0; jc<ncurves; jc++)
 	    if(mat_entry(ic,jc)==ell) os << (jc+1) << sep;
                     	    // id #s of l-isogenous curves
 	}
@@ -466,10 +457,10 @@ vector<CurveRed> twoisog(const CurveRed& CR, int verbose)
       ZZ w = x*t;
       if(verbose) cout<<"w = "<<w<<endl;
       Curve E(2*a1, 4*a2, 8*a3, 16*a4-5*t, 64*a6-4*b2*t-7*w);
-      if(verbose) 
+      if(verbose)
 	cout<<"raw 2-isogenous curve = "<<E<<endl;
       Curvedata EE(E,1);
-      if(verbose) 
+      if(verbose)
 	cout<<"after minimising,  2-isogenous curve = "<<(Curve)EE<<endl;
       ans.push_back(CurveRed(EE));
     }
@@ -499,10 +490,10 @@ vector<CurveRed> threeisog(const CurveRed& CR, int verbose)
       ZZ w = ((10*x+6*b2)*x+27*b4)*x+27*b6;
       if(verbose) cout<<"w = "<<w<<endl;
       Curve E(3*a1, 9*a2, 27*a3, 81*a4-135*t, 729*a6-243*b2*t-189*w);
-      if(verbose) 
+      if(verbose)
 	cout<<"raw 3-isogenous curve = "<<E<<endl;
       Curvedata EE(E,1);
-      if(verbose) 
+      if(verbose)
 	cout<<"after minimising,  3-isogenous curve = "<<(Curve)EE<<endl;
       ans.push_back(CurveRed(EE));
     }

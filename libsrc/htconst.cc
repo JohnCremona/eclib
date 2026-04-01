@@ -751,10 +751,10 @@ void point_min_height_finder::search(bigfloat h_lim)
     bigcomplex c1(I2bigfloat(c[2])),
 	c2(I2bigfloat(c[1])),
 	c3(I2bigfloat(c[0]));
-    vector<bigcomplex> roots=solvecubic(c1,c2,c3);
-    //  cout<<"solvecubic("<<c1<<","<<c2<<","<<c3<<") returns "<<roots<<endl;
+    vector<bigcomplex> croots=solvecubic(c1,c2,c3);
+    //  cout<<"solvecubic("<<c1<<","<<c2<<","<<c3<<") returns "<<croots<<endl;
     vector<double> bnd(3);
-    int nrr=order_real_roots(bnd,roots);
+    int nrr=order_real_roots(bnd,croots);
     s.set_intervals(bnd,nrr,1);
     s.search();
 }
@@ -955,7 +955,7 @@ bigfloat CurveHeightConst::D(long n) // D_E(n) in the paper
   bigfloat ans = to_bigfloat(0);
   primevar pr;
   long p, e, pmax = (n+1)*(n+1);
-  for (p=pr.value(); p<pmax; pr++, p=pr.value())
+  for (p=pr.value(); p<pmax; ++pr, p=pr.value())
     {
       e = e_p(p);
 #ifdef debugLB

@@ -2,33 +2,33 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/elog.h"
 #include "eclib/polys.h"
 
 bigfloat ssqrt(const bigfloat& x)
 {
-  if(x<0) 
+  if(x<0)
     {
-      cout<<"Attempts to take real square root of "<<x<<endl; 
+      cout<<"Attempts to take real square root of "<<x<<endl;
       return to_bigfloat(0);
     }
   return sqrt(x);
@@ -38,12 +38,12 @@ void boundedratapprox(bigfloat x, ZZ& a, ZZ& b, const ZZ& maxden);
 
 
 // Given an elliptic curve and its (precomputed) periods, and a point
-// P=(x,y), returns the unique complex number z such that 
+// P=(x,y), returns the unique complex number z such that
 
-// (1) \wp(z)=x+b2/12, \wp'(z)=2y+a1*x+a3, 
+// (1) \wp(z)=x+b2/12, \wp'(z)=2y+a1*x+a3,
 
 // (2) either z is real and 0\le z\lt w1, or Delta>0, z-w2/2 is real
-// and 0\le z-w2/2\le w1.  
+// and 0\le z-w2/2\le w1.
 
 // Here, [w1,w2] is the standard period lattice basis
 
@@ -60,7 +60,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
   bigfloat ra3=I2bigfloat(za3);
   bigfloat xP(x), yP(y);
   int posdisc = (sign(getdiscr(E))>0);
-  
+
   bigcomplex e1,e2,e3;
   getei(E,e1,e2,e3);
   if (posdisc) reorder1(e1,e2,e3);  else reorder2(e1,e2,e3);
@@ -76,7 +76,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
   if(posdisc) // all roots real, e1>e2>e3
     {
 #ifdef DEBUG_ELOG
-      cout<<"positive discriminant"<<endl; 
+      cout<<"positive discriminant"<<endl;
 #endif
       bigfloat re2=real(e2);
       bigfloat re3=real(e3);
@@ -91,7 +91,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
       int egg = (xP<re1); // if P is on the "egg", replace it by P+T3
 			  // where T3=(e3,y3) is a 2-torsion point on
 			  // the egg coming from w2/2 on the lattice
-      if(egg) 
+      if(egg)
 	{
 	  bigfloat y3 = -(ra1*re3+ra3)/2;
 	  bigfloat lambda=(yP-y3)/(xP-re3);
@@ -174,7 +174,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
 #endif
 	}
       z/=a;
-      if(w>0) 
+      if(w>0)
 	{
 #ifdef DEBUG_ELOG
 	  cout<<"After second adjustment, z = "<<z<<endl;
@@ -194,7 +194,7 @@ bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, const bigfloat& 
 //
 // First function:  returns x,y as complex numbers
 
-vector<bigcomplex> ellztopoint(Curvedata& E,  const Cperiods& per, const bigcomplex& z)
+vector<bigcomplex> ellztopoint(const Curvedata& E,  const Cperiods& per, const bigcomplex& z)
 {
   ZZ a1,a2,a3,a4,a6;
   E.getai(a1,a2,a3,a4,a6);
@@ -268,13 +268,13 @@ Point ellztopoint(Curvedata& E, const Cperiods& per, const bigcomplex& z, const 
             }
         }
 #ifdef DEBUG_EZP
-      cout<<"ellztopoint returning valid point "<<P<<endl; 
+      cout<<"ellztopoint returning valid point "<<P<<endl;
 #endif
     }
 #ifdef DEBUG_EZP
   else
     {
-      cout<<"ellztopoint failed to construct a valid rational point"<<endl; 
+      cout<<"ellztopoint failed to construct a valid rational point"<<endl;
     }
 #endif
   return P;
@@ -333,10 +333,10 @@ vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one
   long original_prec, new_prec;
   if (!zero_flag)
     {
-      ZZ den = P.getZ();
-      long nbits = I2long(Iceil(log(I2bigfloat(den))/log(to_bigfloat(2.0))));
+      ZZ PZ = P.getZ();
+      long nbits = I2long(Iceil(log(I2bigfloat(PZ))/log(to_bigfloat(2.0))));
 #ifdef DEBUG_DIVPT
-      cout<<"den=      "<<den<<" with "<<nbits<<" bits"<<endl;
+      cout<<"den =      "<<PZ<<" with "<<nbits<<" bits"<<endl;
 #endif
       original_prec = bit_precision();
       new_prec = max(long(floor(1.5*nbits)), original_prec);
@@ -366,12 +366,12 @@ vector<Point> division_points(Curvedata& E,  const Point& P, int m, int only_one
 vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P, int m, int only_one)
 {
 #ifdef DEBUG_DIVPT
-  cout<<"division_points("<<(Curve)E<<","<<P<<","<<m<<")"<<endl;  
+  cout<<"division_points("<<(Curve)E<<","<<P<<","<<m<<")"<<endl;
 #endif
   vector<Point> ans;
-  if(m==0) 
+  if(m==0)
     {
-      cout<<"division_points() called with m=0!"<<endl; 
+      cout<<"division_points() called with m=0!"<<endl;
       return ans;
     }
   if(m<0) m=-m;
@@ -385,7 +385,7 @@ vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P
   Point Q(E);
 
   bigcomplex z(to_bigfloat(0)), w;
-  ZZ den(1);
+  ZZ Pden(1);
   int zero_flag = P.is_zero();
   if(zero_flag)
     {
@@ -395,7 +395,7 @@ vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P
   else
     {
       z = elliptic_logarithm(E,per2,P);
-      den = P.getZ();
+      Pden = P.getZ();
     }
 
   if (only_one and ans.size()>0)
@@ -425,7 +425,7 @@ vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P
 	  for(k=0; k<m; k++)       // now m is odd, Q on egg too
 	    {
 	      w = real(z+to_bigfloat(k)*w1)/m + half_w2;
-	      Q = ellztopoint(E,per2,w,den);
+	      Q = ellztopoint(E,per2,w,Pden);
 #ifdef DEBUG_DIVPT
               cout<<"candidate Q = "<<Q<<endl;
 #endif
@@ -456,7 +456,7 @@ vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P
 #endif
 	      if((k>0)||(!zero_flag))
 		{
-		  Q = ellztopoint(E,per2,w,den);
+		  Q = ellztopoint(E,per2,w,Pden);
 #ifdef DEBUG_DIVPT
                   cout<<"candidate Q = "<<Q<<endl;
 #endif
@@ -476,7 +476,7 @@ vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P
 		}
 	      if(even(m))
 		{
-		  Q = ellztopoint(E,per2,w+half_w2,den);
+		  Q = ellztopoint(E,per2,w+half_w2,Pden);
 #ifdef DEBUG_DIVPT
                   cout<<"candidate Q = "<<Q<<endl;
 #endif
@@ -507,7 +507,7 @@ vector<Point> division_points(Curvedata& E,  const Cperiods& per, const Point& P
 #ifdef DEBUG_DIVPT
           cout<<"k="<<k<<", w=        "<<w<<endl;
 #endif
-	  Q = ellztopoint(E,per2,w,den);
+	  Q = ellztopoint(E,per2,w,Pden);
 #ifdef DEBUG_DIVPT
                   cout<<"candidate Q = "<<Q<<endl;
 #endif
@@ -587,4 +587,3 @@ void boundedratapprox(bigfloat x, ZZ& a, ZZ& b, const ZZ& maxden)
   cout<<"bounded ratapprox gives a/b where\na = "<<a<<"\nb = "<<b<<endl;
 #endif
 }
-

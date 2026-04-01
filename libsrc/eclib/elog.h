@@ -76,7 +76,7 @@ inline bigcomplex elliptic_logarithm(const Curvedata& E, const Cperiods& per, co
 //
 // First function:  given z mod L, returns complex vector [x,y]
 
-vector<bigcomplex> ellztopoint(Curvedata& E,  const Cperiods& per, const bigcomplex& z);
+vector<bigcomplex> ellztopoint(const Curvedata& E,  const Cperiods& per, const bigcomplex& z);
 
 // Second function, expects to return a rational point.
 // User supplies a denominator for the point; if it doesn't work, the

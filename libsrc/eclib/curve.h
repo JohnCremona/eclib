@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 // originally adapted from Elliptic.h by Oisin McGuiness
 
 // allow for multiple includes
@@ -36,21 +36,21 @@ class IsogenyClass;
 
 //general test:
 int valid_invariants(const ZZ& c4, const ZZ& c6); //true if valid
-void c4c6_to_ai(const ZZ& c4, const ZZ& c6, 
-		ZZ& a1, ZZ& a2, ZZ& a3, ZZ& a4, 
-		ZZ& a6, 
+void c4c6_to_ai(const ZZ& c4, const ZZ& c6,
+		ZZ& a1, ZZ& a2, ZZ& a3, ZZ& a4,
+		ZZ& a6,
 		ZZ& b2, ZZ& b4, ZZ& b6, ZZ& b8);
-void c4c6_to_ai(const ZZ& c4, const ZZ& c6, 
-		ZZ& a1, ZZ& a2, ZZ& a3, ZZ& a4, 
+void c4c6_to_ai(const ZZ& c4, const ZZ& c6,
+		ZZ& a1, ZZ& a2, ZZ& a3, ZZ& a4,
 		ZZ& a6);
-void minimise_c4c6(const ZZ& c4, const ZZ& c6, const ZZ& discr, 
+void minimise_c4c6(const ZZ& c4, const ZZ& c6, const ZZ& discr,
                    ZZ& newc4, ZZ& newc6, ZZ& newdiscr, ZZ& u);
 
 //
 // base class for bare elliptic curve
 //
 
-class Curve{ 
+class Curve{
 friend class Point;
 friend class IsogenyClass;
 public:
@@ -71,7 +71,7 @@ public:
   void tex_print(ostream &) const ;
   // puts out TeX-ed equation of curve; never been used
 
-// constructors 
+// constructors
   Curve(void)  :a1(0),a2(0),a3(0),a4(0),a6(0)  {;}
   Curve(const ZZ& c4, const ZZ& c6); //init by invariants
                                  //check valid for elliptic curve
@@ -120,8 +120,8 @@ public:
   Curvedata(const ZZ& aa1, const ZZ& aa2, const ZZ& aa3,
         const ZZ& aa4, const ZZ& aa6, int min_on_init);
   /*
-  Curvedata(const bigrational& qa1, const bigrational& qa2, 
-	    const bigrational& qa3, const bigrational& qa4, 
+  Curvedata(const bigrational& qa1, const bigrational& qa2,
+	    const bigrational& qa3, const bigrational& qa4,
 	    const bigrational& qa6, ZZ& scale);
   */
   Curvedata(const vector<bigrational>& qai, ZZ& scale);

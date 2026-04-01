@@ -398,7 +398,7 @@ vector<ZZ> pdivs_trial_div(ZZ& n, const ZZ& pmax)
 	  the_extra_primes.add(n); 
 	  n=1; 
 	}
-      pr++; p = pr.value(); mp=p;
+      ++pr; p = pr.value(); mp=p;
     }
   return plist;
 }
@@ -1279,10 +1279,9 @@ divisor_iterator::divisor_iterator(const vector<ZZ>& P, const vector<long>& E)
 }
 
 divisor_iterator::divisor_iterator(const ZZ& N)
+  :PP(pdivs(N)), nd(1)
 {
-  PP = pdivs(N);
   np = PP.size();
-  nd = 1;
   std::for_each(PP.cbegin(), PP.cend(),
                 [this, N](auto p){
                   int e = val(p,N);

@@ -242,16 +242,16 @@ int quartic::trivial() const // Checks for a rational root
 
 vector<bigrational> quartic::rational_roots() const // returns rational roots
 {
-  ZZ num;
+  ZZ n;
   int i, start = (type==1)? 5 : (type==2)? 1 : 3;
   ZZ ac = a*c, a2d = a*a*d, a3e = a*a*a*e;
   bigfloat ra = I2bigfloat(a);
   vector<bigrational> ans;
   for (i = start; i<=4 ; i++)
     {
-      num = Iround(ra*real((roots)[i-1]));
-      if (((((num+b)*num+ac)*num+a2d)*num+a3e)== 0)
-        ans.push_back(bigrational(num,a));
+      n = Iround(ra*real((roots)[i-1]));
+      if (((((n+b)*n+ac)*n+a2d)*n+a3e)== 0)
+        ans.push_back(bigrational(n,a));
     }
   return(ans);
 }

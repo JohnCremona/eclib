@@ -125,7 +125,7 @@ void rank1::addquartic(const ZZ& a, const ZZ& b, const ZZ& c,
   static ZZ one(1);
   long firsti, i, oldnumber=0, thisnumber, nfl;
   char ab;
-  int trivial=0, newone=1, gls=0, els=0;
+  int triv=0, newone=1, gls=0, els=0;
   ZZ x,y,z, badp; 	  Point Ptemp;
   int btype = 0;
   int pivtype=-1; // set to 0 for \infty, 1 for odd prime, 2 for 2
@@ -171,8 +171,8 @@ void rank1::addquartic(const ZZ& a, const ZZ& b, const ZZ& c,
 
   // Check triviality
 
-  if(atype) trivial = thisq.trivial(); // else certainly nontrivial
-  if (trivial)
+  if(atype) triv = thisq.trivial(); // else certainly nontrivial
+  if (triv)
     {
       if (verbose) cout << "--trivial"<<endl;
       return;
@@ -1447,7 +1447,7 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
   cout << "Setting eqplist, length = " << NEQPLIST << "\n";
 #endif
   eqplist.reserve(NEQPLIST);
-  for(primevar pp; eqplist.size()<NEQPLIST; pp++)
+  for(primevar pp; eqplist.size()<NEQPLIST; ++pp)
     {
       long p = pp;
       if(ndiv(p,d1728)) eqplist.push_back(p);
@@ -1768,9 +1768,9 @@ void rank1::aux_init()  // define  auxiliary moduli and squares
   // which the image of a quartic lies depends on whether it has 0 or 4 roots mod p;
   // if 0, then a further condition determines which non-trivial coset it belongs to
 
-  primevar pr; pr++; pr++;  // skip past 2 and 3
+  primevar pr; ++pr; ++pr;  // skip past 2 and 3
 
-  for(;pr.ok()&&i<num_aux; pr++)
+  for(;pr.ok()&&i<num_aux; ++pr)
     {
       long p = pr;
       if(div(p,disc)) continue;
@@ -1883,15 +1883,15 @@ void rank1::flag_init() // set up flag array
 	  for(h=0; h<aux; h++, flagsiah++)
 	    {
 	      long h2 = (h*h)%aux2;
-	      long disc = (((h*((h2-a2I48)%aux2))%aux2)+a3J64)%aux2;
+	      long d = (((h*((h2-a2I48)%aux2))%aux2)+a3J64)%aux2;
 	      if(i==0) // special mod-9 condition to force 27-divisibility
 		{
-		  *flagsiah = (disc==0);
+		  *flagsiah = (d==0);
 		}
 	      else
 		{
-		  disc = posmod(-3*disc,aux2);
-		  thisflag = (*squaresi)[disc];
+		  d = posmod(-3*d,aux2);
+		  thisflag = (*squaresi)[d];
 		  if(thisflag)
 		    {
 	      // look further to see how many roots mod p an (a,h) quartic
@@ -1901,7 +1901,7 @@ void rank1::flag_init() // set up flag array
 		  //By choice of auxs there must be 0 or 2 roots, and
 		  // the flag is set to 15 if there are 2 roots, else 5
 			  thisflag=5;
-			  if(disc==0) //must look at Q-seminvariant
+			  if(d==0) //must look at Q-seminvariant
 			    {
 			      long q3 = posmod(3*(h2-a2I16),aux2);
 			      if((*squaresi)[q3]) thisflag=15;

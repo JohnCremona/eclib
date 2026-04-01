@@ -168,19 +168,19 @@ int rootsequiv(const quartic* q1, const quartic* q2, int i, const vector<ZZ>& dl
            cbeta  = (xy1*xy23) + (xy2*xy13) + (xy3*xy12),
            cgamma = xy13 + xy12 + xy23,
            cdelta = (xy1*(x2-x3)) + (xy2*(x3-x1)) + (xy3*(x1-x2));
-   bigcomplex scale = calpha;
-   if (abs(scale)<abs(cbeta)) scale=cbeta;
-   if (abs(scale)<abs(cgamma)) scale=cgamma;
-   if (abs(scale)<abs(cdelta)) scale=cdelta;
-   if(is_small(scale)) 
+   bigcomplex scale_factor = calpha;
+   if (abs(scale_factor)<abs(cbeta)) scale_factor=cbeta;
+   if (abs(scale_factor)<abs(cgamma)) scale_factor=cgamma;
+   if (abs(scale_factor)<abs(cdelta)) scale_factor=cdelta;
+   if(is_small(scale_factor)) 
      {
-       cout << "Warning from rootsequiv(): scale = " << scale << endl;
+       cout << "Warning from rootsequiv(): scale_factor = " << scale_factor << endl;
        cout << "alpha, beta, gamma, delta = " << calpha << cbeta << cgamma << cdelta << endl;
      }
-   calpha /= scale;
-   cbeta  /= scale;
-   cgamma /= scale;
-   cdelta /= scale;
+   calpha /= scale_factor;
+   cbeta  /= scale_factor;
+   cgamma /= scale_factor;
+   cdelta /= scale_factor;
    if (!(is_real(calpha) && is_real(cbeta) 
          && is_real(cgamma) 
          && is_real(cdelta)))

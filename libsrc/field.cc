@@ -6,7 +6,7 @@
 
 //#define DEBUG_ARITH
 
-const Field* FieldQQ = new Field();
+const Field FieldQQ; // default Field constructor gives QQ
 
 //#define DEBUG_FIELD_CONSTRUCTOR
 Field::Field(const ZZX& p, string a, int verb)
@@ -39,7 +39,15 @@ Field::Field(const ZZX& p, string a, int verb)
 #ifdef DEBUG_FIELD_CONSTRUCTOR
       display_factors(p);
 #endif
-      *this = Field();
+      // Here is the default constructor code (for Q):
+      d=1;
+      A.init(1,1); // zero matrix
+      B.init(1,1); // zero matrix
+      C.init(1,1); // zero matrix
+      denom = B(1,1) = Bdet = Bdet1 = Bdet2 = Bdet3 = ZZ(1);
+      Binv = B;
+      var = ""; // will not be used anyway
+      SetX(minpoly);
     }
 }
 
@@ -139,10 +147,10 @@ string Field::str(int raw) const
 }
 
 //#define DEBUG_FIELD_INPUT
-istream& operator>>(istream& s, Field* F)
+istream& operator>>(istream& s, Field& F)
 {
 #ifdef DEBUG_FIELD_INPUT
-  cout << "In operator>>(istream& s, Field* F)..." << endl;
+  cout << "In operator>>(istream& s, Field& F)..." << endl;
 #endif
   string var;
   s >> var;
@@ -154,7 +162,7 @@ istream& operator>>(istream& s, Field* F)
 #ifdef DEBUG_FIELD_INPUT
       cout << "- setting F to QQ" << endl;
 #endif
-      *F = Field();
+      F = FieldQQ;
     }
   else
     {
@@ -164,26 +172,11 @@ istream& operator>>(istream& s, Field* F)
       cout << "- not QQ" <<endl;
       cout << "- input f = " << ::str(f) << endl;
 #endif
-      *F = Field(f, var);
+      F = Field(f, var);
 #ifdef DEBUG_FIELD_INPUT
-      cout << *F << endl;
+      cout << F << endl;
       F->display();
 #endif
-    }
-  return s;
-}
-
-istream& operator>>(istream& s, Field** F)
-{
-  string var;
-  s >> var;
-  if (var=="Q")
-    *F = (Field*)FieldQQ;
-  else
-    {
-      ZZX f;
-      s >> f;
-      *F = new Field(f, var);
     }
   return s;
 }
@@ -417,7 +410,7 @@ string FieldElement::str(int raw) const
 // x must be initialised with a Field before input to x
 istream& operator>>(istream& s, FieldElement& x)
 {
-  if (x.field()->isQ())
+  if (x.field_ptr()->isQ())
     s >> x.val;
   else
     s >> x.coords >> x.denom;
@@ -453,7 +446,7 @@ ZZX FieldElement::charpoly() const
     {
       ZZX mp = minpoly();
       cp = mp;
-      int d = field()->degree() - 1;
+      int d = F->d - 1;
       while (d--)
         cp *= mp;
       return cp;
@@ -495,18 +488,18 @@ ZZX FieldElement::minpoly() const
 
 bigrational FieldElement::norm() const
 {
-  int d = field()->degree();
+  int d = F->d;
   if (d==1) return val;
   bigrational r;
   if (is_rational(r)) // then norm = r**degree
     return bigrational(pow(r.num(), d), pow(r.den(), d));
   else
-    return bigrational(matrix().determinant(), pow(denom, field()->degree()));
+    return bigrational(matrix().determinant(), pow(denom, d));
 }
 
 bigrational FieldElement::trace() const
 {
-  int d = field()->degree();
+  int d = F->d;
   if (d==1) return val;
   bigrational r;
   if (is_rational(r)) // then norm = r**degree
@@ -542,6 +535,8 @@ FieldElement FieldElement::operator+(const FieldElement& b) const
   if (!in_same_field(b))
     {
       cerr << "Attempt to add elements of different fields!" << endl;
+      cerr << "LHS field: "; F->display(); cerr << endl;
+      cerr << "RHS field: "; b.F->display(); cerr << endl;
       exit(1);
     }
   FieldElement a = *this;
@@ -563,6 +558,8 @@ void FieldElement::operator-=(const FieldElement& b)
   if (!in_same_field(b))
     {
       cerr << "Attempt to subtract elements of different fields!" << endl;
+      cerr << "LHS field: "; F->display(); cerr << endl;
+      cerr << "RHS field: "; b.F->display(); cerr << endl;
       exit(1);
     }
   if (b.is_zero())
@@ -582,6 +579,8 @@ FieldElement FieldElement::operator-(const FieldElement& b) const
   if (!in_same_field(b))
     {
       cerr << "Attempt to subtract elements of different fields!" << endl;
+      cerr << "LHS field: "; F->display(); cerr << endl;
+      cerr << "RHS field: "; b.F->display(); cerr << endl;
       exit(1);
     }
   FieldElement a = *this;
@@ -656,6 +655,10 @@ void FieldElement::operator/=(const FieldElement& b)      // divide by b
   if (!in_same_field(b))
     {
       cerr << "Attempt to divide elements of different fields!" << endl;
+      cerr << "LHS: " << (*this) << ", " << flush;
+      cerr << "LHS field: "; F->display(); cerr << endl;
+      cerr << "RHS: " << b << ", " << flush;
+      cerr << "RHS field: "; b.F->display(); cerr << endl;
       exit(1);
     }
   if (is_zero())
@@ -678,6 +681,10 @@ FieldElement FieldElement::operator/(const FieldElement& b) const // raise error
   if (!in_same_field(b))
     {
       cerr << "Attempt to divide elements of different fields!" << endl;
+      cerr << "LHS: " << (*this) << ", " << flush;
+      cerr << "LHS field: "; F->display(); cerr << endl;
+      cerr << "RHS: " << b << ", " << flush;
+      cerr << "RHS field: "; b.F->display(); cerr << endl;
       exit(1);
     }
   FieldElement a = *this;
@@ -962,9 +969,9 @@ FieldIso FieldIso::inverse() const
 FieldElement FieldIso::operator()(const FieldElement& x) const
 {
   if (id_flag) return x;
-  if ((x.field()==domain) || (*x.field()==*domain))
+  if ((x.field_ptr()==domain) || (*x.field_ptr()==*domain))
     {
-      if (x.field()->isQ())
+      if (x.field_ptr()->isQ())
         return codomain->rational(x.val);
 
       FieldElement y(codomain, isomat*x.coords, denom*x.denom);
@@ -977,7 +984,7 @@ FieldElement FieldIso::operator()(const FieldElement& x) const
         }
       return y;
     }
-  cerr << "Cannot apply FieldIso\n" << *this << "\n to " << x << " in " << *(x.field()) << endl;
+  cerr << "Cannot apply FieldIso\n" << *this << "\n to " << x << " in " << *(x.field_ptr()) << endl;
   exit(1);
   return FieldElement(codomain);
 }
@@ -1063,10 +1070,10 @@ FieldIso Field::change_generator(const FieldElement& b) const
 {
   FieldIso iso(this); // default
 
-  if (b.field() != this)
+  if (b.field_ptr() != this)
     {
       cerr << "Cannot change generator of " << *this << " to " << b
-           << " which is in a different field " << *b.field() << endl;
+           << " which is in a different field " << *b.field_ptr() << endl;
       return iso;
     }
   ZZX b_pol(b.minpoly());
@@ -1167,10 +1174,10 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, FieldElemen
 #ifdef DEBUG_SQRT_EMBEDDING
   cout << "In sqrt_embedding() with base field " << *this << " and r = " << r << endl;
 #endif
-  if (r.field() != this)
+  if (r.field_ptr() != this)
     {
       cerr << "Cannot adjoin sqrt(" << r << ") to " << *this
-           << " as it is in a different field " << *r.field() << endl;
+           << " as it is in a different field " << *r.field_ptr() << endl;
       return FieldIso(this);
     }
   if (r.is_square(sqrt_r))

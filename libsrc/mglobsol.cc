@@ -115,10 +115,10 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 	    }
 	}
       if(!two_is_ok) wprimes.push_back(2);
-      primevar pr; pr++; // to start at 3
+      primevar pr; ++pr; // to start at 3
       while((long)wprimes.size()<nwprimes)
 	{
-	  p=pr; pr++;
+	  p=pr; ++pr;
 	  if(legendre(a,p)==-1) wprimes.push_back(p);
 	}
       if(verbose)
@@ -137,10 +137,10 @@ quartic_sieve::quartic_sieve(quartic * gg, int moduli_option, int verb)
 	    }
 	}
       if(!two_is_ok) uprimes.push_back(2);
-      pr.init(); pr++; // to start at 3
+      pr.init(); ++pr; // to start at 3
       while((long)uprimes.size()<nwprimes)
 	{
-	  p=pr; pr++;
+	  p=pr; ++pr;
 	  if(legendre(e,p)==-1) uprimes.push_back(p);
 	}
       if(verbose)
@@ -248,7 +248,7 @@ long quartic_sieve::search(double h_lim, long maxnpts, int posxonly)
     cout << "quartic_sieve::search: trying u,w up to "<<ulim<<endl;
 
   int type = g->gettype();
-  vector<bigcomplex> roots = g->getroots();
+  vector<bigcomplex> croots = g->getroots();
   bigfloat x1, x2, x3, x4,t, zero=to_bigfloat(0);
   switch (type) {
   case 0:  default: // no roots info known
@@ -266,7 +266,7 @@ long quartic_sieve::search(double h_lim, long maxnpts, int posxonly)
       return npoints;
       break;
     case 3:  // 2 real roots, one or two ranges
-      x1 = real(roots[2]); x2 = real(roots[3]);
+      x1 = real(croots[2]); x2 = real(croots[3]);
       if(x1>x2) {t=x1; x1=x2; x2=t;}
 #ifdef DEBUG_RANGES
       cout << "sieve::search: type 3, real roots "<<x1<<", "<<x2<<"\n";
@@ -284,8 +284,8 @@ long quartic_sieve::search(double h_lim, long maxnpts, int posxonly)
       return npoints;
       break;
     case 2:  // 4 real roots, 2 or 3 ranges
-      x1 = real(roots[0]); x2 = real(roots[1]);
-      x3 = real(roots[2]); x4 = real(roots[3]);
+      x1 = real(croots[0]); x2 = real(croots[1]);
+      x3 = real(croots[2]); x4 = real(croots[3]);
       sort(x1,x2,x3,x4);  // put in increasing order
 #ifdef DEBUG_RANGES
       cout << "sieve::search: type 2, real roots "<<x1<<", "<<x2<<", "<<x3<<", "<<x4<<"\n";
@@ -317,7 +317,7 @@ long quartic_sieve::stoll_search(double h_lim, int posxonly)
   // Find and set search intervals
 
   int type = g->gettype(), lb_flag;
-  vector<bigcomplex> roots = g->getroots();
+  vector<bigcomplex> croots = g->getroots();
   vector<double> real_roots(4); int nrr=0;
   bigfloat x1, x2, x3, x4, t;
   switch (type) {
@@ -332,7 +332,7 @@ long quartic_sieve::stoll_search(double h_lim, int posxonly)
     break;
   case 3:  // 2 real roots, one or two ranges
     nrr=2;
-    x1 = real(roots[2]); x2 = real(roots[3]);
+    x1 = real(croots[2]); x2 = real(croots[3]);
     if(x1>x2) {t=x1; x1=x2; x2=t;}
 #ifdef DEBUG_RANGES
     cout << "sieve::search: type 3, real roots "<<x1<<", "<<x2<<"\n";
@@ -350,8 +350,8 @@ long quartic_sieve::stoll_search(double h_lim, int posxonly)
   
   case 2:  // 4 real roots, 2 or 3 ranges
     nrr=4;
-    x1 = real(roots[0]); x2 = real(roots[1]);
-    x3 = real(roots[2]); x4 = real(roots[3]);
+    x1 = real(croots[0]); x2 = real(croots[1]);
+    x3 = real(croots[2]); x4 = real(croots[3]);
     sort(x1,x2,x3,x4);  // put in increasing order
     if(doublify(x1,real_roots[0])||doublify(x2,real_roots[1])
        ||doublify(x3,real_roots[2])||doublify(x4,real_roots[3]))
@@ -364,7 +364,7 @@ long quartic_sieve::stoll_search(double h_lim, int posxonly)
     lb_flag = (a<0);
     s.set_intervals(real_roots,nrr,lb_flag,posxonly);
   }
-  
+
   //  cout<<"About to start search..."<<flush;
   npoints = s.search();
   //  cout<<"...finished, "<<npoints<<" points found"<<endl;

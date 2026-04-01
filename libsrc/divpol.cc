@@ -109,7 +109,7 @@ ZZX div_pol(const ZZ& a1,const ZZ& a2,const ZZ& a3,const ZZ& a4,
   return (n==2? div_pol_2(a1,a2,a3,a4,a6) :  div_pol_odd(a1,a2,a3,a4,a6,n));
 }
 
-ZZX division_polynomial(Curvedata* E, int p)
+ZZX division_polynomial(const Curvedata* E, int p)
 {
   ZZ a1,a2,a3,a4,a6;
   E->getai(a1,a2,a3,a4,a6);

@@ -506,12 +506,12 @@ int mw::process(const Point& PP, int sat)
 
 
   // find minimum coeff. |ai|
-  long min = 0, ni;
+  long mi = 0, ni;
   long imin = -1;
   for (i=0; i <= rank; i++)
     { ni = abs(nlist[i]);
-      if (  (ni>0) && ( (imin==-1) || (ni<min) )  )
-	{ min = ni; imin = i; }
+      if (  (ni>0) && ( (imin==-1) || (ni<mi) )  )
+	{ mi = ni; imin = i; }
     }
 
   // find aj with ai ndiv aj, write aj = ai*q + r with 0<r<|ai|
@@ -522,16 +522,16 @@ int mw::process(const Point& PP, int sat)
   // then we can just discard Pi.
 
   long r, q;
-  while ( min > 1 )
+  while ( mi > 1 )
     {
       for (i=0; i <= rank; i++)
       {
-	r = mod(nlist[i], min);
+	r = mod(nlist[i], mi);
 	q = (nlist[i] - r) / nlist[imin];
 	if ( r!=0 )
 	{
 	  basis[imin] += q*basis[i];
-	  imin=i; min=abs(r); nlist[imin]=r;
+	  imin=i; mi=abs(r); nlist[imin]=r;
 #ifdef DEBUG
 	  if (verbose)
 	    { for (j=0; j < rank; j++)
@@ -1039,8 +1039,8 @@ cout<<"amin = " << amin << ", amax = " << amax <<  endl;
 void sieve::a_search(const long& amin, const long& amax)
 {
   ZZ pb,qb,db,rdb,rdb2,b,ac;
-  long i, a=amin;
-  a--;
+  long i;
+  a=amin-1;
   if (verbose) cout<<"sieve::search: trying c = "<<c<<"\t"
                    <<"("<<amin<<" <= a <= "<<amax<<")"<<endl;
 
@@ -1099,7 +1099,6 @@ void sieve::a_search(const long& amin, const long& amax)
 void sieve::a_simple_search(const long& amin, const long& amax)
 {
   ZZ pb,qb,db,rdb,rdb2,b,ac;
-  long a;
   if (verbose) cout<<"sieve::search: trying c = "<<c<<"\t"
                    <<"("<<amin<<" <= a <= "<<amax<<")\n";
 

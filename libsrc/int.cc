@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "eclib/int.h"
 
-INT::INT(std::string s)
+INT::INT(const std::string& s)
 {
   fmpz_init(z);
   fmpz_set_str(z, s.c_str(), 10);

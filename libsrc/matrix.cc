@@ -1025,12 +1025,12 @@ Zvec<T> apply(const Zmat<T>& m, const Zvec<T>& v)    // same as *(mat, vec)
 template<class T>
 T inverse(const Zmat<T>& A, Zmat<T>& Ainv)
 {
-  long d = A.nrows();
-  Zmat<T> aug=colcat(A, Zmat<T>::identity_matrix(d));
-  long rk, ny; Zvec<int> pc,npc; T denom;
-  Zmat<T> ref = echelon(aug, pc, npc, rk, ny, denom, 0);
-  Ainv = ref.slice(1,d,d+1,2*d);
-  return denom;
+  long n = A.nrows();
+  Zmat<T> aug=colcat(A, Zmat<T>::identity_matrix(n));
+  long rk, ny; Zvec<int> pc,npc; T d;
+  Zmat<T> ref = echelon(aug, pc, npc, rk, ny, d, 0);
+  Ainv = ref.slice(1,n,n+1,2*n);
+  return d;
 }
 
 template<class T>
@@ -1729,11 +1729,11 @@ hmod_mat_mul(hmod_mat_t C, const hmod_mat_t A, const hmod_mat_t B)
 slong
 hmod_mat_rref(hmod_mat_t mat)
 {
-    slong rank;
-    gr_ctx_t ctx;
-    gr_ctx_init_nmod32(ctx, mat->mod.n);
-    GR_MUST_SUCCEED(gr_mat_rref_lu(&rank, (gr_mat_struct *) mat, (gr_mat_struct *) mat, ctx));
-    return rank;
+  slong rk;
+  gr_ctx_t ctx;
+  gr_ctx_init_nmod32(ctx, mat->mod.n);
+  GR_MUST_SUCCEED(gr_mat_rref_lu(&rk, (gr_mat_struct *) mat, (gr_mat_struct *) mat, ctx));
+  return rk;
 }
 
 // create flint matrix (type hmod_mat_t) copy of a Zmat<int>:
@@ -1855,21 +1855,21 @@ Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr)
 {
   long nr=M.nrows(), nc=M.ncols();
 
-  fmpz_mod_ctx_t mod;
-  fmpz_mod_ctx_init(mod, *NTL_to_FLINT(pr));
+  fmpz_mod_ctx_t modulus;
+  fmpz_mod_ctx_init(modulus, *NTL_to_FLINT(pr));
 
   fmpz_mod_mat_t A, R;
-  fmpz_mod_mat_init(A, nr, nc, mod);
-  fmpz_mod_mat_init(R, nr, nc, mod);
+  fmpz_mod_mat_init(A, nr, nc, modulus);
+  fmpz_mod_mat_init(R, nr, nc, modulus);
 
-  mod_mat_from_mat(A,mod,M,pr);
+  mod_mat_from_mat(A,modulus,M,pr);
 
-  long rk = fmpz_mod_mat_rref(R, A, mod);
+  long rk = fmpz_mod_mat_rref(R, A, modulus);
   ZZ dummy;
-  Zmat<ZZ> B = mat_from_mod_mat(R, mod, dummy).slice(rk, nc);
-  fmpz_mod_mat_clear(A,mod);
-  fmpz_mod_mat_clear(R,mod);
-  fmpz_mod_ctx_clear(mod);
+  Zmat<ZZ> B = mat_from_mod_mat(R, modulus, dummy).slice(rk, nc);
+  fmpz_mod_mat_clear(A,modulus);
+  fmpz_mod_mat_clear(R,modulus);
+  fmpz_mod_ctx_clear(modulus);
   return B;
 }
 
@@ -1877,23 +1877,23 @@ Zmat<INT> ref_via_flint(const Zmat<INT>& M, const INT& pr)
 {
   long nr=M.nrows(), nc=M.ncols();
 
-  fmpz_mod_ctx_t mod;
+  fmpz_mod_ctx_t modulus;
   fmpz_t tmp;
   pr.get_fmpz(tmp);
-  fmpz_mod_ctx_init(mod, tmp);
+  fmpz_mod_ctx_init(modulus, tmp);
 
   fmpz_mod_mat_t A, R;
-  fmpz_mod_mat_init(A, nr, nc, mod);
-  fmpz_mod_mat_init(R, nr, nc, mod);
+  fmpz_mod_mat_init(A, nr, nc, modulus);
+  fmpz_mod_mat_init(R, nr, nc, modulus);
 
-  mod_mat_from_mat(A,mod,M,pr);
+  mod_mat_from_mat(A,modulus,M,pr);
 
-  long rk = fmpz_mod_mat_rref(R, A, mod);
+  long rk = fmpz_mod_mat_rref(R, A, modulus);
   INT dummy;
-  Zmat<INT> B = mat_from_mod_mat(R, mod, dummy).slice(rk, nc);
-  fmpz_mod_mat_clear(A,mod);
-  fmpz_mod_mat_clear(R,mod);
-  fmpz_mod_ctx_clear(mod);
+  Zmat<INT> B = mat_from_mod_mat(R, modulus, dummy).slice(rk, nc);
+  fmpz_mod_mat_clear(A,modulus);
+  fmpz_mod_mat_clear(R,modulus);
+  fmpz_mod_ctx_clear(modulus);
   return B;
 }
 

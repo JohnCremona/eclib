@@ -21,7 +21,7 @@ int main()
   while(1)
     {
       cerr << "Enter a field F (Q to end): ";
-      cin >> &F;
+      cin >> F;
       if (F.isQ())
         break;
       test_field(F);

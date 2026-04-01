@@ -39,8 +39,8 @@ vector<CurveRed> lisog(const CurveRed& CR, Cperiods& cp,
 			  // of curves ell-isogenous to CR
 
 
-int semistable(CurveRed& CR, const ZZ& p);
-int semistable(CurveRed& CR);
+int semistable(const CurveRed& CR, const ZZ& p);
+int semistable(const CurveRed& CR);
 
 vector<long> getelllist(CurveRed& CR); 
 // returns list of possible primes l ("ell") for which CR might have an l-isogeny.

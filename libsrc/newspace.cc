@@ -96,39 +96,39 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 
   if (d==1)
     {
-      F = F0 = (Field*)FieldQQ;
-      Fiso = FieldIso(F);
+      F = F0 = FieldQQ;
+      Fiso = FieldIso(&F);
     }
   else
     {
       string var = codeletter(index-1);
-      F0 = new Field(A, denom_abs, var, verbose>1);
+      F0 = Field(A, denom_abs, var, verbose>1);
       int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
       if (verbose)
         {
           cout << "Applying "
                << (canonical? "polredabs": "polredbest")
-               << " to field " << *F0 << endl;
+               << " to field " << F0 << endl;
           if (!canonical)
             {
               cout << "Not applying polredabs as degree is greater than "
                    << POLREDABS_DEGREE_UPPER_BOUND <<endl;
             }
         }
-      Fiso = F0->reduction_isomorphism(var, canonical);
-      F = (Field*)Fiso.codom();
+      Fiso = F0.reduction_isomorphism(var, canonical);
+      F = *Fiso.codom();
       if (verbose)
-        cout << "Reduced field is " << *F << endl;
+        cout << "Reduced field is " << F << endl;
       if (Fiso.is_nontrivial() && verbose)
         {
-          cout << "[replacing original Hecke field with polynomial " << ::str(F0->poly())
-               << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
+          cout << "[replacing original Hecke field with polynomial " << ::str(F0.poly())
+               << " with polredabs reduced field with polynomial " << ::str(F.poly()) << "]" << endl;
         }
     }
   if (verbose)
     {
       cout <<"Hecke field data:" << endl;
-      cout << *F << endl;
+      cout << F << endl;
     }
 
   cm = 1;    // means unknown
@@ -160,13 +160,13 @@ FieldElement Newform::eig(const matop& T)
   vec_m apv = to_vec_m(nsp->H1->applyop_proj(T, key_symbol, projcoord));
   // cout << "ap vector = " << apv <<endl;
   static const ZZ one(1);
-  if (F0->isQ())
+  if (F0.isQ())
     {
       return FieldElement(bigrational(apv[1], to_ZZ(denom_abs)));
     }
   else
     {
-      FieldElement a(F0, apv, one, 1); // raw=1
+      FieldElement a(&F0, apv, one, 1); // raw=1
       return (Fiso.is_identity()? a : Fiso(a));
     }
 }
@@ -190,7 +190,7 @@ FieldElement Newform::eig_P(const long& P)
   // If P is bad, return AL eigenvalue
   auto it1 = eQmap.find(P);
   if (it1!=eQmap.end())
-    return F->rational(it1->second);
+    return F.rational(it1->second);
   // If P is good and in aPmap, return stored Tp eigenvalue
   auto it2 = aPmap.find(P);
   if (it2!=aPmap.end())
@@ -201,9 +201,14 @@ FieldElement Newform::eig_P(const long& P)
   return aP;
 }
 
+//#define DEBUG_COEFFS
+
 // Compute aM for one M, assuming value for M'<M are all known and in aMlist
 FieldElement Newform::compute_aM(const long& M)
 {
+#ifdef DEBUG_COEFFS
+  cout<<"Computing aM for M = " << M << endl;
+#endif
   // largest M for which we already have the coefficient:
   long maxM = aMlist.size()-1;
 
@@ -213,9 +218,9 @@ FieldElement Newform::compute_aM(const long& M)
 
   // Otherwise compute it
   if (M<1)
-    return F->zero();
+    return F.zero();
   if (M==1)
-    return F->one();
+    return F.one();
 
   // Now we assume that aMlist contains aM[M'] for proper divisors
   long p = primdiv(M); // smallest prime divisor
@@ -223,26 +228,42 @@ FieldElement Newform::compute_aM(const long& M)
   long e = divide_out(M1, p); // now M = M1*p^e
 
   if (M1>1) // use easy multiplicativity
-    return aMlist[M1] * aMlist[M/M1];
+    {
+#ifdef DEBUG_COEFFS
+      cout << " - using multiplicativity with factors " << M1 << " * " << M/M1 <<endl;
+#endif
+      return aMlist[M1] * aMlist[M/M1];
+    }
+
+#ifdef DEBUG_COEFFS
+  cout << " - prime power case, p = " << p << ", e = " << e << endl;
+#endif
 
   // Now M = p^e is a prime power.  aPmap has the aP for bad p as well
   // as good, from compute_AL_eigs()
   FieldElement aP = aPmap[p];
+#ifdef DEBUG_COEFFS
+  cout << " - a_p = " << aP << endl;
+#endif
   if (e==1)
     return aP;
 
   // Now  e>=2, use recursion
   M1 = M/p;
   FieldElement a = aP*aMlist[M1];
-  return (divides(p,N)? a : a - F->rational(p) * aMlist[M1/p]);
+  return (divides(p,N)? a : a - F.rational(p) * aMlist[M1/p]);
 }
 
+//#define DEBUG_COEFFS
 // coefficient in F of integral ideal M from aMmap or computed (and
 // stored in aMmap) using multiplicative relations.
 FieldElement Newform::aM(const long& M)
 {
   // largest M for which we already have the coefficient:
   long maxM = aMlist.size()-1;
+#ifdef DEBUG_COEFFS
+  cout<<"Fetching aM for M = " << M << endl;
+#endif
 
   // Compute and store a_M' for M'<=M if necessary,(doing nothing
   // unless M>maxM:
@@ -250,9 +271,15 @@ FieldElement Newform::aM(const long& M)
   for (long M1=maxM+1; M1<=M; M1++)
     {
       FieldElement a = compute_aM(M1);
+#ifdef DEBUG_COEFFS
+      cout<<" computed a_"<<M1<<" = " << a << endl;
+#endif
       aMlist.push_back(a);
       trace_list.push_back(a.trace().num());
     }
+#ifdef DEBUG_COEFFS
+  cout<<" returning a_"<<M<<" = " << aMlist[M] << endl;
+#endif
   return aMlist[M];
 }
 
@@ -260,27 +287,33 @@ FieldElement Newform::aM(const long& M)
 void Newform::compute_coefficients(int ntp, int verbose)
 {
   if (aPmap.empty())
-    compute_eigs(ntp, verbose);
+    {
+      cout << "In compute_coefficients("<<ntp<<"), aPmap is empty so computing eigs..."<<endl;
+      compute_eigs(ntp, verbose);
+      cout << "Done\n";
+      display(1,1,0);
+      cout << "----------------------------------------------"<<endl;
+    }
 
   // Compute a_m for m up to maxP (the max p for which we have aP).
   // This will trigger computation and storing of all coefficients up
   // to maxP and their traces.
   aMlist.clear(); aMlist.reserve(maxP+1);
   trace_list.clear(); trace_list.reserve(maxP+1);
-  auto a = aM(maxP);
+  aM(maxP); // value discarded, just done for the side-effect
 }
 
 // Principal eigenvalue of a linear combination of the above:
 FieldElement Newform::eig_lin_comb(const vector<long>& Plist, const vector<scalar>& coeffs,
                                    int verb)
 {
-  FieldElement a(F->zero());
-  auto Pi = Plist.begin();
-  auto ci = coeffs.begin();
-  while (Pi!=Plist.end())
+  FieldElement a(F.zero());
+  auto Pj = Plist.begin();
+  auto cj = coeffs.begin();
+  while (Pj!=Plist.end())
     {
-      scalar c = *ci++;
-      long P = *Pi++;
+      scalar c = *cj++;
+      long P = *Pj++;
       if (c!=0)
         a += eig_P(P) * to_ZZ(c);
     }
@@ -615,16 +648,6 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
   return;
 }
 
-FieldElement Newform::compute_one_eig(const matop& T, int verbose)
-{
-  if (verbose)
-    cout << "Computing eigenvalue of " << T.name() << "..." << flush;
-  FieldElement a(eig(T));
-  if (verbose)
-    cout << ":\t" << a << endl;
-  return a;
-}
-
 // Compute aP and AL-eigs and Fourier coeffs
 void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 {
@@ -636,12 +659,12 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 // Fill aPmap, dict of eigenvalues of first ntp good primes
 void Newform::compute_eigs(int ntp, int verbose)
 {
-  long p;
+  long p=2;
   primevar pr(ntp); // iterator over first ntp primes
   while(pr.ok())
     {
       p = pr;
-      pr++;
+      ++pr;
       if (!divides(p,N)) // compute AL eigs separately, later
         {
           if (verbose) cout << "Computing a_p for p = " << p << "..." << flush;
@@ -666,7 +689,7 @@ void Newform::compute_AL_eigs(int ntp, int verbose)
   if (verbose)
     cout << "Computing W(Q) eigenvalues for Q in " << nsp->badprimes << endl;
 
-  FieldElement zero(F->zero());
+  FieldElement zero(F.zero());
   for (auto q: nsp->badprimes)
     {
       if (verbose)
@@ -681,7 +704,7 @@ void Newform::compute_AL_eigs(int ntp, int verbose)
       // minus the AL eigenvalue if q||N else 0
       eQmap[q] = eq;
       sfe *= eq;
-      aPmap[q] = (divides(q*q,N)? zero: F->rational(-eq));
+      aPmap[q] = (divides(q*q,N)? zero: F.rational(-eq));
 
     } // end of loop over bad primes q
 } // end of Newform::compute_AL_eigs()
@@ -707,7 +730,7 @@ void Newform::display(int aP, int AL, int traces) const
   // Information about Hecke field:
 
   cout << " - Hecke field k_f = ";
-  cout << *F << endl;
+  cout << F << endl;
 
   if (AL)
     {
@@ -813,8 +836,8 @@ void Newform::set_index(int i)
     // On creation from scratch, F0 exists and F is a
     // polredabs/polredbest isomorphic field, but after reading from a
     // file only F is set.
-    if (F0!=NULL) F0->set_var(lab+string("0"));
-    F->set_var(lab);
+    F0.set_var(lab+string("0"));
+    F.set_var(lab);
   }
 
 // newform file output
@@ -830,8 +853,8 @@ void Newform::output_to_file() const
   out << dimension() << endl;
 
   // Hecke field:
-  out << F->str(1) << endl;  // raw=1
-  // cout << "Principal Hecke field output:\n" << F->str(1) << endl;  // raw=1
+  out << F.str(1) << endl;  // raw=1
+  // cout << "Principal Hecke field output:\n" << F.str(1) << endl;  // raw=1
 
   out << endl;
 
@@ -880,12 +903,12 @@ int Newform::input_from_file(int verb)
     cout << "--> dim = " << d << endl;
 
   // Hecke field:
-  F = new Field();
-  fdata >> &F;
+  F = Field();
+  fdata >> F;
   if (verb>1)
-    cout << "--> Hecke field is " << *F << endl;
+    cout << "--> Hecke field is " << F << endl;
   F0 = F;
-  Fiso = FieldIso(F0);
+  Fiso = FieldIso(&F0);
 
   if (verb>1)
     {
@@ -924,7 +947,7 @@ int Newform::input_from_file(int verb)
 
   // aP
   long P; maxP=0;
-  FieldElement aP(F->zero());
+  FieldElement aP(F.zero());
   // read whitespace, so if there are no aP on file it does not try to read any
   fdata >> ws;
   // keep reading lines until end of file
@@ -1061,7 +1084,7 @@ mat_m Newspace::heckeop(const matop& T, int cuspidal, int dual) const
   return to_mat_m(H1->calcop(T, cuspidal, dual, 0)); // 0 display
 }
 
-mat_m Newspace::heckeop(long& P, int cuspidal, int dual)
+mat_m Newspace::heckeop(const long& P, int cuspidal, int dual)
 {
   return heckeop(matop(P, N), cuspidal, dual);
 }
