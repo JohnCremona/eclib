@@ -28,26 +28,26 @@ map<ZZ,ZZ_pContext> ZZ_pContextCache;
 galois_field::galois_field(void)  //dummy
  :q(to_ZZ(2))
 {
-  //  cout<<"In galois_field constructor, calling default ZZ_p::init(2)"<<endl;
-  ZZ_p::init(q);
+  ZZ_pContext_init_or_restore(q);
 }
 
-galois_field::galois_field(const ZZ& qq)
- :q(qq)
+void ZZ_pContext_init_or_restore(const ZZ& q)
 {
-  //  cout<<"In galois_field constructor with q="<<qq<<endl;
   auto t = ZZ_pContextCache.find(q);
   if(t==ZZ_pContextCache.end())
     {
-      //      cout<<"Calling ZZ_p::init("<<q<<")"<<endl;
       ZZ_p::init(q);
-      //      cout<<"Storing ZZ_pContext for q="<<q<<endl;
       ZZ_pContext c; c.save();
       ZZ_pContextCache[q]=c;
     }
   else
     {
-      //      cout<<"Restoring ZZ_pContext for q="<<q<<endl;
       t->second.restore();
     }
+}
+
+galois_field::galois_field(const ZZ& qq)
+ :q(qq)
+{
+  ZZ_pContext_init_or_restore(qq);
 }

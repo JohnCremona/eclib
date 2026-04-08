@@ -66,7 +66,7 @@ public:
   sZmat<T>& mult_by_scalar_mod_p (T scal, const T& p);
   sZmat<T>& operator/= (T);
   Zmat<T> operator*( const Zmat<T>& );
-  void set_row ( int, int, int*, T* );
+  void set_row ( int, int, int const*, T const* );
   sZmat<T> select_rows(const Zvec<int>& rows) const;
   void setrow ( int i, const sZvec<T>& v); // i counts from 1
   void setrow ( int i, const Zvec<T>& v); // i counts from 1

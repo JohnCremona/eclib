@@ -83,8 +83,10 @@ sZmat<T>::sZmat(const sZmat<T>& sm)
       int d = sm.col[i][0];
       col[i] = new int[ d+1 ];
       val[i] = new T[ d ];
-      int *pos = col[i], *pi = sm.col[i];
-      T *values = val[i], *vi = sm.val[i];
+      int *pos = col[i];
+      int const *pi = sm.col[i];
+      T *values = val[i];
+      T const *vi = sm.val[i];
       *pos++ = *pi++;
       while (d--) { *values++ = *vi++; *pos++ = *pi++; }
     }
@@ -108,7 +110,8 @@ sZmat<T>::sZmat(const Zmat<T>& m)
       for( j = 0, k = 0; j < nco; j++ ) if( is_nonzero(*veci++) ) k++;
       col[i] = new int[ k+1 ];
       val[i] = new T[ k ];
-      T *values = val[i]; int *pos = col[i];
+      T *values = val[i];
+      int *pos = col[i];
       veci = m.entries.begin() + i*nco;
       *pos++ = k;
       for( l = 0, p = 1;  l < nco; l++, p++,veci++ )
@@ -130,7 +133,7 @@ sZmat<T>::~sZmat()
 // member functions and operators
 
 template<class T>
-void sZmat<T>::set_row( int i, int d, int* pos, T* values) // i counts from 0
+void sZmat<T>::set_row( int i, int d, int const *pos, T const *values) // i counts from 0
 {
   T *vali = val[i];
   int *coli = col[i];
@@ -261,8 +264,8 @@ sZvec<T> sZmat<T>::row(int i) const // extract row i as an svec, i counts from 1
   i--;
   sZvec<T> ans(nco);
   int d = *col[i];
-  T *values = val[i];
-  int *posi = col[i] + 1;
+  T const *values = val[i];
+  int const *posi = col[i] + 1;
   while( d-- )
     ans.set( (*posi++),  (*values++));
   return ans;
@@ -279,7 +282,7 @@ T sZmat<T>::elem(int i, int j)  const   /*returns (i,j) entry, 1 <= i <= nro
      if (d==0) return zero;
      int *first = col[i-1]+1;
      int *last = col[i-1]+1+d;
-     int *p = std::lower_bound(first, last, j);
+     int const *p = std::lower_bound(first, last, j);
      if ((p==last) || (*p!=j))
        return zero;
      return val[i-1][p-first];
@@ -331,7 +334,7 @@ sZmat<T>& sZmat<T>::operator=(const sZmat<T>& sm)
 	 col[i][0]=d;
        }
      T *values = val[i]; int *pos = col[i];
-     T *vi = sm.val[i]; int *pi = sm.col[i];
+     T const *vi = sm.val[i]; int const *pi = sm.col[i];
      *pos++ = *pi++;
      while (d--) { *values++ = *vi++; *pos++ = *pi++; }
    }
@@ -351,25 +354,25 @@ sZmat<T>& sZmat<T>::operator+=(const sZmat<T>& mat2)
 	  int d = *col[i], d2 = *mat2.col[i];
 	  int *pos1 = col[i] + 1, *pos2 = mat2.col[i]+1;
  	  T *val1 = val[i], *val2 = mat2.val[i];
-	  int *P = new int [ d + d2 + 1 ]; int* Pi=P+1;
+	  int *P = new int [ d + d2 + 1 ]; int* Pj=P+1;
 	  T *V = new T [ d + d2 ]; T* Vi=V;
 	  int k = 0;       /*k will be # of non-zero entries of sum*/
 	  while( d && d2 )
 	    { 
 	      if( *pos1 < *pos2 ) 
-		{  *Pi++ = *pos1++; *Vi++ = *val1++; d--; k++; }
+		{  *Pj++ = *pos1++; *Vi++ = *val1++; d--; k++; }
 	      else if(*pos2 < *pos1 )
-		{  *Pi++ = *pos2++; *Vi++ = *val2++; d2--; k++; }
+		{  *Pj++ = *pos2++; *Vi++ = *val2++; d2--; k++; }
 	      else {
 // 		cout<<"two entries at position "<<(*pos1)<<", "<<(*val1)<<" and "<<(*val2)<<endl;
-		*Pi = *pos1;
+		*Pj = *pos1;
 		T newval = (*val1++) + (*val2++);
 // 		cout<<"sum = "<<newval<<endl;
 		if( newval!=0 ) 
 		  {
 		    *Vi=newval;
-// 		    cout<<"nonzero, putting "<<(*V)<<" into sum row in position "<<(*Pi)<<endl; 
-		    Vi++; Pi++; k++;
+// 		    cout<<"nonzero, putting "<<(*V)<<" into sum row in position "<<(*Pj)<<endl; 
+		    Vi++; Pj++; k++;
 		  }
 // 		else cout<<"zero, omitting from sum row"<<endl;
 		pos1++; pos2++; d--; d2--;
@@ -380,9 +383,9 @@ sZmat<T>& sZmat<T>::operator+=(const sZmat<T>& mat2)
 // 	  showrow(P,V);
 // 	  cout<<endl;
 	  while( d2-- )
-	    { *Pi++ = *pos2++; *Vi++ = *val2++; k++; }
+	    { *Pj++ = *pos2++; *Vi++ = *val2++; k++; }
 	  while( d -- )
-	    { *Pi++ = *pos1++; *Vi++ = *val1++; k++; }
+	    { *Pj++ = *pos1++; *Vi++ = *val1++; k++; }
 	  P[0] = k;
 	  delete [] col[i]; col[i]=P;
 	  delete [] val[i]; val[i]=V;
@@ -405,26 +408,26 @@ sZmat<T>& sZmat<T>::operator-=(const sZmat<T>& mat2)
 	  int d = *col[i], d2 = *mat2.col[i];
 	  int *pos1 = col[i] + 1, *pos2 = mat2.col[i]+1;
  	  T *val1 = val[i], *val2 = mat2.val[i];
-	  int *P = new int [ d + d2 + 1 ]; int* Pi=P+1;
+	  int *P = new int [ d + d2 + 1 ]; int* Pj=P+1;
 	  T *V = new T [ d + d2 ]; T* Vi=V;
 	  int k = 0;       /*k will be # of non-zero entries of sum*/
 	  while( d && d2 )
 	    { 
 	      if( *pos1 < *pos2 ) 
-		{ *Pi++ = *pos1++; *Vi++ = *val1++; d--; k++; }
+		{ *Pj++ = *pos1++; *Vi++ = *val1++; d--; k++; }
 	      else if(*pos2 < *pos1 )
-		{  *Pi++ = *pos2++; *Vi++ = -(*val2++); d2--; k++; }
+		{  *Pj++ = *pos2++; *Vi++ = -(*val2++); d2--; k++; }
 	      else {
-		*Pi = *pos1;
+		*Pj = *pos1;
 		T newval = (*val1++) - (*val2++);
-		if( newval!=0 ) { *Vi++=newval; Pi++; k++; }
+		if( newval!=0 ) { *Vi++=newval; Pj++; k++; }
 		pos1++; pos2++; d--; d2--;
 	      }
 	    }
 	  while( d2-- )
-	    { *Pi++ = *pos2++; *Vi++ = -(*val2++); k++; }
+	    { *Pj++ = *pos2++; *Vi++ = -(*val2++); k++; }
 	  while( d -- )
-	    { *Pi++ = *pos1++; *Vi++ = *val1++; k++; }
+	    { *Pj++ = *pos1++; *Vi++ = *val1++; k++; }
 	  P[0] = k;
 	  delete [] col[i]; col[i]=P;
 	  delete [] val[i]; val[i]=V;
@@ -446,26 +449,26 @@ sZmat<T>& sZmat<T>::operator+= (const T& scal) // adds scalar*identity
       T *val1 = val[i];            // pointer to run along value vector
       int *P = new int [ d + 2 ];       //  new position vector
       T *V = new T [ d + 1 ]; //  new value vector
-      int* Pi=P+1;
+      int* Pj=P+1;
       T* Vi=V;
       int k = 0;           // k will be # of non-zero entries of new row
       while((d)&&(*pos1<(i+1)))  // just copy entries
 	{
-	  *Pi++ = *pos1++; *Vi++ = *val1++; k++; d--;
+	  *Pj++ = *pos1++; *Vi++ = *val1++; k++; d--;
 	}
       if(d&&(*pos1==(i+1)))     // add the scalar, see if it's zero
 	{
 	  T newval = (*val1)+scal;
-	  if( newval!=0) { *Vi++ = newval; *Pi++=*pos1; k++; }
+	  if( newval!=0) { *Vi++ = newval; *Pj++=*pos1; k++; }
 	  pos1++; val1++; d--;
 	}
       else // insert new entry
 	{
-	  *Vi++ = scal; *Pi++=(i+1); k++; 
+	  *Vi++ = scal; *Pj++=(i+1); k++; 
 	}
       while(d--) // copy remaining entries if necessary
 	{
-	  *Pi++ = *pos1++; *Vi++ = *val1++; k++; 
+	  *Pj++ = *pos1++; *Vi++ = *val1++; k++; 
 	}
       P[0] = k;
       delete [] col[i]; col[i]=P;
@@ -922,7 +925,7 @@ int get_population(const sZmat<T>& m )
     {
       int d = *(m.col[r]);
       if(d==0) continue;
-      int *pos = m.col[r] + 1;
+      int const *pos = m.col[r] + 1;
       while( d-- ) { count += ( is_nonzero(*pos++) );}
     }
   return count;
@@ -1019,9 +1022,7 @@ template<class T>
 int liftmats_chinese(const sZmat<T>& m1, T pr1, const sZmat<T>& m2, T pr2,
                       sZmat<T>& m, T& dd)
 {
-  T modulus=pr1*pr2;
-  T n,d,u,v;
-
+  T modulus=pr1*pr2, u, v;
   dd = bezout(pr1,pr2,u,v); //==1
   if (dd!=1) return 0;
 
@@ -1039,6 +1040,7 @@ int liftmats_chinese(const sZmat<T>& m1, T pr1, const sZmat<T>& m2, T pr2,
           }
 #endif
         m.val[nr][nc] = mij;
+        T n, d;  // lift mij mod modulus to n/d in Q
         if (modrat(mij,modulus,n,d))
           dd=lcm(d,dd);
         else
@@ -1050,15 +1052,15 @@ int liftmats_chinese(const sZmat<T>& m1, T pr1, const sZmat<T>& m2, T pr2,
             return 0;
           }
       }
-  dd=abs(dd);
+  dd=abs(dd); // dd is the LCM of denoms of all entries after lifting to Q.
 #ifdef DEBUG_CHINESE
   cout << "Common denominator = " << dd << "\n";
 #endif
-  // Second time through: rescale
+  // Second time through: rescale by dd
   for(int nr=0; nr<m.nro; nr++)
     for(int nc=0; nc<m.col[nr][0]; nc++)
       {
-        m.val[nr][nc] = mod(xmodmul((dd/d),m.val[nr][nc],modulus),modulus);
+        m.val[nr][nc] = mod(xmodmul(dd,m.val[nr][nc],modulus),modulus);
       }
   return 1;
 }

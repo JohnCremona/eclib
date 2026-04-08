@@ -485,13 +485,8 @@ vector<Point> m_torsion(Curvedata& E, long m, int exact)
 #ifdef DEBUG_TORSION
       cout<<" x = "<<xi<< " gives points "<<allP<<" of order dividing "<<m<<": "<<allP<<"\n";
 #endif
-      // std::copy_if(allP.begin(), allP.end(), std::back_inserter(m_tors),
-      //              [exact, m](Point& P){return ((!exact) || (order(P)==m));});
-      for (auto P : allP)
-        {
-          if ((!exact) || (order(P)==m))
-            m_tors.push_back(P);
-        }
+      std::copy_if(allP.begin(), allP.end(), std::back_inserter(m_tors),
+                   [exact, m](Point& P){return ((!exact) || (order(P)==m));});
     }
 
 #ifdef DEBUG_TORSION

@@ -29,6 +29,8 @@
 
 extern map<ZZ,ZZ_pContext> ZZ_pContextCache;
 
+void ZZ_pContext_init_or_restore(const ZZ& qq);
+
 class galois_field {
   ZZ q;
  public:

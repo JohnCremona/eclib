@@ -133,7 +133,6 @@ class qsieve {
 
   long coeffs_mod_p[QS_NUM_PRIMES][QS_MAX_DEGREE+1];
   ZZ bc[QS_MAX_DEGREE+1]; //The coefficients of f, multiplied by powers of b
-  ZZ fff, tmp, tmp2;   //Some multi-precision integer variables 
   long sieve_primes1;  //The number of primes used for the first sieving stage
   long sieve_primes2; //The number of primes used for the both sieving stages
   bit_array *survivors;

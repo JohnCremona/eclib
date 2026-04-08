@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/subspace.h"
 #include "eclib/saturate.h"
 #include "eclib/tlss.h"
@@ -40,7 +40,7 @@ void saturator::reset_points(const vector<Point>& PP)
   rank=Plistx.size();
   TLimage=mat_l(0,rank); //  holds TL image in echelon form
   TLrank=0;
-  qvar.init(); qvar++; qvar++;   // skip past 2 and 3
+  qvar.init(); ++qvar; ++qvar;   // skip past 2 and 3
   stuck_counter=0;
   the_index_bound = ZZ(0);
 }
@@ -76,9 +76,9 @@ int saturator::test_saturation(int pp, int ms)
   Plistx=Plist;
   Plistp = pCoTorsion(AllTorsion,p);
   int npcot = Plistp.size();
-  if(npcot>0) 
+  if(npcot>0)
     {
-      if(verbose>1) 
+      if(verbose>1)
 	cout<< "saturator: adding "<<npcot<<" extra points before sieving: "
 	    <<Plistp<<endl;
       int i;
@@ -87,14 +87,14 @@ int saturator::test_saturation(int pp, int ms)
   rank=Plistx.size();
   TLimage=mat_l(0,rank); //  holds TL image in echelon form
   TLrank=0;
-  
+
   if(use_div_pols)
     {
       pdivpol = division_polynomial(E,p);
       //cout<<p<<"-division poly = "<<pdivpol<<endl;
     }
 
-  qvar.init(); qvar++; qvar++;   // skip past 2 and 3
+  qvar.init(); ++qvar; ++qvar;   // skip past 2 and 3
   stuck_counter=0;
   log_index=0;
   while((TLrank<rank)&&(stuck_counter<ms)) nextq();
@@ -114,8 +114,8 @@ void saturator::nextq()
   TLSS sieve; ZZ q;
   while (ntp==0) /* (ntp<2) */
     {
-      qvar++; q=qvar; 
-      if(!qvar.ok()) 
+      ++qvar; q=qvar;
+      if(!qvar.ok())
 	{
 	  if(verbose>1)
 	    cout<<"*** not enough precomputed primes for saturation (max = "
@@ -124,12 +124,12 @@ void saturator::nextq()
 	  if(verbose>1)
 	    cout<<"done, now max prime = "<<maxprime()<<endl;
 	  qvar.init();
-	  while(qvar.value()<=q) qvar++;
-	  q=qvar; 
+	  while(qvar.value()<=q) ++qvar;
+	  q=qvar;
 	  if(verbose>1)
 	    cout<<"Continuing with q="<<q<<endl;
 	}
-      while(div(q,disc)) {qvar++; q=qvar; }
+      while(div(q,disc)) {++qvar; q=qvar; }
       if(q==p) continue;
 
       if(verbose>2) cout<<"Trying q="<<q<<endl;
@@ -193,7 +193,7 @@ void saturator::nextq()
       maxp=p;
     }
   mat_l TLim = sieve.map_points(Plistx);
-  if(verbose>2) 
+  if(verbose>2)
     {
       cout<<"Adding "<<ntp<<" rows to TL matrix;\n";
       cout<<TLim<<endl;
@@ -202,7 +202,7 @@ void saturator::nextq()
   vec_i pcols, npcols; // not used
   long newTLrank, ny;
   mat_l newTLmat = echmodp(rowcat(TLimage,TLim),pcols, npcols, newTLrank, ny, p);
-  if(verbose>2) 
+  if(verbose>2)
     {
       cout<<"New rank = "<<newTLrank<<endl;
       cout<<"New TL matrix = "<<newTLmat<<endl;
@@ -210,13 +210,13 @@ void saturator::nextq()
   if(newTLrank==TLrank)
     {
       stuck_counter++;
-      if(verbose>1) 
+      if(verbose>1)
 	cout<<"Stuck at rank "<<TLrank<<" for the last "<<stuck_counter<<" primes"<<endl;
     }
-  else 
+  else
     {
       stuck_counter=0;
-      if(verbose>1) 
+      if(verbose>1)
 	cout<<"rank increases by "<<(newTLrank-TLrank)<<" to "<<newTLrank<<endl;
       TLimage=newTLmat;
       TLrank=newTLrank;
@@ -304,7 +304,7 @@ int saturator::enlarge()
   // reset TL matrix and q iteration
   TLimage=mat_l(0,rank); //  holds TL image in echelon form
   TLrank=0;
-  qvar.init(); qvar++; qvar++;   // skip past 2 and 3
+  qvar.init(); ++qvar; ++qvar;   // skip past 2 and 3
   stuck_counter=0;
   return 1;
 }
@@ -359,8 +359,8 @@ vector<long> iv2lv(const vector<int>& v)
   return ans;
 }
 
-int saturator::do_saturation(vector<long> plist, 
-			     long& index, vector<long>& unsat, 
+int saturator::do_saturation(vector<long> plist,
+			     long& index, vector<long>& unsat,
 			     int maxntries)
 {
   vector<int>iplist = lv2iv(plist), iunsat;
@@ -369,42 +369,42 @@ int saturator::do_saturation(vector<long> plist,
   return ans;
 }
 
-int saturator::do_saturation(vector<int> plist, 
-			     long& index, vector<int>& unsat, 
+int saturator::do_saturation(vector<int> plist,
+			     long& index, vector<int>& unsat,
 			     int maxntries)
 {
   int success=1;
   index=1;
   if(verbose) cout<<"Checking saturation at "<<plist<<endl;
-  for( const int& p : plist)
+  for( const int& pi : plist)
     {
-      if (trivially_saturated(p))
+      if (trivially_saturated(pi))
         continue; // to the next prime in the list
-      if(verbose) cout<<"Checking "<<p<<"-saturation "<<endl;
-      int pi = do_saturation(p,maxntries); // = log_index if >=0, -1 if failed
-      if(pi<0)
+      if(verbose) cout<<"Checking "<<pi<<"-saturation "<<endl;
+      int i = do_saturation(pi,maxntries); // = log_index if >=0, -1 if failed
+      if(i<0)
 	{
-	  cout<<p<<"-saturation failed!"<<endl;
-	  unsat.push_back(p);
+	  cout<<pi<<"-saturation failed!"<<endl;
+	  unsat.push_back(pi);
 	  success=0;
 	}
       else
 	{
 	  if(verbose)
 	    {
-	      if(pi>0)
+	      if(i>0)
 		{
-		  cout<<"Points have successfully been "<<p
+		  cout<<"Points have successfully been "<<pi
 		      <<"-saturated (max q used = "<<get_q()<<")"<<endl;
-		  cout<<"Index gain = "<<p<<"^"<<pi<<endl;
+		  cout<<"Index gain = "<<pi<<"^"<<i<<endl;
 		}
-	      if(pi==0)
+	      if(i==0)
 		{
-		  cout<<"Points were proved "<<p
+		  cout<<"Points were proved "<<pi
 		      <<"-saturated (max q used = "<<get_q()<<")"<<endl;
 		}
 	    }
-	  while(pi--) index *= p;
+	  while(i--) index *= pi;
 	}
     }
   return success;
@@ -420,8 +420,8 @@ int saturator::saturate(vector<long>& unsat, long& index,
 
   vector<long> satprimes;
   primevar pr;
-  while(pr.value()<sat_low_bd) pr++;
-  int p=pr.value();
+  while(pr.value()<sat_low_bd) ++pr;
+  int pi = pr.value();
 
   ZZ ib = get_index_bound();
   if(verbose)
@@ -460,11 +460,11 @@ int saturator::saturate(vector<long>& unsat, long& index,
           ib = sat_bd;
         }
     }
-  while(p<=ib)
+  while(pi<=ib)
     {
       //cout<<"adding p="<<p<<" to saturation list"<<endl;
-      satprimes.push_back(p);
-      pr++; p=pr.value();
+      satprimes.push_back(pi);
+      ++pr; pi=pr.value();
     }
 
   // under the egr option, the computed bound is on the saturation
@@ -507,8 +507,8 @@ void saturator::show_q_tally()
 }
 
 
-// This function returns a list of 0,1 or 2 points which generate 
-// torsion modulo p*torsion:  
+// This function returns a list of 0,1 or 2 points which generate
+// torsion modulo p*torsion:
 //
 // 0 if p ndiv #torsion; else
 // 1 (a generator) if torsion is cyclic; else
@@ -516,40 +516,40 @@ void saturator::show_q_tally()
 
 vector<Point> pCoTorsion(const vector<Point>& AllTorsion, int p)
 {
-  long i, maxorder=0, ntorsion = AllTorsion.size();
+  long i, maxorder=0, ntor = AllTorsion.size();
   vector<Point> ans;
 
   // Case 0:
 
-  if(ndivides(p,ntorsion)) return ans; // empty
+  if(ndivides(p,ntor)) return ans; // empty
 
   //  find point Q of maximal order:
 
   Point P,Q;
-  for(i=0; (i<ntorsion)&&(maxorder<ntorsion); i++) 
+  for(i=0; (i<ntor)&&(maxorder<ntor); i++)
     {
       P = AllTorsion[i];
-      if(order(P)>maxorder) 
+      if(order(P)>maxorder)
 	{
 	  Q=P; maxorder=order(Q);
 	}
     }
   ans.push_back(Q);
-  
-  // Case 1: 
 
-  if((maxorder==ntorsion)||(p>2)) return ans; // p-torsion is cyclic, return Q (generator)
+  // Case 1:
+
+  if((maxorder==ntor)||(p>2)) return ans; // p-torsion is cyclic, return Q (generator)
 
   // Now order is 4, 8, 12 and torsion is not cyclic: add either
   // 2-torsion point not a multiple of Q:
 
   Q = (maxorder/2)*Q; // the 2-torsion point to avoid
-  for(i=0; i<ntorsion; i++) 
+  for(i=0; i<ntor; i++)
     {
       P = AllTorsion[i];
-      if((order(P)==2) && (Q != P)) 
+      if((order(P)==2) && (Q != P))
 	{
-	  ans.push_back(P);     
+	  ans.push_back(P);
 	  return ans;
 	}
     }
@@ -604,7 +604,7 @@ ZZ index_bound(vector<Point>& points,
     cout<<"Regulator of input points = "<<reg<<endl;
 
   bigfloat gamma=lattice_const(npts);
-  if(verbose) 
+  if(verbose)
     cout<<"Lattice constant = "<<gamma<<endl;
 
   // If egr==1, find regulator of egr subgroup
@@ -645,18 +645,18 @@ ZZ index_bound(vector<Point>& points,
   ZZ x_shift;
   Curvedata C_opt = opt_x_shift(*C,x_shift);
   int shift_flag = !is_zero(x_shift);
-  if(shift_flag&&verbose) 
+  if(shift_flag&&verbose)
     cout<<"Using shifted model "<<(Curve)C_opt<<" for searching"<<endl;
 
-  double hc; 
+  double hc;
   if(egr)
     hc = egr_height_constant(C_opt);
-  else  
+  else
     hc = height_constant(C_opt);
-  if(verbose) 
+  if(verbose)
     cout<<"height bound constant for shifted curve  = "<<hc<<endl;
-  double hc1; 
-  doublify(reg,hc1); 
+  double hc1;
+  doublify(reg,hc1);
   hc1 = (hc+hc1/(3.9));
   if(hc1>12) hc1=12;    // so hc1 = min(12,R/4+ht.const.)
   double hcx = hc1-hc; // = min(12-ht.const., R/4)
@@ -668,11 +668,11 @@ ZZ index_bound(vector<Point>& points,
       else
 	cout<<"Searching for all points to naive height "<<hc1<<endl;
     }
-  if(hc1>max_search_bound) 
+  if(hc1>max_search_bound)
     {
       cout<<"\n***Warning: search bound of "<<hc1
 	  <<" reduced to "<<max_search_bound
-	  <<" -- points may not be saturated***"<<endl;     
+	  <<" -- points may not be saturated***"<<endl;
       hc1=max_search_bound;
     }
   point_min_height_finder pmh(&C_opt,egr,verbose);
@@ -680,24 +680,24 @@ ZZ index_bound(vector<Point>& points,
   bigfloat lambda=pmh.get_min_ht();
   newpoints = pmh.points();
   //  cout<<"Before shifting, newpoints = "<<newpoints<<endl;
-  if(shift_flag) 
+  if(shift_flag)
     for(unsigned int i=0; i<newpoints.size(); i++)
       newpoints[i] = transform(newpoints[i],C,ZZ(1),
 			   x_shift,ZZ(0),ZZ(0),1);
   //  cout<<"After shifting, newpoints = "<<newpoints<<endl;
   Point Pmin = pmh.get_min_ht_point();
   if(lambda==0)
-    {	  
+    {
       lambda=hcx;
-      if(verbose) 
+      if(verbose)
 	cout<<"No points found, lambda = "<<lambda<<endl;
     }
   else
     {
-      if(verbose) 
+      if(verbose)
 	cout<<"Min height of points found = "<<lambda<<" (point "<<Pmin<<")"<<endl;
       if(lambda>hcx) lambda=hcx;
-      if(verbose) 
+      if(verbose)
 	cout<<"Using lambda = "<<lambda<<endl;
     }
 #endif

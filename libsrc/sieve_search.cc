@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 // File        : sieve_search.c
 // Author      : John Cremona, Sophie Labour
 //		 Adaption of M. Stoll's and J. Cremona's code
@@ -78,15 +78,15 @@ void qsieve::init_data()
       is_f_square[i]=new char[QS_MAX_PRIME];
     }
   init_all();//initialize bits[] and squares[][]
-  // Set global variables to their default values 
+  // Set global variables to their default values
   num_inter = 0;       // No interval up to now ([-hlim,hlim]
-  sieve_primes1 = -1;  // automatic determination of this number 
-  sieve_primes2 = -1;  // automatic determination of this number 
-  no_check = 0;        // do the check by default 
-  points_at_infty = 1; // also find points at infinity 
-  b_low = 1;           // denominators go from 1 to h 
+  sieve_primes1 = -1;  // automatic determination of this number
+  sieve_primes2 = -1;  // automatic determination of this number
+  no_check = 0;        // do the check by default
+  points_at_infty = 1; // also find points at infinity
+  b_low = 1;           // denominators go from 1 to h
   b_high = height;
-  use_opt = 1;         // use even denominator optimisation 
+  use_opt = 1;         // use even denominator optimisation
   array_size = QS_DEFAULT_SIZE;
 }
 
@@ -101,7 +101,7 @@ qsieve::qsieve(point_processor* acurve, int deg, vector<ZZ> coeff, int verb)
   cout<<"coeff = [";
   for (i=0;i<=degree;i++) cout<<c[i]<<" ";
   cout<<"]"<<endl;
-#endif  
+#endif
 
   set_height(QS_DEFAULT_HEIGHT);
   init_data();
@@ -119,7 +119,7 @@ qsieve::qsieve(point_processor* acurve, int deg, vector<ZZ> coeff, bigfloat h_li
   cout<<"coeff = [";
   for (i=0;i<=degree;i++) cout<<c[i]<<" ";
   cout<<"]"<<endl;
-#endif  
+#endif
 
   set_height(h_lim);
   init_data();
@@ -136,7 +136,7 @@ qsieve::qsieve(point_processor* acurve, int deg, vector<ZZ> coeff, double h_lim,
   cout<<"coeff = [";
   for (i=0;i<=degree;i++) cout<<c[i]<<" ";
   cout<<"]"<<endl;
-#endif  
+#endif
 
   init_all();
   height=(long)(floor(exp(h_lim)));
@@ -147,18 +147,18 @@ qsieve::qsieve(point_processor* acurve, int deg, vector<ZZ> coeff, double h_lim,
   w_upper=upper/QS_LONG_LENGTH;
   w_lower=lower/QS_LONG_LENGTH;
 }*/
-      
+
 void qsieve::init_all()
 {
   if (!init_made)
     {
       init_made=1;
-      // intialize bits[] 
+      // intialize bits[]
       bit_array bit = (bit_array)1;
       long n;
       for(n = 0; n < (long)QS_LONG_LENGTH; n++) { bits[n] = bit; bit <<= 1; }
-      
-      // initialize squares[][] 
+
+      // initialize squares[][]
       //      if (verbose)
       //	cout<<"Init squares"<<endl;
       long a, pn;
@@ -167,7 +167,7 @@ void qsieve::init_all()
 	  long p = prime[pn];
 	  for(a = 0 ; a < p ; a++) squares[pn][a] = 0;
 	  for(a = 0 ; a < p; a += 2) squares[pn][(a*a)%p] = 1;
-	  // if p==2 then this does not work! 
+	  // if p==2 then this does not work!
 	}
     }
 #ifdef DEBUG_QS
@@ -204,9 +204,9 @@ void qsieve::set_intervals(vector<double> interv,int nb_bnd,int start_low,int po
     the_min=0;
   else
     the_min=-height;
-  
+
   while (j<nb_bnd && interv[j]<the_min) {j++;}
-  
+
   if (j==nb_bnd)
     {
       domain[0].low=the_min;
@@ -234,7 +234,7 @@ void qsieve::set_intervals(vector<double> interv,int nb_bnd,int start_low,int po
     {
       if (j&1)//lower bound
 	{
-	  domain[0].low=interv[j]; 
+	  domain[0].low=interv[j];
 	  uplow++;
 	}
       else //upper bound
@@ -277,7 +277,7 @@ void qsieve::set_intervals(vector<double> interv,int nb_bnd,int start_low,int po
 	    }
 	}
     }
-  
+
   if (uplow&1) //finish last interval
     {
       domain[num_inter].up=height;
@@ -297,16 +297,16 @@ void qsieve::set_intervals(vector<double> interv,int nb_bnd,int start_low,int po
 void qsieve::set_sieve_primes1(long sp1)
 {
   sieve_primes1=sp1;
-  if (sieve_primes1 < 0) 
+  if (sieve_primes1 < 0)
     sieve_primes1 = 0;
   else
-    { 
+    {
       if (sieve_primes2 >= 0 && sieve_primes1 > sieve_primes2)
 	sieve_primes1 = sieve_primes2;
-      else 
-	{ 
-	  if(sieve_primes1 > QS_NUM_PRIMES) 
-	    sieve_primes1 = QS_NUM_PRIMES; 
+      else
+	{
+	  if(sieve_primes1 > QS_NUM_PRIMES)
+	    sieve_primes1 = QS_NUM_PRIMES;
 	}
     }
 }
@@ -314,16 +314,16 @@ void qsieve::set_sieve_primes1(long sp1)
 void qsieve::set_sieve_primes2(long sp2)
 {
   sieve_primes2=sp2;
-  if(sieve_primes2 < 0) 
+  if(sieve_primes2 < 0)
     sieve_primes2 = 0;
   else
-    { 
+    {
       if(sieve_primes1 >= 0 && sieve_primes1 > sieve_primes2)
 	sieve_primes2 = sieve_primes1;
-      else 
-	{ 
-	  if(sieve_primes2 > QS_NUM_PRIMES) 
-	    sieve_primes2 = QS_NUM_PRIMES; 
+      else
+	{
+	  if(sieve_primes2 > QS_NUM_PRIMES)
+	    sieve_primes2 = QS_NUM_PRIMES;
 	}
     }
 }
@@ -344,18 +344,18 @@ void qsieve::init_f()
 	t1 = posmod(c[0],8);
 	t2 = posmod(c[1],4) + 2*posmod(c[2],2);
 	switch(t1)
-	  { 
+	  {
 	  case 2: case 3: case 6:
 	  case 7: if((t2&1) == 0) odd_nums = 1; break;
 	  case 5: if((t2&3) == 0) odd_nums = 1; break;
-	  } 
+	  }
       }
-    
+
     if(check_denom)
-      {//check if we can exclude denominators divisible by 
-       //low powers of 2,3,5, or 7 
+      {//check if we can exclude denominators divisible by
+       //low powers of 2,3,5, or 7
 	unsigned long t, t1, t2, t3;
-	//check powers of 2 first 
+	//check powers of 2 first
 	t1 = posmod(c[degree],8);
 	t2 = posmod(c[degree-1],4);
 	t3 = posmod(c[degree-2],2);
@@ -384,7 +384,7 @@ void qsieve::init_f()
 	  cout<<forbidden[i]<<", ";
 	cout<<endl;
 #endif
-	//check 3, 5, 7 
+	//check 3, 5, 7
 	t = posmod(c[degree],9);
 	t1 = t%3;
 	t2 = posmod(c[degree-1],3);
@@ -393,14 +393,14 @@ void qsieve::init_f()
 	else
 	  { if(t == 3 || t == 6)
 	    { forbidden[fdc] = (t2 == 0) ? 3 : 9; fdc++; }
-	  } 
+	  }
 #ifdef DEBUG_FORBIDDEN
 	cout<<"Forbidden divisors of the denominator (3): fdc="<<fdc<<endl;
 	for (i=0;forbidden[i];i++)
 	  cout<<forbidden[i]<<", ";
 	cout<<endl;
 #endif
-        
+
 	t = posmod(c[degree],25);
 	t1 = t%5;
 	t2 = posmod(c[degree-1],5);
@@ -416,19 +416,19 @@ void qsieve::init_f()
 	  cout<<forbidden[i]<<", ";
 	cout<<endl;
 #endif
-	
+
 	t = posmod(c[degree],49);
 	t1 = t%7;
 	t2 = posmod(c[degree-1],7);
 	if((t1 == 3) || (t1 == 5) || (t1 == 6))
-	  { forbidden[fdc] = 7; fdc++; 
+	  { forbidden[fdc] = 7; fdc++;
 #ifdef DEBUG_FORBIDDEN
 	    cout<<"Adding 7 to forbidden list, now fdc="<<fdc<<endl;
 #endif
 	  }
 	else
 	  { if((t != 0) && (t1 == 0))
-	    { forbidden[fdc] = ((t2 == 0) ? 7 : 49); fdc++; 
+	    { forbidden[fdc] = ((t2 == 0) ? 7 : 49); fdc++;
 #ifdef DEBUG_FORBIDDEN
 	    cout<<"Adding 7 or 49 to forbidden list, now fdc="<<fdc<<endl;
 #endif
@@ -473,7 +473,7 @@ void qsieve::init_f()
 	else
 	  { prec[pn].r = (double)np/(double)p;
 	  /* denominator divisible by p is excluded */
-	  if(check_denom && (p > 7)) { forbidden[fdc] = p; fdc++; } 
+	  if(check_denom && (p > 7)) { forbidden[fdc] = p; fdc++; }
 	  }
       }
 #ifdef DEBUG_FORBIDDEN
@@ -483,11 +483,11 @@ void qsieve::init_f()
 	cout<<endl;
 #endif
 
-    // sort the array to get at the best primes 
+    // sort the array to get at the best primes
     qsort(prec, QS_NUM_PRIMES, sizeof(entry), compare_entries);
     //Determine the number of sieving primes:
     //First stage: take smallest n such that prod(j<=n) prob(j) * ratio1 < 1.
-    //Second stage: take smallest N such that (1-prob(N+1)) * ratio2 < 1. 
+    //Second stage: take smallest N such that (1-prob(N+1)) * ratio2 < 1.
     if(sieve_primes1 < 0)
       { long n = 0, m = (sieve_primes2 >= 0) ? sieve_primes2-1 : QS_NUM_PRIMES-1;
       double prod;
@@ -536,7 +536,7 @@ void qsieve::init_f()
 		  <<prec[QS_NUM_PRIMES-1].r<<endl<<endl;
 	  }
       }
-    //terminate array of forbidden divisors 
+    //terminate array of forbidden divisors
     if(check_denom)
       { forbidden[fdc] = 0;
       if(fdc == 0) check_denom = 0;
@@ -556,7 +556,7 @@ void qsieve::init_f()
   {
     //help is an array for temporarily storing the sieving information. Bit j of help[b][a0] says whether f(a/b) is a square mod p, where a = a0*QS_LONG_LENGTH + j. a runs from 0 to k*p - 1, where k*p is the least multiple of p exceeding QS_LONG_LENGTH.
     bit_array help[QS_MAX_PRIME][QS_MAX_PRIME / QS_LONG_LENGTH + 2];
-    //help2 plays the same role when using the optimisation for even denoms 
+    //help2 plays the same role when using the optimisation for even denoms
     bit_array help2[QS_MAX_PRIME][QS_MAX_PRIME / QS_LONG_LENGTH + 2];
 
     sieve= new bit_array**[sieve_primes2];
@@ -570,7 +570,7 @@ void qsieve::init_f()
 	long p = prime[pnn[pn]];
 	sieve[pn]=new bit_array*[p+1];
 	sieve2[pn]=new bit_array*[p+1];
-	//kp = k*p such that k = 1 if p > tech and k*p maximal <= tech otherwise 
+	//kp = k*p such that k = 1 if p > tech and k*p maximal <= tech otherwise
 	if(p > tech)
 	  kp = p;
 	else
@@ -590,20 +590,20 @@ void qsieve::init_f()
 	  {
 	    //initialize help[][]
 	    for(b = 0; b < bb; b++)
-	      for(a = 0; a <= aa; a++) 
+	      for(a = 0; a <= aa; a++)
 		help[b][a] = bit_zero;
 	    if(p < (long)QS_LONG_LENGTH) //small p
 	      for(a = 0; a < p; a++)
 		{
 		  if(is_f_square[pnn[pn]][a])
 		    for(b = 1; b < bb; b++)
-		      { 
+		      {
 			long ab = (a * b) % p;
 			for(i = 0; i <= (long)QS_LONG_LENGTH/p; i++) //repeat the pattern
 			  {
 			    help[b][ab>>QS_LONG_SHIFT] |= bits[ab & QS_LONG_MASK];
 			    ab += p;
-			  } 
+			  }
 		      }
 		}
 	    else
@@ -611,38 +611,38 @@ void qsieve::init_f()
 		{
 		  if(is_f_square[pnn[pn]][a])
 		    for(b = 1; b < bb; b++)
-		      { 
+		      {
 			long ab = (a * b) % p;
 			help[b][ab>>QS_LONG_SHIFT] |= bits[ab & QS_LONG_MASK];
 		      }
 		}
 	  }
-	
+
 	if(odd_nums || use_opt)
-	  { // prepare help2 
+	  { // prepare help2
 	    for(b = 0; b < bb; b++)
 	      for(a = 0; a <= aa; a++) help2[b][a] = bit_zero;
 	    if(p < (long)QS_LONG_LENGTH)
 	      for(a = 0; a < p; a++)
-		{ 
+		{
 		  if(is_f_square[pnn[pn]][a])
 		    for(b = 1; b < bb; b++)
-		      { 
+		      {
 			long ab = (a * b) % p;
 			ab = (ab&1) ? (ab-1)>>1 : (ab-1+p)>>1;
 			for(i = 0; i <= (long)QS_LONG_LENGTH / p; i++)
 			  {
 			    help2[b][ab>>QS_LONG_SHIFT] |= bits[ab & QS_LONG_MASK];
 			    ab += p;
-			  } 
+			  }
 		      }
 		}
 	    else
 	      for(a = 0; a < p; a++)
-		{ 
+		{
 		  if(is_f_square[pnn[pn]][a])
 		    for(b = 1; b < bb; b++)
-		      { 
+		      {
 			long ab = (a * b) % p;
 			ab = (ab&1) ? (ab-1)>>1 : (ab-1+p)>>1;
 			help2[b][ab>>QS_LONG_SHIFT] |= bits[ab & QS_LONG_MASK];
@@ -651,11 +651,11 @@ void qsieve::init_f()
 	  }
 
 	if(!odd_nums)
-	  { 
-	    //fill that bit pattern into sieve[pn][][] 
+	  {
+	    //fill that bit pattern into sieve[pn][][]
 	    //sieve[pn][b][a0] has the same semantics as help[b][a0], but here, a0 runs from 0 to kp-1 and all bits are filled.
 	    for(b = 1; b < bb; b++)
-	      { 
+	      {
 		bit_array *si = sieve[pn][b];
 		bit_array *he = help[b];
 		long p1 = (QS_LONG_LENGTH/p + 1) * p;
@@ -663,25 +663,25 @@ void qsieve::init_f()
 		long diff = QS_LONG_LENGTH - diff_shift;
 		bit_array diff_mask = ~(all_ones<<diff);
 		long wp = p1>>QS_LONG_SHIFT;
-		for(a = 0; a < wp; a++) 
+		for(a = 0; a < wp; a++)
 		  si[a] = he[a];
 		long a1;
 		for(a1 = a ; a < p; a++)
 		  {
 		    he[a1] |= (he[(a1 == wp) ? 0 : a1 + 1] & diff_mask)<<diff_shift;
 		    si[a] = he[a1];
-		    if(a1 == wp) 
-		      a1 = 0; 
+		    if(a1 == wp)
+		      a1 = 0;
 		    else a1++;
 		    he[a1] >>= diff;
-		  } 
+		  }
 	      }
 	  }
 
 	if(odd_nums || use_opt)
 	  { //fill in sieve2 for the case of only odd numerators */
 	    for(b = 1; b < bb; b++)
-	      { 
+	      {
 		bit_array *si = sieve2[pn][b];
 		bit_array *he = help2[b];
 		long p1 = (QS_LONG_LENGTH/p + 1) * p;
@@ -689,22 +689,22 @@ void qsieve::init_f()
 		long diff = QS_LONG_LENGTH - diff_shift;
 		bit_array diff_mask = ~(all_ones<<diff);
 		long wp = p1>>QS_LONG_SHIFT;
-		//copy the first chunk from help2[b][] into sieve2[pn][b][] 
+		//copy the first chunk from help2[b][] into sieve2[pn][b][]
 		for(a = 0; a < wp; a++) si[a] = he[a];
-		//now keep repeating the bit pattern, rotating it in help2 
+		//now keep repeating the bit pattern, rotating it in help2
 		long a1;
 		for(a1 = a ; a < kp; a++)
-		  { 
+		  {
 		    he[a1] |= (he[(a1 == wp) ? 0 : a1 + 1] & diff_mask)<<diff_shift;
 		    si[a] = he[a1];
 		    if(a1 == wp) a1 = 0; else a1++;
 		    he[a1] >>= diff;
-		  } 
-	      }      
+		  }
+	      }
 	  }
 
-	// implement check for denominator divisble by p 
-	{ 
+	// implement check for denominator divisble by p
+	{
 	  bit_array pattern = bit_zero;
 	  if((degree & 1L) || squares[pnn[pn]][coeffs_mod_p[pnn[pn]][degree]])
 	    pattern = ~bit_zero;
@@ -713,7 +713,7 @@ void qsieve::init_f()
 	  if(odd_nums || use_opt)
 	    for(a = 0; a < kp; a++) sieve2[pn][0][a] = pattern;
 	}
-      }    
+      }
   }
 }
 
@@ -729,23 +729,23 @@ long qsieve::sift(long b)
 
   int use_odd_nums; //flag that tells whether to use only odd numerators
   use_odd_nums = odd_nums || (!(b&1) && use_opt);
-  { 
+  {
     long n;
     if(use_odd_nums)
       for(n = 0; n < sieve_primes2; n++)
-	{ 
+	{
 	  long pn = pnn[n], p = prime[pn];
 	  sieves[n].ptr = &sieve2[n][b%p][0];
 	}
     else
       for(n = 0; n < sieve_primes2; n++)
-      { 
+      {
 	long pn = pnn[n], p = prime[pn];
         sieves[n].ptr = &sieve[n][b%p][0];
-      }   
+      }
   }
 
-  long low, high, range;
+  long low, high, rng;
   long w_low, w_high;
   long w_low0, w_high0;
   compute_bc = 1;
@@ -756,8 +756,8 @@ long qsieve::sift(long b)
 #endif
 
   for(k = 0; k < num_inter; k++)
-    { //Determine relevant interval [low, high[ of numerators. 
-      { 
+    { //Determine relevant interval [low, high[ of numerators.
+      {
 	double hb = (double)height/(double)b;
 	interval inter = domain[k];
 #ifdef DEBUG_QS
@@ -767,24 +767,24 @@ long qsieve::sift(long b)
 	if(inter.low <= -hb)
 	  low = -height;
 	else
-	  { 
-	    if(inter.low > hb) 
-	      return(total); 
+	  {
+	    if(inter.low > hb)
+	      return(total);
 	    low = (long)floor(b*inter.low);
 	  }
 	if(inter.up >= hb)
 	  high = height;
 	else
-	  { 
-	    if(inter.up < -hb) 
+	  {
+	    if(inter.up < -hb)
 	      high = -height-1;
-	    else 
+	    else
 	      high = (long)ceil(b*inter.up);
 	  }
 	high++;
       }
       if(use_odd_nums)
-	{ 
+	{
 	  low >>= 1;
 	  high--; high >>= 1;
 	}
@@ -793,29 +793,29 @@ long qsieve::sift(long b)
 #endif
 
       if(low < high)
-	{ //Now the range of longwords (= bit_arrays) 
+	{ //Now the range of longwords (= bit_arrays)
 	  w_low = w_floor(low, QS_LONG_LENGTH);
 	  w_high = w_ceil(high, QS_LONG_LENGTH);
 	  for(w_low0 = w_low; w_low0 < w_high; w_low0 += array_size)
 	    { //array_size is the size of the array of survivors
 	      w_high0 = w_low0 + array_size;
-	      if(w_high0 > w_high) 
+	      if(w_high0 > w_high)
 		w_high0 = w_high;
-	      range = w_high0 - w_low0;
-	      {//initialise the bits 
+	      rng = w_high0 - w_low0;
+	      {//initialise the bits
 		bit_array *surv;
 		long i;
 		surv = survivors; // &survivors[0];
 		if(!use_odd_nums && !(b&1))
-		  for(i = range; i; i--) *surv++ = QS_HALF_MASK;
+		  for(i = rng; i; i--) *surv++ = QS_HALF_MASK;
 		else
-		  for(i = range; i; i--) *surv++ = ~bit_zero;
+		  for(i = rng; i; i--) *surv++ = ~bit_zero;
 	      }
 	      if(w_low0 == w_low)
 		survivors[0] &= (all_ones)<<(low - QS_LONG_LENGTH * w_low);
 	      if(w_high0 == w_high)
-		survivors[range-1] &= (all_ones)>>(QS_LONG_LENGTH * w_high - high);
-	      { 
+		survivors[rng-1] &= (all_ones)>>(QS_LONG_LENGTH * w_high - high);
+	      {
 		long num = sift0(b, w_low0, w_high0, use_odd_nums);
 		total += num;
 #if DEBUG_QS>0
@@ -823,8 +823,8 @@ long qsieve::sift(long b)
 		    <<" and halt_flag = "<<halt_flag<<endl;
 #endif
 		if(halt_flag) return(total);
-	      } 
-	    } 
+	      }
+	    }
 	}
     }
   return(total);
@@ -836,9 +836,9 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
   cout<<"Entering sift0. w_low="<<w_low<<"; w_high="<<w_high<<endl;
 #endif
 
-  long total = 0, n, i, range;
+  long total = 0, n, i, rng;
   halt_flag=0;
-  range = w_high - w_low;
+  rng = w_high - w_low;
   for(n = 0; n < sieve_primes1; n++)
     {
       bit_array *sieve_n = sieves[n].ptr;
@@ -848,27 +848,23 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
       surv = survivors;
 
       if(p_high < p_low)
-	{ 
-	  bit_array *siv1;
-	  siv1 = &sieve_n[w_low - kp * p_high];
-	  for(i = range; i ; i--) 
+	{
+	  bit_array const *siv1 = &sieve_n[w_low - kp * p_high];
+	  for(i = rng; i ; i--)
 	    *surv++ &= *siv1++;
 	}
       else
 	{
-	  bit_array *siv1;
-	  long j;
-	  j = kp * p_low - w_low;
-	  siv1 = &sieve_n[kp-j];
+	  long j = kp * p_low - w_low;
+	  bit_array const *siv1 = &sieve_n[kp-j];
 	  if(j)
-	    { 
-	      for(i = j; i; i--) 
+	    {
+	      for(i = j; i; i--)
 		*surv++ &= *siv1++;
 	    }
 	  for(i = p_high - p_low; i; i--)
 	    {
-	      bit_array *siv0;
-	      siv0 = siv1;
+	      bit_array const *siv0 = siv1;
 	      siv1 -= kp;
 	      while(siv1 != siv0) *surv++ &= *siv1++;
 	    }
@@ -876,14 +872,14 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
 	  if(j)
 	    {
 	      siv1 -= kp;
-	      for(i = j; i; i--) 
+	      for(i = j; i; i--)
 		*surv++ &= *siv1++;
-	    } 
+	    }
 	}
     }
-  //Check the points that have survived the sieve if they really are points 
-  { 
-    bit_array *surv0 = survivors; // &survivors[0];
+  //Check the points that have survived the sieve if they really are points
+  {
+    bit_array const *surv0 = survivors; // &survivors[0];
     for(i = w_low; i < w_high; i++)
       {
         bit_array nums = *surv0++;
@@ -903,7 +899,7 @@ long qsieve::sift0(long b, long w_low, long w_high, int use_odd_nums)
 
 void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_odd_nums)
      //MS: "Apart from the innermost loops of sift0, the speed of the following procedure influences the overall speed of the program to some extent. If it is faster, then it is possible to use fewer primes for sieving. Since it is possible to determine beforehand a good bound for the size of the multi-precision integers needed for the computation (the result and all intermediate results are at most of absolute value
-     //(l^1-norm of the coeffs of f)*(height bound)^(degree[+1])  ), 
+     //(l^1-norm of the coeffs of f)*(height bound)^(degree[+1])  ),
      //it might be possible to gain a little bit by using one's own fixed-length multi-precision integers here."
 {//this checks a complete bit_array of possible survivors
 #ifdef DEBUG_QS
@@ -912,10 +908,10 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
   sieve_spec *ssp = &sieves[sieve_primes1];
   num_surv1++;
   if(i < 0)
-  { 
+  {
     long n;
     for(n = sieve_primes2 - sieve_primes1; n && nums; n--)
-      { 
+      {
 	long p = ssp->p;
 	long ip = i%p;
 	if(ip) ip += p;
@@ -924,10 +920,10 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
       }
   }
   else
-  { 
+  {
     long n;
     for(n = sieve_primes2 - sieve_primes1; n && nums; n--)
-      { 
+      {
 	long p = ssp->p;
 	long ip = i%p;
 	nums &= ssp->ptr[ip];
@@ -944,15 +940,15 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
 	{ d = 1; a = i; }
       else
 	{ d = 2; a = 2*i + 1; }
-      
+
       for(test = 1 ; test; a += d, test <<= 1)
 	{ //test one bit
 	  if((nums & test) && (gcd(a,b)==1))
-	    { //a/b is a surviving fraction so far. 
-	      //Now check if it really gives a point. 
+	    { //a/b is a surviving fraction so far.
+	      //Now check if it really gives a point.
 	      num_surv2++;
 	      if(!no_check)
-		{ //Compute F(a, b), where F is the homogenized version of f of smallest possible even degree 
+		{ //Compute F(a, b), where F is the homogenized version of f of smallest possible even degree
 		  long k;
 		  if(compute_bc)
 		    { //compute entries bc[k] = c[k] * b^(degree-k), k < degree
@@ -967,18 +963,18 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
 		  ZZ fff=c[degree];
 		  for(k = degree-1; k >= 0; k--)
 		    {
-		      fff *= a;  
+		      fff *= a;
 		      fff += bc[k];
 		    }
-		  if(degree&1 && !use_squares) 
+		  if(degree&1 && !use_squares)
 		    fff *= b;
 		  //If degree is odd and lcf is 1, b is a square anyway...
 		  ZZ y;
 		  if(isqrt(fff,y))
-		    { 
+		    {
 		      if (verbose)
 			cout<<"x = "<<a<<"/"<<b<<" gives a rational point."<<endl;
-		      halt_flag = (*curve).process(ZZ(a),y,ZZ(b));  
+		      halt_flag = (*curve).process(ZZ(a),y,ZZ(b));
 #if DEBUG_QS>0
 		      cout<<"After calling process(), halt_flag = "<<halt_flag<<endl;
 #endif
@@ -991,7 +987,7 @@ void qsieve::check_point(bit_array nums, long b, long i, long* total, int use_od
 		    }
 		} //endif(!no_check)
 	      else
-		{ 
+		{
 		  if (verbose)
 		    cout<<a<<"/"<<b<<" may be a point (no check)."<<endl;
 		  halt_flag = (*curve).process(ZZ(a),ZZ(0),ZZ(b));
@@ -1036,7 +1032,7 @@ long qsieve::search()
 	cout<<c[i]<<"x^"<<i<<" + ";
       cout<<c[0]<<endl;
     }
-  
+
   if (num_inter==0)
     {
       num_inter=1;
@@ -1047,21 +1043,21 @@ long qsieve::search()
   long s = 2*w_ceil(height, QS_LONG_LENGTH);
   array_size <<= 13 - QS_LONG_SHIFT; /* from kbytes to longs */
   if(s < array_size) array_size = s;
-  
+
   long total = 0,b;
   halt_flag=0;
   int proc_infty = 0;
   ZZ t;
-  
+
   if(degree&1 || isqrt(c[degree],t))
-    { 
+    {
       if(points_at_infty) proc_infty = 1;
       check_denom = 0;
     }
-  //Can use only squares as denoms if degree is odd and poly is monic 
-  if(degree&1 && (c[degree] == 1)) 
+  //Can use only squares as denoms if degree is odd and poly is monic
+  if(degree&1 && (c[degree] == 1))
     use_squares = 1;
-  
+
   if (proc_infty)
     {
       halt_flag = (*curve).process(ZZ(0),ZZ(1),ZZ(0));
@@ -1071,28 +1067,28 @@ long qsieve::search()
       total++;
       if (halt_flag)	return total;
     }
-  
+
   init_f();//sieves get allocated
   survivors=new bit_array[array_size];
-  
+
   if(sieve_primes2 > 0 && prec[0].r == 0.0)
-    { 
+    {
       cout<<"sieve_primes2 = "<<sieve_primes2<<endl;
       cout<<"prec[0].p = "<<prec[0].p<<endl;
       cout<<"prec[0].n = "<<prec[0].n<<endl;
       cout<<"prec[0].r = "<<prec[0].r<<endl;
-      if(verbose) 
+      if(verbose)
 	cout<<"No solution (prob=0)"<<endl;
       dealloc_sieves();
-      return 0; 
+      return 0;
     }
-  
+
   //Otherwise, try to find the points
   if (verbose)
     {
       cout<<"Try to find the points up to height "<<height<<endl;
     }
-  
+
   if (use_squares)
     {
       long limit = (long)floor(sqrt((double)b_high));
@@ -1100,7 +1096,7 @@ long qsieve::search()
       cout<<"search with use_squares with b_low "<<b_low<<"to limit "<<limit<<endl;
 #endif
       for(b = b_low; b <= limit; b++)
-	{ 
+	{
 	  long num = sift(b*b);
 	  total+=num;
 #if DEBUG_QS>0
@@ -1115,23 +1111,23 @@ long qsieve::search()
 	}
     }
   else
-    { 
+    {
 #ifdef DEBUG_QS
       cout<<"search without use_squares with b_low "<<b_low<<"to b_high "<<b_high<<endl;
 #endif
       if(check_denom)
-	{ 
+	{
 #ifdef DEBUG_QS
 	  cout<<"check_denom=1="<<check_denom<<endl;
 #endif
 	  long *forb;
 	  for(b = b_low; b <= b_high; b++)
-	    { 
-	      //check if denominator is excluded 
+	    {
+	      //check if denominator is excluded
 	      for(forb = &forbidden[0] ; *forb && (b % (*forb)); forb++)
 		{};
 	      if(*forb == 0)
-		{ 
+		{
 #ifdef DEBUG_QS
 	  cout<<"going to sift with b="<<b<<endl;
 #endif
@@ -1147,7 +1143,7 @@ long qsieve::search()
 		      return total;
 		    }
 		}
-	    } 
+	    }
 	}
       else
 	for(b = b_low; b <= b_high; b++)
@@ -1166,7 +1162,7 @@ long qsieve::search()
 	  }
     }
   dealloc_sieves();
-  return(total); //number of points found 
+  return(total); //number of points found
 }
 
 long qsieve::search(double h_lim)
@@ -1184,4 +1180,3 @@ long qsieve::search_range(double xmin, double xmax, double h_lim)
   return search();
 }
 */
-

@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/bitspace.h"
 #include "eclib/sqfdiv.h"
 
@@ -32,7 +32,7 @@ sqfdiv::sqfdiv(const ZZ& dd, int posd, vector<ZZ>* plist)
   ZZ p;
   for(unsigned long i=0; i<plist->size(); i++)
     if(p=(*primebase)[i],div(p,dd)) {d*=p; np++;}
-  maxnsub=2<<np;    // = 2^(np+1) 
+  maxnsub = long(2)<<np;    // = 2^(np+1)
   maxngens=np+1; ngens=0;  nsub=1;
   subgp.resize(maxnsub);
   gens.resize(maxngens);
@@ -45,7 +45,7 @@ void sqfdiv::usediv(const ZZ& ee)
 {
   ZZ e = sqfred(ee,*primebase);
 #ifdef DEBUG
-  cout << "usediv called with e = " << ee 
+  cout << "usediv called with e = " << ee
     << " reduced mod squares to "<<e<<"\n";
 #endif
   int triv=(e==1); long i;
@@ -61,7 +61,7 @@ void sqfdiv::usediv(const ZZ& ee)
       cout << "After using gen "<<gens[i]<<", reduced to " << e <<"\n";
 #endif
     }
-  if(triv) 
+  if(triv)
     {
 #ifdef DEBUG
       cout << ee << " is in subgroup already...\n";
@@ -88,10 +88,10 @@ void sqfdiv::usediv(const ZZ& ee)
       if(div(p,d)) {valp=val(p,e); newpiv=i-1;}
     }
   // now if valp!=0, p|d and p|e to an odd power
-  if(valp) 
+  if(valp)
     {d/=p; np--; factor++; pivs[ngens++]=newpiv;}
-  else 
-    if((e<0)&& !positive) 
+  else
+    if((e<0)&& !positive)
       {positive=1; factor++; pivs[ngens++]=-1;}
   //else e is square over the support of d so should have returned earlier!
 #ifdef DEBUG
@@ -103,13 +103,13 @@ void sqfdiv::usediv(const ZZ& ee)
 
 vector<ZZ> sqfdiv::getdivs() const
 {
- long nd=1<<np;
+  long nd = long(1)<<np;
  if(!positive) nd*=2;
 // cout << "Constructing divisor list for d = " << d;
 // cout << ", positive = " << positive;
 // cout << ", number of divisors = " << nd << endl;
  vector<ZZ> dlist(nd);
- dlist[0]=1; 
+ dlist[0]=1;
  nd=1;
  if(!positive) {dlist[nd++]=-1;}
  for(unsigned long i=0; i<primebase->size(); i++)
@@ -165,7 +165,7 @@ ZZ sqfmul(const ZZ& a, const ZZ& b)
 
 ZZ makenum(const vector<ZZ>& supp, long mask)
 {
-  ZZ ans; ans=1; 
+  ZZ ans; ans=1;
   long i, ns=supp.size();
   for(i=0; i<ns; i++) if(testbit(mask,i)) ans=sqfmul(ans,supp[i]);
   return ans;
@@ -190,7 +190,7 @@ long makeindex(const vector<ZZ>& supp, const ZZ& n, ZZ& n0)
   return index;
 }
 
-// support(n) is like pdivs(n) but includes -1 always (except n=0, 
+// support(n) is like pdivs(n) but includes -1 always (except n=0,
 //but it should never be called with 0)
 vector<ZZ> support(const ZZ& n)
 {

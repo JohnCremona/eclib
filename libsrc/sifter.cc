@@ -52,9 +52,9 @@ sifter::sifter(Curvedata* EE, int na, int verb)
   // the rest of the auxs must be chosen as follows: they should
   // be good primes p>5, such that the resolvent cubic has root(s) mod p.
 
-  primevar pr; pr++; pr++;  // skip past 2 and 3
+  primevar pr; ++pr; ++pr;  // skip past 2 and 3
 
-  for(;pr.ok()&&iaux<num_aux; pr++)
+  for(;pr.ok()&&iaux<num_aux; ++pr)
     {
       long p = pr;
       if(div(p,disc)) continue;
@@ -233,7 +233,7 @@ void sifter::process(const Point& P)
 int sifter::code(const ZZ& x, const ZZ& z2, int i)
 {
   long p = auxs[i], theta, alpha, beta;
-  int j, ans; int eps[3];
+  int j, ans; int epsi[3];
   switch(nroots[i]) {
   case 1:
     theta=thetamod[i][0];
@@ -247,17 +247,17 @@ int sifter::code(const ZZ& x, const ZZ& z2, int i)
       {
 	theta = thetamod[i][j];
 	alpha = posmod(x - theta*z2 , p);
-	eps[j] = 2*(squares[i][alpha])-(alpha==0)-1; // =0,-1,+1
+	epsi[j] = 2*(squares[i][alpha])-(alpha==0)-1; // =0,-1,+1
       }
-    if(eps[0]==0) {eps[0]=eps[1]*eps[2];}
+    if(epsi[0]==0) {epsi[0]=epsi[1]*epsi[2];}
     else {
-      if(eps[1]==0) {eps[1]=eps[0]*eps[2];}
+      if(epsi[1]==0) {epsi[1]=epsi[0]*epsi[2];}
       else {
-	if(eps[2]==0) {eps[2]=eps[0]*eps[1];}
+	if(epsi[2]==0) {epsi[2]=epsi[0]*epsi[1];}
       }
     }
-    if(eps[0]==1) ans=(eps[1]==1? 0: 1);
-    else          ans=(eps[1]==1? 2: 3);  // binary coding for 00,01,10,11
+    if(epsi[0]==1) ans=(epsi[1]==1? 0: 1);
+    else          ans=(epsi[1]==1? 2: 3);  // binary coding for 00,01,10,11
     return ans;
     break;
   case 0: default: return 0; break;

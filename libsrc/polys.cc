@@ -47,7 +47,7 @@ vector<ZZ_p> roots(const ZZ_pX& f)
 
 vector<ZZ> rootsmod(const vector<ZZ>& coeffs, ZZ q)
 {
-  galois_field Fq(q);
+  ZZ_pContext_init_or_restore(q);
   ZZ_pX f;
   unsigned long i, deg = coeffs.size()-1;
   for (i=0; i<=deg; i++) SetCoeff(f,i, to_ZZ_p(coeffs[i]));

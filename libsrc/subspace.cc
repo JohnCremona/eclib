@@ -130,18 +130,18 @@ Zmat<T> restrict_mat(const Zmat<T>& M, const subZspace<T>& S, int cr)
 template<class T>
 subZspace<T> kernel(const Zmat<T>& m1, int method)
 {
-   long rank, nullity;
+   long rk, ny;
    T d;
    Zvec<int> pcols,npcols;
-   Zmat<T> m = echelon(m1,pcols,npcols, rank, nullity, d, method);
+   Zmat<T> m = echelon(m1,pcols,npcols, rk, ny, d, method);
    // cout << "echelon(M) for M = \n" << m1 << "\nis\n" << m << endl;
-   Zmat<T> bas(m.ncols(),nullity);
-   for (int n=1; n<=nullity; n++)
+   Zmat<T> bas(m.ncols(),ny);
+   for (int n=1; n<=ny; n++)
      bas.set(npcols[n],n,d);
-   for (int r=1; r<=rank; r++)
+   for (int r=1; r<=rk; r++)
    {
      int i = pcols[r];
-     for (int j=1; j<=nullity; j++)
+     for (int j=1; j<=ny; j++)
        bas.set(i,j, -m(r,npcols[j]));
    }
    return subZspace<T>(bas, npcols, d);
@@ -151,9 +151,9 @@ template<class T>
 subZspace<T> image(const Zmat<T>& m, int method)
 {
   Zvec<int> p,np;
-  long rank, nullity;
+  long rk, ny;
   T d;
-  Zmat<T> b = transpose(echelon(transpose(m),p,np,rank,nullity,d,method));
+  Zmat<T> b = transpose(echelon(transpose(m),p,np,rk,ny,d,method));
   return subZspace<T>(b,p,d);
 }
 
@@ -202,16 +202,16 @@ Zmat<T> prestrict(const Zmat<T>& M, const subZspace<T>& S, const T& pr, int cr)
 template<class T>
 subZspace<T> oldpkernel(const Zmat<T>& m1, const T& pr)   // using full echmodp
 {
-   long rank, nullity;
+   long rk, ny;
    Zvec<int> pcols,npcols;
-   Zmat<T> m = echmodp(m1,pcols,npcols, rank, nullity, pr);
-   Zmat<T> bas(m.ncols(),nullity);
-   for (int n=1; n<=nullity; n++)
+   Zmat<T> m = echmodp(m1,pcols,npcols, rk, ny, pr);
+   Zmat<T> bas(m.ncols(),ny);
+   for (int n=1; n<=ny; n++)
      bas.set(npcols[n],n,T(1));
-   for (int r=1; r<=rank; r++)
+   for (int r=1; r<=rk; r++)
    {
      int i = pcols[r];
-     for (int j=1; j<=nullity; j++)
+     for (int j=1; j<=ny; j++)
        bas.set(i,j, mod(-m(r,npcols[j]),pr));
    }
    return subZspace<T>(bas, npcols, T(1));
@@ -221,18 +221,18 @@ subZspace<T> oldpkernel(const Zmat<T>& m1, const T& pr)   // using full echmodp
 template<class T>
 subZspace<T> pkernel(const Zmat<T>& m1, const T& pr)
 {
-  long rank, nullity;
+  long rk, ny;
   Zvec<int> pcols,npcols;
-  Zmat<T> m = echmodp_uptri(m1,pcols,npcols, rank, nullity, pr);
-  Zmat<T> bas(m.ncols(),nullity);
-  for(int j=nullity; j>0; j--)
+  Zmat<T> m = echmodp_uptri(m1,pcols,npcols, rk, ny, pr);
+  Zmat<T> bas(m.ncols(),ny);
+  for(int j=ny; j>0; j--)
     {
       int jj = npcols[j];
       bas(jj,j) = 1;
-      for(int i=rank; i>0; i--)
+      for(int i=rk; i>0; i--)
         {
           T temp = -m(i,jj);
-          for(int t=rank; t>i; t--)
+          for(int t = rk; t>i; t--)
             {
               int tt=pcols[t];
               temp -= xmodmul(m(i,tt),bas(tt,j),pr);
@@ -248,8 +248,8 @@ template<class T>
 subZspace<T> pimage(const Zmat<T>& m, const T& pr)
 {
   Zvec<int> p,np;
-  long rank, nullity;
-  const Zmat<T>& b = transpose(echmodp(transpose(m),p,np,rank,nullity,pr));
+  long rk, ny;
+  const Zmat<T>& b = transpose(echmodp(transpose(m),p,np,rk,ny,pr));
   return subZspace<T>(b,p,T(1));
 }
 

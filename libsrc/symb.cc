@@ -209,11 +209,11 @@ void symbdata::display() const
 
 void symbdata::check(void) const
 {
-  int i, j, ok=1; symb s;
-  for (i=0; i<nsymb; i++)
+  int ok=1;
+  for (int i=0; i<nsymb; i++)
     {
-      s=symbol(i);
-      j = index(s);
+      symb s=symbol(i);
+      int j = index(s);
       if (i!=j)
         {
           cout << i << "-->" << s << "-->" << j << "\n";
