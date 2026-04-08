@@ -85,7 +85,7 @@ protected:
   void make_submat(ff_data<T> &data);
   sZmat<T> make_nested_submat(long ip, ff_data<T> &data);
   void go_down(ff_data<T> &data, long eig, int last=0);
-  void go_up( ff_data<T> &data );
+  void go_up( const ff_data<T> &data );
   void make_basis(ff_data<T> &data);
   Zvec<T> make_basis1(ff_data<T> &data);  // current space has dim. 1
   Zvec<T> make_basis2(ff_data<T> &data, const Zvec<T>& v);  // current space has dim. >1 and

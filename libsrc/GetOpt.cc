@@ -193,7 +193,7 @@ GetOpt::operator () (void)
 
   {
     char c = *nextchar++;
-    char *temp = (char *) strchr (noptstring, c);
+    char const *temp = (char *) strchr (noptstring, c);
 
     /* Increment `optind' when we start to process its last character.  */
     if (*nextchar == 0)

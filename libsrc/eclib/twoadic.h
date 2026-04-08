@@ -2,23 +2,23 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
 
 #ifndef _ECLIB_TWOADIC_H
@@ -44,21 +44,21 @@
 inline long val(long a){long r = (a) ? val16(a) : HIGH;  return r;}
 inline long val(ZZ a){long r = (a==0) ? HIGH: val(2,a);  return r;}
 
-// try1(poly), with poly a deg 3 polynomial in x, determines if 
-// there is a 2-adic integer a such that poly(a) is a square    
-// in Q_2. Returns 1 if successful, 0 otherwise.                
+// try1(poly), with poly a deg 3 polynomial in x, determines if
+// there is a 2-adic integer a such that poly(a) is a square
+// in Q_2. Returns 1 if successful, 0 otherwise.
 
 // These were originally used to determine the index in the ambiguous
 // cases, but were much slower than the non-recursive functions,
 // called case1() and case2()
 
-// In all cases the return value is 0 if the index is 1 
+// In all cases the return value is 0 if the index is 1
 //                              and 1 if the index is 2
 // so add 1 to get the index, which is also the "number of I,J pairs"
 
 
-long try1(long poly[4]);
-long try1(ZZ poly[4]);
+long try1(long const poly[4]);
+long try1(ZZ const poly[4]);
 long case1(long a, long b); // A=4a, B=4b
 long case2(long a, long b); // A=4a+1, B=4b+2
 

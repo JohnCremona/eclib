@@ -95,7 +95,7 @@ void form_finderT<T>::make_opmat(long i, ff_data<T> &data) {
 }
 
 template<class T>
-void form_finderT<T>::make_submat( ff_data<T> &data ) {
+void form_finderT<T>::make_submat(ff_data<T> &data ) {
   // Cache current data node depth
   long depth = data.depth_;
 
@@ -235,7 +235,7 @@ void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
 }
 
 template<class T>
-void form_finderT<T>::go_up( ff_data<T> &data ) {
+void form_finderT<T>::go_up(const ff_data<T> &data ) {
   // Cache pointer to parent data node for access after current node is deleted
   ff_data<T> *parent = data.parent_;
 

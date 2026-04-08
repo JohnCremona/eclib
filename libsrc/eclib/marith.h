@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #ifndef _ECLIB_MARITH_H
 #define _ECLIB_MARITH_H
 
@@ -60,11 +60,11 @@ inline ZZ pow(const ZZ& a, long e)  {return power(a,e);}
 
 //N.B. no power to ZZ exponent in NTL
 inline long jacobi(const ZZ& a, const ZZ& p)  {return Jacobi(a,p);}
-inline void sqrt_mod_p(ZZ & x, const ZZ & a, const ZZ & p)  
+inline void sqrt_mod_p(ZZ & x, const ZZ & a, const ZZ & p)
   {SqrRootMod(x,a,p); if(x>(p-x)) x= p-x;}
-inline void power_mod(ZZ& ans, const ZZ& base, const ZZ& expo, const ZZ& m) 
+inline void power_mod(ZZ& ans, const ZZ& base, const ZZ& expo, const ZZ& m)
  {PowerMod(ans,base,expo,m);}
-inline void nearest(ZZ& c, const ZZ& a, const ZZ& b) 
+inline void nearest(ZZ& c, const ZZ& a, const ZZ& b)
  {ZZ a0=(a%b);  c = (a-a0)/b; if(2*a0>b) c+=1;}
 inline ZZ roundover(const ZZ& a, const ZZ& b)
  {ZZ a0=(a%b); ZZ c = (a-a0)/b; if(2*a0>b) c+=1; return c;}
@@ -101,23 +101,23 @@ ZZ show(const ZZ& a);
 vector<ZZ> show(const vector<ZZ>& a);
 
 
-// extra_primes is a set holding extra big primes found or added manually.  
+// extra_primes is a set holding extra big primes found or added manually.
 class extra_prime_class {
 public:
   std::set<ZZ> the_primes;
   extra_prime_class() {;}
   ~extra_prime_class();
-  void read_from_file(const string pfilename, int verb=0);
-  void write_to_file(const string pfilename, int verb=0);
+  void read_from_file(const string& pfilename, int verb=0);
+  void write_to_file(const string& pfilename, int verb=0);
   int contains(const ZZ& p)
   {
     return the_primes.find(p)!=the_primes.end();
   }
-  void add(const ZZ& p)  
+  void add(const ZZ& p)
   {
     if(p>maxprime()) the_primes.insert(p);
   }
-  void show() 
+  void show()
   {
     cout << "Extra primes in list: ";
     copy(the_primes.begin(),the_primes.end(), ostream_iterator<ZZ>(cout, " "));
@@ -127,7 +127,7 @@ public:
 
 extern extra_prime_class the_extra_primes;  // The one and only instance
 
-void initprimes(const string pfilename, int verb=0);
+void initprimes(const string& pfilename, int verb=0);
 
 //
 // divisors
@@ -170,15 +170,15 @@ ZZ squarefree_part(const ZZ& a);
 // squarefree product of two squarefree integers (with signs)
 ZZ squarefree_product(const ZZ& a, const ZZ& b);
 
-// Given a, b, lem3 returns m1 etc so that a=c1^2*m1*m12, b=c2^2*m2*m12 
-// with m1, m2, m12 pairwise coprime.   At all  times these equations hold, 
-// and at each step the product m1*m2*m12 is decreased by a factor d, 
-// so the process terminates when the coprimality condition is satisfied. 
+// Given a, b, lem3 returns m1 etc so that a=c1^2*m1*m12, b=c2^2*m2*m12
+// with m1, m2, m12 pairwise coprime.   At all  times these equations hold,
+// and at each step the product m1*m2*m12 is decreased by a factor d,
+// so the process terminates when the coprimality condition is satisfied.
 void rusin_lem3(const ZZ& a, const ZZ& b,
 	  ZZ& m1, ZZ& m2, ZZ& m12, ZZ& c1, ZZ& c2);
 
 // Solves x-a1(mod m1), x=a2(mod m2)
-ZZ chrem(const ZZ& a1, const ZZ& a2, 
+ZZ chrem(const ZZ& a1, const ZZ& a2,
 	     const ZZ& m1, const ZZ& m2);
 
 //

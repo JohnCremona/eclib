@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/twoadic.h"
 
 // The following due to Michael Stoll:
@@ -28,17 +28,17 @@
 /* try1(poly), with poly a deg 3 polynomial in x, determines if */
 /* there is a 2-adic integer a such that poly(a) is a square    */
 /* in Q_2. Returns 1 if successful, 0 otherwise.                */
-long try1(long poly[4])
+long try1(long const poly[4])
 { long c, v, sq, j, k;
   /* see if we can lift to obtain a zero of poly.      */
   /* the condition is  val(poly[0]) > 2*val(poly[1]).  */
-#ifdef SHOW_POLY      
+#ifdef SHOW_POLY
  cout<<"("<<poly[3]<<","<<poly[2]<<","<<poly[1]<<","<<poly[0]<<")"<<endl;
 #endif
   c = poly[0];
   v = val(c);
   // Hensel test for a root:
-  if(c == 0 || v > 2*val(poly[1])) 
+  if(c == 0 || v > 2*val(poly[1]))
     {
       //      cout<<" has a 2-adic root via Hensel"<<endl;
       return 1;
@@ -88,18 +88,18 @@ The condition in the code comes from Hensel's lemma and implies the
 conditions given above.
 */
 
-long try1(ZZ poly[4])
+long try1(ZZ const poly[4])
 { long c, v, sq, j, k;
- ZZ mc; 
+ ZZ mc;
   /* see if we can lift to obtain a zero of poly.      */
   /* the condition is  val(poly[0]) > 2*val(poly[1]).  */
-#ifdef SHOW_POLY      
+#ifdef SHOW_POLY
  cout<<"("<<poly[3]<<","<<poly[2]<<","<<poly[1]<<","<<poly[0]<<")"<<endl;
 #endif
   mc = poly[0];
   v = val(mc);
   // Hensel test for a root:
-  if(mc == 0 || v > 2*val(poly[1])) 
+  if(mc == 0 || v > 2*val(poly[1]))
     {
       //      cout<<" has a 2-adic root via Hensel"<<endl;
       return 1;
@@ -151,7 +151,7 @@ long case1(long a, long b) // A=4a, B=4b
   if(c2) return 1;
 // Now, d = 0 mod 4. Divide by 4 to get (4, 6, c, d/4)
   d>>=2;
-  c>>=1; 
+  c>>=1;
   a=b=1;
   while(1)
     {
@@ -186,7 +186,7 @@ long case2(long a, long b) // A=4a+1, B=4b+2
   // Now, d = 0 mod 4. Divide by 4 and replace c,d by c/2,d/4
   // to get (4, 3, 2*c, d)
   d>>=2;
-  c>>=1; 
+  c>>=1;
   a=1; b=0;  // The polynomial is (4*a, 3*(4*b+1), 2*c, d)
   while(1)
     {
@@ -199,7 +199,7 @@ long case2(long a, long b) // A=4a+1, B=4b+2
 	  temp=2*c+d+3;
 	  if(temp&3) return 0;
 	  if(c2==0) return 1;
-	  // Now any root must be odd, so change poly	  
+	  // Now any root must be odd, so change poly
 	  d = a+3*b+temp/4; c = 3*a+6*b+(c+3)/2; b = a+b; a = 2*a;
 	}
       else
@@ -208,8 +208,8 @@ long case2(long a, long b) // A=4a+1, B=4b+2
 	  if(((temp+2*c)&7)==0) return 1;
 	  if(((temp-2*c)&7)==0) return 1;
 	  if(d4==2) return 0;
-	  // Now any root must be even, so change poly	  
-	  d >>=2; c >>=1; a <<=1;  
+	  // Now any root must be even, so change poly
+	  d >>=2; c >>=1; a <<=1;
 	}
     }
 }
@@ -235,29 +235,29 @@ long case2(long a, long b) // A=4a+1, B=4b+2
     {
       d8=d&7; d4=d8&3;
       if(c&1) // c odd
-      { 
+      {
 	switch(d4){
 	case 0: return 1; break;
 	case 2: return 0; break;
 	case 1: return (d8==1); break;
-	case 3: 
+	case 3:
 	  { // replace f(x) by f(2x+1)/4 and loop
 	    d = a + 3*b + (c+1)/2 + (d+1)/4 ;
 	    c = 3*a + 6*b + (c+3)/2;
 	    b += a ;
-	    a <<= 1; 
-	  } 
+	    a <<= 1;
+	  }
 	}
       }
       else   // c even
-      { 
+      {
 	switch(d4){
 	case 1: return 1; break;
 	case 3: return 0; break;
 	case 2: return (((d8+4*(a+b)+2*c+2)&7) == 0);
-	case 0: 
+	case 0:
 	  {  // replace f(x) by f(2x)/4 and loop
-	    d >>= 2; c >>= 1; a <<= 1; 
+	    d >>= 2; c >>= 1; a <<= 1;
 	  }
 	}
       }
@@ -281,7 +281,7 @@ long case1(ZZ a, ZZ b) // A=4a, B=4b
   if(c2) return 1;
 // Now, d = 0 mod 4. Divide by 4 to get (4, 6, c, d/4)
   d>>=2;
-  c>>=1; 
+  c>>=1;
   a=b=1;
   while(1)
     {
@@ -319,29 +319,29 @@ long case2(ZZ a, ZZ b) // A=4a+1, B=4b+2
     {
       d8=posmod(d,8); d4=d8&3; c2=posmod(c,2);
       if(c2) // c odd
-      { 
+      {
 	switch(d4){
 	case 0: return 1; break;
 	case 2: return 0; break;
 	case 1: return (d8==1); break;
-	case 3: 
+	case 3:
 	  { // replace f(x) by f(2x+1)/4 and loop
 	    d = a + 3*b + (c+1)/2 + (d+1)/4 ;
 	    c = 3*a + 6*b + (c+3)/2;
 	    b += a ;
-	    a <<= 1; 
-	  } 
+	    a <<= 1;
+	  }
 	}
       }
       else   // c even
-      { 
+      {
 	switch(d4){
 	case 1: return 1; break;
 	case 3: return 0; break;
 	case 2: return ((posmod(-4*(a+b)-2*c-2,8)) == d8);
-	case 0: 
+	case 0:
 	  {  // replace f(x) by f(2x)/4 and loop
-	    d >>= 2; c >>= 1; a <<= 1; 
+	    d >>= 2; c >>= 1; a <<= 1;
 	  }
 	}
       }

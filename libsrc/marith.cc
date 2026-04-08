@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 // We use the pari C library for factoring
 
 #include <sstream>
@@ -70,7 +70,7 @@ int sqrtq2(ZZ& root, const ZZ& n)
 	  rshift(r,1,r);
 	}
       else
-	{ 
+	{
 	  subx(r,a,r); rshift(r,1,r); subx(r,twok3,r);
 	  setbit(a,kminus1);
 	}
@@ -174,7 +174,7 @@ int sqrt_mod_2_power(ZZ& x, const ZZ& a, int e)
   if(e==2) return ((a8%4)==1);
   if(a8!=1) return 0;
   if(e==3)  return 1;
-  // Now e>=4 and a=1 (mod 8)  
+  // Now e>=4 and a=1 (mod 8)
   int k; ZZ q1, q, q2; q1=4, q=8, q2=16;
   for(k=3; k<e; k++)
     {
@@ -185,7 +185,7 @@ int sqrt_mod_2_power(ZZ& x, const ZZ& a, int e)
   if(ndiv(q,sqr(x)-a))
     cout<<"Error in sqrt_mod_2_power with a="<<a<<", a mod 8="<<a8<<", e="<<e
 	<<": returns "<<x<<endl;
-#endif  
+#endif
   return 1;
 }
 
@@ -197,7 +197,7 @@ int sqrt_mod_p_power(ZZ& x, const ZZ& a, const ZZ& p, int e)
   if(a1==0) return 0;  // p ndiv a only
   if(legendre(a1,p)==-1) return 0;
   if(a1<0) a1+=p;  // since sqrt_mod_p wants it between 0 and p-1
-  sqrt_mod_p(x,a1,p);  
+  sqrt_mod_p(x,a1,p);
   //  cout<<"sqrt("<<a1<<" mod "<<p<<") = "<<x<<endl;
   if(e==1) {return 1;}
   ZZ s = invmod(2*x,p);
@@ -213,7 +213,7 @@ int sqrt_mod_p_power(ZZ& x, const ZZ& a, const ZZ& p, int e)
   if(ndiv(q,sqr(x)-a))
     cout<<"Error in sqrt_mod_p_power with a="<<a<<", p="<<p<<", e="<<e
 	<<": returns "<<x<<endl;
-#endif  
+#endif
   return 1;
 }
 
@@ -226,11 +226,11 @@ int sqrt_mod_m(ZZ& x, const ZZ& a, const ZZ& m)
   if(is_one(a))  {x=one; return 1;}
 #ifdef CHECK_SQRT_MOD
   cout<<"Factorizing "<<m<<"..."<<flush;
-#endif  
+#endif
   vector<ZZ> mpdivs = pdivs(m);
 #ifdef CHECK_SQRT_MOD
   cout<<"prime factors are "<<mpdivs<<endl;
-#endif  
+#endif
   return sqrt_mod_m(x,a,m,mpdivs);
 }
 
@@ -242,7 +242,7 @@ int sqrt_mod_m(ZZ& x, const ZZ& a, const ZZ& m, const vector<ZZ>& mpdivs)
   if(is_one(a))  {x=1; return 1;}
   ZZ mm, xp, q; int e;
   x=0;  mm=1;
-  
+
   for( const auto& p : mpdivs)
     {
       e = val(p,m);
@@ -262,7 +262,7 @@ int sqrt_mod_m(ZZ& x, const ZZ& a, const ZZ& m, const vector<ZZ>& mpdivs)
   if(ndiv(m,sqr(x)-a))
     cout<<"Error in sqrt_mod_m with a="<<a<<", m="<<m
 	<<": returns "<<x<<endl;
-#endif  
+#endif
   return 1;
 }
 
@@ -311,9 +311,9 @@ void sqrt_mod_p(long & x, long a, long p) // declared in arith.h
 
 extra_prime_class the_extra_primes;  // The one and only instance
 
-void initprimes(const string pfilename, int verb)
+void initprimes(const string& pfilename, int verb)
 {
-  if(verb) 
+  if(verb)
     {
       cout<<"Computed " << nprimes() << " primes, ";
       cout << "largest is " << maxprime() << "\n";
@@ -327,27 +327,27 @@ extra_prime_class::~extra_prime_class()
   //  write_to_file(string("PRIMES").c_str());
 }
 
-void extra_prime_class::write_to_file(const string pfilename, int verb)
+void extra_prime_class::write_to_file(const string& pfilename, int verb)
 {
   if(the_primes.size()==0) return;
   if(verb) cout << "writing primes to file " << pfilename << endl;
   ofstream pfile(pfilename.c_str());
-  copy(the_primes.begin(),the_primes.end(), ostream_iterator<ZZ>(pfile, "\n"));  
+  copy(the_primes.begin(),the_primes.end(), ostream_iterator<ZZ>(pfile, "\n"));
   if(verb) cout << "finished writing primes to file " << pfilename << endl;
 }
 
-void extra_prime_class::read_from_file(const string pfilename, int verb)
+void extra_prime_class::read_from_file(const string& pfilename, int verb)
 {
   ifstream pfile(pfilename.c_str());
   if(!pfile)  // default: no primes file exists
     {
       return;
-    } 
+    }
   pfile>>ws;
   if(pfile.eof())  //  primes file exists but is empty
     {
       return;
-    } 
+    }
   if(verb) cout << "reading primes from file " << pfilename << endl;
   ZZ xp;
   while(pfile>>xp>>ws, (xp!=0) )
@@ -384,7 +384,7 @@ vector<ZZ> pdivs_trial_div(ZZ& n, const ZZ& pmax)
   primevar pr;
   long p=2, r; ZZ mp, q; mp=2;
   while ( (n>1) && (pr.ok()) && (mp<=pmax))
-    { 
+    {
       if (::divides(n,p,q,r))   // then found a prime factor
 	{
 	  plist.push_back(mp); // add it to the list
@@ -392,11 +392,11 @@ vector<ZZ> pdivs_trial_div(ZZ& n, const ZZ& pmax)
 	  divide_out(n,mp);     // divide it out from n
 	}
       // Now we might be able to conclude that the cofactor is prime:
-      if(n>1) if (sqr(mp)>n) 
+      if(n>1) if (sqr(mp)>n)
 	{
-	  plist.push_back(n); 
-	  the_extra_primes.add(n); 
-	  n=1; 
+	  plist.push_back(n);
+	  the_extra_primes.add(n);
+	  n=1;
 	}
       ++pr; p = pr.value(); mp=p;
     }
@@ -419,10 +419,10 @@ vector<ZZ> pdivs_trial(const ZZ& number, int trace)
   plist = vector_union(plist,pdivs_trial_div(n, ZZ(maxprime())));
   if(trace) cout<< "After using trial division, n= " <<n<<", plist = "<< plist << endl;
 
-  if(n>1) if(ProbPrime(n)) 
+  if(n>1) if(ProbPrime(n))
     {plist.push_back(n); the_extra_primes.add(n); n=1; }
 
-  if (n>1) // failed to factor it 
+  if (n>1) // failed to factor it
     {
       cout<<"\n***Failed to find prime factor for composite "<<n<<" using trial division factorization of "<<number<<endl;
       cout<<"*** --appending "<<n<<" to its list of prime divisors"<<endl;
@@ -471,19 +471,19 @@ vector<ZZ> pdivs_pari(const ZZ& number, int trace)
 
   // for small n just use trial division...
 
-  if(n<TRIAL_DIV_BOUND) 
+  if(n<TRIAL_DIV_BOUND)
     {
-      return pdivs_trial(n,trace); 
+      return pdivs_trial(n,trace);
     }
   if(trace) cout<<"pdivs_pari factoring "<<n<<endl;
 
   // use prime base first...
 
   plist=pdivs_use_factorbase(n,the_extra_primes.the_primes);
-  if(trace&&plist.size()>0) 
+  if(trace&&plist.size()>0)
     cout<<"after using factorbase, have factors "<<plist
 	<<", and cofactor = "<<n<< endl;
-  if(n<2) 
+  if(n<2)
     {
       sort(plist.begin(),plist.end());
       return plist;
@@ -492,11 +492,11 @@ vector<ZZ> pdivs_pari(const ZZ& number, int trace)
   // now use small primes...
 
   plist = vector_union(plist,pdivs_trial_div(n,TRIAL_DIV_PRIME_BOUND));
-  if(trace&&plist.size()>0) 
+  if(trace&&plist.size()>0)
     cout<<"after using trial division up to "<<TRIAL_DIV_PRIME_BOUND<<", have factors "<<plist
 	<<", and cofactor = "<<n<< endl;
 
-  if(n<2) 
+  if(n<2)
     {
       sort(plist.begin(),plist.end());
       return plist;
@@ -524,10 +524,10 @@ vector<ZZ> posdivs(const ZZ& number)
 vector<ZZ> posdivs(const ZZ& number, const vector<ZZ>& plist)
 {
   static const ZZ one(1);
-  vector<ZZ> dlist = {one};
-  for (auto p: plist)
-    dlist = multiply_lists(powers(p, val(p,number)), dlist);
-  return dlist;
+  static const vector<ZZ> list_of_one = {one};
+  return std::transform_reduce(plist.begin(), plist.end(), list_of_one,
+                               multiply_lists,
+                               [number](auto p){return powers(p, val(p,number));});
 }
 
 vector<ZZ> alldivs(const ZZ& number)
@@ -551,10 +551,10 @@ vector<ZZ> sqdivs(const ZZ& number)
 vector<ZZ> sqdivs(const ZZ& number, const vector<ZZ>& plist)
 {
   static const ZZ one(1);
-  vector<ZZ> dlist = {one};
-  for (auto p: plist)
-    dlist = multiply_lists(powers(p, val(p,number)/2), dlist);
-  return dlist;
+  static const vector<ZZ> list_of_one = {one};
+  return std::transform_reduce(plist.begin(), plist.end(), list_of_one,
+                               multiply_lists,
+                               [number](auto p){return powers(p, val(p,number)/2);});
 }
 
 vector<ZZ> sqfreedivs(const ZZ& number)
@@ -565,11 +565,11 @@ vector<ZZ> sqfreedivs(const ZZ& number)
 
 vector<ZZ> sqfreedivs(const ZZ& number, const vector<ZZ>& plist)
 {
- static const ZZ one(1);
-  vector<ZZ> dlist = {one};
-  for (auto p: plist)
-    dlist = multiply_lists(powers(p, 1), dlist);
- return dlist;
+  static const ZZ one(1);
+  static const vector<ZZ> list_of_one = {one};
+  return std::transform_reduce(plist.begin(), plist.end(), list_of_one,
+                               multiply_lists,
+                               [number](auto p){return powers(p, 1);});
 }
 
 void sqfdecomp(const ZZ& a, ZZ& a1, ZZ& a2, vector<ZZ>& plist, int trace_fact)
@@ -625,10 +625,10 @@ ZZ squarefree_product(const ZZ& a, const ZZ& b)
   return (a/g)*(b/g);
 }
 
-// Given a, b, lem3 returns m1 etc so that a=c1^2*m1*m12, b=c2^2*m2*m12 
-// with m1, m2, m12 pairwise coprime.   At all  times these equations hold, 
-// and at each step the product m1*m2*m12 is decreased by a factor d, 
-// so the process terminates when the coprimality condition is satisfied. 
+// Given a, b, lem3 returns m1 etc so that a=c1^2*m1*m12, b=c2^2*m2*m12
+// with m1, m2, m12 pairwise coprime.   At all  times these equations hold,
+// and at each step the product m1*m2*m12 is decreased by a factor d,
+// so the process terminates when the coprimality condition is satisfied.
 
 void rusin_lem3(const ZZ& a, const ZZ& b,
 	  ZZ& m1, ZZ& m2, ZZ& m3, ZZ& c1, ZZ& c2)
@@ -657,7 +657,7 @@ void rusin_lem3(const ZZ& a, const ZZ& b,
 	}
     }
 #ifdef CHECK_LEM3
-  if( (a==sqr(c1)*m1*m3) && (b==sqr(c2)*m2*m3) 
+  if( (a==sqr(c1)*m1*m3) && (b==sqr(c2)*m2*m3)
       && (gcd(m1,m3)==1) && (gcd(m2,m3)==1) && (gcd(m1,m2)==1) )
     {;}
   else
@@ -669,7 +669,7 @@ void rusin_lem3(const ZZ& a, const ZZ& b,
 #endif
 }
 
-ZZ chrem(const ZZ& a1, const ZZ& a2, 
+ZZ chrem(const ZZ& a1, const ZZ& a2,
 	     const ZZ& m1, const ZZ& m2)
 {
   ZZ u,v,q,r,ans;
@@ -686,7 +686,7 @@ ZZ chrem(const ZZ& a1, const ZZ& a2,
       return ans;
     }
   cout<<"No solution in chrem to "<<a1<<" mod "<<m1
-      <<", "<<a2<<" mod "<<m2<<endl; 
+      <<", "<<a2<<" mod "<<m2<<endl;
   ans = 0;
   return ans;
 }
@@ -736,7 +736,7 @@ ZZ Ifloor(double x)  // bigfloats are just doubles in this case
 #ifdef DEBUG_IFLOOR
      cout<<", ans="<<ans;
 #endif
-     x=fmod(x,ldexp((double)1,e-1)); 
+     x=fmod(x,ldexp((double)1,e-1));
 #ifdef DEBUG_IFLOOR
      cout<<", new x="<<x<<endl;
 #endif
@@ -744,7 +744,7 @@ ZZ Ifloor(double x)  // bigfloats are just doubles in this case
    }
  if((x>0)&&(s<0)) ++ans;        // adjust if fractional part non-zero
  if(s<0) ans=-ans;  // adjust if negative
- return ans; 
+ return ans;
 }
 
 #endif
@@ -754,17 +754,17 @@ ZZ mod(const ZZ& a, const ZZ& b)
   ZZ bb(abs(b));
   ZZ c=a%bb;
   ZZ c2=c<<1;
-  if (c2>  bb) return c-bb; 
+  if (c2>  bb) return c-bb;
   if (c2<=-bb) return c+bb;
   return c;
 }
 
 long mod(const ZZ& a, long b)
 {
-  long bb=abs(b);  
-  long c = ZZ_mod_long(a,bb); 
+  long bb=abs(b);
+  long c = ZZ_mod_long(a,bb);
   long c2=c<<1;
-  if (c2>  bb) return c-bb; 
+  if (c2>  bb) return c-bb;
   if (c2<=-bb) return c+bb;
   return c;
 }
@@ -780,7 +780,7 @@ ZZ posmod(const ZZ& a, const ZZ& b)
 long posmod(const ZZ& a, long b)
 {
   long bb = abs(b);
-  long c = ZZ_mod_long(a,bb); 
+  long c = ZZ_mod_long(a,bb);
   if (c<0) return c+bb;
   return c;
 }
@@ -825,7 +825,7 @@ long val(const ZZ& factor, const ZZ& number)
 {
  if (is_zero(number)) return VALUATION_OF_ZERO;
  ZZ f = abs(factor);
- if ((f<2)) return VALUATION_OF_ZERO;  // error condition! N.B. This value 
+ if ((f<2)) return VALUATION_OF_ZERO;  // error condition! N.B. This value
  ZZ n = number;                        // must be unlikely and POSITIVE.
  long e = divide_out(n,f);
  return e;
@@ -835,7 +835,7 @@ long val(long factor, const ZZ& number)
 {
  if (is_zero(number)) return VALUATION_OF_ZERO;
  long f = abs(factor);
- if ((f<2)) return VALUATION_OF_ZERO;  // error condition! N.B. This value 
+ if ((f<2)) return VALUATION_OF_ZERO;  // error condition! N.B. This value
  ZZ n = number;                    // must be unlikely and POSITIVE.
  long e = divide_out(n,f);
  return e;
@@ -859,12 +859,12 @@ vector<int> valuations(const ZZ& n, const vector<int>& primes)
   return ee;
 }
 
-int div(const ZZ& factor, const ZZ& number) 
+int div(const ZZ& factor, const ZZ& number)
 { if (is_zero(factor)) return is_zero(number);
   else return (is_zero(number%factor));
 }
 
-int div(long factor, const ZZ& number) 
+int div(long factor, const ZZ& number)
 { if (factor==0) return is_zero(number);
   else return is_zero(number%factor);
 }
@@ -873,7 +873,7 @@ long bezout(const ZZ& aa, long bb, ZZ& xx, ZZ& yy)
 {ZZ a,b,c,x,oldx,newx,y,oldy,newy,q;
  oldx = 1; oldy = 0; x = 0; y = 1; a = aa; b = bb;
  while (sign(b)!=0)
- { q = a/b; 
+ { q = a/b;
    c    = a    - q*b; a    = b; b = c;
    newx = oldx - q*x; oldx = x; x = newx;
    newy = oldy - q*y; oldy = y; y = newy;
@@ -882,7 +882,7 @@ long bezout(const ZZ& aa, long bb, ZZ& xx, ZZ& yy)
  else     {xx= oldx; yy= oldy; return  I2long(a);}
 }
 
- 
+
 ZZ invmod(const ZZ& a, const ZZ& p)
 {ZZ g,x,y;
  g=bezout(a,p,x,y);
@@ -897,7 +897,7 @@ ZZ invmod(const ZZ& a, const ZZ& p)
 long invmod(const ZZ& a, long p)
 {ZZ g,x,y;
  g=bezout(a,p,x,y);
- if (!is_one(g)) 
+ if (!is_one(g))
    {
      x=0;
      cerr << "invmod called with " << a << " and " << p << " -- not coprime!" << endl;
@@ -909,47 +909,47 @@ long invmod(const ZZ& a, long p)
 int m1pow(const ZZ& a)
 { return (odd(a) ?  -1 : +1);
 }
- 
+
 static int table8[8] = {0,1,0,-1,0,-1,0,1};
 static int table4[4] = {0,1,0,-1};
 static int table44[4][4] = {{0,0,0,0}, {0,1,0,1}, {0,0,0,0}, {0,1,0,-1}};
-  
+
 int chi2(const ZZ& a)
-{ 
+{
   return table8[posmod(a,8)];
 }
- 
+
 int chi4(const ZZ& a)
-{ 
+{
   return table4[posmod(a,4)];
-} 
+}
 
 
 int hilbert2(const ZZ& a, const ZZ& b)
-{ 
+{
   return table44[posmod(a,4)][posmod(b,4)];
 }
 
 int hilbert2(const ZZ& a, long b)
-{ 
+{
   return table44[posmod(a,4)][posmod(b,4)];
 }
 
 int hilbert2(long a, const ZZ& b)
-{ 
+{
   return table44[posmod(a,4)][posmod(b,4)];
 }
 
 
-static int leg(const ZZ& a, const ZZ& b) 
+static int leg(const ZZ& a, const ZZ& b)
 //nb this function is not intended for public use!
-{ 
+{
   ZZ aa = a;
   ZZ bb = b;
 //  cout<<"leg("<<a<<","<<b<<") = "<<flush;
   ZZ c;
   int ans = 1;
-  while (bb>1) 
+  while (bb>1)
   {     aa = aa % bb;
         if (sign(aa)<0)       {aa=-aa; ans*=chi4(bb);}
         while (is_zero(aa%4)) {aa/=4;}
@@ -960,13 +960,13 @@ static int leg(const ZZ& a, const ZZ& b)
 //  cout << ans << endl;
   return ans;
 }
- 
-static int leg(const long& a, const long& b) 
+
+static int leg(const long& a, const long& b)
 //nb this function is not intended for public use!
 { long aa = a, bb = b;
 //  cout<<"leg("<<a<<","<<b<<") = "<<flush;
   int ans = 1;
-  while (bb>1) 
+  while (bb>1)
   {     aa = aa % bb;
         if (aa<0)       {aa=-aa; ans*=chi4(bb);}
         while (!(aa&3)) {aa/=4;}
@@ -977,15 +977,15 @@ static int leg(const long& a, const long& b)
 //  cout << ans << endl;
   return ans;
 }
- 
+
 
 int legendre(const ZZ& a, const ZZ& b)
-{ 
+{
   return ((is_one(gcd(a,b)) && (odd(b))) ? leg(a,b) : 0);
 }
 
 int legendre(const ZZ& aa, long b)
-{ 
+{
   if(!(b%2)) return 0;  // b was even
   long a=I2long(aa%b);
   long g=::gcd(a,b);
@@ -994,15 +994,15 @@ int legendre(const ZZ& aa, long b)
 }
 
 int kronecker(const ZZ& x, const ZZ& y)
-{ 
+{
   long r; ZZ x1=x,y1=y,z;
   int s=1;
 
   if (is_zero(y1)) return (abs(x1)==1);
 
-  if (is_negative(y)) 
+  if (is_negative(y))
     {
-      y1= -y1; 
+      y1= -y1;
       if (is_negative(x1)) s = -1;
     }
 
@@ -1026,12 +1026,12 @@ int kronecker(const ZZ& x, const ZZ& y)
   }
   return (y1==1)? s: 0;
 }
- 
+
 int kronecker(const ZZ& d, long n)
-{ 
+{
   return kronecker(mod(d,n),n);
 }
- 
+
 long gcd(const ZZ& a, long b)
 {
   ZZ bb(b);
