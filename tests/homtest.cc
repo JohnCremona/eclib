@@ -40,7 +40,6 @@ int main(void)
  long n=1;
  int plus=1;
  int verbose=0;
- int cuspidal=0;
  vector<long> dims(3), cdims(3);
  // cout << "Verbose? "; cin >> verbose;
  // cout << "Plus space, minus space or full space (+1,-1,0)? "; cin >> plus;

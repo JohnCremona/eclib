@@ -53,7 +53,7 @@ level::level(long n, long neigs)
   squarelevel=(n==rootn*rootn);
   ncusps = std::transform_reduce(dlist.begin(), dlist.end(), 0,
                                  std::plus{},
-                                 [this](long& d){return euler_phi(gcd(d,N/d), plist);});
+                                 [this](auto d){return euler_phi(gcd(d,N/d), plist);});
   // cout<<"Number of cusps at level " << N << " is " << ncusps << endl;
 }
 
