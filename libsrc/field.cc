@@ -17,7 +17,7 @@ Field::Field(const ZZX& p, string a, int verb)
 #endif
   if (IsMonic(p) && IsIrreducible(p))
     {
-      // Set A to be the companion matrix of p.  The function
+      // Set m to be the companion matrix of p.  The function
       // CompanionMatrix(p) returns a mat_ZZ so we do this manually.
       d = deg(p);
       mat_m m(d,d);
@@ -29,7 +29,7 @@ Field::Field(const ZZX& p, string a, int verb)
       m(d,d) = -coeff(p, d-1);
       // Finally call the other constructor
 #ifdef DEBUG_FIELD_CONSTRUCTOR
-  cout << "Calling the other Field constructor " << endl;
+      cout << "Calling the other Field constructor " << endl;
 #endif
       *this = Field(m, ZZ(1), a, verb);
     }
@@ -39,32 +39,24 @@ Field::Field(const ZZX& p, string a, int verb)
 #ifdef DEBUG_FIELD_CONSTRUCTOR
       display_factors(p);
 #endif
-      // Here is the default constructor code (for Q):
-      d=1;
-      A.init(1,1); // zero matrix
-      B.init(1,1); // zero matrix
-      C.init(1,1); // zero matrix
-      denom = B(1,1) = Bdet = Bdet1 = Bdet2 = Bdet3 = ZZ(1);
-      Binv = B;
-      var = ""; // will not be used anyway
-      SetX(minpoly);
+      *this = FieldQQ;
     }
+#ifdef DEBUG_FIELD_CONSTRUCTOR
+  cout << "Constructed field " << this << " --> " << *this << endl;
+#endif
 }
 
 Field::Field() // defaults to Q
+  :var(""), d(1), denom(ZZ(1))
 {
-  d=1;
-  A.init(1,1); // zero matrix
-  B.init(1,1); // zero matrix
-  C.init(1,1); // zero matrix
-  denom = B(1,1) = Bdet = Bdet1 = Bdet2 = Bdet3 = ZZ(1);
-  Binv = B;
-  var = ""; // will not be used anyway
   SetX(minpoly);
+#ifdef DEBUG_FIELD_CONSTRUCTOR
+  cout << "Constructed field " << this << " --> " << *this << endl;
+#endif
 }
 
-Field::Field(const mat_m& m, const ZZ& den, string a, int verb)
-  : var(a), d(m.nrows()), denom(den), A(m)
+Field::Field(const mat_m& A, const ZZ& den, mat_m& Binv, ZZ& Bdet3, string a, int verb)
+  : var(a), d(A.nrows()), denom(den)
 {
   if (verb)
     {
@@ -82,28 +74,30 @@ Field::Field(const mat_m& m, const ZZ& den, string a, int verb)
   vec_m v(d);
   v[1] = pow(denom,d-1); // so v=[1,0,...,0]*denom^(d-1)
   // cout<<"v = "<<v<<endl;
-  B.init(d,d);
+  mat_m B(d,d);
   B.setcol(1,v);
   for(int i=2; i<=d; i++)
     {
       v = A*v / denom;
       B.setcol(i,v);
     }
-  Bcontent = B.content();
+  ZZ Bcontent = B.content();
   // cout << "Content of original B is " << Bcontent << endl;
   B /= Bcontent;
-  Binv.init(d,d);
-  Bdet = inverse(B,Binv); // so B*Binv = Bdet*identity
+  ZZ Bdet = inverse(B,Binv); // so B*Binv = Bdet*identity
   mat_m I = mat_m::identity_matrix(d);
   assert (B*Binv == Bdet*I);
-  Bdet1 = B(1,1);
-  Bdet2 = Binv(1,1);
+  ZZ Bdet1 = B(1,1);
+  ZZ Bdet2 = Binv(1,1);
   Bdet3 = Bdet2*denom;
   // Now we have Binv*A*B = denom*Bdet * C, where C = companion
   // matrix of minpoly. i.e. the B-conjugate of A can be divided by
   // denom to give the integral matrix C.
-  C = (Binv*A*B) / (denom*Bdet);
+  mat_m C = (Binv*A*B) / (denom*Bdet);
   assert (CompanionMatrix(minpoly) == mat_to_mat_ZZ(C));
+
+  // NB To construct a field element from a 'raw' coord vector c and denom d
+  // replace c by Binv*c and d by Bdet3*d (and cancel)
 
   Cpowers.resize(d);
   Cpowers[0] = I;
@@ -127,14 +121,18 @@ Field::Field(const mat_m& m, const ZZ& den, string a, int verb)
       cout << "Leaving Field constructor" << endl;
       cout << "----------------------------"<<endl;
     }
+#ifdef DEBUG_FIELD_CONSTRUCTOR
+  cout << "Constructed field " << this << " --> " << *this << endl;
+#endif
 }
 
 // String for prettier output, like "Q" or "Q(i) = Q[X]/(X^2+1)" or
 // raw output, suitable for re-input, like "Q" or "i [1 0 1]":
 string Field::str(int raw) const
 {
+  // cout << "In Field::str() with field " << this << " ---> " << endl;
   ostringstream s;
-  if (isQ())
+  if (d==1)
     s << "Q";
   else
     {
@@ -174,110 +172,38 @@ istream& operator>>(istream& s, Field& F)
 #endif
       F = Field(f, var);
 #ifdef DEBUG_FIELD_INPUT
-      cout << F << endl;
-      F->display();
+      F.display();
 #endif
     }
   return s;
 }
 
-void Field::display_bases(ostream&s) const
+void Field::display(ostream&s) const
 {
-  if (isQ())
-    return;
-  mat_m I(mat_m::identity_matrix(d));
-
-  s << "Powers of A (i.e. powers of " << var << " in A-embedding):\n";
-  vector<mat_m> Apowers(d);
-  Apowers[0] = I;
-  for (int i=1; i<d; i++)
-    Apowers[i] = A*Apowers[i-1];
-  for (auto Apow: Apowers)
-    {
-      Apow.output(s);
-      s<<endl;
-      s<<endl;
-    }
-  ZZ fac = pow(denom, d-1) * Bdet;
-  s << "Basis in A-embedding, scaled by "<< denom << "^" << d-1 << " * " << Bdet << " = " << fac <<":\n";
-  fac = Bdet*Bcontent;
-  s << "(first columns should be standard basis vectors * "<< fac <<")\n";
-  for(int i=1; i<=d; i++)
-    {
-      vec_m coli = Binv.col(i);
-      for(int j=1; j<=d; j++)
-        coli[j] *= pow(denom, d-j);
-      mat_m M = lin_comb_mats(coli, Apowers);
-      M.output(s);
-      s<<endl;
-      s<<endl;
-      if (!(M.col(1)==fac*I.col(i)))
-        {
-          cout<<"Scaling problem:  column(1) = "<<M.col(1)
-              <<" but fac*e_"<<i<<" = "<<fac*I.col(i)<<endl;
-        }
-    }
-  s << "Powers of C (i.e. powers of " << var << " in C-embedding):\n";
-  for (auto Cpow: Cpowers)
-    {
-      Cpow.output(s);
-      s<<endl;
-      s<<endl;
-    }
-  s << "Basis in C-embedding, scaled by "<<Bdet<<":\n";
-  s << "(first columns should be columns of basis())\n";
-  for(int i=1; i<=d; i++)
-    {
-      mat_m M = lin_comb_mats(Binv.col(i), Cpowers);
-      M.output(s);
-      s<<endl;
-      s<<endl;
-      assert (M.col(1) == Binv.col(i));
-    }
-}
-
-void Field::display(ostream&s, int raw) const
-{
-  string fpol = ::str(minpoly);
-  if (isQ() || (d==1))
+  if (d==1)
     {
       s << "Q" << endl;
-      return;
     }
-  s << "Q(" << var << ") with defining polynomial "<< ::str(minpoly) <<" (of degree "<<d
-    << " and discriminant " << discriminant(minpoly) << ")" << endl;
-  if(raw && !isQ())
+  else
     {
-      s << "   Raw basis with respect to alpha-power basis:\n";
-      for(int i=1; i<=d; i++)
-        {
-          FieldElement bi = element(vec_m::unit_vector(d,i), ZZ(1), 1);
-          s << "   #"<<i<<": "<< bi << endl;
-          s << "   (with char poly = " << ::str(bi.charpoly())
-            << " and minpoly = " << ::str(bi.minpoly()) << "\n";
-        }
+      s << "Q(" << var << ") with defining polynomial "<< ::str(minpoly) <<" (of degree "<<d
+        << " and discriminant " << discriminant(minpoly) << ")" << endl;
     }
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-// raw means the given coords are w.r.t. the B-basis
-FieldElement::FieldElement(const Field* HF, const vec_m& c, const ZZ& d, int raw)
+FieldElement::FieldElement(const Field* HF, const vec_m& c, const ZZ& d)
     :F(HF), coords(c), denom(d)
 {
-  // cout<<"Constructing a FieldElement in Q("<<F->var<<")\n";
-  if (raw)
-    {
-      coords = F->Binv *coords;
-      denom *= F->Bdet3;
-    }
+  // cout<<"Constructing a FieldElement in "<< *F << ")\n";
   cancel();
   // cout<<" - finished constructing " << (*this) << "\n";
 }
 
-FieldElement Field::element(const vec_m& c, const ZZ& d, int raw) const
+FieldElement Field::element(const vec_m& c, const ZZ& d) const
 {
-  return FieldElement(this, c, d, raw);
+  return FieldElement(this, c, d);
 }
 
 FieldElement Field::rational(const bigrational& x) const
@@ -327,7 +253,7 @@ FieldElement Field::minus_two() const
 
 FieldElement Field::gen() const
 {
-  if (isQ())
+  if (d==1)
     return rational(1);
   else
     return FieldElement(this, vec_m::unit_vector(d, 2));
@@ -335,7 +261,7 @@ FieldElement Field::gen() const
 
 void FieldElement::cancel() // divides through by gcd(content(coords, denom))
 {
-  if (IsOne(denom))
+  if (field_is_Q() || IsOne(denom))
     return;
   if (denom<0)
     {
@@ -351,7 +277,7 @@ void FieldElement::cancel() // divides through by gcd(content(coords, denom))
 
 int FieldElement::is_zero() const
 {
-  if (F->isQ())
+  if (field_is_Q())
     return val.is_zero();
   return trivial(coords);
 }
@@ -359,7 +285,7 @@ int FieldElement::is_zero() const
 int FieldElement::is_one() const
 {
   static const bigrational one(1);
-  if (F->isQ())
+  if (field_is_Q())
     return val==one;
   return IsOne(denom) && coords == vec_m::unit_vector(F->d,1);
 }
@@ -367,14 +293,14 @@ int FieldElement::is_one() const
 int FieldElement::is_minus_one() const
 {
   static const bigrational minus_one(-1);
-  if (F->isQ())
+  if (field_is_Q())
     return val==minus_one;
   return IsOne(denom) && coords == -vec_m::unit_vector(F->d,1);
 }
 
 void FieldElement::negate() // negate in place
 {
-  if (F->isQ())
+  if (field_is_Q())
     val = -val;
   else
     coords = -coords;
@@ -384,10 +310,8 @@ void FieldElement::negate() // negate in place
 // or for raw output, suitable for re-input (with Field known):
 string FieldElement::str(int raw) const
 {
-  // cout << "In FieldElement::str() with var = " << F->var << endl;
-  // cout << "coords = " << coords << ", denom = " << denom << endl;
   ostringstream s;
-  if (F->isQ())
+  if (field_is_Q())
     {
       s << val; // if val is an integer this just outputs the integer with no "/" + denominator
       return s.str();
@@ -410,26 +334,40 @@ string FieldElement::str(int raw) const
 // x must be initialised with a Field before input to x
 istream& operator>>(istream& s, FieldElement& x)
 {
-  if (x.field_ptr()->isQ())
-    s >> x.val;
+  if (x.field_is_Q())
+    {
+      s >> x.val;
+    }
   else
-    s >> x.coords >> x.denom;
+    {
+      s >> x.coords >> x.denom;
+    }
   return s;
 }
 
 int FieldElement::operator==(const FieldElement& b) const
 {
-  return in_same_field(b) && (F->isQ()? val==b.val : (denom==b.denom) && (coords==b.coords));
+  return in_same_field(b) && ( field_is_Q()? val==b.val : (denom==b.denom) && (coords==b.coords));
 }
 
 int FieldElement::operator!=(const FieldElement& b) const
 {
-  return (!in_same_field(b)) || (F->isQ()? val!=b.val : (denom!=b.denom) || (coords!=b.coords));
+  return (!in_same_field(b)) || ( field_is_Q()? val!=b.val : (denom!=b.denom) || (coords!=b.coords));
+}
+
+// Change the field pointer to F1 (requires F1 and F to be pointers
+// to the same field)
+void FieldElement::change_field_pointer(const Field* F1)
+{
+  if (F1==F) return;              // same pointer, no change needed
+  if (*F1==*F) {F = F1; return; } // different pointer but same field
+  cerr << "Cannot change field pointer of " << *this << " from " << F << " (pointing to " << *F
+       << ") to " << F1 << " (pointing to " << *F1 << "), as these are different fields." << endl;
 }
 
 mat_m FieldElement::matrix() const // ignores denom, not used for Q
 {
-  if (F->isQ())
+  if (field_is_Q())
     return mat_m::scalar_matrix(1, num(val));
   return lin_comb_mats(coords, F->Cpowers);
 }
@@ -520,7 +458,7 @@ void FieldElement::operator+=(const FieldElement& b)
     }
   if (b.is_zero())
     return;
-  if (F->isQ())
+  if (field_is_Q())
     {
       val += b.val;
       return;
@@ -547,7 +485,7 @@ FieldElement FieldElement::operator+(const FieldElement& b) const
 
 FieldElement FieldElement::operator-() const
 {
-  if (F->isQ())
+  if (field_is_Q())
     return FieldElement(-val);
   return FieldElement(F, -coords, denom);
 }
@@ -564,7 +502,7 @@ void FieldElement::operator-=(const FieldElement& b)
     }
   if (b.is_zero())
     return;
-  if (F->isQ())
+  if (field_is_Q())
     {
       val -= b.val;
       return;
@@ -600,7 +538,7 @@ void FieldElement::operator*=(const FieldElement& b) // multiply by b
     }
   if (is_zero()) return;
   if (b.is_zero()) {*this = b; return;}
-  if (F->isQ())
+  if (field_is_Q())
     {
       val *= b.val;
       return;
@@ -635,7 +573,7 @@ FieldElement FieldElement::inverse() const // raise error if zero
     }
   if (is_one() || is_minus_one())
     return FieldElement(*this);
-  if (F->isQ())
+  if (field_is_Q())
     return FieldElement(recip(val));
 
   mat_m M = matrix(), Minv;
@@ -663,7 +601,7 @@ void FieldElement::operator/=(const FieldElement& b)      // divide by b
     }
   if (is_zero())
     return;
-  if (F->isQ())
+  if (field_is_Q())
     {
       val /= b.val;
       return;
@@ -710,7 +648,7 @@ FieldElement evaluate(const ZZX& f, const FieldElement a)
 int FieldElement::is_rational(bigrational& r) const
 {
   r = val;
-  if (F->isQ())
+  if (F->d ==1)
     return 1;
   r = bigrational(coords[1],denom);
   for (int i=2; i <= F->d; i++)
@@ -732,7 +670,7 @@ int FieldElement::is_integral() const
 // return 1 and r s.t. r^2=this, with deg(r)=degree(), else 0
 int FieldElement::is_absolute_square(FieldElement& r) const
 {
-  if (F->isQ())
+  if (field_is_Q())
     return (val.is_square(r.val));
   // field not Q, reduce to integral case if necessary
   if (::is_one(denom))
@@ -747,7 +685,7 @@ int FieldElement::is_absolute_square(FieldElement& r) const
 // Same as above if the min poly is known and denom=1
 int FieldElement::is_absolute_integral_square(FieldElement& r)  const
 {
-  if (F->isQ())
+  if (field_is_Q())
     return (val.is_square(r.val));
   assert (::is_one(denom));
   ZZX g, g0, g1, f = minpoly();
@@ -785,7 +723,7 @@ int FieldElement::is_square(FieldElement& r, int ntries) const
   if (is_zero() || is_one())
     return 1;
 
-  if (F->isQ())
+  if (field_is_Q())
     return (val.is_square(r.val));
 
   // If this has full degree, or if the relative degree is odd, just
@@ -971,8 +909,9 @@ FieldElement FieldIso::operator()(const FieldElement& x) const
   if (id_flag) return x;
   if ((x.field_ptr()==domain) || (*x.field_ptr()==*domain))
     {
-      if (x.field_ptr()->isQ())
-        return codomain->rational(x.val);
+      bigrational r;
+      if (x.is_rational(r))
+        return codomain->rational(r);
 
       FieldElement y(codomain, isomat*x.coords, denom*x.denom);
       // sanity check that the min poly has not changed
@@ -1009,7 +948,7 @@ FieldIso Field::reduction_isomorphism(string newvar, int canonical) const
 #ifdef DEBUG_REDUCE
   cout << "In Field::reduction_isomorphism(), minpoly = " << ::str(minpoly) << endl;
 #endif
-  if (isQ())
+  if (d==1)
     {
 #ifdef DEBUG_REDUCE
       cout << " - Field is Q, so identity" << endl;

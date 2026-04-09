@@ -91,18 +91,16 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       cout << "projcoord = " << projcoord << endl;
     }
 
-  // Compute Hecke field basis (expressing the basis on which we will
-  // express eigenvalues w.r.t. the power basis on the roots of f)
-
   if (d==1)
     {
       F = F0 = FieldQQ;
       Fiso = FieldIso(&F);
     }
   else
+    // Compute Hecke field from matrix A if degree d>1
     {
       string var = codeletter(index-1);
-      F0 = Field(A, denom_abs, var, verbose>1);
+      F0 = Field(A, denom_abs, basis_change_matrix, basis_change_denominator, var, verbose>1);
       int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
       if (verbose)
         {
@@ -131,19 +129,44 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       cout << F << endl;
     }
 
-  cm = 1;    // means unknown
   sfe = 0;   // means unknown
 }
 
 // Constructor which will read from file
 Newform::Newform(Newspace* x, int i, int verbose)
-  :N(x->N), nsp(x), index(i), lab(codeletter(i-1))
+  :N(x->N), nsp(x), index(i), lab(codeletter(i-1)),
+   F(FieldQQ), F0(FieldQQ) // will be overwritten of degree>1
 {
   if (verbose)
-    cout << "Constructing Newform from file data "<< endl;
+    cout << "Constructing Newform " << this << " from file data "<< endl;
   if (!input_from_file(verbose))
     cerr << "Unable to read Newform " << lab << endl;
 }
+
+// NB We do not use automatic copy constructor and assignment since
+// when the aP are copied they must point to the field in the new
+// Newform not the old.
+
+Newform::Newform(const Newform& x)
+  :N(x.N), nsp(x.nsp), index(x.index), lab(x.lab), d(x.d), F0(x.F0), F(x.F), Fiso(x.Fiso),
+   S(x.S), denom_abs(x.denom_abs), projcoord(x.projcoord), key_symbol(x.key_symbol),
+   basis_change_matrix(x.basis_change_matrix), basis_change_denominator(x.basis_change_denominator),
+   sfe(x.sfe), maxP(x.maxP), aPmap(x.aPmap), eQmap(x.eQmap), aMlist(x.aMlist), trace_list(x.trace_list)
+{
+  for (auto& item: aPmap) item.second.change_field_pointer(&F);
+}
+
+// assignment
+Newform& Newform::operator=(const Newform& x)
+{
+  N = x.N; nsp = x.nsp; index = x.index; lab = x.lab; d = x.d; F0 = x.F0; F = x.F; Fiso = x.Fiso;
+  S = x.S; denom_abs = x.denom_abs; projcoord = x.projcoord; key_symbol = x.key_symbol;
+  basis_change_matrix = x.basis_change_matrix;  basis_change_denominator = x.basis_change_denominator;
+  sfe=x.sfe; maxP = x.maxP; aPmap = x.aPmap; eQmap = x.eQmap; aMlist = x.aMlist; trace_list = x.trace_list;
+  for (auto& item: aPmap) item.second.change_field_pointer(&F);
+  return *this;
+}
+
 
 string Newform::label() const
 {
@@ -160,13 +183,13 @@ FieldElement Newform::eig(const matop& T)
   vec_m apv = to_vec_m(nsp->H1->applyop_proj(T, key_symbol, projcoord));
   // cout << "ap vector = " << apv <<endl;
   static const ZZ one(1);
-  if (F0.isQ())
+  if (d==1)
     {
       return FieldElement(bigrational(apv[1], to_ZZ(denom_abs)));
     }
   else
     {
-      FieldElement a(&F0, apv, one, 1); // raw=1
+      FieldElement a(&F0, basis_change_matrix * apv, basis_change_denominator);
       return (Fiso.is_identity()? a : Fiso(a));
     }
 }
@@ -883,7 +906,7 @@ int Newform::input_from_file(int verb)
 {
   string fname = filename();
   if (verb)
-    cout << "Reading newform " << lab << " from " << fname << " (verb="<<verb<<")"<<endl;
+    cout << "Reading newform " << this << " : " << lab << " from " << fname << " (verb="<<verb<<")"<<endl;
   ifstream fdata(fname.c_str());
   if (!fdata.is_open())
     {
@@ -902,13 +925,10 @@ int Newform::input_from_file(int verb)
   if (verb>1)
     cout << "--> dim = " << d << endl;
 
-  // Hecke field:
-  F = Field();
+  // Hecke field (we only read F; F0 and Fiso are not defined):
   fdata >> F;
   if (verb>1)
     cout << "--> Hecke field is " << F << endl;
-  F0 = F;
-  Fiso = FieldIso(&F0);
 
   if (verb>1)
     {
@@ -1038,11 +1058,18 @@ int Newspace::input_from_file(const long& level, int verb)
   if (verb>1)
     cout << "-> dims: " << dims <<endl;
 
+  newforms.reserve(nnf);
   for (int i=1; i<=nnf; i++)
     {
       if (verb)
         cout << "About to read newform #" << i << " from file" << endl;
-      newforms.push_back(Newform(this, i, verb));
+      Newform nf(this, i, verb);
+      if (verb>1)
+        {
+          cout << "After reading newform #" << i << " from file:" << endl;
+          nf.display(1,1,1);
+        }
+      newforms.push_back(nf);
     }
 
   if (verb>1)
@@ -1058,9 +1085,9 @@ int Newspace::input_from_file(const long& level, int verb)
 // output basis for the Hecke field and character of all newforms
 void Newspace::display_newforms(int aP, int AL, int traces) const
 {
-  for ( auto& F : newforms)
+  for ( auto& nf : newforms)
     {
-      F.display(aP, AL, traces);
+      nf.display(aP, AL, traces);
       cout<<endl;
     }
 }
@@ -1070,7 +1097,7 @@ vector<int> Newspace::dimensions() const
 {
   vector<int> dims(newforms.size());
   std::transform(newforms.begin(), newforms.end(), dims.begin(),
-                 [](const Newform& F){return F.dimension();});
+                 [](const Newform& nf){return nf.dimension();});
   return dims;
 }
 

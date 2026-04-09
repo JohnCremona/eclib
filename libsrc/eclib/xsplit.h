@@ -79,7 +79,7 @@ protected:
   vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists
   vector<Zvec<T>>    gbplus, gbminus;           // Vector to hold all bplus/bminus
 
-  ff_data<T>* root;                            // Always points to root data node
+  ff_data<T> *root;                            // Always points to root data node
 
   void make_opmat(long i, ff_data<T> &data);   // Puts it in the_opmat
   void make_submat(ff_data<T> &data);

@@ -51,10 +51,12 @@ private:
   ZZ denom_abs; // absolute denominator of S
   mat projcoord; // used to computed eigenvalues of any operator
   modsym key_symbol; // nsp->H1->freemods[pivots(S)[1] -1]
+  mat_m basis_change_matrix;
+  ZZ basis_change_denominator;
+  // To construct a field element from a 'raw' coord vector c and
+  // denominator d, replace c by basis_change_matrix*c and d by
+  // basis_change_denominator*d and cancel.
 
-  int self_twist_flag; // -1 for unknown, 0 for no, 1 for yes
-  INT CMD;            // =D if this is self-twist by unramified disc D<0 dividing Quad::disc, else 0
-  int cm; // CM code (see defn in newforms.h, but only 1 (not set) for now)
   int sfe; // Sign of functional equation (minus product of AL eigs), 0 if not known
 
   // Dict of T(P) eigenvalues of good primes P:
@@ -90,6 +92,15 @@ public:
   // constructor from ambient Newspace (read from file)
   Newform(Newspace* x, int i, int verbose=0);
 
+  // NB We do not use automatic copy constructor and assignment since
+  // when the aP are copied they must point to the field in the new
+  // Newform not the old.
+
+  // copy constructor
+  Newform(const Newform& x);
+  // assignment
+  Newform& operator=(const Newform& x);
+
   // Return the number of this newform (counting from 1)
   int get_index() const { return index;}
   // Use after sorting to reset the numbers and variable names
@@ -117,6 +128,7 @@ public:
   // Characteristic polynomial of such a linear combination:
   ZZX char_pol_lin_comb(const vector<long>& Plist, const vector<scalar>& coeffs, int verb=0);
 
+  // Return the Hecke field
   Field field(int original=0) const {return (original? F0: F);}
   // Return the degree of the Hecke field
   int dimension() const {return d;}
@@ -131,10 +143,6 @@ public:
   void display_aP() const;
   // Display AL eigenvalues
   void display_AL() const;
-
-  int is_self_twist() const {return self_twist_flag;}
-  INT self_twist_discriminant() const {return CMD;}
-  int cm_code() const {return cm;}
 
   // Compute aPmap for first ntp primes if empty, and return it
   map<long, FieldElement> TP_eigs(int ntp, int verbose=0);

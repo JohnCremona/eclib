@@ -25,20 +25,30 @@ private:
   int d;        // degree
   ZZX minpoly;  // irreducible poly of degree d
   ZZ denom; // minpoly is the (integral) min poly of A/denom
-  mat_m A;        // dxd matrix with scaled min.poly. minpoly
-  mat_m B, Binv;  // Binv*B = Bdet*I
-  // B has first column Bdet1*e1, Binv has first column Bdet2*e1,
-  // Bdet=Bdet1*Bdet2, Bdet3 = denom*Bdet2
-  ZZ Bdet, Bdet1, Bdet2, Bdet3, Bcontent;
-  // Binv*A*B = Bdet*denom*C
-  // cols of Binv are Bdet * coeffs of basis w.r.t. a-powers
-  mat_m C;        // dxd companion matrix with min.poly. minpoly
-  vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1
+  vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1, where C =dxd companion matrix with min.poly. minpoly
 public:
   ~Field() {minpoly.kill();}
   Field(); // defaults to Q
-  explicit Field(const mat_m& m, const ZZ& den = to_ZZ(1), string a="a", int verb=0);
+  explicit Field(const mat_m& A, const ZZ& den, mat_m& Binv, ZZ& Bdet3, string a="a", int verb=0);
+  explicit Field(const mat_m& A, const ZZ& den, string a="a", int verb=0)
+  {
+    mat_m bcm;
+    ZZ bcd;
+    *this = Field(A, den, bcm, bcd, a, verb);
+  }
   explicit Field(const ZZX& p, string a="a", int verb=0);
+  Field(const Field& x)
+    :var(x.var), d(x.d), minpoly(x.minpoly), denom(x.denom), Cpowers(x.Cpowers) {;}
+  Field& operator=(const Field& x)
+  {
+    var = x.var;
+    d = x.d;
+    minpoly = x.minpoly;
+    denom = x.denom;
+    Cpowers = x.Cpowers;
+    return *this;
+  }
+
   FieldElement rational(const bigrational& x) const;
   FieldElement rational(const ZZ& x) const;
   FieldElement rational(long x) const;
@@ -49,17 +59,13 @@ public:
   FieldElement minus_two() const;
   FieldElement zero() const;
   FieldElement gen() const;
-  FieldElement element(const vec_m& c, const ZZ& d=to_ZZ(1), int raw=0) const;
+  FieldElement element(const vec_m& c, const ZZ& d=to_ZZ(1)) const;
   int degree() const {return d;}
   int isQ() const {return d==1;}
   ZZX poly() const {return minpoly;}
   int operator==(const Field& F) const {return d==F.d && (d==1 || minpoly==F.minpoly);}
   int operator!=(const Field& F) const {return d!=F.d || (d!=1 && minpoly!=F.minpoly);}
-  mat_m basis() const {return Binv;} // columns are Bfactor * coeffs of basis w.r.t. a-powers
-  //  ZZ basis_factor() const {return Bdet;}
-  mat_m inv_basis() const {return B;} // columns are coeffs of a-powers w.r.t. basis
-  void display(ostream&s = cout, int raw=0) const; // if raw, also display raw basis
-  void display_bases(ostream&s = cout) const; // display powers of A and C and bases in both embeddings
+  void display(ostream&s = cout) const;
   string get_var() const {return var;}
   void set_var(const string& v)  {var = v;}
   // String for pretty output, like "Q" or "Q(i) = Q[X]/(X^2+1)", or
@@ -92,7 +98,7 @@ class FieldElement {
   friend class FieldIso;
   friend FieldElement evaluate(const ZZX& f, const FieldElement a);
 private:
-  const Field* F;
+  const Field *F;
 
   // In general the field element is (1/denom)*coords-combination of power basis of F
   // NB On construction every element will be reduced using cancel()
@@ -109,7 +115,7 @@ public:
   explicit FieldElement(const Field* HF)
     :F(HF), coords(vec_m(HF->d)), denom(to_ZZ(1))  {if (HF->d==1) val = bigrational(0);}
   // raw means the given coords are w.r.t. the B-basis
-  FieldElement(const Field* HF, const vec_m& c, const ZZ& d=to_ZZ(1), int raw=0);
+  FieldElement(const Field* HF, const vec_m& c, const ZZ& d=to_ZZ(1));
   // creation from a rational (general F)
   FieldElement(const Field* HF, const ZZ& a, const ZZ& d=to_ZZ(1))
     :F(HF), coords(a*vec_m::unit_vector(HF->d, 1)), denom(d), val(bigrational(a,d)) { cancel();}
@@ -119,13 +125,27 @@ public:
   // creation from a rational (general F)
   FieldElement(const Field* HF, const bigrational& r)
     :F(HF), coords(r.num()*vec_m::unit_vector(HF->d, 1)), denom(r.den()), val(r) {;}
-
+  // copy constructor
+  FieldElement(const FieldElement& x)
+    :F(x.F), coords(x.coords), denom(x.denom), val(x.val) {;}
+  // copy constructor
+  FieldElement& operator=(const FieldElement& x)
+  {
+    F = x.F;
+    coords = x.coords;
+    denom = x.denom;
+    val = x.val;
+    return *this;
+  }
 
   // String for pretty printing, used in default <<, or (if raw) raw
   // output, suitable for re-input:
   string str(int raw=0) const;
 
   const Field* field_ptr() const {return F;}
+  int field_degree() const {return F->d;}
+  int field_is_Q() const {return F->d == 1;}
+
   mat_m matrix() const; // ignores denom
   // NB Since we do not have polynomials with rational coefficients,
   // both charpoly and minpoly are scaled to be primitive rather than
@@ -145,6 +165,10 @@ public:
   int in_same_field(const FieldElement& b) const {return (F==b.F) || (*F==*b.F);}
   int operator==(const FieldElement& b) const;
   int operator!=(const FieldElement& b) const;
+
+  // Change the field pointer to F1 (requires F1 and F to be pointers
+  // to the same field)
+  void change_field_pointer(const Field* F1);
 
   FieldElement operator+(const FieldElement& b) const; // add
   FieldElement operator+(const ZZ& b) const {return operator+(FieldElement(F,b));} // add
