@@ -927,12 +927,10 @@ int Newform::input_from_file(int verb)
 
   // Hecke field (we only read F; F0 and Fiso are not defined):
   fdata >> F;
-  if (verb>1)
-    cout << "--> Hecke field is " << F << endl;
 
-  if (verb>1)
+ if (verb>1)
     {
-      cout << "Before reading eigenvalues:" << endl;
+      cout << "After reading Hecke field, before reading eigenvalues:" << endl;
       display();
     }
 

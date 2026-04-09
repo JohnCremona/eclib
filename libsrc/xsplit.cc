@@ -54,28 +54,21 @@ template<class T>
 form_finderT<T>::form_finderT(splitter_base<T>* hh, T mod,
                               int plus, int maxd, int mind,
                               int dualflag, int bigmatsflag, int v)
-  :h(hh), modulus(mod), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v),
-   gnfcount(0), maxdepth(maxd), mindepth(mind)
+  :h(hh), modulus(mod), denom1(hh->matden()), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v),
+   gnfcount(0), maxdepth(maxd), mindepth(mind), dimen(hh->matdim()), root(ff_data<T>( this ))
 {
   //cout<<"In form_finder constructor, modulus="<<modulus<<", plusflag="<<plus<<", maxd="<<maxd<<", mind="<<mind<<", dualflag="<<dualflag<<", bigmatsflag="<<bigmatsflag<<endl;
   eclogger::setLevel( verbose );
-  denom1 = h->matden();
-  dimen  = h->matdim();
-
-  // Create and initialise new data object as root node
-  // passing a constant pointer of current form_finder object
-  // to data class constructor
-  root = new ff_data<T>( this );
 
   // Set initial values
   // form_finder class is a friend of ff_data class
   // so may access private members
-  root -> subdim_ = dimen;
+  root.subdim_ = dimen;
 
   targetdim = 1;
   if( !plusflag ) {           // full conjmat not needed when plusflag is true
     targetdim=2;
-    if( bigmats ) root -> conjmat_ = h -> s_opmat(-1,dual);
+    if( bigmats ) root.conjmat_ = h -> s_opmat(-1,dual);
   }
 }
 
@@ -85,7 +78,7 @@ form_finderT<T>::~form_finderT(void) {
   // if they have not already been deleted during find()
   // All dynamically created objects (subspaces) held
   // in each data node will also be deleted.
-  delete root;
+  //delete root;
 }
 
 // This is only used when bigmats==1 and we compute opmats on the entire ambient space:
@@ -387,14 +380,14 @@ void form_finderT<T>::recover(vector< vector<long> > eigs) {
   }
   // Clears all nodes.  This cannot be done automatically since we
   // don't know how many eigs lists were to be splt off.
-  root -> eraseChildren();
+  root.eraseChildren();
 }
 
 template<class T>
 void form_finderT<T>::splitoff(const vector<long>& eigs) {
 
   // Always start at root node
-  ff_data<T> *current = root;
+  ff_data<T> *current = &root;
 
   // Temporary variables
   long depth  = current -> depth_;
@@ -481,7 +474,7 @@ void form_finderT<T>::find() {
 #endif
 
   // Proceed in recursive find, passing a node through
-  find( *root );
+  find( root );
 
 #ifdef ECLIB_MULTITHREAD
   // Join all threads in threadpool to wait for all jobs to finish
@@ -490,7 +483,7 @@ void form_finderT<T>::find() {
 #endif
 
   // Clear all nodes.  This should have been be done automatically but not all nodes are deleted when running in multithreaded mode.
-  root -> eraseChildren();
+  root.eraseChildren();
 
   // Now compute all newforms only if recursion has finished
   if(verbose>1) cout << "Now performing use() on all lists at once" << endl;
