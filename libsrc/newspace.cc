@@ -144,8 +144,8 @@ Newform::Newform(Newspace* x, int i, int verbose)
 }
 
 // NB We do not use automatic copy constructor and assignment since
-// when the aP are copied they must point to the field in the new
-// Newform not the old.
+// when data items which have field pointers are copied these must be
+// changed to pointers to fields in the new Newform not the old.
 
 Newform::Newform(const Newform& x)
   :N(x.N), nsp(x.nsp), index(x.index), lab(x.lab), d(x.d), F0(x.F0), F(x.F), Fiso(x.Fiso),
@@ -153,7 +153,11 @@ Newform::Newform(const Newform& x)
    basis_change_matrix(x.basis_change_matrix), basis_change_denominator(x.basis_change_denominator),
    sfe(x.sfe), maxP(x.maxP), aPmap(x.aPmap), eQmap(x.eQmap), aMlist(x.aMlist), trace_list(x.trace_list)
 {
-  for (auto& item: aPmap) item.second.change_field_pointer(&F);
+  for (auto& item: aPmap)
+    item.second.change_field_pointer(&F);
+  for (auto& a: aMlist)
+    a.change_field_pointer(&F);
+  Fiso.change_field_pointers(&F0, &F);
 }
 
 // assignment
@@ -163,7 +167,12 @@ Newform& Newform::operator=(const Newform& x)
   S = x.S; denom_abs = x.denom_abs; projcoord = x.projcoord; key_symbol = x.key_symbol;
   basis_change_matrix = x.basis_change_matrix;  basis_change_denominator = x.basis_change_denominator;
   sfe=x.sfe; maxP = x.maxP; aPmap = x.aPmap; eQmap = x.eQmap; aMlist = x.aMlist; trace_list = x.trace_list;
-  for (auto& item: aPmap) item.second.change_field_pointer(&F);
+
+  for (auto& item: aPmap)
+    item.second.change_field_pointer(&F);
+  for (auto& a: aMlist)
+    a.change_field_pointer(&F);
+  Fiso.change_field_pointers(&F0, &F);
   return *this;
 }
 

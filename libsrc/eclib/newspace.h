@@ -93,8 +93,8 @@ public:
   Newform(Newspace* x, int i, int verbose=0);
 
   // NB We do not use automatic copy constructor and assignment since
-  // when the aP are copied they must point to the field in the new
-  // Newform not the old.
+  // when data items which have field pointers are copied these must be
+  // changed to pointers to fields in the new Newform not the old.
 
   // copy constructor
   Newform(const Newform& x);

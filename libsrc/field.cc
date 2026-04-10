@@ -781,6 +781,27 @@ void cancel_mat(mat_m& M, ZZ& d)
   d /= g;
 }
 
+void FieldIso::change_field_pointers(const Field* dom, const Field* codom)
+{
+  if (dom!=domain)
+    {
+      if (*dom==*domain)
+        domain = dom;
+      else
+        cerr << "Cannot change domain field pointer of " << *this << " from " << domain << " (pointing to " << *domain
+             << ") to " << dom << " (pointing to " << *dom << "), as these are different fields." << endl;
+    }
+  if (codom!=codomain)
+    {
+      if (*codom==*codomain)
+        codomain = codom;
+      else
+        cerr << "Cannot change codomain field pointer of " << *this << " from " << codomain << " (pointing to " << *codomain
+             << ") to " << codom << " (pointing to " << *codom << "), as these are different fields." << endl;
+    }
+}
+
+
 //#define DEBUG_COMPOSE
 
 // precompose this FieldIso with another (requires iso.codomain = domain)

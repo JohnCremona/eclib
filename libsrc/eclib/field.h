@@ -268,6 +268,9 @@ public:
   // Identity
   explicit FieldIso(const Field* F1)
     :domain(F1), codomain(F1), isomat(mat_m::identity_matrix(F1->d)), denom(ZZ(1)), id_flag(1) {;}
+
+  void change_field_pointers(const Field* dom, const Field* codom);
+
   // inverse isomorphism
   FieldIso inverse() const;
   // map x in domain to an element of the codomain
