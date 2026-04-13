@@ -43,8 +43,8 @@ private:
   int index;       // index (starting from 1) of this newforms in the list of all
   string lab;      // label suffix (a,b,c,...)
   int d;      // dim(S)
-  Field F0;   // Hecke field (original)
-  Field F;    // Hecke field (reduced)
+  Field *F0;   // Hecke field (original) // not pointer to const as we may change the variable after sorting
+  Field *F;    // Hecke field (reduced)
   FieldIso Fiso; // isomorphism from F0 to F (possibly identity)
 
   subspace_m S; // irreducible subspace of modular symbol space
@@ -96,10 +96,10 @@ public:
   // when data items which have field pointers are copied these must be
   // changed to pointers to fields in the new Newform not the old.
 
-  // copy constructor
-  Newform(const Newform& x);
-  // assignment
-  Newform& operator=(const Newform& x);
+  // // copy constructor
+  // Newform(const Newform& x);
+  // // assignment
+  // Newform& operator=(const Newform& x);
 
   // Return the number of this newform (counting from 1)
   int get_index() const { return index;}
@@ -117,7 +117,7 @@ public:
   int eps(const matop& T);
 
   // coefficient in F of integral M from aMlist or computed (and stored
-  // in aMmap) using multiplicative relations.
+  // in aMlist) using multiplicative relations.
   FieldElement aM(const long& M);
 
   // eigenvalue of a prime from eQmap or aPmap if P is in there;
@@ -128,11 +128,11 @@ public:
   // Characteristic polynomial of such a linear combination:
   ZZX char_pol_lin_comb(const vector<long>& Plist, const vector<scalar>& coeffs, int verb=0);
 
-  // Return the Hecke field
-  Field field(int original=0) const {return (original? F0: F);}
+  // Return (pointer to) the Hecke field
+  Field* field(int original=0) const {return (original? F0: F);}
   // Return the degree of the Hecke field
   int dimension() const {return d;}
-  ZZX poly(int original=0) const {return (original? F0.poly(): F.poly());}
+  ZZX poly(int original=0) const {return (original? F0->poly(): F->poly());}
   string label_suffix() const {return lab;}
   string label() const;
 

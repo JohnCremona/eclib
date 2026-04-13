@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/convert.h"
 #include "eclib/linalg.h"
 #include "eclib/polys.h"
@@ -372,27 +372,6 @@ void Zmat<T>::output_pretty(ostream& s) const
     }
 }
 
-// The binary file input/output only works for T=int or long, not
-// ZZ, and is not used anyehere else
-// void mat::dump_to_file(string filename) const
-// {
-//   ofstream fout(filename.c_str(),ofstream::binary);
-//   fout.write((char*)&nro,sizeof(nro));
-//   fout.write((char*)&nco,sizeof(nco));
-//   fout.write((char*)entries.data(),nro*nco*sizeof(T));
-//   fout.close();
-// }
-
-// void mat::read_from_file(string filename)
-// {
-//   ifstream fin(filename.c_str());
-//   fin.read((char*)&nro,sizeof(nro));
-//   fin.read((char*)&nco,sizeof(nco));
-//   entries.resize(nro*nco);
-//   fin.read((char*)entries.data(),nro*nco*sizeof(T));
-//   fin.close();
-// }
-
 template<class T>
 istream& operator>>(istream& s, Zmat<T>& m) // m cannot be const
 {
@@ -505,7 +484,7 @@ Zmat<T> operator+(const Zmat<T>& m1, const Zmat<T>& m2)
 }
 
 template<class T>
-Zmat<T> operator-(const Zmat<T>& m1, const Zmat<T>& m2) 
+Zmat<T> operator-(const Zmat<T>& m1, const Zmat<T>& m2)
 {
   Zmat<T> ans(m1); ans-=m2;  return ans;
 }
@@ -1031,6 +1010,13 @@ T inverse(const Zmat<T>& A, Zmat<T>& Ainv)
   Zmat<T> ref = echelon(aug, pc, npc, rk, ny, d, 0);
   Ainv = ref.slice(1,n,n+1,2*n);
   return d;
+}
+
+template<class T>
+Zmat<T> rref(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                               long& rk, long& ny, const T& pr)
+{
+  return ref_via_flint(M, pcols, npcols, rk, ny, pr);
 }
 
 template<class T>
@@ -1736,7 +1722,7 @@ hmod_mat_rref(hmod_mat_t mat)
   return rk;
 }
 
-// create flint matrix (type hmod_mat_t) copy of a Zmat<int>:
+// create flint matrix (type hmod_mat_t) copy of a Zmat<int> modulo pr:
 void mod_mat_from_mat(hmod_mat_t& A, const Zmat<int>& M, const int& pr)
 {
   long nr=M.nrows(), nc=M.ncols();
@@ -1746,7 +1732,7 @@ void mod_mat_from_mat(hmod_mat_t& A, const Zmat<int>& M, const int& pr)
       hmod_mat_entry(A,i,j) = (hlimb_t)posmod(M(i+1,j+1),pr);
 }
 
-// create flint matrix (type nmod_mat_t) copy of a Zmat<long>:
+// create flint matrix (type nmod_mat_t) copy of a Zmat<long> modulo pr:
 void mod_mat_from_mat(nmod_mat_t& A, const Zmat<long>& M, const long& pr)
 {
   long nr=M.nrows(), nc=M.ncols();
@@ -1756,7 +1742,7 @@ void mod_mat_from_mat(nmod_mat_t& A, const Zmat<long>& M, const long& pr)
       nmod_mat_entry(A,i,j) = (mp_limb_t)posmod(M(i+1,j+1),pr);
 }
 
-// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<ZZ>:
+// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<ZZ> modulo pr:
 void mod_mat_from_mat(fmpz_mod_mat_t& A, fmpz_mod_ctx_t& mod, const Zmat<ZZ>& M, const ZZ& pr)
 {
   long nr=M.nrows(), nc=M.ncols();
@@ -1767,13 +1753,13 @@ void mod_mat_from_mat(fmpz_mod_mat_t& A, fmpz_mod_ctx_t& mod, const Zmat<ZZ>& M,
       fmpz_mod_mat_set_entry(A,i,j, *NTL_to_FLINT(posmod(M(i+1,j+1),pr)), mod);
 }
 
-// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<INT>:
+// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<INT> modulo pr:
 void mod_mat_from_mat(fmpz_mod_mat_t& A, fmpz_mod_ctx_t& mod, const Zmat<INT>& M, const INT& pr)
 {
   long nr=M.nrows(), nc=M.ncols();
   fmpz_t tmp;
-  pr.get_fmpz(tmp);
-  fmpz_mod_ctx_init(mod, tmp);
+  // pr.get_fmpz(tmp);
+  // fmpz_mod_ctx_init(mod, tmp);
   fmpz_mod_mat_init(A, nr, nc, mod);
   for(long i=0; i<nr; i++)
     for(long j=0; j<nc; j++)
@@ -1869,7 +1855,7 @@ Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr)
   Zmat<ZZ> B = mat_from_mod_mat(R, modulus, dummy).slice(rk, nc);
   fmpz_mod_mat_clear(A,modulus);
   fmpz_mod_mat_clear(R,modulus);
-  fmpz_mod_ctx_clear(modulus);
+  //  fmpz_mod_ctx_clear(modulus);
   return B;
 }
 
@@ -1893,7 +1879,7 @@ Zmat<INT> ref_via_flint(const Zmat<INT>& M, const INT& pr)
   Zmat<INT> B = mat_from_mod_mat(R, modulus, dummy).slice(rk, nc);
   fmpz_mod_mat_clear(A,modulus);
   fmpz_mod_mat_clear(R,modulus);
-  fmpz_mod_ctx_clear(modulus);
+  //  fmpz_mod_ctx_clear(modulus);
   return B;
 }
 

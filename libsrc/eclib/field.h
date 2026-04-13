@@ -11,8 +11,6 @@ class Field;
 class FieldIso;
 class FieldElement;
 
-extern const Field FieldQQ;
-
 // Divide through by gcd of content(M) and d
 void cancel_mat(mat_m& M, ZZ& d);
 
@@ -37,27 +35,11 @@ public:
     *this = Field(A, den, bcm, bcd, a, verb);
   }
   explicit Field(const ZZX& p, string a="a", int verb=0);
-  Field(const Field& x)
-    :var(x.var), d(x.d), minpoly(x.minpoly), denom(x.denom), Cpowers(x.Cpowers) {;}
-  Field& operator=(const Field& x)
-  {
-    var = x.var;
-    d = x.d;
-    minpoly = x.minpoly;
-    denom = x.denom;
-    Cpowers = x.Cpowers;
-    return *this;
-  }
 
-  FieldElement rational(const bigrational& x) const;
-  FieldElement rational(const ZZ& x) const;
-  FieldElement rational(long x) const;
-  FieldElement rational(int x) const;
-  FieldElement one() const;
-  FieldElement minus_one() const;
-  FieldElement two() const;
-  FieldElement minus_two() const;
-  FieldElement zero() const;
+  FieldElement operator()(const bigrational& x) const;
+  FieldElement operator()(const ZZ& x) const;
+  FieldElement operator()(long x) const;
+  FieldElement operator()(int x) const;
   FieldElement gen() const;
   FieldElement element(const vec_m& c, const ZZ& d=to_ZZ(1)) const;
   int degree() const {return d;}
@@ -71,6 +53,7 @@ public:
   // String for pretty output, like "Q" or "Q(i) = Q[X]/(X^2+1)", or
   // (if raw) raw output, suitable for re-input, like "Q" or "i [1 0 1]":
   string str(int raw=0) const;
+  void read(istream& s);
   friend istream& operator>>(istream& s, Field& F);
 
   // Apply polredabs (if canonical) or polredbest to the defining
@@ -78,16 +61,16 @@ public:
   // isomorphism from this to that.  If the poly was already
   // polredabsed, or if F is QQ, return the identity. Otherwise a new
   // Field is created with provided variable name.
-  FieldIso reduction_isomorphism(string newvar, int canonical=0) const;
+  FieldIso reduction_isomorphism(string newvar, Field& Fred, int canonical=0) const;
 
   // Return an iso from this=Q(a) to Q(b) where b is in this field and generates
-  FieldIso change_generator(const FieldElement& b) const;
+  FieldIso change_generator(const FieldElement& b, Field& Qb) const;
 
   // Return an iso from this=Q(a) to Q(b) where b^2=r, optionally
   // applying polredabs (if reduce=2) or polredbest (if reduce=1) to
   // the codomain.  sqrt_r is set to sqrt(r) in the codomain, so
   // sqrt_r^2 = image of r
-  FieldIso sqrt_embedding(const FieldElement& r, string newvar, FieldElement& sqrt_r, int reduce=1) const;
+  FieldIso sqrt_embedding(const FieldElement& r, string newvar, Field& F_sqrt_r, FieldElement& sqrt_r, int reduce=1) const;
 };
 
 inline ostream& operator<<(ostream& s, const Field& F)
@@ -98,7 +81,7 @@ class FieldElement {
   friend class FieldIso;
   friend FieldElement evaluate(const ZZX& f, const FieldElement a);
 private:
-  const Field *F;
+  Field const * F;
 
   // In general the field element is (1/denom)*coords-combination of power basis of F
   // NB On construction every element will be reduced using cancel()
@@ -111,32 +94,22 @@ private:
   bigrational val;
 public:
   FieldElement()
-    :F(&FieldQQ) {;}
-  explicit FieldElement(const Field* HF)
-    :F(HF), coords(vec_m(HF->d)), denom(to_ZZ(1))  {if (HF->d==1) val = bigrational(0);}
+    :F(new Field()) {;}
+  explicit FieldElement(const Field& HF)
+    :F(&HF), coords(vec_m(F->d)), denom(to_ZZ(1))  {if (F->d==1) val = bigrational(0);}
   // raw means the given coords are w.r.t. the B-basis
-  FieldElement(const Field* HF, const vec_m& c, const ZZ& d=to_ZZ(1));
+  FieldElement(const Field& HF, const vec_m& c, const ZZ& d=to_ZZ(1))
+    :F(&HF), coords(c), denom(d) { cancel();}
+
   // creation from a rational (general F)
-  FieldElement(const Field* HF, const ZZ& a, const ZZ& d=to_ZZ(1))
-    :F(HF), coords(a*vec_m::unit_vector(HF->d, 1)), denom(d), val(bigrational(a,d)) { cancel();}
+  FieldElement(const Field& HF, const ZZ& a, const ZZ& d=to_ZZ(1))
+    :F(&HF), coords(a*vec_m::unit_vector(F->d, 1)), denom(d), val(bigrational(a,d)) { cancel();}
   // creation from a rational (F=Q)
   explicit FieldElement(const bigrational& r)
-    :F(&FieldQQ), val(r) {;}
+    :F(new Field()), val(r) {;}
   // creation from a rational (general F)
-  FieldElement(const Field* HF, const bigrational& r)
-    :F(HF), coords(r.num()*vec_m::unit_vector(HF->d, 1)), denom(r.den()), val(r) {;}
-  // copy constructor
-  FieldElement(const FieldElement& x)
-    :F(x.F), coords(x.coords), denom(x.denom), val(x.val) {;}
-  // copy constructor
-  FieldElement& operator=(const FieldElement& x)
-  {
-    F = x.F;
-    coords = x.coords;
-    denom = x.denom;
-    val = x.val;
-    return *this;
-  }
+  FieldElement(const Field& HF, const bigrational& r)
+    :F(&HF), coords(r.num()*vec_m::unit_vector(F->d, 1)), denom(r.den()), val(r) {;}
 
   // String for pretty printing, used in default <<, or (if raw) raw
   // output, suitable for re-input:
@@ -166,47 +139,46 @@ public:
   int operator==(const FieldElement& b) const;
   int operator!=(const FieldElement& b) const;
 
-  // Change the field pointer to F1 (requires F1 and F to be pointers
-  // to the same field)
-  void change_field_pointer(const Field* F1);
+  void set_zero();
+  void set_one();
 
   FieldElement operator+(const FieldElement& b) const; // add
-  FieldElement operator+(const ZZ& b) const {return operator+(FieldElement(F,b));} // add
-  FieldElement operator+(const int& b) const {return operator+(FieldElement(F,to_ZZ(b)));} // add
-  FieldElement operator+(const long& b) const {return operator+(FieldElement(F,to_ZZ(b)));} // add
+  FieldElement operator+(const ZZ& b) const {return operator+(F->operator()(b));} // add
+  FieldElement operator+(const int& b) const {return operator+(F->operator()(b));} // add
+  FieldElement operator+(const long& b) const {return operator+(F->operator()(b));} // add
   void operator+=(const FieldElement& b); // add b to this
-  void operator+=(const ZZ& b) { operator+=(FieldElement(F,b));} // add b
-  void operator+=(const int& b) { operator+=(FieldElement(F,to_ZZ(b)));} // add b
-  void operator+=(const long& b) { operator+=(FieldElement(F,to_ZZ(b)));} // add b
+  void operator+=(const ZZ& b) { operator+=(F->operator()(b));} // add b
+  void operator+=(const int& b) { operator+=(F->operator()(b));} // add b
+  void operator+=(const long& b) { operator+=(F->operator()(b));} // add b
 
   FieldElement operator-(const FieldElement& b) const; // subtract
-  FieldElement operator-(const ZZ& b) const {return operator-(FieldElement(F,b));} // subtract
-  FieldElement operator-(const int& b) const {return operator-(FieldElement(F,to_ZZ(b)));} // subtract
-  FieldElement operator-(const long& b) const {return operator-(FieldElement(F,to_ZZ(b)));} // subtract
+  FieldElement operator-(const ZZ& b) const {return operator-(F->operator()(b));} // subtract
+  FieldElement operator-(const int& b) const {return operator-(F->operator()(b));} // subtract
+  FieldElement operator-(const long& b) const {return operator-(F->operator()(b));} // subtract
   void operator-=(const FieldElement& b); // subtract b from this
-  void operator-=(const ZZ& b) { operator-=(FieldElement(F,b));} // subtract b
-  void operator-=(const int& b) { operator-=(FieldElement(F,to_ZZ(b)));} // subtract b
-  void operator-=(const long& b) { operator-=(FieldElement(F,to_ZZ(b)));} // subtract b
+  void operator-=(const ZZ& b) { operator-=(F->operator()(b));} // subtract b
+  void operator-=(const int& b) { operator-=(F->operator()(b));} // subtract b
+  void operator-=(const long& b) { operator-=(F->operator()(b));} // subtract b
   FieldElement operator-() const;                           // unary minus
 
   FieldElement operator*(const FieldElement& b) const; // product
-  FieldElement operator*(const ZZ& b) const {return operator*(FieldElement(F,b));} // product
-  FieldElement operator*(const int& b) const {return operator*(FieldElement(F,to_ZZ(b)));} // product
-  FieldElement operator*(const long& b) const {return operator*(FieldElement(F,to_ZZ(b)));} // product
+  FieldElement operator*(const ZZ& b) const {return operator*(F->operator()(b));} // product
+  FieldElement operator*(const int& b) const {return operator*(F->operator()(b));} // product
+  FieldElement operator*(const long& b) const {return operator*(F->operator()(b));} // product
   void operator*=(const FieldElement& b); // multiply by b
-  void operator*=(const ZZ& b) { operator*=(FieldElement(F,b));} // multiply by b
-  void operator*=(const int& b) { operator*=(FieldElement(F,to_ZZ(b)));} // multiply by b
-  void operator*=(const long& b) { operator*=(FieldElement(F,to_ZZ(b)));} // multiply by b
+  void operator*=(const ZZ& b) { operator*=(F->operator()(b));} // multiply by b
+  void operator*=(const int& b) { operator*=(F->operator()(b));} // multiply by b
+  void operator*=(const long& b) { operator*=(F->operator()(b));} // multiply by b
 
   FieldElement inverse() const; // raise error if zero      // inverse
   FieldElement operator/(const FieldElement& b) const; // divide (raise error if b is zero)
-  FieldElement operator/(const ZZ& b) const {return operator/(FieldElement(F,b));} // divide
-  FieldElement operator/(const int& b) const {return operator/(FieldElement(F,to_ZZ(b)));} // divide
-  FieldElement operator/(const long& b) const {return operator/(FieldElement(F,to_ZZ(b)));} // divide
+  FieldElement operator/(const ZZ& b) const {return operator/(F->operator()(b));} // divide
+  FieldElement operator/(const int& b) const {return operator/(F->operator()(b));} // divide
+  FieldElement operator/(const long& b) const {return operator/(F->operator()(b));} // divide
   void operator/=(const FieldElement& b);                        // divide by b
-  void operator/=(const ZZ& b) { operator/=(FieldElement(F,b));} // divide by b
-  void operator/=(const int& b) { operator/=(FieldElement(F,to_ZZ(b)));} // divide by b
-  void operator/=(const long& b) { operator/=(FieldElement(F,to_ZZ(b)));} // divide by b
+  void operator/=(const ZZ& b) { operator/=(F->operator()(b));} // divide by b
+  void operator/=(const int& b) { operator/=(F->operator()(b));} // divide by b
+  void operator/=(const long& b) { operator/=(F->operator()(b));} // divide by b
   void negate(); // negate in place
 
   // NB for a in F, either [Q(sqrt(a))=Q(a)] or [Q(sqrt(a)):Q(a)]=2.
@@ -229,6 +201,7 @@ public:
   int is_integral() const;
 
   // x must be initialised with a Field before input to x
+  void read (istream& s);
   friend istream& operator>>(istream& s, FieldElement& x);
 };
 
@@ -241,8 +214,8 @@ class FieldIso {
   friend class Field;
   friend class FieldElement;
 private:
-  const Field* domain;
-  const Field* codomain;
+  Field const * domain;   // pointer to const object
+  Field const * codomain; // pointer to const object
   mat_m isomat;
   ZZ denom;
   int id_flag; // flags that this is the identity (domain=codomain and isomat=id)
@@ -253,23 +226,24 @@ private:
 public:
   // Dummy constructor
   FieldIso()
-    :domain(&FieldQQ), codomain(&FieldQQ), isomat(mat_m::identity_matrix(1)), denom(ZZ(1)), id_flag(1) {;}
+    :isomat(mat_m::identity_matrix(1)), denom(ZZ(1)), id_flag(1)
+  {
+    domain = codomain = new Field();
+  }
   // Constructor from a known matrix
-  FieldIso(const Field* F1, const Field* F2, const mat_m& M, const ZZ& d = ZZ(1), int id=-1)
-    :domain(F1), codomain(F2), isomat(M), denom(d), id_flag(id)
+  FieldIso( const Field& F1, const Field& F2, const mat_m& M, const ZZ& d = ZZ(1), int id=-1)
+    :domain(&F1), codomain(&F2), isomat(M), denom(d), id_flag(id)
   {
     if (id_flag==-1)
       set_id_flag();
   }
   // Partial constructor from two fields, used when inputting just the matrix and denominator.
   // This initializes isomat to the correct size as the 0 matrix
-  FieldIso(const Field* F1, const Field* F2)
-    :domain(F1), codomain(F2), isomat(mat_m(F2->degree(),F1->degree())), denom(ZZ(1)), id_flag(0) {;}
+  FieldIso( const Field& F1, const Field& F2)
+    :domain(&F1), codomain(&F2), isomat(mat_m(F2.degree(),F1.degree())), denom(ZZ(1)), id_flag(0) {;}
   // Identity
-  explicit FieldIso(const Field* F1)
-    :domain(F1), codomain(F1), isomat(mat_m::identity_matrix(F1->d)), denom(ZZ(1)), id_flag(1) {;}
-
-  void change_field_pointers(const Field* dom, const Field* codom);
+  explicit FieldIso( const Field& F1)
+    :domain(&F1), codomain(&F1), isomat(mat_m::identity_matrix(F1.d)), denom(ZZ(1)), id_flag(1) {;}
 
   // inverse isomorphism
   FieldIso inverse() const;
@@ -287,8 +261,8 @@ public:
   // access data
   int is_identity() const {return id_flag;}
   int is_nontrivial() const {return !id_flag;}
-  const Field* dom() const {return domain;}
-  const Field* codom() const {return codomain;}
+  Field dom() const {return *domain;}
+  Field codom() const {return *codomain;}
   mat_m matrix() const {return isomat;}
   ZZ den() const {return denom;}
 
@@ -298,6 +272,7 @@ public:
 
   // x must be initialised with domain and codomain, this just inputs
   // the matrix and denominator
+  void read(istream& s);
   friend istream& operator>>(istream& s, FieldIso& x);
 };
 

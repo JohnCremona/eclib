@@ -93,14 +93,14 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 
   if (d==1)
     {
-      F = F0 = FieldQQ;
-      Fiso = FieldIso(&F);
+      F = F0 = new Field();
+      Fiso = FieldIso(*F);
     }
   else
     // Compute Hecke field from matrix A if degree d>1
     {
       string var = codeletter(index-1);
-      F0 = Field(A, denom_abs, basis_change_matrix, basis_change_denominator, var, verbose>1);
+      F0 = new Field(A, denom_abs, basis_change_matrix, basis_change_denominator, var, verbose>1);
       int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
       if (verbose)
         {
@@ -113,14 +113,13 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
                    << POLREDABS_DEGREE_UPPER_BOUND <<endl;
             }
         }
-      Fiso = F0.reduction_isomorphism(var, canonical);
-      F = *Fiso.codom();
+      Fiso = F0->reduction_isomorphism(var, *F, canonical);
       if (verbose)
         cout << "Reduced field is " << F << endl;
       if (Fiso.is_nontrivial() && verbose)
         {
-          cout << "[replacing original Hecke field with polynomial " << ::str(F0.poly())
-               << " with polredabs reduced field with polynomial " << ::str(F.poly()) << "]" << endl;
+          cout << "[replacing original Hecke field with polynomial " << ::str(F0->poly())
+               << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
         }
     }
   if (verbose)
@@ -134,8 +133,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 
 // Constructor which will read from file
 Newform::Newform(Newspace* x, int i, int verbose)
-  :N(x->N), nsp(x), index(i), lab(codeletter(i-1)),
-   F(FieldQQ), F0(FieldQQ) // will be overwritten of degree>1
+  :N(x->N), nsp(x), index(i), lab(codeletter(i-1))
 {
   if (verbose)
     cout << "Constructing Newform " << this << " from file data "<< endl;
@@ -143,38 +141,38 @@ Newform::Newform(Newspace* x, int i, int verbose)
     cerr << "Unable to read Newform " << lab << endl;
 }
 
-// NB We do not use automatic copy constructor and assignment since
-// when data items which have field pointers are copied these must be
-// changed to pointers to fields in the new Newform not the old.
+// // NB We do not use automatic copy constructor and assignment since
+// // when data items which have field pointers are copied these must be
+// // changed to pointers to fields in the new Newform not the old.
 
-Newform::Newform(const Newform& x)
-  :N(x.N), nsp(x.nsp), index(x.index), lab(x.lab), d(x.d), F0(x.F0), F(x.F), Fiso(x.Fiso),
-   S(x.S), denom_abs(x.denom_abs), projcoord(x.projcoord), key_symbol(x.key_symbol),
-   basis_change_matrix(x.basis_change_matrix), basis_change_denominator(x.basis_change_denominator),
-   sfe(x.sfe), maxP(x.maxP), aPmap(x.aPmap), eQmap(x.eQmap), aMlist(x.aMlist), trace_list(x.trace_list)
-{
-  for (auto& item: aPmap)
-    item.second.change_field_pointer(&F);
-  for (auto& a: aMlist)
-    a.change_field_pointer(&F);
-  Fiso.change_field_pointers(&F0, &F);
-}
+// Newform::Newform(const Newform& x)
+//   :N(x.N), nsp(x.nsp), index(x.index), lab(x.lab), d(x.d), F0(x.F0), F(x.F), Fiso(x.Fiso),
+//    S(x.S), denom_abs(x.denom_abs), projcoord(x.projcoord), key_symbol(x.key_symbol),
+//    basis_change_matrix(x.basis_change_matrix), basis_change_denominator(x.basis_change_denominator),
+//    sfe(x.sfe), maxP(x.maxP), aPmap(x.aPmap), eQmap(x.eQmap), aMlist(x.aMlist), trace_list(x.trace_list)
+// {
+//   for (auto& item: aPmap)
+//     item.second.change_field_pointer(&F);
+//   for (auto& a: aMlist)
+//     a.change_field_pointer(&F);
+//   Fiso.change_field_pointers(&F0, &F);
+// }
 
-// assignment
-Newform& Newform::operator=(const Newform& x)
-{
-  N = x.N; nsp = x.nsp; index = x.index; lab = x.lab; d = x.d; F0 = x.F0; F = x.F; Fiso = x.Fiso;
-  S = x.S; denom_abs = x.denom_abs; projcoord = x.projcoord; key_symbol = x.key_symbol;
-  basis_change_matrix = x.basis_change_matrix;  basis_change_denominator = x.basis_change_denominator;
-  sfe=x.sfe; maxP = x.maxP; aPmap = x.aPmap; eQmap = x.eQmap; aMlist = x.aMlist; trace_list = x.trace_list;
+// // assignment
+// Newform& Newform::operator=(const Newform& x)
+// {
+//   N = x.N; nsp = x.nsp; index = x.index; lab = x.lab; d = x.d; F0 = x.F0; F = x.F; Fiso = x.Fiso;
+//   S = x.S; denom_abs = x.denom_abs; projcoord = x.projcoord; key_symbol = x.key_symbol;
+//   basis_change_matrix = x.basis_change_matrix;  basis_change_denominator = x.basis_change_denominator;
+//   sfe=x.sfe; maxP = x.maxP; aPmap = x.aPmap; eQmap = x.eQmap; aMlist = x.aMlist; trace_list = x.trace_list;
 
-  for (auto& item: aPmap)
-    item.second.change_field_pointer(&F);
-  for (auto& a: aMlist)
-    a.change_field_pointer(&F);
-  Fiso.change_field_pointers(&F0, &F);
-  return *this;
-}
+//   for (auto& item: aPmap)
+//     item.second.change_field_pointer(&F);
+//   for (auto& a: aMlist)
+//     a.change_field_pointer(&F);
+//   Fiso.change_field_pointers(&F0, &F);
+//   return *this;
+// }
 
 
 string Newform::label() const
@@ -198,7 +196,7 @@ FieldElement Newform::eig(const matop& T)
     }
   else
     {
-      FieldElement a(&F0, basis_change_matrix * apv, basis_change_denominator);
+      FieldElement a(*F0, basis_change_matrix * apv, basis_change_denominator);
       return (Fiso.is_identity()? a : Fiso(a));
     }
 }
@@ -222,7 +220,7 @@ FieldElement Newform::eig_P(const long& P)
   // If P is bad, return AL eigenvalue
   auto it1 = eQmap.find(P);
   if (it1!=eQmap.end())
-    return F.rational(it1->second);
+    return (*F)(it1->second);
   // If P is good and in aPmap, return stored Tp eigenvalue
   auto it2 = aPmap.find(P);
   if (it2!=aPmap.end())
@@ -250,9 +248,9 @@ FieldElement Newform::compute_aM(const long& M)
 
   // Otherwise compute it
   if (M<1)
-    return F.zero();
+    return (*F)(0);
   if (M==1)
-    return F.one();
+    return (*F)(1);
 
   // Now we assume that aMlist contains aM[M'] for proper divisors
   long p = primdiv(M); // smallest prime divisor
@@ -283,7 +281,7 @@ FieldElement Newform::compute_aM(const long& M)
   // Now  e>=2, use recursion
   M1 = M/p;
   FieldElement a = aP*aMlist[M1];
-  return (divides(p,N)? a : a - F.rational(p) * aMlist[M1/p]);
+  return (divides(p,N)? a : a - (*F)(p) * aMlist[M1/p]);
 }
 
 //#define DEBUG_COEFFS
@@ -339,7 +337,7 @@ void Newform::compute_coefficients(int ntp, int verbose)
 FieldElement Newform::eig_lin_comb(const vector<long>& Plist, const vector<scalar>& coeffs,
                                    int verb)
 {
-  FieldElement a(F.zero());
+  FieldElement a(*F);
   auto Pj = Plist.begin();
   auto cj = coeffs.begin();
   while (Pj!=Plist.end())
@@ -721,7 +719,7 @@ void Newform::compute_AL_eigs(int ntp, int verbose)
   if (verbose)
     cout << "Computing W(Q) eigenvalues for Q in " << nsp->badprimes << endl;
 
-  FieldElement zero(F.zero());
+  FieldElement zero(*F);
   for (auto q: nsp->badprimes)
     {
       if (verbose)
@@ -736,7 +734,7 @@ void Newform::compute_AL_eigs(int ntp, int verbose)
       // minus the AL eigenvalue if q||N else 0
       eQmap[q] = eq;
       sfe *= eq;
-      aPmap[q] = (divides(q*q,N)? zero: F.rational(-eq));
+      aPmap[q] = (divides(q*q,N)? zero: (*F)(-eq));
 
     } // end of loop over bad primes q
 } // end of Newform::compute_AL_eigs()
@@ -761,8 +759,7 @@ void Newform::display(int aP, int AL, int traces) const
 
   // Information about Hecke field:
 
-  cout << " - Hecke field k_f = ";
-  cout << F << endl;
+  cout << " - Hecke field k_f = " << *F << endl;
 
   if (AL)
     {
@@ -868,8 +865,8 @@ void Newform::set_index(int i)
     // On creation from scratch, F0 exists and F is a
     // polredabs/polredbest isomorphic field, but after reading from a
     // file only F is set.
-    F0.set_var(lab+string("0"));
-    F.set_var(lab);
+    F0->set_var(lab+string("0"));
+    F->set_var(lab);
   }
 
 // newform file output
@@ -885,8 +882,8 @@ void Newform::output_to_file() const
   out << dimension() << endl;
 
   // Hecke field:
-  out << F.str(1) << endl;  // raw=1
-  // cout << "Principal Hecke field output:\n" << F.str(1) << endl;  // raw=1
+  out << F->str(1) << endl;  // raw=1
+  // cout << "Principal Hecke field output:\n" << F->str(1) << endl;  // raw=1
 
   out << endl;
 
@@ -935,7 +932,8 @@ int Newform::input_from_file(int verb)
     cout << "--> dim = " << d << endl;
 
   // Hecke field (we only read F; F0 and Fiso are not defined):
-  fdata >> F;
+  F = new Field();
+  F->read(fdata);
 
  if (verb>1)
     {
@@ -974,7 +972,7 @@ int Newform::input_from_file(int verb)
 
   // aP
   long P; maxP=0;
-  FieldElement aP(F.zero());
+  FieldElement aP(*F);
   // read whitespace, so if there are no aP on file it does not try to read any
   fdata >> ws;
   // keep reading lines until end of file

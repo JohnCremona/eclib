@@ -6,9 +6,8 @@
 
 //#define DEBUG_ARITH
 
-const Field FieldQQ; // default Field constructor gives QQ
-
 //#define DEBUG_FIELD_CONSTRUCTOR
+
 Field::Field(const ZZX& p, string a, int verb)
 {
 #ifdef DEBUG_FIELD_CONSTRUCTOR
@@ -39,7 +38,6 @@ Field::Field(const ZZX& p, string a, int verb)
 #ifdef DEBUG_FIELD_CONSTRUCTOR
       display_factors(p);
 #endif
-      *this = FieldQQ;
     }
 #ifdef DEBUG_FIELD_CONSTRUCTOR
   cout << "Constructed field " << this << " --> " << *this << endl;
@@ -145,36 +143,21 @@ string Field::str(int raw) const
 }
 
 //#define DEBUG_FIELD_INPUT
-istream& operator>>(istream& s, Field& F)
+void Field::read(istream& s)
 {
-#ifdef DEBUG_FIELD_INPUT
-  cout << "In operator>>(istream& s, Field& F)..." << endl;
-#endif
-  string var;
   s >> var;
-#ifdef DEBUG_FIELD_INPUT
-  cout << "- input var = " <<var << endl;
-#endif
   if (var=="Q")
-    {
-#ifdef DEBUG_FIELD_INPUT
-      cout << "- setting F to QQ" << endl;
-#endif
-      F = FieldQQ;
-    }
+    *this = Field();
   else
     {
-      ZZX f;
-      s >> f;
-#ifdef DEBUG_FIELD_INPUT
-      cout << "- not QQ" <<endl;
-      cout << "- input f = " << ::str(f) << endl;
-#endif
-      F = Field(f, var);
-#ifdef DEBUG_FIELD_INPUT
-      F.display();
-#endif
+      s >> minpoly;
+      *this = Field(minpoly, var);
     }
+}
+
+istream& operator>>(istream& s, Field& F)
+{
+  F.read(s);
   return s;
 }
 
@@ -193,70 +176,37 @@ void Field::display(ostream&s) const
 
 ////////////////////////////////////////////////////////////////////////
 
-FieldElement::FieldElement(const Field* HF, const vec_m& c, const ZZ& d)
-    :F(HF), coords(c), denom(d)
-{
-  // cout<<"Constructing a FieldElement in "<< *F << ")\n";
-  cancel();
-  // cout<<" - finished constructing " << (*this) << "\n";
-}
-
 FieldElement Field::element(const vec_m& c, const ZZ& d) const
 {
-  return FieldElement(this, c, d);
+  return FieldElement(*this, c, d);
 }
 
-FieldElement Field::rational(const bigrational& x) const
+FieldElement Field::operator()(const bigrational& x) const
 {
-  return FieldElement(this, x.num(), x.den());
+  return FieldElement(*this, x.num(), x.den());
 }
 
-FieldElement Field::rational(const ZZ& x) const
+FieldElement Field::operator()(const ZZ& x) const
 {
-  return rational(bigrational(x));
+  return operator()(bigrational(x));
 }
 
-FieldElement Field::rational(long x) const
+FieldElement Field::operator()(long x) const
 {
-  return rational(bigrational(x));
+  return operator()(bigrational(x));
 }
 
-FieldElement Field::rational(int x) const
+FieldElement Field::operator()(int x) const
 {
-  return rational(bigrational(x));
-}
-
-FieldElement Field::zero() const
-{
-  return rational(0);
-}
-
-FieldElement Field::one() const
-{
-  return rational(1);
-}
-
-FieldElement Field::minus_one() const
-{
-  return rational(-1);
-}
-
-FieldElement Field::two() const
-{
-  return rational(2);
-}
-
-FieldElement Field::minus_two() const
-{
-  return rational(-2);
+  return operator()(bigrational(x));
 }
 
 FieldElement Field::gen() const
 {
   if (d==1)
-    return rational(1);
+    return operator()(1);
   else
-    return FieldElement(this, vec_m::unit_vector(d, 2));
+    return FieldElement(*this, vec_m::unit_vector(d, 2));
 }
 
 void FieldElement::cancel() // divides through by gcd(content(coords, denom))
@@ -331,17 +281,18 @@ string FieldElement::str(int raw) const
   return s.str();
 }
 
+void FieldElement::read (istream& s)
+{
+  if (field_is_Q())
+    s >> val;
+  else
+    s >> coords >> denom;
+}
+
 // x must be initialised with a Field before input to x
 istream& operator>>(istream& s, FieldElement& x)
 {
-  if (x.field_is_Q())
-    {
-      s >> x.val;
-    }
-  else
-    {
-      s >> x.coords >> x.denom;
-    }
+  x.read(s);
   return s;
 }
 
@@ -353,16 +304,6 @@ int FieldElement::operator==(const FieldElement& b) const
 int FieldElement::operator!=(const FieldElement& b) const
 {
   return (!in_same_field(b)) || ( field_is_Q()? val!=b.val : (denom!=b.denom) || (coords!=b.coords));
-}
-
-// Change the field pointer to F1 (requires F1 and F to be pointers
-// to the same field)
-void FieldElement::change_field_pointer(const Field* F1)
-{
-  if (F1==F) return;              // same pointer, no change needed
-  if (*F1==*F) {F = F1; return; } // different pointer but same field
-  cerr << "Cannot change field pointer of " << *this << " from " << F << " (pointing to " << *F
-       << ") to " << F1 << " (pointing to " << *F1 << "), as these are different fields." << endl;
 }
 
 mat_m FieldElement::matrix() const // ignores denom, not used for Q
@@ -446,6 +387,31 @@ bigrational FieldElement::trace() const
     return bigrational(matrix().trace(), denom);
 }
 
+void FieldElement::set_zero()
+{
+  int d = F->d;
+  if (d ==1 )
+    val = bigrational(0);
+  else
+    {
+      coords.clear();
+      denom = ZZ(1);
+    }
+}
+
+void FieldElement::set_one()
+{
+  int d = F->d;
+  if (d ==1 )
+    val = bigrational(1);
+  else
+    {
+      coords = vec_m::unit_vector(d, 1);
+      denom = ZZ(1);
+    }
+}
+
+
 // add b to this
 void FieldElement::operator+=(const FieldElement& b)
 {
@@ -487,7 +453,7 @@ FieldElement FieldElement::operator-() const
 {
   if (field_is_Q())
     return FieldElement(-val);
-  return FieldElement(F, -coords, denom);
+  return FieldElement(*F, -coords, denom);
 }
 
 // subtract b
@@ -537,7 +503,7 @@ void FieldElement::operator*=(const FieldElement& b) // multiply by b
       exit(1);
     }
   if (is_zero()) return;
-  if (b.is_zero()) {*this = b; return;}
+  if (b.is_zero()) {set_zero(); return;}
   if (field_is_Q())
     {
       val *= b.val;
@@ -578,7 +544,7 @@ FieldElement FieldElement::inverse() const // raise error if zero
 
   mat_m M = matrix(), Minv;
   ZZ Mdet = ::inverse(M,Minv); // so M*Minv = Mdet*identity
-  FieldElement ans = FieldElement(F, denom*Minv.col(1), Mdet);
+  FieldElement ans = FieldElement(*F, denom*Minv.col(1), Mdet);
   assert (operator*(ans).is_one());
   return ans;
 }
@@ -633,7 +599,7 @@ FieldElement FieldElement::operator/(const FieldElement& b) const // raise error
 
 FieldElement evaluate(const ZZX& f, const FieldElement a)
 {
-  FieldElement fa(a.F, to_ZZ(0));
+  FieldElement fa = (*(a.F))(0);
   for(int i=deg(f); i>=0; i--)
     {
       fa += coeff(f,i);
@@ -675,7 +641,7 @@ int FieldElement::is_absolute_square(FieldElement& r) const
   // field not Q, reduce to integral case if necessary
   if (::is_one(denom))
     return is_absolute_integral_square(r);
-  FieldElement x = FieldElement(F, denom*coords);
+  FieldElement x = FieldElement(*F, denom*coords);
   int res = x.is_absolute_integral_square(r);
   if (res)
     r /= denom;
@@ -752,7 +718,7 @@ int FieldElement::is_square(FieldElement& r, int ntries) const
   FieldElement b = F->gen();
   for (int i=0; i<ntries; i++, b+=to_ZZ(1))
     {
-      FieldElement abb = (*this)*b*b, rb(F);
+      FieldElement abb = (*this)*b*b, rb(*F);
       ZZX mb = abb.minpoly();
       if ((d/deg(mb))%2)
         {
@@ -779,26 +745,6 @@ void cancel_mat(mat_m& M, ZZ& d)
     return;
   M /= g;
   d /= g;
-}
-
-void FieldIso::change_field_pointers(const Field* dom, const Field* codom)
-{
-  if (dom!=domain)
-    {
-      if (*dom==*domain)
-        domain = dom;
-      else
-        cerr << "Cannot change domain field pointer of " << *this << " from " << domain << " (pointing to " << *domain
-             << ") to " << dom << " (pointing to " << *dom << "), as these are different fields." << endl;
-    }
-  if (codom!=codomain)
-    {
-      if (*codom==*codomain)
-        codomain = codom;
-      else
-        cerr << "Cannot change codomain field pointer of " << *this << " from " << codomain << " (pointing to " << *codomain
-             << ") to " << codom << " (pointing to " << *codom << "), as these are different fields." << endl;
-    }
 }
 
 
@@ -883,6 +829,7 @@ string FieldIso::str(int raw) const
     }
   else
     {
+      //s << "(domain = " << domain << ", codomain = " << codomain << "): " << endl;
       if (id_flag)
         s << "Identity automorphism of " << domain->str();
       else
@@ -890,7 +837,7 @@ string FieldIso::str(int raw) const
           if (domain==codomain)
             s << "Automorphism of " << domain->str();
           else
-            s << "Isomorphism from " << domain->str() << " to " << codomain->str();
+            s << "Embedding of " << domain->str() << " into " << codomain->str();
           // s << " with matrix\n" << isomat;
           // if (!IsOne(denom)) s << "/ "<< denom;
           s << " mapping " << domain->gen() << " to " << operator()(domain->gen());
@@ -901,15 +848,15 @@ string FieldIso::str(int raw) const
 
 // x must be initialised with domain and codomain, this just inputs
 // the matrix and denominator
+void FieldIso::read(istream& s)
+{
+  s >> isomat >> denom;
+  set_id_flag();
+}
+
 istream& operator>>(istream& s, FieldIso& x)
 {
-  // cout << "Reading a FieldIso into " << x << endl;
-  // cout << "Domain has degree " << x.domain->degree() << endl;
-  // cout << "Codomain has degree " << x.codomain->degree() << endl;
-  s >> x.isomat >> x.denom;
-  x.set_id_flag();
-  // cout << "After reading, the FieldIso is " << x << endl;
-  // cout << "Matrix = " << x.isomat << ", denominator = " << x.denom << ", id_flag = " << x.id_flag << endl;
+  x.read(s);
   return s;
 }
 
@@ -921,7 +868,7 @@ FieldIso FieldIso::inverse() const
   ZZ d = ::inverse(isomat, inversemat);
   inversemat *= denom;
   cancel_mat(inversemat, d);
-  return FieldIso(codomain, domain, inversemat, d, 0); // 0: not the identity
+  return FieldIso(*codomain, *domain, inversemat, d, 0); // 0: not the identity
 }
 
 // map x in domain to an element of the codomain
@@ -932,9 +879,9 @@ FieldElement FieldIso::operator()(const FieldElement& x) const
     {
       bigrational r;
       if (x.is_rational(r))
-        return codomain->rational(r);
+        return (*codomain)(r);
 
-      FieldElement y(codomain, isomat*x.coords, denom*x.denom);
+      FieldElement y(*codomain, isomat*x.coords, denom*x.denom);
       // sanity check that the min poly has not changed
       if (! (x.minpoly()==y.minpoly()))
         {
@@ -944,9 +891,11 @@ FieldElement FieldIso::operator()(const FieldElement& x) const
         }
       return y;
     }
+  cerr << "Error in FieldIso::operator(): domain = " << domain << flush << " --> " << *domain
+       << ", argument x = " << x << " in field " << x.field_ptr() << flush << " --> " << *x.field_ptr() <<endl;
   cerr << "Cannot apply FieldIso\n" << *this << "\n to " << x << " in " << *(x.field_ptr()) << endl;
   exit(1);
-  return FieldElement(codomain);
+  return FieldElement(*codomain);
 }
 
 // same to all in a list of elements of the domain
@@ -964,17 +913,18 @@ vector<FieldElement> FieldIso::operator()(const vector<FieldElement>& x) const
 // isomorphism from this to that.  If the poly was already
 // polredabsed, or if F is QQ, return the identity. Otherwise a new
 // Field is created with provided variable name.
-FieldIso Field::reduction_isomorphism(string newvar, int canonical) const
+FieldIso Field::reduction_isomorphism(string newvar, Field& Fred, int canonical) const
 {
 #ifdef DEBUG_REDUCE
   cout << "In Field::reduction_isomorphism(), minpoly = " << ::str(minpoly) << endl;
 #endif
+  Fred = *this;
   if (d==1)
     {
 #ifdef DEBUG_REDUCE
       cout << " - Field is Q, so identity" << endl;
 #endif
-      return FieldIso(this); // identity
+      return FieldIso(*this, Fred,  mat_m::identity_matrix(d)); // identity
     }
   ZZX h; ZZ denh;
   ZZX g = polred(minpoly, h, denh, canonical);
@@ -984,20 +934,21 @@ FieldIso Field::reduction_isomorphism(string newvar, int canonical) const
 #ifdef DEBUG_REDUCE
       cout << " - " << ::str(minpoly) << " is already reduced, so identity" << endl;
 #endif
-      return FieldIso(this); // identity
+      return FieldIso(*this, Fred,  mat_m::identity_matrix(d)); // identity
     }
 #ifdef DEBUG_REDUCE
   cout << " - reduced minpoly = " << ::str(g) << endl;
 #endif
+
   // construct the reduced field:
-  const Field* Fred = new Field(g, newvar);
+  Fred = Field(g, newvar);
 #ifdef DEBUG_REDUCE
-  cout << " - reduced field is\n" << *Fred << endl;
+  cout << " - reduced field is\n" << Fred << endl;
 #endif
   // construct the isomorphism matrix from F to Fred:
   mat_m M(d,d);
   // denh * image of F's gen in Fred:
-  FieldElement a = evaluate(h,Fred->gen()); // / Fred->rational(denh);
+  FieldElement a = evaluate(h,Fred.gen()); // / Fred->rational(denh);
 #ifdef DEBUG_REDUCE
   cout << " - image of gen is (" << a << ") / " << denh << endl;
 #endif
@@ -1020,15 +971,17 @@ FieldIso Field::reduction_isomorphism(string newvar, int canonical) const
     cout << " / " << denhpowmax;
   cout << endl;
 #endif
-  FieldIso iso(this, Fred, M, denhpowmax, 0); // 0: not the identity
+  FieldIso iso(*this, Fred, M, denhpowmax, 0); // 0: not the identity
   return iso;
 }
 
 //#define DEBUG_CHANGE_GEN
 // Return an iso from this=Q(a) to Q(b) where B is in this field and generates
-FieldIso Field::change_generator(const FieldElement& b) const
+FieldIso Field::change_generator(const FieldElement& b, Field& Qb) const
 {
-  FieldIso iso(this); // default
+  // default (trivial extension)
+  Qb = *this; // copy of this field
+  FieldIso iso(*this);
 
   if (b.field_ptr() != this)
     {
@@ -1053,13 +1006,15 @@ FieldIso Field::change_generator(const FieldElement& b) const
            << " which is not integral " << endl;
       return iso;
     }
-  if ((d==1) || (b_pol==minpoly)) // then the identity will do
+  if ((d==1) || (b_pol==minpoly)) // then the identity works but the
+                                  // codomain must be a pointer to the
+                                  // supplied field
     {
-      return iso;
+      return FieldIso(*this, Qb,  mat_m::identity_matrix(d));
     }
 
   // Create the new field:
-  const Field* b_field = new Field(b_pol, var+string("1"));
+  Qb = Field(b_pol, var+string("1"));
 
   // To define the map to the new field we need to express a as a
   // polynomial in b.  The coordinates of b^j w.r.t. a are the columns
@@ -1109,17 +1064,20 @@ FieldIso Field::change_generator(const FieldElement& b) const
 #endif
   // The coeffs of 1,a,a^2,... as polynomials in b are the columns
   // 1,2,3,... of Minv/da.
-  iso =  FieldIso(this, b_field, Minv, da, 0); // 0: not the identity
+  iso =  FieldIso(*this, Qb, Minv, da, 0); // 0: not the identity
   // check:
   FieldElement isob = iso(b);
-  if (isob!=b_field->gen())
+  if (isob != Qb.gen())
     {
       cerr << "Error in Field::change_generator(b) with b = " << b << "\n";
       cerr << "b has minpoly " << ::str(b.minpoly()) << "\n";
       cerr << "iso(b) = " << isob << " with minpoly " << ::str(isob.minpoly()) << "\n";
       exit(1);
     }
-  delete b_field;
+#ifdef DEBUG_CHANGE_GEN
+  cout << "Field::change_generator() with this = " << this
+       << " returns an iso with domain " << iso.domain << " and codomain " << iso.codomain << endl;
+#endif
   return iso;
 }
 
@@ -1129,28 +1087,29 @@ FieldIso Field::change_generator(const FieldElement& b) const
 // image of r.
 
 //#define DEBUG_SQRT_EMBEDDING
-FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, FieldElement& sqrt_r, int reduce) const
+FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, Field& F_sqrt_r, FieldElement& sqrt_r, int reduce) const
 {
 #ifdef DEBUG_SQRT_EMBEDDING
-  cout << "In sqrt_embedding() with base field " << *this << " and r = " << r << endl;
+  cout << "In sqrt_embedding() with base field " << this << " --> " << *this << " and r = " << r << endl;
 #endif
   if (r.field_ptr() != this)
     {
       cerr << "Cannot adjoin sqrt(" << r << ") to " << *this
            << " as it is in a different field " << *r.field_ptr() << endl;
-      return FieldIso(this);
+      return FieldIso(*this);
     }
   if (r.is_square(sqrt_r))
     {
       cout << "Adjoining sqrt(" << r << ") to " << *this << " is trivial since "
            << r << " is already a square, with root " << sqrt_r << endl;
-      return FieldIso(this);
+      F_sqrt_r = *this;
+      return FieldIso(*this, F_sqrt_r, mat_m::identity_matrix(d));
     }
 
   // If r has degree < d we replace it with an equivalent element of
   // maximal degree by multiplying by a square.  Then the sqrt field
   // is generated by f(X^2) where f is the char poly.
-  FieldElement s(rational(1));
+  FieldElement s(operator()(1));
   FieldElement rss = r;
   if (rss.degree()<d)
     {
@@ -1165,30 +1124,34 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, FieldElemen
 #ifdef DEBUG_SQRT_EMBEDDING
   cout << " s = " << s << ", rss = " << rss << endl;
 #endif
-  // Now we adjoin sqrt(rss) instead
+
   ZZX sqrt_rss_pol = XtoX2(rss.charpoly());
   assert (IsIrreducible(sqrt_rss_pol)); // must be else r is a square
-  Field* F_sqrt_rss = new Field(sqrt_rss_pol, newvar);
+  Field F_sqrt_r_orig = Field(sqrt_rss_pol, newvar); // the extension field before reduction
 #ifdef DEBUG_SQRT_EMBEDDING
-  cout << " extended field is " << *F_sqrt_rss << endl;
+  cout << " extended field (before any reduction) is " << &F_sqrt_r_orig << " --> " << F_sqrt_r_orig << endl;
 #endif
+
   // Now we embed this into the new field in three steps:
-  // Q(a) -~-> Q(rss) c-> Q(sqrt(rss)) -~-> Q(b)
+  // Q(a) -~-> Q(rss) --> Q(sqrt(rss)) -~-> Q(b)
   // The first and last are isomorphisms, the last (optional) is polredabs reduction.
-  FieldIso iso(change_generator(rss));  // Q(a) -> Q(rss)
+
+  Field Qrss; // this field expressed as Q(r*s*s) for suitable s
+  FieldIso iso(change_generator(rss, Qrss));  // Q(a) -> Q(rss)
 #ifdef DEBUG_SQRT_EMBEDDING
+  cout << " After changing generator to rss, Qrss = " << &Qrss << " --> " << Qrss << endl;
   cout << " first map (isomorphism) is " << iso << endl;
 #endif
-  s = iso(s); // image of s in Q(rss)
+      s = iso(s); // image of s in Q(rss)
 #ifdef DEBUG_SQRT_EMBEDDING
-  cout << " iso(s) = " << s << endl;
+      cout << " iso(s) = " << s << endl;
 #endif
-  const Field* Qrss = iso.codomain; // Q(rss)
+
   // the images of the powers of rss are the even powers of sqrt_rss:
   mat_m isomat(2*d, d);
   for (int j=0; j<d; j++)
     isomat.setrow(2*j+1, vec_m::unit_vector(d,j+1));
-  FieldIso emb(Qrss, F_sqrt_rss, isomat, ZZ(1)); // Q(rss) -> Q(sqrt(rss))
+  FieldIso emb(Qrss, F_sqrt_r_orig, isomat, ZZ(1)); // Q(rss) -> Q(sqrt(rss))
 #ifdef DEBUG_SQRT_EMBEDDING
   cout << " second map (embedding) is " << emb << endl;
 #endif
@@ -1196,9 +1159,9 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, FieldElemen
 #ifdef DEBUG_SQRT_EMBEDDING
   cout << " emb(s) = " << s << endl;
 #endif
-  sqrt_r = F_sqrt_rss->gen()/s; // sqrt(r) = sqrt(rss)/s
+  sqrt_r = F_sqrt_r_orig.gen()/s; // sqrt(r) = sqrt(rss)/s
 #ifdef DEBUG_SQRT_EMBEDDING
-  cout << " sqrt_r = " << sqrt_r << endl;
+  cout << " sqrt(r) = " << sqrt_r << endl;
 #endif
   emb.precompose(iso);
 #ifdef DEBUG_SQRT_EMBEDDING
@@ -1211,9 +1174,9 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, FieldElemen
            << (reduce>1? "polredabs" : "polredbest")
            << "..." << endl;
 #endif
-      FieldIso red = F_sqrt_rss->reduction_isomorphism(newvar, reduce>1);
+      FieldIso red = F_sqrt_r_orig.reduction_isomorphism(newvar, F_sqrt_r, reduce>1);
 #ifdef DEBUG_SQRT_EMBEDDING
-  cout << " third map (reduction isomorphism) is" << red << endl;
+  cout << " third map (reduction isomorphism) is " << red << endl;
 #endif
   emb.postcompose(red);
 #ifdef DEBUG_SQRT_EMBEDDING
@@ -1223,6 +1186,10 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, FieldElemen
 #ifdef DEBUG_SQRT_EMBEDDING
   cout << " In the extension, sqrt(r) = " << sqrt_r << endl;
 #endif
+    }
+  else // No reduction
+    {
+      F_sqrt_r = F_sqrt_r_orig;
     }
   return emb;
 }

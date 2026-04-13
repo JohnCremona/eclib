@@ -40,17 +40,15 @@ void test_field(const Field& F)
   if (d>1) cout << "generator name = " << v << endl;
   FieldElement a = F.gen();
   cout << "generator = " << a << endl;
-  cout << "0 in F is " << F.zero() << endl;
-  cout << "1 in F is " << F.one() << endl;
-  cout << "-1 in F is " << F.minus_one() << endl;
-  cout << "2 in F is " << F.two() << endl;
-  cout << "-2 in F is " << F.minus_two() << endl;
+  for (auto n: {0,1,-1,2,-2})
+    cout << n << " in F is " << F(n) << endl;
 
   cout << "Applying polred..." << endl;
-  FieldIso iso = F.reduction_isomorphism(F.get_var()+"0", 1);
+  Field Fred;
+  FieldIso iso = F.reduction_isomorphism(F.get_var()+"0", Fred, 1);
   cout << iso << endl;
   cout << "Reduced field is ";
-  iso.codom()->display();
+  Fred.display();
   cout << endl;
 
   FieldElement b = a*a;
@@ -72,12 +70,13 @@ void test_field(const Field& F)
            << ", with degree " << db << ", char poly = " << str(cp)
            << " and min poly " << str(mp) << endl;
     }
-  cout << "Automorphism mapping " << v << " to " << b << "..."<<endl;
-  FieldIso aut(F.change_generator(b));
-  cout << iso << endl;
+  cout << "Automorphism mapping generator " << v << " to " << b << "..."<<endl;
+  Field Qb;
+  FieldIso aut(F.change_generator(b, Qb));
+  cout << aut << endl;
 
   b = a;
-  FieldElement r(&F);
+  FieldElement r;
   int sq = b.is_square(r);
   cout << "b = " << b << (sq? " is" : " is not") << " a square in F" << endl;
   while (sq)
@@ -89,9 +88,9 @@ void test_field(const Field& F)
       cout << "b = " << b << (sq? " is" : " is not") << " a square in F" << endl;
     }
   cout << "adjoining sqrt(b) to F..."<<endl;
-  FieldIso emb = F.sqrt_embedding(b, "r", r, 1); // reduce=1 for polredbest
+  Field Frootb;
+  FieldIso emb = F.sqrt_embedding(b, "sqrt(r)", Frootb, r, 1); // reduce=1 for polredabs
   cout << emb << endl;
-  Field Frootb = *(iso.codom());
   FieldElement eb = emb(b);
   cout << "The image of b is " << eb << " with sqrt("<<eb<<") = " << r << endl;
   assert (r*r==eb);

@@ -15,18 +15,18 @@ generator = 1
 2 in F is 2
 -2 in F is -2
 Applying polred...
-Identity automorphism of Q
+Embedding of Q into Q mapping 1 to 1
 Reduced field is Q
 
 b = 1^2 = 1, with degree 1, char poly = X-1 and min poly X-1
-Automorphism mapping  to 1...
-Identity automorphism of Q
+Automorphism mapping generator  to 1...
+Embedding of Q into Q mapping 1 to 1
 b = 1 is a square in F
 sqrt(b) = 1
 b = 2 is not a square in F
 adjoining sqrt(b) to F...
-Isomorphism from Q to Q(r) = Q[X]/(X^2-2) mapping 1 to 1
-The image of b is 2 with sqrt(2) = r
+Embedding of Q into Q(sqrt(r)) = Q[X]/(X^2-2) mapping 1 to 1
+The image of b is 2 with sqrt(2) = sqrt(r)
 
 F = Q(i) = Q[X]/(X^2+1)
 Q(i) with defining polynomial X^2+1 (of degree 2 and discriminant -4)
@@ -40,17 +40,17 @@ generator = i
 2 in F is 2
 -2 in F is -2
 Applying polred...
-Identity automorphism of Q(i) = Q[X]/(X^2+1)
+Embedding of Q(i) = Q[X]/(X^2+1) into Q(i) = Q[X]/(X^2+1) mapping i to i
 Reduced field is Q(i) with defining polynomial X^2+1 (of degree 2 and discriminant -4)
 
 b = i^2 = -1, with degree 1, char poly = X^2+2*X+1 and min poly X+1
 b = i^3 = -i, with degree 2, char poly = X^2+1 and min poly X^2+1
-Automorphism mapping i to -i...
-Identity automorphism of Q(i) = Q[X]/(X^2+1)
+Automorphism mapping generator i to -i...
+Embedding of Q(i) = Q[X]/(X^2+1) into Q(i) = Q[X]/(X^2+1) mapping i to i
 b = i is not a square in F
 adjoining sqrt(b) to F...
-Isomorphism from Q(i) = Q[X]/(X^2+1) to Q(r) = Q[X]/(X^4+1) mapping i to r^2
-The image of b is r^2 with sqrt(r^2) = r
+Embedding of Q(i) = Q[X]/(X^2+1) into Q(sqrt(r)) = Q[X]/(X^4+1) mapping i to sqrt(r)^2
+The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
 F = Q(a) = Q[X]/(X^2+9)
 Q(a) with defining polynomial X^2+9 (of degree 2 and discriminant -36)
@@ -64,17 +64,17 @@ generator = a
 2 in F is 2
 -2 in F is -2
 Applying polred...
-Isomorphism from Q(a) = Q[X]/(X^2+9) to Q(a0) = Q[X]/(X^2+1) mapping a to 3*a0
+Embedding of Q(a) = Q[X]/(X^2+9) into Q(a0) = Q[X]/(X^2+1) mapping a to 3*a0
 Reduced field is Q(a0) with defining polynomial X^2+1 (of degree 2 and discriminant -4)
 
 b = a^2 = -9, with degree 1, char poly = X^2+18*X+81 and min poly X+9
 b = a^3 = -9*a, with degree 2, char poly = X^2+729 and min poly X^2+729
-Automorphism mapping a to -9*a...
-Isomorphism from Q(a) = Q[X]/(X^2+9) to Q(a0) = Q[X]/(X^2+1) mapping a to 3*a0
+Automorphism mapping generator a to -9*a...
+Embedding of Q(a) = Q[X]/(X^2+9) into Q(a1) = Q[X]/(X^2+729) mapping a to (-a1)/9
 b = a is not a square in F
 adjoining sqrt(b) to F...
-Isomorphism from Q(a) = Q[X]/(X^2+9) to Q(r) = Q[X]/(X^4+2*X^2-12*X+10) mapping a to (6*r^3+9*r^2+18*r-45)/5
-The image of b is (6*r^3+9*r^2+18*r-45)/5 with sqrt((6*r^3+9*r^2+18*r-45)/5) = (2*r^3+3*r^2+11*r-15)/5
+Embedding of Q(a) = Q[X]/(X^2+9) into Q(sqrt(r)) = Q[X]/(X^4+2*X^2-12*X+10) mapping a to (6*sqrt(r)^3+9*sqrt(r)^2+18*sqrt(r)-45)/5
+The image of b is (6*sqrt(r)^3+9*sqrt(r)^2+18*sqrt(r)-45)/5 with sqrt((6*sqrt(r)^3+9*sqrt(r)^2+18*sqrt(r)-45)/5) = (2*sqrt(r)^3+3*sqrt(r)^2+11*sqrt(r)-15)/5
 
 F = Q(b) = Q[X]/(X^2+33*X+22)
 Q(b) with defining polynomial X^2+33*X+22 (of degree 2 and discriminant 1001)
@@ -88,16 +88,16 @@ generator = b
 2 in F is 2
 -2 in F is -2
 Applying polred...
-Isomorphism from Q(b) = Q[X]/(X^2+33*X+22) to Q(b0) = Q[X]/(X^2-X-250) mapping b to -b0-16
+Embedding of Q(b) = Q[X]/(X^2+33*X+22) into Q(b0) = Q[X]/(X^2-X-250) mapping b to -b0-16
 Reduced field is Q(b0) with defining polynomial X^2-X-250 (of degree 2 and discriminant 1001)
 
 b = b^2 = -33*b-22, with degree 2, char poly = X^2-1045*X+484 and min poly X^2-1045*X+484
-Automorphism mapping b to -33*b-22...
-Isomorphism from Q(b) = Q[X]/(X^2+33*X+22) to Q(b0) = Q[X]/(X^2-X-250) mapping b to -b0-16
+Automorphism mapping generator b to -33*b-22...
+Embedding of Q(b) = Q[X]/(X^2+33*X+22) into Q(b1) = Q[X]/(X^2-1045*X+484) mapping b to (-b1-22)/33
 b = b is not a square in F
 adjoining sqrt(b) to F...
-Isomorphism from Q(b) = Q[X]/(X^2+33*X+22) to Q(r) = Q[X]/(X^4+33*X^2+22) mapping b to r^2
-The image of b is r^2 with sqrt(r^2) = r
+Embedding of Q(b) = Q[X]/(X^2+33*X+22) into Q(sqrt(r)) = Q[X]/(X^4+33*X^2+22) mapping b to sqrt(r)^2
+The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
 F = Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336)
 Q(c) with defining polynomial X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336 (of degree 16 and discriminant 373806240249576772806216528619898703598888444336604916579875358039683351624857517597410047102529448513647466376971300765141262477234072742526976)
@@ -111,17 +111,17 @@ generator = c
 2 in F is 2
 -2 in F is -2
 Applying polred...
-Isomorphism from Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336) to Q(c0) = Q[X]/(X^16-20*X^13-70*X^12+76*X^11+200*X^10-296*X^9+5311*X^8-15548*X^7+22808*X^6-30984*X^5+38754*X^4-31428*X^3+16200*X^2-4860*X+729) mapping c to (8515537569225205*c0^15+2154158749277180*c0^14-521130839509137*c0^13-171430586743748828*c0^12-640096784261549264*c0^11+506753176966059218*c0^10+1927616175477565195*c0^9-2024676056672845270*c0^8+44489599786657518048*c0^7-121065980758500891378*c0^6+157993634703675254785*c0^5-212708086779409620698*c0^4+263113230020112670401*c0^3-181693559170675694322*c0^2+68429147561094867534*c0-11842867458532251306)/741644554801867308
+Embedding of Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336) into Q(c0) = Q[X]/(X^16-20*X^13-70*X^12+76*X^11+200*X^10-296*X^9+5311*X^8-15548*X^7+22808*X^6-30984*X^5+38754*X^4-31428*X^3+16200*X^2-4860*X+729) mapping c to (8515537569225205*c0^15+2154158749277180*c0^14-521130839509137*c0^13-171430586743748828*c0^12-640096784261549264*c0^11+506753176966059218*c0^10+1927616175477565195*c0^9-2024676056672845270*c0^8+44489599786657518048*c0^7-121065980758500891378*c0^6+157993634703675254785*c0^5-212708086779409620698*c0^4+263113230020112670401*c0^3-181693559170675694322*c0^2+68429147561094867534*c0-11842867458532251306)/741644554801867308
 Reduced field is Q(c0) with defining polynomial X^16-20*X^13-70*X^12+76*X^11+200*X^10-296*X^9+5311*X^8-15548*X^7+22808*X^6-30984*X^5+38754*X^4-31428*X^3+16200*X^2-4860*X+729 (of degree 16 and discriminant 381568774073100322516916942298963355496680713083726189553878249563602652353732114628214784)
 
 b = c^2 = c^2, with degree 8, char poly = X^16+144*X^15+10032*X^14+441792*X^13+13678688*X^12+314613504*X^11+5557282560*X^10+77016794112*X^9+850001715456*X^8+7544411062272*X^7+54195319554048*X^6+315420005892096*X^5+1484901070536704*X^4+5554657044725760*X^3+16179063492182016*X^2+33098602087710720*X+46138325148368896 and min poly X^8+72*X^7+2424*X^6+46368*X^5+562960*X^4+4377600*X^3+23843328*X^2+77045760*X+214798336
 b = c^3 = c^3, with degree 16, char poly = X^16-11232*X^14+202589568*X^12-1007720773632*X^10+3318892980932608*X^8-3349746870934044672*X^6+1187616870054739574784*X^4-120498425445012146749440*X^2+9910435467696591974957056 and min poly X^16-11232*X^14+202589568*X^12-1007720773632*X^10+3318892980932608*X^8-3349746870934044672*X^6+1187616870054739574784*X^4-120498425445012146749440*X^2+9910435467696591974957056
-Automorphism mapping c to c^3...
-Isomorphism from Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336) to Q(c0) = Q[X]/(X^16-20*X^13-70*X^12+76*X^11+200*X^10-296*X^9+5311*X^8-15548*X^7+22808*X^6-30984*X^5+38754*X^4-31428*X^3+16200*X^2-4860*X+729) mapping c to (8515537569225205*c0^15+2154158749277180*c0^14-521130839509137*c0^13-171430586743748828*c0^12-640096784261549264*c0^11+506753176966059218*c0^10+1927616175477565195*c0^9-2024676056672845270*c0^8+44489599786657518048*c0^7-121065980758500891378*c0^6+157993634703675254785*c0^5-212708086779409620698*c0^4+263113230020112670401*c0^3-181693559170675694322*c0^2+68429147561094867534*c0-11842867458532251306)/741644554801867308
+Automorphism mapping generator c to c^3...
+Embedding of Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336) into Q(c1) = Q[X]/(X^16-11232*X^14+202589568*X^12-1007720773632*X^10+3318892980932608*X^8-3349746870934044672*X^6+1187616870054739574784*X^4-120498425445012146749440*X^2+9910435467696591974957056) mapping c to (19451278665741128742829147699537803*c1^15-279419756778331054592819193549144211104*c1^13+4584166972564210289739497198034554404893824*c1^11-31513169934527509750577105223740944607862122496*c1^9+117936551947636467132975245557160218549167052271616*c1^7-231101571962394134036352549230864750344681716096958464*c1^5+113157994788467963055703797438886164616556773097825370112*c1^3-8481536328861312071303304701581520960527606748143360671744*c1)/41502264678458244103737685362041267270988446984612805083136
 b = c is not a square in F
 adjoining sqrt(b) to F...
-Isomorphism from Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336) to Q(r) = Q[X]/(X^32+72*X^28+2424*X^24+46368*X^20+562960*X^16+4377600*X^12+23843328*X^8+77045760*X^4+214798336) mapping c to r^2
-The image of b is r^2 with sqrt(r^2) = r
+Embedding of Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336) into Q(sqrt(r)) = Q[X]/(X^32+72*X^28+2424*X^24+46368*X^20+562960*X^16+4377600*X^12+23843328*X^8+77045760*X^4+214798336) mapping c to sqrt(r)^2
+The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
 F = Q(z) = Q[X]/(X^4+1)
 Q(z) with defining polynomial X^4+1 (of degree 4 and discriminant 256)
@@ -135,15 +135,15 @@ generator = z
 2 in F is 2
 -2 in F is -2
 Applying polred...
-Identity automorphism of Q(z) = Q[X]/(X^4+1)
+Embedding of Q(z) = Q[X]/(X^4+1) into Q(z) = Q[X]/(X^4+1) mapping z to z
 Reduced field is Q(z) with defining polynomial X^4+1 (of degree 4 and discriminant 256)
 
 b = z^2 = z^2, with degree 2, char poly = X^4+2*X^2+1 and min poly X^2+1
 b = z^3 = z^3, with degree 4, char poly = X^4+1 and min poly X^4+1
-Automorphism mapping z to z^3...
-Identity automorphism of Q(z) = Q[X]/(X^4+1)
+Automorphism mapping generator z to z^3...
+Embedding of Q(z) = Q[X]/(X^4+1) into Q(z) = Q[X]/(X^4+1) mapping z to z
 b = z is not a square in F
 adjoining sqrt(b) to F...
-Isomorphism from Q(z) = Q[X]/(X^4+1) to Q(r) = Q[X]/(X^8+1) mapping z to r^2
-The image of b is r^2 with sqrt(r^2) = r
+Embedding of Q(z) = Q[X]/(X^4+1) into Q(sqrt(r)) = Q[X]/(X^8+1) mapping z to sqrt(r)^2
+The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
