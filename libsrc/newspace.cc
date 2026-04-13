@@ -192,7 +192,7 @@ FieldElement Newform::eig(const matop& T)
   static const ZZ one(1);
   if (d==1)
     {
-      return FieldElement(bigrational(apv[1], to_ZZ(denom_abs)));
+      return FieldElement(*F0, bigrational(apv[1], to_ZZ(denom_abs)));
     }
   else
     {

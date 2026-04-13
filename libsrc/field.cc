@@ -452,7 +452,7 @@ FieldElement FieldElement::operator+(const FieldElement& b) const
 FieldElement FieldElement::operator-() const
 {
   if (field_is_Q())
-    return FieldElement(-val);
+    return FieldElement(*F, -val);
   return FieldElement(*F, -coords, denom);
 }
 
@@ -540,7 +540,7 @@ FieldElement FieldElement::inverse() const // raise error if zero
   if (is_one() || is_minus_one())
     return FieldElement(*this);
   if (field_is_Q())
-    return FieldElement(recip(val));
+    return FieldElement(*F, recip(val));
 
   mat_m M = matrix(), Minv;
   ZZ Mdet = ::inverse(M,Minv); // so M*Minv = Mdet*identity

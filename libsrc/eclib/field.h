@@ -93,8 +93,7 @@ private:
   // class and coords and denom are ignored
   bigrational val;
 public:
-  FieldElement()
-    :F(new Field()) {;}
+  FieldElement() {;}
   explicit FieldElement(const Field& HF)
     :F(&HF), coords(vec_m(F->d)), denom(to_ZZ(1))  {if (F->d==1) val = bigrational(0);}
   // raw means the given coords are w.r.t. the B-basis
@@ -104,10 +103,7 @@ public:
   // creation from a rational (general F)
   FieldElement(const Field& HF, const ZZ& a, const ZZ& d=to_ZZ(1))
     :F(&HF), coords(a*vec_m::unit_vector(F->d, 1)), denom(d), val(bigrational(a,d)) { cancel();}
-  // creation from a rational (F=Q)
-  explicit FieldElement(const bigrational& r)
-    :F(new Field()), val(r) {;}
-  // creation from a rational (general F)
+  // creation from a rational
   FieldElement(const Field& HF, const bigrational& r)
     :F(&HF), coords(r.num()*vec_m::unit_vector(F->d, 1)), denom(r.den()), val(r) {;}
 
@@ -225,11 +221,8 @@ private:
   }
 public:
   // Dummy constructor
-  FieldIso()
-    :isomat(mat_m::identity_matrix(1)), denom(ZZ(1)), id_flag(1)
-  {
-    domain = codomain = new Field();
-  }
+  FieldIso() {;}
+
   // Constructor from a known matrix
   FieldIso( const Field& F1, const Field& F2, const mat_m& M, const ZZ& d = ZZ(1), int id=-1)
     :domain(&F1), codomain(&F2), isomat(M), denom(d), id_flag(id)
