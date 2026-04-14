@@ -52,6 +52,14 @@ adjoining sqrt(b) to F...
 Embedding of Q(i) = Q[X]/(X^2+1) into Q(sqrt(r)) = Q[X]/(X^4+1) mapping i to sqrt(r)^2
 The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
+
+Test of multiquadratic extensions
+Adjoining sqrt(r) to Q(i) = Q[X]/(X^2+1) for all r in [ -1 2 3 ]
+Adjoining sqrt(-1) to Q(i) = Q[X]/(X^2+1) is trivial since -1 is already a square, with root -i
+Extension field is Q(a) = Q[X]/(X^8-12*X^6+342*X^4+5076*X^2+23409)
+sqrt(-1) = (-a^6+15*a^4-495*a^2-2943)/2592
+sqrt(2) = (-a^6-3*a^4+45*a^2-6993)/5184
+sqrt(3) = (5*a^7-111*a^5+2475*a^3+11151*a)/22032
 F = Q(a) = Q[X]/(X^2+9)
 Q(a) with defining polynomial X^2+9 (of degree 2 and discriminant -36)
 F is Q? 0
@@ -76,6 +84,14 @@ adjoining sqrt(b) to F...
 Embedding of Q(a) = Q[X]/(X^2+9) into Q(sqrt(r)) = Q[X]/(X^4+2*X^2-12*X+10) mapping a to (6*sqrt(r)^3+9*sqrt(r)^2+18*sqrt(r)-45)/5
 The image of b is (6*sqrt(r)^3+9*sqrt(r)^2+18*sqrt(r)-45)/5 with sqrt((6*sqrt(r)^3+9*sqrt(r)^2+18*sqrt(r)-45)/5) = (2*sqrt(r)^3+3*sqrt(r)^2+11*sqrt(r)-15)/5
 
+
+Test of multiquadratic extensions
+Adjoining sqrt(r) to Q(a) = Q[X]/(X^2+9) for all r in [ -1 2 3 ]
+Adjoining sqrt(-1) to Q(a) = Q[X]/(X^2+9) is trivial since -1 is already a square, with root (-a)/3
+Extension field is Q(a) = Q[X]/(X^8+180*X^6+15894*X^4+763668*X^2+15186609)
+sqrt(-1) = (-a^6-129*a^4-9999*a^2-315279)/49248
+sqrt(2) = (-a^6-243*a^4-17523*a^2-636417)/164160
+sqrt(3) = (7*a^7+827*a^5+55401*a^3+1608453*a)/1184688
 F = Q(b) = Q[X]/(X^2+33*X+22)
 Q(b) with defining polynomial X^2+33*X+22 (of degree 2 and discriminant 1001)
 F is Q? 0
@@ -99,6 +115,13 @@ adjoining sqrt(b) to F...
 Embedding of Q(b) = Q[X]/(X^2+33*X+22) into Q(sqrt(r)) = Q[X]/(X^4+33*X^2+22) mapping b to sqrt(r)^2
 The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
+
+Test of multiquadratic extensions
+Adjoining sqrt(r) to Q(b) = Q[X]/(X^2+33*X+22) for all r in [ -1 2 3 ]
+Extension field is Q(a) = Q[X]/(X^16+25008*X^14+234820476*X^12+980223510096*X^10+1527175210988070*X^8-38319049625101488*X^6+448843303990555452*X^4+2396268708854494896*X^2+6918120799921590561)
+sqrt(-1) = (-2069869*a^14-51763392627*a^12-486052075990485*a^10-2028993216813796851*a^8-3161380139218569006063*a^6+78617514709587422024991*a^4-1134523269077638611618639*a^2-2437707412817847322444089)/3639762470420358954439680
+sqrt(2) = (-435503*a^14-10896221133*a^12-102394198762659*a^10-428104105644595689*a^8-670159312843603998573*a^6+8794132516517180888313*a^4+46330207321520082751551*a^2-2217179688956427583828035)/1658569624831611299496960
+sqrt(3) = (20029889410796047*a^15+500794263181762446150*a^13+4700597598373070109606579*a^11+19607195587021298964811557450*a^9+30478247275860327937425963055101*a^7-940289573928980691962826684143382*a^5+13286582717720251693960909655372673*a^3+10347731424296840459846822560700742*a)/48700901577822088295216997554449536
 F = Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336)
 Q(c) with defining polynomial X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X^6+23843328*X^4+77045760*X^2+214798336 (of degree 16 and discriminant 373806240249576772806216528619898703598888444336604916579875358039683351624857517597410047102529448513647466376971300765141262477234072742526976)
 F is Q? 0
@@ -147,3 +170,12 @@ adjoining sqrt(b) to F...
 Embedding of Q(z) = Q[X]/(X^4+1) into Q(sqrt(r)) = Q[X]/(X^8+1) mapping z to sqrt(r)^2
 The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
+
+Test of multiquadratic extensions
+Adjoining sqrt(r) to Q(z) = Q[X]/(X^4+1) for all r in [ -1 2 3 ]
+Adjoining sqrt(-1) to Q(z) = Q[X]/(X^4+1) is trivial since -1 is already a square, with root z^2
+Adjoining sqrt(2) to Q(z) = Q[X]/(X^4+1) is trivial since 2 is already a square, with root -z^3+z
+Extension field is Q(a) = Q[X]/(X^8-12*X^6+72*X^4+216*X^2+324)
+sqrt(-1) = (-a^6+15*a^4-90*a^2-108)/162
+sqrt(2) = (-a^6+6*a^4+18*a^2-432)/324
+sqrt(3) = (-5*a^7+66*a^5-450*a^3-216*a)/648

@@ -5,7 +5,8 @@
 #include "eclib/field.h"
 #include <eclib/pari_init.h>
 
-void test_field(const Field& F);
+void test_field(const Field& F); // general test for any field
+void test_mqfield(const Field& F); // test of multiquadratic extensions
 
 int main()
 {
@@ -25,7 +26,10 @@ int main()
       if (F.isQ())
         break;
       test_field(F);
+      if (F.degree() < 10)
+        test_mqfield(F);
     }
+
   exit(0);
 }
 
@@ -95,4 +99,23 @@ void test_field(const Field& F)
   cout << "The image of b is " << eb << " with sqrt("<<eb<<") = " << r << endl;
   assert (r*r==eb);
   cout << endl;
+}
+
+void test_mqfield(const Field& F) // test of multiquadratic extensions
+{
+  cout << "\nTest of multiquadratic extensions" <<endl;
+  vector<int> ri = {-1,2,3};
+  size_t nr = ri.size();
+  vector<FieldElement> r_list(nr);
+  std::transform(ri.begin(), ri.end(), r_list.begin(), [&F](const int& r){return F(r);});
+  cout << "Adjoining sqrt(r) to " << F << " for all r in " << ri << endl;
+  vector<FieldElement> sqrt_r_list;
+  Field K;
+  FieldIso emb = F.sqrt_embedding(r_list, "a", K, sqrt_r_list, 1);
+  cout << "Extension field is " << K << endl;
+  for (int i=0; i<nr; i++)
+    {
+      cout << "sqrt(" << ri[i] << ") = " << sqrt_r_list[i] << endl;
+      assert (sqrt_r_list[i]*sqrt_r_list[i] == emb(r_list[i]));
+    }
 }

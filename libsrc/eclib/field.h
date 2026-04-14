@@ -66,11 +66,25 @@ public:
   // Return an iso from this=Q(a) to Q(b) where b is in this field and generates
   FieldIso change_generator(const FieldElement& b, Field& Qb) const;
 
-  // Return an iso from this=Q(a) to Q(b) where b^2=r, optionally
-  // applying polredabs (if reduce=2) or polredbest (if reduce=1) to
-  // the codomain.  sqrt_r is set to sqrt(r) in the codomain, so
-  // sqrt_r^2 = image of r
-  FieldIso sqrt_embedding(const FieldElement& r, string newvar, Field& F_sqrt_r, FieldElement& sqrt_r, int reduce=1) const;
+  // Return an embedding from K to K(sqrt(r)), optionally applying
+  // polredabs (if reduce=2) or polredbest (if reduce=1) to the
+  // codomain.  sqrt_r is set to sqrt(r) in the codomain, so sqrt_r^2
+  // = image of r.  Caller supplies a reference to the target field
+  // which will be overwritten (so caller already has the pointer to
+  // it).
+  FieldIso sqrt_embedding(const FieldElement& r, string newvar,
+                          Field& F_sqrt_r, FieldElement& sqrt_r,
+                          int reduce=1) const;
+
+  // Return an embedding from K to K(sqrt(r1),sqrt(r2),...),
+  // optionally applying polredabs (if reduce=2) or polredbest (if
+  // reduce=1) to the codomain.  sqrts is set to [sqrt(r1), sqrt(r2),
+  // ..], a list of elements of the codoimain, so (sqrt_ri)^2 = image
+  // of ri.  Caller supplies a reference to the target field which
+  // will be overwritten (so caller already has the pointer to it).
+  FieldIso sqrt_embedding(const vector<FieldElement>& r_list, string newvar,
+                          Field& F_sqrt_r, vector<FieldElement>& sqrt_r_list,
+                          int reduce=1) const;
 };
 
 inline ostream& operator<<(ostream& s, const Field& F)
@@ -254,8 +268,8 @@ public:
   // access data
   int is_identity() const {return id_flag;}
   int is_nontrivial() const {return !id_flag;}
-  Field dom() const {return *domain;}
-  Field codom() const {return *codomain;}
+  Field const * dom() const {return domain;}
+  Field const * codom() const {return codomain;}
   mat_m matrix() const {return isomat;}
   ZZ den() const {return denom;}
 
