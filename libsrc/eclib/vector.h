@@ -104,6 +104,8 @@ template<class T> void elimp(Zmat<T>& m, long r1, long r2, long pos, const T& pr
 template<class T> void elimp1(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
 template<class T> Zmat<T> echelonp(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                       long& rk, long& ny, T& d, const T& pr);
+template<class T> Zmat<T> echelonp_via_flint(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                      long& rk, long& ny, T& d, const T& pr);
 template<class T> Zmat<T> echmodp(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                      long& rk, long& ny, const T& pr);
 template<class T> Zmat<T> echmodp_uptri(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,

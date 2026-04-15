@@ -99,6 +99,8 @@ public:
   friend void elimp1<>(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
   friend Zmat echelonp<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                           long& rk, long& ny, T& d, const T& pr);
+  friend Zmat echelonp_via_flint<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                          long& rk, long& ny, T& d, const T& pr);
   friend Zmat echmodp<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const T& pr);
   friend Zmat echmodp_uptri<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,

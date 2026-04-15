@@ -602,6 +602,7 @@ Zmat<T> echelon(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
     {
     case 0: default: return echelon0(entries,pcols,npcols,rk,ny,d);
     case 2: return echelonp(entries,pcols,npcols,rk,ny,d, default_modulus<T>());
+    case 3: return echelonp_via_flint(entries,pcols,npcols,rk,ny,d, default_modulus<T>());
     }
 }
 
@@ -1208,6 +1209,50 @@ Zmat<T> echelonp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
  cout << "Denominator mat = " << dmat << endl;
  cout << "Common denominator = " << dd << endl;
 #endif /* TRACE */
+ for (long i=1; i<=rk; i++)
+   for (long j=1; j<=nc; j++)
+     m(i,j)=(dd*nmat(i,j))/dmat(i,j);
+ d=dd;
+ return m;
+}
+
+template<class T>
+Zmat<T> echelonp_via_flint(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
+             long& rk, long& ny, T& d, const T& pr)
+{
+ long nr=entries.nrows(), nc=entries.ncols();
+ Zmat<T> m(nr,nc);
+ std::transform(entries.entries.begin(), entries.entries.end(), m.entries.begin(),
+                [pr] (const T& x) {return mod(x,pr);});
+ m = rref(m, pcols, npcols, rk, ny, pr);
+ T dd(1);
+ Zmat<T> nmat(rk,nc);
+ Zmat<T> dmat(rk,nc);
+
+ for (long i=1; i<=rk; i++)
+   {
+     for (long j=1; j<=rk; j++)
+       {
+         nmat(i,pcols[j])=(i==j);
+         dmat(i,pcols[j])=1;
+       }
+     for (long j=1; j<=ny; j++)
+       {
+         T n1,d1;
+         long jj = npcols[j];
+         int ok = modrat(m(i,jj), pr,n1,d1);
+         nmat(i,jj)=n1;
+         dmat(i,jj)=d1;
+         if (ok)
+           dd=(dd*d1)/gcd(dd,d1);
+         else
+           {
+             cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q"<<endl;
+             exit(1);
+           }
+       }
+   }
+ dd=abs(dd);
  for (long i=1; i<=rk; i++)
    for (long j=1; j<=nc; j++)
      m(i,j)=(dd*nmat(i,j))/dmat(i,j);

@@ -143,3 +143,17 @@ A has inverse (1/2)*
 [[-4,2],
 [3,-1]]
 Check: A.A^(-1) = I ? True!
+
+Using method 3 (modulus = 1073741789)
+Echelon matrix = 
+[[2,0,-4,2],
+[0,2,3,-1]]
+pivotal columns: [1,2]
+nonpivotal columns: [3,4]
+Denom = 2
+Rank = 2
+Nullity = 0
+A has inverse (1/2)*
+[[-4,2],
+[3,-1]]
+Check: A.A^(-1) = I ? True!

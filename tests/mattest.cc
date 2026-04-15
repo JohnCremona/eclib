@@ -21,6 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <cassert>
 #include <iostream>
 #include <eclib/timer.h>
 #include <eclib/linalg.h>
@@ -99,10 +100,10 @@ int main(void)
   // int method=0;
   // cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
   // cin>>method;
-  for (auto method: {0, 2})
+  for (auto method: {0, 2, 3})
     {
   cout << "\nUsing method " << method;
-  if(method==2) cout << " (modulus = " << modulus << ")";
+  if(method>0) cout << " (modulus = " << modulus << ")";
   cout << endl;
   mat ref = echelon(aug, pc, npc, rk, ny, denom, method);
   cout << "Echelon matrix = \n" << ref << endl;
@@ -126,11 +127,9 @@ int main(void)
         cout << "(1/" << denom << ")*";
       cout << endl << ainv << endl;
       cout << "Check: A.A^(-1) = I ?";
-      if (a*ainv == mat::scalar_matrix(r,denom))
-        cout << " True!";
-      else
-        cout << " False!";
-      cout << endl;
+      int ok = (a*ainv == mat::scalar_matrix(r,denom));
+      cout << (ok? " True!": " False!") << endl;
+      //      assert (ok);
     }
     } // loop over methods
   stop_time();
