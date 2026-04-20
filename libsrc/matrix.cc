@@ -1787,31 +1787,34 @@ void mod_mat_from_mat(nmod_mat_t& A, const Zmat<long>& M, const long& pr)
       nmod_mat_entry(A,i,j) = (mp_limb_t)posmod(M(i+1,j+1),pr);
 }
 
-// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<ZZ> modulo pr:
-void mod_mat_from_mat(fmpz_mod_mat_t& A, fmpz_mod_ctx_t& mod, const Zmat<ZZ>& M, const ZZ& pr)
+// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<ZZ> modulo
+// pr. The context flint_modulus must have been preset to match pr and
+// fmpz_mod_mat_init(A, flint_modulus) should have been called already.  We pass
+// pr as a parameter since the FLINT matrix must have integers in
+// therange 0..pr-1.
+void mod_mat_from_mat(fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& flint_modulus, const Zmat<ZZ>& M, const ZZ& pr)
 {
   long nr=M.nrows(), nc=M.ncols();
-  fmpz_mod_ctx_init(mod, *NTL_to_FLINT(pr));
-  fmpz_mod_mat_init(A, nr, nc, mod);
   for(long i=0; i<nr; i++)
     for(long j=0; j<nc; j++)
-      fmpz_mod_mat_set_entry(A,i,j, *NTL_to_FLINT(posmod(M(i+1,j+1),pr)), mod);
+      fmpz_mod_mat_set_entry(A,i,j, *NTL_to_FLINT(posmod(M(i+1,j+1),pr)), flint_modulus);
 }
 
-// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<INT> modulo pr:
-void mod_mat_from_mat(fmpz_mod_mat_t& A, fmpz_mod_ctx_t& mod, const Zmat<INT>& M, const INT& pr)
+// create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<ZZ> modulo
+// pr. The context flint_modulus must have been preset to match pr and
+// fmpz_mod_mat_init(A, flint_modulus) should have been called already.  We pass
+// pr as a parameter since the FLINT matrix must have integers in
+// therange 0..pr-1.
+void mod_mat_from_mat(fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& flint_modulus, const Zmat<INT>& M, const INT& pr)
 {
-  long nr=M.nrows(), nc=M.ncols();
   fmpz_t tmp;
-  // pr.get_fmpz(tmp);
-  // fmpz_mod_ctx_init(mod, tmp);
-  fmpz_mod_mat_init(A, nr, nc, mod);
+  long nr=M.nrows(), nc=M.ncols();
   for(long i=0; i<nr; i++)
     for(long j=0; j<nc; j++)
       {
         INT Aij = posmod(M(i+1,j+1),pr);
         Aij.get_fmpz(tmp);
-        fmpz_mod_mat_set_entry(A,i,j, tmp, mod);
+        fmpz_mod_mat_set_entry(A,i,j, tmp, flint_modulus);
       }
   fmpz_clear(tmp);
 }
@@ -1836,9 +1839,9 @@ Zmat<long> mat_from_mod_mat(const nmod_mat_t& A)
   return M;
 }
 
-Zmat<ZZ> mat_from_mod_mat(const fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& mod, const ZZ& dummy)
+Zmat<ZZ> mat_from_mod_mat(const fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& flint_modulus, const ZZ& dummy)
 {
-  long nr=fmpz_mod_mat_nrows(A, mod), nc=fmpz_mod_mat_ncols(A, mod);
+  long nr=fmpz_mod_mat_nrows(A, flint_modulus), nc=fmpz_mod_mat_ncols(A, flint_modulus);
   Zmat<ZZ> M(nr, nc);
   for(long i=0; i<nr; i++)
     for(long j=0; j<nc; j++)
@@ -1849,9 +1852,9 @@ Zmat<ZZ> mat_from_mod_mat(const fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& mod, co
   return M;
 }
 
-Zmat<INT> mat_from_mod_mat(const fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& mod, const INT& dummy)
+Zmat<INT> mat_from_mod_mat(const fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& flint_modulus, const INT& dummy)
 {
-  long nr=fmpz_mod_mat_nrows(A, mod), nc=fmpz_mod_mat_ncols(A, mod);
+  long nr=fmpz_mod_mat_nrows(A, flint_modulus), nc=fmpz_mod_mat_ncols(A, flint_modulus);
   Zmat<INT> M(nr, nc);
   for(long i=0; i<nr; i++)
     for(long j=0; j<nc; j++)
@@ -1869,6 +1872,7 @@ Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr)
   long rk = hmod_mat_rref(A);
   Zmat<int> B = mat_from_mod_mat(A).slice(rk, M.ncols());
   hmod_mat_clear(A);
+  B.reduce_mod_p(pr);
   return B;
 }
 
@@ -1879,52 +1883,69 @@ Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr)
   long rk = nmod_mat_rref(A);
   Zmat<long> B = mat_from_mod_mat(A).slice(rk, M.ncols());
   nmod_mat_clear(A);
+  B.reduce_mod_p(pr);
   return B;
 }
 
 Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr)
 {
-  long nr=M.nrows(), nc=M.ncols();
+  fmpz_mod_ctx_t flint_modulus;
+  fmpz_mod_ctx_init(flint_modulus, *NTL_to_FLINT(pr));
 
-  fmpz_mod_ctx_t modulus;
-  fmpz_mod_ctx_init(modulus, *NTL_to_FLINT(pr));
-
+  long nr=M.nrows(), nc=M.ncols(), rk;
   fmpz_mod_mat_t A, R;
-  fmpz_mod_mat_init(A, nr, nc, modulus);
-  fmpz_mod_mat_init(R, nr, nc, modulus);
+  fmpz_mod_mat_init(A, nr, nc, flint_modulus);
+  fmpz_mod_mat_init(R, nr, nc, flint_modulus);
 
-  mod_mat_from_mat(A,modulus,M,pr);
-
-  long rk = fmpz_mod_mat_rref(R, A, modulus);
+  mod_mat_from_mat(A,flint_modulus,M,pr);
+  // cout << "About to call fmpz_mod_mat_rref() on matrix\n";
+  // fmpz_mod_mat_print_pretty(A, flint_modulus);
+  // cout << "\n modulo " << pr << endl;
+  rk = fmpz_mod_mat_rref(R, A, flint_modulus);
+  // cout << " fmpz_mod_mat_rref() returns matrix\n";
+  // fmpz_mod_mat_print_pretty(R, flint_modulus);
+  // cout << endl;
   ZZ dummy;
-  Zmat<ZZ> B = mat_from_mod_mat(R, modulus, dummy).slice(rk, nc);
-  fmpz_mod_mat_clear(A,modulus);
-  fmpz_mod_mat_clear(R,modulus);
-  //  fmpz_mod_ctx_clear(modulus);
+  Zmat<ZZ> B = mat_from_mod_mat(R, flint_modulus, dummy).slice(rk, nc);
+  B.reduce_mod_p(pr);
+
+  fmpz_mod_mat_clear(A,flint_modulus);
+  fmpz_mod_mat_clear(R,flint_modulus);
+  fmpz_mod_ctx_clear(flint_modulus);
+
   return B;
 }
 
 Zmat<INT> ref_via_flint(const Zmat<INT>& M, const INT& pr)
 {
-  long nr=M.nrows(), nc=M.ncols();
+  // Zmat<ZZ> A = to_mat_m(M);
+  // ZZ p = to_ZZ(pr);
+  // cout << "Calling ref_via_flint on ZZ-matrix\n" << A << "\n modulo " << p << endl;
+  // Zmat<ZZ> R = ref_via_flint(A, p);
+  // cout << " ref_via_flint returns ZZ-matrix\n" << R << endl;
+  // return to_mat_I(R);
 
-  fmpz_mod_ctx_t modulus;
+  fmpz_mod_ctx_t flint_modulus;
   fmpz_t tmp;
   pr.get_fmpz(tmp);
-  fmpz_mod_ctx_init(modulus, tmp);
+  fmpz_mod_ctx_init(flint_modulus, tmp);
+  fmpz_clear(tmp);
 
+  long nr=M.nrows(), nc=M.ncols(), rk;
   fmpz_mod_mat_t A, R;
-  fmpz_mod_mat_init(A, nr, nc, modulus);
-  fmpz_mod_mat_init(R, nr, nc, modulus);
+  fmpz_mod_mat_init(A, nr, nc, flint_modulus);
+  fmpz_mod_mat_init(R, nr, nc, flint_modulus);
 
-  mod_mat_from_mat(A,modulus,M,pr);
-
-  long rk = fmpz_mod_mat_rref(R, A, modulus);
+  mod_mat_from_mat(A,flint_modulus,M,pr);
+  rk = fmpz_mod_mat_rref(R, A, flint_modulus);
   INT dummy;
-  Zmat<INT> B = mat_from_mod_mat(R, modulus, dummy).slice(rk, nc);
-  fmpz_mod_mat_clear(A,modulus);
-  fmpz_mod_mat_clear(R,modulus);
-  //  fmpz_mod_ctx_clear(modulus);
+  Zmat<INT> B = mat_from_mod_mat(R, flint_modulus, dummy).slice(rk, nc);
+  B.reduce_mod_p(pr);
+
+  fmpz_mod_mat_clear(A,flint_modulus);
+  fmpz_mod_mat_clear(R,flint_modulus);
+  fmpz_mod_ctx_clear(flint_modulus);
+
   return B;
 }
 

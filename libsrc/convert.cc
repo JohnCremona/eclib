@@ -74,7 +74,9 @@ ZZ to_ZZ     (const INT& a)      // from INT to ZZ
 {
   fmpz_t z;
   a.get_fmpz(z);
-  return FLINT_to_NTL(z);
+  ZZ b = FLINT_to_NTL(z);
+  fmpz_clear(z);
+  return b;
 }
 
 ZZ PARI_to_NTL(const GEN& a)  // from PARI to NTL

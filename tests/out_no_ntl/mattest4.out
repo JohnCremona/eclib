@@ -157,3 +157,7 @@ A has inverse (1/2)*
 [[-4,2],
 [3,-1]]
 Check: A.A^(-1) = I ? True!
+Calling ref_via_flint()...
+ ref_via_flint() returns
+[[1,0],
+[0,1]]

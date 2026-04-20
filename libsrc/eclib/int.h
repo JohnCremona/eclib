@@ -109,6 +109,7 @@ public:
   friend class REAL;
   friend void make_mat( fmpz_mat_t A, const std::vector<std::vector<INT>>& M);
   friend int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b);
+  friend INT NextPrime(const INT& a, int proof);
 };
 
 inline int sign(const INT& a) {return a.sign();}
@@ -177,18 +178,19 @@ INT sqrt_mod_p(const INT& a, const INT& p);
 
 inline INT addmod(const INT& a, const INT& b, const INT& m)
 {
-  if (is_zero(a)) return b;
-  if (is_zero(b)) return a;
   return mod(a+b,m);
 }
 
 inline INT xmm(const INT& a, const INT& b, const INT& m)
 {
-  if (is_one(a)) return b;
-  if (is_one(b)) return a;
-  if (is_one(-a)) return -b;
-  if (is_one(-b)) return -a;
-  return (a*b) % m;
+  return mod(a*b, m);
+}
+
+inline INT NextPrime(const INT& a, int proof=1)
+{
+  INT p;
+  fmpz_nextprime(p.z, a.z, proof);
+  return p;
 }
 
 // Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2

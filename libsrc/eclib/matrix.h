@@ -250,4 +250,9 @@ mat_m lin_comb_mats(const vector<ZZ>& co, const vector<mat_m>& mats);
 template<class T>
 void output_flat_matrix(const Zmat<T>& m, ostream&s = cout);
 
+Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr);
+Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr);
+Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr);
+Zmat<INT> ref_via_flint(const Zmat<INT>& M, const INT& pr);
+
 #endif

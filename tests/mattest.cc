@@ -132,6 +132,10 @@ int main(void)
       //      assert (ok);
     }
     } // loop over methods
+
+  cout << "Calling ref_via_flint()..." << endl;
+  mat R = ref_via_flint(a, modulus);
+  cout << " ref_via_flint() returns\n" << R << endl;
   stop_time();
   // commented out for automatic tests:
   //cout << "cpu time = "; show_time(); cout << endl;
