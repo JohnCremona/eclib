@@ -70,7 +70,7 @@ int main()
     // The Newspace constructor looks for a suitable splitting
     // operator which is a linear combination of up to maxnp prime
     // Hecke operators with coefficients up to maxc:
-    int maxnp = 10, maxc = 20, minp=10;
+    int maxnp = 10, maxc = 20, minp=2; // 10;
     Newspace NS(H1, maxnp, maxc, minp, verbose);
     if (cdim>0 && !NS.ok())
       {

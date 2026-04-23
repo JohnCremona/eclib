@@ -66,6 +66,8 @@ GEN ZZX_to_t_POL(const ZZX& f)
   return P;
 }
 
+//#define DEBUG_POLRED
+
 // polredabs (if canonical) or polredbest of an *irreducible*
 // polynomial in Z[X]
 
@@ -85,12 +87,12 @@ ZZX polred(const ZZX& f, int canonical)
     G = polredabs0(G, 0);
   else
     {
-#ifdef DEBUG_POLY
+#ifdef DEBUG_POLRED
       pari_printf("applying polredbest to %Ps\n", G);
 #endif
       GEN G1 = polredbest(G, 0);
       nsteps++;
-#ifdef DEBUG_POLY
+#ifdef DEBUG_POLRED
       pari_printf("polredbest step %d gives %Ps\n", nsteps, G1);
 #endif
       while (!ZX_equal(G,G1))
@@ -98,12 +100,12 @@ ZZX polred(const ZZX& f, int canonical)
           G = G1;
           G1 = polredbest(G, 0);
           nsteps++;
-#ifdef DEBUG_POLY
+#ifdef DEBUG_POLRED
           pari_printf("polredbest step %d gives %Ps\n", nsteps, G1);
 #endif
         }
     }
-#ifdef DEBUG_POLY
+#ifdef DEBUG_POLRED
   if (canonical)
     pari_printf("polredabs0(f, 0) returns %Ps\n", G);
   else
@@ -131,22 +133,25 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
   if (canonical)
     {
       GEN G_H = polredabs0(G, nf_ORIG);
-#ifdef DEBUG_POLY
+#ifdef DEBUG_POLRED
       pari_printf("polredabs0(f,nf_ORIG) returns [G, H] = %Ps\n", G_H);
 #endif
       G = gel(G_H,1);
       A = lift(gel(G_H,2));
-#ifdef DEBUG_POLY
+#ifdef DEBUG_POLRED
       pari_printf("  G = %Ps\n  A = %Ps\n", G, A);
 #endif
     }
   else
     {
+#ifdef DEBUG_POLRED
+      pari_printf("applying polredbest to %Ps\n", G);
+#endif
       GEN G_H = polredbest(G, nf_ORIG);
       nsteps++;
       GEN G1 = gel(G_H,1);
       A = lift(gel(G_H,2));
-#ifdef DEBUG_POLY
+#ifdef DEBUG_POLRED
       pari_printf("After 1 step of polredbest,   G1 = %Ps,  A = %Ps\n", G1, A);
 #endif
       while (!ZX_equal(G,G1))
@@ -156,16 +161,14 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
           nsteps++;
           G1 = gel(G_H,1);
           if (!ZX_equal(G,G1))
-            {
-              A = lift(poleval(A, gel(G_H,2)));
-#ifdef DEBUG_POLY
-              pari_printf("After %d steps of polredbest,  G1 = %Ps,  A = %Ps\n", nsteps, G1, A);
+            A = lift(poleval(A, gel(G_H,2)));
+#ifdef DEBUG_POLRED
+          pari_printf("After %d steps of polredbest,  G1 = %Ps,  A = %Ps\n", nsteps, G1,  A);
 #endif
-            }
         }
     }
 
-#ifdef DEBUG_POLY
+#ifdef DEBUG_POLRED
   if (canonical)
     pari_printf("polredabs0(f,nf_ORIG) returns G = %Ps, A = %Ps\n", G, A);
   else

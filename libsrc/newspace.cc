@@ -74,11 +74,14 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   if(verbose)
     {
       cout<<"done."<<endl;
-      cout<<"A (the matrix of T restricted to S) = ";
-      output_flat_matrix(A);
-      if(denom_abs>1)
-        cout<<" / " << denom_abs;
-      cout<<endl;
+      if (verbose>1)
+        {
+          cout<<"A (the matrix of T restricted to S) = ";
+          output_flat_matrix(A);
+          if(denom_abs>1)
+            cout<<" / " << denom_abs;
+          cout<<endl;
+        }
       cout<<"f(X) is the min poly of A"<<endl;
     }
 
@@ -101,12 +104,15 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     {
       string var = codeletter(index-1);
       F0 = new Field(A, denom_abs, basis_change_matrix, basis_change_denominator, var, verbose>1);
+      F = new Field();
       int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
       if (verbose)
         {
           cout << "Applying "
-               << (canonical? "polredabs": "polredbest")
-               << " to field " << F0 << endl;
+               << (canonical? "polredabs": "polredbest");
+          if (verbose>1)
+            cout << " to field " << F0 << " --> " << *F0;
+          cout  << endl;
           if (!canonical)
             {
               cout << "Not applying polredabs as degree is greater than "
@@ -115,7 +121,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
         }
       Fiso = F0->reduction_isomorphism(var, *F, canonical);
       if (verbose)
-        cout << "Reduced field is " << F << endl;
+        cout << "Reduced field is " << *F << endl;
       if (Fiso.is_nontrivial() && verbose)
         {
           cout << "[replacing original Hecke field with polynomial " << ::str(F0->poly())
@@ -125,7 +131,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   if (verbose)
     {
       cout <<"Hecke field data:" << endl;
-      cout << F << endl;
+      cout << *F << endl;
     }
 
   sfe = 0;   // means unknown
@@ -140,39 +146,6 @@ Newform::Newform(Newspace* x, int i, int verbose)
   if (!input_from_file(verbose))
     cerr << "Unable to read Newform " << lab << endl;
 }
-
-// // NB We do not use automatic copy constructor and assignment since
-// // when data items which have field pointers are copied these must be
-// // changed to pointers to fields in the new Newform not the old.
-
-// Newform::Newform(const Newform& x)
-//   :N(x.N), nsp(x.nsp), index(x.index), lab(x.lab), d(x.d), F0(x.F0), F(x.F), Fiso(x.Fiso),
-//    S(x.S), denom_abs(x.denom_abs), projcoord(x.projcoord), key_symbol(x.key_symbol),
-//    basis_change_matrix(x.basis_change_matrix), basis_change_denominator(x.basis_change_denominator),
-//    sfe(x.sfe), maxP(x.maxP), aPmap(x.aPmap), eQmap(x.eQmap), aMlist(x.aMlist), trace_list(x.trace_list)
-// {
-//   for (auto& item: aPmap)
-//     item.second.change_field_pointer(&F);
-//   for (auto& a: aMlist)
-//     a.change_field_pointer(&F);
-//   Fiso.change_field_pointers(&F0, &F);
-// }
-
-// // assignment
-// Newform& Newform::operator=(const Newform& x)
-// {
-//   N = x.N; nsp = x.nsp; index = x.index; lab = x.lab; d = x.d; F0 = x.F0; F = x.F; Fiso = x.Fiso;
-//   S = x.S; denom_abs = x.denom_abs; projcoord = x.projcoord; key_symbol = x.key_symbol;
-//   basis_change_matrix = x.basis_change_matrix;  basis_change_denominator = x.basis_change_denominator;
-//   sfe=x.sfe; maxP = x.maxP; aPmap = x.aPmap; eQmap = x.eQmap; aMlist = x.aMlist; trace_list = x.trace_list;
-
-//   for (auto& item: aPmap)
-//     item.second.change_field_pointer(&F);
-//   for (auto& a: aMlist)
-//     a.change_field_pointer(&F);
-//   Fiso.change_field_pointers(&F0, &F);
-//   return *this;
-// }
 
 
 string Newform::label() const
@@ -562,23 +535,7 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
 // subspace is squarefree and coprime to its char polys on the
 // oldspace and non-cuspidal subspace.
 //
-// This function manages the linear combinations, with the validity
-// testing done by valid_splitting_combo().
-//
 // Set split_ok=1 if successful else 0.
-
-static vector<int> random_vector(size_t size, int minv, int maxv)
-{
-  // We use static in order to instantiate the random engine and the
-  // distribution once only.  It may provoke some thread-safety
-  // issues.
-  static std::uniform_int_distribution<int> distribution(minv, maxv);
-  static std::default_random_engine generator;
-
-  std::vector<int> v(size);
-  std::generate(v.begin(), v.end(), []() { return distribution(generator); });
-  return v;
-}
 
 void Newspace::find_T(int maxnp, int maxc, int minp)
 {
@@ -593,7 +550,7 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
                  [this](long p){return matop(p,N);});
 
   BoundedWeightVectorGenerator combo_generator(maxnp, maxc);
-  //vector<vector<int>> lincombs = all_linear_combinations(maxnp, maxc, 1);
+
   if (verbose)
     {
       cout << "Trying linear combinations with coefficients up to "<<maxc;
@@ -609,39 +566,51 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
   gmatop T_op;
   ZZX f;
 
-  //  while (!combo_generator.at_last())  // To use all linear combos:
-  for (int i=0; i<1000; i++)              // To use random linear combos:
+  // local function to test a linear combination (lc) of ops,
+  // returning success flag.  If successful, assigns T_op, T_name, f
+  auto test_lc = [this, ops, Plist, &T_op, &f](const vector<scalar>& lc)
   {
-    // Using all linear combos:
-    // vector<int> lc = combo_generator.next();
-    // if (combo_generator.at_last())
-    //   break;
-
-    // using random linear combos:
-    vector<int> lc = random_vector(maxnp, -maxc,maxc);
-
-    if (std::count(lc.begin(), lc.end(), 0) > maxnp-6)
-        continue;
-      vector<scalar> ilc(lc.size());
-      std::transform(lc.begin(), lc.end(), ilc.begin(), [](int c){return scalar(c);});
-      T_op = gmatop(ops, ilc);
-      T_name = T_op.name();
-      if (verbose)
-        cout << "Trying "<<lc<<": "<<T_name<<"..."<<flush;
+    T_op = gmatop(ops, lc);
+    T_name = T_op.name();
+    if (verbose)
+      cout << "Trying "<<lc<<": "<<T_name<<"..."<<flush;
 #ifdef USE_OLD_SPACES
-      split_ok = valid_splitting_combo(Plist, ilc, T_op, f);
+    return valid_splitting_combo(Plist, lc, T_op, f);
 #else
-      split_ok = test_splitting_operator(N, T_op, H1->modulus, verbose>1);
+    return test_splitting_operator(N, T_op, H1->modulus, verbose>1);
 #endif
+  };
+
+  // First test individual ops
+  vector<scalar> lc(maxnp); // all 0
+  for (int i=0; i<maxnp; i++)
+    {
+      lc[i] = 1;
+      split_ok = test_lc(lc);
       if (split_ok)
         {
           if (verbose)
             cout<<"OK!"<<endl;
           break;
         }
+      lc[i] = 0;
       if (verbose)
         cout << " no good, continuing..." << endl;
     }
+
+  // Now test 100 random linear combos
+  for (int i=0; (!split_ok) && (i<100); i++)
+  {
+    split_ok = test_lc(random_vector(maxnp, -maxc, maxc));
+    if (split_ok)
+      {
+        if (verbose)
+          cout<<"OK!"<<endl;
+        break;
+      }
+    if (verbose)
+      cout << " no good, continuing..." << endl;
+  }
 
   if (split_ok)
     {
@@ -1142,3 +1111,28 @@ Newspace* get_Newspace(const long& N, int verb)
   return NSP;
 }
 
+// Function to generate a random integer vector of a given size wit
+// entries taken uniformly from [minv..maxv], optionally repeating
+// until the vector is primitive
+
+vector<scalar> random_vector(size_t size, scalar minv, scalar maxv, int primitive)
+{
+  if (size==1 && primitive==1 && minv<=1 and maxv>=1)
+    return {1};
+  // We use static in order to instantiate the random engine and the
+  // distribution once only.  It may provoke some thread-safety
+  // issues.
+  std::uniform_int_distribution<int> distribution(minv, maxv);
+  static std::default_random_engine generator;
+
+  std::vector<int> v(size);
+  int cont = 0;
+  while (cont==0 || (primitive && cont>1))
+    {
+      std::generate(v.begin(), v.end(),
+                    [&distribution]() { return distribution(generator); });
+      cont = std::accumulate(v.begin(), v.end(), 0,
+                             [](const int& x, const int& y) {return gcd(x,y);});
+    }
+  return v;
+}

@@ -277,4 +277,10 @@ Newspace* get_Newspace(const long& N, int verb=0);
 
 string newspaces_directory(int create_if_necessary=1);
 
+// Function to generate a random nonzero integer vector of a given
+// size with entries taken uniformly from [minv..maxv], optionally
+// making the returned vector primitive.
+
+vector<scalar> random_vector(size_t size, scalar minv, scalar maxv, int primitive=1);
+
 #endif
