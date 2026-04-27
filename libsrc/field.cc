@@ -98,6 +98,13 @@ string Qmat::str(int raw) const
   return s.str();
 }
 
+Qmat Qmat::inverse() const
+{
+  mat_m inverse_entries;
+  ZZ d = ::inverse(entries, inverse_entries);
+  return Qmat(denom * inverse_entries, d);
+}
+
 Qmat Qmat::operator+(const Qmat& b) const
 {
   Qmat a = *this;
@@ -867,8 +874,6 @@ void FieldIso::precompose(const FieldIso& iso)
     if (domain==iso.codomain)
     {
       isomat = isomat * iso.isomat;
-      denom *= iso.denom;
-      cancel_mat(isomat,denom);
       domain = iso.domain;
 #ifdef DEBUG_COMPOSE
       cout << " after precomposing, the iso is " << *this << endl;
@@ -897,8 +902,6 @@ void FieldIso::postcompose(const FieldIso& iso)
   if (codomain==iso.domain)
     {
       isomat = iso.isomat * isomat;
-      denom *= iso.denom;
-      cancel_mat(isomat,denom);
       codomain = iso.codomain;
 #ifdef DEBUG_COMPOSE
       cout << " after postcomposing, the iso is " << *this << endl;
@@ -921,36 +924,29 @@ FieldIso FieldIso::operator*(const FieldIso& iso)
 
 string FieldIso::str(int raw) const
 {
-  ostringstream s;
   if (raw)
-    {
-      for (auto mij: isomat.get_entries())
-        s << mij << " ";
-      s << denom;
-    }
+    return isomat.str(1);
+  ostringstream s;
+  //cout << "(domain = " << domain << ", codomain = " << codomain << "): " << endl;
+  //s << "(domain = " << domain << ", codomain = " << codomain << "): " << endl;
+  if (id_flag)
+    s << "Identity automorphism of " << domain->str();
   else
     {
-      //cout << "(domain = " << domain << ", codomain = " << codomain << "): " << endl;
-      //s << "(domain = " << domain << ", codomain = " << codomain << "): " << endl;
-      if (id_flag)
-        s << "Identity automorphism of " << domain->str();
+      if (domain==codomain)
+        {
+          s << "Automorphism of " << domain->str();
+          //cout << "Automorphism of " << domain->str() << endl;
+        }
       else
         {
-          if (domain==codomain)
-            {
-              s << "Automorphism of " << domain->str();
-              //cout << "Automorphism of " << domain->str() << endl;
-            }
-          else
-            {
-              s << "Embedding of " << domain->str() << " into " << codomain->str();
-              //cout << "Embedding of " << domain->str() << " into " << codomain->str();
-              // s << " with matrix\n" << isomat;
-              // if (!IsOne(denom)) s << "/ "<< denom;
-            }
-          s << " mapping " << domain->gen() << " to " << operator()(domain->gen());
-          //cout << " mapping " << domain->gen() << " to " << operator()(domain->gen()) << endl;
+          s << "Embedding of " << domain->str() << " into " << codomain->str();
+          //cout << "Embedding of " << domain->str() << " into " << codomain->str();
+          // s << " with matrix\n" << isomat;
+          // if (!IsOne(denom)) s << "/ "<< denom;
         }
+      s << " mapping " << domain->gen() << " to " << operator()(domain->gen());
+      //cout << " mapping " << domain->gen() << " to " << operator()(domain->gen()) << endl;
     }
   return s.str();
 }
@@ -959,7 +955,7 @@ string FieldIso::str(int raw) const
 // the matrix and denominator
 void FieldIso::read(istream& s)
 {
-  s >> isomat >> denom;
+  s >> isomat;
   set_id_flag();
 }
 
@@ -972,12 +968,10 @@ istream& operator>>(istream& s, FieldIso& x)
 // inverse isomorphism
 FieldIso FieldIso::inverse() const
 {
-  if (id_flag) return *this;
-  mat_m inversemat;
-  ZZ d = ::inverse(isomat, inversemat);
-  inversemat *= denom;
-  cancel_mat(inversemat, d);
-  return FieldIso(*codomain, *domain, inversemat, d, 0); // 0: not the identity
+  if (id_flag)
+    return *this;
+  else
+    return FieldIso(*codomain, *domain, isomat.inverse(), id_flag);
 }
 
 // map x in domain to an element of the codomain
@@ -990,7 +984,8 @@ FieldElement FieldIso::operator()(const FieldElement& x) const
       if (x.is_rational(r))
         return (*codomain)(r);
 
-      FieldElement y(*codomain, isomat * x.v.get_coords(), denom * x.v.get_denom());
+      FieldElement y(*codomain, isomat * x.v);
+
       // sanity check that the min poly has not changed
       if (! (x.minpoly()==y.minpoly()))
         {

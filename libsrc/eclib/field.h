@@ -64,7 +64,10 @@ class Qmat {
 
 public:
   Qmat() :entries(mat_m()), denom(to_ZZ(1)) {;}
+  Qmat(long nr, long nc) :entries(mat_m(nr,nc)), denom(to_ZZ(1)) {;}
   Qmat(const mat_m& c, const ZZ& d=to_ZZ(1)) :entries(c) { denom=d; cancel();}
+  static Qmat identity(long d) {return Qmat(mat_m::identity_matrix(d));}
+  static Qmat zero(long d) {return Qmat(mat_m(d,d));}
 
   // Before calling this the sie (dimension) must be set
   void read (istream& s) { s >> entries >> denom;}
@@ -74,6 +77,7 @@ public:
   string str(int raw=0) const;
   int is_zero() const {return entries.is_zero();}
   int is_integral() const {return denom==1;}
+  int is_identity() const {return denom==1 && entries==mat_m::identity_matrix(entries.nrows());}
   mat_m get_entries() const {return entries;}
   ZZ get_denom() const {return denom;}
   pair<int,int> dim() const {return {entries.nrows(), entries.ncols()};}
@@ -81,6 +85,7 @@ public:
   bigrational trace() {return bigrational(entries.trace(), denom);}
   bigrational det() {return bigrational(entries.determinant(), pow(denom, entries.nrows()));}
 
+  Qmat inverse() const;
   int operator==(const Qmat& b) const {return (denom==b.denom) && (entries==b.entries);}
   int operator!=(const Qmat& b) const {return (denom!=b.denom) || (entries!=b.entries);}
   Qmat operator+(const Qmat& b) const; // add
@@ -94,6 +99,7 @@ public:
   void operator *= (const Qmat& m) {entries = entries*m.entries; denom *= m.denom; cancel();}
   inline friend Qmat operator*(const ZZ& c, const Qmat& x) {return Qmat(c*x.entries, x.denom);}
   inline friend Qmat operator*(const Qmat&m1, const Qmat& m2) {return Qmat(m1.entries*m2.entries, m1.denom*m2.denom);}
+  inline friend Qvec operator*(const Qmat&m, const Qvec& v) {return Qvec(m.entries*v.coords, m.denom*v.denom);}
   inline friend ostream& operator<<(ostream& s, const Qmat& x) { s << x.str();  return s;}
 };
 
@@ -313,12 +319,11 @@ class FieldIso {
 private:
   Field const * domain;   // pointer to const object
   Field const * codomain; // pointer to const object
-  mat_m isomat;
-  ZZ denom;
+  Qmat isomat;
   int id_flag; // flags that this is the identity (domain=codomain and isomat=id)
   void set_id_flag()
   {
-    id_flag = (domain==codomain) && is_one(denom) && (isomat==mat_m::identity_matrix(domain->d));
+    id_flag = (domain==codomain) && isomat.is_identity();
   }
 public:
   // Dummy constructor
@@ -326,7 +331,14 @@ public:
 
   // Constructor from a known matrix
   FieldIso( const Field& F1, const Field& F2, const mat_m& M, const ZZ& d = ZZ(1), int id=-1)
-    :domain(&F1), codomain(&F2), isomat(M), denom(d), id_flag(id)
+    :domain(&F1), codomain(&F2), isomat(Qmat(M,d)), id_flag(id)
+  {
+    if (id_flag==-1)
+      set_id_flag();
+  }
+  // Constructor from a known matrix
+  FieldIso( const Field& F1, const Field& F2, const Qmat& M, int id=-1)
+    :domain(&F1), codomain(&F2), isomat(M), id_flag(id)
   {
     if (id_flag==-1)
       set_id_flag();
@@ -334,10 +346,10 @@ public:
   // Partial constructor from two fields, used when inputting just the matrix and denominator.
   // This initializes isomat to the correct size as the 0 matrix
   FieldIso( const Field& F1, const Field& F2)
-    :domain(&F1), codomain(&F2), isomat(mat_m(F2.degree(),F1.degree())), denom(ZZ(1)), id_flag(0) {;}
+    :domain(&F1), codomain(&F2), isomat(Qmat(F2.d,F1.d)), id_flag(0) {;}
   // Identity
   explicit FieldIso( const Field& F1)
-    :domain(&F1), codomain(&F1), isomat(mat_m::identity_matrix(F1.d)), denom(ZZ(1)), id_flag(1) {;}
+    :domain(&F1), codomain(&F1), isomat(mat_m::identity_matrix(F1.d)), id_flag(1) {;}
 
   // inverse isomorphism
   FieldIso inverse() const;
@@ -357,8 +369,7 @@ public:
   int is_nontrivial() const {return !id_flag;}
   Field const * dom() const {return domain;}
   Field const * codom() const {return codomain;}
-  mat_m matrix() const {return isomat;}
-  ZZ den() const {return denom;}
+  Qmat matrix() const {return isomat;}
 
   // String for pretty printing, used in default <<, or (if raw) raw
   // output, suitable for re-input:
