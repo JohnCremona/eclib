@@ -21,7 +21,7 @@ class Qvec {
   void cancel(); // divides through by gcd(content(coords, denom))
 
 public:
-  Qvec() :coords({}), denom(to_ZZ(1)) {;}
+  Qvec() :coords(vec_m()), denom(to_ZZ(1)) {;}
   Qvec(const vec_m& c, const ZZ& d=to_ZZ(1)) :coords(c) { denom=d; cancel();}
 
   // Before calling this the sie (dimension) must be set
@@ -54,6 +54,52 @@ public:
 inline istream& operator>>(istream& s, Qvec& x) {x.read(s); return s;}
 inline Qvec operator*(int c, const Qvec& v) {return ZZ(c)*v;}
 inline Qvec operator*(long c, const Qvec& v) {return ZZ(c)*v;}
+
+class Qmat {
+  friend class FieldElement;
+  friend class Qvec;
+  mat_m entries;
+  ZZ denom;
+  void cancel(); // divides through by gcd(content(entries, denom))
+
+public:
+  Qmat() :entries(mat_m()), denom(to_ZZ(1)) {;}
+  Qmat(const mat_m& c, const ZZ& d=to_ZZ(1)) :entries(c) { denom=d; cancel();}
+
+  // Before calling this the sie (dimension) must be set
+  void read (istream& s) { s >> entries >> denom;}
+
+  // String for pretty printing, used in default <<, or (if raw) raw
+  // output, suitable for re-input:
+  string str(int raw=0) const;
+  int is_zero() const {return entries.is_zero();}
+  int is_integral() const {return denom==1;}
+  mat_m get_entries() const {return entries;}
+  ZZ get_denom() const {return denom;}
+  pair<int,int> dim() const {return {entries.nrows(), entries.ncols()};}
+  // trace and det only for square matrices (not checked)
+  bigrational trace() {return bigrational(entries.trace(), denom);}
+  bigrational det() {return bigrational(entries.determinant(), pow(denom, entries.nrows()));}
+
+  int operator==(const Qmat& b) const {return (denom==b.denom) && (entries==b.entries);}
+  int operator!=(const Qmat& b) const {return (denom!=b.denom) || (entries!=b.entries);}
+  Qmat operator+(const Qmat& b) const; // add
+  void operator+=(const Qmat& b); // add b to this
+  Qmat operator-(const Qmat& b) const; // subtract
+  void operator-=(const Qmat& b); // subtract b from this
+  Qmat operator-() const {return Qmat(-entries, denom);} // unary minus
+  void operator *= (const ZZ& c) {entries *= c; cancel();}
+  void operator *= (int c) {entries *= ZZ(c); cancel();}
+  void operator *= (long c) {entries *= ZZ(c); cancel();}
+  void operator *= (const Qmat& m) {entries = entries*m.entries; denom *= m.denom; cancel();}
+  inline friend Qmat operator*(const ZZ& c, const Qmat& x) {return Qmat(c*x.entries, x.denom);}
+  inline friend Qmat operator*(const Qmat&m1, const Qmat& m2) {return Qmat(m1.entries*m2.entries, m1.denom*m2.denom);}
+  inline friend ostream& operator<<(ostream& s, const Qmat& x) { s << x.str();  return s;}
+};
+
+inline istream& operator>>(istream& s, Qmat& x) {x.read(s); return s;}
+inline Qmat operator*(int c, const Qmat& v) {return ZZ(c)*v;}
+inline Qmat operator*(long c, const Qmat& v) {return ZZ(c)*v;}
 
 // Divide through by gcd of content(M) and d
 void cancel_mat(mat_m& M, ZZ& d);

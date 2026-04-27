@@ -68,6 +68,70 @@ void Qvec::operator-=(const Qvec& b)
   cancel();
 }
 
+void Qmat::cancel() // divides through by gcd(content(coords, denom))
+{
+  if (denom<0)
+    {
+      denom = -denom;
+      entries = -entries;
+    }
+  ZZ g = gcd(entries.content(), denom);
+  if (IsOne(g))
+    return;
+  denom /= g;
+  entries /= g;
+}
+
+// String for pretty printing, used in default <<, or (if raw) raw
+// output, suitable for re-input:
+string Qmat::str(int raw) const
+{
+  ostringstream s;
+  if (raw)
+    s << entries << " " << denom;
+  else
+    {
+      s << entries;
+      if (denom>1)
+        s << "/" << denom;
+    }
+  return s.str();
+}
+
+Qmat Qmat::operator+(const Qmat& b) const
+{
+  Qmat a = *this;
+  if (!b.is_zero())
+    a += b;
+  return a;
+}
+
+void Qmat::operator+=(const Qmat& b)
+{
+  if (b.is_zero())
+    return;
+  entries = b.denom*entries + denom*b.entries;
+  denom *= b.denom;
+  cancel();
+}
+
+Qmat Qmat::operator-(const Qmat& b) const
+{
+  Qmat a = *this;
+  if (!b.is_zero())
+    a -= b;
+  return a;
+}
+
+void Qmat::operator-=(const Qmat& b)
+{
+  if (b.is_zero())
+    return;
+  entries = b.denom*entries - denom*b.entries;
+  denom *= b.denom;
+  cancel();
+}
+
 //#define DEBUG_ARITH
 
 //#define DEBUG_FIELD_CONSTRUCTOR

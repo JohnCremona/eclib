@@ -169,7 +169,8 @@ FieldElement Newform::eig(const matop& T)
     }
   else
     {
-      FieldElement a(*F0, basis_change_matrix * apv, basis_change_denominator);
+      Qvec coords(basis_change_matrix * apv, basis_change_denominator);
+      FieldElement a(*F0, coords);
       return (Fiso.is_identity()? a : Fiso(a));
     }
 }
