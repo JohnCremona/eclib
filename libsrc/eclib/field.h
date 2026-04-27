@@ -7,9 +7,42 @@
 #include "linalg.h"
 #include "bigrat.h"
 
+class Qvec; // vec_m (=Zvec<ZZ>) with common denominator
+class Qmat; // mat_m (=Zmat<ZZ>) with common denominator
 class Field;
 class FieldIso;
 class FieldElement;
+
+class Qvec {
+  vec_m coords;
+  ZZ denom;
+  void cancel(); // divides through by gcd(content(coords, denom))
+  Qvec(const vec_m& c, const ZZ& d=to_ZZ(1))
+    :coords(c), denom(d) { cancel();}
+  // String for pretty printing, used in default <<, or (if raw) raw
+  // output, suitable for re-input:
+  string str(int raw=0) const;
+  int is_zero() const {return trivial(coords);}
+  vec_m get_coords() const {return coords;}
+  ZZ get_denom() const {return denom;}
+  int dim() const {return coords.dim();}
+  int operator==(const Qvec& b) const {return (denom==b.denom) && (coords==b.coords);}
+  int operator!=(const Qvec& b) const {return (denom!=b.denom) || (coords!=b.coords);}
+  Qvec operator+(const Qvec& b) const; // add
+  void operator+=(const Qvec& b); // add b to this
+  Qvec operator-(const Qvec& b) const; // subtract
+  void operator-=(const Qvec& b); // subtract b from this
+  Qvec operator-() const {return Qvec(-coords, denom);} // unary minus
+  void operator *= (const ZZ& c) {coords *= c; cancel();}
+  void operator *= (int c) {coords *= ZZ(c); cancel();}
+  void operator *= (long c) {coords *= ZZ(c); cancel();}
+  inline friend Qvec operator*(const ZZ& c, const Qvec& v) {return Qvec(c*v.coords, v.denom);}
+  inline friend ostream& operator<<(ostream& s, const Qvec& x) { s << x.str();  return s;}
+};
+
+inline Qvec operator*(int c, const Qvec& v) {return ZZ(c)*v;}
+inline Qvec operator*(long c, const Qvec& v) {return ZZ(c)*v;}
+
 
 // Divide through by gcd of content(M) and d
 void cancel_mat(mat_m& M, ZZ& d);

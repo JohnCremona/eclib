@@ -4,6 +4,70 @@
 #include "eclib/field.h"
 #include "eclib/polred.h"
 
+void Qvec::cancel() // divides through by gcd(content(coords, denom))
+{
+  if (denom<0)
+    {
+      denom = -denom;
+      coords = -coords;
+    }
+  ZZ g = gcd(content(coords), denom);
+  if (IsOne(g))
+    return;
+  denom /= g;
+  coords /= g;
+}
+
+// String for pretty printing, used in default <<, or (if raw) raw
+// output, suitable for re-input:
+string Qvec::str(int raw) const
+{
+  ostringstream s;
+  if (raw)
+    s << coords << " " << denom;
+  else
+    {
+      s << coords;
+      if (denom>1)
+        s << "/" << denom;
+    }
+  return s.str();
+}
+
+Qvec Qvec::operator+(const Qvec& b) const
+{
+  Qvec a = *this;
+  if (!b.is_zero())
+    a += b;
+  return a;
+}
+
+void Qvec::operator+=(const Qvec& b)
+{
+  if (b.is_zero())
+    return;
+  coords = b.denom*coords + denom*b.coords;
+  denom *= b.denom;
+  cancel();
+}
+
+Qvec Qvec::operator-(const Qvec& b) const
+{
+  Qvec a = *this;
+  if (!b.is_zero())
+    a -= b;
+  return a;
+}
+
+void Qvec::operator-=(const Qvec& b)
+{
+  if (b.is_zero())
+    return;
+  coords = b.denom*coords - denom*b.coords;
+  denom *= b.denom;
+  cancel();
+}
+
 //#define DEBUG_ARITH
 
 //#define DEBUG_FIELD_CONSTRUCTOR
