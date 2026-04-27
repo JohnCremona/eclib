@@ -14,15 +14,26 @@ class FieldIso;
 class FieldElement;
 
 class Qvec {
+  friend class FieldElement;
+  friend class Qmat;
   vec_m coords;
   ZZ denom;
   void cancel(); // divides through by gcd(content(coords, denom))
-  Qvec(const vec_m& c, const ZZ& d=to_ZZ(1))
-    :coords(c), denom(d) { cancel();}
+
+public:
+  Qvec() :coords({}), denom(to_ZZ(1)) {;}
+  Qvec(const vec_m& c, const ZZ& d=to_ZZ(1)) :coords(c) { denom=d; cancel();}
+
+  // Before calling this the sie (dimension) must be set
+  void read (istream& s) { s >> coords >> denom;}
+
   // String for pretty printing, used in default <<, or (if raw) raw
   // output, suitable for re-input:
   string str(int raw=0) const;
+  void set_zero() {coords.clear(); denom=ZZ(1);}
+  void set_unit_vector(int i) {coords.clear(); coords[i]=denom=ZZ(1);}
   int is_zero() const {return trivial(coords);}
+  int is_integral() const {return denom==1;}
   vec_m get_coords() const {return coords;}
   ZZ get_denom() const {return denom;}
   int dim() const {return coords.dim();}
@@ -40,9 +51,9 @@ class Qvec {
   inline friend ostream& operator<<(ostream& s, const Qvec& x) { s << x.str();  return s;}
 };
 
+inline istream& operator>>(istream& s, Qvec& x) {x.read(s); return s;}
 inline Qvec operator*(int c, const Qvec& v) {return ZZ(c)*v;}
 inline Qvec operator*(long c, const Qvec& v) {return ZZ(c)*v;}
-
 
 // Divide through by gcd of content(M) and d
 void cancel_mat(mat_m& M, ZZ& d);
@@ -75,6 +86,7 @@ public:
   FieldElement operator()(int x) const;
   FieldElement gen() const;
   FieldElement element(const vec_m& c, const ZZ& d=to_ZZ(1)) const;
+  FieldElement element(const Qvec& v) const;
   int degree() const {return d;}
   int isQ() const {return d==1;}
   ZZX poly() const {return minpoly;}
@@ -129,30 +141,26 @@ class FieldElement {
   friend FieldElement evaluate(const ZZX& f, const FieldElement a);
 private:
   Field const * F;
-
   // In general the field element is (1/denom)*coords-combination of power basis of F
-  // NB On construction every element will be reduced using cancel()
-  vec_m coords; // length F->d
-  ZZ denom;     // >=1
-  void cancel(); // divides through by gcd(content(coords, denom))
-
+  Qvec v;
   // When F is Q this is just a wrapper round eclib's bigrational
   // class and coords and denom are ignored
   bigrational val;
 public:
   FieldElement() {;}
   explicit FieldElement(const Field& HF)
-    :F(&HF), coords(vec_m(F->d)), denom(to_ZZ(1))  {if (F->d==1) val = bigrational(0);}
-  // raw means the given coords are w.r.t. the B-basis
+    :F(&HF), v(vec_m(F->d)) {if (F->d==1) val = bigrational(0);}
   FieldElement(const Field& HF, const vec_m& c, const ZZ& d=to_ZZ(1))
-    :F(&HF), coords(c), denom(d) { cancel();}
+    :F(&HF), v(c,d) {;}
+  FieldElement(const Field& HF, const Qvec& c)
+    :F(&HF), v(c) {;}
 
   // creation from a rational (general F)
   FieldElement(const Field& HF, const ZZ& a, const ZZ& d=to_ZZ(1))
-    :F(&HF), coords(a*vec_m::unit_vector(F->d, 1)), denom(d), val(bigrational(a,d)) { cancel();}
+    :F(&HF), v(a*vec_m::unit_vector(F->d, 1), d), val(bigrational(a,d)) {;}
   // creation from a rational
   FieldElement(const Field& HF, const bigrational& r)
-    :F(&HF), coords(r.num()*vec_m::unit_vector(F->d, 1)), denom(r.den()), val(r) {;}
+    :F(&HF), v(r.num()*vec_m::unit_vector(F->d, 1), r.den()), val(r) {;}
 
   // String for pretty printing, used in default <<, or (if raw) raw
   // output, suitable for re-input:
@@ -176,8 +184,8 @@ public:
   int is_minus_one() const;
   int is_generator() const {return degree()==F->d;}
   bigrational get_val() const {return val;}
-  vec_m get_coords() const {return coords;}
-  ZZ get_denom() const {return denom;}
+  Qvec get_coords() const {return v;}
+  ZZ get_denom() const {return (field_is_Q()? val.den() : v.denom);}
   int in_same_field(const FieldElement& b) const {return (F==b.F) || (*F==*b.F);}
   int operator==(const FieldElement& b) const;
   int operator!=(const FieldElement& b) const;

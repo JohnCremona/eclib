@@ -245,6 +245,11 @@ FieldElement Field::element(const vec_m& c, const ZZ& d) const
   return FieldElement(*this, c, d);
 }
 
+FieldElement Field::element(const Qvec& v) const
+{
+  return FieldElement(*this, v);
+}
+
 FieldElement Field::operator()(const bigrational& x) const
 {
   return FieldElement(*this, x);
@@ -273,27 +278,12 @@ FieldElement Field::gen() const
     return FieldElement(*this, vec_m::unit_vector(d, 2));
 }
 
-void FieldElement::cancel() // divides through by gcd(content(coords, denom))
-{
-  if (field_is_Q() || IsOne(denom))
-    return;
-  if (denom<0)
-    {
-      denom = -denom;
-      coords = -coords;
-    }
-  ZZ g = gcd(content(coords), denom);
-  if (IsOne(g))
-    return;
-  denom /=g;
-  coords /= g;
-}
-
 int FieldElement::is_zero() const
 {
   if (field_is_Q())
     return val.is_zero();
-  return trivial(coords);
+  else
+    return v.is_zero();
 }
 
 int FieldElement::is_one() const
@@ -301,7 +291,8 @@ int FieldElement::is_one() const
   static const bigrational one(1);
   if (field_is_Q())
     return val==one;
-  return IsOne(denom) && coords == vec_m::unit_vector(F->d,1);
+  else
+    return v.denom==1 && v.coords == vec_m::unit_vector(F->d,1);
 }
 
 int FieldElement::is_minus_one() const
@@ -309,7 +300,8 @@ int FieldElement::is_minus_one() const
   static const bigrational minus_one(-1);
   if (field_is_Q())
     return val==minus_one;
-  return IsOne(denom) && coords == -vec_m::unit_vector(F->d,1);
+  else
+    return v.denom==1 && v.coords == -vec_m::unit_vector(F->d,1);
 }
 
 void FieldElement::negate() // negate in place
@@ -317,7 +309,7 @@ void FieldElement::negate() // negate in place
   if (field_is_Q())
     val = -val;
   else
-    coords = -coords;
+    v = -v;
 }
 
 // String for pretty printing, used in default <<
@@ -331,26 +323,27 @@ string FieldElement::str(int raw) const
       return s.str();
     }
   if (raw)
-    s << coords << " " << denom;
+    s << v.str(1);
   else
     {
-      string n = ::str(coords, F->var);
+      string n = ::str(v.coords, F->var);
       if (n[0]=='+')
         n.erase(0,1);
-      if (denom==1)
+      if (v.denom==1)
         s << n;
       else
-        s << "(" << n << ")/" << denom;
+        s << "(" << n << ")/" << v.denom;
     }
   return s.str();
 }
 
+// If not Q, v must be initialised with the right size
 void FieldElement::read (istream& s)
 {
   if (field_is_Q())
     s >> val;
   else
-    s >> coords >> denom;
+    s >> v;
 }
 
 // x must be initialised with a Field before input to x
@@ -362,19 +355,19 @@ istream& operator>>(istream& s, FieldElement& x)
 
 int FieldElement::operator==(const FieldElement& b) const
 {
-  return in_same_field(b) && ( field_is_Q()? val==b.val : (denom==b.denom) && (coords==b.coords));
+  return in_same_field(b) && ( field_is_Q()? val==b.val : v==b.v);
 }
 
 int FieldElement::operator!=(const FieldElement& b) const
 {
-  return (!in_same_field(b)) || ( field_is_Q()? val!=b.val : (denom!=b.denom) || (coords!=b.coords));
+  return (!in_same_field(b)) || ( field_is_Q()? val!=b.val : v!=b.v);
 }
 
 mat_m FieldElement::matrix() const // ignores denom, not used for Q
 {
   if (field_is_Q())
     return mat_m::scalar_matrix(1, num(val));
-  return lin_comb_mats(coords, F->Cpowers);
+  return lin_comb_mats(v.coords, F->Cpowers);
 }
 
 // NB Since we do not have polynomials with rational coefficients,
@@ -398,13 +391,13 @@ ZZX FieldElement::charpoly() const
   // Now this is not rational (and the field is not QQ)
   cp = ::charpoly(mat_to_mat_ZZ(matrix()));
   // now replace X by denom*X and make primitive
-  ZZ dpow(denom);
+  ZZ dpow(v.denom);
   int d = F->d;
   for (int i=1; i<=d; i++)
     {
       SetCoeff(cp, i, dpow*coeff(cp, i));
       if (i!=d)
-        dpow *= denom;
+        dpow *= v.denom;
     }
   return PrimitivePart(cp);
 }
@@ -433,11 +426,12 @@ bigrational FieldElement::norm() const
 {
   int d = F->d;
   if (d==1) return val;
+  const ZZ& den = get_denom();
   bigrational r;
   if (is_rational(r)) // then norm = r**degree
-    return bigrational(pow(r.num(), d), pow(r.den(), d));
+    return bigrational(pow(r.num(), d), pow(den, d));
   else
-    return bigrational(matrix().determinant(), pow(denom, d));
+    return bigrational(matrix().determinant(), pow(den, d));
 }
 
 bigrational FieldElement::trace() const
@@ -445,36 +439,23 @@ bigrational FieldElement::trace() const
   int d = F->d;
   if (d==1) return val;
   bigrational r;
-  if (is_rational(r)) // then norm = r**degree
+  if (is_rational(r)) // then trace = r*degree
     return ZZ(d) * r;
   else
-    return bigrational(matrix().trace(), denom);
+    return bigrational(matrix().trace(), v.denom);
 }
 
 void FieldElement::set_zero()
 {
-  int d = F->d;
-  if (d ==1 )
-    val = bigrational(0);
-  else
-    {
-      coords.clear();
-      denom = ZZ(1);
-    }
+  val = bigrational(0);
+  v.set_zero();
 }
 
 void FieldElement::set_one()
 {
-  int d = F->d;
-  if (d ==1 )
-    val = bigrational(1);
-  else
-    {
-      coords = vec_m::unit_vector(d, 1);
-      denom = ZZ(1);
-    }
+  val = bigrational(1);
+  v.set_unit_vector(1);
 }
-
 
 // add b to this
 void FieldElement::operator+=(const FieldElement& b)
@@ -489,13 +470,9 @@ void FieldElement::operator+=(const FieldElement& b)
   if (b.is_zero())
     return;
   if (field_is_Q())
-    {
-      val += b.val;
-      return;
-    }
-  coords = b.denom*coords + denom*b.coords;
-  denom *= b.denom;
-  cancel();
+    val += b.val;
+  else
+    v += b.v;
 }
 
 FieldElement FieldElement::operator+(const FieldElement& b) const
@@ -517,7 +494,8 @@ FieldElement FieldElement::operator-() const
 {
   if (field_is_Q())
     return FieldElement(*F, -val);
-  return FieldElement(*F, -coords, denom);
+  else
+    return FieldElement(*F, -v);
 }
 
 // subtract b
@@ -533,13 +511,9 @@ void FieldElement::operator-=(const FieldElement& b)
   if (b.is_zero())
     return;
   if (field_is_Q())
-    {
-      val -= b.val;
-      return;
-    }
-  coords = b.denom*coords - denom*b.coords;
-  denom *= b.denom;
-  cancel();
+    val -= b.val;
+  else
+    v -=b.v;
 }
 
 FieldElement FieldElement::operator-(const FieldElement& b) const
@@ -569,13 +543,9 @@ void FieldElement::operator*=(const FieldElement& b) // multiply by b
   if (is_zero()) return;
   if (b.is_zero()) {set_zero(); return;}
   if (field_is_Q())
-    {
-      val *= b.val;
-      return;
-    }
-  coords = (matrix()*b.matrix()).col(1);
-  denom *= b.denom;
-  cancel();
+    val *= b.val;
+  else
+    v = Qvec((matrix()*b.matrix()).col(1),  get_denom() * b.get_denom());
 }
 
 FieldElement FieldElement::operator*(const FieldElement& b) const
@@ -608,7 +578,7 @@ FieldElement FieldElement::inverse() const // raise error if zero
 
   mat_m M = matrix(), Minv;
   ZZ Mdet = ::inverse(M,Minv); // so M*Minv = Mdet*identity
-  FieldElement ans = FieldElement(*F, denom*Minv.col(1), Mdet);
+  FieldElement ans = FieldElement(*F, v.denom*Minv.col(1), Mdet);
   assert (operator*(ans).is_one());
   return ans;
 }
@@ -680,19 +650,21 @@ int FieldElement::is_rational(bigrational& r) const
   r = val;
   if (F->d ==1)
     return 1;
-  r = bigrational(coords[1],denom);
+  r = bigrational(v.coords[1], v.denom);
   for (int i=2; i <= F->d; i++)
     {
-      if (coords[i]!=0)
+      if (v.coords[i]!=0)
         return 0;
     }
   return 1;
 }
 
-// return 1 iff this is an algebraic integer
+// return 1 iff this is an algebraic integer.  Since the field's
+// defining polynomial is monic integral, it is sufficient, but not
+// necessary that the coordinate vector be integral:
 int FieldElement::is_integral() const
 {
-  return IsMonic(charpoly());
+  return (get_denom()==ZZ(1)) || IsMonic(charpoly());
 }
 
 // NB for a in F, either [Q(sqrt(a))=Q(a)] or [Q(sqrt(a)):Q(a)]=2.
@@ -703,12 +675,13 @@ int FieldElement::is_absolute_square(FieldElement& r) const
   if (field_is_Q())
     return (val.is_square(r.val));
   // field not Q, reduce to integral case if necessary
-  if (::is_one(denom))
+  const ZZ& den = v.denom;
+  if (::is_one(den))
     return is_absolute_integral_square(r);
-  FieldElement x = FieldElement(*F, denom*coords);
+  FieldElement x = FieldElement(*F, den*v.coords);
   int res = x.is_absolute_integral_square(r);
   if (res)
-    r /= denom;
+    r /= den;
   return res;
 }
 
@@ -717,7 +690,7 @@ int FieldElement::is_absolute_integral_square(FieldElement& r)  const
 {
   if (field_is_Q())
     return (val.is_square(r.val));
-  assert (::is_one(denom));
+  assert (::is_one(v.denom));
   ZZX g, g0, g1, f = minpoly();
   if (::is_square(f, g)) // Tests if f(x^2) = (+/-) g(x)*g(-x)
     {
@@ -953,7 +926,7 @@ FieldElement FieldIso::operator()(const FieldElement& x) const
       if (x.is_rational(r))
         return (*codomain)(r);
 
-      FieldElement y(*codomain, isomat*x.coords, denom*x.denom);
+      FieldElement y(*codomain, isomat * x.v.get_coords(), denom * x.v.get_denom());
       // sanity check that the min poly has not changed
       if (! (x.minpoly()==y.minpoly()))
         {
@@ -1032,12 +1005,12 @@ FieldIso Field::reduction_isomorphism(string newvar, Field& Fred, int canonical)
   ZZ denhpow = denhpowmax;
   M.setcol(1, denhpow * vec_m::unit_vector(d, 1));
   denhpow /= denh;
-  M.setcol(2, denhpow * a.get_coords());
+  M.setcol(2, denhpow * a.v.get_coords());
   for (int i=3; i<=d; i++)
     {
       denhpow /= denh;
       apow *= a;
-      M.setcol(i, denhpow * apow.get_coords());
+      M.setcol(i, denhpow * apow.v.get_coords());
     }
   cancel_mat(M, denhpowmax);
 #ifdef DEBUG_REDUCE
@@ -1100,7 +1073,7 @@ FieldIso Field::change_generator(const FieldElement& b, Field& Qb) const
   // rows up).
 
   mat_m bmat(b.matrix()), M(d,d),  Minv(d,d);
-  ZZ dbmat(b.denom);
+  ZZ dbmat(b.get_denom());
   vec_m v(vec_m::unit_vector(d,1));
   // Set the volumns of M in turn, multiplying by bmat
   M.setcol(1,v);
