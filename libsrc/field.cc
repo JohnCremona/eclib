@@ -239,8 +239,8 @@ Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
     Cpowers[i] = C*Cpowers[i-1];
   if(verb)
     {
-      cout<<"basis  matrix = " << B.str()<<endl;
-      cout<<"inverse basis matrix = " << Binv.str() <<endl;
+      cout<<"basis  matrix = " << Binv.str()<<endl;
+      cout<<"inverse basis matrix = " << B.str() <<endl;
       if (verb>1)
         {
           cout<<"companion matrix  = ";

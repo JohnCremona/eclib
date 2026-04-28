@@ -103,7 +103,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     // Compute Hecke field from matrix A if degree d>1
     {
       string var = codeletter(index-1);
-      F0 = new Field(Qmat(A, denom_abs), basis_change_matrix, basis_change_inverse, var, verbose>1);
+      F0 = new Field(Qmat(A, denom_abs), basis_change_inverse, basis_change_matrix, var, verbose>1);
       F = new Field();
       int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
       if (verbose)
@@ -111,7 +111,9 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
           cout << "Applying "
                << (canonical? "polredabs": "polredbest");
           if (verbose>1)
-            cout << " to field " << F0 << " --> " << *F0;
+            cout << " to field "
+                 // << F0 << " --> "
+                 << *F0;
           cout  << endl;
           if (!canonical)
             {
@@ -169,7 +171,7 @@ FieldElement Newform::eig(const matop& T)
     }
   else
     {
-      FieldElement a(*F0, basis_change_matrix * Qvec(apv));
+      FieldElement a(*F0, basis_change_matrix * Qvec(apv, denom_abs));
       return (Fiso.is_identity()? a : Fiso(a));
     }
 }
