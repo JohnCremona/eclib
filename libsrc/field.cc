@@ -114,6 +114,28 @@ void Qmat::setcol(int i, const Qvec& v)
   cancel();
 }
 
+// Compute matrix B, with column j equal to A^(j-1)v for j from 1 to
+// d, where v is the first unit vector, so that A*B=B*C where C is the
+// companion matrix of A's minpoly. We assume that A has integral char
+// poly and return onyl the 'numerator' of C whose denominator is 1.
+mat_m Qmat::companion_transform(Qmat& B, Qmat& Binv) const
+{
+  int d = nrows();
+  Qvec v(d);
+  v.set_unit_vector(1);
+  B = Qmat(d,d);
+  B.setcol(1,v);
+  for(int i=2; i<=d; i++)
+    {
+      v = (*this)*v;
+      B.setcol(i,v);
+    }
+  Binv = B.inverse();
+  mat_m C = (Binv*(*this)*B).get_numerator();
+  assert (CompanionMatrix(this->charpoly()) == mat_to_mat_ZZ(C));
+  return C;
+}
+
 Qmat Qmat::operator+(const Qmat& b) const
 {
   Qmat a = *this;
@@ -211,27 +233,10 @@ Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
   if (verb)
     cout << " - min poly = " << ::str(minpoly) << ", generator " << var << endl;
 
-  // Compute change of basis matrix B, with column j equal to
-  // denom^(n-j)*A^(j-1)v for j from 1 to d
-  Qvec v(d);
-  v.set_unit_vector(1);  // so v=[1,0,...,0]
-  // cout<<"v = "<<v<<endl;
-  B = Qmat(d,d);
-  B.setcol(1,v);
-  for(int i=2; i<=d; i++)
-    {
-      v = A*v;
-      B.setcol(i,v);
-    }
-  Binv = B.inverse();
-  assert (B*Binv == Qmat::identity(d));
-  // Now we have Binv*A*B = C, where C = companion matrix of
-  // minpoly. i.e. the B-conjugate of A is the integral matrix C.
-  mat_m C = (Binv*A*B).get_numerator();
-  assert (CompanionMatrix(minpoly) == mat_to_mat_ZZ(C));
+  mat_m C = A.companion_transform(B, Binv);
 
-  // NB To construct a field element from a 'raw' coord vector v =
-  // Qvec(c,d), muliply by Binv.
+  // NB To construct a field element from a 'raw' coord Qvec v, use
+  // Binv*v.
 
   Cpowers.resize(d);
   Cpowers[0] = mat_m::identity_matrix(d);
@@ -342,7 +347,7 @@ FieldElement Field::gen() const
   if (d==1)
     return operator()(1);
   else
-    return FieldElement(*this, vec_m::unit_vector(d, 2));
+    return FieldElement(*this, Qvec::unit_vector(d, 2));
 }
 
 int FieldElement::is_zero() const
@@ -357,18 +362,18 @@ int FieldElement::is_one() const
 {
   static const bigrational one(1);
   if (field_is_Q())
-    return val==one;
+    return val == one;
   else
-    return v.denom==1 && v.numerator == vec_m::unit_vector(F->d,1);
+    return v == Qvec::unit_vector(F->d,1);
 }
 
 int FieldElement::is_minus_one() const
 {
   static const bigrational minus_one(-1);
   if (field_is_Q())
-    return val==minus_one;
+    return val == minus_one;
   else
-    return v.denom==1 && v.numerator == -vec_m::unit_vector(F->d,1);
+    return v == - Qvec::unit_vector(F->d,1);
 }
 
 void FieldElement::negate() // negate in place
@@ -493,12 +498,12 @@ bigrational FieldElement::norm() const
 {
   int d = F->d;
   if (d==1) return val;
-  const ZZ& den = get_denom();
+  const ZZ& pow_den = pow(v.denom, d);
   bigrational r;
   if (is_rational(r)) // then norm = r**degree
-    return bigrational(pow(r.num(), d), pow(den, d));
+    return bigrational(pow(r.num(), d), pow_den);
   else
-    return bigrational(matrix().determinant(), pow(den, d));
+    return bigrational(matrix().determinant(), pow_den);
 }
 
 bigrational FieldElement::trace() const
@@ -742,13 +747,13 @@ int FieldElement::is_absolute_square(FieldElement& r) const
   if (field_is_Q())
     return (val.is_square(r.val));
   // field not Q, reduce to integral case if necessary
-  const ZZ& den = v.denom;
-  if (::is_one(den))
+  const ZZ& vden = v.denom;
+  if (::is_one(vden))
     return is_absolute_integral_square(r);
-  FieldElement x = FieldElement(*F, den*v.numerator);
+  FieldElement x = FieldElement(*F, vden*v.numerator);
   int res = x.is_absolute_integral_square(r);
   if (res)
-    r /= den;
+    r /= vden;
   return res;
 }
 
@@ -840,17 +845,22 @@ int FieldElement::is_square(FieldElement& r, int ntries) const
   return 0;
 }
 
-void cancel_mat(mat_m& M, ZZ& d)
+Qmat FieldElement::power_matrix() const // cols are coords of powers
 {
-  if (IsOne(d))
-    return;
-  ZZ g = gcd(M.content(), d);
-  if (IsOne(g))
-    return;
-  M /= g;
-  d /= g;
+  int d = F->d;
+  Qmat M(d,d);
+  M.setcol(1, Qvec::unit_vector(d, 1));
+  if (d==1) return M;
+  M.setcol(2, v);
+  if (d==2) return M;
+  FieldElement apow = *this;
+  for (int i=3; i<=d; i++)
+    {
+      apow *= (*this);
+      M.setcol(i, apow.v);
+    }
+  return M;
 }
-
 
 //#define DEBUG_COMPOSE
 
@@ -1027,7 +1037,7 @@ FieldIso Field::reduction_isomorphism(string newvar, Field& Fred, int canonical)
 #ifdef DEBUG_REDUCE
       cout << " - Field is Q, so identity" << endl;
 #endif
-      return FieldIso(*this, Fred,  mat_m::identity_matrix(d)); // identity
+      return FieldIso(*this, Fred,  Qmat::identity(d));
     }
   ZZX h; ZZ denh;
   ZZX g = polred(minpoly, h, denh, canonical);
@@ -1037,7 +1047,7 @@ FieldIso Field::reduction_isomorphism(string newvar, Field& Fred, int canonical)
 #ifdef DEBUG_REDUCE
       cout << " - " << ::str(minpoly) << " is already reduced, so identity" << endl;
 #endif
-      return FieldIso(*this, Fred,  mat_m::identity_matrix(d)); // identity
+      return FieldIso(*this, Fred,  Qmat::identity(d));
     }
 #ifdef DEBUG_REDUCE
   cout << " - reduced minpoly = " << ::str(g) << endl;
@@ -1048,34 +1058,17 @@ FieldIso Field::reduction_isomorphism(string newvar, Field& Fred, int canonical)
 #ifdef DEBUG_REDUCE
   cout << " - reduced field is\n" << Fred << endl;
 #endif
-  // construct the isomorphism matrix from F to Fred:
-  mat_m M(d,d);
-  // denh * image of F's gen in Fred:
-  FieldElement a = evaluate(h,Fred.gen()); // / Fred->rational(denh);
+  // Construct the isomorphism matrix from F to Fred.
+
+  FieldElement a = evaluate(h,Fred.gen()) / denh;
 #ifdef DEBUG_REDUCE
-  cout << " - image of gen is (" << a << ") / " << denh << endl;
+  cout << " - image of gen is (" << a << ") " << endl;
 #endif
-  FieldElement apow = a; // power of a
-  ZZ denhpowmax = pow(denh, d-1);
-  ZZ denhpow = denhpowmax;
-  M.setcol(1, denhpow * vec_m::unit_vector(d, 1));
-  denhpow /= denh;
-  M.setcol(2, denhpow * a.v.get_numerator());
-  for (int i=3; i<=d; i++)
-    {
-      denhpow /= denh;
-      apow *= a;
-      M.setcol(i, denhpow * apow.v.get_numerator());
-    }
-  cancel_mat(M, denhpowmax);
+  Qmat M = a.power_matrix();
 #ifdef DEBUG_REDUCE
-  cout << " - iso matrix = \n" << M;
-  if (denh>1)
-    cout << " / " << denhpowmax;
-  cout << endl;
+  cout << " - iso matrix = \n" << M << endl;
 #endif
-  FieldIso iso(*this, Fred, M, denhpowmax, 0); // 0: not the identity
-  return iso;
+  return FieldIso(*this, Fred, M, 0); // 0: not the identity
 }
 
 //#define DEBUG_CHANGE_GEN
@@ -1112,62 +1105,18 @@ FieldIso Field::change_generator(const FieldElement& b, Field& Qb) const
   if ((d==1) || (b_pol==minpoly)) // then the identity works but the
                                   // codomain must be a pointer to the
                                   // supplied field
-    {
-      return FieldIso(*this, Qb,  mat_m::identity_matrix(d));
-    }
+    return FieldIso(*this, Qb,  Qmat::identity(d));
 
   // Create the new field:
   Qb = Field(b_pol, var+string("1"));
 
-  // To define the map to the new field we need to express a as a
-  // polynomial in b.  The coordinates of b^j w.r.t. a are the columns
-  // of the matrix M with first column m_1=e_1 and j'th column m_j =
-  // (B/dB)*m_{j-1}.  Instead of multiplying M on the right by
-  // diag(1,dB,dB^2,...)^-1 (scaling its columns down) we will
-  // multiply Minv on the left by diag(1,dB,dB^2,...), (scaling its
-  // rows up).
+  // Let B be the matrix whose columns are the powers of b expressed
+  // in the original a-power basis; then its inverse is the matrix of
+  // the isomorphism.
 
-  mat_m bmat(b.matrix()), M(d,d),  Minv(d,d);
-  ZZ dbmat(b.get_denom());
-  vec_m v(vec_m::unit_vector(d,1));
-  // Set the volumns of M in turn, multiplying by bmat
-  M.setcol(1,v);
-  for(int j=2; j<=d; j++)
-    {
-      v = bmat*v;
-      M.setcol(j,v);
-    }
-#ifdef DEBUG_CHANGE_GEN
-  cout << "M = " << M << endl;
-#endif
-  ZZ da = inverse(M,Minv); // so M*Minv = da*identity
-#ifdef DEBUG_CHANGE_GEN
-  cout << "Before scaling by dbmat = " << dbmat << ", Minv = " << Minv
-       << " and denom(Minv) = " << da << endl;
-#endif
-  // Multiply the rows of Minv by successive posers of dbmat
-  if (!IsOne(dbmat))
-    {
-      ZZ dbmatpow(dbmat);
-      for(int i=2; i<=d; i++)
-        {
-          Minv.multrow(i, dbmatpow);
-          if (i<d)
-            dbmatpow *= dbmat;
-        }
-    }
-#ifdef DEBUG_CHANGE_GEN
-  cout << "After scaling, Minv = " << Minv
-       << " and denom(Minv) = " << da << endl;
-#endif
-  cancel_mat(Minv, da);
-#ifdef DEBUG_CHANGE_GEN
-  cout << "After cancelling, Minv = " << Minv
-       << " and denom(Minv) = " << da << endl;
-#endif
-  // The coeffs of 1,a,a^2,... as polynomials in b are the columns
-  // 1,2,3,... of Minv/da.
-  iso =  FieldIso(*this, Qb, Minv, da, 0); // 0: not the identity
+  Qmat B = b.power_matrix();
+  iso = FieldIso(*this, Qb, B.inverse(), 0);
+
   // check:
   FieldElement isob = iso(b);
   if (isob != Qb.gen())
@@ -1208,7 +1157,7 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, Field& F_sq
       cout << "Adjoining sqrt(" << r << ") to " << *this << " is trivial since "
            << r << " is already a square, with root " << sqrt_r << endl;
       F_sqrt_r = *this;
-      return FieldIso(*this, F_sqrt_r, mat_m::identity_matrix(d));
+      return FieldIso(*this, F_sqrt_r, Qmat::identity(d));
     }
 
   // If r has degree < d we replace it with an equivalent element
@@ -1290,7 +1239,7 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, Field& F_sq
     }
   else // No reduction
     {
-      FieldIso red(F_sqrt_r_orig, F_sqrt_r, mat_m::identity_matrix(F_sqrt_r_orig.degree()));
+      FieldIso red(F_sqrt_r_orig, F_sqrt_r, Qmat::identity(F_sqrt_r_orig.degree()));
       F_sqrt_r = F_sqrt_r_orig;
       emb.postcompose(red);
       sqrt_r = red(sqrt_r);
@@ -1334,7 +1283,7 @@ FieldIso Field::sqrt_embedding(const vector<FieldElement>& r_list, string newvar
 #endif
       sqrt_r_list.clear();
       F_sqrt_r = *this;
-      return FieldIso(*this, F_sqrt_r, mat_m::identity_matrix(d));
+      return FieldIso(*this, F_sqrt_r, Qmat::identity(d));
     }
 
   // First call the special case to construct K(sqrt(r1)), then recurse

@@ -22,8 +22,9 @@ class Qvec {
 
 public:
   Qvec() :numerator(vec_m()), denom(to_ZZ(1)) {;}
-  Qvec(int d) :numerator(vec_m(d)), denom(to_ZZ(1)) {;}
-  Qvec(const vec_m& c, const ZZ& d=to_ZZ(1)) :numerator(c) { denom=d; cancel();}
+  explicit Qvec(int d) :numerator(vec_m(d)), denom(to_ZZ(1)) {;}
+  explicit Qvec(const vec_m& c, const ZZ& d=to_ZZ(1)) :numerator(c), denom(d) { cancel();}
+  static Qvec unit_vector(long d, long i) {return Qvec(vec_m::unit_vector(d,i));}
 
   // Before calling this the sie (dimension) must be set
   void read (istream& s) { s >> numerator >> denom;}
@@ -66,7 +67,7 @@ class Qmat {
 public:
   Qmat() :numerator(mat_m()), denom(to_ZZ(1)) {;}
   Qmat(long nr, long nc) :numerator(mat_m(nr,nc)), denom(to_ZZ(1)) {;}
-  Qmat(const mat_m& c, const ZZ& d=to_ZZ(1)) :numerator(c) { denom=d; cancel();}
+  explicit Qmat(const mat_m& c, const ZZ& d=to_ZZ(1)) :numerator(c), denom(d) { cancel();}
   static Qmat identity(long d) {return Qmat(mat_m::identity_matrix(d));}
   static Qmat zero(long d) {return Qmat(mat_m(d,d));}
 
@@ -85,12 +86,14 @@ public:
   int ncols() const {return numerator.ncols();}
 
   void setcol(int i, const Qvec& v);
+  Qvec col(int i) const {return Qvec(numerator.col(i), denom);}
 
   // trace, det, charpoly, inverse only for square matrices (not checked)
   bigrational trace() const {return bigrational(numerator.trace(), denom);}
   bigrational det() const {return bigrational(numerator.determinant(), pow(denom, numerator.nrows()));}
   ZZX charpoly() const {return scaled_charpoly(mat_to_mat_ZZ(numerator), denom);}
   Qmat inverse() const;
+  mat_m companion_transform(Qmat& B, Qmat& Binv) const;
 
   int operator==(const Qmat& b) const {return (denom==b.denom) && (numerator==b.numerator);}
   int operator!=(const Qmat& b) const {return (denom!=b.denom) || (numerator!=b.numerator);}
@@ -238,7 +241,8 @@ public:
   int is_minus_one() const;
   int is_generator() const {return degree()==F->d;}
   bigrational get_val() const {return val;}
-  Qvec get_numerator() const {return v;}
+  Qvec coords() const {return v;}
+  Qmat power_matrix() const; // cols are coords of powers
   ZZ get_denom() const {return (field_is_Q()? val.den() : v.denom);}
   int in_same_field(const FieldElement& b) const {return (F==b.F) || (*F==*b.F);}
   int operator==(const FieldElement& b) const;

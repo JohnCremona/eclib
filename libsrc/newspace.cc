@@ -57,17 +57,17 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
           <<", absolute denom = "<<denom_abs<<endl;
       cout<<"Computing A, the restriction of T..." <<flush;
     }
-  mat_m A = transpose(restrict_mat(nsp->T_mat,S));
+  Qmat A(transpose(restrict_mat(nsp->T_mat,S)), denom_abs);
   if(verbose)
-    cout<<"done. Checking its char poly..."<<endl;
+    cout<<"done. Checking its char poly..."<<flush;
 
   // Check that (scaled) charpoly(A) = f
-  ZZX cpA = scaled_charpoly(mat_to_mat_ZZ(A), denom_abs);
+  ZZX cpA = A.charpoly();
   if (cpA != f)
     {
       cout<<endl;
       cout<<"Error: f(X) =            "<<fstring<<endl;
-      cout<<"but scaled_charpoly(A) = "<<str(cpA)<<endl;
+      cout<<"but charpoly(A) = " << str(cpA) << endl;
       exit(1);
     }
 
@@ -75,13 +75,8 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     {
       cout<<"done."<<endl;
       if (verbose>1)
-        {
-          cout<<"A (the matrix of T restricted to S) = ";
-          output_flat_matrix(A);
-          if(denom_abs>1)
-            cout<<" / " << denom_abs;
-          cout<<endl;
-        }
+        cout<<"A (the matrix of T restricted to S) = \n"
+            << A << endl;
       cout<<"f(X) is the min poly of A"<<endl;
     }
 
@@ -103,7 +98,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     // Compute Hecke field from matrix A if degree d>1
     {
       string var = codeletter(index-1);
-      F0 = new Field(Qmat(A, denom_abs), basis_change_inverse, basis_change_matrix, var, verbose>1);
+      F0 = new Field(A, basis_change_inverse, basis_change_matrix, var, verbose>1);
       F = new Field();
       int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
       if (verbose)
@@ -144,7 +139,7 @@ Newform::Newform(Newspace* x, int i, int verbose)
   :N(x->N), nsp(x), index(i), lab(codeletter(i-1))
 {
   if (verbose)
-    cout << "Constructing Newform " << this << " from file data "<< endl;
+    cout << "Constructing Newform from file data "<< endl;
   if (!input_from_file(verbose))
     cerr << "Unable to read Newform " << lab << endl;
 }
@@ -753,6 +748,7 @@ void Newform::display(int aP, int AL, int traces) const
 
 // Display aP data (trivial char or C4 fields)
 //#define CHECK_TRACES
+//#define BASES
 void Newform::display_aP() const
 {
   if (aPmap.empty())
@@ -760,11 +756,31 @@ void Newform::display_aP() const
       cout << "No aP known" << endl;
       return;
     }
+#ifdef BASES
+  Qmat bc;
+  if (d>1)
+    {
+      bc = denom_abs * basis_change_inverse * Fiso.matrix().inverse();
+      FieldElement gen = F->gen();
+      FieldElement gen_power = F->operator()(1);
+      for (int i=0; i<d; i++)
+        {
+          cout << gen_power << "\t --> "
+               << bc * gen_power.coords() << endl;
+          if (i < d-1) gen_power *= gen;
+        }
+      cout << endl;
+    }
+#endif
   cout << "a_p for first " << aPmap.size() << " primes:" << endl;
   for (auto x : aPmap)
     {
       FieldElement aP = x.second;
-      cout << x.first << ":\t" << aP;
+      cout << x.first << ":\t";
+#ifdef BASES
+      if (d>1) cout << bc * aP.coords() << "\t\t";
+#endif
+      cout << aP;
 #ifdef CHECK_TRACES
       bigrational taP = aP.trace();
       cout << " (trace = " << taP << ")";
@@ -883,7 +899,7 @@ int Newform::input_from_file(int verb)
 {
   string fname = filename();
   if (verb)
-    cout << "Reading newform " << this << " : " << lab << " from " << fname << " (verb="<<verb<<")"<<endl;
+    cout << "Reading newform " << lab << " from " << fname << " (verb="<<verb<<")"<<endl;
   ifstream fdata(fname.c_str());
   if (!fdata.is_open())
     {
