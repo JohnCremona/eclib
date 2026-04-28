@@ -16,38 +16,39 @@ class FieldElement;
 class Qvec {
   friend class FieldElement;
   friend class Qmat;
-  vec_m coords;
+  vec_m numerator;
   ZZ denom;
-  void cancel(); // divides through by gcd(content(coords, denom))
+  void cancel(); // divides through by gcd(content(numerator, denom))
 
 public:
-  Qvec() :coords(vec_m()), denom(to_ZZ(1)) {;}
-  Qvec(const vec_m& c, const ZZ& d=to_ZZ(1)) :coords(c) { denom=d; cancel();}
+  Qvec() :numerator(vec_m()), denom(to_ZZ(1)) {;}
+  Qvec(int d) :numerator(vec_m(d)), denom(to_ZZ(1)) {;}
+  Qvec(const vec_m& c, const ZZ& d=to_ZZ(1)) :numerator(c) { denom=d; cancel();}
 
   // Before calling this the sie (dimension) must be set
-  void read (istream& s) { s >> coords >> denom;}
+  void read (istream& s) { s >> numerator >> denom;}
 
   // String for pretty printing, used in default <<, or (if raw) raw
   // output, suitable for re-input:
   string str(int raw=0) const;
-  void set_zero() {coords.clear(); denom=ZZ(1);}
-  void set_unit_vector(int i) {coords.clear(); coords[i]=denom=ZZ(1);}
-  int is_zero() const {return trivial(coords);}
+  void set_zero() {numerator.clear(); denom=ZZ(1);}
+  void set_unit_vector(int i) {numerator.clear(); numerator[i]=denom=ZZ(1);}
+  int is_zero() const {return trivial(numerator);}
   int is_integral() const {return denom==1;}
-  vec_m get_coords() const {return coords;}
+  vec_m get_numerator() const {return numerator;}
   ZZ get_denom() const {return denom;}
-  int dim() const {return coords.dim();}
-  int operator==(const Qvec& b) const {return (denom==b.denom) && (coords==b.coords);}
-  int operator!=(const Qvec& b) const {return (denom!=b.denom) || (coords!=b.coords);}
+  int dim() const {return numerator.dim();}
+  int operator==(const Qvec& b) const {return (denom==b.denom) && (numerator==b.numerator);}
+  int operator!=(const Qvec& b) const {return (denom!=b.denom) || (numerator!=b.numerator);}
   Qvec operator+(const Qvec& b) const; // add
   void operator+=(const Qvec& b); // add b to this
   Qvec operator-(const Qvec& b) const; // subtract
   void operator-=(const Qvec& b); // subtract b from this
-  Qvec operator-() const {return Qvec(-coords, denom);} // unary minus
-  void operator *= (const ZZ& c) {coords *= c; cancel();}
-  void operator *= (int c) {coords *= ZZ(c); cancel();}
-  void operator *= (long c) {coords *= ZZ(c); cancel();}
-  inline friend Qvec operator*(const ZZ& c, const Qvec& v) {return Qvec(c*v.coords, v.denom);}
+  Qvec operator-() const {return Qvec(-numerator, denom);} // unary minus
+  void operator *= (const ZZ& c) {numerator *= c; cancel();}
+  void operator *= (int c) {numerator *= ZZ(c); cancel();}
+  void operator *= (long c) {numerator *= ZZ(c); cancel();}
+  inline friend Qvec operator*(const ZZ& c, const Qvec& v) {return Qvec(c*v.numerator, v.denom);}
   inline friend ostream& operator<<(ostream& s, const Qvec& x) { s << x.str();  return s;}
 };
 
@@ -58,57 +59,59 @@ inline Qvec operator*(long c, const Qvec& v) {return ZZ(c)*v;}
 class Qmat {
   friend class FieldElement;
   friend class Qvec;
-  mat_m entries;
+  mat_m numerator;
   ZZ denom;
-  void cancel(); // divides through by gcd(content(entries, denom))
+  void cancel(); // divides through by gcd(content(numerator, denom))
 
 public:
-  Qmat() :entries(mat_m()), denom(to_ZZ(1)) {;}
-  Qmat(long nr, long nc) :entries(mat_m(nr,nc)), denom(to_ZZ(1)) {;}
-  Qmat(const mat_m& c, const ZZ& d=to_ZZ(1)) :entries(c) { denom=d; cancel();}
+  Qmat() :numerator(mat_m()), denom(to_ZZ(1)) {;}
+  Qmat(long nr, long nc) :numerator(mat_m(nr,nc)), denom(to_ZZ(1)) {;}
+  Qmat(const mat_m& c, const ZZ& d=to_ZZ(1)) :numerator(c) { denom=d; cancel();}
   static Qmat identity(long d) {return Qmat(mat_m::identity_matrix(d));}
   static Qmat zero(long d) {return Qmat(mat_m(d,d));}
 
   // Before calling this the sie (dimension) must be set
-  void read (istream& s) { s >> entries >> denom;}
+  void read (istream& s) { s >> numerator >> denom;}
 
   // String for pretty printing, used in default <<, or (if raw) raw
   // output, suitable for re-input:
   string str(int raw=0) const;
-  int is_zero() const {return entries.is_zero();}
+  int is_zero() const {return numerator.is_zero();}
   int is_integral() const {return denom==1;}
-  int is_identity() const {return denom==1 && entries==mat_m::identity_matrix(entries.nrows());}
-  mat_m get_entries() const {return entries;}
+  int is_identity() const {return denom==1 && numerator==mat_m::identity_matrix(numerator.nrows());}
+  mat_m get_numerator() const {return numerator;}
   ZZ get_denom() const {return denom;}
-  pair<int,int> dim() const {return {entries.nrows(), entries.ncols()};}
-  // trace and det only for square matrices (not checked)
-  bigrational trace() {return bigrational(entries.trace(), denom);}
-  bigrational det() {return bigrational(entries.determinant(), pow(denom, entries.nrows()));}
+  int nrows() const {return numerator.nrows();}
+  int ncols() const {return numerator.ncols();}
 
+  void setcol(int i, const Qvec& v);
+
+  // trace, det, charpoly, inverse only for square matrices (not checked)
+  bigrational trace() const {return bigrational(numerator.trace(), denom);}
+  bigrational det() const {return bigrational(numerator.determinant(), pow(denom, numerator.nrows()));}
+  ZZX charpoly() const {return scaled_charpoly(mat_to_mat_ZZ(numerator), denom);}
   Qmat inverse() const;
-  int operator==(const Qmat& b) const {return (denom==b.denom) && (entries==b.entries);}
-  int operator!=(const Qmat& b) const {return (denom!=b.denom) || (entries!=b.entries);}
+
+  int operator==(const Qmat& b) const {return (denom==b.denom) && (numerator==b.numerator);}
+  int operator!=(const Qmat& b) const {return (denom!=b.denom) || (numerator!=b.numerator);}
   Qmat operator+(const Qmat& b) const; // add
   void operator+=(const Qmat& b); // add b to this
   Qmat operator-(const Qmat& b) const; // subtract
   void operator-=(const Qmat& b); // subtract b from this
-  Qmat operator-() const {return Qmat(-entries, denom);} // unary minus
-  void operator *= (const ZZ& c) {entries *= c; cancel();}
-  void operator *= (int c) {entries *= ZZ(c); cancel();}
-  void operator *= (long c) {entries *= ZZ(c); cancel();}
-  void operator *= (const Qmat& m) {entries = entries*m.entries; denom *= m.denom; cancel();}
-  inline friend Qmat operator*(const ZZ& c, const Qmat& x) {return Qmat(c*x.entries, x.denom);}
-  inline friend Qmat operator*(const Qmat&m1, const Qmat& m2) {return Qmat(m1.entries*m2.entries, m1.denom*m2.denom);}
-  inline friend Qvec operator*(const Qmat&m, const Qvec& v) {return Qvec(m.entries*v.coords, m.denom*v.denom);}
+  Qmat operator-() const {return Qmat(-numerator, denom);} // unary minus
+  void operator *= (const ZZ& c) {numerator *= c; cancel();}
+  void operator *= (int c) {numerator *= ZZ(c); cancel();}
+  void operator *= (long c) {numerator *= ZZ(c); cancel();}
+  void operator *= (const Qmat& m) {numerator = numerator*m.numerator; denom *= m.denom; cancel();}
+  inline friend Qmat operator*(const ZZ& c, const Qmat& x) {return Qmat(c*x.numerator, x.denom);}
+  inline friend Qmat operator*(const Qmat&m1, const Qmat& m2) {return Qmat(m1.numerator*m2.numerator, m1.denom*m2.denom);}
+  inline friend Qvec operator*(const Qmat&m, const Qvec& v) {return Qvec(m.numerator*v.numerator, m.denom*v.denom);}
   inline friend ostream& operator<<(ostream& s, const Qmat& x) { s << x.str();  return s;}
 };
 
 inline istream& operator>>(istream& s, Qmat& x) {x.read(s); return s;}
 inline Qmat operator*(int c, const Qmat& v) {return ZZ(c)*v;}
 inline Qmat operator*(long c, const Qmat& v) {return ZZ(c)*v;}
-
-// Divide through by gcd of content(M) and d
-void cancel_mat(mat_m& M, ZZ& d);
 
 class Field {
   friend class FieldIso;
@@ -123,12 +126,11 @@ private:
 public:
   ~Field() {minpoly.kill();}
   Field(); // defaults to Q
-  explicit Field(const mat_m& A, const ZZ& den, mat_m& Binv, ZZ& Bdet3, string a="a", int verb=0);
-  explicit Field(const mat_m& A, const ZZ& den, string a="a", int verb=0)
+  explicit Field(const Qmat& A, Qmat& B, Qmat& Binv, string a="a", int verb=0);
+  explicit Field(const Qmat& A, string a="a", int verb=0)
   {
-    mat_m bcm;
-    ZZ bcd;
-    *this = Field(A, den, bcm, bcd, a, verb);
+    Qmat B, Binv;
+    *this = Field(A, B, Binv, a, verb);
   }
   explicit Field(const ZZX& p, string a="a", int verb=0);
 
@@ -193,11 +195,11 @@ class FieldElement {
   friend FieldElement evaluate(const ZZX& f, const FieldElement a);
 private:
   Field const * F;
-  // In general the field element is (1/denom)*coords-combination of power basis of F
-  Qvec v;
-  // When F is Q this is just a wrapper round eclib's bigrational
-  // class and coords and denom are ignored
-  bigrational val;
+  Qvec v;             // only used for degree>1, i.e. not Q
+  bigrational val;    // only used for degree=1, i.e. Q
+  // In general the field element is the v-combination of power basis
+  // of F, but when F is Q this class is just a wrapper round the
+  // bigrational class and v is ignored.
 public:
   FieldElement() {;}
   explicit FieldElement(const Field& HF)
@@ -236,7 +238,7 @@ public:
   int is_minus_one() const;
   int is_generator() const {return degree()==F->d;}
   bigrational get_val() const {return val;}
-  Qvec get_coords() const {return v;}
+  Qvec get_numerator() const {return v;}
   ZZ get_denom() const {return (field_is_Q()? val.den() : v.denom);}
   int in_same_field(const FieldElement& b) const {return (F==b.F) || (*F==*b.F);}
   int operator==(const FieldElement& b) const;

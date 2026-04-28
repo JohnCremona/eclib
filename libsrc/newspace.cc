@@ -103,7 +103,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     // Compute Hecke field from matrix A if degree d>1
     {
       string var = codeletter(index-1);
-      F0 = new Field(A, denom_abs, basis_change_matrix, basis_change_denominator, var, verbose>1);
+      F0 = new Field(Qmat(A, denom_abs), basis_change_matrix, basis_change_inverse, var, verbose>1);
       F = new Field();
       int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
       if (verbose)
@@ -169,8 +169,7 @@ FieldElement Newform::eig(const matop& T)
     }
   else
     {
-      Qvec coords(basis_change_matrix * apv, basis_change_denominator);
-      FieldElement a(*F0, coords);
+      FieldElement a(*F0, basis_change_matrix * Qvec(apv));
       return (Fiso.is_identity()? a : Fiso(a));
     }
 }

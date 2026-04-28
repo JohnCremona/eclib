@@ -49,13 +49,12 @@ private:
 
   subspace_m S; // irreducible subspace of modular symbol space
   ZZ denom_abs; // absolute denominator of S
+
   mat projcoord; // used to computed eigenvalues of any operator
   modsym key_symbol; // nsp->H1->freemods[pivots(S)[1] -1]
-  mat_m basis_change_matrix;
-  ZZ basis_change_denominator;
-  // To construct a field element from a 'raw' coord vector c and
-  // denominator d, replace c by basis_change_matrix*c and d by
-  // basis_change_denominator*d and cancel.
+  Qmat basis_change_matrix, basis_change_inverse;
+  // To construct a field element from v = Qvec(c,d), use
+  // basis_change_matrix*Qvec(c,d).
 
   int sfe; // Sign of functional equation (minus product of AL eigs), 0 if not known
 

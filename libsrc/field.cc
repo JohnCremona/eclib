@@ -4,18 +4,18 @@
 #include "eclib/field.h"
 #include "eclib/polred.h"
 
-void Qvec::cancel() // divides through by gcd(content(coords, denom))
+void Qvec::cancel() // divides through by gcd(content(numerator, denom))
 {
   if (denom<0)
     {
       denom = -denom;
-      coords = -coords;
+      numerator = -numerator;
     }
-  ZZ g = gcd(content(coords), denom);
+  ZZ g = gcd(content(numerator), denom);
   if (IsOne(g))
     return;
   denom /= g;
-  coords /= g;
+  numerator /= g;
 }
 
 // String for pretty printing, used in default <<, or (if raw) raw
@@ -24,10 +24,10 @@ string Qvec::str(int raw) const
 {
   ostringstream s;
   if (raw)
-    s << coords << " " << denom;
+    s << numerator << " " << denom;
   else
     {
-      s << coords;
+      s << numerator;
       if (denom>1)
         s << "/" << denom;
     }
@@ -46,7 +46,7 @@ void Qvec::operator+=(const Qvec& b)
 {
   if (b.is_zero())
     return;
-  coords = b.denom*coords + denom*b.coords;
+  numerator = b.denom*numerator + denom*b.numerator;
   denom *= b.denom;
   cancel();
 }
@@ -63,23 +63,23 @@ void Qvec::operator-=(const Qvec& b)
 {
   if (b.is_zero())
     return;
-  coords = b.denom*coords - denom*b.coords;
+  numerator = b.denom*numerator - denom*b.numerator;
   denom *= b.denom;
   cancel();
 }
 
-void Qmat::cancel() // divides through by gcd(content(coords, denom))
+void Qmat::cancel() // divides through by gcd(content(numerator, denom))
 {
   if (denom<0)
     {
       denom = -denom;
-      entries = -entries;
+      numerator = -numerator;
     }
-  ZZ g = gcd(entries.content(), denom);
+  ZZ g = gcd(numerator.content(), denom);
   if (IsOne(g))
     return;
   denom /= g;
-  entries /= g;
+  numerator /= g;
 }
 
 // String for pretty printing, used in default <<, or (if raw) raw
@@ -88,10 +88,10 @@ string Qmat::str(int raw) const
 {
   ostringstream s;
   if (raw)
-    s << entries << " " << denom;
+    s << numerator << " " << denom;
   else
     {
-      s << entries;
+      s << numerator;
       if (denom>1)
         s << "/" << denom;
     }
@@ -100,9 +100,18 @@ string Qmat::str(int raw) const
 
 Qmat Qmat::inverse() const
 {
-  mat_m inverse_entries;
-  ZZ d = ::inverse(entries, inverse_entries);
-  return Qmat(denom * inverse_entries, d);
+  mat_m inverse_numerator;
+  ZZ d = ::inverse(numerator, inverse_numerator);
+  return Qmat(denom * inverse_numerator, d);
+}
+
+void Qmat::setcol(int i, const Qvec& v)
+{
+  ZZ new_d = lcm(denom, v.denom);
+  numerator *= (new_d/denom);
+  denom = new_d;
+  numerator.setcol(i, (new_d/v.denom) * v.numerator);
+  cancel();
 }
 
 Qmat Qmat::operator+(const Qmat& b) const
@@ -117,7 +126,7 @@ void Qmat::operator+=(const Qmat& b)
 {
   if (b.is_zero())
     return;
-  entries = b.denom*entries + denom*b.entries;
+  numerator = b.denom*numerator + denom*b.numerator;
   denom *= b.denom;
   cancel();
 }
@@ -134,7 +143,7 @@ void Qmat::operator-=(const Qmat& b)
 {
   if (b.is_zero())
     return;
-  entries = b.denom*entries - denom*b.entries;
+  numerator = b.denom*numerator - denom*b.numerator;
   denom *= b.denom;
   cancel();
 }
@@ -165,7 +174,7 @@ Field::Field(const ZZX& p, string a, int verb)
 #ifdef DEBUG_FIELD_CONSTRUCTOR
       cout << "Calling the other Field constructor " << endl;
 #endif
-      *this = Field(m, ZZ(1), a, verb);
+      *this = Field(Qmat(m), a, verb);
     }
   else
     {
@@ -188,8 +197,8 @@ Field::Field() // defaults to Q
 #endif
 }
 
-Field::Field(const mat_m& A, const ZZ& den, mat_m& Binv, ZZ& Bdet3, string a, int verb)
-  : var(a), d(A.nrows()), denom(den)
+Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
+  : var(a), d(A.nrows()), denom(A.get_denom())
 {
   if (verb)
     {
@@ -198,53 +207,40 @@ Field::Field(const mat_m& A, const ZZ& den, mat_m& Binv, ZZ& Bdet3, string a, in
     }
   // NB the assumption is that A/denom is integral, i.e. its (monic)
   // char poly is integral and irreducible.
-  minpoly = scaled_charpoly(mat_to_mat_ZZ(A), denom);
+  minpoly = A.charpoly();
   if (verb)
     cout << " - min poly = " << ::str(minpoly) << ", generator " << var << endl;
 
   // Compute change of basis matrix B, with column j equal to
   // denom^(n-j)*A^(j-1)v for j from 1 to d
-  vec_m v(d);
-  v[1] = pow(denom,d-1); // so v=[1,0,...,0]*denom^(d-1)
+  Qvec v(d);
+  v.set_unit_vector(1);  // so v=[1,0,...,0]
   // cout<<"v = "<<v<<endl;
-  mat_m B(d,d);
+  B = Qmat(d,d);
   B.setcol(1,v);
   for(int i=2; i<=d; i++)
     {
-      v = A*v / denom;
+      v = A*v;
       B.setcol(i,v);
     }
-  ZZ Bcontent = B.content();
-  // cout << "Content of original B is " << Bcontent << endl;
-  B /= Bcontent;
-  ZZ Bdet = inverse(B,Binv); // so B*Binv = Bdet*identity
-  mat_m I = mat_m::identity_matrix(d);
-  assert (B*Binv == Bdet*I);
-  ZZ Bdet1 = B(1,1);
-  ZZ Bdet2 = Binv(1,1);
-  Bdet3 = Bdet2*denom;
-  // Now we have Binv*A*B = denom*Bdet * C, where C = companion
-  // matrix of minpoly. i.e. the B-conjugate of A can be divided by
-  // denom to give the integral matrix C.
-  mat_m C = (Binv*A*B) / (denom*Bdet);
+  Binv = B.inverse();
+  assert (B*Binv == Qmat::identity(d));
+  // Now we have Binv*A*B = C, where C = companion matrix of
+  // minpoly. i.e. the B-conjugate of A is the integral matrix C.
+  mat_m C = (Binv*A*B).get_numerator();
   assert (CompanionMatrix(minpoly) == mat_to_mat_ZZ(C));
 
-  // NB To construct a field element from a 'raw' coord vector c and denom d
-  // replace c by Binv*c and d by Bdet3*d (and cancel)
+  // NB To construct a field element from a 'raw' coord vector v =
+  // Qvec(c,d), muliply by Binv.
 
   Cpowers.resize(d);
-  Cpowers[0] = I;
+  Cpowers[0] = mat_m::identity_matrix(d);
   for (int i=1; i<d; i++)
     Cpowers[i] = C*Cpowers[i-1];
   if(verb)
     {
-      cout<<"basis  matrix = ";
-      output_flat_matrix(Binv);
-      cout<<endl;
-      cout<<"inverse basis matrix = ";
-      output_flat_matrix(B);
-      cout<<endl;
-      cout << "basis factor  = " << Bdet1 << "*" << Bdet2 << "=" << Bdet <<endl;
+      cout<<"basis  matrix = " << B.str()<<endl;
+      cout<<"inverse basis matrix = " << Binv.str() <<endl;
       if (verb>1)
         {
           cout<<"companion matrix  = ";
@@ -363,7 +359,7 @@ int FieldElement::is_one() const
   if (field_is_Q())
     return val==one;
   else
-    return v.denom==1 && v.coords == vec_m::unit_vector(F->d,1);
+    return v.denom==1 && v.numerator == vec_m::unit_vector(F->d,1);
 }
 
 int FieldElement::is_minus_one() const
@@ -372,7 +368,7 @@ int FieldElement::is_minus_one() const
   if (field_is_Q())
     return val==minus_one;
   else
-    return v.denom==1 && v.coords == -vec_m::unit_vector(F->d,1);
+    return v.denom==1 && v.numerator == -vec_m::unit_vector(F->d,1);
 }
 
 void FieldElement::negate() // negate in place
@@ -397,7 +393,7 @@ string FieldElement::str(int raw) const
     s << v.str(1);
   else
     {
-      string n = ::str(v.coords, F->var);
+      string n = ::str(v.numerator, F->var);
       if (n[0]=='+')
         n.erase(0,1);
       if (v.denom==1)
@@ -438,7 +434,7 @@ mat_m FieldElement::matrix() const // ignores denom, not used for Q
 {
   if (field_is_Q())
     return mat_m::scalar_matrix(1, num(val));
-  return lin_comb_mats(v.coords, F->Cpowers);
+  return lin_comb_mats(v.numerator, F->Cpowers);
 }
 
 // NB Since we do not have polynomials with rational coefficients,
@@ -721,10 +717,10 @@ int FieldElement::is_rational(bigrational& r) const
   r = val;
   if (F->d ==1)
     return 1;
-  r = bigrational(v.coords[1], v.denom);
+  r = bigrational(v.numerator[1], v.denom);
   for (int i=2; i <= F->d; i++)
     {
-      if (v.coords[i]!=0)
+      if (v.numerator[i]!=0)
         return 0;
     }
   return 1;
@@ -749,7 +745,7 @@ int FieldElement::is_absolute_square(FieldElement& r) const
   const ZZ& den = v.denom;
   if (::is_one(den))
     return is_absolute_integral_square(r);
-  FieldElement x = FieldElement(*F, den*v.coords);
+  FieldElement x = FieldElement(*F, den*v.numerator);
   int res = x.is_absolute_integral_square(r);
   if (res)
     r /= den;
@@ -1064,12 +1060,12 @@ FieldIso Field::reduction_isomorphism(string newvar, Field& Fred, int canonical)
   ZZ denhpow = denhpowmax;
   M.setcol(1, denhpow * vec_m::unit_vector(d, 1));
   denhpow /= denh;
-  M.setcol(2, denhpow * a.v.get_coords());
+  M.setcol(2, denhpow * a.v.get_numerator());
   for (int i=3; i<=d; i++)
     {
       denhpow /= denh;
       apow *= a;
-      M.setcol(i, denhpow * apow.v.get_coords());
+      M.setcol(i, denhpow * apow.v.get_numerator());
     }
   cancel_mat(M, denhpowmax);
 #ifdef DEBUG_REDUCE
