@@ -274,11 +274,12 @@ inline ostream& operator<<(ostream& s, const bigrational& q)
    return s;
 }
 
-
+// NB input is either one integer (numerator) or two integers (n and
+// d) separated by "/" *with no whitespace between n and "/".
 inline istream& operator>> (istream& is, bigrational& r)
 {
   ZZ n,d(1);
-  is>>n>>ws;
+  is>>n;
   if(!is.eof())
     {
       char c;
