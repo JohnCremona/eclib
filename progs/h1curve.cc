@@ -31,11 +31,6 @@
 #define LMFDB_ORDER       // if defined, sorts newforms into LMFDB order before output
                           // otherwise, sorts newforms into Cremona order before output
 
-// If this is defined, the fisc6 output is placed in subdirectory
-// fixc6 in file fixc6/fixc6.N (one per level); otherwise it is all
-// put in ./fixc6.extra
-//#define FIXC6_OUTPUT_TO_SUBDIR
-
 #include <eclib/curvesort.h>
 
 vector<pair<int,int> > bad_ones; // holds bad (n,i) list
@@ -164,21 +159,6 @@ int main(void)
            }
          cout<<endl;
        }
-#ifdef SINGLE
-     ZZ c6=getc6(CD),  c4=getc4(CD);
-     char* f = new char[20];
-#ifdef FIXC6_OUTPUT_TO_SUBDIR
-     sprintf(f,"fixc6/fixc6.%ld",n);
-#else
-     sprintf(f,"fixc6.extra");
-#endif
-     ofstream xout(f,ios::app);
-     delete[] f;
-     xout<<" "<<n<<" "<<(i+1)<<" "<<c6<<endl;
-     xout.close();
-     cout<<"c4: "<<n<<" "<<(i+1)<<" "<<c4<<endl;
-     cout<<"c6: "<<n<<" "<<(i+1)<<" "<<c6<<endl;
-#endif
      if(verb) cout<<endl;
    }
 }       // end of if(n)

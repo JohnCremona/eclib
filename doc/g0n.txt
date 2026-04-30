@@ -1,7 +1,7 @@
 Documentation for the modular symbol programs in the eclib library (guide to source code)
 
 %  created 20070125
-%  Time-stamp: <2016-01-02 15:46:35 jec>
+%  Time-stamp: <2026-04-30 11:02:48 john>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -621,58 +621,12 @@ y=y0/ny, is the period lattice of an elliptic curve of conductor n
 
 ----------------------------------------------------------------------
 
-files: nfd.h, nfd.cc, tnfd.cc
-class: nfd
+files: newspace.h, newspace.cc, makensp.cc, listnsp.cc
+classes: Newform, Newspace
 
-Class which implements d-dimensional newforms (i.e. with Hecke
-eigenvalues of degree d over Q).
-
-Program tnfd is a test program for this.  Experimental, not currently
-working.
-
+Classes which implements d-dimensional newforms (i.e. with Hecke
+eigenvalues of degree d over Q).  progs/makensp computes and stores in
+newspaces/ directory, progs/listnsp reads ans displays these.
 
 ----------------------------------------------------------------------
-
-files: fixc6.h, fixc6.cc; (optional) fixc4.data, fixc6.data
-class: fixc6
-
-These can be completely ignored, since I gave up using them after
-N=130000 and just use multiprecision floating point always, even
-though it is slower, with some cleverness to automatically increase
-precision as needed.  The standard double precision code is all still
-here (and runs when the --deisable-mpfp option is given on
-configuration).  In future the code will use that where possible and
-sensible, for speed and flexibility.
-
-// Background: for curves with large c6 (or c4), the value cannot be computed
-// with sufficient precision without using multiprecision floating
-// point arithmetic, which slows down all the other cases
-// unnecessarily.  To avoid this, after first computing the "correct"
-// c6 value once in multiprecision, we add that value to a table
-// indexed by (level, form#), and look up in the table when we need
-// the value.
-
-// The fixc6 class has two static data members, of type map<
-// pair<long,int>, bigint> such that an entry ((N,i),c6) or ((N,i),c4)
-// says that the c6 or c4 value for form i at level N is c6 or c4.  Of
-// course, for most (N,i) pairs this is blank -- and we must avoid
-// inserting wrong dummy entries of the form ((N,i),0).
-
-// April 2005: added facility for fixing c4 as well as c6, but the
-// class name is unchanged
-
-NB For levels up to 130000 these files are quite big:
-   443   1329  10319 fixc4.data
- 25808  77424 679655 fixc6.data
- 26251  78753 689974 total
-
-That is, out of 570226 (optimal) curves, 25808 require this "fixing"
-of c6 and 443 also for c4.
-
-NB This is *not used* when the programs are compiled with
-multiprecision floating point (i.e. without --disable-mpfp) so can be
-ignored for Sage.  But the programs which produce tables of curves
-from stored data *do* recompute the periods of the newforms and hence
-get the curves from their periods, and this is *much* faster using
-standard C doubles!
 

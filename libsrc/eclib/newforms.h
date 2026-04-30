@@ -267,7 +267,7 @@ public:
   int get_imag_period(long i, bigfloat& y, int verbose=0) const;
   // Given all data, compute the periods as a Cperiods
   Cperiods getperiods(long i, int method=-1, int verbose=0);
-  // Given all data & Cperiods, compute the curve (using fixc6 etc)
+  // Given all data & Cperiods, compute the curve
   Curve getcurve(long i, int method, bigfloat& rperiod, int verbose=0);
 
   // Attempt to compute and display the elliptic curve for each

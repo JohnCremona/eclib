@@ -22,9 +22,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "eclib/periods.h"
-#ifndef MPFP // Multi-Precision Floating Point
-#include "eclib/fixc6.h"
-#endif
 
 #define CHECK_PERIODS // check that curves constructed from periods
                       // have the same periods...
@@ -778,8 +775,6 @@ Cperiods newforms::getperiods(long i, int method, int verbose)
 }
 
 Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
-// Cannot just use trans_to_curve() as we need to fixc6...
-// which DOES use n and i
 {
   long fac = sqfac;
   long fac6=(odd(fac)?fac:2*fac);
@@ -809,18 +804,6 @@ Curve newforms::getcurve(long i, int method, bigfloat& rperiod, int verbose)
       cout<<":\n";
       cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
     }
-  // To fix the c4 or c6 values insert data in files fixc4.data and
-  // fixc6.data; NB the index here (i) starts at 0, but class fixc6
-  // adjusts so in the data files, start at 1
-
-#ifndef MPFP // Multi-Precision Floating Point
-  c4c6fixer(N,i,ic4,ic6);
-  if(verbose)
-    {
-      cout << "After fixing: \n";
-      cout << "ic4 = " << ic4 << "\nic6 = " << ic6 << endl;
-    }
-#endif
   Curve C(ic4,ic6);
   if(C.isnull()) return C;
   Curvedata CD(C,1);  // The 1 causes minimalization

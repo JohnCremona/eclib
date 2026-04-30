@@ -135,7 +135,6 @@ tests/tlatconst
 tests/tmanin
 tests/tmanin_prof
 tests/tmrank
-tests/tnfd
 tests/torsion
 tests/tp2points
 tests/tperiods

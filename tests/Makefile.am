@@ -140,7 +140,7 @@ check_qrank: qrank_tests
 
 ################ G0N #############################################
 
-G0N_TESTS = modtest homtest hecketest mhcount tmanin nftest oftest newhecke# tnfd 
+G0N_TESTS = modtest homtest hecketest mhcount tmanin nftest oftest newhecke
 G0N_TESTS_SUFFIXED = $(G0N_TESTS:=$(EXEEXT))
 g0n_tests: $(G0N_TESTS_SUFFIXED)
 
@@ -155,7 +155,6 @@ nftest_SOURCES=nftest.cc
 mhcount_SOURCES=mhcount.cc
 oftest_SOURCES=oftest.cc
 tmanin_SOURCES=tmanin.cc
-#tnfd_SOURCES=tnfd.cc
 
 # This is the name of a directory which will be used for newform
 # input/output in the "make check" tests and removed afterwards.
