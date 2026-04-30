@@ -1,3 +1,27 @@
+// File RREF.CC: functions for working with number fields for Hecke eigenvalues
+//////////////////////////////////////////////////////////////////////////
+//
+// Copyright 1990-2026 John Cremona
+//
+// This file is part of the eclib package.
+//
+// eclib is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the
+// Free Software Foundation; either version 2 of the License, or (at your
+// option) any later version.
+//
+// eclib is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with eclib; if not, write to the Free Software Foundation,
+// Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
+//
+//////////////////////////////////////////////////////////////////////////
+
+
 #include <flint/fmpz.h>
 #include <flint/fmpz_mat.h>
 #define uscalar mp_limb_t // unsigned long
@@ -28,10 +52,4 @@ mat_m mmat_from_flint_mat(const fmpz_mat_t& A)
       M(i+1,j+1) = fmpz_get_si(fmpz_mat_entry(A,i,j));
   return M;
 }
-
-// mat_m echelon_via_flint(const mat_m& m1, vec_i& pc, vec_i& npc,
-//                 long& rk, long& ny, ZZ& d)
-// {
-
-// }
 
