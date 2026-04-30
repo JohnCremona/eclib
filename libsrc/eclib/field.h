@@ -30,13 +30,11 @@
 class Field {
   friend class FieldIso;
   friend class FieldElement;
-  friend class Newform;
 private:
   string var;   // name of generator
   int d;        // degree
   ZZX minpoly;  // irreducible poly of degree d
-  ZZ denom; // minpoly is the (integral) min poly of A/denom
-  vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1, where C =dxd companion matrix with min.poly. minpoly
+  vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1, where C =dxd companion matrix of minpoly
 public:
   ~Field() {minpoly.kill();}
   Field(); // defaults to Q
@@ -260,7 +258,7 @@ public:
     if (id_flag==-1)
       set_id_flag();
   }
-  // Partial constructor from two fields, used when inputting just the matrix and denominator.
+  // Partial constructor from two fields, used when inputting just the matrix.
   // This initializes isomat to the correct size as the 0 matrix
   FieldIso( const Field& F1, const Field& F2)
     :domain(&F1), codomain(&F2), isomat(Qmat(F2.d,F1.d)), id_flag(0) {;}

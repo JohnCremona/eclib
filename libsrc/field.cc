@@ -65,7 +65,7 @@ Field::Field(const ZZX& p, string a, int verb)
 }
 
 Field::Field() // defaults to Q
-  :var(""), d(1), denom(ZZ(1))
+  :var(""), d(1)
 {
   SetX(minpoly);
 #ifdef DEBUG_FIELD_CONSTRUCTOR
@@ -74,15 +74,15 @@ Field::Field() // defaults to Q
 }
 
 Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
-  : var(a), d(A.nrows()), denom(A.get_denom())
+  : var(a), d(A.nrows())
 {
   if (verb)
     {
       cout << "----------------------------"<<endl;
       cout << "In Field constructor (var = "<<a<<")"<< endl;
     }
-  // NB the assumption is that A/denom is integral, i.e. its (monic)
-  // char poly is integral and irreducible.
+  // NB We assume that A is integral in the sense that its monic char
+  // poly is integral and irreducible.
   minpoly = A.charpoly();
   if (verb)
     cout << " - min poly = " << ::str(minpoly) << ", generator " << var << endl;
