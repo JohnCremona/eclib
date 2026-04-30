@@ -20,7 +20,15 @@ jobs:
     - uses: actions/checkout@v4
     - name: configure
       run: |
-        sudo apt-get install libpari-dev pari-gp2c libntl-dev libflint-dev
+        sudo apt-get install libpari-dev pari-gp2c libntl-dev libmpfr-dev
+        wget https://flintlib.org/download/flint-3.5.0.tar.gz
+        tar xf flint-3.5.0.tar.gz
+        cd flint-3.5.0
+        ./configure
+        make -j 8
+        make install
+        sudo ldconfig
+        cd ..
         ./autogen.sh
         ./configure --with-boost="no" --with-flint --disable-allprogs --${{ matrix.mpfp }}
       env:
