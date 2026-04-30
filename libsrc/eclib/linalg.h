@@ -40,6 +40,7 @@
 #include "subspace.h"
 #include "ssubspace.h"
 #include "smatrix_elim.h"
+#include "qvecmat.h"
 
 // SCALAR_OPTION may be set to 1 (int), 2 (long), 3 (ZZ), or 4 (INT) by the
 // user.  This determines whether vec, mat, ... default to vec_i,
