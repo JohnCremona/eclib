@@ -36,7 +36,6 @@
 
 class Qvec; // vec_m (=Zvec<ZZ>) with common denominator
 class Qmat; // mat_m (=Zmat<ZZ>) with common denominator
-class Field;
 class FieldIso;
 class FieldElement;
 
@@ -78,6 +77,7 @@ public:
   void operator *= (long c) {numerator *= ZZ(c); cancel();}
   inline friend Qvec operator*(const ZZ& c, const Qvec& v) {return Qvec(c*v.numerator, v.denom);}
   inline friend ostream& operator<<(ostream& s, const Qvec& x) { s << x.str();  return s;}
+  friend Qvec operator*(const Qmat&m, const Qvec& v);
 };
 
 inline istream& operator>>(istream& s, Qvec& x) {x.read(s); return s;}
