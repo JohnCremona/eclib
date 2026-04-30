@@ -783,14 +783,15 @@ mat homspace::newheckeop(long p, int cuspidal, int dual, int display) const
   if(::divides(p,N)) return wop(p,cuspidal,dual,display);
   matop hmats(p); // constructs H-matrices
   long j, nmats=hmats.size();
-  svec colj(dimension);    mat m(dimension,dimension);
+  mat m(dimension,dimension);
   for (j=0; j<dimension; j++)
-    {  symb s = symbol(freegens[j]);
-       colj = hmats[0](s,this);
-       colj+= hmats[1](s,this);
-       for(long i=2; i<nmats; i++) colj+= (hmats[i](s,this));
-       m.setcol(j+1,colj.as_vec());
-     }
+    {
+      symb s = symbol(freegens[j]);
+      svec colj = hmats[0](s,this);;
+      for(long i=1; i<nmats; i++)
+        colj+= (hmats[i](s,this));
+      m.setcol(j+1,colj.as_vec());
+    }
   if(cuspidal) m = restrict_mat(smat(m),kern).as_mat();
   if(dual) m=transpose(m);
   if (display)
