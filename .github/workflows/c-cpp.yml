@@ -26,7 +26,7 @@ jobs:
         cd flint-3.5.0
         ./configure
         make -j 8
-        make install
+        sudo make install
         sudo ldconfig
         cd ..
         ./autogen.sh
