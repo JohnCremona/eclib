@@ -24,13 +24,6 @@
 #include "eclib/convert.h"
 #include "eclib/linalg.h"
 
-// Instantiate Zvec template classes for T=int, long, ZZ, INT
-
-template class Zvec<int>;
-template class Zvec<long>;
-template class Zvec<ZZ>;
-template class Zvec<INT>;
-
 // Definitions of member operators and functions:
 
 template<class T>
@@ -485,6 +478,13 @@ vec_I to_vec_I(const Zvec<T>& V)
 template vec_I to_vec_I<int>(const Zvec<int>& M);
 template vec_I to_vec_I<long>(const Zvec<long>& M);
 template vec_I to_vec_I<ZZ>(const Zvec<ZZ>& M);
+
+// Instantiate Zvec template classes for T=int, long, ZZ, INT
+
+template class Zvec<int>;
+template class Zvec<long>;
+template class Zvec<ZZ>;
+template class Zvec<INT>;
 
 // Instantiate Zvec template functions for T=int
 template int dim<int>(const Zvec<int>&);

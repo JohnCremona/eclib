@@ -23,13 +23,6 @@
  
 #include "eclib/linalg.h"
 
-// Instantiate ssubspace template classes for T=int, long, ZZ, INT
-
-template class ssubZspace<int>;
-template class ssubZspace<long>;
-template class ssubZspace<ZZ>;
-template class ssubZspace<INT>;
-
 template<class T>
 ssubZspace<T>::ssubZspace(int n, T mod)
   :modulus(mod), pivots(Zvec<int>::iota(n)), basis(sZmat<T>::identity_matrix(n))
@@ -94,6 +87,13 @@ ssubZspace<T> make1d(const Zvec<T>& bas, T&piv, T m)
   piv=sbas.elem(pivs[1]);
   return ssubZspace<T>(transpose(tbasis),pivs,m);
 }
+
+// Instantiate ssubspace template classes for T=int, long, ZZ, INT
+
+template class ssubZspace<int>;
+template class ssubZspace<long>;
+template class ssubZspace<ZZ>;
+template class ssubZspace<INT>;
 
 // Instantiate template functions for T=int
 template ssubZspace<int> make1d<int>(const Zvec<int>& bas, int&piv, int m);

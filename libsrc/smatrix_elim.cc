@@ -25,13 +25,6 @@
 
 #include "eclib/linalg.h"
 
-// Instantiate sZmat_elim template classes for T=int, long, ZZ, INT
-
-template class sZmat_elim<int>;
-template class sZmat_elim<long>;
-template class sZmat_elim<ZZ>;
-template class sZmat_elim<INT>;
-
 //#define TRACE_LISTS
 //#define TRACE_FIND
 
@@ -1330,6 +1323,13 @@ ssubZspace<T> kernel(const sZmat<T>& sm, T m)
   sZmat<T> kern = sZmat_elim(sm,m).kernel(npivs,pivs);
   return ssubZspace<T>(kern,pivs,m);
 }
+
+// Instantiate sZmat_elim template classes for T=int, long, ZZ, INT
+
+template class sZmat_elim<int>;
+template class sZmat_elim<long>;
+template class sZmat_elim<ZZ>;
+template class sZmat_elim<INT>;
 
 // Instantiate template functions for T=int
 template int sZmat<int>::rank(int mod);

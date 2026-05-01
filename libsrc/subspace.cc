@@ -23,13 +23,6 @@
  
 #include "eclib/linalg.h"
 
-// Instantiate subZspace template classes for T=int, long, ZZ, INT
-
-template class subZspace<int>;
-template class subZspace<long>;
-template class subZspace<ZZ>;
-template class subZspace<INT>;
-
 // definitions of member operators and functions:
 
 // assignment
@@ -335,6 +328,12 @@ vector<long> dotperp(const vector<long>& alist, int r)
   return ans;
 }
 
+// Instantiate subZspace template classes for T=int, long, ZZ, INT
+
+template class subZspace<int>;
+template class subZspace<long>;
+template class subZspace<ZZ>;
+template class subZspace<INT>;
 
 // Instantiate template functions for T=int
 

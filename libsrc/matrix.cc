@@ -25,13 +25,6 @@
 #include "eclib/linalg.h"
 #include "eclib/polys.h"
 
-// Instantiate Zmat template classes for T=int, long, ZZ, INT
-
-template class Zmat<int>;
-template class Zmat<long>;
-template class Zmat<ZZ>;
-template class Zmat<INT>;
-
 // Definitions of member operators and functions:
 
 template<class T>
@@ -2201,6 +2194,12 @@ long nullity(mat_ZZ A)
 
 ///////////////////////////////////////////////////////////////////////////
 
+// Instantiate Zmat template classes for T=int, long, ZZ, INT
+
+template class Zmat<int>;
+template class Zmat<long>;
+template class Zmat<ZZ>;
+template class Zmat<INT>;
 
 // Instantiate Zmat template functions for T=int
 template void add_row_to_vec<int>(Zvec<int>& v, const Zmat<int>& m, long i);

@@ -26,13 +26,6 @@
 #include <assert.h>
 #include "eclib/linalg.h"
 
-// Instantiate sZmat template classes for T=int, long, ZZ, INT
-
-template class sZmat<int>;
-template class sZmat<long>;
-template class sZmat<ZZ>;
-template class sZmat<INT>;
-
 template<class T>
 void showrow(int*pos, T*val) // for debugging
 {
@@ -1114,6 +1107,13 @@ sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s)
   if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
   return mult_mod_p(m.select_rows(pivots(s)),sZmat<T>(basis(s)), default_modulus<T>());
 }
+
+// Instantiate sZmat template classes for T=int, long, ZZ, INT
+
+template class sZmat<int>;
+template class sZmat<long>;
+template class sZmat<ZZ>;
+template class sZmat<INT>;
 
 // Instantiate sZmat template functions for T=int
 template vector<int> dim<int>(const sZmat<int>& A);

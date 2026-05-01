@@ -23,13 +23,6 @@
 
 #include "eclib/linalg.h"
 
-// Instantiate sZvec template classes for T=int, long, ZZ, INT
-
-template class sZvec<int>;
-template class sZvec<long>;
-template class sZvec<ZZ>;
-template class sZvec<INT>;
-
 // Definitions of member operators and functions:
 
 template<class T>
@@ -515,6 +508,13 @@ template<class T> T dotmodp(const Zvec<T>& v, const sZvec<T>& sv, const T& pr) {
 template<class T> int operator!=(const sZvec<T>& v1, const Zvec<T>& v2) {return !(v1==v2);}
 template<class T> int operator==(const Zvec<T>& v1, const sZvec<T>& v2) {return v2==v1;}
 template<class T> int operator!=(const Zvec<T>& v1, const sZvec<T>& v2) {return v2!=v1;};
+
+// Instantiate sZvec template classes for T=int, long, ZZ, INT
+
+template class sZvec<int>;
+template class sZvec<long>;
+template class sZvec<ZZ>;
+template class sZvec<INT>;
 
 // Instantiate sZvec template functions for T=int
 template int operator*<int>(const sZvec<int>&, const sZvec<int>&);

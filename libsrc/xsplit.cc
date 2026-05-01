@@ -29,11 +29,6 @@
 #include "eclib/logger.h"
 #include "eclib/xsplit.h"
 
-template class form_finderT<int>;
-template class form_finderT<long>;
-template class form_finderT<ZZ>;
-template class form_finderT<INT>;
-
 template<class T>
 Zvec<T> lift(const Zvec<T>& v, T mod)
 {
@@ -610,5 +605,12 @@ void form_finderT<T>::store(Zvec<T> bp, Zvec<T> bm, vector<long> eigs) {
   // Inform about newform count
   ECLOG(1) << "Current newform subtotal count at " << gnfcount << endl;
 }
+
+// Instantiate form_finderT template classes for T=int, long, ZZ, INT
+
+template class form_finderT<int>;
+template class form_finderT<long>;
+template class form_finderT<ZZ>;
+template class form_finderT<INT>;
 
 // end of XSPLIT.CC
