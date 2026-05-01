@@ -90,7 +90,7 @@ struct factor_modp_comparison {
   }
 };
 
-// function to sort of polynomials, first by degree of factor
+// function to sort polynomials, first by degree of factor
 // then lexicographically
 
 struct poly_comparison {

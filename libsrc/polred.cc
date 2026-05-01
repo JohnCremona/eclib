@@ -38,6 +38,7 @@ using PARI::nf_ORIG;
 using PARI::lift;
 using PARI::ZX_equal;
 using PARI::poleval;
+using PARI::nfisincl0;
 
 //#define DEBUG_POLY
 
@@ -149,11 +150,11 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
       return f;
     }
   pari_sp av = avma;
-  GEN G = ZZX_to_t_POL(f), A;
+  GEN F = ZZX_to_t_POL(f), A, G;
   int nsteps = 0;
   if (canonical)
     {
-      GEN G_H = polredabs0(G, nf_ORIG);
+      GEN G_H = polredabs0(F, nf_ORIG);
 #ifdef DEBUG_POLRED
       pari_printf("polredabs0(f,nf_ORIG) returns [G, H] = %Ps\n", G_H);
 #endif
@@ -166,10 +167,11 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
   else
     {
 #ifdef DEBUG_POLRED
-      pari_printf("applying polredbest to %Ps\n", G);
+      pari_printf("applying polredbest to %Ps\n", F);
 #endif
-      GEN G_H = polredbest(G, nf_ORIG);
+      GEN G_H = polredbest(F, nf_ORIG);
       nsteps++;
+      G = F;
       GEN G1 = gel(G_H,1);
       A = lift(gel(G_H,2));
 #ifdef DEBUG_POLRED
@@ -197,8 +199,41 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
 #endif
   ZZX g = t_POL_to_ZZX(G, d); // this d=1
   assert (d==1);
-  // NB H need not have integer coefficients!
-  h = t_POL_to_ZZX(A, d); // this d may be >1
+
+  // Now H may not be unique (if the field has nontrivial
+  // automorphisms).  To be deterministic, we find all possibles, sort
+  // and return the first one.
+
+  GEN Hlist = nfisincl0(F, G, 0);
+  int nH = lg(Hlist)-1;
+#ifdef DEBUG_POLRED
+  cout << nH << " possible images: ";
+  pari_printf("%Ps\n", Hlist);
+#endif
+  if (nH==1) // only one choice
+    {
+      // NB H need not have integer coefficients!
+      h = t_POL_to_ZZX(A, d); // this d may be >1
+      avma = av;
+      return g;
+    }
+  vector<ZZX> hlist(nH);
+  vector<ZZ> dlist(nH);
+  for (int i=0; i<nH; i++)
+    hlist[i] = t_POL_to_ZZX(gel(Hlist,i+1), dlist[i]);
+
+#ifdef DEBUG_POLRED
+  cout << "After conversion:\nh-polys: " << hlist << "\ndenoms: " << dlist << endl;
+#endif
+
+  // Now we sort the h's and pick the first
+  auto hmin = std::min_element(hlist.begin(), hlist.end(), poly_cmp);
+  h = *hmin;
+  d = dlist[std::distance(hlist.begin(), hmin)];
+#ifdef DEBUG_POLRED
+  cout << "Smallest is h =  " << h << ", d = " << d << endl;
+#endif
+
   avma = av;
   return g;
 }
