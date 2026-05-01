@@ -25,11 +25,6 @@
 #include "eclib/logger.h"
 #include "eclib/xsplit.h"
 
-template class ff_data<int>;
-template class ff_data<long>;
-template class ff_data<ZZ>;
-template class ff_data<INT>;
-
 /**
  * ff_data()
  *
@@ -405,5 +400,12 @@ int ff_data<T>::map( long eig ) {
   int i = (int)(find(eigrange_.begin(),eigrange_.end(),eig)-eigrange_.begin());
   return i;
 }
+
+// Instantiate ff_data template classes for T=int, long, ZZ, INT
+
+template class ff_data<int>;
+template class ff_data<long>;
+template class ff_data<ZZ>;
+template class ff_data<INT>;
 
 // end of XSPLIT_DATA.CC
