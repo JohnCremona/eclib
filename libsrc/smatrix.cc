@@ -26,7 +26,7 @@
 #include <assert.h>
 #include "eclib/linalg.h"
 
-// Instantiate sZmat template classes for T=int, long, ZZ
+// Instantiate sZmat template classes for T=int, long, ZZ, INT
 
 template class sZmat<int>;
 template class sZmat<long>;

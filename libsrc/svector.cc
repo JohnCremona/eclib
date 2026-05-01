@@ -23,7 +23,7 @@
 
 #include "eclib/linalg.h"
 
-// Instantiate sZvec template classes for T=int, long, ZZ
+// Instantiate sZvec template classes for T=int, long, ZZ, INT
 
 template class sZvec<int>;
 template class sZvec<long>;

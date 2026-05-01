@@ -23,7 +23,7 @@
  
 #include "eclib/linalg.h"
 
-// Instantiate subZspace template classes for T=int, long, ZZ
+// Instantiate subZspace template classes for T=int, long, ZZ, INT
 
 template class subZspace<int>;
 template class subZspace<long>;

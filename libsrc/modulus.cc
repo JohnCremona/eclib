@@ -23,7 +23,7 @@
  
 #include "eclib/modulus.h"
 
-// Instantiate/specialise modulus_factory template classes for T=int, long, ZZ
+// Instantiate/specialise modulus_factory template classes for T=int, long, ZZ, INT
 
 // PRIME30 is (as defined in xmod.h) 1073741789,  the largest p such that p < 2^30
 template<> int default_modulus<int>()       { return modulus_factory_int.get_modulus();}

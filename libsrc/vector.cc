@@ -24,7 +24,7 @@
 #include "eclib/convert.h"
 #include "eclib/linalg.h"
 
-// Instantiate Zvec template classes for T=int, long, ZZ
+// Instantiate Zvec template classes for T=int, long, ZZ, INT
 
 template class Zvec<int>;
 template class Zvec<long>;

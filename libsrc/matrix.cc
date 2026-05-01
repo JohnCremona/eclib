@@ -25,7 +25,7 @@
 #include "eclib/linalg.h"
 #include "eclib/polys.h"
 
-// Instantiate Zmat template classes for T=int, long, ZZ
+// Instantiate Zmat template classes for T=int, long, ZZ, INT
 
 template class Zmat<int>;
 template class Zmat<long>;
@@ -2041,6 +2041,7 @@ ZZX charpoly(const Zmat<T>& A)
 template ZZX charpoly<int>(const Zmat<int>& A);
 template ZZX charpoly<long>(const Zmat<long>& A);
 template ZZX charpoly<ZZ>(const Zmat<ZZ>& A);
+template ZZX charpoly<INT>(const Zmat<INT>& A);
 
 ZZX scaled_charpoly(const mat_ZZ& A, const ZZ& den, const ZZ& m)
 {
@@ -2095,6 +2096,7 @@ mat_m evaluate(const ZZX& f, const Zmat<T>& A)
 template mat_m evaluate<int>(const ZZX& f, const Zmat<int>& A);
 template mat_m evaluate<long>(const ZZX& f, const Zmat<long>& A);
 template mat_m evaluate<ZZ>(const ZZX& f, const Zmat<ZZ>& A);
+template mat_m evaluate<INT>(const ZZX& f, const Zmat<INT>& A);
 
 // p should be monic:
 mat_ZZ CompanionMatrix(const ZZX& p)

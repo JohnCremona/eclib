@@ -25,7 +25,7 @@
 
 #include "eclib/linalg.h"
 
-// Instantiate sZmat_elim template classes for T=int, long, ZZ
+// Instantiate sZmat_elim template classes for T=int, long, ZZ, INT
 
 template class sZmat_elim<int>;
 template class sZmat_elim<long>;
