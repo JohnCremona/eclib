@@ -35,6 +35,11 @@ private:
   int d;        // degree
   ZZX minpoly;  // irreducible poly of degree d
   vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1, where C =dxd companion matrix of minpoly
+
+  int have_integral_basis; // 0 if not yet computed
+  ZZ order_index; // index of Z[gen] in ring of integers, 0 if not yet computed
+  vector<FieldElement> integral_basis;
+  mat_m basis_change_matrix; // powers of gen in terms of integral basis
 public:
   ~Field() {minpoly.kill();}
   Field(); // defaults to Q
@@ -66,6 +71,10 @@ public:
   string str(int raw=0) const;
   void read(istream& s);
   friend istream& operator>>(istream& s, Field& F);
+
+  // compute integral basis (via libpari), fill integral_basis and basis_change_matrix
+  void make_integral_basis();
+  vec_m integral_coords(const FieldElement& a);
 
   // Apply polredabs (if canonical) or polredbest to the defining
   // polynomial, define a new field with that poly and return an

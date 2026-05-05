@@ -29,6 +29,7 @@
 //#define DEBUG_FIELD_CONSTRUCTOR
 
 Field::Field(const ZZX& p, string a, int verb)
+  :have_integral_basis(0)
 {
 #ifdef DEBUG_FIELD_CONSTRUCTOR
   cout << "In Field constructor with poly " << ::str(p) << ", name = " << a << endl;
@@ -65,7 +66,7 @@ Field::Field(const ZZX& p, string a, int verb)
 }
 
 Field::Field() // defaults to Q
-  :var(""), d(1)
+  :var(""), d(1), have_integral_basis(0)
 {
   SetX(minpoly);
 #ifdef DEBUG_FIELD_CONSTRUCTOR
@@ -74,7 +75,7 @@ Field::Field() // defaults to Q
 }
 
 Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
-  : var(a), d(A.nrows())
+  : var(a), d(A.nrows()), have_integral_basis(0)
 {
   if (verb)
     {
@@ -202,6 +203,25 @@ FieldElement Field::gen() const
     return operator()(1);
   else
     return FieldElement(*this, Qvec::unit_vector(d, 2));
+}
+
+// compute integral basis (via libpari), fill integral_basis and basis_change_matrix
+void Field::make_integral_basis()
+{
+  if (have_integral_basis) return;
+
+  vector<Qvec> zbc;
+  nfinit(minpoly, order_index, zbc, basis_change_matrix);
+  integral_basis.resize(d);
+  std::transform(zbc.begin(), zbc.end(), integral_basis.begin(),
+                 [this](const Qvec& v) {return FieldElement(*this, v);});
+  have_integral_basis = 1;
+}
+
+vec_m Field::integral_coords(const FieldElement& a)
+{
+  Qvec coords = a.v;
+  return (basis_change_matrix * coords.get_numerator()) / coords.get_denom();
 }
 
 int FieldElement::is_zero() const
