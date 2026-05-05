@@ -131,8 +131,10 @@ void test_field(const Field& F)
   vector<FieldElement> Zbasis;
   for (int i=0; i<d; i++)
     Zbasis.push_back(FieldElement(Fred, zbasis_coords[i]));
-  cout << "Integral basis: " << Zbasis << endl;
-  cout << "Matrix of coefficients of powers w.r.t. integral basis:\n" << bcm << endl;
+  cout << "Integral basis: " << Zbasis << " // random" << endl;
+  cout << "Matrix of coefficients of powers w.r.t. integral basis:\n";
+  output_flat_matrix(bcm);
+  cout << " // random" << endl;
   cout << endl;
   cout << endl;
 }
