@@ -25,6 +25,7 @@
 #include "eclib/polys.h"
 #include "eclib/field.h"
 #include <eclib/pari_init.h>
+#include "eclib/polred.h"
 
 void test_field(const Field& F); // general test for any field
 void test_mqfield(const Field& F); // test of multiquadratic extensions
@@ -119,6 +120,20 @@ void test_field(const Field& F)
   FieldElement eb = emb(b);
   cout << "The image of b is " << eb << " with sqrt("<<eb<<") = " << r << endl;
   assert (r*r==eb);
+  cout << endl;
+
+  cout << "Testing nfinit interface for reduced polynomial " << str(Fred.poly()) << ":\n";
+  ZZ ind;
+  vector<Qvec> zbasis_coords;
+  mat_m bcm;
+  nfinit(Fred.poly(), ind, zbasis_coords, bcm);
+  cout << "Equation order has index " << ind << " in maximal order " << endl;
+  vector<FieldElement> Zbasis;
+  for (int i=0; i<d; i++)
+    Zbasis.push_back(FieldElement(Fred, zbasis_coords[i]));
+  cout << "Integral basis: " << Zbasis << endl;
+  cout << "Matrix of coefficients of powers w.r.t. integral basis:\n" << bcm << endl;
+  cout << endl;
   cout << endl;
 }
 

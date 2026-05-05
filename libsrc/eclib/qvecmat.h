@@ -65,6 +65,7 @@ public:
   vec_m get_numerator() const {return numerator;}
   ZZ get_denom() const {return denom;}
   int dim() const {return numerator.dim();}
+  bigrational operator[](int i) const {return bigrational(numerator[i], denom);}
   int operator==(const Qvec& b) const {return (denom==b.denom) && (numerator==b.numerator);}
   int operator!=(const Qvec& b) const {return (denom!=b.denom) || (numerator!=b.numerator);}
   Qvec operator+(const Qvec& b) const; // add

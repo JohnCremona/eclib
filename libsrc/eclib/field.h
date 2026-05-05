@@ -119,7 +119,7 @@ public:
   FieldElement(const Field& HF, const vec_m& c, const ZZ& d=to_ZZ(1))
     :F(&HF), v(c,d) {;}
   FieldElement(const Field& HF, const Qvec& c)
-    :F(&HF), v(c) {;}
+    :F(&HF), v(c)  {if (F->d==1) val = c[1];}
 
   // creation from a rational (general F)
   FieldElement(const Field& HF, const ZZ& a, const ZZ& d=to_ZZ(1))

@@ -39,6 +39,7 @@ using PARI::lift;
 using PARI::ZX_equal;
 using PARI::poleval;
 using PARI::nfisincl0;
+using PARI::nfinit0;
 
 //#define DEBUG_POLY
 
@@ -238,3 +239,59 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
   return g;
 }
 
+//#define DEBUG_NF_INIT
+
+void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm)
+{
+  pari_sp av = avma;
+  int d = deg(f);
+#ifdef DEBUG_NF_INIT
+  cout << "In nfinit(" << str(f) << ")" << endl;
+#endif
+  GEN F = ZZX_to_t_POL(f);
+  GEN nf = nfinit0(F, 0, DEFAULTPREC);
+#ifdef DEBUG_NF_INIT
+  pari_printf(" - PARI::nfinit0() returns%Ps\n", nf);
+#endif
+
+  ind = PARI_to_NTL(gel(nf, 4));
+#ifdef DEBUG_NF_INIT
+  cout << " - index of equation order in maximal order = ind = " << ind << endl;
+#endif
+
+  GEN zb = gel(nf, 7); // list of d integer polys mod F
+  // pari_printf(" - zb = %Ps\n", zb);
+  vec_m co(d);
+  zbasis.clear();
+  for (int i=0; i<d; i++)
+    {
+      GEN zbi = lift(gel(zb, i+1)); // integer poly
+      // pari_printf(" - zbi = %Ps\n", zbi);
+      int di = degpol(zbi);
+      for (int j=1; j<=d; j++)
+        co[j] = (j<=di+1? PARI_to_NTL(gel(zbi, j+1)) : ZZ(0)); // coeff of x^(j-1)
+      Qvec bi(co,ind);
+      zbasis.push_back(bi);
+#ifdef DEBUG_NF_INIT
+      cout << i << ": " << bi << endl;
+#endif
+    }
+#ifdef DEBUG_NF_INIT
+  cout << " - coefficients of integral basis w.r.t. power basis:\n";
+  for (auto bi: zbasis)
+    cout << bi << endl;
+#endif
+
+  GEN zbi = gel(nf, 8); // dxd matrix of integers
+  bcm.init(d,d);
+  for (int i=1; i<=d; i++)
+    for (int j=1; j<=d; j++)
+      bcm.set(i,j, PARI_to_NTL(gcoeff(zbi, i,j)));
+#ifdef DEBUG_NF_INIT
+  cout << " - coefficients of power basis w.r.t. integral basis:\n";
+  cout << bcm << endl;
+#endif
+
+  avma = av;
+  return;
+}

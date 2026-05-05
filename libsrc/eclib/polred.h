@@ -26,8 +26,8 @@
 
 #include <assert.h>
 #include "templates.h"
-#include "int.h"
 #include "polys.h"
+#include "qvecmat.h"
 #include "pari_init.h"
 #undef recip // pariold.h #defines recip = serreverse
 
@@ -50,5 +50,11 @@ ZZX polred(const ZZX& f, int canonical=0);
 // (2) also sets h such that a=h(b)/d (so f(h(b)/d)=0) where f(a)=g(b)=0
 ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical=0);
 
+// interface to nfinit: given f (monic irreducible) defining a field
+// K=Q(t), returns d = [O_K:Z[t]], zbasis of OK (as rational
+// coordinate vectors w.r.t. t-power basis), integral base-change
+// matrix (integral basis coordinates of powers of t)
+
+void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm);
 
 #endif
