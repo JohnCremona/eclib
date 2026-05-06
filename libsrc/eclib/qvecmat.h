@@ -53,7 +53,7 @@ public:
   static Qvec unit_vector(long d, long i) {return Qvec(vec_m::unit_vector(d,i));}
 
   // Before calling this the sie (dimension) must be set
-  void read (istream& s) { s >> numerator >> denom;}
+  void read(istream& s) { s >> numerator >> denom;}
 
   // String for pretty printing, used in default <<, or (if raw) raw
   // output, suitable for re-input:
@@ -114,7 +114,9 @@ public:
   int ncols() const {return numerator.ncols();}
 
   void setcol(int i, const Qvec& v);
+  void setrow(int i, const Qvec& v);
   Qvec col(int i) const {return Qvec(numerator.col(i), denom);}
+  Qvec row(int i) const {return Qvec(numerator.row(i), denom);}
 
   // trace, det, charpoly, inverse only for square matrices (not checked)
   bigrational trace() const {return bigrational(numerator.trace(), denom);}

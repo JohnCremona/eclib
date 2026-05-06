@@ -29,7 +29,7 @@
 //#define DEBUG_FIELD_CONSTRUCTOR
 
 Field::Field(const ZZX& p, string a, int verb)
-  :have_integral_basis(0)
+  :have_integral_basis(0), order_index(0)
 {
 #ifdef DEBUG_FIELD_CONSTRUCTOR
   cout << "In Field constructor with poly " << ::str(p) << ", name = " << a << endl;
@@ -66,7 +66,7 @@ Field::Field(const ZZX& p, string a, int verb)
 }
 
 Field::Field() // defaults to Q
-  :var(""), d(1), have_integral_basis(0)
+  :var(""), d(1), have_integral_basis(0), order_index(0)
 {
   SetX(minpoly);
 #ifdef DEBUG_FIELD_CONSTRUCTOR
@@ -75,7 +75,7 @@ Field::Field() // defaults to Q
 }
 
 Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
-  : var(a), d(A.nrows()), have_integral_basis(0)
+  : var(a), d(A.nrows()), have_integral_basis(0), order_index(0)
 {
   if (verb)
     {
@@ -94,9 +94,14 @@ Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
   // Binv*v.
 
   Cpowers.resize(d);
+  Cpower_traces.init(d);
   Cpowers[0] = mat_m::identity_matrix(d);
+  Cpower_traces[1] = ZZ(d); // vec_m indices start at 1
   for (int i=1; i<d; i++)
-    Cpowers[i] = C*Cpowers[i-1];
+    {
+      Cpowers[i] = C*Cpowers[i-1];
+      Cpower_traces[i+1] = Cpowers[i].trace();
+    }
   if(verb)
     {
       cout<<"basis  matrix = " << Binv.str()<<endl;
@@ -197,6 +202,23 @@ FieldElement Field::operator()(int x) const
   return operator()(bigrational(x));
 }
 
+FieldElement Field::operator()(const Qvec& v) const
+{
+  return element(v);
+}
+
+FieldElement Field::operator()(const vec_m& v) const // v-lin.comb. of int.basis
+{
+  FieldElement a(*this);
+  for (int i=0; i<d; i++)
+    {
+      ZZ vi = v[i+1];
+      if (!is_zero(vi))
+        a += integral_basis[i] * vi;
+    }
+  return a;
+}
+
 FieldElement Field::gen() const
 {
   if (d==1)
@@ -218,10 +240,29 @@ void Field::make_integral_basis()
   have_integral_basis = 1;
 }
 
-vec_m Field::integral_coords(const FieldElement& a)
+// recreate integral basis from index and base_change_matrix's inverse (after reading from file)
+
+void Field::set_integral_basis(const ZZ& i, const mat_m& M)
 {
-  Qvec coords = a.v;
-  return (basis_change_matrix * coords.get_numerator()) / coords.get_denom();
+  order_index = i;
+  basis_change_matrix = M;
+  Qmat bcm(M);
+  Qmat bcmi = bcm.inverse();
+  integral_basis.resize(d);
+  for (int j=0; j<d; j++)
+    integral_basis[j] = (*this)(bcmi.col(j+1));
+  have_integral_basis = 1;
+}
+
+vec_m Field::integral_coords(const FieldElement& a) const
+{
+  if (have_integral_basis)
+    {
+      Qvec coords = a.v;
+      return (basis_change_matrix * coords.get_numerator()) / coords.get_denom();
+    }
+  cerr << "No integral basis yet computed for Field " << *this << endl;
+  return vec_m();
 }
 
 int FieldElement::is_zero() const
@@ -388,7 +429,7 @@ bigrational FieldElement::trace() const
   if (is_rational(r)) // then trace = r*degree
     return ZZ(d) * r;
   else
-    return bigrational(matrix().trace(), v.denom);
+    return bigrational(v.numerator * F->Cpower_traces, v.denom);
 }
 
 void FieldElement::set_zero()

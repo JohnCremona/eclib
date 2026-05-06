@@ -28,7 +28,9 @@
 // Degree bound: fields of degree up to this will be reduced via
 // polredabs (giving a canonical defining polynomial); above this only
 // polredbest will be used.
-const int POLREDABS_DEGREE_UPPER_BOUND = 15;
+const int POLREDABS_DEGREE_UPPER_BOUND = 25;
+
+#define USE_INTEGRAL_BASES
 
 newform_comparison newform_cmp;
 
@@ -145,6 +147,9 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
                << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
         }
     }
+#ifdef USE_INTEGRAL_BASES
+  F->make_integral_basis();
+#endif
   if (verbose)
     {
       cout <<"Hecke field data:" << endl;
@@ -768,7 +773,7 @@ void Newform::display(int aP, int AL, int traces) const
 
 // Display aP data (trivial char or C4 fields)
 //#define CHECK_TRACES
-//#define BASES
+
 void Newform::display_aP() const
 {
   if (aPmap.empty())
@@ -776,17 +781,16 @@ void Newform::display_aP() const
       cout << "No aP known" << endl;
       return;
     }
-#ifdef BASES
-  Qmat bc;
+#ifdef USE_INTEGRAL_BASES
   if (d>1)
     {
-      bc = denom_abs * basis_change_inverse * Fiso.matrix().inverse();
-      FieldElement gen = F->gen();
-      FieldElement gen_power = F->operator()(1);
+      FieldElement gen = F->gen(), gen_power = (*F)(1);
+      cout << "Integral coordinates of power basis of Hecke field (index of Z["<<gen<<"] is "
+           << F->get_order_index()<<"):\n";
       for (int i=0; i<d; i++)
         {
-          cout << gen_power << "\t --> "
-               << bc * gen_power.coords() << endl;
+          cout << gen_power << "\t = "
+               << F->integral_coords(gen_power) << endl;
           if (i < d-1) gen_power *= gen;
         }
       cout << endl;
@@ -797,10 +801,16 @@ void Newform::display_aP() const
     {
       FieldElement aP = x.second;
       cout << x.first << ":\t";
-#ifdef BASES
-      if (d>1) cout << bc * aP.coords() << "\t\t";
+      if (d==1)
+        cout << aP;
+      else
+        {
+#ifdef USE_INTEGRAL_BASES
+          cout << F->integral_coords(aP);
+#else
+          cout << aP;
 #endif
-      cout << aP;
+        }
 #ifdef CHECK_TRACES
       bigrational taP = aP.trace();
       cout << " (trace = " << taP << ")";
@@ -883,16 +893,26 @@ void Newform::output_to_file() const
   out.open(filename().c_str());
 
   // Level, letter-code:
-  out << nsp->label() << " " << lab << endl;
+  out << nsp->label() << " " << lab << "\n";
 
   // Dimension
-  out << dimension() << endl;
+  out << dimension() << "\n";
 
   // Hecke field:
-  out << F->str(1) << endl;  // raw=1
-  // cout << "Principal Hecke field output:\n" << F->str(1) << endl;  // raw=1
+  out << F->str(1) << "\n";  // raw=1
+  // cout << "Principal Hecke field output:\n" << F->str(1) << "\n";  // raw=1
 
-  out << endl;
+#ifdef USE_INTEGRAL_BASES
+  int ib = F->has_integral_basis();
+  if (ib)
+    {
+      out << F->get_order_index() << "\n";
+      vec_out(out, F->get_bcm().get_entries(), " ", " ", " ");
+    }
+  else
+    out << "0";
+#endif
+  out << "\n\n";
 
   // Output A-L eigenvalues if computed, else output nothing
   vector<long> bads = nsp->badprimes;
@@ -901,15 +921,22 @@ void Newform::output_to_file() const
       int eQ=0;
       if (!eQmap.empty())
         eQ = eQmap.at(Q);
-      out << Q << " " << eQ << endl;
+      out << Q << " " << eQ << "\n";
     }
-  out << endl;
+  out << "\n";
 
   // Output aP
   for (auto x: aPmap)
     {
       FieldElement aP = x.second;
-      out << x.first << " " << aP.str(1) << endl;
+      out << x.first << " ";
+#ifdef USE_INTEGRAL_BASES
+      if (ib && d>1)
+        out << F->integral_coords(aP);
+      else
+#endif
+        out << aP.str(1);
+      out << "\n";
     }
 }
 
@@ -942,11 +969,27 @@ int Newform::input_from_file(int verb)
   F = new Field();
   F->read(fdata);
 
- if (verb>1)
+  if (verb>1)
     {
       cout << "After reading Hecke field, before reading eigenvalues:" << endl;
       display();
     }
+
+#ifdef USE_INTEGRAL_BASES
+  // read integral basis info if present
+
+  ZZ ib;
+  fdata >>ib; // either 0 or the index of the equation order
+  if (!is_zero(ib))
+    {
+      // cout << "Read order index = " << ib << endl;
+      mat_m bcm(d,d);
+      fdata >> bcm;
+      // cout << "Read bcm = \n" << bcm << endl;
+      F->set_integral_basis(ib,bcm);
+      // cout << "After set_integral_bases, F has integral basis " << F->get_integral_basis() << endl;
+    }
+#endif
 
   fdata >> ws;
   sfe = -1;
@@ -980,14 +1023,26 @@ int Newform::input_from_file(int verb)
   // aP
   long P; maxP=0;
   FieldElement aP(*F);
+  vec_m aPcoords(d);
+
   // read whitespace, so if there are no aP on file it does not try to read any
   fdata >> ws;
   // keep reading lines until end of file
   while (!fdata.eof())
     {
-      fdata >> P // prime label
-            >> aP   // eigenvalue data
-            >> ws;  // eat whitespace, including newline
+      fdata >> P;    // prime label
+#ifdef USE_INTEGRAL_BASES
+      if (d==1)
+        fdata >> aP;
+      else
+        {
+          fdata >> aPcoords;
+          aP = (*F)(aPcoords);
+        }
+#else
+      fdata >> aP;   // eigenvalue data
+#endif
+      fdata >> ws;  // eat whitespace, including newline
       aPmap[P] = aP;
       if (verb>1)
         cout << "--> P = " << P

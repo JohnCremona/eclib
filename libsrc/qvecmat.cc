@@ -141,6 +141,15 @@ void Qmat::setcol(int i, const Qvec& v)
   cancel();
 }
 
+void Qmat::setrow(int i, const Qvec& v)
+{
+  ZZ new_d = lcm(denom, v.denom);
+  numerator *= (new_d/denom);
+  denom = new_d;
+  numerator.setrow(i, (new_d/v.denom) * v.numerator);
+  cancel();
+}
+
 // Compute matrix B, with column j equal to A^(j-1)v for j from 1 to
 // d, where v is the first unit vector, so that A*B=B*C where C is the
 // companion matrix of A's minpoly. We assume that A has integral char

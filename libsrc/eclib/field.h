@@ -35,11 +35,13 @@ private:
   int d;        // degree
   ZZX minpoly;  // irreducible poly of degree d
   vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1, where C =dxd companion matrix of minpoly
+  vec_m Cpower_traces; // traces of C^i
 
   int have_integral_basis; // 0 if not yet computed
   ZZ order_index; // index of Z[gen] in ring of integers, 0 if not yet computed
   vector<FieldElement> integral_basis;
   mat_m basis_change_matrix; // powers of gen in terms of integral basis
+
 public:
   ~Field() {minpoly.kill();}
   Field(); // defaults to Q
@@ -58,6 +60,8 @@ public:
   FieldElement gen() const;
   FieldElement element(const vec_m& c, const ZZ& d=to_ZZ(1)) const;
   FieldElement element(const Qvec& v) const;
+  FieldElement operator()(const Qvec& v) const;
+  FieldElement operator()(const vec_m& v) const; // v-lin.comb. of int.basis
   int degree() const {return d;}
   int isQ() const {return d==1;}
   ZZX poly() const {return minpoly;}
@@ -74,7 +78,15 @@ public:
 
   // compute integral basis (via libpari), fill integral_basis and basis_change_matrix
   void make_integral_basis();
-  vec_m integral_coords(const FieldElement& a);
+  // recreate integral basis from index and base_change_matrix's inverse (after reading from file)
+  void set_integral_basis(const ZZ& i, const mat_m& M);
+
+  vec_m integral_coords(const FieldElement& a) const;
+
+  int has_integral_basis() const {return have_integral_basis;}
+  vector<FieldElement> get_integral_basis() const {return integral_basis;}
+  ZZ get_order_index() const {return order_index;}
+  mat_m get_bcm() const {return basis_change_matrix;}
 
   // Apply polredabs (if canonical) or polredbest to the defining
   // polynomial, define a new field with that poly and return an
