@@ -96,7 +96,7 @@ int main(void)
        {
          cout<<"Computed matrix ";
          if(den>1) cout<<" (scaled by "<<den<<") = ";
-         output_flat_matrix(wq);
+         wq.output_flat(cout);
          cout<<endl;
        }
      smat swq(wq);
@@ -141,7 +141,7 @@ int main(void)
        {
          cout<<"Computed matrix ";
          if(den>1) cout<<" (scaled by "<<den<<") = ";
-         output_flat_matrix(tp);
+         tp.output_flat(cout);
          cout<<endl;
        }
      stop_time();

@@ -73,8 +73,12 @@ public:
   T determinant() const;
   int is_zero() const;
   void output(ostream&s=cout) const;
+  void output_raw(ostream&s=cout) const; // no "[", "]", commas or newlines
   void output_pari(ostream&s=cout) const;
   void output_pretty(ostream&s=cout) const;
+  // same as output() except no newlines between rows
+  void output_flat(ostream&s = cout) const;
+
   void reduce_mod_p(const T& p);
 
   static Zmat<T> scalar_matrix(long n, const T& a);
@@ -245,10 +249,6 @@ long nullity(mat_ZZ A);
 mat_m lin_comb_mats(const vec_m& co, const vector<mat_m>& mats);
 // Linear combinarion of n>0 matrices, all dxd
 mat_m lin_comb_mats(const vector<ZZ>& co, const vector<mat_m>& mats);
-
-// same as m.output(cout) except no newlines between rows
-template<class T>
-void output_flat_matrix(const Zmat<T>& m, ostream&s = cout);
 
 Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr);
 Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr);

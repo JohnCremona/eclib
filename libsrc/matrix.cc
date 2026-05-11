@@ -292,6 +292,12 @@ int operator==(const Zmat<T>& m1, const Zmat<T>& m2)
 }
 
 template<class T>
+void Zmat<T>::output_raw(ostream& s) const
+{
+  std::copy(entries.begin(), entries.end(), ostream_iterator<T>(s," "));
+}
+
+template<class T>
 void Zmat<T>::output(ostream& s) const
 {
   auto mij=entries.begin();
@@ -301,8 +307,39 @@ void Zmat<T>::output(ostream& s) const
     {
       long nc=nco;
       s<<"[";
-      while(nc--) {s<<(*mij++); if(nc) s<<",";}
-      s<<"]"; if(nr) s<<",\n";
+      while(nc--)
+        {
+          s<<(*mij++);
+          if(nc)
+            s<<",";
+        }
+      s<<"]";
+      if(nr)
+        s<<",\n";
+    }
+  s << "]";
+}
+
+// same as m.output(cout) except no newlines between rows
+template<class T>
+void Zmat<T>::output_flat(ostream&s) const
+{
+  auto mij = entries.begin();
+  s << "[";
+  long nr=nro;
+  while(nr--)
+    {
+      long nc = nco;
+      s<<"[";
+      while(nc--)
+        {
+          s<<(*mij++);
+          if(nc)
+            s<<",";
+        }
+      s<<"]";
+      if(nr)
+        s<<",";
     }
   s << "]";
 }
@@ -2154,31 +2191,6 @@ mat_m lin_comb_mats(const vector<ZZ>& co, const vector<mat_m>& mats)
   return a;
 }
 
-// same as m.output(cout) except no newlines between rows
-template<class T>
-void output_flat_matrix(const Zmat<T>& m, ostream&s)
-{
-  vector<T> entries = m.get_entries();
-  auto mij = entries.begin();
-  s << "[";
-  long nr = m.nrows();
-  while(nr--)
-    {
-      long nc = m.ncols();
-      s<<"[";
-      while(nc--)
-        {
-          s<<(*mij++);
-          if(nc)
-            s<<",";
-        }
-      s<<"]";
-      if(nr)
-        s<<",";
-    }
-  s << "]";
-}
-
 // rank of an NTL matrix:
 long rank(mat_ZZ A)
 {
@@ -2258,7 +2270,6 @@ template int inverse<int>(const Zmat<int>&, Zmat<int>&);
 template int liftmat<int>(const Zmat<int>& mm, const int& pr, Zmat<int>& m, int& dd);
 template void Zvec<int>::sub_row(const Zmat<int>& m, int i);
 template void Zvec<int>::add_row(const Zmat<int>& m, int i);
-template void output_flat_matrix<int>(const Zmat<int>& m, ostream&s);
 
 // Instantiate Zmat template functions for T=long
 template void add_row_to_vec<long>(Zvec<long>& v, const Zmat<long>& m, long i);
@@ -2317,7 +2328,6 @@ template long inverse<long>(const Zmat<long>&, Zmat<long>&);
 template int liftmat<long>(const Zmat<long>& mm, const long& pr, Zmat<long>& m, long& dd);
 template void Zvec<long>::sub_row(const Zmat<long>& m, int i);
 template void Zvec<long>::add_row(const Zmat<long>& m, int i);
-template void output_flat_matrix<long>(const Zmat<long>& m, ostream&s);
 
 // Instantiate Zmat template functions for T=ZZ
 template void add_row_to_vec<ZZ>(Zvec<ZZ>& v, const Zmat<ZZ>& m, long i);
@@ -2376,7 +2386,6 @@ template ZZ inverse<ZZ>(const Zmat<ZZ>&, Zmat<ZZ>&);
 template int liftmat<ZZ>(const Zmat<ZZ>& mm, const ZZ& pr, Zmat<ZZ>& m, ZZ& dd);
 template void Zvec<ZZ>::sub_row(const Zmat<ZZ>& m, int i);
 template void Zvec<ZZ>::add_row(const Zmat<ZZ>& m, int i);
-template void output_flat_matrix<ZZ>(const Zmat<ZZ>& m, ostream&s);
 
 // Instantiate Zmat template functions for T=INT
 template void add_row_to_vec<INT>(Zvec<INT>& v, const Zmat<INT>& m, long i);
@@ -2431,4 +2440,3 @@ template INT inverse<INT>(const Zmat<INT>&, Zmat<INT>&);
 template int liftmat<INT>(const Zmat<INT>& mm, const INT& pr, Zmat<INT>& m, INT& dd);
 template void Zvec<INT>::sub_row(const Zmat<INT>& m, int i);
 template void Zvec<INT>::add_row(const Zmat<INT>& m, int i);
-template void output_flat_matrix<INT>(const Zmat<INT>& m, ostream&s);

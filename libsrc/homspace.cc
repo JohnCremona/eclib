@@ -695,7 +695,7 @@ ZZX homspace::charpoly(const matop& T, int cuspidal) const
   if (cuspidal) cout << " on cuspidal subspace";
   else  cout << " on full space";
   mat M = calcop(T,cuspidal,0);
-  cout << "Matrix: "; output_flat_matrix(M); cout << endl;
+  cout << "Matrix: "; M.output_flat(cout); cout << endl;
   cout << "denominator: " << Tden << endl;
   cout << "scaled char poly: " << scaled_charpoly(mat_to_mat_ZZ(M), Tden) << endl;
 #endif
@@ -1727,7 +1727,7 @@ mat get_full_mat(const long& N,  const matop& T, const scalar& mod)
   full_mat_dict[NT] = M;
 #ifdef DEBUG_GET_FULL_MAT
   cout << "caching and returning matrix of " << NT << endl;
-  output_flat_matrix(M);
+  M.output_flat(cout);
   cout << endl;
 #endif
   return M;
@@ -1829,7 +1829,8 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
 #ifdef DEBUG_GET_POLY
   cout << "Full matrix M of size " << M.nrows() << " obtained from get_full_mat()" << endl;
   cout << "den =  " << hden << endl;
-  output_flat_matrix(M);  cout << endl;
+  M.output_flat(cout);
+  cout << endl;
 #endif
   if (cuspidal)
     {
@@ -1839,7 +1840,7 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
       cout << "Cuspidal case" << endl;
       cout << "Restricted M to cuspidal subspace"
            << " (which has denominator " << hden << "):" << endl;
-      output_flat_matrix(M);
+      M.output_flat(cout);
       cout << endl;
 #endif
     }

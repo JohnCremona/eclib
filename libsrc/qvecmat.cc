@@ -115,7 +115,10 @@ string Qmat::str(int raw) const
 {
   ostringstream s;
   if (raw)
-    s << numerator << " " << denom;
+    {
+      numerator.output_raw(s);
+      s << " " << denom;
+    }
   else
     {
       s << numerator;

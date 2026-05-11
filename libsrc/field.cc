@@ -109,7 +109,7 @@ Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
       if (verb>1)
         {
           cout<<"companion matrix  = ";
-          output_flat_matrix(C);
+          C.output_flat(cout);
           cout<<endl;
         }
       cout << "Leaving Field constructor" << endl;
@@ -846,7 +846,7 @@ FieldIso FieldIso::operator*(const FieldIso& iso)
 string FieldIso::str(int raw) const
 {
   if (raw)
-    return isomat.str(1);
+    return isomat.str(raw);
   ostringstream s;
   //cout << "(domain = " << domain << ", codomain = " << codomain << "): " << endl;
   //s << "(domain = " << domain << ", codomain = " << codomain << "): " << endl;
@@ -876,6 +876,7 @@ string FieldIso::str(int raw) const
 // the matrix and denominator
 void FieldIso::read(istream& s)
 {
+  isomat = Qmat(codomain->degree(), domain->degree());
   s >> isomat;
   set_id_flag();
 }

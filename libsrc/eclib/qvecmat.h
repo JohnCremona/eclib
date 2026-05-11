@@ -52,7 +52,7 @@ public:
   explicit Qvec(const vec_m& c, const ZZ& d=to_ZZ(1)) :numerator(c), denom(d) { cancel();}
   static Qvec unit_vector(long d, long i) {return Qvec(vec_m::unit_vector(d,i));}
 
-  // Before calling this the sie (dimension) must be set
+  // Before calling this the size (dimension) must be set
   void read(istream& s) { s >> numerator >> denom;}
 
   // String for pretty printing, used in default <<, or (if raw) raw
@@ -99,7 +99,7 @@ public:
   static Qmat identity(long d) {return Qmat(mat_m::identity_matrix(d));}
   static Qmat zero(long d) {return Qmat(mat_m(d,d));}
 
-  // Before calling this the sie (dimension) must be set
+  // Before calling this the size (dimension) must be set
   void read (istream& s) { s >> numerator >> denom;}
 
   // String for pretty printing, used in default <<, or (if raw) raw
