@@ -111,4 +111,7 @@ int main(void)
  cout << "u = "<< u << endl;
  swapvec(u,v);
  cout << "After swapvec(u,v):\nu = " << u << "\nv = " << v << endl;
+
+  flint_cleanup_master();
+  exit(0);
 }

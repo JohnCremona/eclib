@@ -104,6 +104,8 @@ int test(const ZZ& a)
       return 0;
     }
   return 1;
+  flint_cleanup_master();
+  exit(0);
 }
 
 std::ostream& operator<<(std::ostream& s, const fmpz_t& a)

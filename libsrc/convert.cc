@@ -171,7 +171,7 @@ fmpz_t* PARI_to_FLINT(const GEN& a)  // from PARI to FLINT
   if (!is_bigint(a))
     {
       fmpz_t* b = new fmpz_t[1];
-      fmpz_set_si(b[0], itos(a));
+      fmpz_init_set_si(b[0], itos(a));
       return b;
     }
   // deal with sign (a is certainly nonzero here)

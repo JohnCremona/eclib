@@ -40,7 +40,14 @@ std::ostream& operator<<(std::ostream& s, const INT& a)
 
 std::istream& operator>>(std::istream& s, INT& x)
 {
-  // std::cout << "Reading into an INT..." << std::endl;
+  //std::cout << "Reading into an INT..." << std::endl;
+
+  // This does not work since the string input only stops at whitespace
+  // std::string st;
+  // s >> st;
+  // std::cout << "...read string " << st << std::endl;
+  // fmpz_set_str(x.z, st.c_str(), 10);
+
   x = 0;
   int digit = 0, neg = 0;
   char c;
@@ -83,7 +90,8 @@ std::istream& operator>>(std::istream& s, INT& x)
     }
   if (neg)
     x = -x;
-  // std::cout << "Final character read was " << c << ", final x = " << x << std::endl;
+  // std::cout << "Final character read was " << c << std::endl;
+  // std::cout << "...the INT is " << x << std::endl;
   return s;
 }
 

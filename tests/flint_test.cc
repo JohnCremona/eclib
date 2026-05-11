@@ -130,4 +130,7 @@ int main ()
   RAT q;
   cin >> q;
   cout<<"   value entered: "<<q<<endl;
+
+  flint_cleanup_master();
+  exit(0);
 }
