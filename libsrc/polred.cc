@@ -40,6 +40,7 @@ using PARI::ZX_equal;
 using PARI::poleval;
 using PARI::nfisincl0;
 using PARI::nfinit0;
+using PARI::nfbasis;
 
 //#define DEBUG_POLY
 
@@ -248,48 +249,45 @@ void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm)
 #ifdef DEBUG_NF_INIT
   cout << "In nfinit(" << str(f) << ")" << endl;
 #endif
-  GEN F = ZZX_to_t_POL(f);
-  GEN nf = nfinit0(F, 0, DEFAULTPREC);
+  GEN* disc = new GEN(stoi(0));
+  GEN pol_and_bound = mkvecn(2, ZZX_to_t_POL(f), stoi(100000000));
+  GEN nf = nfbasis(pol_and_bound, disc);
+  // GEN nf = nfbasis( ZZX_to_t_POL(f), disc);
 #ifdef DEBUG_NF_INIT
-  pari_printf(" - PARI::nfinit0() returns%Ps\n", nf);
+  pari_printf(" - PARI::nfbasis() returns %Ps with disc = %Ps\n", nf, *disc);
 #endif
 
-  ind = PARI_to_NTL(gel(nf, 4));
-#ifdef DEBUG_NF_INIT
-  cout << " - index of equation order in maximal order = ind = " << ind << endl;
-#endif
-
-  GEN zb = gel(nf, 7); // list of d integer polys mod F
-  // pari_printf(" - zb = %Ps\n", zb);
-  vec_m co(d);
   zbasis.clear();
+  zbasis.resize(d);
   for (int i=0; i<d; i++)
     {
-      GEN zbi = lift(gel(zb, i+1)); // integer poly
-      // pari_printf(" - zbi = %Ps\n", zbi);
-      int di = degpol(zbi);
-      for (int j=1; j<=d; j++)
-        co[j] = (j<=di+1? PARI_to_NTL(gel(zbi, j+1)) : ZZ(0)); // coeff of x^(j-1)
-      Qvec bi(co,ind);
-      zbasis.push_back(bi);
 #ifdef DEBUG_NF_INIT
-      cout << i << ": " << bi << endl;
+      pari_printf(" - basis elt = %Ps\n", gel(nf, i+1));
+#endif
+      ZZ di;
+      ZZX bi(t_POL_to_ZZX(lift(gel(nf, i+1)), di));
+      // bi may have degree < d-1; if so we pad with 0s
+      zbasis[i] = Qvec(vec_m(coeffs(bi, d-1)), di);
+#ifdef DEBUG_NF_INIT
+      cout << "i="<<i<<", zbasis[i] = " << zbasis[i] << endl;
 #endif
     }
-#ifdef DEBUG_NF_INIT
-  cout << " - coefficients of integral basis w.r.t. power basis:\n";
-  for (auto bi: zbasis)
-    cout << bi << endl;
-#endif
 
-  GEN zbi = gel(nf, 8); // dxd matrix of integers
-  bcm.init(d,d);
+  // change of basis matrices:
+  Qmat bcmi(d,d); //  matrix of coeffs of integral basis w.r.t. power basis
   for (int i=1; i<=d; i++)
-    for (int j=1; j<=d; j++)
-      bcm.set(i,j, PARI_to_NTL(gcoeff(zbi, i,j)));
+    bcmi.setcol(i, zbasis[i-1]);
+
+  Qmat bcm_Q = bcmi.inverse();
+  bcm = bcm_Q.get_numerator();
+  if (!is_one(bcm_Q.get_denom()))
+    cout << "Error: non-integral coefficients in matrix of  power basis w.r.t. integral basis:\n"
+         << " denominator = " << bcm_Q.get_denom() << endl;
+  ind = bcm.determinant();
 #ifdef DEBUG_NF_INIT
   cout << " - coefficients of power basis w.r.t. integral basis:\n";
   cout << bcm << endl;
+  cout << " - index of equation order = " << ind << endl;
 #endif
 
   avma = av;

@@ -245,21 +245,25 @@ string str(const Zvec<ZZ>& coeffs, const string& var)
   return str(co, var);
 }
 
-vector<ZZ> coeffs(const ZZX& p)
+// Extract vector of coefficients from a polynomial. If pad>0, pad the
+// vector with 0s (if necessary) to size pad+1 instead of degree+1.
+vector<ZZ> coeffs(const ZZX& p, int pad)
 {
   int d = deg(p);
-  vector<ZZ> v(d+1);
-  for(int i=0; i<=d; i++)
-    v[i] = coeff(p, i);
+  int xd = max(d, pad);
+  vector<ZZ> v(xd + 1);
+  for(int i=0; i<=xd; i++)
+    v[i] = (i<=d? coeff(p, i) : ZZ(0));
   return v;
 }
 
-vector<ZZ> coeffs(const ZZ_pX& p)
+vector<ZZ> coeffs(const ZZ_pX& p, int pad)
 {
   int d = deg(p);
-  vector<ZZ> v(d+1);
-  for(int i=0; i<=d; i++)
-    v[i] = rep(coeff(p, i));
+  int xd = max(d, pad);
+  vector<ZZ> v(xd + 1);
+  for(int i=0; i<=xd; i++)
+    v[i] = (i<=d? rep(coeff(p, i)) : ZZ(0));
   return v;
 }
 

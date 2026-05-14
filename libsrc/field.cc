@@ -254,8 +254,28 @@ void Field::set_integral_basis(const ZZ& i, const mat_m& M)
   have_integral_basis = 1;
 }
 
+// rational coordinate vector w.r.t. integral basis
+Qvec Field::rational_coords(const FieldElement& a) const
+{
+  if (d==1)
+    {
+      vec_m n(1);
+      n[1] = a.val.num();
+      return Qvec(n, a.val.den());
+    }
+  Qvec coords = a.v;
+  return Qvec(basis_change_matrix * coords.get_numerator(), coords.get_denom());
+}
+
 vec_m Field::integral_coords(const FieldElement& a) const
 {
+  if (d==1)
+    {
+      vec_m n(1);
+      n[1] = a.val.num();
+      return n;
+    }
+
   if (have_integral_basis)
     {
       Qvec coords = a.v;
@@ -273,8 +293,11 @@ vec_m Field::integral_coords(const FieldElement& a) const
         }
       return ans_num/ans_den;
     }
-  cerr << "No integral basis yet computed for Field " << *this << endl;
-  return vec_m();
+  else
+    {
+      cerr << "No integral basis yet computed for Field " << *this << endl;
+      return vec_m();
+    }
 }
 
 int FieldElement::is_zero() const

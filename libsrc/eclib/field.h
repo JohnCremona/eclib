@@ -81,6 +81,9 @@ public:
   // recreate integral basis from index and base_change_matrix's inverse (after reading from file)
   void set_integral_basis(const ZZ& i, const mat_m& M);
 
+  // rational coordinate vector w.r.t. integral basis
+  Qvec rational_coords(const FieldElement& a) const;
+  // integral coordinate vector w.r.t. integral basis (assumes a is integral)
   vec_m integral_coords(const FieldElement& a) const;
 
   int has_integral_basis() const {return have_integral_basis;}
