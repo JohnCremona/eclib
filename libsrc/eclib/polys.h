@@ -126,8 +126,11 @@ extern poly_comparison poly_cmp;
 extern factor_modp_comparison fact_modp_cmp;
 extern poly_modp_comparison poly_modp_cmp;
 
-vector<ZZ> coeffs(const ZZX& p);
-vector<ZZ> coeffs(const ZZ_pX& p);
+// Extract vector of coefficients from a polynomial. If pad>0, pad the
+// vector with 0s (if necessary) to size pad+1 instead of degree+1.
+vector<ZZ> coeffs(const ZZX& p, int pad=0);
+vector<ZZ> coeffs(const ZZ_pX& p, int pad=0);
+
 string str(const vector<ZZ>& coeffs, const string& var="X");
 string str(const Zvec<ZZ>& coeffs, const string& var="X");
 string str(const ZZX& p, const string& var="X");
