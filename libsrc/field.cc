@@ -259,7 +259,19 @@ vec_m Field::integral_coords(const FieldElement& a) const
   if (have_integral_basis)
     {
       Qvec coords = a.v;
-      return (basis_change_matrix * coords.get_numerator()) / coords.get_denom();
+      vec_m ans_num = basis_change_matrix * coords.get_numerator();
+      ZZ c = content(ans_num);
+      ZZ ans_den = coords.get_denom();
+      // We will return ans_num/ans_den but must check that the result
+      // will be integral, otherwise the argument a is not an
+      // algebraic integer (i.e., in the order spanned by the field's
+      // integral_basis):
+      ZZ a_den = ans_den / gcd(c, ans_den);
+      if (!is_one(a_den))
+        {
+          cout << "Error in computing integral_coords(a) for a = " << a << ": it has denominator " << a_den << endl;
+        }
+      return ans_num/ans_den;
     }
   cerr << "No integral basis yet computed for Field " << *this << endl;
   return vec_m();
