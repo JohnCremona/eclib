@@ -36,10 +36,12 @@
 
 class Qvec; // vec_m (=Zvec<ZZ>) with common denominator
 class Qmat; // mat_m (=Zmat<ZZ>) with common denominator
+class Field;
 class FieldIso;
 class FieldElement;
 
 class Qvec {
+  friend class Field;
   friend class FieldElement;
   friend class Qmat;
   vec_m numerator;
@@ -50,6 +52,7 @@ public:
   Qvec() :numerator(vec_m()), denom(to_ZZ(1)) {;}
   explicit Qvec(int d) :numerator(vec_m(d)), denom(to_ZZ(1)) {;}
   explicit Qvec(const vec_m& c, const ZZ& d=to_ZZ(1)) :numerator(c), denom(d) { cancel();}
+  explicit Qvec(const bigrational& r) :numerator(vec_m({r.num()})), denom(r.den()) {;}
   static Qvec unit_vector(long d, long i) {return Qvec(vec_m::unit_vector(d,i));}
 
   // Before calling this the size (dimension) must be set
@@ -79,6 +82,7 @@ public:
   inline friend Qvec operator*(const ZZ& c, const Qvec& v) {return Qvec(c*v.numerator, v.denom);}
   inline friend ostream& operator<<(ostream& s, const Qvec& x) { s << x.str();  return s;}
   friend Qvec operator*(const Qmat&m, const Qvec& v);
+  friend Qvec operator*(const mat_m&m, const Qvec& v);
 };
 
 inline istream& operator>>(istream& s, Qvec& x) {x.read(s); return s;}
@@ -139,6 +143,7 @@ public:
   inline friend Qmat operator*(const ZZ& c, const Qmat& x) {return Qmat(c*x.numerator, x.denom);}
   inline friend Qmat operator*(const Qmat&m1, const Qmat& m2) {return Qmat(m1.numerator*m2.numerator, m1.denom*m2.denom);}
   inline friend Qvec operator*(const Qmat&m, const Qvec& v) {return Qvec(m.numerator*v.numerator, m.denom*v.denom);}
+  inline friend Qvec operator*(const mat_m&m, const Qvec& v) {return Qvec(m*v.numerator, v.denom);}
   inline friend ostream& operator<<(ostream& s, const Qmat& x) { s << x.str();  return s;}
 };
 

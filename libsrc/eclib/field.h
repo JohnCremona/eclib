@@ -83,6 +83,8 @@ public:
 
   // rational coordinate vector w.r.t. integral basis
   Qvec rational_coords(const FieldElement& a) const;
+  // denominator of rational coordinate vector w.r.t. integral basis
+  ZZ denominator(const FieldElement& a) const;
   // integral coordinate vector w.r.t. integral basis (assumes a is integral)
   vec_m integral_coords(const FieldElement& a) const;
 

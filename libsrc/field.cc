@@ -258,13 +258,17 @@ void Field::set_integral_basis(const ZZ& i, const mat_m& M)
 Qvec Field::rational_coords(const FieldElement& a) const
 {
   if (d==1)
-    {
-      vec_m n(1);
-      n[1] = a.val.num();
-      return Qvec(n, a.val.den());
-    }
-  Qvec coords = a.v;
-  return Qvec(basis_change_matrix * coords.get_numerator(), coords.get_denom());
+    return Qvec(a.val);
+  if (have_integral_basis)
+    return basis_change_matrix * a.v;
+  cerr << "No integral basis yet computed for Field " << *this << endl;
+  return Qvec();
+}
+
+// denominator of rational coordinate vector w.r.t. integral basis
+ZZ Field::denominator(const FieldElement& a) const
+{
+  return rational_coords(a).denom;
 }
 
 vec_m Field::integral_coords(const FieldElement& a) const
@@ -278,20 +282,12 @@ vec_m Field::integral_coords(const FieldElement& a) const
 
   if (have_integral_basis)
     {
-      Qvec coords = a.v;
-      vec_m ans_num = basis_change_matrix * coords.get_numerator();
-      ZZ c = content(ans_num);
-      ZZ ans_den = coords.get_denom();
-      // We will return ans_num/ans_den but must check that the result
-      // will be integral, otherwise the argument a is not an
-      // algebraic integer (i.e., in the order spanned by the field's
-      // integral_basis):
-      ZZ a_den = ans_den / gcd(c, ans_den);
-      if (!is_one(a_den))
-        {
-          cout << "Error in computing integral_coords(a) for a = " << a << ": it has denominator " << a_den << endl;
-        }
-      return ans_num/ans_den;
+      Qvec coords = rational_coords(a);
+      if (!is_one(coords.denom))
+        cout << "Error in computing integral_coords(a) for a = " << a
+             << ": it has denominator " << coords.denom
+             << " so is not integral" << endl;
+      return coords.numerator;
     }
   else
     {
