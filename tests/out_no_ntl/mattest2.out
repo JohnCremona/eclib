@@ -161,3 +161,17 @@ Calling ref_via_flint()...
  ref_via_flint() returns
 [[1,0],
 [0,1]]
+Testing conversion to and from FLINT matrices: OK
+Testing HNF via FLINT: 
+M = 
+[[2,4,4],
+[-6,6,12],
+[10,-4,-16]]
+HNF(M) = 
+[[2,4,4],
+[0,6,0],
+[0,0,12]]
+SNF(M) = 
+[[2,0,0],
+[0,6,0],
+[0,0,12]]

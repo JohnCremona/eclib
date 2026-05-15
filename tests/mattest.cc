@@ -144,9 +144,32 @@ int main(void)
   cout << " ref_via_flint() returns\n" << R << endl;
 
   // test conversion to/from FLINT matrices:
-  fmpz_mat_t M;
-  flint_mat_from_mat(M,a);
-  assert (a == mat_from_flint_mat(M, (scalar)(0)));
+
+  cout << "Testing conversion to and from FLINT matrices: " << flush;
+  fmpz_mat_t A;
+  flint_mat_from_mat(A,a);
+  b = mat_from_flint_mat(A, (scalar)(0));
+  if (a == b)
+    cout << "OK" << endl;
+  else
+    {
+      cout << "***** not OK: from "; a.output_flat(cout);
+      cout << " to "; b.output_flat(cout); cout << endl;
+    }
+
+  // Test HNF and SNF via FLINT
+  cout << "Testing HNF via FLINT: " << endl;
+  vector<int> e = {2,4,4,
+                   -6,6,12,
+                   10,-4,-16};
+  vector<scalar> entries(e.size());
+  std::transform(e.begin(), e.end(), entries.begin(), [](const int& Mij){return scalar(Mij);});
+  mat M = mat(3,3,entries);
+  cout << "M = \n" << M << endl;
+  mat H = HNF(M);
+  cout << "HNF(M) = \n" << H << endl;
+  mat S = SNF(M);
+  cout << "SNF(M) = \n" << S << endl;
 
 #ifdef TIMER
   stop_time();

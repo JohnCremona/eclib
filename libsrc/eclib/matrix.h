@@ -258,6 +258,13 @@ void flint_mat_from_mat(fmpz_mat_t& A, const Zmat<T>& M);
 template<class T>
 Zmat<T> mat_from_flint_mat(fmpz_mat_t& A, const T& dummy);
 
+// Hermite and Smith Normal Forms (via FLINT)
+template<class T>
+Zmat<T> HNF(const Zmat<T>& M);
+
+template<class T>
+Zmat<T> SNF(const Zmat<T>& M);
+
 Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr);
 Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr);
 Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr);
