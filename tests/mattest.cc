@@ -2,36 +2,42 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
+//#define TIMER  // not defined for automatic tests
+
 #include <cassert>
 #include <iostream>
+#ifdef TIMER
 #include <eclib/timer.h>
+#endif
 #include <eclib/linalg.h>
 
 const scalar modulus(default_modulus<scalar>());
 
 int main(void)
 {
+#ifdef TIMER
   init_time();
   start_time();
+#endif
   cout << "Matrix test program with scalar type " << scalar_type << ".\n\n";
 
   long i; int r;
@@ -136,7 +142,14 @@ int main(void)
   cout << "Calling ref_via_flint()..." << endl;
   mat R = ref_via_flint(a, modulus);
   cout << " ref_via_flint() returns\n" << R << endl;
+
+  // test conversion to/from FLINT matrices:
+  fmpz_mat_t M;
+  flint_mat_from_mat(M,a);
+  assert (a == mat_from_flint_mat(M, (scalar)(0)));
+
+#ifdef TIMER
   stop_time();
-  // commented out for automatic tests:
-  //cout << "cpu time = "; show_time(); cout << endl;
+  cout << "cpu time = "; show_time(); cout << endl;
+#endif
 }

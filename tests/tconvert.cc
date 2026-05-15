@@ -64,7 +64,7 @@ int test(const ZZ& a)
   cout << "Conversion tests" << endl;
   cout << "a = " << a << " (as ZZ)" << endl;
 
-  fmpz_t* b = NTL_to_FLINT(a);
+  fmpz_t* b = to_FLINT(a);
   cout << "a = " << b[0] << " (as fmpz_t)" << endl;
   ZZ a2 = FLINT_to_NTL(b[0]);
   cout << "converting back to ZZ...\na = " << a2 << endl;
@@ -75,7 +75,7 @@ int test(const ZZ& a)
       cout << "******************* WRONG! ******************" <<endl;
       return 0;
     }
-  GEN c = NTL_to_PARI(a);
+  GEN c = to_PARI(a);
   pari_printf("a = %Ps (as t_INT)\n", c);
   ZZ a3 = PARI_to_NTL(c);
   cout << "converting back to ZZ...\na = " << a3 << endl;
@@ -88,10 +88,10 @@ int test(const ZZ& a)
     }
 
   cout << "Converting from FLINT to PARI\n";
-  GEN d = FLINT_to_PARI(b[0]);
+  GEN d = to_PARI(b[0]);
   pari_printf("a = %Ps (as t_INT)\n", d);
   cout << "Converting from PARI back to FLINT\n";
-  fmpz_t* e = PARI_to_FLINT(d);
+  fmpz_t* e = to_FLINT(d);
   cout << "a = " << e[0] << " (as fmpz_t)" << endl;
   cout << "and then back from FLINT to NTL\n";
   ZZ f = FLINT_to_NTL(e[0]);
@@ -115,11 +115,3 @@ std::ostream& operator<<(std::ostream& s, const fmpz_t& a)
   flint_free(st);
   return s;
 }
-
-// std::ostream& operator<<(std::ostream& s, const GEN& a)
-// {
-//   char* st = pari_sprintf("%Ps", a);
-//   s << std::string(st);
-//   free(st);
-//   return s;
-// }

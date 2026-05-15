@@ -1744,6 +1744,7 @@ template mat_I to_mat_I(const Zmat<ZZ>& M);
 #include "eclib/flinterface.h"
 #include "flint/gr.h"
 #include "flint/gr_mat.h"
+#include <flint/fmpz_mat.h>
 #include <flint/fmpz_mod.h>
 #include <flint/fmpz_mod_mat.h>
 
@@ -1817,6 +1818,44 @@ void mod_mat_from_mat(nmod_mat_t& A, const Zmat<long>& M, const long& pr)
       nmod_mat_entry(A,i,j) = (mp_limb_t)posmod(M(i+1,j+1),pr);
 }
 
+// create flint matrix (type fmpz_mat_t) copy of a Zmat<T>:
+template<class T>
+void flint_mat_from_mat(fmpz_mat_t& A, const Zmat<T>& M)
+{
+  long nr=M.nrows(), nc=M.ncols();
+  fmpz_mat_init(A, nr, nc);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      fmpz_set(fmpz_mat_entry(A,i,j), *to_FLINT(M(i+1,j+1)));
+}
+template void flint_mat_from_mat<int>(fmpz_mat_t& A, const Zmat<int>& M);
+template void flint_mat_from_mat<long>(fmpz_mat_t& A, const Zmat<long>& M);
+template void flint_mat_from_mat<ZZ>(fmpz_mat_t& A, const Zmat<ZZ>& M);
+template void flint_mat_from_mat<INT>(fmpz_mat_t& A, const Zmat<INT>& M);
+
+// convert a flint matrix (type fmpz_mat_t) to a Zmat<T>.  The dummy
+// variable is needed to determine the return type
+template<class T>
+Zmat<T> mat_from_flint_mat(fmpz_mat_t& A, const T& dummy)
+{
+  long nr = fmpz_mat_nrows(A), nc = fmpz_mat_ncols(A);
+  Zmat<T> M(nr,nc);
+  fmpz_t Mij;
+  fmpz_init(Mij);
+  for(long i=0; i<nr; i++)
+    for(long j=0; j<nc; j++)
+      {
+        fmpz_set(Mij, fmpz_mat_entry(A,i,j));
+        set(M(i+1,j+1), Mij);
+      }
+  fmpz_clear(Mij);
+  return M;
+}
+template Zmat<int> mat_from_flint_mat<int>(fmpz_mat_t& A, const int& dummy);
+template Zmat<long> mat_from_flint_mat<long>(fmpz_mat_t& A, const long& dummy);
+template Zmat<ZZ> mat_from_flint_mat<ZZ>(fmpz_mat_t& A, const ZZ& dummy);
+template Zmat<INT> mat_from_flint_mat<INT>(fmpz_mat_t& A, const INT& dummy);
+
 // create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<ZZ> modulo
 // pr. The context flint_modulus must have been preset to match pr and
 // fmpz_mod_mat_init(A, flint_modulus) should have been called already.  We pass
@@ -1827,7 +1866,7 @@ void mod_mat_from_mat(fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& flint_modulus, co
   long nr=M.nrows(), nc=M.ncols();
   for(long i=0; i<nr; i++)
     for(long j=0; j<nc; j++)
-      fmpz_mod_mat_set_entry(A,i,j, *NTL_to_FLINT(posmod(M(i+1,j+1),pr)), flint_modulus);
+      fmpz_mod_mat_set_entry(A,i,j, *to_FLINT(posmod(M(i+1,j+1),pr)), flint_modulus);
 }
 
 // create flint matrix (type fmpz_mod_mat_t) copy of a Zmat<ZZ> modulo
@@ -1920,7 +1959,7 @@ Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr)
 Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr)
 {
   fmpz_mod_ctx_t flint_modulus;
-  fmpz_mod_ctx_init(flint_modulus, *NTL_to_FLINT(pr));
+  fmpz_mod_ctx_init(flint_modulus, *to_FLINT(pr));
 
   long nr=M.nrows(), nc=M.ncols(), rk;
   fmpz_mod_mat_t A, R;

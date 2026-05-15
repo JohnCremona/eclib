@@ -46,7 +46,7 @@ typedef unsigned long int ulong;
 typedef long int slong;
 #endif
 
-ZZ FLINT_to_NTL(const fmpz_t& a)  // from FLINT to NTL
+ZZ FLINT_to_NTL(const fmpz_t& a)  // from FLINT integer to NTL integer
 {
   if (fmpz_fits_si(a))
     return ZZ(fmpz_get_si(a));
@@ -79,7 +79,7 @@ ZZ to_ZZ     (const INT& a)      // from INT to ZZ
   return b;
 }
 
-ZZ PARI_to_NTL(const GEN& a)  // from PARI to NTL
+ZZ PARI_to_NTL(const GEN& a)  // from PARI integer to NTL integer
 {
   // if a fits in a long int it is easy:
   if (!is_bigint(a))
@@ -90,7 +90,7 @@ ZZ PARI_to_NTL(const GEN& a)  // from PARI to NTL
   GEN aa = absi(a);
 
 #ifdef DEBUG_CONVERT
-  pari_printf("In NTL_to_PARI() with t_INT a =  %Ps, abs(a) = %Ps\n", a, aa);
+  pari_printf("In PARI_to_NTL() with t_INT a =  %Ps, abs(a) = %Ps\n", a, aa);
 #endif
   // extract digits as a t_VEC
   GEN digits = binary_2k(a, NTL_BITS_PER_LIMB_T);
@@ -125,7 +125,28 @@ ZZ PARI_to_NTL(const GEN& a)  // from PARI to NTL
   return (sign_a<0? -b : b);
 }
 
-fmpz_t* NTL_to_FLINT(const ZZ& a)  // from NTL to FLINT
+fmpz_t* to_FLINT  (const INT& a) // from INT to FLINT integer
+{
+  fmpz_t* b = new fmpz_t[1];
+  a.get_fmpz(b[0]);
+  return b;
+}
+
+fmpz_t* to_FLINT  (const int& a) // from int to FLINT integer
+{
+  fmpz_t* b = new fmpz_t[1];
+  fmpz_init_set_si(b[0], a);
+  return b;
+}
+
+fmpz_t* to_FLINT  (const long& a)  // from long to FLINT integer
+{
+  fmpz_t* b = new fmpz_t[1];
+  fmpz_init_set_si(b[0], a);
+  return b;
+}
+
+fmpz_t* to_FLINT(const ZZ& a)  // from NTL to FLINT integer
 {
   if (IsZero(a))
     {
@@ -139,7 +160,7 @@ fmpz_t* NTL_to_FLINT(const ZZ& a)  // from NTL to FLINT
   ZZ aa = abs(a);
 
 #ifdef DEBUG_CONVERT
-  cout<<"In NTL_to_FLINT() with ZZ a = " << a << ", abs(a) = " << aa <<endl;
+  cout<<"In to_FLINT() with ZZ a = " << a << ", abs(a) = " << aa <<endl;
 #endif
   // extract limbs
   int n = aa.size();
@@ -165,7 +186,7 @@ fmpz_t* NTL_to_FLINT(const ZZ& a)  // from NTL to FLINT
   return b;
 }
 
-fmpz_t* PARI_to_FLINT(const GEN& a)  // from PARI to FLINT
+fmpz_t* to_FLINT(const GEN& a)  // from PARI to FLINT integer
 {
   // if a fits in a long int it is easy:
   if (!is_bigint(a))
@@ -201,7 +222,7 @@ fmpz_t* PARI_to_FLINT(const GEN& a)  // from PARI to FLINT
   return b;
 }
 
-GEN NTL_to_PARI(const ZZ& a)  // from NTL to PARI
+GEN to_PARI(const ZZ& a)  // from NTL to PARI
 {
   if (IsZero(a))
     return stoi(0);
@@ -211,7 +232,7 @@ GEN NTL_to_PARI(const ZZ& a)  // from NTL to PARI
   ZZ aa = abs(a);
 
 #ifdef DEBUG_CONVERT
-  cout<<"In NTL_to_PARI() with ZZ a = " << a << ", abs(a) = " << aa <<endl;
+  cout<<"In to_PARI() with ZZ a = " << a << ", abs(a) = " << aa <<endl;
 #endif
   // extract limbs
   int n = aa.size();
@@ -247,7 +268,7 @@ GEN NTL_to_PARI(const ZZ& a)  // from NTL to PARI
   return (sign_a<0? negi(b): b);
 }
 
-GEN FLINT_to_PARI(const fmpz_t& a)  // from FLINT to PARI
+GEN to_PARI(const fmpz_t& a)  // from FLINT to PARI
 {
   if (fmpz_fits_si(a))
     return stoi(fmpz_get_si(a));

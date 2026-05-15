@@ -250,6 +250,14 @@ mat_m lin_comb_mats(const vec_m& co, const vector<mat_m>& mats);
 // Linear combinarion of n>0 matrices, all dxd
 mat_m lin_comb_mats(const vector<ZZ>& co, const vector<mat_m>& mats);
 
+// create flint matrix (type fmpz_mat_t) copy of a Zmat<T>:
+template<class T>
+void flint_mat_from_mat(fmpz_mat_t& A, const Zmat<T>& M);
+// convert a flint matrix (type fmpz_mat_t) to a Zmat<T>.  The dummy
+// variable is needed to determine the return type
+template<class T>
+Zmat<T> mat_from_flint_mat(fmpz_mat_t& A, const T& dummy);
+
 Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr);
 Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr);
 Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr);

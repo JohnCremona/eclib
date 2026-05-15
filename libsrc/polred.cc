@@ -82,7 +82,7 @@ GEN ZZX_to_t_POL(const ZZX& f)
   GEN P = cgetg(d+3, t_POL);
   P[1] = evalvarn(0); // set variable to #0, i.e. 'x'
   for (int i=0; i<=d; i++)
-    gel(P,i+2) = NTL_to_PARI(coeff(f,i));
+    gel(P,i+2) = to_PARI(coeff(f,i));
   P = RgX_renormalize_lg(P,d+3);
 #ifdef DEBUG_POLY
   pari_printf(" Result is %Ps\n", P);

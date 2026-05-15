@@ -43,7 +43,7 @@ pair<vector<ZZ>, vector<ZZ>> factor_via_pari(const ZZ& n)
   eclib_pari_init();
   pari_sp av=avma;  // store pari stack pointer
 
-  GEN pn = NTL_to_PARI(n);
+  GEN pn = to_PARI(n);
 #ifdef DEBUG_GPFACT
   pari_printf(" - n as t_INT: %Ps\n", pn);
 #endif
@@ -70,7 +70,7 @@ int is_prime_via_pari(const ZZ& p)
   eclib_pari_init();
   pari_sp av=avma;  // store pari stack pointer
 
-  int ans = isprime(NTL_to_PARI(p));
+  int ans = isprime(to_PARI(p));
 
   avma=av;         // restore pari stackpointer
   return ans;
@@ -86,8 +86,8 @@ ellap(const ZZ& a1, const ZZ& a2, const ZZ& a3, const ZZ& a4, const ZZ& a6, cons
 #ifdef DEBUG_ELLAP
   std::cout<<"ellap called with ["<<a1<<","<<a2<<","<<a3<<","<<a4<<","<<a6<<"], p="<<p<<endl;
 #endif
-  GEN ai = mkvecn(5, NTL_to_PARI(a1), NTL_to_PARI(a2), NTL_to_PARI(a3), NTL_to_PARI(a4), NTL_to_PARI(a6));
-  GEN pp = NTL_to_PARI(p);
+  GEN ai = mkvecn(5, to_PARI(a1), to_PARI(a2), to_PARI(a3), to_PARI(a4), to_PARI(a6));
+  GEN pp = to_PARI(p);
   ZZ ap = PARI_to_NTL(ellap(ellinit(ai, pp, 0), pp));
 #ifdef DEBUG_ELLAP
   std::cout<<"ellap returns "<<ap<<endl;
