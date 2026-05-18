@@ -240,6 +240,32 @@ void Zmat<T>::operator/=(const T& scal)
                  [scal](const T& x) {return x / scal;});
 }
 
+// append n zero rows
+template<class T>
+void Zmat<T>::append_rows(int n)
+{
+  entries.insert(entries.end(), n*nco, T(0));
+  nro += n;
+}
+
+// append given new rows
+template<class T>
+void Zmat<T>::append_rows(const vector<Zvec<T>>& new_rows)
+{
+  for (auto v: new_rows)
+    entries.insert(entries.end(), v.entries.begin(), v.entries.end());
+  nro += new_rows.size();
+}
+
+// delete the last n rows
+template<class T>
+void Zmat<T>::delete_rows(int n)
+{
+  entries.erase(entries.end()-n*nco, entries.end());
+  nro -= n;
+}
+
+
 // Definitions of non-member, friend operators and functions
 
 // add/sub row i of mat to v

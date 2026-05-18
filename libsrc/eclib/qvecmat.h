@@ -26,7 +26,9 @@
 // FieldIso, Newspace and Newform.  Also, the base integer type is
 // currently fixed to be ZZ (NTL integers) but could easily be
 // templated to work also with int, long and INT (wrapping FLINT
-// integers).
+// integers).  This would require a templatised Rational class to
+// replace the classes rational (for long), bigrational (for ZZ) and
+// RAT (wrapping FLINT fmpq).
 
 #ifndef _QVECMAT_H
 #define _QVECMAT_H      1
@@ -122,6 +124,27 @@ public:
   Qvec col(int i) const {return Qvec(numerator.col(i), denom);}
   Qvec row(int i) const {return Qvec(numerator.row(i), denom);}
 
+  // append a 0 row at bottom:
+  void append_row()
+  {
+    numerator.append_rows(1);
+  }
+
+  // append v as a new row at bottom:
+  void append_row(const Qvec& v)
+  {
+    numerator.append_rows(1);
+    setrow(numerator.nrows(), v);
+  }
+
+  // delete last row, recancel if requested (e.g. will not be
+  // necessary if the last row was 0):
+  void delete_row(int recancel=0)
+  {
+    numerator.delete_rows(1);
+    if (recancel) cancel();
+  }
+
   // trace, det, charpoly, inverse only for square matrices (not checked)
   bigrational trace() const {return bigrational(numerator.trace(), denom);}
   bigrational det() const {return bigrational(numerator.determinant(), pow(denom, numerator.nrows()));}
@@ -145,6 +168,9 @@ public:
   inline friend Qvec operator*(const Qmat&m, const Qvec& v) {return Qvec(m.numerator*v.numerator, m.denom*v.denom);}
   inline friend Qvec operator*(const mat_m&m, const Qvec& v) {return Qvec(m*v.numerator, v.denom);}
   inline friend ostream& operator<<(ostream& s, const Qmat& x) { s << x.str();  return s;}
+
+  inline friend Qmat HNF(const Qmat& M) {return Qmat(HNF(M.numerator), M.denom);}
+  inline friend Qmat SNF(const Qmat& M) {return Qmat(SNF(M.numerator), M.denom);}
 };
 
 inline istream& operator>>(istream& s, Qmat& x) {x.read(s); return s;}

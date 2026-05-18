@@ -171,6 +171,16 @@ int main(void)
   mat S = SNF(M);
   cout << "SNF(M) = \n" << S << endl;
 
+#if (SCALAR_OPTION==3) // ZZ
+  // Some tests of Qmat class (rational matrices, only implemented for scalar ZZ)
+  cout << "Testing Qmat class: " << endl;
+
+  Qmat QM(M, scalar(6));
+  cout << "M/6 = \n" << QM << endl;
+  cout << "with HNF\n" << HNF(QM) << endl;
+  cout << "and  SNF\n" << SNF(QM) << endl;
+#endif
+
 #ifdef TIMER
   stop_time();
   cout << "cpu time = "; show_time(); cout << endl;
