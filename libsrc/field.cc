@@ -24,12 +24,19 @@
 #include "eclib/field.h"
 #include "eclib/polred.h"
 
+
+////////////////////////////////////////////////////////////////////////
+//
+// Implementation of Field methods
+//
+////////////////////////////////////////////////////////////////////////
+
 //#define DEBUG_ARITH
 
 //#define DEBUG_FIELD_CONSTRUCTOR
 
 Field::Field(const ZZX& p, string a, int verb)
-  :have_integral_basis(0), order_index(0)
+  :have_integral_basis(0)
 {
 #ifdef DEBUG_FIELD_CONSTRUCTOR
   cout << "In Field constructor with poly " << ::str(p) << ", name = " << a << endl;
@@ -66,7 +73,7 @@ Field::Field(const ZZX& p, string a, int verb)
 }
 
 Field::Field() // defaults to Q
-  :var(""), d(1), have_integral_basis(0), order_index(0)
+  :var(""), d(1), have_integral_basis(0)
 {
   SetX(minpoly);
 #ifdef DEBUG_FIELD_CONSTRUCTOR
@@ -75,7 +82,7 @@ Field::Field() // defaults to Q
 }
 
 Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
-  : var(a), d(A.nrows()), have_integral_basis(0), order_index(0)
+  : var(a), d(A.nrows()), have_integral_basis(0)
 {
   if (verb)
     {
@@ -171,6 +178,10 @@ void Field::display(ostream&s) const
 }
 
 ////////////////////////////////////////////////////////////////////////
+//
+// Implementation of FieldElement methods
+//
+////////////////////////////////////////////////////////////////////////
 
 FieldElement Field::element(const vec_m& c, const ZZ& d) const
 {
@@ -207,18 +218,6 @@ FieldElement Field::operator()(const Qvec& v) const
   return element(v);
 }
 
-FieldElement Field::operator()(const vec_m& v) const // v-lin.comb. of int.basis
-{
-  FieldElement a(*this);
-  for (int i=0; i<d; i++)
-    {
-      ZZ vi = v[i+1];
-      if (!is_zero(vi))
-        a += integral_basis[i] * vi;
-    }
-  return a;
-}
-
 FieldElement Field::gen() const
 {
   if (d==1)
@@ -227,73 +226,35 @@ FieldElement Field::gen() const
     return FieldElement(*this, Qvec::unit_vector(d, 2));
 }
 
+vector<FieldElement> Field::power_basis() const
+{
+  vector<FieldElement> bas(d);
+  FieldElement g = gen(), h = (*this)(1);
+  for (int i=0; i<d; i++)
+    {
+      bas[i] = h;
+      if (i < d-1)
+        h *= g;
+    }
+  return bas;
+}
+
 // compute integral basis (via libpari), fill integral_basis and basis_change_matrix
 void Field::make_integral_basis()
 {
-  if (have_integral_basis) return;
-
-  vector<Qvec> zbc;
-  nfinit(minpoly, order_index, zbc, basis_change_matrix);
-  integral_basis.resize(d);
-  std::transform(zbc.begin(), zbc.end(), integral_basis.begin(),
-                 [this](const Qvec& v) {return FieldElement(*this, v);});
-  have_integral_basis = 1;
+  if (!have_integral_basis)
+    {
+      Integers = new Order(MaximalOrder(*this));
+      have_integral_basis = 1;
+    }
 }
 
 // recreate integral basis from index and base_change_matrix's inverse (after reading from file)
 
 void Field::set_integral_basis(const ZZ& i, const mat_m& M)
 {
-  order_index = i;
-  basis_change_matrix = M;
-  Qmat bcm(M);
-  Qmat bcmi = bcm.inverse();
-  integral_basis.resize(d);
-  for (int j=0; j<d; j++)
-    integral_basis[j] = (*this)(bcmi.col(j+1));
+  Integers = new Order(*this, i, M);
   have_integral_basis = 1;
-}
-
-// rational coordinate vector w.r.t. integral basis
-Qvec Field::rational_coords(const FieldElement& a) const
-{
-  if (d==1)
-    return Qvec(a.val);
-  if (have_integral_basis)
-    return basis_change_matrix * a.v;
-  cerr << "No integral basis yet computed for Field " << *this << endl;
-  return Qvec();
-}
-
-// denominator of rational coordinate vector w.r.t. integral basis
-ZZ Field::denominator(const FieldElement& a) const
-{
-  return rational_coords(a).denom;
-}
-
-vec_m Field::integral_coords(const FieldElement& a) const
-{
-  if (d==1)
-    {
-      vec_m n(1);
-      n[1] = a.val.num();
-      return n;
-    }
-
-  if (have_integral_basis)
-    {
-      Qvec coords = rational_coords(a);
-      if (!is_one(coords.denom))
-        cout << "Error in computing integral_coords(a) for a = " << a
-             << ": it has denominator " << coords.denom
-             << " so is not integral" << endl;
-      return coords.numerator;
-    }
-  else
-    {
-      cerr << "No integral basis yet computed for Field " << *this << endl;
-      return vec_m();
-    }
 }
 
 int FieldElement::is_zero() const
@@ -808,6 +769,12 @@ Qmat FieldElement::power_matrix() const // cols are coords of powers
   return M;
 }
 
+////////////////////////////////////////////////////////////////////////
+//
+// Implementation of FieldIso methods
+//
+////////////////////////////////////////////////////////////////////////
+
 //#define DEBUG_COMPOSE
 
 // precompose this FieldIso with another (requires iso.codomain = domain)
@@ -1261,3 +1228,107 @@ FieldIso Field::sqrt_embedding(const vector<FieldElement>& r_list, string newvar
   return emb1*emb2;
 }
 
+
+////////////////////////////////////////////////////////////////////////
+//
+// Implementation of Order methods
+//
+////////////////////////////////////////////////////////////////////////
+
+Order::Order(const Field& HF) // equation order
+  :F(&HF)
+{
+  Zbasis = F->power_basis();
+  power_coords_matrix = mat_m::identity_matrix(F->d);
+  basis_matrix = Qmat(power_coords_matrix); // denom=1
+  order_index = ZZ(1);
+}
+
+Order::Order(const Field& HF, const vector<FieldElement>& v)
+  :F(&HF), Zbasis(v)
+{
+  int d = F->d;
+  basis_matrix = Qmat(d,d);
+  for (int i=0; i<d; i++)
+    basis_matrix.setcol(i+1,v[i].coords());
+  power_coords_matrix = basis_matrix.inverse().get_numerator();
+  order_index = power_coords_matrix.determinant();
+}
+
+Order::Order(const Field& HF, const vector<FieldElement>& v, const mat_m pcm)
+  :F(&HF), Zbasis(v), power_coords_matrix(pcm), order_index(pcm.determinant())
+{
+  int d = F->d;
+  basis_matrix = Qmat(d,d);
+  for (int i=0; i<d; i++)
+    basis_matrix.setcol(i+1,v[i].coords());
+}
+
+Order::Order(const Field& HF, const ZZ& i, const mat_m& M) // Order in F given pcm
+  :F(&HF), power_coords_matrix(M), basis_matrix(Qmat(M).inverse()), order_index(i)
+{
+  auto d = HF.d;
+  Zbasis.resize(d);
+  for (int j=0; j<d; j++)
+    Zbasis[j] = (*F)(basis_matrix.col(j+1));
+}
+
+// coords w.r.t. Zbasis of an element of F in this order
+vec_m Order::integral_coords(const FieldElement& a) const
+{
+  Qvec c = coords(a);
+  if (!is_one(c.denom))
+    cout << "Error in computing integral_coords(a) for a = " << a
+         << " in order " << (*this)
+         << ": it has denominator " << c.denom
+         << " so is not in the order" << endl;
+  return c.numerator;
+}
+
+// FieldElement from integer coords
+FieldElement Order::operator()(const vec_m& coords) const
+{
+  FieldElement a(*F);
+  for (int i=0; i<F->d; i++)
+    {
+      ZZ ci = coords[i+1];
+      if (!is_zero(ci))
+        a += Zbasis[i] * ci;
+    }
+  return a;
+}
+
+// FieldElement from rational coords
+FieldElement Order::operator()(const Qvec& coords) const
+{
+  return operator()(coords.numerator) / coords.denom;
+}
+
+string Order::str(int raw) const
+{
+  ostringstream s;
+
+  if (raw) // only output the integral basis coords
+    {
+      for (auto bi: Zbasis)
+        s << bi.str(1) << "\n";
+    }
+  else
+    {
+      s << "Order in " << *F << " with Z-basis " << Zbasis;
+    }
+  return s.str();
+}
+
+// Compute Maximal Order (via lib)pari
+Order MaximalOrder(const Field& F)
+{
+  ZZ ind;
+  vector<Qvec> zbc;
+  mat_m bcm;
+  nfinit(F.minpoly, ind, zbc, bcm);
+  vector<FieldElement> bas(F.d);
+  std::transform(zbc.begin(), zbc.end(), bas.begin(),
+                 [F](const Qvec& v) {return FieldElement(F, v);});
+  return Order(F, bas, bcm);
+}

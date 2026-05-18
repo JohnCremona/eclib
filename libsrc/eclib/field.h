@@ -27,9 +27,15 @@
 #include "linalg.h"
 #include "bigrat.h"
 
+class Field;
+class FieldElement;
+class FieldIso;
+class Order;
+
 class Field {
   friend class FieldIso;
   friend class FieldElement;
+  friend class Order;
 private:
   string var;   // name of generator
   int d;        // degree
@@ -38,9 +44,7 @@ private:
   vec_m Cpower_traces; // traces of C^i
 
   int have_integral_basis; // 0 if not yet computed
-  ZZ order_index; // index of Z[gen] in ring of integers, 0 if not yet computed
-  vector<FieldElement> integral_basis;
-  mat_m basis_change_matrix; // powers of gen in terms of integral basis
+  Order* Integers; // ring of integers (if have_integral_basis==1)
 
 public:
   ~Field() {minpoly.kill();}
@@ -58,10 +62,11 @@ public:
   FieldElement operator()(long x) const;
   FieldElement operator()(int x) const;
   FieldElement gen() const;
+  vector<FieldElement> power_basis() const;
   FieldElement element(const vec_m& c, const ZZ& d=to_ZZ(1)) const;
   FieldElement element(const Qvec& v) const;
   FieldElement operator()(const Qvec& v) const;
-  FieldElement operator()(const vec_m& v) const; // v-lin.comb. of int.basis
+
   int degree() const {return d;}
   int isQ() const {return d==1;}
   ZZX poly() const {return minpoly;}
@@ -80,18 +85,10 @@ public:
   void make_integral_basis();
   // recreate integral basis from index and base_change_matrix's inverse (after reading from file)
   void set_integral_basis(const ZZ& i, const mat_m& M);
-
-  // rational coordinate vector w.r.t. integral basis
-  Qvec rational_coords(const FieldElement& a) const;
-  // denominator of rational coordinate vector w.r.t. integral basis
-  ZZ denominator(const FieldElement& a) const;
-  // integral coordinate vector w.r.t. integral basis (assumes a is integral)
-  vec_m integral_coords(const FieldElement& a) const;
-
+  // check whether we have an integral basis
   int has_integral_basis() const {return have_integral_basis;}
-  vector<FieldElement> get_integral_basis() const {return integral_basis;}
-  ZZ get_order_index() const {return order_index;}
-  mat_m get_bcm() const {return basis_change_matrix;}
+  // return pointer to integral basis
+  Order* get_integral_basis() const {return Integers;}
 
   // Apply polredabs (if canonical) or polredbest to the defining
   // polynomial, define a new field with that poly and return an
@@ -122,6 +119,7 @@ public:
   FieldIso sqrt_embedding(const vector<FieldElement>& r_list, string newvar,
                           Field& F_sqrt_r, vector<FieldElement>& sqrt_r_list,
                           int reduce=1) const;
+  friend Order MaximalOrder(const Field& F);
 };
 
 inline ostream& operator<<(ostream& s, const Field& F)
@@ -129,6 +127,7 @@ inline ostream& operator<<(ostream& s, const Field& F)
 
 class FieldElement {
   friend class Field;
+  friend class Order;
   friend class FieldIso;
   friend FieldElement evaluate(const ZZX& f, const FieldElement a);
 private:
@@ -325,5 +324,49 @@ public:
 inline ostream& operator<<(ostream& s, const FieldIso& x)
 { s << x.str(); return s; }
 
+class Order{
+
+public:
+  // Constructors:
+  Order() {;}
+  explicit Order(const Field& HF); // equation order
+  Order(const Field& HF, const vector<FieldElement>& v); // given a Z-basis
+  Order(const Field& HF, const vector<FieldElement>& v, const mat_m pcm); // same with known power_coords_matrix
+  Order(const Field& HF, const ZZ& i, const mat_m& M); // Order in F given pcm
+
+  // Access data:
+  const Field* get_field() const {return F;}
+  const vector<FieldElement> get_basis() const {return Zbasis;}
+  ZZ get_order_index() const {return order_index;}
+  int field_degree() const {return F->d;}
+  int field_is_Q() const {return F->d == 1;}
+  mat_m get_pcm() const {return power_coords_matrix;}
+  Qmat get_bm() const {return basis_matrix;}
+  string str(int raw=0) const;
+
+  // coords w.r.t. Zbasis of an arbitrary element of F
+  Qvec coords(const FieldElement& a) const  { return power_coords_matrix * a.v;}
+  // denominator of Zbasis coords of an arbitrary element of F
+  ZZ denom(const FieldElement& a) const { return coords(a).denom;}
+  // coords w.r.t. Zbasis of an element of F in this order
+  vec_m integral_coords(const FieldElement& a) const;
+
+  // FieldElement from integer coords
+  FieldElement operator()(const vec_m& coords) const;
+  // FieldElement from rational coords
+  FieldElement operator()(const Qvec& coords) const;
+private:
+  const Field *F; // the ambient number field
+  vector<FieldElement> Zbasis; // Z-basis of the order
+  mat_m power_coords_matrix; // columns are coords of power basis w.r.t. Zbasis
+  Qmat basis_matrix; // columns are coords of Zbasis w.r.t. power basis
+  ZZ order_index; // index of equation order in this ( = det(power_coords_matrix))
+};
+
+inline ostream& operator<<(ostream& s, const Order& x)
+{ s << x.str(); return s; }
+
+// Compute Maximal Order (via lib)pari
+Order MaximalOrder(const Field& F);
 
 #endif

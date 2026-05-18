@@ -782,15 +782,16 @@ void Newform::display_aP() const
       return;
     }
 #ifdef USE_INTEGRAL_BASES
+  Order * O = F->get_integral_basis();
   if (d>1)
     {
       FieldElement gen = F->gen(), gen_power = (*F)(1);
       cout << "Integral coordinates of power basis of Hecke field (index of Z["<<gen<<"] is "
-           << F->get_order_index()<<"):\n";
+           << O->get_order_index()<<"):\n";
       for (int i=0; i<d; i++)
         {
           cout << gen_power << "\t = "
-               << F->integral_coords(gen_power) << endl;
+               << O->integral_coords(gen_power) << endl;
           if (i < d-1) gen_power *= gen;
         }
       cout << endl;
@@ -806,7 +807,7 @@ void Newform::display_aP() const
       else
         {
 #ifdef USE_INTEGRAL_BASES
-          cout << F->integral_coords(aP);
+          cout << O->integral_coords(aP);
 #else
           cout << aP;
 #endif
@@ -906,8 +907,9 @@ void Newform::output_to_file() const
   int ib = F->has_integral_basis();
   if (ib)
     {
-      out << F->get_order_index() << "\n";
-      vec_out(out, F->get_bcm().get_entries(), " ", " ", " ");
+      Order *O = F->get_integral_basis();
+      out << O->get_order_index() << "\n";
+      vec_out(out, O->get_pcm().get_entries(), " ", " ", " ");
     }
   else
     out << "0";
@@ -926,13 +928,16 @@ void Newform::output_to_file() const
   out << "\n";
 
   // Output aP
+#ifdef USE_INTEGRAL_BASES
+  Order *O = F->get_integral_basis();
+#endif
   for (auto x: aPmap)
     {
       FieldElement aP = x.second;
       out << x.first << " ";
 #ifdef USE_INTEGRAL_BASES
       if (ib && d>1)
-        out << F->integral_coords(aP);
+        out << O->integral_coords(aP);
       else
 #endif
         out << aP.str(1);
@@ -1024,6 +1029,9 @@ int Newform::input_from_file(int verb)
   long P; maxP=0;
   FieldElement aP(*F);
   vec_m aPcoords(d);
+#ifdef USE_INTEGRAL_BASES
+  Order *O = F->get_integral_basis();
+#endif
 
   // read whitespace, so if there are no aP on file it does not try to read any
   fdata >> ws;
@@ -1037,7 +1045,7 @@ int Newform::input_from_file(int verb)
       else
         {
           fdata >> aPcoords;
-          aP = (*F)(aPcoords);
+          aP = (*O)(aPcoords);
         }
 #else
       fdata >> aP;   // eigenvalue data

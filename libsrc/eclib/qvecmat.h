@@ -45,6 +45,7 @@ class FieldElement;
 class Qvec {
   friend class Field;
   friend class FieldElement;
+  friend class Order;
   friend class Qmat;
   vec_m numerator;
   ZZ denom;
@@ -93,6 +94,7 @@ inline Qvec operator*(long c, const Qvec& v) {return ZZ(c)*v;}
 
 class Qmat {
   friend class FieldElement;
+  friend class Order;
   friend class Qvec;
   mat_m numerator;
   ZZ denom;
