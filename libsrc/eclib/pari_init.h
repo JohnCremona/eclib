@@ -51,11 +51,16 @@ using PARI::itou;
 using PARI::utoi;
 using PARI::absi;
 using PARI::negi;
+using PARI::gdiv;
+using PARI::gen_1;
+using PARI::lift;
 using PARI::is_bigint;
 using PARI::binary_2k;
 using PARI::fromdigits_2k;
 using PARI::pari_printf;
 using PARI::t_VEC;
+using PARI::ZV_sum;
+using PARI::gequal0;
 // NOT using PARI::signe, PARI::lg, PARI::gel which are macros
 
 #define DEFAULT_PARI_SIZE 100000000

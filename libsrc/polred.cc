@@ -29,18 +29,16 @@
 using PARI::degpol;
 using PARI::t_POL;
 using PARI::content0;
-using PARI::gdiv;
-using PARI::gen_1;
 using PARI::RgX_renormalize_lg;
 using PARI::polredbest;
 using PARI::polredabs0;
 using PARI::nf_ORIG;
-using PARI::lift;
 using PARI::ZX_equal;
 using PARI::poleval;
 using PARI::nfisincl0;
 using PARI::nfinit0;
 using PARI::nfbasis;
+using PARI::nfcertify;
 
 //#define DEBUG_POLY
 
@@ -252,7 +250,6 @@ void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm)
   GEN* disc = new GEN(stoi(0));
   GEN pol_and_bound = mkvecn(2, ZZX_to_t_POL(f), stoi(100000000));
   GEN nf = nfbasis(pol_and_bound, disc);
-  // GEN nf = nfbasis( ZZX_to_t_POL(f), disc);
 #ifdef DEBUG_NF_INIT
   pari_printf(" - PARI::nfbasis() returns %Ps with disc = %Ps\n", nf, *disc);
 #endif

@@ -32,6 +32,177 @@ class FieldElement;
 class FieldIso;
 class Order;
 
+class FieldElement {
+  friend class Field;
+  friend class Order;
+  friend class FieldIso;
+  friend FieldElement evaluate(const ZZX& f, const FieldElement a);
+private:
+  Field const * F;
+  Qvec v;             // only used for degree>1, i.e. not Q
+  bigrational val;    // only used for degree=1, i.e. Q
+  // In general the field element is the v-combination of power basis
+  // of F, but when F is Q this class is just a wrapper round the
+  // bigrational class and v is ignored.
+public:
+  FieldElement() {;}
+  // creation of 0 in the given field
+  explicit FieldElement(const Field& HF);
+  // creation from an integer vector of coords with denominator
+  FieldElement(const Field& HF, const vec_m& c, const ZZ& d=to_ZZ(1));
+  // creation from a rational vector of coords
+  FieldElement(const Field& HF, const Qvec& c);
+  // creation from a rational (general F)
+  FieldElement(const Field& HF, const ZZ& a, const ZZ& d=to_ZZ(1));
+  // creation from a rational
+  FieldElement(const Field& HF, const bigrational& r);
+
+  // String for pretty printing, used in default <<, or (if raw) raw
+  // output, suitable for re-input:
+  string str(int raw=0) const;
+
+  const Field* field_ptr() const {return F;}
+  int field_degree() const;
+  int field_is_Q() const;
+
+  mat_m matrix() const; // ignores denom
+  // NB Since we do not have polynomials with rational coefficients,
+  // both charpoly and minpoly are scaled to be primitive rather than
+  // monic.
+  ZZX charpoly() const;
+  ZZX minpoly() const;
+  int degree() const {return deg(minpoly());}
+  bigrational norm() const;
+  bigrational trace() const;
+  int is_zero() const;
+  int is_one() const;
+  int is_minus_one() const;
+  int is_generator() const;
+  bigrational get_val() const {return val;}
+  Qvec coords() const {return v;}
+  Qmat power_matrix() const; // cols are coords of powers
+  ZZ get_denom() const {return (field_is_Q()? val.den() : v.denom);}
+  int in_same_field(const FieldElement& b) const;
+  int operator==(const FieldElement& b) const;
+  int operator!=(const FieldElement& b) const;
+
+  void set_zero();
+  void set_one();
+
+  FieldElement operator+(const FieldElement& b) const; // add
+  FieldElement operator+(const ZZ& b) const;           // add
+  FieldElement operator+(const int& b) const;          // add
+  FieldElement operator+(const long& b) const;         // add
+  void operator+=(const FieldElement& b); // add b to this
+  void operator+=(const ZZ& b);           // add b to this
+  void operator+=(const int& b);          // add b to this
+  void operator+=(const long& b);         // add b to this
+
+  FieldElement operator-(const FieldElement& b) const; // subtract
+  FieldElement operator-(const ZZ& b) const;
+  FieldElement operator-(const int& b) const;
+  FieldElement operator-(const long& b) const;
+  void operator-=(const FieldElement& b); // subtract b from this
+  void operator-=(const ZZ& b);
+  void operator-=(const int& b);
+  void operator-=(const long& b);
+  FieldElement operator-() const;                           // unary minus
+
+  FieldElement operator*(const FieldElement& b) const; // product
+  FieldElement operator*(const ZZ& b) const;
+  FieldElement operator*(const int& b) const;
+  FieldElement operator*(const long& b) const;
+  void operator*=(const FieldElement& b); // multiply by b
+  void operator*=(const ZZ& b);
+  void operator*=(const int& b);
+  void operator*=(const long& b);
+
+  FieldElement inverse() const; // raise error if zero      // inverse
+  FieldElement operator/(const FieldElement& b) const; // divide (raise error if b is zero)
+  FieldElement operator/(const ZZ& b) const;
+  FieldElement operator/(const int& b) const;
+  FieldElement operator/(const long& b) const;
+  void operator/=(const FieldElement& b);                        // divide by b
+  void operator/=(const ZZ& b);
+  void operator/=(const int& b);
+  void operator/=(const long& b);
+  void negate(); // negate in place
+
+  // NB for a in F, either [Q(sqrt(a))=Q(a)] or [Q(sqrt(a)):Q(a)]=2.
+  // The first function only applies when a has maximal degree:
+  // return 1 and r s.t. r^2=this, with deg(r)=degree(), else 0
+  int is_absolute_square(FieldElement& r)  const;
+  // Same as above if the denom is 1
+  int is_absolute_integral_square(FieldElement& r)  const;
+  // The second function applies in general: return 1 and r
+  // s.t. r^2=this, with deg(r)=degree(), else 0. Here, ntries is the
+  // number of squares this is multiplied by to get odd co-degree.
+  int is_square(FieldElement& r, int ntries=100) const;
+
+  // return 1 and set r to the rational value if the degree is 1
+  int is_rational(bigrational& r) const;
+  // Same with no value needed
+  int is_rational() const {bigrational r;  return is_rational(r);}
+
+  // return 1 iff this is an algebraic integer
+  int is_integral() const;
+
+  // x must be initialised with a Field before input to x
+  void read (istream& s);
+  friend istream& operator>>(istream& s, FieldElement& x);
+};
+
+inline ostream& operator<<(ostream& s, const FieldElement& x)
+{ s << x.str();  return s;}
+
+FieldElement evaluate(const ZZX& f, const FieldElement a);
+
+
+class Order{
+
+public:
+  // Constructors:
+  Order() {;}
+  explicit Order(const Field& F); // equation order
+  Order(const Field& F, const vector<FieldElement>& v); // given a Z-basis
+  Order(const Field& F, const vector<FieldElement>& v, const mat_m pcm); // same with known power_coords_matrix
+  Order(const Field& F, const ZZ& i, const mat_m& M); // Order in F given pcm
+
+  // Access data:
+  const vector<FieldElement> get_basis() const {return Zbasis;}
+  mat_m get_pcm() const {return power_coords_matrix;}
+  Qmat get_bm() const {return basis_matrix;}
+  // index of equation order in this
+  ZZ get_order_index() const {return index;} // power_coords_matrix.determinant();}
+  // discriminant of this order
+  ZZ get_disc() const {return disc;}
+  string str(int raw=0) const;
+
+  // coords w.r.t. Zbasis of an arbitrary element of F
+  Qvec coords(const FieldElement& a) const  { return power_coords_matrix * a.v;}
+  // denominator of Zbasis coords of an arbitrary element of F
+  ZZ denom(const FieldElement& a) const { return coords(a).denom;}
+  // coords w.r.t. Zbasis of an element of F in this order
+  vec_m integral_coords(const FieldElement& a) const;
+
+  // FieldElement from integer coords
+  FieldElement operator()(const vec_m& coords) const;
+  // FieldElement from rational coords
+  FieldElement operator()(const Qvec& coords) const;
+
+private:
+  vector<FieldElement> Zbasis; // Z-basis of the order
+  mat_m power_coords_matrix; // columns are coords of power basis w.r.t. Zbasis
+  Qmat basis_matrix; // columns are coords of Zbasis w.r.t. power basis
+  ZZ index; // index of equation order in this
+  ZZ disc;  // discriminant of this order
+  ZZ poldisc;  // discriminant of ambient field's defining polynomial
+  int rank; // of this order, i.e. degree of ambient field
+};
+
+// Compute Maximal Order (via lib)pari
+Order MaximalOrder(const Field* F);
+
 class Field {
   friend class FieldIso;
   friend class FieldElement;
@@ -44,7 +215,7 @@ private:
   vec_m Cpower_traces; // traces of C^i
 
   int have_integral_basis; // 0 if not yet computed
-  Order* Integers; // ring of integers (if have_integral_basis==1)
+  Order Integers; // ring of integers (if have_integral_basis==1)
 
 public:
   ~Field() {minpoly.kill();}
@@ -87,8 +258,9 @@ public:
   void set_integral_basis(const ZZ& i, const mat_m& M);
   // check whether we have an integral basis
   int has_integral_basis() const {return have_integral_basis;}
-  // return pointer to integral basis
-  Order* get_integral_basis() const {return Integers;}
+  // return maximal order
+  const Order& maximal_order() const {return Integers;}
+  const Order& integers() const {return Integers;}
 
   // Apply polredabs (if canonical) or polredbest to the defining
   // polynomial, define a new field with that poly and return an
@@ -119,139 +291,11 @@ public:
   FieldIso sqrt_embedding(const vector<FieldElement>& r_list, string newvar,
                           Field& F_sqrt_r, vector<FieldElement>& sqrt_r_list,
                           int reduce=1) const;
-  friend Order MaximalOrder(const Field& F);
+  friend Order MaximalOrder(const Field* F);
 };
 
 inline ostream& operator<<(ostream& s, const Field& F)
 { s << F.str();  return s; }
-
-class FieldElement {
-  friend class Field;
-  friend class Order;
-  friend class FieldIso;
-  friend FieldElement evaluate(const ZZX& f, const FieldElement a);
-private:
-  Field const * F;
-  Qvec v;             // only used for degree>1, i.e. not Q
-  bigrational val;    // only used for degree=1, i.e. Q
-  // In general the field element is the v-combination of power basis
-  // of F, but when F is Q this class is just a wrapper round the
-  // bigrational class and v is ignored.
-public:
-  FieldElement() {;}
-  explicit FieldElement(const Field& HF)
-    :F(&HF), v(vec_m(F->d)) {if (F->d==1) val = bigrational(0);}
-  FieldElement(const Field& HF, const vec_m& c, const ZZ& d=to_ZZ(1))
-    :F(&HF), v(c,d) {;}
-  FieldElement(const Field& HF, const Qvec& c)
-    :F(&HF), v(c)  {if (F->d==1) val = c[1];}
-
-  // creation from a rational (general F)
-  FieldElement(const Field& HF, const ZZ& a, const ZZ& d=to_ZZ(1))
-    :F(&HF), v(a*vec_m::unit_vector(F->d, 1), d), val(bigrational(a,d)) {;}
-  // creation from a rational
-  FieldElement(const Field& HF, const bigrational& r)
-    :F(&HF), v(r.num()*vec_m::unit_vector(F->d, 1), r.den()), val(r) {;}
-
-  // String for pretty printing, used in default <<, or (if raw) raw
-  // output, suitable for re-input:
-  string str(int raw=0) const;
-
-  const Field* field_ptr() const {return F;}
-  int field_degree() const {return F->d;}
-  int field_is_Q() const {return F->d == 1;}
-
-  mat_m matrix() const; // ignores denom
-  // NB Since we do not have polynomials with rational coefficients,
-  // both charpoly and minpoly are scaled to be primitive rather than
-  // monic.
-  ZZX charpoly() const;
-  ZZX minpoly() const;
-  int degree() const {return deg(minpoly());}
-  bigrational norm() const;
-  bigrational trace() const;
-  int is_zero() const;
-  int is_one() const;
-  int is_minus_one() const;
-  int is_generator() const {return degree()==F->d;}
-  bigrational get_val() const {return val;}
-  Qvec coords() const {return v;}
-  Qmat power_matrix() const; // cols are coords of powers
-  ZZ get_denom() const {return (field_is_Q()? val.den() : v.denom);}
-  int in_same_field(const FieldElement& b) const {return (F==b.F) || (*F==*b.F);}
-  int operator==(const FieldElement& b) const;
-  int operator!=(const FieldElement& b) const;
-
-  void set_zero();
-  void set_one();
-
-  FieldElement operator+(const FieldElement& b) const; // add
-  FieldElement operator+(const ZZ& b) const {return operator+(F->operator()(b));} // add
-  FieldElement operator+(const int& b) const {return operator+(F->operator()(b));} // add
-  FieldElement operator+(const long& b) const {return operator+(F->operator()(b));} // add
-  void operator+=(const FieldElement& b); // add b to this
-  void operator+=(const ZZ& b) { operator+=(F->operator()(b));} // add b
-  void operator+=(const int& b) { operator+=(F->operator()(b));} // add b
-  void operator+=(const long& b) { operator+=(F->operator()(b));} // add b
-
-  FieldElement operator-(const FieldElement& b) const; // subtract
-  FieldElement operator-(const ZZ& b) const {return operator-(F->operator()(b));} // subtract
-  FieldElement operator-(const int& b) const {return operator-(F->operator()(b));} // subtract
-  FieldElement operator-(const long& b) const {return operator-(F->operator()(b));} // subtract
-  void operator-=(const FieldElement& b); // subtract b from this
-  void operator-=(const ZZ& b) { operator-=(F->operator()(b));} // subtract b
-  void operator-=(const int& b) { operator-=(F->operator()(b));} // subtract b
-  void operator-=(const long& b) { operator-=(F->operator()(b));} // subtract b
-  FieldElement operator-() const;                           // unary minus
-
-  FieldElement operator*(const FieldElement& b) const; // product
-  FieldElement operator*(const ZZ& b) const {return operator*(F->operator()(b));} // product
-  FieldElement operator*(const int& b) const {return operator*(F->operator()(b));} // product
-  FieldElement operator*(const long& b) const {return operator*(F->operator()(b));} // product
-  void operator*=(const FieldElement& b); // multiply by b
-  void operator*=(const ZZ& b) { operator*=(F->operator()(b));} // multiply by b
-  void operator*=(const int& b) { operator*=(F->operator()(b));} // multiply by b
-  void operator*=(const long& b) { operator*=(F->operator()(b));} // multiply by b
-
-  FieldElement inverse() const; // raise error if zero      // inverse
-  FieldElement operator/(const FieldElement& b) const; // divide (raise error if b is zero)
-  FieldElement operator/(const ZZ& b) const {return operator/(F->operator()(b));} // divide
-  FieldElement operator/(const int& b) const {return operator/(F->operator()(b));} // divide
-  FieldElement operator/(const long& b) const {return operator/(F->operator()(b));} // divide
-  void operator/=(const FieldElement& b);                        // divide by b
-  void operator/=(const ZZ& b) { operator/=(F->operator()(b));} // divide by b
-  void operator/=(const int& b) { operator/=(F->operator()(b));} // divide by b
-  void operator/=(const long& b) { operator/=(F->operator()(b));} // divide by b
-  void negate(); // negate in place
-
-  // NB for a in F, either [Q(sqrt(a))=Q(a)] or [Q(sqrt(a)):Q(a)]=2.
-  // The first function only applies when a has maximal degree:
-  // return 1 and r s.t. r^2=this, with deg(r)=degree(), else 0
-  int is_absolute_square(FieldElement& r)  const;
-  // Same as above if the denom is 1
-  int is_absolute_integral_square(FieldElement& r)  const;
-  // The second function applies in general: return 1 and r
-  // s.t. r^2=this, with deg(r)=degree(), else 0. Here, ntries is the
-  // number of squares this is multiplied by to get odd co-degree.
-  int is_square(FieldElement& r, int ntries=100) const;
-
-  // return 1 and set r to the rational value if the degree is 1
-  int is_rational(bigrational& r) const;
-  // Same with no value needed
-  int is_rational() const {bigrational r;  return is_rational(r);}
-
-  // return 1 iff this is an algebraic integer
-  int is_integral() const;
-
-  // x must be initialised with a Field before input to x
-  void read (istream& s);
-  friend istream& operator>>(istream& s, FieldElement& x);
-};
-
-inline ostream& operator<<(ostream& s, const FieldElement& x)
-{ s << x.str();  return s;}
-
-FieldElement evaluate(const ZZX& f, const FieldElement a);
 
 class FieldIso {
   friend class Field;
@@ -324,49 +368,7 @@ public:
 inline ostream& operator<<(ostream& s, const FieldIso& x)
 { s << x.str(); return s; }
 
-class Order{
-
-public:
-  // Constructors:
-  Order() {;}
-  explicit Order(const Field& HF); // equation order
-  Order(const Field& HF, const vector<FieldElement>& v); // given a Z-basis
-  Order(const Field& HF, const vector<FieldElement>& v, const mat_m pcm); // same with known power_coords_matrix
-  Order(const Field& HF, const ZZ& i, const mat_m& M); // Order in F given pcm
-
-  // Access data:
-  const Field* get_field() const {return F;}
-  const vector<FieldElement> get_basis() const {return Zbasis;}
-  ZZ get_order_index() const {return order_index;}
-  int field_degree() const {return F->d;}
-  int field_is_Q() const {return F->d == 1;}
-  mat_m get_pcm() const {return power_coords_matrix;}
-  Qmat get_bm() const {return basis_matrix;}
-  string str(int raw=0) const;
-
-  // coords w.r.t. Zbasis of an arbitrary element of F
-  Qvec coords(const FieldElement& a) const  { return power_coords_matrix * a.v;}
-  // denominator of Zbasis coords of an arbitrary element of F
-  ZZ denom(const FieldElement& a) const { return coords(a).denom;}
-  // coords w.r.t. Zbasis of an element of F in this order
-  vec_m integral_coords(const FieldElement& a) const;
-
-  // FieldElement from integer coords
-  FieldElement operator()(const vec_m& coords) const;
-  // FieldElement from rational coords
-  FieldElement operator()(const Qvec& coords) const;
-private:
-  const Field *F; // the ambient number field
-  vector<FieldElement> Zbasis; // Z-basis of the order
-  mat_m power_coords_matrix; // columns are coords of power basis w.r.t. Zbasis
-  Qmat basis_matrix; // columns are coords of Zbasis w.r.t. power basis
-  ZZ order_index; // index of equation order in this ( = det(power_coords_matrix))
-};
-
 inline ostream& operator<<(ostream& s, const Order& x)
 { s << x.str(); return s; }
-
-// Compute Maximal Order (via lib)pari
-Order MaximalOrder(const Field& F);
 
 #endif

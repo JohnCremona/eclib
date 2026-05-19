@@ -26,7 +26,6 @@
 #include "eclib/interface.h"
 #include "eclib/pari_init.h"       // must be included after any NTL
 
-using PARI::avma;
 using PARI::pari_init;
 
 void eclib_pari_init(long max_prime)

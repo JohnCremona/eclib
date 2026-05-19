@@ -177,12 +177,6 @@ void Field::display(ostream&s) const
     }
 }
 
-////////////////////////////////////////////////////////////////////////
-//
-// Implementation of FieldElement methods
-//
-////////////////////////////////////////////////////////////////////////
-
 FieldElement Field::element(const vec_m& c, const ZZ& d) const
 {
   return FieldElement(*this, c, d);
@@ -244,7 +238,8 @@ void Field::make_integral_basis()
 {
   if (!have_integral_basis)
     {
-      Integers = new Order(MaximalOrder(*this));
+      Integers = MaximalOrder(this);
+      // cout << "In make_integral_basis(), after calling MaximalOrder(), Integers = " << Integers << endl;
       have_integral_basis = 1;
     }
 }
@@ -253,8 +248,72 @@ void Field::make_integral_basis()
 
 void Field::set_integral_basis(const ZZ& i, const mat_m& M)
 {
-  Integers = new Order(*this, i, M);
+  Integers = Order(*this, i, M);
   have_integral_basis = 1;
+}
+
+////////////////////////////////////////////////////////////////////////
+//
+// Implementation of FieldElement methods
+//
+////////////////////////////////////////////////////////////////////////
+
+// creation of 0 in the given field
+FieldElement::FieldElement(const Field& HF)
+    :F(&HF), v(vec_m(F->d))
+{
+  if (F->d==1)
+    val = bigrational(0);
+}
+
+// creation from an integer vector of coords with denominator
+FieldElement::FieldElement(const Field& HF, const vec_m& c, const ZZ& d)
+  :F(&HF), v(c,d)
+{
+  if (F->d==1)
+    val = c[1];
+}
+
+// creation from a rational vector of coords
+FieldElement::FieldElement(const Field& HF, const Qvec& c)
+    :F(&HF), v(c)
+{
+  if (F->d==1)
+    val = c[1];
+}
+
+// creation from a rational (general F)
+FieldElement::FieldElement(const Field& HF, const ZZ& a, const ZZ& d)
+  :F(&HF), v(a*vec_m::unit_vector(F->d, 1), d), val(bigrational(a,d))
+{
+  ;
+}
+
+// creation from a rational
+FieldElement::FieldElement(const Field& HF, const bigrational& r)
+  :F(&HF), v(r.num()*vec_m::unit_vector(F->d, 1), r.den()), val(r)
+{
+  ;
+}
+
+int FieldElement::field_degree() const
+{
+  return F->d;
+}
+
+int FieldElement::field_is_Q() const
+{
+  return F->d == 1;
+}
+
+int FieldElement::is_generator() const
+{
+  return degree()==F->d;
+}
+
+int FieldElement::in_same_field(const FieldElement& b) const
+{
+  return (F==b.F) || (*F==*b.F);
 }
 
 int FieldElement::is_zero() const
@@ -436,6 +495,13 @@ void FieldElement::set_one()
   v.set_unit_vector(1);
 }
 
+FieldElement FieldElement::operator+(const ZZ& b) const {return operator+(F->operator()(b));} // add
+FieldElement FieldElement::operator+(const int& b) const {return operator+(F->operator()(b));} // add
+FieldElement FieldElement::operator+(const long& b) const {return operator+(F->operator()(b));} // add
+void FieldElement::operator+=(const ZZ& b) { operator+=(F->operator()(b));} // add b
+void FieldElement::operator+=(const int& b) { operator+=(F->operator()(b));} // add b
+void FieldElement::operator+=(const long& b) { operator+=(F->operator()(b));} // add b
+
 // add b to this
 void FieldElement::operator+=(const FieldElement& b)
 {
@@ -477,6 +543,10 @@ FieldElement FieldElement::operator-() const
     return FieldElement(*F, -v);
 }
 
+FieldElement FieldElement::operator-(const ZZ& b) const {return operator-(F->operator()(b));} // subtract
+FieldElement FieldElement::operator-(const int& b) const {return operator-(F->operator()(b));} // subtract
+FieldElement FieldElement::operator-(const long& b) const {return operator-(F->operator()(b));} // subtract
+
 // subtract b
 void FieldElement::operator-=(const FieldElement& b)
 {
@@ -494,6 +564,10 @@ void FieldElement::operator-=(const FieldElement& b)
   else
     v -=b.v;
 }
+
+void FieldElement::operator-=(const ZZ& b) { operator-=(F->operator()(b));} // subtract b
+void FieldElement::operator-=(const int& b) { operator-=(F->operator()(b));} // subtract b
+void FieldElement::operator-=(const long& b) { operator-=(F->operator()(b));} // subtract b
 
 FieldElement FieldElement::operator-(const FieldElement& b) const
 {
@@ -527,6 +601,10 @@ void FieldElement::operator*=(const FieldElement& b) // multiply by b
     v = Qvec((matrix()*b.matrix()).col(1),  get_denom() * b.get_denom());
 }
 
+void FieldElement::operator*=(const ZZ& b) { operator*=(F->operator()(b));} // multiply by b
+void FieldElement::operator*=(const int& b) { operator*=(F->operator()(b));} // multiply by b
+void FieldElement::operator*=(const long& b) { operator*=(F->operator()(b));} // multiply by b
+
 FieldElement FieldElement::operator*(const FieldElement& b) const
 {
   if (!in_same_field(b))
@@ -542,6 +620,10 @@ FieldElement FieldElement::operator*(const FieldElement& b) const
     a *= b;
   return a;
 }
+
+FieldElement FieldElement::operator*(const ZZ& b) const {return operator*(F->operator()(b));} // product
+FieldElement FieldElement::operator*(const int& b) const {return operator*(F->operator()(b));} // product
+FieldElement FieldElement::operator*(const long& b) const {return operator*(F->operator()(b));} // product
 
 FieldElement FieldElement::inverse() const // raise error if zero
 {
@@ -588,6 +670,10 @@ void FieldElement::operator/=(const FieldElement& b)      // divide by b
   operator*=(b.inverse());
 }
 
+void FieldElement::operator/=(const ZZ& b) { operator/=(F->operator()(b));} // divide by b
+void FieldElement::operator/=(const int& b) { operator/=(F->operator()(b));} // divide by b
+void FieldElement::operator/=(const long& b) { operator/=(F->operator()(b));} // divide by b
+
 FieldElement FieldElement::operator/(const FieldElement& b) const // raise error if b is zero
 {
   if (b.is_zero())
@@ -609,6 +695,10 @@ FieldElement FieldElement::operator/(const FieldElement& b) const // raise error
     a /= b;
   return a;
 }
+
+FieldElement FieldElement::operator/(const ZZ& b) const {return operator/(F->operator()(b));} // divide
+FieldElement FieldElement::operator/(const int& b) const {return operator/(F->operator()(b));} // divide
+FieldElement FieldElement::operator/(const long& b) const {return operator/(F->operator()(b));} // divide
 
 FieldElement evaluate(const ZZX& f, const FieldElement a)
 {
@@ -1235,42 +1325,46 @@ FieldIso Field::sqrt_embedding(const vector<FieldElement>& r_list, string newvar
 //
 ////////////////////////////////////////////////////////////////////////
 
-Order::Order(const Field& HF) // equation order
-  :F(&HF)
+Order::Order(const Field& F) // equation order
+  :Zbasis(F.power_basis()), power_coords_matrix(mat_m::identity_matrix(F.d)),
+   index(1), poldisc(discriminant(F.minpoly)), rank(F.d)
 {
-  Zbasis = F->power_basis();
-  power_coords_matrix = mat_m::identity_matrix(F->d);
+  disc = poldisc;
   basis_matrix = Qmat(power_coords_matrix); // denom=1
-  order_index = ZZ(1);
 }
 
-Order::Order(const Field& HF, const vector<FieldElement>& v)
-  :F(&HF), Zbasis(v)
+Order::Order(const Field& F, const vector<FieldElement>& v)
+  :Zbasis(v), poldisc(discriminant(F.minpoly)), rank(F.d)
 {
-  int d = F->d;
-  basis_matrix = Qmat(d,d);
-  for (int i=0; i<d; i++)
+  basis_matrix = Qmat(rank, rank);
+  for (int i=0; i<rank; i++)
     basis_matrix.setcol(i+1,v[i].coords());
   power_coords_matrix = basis_matrix.inverse().get_numerator();
-  order_index = power_coords_matrix.determinant();
+  index = power_coords_matrix.determinant();
+  disc = poldisc/(index*index);
 }
 
-Order::Order(const Field& HF, const vector<FieldElement>& v, const mat_m pcm)
-  :F(&HF), Zbasis(v), power_coords_matrix(pcm), order_index(pcm.determinant())
+Order::Order(const Field& F, const vector<FieldElement>& v, const mat_m pcm)
+  :Zbasis(v), power_coords_matrix(pcm),
+   index(pcm.determinant()), poldisc(discriminant(F.minpoly)), rank(F.d)
 {
-  int d = F->d;
-  basis_matrix = Qmat(d,d);
-  for (int i=0; i<d; i++)
+  // cout << "In Order constructor, field is " << F << ", basis = " << v << "\npcm = " << pcm <<endl;
+  // cout << "Zbasis = " << Zbasis <<endl;
+  basis_matrix = Qmat(rank, rank);
+  for (int i=0; i<rank; i++)
     basis_matrix.setcol(i+1,v[i].coords());
+  disc = poldisc/(index*index);
+  // cout << " - at end of constructor, the order is\n" << *this << endl;
 }
 
-Order::Order(const Field& HF, const ZZ& i, const mat_m& M) // Order in F given pcm
-  :F(&HF), power_coords_matrix(M), basis_matrix(Qmat(M).inverse()), order_index(i)
+Order::Order(const Field& F, const ZZ& i, const mat_m& M) // Order in F given pcm
+  :power_coords_matrix(M), basis_matrix(Qmat(M).inverse()),
+   index(M.determinant()), poldisc(discriminant(F.minpoly)), rank(F.d)
 {
-  auto d = HF.d;
-  Zbasis.resize(d);
-  for (int j=0; j<d; j++)
-    Zbasis[j] = (*F)(basis_matrix.col(j+1));
+  Zbasis.resize(rank);
+  for (int j=0; j<rank; j++)
+    Zbasis[j] = F(basis_matrix.col(j+1));
+  disc = poldisc/(index*index);
 }
 
 // coords w.r.t. Zbasis of an element of F in this order
@@ -1288,8 +1382,8 @@ vec_m Order::integral_coords(const FieldElement& a) const
 // FieldElement from integer coords
 FieldElement Order::operator()(const vec_m& coords) const
 {
-  FieldElement a(*F);
-  for (int i=0; i<F->d; i++)
+  FieldElement a = Zbasis[0] * coords[1];
+  for (int i=1; i<rank; i++)
     {
       ZZ ci = coords[i+1];
       if (!is_zero(ci))
@@ -1306,6 +1400,12 @@ FieldElement Order::operator()(const Qvec& coords) const
 
 string Order::str(int raw) const
 {
+  if (rank==0) // only possible after a default construction woth no field
+    return string("Empty order: no field");
+
+  // cout << "In method str() for Order of rank " << rank << " with basis " << Zbasis
+  //      << " in Field " << Zbasis[0].F << flush << " -> " << *(Zbasis[0].F) << endl;
+
   ostringstream s;
 
   if (raw) // only output the integral basis coords
@@ -1315,20 +1415,26 @@ string Order::str(int raw) const
     }
   else
     {
-      s << "Order in " << *F << " with Z-basis " << Zbasis;
+      s << "Order in " << *Zbasis[0].F << " with Z-basis " << Zbasis;
     }
   return s.str();
 }
 
 // Compute Maximal Order (via lib)pari
-Order MaximalOrder(const Field& F)
+Order MaximalOrder(const Field* F)
 {
+  // cout << "In MaximalOrder(F) with F = " << F << " -> " << *F << endl;
   ZZ ind;
   vector<Qvec> zbc;
   mat_m bcm;
-  nfinit(F.minpoly, ind, zbc, bcm);
-  vector<FieldElement> bas(F.d);
+  nfinit(F->minpoly, ind, zbc, bcm);
+  // cout << "nfinit() returns ind = " << ind << "\nzbc = " <<zbc << "\nbcm = " << bcm << endl;
+  vector<FieldElement> bas(F->d);
   std::transform(zbc.begin(), zbc.end(), bas.begin(),
-                 [F](const Qvec& v) {return FieldElement(F, v);});
-  return Order(F, bas, bcm);
+                 [F](const Qvec& v) {return (*F)(v);});
+  // cout << "Now calling Order constructor with basis = " << bas << endl;
+  Order O(*F, bas, bcm);
+  // cout << "... O = " << O << endl;
+  // cout << "End of MaximalOrder(F) with F = " << F << " -> " << *F << endl;
+  return O;
 }

@@ -29,10 +29,7 @@ Embedding of Q into Q(sqrt(r)) = Q[X]/(X^2-2) mapping 1 to 1
 The image of b is 2 with sqrt(2) = sqrt(r)
 
 Testing nfinit interface for reduced polynomial X:
-Equation order has index 1 in maximal order 
-Integral basis: [ 1 ] // random
-Matrix of coefficients of powers w.r.t. integral basis:
-[[1]] // random
+Ring of integers: Order in Q with Z-basis [ 1 ]
 
 
 F = Q(i) = Q[X]/(X^2+1)
@@ -60,10 +57,7 @@ Embedding of Q(i) = Q[X]/(X^2+1) into Q(sqrt(r)) = Q[X]/(X^4+1) mapping i to sqr
 The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
 Testing nfinit interface for reduced polynomial X^2+1:
-Equation order has index 1 in maximal order 
-Integral basis: [ 1 i ] // random
-Matrix of coefficients of powers w.r.t. integral basis:
-[[1,0],[0,1]] // random
+Ring of integers: Order in Q(i) = Q[X]/(X^2+1) with Z-basis [ 1 i ]
 
 
 
@@ -99,10 +93,7 @@ Embedding of Q(a) = Q[X]/(X^2+9) into Q(sqrt(r)) = Q[X]/(X^4+2*X^2-12*X+10) mapp
 The image of b is (-6*sqrt(r)^3-9*sqrt(r)^2-18*sqrt(r)+45)/5 with sqrt((-6*sqrt(r)^3-9*sqrt(r)^2-18*sqrt(r)+45)/5) = (3*sqrt(r)^3+2*sqrt(r)^2+9*sqrt(r)-25)/5
 
 Testing nfinit interface for reduced polynomial X^2+1:
-Equation order has index 1 in maximal order 
-Integral basis: [ 1 a0 ] // random
-Matrix of coefficients of powers w.r.t. integral basis:
-[[1,0],[0,1]] // random
+Ring of integers: Order in Q(a0) = Q[X]/(X^2+1) with Z-basis [ 1 a0 ]
 
 
 
@@ -137,10 +128,7 @@ Embedding of Q(b) = Q[X]/(X^2+33*X+22) into Q(sqrt(r)) = Q[X]/(X^4+33*X^2+22) ma
 The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
 Testing nfinit interface for reduced polynomial X^2-X-250:
-Equation order has index 1 in maximal order 
-Integral basis: [ 1 b0 ] // random
-Matrix of coefficients of powers w.r.t. integral basis:
-[[1,0],[0,1]] // random
+Ring of integers: Order in Q(b0) = Q[X]/(X^2-X-250) with Z-basis [ 1 b0 ]
 
 
 
@@ -175,10 +163,7 @@ Embedding of Q(c) = Q[X]/(X^16+72*X^14+2424*X^12+46368*X^10+562960*X^8+4377600*X
 The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
 Testing nfinit interface for reduced polynomial X^16-20*X^13-70*X^12+76*X^11+200*X^10-296*X^9+5311*X^8-15548*X^7+22808*X^6-30984*X^5+38754*X^4-31428*X^3+16200*X^2-4860*X+729:
-Equation order has index 98161902597249888295855987556352 in maximal order 
-Integral basis: [ 1 c0 c0^2 c0^3 c0^4 c0^5 c0^6 c0^7 (c0^8-4*c0^7+4*c0^6-4*c0^5-5*c0^4-4*c0^3+4*c0^2-4*c0-3)/12 (c0^9+3*c0^5+5*c0)/12 (c0^10+3*c0^6+5*c0^2)/12 (c0^11+3*c0^7+5*c0^3)/12 (c0^12+c0^9-c0^8+16*c0^7+8*c0^6-5*c0^5-11*c0^4+16*c0^3+8*c0^2-15*c0)/36 (c0^13-2*c0^10+2*c0^9+4*c0^8-52*c0^7+10*c0^6+10*c0^5+40*c0^4-16*c0^3+30*c0^2-45*c0)/108 (c0^14+1452*c0^13+5283*c0^12-20*c0^11+15440*c0^10-3266*c0^9+14927*c0^8-199388*c0^7+198040*c0^6-96482*c0^5-134743*c0^4+196740*c0^3+32481*c0^2-16362*c0+161514)/547236 (c0^15-726738001974*c0^14-3999982618806066*c0^13+7631877312219958*c0^12+25483621884488444*c0^11-79028770506560717*c0^10-29698672418965519*c0^9+89695162023180760*c0^8+376249916234310292*c0^7+527253283712858557*c0^6+901743522218115383*c0^5-557089731551112684*c0^4-951782714259563187*c0^3-584149773084628671*c0^2+143996807583761463*c0+559457097278987430)/2224933664405601924 ] // random
-Matrix of coefficients of powers w.r.t. integral basis:
-[[1,0,0,0,0,0,0,0,3,0,0,0,3,-12,-204720,-1048215810474979656],[0,1,0,0,0,0,0,0,4,-5,0,0,24,39,-243096,-855103652459026020],[0,0,1,0,0,0,0,0,-4,0,-5,0,-12,-24,202671,690658231137914592],[0,0,0,1,0,0,0,0,4,0,0,-5,-12,0,-193152,671631804778639815],[0,0,0,0,1,0,0,0,5,0,0,0,16,-60,62700,-207928599964904604],[0,0,0,0,0,1,0,0,4,-3,0,0,12,-20,-7380,-1526565694145063916],[0,0,0,0,0,0,1,0,-4,0,-3,0,-12,0,-28616,-334772754057666156],[0,0,0,0,0,0,0,1,4,0,0,-3,-12,36,150744,-313446403280341472],[0,0,0,0,0,0,0,0,12,0,0,0,12,-48,-172824,-1485521406180654360],[0,0,0,0,0,0,0,0,0,12,0,0,-12,-24,137436,451846977962178804],[0,0,0,0,0,0,0,0,0,0,12,0,0,24,-220128,884369446031541516],[0,0,0,0,0,0,0,0,0,0,0,12,0,0,240,-305629045493387568],[0,0,0,0,0,0,0,0,0,0,0,0,36,0,-190188,-412964430359349600],[0,0,0,0,0,0,0,0,0,0,0,0,0,108,-156816,318033976313500344],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,547236,397697197248243864],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2224933664405601924]] // random
+Ring of integers: Order in Q(c0) = Q[X]/(X^16-20*X^13-70*X^12+76*X^11+200*X^10-296*X^9+5311*X^8-15548*X^7+22808*X^6-30984*X^5+38754*X^4-31428*X^3+16200*X^2-4860*X+729) with Z-basis [ 1 c0 c0^2 c0^3 c0^4 c0^5 c0^6 c0^7 (c0^8-4*c0^7+4*c0^6-4*c0^5-5*c0^4-4*c0^3+4*c0^2-4*c0-3)/12 (c0^9+3*c0^5+5*c0)/12 (c0^10+3*c0^6+5*c0^2)/12 (c0^11+3*c0^7+5*c0^3)/12 (c0^12+c0^9-c0^8+16*c0^7+8*c0^6-5*c0^5-11*c0^4+16*c0^3+8*c0^2-15*c0)/36 (c0^13-2*c0^10+2*c0^9+4*c0^8-52*c0^7+10*c0^6+10*c0^5+40*c0^4-16*c0^3+30*c0^2-45*c0)/108 (c0^14+1452*c0^13+5283*c0^12-20*c0^11+15440*c0^10-3266*c0^9+14927*c0^8-199388*c0^7+198040*c0^6-96482*c0^5-134743*c0^4+196740*c0^3+32481*c0^2-16362*c0+161514)/547236 (c0^15-726738001974*c0^14-3999982618806066*c0^13+7631877312219958*c0^12+25483621884488444*c0^11-79028770506560717*c0^10-29698672418965519*c0^9+89695162023180760*c0^8+376249916234310292*c0^7+527253283712858557*c0^6+901743522218115383*c0^5-557089731551112684*c0^4-951782714259563187*c0^3-584149773084628671*c0^2+143996807583761463*c0+559457097278987430)/2224933664405601924 ]
 
 
 F = Q(z) = Q[X]/(X^4+1)
@@ -206,10 +191,7 @@ Embedding of Q(z) = Q[X]/(X^4+1) into Q(sqrt(r)) = Q[X]/(X^8+1) mapping z to sqr
 The image of b is sqrt(r)^2 with sqrt(sqrt(r)^2) = sqrt(r)
 
 Testing nfinit interface for reduced polynomial X^4+1:
-Equation order has index 1 in maximal order 
-Integral basis: [ 1 z z^2 z^3 ] // random
-Matrix of coefficients of powers w.r.t. integral basis:
-[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]] // random
+Ring of integers: Order in Q(z) = Q[X]/(X^4+1) with Z-basis [ 1 z z^2 z^3 ]
 
 
 

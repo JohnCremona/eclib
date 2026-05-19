@@ -123,18 +123,20 @@ void test_field(const Field& F)
   cout << endl;
 
   cout << "Testing nfinit interface for reduced polynomial " << str(Fred.poly()) << ":\n";
-  ZZ ind;
-  vector<Qvec> zbasis_coords;
-  mat_m bcm;
-  nfinit(Fred.poly(), ind, zbasis_coords, bcm);
-  cout << "Equation order has index " << ind << " in maximal order " << endl;
-  vector<FieldElement> Zbasis;
-  for (int i=0; i<d; i++)
-    Zbasis.push_back(FieldElement(Fred, zbasis_coords[i]));
-  cout << "Integral basis: " << Zbasis << " // random" << endl;
-  cout << "Matrix of coefficients of powers w.r.t. integral basis:\n";
-  bcm.output_flat(cout);
-  cout << " // random" << endl;
+  Fred.make_integral_basis();
+  cout << "Ring of integers: " << Fred.integers() << endl;
+  // ZZ ind;
+  // vector<Qvec> zbasis_coords;
+  // mat_m bcm;
+  // nfinit(Fred.poly(), ind, zbasis_coords, bcm);
+  // cout << "Equation order has index " << ind << " in maximal order " << endl;
+  // vector<FieldElement> Zbasis;
+  // for (int i=0; i<d; i++)
+  //   Zbasis.push_back(FieldElement(Fred, zbasis_coords[i]));
+  // cout << "Integral basis: " << Zbasis << " // random" << endl;
+  // cout << "Matrix of coefficients of powers w.r.t. integral basis:\n";
+  // bcm.output_flat(cout);
+  // cout << " // random" << endl;
   cout << endl;
   cout << endl;
 }
