@@ -1440,13 +1440,20 @@ string Order::str(int raw) const
 
 // Extend by a (which must be an algebraic integer), returning the
 // index of the extension
-ZZ Order::extend_by(const FieldElement& a)
+ZZ Order::extend_by(const FieldElement& a, int check)
 {
-  // Get coords of a:
-  Qvec v = a.v;
+  // Get coords of a w.r.t. current Zbasis:
+  Qvec v = coords(a);
   // Do nothing if its denominator is 1
   if (is_one(v.denom))
     return ZZ(1);
+
+  if (check && !a.is_integral())
+    {
+      cout << "Cannot extend order " << *this << " by " << a
+           << " which is not an algenbraic integer!" << endl;
+      return ZZ(1);
+    }
 
   // ...else make a rational matrix whose rows are the coords of the
   // current Z-basis
@@ -1474,14 +1481,24 @@ ZZ Order::extend_by(const FieldElement& a)
 
 // Extend by all a in alist (which must be algebraic integers),
 // returning the index of the extension
-ZZ Order::extend_by(const vector<FieldElement>& alist)
+ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
 {
   // make a rational matrix whose rows are the coords of the current
   // Z-basis
   Qmat M = transpose(basis_matrix);
+
   // ... append row of coords of a for all a in alist:
   for (auto a: alist)
-    M.append_row(a.v);
+    {
+      if (check && !a.is_integral())
+        {
+          cout << "Cannot extend order " << *this << " by " << a
+               << " which is not an algenbraic integer!" << endl;
+          return ZZ(1);
+        }
+      M.append_row(coords(a.v));
+    }
+
   // ... form (row-wise) HNF
   M = HNF(M);
   // ...delete last #alist rows (which will be 0)

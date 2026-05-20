@@ -195,14 +195,15 @@ public:
   // FieldElement from rational coords
   FieldElement operator()(const Qvec& coords) const;
 
-  // Functions to enlarge the order
+  // Functions to enlarge the order. If check==1, check that the
+  // elements provided are algebraic integers.
 
   // Extend by a (which must be an algebraic integer), returning the
   // index of the extension
-  ZZ extend_by(const FieldElement& a);
+  ZZ extend_by(const FieldElement& a, int check=0);
   // Extend by all a in alist (which must be algebraic integers),
   // returning the index of the extension
-  ZZ extend_by(const vector<FieldElement>& alist);
+  ZZ extend_by(const vector<FieldElement>& alist, int check=0);
 
 private:
   vector<FieldElement> Zbasis; // Z-basis of the order
