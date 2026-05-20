@@ -1333,28 +1333,49 @@ Order::Order(const Field& F) // equation order
   basis_matrix = Qmat(power_coords_matrix); // denom=1
 }
 
-Order::Order(const Field& F, const vector<FieldElement>& v)
-  :Zbasis(v), poldisc(discriminant(F.minpoly)), rank(F.d)
+Order::Order(const vector<FieldElement>& v, int basis)
 {
-  basis_matrix = Qmat(rank, rank);
-  for (int i=0; i<rank; i++)
-    basis_matrix.setcol(i+1,v[i].coords());
-  power_coords_matrix = basis_matrix.inverse().get_numerator();
-  index = power_coords_matrix.determinant();
-  disc = poldisc/(index*index);
+  const Field& F = *v[0].field_ptr();
+  poldisc = discriminant(F.minpoly);
+  rank = F.d;
+  if (basis)
+    {
+      Zbasis = v;
+      basis_matrix = Qmat(rank, rank);
+      for (int i=0; i<rank; i++)
+        basis_matrix.setcol(i+1,v[i].coords());
+      power_coords_matrix = basis_matrix.inverse().get_numerator();
+      index = power_coords_matrix.determinant();
+      disc = poldisc/(index*index);
+    }
+  else
+    {
+      int ngens = v.size();
+      Qmat M(ngens, rank); // rows are coords of given gens
+      for (int i=0; i<ngens; i++)
+        M.setcol(i+1,v[i].coords());
+      M = HNF(M);
+      M.delete_rows(ngens-rank);
+      basis_matrix = transpose(M); // cols are coords of Zbasis
+      Zbasis.resize(rank);
+      for (int j=0; j<rank; j++)
+        Zbasis[j] = F(basis_matrix.col(j+1));
+      power_coords_matrix = basis_matrix.inverse().get_numerator();
+      index = power_coords_matrix.determinant();
+      disc = poldisc/(index*index);
+    }
 }
 
-Order::Order(const Field& F, const vector<FieldElement>& v, const mat_m pcm)
-  :Zbasis(v), power_coords_matrix(pcm),
-   index(pcm.determinant()), poldisc(discriminant(F.minpoly)), rank(F.d)
+Order::Order(const vector<FieldElement>& v, const mat_m pcm)
+  :Zbasis(v), power_coords_matrix(pcm), index(pcm.determinant())
 {
-  // cout << "In Order constructor, field is " << F << ", basis = " << v << "\npcm = " << pcm <<endl;
-  // cout << "Zbasis = " << Zbasis <<endl;
+  const Field& F = *v[0].field_ptr();
+  poldisc = discriminant(F.minpoly);
+  rank = F.d;
   basis_matrix = Qmat(rank, rank);
   for (int i=0; i<rank; i++)
     basis_matrix.setcol(i+1,v[i].coords());
   disc = poldisc/(index*index);
-  // cout << " - at end of constructor, the order is\n" << *this << endl;
 }
 
 Order::Order(const Field& F, const ZZ& i, const mat_m& M) // Order in F given pcm
@@ -1436,58 +1457,59 @@ string Order::str(int raw) const
   return s.str();
 }
 
+// Sum of two orders (in the same field!)
+Order Order::operator+(const Order& O2)
+{
+  vector<FieldElement> gens;
+  gens.reserve(rank*O2.rank);
+  for (auto a: Zbasis)
+    for (auto b: O2.Zbasis)
+      gens.push_back(a*b);
+  return Order(gens, 0); // 0 means not a basis, just Z-gens
+}
+
+// Add another order to this:
+Order Order::operator+=(const Order& O2)
+{
+  *this = *this + O2;
+  return *this;
+}
+
+// Sum of this and the power order of a
+Order Order::operator+(const FieldElement& a)
+{
+  return (*this) + PowerOrder(a);
+}
+
+// Add the power order of a to this
+Order Order::operator+=(const FieldElement& a)
+{
+  *this = *this + a;
+  return *this;
+}
+
 // Functions to enlarge the order
 
 // Extend by a (which must be an algebraic integer), returning the
 // index of the extension
 ZZ Order::extend_by(const FieldElement& a, int check)
 {
-  // Get coords of a w.r.t. current Zbasis:
-  Qvec v = coords(a);
-  // Do nothing if its denominator is 1
-  if (is_one(v.denom))
-    return ZZ(1);
-
   if (check && !a.is_integral())
     {
       cout << "Cannot extend order " << *this << " by " << a
            << " which is not an algenbraic integer!" << endl;
       return ZZ(1);
     }
-
-  // ...else make a rational matrix whose rows are the coords of the
-  // current Z-basis
-  Qmat M = transpose(basis_matrix);
-  // ... append row of coords of a:
-  M.append_row(v);
-  // ... form (row-wise) HNF
-  M = HNF(M);
-  // ...delete last row (which will be 0)
-  M.delete_row();
-  // ... the transpose of this is the new basis matrix
-  basis_matrix = transpose(M);
-  // ... use its rows to form the new Zbasis
-  const Field& F = *Zbasis[0].F;
-  for (int j=0; j<rank; j++)
-    Zbasis[j] = F(basis_matrix.col(j+1));
-  power_coords_matrix = basis_matrix.inverse().get_numerator();
-  // ... compute new index and that gain factor
   ZZ old_index = index;
-  index = power_coords_matrix.determinant();
-  ZZ index_gain = index/old_index;
-  disc = disc/(index_gain*index_gain);
-  return index_gain;
+  operator+=(a);
+  return index/old_index;
 }
 
 // Extend by all a in alist (which must be algebraic integers),
 // returning the index of the extension
 ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
 {
-  // make a rational matrix whose rows are the coords of the current
-  // Z-basis
-  Qmat M = transpose(basis_matrix);
-
-  // ... append row of coords of a for all a in alist:
+  ZZ index_gain(1);
   for (auto a: alist)
     {
       if (check && !a.is_integral())
@@ -1496,25 +1518,8 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
                << " which is not an algenbraic integer!" << endl;
           return ZZ(1);
         }
-      M.append_row(coords(a.v));
+      index_gain *= extend_by(a);
     }
-
-  // ... form (row-wise) HNF
-  M = HNF(M);
-  // ...delete last #alist rows (which will be 0)
-  M.delete_rows(alist.size());
-  // ... the transpose of this is the new basis matrix
-  basis_matrix = transpose(M);
-  // ... use its rows to form the new Zbasis
-  const Field& F = *Zbasis[0].F;
-  for (int j=0; j<rank; j++)
-    Zbasis[j] = F(basis_matrix.col(j+1));
-  power_coords_matrix = basis_matrix.inverse().get_numerator();
-  // ... compute new index and that gain factor
-  ZZ old_index = index;
-  index = power_coords_matrix.determinant();
-  ZZ index_gain = index/old_index;
-  disc = disc/(index_gain*index_gain);
   return index_gain;
 }
 
@@ -1532,8 +1537,34 @@ Order MaximalOrder(const Field* F, const ZZ& bound)
   std::transform(zbc.begin(), zbc.end(), bas.begin(),
                  [F](const Qvec& v) {return (*F)(v);});
   // cout << "Now calling Order constructor with basis = " << bas << endl;
-  Order O(*F, bas, bcm);
+  Order O(bas, bcm);
   // cout << "... O = " << O << endl;
   // cout << "End of MaximalOrder(F) with F = " << F << " -> " << *F << endl;
   return O;
+}
+
+// List of x^i for i=0,1,...,deg(F)
+vector<FieldElement> powers(const FieldElement& x)
+{
+  const Field& F = *x.field_ptr();
+  int d = F.degree();
+  vector<FieldElement> bas(d);
+  bas[0] = F(1);
+  for (int i=1; i<d; i++)
+    bas[i] = x*bas[i-1];
+  return bas;
+}
+
+// For x an algebraic integer, the order spanned by x^i for
+// i=0..deg(F)-1.  If check then check that x is an algebraic integer.
+Order PowerOrder(const FieldElement& x, int check)
+{
+  if (check && !x.is_integral())
+    {
+      cout << "Cannot creat power order from " << x
+           << " which is not an algenbraic integer!" << endl;
+      return Order();
+    }
+  else
+    return Order(powers(x));
 }

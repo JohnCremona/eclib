@@ -32,6 +32,12 @@ class FieldElement;
 class FieldIso;
 class Order;
 
+////////////////////////////////////////////////////////////////////////
+//
+// FieldElement class
+//
+////////////////////////////////////////////////////////////////////////
+
 class FieldElement {
   friend class Field;
   friend class Order;
@@ -152,11 +158,19 @@ public:
   friend istream& operator>>(istream& s, FieldElement& x);
 };
 
+// List of x^i for i=0,1,...,deg(F)
+vector<FieldElement> powers(const FieldElement& x);
+
 inline ostream& operator<<(ostream& s, const FieldElement& x)
 { s << x.str();  return s;}
 
 FieldElement evaluate(const ZZX& f, const FieldElement a);
 
+////////////////////////////////////////////////////////////////////////
+//
+// Order class
+//
+////////////////////////////////////////////////////////////////////////
 
 class Order{
 
@@ -164,8 +178,8 @@ public:
   // Constructors:
   Order() {;}
   explicit Order(const Field& F); // equation order
-  Order(const Field& F, const vector<FieldElement>& v); // given a Z-basis
-  Order(const Field& F, const vector<FieldElement>& v, const mat_m pcm); // same with known power_coords_matrix
+  Order(const vector<FieldElement>& v, int basis=1); // given a Z-basis or just a Z-spanning set
+  Order(const vector<FieldElement>& v, const mat_m pcm); // same with known power_coords_matrix
   Order(const Field& F, const ZZ& i, const mat_m& M); // Order in F given pcm
 
   // Access data:
@@ -198,6 +212,15 @@ public:
   // Functions to enlarge the order. If check==1, check that the
   // elements provided are algebraic integers.
 
+  // Sum of two orders (in the same field!)
+  Order operator+(const Order& O2);
+  // Sum of this and power order of a
+  Order operator+(const FieldElement& a);
+  // Add another order to this:
+  Order operator+=(const Order& O2);
+  // Add the power order of a to this
+  Order operator+=(const FieldElement& a);
+
   // Extend by a (which must be an algebraic integer), returning the
   // index of the extension
   ZZ extend_by(const FieldElement& a, int check=0);
@@ -218,6 +241,16 @@ private:
 // Compute Maximal Order (via lib)pari.  If bound>0 then the order may
 // not be p-maximal for p>bound.
 Order MaximalOrder(const Field* F, const ZZ& bound = ZZ(0));
+
+// For x an algebraic integer, the order spanned by x^i for
+// i=0..deg(F)-1.  If check then check that x is an algebraic integer.
+Order PowerOrder(const FieldElement& x, int check=0);
+
+////////////////////////////////////////////////////////////////////////
+//
+// Field class
+//
+////////////////////////////////////////////////////////////////////////
 
 class Field {
   friend class FieldIso;
@@ -312,6 +345,12 @@ public:
 
 inline ostream& operator<<(ostream& s, const Field& F)
 { s << F.str();  return s; }
+
+////////////////////////////////////////////////////////////////////////
+//
+// FieldIso class
+//
+////////////////////////////////////////////////////////////////////////
 
 class FieldIso {
   friend class Field;
