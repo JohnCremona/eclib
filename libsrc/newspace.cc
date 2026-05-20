@@ -30,8 +30,6 @@
 // polredbest will be used.
 const int POLREDABS_DEGREE_UPPER_BOUND = 25;
 
-#define USE_INTEGRAL_BASES
-
 newform_comparison newform_cmp;
 
 // When this is set, use the old spaces info read in from file, with
@@ -147,9 +145,6 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
                << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
         }
     }
-#ifdef USE_INTEGRAL_BASES
-  F->make_integers();
-#endif
   if (verbose)
     {
       cout <<"Hecke field data:" << endl;
@@ -680,6 +675,11 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 // Fill aPmap, dict of eigenvalues of first ntp good primes
 void Newform::compute_eigs(int ntp, int verbose)
 {
+  HO = Order(*F); // initialise with equation order
+  ZZ Hecke_index = ZZ(1); // index of eqn order in HO
+  if (d>1 && verbose)
+    cout << "Hecke order initialised to " << HO << endl;
+
   long p=2;
   primevar pr(ntp); // iterator over first ntp primes
   while(pr.ok())
@@ -689,11 +689,20 @@ void Newform::compute_eigs(int ntp, int verbose)
       if (!divides(p,N)) // compute AL eigs separately, later
         {
           if (verbose) cout << "Computing a_p for p = " << p << "..." << flush;
-          aPmap[p] = ap(p);
-          if (verbose) cout << "done, a_p = " << aPmap[p] << endl;
+          FieldElement a_p = ap(p);
+          aPmap[p] = a_p;
+          if (verbose) cout << "done, a_p = " << a_p << endl;
+          if (d>1 && verbose)
+            {
+              ZZ rel_index = HO.extend_by(a_p);
+              if (!is_one(rel_index))
+                cout << "Hecke order grows by index " << rel_index << " to " << HO << endl;
+            }
         }
     }
   maxP = p; // record last prime
+  if (d>1 && verbose)
+    cout << "After computing a_p for primes up to " << maxP << ", Hecke order is " << HO << endl;
 } // end of compute_eigs
 
 // Fill dict eQmap *after* aPmap, and set sfe
@@ -751,6 +760,14 @@ void Newform::display(int aP, int AL, int traces) const
   // Information about Hecke field:
 
   cout << " - Hecke field k_f = " << *F << endl;
+  if (d>1 && HO.rk())
+    {
+      ZZ ind = HO.get_order_index();
+      if (is_one(ind))
+        cout << " - Hecke order is equation order Z[" << F->gen() << "]" << endl;
+      else
+        cout << " - Hecke order basis " << HO.get_basis() << endl;
+    }
 
   if (AL)
     {
@@ -781,22 +798,21 @@ void Newform::display_aP() const
       cout << "No aP known" << endl;
       return;
     }
-#ifdef USE_INTEGRAL_BASES
-  const Order& O = F->integers();
-  if (d>1)
+
+  if (d>1 && HO.rk()>0 && !is_one(HO.get_order_index()))
     {
       FieldElement gen = F->gen(), gen_power = (*F)(1);
-      cout << "Integral coordinates of power basis of Hecke field (index of Z["<<gen<<"] is "
-           << O.get_order_index()<<"):\n";
+      cout << "Hecke order coordinates of power basis of Hecke field (index of Z["<<gen<<"] is "
+           << HO.get_order_index()<<"):\n";
       for (int i=0; i<d; i++)
         {
           cout << gen_power << "\t = "
-               << O.integral_coords(gen_power) << endl;
+               << HO.integral_coords(gen_power) << endl;
           if (i < d-1) gen_power *= gen;
         }
       cout << endl;
     }
-#endif
+
   cout << "a_p for first " << aPmap.size() << " primes:" << endl;
   for (auto x : aPmap)
     {
@@ -806,11 +822,10 @@ void Newform::display_aP() const
         cout << aP;
       else
         {
-#ifdef USE_INTEGRAL_BASES
-          cout << O.integral_coords(aP);
-#else
-          cout << aP;
-#endif
+          if (HO.rk())
+            cout << HO.integral_coords(aP);
+          else
+            cout << aP;
         }
 #ifdef CHECK_TRACES
       bigrational taP = aP.trace();
@@ -903,17 +918,14 @@ void Newform::output_to_file() const
   out << F->str(1) << "\n";  // raw=1
   // cout << "Principal Hecke field output:\n" << F->str(1) << "\n";  // raw=1
 
-#ifdef USE_INTEGRAL_BASES
-  int ib = F->has_integral_basis();
-  if (ib)
+  if (HO.rk()>0)
     {
-      const Order& O = F->integers();
-      out << O.get_order_index() << "\n";
-      vec_out(out, O.get_pcm().get_entries(), " ", " ", " ");
+      out << HO.get_order_index() << "\n";
+      vec_out(out, HO.get_pcm().get_entries(), " ", " ", " ");
     }
   else
     out << "0";
-#endif
+
   out << "\n\n";
 
   // Output A-L eigenvalues if computed, else output nothing
@@ -928,18 +940,13 @@ void Newform::output_to_file() const
   out << "\n";
 
   // Output aP
-#ifdef USE_INTEGRAL_BASES
-  const Order& O = F->integers();
-#endif
   for (auto x: aPmap)
     {
       FieldElement aP = x.second;
       out << x.first << " ";
-#ifdef USE_INTEGRAL_BASES
-      if (ib && d>1)
-        out << O.integral_coords(aP);
+      if (HO.rk()>0 && d>1)
+        out << HO.integral_coords(aP);
       else
-#endif
         out << aP.str(1);
       out << "\n";
     }
@@ -980,21 +987,19 @@ int Newform::input_from_file(int verb)
       display();
     }
 
-#ifdef USE_INTEGRAL_BASES
-  // read integral basis info if present
+  // read integral basis info
 
   ZZ ib;
-  fdata >>ib; // either 0 or the index of the equation order
+  fdata >> ib; // either 0 or the index of the equation order
   if (!is_zero(ib))
     {
       // cout << "Read order index = " << ib << endl;
       mat_m bcm(d,d);
       fdata >> bcm;
       // cout << "Read bcm = \n" << bcm << endl;
-      F->set_integers(ib,bcm);
-      // cout << "After set_integral_bases, F has integral basis " << F->integers() << endl;
+      HO = Order(*F,ib,bcm);
+      // cout << "Hecke order: " << HO << endl;
     }
-#endif
 
   fdata >> ws;
   sfe = -1;
@@ -1029,9 +1034,6 @@ int Newform::input_from_file(int verb)
   long P; maxP=0;
   FieldElement aP(*F);
   vec_m aPcoords(d);
-#ifdef USE_INTEGRAL_BASES
-  const Order& O = F->integers();
-#endif
 
   // read whitespace, so if there are no aP on file it does not try to read any
   fdata >> ws;
@@ -1039,17 +1041,13 @@ int Newform::input_from_file(int verb)
   while (!fdata.eof())
     {
       fdata >> P;    // prime label
-#ifdef USE_INTEGRAL_BASES
       if (d==1)
         fdata >> aP;
       else
         {
           fdata >> aPcoords;
-          aP = O(aPcoords);
+          aP = HO(aPcoords);
         }
-#else
-      fdata >> aP;   // eigenvalue data
-#endif
       fdata >> ws;  // eat whitespace, including newline
       aPmap[P] = aP;
       if (verb>1)

@@ -176,13 +176,14 @@ class Order{
 
 public:
   // Constructors:
-  Order() {;}
+  Order() {rank=0;}
   explicit Order(const Field& F); // equation order
   Order(const vector<FieldElement>& v, int basis=1); // given a Z-basis or just a Z-spanning set
   Order(const vector<FieldElement>& v, const mat_m pcm); // same with known power_coords_matrix
   Order(const Field& F, const ZZ& i, const mat_m& M); // Order in F given pcm
 
   // Access data:
+  int rk() const {return rank;}
   const vector<FieldElement> get_basis() const {return Zbasis;}
   mat_m get_pcm() const {return power_coords_matrix;}
   Qmat get_bm() const {return basis_matrix;}

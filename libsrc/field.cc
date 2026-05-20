@@ -1344,7 +1344,7 @@ Order::Order(const vector<FieldElement>& v, int basis)
       for (int i=0; i<rank; i++)
         basis_matrix.setcol(i+1,v[i].coords());
       power_coords_matrix = basis_matrix.inverse().get_numerator();
-      index = power_coords_matrix.determinant();
+      index = abs(power_coords_matrix.determinant());
       disc = poldisc/(index*index);
     }
   else
@@ -1352,21 +1352,21 @@ Order::Order(const vector<FieldElement>& v, int basis)
       int ngens = v.size();
       Qmat M(ngens, rank); // rows are coords of given gens
       for (int i=0; i<ngens; i++)
-        M.setcol(i+1,v[i].coords());
+        M.setrow(i+1,v[i].coords());
       M = HNF(M);
-      M.delete_rows(ngens-rank);
-      basis_matrix = transpose(M); // cols are coords of Zbasis
+      M.delete_rows(ngens-rank);   // rows are coords of new Zbasis
+      basis_matrix = transpose(M); // cols are coords of new Zbasis
       Zbasis.resize(rank);
       for (int j=0; j<rank; j++)
         Zbasis[j] = F(basis_matrix.col(j+1));
       power_coords_matrix = basis_matrix.inverse().get_numerator();
-      index = power_coords_matrix.determinant();
+      index = abs(power_coords_matrix.determinant());
       disc = poldisc/(index*index);
     }
 }
 
 Order::Order(const vector<FieldElement>& v, const mat_m pcm)
-  :Zbasis(v), power_coords_matrix(pcm), index(pcm.determinant())
+  :Zbasis(v), power_coords_matrix(pcm), index(abs(pcm.determinant()))
 {
   const Field& F = *v[0].field_ptr();
   poldisc = discriminant(F.minpoly);
@@ -1379,7 +1379,7 @@ Order::Order(const vector<FieldElement>& v, const mat_m pcm)
 
 Order::Order(const Field& F, const ZZ& i, const mat_m& M) // Order in F given pcm
   :power_coords_matrix(M), basis_matrix(Qmat(M).inverse()),
-   index(M.determinant()), poldisc(discriminant(F.minpoly)), rank(F.d)
+   index(abs(M.determinant())), poldisc(discriminant(F.minpoly)), rank(F.d)
 {
   Zbasis.resize(rank);
   for (int j=0; j<rank; j++)

@@ -337,13 +337,10 @@ Newform #1 (23a)
  - Dimension: 2
  - Sign of functional equation = +1
  - Hecke field k_f = Q(a) = Q[X]/(X^2-X-1)
+ - Hecke order is equation order Z[a]
 
 Atkin-Lehner eigenvalues:
 23:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[a] is 1):
-1	 = [1,0]
-a	 = [0,1]
 
 a_p for first 25 primes:
 2:	[-1,1]
@@ -547,13 +544,10 @@ Newform #1 (29a)
  - Dimension: 2
  - Sign of functional equation = +1
  - Hecke field k_f = Q(a) = Q[X]/(X^2-2)
+ - Hecke order is equation order Z[a]
 
 Atkin-Lehner eigenvalues:
 29:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[a] is 1):
-1	 = [1,0]
-a	 = [0,1]
 
 a_p for first 25 primes:
 2:	[-1,-1]
@@ -633,13 +627,10 @@ Newform #1 (31a)
  - Dimension: 2
  - Sign of functional equation = +1
  - Hecke field k_f = Q(a) = Q[X]/(X^2-X-1)
+ - Hecke order is equation order Z[a]
 
 Atkin-Lehner eigenvalues:
 31:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[a] is 1):
-1	 = [1,0]
-a	 = [0,1]
 
 a_p for first 25 primes:
 2:	[0,1]
@@ -837,14 +828,11 @@ Newform #2 (35b)
  - Dimension: 2
  - Sign of functional equation = +1
  - Hecke field k_f = Q(b) = Q[X]/(X^2-X-4)
+ - Hecke order is equation order Z[b]
 
 Atkin-Lehner eigenvalues:
 5:	-1
 7:	1
-
-Integral coordinates of power basis of Hecke field (index of Z[b] is 1):
-1	 = [1,0]
-b	 = [0,1]
 
 a_p for first 25 primes:
 2:	[-1,1]
@@ -1117,14 +1105,11 @@ Newform #2 (39b)
  - Dimension: 2
  - Sign of functional equation = +1
  - Hecke field k_f = Q(b) = Q[X]/(X^2-2)
+ - Hecke order is equation order Z[b]
 
 Atkin-Lehner eigenvalues:
 3:	-1
 13:	1
-
-Integral coordinates of power basis of Hecke field (index of Z[b] is 1):
-1	 = [1,0]
-b	 = [0,1]
 
 a_p for first 25 primes:
 2:	[-1,-1]
@@ -1203,14 +1188,10 @@ Newform #1 (41a)
  - Dimension: 3
  - Sign of functional equation = +1
  - Hecke field k_f = Q(a) = Q[X]/(X^3-X^2-3*X+1)
+ - Hecke order is equation order Z[a]
 
 Atkin-Lehner eigenvalues:
 41:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[a] is 1):
-1	 = [1,0,0]
-a	 = [0,1,0]
-a^2	 = [0,0,1]
 
 a_p for first 25 primes:
 2:	[2,0,-1]
@@ -1327,13 +1308,10 @@ Newform #2 (43b)
  - Dimension: 2
  - Sign of functional equation = +1
  - Hecke field k_f = Q(b) = Q[X]/(X^2-2)
+ - Hecke order is equation order Z[b]
 
 Atkin-Lehner eigenvalues:
 43:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[b] is 1):
-1	 = [1,0]
-b	 = [0,1]
 
 a_p for first 25 primes:
 2:	[0,1]
@@ -1494,15 +1472,10 @@ Newform #1 (47a)
  - Dimension: 4
  - Sign of functional equation = +1
  - Hecke field k_f = Q(a) = Q[X]/(X^4-4*X^2-X+1)
+ - Hecke order is equation order Z[a]
 
 Atkin-Lehner eigenvalues:
 47:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[a] is 1):
-1	 = [1,0,0,0]
-a	 = [0,1,0,0]
-a^2	 = [0,0,1,0]
-a^3	 = [0,0,0,1]
 
 a_p for first 25 primes:
 2:	[-1,3,1,-1]
@@ -1738,14 +1711,11 @@ Newform #2 (51b)
  - Dimension: 2
  - Sign of functional equation = +1
  - Hecke field k_f = Q(b) = Q[X]/(X^2-X-4)
+ - Hecke order is equation order Z[b]
 
 Atkin-Lehner eigenvalues:
 3:	1
 17:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[b] is 1):
-1	 = [1,0]
-b	 = [0,1]
 
 a_p for first 25 primes:
 2:	[-1,1]
@@ -1861,14 +1831,10 @@ Newform #2 (53b)
  - Dimension: 3
  - Sign of functional equation = +1
  - Hecke field k_f = Q(b) = Q[X]/(X^3-X^2-3*X+1)
+ - Hecke order is equation order Z[b]
 
 Atkin-Lehner eigenvalues:
 53:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[b] is 1):
-1	 = [1,0,0]
-b	 = [0,1,0]
-b^2	 = [0,0,1]
 
 a_p for first 25 primes:
 2:	[0,-1,0]
@@ -2023,14 +1989,11 @@ Newform #2 (55b)
  - Dimension: 2
  - Sign of functional equation = +1
  - Hecke field k_f = Q(b) = Q[X]/(X^2-2)
+ - Hecke order is equation order Z[b]
 
 Atkin-Lehner eigenvalues:
 5:	1
 11:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[b] is 1):
-1	 = [1,0]
-b	 = [0,1]
 
 a_p for first 25 primes:
 2:	[1,-1]
@@ -2343,16 +2306,10 @@ Newform #1 (59a)
  - Dimension: 5
  - Sign of functional equation = +1
  - Hecke field k_f = Q(a) = Q[X]/(X^5-X^4-6*X^3+3*X^2+4*X-2)
+ - Hecke order is equation order Z[a]
 
 Atkin-Lehner eigenvalues:
 59:	-1
-
-Integral coordinates of power basis of Hecke field (index of Z[a] is 1):
-1	 = [1,0,0,0,0]
-a	 = [0,1,0,0,0]
-a^2	 = [0,0,1,0,0]
-a^3	 = [0,0,0,1,0]
-a^4	 = [0,0,0,0,1]
 
 a_p for first 25 primes:
 2:	[-5,3,7,0,-1]
