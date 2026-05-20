@@ -173,9 +173,11 @@ public:
   mat_m get_pcm() const {return power_coords_matrix;}
   Qmat get_bm() const {return basis_matrix;}
   // index of equation order in this
-  ZZ get_order_index() const {return index;} // power_coords_matrix.determinant();}
+  ZZ get_order_index() const {return index;}
   // discriminant of this order
   ZZ get_disc() const {return disc;}
+  // discriminant of equation order
+  ZZ get_poldisc() const {return poldisc;}
   string str(int raw=0) const;
 
   // coords w.r.t. Zbasis of an arbitrary element of F
