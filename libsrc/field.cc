@@ -1379,6 +1379,22 @@ vec_m Order::integral_coords(const FieldElement& a) const
   return c.numerator;
 }
 
+// membership test
+int Order::contains(const FieldElement& a) const
+{
+  return a.in_same_field(Zbasis[0]) && is_one(denom(a));
+}
+
+// membership test returning coords
+int Order::contains(const FieldElement& a, vec_m& c) const
+{
+  if (!a.in_same_field(Zbasis[0]))
+    return 0;
+  Qvec qc = coords(a);
+  c = qc.numerator;
+  return is_one(qc.denom);
+}
+
 // FieldElement from integer coords
 FieldElement Order::operator()(const vec_m& coords) const
 {
@@ -1418,6 +1434,71 @@ string Order::str(int raw) const
       s << "Order in " << *Zbasis[0].F << " with Z-basis " << Zbasis;
     }
   return s.str();
+}
+
+// Functions to enlarge the order
+
+// Extend by a (which must be an algebraic integer), returning the
+// index of the extension
+ZZ Order::extend_by(const FieldElement& a)
+{
+  // Get coords of a:
+  Qvec v = a.v;
+  // Do nothing if its denominator is 1
+  if (is_one(v.denom))
+    return ZZ(1);
+
+  // ...else make a rational matrix whose rows are the coords of the
+  // current Z-basis
+  Qmat M = transpose(basis_matrix);
+  // ... append row of coords of a:
+  M.append_row(v);
+  // ... form (row-wise) HNF
+  M = HNF(M);
+  // ...delete last row (which will be 0)
+  M.delete_row();
+  // ... the transpose of this is the new basis matrix
+  basis_matrix = transpose(M);
+  // ... use its rows to form the new Zbasis
+  const Field& F = *Zbasis[0].F;
+  for (int j=0; j<rank; j++)
+    Zbasis[j] = F(basis_matrix.col(j+1));
+  power_coords_matrix = basis_matrix.inverse().get_numerator();
+  // ... compute new index and that gain factor
+  ZZ old_index = index;
+  index = power_coords_matrix.determinant();
+  ZZ index_gain = index/old_index;
+  disc = disc/(index_gain*index_gain);
+  return index_gain;
+}
+
+// Extend by all a in alist (which must be algebraic integers),
+// returning the index of the extension
+ZZ Order::extend_by(const vector<FieldElement>& alist)
+{
+  // make a rational matrix whose rows are the coords of the current
+  // Z-basis
+  Qmat M = transpose(basis_matrix);
+  // ... append row of coords of a for all a in alist:
+  for (auto a: alist)
+    M.append_row(a.v);
+  // ... form (row-wise) HNF
+  M = HNF(M);
+  // ...delete last #alist rows (which will be 0)
+  M.delete_rows(alist.size());
+  // ... the transpose of this is the new basis matrix
+  basis_matrix = transpose(M);
+  // ... use its rows to form the new Zbasis
+  const Field& F = *Zbasis[0].F;
+  for (int j=0; j<rank; j++)
+    Zbasis[j] = F(basis_matrix.col(j+1));
+  power_coords_matrix = basis_matrix.inverse().get_numerator();
+  // ... compute new index and that gain factor
+  ZZ old_index = index;
+  index = power_coords_matrix.determinant();
+  ZZ index_gain = index/old_index;
+  disc = disc/(index_gain*index_gain);
+  return index_gain;
 }
 
 // Compute Maximal Order (via lib)pari.  If bound>0 then the order may

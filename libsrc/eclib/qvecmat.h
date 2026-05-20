@@ -126,7 +126,13 @@ public:
   Qvec col(int i) const {return Qvec(numerator.col(i), denom);}
   Qvec row(int i) const {return Qvec(numerator.row(i), denom);}
 
-  // append a 0 row at bottom:
+  // append n 0 rows at bottom:
+  void append_rows(int n = 1)
+  {
+    numerator.append_rows(n);
+  }
+
+  // append one 0 row at bottom:
   void append_row()
   {
     numerator.append_rows(1);
@@ -139,11 +145,29 @@ public:
     setrow(numerator.nrows(), v);
   }
 
+  // append v for v in vlist as new rows at bottom.
+  void append_rows(const vector<Qvec>& vlist)
+  {
+    int old_nro = numerator.nrows();
+    int extra_nro = vlist.size();
+    append_rows(extra_nro);
+    for (int i=0; i<extra_nro; i++)
+      setrow(old_nro+i+1, vlist[i]);
+  }
+
   // delete last row, recancel if requested (e.g. will not be
-  // necessary if the last row was 0):
+  // necessary if the last row is 0):
   void delete_row(int recancel=0)
   {
     numerator.delete_rows(1);
+    if (recancel) cancel();
+  }
+
+  // delete last n rows, recancel if requested (e.g. will not be
+  // necessary if the last rows are all 0):
+  void delete_rows(int n, int recancel=0)
+  {
+    numerator.delete_rows(n);
     if (recancel) cancel();
   }
 
@@ -173,6 +197,7 @@ public:
 
   inline friend Qmat HNF(const Qmat& M) {return Qmat(HNF(M.numerator), M.denom);}
   inline friend Qmat SNF(const Qmat& M) {return Qmat(SNF(M.numerator), M.denom);}
+  inline friend Qmat transpose(const Qmat& M) {return Qmat(transpose(M.numerator), M.denom);}
 };
 
 inline istream& operator>>(istream& s, Qmat& x) {x.read(s); return s;}

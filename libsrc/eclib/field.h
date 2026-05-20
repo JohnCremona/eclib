@@ -186,11 +186,23 @@ public:
   ZZ denom(const FieldElement& a) const { return coords(a).denom;}
   // coords w.r.t. Zbasis of an element of F in this order
   vec_m integral_coords(const FieldElement& a) const;
-
+  // membership test
+  int contains(const FieldElement& a) const;
+  // membership test returning coords
+  int contains(const FieldElement& a, vec_m& c) const;
   // FieldElement from integer coords
   FieldElement operator()(const vec_m& coords) const;
   // FieldElement from rational coords
   FieldElement operator()(const Qvec& coords) const;
+
+  // Functions to enlarge the order
+
+  // Extend by a (which must be an algebraic integer), returning the
+  // index of the extension
+  ZZ extend_by(const FieldElement& a);
+  // Extend by all a in alist (which must be algebraic integers),
+  // returning the index of the extension
+  ZZ extend_by(const vector<FieldElement>& alist);
 
 private:
   vector<FieldElement> Zbasis; // Z-basis of the order
