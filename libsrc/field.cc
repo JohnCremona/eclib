@@ -234,19 +234,18 @@ vector<FieldElement> Field::power_basis() const
 }
 
 // compute integral basis (via libpari), fill integral_basis and basis_change_matrix
-void Field::make_integral_basis()
+void Field::make_integers(const ZZ& bound)
 {
   if (!have_integral_basis)
     {
-      Integers = MaximalOrder(this);
-      // cout << "In make_integral_basis(), after calling MaximalOrder(), Integers = " << Integers << endl;
+      Integers = MaximalOrder(this, bound);
       have_integral_basis = 1;
     }
 }
 
 // recreate integral basis from index and base_change_matrix's inverse (after reading from file)
 
-void Field::set_integral_basis(const ZZ& i, const mat_m& M)
+void Field::set_integers(const ZZ& i, const mat_m& M)
 {
   Integers = Order(*this, i, M);
   have_integral_basis = 1;

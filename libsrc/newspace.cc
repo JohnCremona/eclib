@@ -148,7 +148,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
         }
     }
 #ifdef USE_INTEGRAL_BASES
-  F->make_integral_basis();
+  F->make_integers();
 #endif
   if (verbose)
     {
@@ -991,7 +991,7 @@ int Newform::input_from_file(int verb)
       mat_m bcm(d,d);
       fdata >> bcm;
       // cout << "Read bcm = \n" << bcm << endl;
-      F->set_integral_basis(ib,bcm);
+      F->set_integers(ib,bcm);
       // cout << "After set_integral_bases, F has integral basis " << F->integers() << endl;
     }
 #endif

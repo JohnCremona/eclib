@@ -123,7 +123,7 @@ void test_field(const Field& F)
   cout << endl;
 
   cout << "Testing nfinit interface for reduced polynomial " << str(Fred.poly()) << ":\n";
-  Fred.make_integral_basis();
+  Fred.make_integers();
   const Order& O = Fred.integers();
   cout << "Ring of integers: " << O << endl;
   ZZ ind = O.get_order_index();

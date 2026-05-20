@@ -301,10 +301,10 @@ public:
   void read(istream& s);
   friend istream& operator>>(istream& s, Field& F);
 
-  // compute integral basis (via libpari), fill integral_basis and basis_change_matrix
-  void make_integral_basis();
+  // compute Integers order (via libpari).  See MaximalOrder() for bound parameter
+  void make_integers(const ZZ& bound=ZZ(0));
   // recreate integral basis from index and base_change_matrix's inverse (after reading from file)
-  void set_integral_basis(const ZZ& i, const mat_m& M);
+  void set_integers(const ZZ& i, const mat_m& M);
   // check whether we have an integral basis
   int has_integral_basis() const {return have_integral_basis;}
   // return maximal order
