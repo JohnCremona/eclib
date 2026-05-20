@@ -50,11 +50,14 @@ ZZX polred(const ZZX& f, int canonical=0);
 // (2) also sets h such that a=h(b)/d (so f(h(b)/d)=0) where f(a)=g(b)=0
 ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical=0);
 
-// interface to nfinit: given f (monic irreducible) defining a field
-// K=Q(t), returns d = [O_K:Z[t]], zbasis of OK (as rational
+// interface to PARI::nfinit: given f (monic irreducible) defining a
+// field K=Q(t), returns ind = [O_K:Z[t]], zbasis of OK (as rational
 // coordinate vectors w.r.t. t-power basis), integral base-change
-// matrix (integral basis coordinates of powers of t)
+// matrix (integral basis coordinates of powers of t). If bound > 0
+// then it is passed to PARI::nfinit; then the order returned may not
+// be maximal at primes > bound.  This may be much faster of disc(f)
+// is hard to factor.
 
-void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm);
+void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm, const ZZ& bound=ZZ(0));
 
 #endif

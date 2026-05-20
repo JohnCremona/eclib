@@ -238,9 +238,18 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
   return g;
 }
 
+
+// interface to PARI::nfinit: given f (monic irreducible) defining a
+// field K=Q(t), returns ind = [O_K:Z[t]], zbasis of OK (as rational
+// coordinate vectors w.r.t. t-power basis), integral base-change
+// matrix (integral basis coordinates of powers of t). If bound > 0
+// then it is passed to PARI::nfinit; then the order returned may not
+// be maximal at primes > bound.  This may be much faster of disc(f)
+// is hard to factor.
+
 //#define DEBUG_NF_INIT
 
-void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm)
+void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm, const ZZ& bound)
 {
   pari_sp av = avma;
   int d = deg(f);
@@ -248,8 +257,17 @@ void nfinit(const ZZX& f, ZZ& ind, vector<Qvec>& zbasis, mat_m& bcm)
   cout << "In nfinit(" << str(f) << ")" << endl;
 #endif
   GEN* disc = new GEN(stoi(0));
-  GEN pol_and_bound = mkvecn(2, ZZX_to_t_POL(f), stoi(100000000));
-  GEN nf = nfbasis(pol_and_bound, disc);
+  GEN F = ZZX_to_t_POL(f);
+  GEN nf;
+  if (bound>0)
+    {
+      GEN pol_and_bound = mkvecn(2, F, to_PARI(bound));
+      nf = nfbasis(pol_and_bound, disc);
+    }
+  else
+    {
+      nf = nfbasis(F, disc);
+    }
 #ifdef DEBUG_NF_INIT
   pari_printf(" - PARI::nfbasis() returns %Ps with disc = %Ps\n", nf, *disc);
 #endif

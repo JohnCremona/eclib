@@ -202,8 +202,9 @@ private:
   int rank; // of this order, i.e. degree of ambient field
 };
 
-// Compute Maximal Order (via lib)pari
-Order MaximalOrder(const Field* F);
+// Compute Maximal Order (via lib)pari.  If bound>0 then the order may
+// not be p-maximal for p>bound.
+Order MaximalOrder(const Field* F, const ZZ& bound = ZZ(0));
 
 class Field {
   friend class FieldIso;
@@ -293,7 +294,7 @@ public:
   FieldIso sqrt_embedding(const vector<FieldElement>& r_list, string newvar,
                           Field& F_sqrt_r, vector<FieldElement>& sqrt_r_list,
                           int reduce=1) const;
-  friend Order MaximalOrder(const Field* F);
+  friend Order MaximalOrder(const Field* F, const ZZ& bound);
 };
 
 inline ostream& operator<<(ostream& s, const Field& F)

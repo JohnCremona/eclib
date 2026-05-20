@@ -1420,14 +1420,15 @@ string Order::str(int raw) const
   return s.str();
 }
 
-// Compute Maximal Order (via lib)pari
-Order MaximalOrder(const Field* F)
+// Compute Maximal Order (via lib)pari.  If bound>0 then the order may
+// not be p-maximal for p>bound.
+Order MaximalOrder(const Field* F, const ZZ& bound)
 {
   // cout << "In MaximalOrder(F) with F = " << F << " -> " << *F << endl;
   ZZ ind;
   vector<Qvec> zbc;
   mat_m bcm;
-  nfinit(F->minpoly, ind, zbc, bcm);
+  nfinit(F->minpoly, ind, zbc, bcm, bound);
   // cout << "nfinit() returns ind = " << ind << "\nzbc = " <<zbc << "\nbcm = " << bcm << endl;
   vector<FieldElement> bas(F->d);
   std::transform(zbc.begin(), zbc.end(), bas.begin(),
