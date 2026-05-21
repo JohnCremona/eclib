@@ -205,6 +205,8 @@ public:
   int contains(const FieldElement& a) const;
   // membership test returning coords
   int contains(const FieldElement& a, vec_m& c) const;
+  // containment test
+  int contains(const Order& O2) const;
   // FieldElement from integer coords
   FieldElement operator()(const vec_m& coords) const;
   // FieldElement from rational coords

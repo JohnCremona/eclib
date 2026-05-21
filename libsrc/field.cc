@@ -1352,14 +1352,22 @@ Order::Order(const vector<FieldElement>& v, int basis)
       int ngens = v.size();
       Qmat M(ngens, rank); // rows are coords of given gens
       for (int i=0; i<ngens; i++)
-        M.setrow(i+1,v[i].coords());
+        M.setrow(i+1,reverse(v[i].coords()));
       M = HNF(M);
       M.delete_rows(ngens-rank);   // rows are coords of new Zbasis
-      basis_matrix = transpose(M); // cols are coords of new Zbasis
+      // cout << "HNF(M) = \n" << M << endl;
       Zbasis.resize(rank);
       for (int j=0; j<rank; j++)
-        Zbasis[j] = F(basis_matrix.col(j+1));
+        Zbasis[rank-1-j] = F(reverse(M.row(j+1)));
+      basis_matrix = Qmat(rank,rank);
+      for (int j=0; j<rank; j++)
+        basis_matrix.setcol(j+1,Zbasis[j].coords());
+      // cout << "basis_matrix = \n" << basis_matrix << endl;
       power_coords_matrix = basis_matrix.inverse().get_numerator();
+      cout << "power_coords_matrix = \n" << power_coords_matrix << endl;
+      // cout << "Z-basis:\n";
+      // for (int j=0; j<rank; j++)
+      //   cout << Zbasis[j] << endl;
       index = abs(power_coords_matrix.determinant());
       disc = poldisc/(index*index);
     }
@@ -1415,6 +1423,13 @@ int Order::contains(const FieldElement& a, vec_m& c) const
   return is_one(qc.denom);
 }
 
+// containment test
+int Order::contains(const Order& O2) const
+{
+  return std::all_of(O2.Zbasis.begin(), O2.Zbasis.end(),
+                    [this](const FieldElement& a){return contains(a);});
+}
+
 // FieldElement from integer coords
 FieldElement Order::operator()(const vec_m& coords) const
 {
@@ -1452,6 +1467,7 @@ string Order::str(int raw) const
   else
     {
       s << "Order in " << *Zbasis[0].F << " with Z-basis " << Zbasis;
+      // s << "Order with Z-basis " << Zbasis;
     }
   return s.str();
 }
@@ -1461,8 +1477,8 @@ Order Order::operator+(const Order& O2)
 {
   vector<FieldElement> gens;
   gens.reserve(rank*O2.rank);
-  for (auto a: Zbasis)
-    for (auto b: O2.Zbasis)
+  for (auto a: O2.Zbasis)
+    for (auto b: Zbasis)
       gens.push_back(a*b);
   return Order(gens, 0); // 0 means not a basis, just Z-gens
 }
@@ -1477,13 +1493,17 @@ Order Order::operator+=(const Order& O2)
 // Sum of this and the power order of a
 Order Order::operator+(const FieldElement& a)
 {
-  return (*this) + PowerOrder(a);
+  if (contains(a))
+    return (*this);
+  else
+    return (*this) + PowerOrder(a);
 }
 
 // Add the power order of a to this
 Order Order::operator+=(const FieldElement& a)
 {
-  *this = *this + a;
+  if (!contains(a))
+    *this = *this + a;
   return *this;
 }
 
@@ -1500,7 +1520,8 @@ ZZ Order::extend_by(const FieldElement& a, int check)
       return ZZ(1);
     }
   ZZ old_index = index;
-  operator+=(a);
+  if (!contains(a))
+    operator+=(a);
   return index/old_index;
 }
 

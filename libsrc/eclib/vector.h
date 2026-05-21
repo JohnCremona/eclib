@@ -301,4 +301,10 @@ vec_i to_vec_i(const Zvec<T>& V);
 template<class T>
 vec_l to_vec_l(const Zvec<T>& V);
 
+// Function to generate a random nonzero integer vector of a given
+// size with entries taken uniformly from [minv..maxv], optionally
+// making the returned vector primitive.
+
+vector<int> random_vector(size_t size, int minv, int maxv, int primitive=1);
+
 #endif

@@ -21,6 +21,7 @@
 // 
 //////////////////////////////////////////////////////////////////////////
  
+#include <random>
 #include "eclib/convert.h"
 #include "eclib/linalg.h"
 
@@ -478,6 +479,33 @@ vec_I to_vec_I(const Zvec<T>& V)
 template vec_I to_vec_I<int>(const Zvec<int>& M);
 template vec_I to_vec_I<long>(const Zvec<long>& M);
 template vec_I to_vec_I<ZZ>(const Zvec<ZZ>& M);
+
+// Function to generate a random integer vector of a given size wit
+// entries taken uniformly from [minv..maxv], optionally repeating
+// until the vector is primitive
+
+vector<int> random_vector(size_t size, int minv, int maxv, int primitive)
+{
+  if (size==1 && primitive==1 && minv<=1 and maxv>=1)
+    return {1};
+  // We use static in order to instantiate the random engine and the
+  // distribution once only.  It may provoke some thread-safety
+  // issues.
+  std::uniform_int_distribution<int> distribution(minv, maxv);
+  static std::default_random_engine generator;
+
+  vector<int> v(size);
+  int cont = 0;
+  while (cont==0 || (primitive && cont>1))
+    {
+      std::generate(v.begin(), v.end(),
+                    [&distribution]() { return distribution(generator); });
+      cont = std::accumulate(v.begin(), v.end(), 0,
+                             [](const int& x, const int& y) {return gcd(x,y);});
+    }
+  return v;
+}
+
 
 // Instantiate Zvec template classes for T=int, long, ZZ, INT
 

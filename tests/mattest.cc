@@ -32,6 +32,9 @@
 
 const scalar modulus(default_modulus<scalar>());
 
+// test with a size nr x nc matrix of type scalar whose entries are in Mij
+void testHNFetc(int nr, int nc, const vector<int>& Mij);
+
 int main(void)
 {
 #ifdef TIMER
@@ -157,19 +160,48 @@ int main(void)
       cout << " to "; b.output_flat(cout); cout << endl;
     }
 
-  // Test HNF and SNF via FLINT
-  cout << "Testing HNF via FLINT: " << endl;
-  vector<int> e = {2,4,4,
-                   -6,6,12,
-                   10,-4,-16};
-  vector<scalar> entries(e.size());
-  std::transform(e.begin(), e.end(), entries.begin(), [](const int& Mij){return scalar(Mij);});
-  mat M = mat(3,3,entries);
+  // Test HNF, SNF and LLL via FLINT
+  cout << "Testing HNF, SNF and LLL via FLINT: " << endl;
+
+  // 3x3 example:
+  testHNFetc(3, 3, {2,4,4,  -6,6,12,  10,-4,-16});
+
+  // larger example:
+#if (SCALAR_OPTION==1) // int
+  int d = 5, m=5;
+#endif
+#if (SCALAR_OPTION==2) // long
+  int d = 10, m=5;
+#endif
+#if (SCALAR_OPTION==3) // ZZ (NTL)
+  int d = 20, m=1000;
+#endif
+#if (SCALAR_OPTION==4) // INT (FLINT fmpz)
+  int d = 10, m=10000;
+#endif
+  testHNFetc(d, d, random_vector(d*d, -m,m, 0)); // 0: not primitive
+
+#ifdef TIMER
+  stop_time();
+  cout << "cpu time = "; show_time(); cout << endl;
+#endif
+}
+
+// test with a size nr x nc matrix of type scalar whose entries are in Mij
+void testHNFetc(int nr, int nc, const vector<int>& Mij)
+{
+  vector<scalar> entries(Mij.size());
+  std::transform(Mij.begin(), Mij.end(), entries.begin(), [](const int& aij){return scalar(aij);});
+  mat M = mat(nr,nc,entries);
   cout << "M = \n" << M << endl;
+  cout << "max entry of M: " << maxabs(M) << endl;
   mat H = HNF(M);
-  cout << "HNF(M) = \n" << H << endl;
+  cout << "HNF(M) =\n" << H << endl;
   mat S = SNF(M);
-  cout << "SNF(M) = \n" << S << endl;
+  cout << "SNF(M) =\n" << S << endl;
+  mat L = LLL(M);
+  cout << "LLL(M) = L =\n" << L << endl;
+  cout << "max entry of L: " << maxabs(L) << endl;
 
 #if (SCALAR_OPTION==3) // ZZ
   // Some tests of Qmat class (rational matrices, only implemented for scalar ZZ)
@@ -179,10 +211,5 @@ int main(void)
   cout << "M/6 = \n" << QM << endl;
   cout << "with HNF\n" << HNF(QM) << endl;
   cout << "and  SNF\n" << SNF(QM) << endl;
-#endif
-
-#ifdef TIMER
-  stop_time();
-  cout << "cpu time = "; show_time(); cout << endl;
 #endif
 }

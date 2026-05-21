@@ -22,13 +22,12 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
-#include <random>
 #include "eclib/newspace.h"
 
 // Degree bound: fields of degree up to this will be reduced via
 // polredabs (giving a canonical defining polynomial); above this only
 // polredbest will be used.
-const int POLREDABS_DEGREE_UPPER_BOUND = 25;
+const int POLREDABS_DEGREE_UPPER_BOUND = 26;
 
 newform_comparison newform_cmp;
 
@@ -675,10 +674,12 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 // Fill aPmap, dict of eigenvalues of first ntp good primes
 void Newform::compute_eigs(int ntp, int verbose)
 {
-  HO = Order(*F); // initialise with equation order
+  // HO = Order(*F); // initialise with equation order
+  ZZ bound(100000000);
+  HO = MaximalOrder(F, bound); // initialise with equation order
   ZZ Hecke_index = ZZ(1); // index of eqn order in HO
   if (d>1 && verbose)
-    cout << "Hecke order initialised to " << HO << endl;
+    cout << "Hecke order initialised to equation order Z[" << F->gen() << "]" << endl;
 
   long p=2;
   primevar pr(ntp); // iterator over first ntp primes
@@ -692,17 +693,32 @@ void Newform::compute_eigs(int ntp, int verbose)
           FieldElement a_p = ap(p);
           aPmap[p] = a_p;
           if (verbose) cout << "done, a_p = " << a_p << endl;
-          if (d>1 && verbose)
+          if (d>1)
             {
-              ZZ rel_index = HO.extend_by(a_p);
-              if (!is_one(rel_index))
-                cout << "Hecke order grows by index " << rel_index << " to " << HO << endl;
+              if (!HO.contains(a_p))
+                {
+                  if (verbose)
+                    cout << "a_p not in current Hecke order (coords are " << HO.coords(a_p)
+                         << "), extending..." << endl;
+                  ZZ rel_index = HO.extend_by(a_p);
+                  if (verbose)
+                    {
+                      cout << "Hecke order grows by index " << rel_index << ". New basis is\n";
+                      for (auto b: HO.get_basis()) cout << b << " = " << b.coords() << endl;
+                    }
+                }
             }
         }
     }
   maxP = p; // record last prime
   if (d>1 && verbose)
-    cout << "After computing a_p for primes up to " << maxP << ", Hecke order is " << HO << endl;
+    {
+      cout << "After computing a_p for primes up to " << maxP << ", Hecke order is ";
+      if (is_one(HO.get_order_index()))
+        cout <<"still the equation order Z[" << F->gen() << "]" << endl;
+      else
+        cout<< "enlarged by index " << HO.get_order_index() << endl;
+    }
 } // end of compute_eigs
 
 // Fill dict eQmap *after* aPmap, and set sfe
@@ -799,11 +815,13 @@ void Newform::display_aP() const
       return;
     }
 
-  if (d>1 && HO.rk()>0 && !is_one(HO.get_order_index()))
+  ZZ ind = (d==1? ZZ(1) : HO.get_order_index());
+
+  if (HO.rk()>0 && !is_one(ind))
     {
       FieldElement gen = F->gen(), gen_power = (*F)(1);
-      cout << "Hecke order coordinates of power basis of Hecke field (index of Z["<<gen<<"] is "
-           << HO.get_order_index()<<"):\n";
+      cout << "Hecke order coordinates of power basis of Hecke field (Hecke order contains Z["
+           << gen <<"] with index " << ind << "):\n";
       for (int i=0; i<d; i++)
         {
           cout << gen_power << "\t = "
@@ -1208,30 +1226,4 @@ Newspace* get_Newspace(const long& N, int verb)
   if (verb)
     cout << "Newspace at level " << Nlabel << " read from file and cached" << endl;
   return NSP;
-}
-
-// Function to generate a random integer vector of a given size wit
-// entries taken uniformly from [minv..maxv], optionally repeating
-// until the vector is primitive
-
-vector<scalar> random_vector(size_t size, scalar minv, scalar maxv, int primitive)
-{
-  if (size==1 && primitive==1 && minv<=1 and maxv>=1)
-    return {1};
-  // We use static in order to instantiate the random engine and the
-  // distribution once only.  It may provoke some thread-safety
-  // issues.
-  std::uniform_int_distribution<int> distribution(minv, maxv);
-  static std::default_random_engine generator;
-
-  std::vector<int> v(size);
-  int cont = 0;
-  while (cont==0 || (primitive && cont>1))
-    {
-      std::generate(v.begin(), v.end(),
-                    [&distribution]() { return distribution(generator); });
-      cont = std::accumulate(v.begin(), v.end(), 0,
-                             [](const int& x, const int& y) {return gcd(x,y);});
-    }
-  return v;
 }

@@ -2086,11 +2086,17 @@ Zmat<T> ref_via_flint(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
 template<class T>
 Zmat<T> HNF(const Zmat<T>& M)
 {
+  // cout << "M = \n" << M << "\n";
   fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
   flint_mat_from_mat(A, M);
+  // cout << "FLINT's M = \n";
+  // fmpz_mat_print_pretty(A);
   fmpz_mat_hnf(A, A);
+  // cout << "FLINT's HNF(M) = \n";
+  // fmpz_mat_print_pretty(A);
   Zmat<T> H = mat_from_flint_mat(A, (T)(0));
   fmpz_mat_clear(A);
+  // cout << "my HNF(M) = \n" << H << endl;
   return H;
 }
 template Zmat<int> HNF<int>(const Zmat<int>& M);
@@ -2104,14 +2110,38 @@ Zmat<T> SNF(const Zmat<T>& M)
   fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
   flint_mat_from_mat(A, M);
   fmpz_mat_snf(A, A);
-  Zmat<T> H = mat_from_flint_mat(A, (T)(0));
+  Zmat<T> S = mat_from_flint_mat(A, (T)(0));
   fmpz_mat_clear(A);
-  return H;
+  return S;
 }
 template Zmat<int> SNF<int>(const Zmat<int>& M);
 template Zmat<long> SNF<long>(const Zmat<long>& M);
 template Zmat<ZZ> SNF<ZZ>(const Zmat<ZZ>& M);
 template Zmat<INT> SNF<INT>(const Zmat<INT>& M);
+
+// LLL row-reduction (via FLINT)
+template<class T>
+Zmat<T> LLL(const Zmat<T>& M)
+{
+  fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
+  flint_mat_from_mat(A, M);
+
+  fmpq_t delta, eta;
+  fmpq_init(delta);
+  fmpq_init(eta);
+  fmpq_set_si(delta, 3, 4); // delta = 3/4
+  fmpq_set_si(eta, 1, 2);   // eta = 1/2
+  fmpz_mat_lll_original(A, delta, eta);
+  Zmat<T> L = mat_from_flint_mat(A, (T)(0));
+  fmpz_mat_clear(A);
+  fmpq_clear(delta);
+  fmpq_clear(eta);
+  return L;
+}
+template Zmat<int> LLL<int>(const Zmat<int>& M);
+template Zmat<long> LLL<long>(const Zmat<long>& M);
+template Zmat<ZZ> LLL<ZZ>(const Zmat<ZZ>& M);
+template Zmat<INT> LLL<INT>(const Zmat<INT>& M);
 
 template<class T>
 mat_ZZ mat_to_mat_ZZ(Zmat<T> A)

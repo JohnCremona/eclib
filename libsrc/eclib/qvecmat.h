@@ -82,6 +82,7 @@ public:
   void operator *= (const ZZ& c) {numerator *= c; cancel();}
   void operator *= (int c) {numerator *= ZZ(c); cancel();}
   void operator *= (long c) {numerator *= ZZ(c); cancel();}
+  inline friend Qvec reverse(const Qvec& v) {return Qvec(reverse(v.numerator), v.denom);}
   inline friend Qvec operator*(const ZZ& c, const Qvec& v) {return Qvec(c*v.numerator, v.denom);}
   inline friend ostream& operator<<(ostream& s, const Qvec& x) { s << x.str();  return s;}
   friend Qvec operator*(const Qmat&m, const Qvec& v);
