@@ -253,11 +253,14 @@ public:
   // returning the index of the extension
   ZZ extend_by(const vector<FieldElement>& alist, int check=1);
 
-  // LLL-reduce basis
+  // LLL-reduce basis (using the basis matrix to reduce)
   void LLL_reduce();
+  // LLL-reduce basis (using the coord matrix of alist to reduce)
+  void LLL_reduce(const vector<FieldElement>& alist);
+
 private:
-  // Add one a (algebraic integer) to the Z-span: the result may not
-  // be an order but this is only used internally
+  // Add one algebraic integer to the Z-span: the result may not be an
+  // order but this is only used internally.
   void add_one(const FieldElement& a, int check=0);
   // Check that the Z-span of the current Zbasis is closed under
   // multiplication.  If not, a will hold a missing product.

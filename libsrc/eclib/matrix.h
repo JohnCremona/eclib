@@ -265,14 +265,20 @@ Zmat<T> mat_from_flint_mat(fmpz_mat_t& A, const T& dummy);
 // Hermite Normal Form (via FLINT)
 template<class T>
 Zmat<T> HNF(const Zmat<T>& M);
+template<class T>
+Zmat<T> HNF(const Zmat<T>& M, Zmat<T>& U); // U*M=H with U unimodular
 
 // Smith Normal Form (via FLINT)
 template<class T>
 Zmat<T> SNF(const Zmat<T>& M);
+template<class T>
+Zmat<T> SNF(const Zmat<T>& M, Zmat<T>& U, Zmat<T>& V); // U*M*V=S with U,V unimodular
 
 // LLL row-reduction (via FLINT)
 template<class T>
 Zmat<T> LLL(const Zmat<T>& M);
+template<class T>
+Zmat<T> LLL(const Zmat<T>& M, Zmat<T>& U); // U*M=L with U unimodular
 
 Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr);
 Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr);

@@ -1597,7 +1597,7 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
   return index_gain;
 }
 
-// LLL-reduce basis
+// LLL-reduce basis (using the basis matrix to reduce)
 void Order::LLL_reduce()
 {
   basis_matrix = transpose(LLL(transpose(basis_matrix)));
@@ -1605,8 +1605,31 @@ void Order::LLL_reduce()
 
   // reset Zbasis (index and disc are unchanged)
   const Field& F = *Zbasis[0].field_ptr();
-  for (int j=0; j<rank; j++)
-    Zbasis[j] = F(basis_matrix.col(j+1));
+  Zbasis = from_coord_matrix(F, basis_matrix);
+}
+
+// LLL-reduce basis (using the coord matrix of alist to reduce)
+void Order::LLL_reduce(const vector<FieldElement>& alist)
+{
+  Qmat C1 = coord_matrix(alist); // columns are coords of a in alist w.r.t. power basis
+  mat_m C2 = (power_coords_matrix * C1).numerator;  // columns are coords w.r.t. integral basis
+  cout << "Before LLL, coords of alist are:\n" << transpose(C2) << endl;
+
+  mat_m U, V;    // to hold unimodular transform and its inverse
+  mat_m L = LLL(C2, U);  // L = U*C = LLL-reduced coords of alist
+  // cout << "LLL returns transformation matrix U =\n" << U << "\n with det(U) = " << U.determinant() << endl;
+  assert (is_one(abs(U.determinant())));
+  ZZ d = inverse(U, V);
+  assert (is_one(abs(d)));
+  if (is_one(-d))
+    V = -V;
+  basis_matrix        = basis_matrix * V;
+  power_coords_matrix = U * power_coords_matrix;
+  // cout << "After  LLL, coords of alist are:\n" << transpose(L) << endl;
+
+  // reset Zbasis (index and disc are unchanged)
+  const Field& F = *Zbasis[0].field_ptr();
+  Zbasis = from_coord_matrix(F, basis_matrix);
 }
 
 // Compute Maximal Order (via lib)pari.  If bound>0 then the order may
@@ -1663,12 +1686,12 @@ vector<FieldElement> from_coord_matrix(const Field& F, const Qmat& M, int rows, 
 {
   int n = (rows? M.nrows(): M.ncols());
   vector<FieldElement> alist(n);
-  for (int i=0; i<n; i++)
+  for (int i=1; i<=n; i++)
     {
       Qvec v =  (rows? M.row(i): M.col(i));
       if (rev)
         v = reverse(v);
-      alist[i] = FieldElement(F, v);
+      alist[i-1] = FieldElement(F, v);
     }
   return alist;
 }

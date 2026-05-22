@@ -667,9 +667,19 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
 void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 {
   compute_eigs(ntp, verbose);         // a(P) for good P
-  if (verbose) cout << "a_p computed, now LLL-reducing Hecke order..." << flush;
-  HO.LLL_reduce();
-  if (verbose) cout << "done." << endl;
+  if (d>1)
+    {
+      if (verbose) cout << "a_p computed, now LLL-reducing Hecke order..." << flush;
+      // (1) just reduce the integral basis
+      HO.LLL_reduce();
+      // (2) LLL-reduce the ap coefficients
+      // // Get list of ap
+      // vector<FieldElement> aplist(aPmap.size());
+      // std::transform(aPmap.begin(), aPmap.end(), aplist.begin(),
+      //                [](const auto& pap){return pap.second;});
+      // HO.LLL_reduce(aplist);
+      if (verbose) cout << "done." << endl;
+    }
   compute_AL_eigs(ntp, verbose);      // e(Q) and a(Q) for bad Q
   compute_coefficients(ntp, verbose); // a(M) and traces for N(M)<=max N(P)
 }
@@ -677,7 +687,7 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 // Fill aPmap, dict of eigenvalues of first ntp good primes
 void Newform::compute_eigs(int ntp, int verbose)
 {
-  // HO = Order(*F); // initialise with equation order
+  // HO = Order(*F); // to initialise with equation order instead of:
   ZZ bound(0);
   if (d>POLREDABS_DEGREE_UPPER_BOUND) bound = ZZ(100000000);
   HO = MaximalOrder(F, bound); // initialise with maximal order (or approximation)

@@ -1771,6 +1771,7 @@ template mat_I to_mat_I(const Zmat<ZZ>& M);
 #include "flint/gr.h"
 #include "flint/gr_mat.h"
 #include <flint/fmpz_mat.h>
+#include <flint/fmpz_lll.h>
 #include <flint/fmpz_mod.h>
 #include <flint/fmpz_mod_mat.h>
 
@@ -2086,17 +2087,13 @@ Zmat<T> ref_via_flint(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
 template<class T>
 Zmat<T> HNF(const Zmat<T>& M)
 {
-  // cout << "M = \n" << M << "\n";
   fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
   flint_mat_from_mat(A, M);
-  // cout << "FLINT's M = \n";
-  // fmpz_mat_print_pretty(A);
+
   fmpz_mat_hnf(A, A);
-  // cout << "FLINT's HNF(M) = \n";
-  // fmpz_mat_print_pretty(A);
   Zmat<T> H = mat_from_flint_mat(A, (T)(0));
+
   fmpz_mat_clear(A);
-  // cout << "my HNF(M) = \n" << H << endl;
   return H;
 }
 template Zmat<int> HNF<int>(const Zmat<int>& M);
@@ -2105,13 +2102,39 @@ template Zmat<ZZ> HNF<ZZ>(const Zmat<ZZ>& M);
 template Zmat<INT> HNF<INT>(const Zmat<INT>& M);
 
 template<class T>
+Zmat<T> HNF(const Zmat<T>& M, Zmat<T>& U)
+{
+  fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
+  flint_mat_from_mat(A, M);
+  fmpz_mat_t UU;
+  fmpz_mat_init(UU, M.nrows(), M.nrows());
+
+  fmpz_mat_hnf_transform(A, UU, A);
+
+  Zmat<T> H = mat_from_flint_mat(A, (T)(0));
+  U = mat_from_flint_mat(UU, (T)(0));
+
+  fmpz_mat_clear(A);
+  fmpz_mat_clear(UU);
+
+  return H;
+}
+template Zmat<int> HNF<int>(const Zmat<int>& M, Zmat<int>& U);
+template Zmat<long> HNF<long>(const Zmat<long>& M, Zmat<long>& U);
+template Zmat<ZZ> HNF<ZZ>(const Zmat<ZZ>& M, Zmat<ZZ>& U);
+template Zmat<INT> HNF<INT>(const Zmat<INT>& M, Zmat<INT>& U);
+
+template<class T>
 Zmat<T> SNF(const Zmat<T>& M)
 {
   fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
   flint_mat_from_mat(A, M);
+
   fmpz_mat_snf(A, A);
   Zmat<T> S = mat_from_flint_mat(A, (T)(0));
+
   fmpz_mat_clear(A);
+
   return S;
 }
 template Zmat<int> SNF<int>(const Zmat<int>& M);
@@ -2119,29 +2142,87 @@ template Zmat<long> SNF<long>(const Zmat<long>& M);
 template Zmat<ZZ> SNF<ZZ>(const Zmat<ZZ>& M);
 template Zmat<INT> SNF<INT>(const Zmat<INT>& M);
 
+template<class T>
+Zmat<T> SNF(const Zmat<T>& M, Zmat<T>& U, Zmat<T>& V)
+{
+  fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
+  flint_mat_from_mat(A, M);
+  fmpz_mat_t UU;
+  fmpz_mat_init(UU, M.nrows(), M.nrows());
+  fmpz_mat_t VV;
+  fmpz_mat_init(VV, M.ncols(), M.ncols());
+
+  fmpz_mat_snf_transform(A, UU, VV, A);
+
+  Zmat<T> S = mat_from_flint_mat(A, (T)(0));
+  U = mat_from_flint_mat(UU, (T)(0));
+  V = mat_from_flint_mat(VV, (T)(0));
+
+  fmpz_mat_clear(A);
+  fmpz_mat_clear(UU);
+  fmpz_mat_clear(VV);
+
+  return S;
+}
+template Zmat<int> SNF<int>(const Zmat<int>& M, Zmat<int>& U, Zmat<int>& V);
+template Zmat<long> SNF<long>(const Zmat<long>& M, Zmat<long>& U, Zmat<long>& V);
+template Zmat<ZZ> SNF<ZZ>(const Zmat<ZZ>& M, Zmat<ZZ>& U, Zmat<ZZ>& V);
+template Zmat<INT> SNF<INT>(const Zmat<INT>& M, Zmat<INT>& U, Zmat<INT>& V);
+
 // LLL row-reduction (via FLINT)
 template<class T>
 Zmat<T> LLL(const Zmat<T>& M)
 {
-  fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
-  flint_mat_from_mat(A, M);
-
-  fmpq_t delta, eta;
-  fmpq_init(delta);
-  fmpq_init(eta);
-  fmpq_set_si(delta, 3, 4); // delta = 3/4
-  fmpq_set_si(eta, 1, 2);   // eta = 1/2
-  fmpz_mat_lll_original(A, delta, eta);
-  Zmat<T> L = mat_from_flint_mat(A, (T)(0));
-  fmpz_mat_clear(A);
-  fmpq_clear(delta);
-  fmpq_clear(eta);
-  return L;
+  Zmat<T> U;
+  return LLL(M, U); // U is discarded
 }
 template Zmat<int> LLL<int>(const Zmat<int>& M);
 template Zmat<long> LLL<long>(const Zmat<long>& M);
 template Zmat<ZZ> LLL<ZZ>(const Zmat<ZZ>& M);
 template Zmat<INT> LLL<INT>(const Zmat<INT>& M);
+
+//#define DEBUG_LLL
+
+template<class T>
+Zmat<T> LLL(const Zmat<T>& M, Zmat<T>& U) // U*M=L with U unimodular
+{
+  fmpz_mat_t A;//  fmpz_mat_init() is done in the next function
+  flint_mat_from_mat(A, M);
+#ifdef DEBUG_LLL
+  flint_printf("fmpz_mat A = \n");
+  fmpz_mat_print_pretty(A); cout << endl;
+#endif
+  auto nr = fmpz_mat_nrows(A);
+  fmpz_mat_t UU;
+  fmpz_mat_init(UU, nr, nr);
+#ifdef DEBUG_LLL
+  flint_printf("After fmpz_mat_init, UU = \n");
+  fmpz_mat_print_pretty(UU); cout << endl;
+#endif
+  fmpz_lll_t fl;
+  fmpz_lll_context_init_default(fl);
+
+  fmpz_lll(A, UU, fl);
+#ifdef DEBUG_LLL
+  flint_printf("fmpz_lll sets A = \n");
+  fmpz_mat_print_pretty(A); cout << endl;
+  flint_printf("fmpz_lll sets UU = \n");
+  fmpz_mat_print_pretty(UU); cout << endl;
+#endif
+  Zmat<T> L = mat_from_flint_mat(A, (T)(0));
+  U = mat_from_flint_mat(UU, (T)(0));
+#ifdef DEBUG_LLL
+  cout << " which converts to U = \n" << U << endl;
+#endif
+  fmpz_mat_clear(A);
+  fmpz_mat_clear(UU);
+
+  return L;
+}
+template Zmat<int> LLL<int>(const Zmat<int>& M, Zmat<int>& U);
+template Zmat<long> LLL<long>(const Zmat<long>& M, Zmat<long>& U);
+template Zmat<ZZ> LLL<ZZ>(const Zmat<ZZ>& M, Zmat<ZZ>& U);
+template Zmat<INT> LLL<INT>(const Zmat<INT>& M, Zmat<INT>& U);
 
 template<class T>
 mat_ZZ mat_to_mat_ZZ(Zmat<T> A)

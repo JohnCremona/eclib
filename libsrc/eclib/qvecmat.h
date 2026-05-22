@@ -197,13 +197,21 @@ public:
   inline friend ostream& operator<<(ostream& s, const Qmat& x) { s << x.str();  return s;}
 
   inline friend Qmat HNF(const Qmat& M) {return Qmat(HNF(M.numerator), M.denom);}
+  inline friend Qmat HNF(const Qmat& M, mat_m& U) {return Qmat(HNF(M.numerator, U), M.denom);}
+
   inline friend Qmat SNF(const Qmat& M) {return Qmat(SNF(M.numerator), M.denom);}
+  inline friend Qmat SNF(const Qmat& M, mat_m& U, mat_m& V) {return Qmat(SNF(M.numerator, U, V), M.denom);}
+
   inline friend Qmat LLL(const Qmat& M) {return Qmat(LLL(M.numerator), M.denom);}
+  inline friend Qmat LLL(const Qmat& M, mat_m& U) {return Qmat(LLL(M.numerator, U), M.denom);}
+
   inline friend Qmat transpose(const Qmat& M) {return Qmat(transpose(M.numerator), M.denom);}
 };
 
 inline istream& operator>>(istream& s, Qmat& x) {x.read(s); return s;}
 inline Qmat operator*(int c, const Qmat& v) {return ZZ(c)*v;}
 inline Qmat operator*(long c, const Qmat& v) {return ZZ(c)*v;}
+inline Qmat operator*(const mat_m& A, const Qmat& B) {return Qmat(A)*B;}
+inline Qmat operator*(const Qmat& A, const mat_m& B) {return A*Qmat(B);}
 
 #endif
