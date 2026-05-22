@@ -224,12 +224,36 @@ public:
   // Add the power order of a to this
   Order operator+=(const FieldElement& a);
 
+  // The old versions add all products of the gens of the two orders
+  // (slower):
+
   // Extend by a (which must be an algebraic integer), returning the
   // index of the extension
-  ZZ extend_by(const FieldElement& a, int check=0);
+  ZZ extend_by_old(const FieldElement& a, int check=1);
   // Extend by all a in alist (which must be algebraic integers),
   // returning the index of the extension
-  ZZ extend_by(const vector<FieldElement>& alist, int check=0);
+  ZZ extend_by_old(const vector<FieldElement>& alist, int check=1);
+
+  // These versions add just a and then check all products one by one,
+  // adding any which are not yet contained  (faster):
+
+  // Extend by a (which must be an algebraic integer), returning the
+  // index of the extension: second version which uses the next two
+  // internally.
+  ZZ extend_by(const FieldElement& a, int check=1);
+  // Extend by all a in alist (which must be algebraic integers),
+  // returning the index of the extension
+  ZZ extend_by(const vector<FieldElement>& alist, int check=1);
+
+private:
+  // Add one a (algebraic integer) to the Z-span: the result may not
+  // be an order but this is only used internally
+  void add_one(const FieldElement& a, int check=0);
+  // Check that the Z-span of the current Zbasis is closed under
+  // multiplication.  If not, a will hold a missing product.
+  int check_order(FieldElement& a) const;
+  void fill_data();
+
 
 private:
   vector<FieldElement> Zbasis; // Z-basis of the order

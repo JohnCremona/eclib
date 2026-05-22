@@ -27,7 +27,7 @@
 // Degree bound: fields of degree up to this will be reduced via
 // polredabs (giving a canonical defining polynomial); above this only
 // polredbest will be used.
-const int POLREDABS_DEGREE_UPPER_BOUND = 26;
+const int POLREDABS_DEGREE_UPPER_BOUND = 20;
 
 newform_comparison newform_cmp;
 
@@ -675,12 +675,16 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 void Newform::compute_eigs(int ntp, int verbose)
 {
   // HO = Order(*F); // initialise with equation order
-  ZZ bound(100000000);
-  HO = MaximalOrder(F, bound); // initialise with equation order
-  ZZ Hecke_index = ZZ(1); // index of eqn order in HO
+  ZZ bound(0);
+  if (d>POLREDABS_DEGREE_UPPER_BOUND) bound = ZZ(100000000);
+  HO = MaximalOrder(F, bound); // initialise with maximal order (or approximation)
   if (d>1 && verbose)
-    cout << "Hecke order initialised to equation order Z[" << F->gen() << "]" << endl;
-
+    {
+      cout << "Hecke order initialised to " << HO << endl;
+      ZZ ind = HO.get_order_index();
+      if (!is_one(ind))
+        cout << "(which contains the equation order with index " << ind << ")" << endl;
+    }
   long p=2;
   primevar pr(ntp); // iterator over first ntp primes
   while(pr.ok())
@@ -698,13 +702,17 @@ void Newform::compute_eigs(int ntp, int verbose)
               if (!HO.contains(a_p))
                 {
                   if (verbose)
-                    cout << "a_p not in current Hecke order (coords are " << HO.coords(a_p)
+                    cout << "a_p not in current Hecke order (denominator " << HO.denom(a_p)
                          << "), extending..." << endl;
-                  ZZ rel_index = HO.extend_by(a_p);
+                  ZZ rel_index = HO.extend_by(a_p, 0); // 0: no need to check that a_p is integral
                   if (verbose)
                     {
-                      cout << "Hecke order grows by index " << rel_index << ". New basis is\n";
-                      for (auto b: HO.get_basis()) cout << b << " = " << b.coords() << endl;
+                      cout << "Hecke order grows by index " << rel_index << endl;
+                      if (verbose>1)
+                        {
+                          cout << "New basis is\n";
+                          for (auto b: HO.get_basis()) cout << b << " = " << b.coords() << endl;
+                        }
                     }
                 }
             }
@@ -782,7 +790,9 @@ void Newform::display(int aP, int AL, int traces) const
       if (is_one(ind))
         cout << " - Hecke order is equation order Z[" << F->gen() << "]" << endl;
       else
-        cout << " - Hecke order basis " << HO.get_basis() << endl;
+        // cout << " - Hecke order basis " << HO.get_basis() << endl;
+        cout << " - Hecke order contains equation order Z[" << F->gen()
+             << "] with index " << HO.get_order_index() << endl;
     }
 
   if (AL)
