@@ -671,13 +671,13 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
     {
       if (verbose) cout << "a_p computed, now LLL-reducing Hecke order..." << flush;
       // (1) just reduce the integral basis
-      HO.LLL_reduce();
+      // HO.LLL_reduce();
       // (2) LLL-reduce the ap coefficients
       // // Get list of ap
-      // vector<FieldElement> aplist(aPmap.size());
-      // std::transform(aPmap.begin(), aPmap.end(), aplist.begin(),
-      //                [](const auto& pap){return pap.second;});
-      // HO.LLL_reduce(aplist);
+      vector<FieldElement> aplist(aPmap.size());
+      std::transform(aPmap.begin(), aPmap.end(), aplist.begin(),
+                     [](const auto& pap){return pap.second;});
+      HO.LLL_reduce(aplist);
       if (verbose) cout << "done." << endl;
     }
   compute_AL_eigs(ntp, verbose);      // e(Q) and a(Q) for bad Q
@@ -800,12 +800,12 @@ void Newform::display(int aP, int AL, int traces) const
   if (d>1 && HO.rk())
     {
       ZZ ind = HO.get_order_index();
-      if (is_one(ind))
-        cout << " - Hecke order is equation order Z[" << F->gen() << "]" << endl;
-      else
-        // cout << " - Hecke order basis " << HO.get_basis() << endl;
-        cout << " - Hecke order contains equation order Z[" << F->gen()
-             << "] with index " << HO.get_order_index() << endl;
+      // if (is_one(ind))
+      //   cout << " - Hecke order is equation order Z[" << F->gen() << "]" << endl;
+      // else
+      cout << " - Hecke order contains equation order Z[" << F->gen()
+           << "] with index " << HO.get_order_index() << endl;
+      cout << " - Hecke order basis: " << HO.get_basis() << endl;
     }
 
   if (AL)
@@ -840,7 +840,7 @@ void Newform::display_aP() const
 
   ZZ ind = (d==1? ZZ(1) : HO.get_order_index());
 
-  if (HO.rk()>0 && !is_one(ind))
+  if (HO.rk()>1) // && !is_one(ind))
     {
       FieldElement gen = F->gen(), gen_power = (*F)(1);
       cout << "Hecke order coordinates of power basis of Hecke field (Hecke order contains Z["

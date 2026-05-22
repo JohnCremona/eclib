@@ -1613,7 +1613,7 @@ void Order::LLL_reduce(const vector<FieldElement>& alist)
 {
   Qmat C1 = coord_matrix(alist); // columns are coords of a in alist w.r.t. power basis
   mat_m C2 = (power_coords_matrix * C1).numerator;  // columns are coords w.r.t. integral basis
-  cout << "Before LLL, coords of alist are:\n" << transpose(C2) << endl;
+  // cout << "Before LLL, coords of alist are:\n" << transpose(C2) << endl;
 
   mat_m U, V;    // to hold unimodular transform and its inverse
   mat_m L = LLL(C2, U);  // L = U*C = LLL-reduced coords of alist

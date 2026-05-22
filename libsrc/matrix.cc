@@ -2108,6 +2108,7 @@ Zmat<T> HNF(const Zmat<T>& M, Zmat<T>& U)
   flint_mat_from_mat(A, M);
   fmpz_mat_t UU;
   fmpz_mat_init(UU, M.nrows(), M.nrows());
+  fmpz_mat_one(UU);
 
   fmpz_mat_hnf_transform(A, UU, A);
 
@@ -2149,8 +2150,10 @@ Zmat<T> SNF(const Zmat<T>& M, Zmat<T>& U, Zmat<T>& V)
   flint_mat_from_mat(A, M);
   fmpz_mat_t UU;
   fmpz_mat_init(UU, M.nrows(), M.nrows());
+  fmpz_mat_one(UU);
   fmpz_mat_t VV;
   fmpz_mat_init(VV, M.ncols(), M.ncols());
+  fmpz_mat_one(VV);
 
   fmpz_mat_snf_transform(A, UU, VV, A);
 
@@ -2195,6 +2198,7 @@ Zmat<T> LLL(const Zmat<T>& M, Zmat<T>& U) // U*M=L with U unimodular
   auto nr = fmpz_mat_nrows(A);
   fmpz_mat_t UU;
   fmpz_mat_init(UU, nr, nr);
+  fmpz_mat_one(UU);
 #ifdef DEBUG_LLL
   flint_printf("After fmpz_mat_init, UU = \n");
   fmpz_mat_print_pretty(UU); cout << endl;
