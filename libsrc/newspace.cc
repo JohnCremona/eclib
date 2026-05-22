@@ -667,6 +667,9 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
 void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 {
   compute_eigs(ntp, verbose);         // a(P) for good P
+  if (verbose) cout << "a_p computed, now LLL-reducing Hecke order..." << flush;
+  HO.LLL_reduce();
+  if (verbose) cout << "done." << endl;
   compute_AL_eigs(ntp, verbose);      // e(Q) and a(Q) for bad Q
   compute_coefficients(ntp, verbose); // a(M) and traces for N(M)<=max N(P)
 }

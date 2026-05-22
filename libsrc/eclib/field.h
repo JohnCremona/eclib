@@ -161,6 +161,14 @@ public:
 // List of x^i for i=0,1,...,deg(F)
 vector<FieldElement> powers(const FieldElement& x);
 
+// To coordinate matrix (by columns unless rows=1). If rev then
+// rows/columns are reversed coordinate vectors.
+Qmat coord_matrix(const vector<FieldElement>& alist, int rows=0, int rev=0);
+
+// From coordinate matrix (by columns unless rows=1).  If rev then
+// rows/columns are reversed coordinate vectors.
+vector<FieldElement> from_coord_matrix(const Field& F, const Qmat& M, int rows=0, int rev=0);
+
 inline ostream& operator<<(ostream& s, const FieldElement& x)
 { s << x.str();  return s;}
 
@@ -245,6 +253,8 @@ public:
   // returning the index of the extension
   ZZ extend_by(const vector<FieldElement>& alist, int check=1);
 
+  // LLL-reduce basis
+  void LLL_reduce();
 private:
   // Add one a (algebraic integer) to the Z-span: the result may not
   // be an order but this is only used internally
@@ -252,8 +262,6 @@ private:
   // Check that the Z-span of the current Zbasis is closed under
   // multiplication.  If not, a will hold a missing product.
   int check_order(FieldElement& a) const;
-  void fill_data();
-
 
 private:
   vector<FieldElement> Zbasis; // Z-basis of the order

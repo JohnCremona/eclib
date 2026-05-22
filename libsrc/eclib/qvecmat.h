@@ -198,6 +198,7 @@ public:
 
   inline friend Qmat HNF(const Qmat& M) {return Qmat(HNF(M.numerator), M.denom);}
   inline friend Qmat SNF(const Qmat& M) {return Qmat(SNF(M.numerator), M.denom);}
+  inline friend Qmat LLL(const Qmat& M) {return Qmat(LLL(M.numerator), M.denom);}
   inline friend Qmat transpose(const Qmat& M) {return Qmat(transpose(M.numerator), M.denom);}
 };
 

@@ -222,15 +222,7 @@ FieldElement Field::gen() const
 
 vector<FieldElement> Field::power_basis() const
 {
-  vector<FieldElement> bas(d);
-  FieldElement g = gen(), h = (*this)(1);
-  for (int i=0; i<d; i++)
-    {
-      bas[i] = h;
-      if (i < d-1)
-        h *= g;
-    }
-  return bas;
+  return powers(gen());
 }
 
 // compute integral basis (via libpari), fill integral_basis and basis_change_matrix
@@ -843,19 +835,7 @@ int FieldElement::is_square(FieldElement& r, int ntries) const
 
 Qmat FieldElement::power_matrix() const // cols are coords of powers
 {
-  int d = F->d;
-  Qmat M(d,d);
-  M.setcol(1, Qvec::unit_vector(d, 1));
-  if (d==1) return M;
-  M.setcol(2, v);
-  if (d==2) return M;
-  FieldElement apow = *this;
-  for (int i=3; i<=d; i++)
-    {
-      apow *= (*this);
-      M.setcol(i, apow.v);
-    }
-  return M;
+  return coord_matrix(powers(*this));
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -1340,35 +1320,18 @@ Order::Order(const vector<FieldElement>& v, int basis)
   if (basis)
     {
       Zbasis = v;
-      basis_matrix = Qmat(rank, rank);
-      for (int i=0; i<rank; i++)
-        basis_matrix.setcol(i+1,v[i].coords());
+      basis_matrix = coord_matrix(v);
       power_coords_matrix = basis_matrix.inverse().get_numerator();
       index = abs(power_coords_matrix.determinant());
       disc = poldisc/(index*index);
     }
   else
     {
-      int ngens = v.size();
-      Qmat M(ngens, rank); // rows are coords of given gens
-      for (int i=0; i<ngens; i++)
-        M.setrow(i+1,reverse(v[i].coords()));
-      M = HNF(M);
-      M.delete_rows(ngens-rank);   // rows are coords of new Zbasis
-      M = Qmat(LLL(M.numerator), M.denom);
-      // cout << "HNF(M) = \n" << M << endl;
-      Zbasis.resize(rank);
-      for (int j=0; j<rank; j++)
-        Zbasis[rank-1-j] = F(reverse(M.row(j+1)));
-      basis_matrix = Qmat(rank,rank);
-      for (int j=0; j<rank; j++)
-        basis_matrix.setcol(j+1,Zbasis[j].coords());
-      // cout << "basis_matrix = \n" << basis_matrix << endl;
+      Qmat M = HNF(coord_matrix(v, 1, 1)); // 1: rows, 1: reverse coords
+      M.delete_rows(v.size()-rank);   // rows are coords of new Zbasis
+      Zbasis = from_coord_matrix(F, M, 1, 1); // 1: rows, 1: reverse coords
+      basis_matrix = coord_matrix(Zbasis); // = M with cols reversed
       power_coords_matrix = basis_matrix.inverse().get_numerator();
-      // cout << "power_coords_matrix = \n" << power_coords_matrix << endl;
-      // cout << "Z-basis:\n";
-      // for (int j=0; j<rank; j++)
-      //   cout << Zbasis[j] << endl;
       index = abs(power_coords_matrix.determinant());
       disc = poldisc/(index*index);
     }
@@ -1380,9 +1343,7 @@ Order::Order(const vector<FieldElement>& v, const mat_m pcm)
   const Field& F = *v[0].field_ptr();
   poldisc = discriminant(F.minpoly);
   rank = F.d;
-  basis_matrix = Qmat(rank, rank);
-  for (int i=0; i<rank; i++)
-    basis_matrix.setcol(i+1,v[i].coords());
+  basis_matrix = coord_matrix(v);
   disc = poldisc/(index*index);
 }
 
@@ -1630,10 +1591,22 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
           cout << "Cannot extend order " << *this << " by " << a
                << " which is not an algenbraic integer!" << endl;
           return ZZ(1);
-        }
+       }
       index_gain *= extend_by(a, 0); // 0: no need to check a again
     }
   return index_gain;
+}
+
+// LLL-reduce basis
+void Order::LLL_reduce()
+{
+  basis_matrix = transpose(LLL(transpose(basis_matrix)));
+  power_coords_matrix = basis_matrix.inverse().get_numerator();
+
+  // reset Zbasis (index and disc are unchanged)
+  const Field& F = *Zbasis[0].field_ptr();
+  for (int j=0; j<rank; j++)
+    Zbasis[j] = F(basis_matrix.col(j+1));
 }
 
 // Compute Maximal Order (via lib)pari.  If bound>0 then the order may
@@ -1666,6 +1639,38 @@ vector<FieldElement> powers(const FieldElement& x)
   for (int i=1; i<d; i++)
     bas[i] = x*bas[i-1];
   return bas;
+}
+
+// To coordinate matrix (by columns unless rows=1).  If rev then
+// rows/columns are reversed coordinate vectors.
+Qmat coord_matrix(const vector<FieldElement>& alist, int rows, int rev)
+{
+  Qmat M(alist[0].field_degree(), alist.size());
+  int i = 1;
+  for (auto& a: alist)
+    {
+      Qvec v = a.coords();
+      if (rev)
+        v = reverse(v);
+      M.setcol(i++, v);
+    }
+  return (rows? transpose(M) : M);
+}
+
+// From coordinate matrix (by columns unless rows=1).  If rev then
+// rows/columns are reversed coordinate vectors.
+vector<FieldElement> from_coord_matrix(const Field& F, const Qmat& M, int rows, int rev)
+{
+  int n = (rows? M.nrows(): M.ncols());
+  vector<FieldElement> alist(n);
+  for (int i=0; i<n; i++)
+    {
+      Qvec v =  (rows? M.row(i): M.col(i));
+      if (rev)
+        v = reverse(v);
+      alist[i] = FieldElement(F, v);
+    }
+  return alist;
 }
 
 // For x an algebraic integer, the order spanned by x^i for
