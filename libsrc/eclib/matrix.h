@@ -132,6 +132,9 @@ public:
   friend long population<>(const Zmat<T>& m); // #nonzero entries
   friend T maxabs<>(const Zmat<T>& m); // max entry
   friend double sparsity<>(const Zmat<T>& m); // #nonzero entries/#entries
+  friend int is_permutation_matrix<>(const Zmat<T>& m); // test for being a permutation matrix
+  friend int is_signed_permutation_matrix<>(const Zmat<T>& m);
+
   // Implementation
 private:
   long nro,nco;

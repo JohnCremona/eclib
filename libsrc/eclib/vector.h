@@ -131,6 +131,8 @@ template<class T> Zvec<T> matvecmulmodp(const Zmat<T>&, const Zvec<T>&, const T&
 template<class T> long population(const Zmat<T>& m);
 template<class T> T maxabs(const Zmat<T>& m);
 template<class T> double sparsity(const Zmat<T>& m);
+template<class T> int is_permutation_matrix(const Zmat<T>& m);
+template<class T> int is_signed_permutation_matrix(const Zmat<T>& m);
 template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr=0);
 template<class T> T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 template<class T> int dim(const subZspace<T>& s);
@@ -242,6 +244,8 @@ public:
   friend ostream& operator<< <>(ostream&s, const Zvec<T>&);
   friend istream& operator>> <>(istream&s, Zvec<T>&);
   friend void swapvec<>(Zvec<T>& v, Zvec<T>& w);
+  friend int is_permutation_matrix<>(const Zmat<T>& m); // test for being a permutation matrix
+  friend int is_signed_permutation_matrix<>(const Zmat<T>& m);
 
   // Implementation
 private:
