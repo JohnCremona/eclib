@@ -1768,6 +1768,13 @@ int is_signed_permutation_matrix(const Zmat<T>& m)
   return 1;
 }
 
+
+template<class T>
+int is_identity_matrix(const Zmat<T>& m)
+{
+  return m == Zmat<T>::identity_matrix(m.nro);
+}
+
 template<class T>
 mat_m to_mat_m(const Zmat<T>& M)
 {
@@ -2517,6 +2524,7 @@ template int maxabs<int>(const Zmat<int>& m); // max entry
 template double sparsity<int>(const Zmat<int>& m); // #nonzero entries/#entries
 template int is_permutation_matrix<int>(const Zmat<int>& m);
 template int is_signed_permutation_matrix<int>(const Zmat<int>& m);
+template int is_identity_matrix<int>(const Zmat<int>& m);
 template ostream& operator<< <int>(ostream&s, const Zmat<int>&m);
 template Zmat<int> operator+<int>(const Zmat<int>&);                   // unary
 template Zmat<int> operator-<int>(const Zmat<int>&);                   // unary
@@ -2577,6 +2585,7 @@ template long maxabs<long>(const Zmat<long>& m); // max entry
 template double sparsity<long>(const Zmat<long>& m); // #nonzero entries/#entries
 template int is_permutation_matrix<long>(const Zmat<long>& m);
 template int is_signed_permutation_matrix<long>(const Zmat<long>& m);
+template int is_identity_matrix<long>(const Zmat<long>& m);
 template ostream& operator<< <long>(ostream&s, const Zmat<long>&m);
 template Zmat<long> operator+<long>(const Zmat<long>&);                   // unary
 template Zmat<long> operator-<long>(const Zmat<long>&);                   // unary
@@ -2635,7 +2644,9 @@ template Zvec<ZZ> matvecmulmodp<ZZ>(const Zmat<ZZ>&, const Zvec<ZZ>&, const ZZ& 
 template long population<ZZ>(const Zmat<ZZ>& m); // #nonzero entries
 template ZZ maxabs<ZZ>(const Zmat<ZZ>& m); // max entry
 template double sparsity<ZZ>(const Zmat<ZZ>& m); // #nonzero entries/#entries
+template int is_permutation_matrix<ZZ>(const Zmat<ZZ>& m);
 template int is_signed_permutation_matrix<ZZ>(const Zmat<ZZ>& m);
+template int is_identity_matrix<ZZ>(const Zmat<ZZ>& m);
 template ostream& operator<< <ZZ>(ostream&s, const Zmat<ZZ>&m);
 template Zmat<ZZ> operator+<ZZ>(const Zmat<ZZ>&);                   // unary
 template Zmat<ZZ> operator-<ZZ>(const Zmat<ZZ>&);                   // unary
@@ -2691,6 +2702,8 @@ template long population<INT>(const Zmat<INT>& m); // #nonzero entries
 template INT maxabs<INT>(const Zmat<INT>& m); // max entry
 template double sparsity<INT>(const Zmat<INT>& m); // #nonzero entries/#entries
 template int is_signed_permutation_matrix<INT>(const Zmat<INT>& m);
+template int is_permutation_matrix<INT>(const Zmat<INT>& m);
+template int is_identity_matrix<INT>(const Zmat<INT>& m);
 template ostream& operator<< <INT>(ostream&s, const Zmat<INT>&m);
 template Zmat<INT> operator+<INT>(const Zmat<INT>&);                   // unary
 template Zmat<INT> operator-<INT>(const Zmat<INT>&);                   // unary

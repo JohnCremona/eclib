@@ -232,6 +232,9 @@ public:
   // Add the power order of a to this
   Order operator+=(const FieldElement& a);
 
+  // Check if this is just the equation order (with standard basis in standard order)
+  int is_equation_order() const;
+
   // The old versions add all products of the gens of the two orders
   // (slower):
 

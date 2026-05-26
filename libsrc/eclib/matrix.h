@@ -134,6 +134,7 @@ public:
   friend double sparsity<>(const Zmat<T>& m); // #nonzero entries/#entries
   friend int is_permutation_matrix<>(const Zmat<T>& m); // test for being a permutation matrix
   friend int is_signed_permutation_matrix<>(const Zmat<T>& m);
+  friend int is_identity_matrix<>(const Zmat<T>& m);
 
   // Implementation
 private:

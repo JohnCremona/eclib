@@ -1469,6 +1469,12 @@ Order Order::operator+=(const FieldElement& a)
   return *this;
 }
 
+// Check if this is just the equation order (with standard basis in standard order)
+int Order::is_equation_order() const
+{
+  return is_identity_matrix(power_coords_matrix);
+}
+
 // Functions to enlarge the order
 
 // Extend by a (which must be an algebraic integer), returning the
@@ -1597,10 +1603,16 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
   return index_gain;
 }
 
-// LLL-reduce basis (using the basis matrix to reduce)
+// LLL-reduce basis (using the basis matrix to reduce) If the basis
+// matrix is a signed permutation matrix then (1) the order is the
+// equation order, and (2) the basis is a permutation of the power
+// basis (up to sign), in which we do nothing.
 void Order::LLL_reduce()
 {
-  basis_matrix = transpose(LLL(transpose(basis_matrix)));
+  const auto& M = LLL(transpose(basis_matrix));
+  if (is_signed_permutation_matrix(M))
+    return;
+  basis_matrix = transpose(M);
   power_coords_matrix = basis_matrix.inverse().get_numerator();
 
   // reset Zbasis (index and disc are unchanged)
@@ -1611,19 +1623,22 @@ void Order::LLL_reduce()
 // LLL-reduce basis (using the coord matrix of alist to reduce)
 void Order::LLL_reduce(const vector<FieldElement>& alist)
 {
-  Qmat C1 = coord_matrix(alist); // columns are coords of a in alist w.r.t. power basis
-  mat_m C2 = (power_coords_matrix * C1).numerator;  // columns are coords w.r.t. integral basis
+  const Qmat& C1 = coord_matrix(alist); // columns are coords of a in alist w.r.t. power basis
+  const mat_m& C2 = (power_coords_matrix * C1).numerator;  // columns are coords w.r.t. integral basis
   // cout << "Before LLL, coords of alist are:\n" << transpose(C2) << endl;
 
   mat_m U, V;    // to hold unimodular transform and its inverse
-  mat_m L = LLL(C2, U);  // L = U*C = LLL-reduced coords of alist
+  const mat_m& L = LLL(C2, U);  // L = U*C = LLL-reduced coords of alist
   // cout << "LLL returns transformation matrix U =\n" << U << "\n with det(U) = " << U.determinant() << endl;
   assert (is_one(abs(U.determinant())));
   ZZ d = inverse(U, V);
   assert (is_one(abs(d)));
   if (is_one(-d))
     V = -V;
-  basis_matrix        = basis_matrix * V;
+  const auto& M = basis_matrix * V;
+  if (is_signed_permutation_matrix(M))
+    return;
+  basis_matrix = M;
   power_coords_matrix = U * power_coords_matrix;
   // cout << "After  LLL, coords of alist are:\n" << transpose(L) << endl;
 

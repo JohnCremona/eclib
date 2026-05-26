@@ -133,6 +133,7 @@ template<class T> T maxabs(const Zmat<T>& m);
 template<class T> double sparsity(const Zmat<T>& m);
 template<class T> int is_permutation_matrix(const Zmat<T>& m);
 template<class T> int is_signed_permutation_matrix(const Zmat<T>& m);
+template<class T> int is_identity_matrix(const Zmat<T>& m);
 template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr=0);
 template<class T> T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 template<class T> int dim(const subZspace<T>& s);

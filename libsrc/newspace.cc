@@ -797,15 +797,23 @@ void Newform::display(int aP, int AL, int traces) const
   // Information about Hecke field:
 
   cout << " - Hecke field k_f = " << *F << endl;
-  if (d>1 && HO.rk())
+  ZZ ind = (d==1? ZZ(1) : HO.get_order_index());
+  int is_eqn_order = HO.is_equation_order(); // not just index=1: basis must be standard
+  FieldElement gen = F->gen();
+  if (d>1)
     {
-      ZZ ind = HO.get_order_index();
-      // if (is_one(ind))
-      //   cout << " - Hecke order is equation order Z[" << F->gen() << "]" << endl;
-      // else
-      cout << " - Hecke order contains equation order Z[" << F->gen()
-           << "] with index " << HO.get_order_index() << endl;
-      cout << " - Hecke order basis: " << HO.get_basis() << endl;
+      if (is_eqn_order)
+        {
+          cout << " - Hecke order is equation order Z[" << gen <<"] with standard basis.";
+        }
+      else
+        {
+          if (is_one(ind))
+            cout << " - Hecke order is equation order Z[" << gen <<"] but with non-standard basis.";
+          else
+            cout << " - Hecke order contains equation order Z[" << gen <<"] with index " << ind <<".";
+        }
+      cout << endl;
     }
 
   if (AL)
@@ -839,12 +847,11 @@ void Newform::display_aP() const
     }
 
   ZZ ind = (d==1? ZZ(1) : HO.get_order_index());
-
-  if (HO.rk()>1) // && !is_one(ind))
+  int is_eqn_order = HO.is_equation_order(); // not just index=1: basis must be standard
+  if (!is_eqn_order)
     {
       FieldElement gen = F->gen(), gen_power = (*F)(1);
-      cout << "Hecke order coordinates of power basis of Hecke field (Hecke order contains Z["
-           << gen <<"] with index " << ind << "):\n";
+      cout << "Coordinates of power basis in Hecke order:\n";
       for (int i=0; i<d; i++)
         {
           cout << gen_power << "\t = "

@@ -206,6 +206,10 @@ public:
   inline friend Qmat LLL(const Qmat& M, mat_m& U) {return Qmat(LLL(M.numerator, U), M.denom);}
 
   inline friend Qmat transpose(const Qmat& M) {return Qmat(transpose(M.numerator), M.denom);}
+  inline friend int is_permutation_matrix(const Qmat& M)
+  {return is_one(M.denom) && is_permutation_matrix(M.numerator);}
+  inline friend int is_signed_permutation_matrix(const Qmat& M)
+  {return is_one(M.denom) && is_signed_permutation_matrix(M.numerator);}
 };
 
 inline istream& operator>>(istream& s, Qmat& x) {x.read(s); return s;}
