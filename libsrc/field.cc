@@ -1357,6 +1357,12 @@ Order::Order(const Field& F, const ZZ& i, const mat_m& M) // Order in F given pc
   disc = poldisc/(index*index);
 }
 
+// coords w.r.t. Zbasis of an arbitrary element of F
+Qvec Order::coords(const FieldElement& a) const
+{
+  return power_coords_matrix * a.coords(); // not a.v in case field is Q
+}
+
 // coords w.r.t. Zbasis of an element of F in this order
 vec_m Order::integral_coords(const FieldElement& a) const
 {

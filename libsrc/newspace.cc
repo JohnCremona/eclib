@@ -966,14 +966,9 @@ void Newform::output_to_file() const
   out << F->str(1) << "\n";  // raw=1
   // cout << "Principal Hecke field output:\n" << F->str(1) << "\n";  // raw=1
 
-  if (HO.rk()>0)
-    {
-      out << HO.get_order_index() << "\n";
-      vec_out(out, HO.get_pcm().get_entries(), " ", " ", " ");
-    }
-  else
-    out << "0";
-
+  // Hecke order:
+  out << HO.get_order_index() << "\n";
+  vec_out(out, HO.get_pcm().get_entries(), " ", " ", " ");
   out << "\n\n";
 
   // Output A-L eigenvalues if computed, else output nothing
@@ -1038,16 +1033,13 @@ int Newform::input_from_file(int verb)
   // read integral basis info
 
   ZZ ib;
-  fdata >> ib; // either 0 or the index of the equation order
-  if (!is_zero(ib))
-    {
-      // cout << "Read order index = " << ib << endl;
-      mat_m bcm(d,d);
-      fdata >> bcm;
-      // cout << "Read bcm = \n" << bcm << endl;
-      HO = Order(*F,ib,bcm);
-      // cout << "Hecke order: " << HO << endl;
-    }
+  fdata >> ib; // index of the equation order
+  // cout << "Read order index = " << ib << endl;
+  mat_m bcm(d,d);
+  fdata >> bcm;
+  // cout << "Read bcm = \n" << bcm << endl;
+  HO = Order(*F,ib,bcm);
+  // cout << "Hecke order: " << HO << endl;
 
   fdata >> ws;
   sfe = -1;

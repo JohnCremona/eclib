@@ -85,7 +85,7 @@ public:
   int is_minus_one() const;
   int is_generator() const;
   bigrational get_val() const {return val;}
-  Qvec coords() const {return v;}
+  Qvec coords() const {return (field_is_Q()? Qvec({val}) : v);}
   Qmat power_matrix() const; // cols are coords of powers
   ZZ get_denom() const {return (field_is_Q()? val.den() : v.denom);}
   int in_same_field(const FieldElement& b) const;
@@ -204,7 +204,7 @@ public:
   string str(int raw=0) const;
 
   // coords w.r.t. Zbasis of an arbitrary element of F
-  Qvec coords(const FieldElement& a) const  { return power_coords_matrix * a.v;}
+  Qvec coords(const FieldElement& a) const;
   // denominator of Zbasis coords of an arbitrary element of F
   ZZ denom(const FieldElement& a) const { return coords(a).denom;}
   // coords w.r.t. Zbasis of an element of F in this order
