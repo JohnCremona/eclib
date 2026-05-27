@@ -58,7 +58,7 @@ int main()
 
     int show_aP = 1;     // 1: do display aP
     int show_AL = 1;     // 1: do display AL
-    int show_traces = 1; // 0: do not display traces
+    int show_traces = 1; // 1: do display traces
     NS.display_newforms(show_aP, show_AL, show_traces);
     }     // end of level loop
   cout << endl;

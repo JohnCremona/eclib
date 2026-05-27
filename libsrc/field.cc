@@ -367,7 +367,7 @@ string FieldElement::str(int raw) const
 }
 
 // If not Q, v must be initialised with the right size
-void FieldElement::read (istream& s)
+void FieldElement::read(istream& s)
 {
   if (field_is_Q())
     s >> val;

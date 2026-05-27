@@ -59,10 +59,12 @@ private:
 
   int sfe; // Sign of functional equation (minus product of AL eigs), 0 if not known
 
-  // Dict of T(P) eigenvalues of good primes P:
+  // Dict of T(P) eigenvalues of good primes P (as field elements in F):
   map<long, FieldElement> aPmap;
   // max(p) for p in aPmap:
   long maxP;
+  // Dict of T(P) eigenvalues of good primes P (as integer coeffs w.r.t. Hecke order HO):
+  map<long, vec_m> aPmap_int_coords;
   // Dict of W(Q) eigenvalues in {+1,-1} of bad primes Q, triv char only:
   map<long, int> eQmap;
   // List of coefficients in F, indexed by integers M.

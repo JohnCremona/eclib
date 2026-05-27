@@ -680,7 +680,13 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
       HO.LLL_reduce(aplist);
       if (verbose) cout << "done." << endl;
     }
+
   compute_AL_eigs(ntp, verbose);      // e(Q) and a(Q) for bad Q
+
+  // Store integral coeffs of ap (good and bad p):
+  for (auto x: aPmap)
+    aPmap_int_coords[x.first] = HO.integral_coords(x.second);
+
   compute_coefficients(ntp, verbose); // a(M) and traces for N(M)<=max N(P)
 }
 
@@ -836,7 +842,6 @@ void Newform::display(int aP, int AL, int traces) const
 }
 
 // Display aP data (trivial char or C4 fields)
-//#define CHECK_TRACES
 
 void Newform::display_aP() const
 {
@@ -862,28 +867,18 @@ void Newform::display_aP() const
     }
 
   cout << "a_p for first " << aPmap.size() << " primes:" << endl;
-  for (auto x : aPmap)
+  for (auto x : aPmap_int_coords)
     {
-      FieldElement aP = x.second;
-      cout << x.first << ":\t";
+      const long& p = x.first;
+      const vec_m& aPcoords = x.second;
+      cout << p << ":\t";
       if (d==1)
-        cout << aP;
+        cout << aPcoords[1];
       else
-        {
-          if (HO.rk())
-            cout << HO.integral_coords(aP);
-          else
-            cout << aP;
-        }
-#ifdef CHECK_TRACES
-      bigrational taP = aP.trace();
-      cout << " (trace = " << taP << ")";
-#endif
-      auto it = eQmap.find(x.first);
+        cout << aPcoords;
+      auto it = eQmap.find(p);
       if (it != eQmap.end())
-        {
-          cout << "\t(AL eigenvalue = " << it->second << ")";
-        }
+        cout << "\t(AL eigenvalue = " << it->second << ")";
       cout << endl;
     }
 }
@@ -983,14 +978,15 @@ void Newform::output_to_file() const
   out << "\n";
 
   // Output aP
-  for (auto x: aPmap)
+  for (auto x: aPmap_int_coords)
     {
-      FieldElement aP = x.second;
-      out << x.first << " ";
-      if (HO.rk()>0 && d>1)
-        out << HO.integral_coords(aP);
+      const long& p = x.first;
+      const vec_m& apcoords = x.second;
+      out << p << " ";
+      if (d==1)
+        out << apcoords[1]; // no brackets
       else
-        out << aP.str(1);
+        out << apcoords;
       out << "\n";
     }
 }
@@ -999,6 +995,7 @@ void Newform::output_to_file() const
 // Returns 0 if data file missing, else 1
 int Newform::input_from_file(int verb)
 {
+  // verb = 2;
   string fname = filename();
   if (verb)
     cout << "Reading newform " << lab << " from " << fname << " (verb="<<verb<<")"<<endl;
@@ -1034,12 +1031,15 @@ int Newform::input_from_file(int verb)
 
   ZZ ib;
   fdata >> ib; // index of the equation order
-  // cout << "Read order index = " << ib << endl;
+  if (verb>1)
+    cout << "Read order index = " << ib << endl;
   mat_m bcm(d,d);
   fdata >> bcm;
-  // cout << "Read bcm = \n" << bcm << endl;
+  if (verb>1)
+    cout << "Read bcm = \n" << bcm << endl;
   HO = Order(*F,ib,bcm);
-  // cout << "Hecke order: " << HO << endl;
+  if (verb>1)
+    cout << "Hecke order: " << HO << endl;
 
   fdata >> ws;
   sfe = -1;
@@ -1071,28 +1071,41 @@ int Newform::input_from_file(int verb)
     }
 
   // aP
-  long P; maxP=0;
+  maxP=0;
+  long P; ZZ aP1;
   FieldElement aP(*F);
-  vec_m aPcoords(d);
+  vec_m aPcoords(d), un = vec_m::unit_vector(1,1);
 
   // read whitespace, so if there are no aP on file it does not try to read any
   fdata >> ws;
   // keep reading lines until end of file
   while (!fdata.eof())
     {
-      fdata >> P;    // prime label
+      fdata >> P;    // prime
+      // cout << "read prime p = " << P << endl;
       if (d==1)
-        fdata >> aP;
+        {
+          fdata >> aP1;
+          // cout << "read integer a_p = " << aP1 << endl;
+          aP = (*F)(aP1);
+          // cout << " - as a field element, a_p = " << aP << endl;
+          aPcoords = aP1 * un;
+          // cout << " - coord vector of a_p = " << aPcoords << endl;
+        }
       else
         {
           fdata >> aPcoords;
+          // cout << " - coord vector of a_p = " << aPcoords << endl;
           aP = HO(aPcoords);
+          // cout << " - as a field element, a_p = " << aP << endl;
         }
       fdata >> ws;  // eat whitespace, including newline
       aPmap[P] = aP;
+      aPmap_int_coords[P] = aPcoords;
       if (verb>1)
         cout << "--> P = " << P
              << ": a_P = " << aP
+             << " = " << aPcoords
              << endl;
       if ((P>maxP) && !divides(P,N)) maxP = P;
     }
