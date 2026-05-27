@@ -92,7 +92,7 @@ public:
   // poly of Newspace's T_mat
   Newform(Newspace* x, int ind, const ZZX& f, int verbose=0);
   // constructor from ambient Newspace (read from file)
-  Newform(Newspace* x, int i, int verbose=0);
+  Newform(Newspace* x, int i, int fill_aPmap=0, int fill_aMlist=0, int verbose=0);
 
   // NB We do not use automatic copy constructor and assignment since
   // when data items which have field pointers are copied these must be
@@ -159,7 +159,7 @@ public:
   // Output newform data:
   void output_to_file() const;
   // Input newform data. Returns 0 if data not available, else 1.
-  int input_from_file(int verb=0);
+  int input_from_file(int fill_aPmap=0, int fill_aMlist=0, int verb=0);
 };
 
 // function to sort newforms of the same level, by (1) traces, (2)
@@ -241,8 +241,8 @@ public:
   Newspace(homspace* h1, int maxnp, int maxc, int minp=2, int verb=0);
   int split_ok; // records whether the constructor was able to find a splitting operator
 
-  // constructor from file
-  explicit Newspace(const long& level, int verb=0);
+  // constructor reading data from file
+  explicit Newspace(const long& level, int fill_aPmaps=0, int fill_aMlists=0, int verb=0);
 
   mat_m heckeop(const long& P, int cuspidal=0, int dual=0);
   mat_m heckeop(const matop& T, int cuspidal=0, int dual=0) const;
@@ -270,12 +270,13 @@ public:
   // output data for this Newspace and each Newform
   void output_to_file();
   // Input Newspace data and newform data for each newform. Returns 0 if data missing, else 1.
-  int input_from_file(const long& level, int verb=0);
+  int input_from_file(const long& level, int fill_aPmaps=0, int fill_aMlists=0, int verb=0);
 };
 
-// dict of Newspaces read from file
+// dict of cached Newspaces read from file (whose Newforms have aPmap
+// and aPmap_int_coords but not aMlist or trace_list)
 extern map<string,Newspace*> Newspace_dict;  // Key: label(N)
-Newspace* get_Newspace(const long& N, int verb=0);
+Newspace* get_oldspace(const long& N, int verb=0);
 
 string newspaces_directory(int create_if_necessary=1);
 

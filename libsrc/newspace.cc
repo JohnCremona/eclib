@@ -154,12 +154,12 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 }
 
 // Constructor which will read from file
-Newform::Newform(Newspace* x, int i, int verbose)
+Newform::Newform(Newspace* x, int i, int fill_aPmap, int fill_aMlist, int verbose)
   :N(x->N), nsp(x), index(i), lab(codeletter(i-1))
 {
   if (verbose)
     cout << "Constructing Newform from file data "<< endl;
-  if (!input_from_file(verbose))
+  if (!input_from_file(fill_aPmap, fill_aMlist, verbose))
     cerr << "Unable to read Newform " << lab << endl;
 }
 
@@ -307,11 +307,15 @@ void Newform::compute_coefficients(int ntp, int verbose)
 {
   if (aPmap.empty())
     {
-      cout << "In compute_coefficients("<<ntp<<"), aPmap is empty so computing eigs..."<<endl;
+      if (verbose)
+        cout << "In compute_coefficients("<<ntp<<"), aPmap is empty so computing eigs..."<<endl;
       compute_eigs(ntp, verbose);
-      cout << "Done\n";
-      display(1,1,0);
-      cout << "----------------------------------------------"<<endl;
+      if (verbose)
+        {
+          cout << "Done\n";
+          display(1,1,0);
+          cout << "----------------------------------------------"<<endl;
+        }
     }
 
   // Compute a_m for m up to maxP (the max p for which we have aP).
@@ -319,6 +323,8 @@ void Newform::compute_coefficients(int ntp, int verbose)
   // to maxP and their traces.
   aMlist.clear(); aMlist.reserve(maxP+1);
   trace_list.clear(); trace_list.reserve(maxP+1);
+  if (verbose)
+    cout << "Computing a_m for m <= " << maxP << endl;
   aM(maxP); // value discarded, just done for the side-effect
 }
 
@@ -409,9 +415,9 @@ void Newspace::sort_newforms()
 }
 
 // constructor from file
-Newspace::Newspace(const long& level, int verb)
+Newspace::Newspace(const long& level, int fill_aPmaps, int fill_aMlists, int verb)
 {
-  input_from_file(level, verb);
+  input_from_file(level, fill_aPmaps, fill_aMlists, verb);
 }
 
 // Compute the char poly of T on the new cuspidal subspace using the
@@ -442,7 +448,7 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
   set(f_old); // set = 1
   for (auto D: Ndivs) // Ndivs contains all *proper* D|N
     {
-      const Newspace* NSD = get_Newspace(D, verbose>1);
+      const Newspace* NSD = get_oldspace(D, verbose>1);
       if (NSD->nforms()==0)
         continue;
       long M = N/D;
@@ -565,8 +571,6 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
   std::transform(Plist.begin(), Plist.end(), ops.begin(),
                  [this](long p){return matop(p,N);});
 
-  BoundedWeightVectorGenerator combo_generator(maxnp, maxc);
-
   if (verbose)
     {
       cout << "Trying linear combinations with coefficients up to "<<maxc;
@@ -687,7 +691,8 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
   for (auto x: aPmap)
     aPmap_int_coords[x.first] = HO.integral_coords(x.second);
 
-  compute_coefficients(ntp, verbose); // a(M) and traces for N(M)<=max N(P)
+  // Compute and store a(M) and traces for M <= maxP
+  compute_coefficients(ntp, verbose);
 }
 
 // Fill aPmap, dict of eigenvalues of first ntp good primes
@@ -830,7 +835,10 @@ void Newform::display(int aP, int AL, int traces) const
   if (aP)
     {
       cout << endl;
-      display_aP();
+      if (aPmap_int_coords.empty())
+        cout << "No aP known" << endl;
+      else
+        display_aP();
     }
   if (traces)
     {
@@ -841,16 +849,10 @@ void Newform::display(int aP, int AL, int traces) const
     }
 }
 
-// Display aP data (trivial char or C4 fields)
+// Display aP data.
 
 void Newform::display_aP() const
 {
-  if (aPmap.empty())
-    {
-      cout << "No aP known" << endl;
-      return;
-    }
-
   ZZ ind = (d==1? ZZ(1) : HO.get_order_index());
   int is_eqn_order = HO.is_equation_order(); // not just index=1: basis must be standard
   if (!is_eqn_order)
@@ -866,7 +868,7 @@ void Newform::display_aP() const
       cout << endl;
     }
 
-  cout << "a_p for first " << aPmap.size() << " primes:" << endl;
+  cout << "a_p for first " << aPmap_int_coords.size() << " primes:" << endl;
   for (auto x : aPmap_int_coords)
     {
       const long& p = x.first;
@@ -883,7 +885,7 @@ void Newform::display_aP() const
     }
 }
 
-// Display A-L eigenvalues (trivial char or C4 fields)
+// Display A-L eigenvalues
 void Newform::display_AL() const
 {
   cout << "Atkin-Lehner eigenvalues:" << endl;
@@ -993,7 +995,7 @@ void Newform::output_to_file() const
 
 // Input newform data (needs lab to be set to construct the filename).
 // Returns 0 if data file missing, else 1
-int Newform::input_from_file(int verb)
+int Newform::input_from_file(int fill_aPmap, int fill_aMlist, int verb)
 {
   // verb = 2;
   string fname = filename();
@@ -1005,6 +1007,13 @@ int Newform::input_from_file(int verb)
       cerr << "Newform file " << fname << " missing" << endl;
       return 0;
     }
+
+  if (fill_aMlist && !fill_aPmap)
+    {
+      if (verb>1) cout << "(switching on fill_aPmap since fill_aMlist is on)" << endl;
+      fill_aPmap = 1;
+    }
+
   // Check field, level, letter-code:
   string dat;
   fdata >> dat;
@@ -1082,44 +1091,48 @@ int Newform::input_from_file(int verb)
   while (!fdata.eof())
     {
       fdata >> P;    // prime
-      // cout << "read prime p = " << P << endl;
       if (d==1)
         {
           fdata >> aP1;
-          // cout << "read integer a_p = " << aP1 << endl;
-          aP = (*F)(aP1);
-          // cout << " - as a field element, a_p = " << aP << endl;
+          if (fill_aPmap)
+            aP = (*F)(aP1);
           aPcoords = aP1 * un;
-          // cout << " - coord vector of a_p = " << aPcoords << endl;
         }
       else
         {
           fdata >> aPcoords;
-          // cout << " - coord vector of a_p = " << aPcoords << endl;
-          aP = HO(aPcoords);
-          // cout << " - as a field element, a_p = " << aP << endl;
+          if (fill_aPmap)
+            aP = HO(aPcoords);
         }
-      fdata >> ws;  // eat whitespace, including newline
-      aPmap[P] = aP;
+      if (fill_aPmap)
+        aPmap[P] = aP;
       aPmap_int_coords[P] = aPcoords;
       if (verb>1)
-        cout << "--> P = " << P
-             << ": a_P = " << aP
-             << " = " << aPcoords
-             << endl;
-      if ((P>maxP) && !divides(P,N)) maxP = P;
+        {
+          cout << "--> P = " << P << ": a_P = ";
+          if (fill_aPmap)
+            cout << aP << " = ";
+          cout << aPcoords << endl;
+        }
+      if ((P>maxP) && !divides(P,N))
+        maxP = P;
+      // eat whitespace, including newline, so we can detect eof
+      fdata >> ws;
     }
   if (verb>1)
     {
       cout << "After reading aP from " << fname <<":" << endl;
       display(1,1,0);
     }
-  // compute a_m and traces from a_p
-  compute_coefficients();
+  if (fill_aMlist)
+    {
+      // compute a_m and traces from a_p
+      compute_coefficients();
+    }
   if (verb)
     {
       cout << "After reading everything from " << fname <<":" << endl;
-      display(1,1,1);
+      display(1,1, fill_aMlist); // no traces unless aMlist has been filled.
     }
   return 1;
 }
@@ -1149,7 +1162,7 @@ void Newspace::output_to_file()
 
 }
 
-int Newspace::input_from_file(const long& level, int verb)
+int Newspace::input_from_file(const long& level, int fill_aPmaps, int fill_aMlists, int verb)
 {
   N = level;
   level_label = to_string(N);
@@ -1189,11 +1202,11 @@ int Newspace::input_from_file(const long& level, int verb)
     {
       if (verb)
         cout << "About to read newform #" << i << " from file" << endl;
-      Newform nf(this, i, verb);
+      Newform nf(this, i, fill_aPmaps, fill_aMlists, verb);
       if (verb>1)
         {
           cout << "After reading newform #" << i << " from file:" << endl;
-          nf.display(1,1,1);
+          nf.display(1,1, fill_aMlists); // only display traces if each aMlist have been filled
         }
       newforms.push_back(nf);
     }
@@ -1245,7 +1258,7 @@ mat_m Newspace::heckeop(const long& P, int cuspidal, int dual)
 // dict of Newspaces read from file
 map<string,Newspace*> Newspace_dict;  // Key: label(N)
 
-Newspace* get_Newspace(const long& N, int verb)
+Newspace* get_oldspace(const long& N, int verb)
 {
   string Nlabel = to_string(N);
   if (Newspace_dict.find(Nlabel) != Newspace_dict.end())
@@ -1256,7 +1269,10 @@ Newspace* get_Newspace(const long& N, int verb)
     }
   if (verb)
     cout << "Newspace at level " << Nlabel << " not in cache, reading from file..." << endl;
-  Newspace* NSP = new Newspace(N, verb);
+  Newspace* NSP = new Newspace(N,
+                               1, // fill_aPmap
+                               0, // do not fill aMlist, trace_list
+                               verb);
   Newspace_dict[Nlabel] = NSP;
   if (verb)
     cout << "Newspace at level " << Nlabel << " read from file and cached" << endl;

@@ -25,6 +25,12 @@
 
 #include "eclib/newspace.h"
 
+const int show_aP = 1;     // 1: do display aP
+const int show_AL = 1;     // 1: do display AL
+const int show_traces = 0; // 0: do not display traces (avoids
+                           // computation of a_m, which are not
+                           // stored, from a_p)
+
 int main()
 {
   cout << "Program listnsp: read and display precomputed newforms of arbitrary dimension."
@@ -43,7 +49,7 @@ int main()
     cout << ">>>> Level " << N << endl;
     Newspace NS;
     int verbose = 0;
-    NS.input_from_file(N, verbose);
+    NS.input_from_file(N, 0, show_traces, verbose);
     int nnf = NS.nforms();
     cout << nnf << (nnf==1? " newform" : " newforms") << " at level " << N;
     if (nnf)
@@ -56,9 +62,6 @@ int main()
       }
     cout << endl;
 
-    int show_aP = 1;     // 1: do display aP
-    int show_AL = 1;     // 1: do display AL
-    int show_traces = 1; // 1: do display traces
     NS.display_newforms(show_aP, show_AL, show_traces);
     }     // end of level loop
   cout << endl;
