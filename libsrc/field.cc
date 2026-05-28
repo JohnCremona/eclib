@@ -1629,9 +1629,12 @@ void Order::LLL_reduce()
 // LLL-reduce basis (using the coord matrix of alist to reduce)
 void Order::LLL_reduce(const vector<FieldElement>& alist)
 {
-  const Qmat& C1 = coord_matrix(alist); // columns are coords of a in alist w.r.t. power basis
-  const mat_m& C2 = (power_coords_matrix * C1).numerator;  // columns are coords w.r.t. integral basis
-  // cout << "Before LLL, coords of alist are:\n" << transpose(C2) << endl;
+  const Field& F = *Zbasis[0].field_ptr();
+  vector<FieldElement> alist1(alist);
+  alist1.push_back(F(1));
+  const mat_m& C2 = (power_coords_matrix * coord_matrix(alist1)).numerator;
+
+  // cout << "Before LLL, coords of alist w.r.t. integral basis are:\n" << transpose(C2) << endl;
 
   mat_m U, V;    // to hold unimodular transform and its inverse
   const mat_m& L = LLL(C2, U);  // L = U*C = LLL-reduced coords of alist
@@ -1641,15 +1644,26 @@ void Order::LLL_reduce(const vector<FieldElement>& alist)
   assert (is_one(abs(d)));
   if (is_one(-d))
     V = -V;
-  const auto& M = basis_matrix * V;
+
+  // Now V*U = id.  We post-multiply basis_matrix by V and premultiply
+  // power_coords_matrix by U, preserving the relation basis_matrix *
+  // power_coords_matrix = id.  If the new matrices are signed
+  // permutation matrices, we replace then by the identity.
+
+  const auto& M = basis_matrix * V;     // potential new basis matrix
   if (is_signed_permutation_matrix(M))
-    return;
-  basis_matrix = M;
-  power_coords_matrix = U * power_coords_matrix;
+    {
+      power_coords_matrix = mat_m::identity_matrix(rank);
+      basis_matrix = Qmat(power_coords_matrix);
+    }
+  else
+    {
+      basis_matrix = M;
+      power_coords_matrix = U * power_coords_matrix;
+    }
   // cout << "After  LLL, coords of alist are:\n" << transpose(L) << endl;
 
   // reset Zbasis (index and disc are unchanged)
-  const Field& F = *Zbasis[0].field_ptr();
   Zbasis = from_coord_matrix(F, basis_matrix);
 }
 
