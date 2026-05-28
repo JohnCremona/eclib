@@ -203,13 +203,26 @@ inline long xmm(long a, long b, long m)
   return (a*(int64_t)b) % m;
 }
 
+// set root to rounded sqrt(a) if a>=0, return 1 iff exact
+int isqrt(long a, long& root);
+// return rounded sqrt(a) (undefined for a<0)
+long isqrt(const long a);
+// set root to rounded sqrt(a) if a>=0, return 1 iff exact
+int isqrt(int a, int& root);
+// return rounded sqrt(a) (undefined for a<0)
+int isqrt(const int a);
+
 // Assuming a*d-b*c!=0, computes a reduced Z-basis for <(a,b),(c,d)>
 void gauss_reduce(long a0, long b0, long c0, long d0,
                   long& a, long& b, long& c, long& d);
 
-// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
-int modrat(long n, long m, long& a, long& b);
-int modrat(int n, int m, int& a, int& b);
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return
+// success if a^2, b^2 <= m/2
+int modrat(long n, long m, long lim, long& a, long& b);
+inline int modrat(long n, long m, long& a, long& b) {return modrat(n,m, isqrt(m>>1), a,b);}
+
+int modrat(int n, int m, int lim, int& a, int& b);
+inline int modrat(int n, int m, int& a, int& b) {return modrat(n,m, isqrt(m>>1), a,b);}
 
 long val(long factor, long number); // order of factor in number
 
@@ -229,11 +242,6 @@ int divrem(int a, int b, int& q, int& r);
 
 inline int m1pow(long a) {return (a%2 ?  -1 : +1);}
 inline int sign(long a)   {return (a==0? 0: (a>0? 1: -1));}
-
-// set root to rounded sqrt(a) if a>=0, return 1 iff exact
-int isqrt(long a, long& root);
-// return rounded sqrt(a) (undefined for a<0)
-long isqrt(const long a);
 
 int chi2(long a);
 int chi4(long a);

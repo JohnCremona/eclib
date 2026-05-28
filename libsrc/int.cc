@@ -211,3 +211,4 @@ INT sqrt_mod_p(const INT& a, const INT& p)
   sqrt_mod_p(b, a, p);
   return b;
 }
+

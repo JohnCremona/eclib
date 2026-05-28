@@ -67,6 +67,7 @@
 #if (SCALAR_OPTION==2) // long
 // #pragma message "In branch with SCALAR_OPTION 2"
 #define scalar_type string("long")
+#define scalar_option 2
 typedef long scalar;
 typedef vec_l vec;
 typedef mat_l mat;
@@ -82,6 +83,7 @@ typedef form_finder_l form_finder;
 #if (SCALAR_OPTION==3) // ZZ
 // #pragma message "In branch with SCALAR_OPTION 3"
 #define scalar_type string("ZZ")
+#define scalar_option 3
 typedef ZZ scalar;
 typedef vec_m vec;
 typedef mat_m mat;
@@ -97,6 +99,7 @@ typedef form_finder_m form_finder;
 #if (SCALAR_OPTION==1) // int
 // #pragma message "In branch with SCALAR_OPTION 1"
 #define scalar_type string("int")
+#define scalar_option 1
 typedef int scalar;
 typedef vec_i vec;
 typedef mat_i mat;
@@ -112,6 +115,7 @@ typedef form_finder_i form_finder;
 #if (SCALAR_OPTION==4) // INT
 // #pragma message "In branch with SCALAR_OPTION 4"
 #define scalar_type string("INT")
+#define scalar_option 4
 typedef INT scalar;
 typedef vec_I vec;
 typedef mat_I mat;
@@ -126,6 +130,7 @@ typedef form_finder_I form_finder;
 #else
 #pragma message "In branch with SCALAR_OPTION not 1, 2, 3, or 4"
 #define scalar_type string("undefined")
+#define scalar_option 0
 #endif
 #endif
 #endif

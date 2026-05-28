@@ -1245,13 +1245,13 @@ Zmat<T> echelonp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
        }
      for (long j=1; j<=ny; j++)
        {
-         T n1,d1;
+         T n1,d1, lim = isqrt(pr>>1);
          long jj = npcols[j];
-         int ok = modrat(m(i,jj), pr,n1,d1);
+         int ok = modrat(m(i,jj), pr, lim, n1,d1);
          nmat(i,jj)=n1;
          dmat(i,jj)=d1;
          if (ok)
-           dd=(dd*d1)/gcd(dd,d1);
+           dd = lcm(dd,d1);
          else
            {
              cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q"<<endl;
@@ -1294,13 +1294,13 @@ Zmat<T> echelonp_via_flint(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& 
        }
      for (long j=1; j<=ny; j++)
        {
-         T n1,d1;
+         T n1,d1, lim = isqrt(pr>>1);
          long jj = npcols[j];
-         int ok = modrat(m(i,jj), pr,n1,d1);
+         int ok = modrat(m(i,jj), pr, lim, n1,d1);
          nmat(i,jj)=n1;
          dmat(i,jj)=d1;
          if (ok)
-           dd=(dd*d1)/gcd(dd,d1);
+           dd=lcm(dd,d1);
          else
            {
              cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q"<<endl;
@@ -1668,14 +1668,26 @@ int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd)
          << "Now lifting back to Q." << endl;
 
   T n,d, lim = isqrt(pr>>1);
+  dd=1;
   m = mm;
   m.reduce_mod_p(pr);
-  if (maxabs(m) < lim) return 1;
+  if (maxabs(m) < lim)
+    {
+      if(trace)
+        cout << "Lifted matrix is " << m << "\n with denominator 1" << endl;
+      return 1;
+    }
   int success = 1;
-  dd=1;
   std::for_each(m.entries.begin(), m.entries.end(),
                 [&success,lim,&dd,pr,&n,&d] (const T& x)
-                {if (abs(x)>lim) {int succ = modrat(x,pr,n,d); if(succ) d=lcm(d,dd); else success=0;}});
+                {
+                  if (abs(x)>lim)
+                    {
+                      int succ = modrat(x,pr,lim,n,d);
+                      if(succ) dd=lcm(d,dd);
+                      else success=0;
+                    }
+                });
   dd=abs(dd);
   if(trace)
     cout << "Common denominator = " << dd << "\n";
@@ -2075,13 +2087,6 @@ Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr)
 
 Zmat<INT> ref_via_flint(const Zmat<INT>& M, const INT& pr)
 {
-  // Zmat<ZZ> A = to_mat_m(M);
-  // ZZ p = to_ZZ(pr);
-  // cout << "Calling ref_via_flint on ZZ-matrix\n" << A << "\n modulo " << p << endl;
-  // Zmat<ZZ> R = ref_via_flint(A, p);
-  // cout << " ref_via_flint returns ZZ-matrix\n" << R << endl;
-  // return to_mat_I(R);
-
   fmpz_mod_ctx_t flint_modulus;
   fmpz_t tmp;
   pr.get_fmpz(tmp);

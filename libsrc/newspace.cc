@@ -39,6 +39,10 @@ newform_comparison newform_cmp;
 
 #define USE_OLD_SPACES
 
+// Set this to use sparse matrix reduction
+
+//#define SPARSE_KERNEL
+
 Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   :N(x->N), nsp(x), index(ind), lab(codeletter(ind-1))
 {
@@ -62,7 +66,22 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   mat_m fT = evaluate(scale_poly_up(f, to_ZZ(nsp->dH)), nsp->T_mat);
   if (verbose>1)
     cout << "Computing ker(f(T)) where f(T) = \n" << fT << endl;
-  S = kernel(fT);
+
+#ifdef SPARSE_KERNEL
+  const ZZ modulus(default_modulus<ZZ>());
+  ssubspace_m sS = kernel(smat_m(fT), modulus);
+  mat_m bas = sS.bas().as_mat();
+  ZZ den;
+  int ok = liftmat(bas, modulus, bas, den);
+  // cout << "lifted basis:\n" << bas << "\ndenom = " << den << endl;
+  assert(ok);
+  S = subspace_m(bas, sS.pivs(), den);
+  // S = kernel(fT, 3); // method 3: echelon via FLINT
+  // cout << "direct basis:\n" << S.bas() << "\ndenom = " << S.den() << endl;
+#else
+  S = kernel(fT, 3); // method 3: echelon via FLINT
+#endif
+
   if(dim(S)!=d)
     {
       cout<<"Problem: eigenspace has wrong dimension "<<dim(S)<<", not "<<d<<endl;
@@ -590,12 +609,14 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
   // returning success flag.  If successful, assigns T_op, T_name, f
   auto test_lc = [this, ops, Plist, &T_op, &f](const vector<scalar>& lc)
   {
-    T_op = gmatop(ops, lc);
+    vector<int> xlc(lc);
+    xlc.insert(xlc.end(), ops.size()-lc.size(), 0);
+    T_op = gmatop(ops, xlc);
     T_name = T_op.name();
     if (verbose)
       cout << "Trying "<<lc<<": "<<T_name<<"..."<<flush;
 #ifdef USE_OLD_SPACES
-    return valid_splitting_combo(Plist, lc, T_op, f);
+    return valid_splitting_combo(Plist, xlc, T_op, f);
 #else
     return test_splitting_operator(N, T_op, H1->modulus, verbose>1);
 #endif
@@ -618,19 +639,24 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
         cout << " no good, continuing..." << endl;
     }
 
-  // Now test 100 random linear combos
-  for (int i=0; (!split_ok) && (i<100); i++)
-  {
-    split_ok = test_lc(random_vector(maxnp, -maxc, maxc));
-    if (split_ok)
-      {
-        if (verbose)
-          cout<<"OK!"<<endl;
+  // Now test random linear combos of length 2...maxnp
+  for (int np=2; np<=maxnp; np++)
+    {
+      for (int i=0; (!split_ok) && (i<5*np); i++)
+        {
+          split_ok = test_lc(random_vector(np, -maxc, maxc));
+          if (split_ok)
+            {
+              if (verbose)
+                cout<<"OK!"<<endl;
+              break;
+            }
+          if (verbose)
+            cout << " no good, continuing..." << endl;
+        }
+      if (split_ok)
         break;
-      }
-    if (verbose)
-      cout << " no good, continuing..." << endl;
-  }
+    }
 
   if (split_ok)
     {
@@ -661,7 +687,7 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
     {
       ZZX fi = NTL_factors[i];
       if (verbose)
-        cout<<(i+1)<<":\t"<<str(fi)<<"\t(degree "<<deg(fi)<<")"<<endl; 
+        cout<<(i+1)<<":\t"<<str(fi)<<"\t(degree "<<deg(fi)<<")"<<endl;
      factors.push_back(fi);
     }
   return;

@@ -29,6 +29,9 @@
 #include <flint/flint.h>
 #include <flint/fmpz.h>
 #include <flint/fmpz_factor.h>
+#include <flint/fmpq.h> // only for _fmpq_reconstruct_fmpz()
+
+class RAT;
 
 class INT {
 private:
@@ -130,6 +133,8 @@ public:
   friend class REAL;
   friend void make_mat( fmpz_mat_t A, const std::vector<std::vector<INT>>& M);
   friend int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b);
+  friend int modrat(const INT& n, const INT& m, const INT& lim, /* return values: */ INT& a, INT& b);
+  friend int modrat(const INT& n, const INT& m, /* return value: */ RAT& q);
   friend INT NextPrime(const INT& a, int proof);
 };
 
@@ -216,6 +221,11 @@ inline INT NextPrime(const INT& a, int proof=1)
 
 // Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
 // (defined as an inline function in frat.h as it uses RAT type).
-//int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b);
+inline int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b)
+{return _fmpq_reconstruct_fmpz(a.z, b.z, (n%m).z, m.z);}
+
+// The next version is for compatibility with int, long, ZZ versions; lim is ignored
+inline int modrat(const INT& n, const INT& m, const INT& lim, /* return values: */ INT& a, INT& b)
+{return _fmpq_reconstruct_fmpz(a.z, b.z, (n%m).z, m.z);}
 
 #endif

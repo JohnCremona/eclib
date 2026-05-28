@@ -1085,13 +1085,12 @@ void gauss_reduce(const ZZ& a0, const ZZ& b0, const ZZ& c0, const ZZ& d0,
 #endif
 }
 
-int modrat(const ZZ& n, const ZZ& m,
+int modrat(const ZZ& n, const ZZ& m, const ZZ& lim,
            /* return values: */ ZZ& a, ZZ& b)
 {
   static const ZZ zero(0), one(1);
   ZZ c,d, n1 = mod(n,m);
   gauss_reduce(n1,one,m,zero,a,b,c,d);
-  ZZ lim = sqrt(m>>1);
   return (abs(a) <= lim) && (abs(b) <= lim);
 }
 

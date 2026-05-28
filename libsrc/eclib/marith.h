@@ -238,8 +238,17 @@ long gcd(const ZZ& a, long b);
 void gauss_reduce(const ZZ& a0, const ZZ& b0, const ZZ& c0, const ZZ& d0,
                   ZZ& a, ZZ& b, ZZ& c, ZZ& d);
 
-// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
-int modrat(const ZZ& n, const ZZ& m, ZZ& a, ZZ& b);
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return
+// success if a^2, b^2 <= m/2. Use this version with lim=isqrt(m/2)
+// preset.
+int modrat(const ZZ& n, const ZZ& m, const ZZ& lim, ZZ& a, ZZ& b);
+
+// Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return
+// success if a^2, b^2 <= m/2.
+inline int modrat(const ZZ& n, const ZZ& m, ZZ& a, ZZ& b)
+{
+  return modrat(n, m, isqrt(m>>1), a, b);
+}
 
 int sqrt_mod_2_power(ZZ& x, const ZZ& a, int e);
 int sqrt_mod_p_power(ZZ& x, const ZZ& a, const ZZ& p, int e);

@@ -394,29 +394,28 @@ long invmod(long a, long p)
 // implementation of gauss_reduce() is now in marith since it uses ZZs
 
 // Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
-int modrat(int n, int m, int& a, int& b)
+int modrat(int n, int m, int lim, int& a, int& b)
 {
-  long la,lb,ln=n,lm=m;
-  int ok = modrat(ln,lm,la,lb);
+  long la,lb,llim=lim,ln=n,lm=m;
+  int ok = modrat(ln,lm,llim,la,lb);
   a=la; b=lb;
   return ok;
 }
 
-int old_modrat(long n, long m, long& a, long& b);
+int old_modrat(long n, long m, long lim, long& a, long& b);
 int new_modrat(long n, long m, long& a, long& b);
 
-int modrat(long n, long m, long& a, long& b)
+int modrat(long n, long m, long lim, long& a, long& b)
 {
-  return old_modrat(n, m, a, b);
+  return old_modrat(n, m, lim, a, b);
   //return new_modrat(n, m, a, b);  // NB new version has problems on 32-bit
 }
 
-int old_modrat(long n, long m, long& a, long& b)
+int old_modrat(long n, long m, long lim, long& a, long& b)
 {long q=m, r=posmod(n,m), qq=0, rr=1;
 #ifdef DEBUG_MODRAT
  cout<<"modrat("<<n<<","<<m<<")\n";
 #endif
- float lim = sqrt(float(m)/2.0);
  a=r; b=1;
  if (r<lim)
    {
@@ -470,7 +469,7 @@ int new_modrat(long n, long m, long& a, long& b)
 long val(long factor, long number)
 {
  long n = abs(number), f = abs(factor);
- if ((n==0) || (f<2)) return 99999;  // error condition! N.B. This value 
+ if ((n==0) || (f<2)) return 99999;  // error condition! N.B. This value
                                      // must be unlikely and POSITIVE.
  long e = 0;
  while (n%f==0) {e++; n/=f;}
@@ -506,6 +505,22 @@ int isqrt(long a, long& root)
 long isqrt(const long a)
 {
   long r;
+  isqrt(a,r);
+  return r;
+}
+
+// set root to rounded sqrt(a) if a>=0, return 1 iff exact
+int isqrt(int a, int& root)
+{
+  if (a<0) {return 0;}
+  root = round(sqrt(a));
+  return a==root*root;
+}
+
+// return rounded sqrt(a) (undefined for a<0)
+int isqrt(const int a)
+{
+  int r;
   isqrt(a,r);
   return r;
 }
