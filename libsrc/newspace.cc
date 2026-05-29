@@ -27,7 +27,7 @@
 // Degree bound: fields of degree up to this will be reduced via
 // polredabs (giving a canonical defining polynomial); above this only
 // polredbest will be used.
-const int POLREDABS_DEGREE_UPPER_BOUND = 20;
+const int POLREDABS_DEGREE_UPPER_BOUND = 15;
 
 newform_comparison newform_cmp;
 
@@ -139,28 +139,24 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       F0 = new Field(A, basis_change_inverse, basis_change_matrix, var, verbose>1);
       F = new Field();
       int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
+      string F0pol = ::str(F0->poly());
       if (verbose)
         {
           cout << "Applying "
-               << (canonical? "polredabs": "polredbest");
-          if (verbose>1)
-            cout << " to field "
-                 // << F0 << " --> "
-                 << *F0;
-          cout  << endl;
+               << (canonical? "polredabs": "polredbest")
+               << " to " << F0pol;
           if (!canonical)
-            {
-              cout << "Not applying polredabs as degree is greater than "
-                   << POLREDABS_DEGREE_UPPER_BOUND <<endl;
-            }
+            cout << " (not applying polredabs as degree is greater than "
+                 << POLREDABS_DEGREE_UPPER_BOUND << ")";
+          cout  << endl;
         }
       Fiso = F0->reduction_isomorphism(var, *F, canonical);
       if (verbose)
         cout << "Reduced field is " << *F << endl;
       if (Fiso.is_nontrivial() && verbose)
         {
-          cout << "[replacing original Hecke field with polynomial " << ::str(F0->poly())
-               << " with polredabs reduced field with polynomial " << ::str(F->poly()) << "]" << endl;
+          cout << " -- replacing original Hecke field with polynomial " << F0pol
+               << " with polredabs reduced field with polynomial " << ::str(F->poly()) << endl;
         }
     }
   if (verbose)
@@ -419,14 +415,14 @@ Newspace::Newspace(homspace* h1, int maxnp, int maxc, int minp, int verb)
     // abort if not
     cout << "Unable to find a suitable splitting operator!" << endl;
 
-  // Sort the newforms (by character, dimension, polynomial; we have no traces yet)
+  // Sort the newforms (by dimension and polynomial; we have no traces yet)
   sort_newforms();
 }
 
 // sort the list of newforms using newform_cmp
 void Newspace::sort_newforms()
 {
-  // Sort the newforms (by character, dimension, polynomial)
+  // Sort the newforms (by traces, dimension, polynomial)
   std::sort(newforms.begin(), newforms.end(), newform_cmp);
   int i=1;
   for (Newform& f: newforms)
@@ -442,12 +438,6 @@ Newspace::Newspace(const long& level, int fill_aPmaps, int fill_aMlists, int ver
 // Compute the char poly of T on the new cuspidal subspace using the
 // oldspaces to obtain the old factors with correct multiplicities.
 
-// If triv_char=0: requires oldspace data for forms with all genus
-// characters, so will only work over fields where this is
-// implemented.
-
-// If triv_char=1: only requires oldspace data for forms with
-// trivial genus characters, so works over all fields.
 ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>& coeffs,
                                 const gmatop &T)
 {
@@ -455,8 +445,8 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
   if (verbose>1)
     cout << "In new_cuspidal_poly() with T = " <<T.name() << endl;
 
-  // Get/compute the char poly of T on the cuspidal subspace /
-  // cuspidal, trivial character, subspace
+  // Get/compute the char poly of T on the cuspidal subspace
+
   ZZX f_all = get_poly(N, T, 1, H1->modulus); // cuspidal=1
   if (verbose>1)
     {
@@ -521,10 +511,7 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
 // Return true iff this combo of ops T has char poly on the new
 // cuspidal subspace which is squarefree and coprime to both the old
 // cuspidal poly and the full Eisenstein poly. f_new is set to the new
-// cuspidal poly. If triv_char=1 then same for the char poly of T on
-// the new cuspidal trivial-character subspace, in which case f_new
-// must also be coprime to the char poly of T on the new cuspidal
-// nontrivial char subspace.
+// cuspidal poly.
 int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scalar>& coeffs,
                                     const gmatop &T, ZZX& f_new)
 {
@@ -541,8 +528,7 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
       return 0;
     }
   // f_full is the char poly of T on the full space (not just the
-  // cuspidal subspace, or the new subspace, or (if triv_char==1) just
-  // the trivial character subspace:
+  // cuspidal subspace, or the new subspace:
   ZZX f_full = get_poly(N, T, 0, H1->modulus); // cuspidal=0
 
   // Hence the quotient f_other is the char poly of T on the
@@ -813,11 +799,9 @@ void Newform::compute_AL_eigs(int ntp, int verbose)
     } // end of loop over bad primes q
 } // end of Newform::compute_AL_eigs()
 
-// output basis for the Principal Hecke field and character of one newform
-// If full, also output multiplicative basis for the full Hecke field
-// Optionally aP and AL (if trivial char) data too
-// Optionally traces too
-// Optionally principal eigs too
+// output info about the newform: dimension, sign, Hecke field and
+// order; optionally aP and AL data; optionally also traces.
+
 void Newform::display(int aP, int AL, int traces) const
 {
   cout << "Newform #" << index << " (" << label() << ")" << endl;
@@ -883,13 +867,19 @@ void Newform::display_aP() const
   int is_eqn_order = HO.is_equation_order(); // not just index=1: basis must be standard
   if (!is_eqn_order)
     {
-      FieldElement gen = F->gen(), gen_power = (*F)(1);
+      string g = F->gen().str();
+      const mat_m& pcm = HO.get_pcm();
       cout << "Coordinates of power basis in Hecke order:\n";
       for (int i=0; i<d; i++)
         {
-          cout << gen_power << "\t = "
-               << HO.integral_coords(gen_power) << endl;
-          if (i < d-1) gen_power *= gen;
+          if (i==0)
+            cout << "1";
+          else
+            {
+              cout << g;
+              if (i>1) cout << "^" << i;
+            }
+          cout << "\t = " << pcm.col(i+1) << endl;
         }
       cout << endl;
     }

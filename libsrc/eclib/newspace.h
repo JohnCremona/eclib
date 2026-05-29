@@ -171,8 +171,8 @@ struct newform_comparison {
   bool operator()(const Newform& f1, const Newform& f2)
   {
     // (1) Sort by lists of traces; if these have not been computed
-    // yet, or if the character is nontrivial, the trace lists will be
-    // empty and we will fall through to the final tests.
+    // yet, the trace lists will be empty and we will fall through to
+    // the final tests.
     vector<ZZ> traces1 = f1.traces(), traces2 = f2.traces();
     int t = traces1<traces2; // true e.g. if f1 has smaller absolute Hecke field degree
     if(t) return 1;

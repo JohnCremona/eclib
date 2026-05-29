@@ -66,6 +66,15 @@ using PARI::gequal0;
 #define DEFAULT_PARI_SIZE 100000000
 #define DEFAULT_PARI_MAX_PRIME 1000000
 
-void eclib_pari_init(long max_prime=DEFAULT_PARI_MAX_PRIME);
+// This function must be called before any libpari functions are used.
+// For each parameter, if the default (0) is passed for either
+// parameter, the value used is taken from the value of an environment
+// variable (PARI_SIZE or PARI_MAX_PRIME) if they are set, otherwise
+// to the defaults above.
+
+// the first parameter is the maximum stack size in bytes
+// the second parameter is the maximum precomputed prime
+
+void eclib_pari_init(long pari_size=0, long max_prime=0);
 
 #endif

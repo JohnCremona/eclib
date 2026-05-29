@@ -1803,12 +1803,11 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
        <<endl;
   cout << "key = " << NT << endl;
 #endif
+  // This is the cache from where we will retrieve the poly if there,
+  // and in which we will store it if its needs to be computed:
   auto poly_cache = (cuspidal?
                      cuspidal_poly_dict:
                      poly_dict);
-  auto new_poly_cache = (cuspidal?
-                         new_cuspidal_poly_dict:
-                         new_poly_dict);
   if (poly_cache.find(NT) != poly_cache.end())
     {
 #ifdef DEBUG_GET_POLY
@@ -1849,7 +1848,11 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
     {
       poly_cache[NT] = full_poly;
       if (deg(full_poly)==0)
-        new_poly_cache[NT] = full_poly;
+        {
+          new_cuspidal_poly_dict[NT] = full_poly;
+          if (!cuspidal)
+            new_poly_dict[NT] = full_poly;
+        }
     }
   return full_poly;
 }

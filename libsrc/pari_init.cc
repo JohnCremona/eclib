@@ -28,14 +28,33 @@
 
 using PARI::pari_init;
 
-void eclib_pari_init(long max_prime)
+long get_pari_size()
 {
-  if (!avma) {
-    long pari_size = strtol(getenv_with_default("PARI_SIZE", "DEFAULT_PARI_SIZE").c_str(), NULL, 0);
-    if (pari_size==0) // e.g. syntax error in the environment variable PARI_SIZE
-      pari_size = DEFAULT_PARI_SIZE;
-    // the first parameter is the maximum stack size in bytes
-    // the second parameter is the maximum precomputed prime
-    pari_init(pari_size, max_prime);
-  }
+  long pari_size = strtol(getenv_with_default("PARI_SIZE", "DEFAULT_PARI_SIZE").c_str(), NULL, 0);
+  if (pari_size==0) // e.g. syntax error in the environment variable PARI_SIZE
+    pari_size =DEFAULT_PARI_SIZE;
+  return pari_size;
+}
+
+long get_pari_max_prime()
+{
+  long pari_max_prime = strtol(getenv_with_default("PARI_MAX_PRIME", "DEFAULT_PARI_MAX_PRIME").c_str(), NULL, 0);
+  if (pari_max_prime==0) // e.g. syntax error in the environment variable
+    pari_max_prime = DEFAULT_PARI_MAX_PRIME;
+  return pari_max_prime;
+}
+
+// the first parameter is the maximum stack size in bytes
+// the second parameter is the maximum precomputed prime
+
+void eclib_pari_init(long pari_size, long max_prime)
+{
+  if (!avma) // else libpari is already initialised
+    {
+      if (pari_size==0)
+        pari_size = get_pari_size();
+      if (max_prime==0)
+        max_prime = get_pari_max_prime();
+      pari_init(pari_size, max_prime);
+    }
 }
