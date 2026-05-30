@@ -144,16 +144,25 @@ ZZX polred(const ZZX& f, int canonical)
 
 ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
 {
+#ifdef DEBUG_POLRED
+  cout << "polred() called with f = " << str(f) << ", canonical = " << canonical << endl;
+#endif
   if (!IsIrreducible(f))
     {
       cerr << "polred() called with f = " << str(f) << " which is reducible" << endl;
       return f;
     }
+#ifdef DEBUG_POLRED
+  cout << " f is irreducible " << endl;
+#endif
   pari_sp av = avma;
   GEN F = ZZX_to_t_POL(f), A, G;
   int nsteps = 0;
   if (canonical)
     {
+#ifdef DEBUG_POLRED
+      pari_printf("calling polredabs0(f) with f= %Ps\n", F);
+#endif
       GEN G_H = polredabs0(F, nf_ORIG);
 #ifdef DEBUG_POLRED
       pari_printf("polredabs0(f,nf_ORIG) returns [G, H] = %Ps\n", G_H);
@@ -199,11 +208,22 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
 #endif
   ZZX g = t_POL_to_ZZX(G, d); // this d=1
   assert (d==1);
+  // NB H need not have integer coefficients!
+  h = t_POL_to_ZZX(A, d); // this d may be >1
+
+  if (!canonical)
+    {
+      avma = av;
+      return g;
+    }
 
   // Now H may not be unique (if the field has nontrivial
   // automorphisms).  To be deterministic, we find all possibles, sort
   // and return the first one.
 
+#ifdef DEBUG_POLRED
+  pari_printf("calling nfisincl(F,G,0) with F = %Ps and G = %Ps\n", F, G);
+#endif
   GEN Hlist = nfisincl0(F, G, 0);
   int nH = lg(Hlist)-1;
 #ifdef DEBUG_POLRED
@@ -212,8 +232,6 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
 #endif
   if (nH==1) // only one choice
     {
-      // NB H need not have integer coefficients!
-      h = t_POL_to_ZZX(A, d); // this d may be >1
       avma = av;
       return g;
     }
