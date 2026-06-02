@@ -1245,12 +1245,12 @@ vector<int> Newspace::dimensions() const
 
 mat_m Newspace::heckeop(const gmatop& T) const
 {
-  return to_mat_m(H1->calcop(T, 0, 1, 0)); // 0: cuspidal, dual, display
+  return to_mat_m(transpose(get_full_mat(N,T,H1->modulus)));
 }
 
 mat_m Newspace::heckeop(const matop& T) const
 {
-  return to_mat_m(H1->calcop(T, 0, 1, 0));
+  return to_mat_m(transpose(get_full_mat(N,T,H1->modulus)));
 }
 
 mat_m Newspace::heckeop(const long& P)

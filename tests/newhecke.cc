@@ -82,7 +82,7 @@ int main(void)
         {
           if (!show_only_cuspidal_pols)
             {
-              charpol = get_poly(N, T, 0, modulus); // cuspidal=0, triv_char=0
+              charpol = get_poly(N, T, 0, modulus); // cuspidal=0
               cout << "Full characteristic polynomial of " << T.name() << ": "
                    << str(charpol)
                    << endl;
@@ -93,7 +93,7 @@ int main(void)
                   cout << endl;
                 }
             }
-          charpol = get_poly(N, T, 1, modulus); // cuspidal=1, triv_char=0
+          charpol = get_poly(N, T, 1, modulus); // cuspidal=1
           cout << "Full cuspidal characteristic polynomial of " << T.name() << ": "
                << str(charpol)
                << endl;
@@ -104,7 +104,7 @@ int main(void)
               cout << endl;
             }
         }
-      charpol = get_new_poly(N, T, 1, modulus); // cuspidal=1, triv_char=0
+      charpol = get_new_poly(N, T, 1, modulus); // cuspidal=1
       int dimnewcusp = deg(charpol);
       if (ntp==1)
         {

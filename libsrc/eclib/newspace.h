@@ -65,15 +65,14 @@ private:
   long maxP;
   // Dict of T(P) eigenvalues of good primes P (as integer coeffs w.r.t. Hecke order HO):
   map<long, vec_m> aPmap_int_coords;
-  // Dict of W(Q) eigenvalues in {+1,-1} of bad primes Q, triv char only:
+  // Dict of W(Q) eigenvalues in {+1,-1} of bad primes Q
   map<long, int> eQmap;
   // List of coefficients in F, indexed by integers M.
   vector<FieldElement> aMlist;
   // List of traces of coefficients in F, indexed by integers M.
   vector<ZZ> trace_list;
 
-  // Fill dict eQmap, if triv_char; if aPmap not already filled, first
-  // compute ntp aP
+  // Fill dict eQmap; if aPmap not already filled, first compute ntp aP
   void compute_AL_eigs(int ntp=10, int verbose=0);
   // Compute aM for one M, assuming value for M'<M are all known and in Mlist
   FieldElement compute_aM(const long& M);

@@ -1914,14 +1914,14 @@ int test_splitting_operator(const long& N, const gmatop& T, const scalar& mod, i
 {
   if (verbose)
     cout << "Testing " << T.name() << "..." << flush;
-  ZZX f_new = get_new_poly(N, T, 1, mod); // cuspidal=1, triv_char=0
+  ZZX f_new = get_new_poly(N, T, 1, mod); // cuspidal=1
   if (!IsSquareFree(f_new))
     {
       if (verbose>1)
         cout << "\n NO: new Hecke polynomial "<<str(f_new)<<" is not squarefree" << endl;
       return 0;
     }
-  ZZX f_full = get_poly(N, T, 0, mod); // cuspidal=0, triv_char=0
+  ZZX f_full = get_poly(N, T, 0, mod); // cuspidal=0
   ZZX f_old = f_full / f_new;
   if (!AreCoprime(f_new, f_old))
     {
