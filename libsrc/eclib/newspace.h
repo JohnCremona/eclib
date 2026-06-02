@@ -230,7 +230,9 @@ private:
   // squarefree and coprime to its char poly on the oldspace.  Set
   // split_ok=1 if successful else 0.
   void find_T(int maxnp, int maxc, int minp);
-
+  // The first few good primes and their Hecke ops
+  vector<long> Plist;
+  vector<matop> ops;
 public:
   vector<Newform> newforms; // the newforms
   Newspace(void) :verbose(0) {;}

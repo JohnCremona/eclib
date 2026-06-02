@@ -113,7 +113,7 @@ int main()
     for (auto& F: NS.newforms)
       {
         if (verbose)
-          cout << "Computing eigenvalues for newform #" << inf <<endl;
+          cout << "Computing eigenvalues for newform #" << inf << " of dimension " << F.dimension() << endl;
         F.compute_eigs_and_coefficients(nap, verbose);
         if (verbose)
           cout << endl;

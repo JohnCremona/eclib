@@ -44,9 +44,8 @@ newform_comparison newform_cmp;
 //#define SPARSE_KERNEL
 
 Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
-  :N(x->N), nsp(x), index(ind), lab(codeletter(ind-1))
+  :N(x->N), nsp(x), index(ind), lab(codeletter(ind-1)), d(deg(f)), sfe(0)
 {
-  d = deg(f);
   string fstring = str(f);
   if (verbose)
     {
@@ -59,7 +58,6 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       if (verbose>1)
         {
           cout << "Finding kernel of f(T)..."<<endl;
-          cout << " f = " << fstring <<endl;
           cout << "denH = " << nsp->dH << endl;
         }
     }
@@ -91,29 +89,6 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       cout << "Finished constructing subspace S of dimension " << d
            << ", relative denom = "<< denom(S)
            << ", absolute denom = "<< denom_abs << endl;
-      cout << "Computing A, the restriction of T..." <<flush;
-    }
-  Qmat A(transpose(restrict_mat(nsp->T_mat,S)), denom_abs);
-  if(verbose)
-    cout<<"done. Checking its char poly..."<<flush;
-
-  // Check that (scaled) charpoly(A) = f
-  ZZX cpA = A.charpoly();
-  if (cpA != f)
-    {
-      cout<<endl;
-      cout<<"Error: f(X) =            "<<fstring<<endl;
-      cout<<"but charpoly(A) = " << str(cpA) << endl;
-      exit(1);
-    }
-
-  if(verbose)
-    {
-      cout<<"done."<<endl;
-      if (verbose>1)
-        cout<<"A (the matrix of T restricted to S) = \n"
-            << A << endl;
-      cout<<"f(X) is the min poly of A"<<endl;
     }
 
   // compute projcoord, precomputed projections the basis of S
@@ -125,45 +100,87 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       cout << "projcoord = " << projcoord << endl;
     }
 
+  // To define the Hecke field we could use f itself and the
+  // restriction of T to S, but if T is a complicated linear
+  // combination of T_p we do better to use a single T_p if possible,
+  // provided that it acts irreducibly on S.
+
+  // If the newform is ratioinal there is nothing more to do
+
   if (d==1)
     {
       F = F0 = new Field();
       Fiso = FieldIso(*F);
+      if (verbose)
+        cout <<"Hecke field is Q" << endl;
+      return;
+    }
+
+  Qmat A; ZZX cpA; string opname;
+  int found=0;
+  for (auto op: nsp->ops)
+    {
+      A = Qmat(transpose(restrict_mat(nsp->heckeop(op),S)), denom_abs);
+      cpA = A.charpoly();
+      if (IsIrreducible(cpA))
+        {
+          found=1;
+          opname = op.name();
+          break;
+        }
+    }
+  if (found)
+    {
+      if (verbose && (opname != nsp->T_name))
+        cout << "Using " << opname << " to define the Hecke field with polynomial\n" << ::str(cpA)
+             << "\ninstead of " << nsp->T_name << " polynomial\n" << ::str(f) << endl;
     }
   else
-    // Compute Hecke field from matrix A if degree d>1
     {
-      string var = codeletter(index-1);
-      F0 = new Field(A, basis_change_inverse, basis_change_matrix, var, verbose>1);
-      F = new Field();
-      int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
-      string F0pol = ::str(F0->poly());
-      if (verbose)
+      A = Qmat(transpose(restrict_mat(nsp->T_mat,S)), denom_abs);
+      cpA = A.charpoly();
+
+      // Check that (scaled) charpoly(A) = f
+      if (cpA != f)
         {
-          cout << "Applying "
-               << (canonical? "polredabs": "polredbest")
-               << " to " << F0pol;
-          if (!canonical)
-            cout << " (not applying polredabs as degree is greater than "
-                 << POLREDABS_DEGREE_UPPER_BOUND << ")";
-          cout  << endl;
+          cout<<endl;
+          cout<<"Error: f(X) =            "<<fstring<<endl;
+          cout<<"but charpoly(A) = " << str(cpA) << endl;
+          exit(1);
         }
-      Fiso = F0->reduction_isomorphism(var, *F, canonical);
       if (verbose)
-        cout << "Reduced field is " << *F << endl;
-      if (Fiso.is_nontrivial() && verbose)
-        {
-          cout << " -- replacing original Hecke field with polynomial " << F0pol
-               << " with polredabs reduced field with polynomial " << ::str(F->poly()) << endl;
-        }
+        cout << "No single T_p for p in " << nsp->Plist << " acts irreducibly on S, so using "
+             << nsp->T_name << " to define the Hecke field with polynomial " << ::str(cpA) << endl;
     }
+
+  // Now define the field, using A and its char poly
+
+  F0 = new Field(A, basis_change_inverse, basis_change_matrix, lab, verbose>1);
+  F = new Field();
+  int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
+  string F0pol = ::str(F0->poly());
   if (verbose)
     {
+      cout << "Applying "
+           << (canonical? "polredabs": "polredbest")
+           << " to " << F0pol;
+      if (!canonical)
+        cout << " (not applying polredabs as degree is greater than "
+             << POLREDABS_DEGREE_UPPER_BOUND << ")";
+      cout  << endl;
+    }
+  Fiso = F0->reduction_isomorphism(lab, *F, canonical);
+  if (verbose)
+    {
+      cout << "Reduced field is " << *F << endl;
+      if (Fiso.is_nontrivial())
+        {
+          cout << " -- replacing original Hecke field with polynomial\n" << F0pol
+               << "\n   with polredabs reduced field with polynomial\n" << ::str(F->poly()) << endl;
+        }
       cout <<"Hecke field data:" << endl;
       cout << *F << endl;
     }
-
-  sfe = 0;   // means unknown
 }
 
 // Constructor which will read from file
@@ -546,12 +563,14 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
 void Newspace::find_T(int maxnp, int maxc, int minp)
 {
   split_ok = 0;
+
   // fill Plist with the first maxnp good primes >= minp
-  vector<long> Plist = the_primes.getfirst(maxnp, N, minp);
+  Plist = the_primes.getfirst(maxnp, N, minp);
   if (verbose)
     cout << "Trying linear combinations of T_p for p in " << Plist << endl;
-  vector<matop> ops(maxnp);
+
   // insert maxnp T_P into ops:
+  ops.resize(maxnp);
   std::transform(Plist.begin(), Plist.end(), ops.begin(),
                  [this](long p){return matop(p,N);});
 
@@ -572,7 +591,7 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
 
   // local function to test a linear combination (lc) of ops,
   // returning success flag.  If successful, assigns T_op, T_name, f
-  auto test_lc = [this, ops, Plist, &T_op, &f](const vector<scalar>& lc)
+  auto test_lc = [this, &T_op, &f](const vector<scalar>& lc)
   {
     vector<scalar> xlc(lc);
     xlc.insert(xlc.end(), ops.size()-lc.size(), scalar(0));
