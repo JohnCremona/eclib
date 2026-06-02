@@ -27,7 +27,7 @@
 // Degree bound: fields of degree up to this will be reduced via
 // polredabs (giving a canonical defining polynomial); above this only
 // polredbest will be used.
-const int POLREDABS_DEGREE_UPPER_BOUND = 15;
+const int POLREDABS_DEGREE_UPPER_BOUND = 10;
 
 newform_comparison newform_cmp;
 
