@@ -31,7 +31,7 @@ const scalar modulus(default_modulus<scalar>());
 int main()
 {
   cout << "Program makensp: constructing newforms of arbitrary dimension." << endl;
-  long pari_size_max = 1000000000; // 10^8 not enough for polredbest at level 1201
+  long pari_size_max = 10000000000; // 10^8 not enough for polredbest at level 1201
   eclib_pari_init(pari_size_max);
 
   int verbose=1;

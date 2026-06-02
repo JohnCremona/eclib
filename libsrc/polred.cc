@@ -199,10 +199,22 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
 #endif
   ZZX g = t_POL_to_ZZX(G, d); // this d=1
   assert (d==1);
+  // NB H need not have integer coefficients!
+  h = t_POL_to_ZZX(A, d); // this d may be >1
+
+  if (!canonical && deg(f)>10)
+    {
+      avma = av;
+      return g;
+    }
 
   // Now H may not be unique (if the field has nontrivial
   // automorphisms).  To be deterministic, we find all possibles, sort
   // and return the first one.
+
+#ifdef DEBUG_POLRED
+  pari_printf("calling nfisincl(%Ps,%Ps)\n", F, G);
+#endif
 
   GEN Hlist = nfisincl0(F, G, 0);
   int nH = lg(Hlist)-1;
@@ -212,8 +224,6 @@ ZZX polred(const ZZX& f, ZZX& h, ZZ& d, int canonical)
 #endif
   if (nH==1) // only one choice
     {
-      // NB H need not have integer coefficients!
-      h = t_POL_to_ZZX(A, d); // this d may be >1
       avma = av;
       return g;
     }

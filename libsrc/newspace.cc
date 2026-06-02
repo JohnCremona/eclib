@@ -73,11 +73,8 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   mat_m bas = sS.bas().as_mat();
   ZZ den;
   int ok = liftmat(bas, modulus, bas, den);
-  // cout << "lifted basis:\n" << bas << "\ndenom = " << den << endl;
   assert(ok);
   S = subspace_m(bas, sS.pivs(), den);
-  // S = kernel(fT, 3); // method 3: echelon via FLINT
-  // cout << "direct basis:\n" << S.bas() << "\ndenom = " << S.den() << endl;
 #else
   S = kernel(fT, 3); // method 3: echelon via FLINT
 #endif
@@ -91,9 +88,10 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   key_symbol = nsp->H1->freemods[pivots(S)[1] -1];
   if (verbose)
     {
-      cout<<"Finished constructing subspace S of dimension "<<d
-          <<", absolute denom = "<<denom_abs<<endl;
-      cout<<"Computing A, the restriction of T..." <<flush;
+      cout << "Finished constructing subspace S of dimension " << d
+           << ", relative denom = "<< denom(S)
+           << ", absolute denom = "<< denom_abs << endl;
+      cout << "Computing A, the restriction of T..." <<flush;
     }
   Qmat A(transpose(restrict_mat(nsp->T_mat,S)), denom_abs);
   if(verbose)
@@ -187,12 +185,7 @@ string Newform::label() const
 // eigenvalue of a general principal operator:
 FieldElement Newform::eig(const matop& T)
 {
-  // cout << "Matrix of "<<T.name()<<" is\n" << nsp->H1->calcop_restricted(T, S, 0, 0) << endl;
-  // cout << "key_symbol = " << key_symbol <<endl;
-  // cout << "applyop_proj("<<T.name()<<") to this with projcoord gives \n";
-
   vec_m apv = to_vec_m(nsp->H1->applyop_proj(T, key_symbol, projcoord));
-  // cout << "ap vector = " << apv <<endl;
   static const ZZ one(1);
   if (d==1)
     {
@@ -201,6 +194,7 @@ FieldElement Newform::eig(const matop& T)
   else
     {
       FieldElement a(*F0, basis_change_matrix * Qvec(apv, denom_abs));
+      assert(a.is_integral());
       return (Fiso.is_identity()? a : Fiso(a));
     }
 }
@@ -519,12 +513,8 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
   f_new = new_cuspidal_poly(Plist, coeffs, T);
   if (!IsSquareFree(f_new))
     {
-      if (verbose>0)
-        {
-          cout << "\n NO: new Hecke polynomial " // <<str(f_new)
-               << " for " << T.name() << " is not squarefree" << endl;
-          // display_factors(f_new);
-        }
+      if (verbose)
+        cout << "NO: not squarefree";
       return 0;
     }
   // f_full is the char poly of T on the full space (not just the
@@ -537,23 +527,12 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
   ZZX f_other = f_full / f_new;
   if (!AreCoprime(f_new, f_other))
     {
-      if (verbose>0)
-        {
-          cout << "\n NO: new Hecke polynomial " // <<str(f_new)
-               << " for " << T.name()
-               << " is not coprime to old Hecke polynomial * Eisenstein polynomial ";
-          if (verbose>1)
-            {
-              cout << str(f_other)<<endl
-                   << " (full polynomial is "<<str(f_full)<<")";
-            }
-          cout <<endl;
-        }
+      if (verbose)
+        cout << "NO: not coprime to old Hecke polynomial * Eisenstein polynomial";
       return 0;
     }
-  if (verbose>0)
-    cout << "\n YES: new Hecke polynomial for " << T.name()
-         << " is squarefree and coprime to old * Eisenstein Hecke polynomial" << endl;
+  if (verbose)
+    cout << "YES: squarefree and coprime to old * Eisenstein Hecke polynomial";
   return 1;
 }
 
@@ -595,12 +574,12 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
   // returning success flag.  If successful, assigns T_op, T_name, f
   auto test_lc = [this, ops, Plist, &T_op, &f](const vector<scalar>& lc)
   {
-    vector<int> xlc(lc);
-    xlc.insert(xlc.end(), ops.size()-lc.size(), 0);
+    vector<scalar> xlc(lc);
+    xlc.insert(xlc.end(), ops.size()-lc.size(), scalar(0));
     T_op = gmatop(ops, xlc);
     T_name = T_op.name();
     if (verbose)
-      cout << "Trying "<<lc<<": "<<T_name<<"..."<<flush;
+      cout << "Trying "<<lc<<" ("<<T_name<<")..."<<flush;
 #ifdef USE_OLD_SPACES
     return valid_splitting_combo(Plist, xlc, T_op, f);
 #else
@@ -630,15 +609,18 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
     {
       for (int i=0; (!split_ok) && (i<5*np); i++)
         {
-          split_ok = test_lc(random_vector(np, -maxc, maxc));
+          vector<int> lci = random_vector(np, -maxc, maxc);
+          vector<scalar> lc(lci.size());
+          std::transform(lci.begin(), lci.end(), lc.begin(), [](const int& x) {return scalar(x);});
+          split_ok = test_lc(lc);
           if (split_ok)
             {
               if (verbose)
-                cout<<"OK!"<<endl;
+                cout<<" -- OK!"<<endl;
               break;
             }
           if (verbose)
-            cout << " no good, continuing..." << endl;
+            cout << " -- no good, continuing..." << endl;
         }
       if (split_ok)
         break;
@@ -647,28 +629,24 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
   if (split_ok)
     {
       if (verbose)
-        cout << " OK: using operator " << T_name << " to split off newforms" << endl;
-      T_mat = heckeop(T_op, 0, 1); // not cuspidal,  dual
-      if (verbose)
+        cout << " Using operator " << T_name << " to split off newforms" << endl;
+      T_mat = heckeop(T_op);
+      if (verbose>1)
         cout << " Getting new cuspidal poly for " << T_name << " from cache" << endl;
       f = get_new_poly(N, T_op, 1, H1->modulus); // cuspidal=1 (cached)
-      if (verbose)
+      if (verbose>1)
         cout << "  New cuspidal poly for " << T_name << " from cache is " << str(f) << endl;
     }
   else
     return;
 
   factors.clear();
-  if (verbose)
-    {
-      cout << " New cuspidal Hecke polynomial for operator " << T_name
-           <<" is "<<str(f)<<endl;
-    }
   NTL::vec_ZZX NTL_factors= SFFactor(f);
   ::sort(NTL_factors.begin(), NTL_factors.end(), poly_cmp);
   int nfactors = NTL_factors.length();
   if (verbose)
-    cout<<"Irreducible factors:"<<endl;
+    cout << " New cuspidal Hecke polynomial for operator " << T_name
+         << " has " << nfactors << " irreducible factors:"<<endl;
   for(int i=0; i<nfactors; i++)
     {
       ZZX fi = NTL_factors[i];
@@ -714,13 +692,10 @@ void Newform::compute_eigs(int ntp, int verbose)
   ZZ bound(0);
   if (d>POLREDABS_DEGREE_UPPER_BOUND) bound = ZZ(100000000);
   HO = MaximalOrder(F, bound); // initialise with maximal order (or approximation)
+  ZZ index_orig = HO.get_order_index();
   if (d>1 && verbose)
-    {
-      cout << "Hecke order initialised to " << HO << endl;
-      ZZ ind = HO.get_order_index();
-      if (!is_one(ind))
-        cout << "(which contains the equation order with index " << ind << ")" << endl;
-    }
+      cout << "Hecke order initialised, contains the equation order with index "
+           << index_orig <<endl;
   long p=2;
   primevar pr(ntp); // iterator over first ntp primes
   while(pr.ok())
@@ -731,16 +706,22 @@ void Newform::compute_eigs(int ntp, int verbose)
         {
           if (verbose) cout << "Computing a_p for p = " << p << "..." << flush;
           FieldElement a_p = ap(p);
+          if (verbose)
+            {
+              cout << "done";
+              if (verbose>1) cout << ", a_p = " << a_p;
+              cout<< endl;
+            }
+          assert(a_p.is_integral());
           aPmap[p] = a_p;
-          if (verbose) cout << "done, a_p = " << a_p << endl;
           if (d>1)
             {
               if (!HO.contains(a_p))
                 {
                   if (verbose)
-                    cout << "a_p not in current Hecke order (denominator " << HO.denom(a_p)
+                    cout << "a_"<<p<<" not in current Hecke order (denominator " << HO.denom(a_p)
                          << "), extending..." << endl;
-                  ZZ rel_index = HO.extend_by(a_p, 0); // 0: no need to check that a_p is integral
+                  ZZ rel_index = HO.extend_by(a_p, 1); // 0: no need to check that a_p is integral
                   if (verbose)
                     {
                       cout << "Hecke order grows by index " << rel_index << endl;
@@ -755,13 +736,19 @@ void Newform::compute_eigs(int ntp, int verbose)
         }
     }
   maxP = p; // record last prime
+  ZZ ind = HO.get_order_index();
   if (d>1 && verbose)
     {
-      cout << "After computing a_p for primes up to " << maxP << ", Hecke order is ";
-      if (is_one(HO.get_order_index()))
-        cout <<"still the equation order Z[" << F->gen() << "]" << endl;
+      cout << "After computing a_p for primes up to " << maxP << ", Hecke order ";
+      if (is_one(ind))
+        cout <<"is the equation order Z[" << F->gen() << "]" << endl;
       else
-        cout<< "enlarged by index " << HO.get_order_index() << endl;
+        {
+          cout << "contains the equation order Z[" << F->gen() << "] with index " << ind;
+          if (ind!=index_orig)
+            cout << " (after enlarging by index " << ind/index_orig <<")";
+          cout<< endl;
+        }
     }
 } // end of compute_eigs
 
@@ -1256,19 +1243,19 @@ vector<int> Newspace::dimensions() const
   return dims;
 }
 
-mat_m Newspace::heckeop(const gmatop& T, int cuspidal, int dual) const
+mat_m Newspace::heckeop(const gmatop& T) const
 {
-  return to_mat_m(H1->calcop(T, cuspidal, dual, 0)); // 0 display
+  return to_mat_m(H1->calcop(T, 0, 1, 0)); // 0: cuspidal, dual, display
 }
 
-mat_m Newspace::heckeop(const matop& T, int cuspidal, int dual) const
+mat_m Newspace::heckeop(const matop& T) const
 {
-  return to_mat_m(H1->calcop(T, cuspidal, dual, 0)); // 0 display
+  return to_mat_m(H1->calcop(T, 0, 1, 0));
 }
 
-mat_m Newspace::heckeop(const long& P, int cuspidal, int dual)
+mat_m Newspace::heckeop(const long& P)
 {
-  return heckeop(matop(P, N), cuspidal, dual);
+  return heckeop(matop(P, N));
 }
 
 // dict of Newspaces read from file

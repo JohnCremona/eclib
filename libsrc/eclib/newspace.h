@@ -244,9 +244,9 @@ public:
   // constructor reading data from file
   explicit Newspace(const long& level, int fill_aPmaps=0, int fill_aMlists=0, int verb=0);
 
-  mat_m heckeop(const long& P, int cuspidal=0, int dual=0);
-  mat_m heckeop(const matop& T, int cuspidal=0, int dual=0) const;
-  mat_m heckeop(const gmatop& T, int cuspidal=0, int dual=0) const;
+  mat_m heckeop(const long& P);
+  mat_m heckeop(const matop& T) const;
+  mat_m heckeop(const gmatop& T) const;
 
   int ok() const {return split_ok;}
   int nforms() const {return newforms.size();}

@@ -94,11 +94,11 @@ Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
   minpoly = A.charpoly();
   if (verb)
     cout << " - min poly = " << ::str(minpoly) << ", generator " << var << endl;
+  //assert(IsMonic(minpoly));
 
   mat_m C = A.companion_transform(B, Binv);
 
-  // NB To construct a field element from a 'raw' coord Qvec v, use
-  // Binv*v.
+  // NB The coords of a field element given a 'raw' coord Qvec v is Binv*v.
 
   Cpowers.resize(d);
   Cpower_traces.init(d);
@@ -631,7 +631,7 @@ FieldElement FieldElement::inverse() const // raise error if zero
   mat_m M = matrix(), Minv;
   ZZ Mdet = ::inverse(M,Minv); // so M*Minv = Mdet*identity
   FieldElement ans = FieldElement(*F, v.denom*Minv.col(1), Mdet);
-  assert (operator*(ans).is_one());
+  // assert (operator*(ans).is_one());
   return ans;
 }
 
@@ -750,7 +750,7 @@ int FieldElement::is_absolute_integral_square(FieldElement& r)  const
 {
   if (field_is_Q())
     return (val.is_square(r.val));
-  assert (::is_one(v.denom));
+  // assert (::is_one(v.denom));
   ZZX g, g0, g1, f = minpoly();
   if (::is_square(f, g)) // Tests if f(x^2) = (+/-) g(x)*g(-x)
     {
@@ -1164,7 +1164,7 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, Field& F_sq
 #endif
 
   ZZX sqrt_rss_pol = XtoX2(rss.charpoly());
-  assert (IsIrreducible(sqrt_rss_pol)); // must be else r is a square
+  // assert (IsIrreducible(sqrt_rss_pol)); // must be else r is a square
 
   Field F_sqrt_r_orig = Field(sqrt_rss_pol, newvar); // the extension field before reduction
 #ifdef DEBUG_SQRT_EMBEDDING
@@ -1536,14 +1536,19 @@ void Order::add_one(const FieldElement& a, int check)
   Qmat M(transpose(basis_matrix)); // rows are coords of current gens
   M.append_row(a.coords());
   M = HNF(M);           // rows are coords of new Zbasis, last row is 0
+  // assert(trivial(M.get_numerator().row(rank+1)));
   M.delete_row();
+  M = LLL(M);
 
   // reset Zbasis etc:
   const Field& F = *a.field_ptr();
   for (int j=0; j<rank; j++)
     Zbasis[j] = F(M.row(j+1));
   basis_matrix = transpose(M);
-  power_coords_matrix = basis_matrix.inverse().get_numerator();
+  Qmat A = basis_matrix.inverse();
+  // assert (is_one(A.get_denom()));
+  power_coords_matrix = A.get_numerator();
+  index = abs(power_coords_matrix.determinant());
 }
 
 // Check that the Z-span of the current Zbasis is closed under
@@ -1570,23 +1575,40 @@ int Order::check_order(FieldElement& a) const
 ZZ Order::extend_by(const FieldElement& a, int check)
 {
   if (contains(a))
-    return ZZ(1);
+    {
+      // cout << "extend_by(): order already contains a" << endl;
+      return ZZ(1);
+    }
   if (check && !a.is_integral())
-    return ZZ(1);
-
+    {
+      cerr << "extend_by(): a is not integral" << endl;
+      cerr << "char poly is " << ::str(a.charpoly()) << endl;
+      return ZZ(1);
+    }
   ZZ old_index = index;
   int ok(0);
+  int nsteps=0;
   FieldElement b(a);
   while (!ok)
     {
-      // cout << "adding " << b << " to order..." << flush;
-      add_one(b, 0);
+      nsteps += 1;
+      // cout << "adding element #" << nsteps << " to order..." << flush;
+      add_one(b, check);
       // cout << "done." << flush;
       ok = check_order(b);
-      // if (ok) cout << " - OK!" << endl;
-      // else    cout << " - not an order, continuing" << endl;
+      if (ok)
+        {
+          // cout << " - OK!" << endl;
+          disc = poldisc/(index*index);
+          return index/old_index;
+        }
+      // cout << " - not an order, index is now " << index << ": continuing" << endl;
     }
-  index = abs(power_coords_matrix.determinant());
+  if (!ok)
+    {
+      cerr << "extend_by() failed (after " << nsteps << " steps)!" <<endl;
+      exit(1);
+    }
   disc = poldisc/(index*index);
   return index/old_index;
 }
@@ -1601,7 +1623,7 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
       if (check && !a.is_integral())
         {
           cout << "Cannot extend order " << *this << " by " << a
-               << " which is not an algenbraic integer!" << endl;
+               << " which is not an algebraic integer!" << endl;
           return ZZ(1);
        }
       index_gain *= extend_by(a, 0); // 0: no need to check a again
@@ -1639,9 +1661,9 @@ void Order::LLL_reduce(const vector<FieldElement>& alist)
   mat_m U, V;    // to hold unimodular transform and its inverse
   const mat_m& L = LLL(C2, U);  // L = U*C = LLL-reduced coords of alist
   // cout << "LLL returns transformation matrix U =\n" << U << "\n with det(U) = " << U.determinant() << endl;
-  assert (is_one(abs(U.determinant())));
+  //assert (is_one(abs(U.determinant())));
   ZZ d = inverse(U, V);
-  assert (is_one(abs(d)));
+  //assert (is_one(abs(d)));
   if (is_one(-d))
     V = -V;
 

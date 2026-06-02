@@ -466,8 +466,10 @@ void homspace::add_proj_coords_cd(vec& v, long c, long d, const mat& bas) const
   // cout << "In add_proj_coords_cd(v,c,d,bas) with v = "<<v<<", (c:d)=("<<c<<":"<<d<<")"<<endl;
   long n = coordindex[index2(c,d)];
   // cout << "(c:d) --> " << n <<endl;
-  if (n>0) v.add_row(bas,n);
-  else if (n<0) v.sub_row(bas,-n);
+  if (n>0)
+    v.add_row(bas,n);
+  else if (n<0)
+    v.sub_row(bas,-n);
   // cout << "New v = " << v << endl;
 }
 
@@ -592,8 +594,8 @@ svec homspace::applyop(const matop& T, const modsym& m) const
 
 vec homspace::applyop_proj(const matop& T, const rational& q, const mat& bas) const
 { vec ans(bas.ncols());
-  long i=T.size();
-  while (i--) add_proj_coords(ans,T[i](q), bas);
+  for (auto i=0; i<T.size(); i++)
+    add_proj_coords(ans,T[i](q), bas);
   return ans;
 }
 
