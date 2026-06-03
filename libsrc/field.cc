@@ -1483,46 +1483,6 @@ int Order::is_equation_order() const
 
 // Functions to enlarge the order
 
-// Extend by a (which must be an algebraic integer), returning the
-// index of the extension
-
-// The old versions add all products of the gens of the two orders (slower):
-
-ZZ Order::extend_by_old(const FieldElement& a, int check)
-{
-  if (check && !a.is_integral())
-    {
-      cout << "Cannot extend order " << *this << " by " << a
-           << " which is not an algenbraic integer!" << endl;
-      return ZZ(1);
-    }
-  ZZ old_index = index;
-  if (!contains(a))
-    operator+=(a);
-  return index/old_index;
-}
-
-// Extend by all a in alist (which must be algebraic integers),
-// returning the index of the extension
-ZZ Order::extend_by_old(const vector<FieldElement>& alist, int check)
-{
-  ZZ index_gain(1);
-  for (auto a: alist)
-    {
-      if (check && !a.is_integral())
-        {
-          cout << "Cannot extend order " << *this << " by " << a
-               << " which is not an algenbraic integer!" << endl;
-          return ZZ(1);
-        }
-      index_gain *= extend_by_old(a, 0); // 0: no need to check a again
-    }
-  return index_gain;
-}
-
-// These versions add just a and then check all products one by one,
-// adding any which are not yet contained  (faster):
-
 // Add one a (algebraic integer) to the Z-span: the result may not be
 // an order but this is only used internally.  NB This does not
 // recompute index or disc: save these until we have an actual order.
@@ -1532,16 +1492,24 @@ void Order::add_one(const FieldElement& a, int check)
     return;
   if (check && !a.is_integral())
     return;
+  add_one(a.coords());
+}
+
+// Same given just the coords of the new element
+void Order::add_one(const Qvec& v)
+{
+  if (is_one(v.denom))
+    return;
 
   Qmat M(transpose(basis_matrix)); // rows are coords of current gens
-  M.append_row(a.coords());
+  M.append_row(v);
   M = HNF(M);           // rows are coords of new Zbasis, last row is 0
   // assert(trivial(M.get_numerator().row(rank+1)));
   M.delete_row();
   M = LLL(M);
 
   // reset Zbasis etc:
-  const Field& F = *a.field_ptr();
+  const Field& F = *Zbasis[0].field_ptr();
   for (int j=0; j<rank; j++)
     Zbasis[j] = F(M.row(j+1));
   basis_matrix = transpose(M);
@@ -1569,6 +1537,23 @@ int Order::check_order(FieldElement& a) const
   return 1;
 }
 
+// Same, v will hold (non-integral) coords of a missing product
+int Order::check_order(Qvec& v) const
+{
+  for (int i=0; i<rank; i++)
+    {
+      const FieldElement& x = Zbasis[i];
+      for (int j=i; j<rank; j++)
+        {
+          v = (x*Zbasis[j]).coords();
+          if (!is_one(v.denom))
+            return 0;
+        }
+    }
+  // if we reach here, all products are in the Z-span
+  return 1;
+}
+
 // Extend by a (an algebraic integer), returning the index of the
 // extension: incremental version using the previous two internal
 // functions.
@@ -1576,7 +1561,6 @@ ZZ Order::extend_by(const FieldElement& a, int check)
 {
   if (contains(a))
     {
-      // cout << "extend_by(): order already contains a" << endl;
       return ZZ(1);
     }
   if (check && !a.is_integral())
@@ -1585,30 +1569,30 @@ ZZ Order::extend_by(const FieldElement& a, int check)
       cerr << "char poly is " << ::str(a.charpoly()) << endl;
       return ZZ(1);
     }
+  return extend_by(a.coords());
+}
+
+// Extend by v, coords in this order of an algebraic integer,
+// returning the index of the extension.
+ZZ Order::extend_by(const Qvec& v)
+{
+  if (is_one(v.denom))
+    return ZZ(1);
+
   ZZ old_index = index;
-  int ok(0);
   int nsteps=0;
-  FieldElement b(a);
-  while (!ok)
+  Qvec w = v;
+  while (1)
     {
       nsteps += 1;
-      // cout << "adding element #" << nsteps << " to order..." << flush;
-      add_one(b, check);
-      // cout << "done." << flush;
-      ok = check_order(b);
-      if (ok)
+      add_one(w);
+      if (check_order(w))
         {
-          // cout << " - OK!" << endl;
           disc = poldisc/(index*index);
           return index/old_index;
         }
-      // cout << " - not an order, index is now " << index << ": continuing" << endl;
     }
-  if (!ok)
-    {
-      cerr << "extend_by() failed (after " << nsteps << " steps)!" <<endl;
-      exit(1);
-    }
+  // code will never reach here
   disc = poldisc/(index*index);
   return index/old_index;
 }
@@ -1766,3 +1750,37 @@ Order PowerOrder(const FieldElement& x, int check)
   else
     return Order(powers(x));
 }
+
+// The old versions add all products of the gens of the two orders (slower):
+
+// ZZ Order::extend_by_old(const FieldElement& a, int check)
+// {
+//   if (check && !a.is_integral())
+//     {
+//       cout << "Cannot extend order " << *this << " by " << a
+//            << " which is not an algenbraic integer!" << endl;
+//       return ZZ(1);
+//     }
+//   ZZ old_index = index;
+//   if (!contains(a))
+//     operator+=(a);
+//   return index/old_index;
+// }
+
+// Extend by all a in alist (which must be algebraic integers),
+// returning the index of the extension
+// ZZ Order::extend_by_old(const vector<FieldElement>& alist, int check)
+// {
+//   ZZ index_gain(1);
+//   for (auto a: alist)
+//     {
+//       if (check && !a.is_integral())
+//         {
+//           cout << "Cannot extend order " << *this << " by " << a
+//                << " which is not an algenbraic integer!" << endl;
+//           return ZZ(1);
+//         }
+//       index_gain *= extend_by_old(a, 0); // 0: no need to check a again
+//     }
+//   return index_gain;
+// }

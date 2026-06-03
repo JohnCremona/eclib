@@ -240,10 +240,10 @@ public:
 
   // Extend by a (which must be an algebraic integer), returning the
   // index of the extension
-  ZZ extend_by_old(const FieldElement& a, int check=1);
+  // ZZ extend_by_old(const FieldElement& a, int check=1);
   // Extend by all a in alist (which must be algebraic integers),
   // returning the index of the extension
-  ZZ extend_by_old(const vector<FieldElement>& alist, int check=1);
+  // ZZ extend_by_old(const vector<FieldElement>& alist, int check=1);
 
   // These versions add just a and then check all products one by one,
   // adding any which are not yet contained  (faster):
@@ -252,6 +252,9 @@ public:
   // index of the extension: second version which uses the next two
   // internally.
   ZZ extend_by(const FieldElement& a, int check=1);
+  // Extend by v, coords in this order of an algebraic integer,
+  // returning the index of the extension.
+  ZZ extend_by(const Qvec& v);
   // Extend by all a in alist (which must be algebraic integers),
   // returning the index of the extension
   ZZ extend_by(const vector<FieldElement>& alist, int check=1);
@@ -265,9 +268,14 @@ private:
   // Add one algebraic integer to the Z-span: the result may not be an
   // order but this is only used internally.
   void add_one(const FieldElement& a, int check=0);
+  // Same given just the coords of the new element
+  void add_one(const Qvec& v);
+
   // Check that the Z-span of the current Zbasis is closed under
   // multiplication.  If not, a will hold a missing product.
   int check_order(FieldElement& a) const;
+  // Same, v will hold (non-integral) coords of a missing product
+  int check_order(Qvec& v) const;
 
 private:
   vector<FieldElement> Zbasis; // Z-basis of the order
