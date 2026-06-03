@@ -155,6 +155,8 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 
   // Now define the field, using A and its char poly
 
+  if (verbose>1)
+    cout << "A =\n" << A << endl;
   F0 = new Field(A, basis_change_inverse, basis_change_matrix, lab, verbose>1);
   F = new Field();
   int canonical = (d<=POLREDABS_DEGREE_UPPER_BOUND);
@@ -192,7 +194,6 @@ Newform::Newform(Newspace* x, int i, int fill_aPmap, int fill_aMlist, int verbos
   if (!input_from_file(fill_aPmap, fill_aMlist, verbose))
     cerr << "Unable to read Newform " << lab << endl;
 }
-
 
 string Newform::label() const
 {
@@ -293,7 +294,13 @@ FieldElement Newform::compute_aM(const long& M)
 
   // Now M = p^e is a prime power.  aPmap has the aP for bad p as well
   // as good, from compute_AL_eigs()
-  FieldElement aP = aPmap[p];
+  FieldElement aP;
+  auto it = aPmap.find(p);
+  if (it == aPmap.end())
+    aP = HO(aPmap_int_coords[p]);
+  else
+    aP = it->second;
+
 #ifdef DEBUG_COEFFS
   cout << " - a_p = " << aP << endl;
 #endif
@@ -338,19 +345,6 @@ FieldElement Newform::aM(const long& M)
 // Assuming aPmap filled, fill aMmap (Fourier coefficients)
 void Newform::compute_coefficients(int ntp, int verbose)
 {
-  if (aPmap.empty())
-    {
-      if (verbose)
-        cout << "In compute_coefficients("<<ntp<<"), aPmap is empty so computing eigs..."<<endl;
-      compute_eigs(ntp, verbose);
-      if (verbose)
-        {
-          cout << "Done\n";
-          display(1,1,0);
-          cout << "----------------------------------------------"<<endl;
-        }
-    }
-
   // Compute a_m for m up to maxP (the max p for which we have aP).
   // This will trigger computation and storing of all coefficients up
   // to maxP and their traces.
@@ -686,8 +680,10 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
 // Compute aP and AL-eigs and Fourier coeffs
 void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 {
-  compute_eigs(ntp, verbose);         // a(P) for good P
-  if (d>1)
+  compute_eigs(ntp, verbose);
+  compute_HO_from_raw_eigs(verbose);
+
+  if (0)
     {
       if (verbose) cout << "a_p computed, now LLL-reducing Hecke order..." << flush;
       // (1) just reduce the integral basis
@@ -703,16 +699,142 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 
   compute_AL_eigs(ntp, verbose);      // e(Q) and a(Q) for bad Q
 
-  // Store integral coeffs of ap (good and bad p):
-  for (auto x: aPmap)
-    aPmap_int_coords[x.first] = HO.integral_coords(x.second);
-
   // Compute and store a(M) and traces for M <= maxP
   compute_coefficients(ntp, verbose);
 }
 
-// Fill aPmap, dict of eigenvalues of first ntp good primes
+// From raw aPmap_int_coords compute Hecke order HO, replace
+// aPmap_int_coords entries with coords w.r.t. HO.
+//#define DEBUG_HO
+void Newform::compute_HO_from_raw_eigs(int verbose)
+{
+  // Initialise the Hecke Order to an approximation to the maximal order
+  ZZ bound(0);
+  if (d>POLREDABS_DEGREE_UPPER_BOUND)
+    bound = ZZ(100000000);
+  HO = MaximalOrder(F, bound);
+  if (d==1)
+    return;
+
+  // Store the index and basis matrices
+  ZZ index_orig = HO.get_order_index();
+  Qmat bm_orig = HO.get_bm();
+  mat_m pcm_orig = HO.get_pcm();
+
+  if (verbose)
+    cout << "Hecke order initialised, contains the equation order with index "
+         << index_orig <<endl;
+#ifdef DEBUG_HO
+  cout << "Initial Hecke order: " << HO << endl;
+#endif
+
+  // Make the matrix transforming raw coords to HO-coords (ignoring
+  // division by denom_abs here)
+  Qmat M = pcm_orig * Fiso.matrix() * basis_change_matrix;
+#ifdef DEBUG_HO
+  cout << "pcm_orig =\n" << pcm_orig << endl;
+  cout << "iso =\n" << Fiso.matrix() << endl;
+  cout << "bcm =\n" << basis_change_matrix << endl;
+  cout << "product M (mapping raw coords to "<<denom_abs<<"* HO-coords) =\n" << M << endl;
+#endif
+
+  // Make a matrix whose rows are all the raw eig coord vectors
+  int nap = aPmap_int_coords.size();
+  mat_m E(nap, d);
+  int i=1;
+  for (auto& c : aPmap_int_coords)
+    E.setrow(i++, c.second);
+#ifdef DEBUG_HO
+  cout << "Before reduction, E =\n" << E << endl;
+#endif
+
+  // HNF-reduce this and delete all but the first d rows (which form a
+  // Z-basis for the row space), then transpose:
+  E = HNF(E);
+  E.delete_rows(nap-d);
+  E = transpose(E);
+  // The columns of E are now a Z-basis for the Z-module of raw ap coord vectors
+#ifdef DEBUG_HO
+  cout << "After reduction, trimming and transpose, E =\n" << E << endl;
+#endif
+
+  Qmat ME = M * Qmat(E, denom_abs);
+#ifdef DEBUG_HO
+  cout << "ME =\n" << ME << endl;
+#endif
+  // The columns of ME are a basis for the Z-module of HO-coord
+  // vectors of all ap.  If ME is integral, then the original HO
+  // contains all ap, but we still need to change coordinates.  In
+  // general, we extend the order to include all elements encoded by
+  // the columns of ME:
+  ZZ index_gain = ZZ(1);
+  if (ME.is_integral())
+    {
+      if (verbose)
+        cout << "Original Hecke order contained all ap" << endl;
+    }
+  else
+    {
+      index_gain = HO.extend_by(ME);
+      if (verbose)
+        cout << "Hecke order extended by index " << index_gain << " to contain all ap" <<endl;
+      M = bm_orig * HO.get_pcm() * M;
+    }
+#ifdef DEBUG_HO
+  cout << "M =\n" << M << endl;
+#endif
+  mat_m C = M.get_numerator();
+  ZZ Mden = denom_abs * M.get_denom();
+#ifdef DEBUG_HO
+  cout << "C =\n" << C << endl;
+#endif
+
+  // Change coords of all aP by applying M and dividing by
+  // denom_abs to get HO-coords:
+  i=1;
+  for (auto& p_c : aPmap_int_coords)
+    {
+      vec_m v = (C * p_c.second) / Mden;
+      aPmap_int_coords[p_c.first] = v;
+      E.setrow(i++, v);
+    }
+
+  // LLL-reduce w.r.t. the new coords
+  mat_m U;
+  HO.LLL_reduce(E, U);
+  for (auto& p_c : aPmap_int_coords)
+    aPmap_int_coords[p_c.first] = U * p_c.second;
+}
+
+// Fill dict aPmap_int_coords of raw eigenvalue coord vectors of
+// first ntp good primes; put max(P) into maxP
 void Newform::compute_eigs(int ntp, int verbose)
+{
+  long p=2;
+  primevar pr(ntp); // iterator over first ntp primes
+  while(pr.ok())
+    {
+      p = pr;
+      ++pr;
+      if (divides(p,N))
+        continue;  // compute AL eigs separately, later
+      if (verbose) cout << "Computing a_p for p = " << p << "..." << flush;
+      vec_m apvec = ap_raw(p);
+      if (verbose)
+        {
+          cout << "done";
+          if (verbose>1)
+            cout << ", apvec = " << apvec;
+          cout<< endl;
+        }
+      if (d==1) apvec /= denom_abs;
+      aPmap_int_coords[p] = apvec;
+    }
+  maxP = p; // record last prime
+} // end of compute_eigs
+
+// Fill aPmap, dict of eigenvalues of first ntp good primes
+void Newform::old_compute_eigs(int ntp, int verbose)
 {
   // HO = Order(*F); // to initialise with equation order instead of:
   ZZ bound(0);
@@ -776,16 +898,13 @@ void Newform::compute_eigs(int ntp, int verbose)
           cout<< endl;
         }
     }
-} // end of compute_eigs
+} // end of old_compute_eigs
 
 // Fill dict eQmap *after* aPmap, and set sfe
 void Newform::compute_AL_eigs(int ntp, int verbose)
 {
   // Compute AL-eigs to fill map<long, FieldElement> eQmap and also
   // the entries in aPmap indexed by bad primes.
-
-  if (aPmap.empty())
-    compute_eigs(ntp, verbose);
 
   sfe = -1; // since the sign is *minus* the product of the AL eigs
 
@@ -807,7 +926,8 @@ void Newform::compute_AL_eigs(int ntp, int verbose)
       // minus the AL eigenvalue if q||N else 0
       eQmap[q] = eq;
       sfe *= eq;
-      aPmap[q] = (divides(q*q,N)? zero: (*F)(-eq));
+      FieldElement eqF = (divides(q*q,N)? zero: (*F)(-eq));
+      aPmap_int_coords[q] = HO.integral_coords(eqF);
 
     } // end of loop over bad primes q
 } // end of Newform::compute_AL_eigs()
@@ -920,20 +1040,6 @@ void Newform::display_AL() const
   cout << "Atkin-Lehner eigenvalues:" << endl;
   for (auto x: eQmap)
     cout << x.first << ":\t" << x.second << endl;
-}
-
-map<long, FieldElement> Newform::TP_eigs(int ntp, int verbose)
-{
-  if (aPmap.empty())
-    compute_eigs(ntp, verbose);
-  return aPmap;
-}
-
-map<long, int> Newform::AL_eigs(int ntp, int verbose)
-{
-  if (eQmap.empty())
-    compute_AL_eigs(ntp, verbose);
-  return eQmap;
 }
 
 // return name of Newspace directory; if create_if_necessary, creates

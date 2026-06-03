@@ -267,8 +267,16 @@ public:
 
   // LLL-reduce basis (using the basis matrix to reduce)
   void LLL_reduce();
+  // Same, returning the unimodular basis change matrix
+  void LLL_reduce(mat_m& U);
   // LLL-reduce basis (using the coord matrix of alist to reduce)
   void LLL_reduce(const vector<FieldElement>& alist);
+  // Same, returning the unimodular basis change matrix
+  void LLL_reduce(const vector<FieldElement>& alist, mat_m& U);
+  // LLL-reduce basis (using the columns of the given matrix to reduce)
+  void LLL_reduce(const mat_m& C);
+  // Same, returning the unimodular basis change matrix
+  void LLL_reduce(const mat_m& C, mat_m& U);
 
 private:
   // Add one algebraic integer to the Z-span: the result may not be an

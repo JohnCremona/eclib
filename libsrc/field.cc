@@ -1641,9 +1641,19 @@ ZZ Order::extend_by(const Qmat& M)
 // basis (up to sign), in which we do nothing.
 void Order::LLL_reduce()
 {
-  const auto& M = LLL(transpose(basis_matrix));
+  mat_m U;
+  LLL_reduce(U);
+}
+
+// Same, returning the unimodular basis change matrix
+void Order::LLL_reduce(mat_m& U)
+{
+  Qmat M = LLL(transpose(basis_matrix), U);
   if (is_signed_permutation_matrix(M))
-    return;
+    {
+      U = transpose(M.get_numerator()) * U;  //transpose=inverse for a signed perm. matrix
+      M = Qmat::identity(rank);
+    }
   basis_matrix = transpose(M);
   power_coords_matrix = basis_matrix.inverse().get_numerator();
 
@@ -1658,29 +1668,49 @@ void Order::LLL_reduce(const vector<FieldElement>& alist)
   const Field& F = *Zbasis[0].field_ptr();
   vector<FieldElement> alist1(alist);
   alist1.push_back(F(1));
-  const mat_m& C2 = (power_coords_matrix * coord_matrix(alist1)).numerator;
+  const mat_m& C = (power_coords_matrix * coord_matrix(alist1)).numerator;
+  LLL_reduce(C);
+}
 
-  // cout << "Before LLL, coords of alist w.r.t. integral basis are:\n" << transpose(C2) << endl;
+// Same, returning the unimodular basis change matrix
+void Order::LLL_reduce(const vector<FieldElement>& alist, mat_m& U)
+{
+  const Field& F = *Zbasis[0].field_ptr();
+  vector<FieldElement> alist1(alist);
+  alist1.push_back(F(1));
+  const mat_m& C = (power_coords_matrix * coord_matrix(alist1)).numerator;
+  LLL_reduce(C, U);
+}
 
-  mat_m U, V;    // to hold unimodular transform and its inverse
-  const mat_m& L = LLL(C2, U);  // L = U*C = LLL-reduced coords of alist
-  // cout << "LLL returns transformation matrix U =\n" << U << "\n with det(U) = " << U.determinant() << endl;
-  //assert (is_one(abs(U.determinant())));
+// LLL-reduce basis (using the coord matrix of alist to reduce)
+void Order::LLL_reduce(const mat_m& C)
+{
+  mat_m U;
+  LLL_reduce(C, U);
+}
+
+// Same, returning the unimodular basis change matrix
+void Order::LLL_reduce(const mat_m& C, mat_m& U)
+{
+  const Field& F = *Zbasis[0].field_ptr();
+
+  mat_m V;    // to hold inverse unimodular transform
+  const mat_m& L = LLL(C, U);  // L = U*C = LLL-reduced coords of alist
   ZZ d = inverse(U, V);
-  //assert (is_one(abs(d)));
   if (is_one(-d))
     V = -V;
 
   // Now V*U = id.  We post-multiply basis_matrix by V and premultiply
   // power_coords_matrix by U, preserving the relation basis_matrix *
   // power_coords_matrix = id.  If the new matrices are signed
-  // permutation matrices, we replace then by the identity.
+  // permutation matrices, we replace both with the identity.
 
   const auto& M = basis_matrix * V;     // potential new basis matrix
   if (is_signed_permutation_matrix(M))
     {
       power_coords_matrix = mat_m::identity_matrix(rank);
       basis_matrix = Qmat(power_coords_matrix);
+      d = inverse(power_coords_matrix, U);
     }
   else
     {

@@ -79,10 +79,16 @@ private:
 
 public:
   // Fill dict aPmap of eigenvalues of first ntp good primes; put max(P) into maxP
+  void old_compute_eigs(int ntp=10, int verbose=0);
+  // Fill dict aPmap_int_coords of raw eigenvalue coord vectors of
+  // first ntp good primes; put max(P) into maxP
   void compute_eigs(int ntp=10, int verbose=0);
+  // From raw aPmap_int_coords compute Hecke order HO, replace
+  // aPmap_int_coords entries with coords w.r.t. HO.
+  void compute_HO_from_raw_eigs(int verbose=0);
   // Assuming aPmap filled, fill aMlist (Fourier coefficients), and
-  // trace_list (their traces) using all P in aPmap if aPmap
-  // already filled, else first compute ntp aP.
+  // trace_list (their traces) using all P in aPmap if aPmap already
+  // filled, else first compute ntp aP.
   void compute_coefficients(int ntp=10, int verbose=0);
   // Compute aP and AL-eigs and Fourier coeffs
   void compute_eigs_and_coefficients(int ntp=10, int verbose=0);
@@ -150,11 +156,6 @@ public:
   // Display AL eigenvalues
   void display_AL() const;
 
-  // Compute aPmap for first ntp primes if empty, and return it
-  map<long, FieldElement> TP_eigs(int ntp, int verbose=0);
-  // Compute eQmap if empty and return it, first computing aPmap for
-  // first ntp primes if necessary
-  map<long, int> AL_eigs(int ntp=10, int verbose=0);
   // return the list of traces
   vector<ZZ> traces() const {return trace_list;}
 
