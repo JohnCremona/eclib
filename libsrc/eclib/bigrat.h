@@ -93,7 +93,7 @@ public:
         int is_zero() const {return ::is_zero(n);}
         int is_one() const {return ::is_one(n) && ::is_one(d);}
         int is_1728() const {return ::is_zero(n-1728*d);}
-
+        int is_integral() const  {return ::is_one(d);}
         int is_square(bigrational& r) const
         {
          ZZ x;

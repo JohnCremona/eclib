@@ -199,21 +199,28 @@ string Newform::label() const
   return nsp->level_label + lab;
 }
 
+// raw eigenvalue coordinate vector of a general principal operator:
+vec_m Newform::eig_raw(const matop& T)
+{
+  return to_vec_m(nsp->H1->applyop_proj(T, key_symbol, projcoord));
+}
+
 // eigenvalue of a general principal operator:
 FieldElement Newform::eig(const matop& T)
 {
-  vec_m apv = to_vec_m(nsp->H1->applyop_proj(T, key_symbol, projcoord));
-  static const ZZ one(1);
+  vec_m apv = eig_raw(T);
   if (d==1)
     {
-      return FieldElement(*F0, bigrational(apv[1], to_ZZ(denom_abs)));
-    }
-  else
-    {
-      FieldElement a(*F0, basis_change_matrix * Qvec(apv, denom_abs));
+      bigrational a(apv[1], to_ZZ(denom_abs));
       assert(a.is_integral());
-      return (Fiso.is_identity()? a : Fiso(a));
+      return FieldElement(*F0, a);
     }
+ else
+   {
+     FieldElement a(*F0, basis_change_matrix * Qvec(apv, denom_abs));
+     assert(a.is_integral());
+     return Fiso(a);
+   }
 }
 
 // eigenvalue +-1 of a scalar involution operator

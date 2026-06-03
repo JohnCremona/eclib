@@ -109,9 +109,14 @@ public:
 
   // Functions for computing eigenvalues of Hecke operators:
 
+  // raw eigenvalue coordinate vector of a general operator:
+  vec_m eig_raw(const matop& T);
+  // raw eigenvalue coordinate vector of T_p or W_p:
+  vec_m ap_raw(const long& p)  {return eig_raw(matop(p,N));}
+
   // eigenvalue of a general operator:
   FieldElement eig(const matop& T);
-  // eigenvalue of T_p or Q_p:
+  // eigenvalue of T_p or W_p:
   FieldElement ap(const long& p)  {return eig(matop(p,N));}
 
   // eigenvalue +-1 of a scalar involution operator
