@@ -1615,6 +1615,26 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
   return index_gain;
 }
 
+// Extend by all v in vlist (which must be coords in this order of
+// algebraic integers), returning the index of the extension
+ZZ Order::extend_by(const vector<Qvec>& vlist)
+{
+  ZZ index_gain(1);
+  for (auto v: vlist)
+    index_gain *= extend_by(v);
+  return index_gain;
+}
+
+// Extend by all columns v of M (as in previous method), returning
+// the index of the extension
+ZZ Order::extend_by(const Qmat& M)
+{
+  ZZ index_gain(1);
+  for (int i=1; i<=M.ncols(); i++)
+    index_gain *= extend_by(M.col(i));
+  return index_gain;
+}
+
 // LLL-reduce basis (using the basis matrix to reduce) If the basis
 // matrix is a signed permutation matrix then (1) the order is the
 // equation order, and (2) the basis is a permutation of the power

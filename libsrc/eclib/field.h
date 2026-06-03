@@ -258,6 +258,12 @@ public:
   // Extend by all a in alist (which must be algebraic integers),
   // returning the index of the extension
   ZZ extend_by(const vector<FieldElement>& alist, int check=1);
+  // Extend by all v in vlist (which must be coords in this order of
+  // algebraic integers), returning the index of the extension
+  ZZ extend_by(const vector<Qvec>& vlist);
+  // Extend by all columns v of M (as in previous method), returning
+  // the index of the extension
+  ZZ extend_by(const Qmat& M);
 
   // LLL-reduce basis (using the basis matrix to reduce)
   void LLL_reduce();
