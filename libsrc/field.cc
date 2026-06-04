@@ -1361,12 +1361,12 @@ Order::Order(const Field& K, const ZZ& i, const mat_m& M) // Order in F given pc
     power_coords_matrix(M),
     basis_matrix(Qmat(M).inverse()),
     index(abs(M.determinant())),
-    poldisc(discriminant(F->minpoly))
+    poldisc(discriminant(F->minpoly)),
+    disc(poldisc/(index*index))
 {
   Zbasis.resize(rank);
   for (int j=0; j<rank; j++)
     Zbasis[j] = (*F)(basis_matrix.col(j+1));
-  disc = poldisc/(index*index);
 }
 
 // coords w.r.t. Zbasis of an arbitrary element of F
@@ -1413,8 +1413,7 @@ int Order::contains(const Order& O2) const
 // FieldElement from integer coords
 FieldElement Order::operator()(const vec_m& coords) const
 {
-  const Field& F = *Zbasis[0].field_ptr();
-  return F(basis_matrix*Qvec(coords));
+  return (*F)(basis_matrix*Qvec(coords));
 }
 
 // FieldElement from rational coords
@@ -1508,8 +1507,7 @@ void Order::add_one(const Qvec& v)
 {
   if (is_one(v.denom))
     return;
-  const Field& F = *Zbasis[0].field_ptr();
-  // assert (F(v).is_integral());
+  // assert ((*F)(v).is_integral());
 
   Qmat M(transpose(basis_matrix)); // rows are field coords of current gens
   M.append_row(v);
@@ -1521,7 +1519,7 @@ void Order::add_one(const Qvec& v)
   // reset Zbasis etc:
   for (int j=0; j<rank; j++)
     {
-      Zbasis[j] = F(M.row(j+1));
+      Zbasis[j] = (*F)(M.row(j+1));
       // assert(Zbasis[j].is_integral());
     }
   basis_matrix = transpose(M);
@@ -1595,8 +1593,7 @@ ZZ Order::extend_by(const Qvec& v)
 {
   if (is_one(v.denom))
     return ZZ(1);
-  const Field& F = *Zbasis[0].field_ptr();
-  auto a = F(v);
+  auto a = (*F)(v);
   // assert (a.is_integral());
   if (contains(a))
     return ZZ(1);
@@ -1681,18 +1678,15 @@ void Order::LLL_reduce(mat_m& U)
     }
   basis_matrix = transpose(M);
   power_coords_matrix = basis_matrix.inverse().get_numerator();
-
-  // reset Zbasis (index and disc are unchanged)
-  const Field& F = *Zbasis[0].field_ptr();
-  Zbasis = from_coord_matrix(F, basis_matrix);
+  Zbasis = from_coord_matrix(*F, basis_matrix);
+  // index and disc are unchanged
 }
 
 // LLL-reduce basis (using the coord matrix of alist to reduce)
 void Order::LLL_reduce(const vector<FieldElement>& alist)
 {
-  const Field& F = *Zbasis[0].field_ptr();
   vector<FieldElement> alist1(alist);
-  alist1.push_back(F(1));
+  alist1.push_back((*F)(1));
   const mat_m& C = (power_coords_matrix * coord_matrix(alist1)).numerator;
   LLL_reduce(C);
 }
@@ -1700,9 +1694,8 @@ void Order::LLL_reduce(const vector<FieldElement>& alist)
 // Same, returning the unimodular basis change matrix
 void Order::LLL_reduce(const vector<FieldElement>& alist, mat_m& U)
 {
-  const Field& F = *Zbasis[0].field_ptr();
   vector<FieldElement> alist1(alist);
-  alist1.push_back(F(1));
+  alist1.push_back((*F)(1));
   const mat_m& C = (power_coords_matrix * coord_matrix(alist1)).numerator;
   LLL_reduce(C, U);
 }
@@ -1717,8 +1710,6 @@ void Order::LLL_reduce(const mat_m& C)
 // Same, returning the unimodular basis change matrix
 void Order::LLL_reduce(const mat_m& C, mat_m& U)
 {
-  const Field& F = *Zbasis[0].field_ptr();
-
   mat_m V;    // to hold inverse unimodular transform
   const mat_m& L = LLL(C, U);  // L = U*C = LLL-reduced coords of alist
   ZZ d = inverse(U, V);
@@ -1743,9 +1734,8 @@ void Order::LLL_reduce(const mat_m& C, mat_m& U)
       power_coords_matrix = U * power_coords_matrix;
     }
   // cout << "After  LLL, coords of alist are:\n" << transpose(L) << endl;
-
-  // reset Zbasis (index and disc are unchanged)
-  Zbasis = from_coord_matrix(F, basis_matrix);
+  Zbasis = from_coord_matrix(*F, basis_matrix);
+  // index and disc are unchanged
 }
 
 // Compute Maximal Order (via lib)pari.  If bound>0 then the order may
