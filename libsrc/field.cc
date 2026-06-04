@@ -1304,19 +1304,18 @@ FieldIso Field::sqrt_embedding(const vector<FieldElement>& r_list, string newvar
 //
 ////////////////////////////////////////////////////////////////////////
 
-Order::Order(const Field& F) // equation order
-  :Zbasis(F.power_basis()), power_coords_matrix(mat_m::identity_matrix(F.d)),
-   index(1), poldisc(discriminant(F.minpoly)), rank(F.d)
+Order::Order(const Field& K) // equation order
+  : F(&K), Zbasis(K.power_basis()), power_coords_matrix(mat_m::identity_matrix(K.d)),
+   index(1), poldisc(discriminant(K.minpoly)), rank(K.d)
 {
   disc = poldisc;
   basis_matrix = Qmat(power_coords_matrix); // denom=1
 }
 
 Order::Order(const vector<FieldElement>& v, int basis)
+  : F(v[0].field_ptr()), poldisc(discriminant(F->minpoly)), rank(F->d)
+
 {
-  const Field& F = *v[0].field_ptr();
-  poldisc = discriminant(F.minpoly);
-  rank = F.d;
   if (basis)
     {
       Zbasis = v;
@@ -1329,7 +1328,7 @@ Order::Order(const vector<FieldElement>& v, int basis)
     {
       Qmat M = HNF(coord_matrix(v, 1, 1)); // 1: rows, 1: reverse coords
       M.delete_rows(v.size()-rank);   // rows are coords of new Zbasis
-      Zbasis = from_coord_matrix(F, M, 1, 1); // 1: rows, 1: reverse coords
+      Zbasis = from_coord_matrix(*F, M, 1, 1); // 1: rows, 1: reverse coords
       basis_matrix = coord_matrix(Zbasis); // = M with cols reversed
       power_coords_matrix = basis_matrix.inverse().get_numerator();
       index = abs(power_coords_matrix.determinant());
@@ -1338,22 +1337,21 @@ Order::Order(const vector<FieldElement>& v, int basis)
 }
 
 Order::Order(const vector<FieldElement>& v, const mat_m pcm)
-  :Zbasis(v), power_coords_matrix(pcm), index(abs(pcm.determinant()))
+  : F(v[0].field_ptr()), Zbasis(v), power_coords_matrix(pcm),
+    basis_matrix(coord_matrix(v)), index(abs(pcm.determinant())),
+    disc(poldisc/(index*index)), poldisc(discriminant(F->minpoly)),
+    rank(F->d)
 {
-  const Field& F = *v[0].field_ptr();
-  poldisc = discriminant(F.minpoly);
-  rank = F.d;
-  basis_matrix = coord_matrix(v);
-  disc = poldisc/(index*index);
+  ;
 }
 
-Order::Order(const Field& F, const ZZ& i, const mat_m& M) // Order in F given pcm
-  :power_coords_matrix(M), basis_matrix(Qmat(M).inverse()),
-   index(abs(M.determinant())), poldisc(discriminant(F.minpoly)), rank(F.d)
+Order::Order(const Field& K, const ZZ& i, const mat_m& M) // Order in F given pcm
+  : F(&K), power_coords_matrix(M), basis_matrix(Qmat(M).inverse()),
+    index(abs(M.determinant())), poldisc(discriminant(F->minpoly)), rank(F->d)
 {
   Zbasis.resize(rank);
   for (int j=0; j<rank; j++)
-    Zbasis[j] = F(basis_matrix.col(j+1));
+    Zbasis[j] = (*F)(basis_matrix.col(j+1));
   disc = poldisc/(index*index);
 }
 
@@ -1401,14 +1399,8 @@ int Order::contains(const Order& O2) const
 // FieldElement from integer coords
 FieldElement Order::operator()(const vec_m& coords) const
 {
-  FieldElement a = Zbasis[0] * coords[1];
-  for (int i=1; i<rank; i++)
-    {
-      ZZ ci = coords[i+1];
-      if (!is_zero(ci))
-        a += Zbasis[i] * ci;
-    }
-  return a;
+  const Field& F = *Zbasis[0].field_ptr();
+  return F(basis_matrix*Qvec(coords));
 }
 
 // FieldElement from rational coords

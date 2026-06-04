@@ -185,10 +185,10 @@ class Order{
 public:
   // Constructors:
   Order() {rank=0;}
-  explicit Order(const Field& F); // equation order
+  explicit Order(const Field& K); // equation order
   Order(const vector<FieldElement>& v, int basis=1); // given a Z-basis or just a Z-spanning set
   Order(const vector<FieldElement>& v, const mat_m pcm); // same with known power_coords_matrix
-  Order(const Field& F, const ZZ& i, const mat_m& M); // Order in F given pcm
+  Order(const Field& K, const ZZ& i, const mat_m& M); // Order in F given pcm
 
   // Access data:
   int rk() const {return rank;}
@@ -292,6 +292,7 @@ private:
   int check_order(Qvec& v) const;
 
 private:
+  Field const * F;
   vector<FieldElement> Zbasis; // Z-basis of the order
   mat_m power_coords_matrix; // columns are coords of power basis w.r.t. Zbasis
   Qmat basis_matrix; // columns are coords of Zbasis w.r.t. power basis
