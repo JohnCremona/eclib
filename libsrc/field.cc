@@ -1307,7 +1307,6 @@ FieldIso Field::sqrt_embedding(const vector<FieldElement>& r_list, string newvar
 Order::Order(const Field& K) // equation order
   : F(&K),
     rank(K.d),
-    Zbasis(K.power_basis()),
     power_coords_matrix(mat_m::identity_matrix(K.d)),
     basis_matrix(Qmat(power_coords_matrix)),
     index(1),
@@ -1324,7 +1323,6 @@ Order::Order(const Field& K, const vector<FieldElement>& v, int basis)
 {
   if (basis)
     {
-      Zbasis = v;
       basis_matrix = coord_matrix(v);
       power_coords_matrix = basis_matrix.inverse().get_numerator();
       index = abs(power_coords_matrix.determinant());
@@ -1333,9 +1331,9 @@ Order::Order(const Field& K, const vector<FieldElement>& v, int basis)
   else
     {
       Qmat M = HNF(coord_matrix(v, 1, 1)); // 1: rows, 1: reverse coords
-      M.delete_rows(v.size()-rank);   // rows are coords of new Zbasis
-      Zbasis = from_coord_matrix(*F, M, 1, 1); // 1: rows, 1: reverse coords
-      basis_matrix = coord_matrix(Zbasis); // = M with cols reversed
+      M.delete_rows(v.size()-rank);   // rows are coords of new Z-basis
+      const auto& basis = from_coord_matrix(*F, M, 1, 1); // 1: rows, 1: reverse coords
+      basis_matrix = coord_matrix(basis); // = M with cols reversed
       power_coords_matrix = basis_matrix.inverse().get_numerator();
       index = abs(power_coords_matrix.determinant());
       disc = poldisc/(index*index);
@@ -1345,7 +1343,6 @@ Order::Order(const Field& K, const vector<FieldElement>& v, int basis)
 Order::Order(const Field& K, const vector<FieldElement>& v, const mat_m pcm)
   : F(&K),
     rank(F->d),
-    Zbasis(v),
     power_coords_matrix(pcm),
     basis_matrix(coord_matrix(v)),
     index(abs(pcm.determinant())),
@@ -1364,18 +1361,26 @@ Order::Order(const Field& K, const ZZ& i, const mat_m& M) // Order in F given pc
     poldisc(discriminant(F->minpoly)),
     disc(poldisc/(index*index))
 {
-  Zbasis.resize(rank);
-  for (int j=0; j<rank; j++)
-    Zbasis[j] = (*F)(basis_matrix.col(j+1));
+  ;
 }
 
-// coords w.r.t. Zbasis of an arbitrary element of F
+vector<FieldElement> Order::get_basis() const
+{
+  return from_coord_matrix(*F, basis_matrix);
+}
+
+FieldElement Order::basis_elt(int i) const
+{
+  return FieldElement(*F, basis_matrix.col(i));
+}
+
+// coords w.r.t. Z-basis of an arbitrary element of F
 Qvec Order::coords(const FieldElement& a) const
 {
   return power_coords_matrix * a.coords(); // not a.v in case field is Q
 }
 
-// coords w.r.t. Zbasis of an element of F in this order
+// coords w.r.t. Z-basis of an element of F in this order
 vec_m Order::integral_coords(const FieldElement& a) const
 {
   Qvec c = coords(a);
@@ -1390,13 +1395,13 @@ vec_m Order::integral_coords(const FieldElement& a) const
 // membership test
 int Order::contains(const FieldElement& a) const
 {
-  return a.in_same_field(Zbasis[0]) && is_one(denom(a));
+  return (F==a.field_ptr()) && is_one(denom(a));
 }
 
 // membership test returning coords
 int Order::contains(const FieldElement& a, vec_m& c) const
 {
-  if (!a.in_same_field(Zbasis[0]))
+  if (F!=a.field_ptr())
     return 0;
   Qvec qc = coords(a);
   c = qc.numerator;
@@ -1406,8 +1411,8 @@ int Order::contains(const FieldElement& a, vec_m& c) const
 // containment test
 int Order::contains(const Order& O2) const
 {
-  return std::all_of(O2.Zbasis.begin(), O2.Zbasis.end(),
-                    [this](const FieldElement& a){return contains(a);});
+  auto M = basis_matrix * O2.power_coords_matrix;
+  return M.is_integral();
 }
 
 // FieldElement from integer coords
@@ -1429,15 +1434,15 @@ string Order::str(int raw) const
 
   ostringstream s;
 
+  auto basis = get_basis();
   if (raw) // only output the integral basis coords
     {
-      for (auto bi: Zbasis)
+      for (auto bi: basis)
         s << bi.str(1) << "\n";
     }
   else
     {
-      s << "Order in " << *Zbasis[0].F << " with Z-basis " << Zbasis;
-      // s << "Order with Z-basis " << Zbasis;
+      s << "Order in " << *F << " with Z-basis " << basis;
     }
   return s.str();
 }
@@ -1451,9 +1456,9 @@ Order Order::operator+(const Order& O2)
       exit(1);
     }
   vector<FieldElement> gens;
-  gens.reserve(rank*O2.rank);
-  for (auto a: O2.Zbasis)
-    for (auto b: Zbasis)
+  gens.reserve(rank*rank);
+  for (auto a: O2.get_basis())
+    for (auto b: get_basis())
       gens.push_back(a*b);
   return Order(*F, gens, 0); // 0 means not a basis, just Z-gens
 }
@@ -1511,17 +1516,11 @@ void Order::add_one(const Qvec& v)
 
   Qmat M(transpose(basis_matrix)); // rows are field coords of current gens
   M.append_row(v);
-  M = HNF(M);           // rows are coords of new Zbasis, last row is 0
+  M = HNF(M);           // rows are coords of new Z-basis, last row is 0
   // assert(trivial(M.get_numerator().row(rank+1)));
   M.delete_row();
   M = LLL(M);
 
-  // reset Zbasis etc:
-  for (int j=0; j<rank; j++)
-    {
-      Zbasis[j] = (*F)(M.row(j+1));
-      // assert(Zbasis[j].is_integral());
-    }
   basis_matrix = transpose(M);
   Qmat A = basis_matrix.inverse();
   // assert (is_one(A.get_denom()));
@@ -1529,16 +1528,16 @@ void Order::add_one(const Qvec& v)
   index = abs(power_coords_matrix.determinant());
 }
 
-// Check that the Z-span of the current Zbasis is closed under
+// Check that the Z-span of the current Z-basis is closed under
 // multiplication.  If not, a will hold a missing product.
 int Order::check_order(FieldElement& a) const
 {
   for (int i=0; i<rank; i++)
     {
-      const FieldElement& x = Zbasis[i];
+      const FieldElement& x = basis_elt(i);
       for (int j=i; j<rank; j++)
         {
-          a = x*Zbasis[j];
+          a = x * basis_elt(j);
           if (!contains(a))
             return 0;
         }
@@ -1552,14 +1551,13 @@ int Order::check_order(Qvec& v) const
 {
   for (int i=0; i<rank; i++)
     {
-      const FieldElement& x = Zbasis[i];
+      const FieldElement& x = basis_elt(i);
       // assert (x.is_integral());
       for (int j=i; j<rank; j++)
         {
-          FieldElement y = Zbasis[j];
+          FieldElement y = basis_elt(j);
           // assert (y.is_integral());
           FieldElement z = x*y;
-          // assert (z.is_integral());
           v = z.coords(); // field coords
           if (!contains(z)) // not in equation order
             return 0;
@@ -1678,7 +1676,6 @@ void Order::LLL_reduce(mat_m& U)
     }
   basis_matrix = transpose(M);
   power_coords_matrix = basis_matrix.inverse().get_numerator();
-  Zbasis = from_coord_matrix(*F, basis_matrix);
   // index and disc are unchanged
 }
 
@@ -1734,7 +1731,6 @@ void Order::LLL_reduce(const mat_m& C, mat_m& U)
       power_coords_matrix = U * power_coords_matrix;
     }
   // cout << "After  LLL, coords of alist are:\n" << transpose(L) << endl;
-  Zbasis = from_coord_matrix(*F, basis_matrix);
   // index and disc are unchanged
 }
 

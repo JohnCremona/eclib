@@ -196,7 +196,8 @@ public:
 
   // Access data:
   int rk() const {return rank;}
-  const vector<FieldElement> get_basis() const {return Zbasis;}
+  FieldElement basis_elt(int i) const;
+  vector<FieldElement> get_basis() const;
   mat_m get_pcm() const {return power_coords_matrix;}
   Qmat get_bm() const {return basis_matrix;}
   // index of equation order in this
@@ -207,11 +208,11 @@ public:
   ZZ get_poldisc() const {return poldisc;}
   string str(int raw=0) const;
 
-  // coords w.r.t. Zbasis of an arbitrary element of F
+  // coords w.r.t. Z-basis of an arbitrary element of F
   Qvec coords(const FieldElement& a) const;
-  // denominator of Zbasis coords of an arbitrary element of F
+  // denominator of Z-basis coords of an arbitrary element of F
   ZZ denom(const FieldElement& a) const { return coords(a).denom;}
-  // coords w.r.t. Zbasis of an element of F in this order
+  // coords w.r.t. Z-basis of an element of F in this order
   vec_m integral_coords(const FieldElement& a) const;
   // membership test
   int contains(const FieldElement& a) const;
@@ -289,7 +290,7 @@ private:
   // Same given just the coords of the new element
   void add_one(const Qvec& v);
 
-  // Check that the Z-span of the current Zbasis is closed under
+  // Check that the Z-span of the current Z-basis is closed under
   // multiplication.  If not, a will hold a missing product.
   int check_order(FieldElement& a) const;
   // Same, v will hold (non-integral) coords of a missing product
@@ -298,9 +299,8 @@ private:
 private:
   Field const * F;
   int rank; // of this order, i.e. degree of ambient field
-  vector<FieldElement> Zbasis; // Z-basis of the order
-  mat_m power_coords_matrix; // columns are coords of power basis w.r.t. Zbasis
-  Qmat basis_matrix; // columns are coords of Zbasis w.r.t. power basis
+  mat_m power_coords_matrix; // columns are coords of power basis w.r.t. Z-basis
+  Qmat basis_matrix; // columns are coords of Z-basis w.r.t. power basis
   ZZ index; // index of equation order in this
   ZZ poldisc;  // discriminant of ambient field's defining polynomial
   ZZ disc;  // discriminant of this order
