@@ -728,29 +728,31 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
   cout << "Initial Hecke order: " << HO << endl;
 #endif
 
-  // Make the matrix transforming raw coords to HO-coords (ignoring
-  // division by denom_abs here)
-  Qmat M = pcm_orig * Fiso.matrix() * basis_change_matrix;
+  // Make the matrices transforming raw coords to field coords (in F)
+  // and HO-coords (ignoring division by denom_abs here)
+  Qmat M0 = Fiso.matrix() * basis_change_matrix;
+  Qmat M = pcm_orig * M0;
 #ifdef DEBUG_HO
   cout << "pcm_orig =\n" << pcm_orig << endl;
   cout << "iso =\n" << Fiso.matrix() << endl;
   cout << "bcm =\n" << basis_change_matrix << endl;
-  cout << "product M (mapping raw coords to "<<denom_abs<<"* HO-coords) =\n" << M << endl;
+  cout << "M0 (mapping raw coords to "<<denom_abs<<"* field-coords) =\n" << M0 << endl;
+  cout << "M (mapping raw coords to "<<denom_abs<<"* HO-coords) =\n" << M << endl;
 #endif
 
   // Make a matrix whose rows are all the raw eig coord vectors
   int nap = aPmap_int_coords.size();
-  mat_m E(nap, d);
+  mat_m E0(nap, d);
   int i=1;
   for (auto& c : aPmap_int_coords)
-    E.setrow(i++, c.second);
+    E0.setrow(i++, c.second);
 #ifdef DEBUG_HO
-  cout << "Before reduction, E =\n" << E << endl;
+  cout << "Before reduction, E =\n" << E0 << endl;
 #endif
 
   // HNF-reduce this and delete all but the first d rows (which form a
   // Z-basis for the row space), then transpose:
-  E = HNF(E);
+  mat_m E = HNF(E0);
   E.delete_rows(nap-d);
   E = transpose(E);
   // The columns of E are now a Z-basis for the Z-module of raw ap coord vectors
@@ -778,32 +780,29 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
       index_gain = HO.extend_by(ME);
       if (verbose)
         cout << "Hecke order extended by index " << index_gain << " to contain all ap" <<endl;
-      M = bm_orig * HO.get_pcm() * M;
+      M = HO.get_pcm() * M0;
     }
 #ifdef DEBUG_HO
   cout << "M =\n" << M << endl;
 #endif
-  mat_m C = M.get_numerator();
-  ZZ Mden = denom_abs * M.get_denom();
-#ifdef DEBUG_HO
-  cout << "C =\n" << C << endl;
-#endif
 
-  // Change coords of all aP by applying M and dividing by
-  // denom_abs to get HO-coords:
+  // Change coords of all aP by applying M and dividing by denom_abs
+  // to get new HO-coords which should now all be integral:
   i=1;
   for (auto& p_c : aPmap_int_coords)
     {
-      vec_m v = (C * p_c.second) / Mden;
-      aPmap_int_coords[p_c.first] = v;
-      E.setrow(i++, v);
+      Qvec v = M * Qvec(p_c.second, denom_abs);
+      assert (v.is_integral());
+      vec_m vnum = v.get_numerator();
+      p_c.second = vnum;
+      E0.setrow(i++, vnum);
     }
 
   // LLL-reduce w.r.t. the new coords
   mat_m U;
-  HO.LLL_reduce(E, U);
+  HO.LLL_reduce(transpose(E0), U);
   for (auto& p_c : aPmap_int_coords)
-    aPmap_int_coords[p_c.first] = U * p_c.second;
+    p_c.second = U * p_c.second;
 }
 
 // Fill dict aPmap_int_coords of raw eigenvalue coord vectors of
