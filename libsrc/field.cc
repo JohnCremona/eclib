@@ -1332,8 +1332,8 @@ Order::Order(const Field& K, const vector<FieldElement>& v, int basis)
     {
       Qmat M = HNF(coord_matrix(v, 1, 1)); // 1: rows, 1: reverse coords
       M.delete_rows(v.size()-rank);   // rows are coords of new Z-basis
-      const auto& basis = from_coord_matrix(*F, M, 1, 1); // 1: rows, 1: reverse coords
-      basis_matrix = coord_matrix(basis); // = M with cols reversed
+      const auto& bas = from_coord_matrix(*F, M, 1, 1); // 1: rows, 1: reverse coords
+      basis_matrix = coord_matrix(bas); // = M with cols reversed
       power_coords_matrix = basis_matrix.inverse().get_numerator();
       index = abs(power_coords_matrix.determinant());
       disc = poldisc/(index*index);
@@ -1434,15 +1434,15 @@ string Order::str(int raw) const
 
   ostringstream s;
 
-  auto basis = get_basis();
+  auto bas = get_basis();
   if (raw) // only output the integral basis coords
     {
-      for (auto bi: basis)
+      for (auto bi: bas)
         s << bi.str(1) << "\n";
     }
   else
     {
-      s << "Order in " << *F << " with Z-basis " << basis;
+      s << "Order in " << *F << " with Z-basis " << bas;
     }
   return s.str();
 }
@@ -1570,7 +1570,7 @@ int Order::check_order(Qvec& v) const
 // Extend by a (an algebraic integer), returning the index of the
 // extension: incremental version using the previous two internal
 // functions.
-ZZ Order::extend_by(const FieldElement& a, int check)
+ZZ Order::extend_by_one(const FieldElement& a, int check)
 {
   if (contains(a))
     {
@@ -1582,12 +1582,12 @@ ZZ Order::extend_by(const FieldElement& a, int check)
       cerr << "char poly is " << ::str(a.charpoly()) << endl;
       return ZZ(1);
     }
-  return extend_by(a.coords());
+  return extend_by_one(a.coords());
 }
 
 // Extend by v, field coords of an algebraic integer, returning the
 // index of the extension.
-ZZ Order::extend_by(const Qvec& v)
+ZZ Order::extend_by_one(const Qvec& v)
 {
   if (is_one(v.denom))
     return ZZ(1);
@@ -1621,18 +1621,19 @@ ZZ Order::extend_by(const Qvec& v)
 // returning the index of the extension
 ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
 {
+  if (check &&
+      !all_of(alist.begin(), alist.end(), [](const FieldElement&a){return a.is_integral();}))
+    {
+      cout << "Cannot extend order " << *this << " by " << alist
+           << " which are not all algebraic integers" << endl;
+      return ZZ(1);
+    }
   ZZ index_gain(1);
   for (auto a: alist)
-    {
-      if (check && !a.is_integral())
-        {
-          cout << "Cannot extend order " << *this << " by " << a
-               << " which is not an algebraic integer!" << endl;
-          return ZZ(1);
-       }
-      index_gain *= extend_by(a, 0); // 0: no need to check a again
-    }
+    index_gain *= extend_by_one(a, 0);
   return index_gain;
+  // auto step = [this](const FieldElement&a){return this->extend_by_one(a,0);};
+  // return std::accumulate(alist.begin(), alist.end(), ZZ(1), step);
 }
 
 // Extend by all v in vlist (which must be field coords of algebraic
@@ -1641,7 +1642,7 @@ ZZ Order::extend_by(const vector<Qvec>& vlist)
 {
   ZZ index_gain(1);
   for (auto v: vlist)
-    index_gain *= extend_by(v);
+    index_gain *= extend_by_one(v);
   return index_gain;
 }
 
@@ -1651,7 +1652,7 @@ ZZ Order::extend_by(const Qmat& M)
 {
   ZZ index_gain(1);
   for (int i=1; i<=M.ncols(); i++)
-    index_gain *= extend_by(M.col(i));
+    index_gain *= extend_by_one(M.col(i));
   return index_gain;
 }
 

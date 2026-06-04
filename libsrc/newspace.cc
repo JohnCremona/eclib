@@ -69,10 +69,10 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   const ZZ modulus(default_modulus<ZZ>());
   ssubspace_m sS = kernel(smat_m(fT), modulus);
   mat_m bas = sS.bas().as_mat();
-  ZZ den;
-  int ok = liftmat(bas, modulus, bas, den);
+  ZZ deno;
+  int ok = liftmat(bas, modulus, bas, deno);
   assert(ok);
-  S = subspace_m(bas, sS.pivs(), den);
+  S = subspace_m(bas, sS.pivs(), deno);
 #else
   S = kernel(fT, 3); // method 3: echelon via FLINT
 #endif
@@ -630,9 +630,9 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
       for (int i=0; (!split_ok) && (i<5*np); i++)
         {
           vector<int> lci = random_vector(np, -maxc, maxc);
-          vector<scalar> lc(lci.size());
-          std::transform(lci.begin(), lci.end(), lc.begin(), [](const int& x) {return scalar(x);});
-          split_ok = test_lc(lc);
+          vector<scalar> lcs(lci.size());
+          std::transform(lci.begin(), lci.end(), lcs.begin(), [](const int& x) {return scalar(x);});
+          split_ok = test_lc(lcs);
           if (split_ok)
             {
               if (verbose)
@@ -718,9 +718,8 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
   if (d==1)
     return;
 
-  // Store the index and basis matrices
+  // Store the index and (inverse) basis matrix
   ZZ index_orig = HO.get_order_index();
-  Qmat bm_orig = HO.get_bm();
   mat_m pcm_orig = HO.get_pcm();
 
   if (verbose)
@@ -730,23 +729,20 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
   cout << "Initial Hecke order: " << HO << endl;
 #endif
 
-  // Make the matrices transforming raw coords to field coords (in F)
-  // and HO-coords (times denom_abs)
+  // Make the matrix transforming raw coords to field coords (in F)
   Qmat M0 = Fiso.matrix() * basis_change_matrix;
-  Qmat M = pcm_orig * M0;
 #ifdef DEBUG_HO
   cout << "pcm_orig =\n" << pcm_orig << endl;
   cout << "iso =\n" << Fiso.matrix() << endl;
   cout << "bcm =\n" << basis_change_matrix << endl;
   cout << "M0 (mapping raw coords to "<<denom_abs<<"* field-coords) =\n" << M0 << endl;
-  cout << "M (mapping raw coords to "<<denom_abs<<"* HO-coords) =\n" << M << endl;
 #endif
 
   // Make a matrix whose rows are all the raw eig coord vectors
   int nap = aPmap_int_coords.size();
   mat_m E0(nap, d);
   int i=1;
-  for (auto& c : aPmap_int_coords)
+  for (const auto& c : aPmap_int_coords)
     E0.setrow(i++, c.second);
 #ifdef DEBUG_HO
   cout << "Before reduction, E =\n" << E0 << endl;
@@ -774,7 +770,7 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
     cout << "Hecke order extended by index " << index_gain << " to contain all ap" <<endl;
 
   // This M converts raw ap coord vectors to new order coord vectors
-  M = HO.get_pcm() * M0 * Qmat(mat_m::identity_matrix(d), denom_abs);
+  Qmat M = HO.get_pcm() * M0 * Qmat(mat_m::identity_matrix(d), denom_abs);
 #ifdef DEBUG_HO
   cout << "M =\n" << M << endl;
 #endif
@@ -861,7 +857,7 @@ void Newform::old_compute_eigs(int ntp, int verbose)
                   if (verbose)
                     cout << "a_"<<p<<" not in current Hecke order (denominator " << HO.denom(a_p)
                          << "), extending..." << endl;
-                  ZZ rel_index = HO.extend_by(a_p, 1); // 0: no need to check that a_p is integral
+                  ZZ rel_index = HO.extend_by_one(a_p, 1); // 0: no need to check that a_p is integral
                   if (verbose)
                     {
                       cout << "Hecke order grows by index " << rel_index << endl;

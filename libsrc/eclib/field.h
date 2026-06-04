@@ -256,10 +256,10 @@ public:
   // Extend by a (which must be an algebraic integer), returning the
   // index of the extension: second version which uses the next two
   // internally.
-  ZZ extend_by(const FieldElement& a, int check=1);
+  ZZ extend_by_one(const FieldElement& a, int check=1);
   // Extend by v, field coords of an algebraic integer, returning the
   // index of the extension.
-  ZZ extend_by(const Qvec& v);
+  ZZ extend_by_one(const Qvec& v);
   // Extend by all a in alist (which must be algebraic integers),
   // returning the index of the extension
   ZZ extend_by(const vector<FieldElement>& alist, int check=1);
