@@ -1305,16 +1305,22 @@ FieldIso Field::sqrt_embedding(const vector<FieldElement>& r_list, string newvar
 ////////////////////////////////////////////////////////////////////////
 
 Order::Order(const Field& K) // equation order
-  : F(&K), Zbasis(K.power_basis()), power_coords_matrix(mat_m::identity_matrix(K.d)),
-   index(1), poldisc(discriminant(K.minpoly)), rank(K.d)
+  : F(&K),
+    rank(K.d),
+    Zbasis(K.power_basis()),
+    power_coords_matrix(mat_m::identity_matrix(K.d)),
+    basis_matrix(Qmat(power_coords_matrix)),
+    index(1),
+    poldisc(discriminant(K.minpoly)),
+    disc(poldisc)
 {
-  disc = poldisc;
-  basis_matrix = Qmat(power_coords_matrix); // denom=1
+  ;
 }
 
-Order::Order(const vector<FieldElement>& v, int basis)
-  : F(v[0].field_ptr()), poldisc(discriminant(F->minpoly)), rank(F->d)
-
+Order::Order(const Field& K, const vector<FieldElement>& v, int basis)
+  : F(&K),
+    rank(F->d),
+    poldisc(discriminant(F->minpoly))
 {
   if (basis)
     {
@@ -1336,18 +1342,26 @@ Order::Order(const vector<FieldElement>& v, int basis)
     }
 }
 
-Order::Order(const vector<FieldElement>& v, const mat_m pcm)
-  : F(v[0].field_ptr()), Zbasis(v), power_coords_matrix(pcm),
-    basis_matrix(coord_matrix(v)), index(abs(pcm.determinant())),
-    disc(poldisc/(index*index)), poldisc(discriminant(F->minpoly)),
-    rank(F->d)
+Order::Order(const Field& K, const vector<FieldElement>& v, const mat_m pcm)
+  : F(&K),
+    rank(F->d),
+    Zbasis(v),
+    power_coords_matrix(pcm),
+    basis_matrix(coord_matrix(v)),
+    index(abs(pcm.determinant())),
+    poldisc(discriminant(F->minpoly)),
+    disc(poldisc/(index*index))
 {
   ;
 }
 
 Order::Order(const Field& K, const ZZ& i, const mat_m& M) // Order in F given pcm
-  : F(&K), power_coords_matrix(M), basis_matrix(Qmat(M).inverse()),
-    index(abs(M.determinant())), poldisc(discriminant(F->minpoly)), rank(F->d)
+  : F(&K),
+    rank(F->d),
+    power_coords_matrix(M),
+    basis_matrix(Qmat(M).inverse()),
+    index(abs(M.determinant())),
+    poldisc(discriminant(F->minpoly))
 {
   Zbasis.resize(rank);
   for (int j=0; j<rank; j++)
@@ -1432,12 +1446,17 @@ string Order::str(int raw) const
 // Sum of two orders (in the same field!)
 Order Order::operator+(const Order& O2)
 {
+  if (F != O2.F)
+    {
+      cerr << "Cannot add orders in defferent fields" << endl;
+      exit(1);
+    }
   vector<FieldElement> gens;
   gens.reserve(rank*O2.rank);
   for (auto a: O2.Zbasis)
     for (auto b: Zbasis)
       gens.push_back(a*b);
-  return Order(gens, 0); // 0 means not a basis, just Z-gens
+  return Order(*F, gens, 0); // 0 means not a basis, just Z-gens
 }
 
 // Add another order to this:
@@ -1736,14 +1755,15 @@ Order MaximalOrder(const Field* F, const ZZ& bound)
   // cout << "In MaximalOrder(F) with F = " << F << " -> " << *F << endl;
   ZZ ind;
   vector<Qvec> zbc;
-  mat_m bcm;
-  nfinit(F->minpoly, ind, zbc, bcm, bound);
-  // cout << "nfinit() returns ind = " << ind << "\nzbc = " <<zbc << "\nbcm = " << bcm << endl;
+  mat_m pcm;
+  nfinit(F->minpoly, ind, zbc, pcm, bound);
+  // cout << "nfinit() returns ind = " << ind << "\nzbc = " <<zbc << "\npcm = " << pcm
+  //      << "\nwith det = " << pcm.determinant() << endl;
   vector<FieldElement> bas(F->d);
   std::transform(zbc.begin(), zbc.end(), bas.begin(),
                  [F](const Qvec& v) {return (*F)(v);});
   // cout << "Now calling Order constructor with basis = " << bas << endl;
-  Order O(bas, bcm);
+  Order O(*F, bas, pcm);
   // cout << "... O = " << O << endl;
   // cout << "End of MaximalOrder(F) with F = " << F << " -> " << *F << endl;
   return O;
@@ -1804,7 +1824,7 @@ Order PowerOrder(const FieldElement& x, int check)
       return Order();
     }
   else
-    return Order(powers(x));
+    return Order(*x.field_ptr(), powers(x));
 }
 
 // The old versions add all products of the gens of the two orders (slower):

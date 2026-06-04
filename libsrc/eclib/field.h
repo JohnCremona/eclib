@@ -185,10 +185,14 @@ class Order{
 public:
   // Constructors:
   Order() {rank=0;}
-  explicit Order(const Field& K); // equation order
-  Order(const vector<FieldElement>& v, int basis=1); // given a Z-basis or just a Z-spanning set
-  Order(const vector<FieldElement>& v, const mat_m pcm); // same with known power_coords_matrix
-  Order(const Field& K, const ZZ& i, const mat_m& M); // Order in F given pcm
+  // equation order:
+  explicit Order(const Field& K);
+  // given a Z-basis (basis=1) or just a Z-spanning set (basis=0)
+  Order(const Field& K, const vector<FieldElement>& v, int basis=1);
+  // same with basis=1 and known power_coords_matrix
+  Order(const Field& K, const vector<FieldElement>& v, const mat_m pcm);
+  // Order in F given pcm
+  Order(const Field& K, const ZZ& i, const mat_m& M);
 
   // Access data:
   int rk() const {return rank;}
@@ -293,13 +297,13 @@ private:
 
 private:
   Field const * F;
+  int rank; // of this order, i.e. degree of ambient field
   vector<FieldElement> Zbasis; // Z-basis of the order
   mat_m power_coords_matrix; // columns are coords of power basis w.r.t. Zbasis
   Qmat basis_matrix; // columns are coords of Zbasis w.r.t. power basis
   ZZ index; // index of equation order in this
-  ZZ disc;  // discriminant of this order
   ZZ poldisc;  // discriminant of ambient field's defining polynomial
-  int rank; // of this order, i.e. degree of ambient field
+  ZZ disc;  // discriminant of this order
 };
 
 // Compute Maximal Order (via lib)pari.  If bound>0 then the order may
