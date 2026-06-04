@@ -1422,9 +1422,6 @@ string Order::str(int raw) const
   if (rank==0) // only possible after a default construction woth no field
     return string("Empty order: no field");
 
-  // cout << "In method str() for Order of rank " << rank << " with basis " << Zbasis
-  //      << " in Field " << Zbasis[0].F << flush << " -> " << *(Zbasis[0].F) << endl;
-
   ostringstream s;
 
   if (raw) // only output the integral basis coords
@@ -1495,13 +1492,15 @@ void Order::add_one(const FieldElement& a, int check)
   add_one(a.coords());
 }
 
-// Same given just the coords of the new element
+// Same given just the field coords of the new element
 void Order::add_one(const Qvec& v)
 {
   if (is_one(v.denom))
     return;
+  const Field& F = *Zbasis[0].field_ptr();
+  // assert (F(v).is_integral());
 
-  Qmat M(transpose(basis_matrix)); // rows are coords of current gens
+  Qmat M(transpose(basis_matrix)); // rows are field coords of current gens
   M.append_row(v);
   M = HNF(M);           // rows are coords of new Zbasis, last row is 0
   // assert(trivial(M.get_numerator().row(rank+1)));
@@ -1509,9 +1508,11 @@ void Order::add_one(const Qvec& v)
   M = LLL(M);
 
   // reset Zbasis etc:
-  const Field& F = *Zbasis[0].field_ptr();
   for (int j=0; j<rank; j++)
-    Zbasis[j] = F(M.row(j+1));
+    {
+      Zbasis[j] = F(M.row(j+1));
+      // assert(Zbasis[j].is_integral());
+    }
   basis_matrix = transpose(M);
   Qmat A = basis_matrix.inverse();
   // assert (is_one(A.get_denom()));
@@ -1537,16 +1538,21 @@ int Order::check_order(FieldElement& a) const
   return 1;
 }
 
-// Same, v will hold (non-integral) coords of a missing product
+// Same, v will hold field coords of a missing product
 int Order::check_order(Qvec& v) const
 {
   for (int i=0; i<rank; i++)
     {
       const FieldElement& x = Zbasis[i];
+      // assert (x.is_integral());
       for (int j=i; j<rank; j++)
         {
-          v = (x*Zbasis[j]).coords();
-          if (!is_one(v.denom))
+          FieldElement y = Zbasis[j];
+          // assert (y.is_integral());
+          FieldElement z = x*y;
+          // assert (z.is_integral());
+          v = z.coords(); // field coords
+          if (!contains(z)) // not in equation order
             return 0;
         }
     }
@@ -1572,27 +1578,35 @@ ZZ Order::extend_by(const FieldElement& a, int check)
   return extend_by(a.coords());
 }
 
-// Extend by v, coords in this order of an algebraic integer,
-// returning the index of the extension.
+// Extend by v, field coords of an algebraic integer, returning the
+// index of the extension.
 ZZ Order::extend_by(const Qvec& v)
 {
   if (is_one(v.denom))
+    return ZZ(1);
+  const Field& F = *Zbasis[0].field_ptr();
+  auto a = F(v);
+  // assert (a.is_integral());
+  if (contains(a))
     return ZZ(1);
 
   ZZ old_index = index;
   int nsteps=0;
   Qvec w = v;
-  while (1)
+  while (nsteps < rank*rank)
     {
       nsteps += 1;
+      // cout << "nsteps = " << nsteps << ", index = " << index << endl;
       add_one(w);
       if (check_order(w))
         {
           disc = poldisc/(index*index);
+          // cout << "extend_by() returning after " << nsteps << " steps " << endl;
           return index/old_index;
         }
     }
-  // code will never reach here
+  // code should never reach here
+  cout << "extend_by() failed after " << nsteps << " steps, current index is " << index << endl;
   disc = poldisc/(index*index);
   return index/old_index;
 }
@@ -1615,8 +1629,8 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
   return index_gain;
 }
 
-// Extend by all v in vlist (which must be coords in this order of
-// algebraic integers), returning the index of the extension
+// Extend by all v in vlist (which must be field coords of algebraic
+// integers), returning the index of the extension.
 ZZ Order::extend_by(const vector<Qvec>& vlist)
 {
   ZZ index_gain(1);
