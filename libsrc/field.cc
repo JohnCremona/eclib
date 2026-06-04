@@ -1532,10 +1532,10 @@ void Order::add_one(const Qvec& v)
 // multiplication.  If not, a will hold a missing product.
 int Order::check_order(FieldElement& a) const
 {
-  for (int i=0; i<rank; i++)
+  for (int i=1; i<=rank; i++)
     {
       const FieldElement& x = basis_elt(i);
-      for (int j=i; j<rank; j++)
+      for (int j=i; j<=rank; j++)
         {
           a = x * basis_elt(j);
           if (!contains(a))
@@ -1549,11 +1549,11 @@ int Order::check_order(FieldElement& a) const
 // Same, v will hold field coords of a missing product
 int Order::check_order(Qvec& v) const
 {
-  for (int i=0; i<rank; i++)
+  for (int i=1; i<=rank; i++)
     {
       const FieldElement& x = basis_elt(i);
       // assert (x.is_integral());
-      for (int j=i; j<rank; j++)
+      for (int j=i; j<=rank; j++)
         {
           FieldElement y = basis_elt(j);
           // assert (y.is_integral());
