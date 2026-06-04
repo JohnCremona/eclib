@@ -705,7 +705,9 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 
 // From raw aPmap_int_coords compute Hecke order HO, replace
 // aPmap_int_coords entries with coords w.r.t. HO.
+
 //#define DEBUG_HO
+
 void Newform::compute_HO_from_raw_eigs(int verbose)
 {
   // Initialise the Hecke Order to an approximation to the maximal order
@@ -729,7 +731,7 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
 #endif
 
   // Make the matrices transforming raw coords to field coords (in F)
-  // and HO-coords (ignoring division by denom_abs here)
+  // and HO-coords (times denom_abs)
   Qmat M0 = Fiso.matrix() * basis_change_matrix;
   Qmat M = pcm_orig * M0;
 #ifdef DEBUG_HO
@@ -760,38 +762,29 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
   cout << "After reduction, trimming and transpose, E =\n" << E << endl;
 #endif
 
-  Qmat ME = M * Qmat(E, denom_abs);
+  // The columns of QE are a Z-basis for the Z-module of ap field coord vectors:
+  Qmat QE = M0 * Qmat(E, denom_abs);
 #ifdef DEBUG_HO
-  cout << "ME =\n" << ME << endl;
+  cout << "QE =\n" << QE << endl;
 #endif
-  // The columns of ME are a basis for the Z-module of HO-coord
-  // vectors of all ap.  If ME is integral, then the original HO
-  // contains all ap, but we still need to change coordinates.  In
-  // general, we extend the order to include all elements encoded by
-  // the columns of ME:
-  ZZ index_gain = ZZ(1);
-  if (ME.is_integral())
-    {
-      if (verbose)
-        cout << "Original Hecke order contained all ap" << endl;
-    }
-  else
-    {
-      index_gain = HO.extend_by(ME);
-      if (verbose)
-        cout << "Hecke order extended by index " << index_gain << " to contain all ap" <<endl;
-      M = HO.get_pcm() * M0;
-    }
+
+  // Extend the order by all elements encoded by the columns of QE:
+  ZZ index_gain = HO.extend_by(QE);
+  if (verbose)
+    cout << "Hecke order extended by index " << index_gain << " to contain all ap" <<endl;
+
+  // This M converts raw ap coord vectors to new order coord vectors
+  M = HO.get_pcm() * M0 * Qmat(mat_m::identity_matrix(d), denom_abs);
 #ifdef DEBUG_HO
   cout << "M =\n" << M << endl;
 #endif
 
-  // Change coords of all aP by applying M and dividing by denom_abs
-  // to get new HO-coords which should now all be integral:
+  // Change coords of all aP by applying M to get new HO-coords which
+  // should now be integral:
   i=1;
   for (auto& p_c : aPmap_int_coords)
     {
-      Qvec v = M * Qvec(p_c.second, denom_abs);
+      Qvec v = M * Qvec(p_c.second);
       assert (v.is_integral());
       vec_m vnum = v.get_numerator();
       p_c.second = vnum;

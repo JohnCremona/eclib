@@ -252,14 +252,14 @@ public:
   // index of the extension: second version which uses the next two
   // internally.
   ZZ extend_by(const FieldElement& a, int check=1);
-  // Extend by v, coords in this order of an algebraic integer,
-  // returning the index of the extension.
+  // Extend by v, field coords of an algebraic integer, returning the
+  // index of the extension.
   ZZ extend_by(const Qvec& v);
   // Extend by all a in alist (which must be algebraic integers),
   // returning the index of the extension
   ZZ extend_by(const vector<FieldElement>& alist, int check=1);
-  // Extend by all v in vlist (which must be coords in this order of
-  // algebraic integers), returning the index of the extension
+  // Extend by all v in vlist (which must be field coords of algebraic
+  // integers), returning the index of the extension.
   ZZ extend_by(const vector<Qvec>& vlist);
   // Extend by all columns v of M (as in previous method), returning
   // the index of the extension
