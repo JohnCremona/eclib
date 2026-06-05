@@ -1,4 +1,4 @@
-// File FIELD.H: class for working with number fields for Hecke eigenvalues
+// File FIELD.H: classes for working with number fields for Hecke eigenvalues
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona

@@ -57,6 +57,9 @@ int main()
       cout << "a = " << ai << " PASSED" << endl << endl;
     else
       cout << "a = " << ai << " FAILED" << endl << endl;
+
+  flint_cleanup_master();
+  exit(0);
 }
 
 int test(const ZZ& a)
@@ -102,10 +105,8 @@ int test(const ZZ& a)
   {
       cout << "******************* WRONG! ******************" <<endl;
       return 0;
-    }
+  }
   return 1;
-  flint_cleanup_master();
-  exit(0);
 }
 
 std::ostream& operator<<(std::ostream& s, const fmpz_t& a)

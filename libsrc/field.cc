@@ -1,4 +1,4 @@
-// File FIELD.CC: class for working with number fields for Hecke eigenvalues
+// File FIELD.CC: classes for working with number fields for Hecke eigenvalues
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
@@ -1632,8 +1632,6 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
   for (auto a: alist)
     index_gain *= extend_by_one(a, 0);
   return index_gain;
-  // auto step = [this](const FieldElement&a){return this->extend_by_one(a,0);};
-  // return std::accumulate(alist.begin(), alist.end(), ZZ(1), step);
 }
 
 // Extend by all v in vlist (which must be field coords of algebraic

@@ -720,7 +720,6 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
 
   // Store the index and (inverse) basis matrix
   ZZ index_orig = HO.get_order_index();
-  mat_m pcm_orig = HO.get_pcm();
 
   if (verbose)
     cout << "Hecke order initialised, contains the equation order with index "
@@ -732,7 +731,6 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
   // Make the matrix transforming raw coords to field coords (in F)
   Qmat M0 = Fiso.matrix() * basis_change_matrix;
 #ifdef DEBUG_HO
-  cout << "pcm_orig =\n" << pcm_orig << endl;
   cout << "iso =\n" << Fiso.matrix() << endl;
   cout << "bcm =\n" << basis_change_matrix << endl;
   cout << "M0 (mapping raw coords to "<<denom_abs<<"* field-coords) =\n" << M0 << endl;
