@@ -189,8 +189,6 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 Newform::Newform(Newspace* x, int i, int fill_aPmap, int fill_aMlist, int verbose)
   :N(x->N), nsp(x), index(i), lab(codeletter(i-1))
 {
-  if (verbose)
-    cout << "Constructing Newform from file data "<< endl;
   if (!input_from_file(fill_aPmap, fill_aMlist, verbose))
     cerr << "Unable to read Newform " << lab << endl;
 }
@@ -501,7 +499,7 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
   DivRem(f_new, rem, f_all, f_old);
   if (!IsZero(rem))
     {
-      cout << "Problem in Newspace::new_cuspidal_poly() at level "<<level_label<<endl;
+      cout << "Problem in Newspace::new_cuspidal_poly() at level "<<N<<endl;
       cout << "Operator " << T.name() << " has full poly" << endl;
       display_factors(f_all);
       cout << "and old poly" << endl;
@@ -1121,7 +1119,7 @@ int Newform::input_from_file(int fill_aPmap, int fill_aMlist, int verb)
   // verb = 2;
   string fname = filename();
   if (verb)
-    cout << "Reading newform " << lab << " from " << fname << " (verb="<<verb<<")"<<endl;
+    cout << " - reading newform " << lab << " from " << fname << " (verb="<<verb<<")"<<endl;
   ifstream fdata(fname.c_str());
   if (!fdata.is_open())
     {
@@ -1144,17 +1142,18 @@ int Newform::input_from_file(int fill_aPmap, int fill_aMlist, int verb)
 
   // Dimension:
   fdata >> d;
-  if (verb>1)
-    cout << "--> dim = " << d << endl;
+  if (verb)
+    cout << " :dim = " << d << endl;
 
   // Hecke field (we only read F; F0 and Fiso are not defined):
   F = new Field();
   F->read(fdata);
 
-  if (verb>1)
+  if (verb)
     {
-      cout << "After reading Hecke field, before reading eigenvalues:" << endl;
-      display();
+      cout << " :after reading Hecke field, before reading eigenvalues" << endl;
+      if (verb>1)
+        display();
     }
 
   // read integral basis info
@@ -1162,18 +1161,19 @@ int Newform::input_from_file(int fill_aPmap, int fill_aMlist, int verb)
   ZZ ib;
   fdata >> ib; // index of the equation order
   if (verb>1)
-    cout << "Read order index = " << ib << endl;
+    cout << " :read order index = " << ib << endl;
   mat_m bcm(d,d);
   fdata >> bcm;
   if (verb>1)
-    cout << "Read bcm = \n" << bcm << endl;
+    cout << " :read bcm = \n" << bcm << endl;
   HO = Order(*F,ib,bcm);
   if (verb>1)
-    cout << "Hecke order: " << HO << endl;
+    cout << " :Hecke order: " << HO << endl;
 
   fdata >> ws;
   sfe = -1;
-  //cout << "Now reading eQ for Q in " << nsp->badprimes <<endl;
+  if (verb)
+    cout << " :reading e_q for q in " << nsp->badprimes <<endl;
   // A-L eigenvalues (will read nothing if level is (1))
   for (auto Q: nsp->badprimes)
     {
@@ -1194,10 +1194,10 @@ int Newform::input_from_file(int fill_aPmap, int fill_aMlist, int verb)
       if (verb>1)
         cout << "AL eigenvalue for " << Q << " is " << eQ << endl;
     }
-  if (verb>1)
+  if (verb)
     {
-      cout << "After reading eQ, before reading aP:" << endl;
-      display(0, 1, 0);
+      cout << " :after reading e_q, before reading a_p" << endl;
+      if (verb>1) display(0, 1, 0);
     }
 
   // aP
@@ -1240,20 +1240,23 @@ int Newform::input_from_file(int fill_aPmap, int fill_aMlist, int verb)
       // eat whitespace, including newline, so we can detect eof
       fdata >> ws;
     }
-  if (verb>1)
+  if (verb)
     {
-      cout << "After reading aP from " << fname <<":" << endl;
-      display(1,1,0);
+      cout << " :after reading a_p" << endl;
+      if (verb>1) display(1,1,0);
     }
   if (fill_aMlist)
     {
       // compute a_m and traces from a_p
       compute_coefficients();
+      if (verb)
+        cout << " :after computing a_m" << endl;
     }
   if (verb)
     {
-      cout << "After reading everything from " << fname <<":" << endl;
-      display(1,1, fill_aMlist); // no traces unless aMlist has been filled.
+      cout << " :after reading everything" << endl;
+      if (verb>1)
+        display(1,1, fill_aMlist); // no traces unless aMlist has been filled.
     }
   return 1;
 }
@@ -1288,7 +1291,7 @@ int Newspace::input_from_file(const long& level, int fill_aPmaps, int fill_aMlis
   N = level;
   level_label = to_string(N);
   if (verb)
-    cout << "In Newspace::input_from_file() with N="<< N << endl;
+    cout << " - reading Newspace for level N="<< N << endl;
   badprimes = pdivs(N);
   Ndivs = posdivs(N, badprimes);
   Ndivs.pop_back(); // excude N itself
@@ -1297,7 +1300,7 @@ int Newspace::input_from_file(const long& level, int fill_aPmaps, int fill_aMlis
   ifstream fdata(fname.c_str());
   if (!fdata.is_open())
     {
-      cerr << "File " << fname << " not available for Newspace input" << endl;
+      cerr << "**************** File " << fname << " not available for Newspace input" << endl;
       return 0;
     }
   string dat;
@@ -1306,37 +1309,39 @@ int Newspace::input_from_file(const long& level, int fill_aPmaps, int fill_aMlis
   int nnf;
   fdata >> nnf;
   if (verb)
-    cout << "-> Level "<<level_label<<" has " << nnf << " newforms in "<<fname<<endl;
+    cout << " :level "<<N<<" has " << nnf << " newforms";
   if (nnf==0)
     {
+      if (verb)
+        cout << endl;
       fdata.close();
       return 1;
     }
 
   vector<int> dims(nnf);
   fdata >> dims;
-  if (verb>1)
-    cout << "-> dims: " << dims <<endl;
+  if (verb)
+    cout << " of dimensions " << dims <<endl;
 
   newforms.reserve(nnf);
   for (int i=1; i<=nnf; i++)
     {
       if (verb)
-        cout << "About to read newform #" << i << " from file" << endl;
+        cout << " - about to read newform #" << i << " from file" << endl;
       Newform nf(this, i, fill_aPmaps, fill_aMlists, verb);
-      if (verb>1)
+      if (verb)
         {
-          cout << "After reading newform #" << i << " from file:" << endl;
-          nf.display(1,1, fill_aMlists); // only display traces if each aMlist have been filled
+          cout << " - finished reading newform #" << i << " from file" << endl;
+          if (verb>1)
+            nf.display(1,1, fill_aMlists); // only display traces if all aMlists have been filled
         }
       newforms.push_back(nf);
     }
 
-  if (verb>1)
+  if (verb)
     {
-      cout << "Finished reading Newspace data with " << nnf << " newforms from " << fname << endl;
-      for (int i=0; i<nnf; i++)
-        cout << "#" << (i+1) << ": " << "dim = " << dims[i] << endl;
+      cout << "Finished reading Newspace data with " << nnf << " newforms from " << fname
+           << " of dimensions " << dims << endl << endl;
     }
   fdata.close();
   return 1;
