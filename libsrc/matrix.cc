@@ -248,6 +248,14 @@ void Zmat<T>::append_rows(int n)
   nro += n;
 }
 
+// append given new row
+template<class T>
+void Zmat<T>::append_row(const Zvec<T>& new_row)
+{
+  entries.insert(entries.end(), new_row.entries.begin(), new_row.entries.end());
+  nro += 1;
+}
+
 // append given new rows
 template<class T>
 void Zmat<T>::append_rows(const vector<Zvec<T>>& new_rows)

@@ -85,6 +85,7 @@ public:
   static Zmat<T> identity_matrix(long n) {return scalar_matrix(n, T(1));}
 
   void append_rows(int n=1); // append n zero rows
+  void append_row(const Zvec<T>& new_row); // append given new row
   void append_rows(const vector<Zvec<T>>& new_rows); // append given new rows
   void delete_rows(int n=1); // delete the last n rows
 

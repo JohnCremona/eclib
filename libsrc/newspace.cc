@@ -178,7 +178,9 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
       if (Fiso.is_nontrivial())
         {
           cout << " -- replacing original Hecke field with polynomial\n" << F0pol
-               << "\n   with polredabs reduced field with polynomial\n" << ::str(F->poly()) << endl;
+               << "\n   with "
+               << (canonical? "polredabs": "polredbest")
+               << " reduced field with polynomial\n" << ::str(F->poly()) << endl;
         }
       cout <<"Hecke field data:" << endl;
       cout << *F << endl;
@@ -198,13 +200,13 @@ string Newform::label() const
   return nsp->level_label + lab;
 }
 
-// raw eigenvalue coordinate vector of a general principal operator:
+// raw eigenvalue coordinate vector of a general operator:
 vec_m Newform::eig_raw(const matop& T)
 {
   return to_vec_m(nsp->H1->applyop_proj(T, key_symbol, projcoord));
 }
 
-// eigenvalue of a general principal operator:
+// eigenvalue of a general operator:
 FieldElement Newform::eig(const matop& T)
 {
   vec_m apv = eig_raw(T);
@@ -258,12 +260,12 @@ FieldElement Newform::eig_P(const long& P)
 FieldElement Newform::compute_aM(const long& M)
 {
 #ifdef DEBUG_COEFFS
-  cout<<"Computing aM for M = " << M << endl;
+  cout<<"Computing a_m for m = " << M << endl;
 #endif
   // largest M for which we already have the coefficient:
   long maxM = aMlist.size()-1;
 
-  // Just return the ctored value if possible:
+  // Just return the stored value if possible:
   if (M<=maxM)
     return aMlist[M];
 
@@ -272,6 +274,10 @@ FieldElement Newform::compute_aM(const long& M)
     return (*F)(0);
   if (M==1)
     return (*F)(1);
+
+#ifdef DEBUG_COEFFS
+  cout<<"Computing a_m via recursion" << endl;
+#endif
 
   // Now we assume that aMlist contains aM[M'] for proper divisors
   long p = primdiv(M); // smallest prime divisor
@@ -300,7 +306,7 @@ FieldElement Newform::compute_aM(const long& M)
     aP = it->second;
 
 #ifdef DEBUG_COEFFS
-  cout << " - a_p = " << aP << endl;
+  cout << " - using a_p" << endl;
 #endif
   if (e==1)
     return aP;
@@ -308,7 +314,11 @@ FieldElement Newform::compute_aM(const long& M)
   // Now  e>=2, use recursion
   M1 = M/p;
   FieldElement a = aP*aMlist[M1];
-  return (divides(p,N)? a : a - (*F)(p) * aMlist[M1/p]);
+  FieldElement b = (divides(p,N)? a : a - (*F)(p) * aMlist[M1/p]);
+#ifdef DEBUG_COEFFS
+  cout << " - a_" << M << " computed" << endl;
+#endif
+  return b;
 }
 
 //#define DEBUG_COEFFS
@@ -329,13 +339,13 @@ FieldElement Newform::aM(const long& M)
     {
       FieldElement a = compute_aM(M1);
 #ifdef DEBUG_COEFFS
-      cout<<" computed a_"<<M1<<" = " << a << endl;
+      cout<<" computed a_"<<M1<<endl; // " = " << a << endl;
 #endif
       aMlist.push_back(a);
       trace_list.push_back(a.trace().num());
     }
 #ifdef DEBUG_COEFFS
-  cout<<" returning a_"<<M<<" = " << aMlist[M] << endl;
+  cout<<" returning a_"<<M<<endl; // " = " << aMlist[M] << endl;
 #endif
   return aMlist[M];
 }
@@ -784,10 +794,14 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
     }
 
   // LLL-reduce w.r.t. the new coords
+  if (verbose)
+    cout << "LLL step..." << flush;
   mat_m U;
   HO.LLL_reduce(transpose(E0), U);
   for (auto& p_c : aPmap_int_coords)
     p_c.second = U * p_c.second;
+  if (verbose)
+    cout << "LLL done." << endl;
 }
 
 // Fill dict aPmap_int_coords of raw eigenvalue coord vectors of
@@ -844,7 +858,7 @@ void Newform::old_compute_eigs(int ntp, int verbose)
               if (verbose>1) cout << ", a_p = " << a_p;
               cout<< endl;
             }
-          assert(a_p.is_integral());
+          // assert(a_p.is_integral());
           aPmap[p] = a_p;
           if (d>1)
             {

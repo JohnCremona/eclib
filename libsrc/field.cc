@@ -1516,16 +1516,31 @@ void Order::add_one(const Qvec& v)
 
   Qmat M(transpose(basis_matrix)); // rows are field coords of current gens
   M.append_row(v);
+#if(0)
+  cout << "Calling HNF (" << M.nrows() << "x" << M.ncols() << ")..." << flush;
   M = HNF(M);           // rows are coords of new Z-basis, last row is 0
-  // assert(trivial(M.get_numerator().row(rank+1)));
+  cout << " HNF done." << endl;
+#else
+  Qmat M1 = Qmat::identity(rank);
+  M1.append_row(power_coords_matrix * v);
+  mat_m U;
+  cout << "Calling HNF (" << M1.nrows() << "x" << M1.ncols() << ")..." << flush;
+  M1 = HNF(M1, U);
+  cout << " HNF done." << endl;
+  M = U*M;
+#endif
+
+  assert(trivial(M.get_numerator().row(rank+1)));
   M.delete_row();
-  M = LLL(M);
+  // M = LLL(M);
 
   basis_matrix = transpose(M);
   Qmat A = basis_matrix.inverse();
   // assert (is_one(A.get_denom()));
   power_coords_matrix = A.get_numerator();
   index = abs(power_coords_matrix.determinant());
+
+  cout << "leaving add_one()" << endl;
 }
 
 // Check that the Z-span of the current Z-basis is closed under
@@ -1534,12 +1549,18 @@ int Order::check_order(FieldElement& a) const
 {
   for (int i=1; i<=rank; i++)
     {
-      const FieldElement& x = basis_elt(i);
+      const Qmat& Mi = Qmat(basis_elt(i).matrix(), basis_matrix.col(i).get_denom());
+      const Qmat& PMi = power_coords_matrix * Mi;
       for (int j=i; j<=rank; j++)
         {
-          a = x * basis_elt(j);
-          if (!contains(a))
-            return 0;
+          const auto& bj = basis_matrix.col(j);
+          const auto& w = PMi * bj;
+          if (!(w.is_integral()))
+            {
+              auto v = Mi * bj;
+              a = (*F)(v);
+              return 0;
+            }
         }
     }
   // if we reach here, all products are in the Z-span
@@ -1549,23 +1570,61 @@ int Order::check_order(FieldElement& a) const
 // Same, v will hold field coords of a missing product
 int Order::check_order(Qvec& v) const
 {
+  int tr = 1;
+  if (tr) cout << "Starting check_order()..." << endl;
+
   for (int i=1; i<=rank; i++)
     {
-      const FieldElement& x = basis_elt(i);
-      // assert (x.is_integral());
+      const Qmat& Mi  = Qmat(basis_elt(i).matrix(), basis_matrix.col(i).get_denom());
+      const Qmat& PMi = power_coords_matrix * Mi;
       for (int j=i; j<=rank; j++)
         {
-          FieldElement y = basis_elt(j);
-          // assert (y.is_integral());
-          FieldElement z = x*y;
-          v = z.coords(); // field coords
-          if (!contains(z)) // not in equation order
-            return 0;
+          const auto& bj = basis_matrix.col(j);
+          const auto& w = PMi * bj;
+          if (!(w.is_integral()))
+            {
+              v = Mi * bj;
+              if (tr) cout << "check_order() returns 0" << endl;
+              return 0;
+            }
+          if (tr) cout << "." << flush;
         }
+      if (tr) cout << endl;
     }
   // if we reach here, all products are in the Z-span
+  if (tr) cout << "check_order() returns 1" << endl;
   return 1;
 }
+
+// // Same, v will hold field coords of a missing product
+// int Order::check_order(Qvec& v) const
+// {
+//   int tr = 1;
+//   if (tr) cout << "Starting check_order()..." << endl;
+//   auto bas = get_basis();
+//   for (int i=0; i<rank; i++)
+//     {
+//       const FieldElement& x = bas[i];
+//       // assert (x.is_integral());
+//       for (int j=i; j<rank; j++)
+//         {
+//           FieldElement y = bas[j];
+//           // assert (y.is_integral());
+//           FieldElement z = x*y;
+//           v = z.coords(); // field coords
+//           if (!contains(z)) // not in equation order
+//             {
+//               if (tr) cout << "check_order() returns 0" << endl;
+//               return 0;
+//             }
+//           if (tr) cout << "." << flush;
+//         }
+//       if (tr) cout << endl;
+//     }
+//   // if we reach here, all products are in the Z-span
+//   if (tr) cout << "check_order() returns 1" << endl;
+//   return 1;
+// }
 
 // Extend by a (an algebraic integer), returning the index of the
 // extension: incremental version using the previous two internal
@@ -1602,12 +1661,12 @@ ZZ Order::extend_by_one(const Qvec& v)
   while (nsteps < rank*rank)
     {
       nsteps += 1;
-      // cout << "nsteps = " << nsteps << ", index = " << index << endl;
+      cout << "nsteps = " << nsteps << ", index = " << index << endl;
       add_one(w);
       if (check_order(w))
         {
           disc = poldisc/(index*index);
-          // cout << "extend_by() returning after " << nsteps << " steps " << endl;
+          cout << "extend_by() returning after " << nsteps << " steps " << endl;
           return index/old_index;
         }
     }
@@ -1648,9 +1707,20 @@ ZZ Order::extend_by(const vector<Qvec>& vlist)
 // the index of the extension
 ZZ Order::extend_by(const Qmat& M)
 {
+  int tr=1;
   ZZ index_gain(1);
   for (int i=1; i<=M.ncols(); i++)
-    index_gain *= extend_by_one(M.col(i));
+    {
+      ZZ ig = extend_by_one(M.col(i));
+      if (!is_one(ig))
+        {
+          index_gain *= ig;
+          if (tr) cout << "Column " << i << " gives index gain of " << ig
+                       << ", total index_gain so far is " << index_gain << endl;
+        }
+      // else
+      //   cout << "Column " << i << " gives no index gain" << endl;
+    }
   return index_gain;
 }
 
