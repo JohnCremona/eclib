@@ -1830,7 +1830,7 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
 #ifdef DEBUG_GET_POLY
   cout << "Full matrix M of size " << M.nrows() << " obtained from get_full_mat()" << endl;
   cout << "den =  " << hden << endl;
-  M.output_flat(cout);
+  // M.output_flat(cout);
   cout << endl;
 #endif
   if (cuspidal)
@@ -1841,11 +1841,17 @@ ZZX get_poly(const long& N,  const gmatop& T, int cuspidal, const scalar& mod)
       cout << "Cuspidal case" << endl;
       cout << "Restricted M to cuspidal subspace"
            << " (which has denominator " << hden << "):" << endl;
-      M.output_flat(cout);
+      // M.output_flat(cout);
       cout << endl;
 #endif
     }
+#ifdef DEBUG_GET_POLY
+  cout << "Computing char poly (cuspidal = " << cuspidal << ", size = " << M.nrows() << ")..." << flush;
+#endif
   ZZX full_poly =  scaled_charpoly(mat_to_mat_ZZ(M), to_ZZ(hden));
+#ifdef DEBUG_GET_POLY
+  cout << "done." << endl;
+#endif
   if (T.is_simple())
     {
       poly_cache[NT] = full_poly;

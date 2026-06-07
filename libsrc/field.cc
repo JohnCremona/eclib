@@ -589,7 +589,7 @@ void FieldElement::operator*=(const FieldElement& b) // multiply by b
   if (field_is_Q())
     val *= b.val;
   else
-    v = Qvec((matrix()*b.matrix()).col(1),  get_denom() * b.get_denom());
+    v = Qmatrix()*b.v;
 }
 
 void FieldElement::operator*=(const ZZ& b) { operator*=(F->operator()(b));} // multiply by b

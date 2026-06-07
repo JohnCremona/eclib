@@ -457,9 +457,10 @@ Newspace::Newspace(const long& level, int fill_aPmaps, int fill_aMlists, int ver
 
 // Compute the char poly of T on the new cuspidal subspace using the
 // oldspaces to obtain the old factors with correct multiplicities.
+// Returns coprime==1 iff this is coprime to all the old polys, else 0.
 
 ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>& coeffs,
-                                const gmatop &T)
+                                const gmatop &T, int& coprime)
 {
   // This will use the caches
   if (verbose>1)
@@ -467,7 +468,11 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
 
   // Get/compute the char poly of T on the cuspidal subspace
 
+  if (verbose)
+    cout << "computing full cuspidal poly..." << flush;
   ZZX f_all = get_poly(N, T, 1, H1->modulus); // cuspidal=1
+  if (verbose)
+    cout << "done." << endl;
   if (verbose>1)
     {
       cout << "f_all = " << str(f_all) << endl;
@@ -475,6 +480,8 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
     }
   ZZX f_old;
   set(f_old); // set = 1
+  vector<ZZX> f_D_list;
+
   for (auto D: Ndivs) // Ndivs contains all *proper* D|N
     {
       const Newspace* NSD = get_oldspace(D, verbose>1);
@@ -490,6 +497,7 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
       for (auto form: NSD->newforms)
         {
           ZZX f_D = form.char_pol_lin_comb(Plist, coeffs, verbose>1);
+          f_D_list.push_back(f_D);
           if (verbose>1)
             {
               cout << "T's poly for " << form.label_suffix() << " is f_D = " << str(f_D) << endl;
@@ -525,6 +533,10 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
         cout<<"Caching new cuspidal poly for " << NT <<endl; // << ": " << str(f_new) << endl;
       new_cuspidal_poly_dict[NT] = f_new;
     }
+  // This is equivalent to testing AreCoprime(f_new, f_old) but the
+  // polys in f_D_list have smaller degree.
+  coprime = std::all_of(f_D_list.begin(), f_D_list.end(),
+                        [f_new](const ZZX& g){return AreCoprime(f_new, g);});
   return f_new;
 }
 
@@ -535,12 +547,19 @@ ZZX Newspace::new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>&
 int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scalar>& coeffs,
                                     const gmatop &T, ZZX& f_new)
 {
+  int coprime;
   // f_new is the char poly of T on the new cuspidal subspace
-  f_new = new_cuspidal_poly(Plist, coeffs, T);
+  f_new = new_cuspidal_poly(Plist, coeffs, T, coprime);
+  if (!coprime)
+    {
+      if (verbose)
+        cout << "NO: not coprime to old Hecke polynomial. ";
+      return 0;
+    }
   if (!IsSquareFree(f_new))
     {
       if (verbose)
-        cout << "NO: not squarefree";
+        cout << "NO: not squarefree. ";
       return 0;
     }
   // f_full is the char poly of T on the full space (not just the
@@ -554,11 +573,11 @@ int Newspace::valid_splitting_combo(const vector<long>& Plist, const vector<scal
   if (!AreCoprime(f_new, f_other))
     {
       if (verbose)
-        cout << "NO: not coprime to old Hecke polynomial * Eisenstein polynomial";
+        cout << "NO: not coprime to Eisenstein polynomial. ";
       return 0;
     }
   if (verbose)
-    cout << "YES: squarefree and coprime to old * Eisenstein Hecke polynomial";
+    cout << "YES: squarefree and coprime to old and Eisenstein Hecke polynomials. ";
   return 1;
 }
 
@@ -619,21 +638,22 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
   vector<scalar> lc(maxnp); // all 0
   for (int i=0; i<maxnp; i++)
     {
-      lc[i] = 1;
-      split_ok = test_lc(lc);
-      if (split_ok)
-        {
-          if (verbose)
-            cout<<"OK!"<<endl;
-          break;
-        }
-      lc[i] = 0;
-      if (verbose)
-        cout << " no good, continuing..." << endl;
+      mat M = get_full_mat(N, ops[i], H1->modulus);
+      // lc[i] = 1;
+      // split_ok = test_lc(lc);
+      // if (split_ok)
+      //   {
+      //     if (verbose)
+      //       cout<<"OK!"<<endl;
+      //     break;
+      //   }
+      // lc[i] = 0;
+      // if (verbose)
+      //   cout << " no good, continuing..." << endl;
     }
 
   // Now test random linear combos of length 2...maxnp
-  for (int np=2; np<=maxnp; np++)
+  for (int np=maxnp; np<=maxnp; np++)
     {
       for (int i=0; (!split_ok) && (i<5*np); i++)
         {
@@ -659,11 +679,12 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
       if (verbose)
         cout << " Using operator " << T_name << " to split off newforms" << endl;
       T_mat = heckeop(T_op);
-      if (verbose>1)
-        cout << " Getting new cuspidal poly for " << T_name << " from cache" << endl;
-      f = get_new_poly(N, T_op, 1, H1->modulus); // cuspidal=1 (cached)
-      if (verbose>1)
-        cout << "  New cuspidal poly for " << T_name << " from cache is " << str(f) << endl;
+      // f has been set by the test_lc function
+      // if (verbose)
+      //   cout << " Getting new cuspidal poly for " << T_name << " from cache" << endl;
+      // f = get_new_poly(N, T_op, 1, H1->modulus); // cuspidal=1 (cached)
+      // if (verbose)
+      //   cout << "  New cuspidal poly for " << T_name << " from cache is " << str(f) << endl;
     }
   else
     return;

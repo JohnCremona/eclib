@@ -220,9 +220,9 @@ private:
 
   // Return the char poly of T on the new cuspidal subspace using the
   // oldspaces to obtain the old factors with correct multiplicities.
-
+  // Returns coprime==1 iff this is coprime to all the old polys, else 0.
   ZZX new_cuspidal_poly(const vector<long>& Plist, const vector<scalar>& coeffs,
-                        const gmatop &T);
+                        const gmatop &T, int& coprime);
 
   // Return true iff this combo of ops T has char poly on the new
   // cuspidal subspace which is squarefree and coprime to both the old

@@ -72,6 +72,7 @@ public:
   int field_is_Q() const;
 
   mat_m matrix() const; // ignores denom
+  Qmat Qmatrix() const {return Qmat(matrix(), v.denom);} // with denom
   // NB Since we do not have polynomials with rational coefficients,
   // both charpoly and minpoly are scaled to be primitive rather than
   // monic.
