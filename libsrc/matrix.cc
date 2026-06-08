@@ -2413,12 +2413,33 @@ template mat_m evaluate<long>(const ZZX& f, const Zmat<long>& A);
 template mat_m evaluate<ZZ>(const ZZX& f, const Zmat<ZZ>& A);
 template mat_m evaluate<INT>(const ZZX& f, const Zmat<INT>& A);
 
+// evaluate f(A) where the coeffs of f are in co
+// (co[1]=const term, co[d+1]=coeff of x^d)
+template<class T>
+Zmat<T> evaluate(const Zvec<T>& co, const Zmat<T>& A)
+{
+  long d = dim(co)-1;
+  Zmat<T> mA = A;
+  Zmat<T> fA = co[d+1]*mA;
+  for(int i=d; i>0; i--)
+    {
+      fA = addscalar(fA, co[i]);
+      if(i>1)
+        fA = fA * mA;
+    }
+  return fA;
+}
+
+template Zmat<int> evaluate<int>(const Zvec<int>& co, const Zmat<int>& A);
+template Zmat<long> evaluate<long>(const Zvec<long>& co, const Zmat<long>& A);
+template Zmat<ZZ> evaluate<ZZ>(const Zvec<ZZ>& co, const Zmat<ZZ>& A);
+template Zmat<INT> evaluate<INT>(const Zvec<INT>& co, const Zmat<INT>& A);
+
 // p should be monic:
-mat_ZZ CompanionMatrix(const ZZX& p)
+mat_m CompanionMatrix(const ZZX& p)
 {
   int d = deg(p);
-  mat_ZZ A;
-  A.SetDims(d,d);
+  mat_m A(d,d);
   ZZ one(1);
   for(int i=1; i<d; i++)
     {

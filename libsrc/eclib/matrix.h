@@ -236,9 +236,12 @@ mat_ZZ evaluate(const ZZX& f, const mat_ZZ& A);
 // evaluate f(A) (assumes f monic)
 template<class T>
 mat_m evaluate(const ZZX& f, const Zmat<T>& A);
+// evaluate f(A) where the coeffs of f are in co
+template<class T>
+Zmat<T> evaluate(const Zvec<T>& co, const Zmat<T>& A);
 
 // p should be monic:
-mat_ZZ CompanionMatrix(const ZZX& p);
+mat_m CompanionMatrix(const ZZX& p);
 
 // check that a matrix is a scaled involution (modulo m, if m!=0):
 int check_involution(const mat_ZZ& A, const ZZ& den, const ZZ& m, int verbose=0);

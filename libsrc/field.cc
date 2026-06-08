@@ -35,6 +35,8 @@
 
 //#define DEBUG_FIELD_CONSTRUCTOR
 
+// The main Field constructor is the one based on a matrix (Qmat) with integral characteristic polynomial.  The following one, based on the polynomial, 
+
 Field::Field(const ZZX& p, string a, int verb)
   :have_integral_basis(0)
 {
@@ -44,21 +46,7 @@ Field::Field(const ZZX& p, string a, int verb)
 #endif
   if (IsMonic(p) && IsIrreducible(p))
     {
-      // Set m to be the companion matrix of p.  The function
-      // CompanionMatrix(p) returns a mat_ZZ so we do this manually.
-      d = deg(p);
-      mat_m m(d,d);
-      for(int i=1; i<d; i++)
-        {
-          m(i+1,i) = ZZ(1);
-          m(i,d) = -coeff(p, i-1);
-        }
-      m(d,d) = -coeff(p, d-1);
-      // Finally call the other constructor
-#ifdef DEBUG_FIELD_CONSTRUCTOR
-      cout << "Calling the other Field constructor " << endl;
-#endif
-      *this = Field(Qmat(m), a, verb);
+      *this = Field(Qmat(CompanionMatrix(p)), a, verb);
     }
   else
     {
@@ -96,18 +84,21 @@ Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
     cout << " - min poly = " << ::str(minpoly) << ", generator " << var << endl;
   //assert(IsMonic(minpoly));
 
-  mat_m C = A.companion_transform(B, Binv);
+  C = A.companion_transform(B, Binv);
 
   // NB The coords of a field element given a 'raw' coord Qvec v is Binv*v.
 
-  Cpowers.resize(d);
-  Cpower_traces.init(d);
-  Cpowers[0] = mat_m::identity_matrix(d);
-  Cpower_traces[1] = ZZ(d); // vec_m indices start at 1
-  for (int i=1; i<d; i++)
+  power_coords.resize(d-1);
+  power_traces.init(d);
+  mat_m Ci = mat_m::identity_matrix(d);
+  power_traces[1] = ZZ(d); // vec_m indices start at 1
+  for (int i=1; i<2*d-1; i++)
     {
-      Cpowers[i] = C*Cpowers[i-1];
-      Cpower_traces[i+1] = Cpowers[i].trace();
+      Ci = C*Ci; // = C^i
+      if (i<d)
+        power_traces[i+1] = Ci.trace();
+      else
+        power_coords[i-d] = Ci.col(1);
     }
   if(verb)
     {
@@ -392,11 +383,14 @@ int FieldElement::operator!=(const FieldElement& b) const
   return (!in_same_field(b)) || ( field_is_Q()? val!=b.val : v!=b.v);
 }
 
-mat_m FieldElement::matrix() const // ignores denom, not used for Q
+// ignores denom (use Matrix() for a Qmat). Not used for Q
+mat_m FieldElement::matrix() const
 {
   if (field_is_Q())
     return mat_m::scalar_matrix(1, num(val));
-  return lin_comb_mats(v.numerator, F->Cpowers);
+  else
+    // return lin_comb_mats(v.numerator, F->Cpowers);
+    return evaluate(v.numerator, F->C);
 }
 
 // NB Since we do not have polynomials with rational coefficients,
@@ -471,7 +465,7 @@ bigrational FieldElement::trace() const
   if (is_rational(r)) // then trace = r*degree
     return ZZ(d) * r;
   else
-    return bigrational(v.numerator * F->Cpower_traces, v.denom);
+    return bigrational(v.numerator * F->power_traces, v.denom);
 }
 
 void FieldElement::set_zero()

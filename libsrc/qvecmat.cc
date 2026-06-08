@@ -171,7 +171,7 @@ mat_m Qmat::companion_transform(Qmat& B, Qmat& Binv) const
     }
   Binv = B.inverse();
   mat_m C = (Binv*(*this)*B).get_numerator();
-  assert (CompanionMatrix(this->charpoly()) == mat_to_mat_ZZ(C));
+  assert (CompanionMatrix(this->charpoly()) == C);
   return C;
 }
 

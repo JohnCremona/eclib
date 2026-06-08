@@ -329,9 +329,9 @@ private:
   string var;   // name of generator
   int d;        // degree
   ZZX minpoly;  // irreducible poly of degree d
-  vector<mat_m> Cpowers;  // C^i for i=0,1,...,d-1, where C =dxd companion matrix of minpoly
-  vec_m Cpower_traces; // traces of C^i
-
+  mat_m C;      // C =dxd companion matrix of minpoly
+  vec_m power_traces; // traces of C^i
+  vector<vec_m> power_coords; // i'th item is coords of gen^{d+i} for i=0..d-2
   int have_integral_basis; // 0 if not yet computed
   Order Integers; // ring of integers (if have_integral_basis==1)
 
