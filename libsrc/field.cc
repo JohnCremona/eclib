@@ -168,6 +168,33 @@ void Field::display(ostream&s) const
     }
 }
 
+// multiply integral coord vectors
+vec_m Field::mult(const vec_m& av, const vec_m& bv) const
+{
+  vec_m cv(d);  // the new numerator vector
+
+  // first the terms g^k for 0<=k<d:
+  for (int k=0; k<d; k++)
+    {
+      ZZ ck(0);
+      for (int j=0; j<=k; j++)
+        ck += av[j+1]*bv[k-j+1];
+      if (!::is_zero(ck))
+        cv[k+1] = ck;
+    }
+
+  // then add the terms g^{k+d-1} for k=1,2,...,2(d-1)
+  for (int k=1; k<d; k++)
+    {
+      ZZ ck(0);
+      for (int j=k; j<d; j++)
+        ck += av[j+1]*bv[d+k-j];
+      if (!::is_zero(ck))
+        cv += ck * power_coords[k-1];
+    }
+  return cv;
+}
+
 FieldElement Field::element(const vec_m& c, const ZZ& d) const
 {
   return FieldElement(*this, c, d);
@@ -389,7 +416,6 @@ mat_m FieldElement::matrix() const
   if (field_is_Q())
     return mat_m::scalar_matrix(1, num(val));
   else
-    // return lin_comb_mats(v.numerator, F->Cpowers);
     return evaluate(v.numerator, F->C);
 }
 
@@ -480,12 +506,12 @@ void FieldElement::set_one()
   v.set_unit_vector(1);
 }
 
-FieldElement FieldElement::operator+(const ZZ& b) const {return operator+(F->operator()(b));} // add
-FieldElement FieldElement::operator+(const int& b) const {return operator+(F->operator()(b));} // add
-FieldElement FieldElement::operator+(const long& b) const {return operator+(F->operator()(b));} // add
-void FieldElement::operator+=(const ZZ& b) { operator+=(F->operator()(b));} // add b
-void FieldElement::operator+=(const int& b) { operator+=(F->operator()(b));} // add b
-void FieldElement::operator+=(const long& b) { operator+=(F->operator()(b));} // add b
+FieldElement FieldElement::operator+(const ZZ& b) const {return operator+((*F)(b));} // add
+FieldElement FieldElement::operator+(const int& b) const {return operator+((*F)(b));} // add
+FieldElement FieldElement::operator+(const long& b) const {return operator+((*F)(b));} // add
+void FieldElement::operator+=(const ZZ& b) { operator+=((*F)(b));} // add b
+void FieldElement::operator+=(const int& b) { operator+=((*F)(b));} // add b
+void FieldElement::operator+=(const long& b) { operator+=((*F)(b));} // add b
 
 // add b to this
 void FieldElement::operator+=(const FieldElement& b)
@@ -528,9 +554,9 @@ FieldElement FieldElement::operator-() const
     return FieldElement(*F, -v);
 }
 
-FieldElement FieldElement::operator-(const ZZ& b) const {return operator-(F->operator()(b));} // subtract
-FieldElement FieldElement::operator-(const int& b) const {return operator-(F->operator()(b));} // subtract
-FieldElement FieldElement::operator-(const long& b) const {return operator-(F->operator()(b));} // subtract
+FieldElement FieldElement::operator-(const ZZ& b) const {return operator-((*F)(b));} // subtract
+FieldElement FieldElement::operator-(const int& b) const {return operator-((*F)(b));} // subtract
+FieldElement FieldElement::operator-(const long& b) const {return operator-((*F)(b));} // subtract
 
 // subtract b
 void FieldElement::operator-=(const FieldElement& b)
@@ -550,9 +576,9 @@ void FieldElement::operator-=(const FieldElement& b)
     v -=b.v;
 }
 
-void FieldElement::operator-=(const ZZ& b) { operator-=(F->operator()(b));} // subtract b
-void FieldElement::operator-=(const int& b) { operator-=(F->operator()(b));} // subtract b
-void FieldElement::operator-=(const long& b) { operator-=(F->operator()(b));} // subtract b
+void FieldElement::operator-=(const ZZ& b) { operator-=((*F)(b));} // subtract b
+void FieldElement::operator-=(const int& b) { operator-=((*F)(b));} // subtract b
+void FieldElement::operator-=(const long& b) { operator-=((*F)(b));} // subtract b
 
 FieldElement FieldElement::operator-(const FieldElement& b) const
 {
@@ -581,14 +607,19 @@ void FieldElement::operator*=(const FieldElement& b) // multiply by b
   if (is_zero()) return;
   if (b.is_zero()) {set_zero(); return;}
   if (field_is_Q())
-    val *= b.val;
-  else
-    v = Qmatrix()*b.v;
+    {
+      val *= b.val;
+      return;
+    }
+
+  // v = Qmatrix()*b.v; // (correct but slower)
+
+  v = F->mult(v, b.v);
 }
 
-void FieldElement::operator*=(const ZZ& b) { operator*=(F->operator()(b));} // multiply by b
-void FieldElement::operator*=(const int& b) { operator*=(F->operator()(b));} // multiply by b
-void FieldElement::operator*=(const long& b) { operator*=(F->operator()(b));} // multiply by b
+void FieldElement::operator*=(const ZZ& b)   { v*=b;} // multiply by b
+void FieldElement::operator*=(const int& b)  { v*=b;}
+void FieldElement::operator*=(const long& b) { v*=b;}
 
 FieldElement FieldElement::operator*(const FieldElement& b) const
 {
@@ -606,9 +637,9 @@ FieldElement FieldElement::operator*(const FieldElement& b) const
   return a;
 }
 
-FieldElement FieldElement::operator*(const ZZ& b) const {return operator*(F->operator()(b));} // product
-FieldElement FieldElement::operator*(const int& b) const {return operator*(F->operator()(b));} // product
-FieldElement FieldElement::operator*(const long& b) const {return operator*(F->operator()(b));} // product
+FieldElement FieldElement::operator*(const ZZ& b) const {return (*F)(b*v);}
+FieldElement FieldElement::operator*(const int& b) const {return (*F)(b*v);}
+FieldElement FieldElement::operator*(const long& b) const {return (*F)(b*v);}
 
 FieldElement FieldElement::inverse() const // raise error if zero
 {
@@ -655,9 +686,9 @@ void FieldElement::operator/=(const FieldElement& b)      // divide by b
   operator*=(b.inverse());
 }
 
-void FieldElement::operator/=(const ZZ& b) { operator/=(F->operator()(b));} // divide by b
-void FieldElement::operator/=(const int& b) { operator/=(F->operator()(b));} // divide by b
-void FieldElement::operator/=(const long& b) { operator/=(F->operator()(b));} // divide by b
+void FieldElement::operator/=(const ZZ& b)   { v/=b;} // divide by b
+void FieldElement::operator/=(const int& b)  { v/=b;}
+void FieldElement::operator/=(const long& b) { v/=b;}
 
 FieldElement FieldElement::operator/(const FieldElement& b) const // raise error if b is zero
 {
@@ -681,9 +712,9 @@ FieldElement FieldElement::operator/(const FieldElement& b) const // raise error
   return a;
 }
 
-FieldElement FieldElement::operator/(const ZZ& b) const {return operator/(F->operator()(b));} // divide
-FieldElement FieldElement::operator/(const int& b) const {return operator/(F->operator()(b));} // divide
-FieldElement FieldElement::operator/(const long& b) const {return operator/(F->operator()(b));} // divide
+FieldElement FieldElement::operator/(const ZZ& b)   const {return (*F)(v/b);} // divide
+FieldElement FieldElement::operator/(const int& b)  const {return (*F)(v/b);}
+FieldElement FieldElement::operator/(const long& b) const {return (*F)(v/b);}
 
 FieldElement evaluate(const ZZX& f, const FieldElement a)
 {
@@ -1541,43 +1572,28 @@ void Order::add_one(const Qvec& v)
 // multiplication.  If not, a will hold a missing product.
 int Order::check_order(FieldElement& a) const
 {
-  for (int i=1; i<=rank; i++)
-    {
-      const Qmat& Mi = Qmat(basis_elt(i).matrix(), basis_matrix.col(i).get_denom());
-      const Qmat& PMi = power_coords_matrix * Mi;
-      for (int j=i; j<=rank; j++)
-        {
-          const auto& bj = basis_matrix.col(j);
-          const auto& w = PMi * bj;
-          if (!(w.is_integral()))
-            {
-              auto v = Mi * bj;
-              a = (*F)(v);
-              return 0;
-            }
-        }
-    }
-  // if we reach here, all products are in the Z-span
-  return 1;
+  Qvec v;
+  int ok = check_order(v);
+  if (!ok) {a = (*F)(v);}
+  return ok;
 }
 
 // Same, v will hold field coords of a missing product
 int Order::check_order(Qvec& v) const
 {
-  int tr = 1;
+  int tr = 0;
   if (tr) cout << "Starting check_order()..." << endl;
 
   for (int i=1; i<=rank; i++)
     {
-      const Qmat& Mi  = Qmat(basis_elt(i).matrix(), basis_matrix.col(i).get_denom());
-      const Qmat& PMi = power_coords_matrix * Mi;
+      const auto& bi = basis_matrix.col(i);
       for (int j=i; j<=rank; j++)
         {
           const auto& bj = basis_matrix.col(j);
-          const auto& w = PMi * bj;
+          v = F->mult(bi, bj); // field coords of product
+          const auto& w = power_coords_matrix * v;
           if (!(w.is_integral()))
             {
-              v = Mi * bj;
               if (tr) cout << "check_order() returns 0" << endl;
               return 0;
             }
@@ -1589,36 +1605,6 @@ int Order::check_order(Qvec& v) const
   if (tr) cout << "check_order() returns 1" << endl;
   return 1;
 }
-
-// // Same, v will hold field coords of a missing product
-// int Order::check_order(Qvec& v) const
-// {
-//   int tr = 1;
-//   if (tr) cout << "Starting check_order()..." << endl;
-//   auto bas = get_basis();
-//   for (int i=0; i<rank; i++)
-//     {
-//       const FieldElement& x = bas[i];
-//       // assert (x.is_integral());
-//       for (int j=i; j<rank; j++)
-//         {
-//           FieldElement y = bas[j];
-//           // assert (y.is_integral());
-//           FieldElement z = x*y;
-//           v = z.coords(); // field coords
-//           if (!contains(z)) // not in equation order
-//             {
-//               if (tr) cout << "check_order() returns 0" << endl;
-//               return 0;
-//             }
-//           if (tr) cout << "." << flush;
-//         }
-//       if (tr) cout << endl;
-//     }
-//   // if we reach here, all products are in the Z-span
-//   if (tr) cout << "check_order() returns 1" << endl;
-//   return 1;
-// }
 
 // Extend by a (an algebraic integer), returning the index of the
 // extension: incremental version using the previous two internal

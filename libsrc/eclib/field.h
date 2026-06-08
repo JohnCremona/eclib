@@ -356,6 +356,10 @@ public:
   FieldElement element(const Qvec& v) const;
   FieldElement operator()(const Qvec& v) const;
 
+  vec_m mult(const vec_m& av, const vec_m& bv) const; // multiply integral coord vectors
+  Qvec mult(const Qvec& av, const Qvec& bv) const     // multiply rational coord vectors
+  {return Qvec(mult(av.numerator, bv.numerator), av.denom * bv.denom);}
+
   int degree() const {return d;}
   int isQ() const {return d==1;}
   ZZX poly() const {return minpoly;}

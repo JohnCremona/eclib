@@ -82,16 +82,22 @@ public:
   void operator *= (const ZZ& c) {numerator *= c; cancel();}
   void operator *= (int c) {numerator *= ZZ(c); cancel();}
   void operator *= (long c) {numerator *= ZZ(c); cancel();}
+  void operator /= (const ZZ& c) {denom *= c; cancel();}
+  void operator /= (int c) {denom *= ZZ(c); cancel();}
+  void operator /= (long c) {denom *= ZZ(c); cancel();}
   inline friend Qvec reverse(const Qvec& v) {return Qvec(reverse(v.numerator), v.denom);}
   inline friend Qvec operator*(const ZZ& c, const Qvec& v) {return Qvec(c*v.numerator, v.denom);}
-  inline friend ostream& operator<<(ostream& s, const Qvec& x) { s << x.str();  return s;}
+  inline friend Qvec operator*(const int& c, const Qvec& v) {return Qvec(ZZ(c)*v.numerator, v.denom);}
+  inline friend Qvec operator*(const long& c, const Qvec& v) {return Qvec(ZZ(c)*v.numerator, v.denom);}
+  inline friend Qvec operator/(const Qvec& v, const ZZ& c) {return Qvec(v.numerator, c*v.denom);}
+  inline friend Qvec operator/(const Qvec& v, const int& c) {return Qvec(v.numerator, ZZ(c)*v.denom);}
+  inline friend Qvec operator/(const Qvec& v, const long& c) {return Qvec(v.numerator, ZZ(c)*v.denom);}
   friend Qvec operator*(const Qmat&m, const Qvec& v);
   friend Qvec operator*(const mat_m&m, const Qvec& v);
 };
 
+inline ostream& operator<<(ostream& s, const Qvec& x) { s << x.str();  return s;}
 inline istream& operator>>(istream& s, Qvec& x) {x.read(s); return s;}
-inline Qvec operator*(int c, const Qvec& v) {return ZZ(c)*v;}
-inline Qvec operator*(long c, const Qvec& v) {return ZZ(c)*v;}
 
 class Qmat {
   friend class FieldElement;
