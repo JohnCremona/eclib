@@ -127,7 +127,6 @@ subZspace<T> kernel(const Zmat<T>& m1, int method)
    T d;
    Zvec<int> pcols,npcols;
    Zmat<T> m = echelon(m1,pcols,npcols, rk, ny, d, method);
-   // cout << "echelon(M) for M = \n" << m1 << "\nis\n" << m << endl;
    Zmat<T> bas(m.ncols(),ny);
    for (int n=1; n<=ny; n++)
      bas.set(npcols[n],n,d);

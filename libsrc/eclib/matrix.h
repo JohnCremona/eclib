@@ -106,9 +106,9 @@ public:
                           long& rk, long& ny, T& d);
   friend void elimp<>(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
   friend void elimp1<>(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
-  friend Zmat echelonp<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+  friend Zmat echelon_modular<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                           long& rk, long& ny, T& d, const T& pr);
-  friend Zmat echelonp_via_flint<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+  friend Zmat echelon_via_flint_modular<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                           long& rk, long& ny, T& d, const T& pr);
   friend Zmat echmodp<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const T& pr);
@@ -118,7 +118,7 @@ public:
                                long& rk, long& ny, const T& pr);
   friend Zmat ref_via_ntl<>(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                              long& rk, long& ny, const T& pr);
-  friend Zmat rref<>(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+  friend Zmat rref_modular<>(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                      long& rk, long& ny, const T& pr);
   friend long rank_via_ntl<>(const Zmat<T>& M, const T& pr);
   friend T det_via_ntl<>(const Zmat<T>& M, const T& pr);
@@ -178,7 +178,7 @@ Zmat<T> submat(const Zmat<T>& m, const Zvec<long>& iv, const Zvec<long>& jv);
 
 template<class T>
 Zmat<T> echelon(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                          long& rk, long& ny, T& d, int method=0);
+                          long& rk, long& ny, T& d, int method=3);
 template<class T>
 Zmat<T> addscalar(const Zmat<T>&, const T&);
 template<class T>
@@ -186,11 +186,12 @@ Zvec<T> apply(const Zmat<T>&, const Zvec<T>&);
 
 // Assigns d*A^-1 to Ainv and returns d, assuming A square and det(A) nonzero
 template<class T>
-T inverse(const Zmat<T>& A, Zmat<T>& Ainv);
+T inverse(const Zmat<T>& A, Zmat<T>& Ainv, int method=0);
 
+// Compute the REF of a matrix by working modulo a prime and lifting:
 template<class T>
-Zmat<T> rref(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-             long& rk, long& ny, const T& pr);
+Zmat<T> rref_modular(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                     long& rk, long& ny, const T& pr);
 
 // Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
 template<class T>
@@ -292,6 +293,7 @@ Zmat<T> LLL(const Zmat<T>& M, Zmat<T>& U); // U*M=L with U unimodular
 template<class T>
 void find_pnpcols(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols);
 
+// Functions to compute the REF of a matrix modulo a prime:
 Zmat<int> ref_via_flint_modular(const Zmat<int>& M, const int& pr);
 Zmat<long> ref_via_flint_modular(const Zmat<long>& M, const long& pr);
 Zmat<ZZ> ref_via_flint_modular(const Zmat<ZZ>& M, const ZZ& pr);

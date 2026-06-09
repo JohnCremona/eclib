@@ -102,9 +102,9 @@ template<class T> Zmat<T> echelon0(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>
                       long& rk, long& ny, T& d);
 template<class T> void elimp(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
 template<class T> void elimp1(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
-template<class T> Zmat<T> echelonp(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+template<class T> Zmat<T> echelon_modular(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                       long& rk, long& ny, T& d, const T& pr);
-template<class T> Zmat<T> echelonp_via_flint(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+template<class T> Zmat<T> echelon_via_flint_modular(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                       long& rk, long& ny, T& d, const T& pr);
 template<class T> Zmat<T> echmodp(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                      long& rk, long& ny, const T& pr);
@@ -114,7 +114,7 @@ template<class T> Zmat<T> ref_via_flint_modular(const Zmat<T>& M, Zvec<int>& pco
                            long& rk, long& ny, const T& pr);
 template<class T> Zmat<T> ref_via_ntl(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const T& pr);
-template<class T> Zmat<T> rref(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+template<class T> Zmat<T> rref_modular(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const T& pr);
 template<class T> long rank_via_ntl(const Zmat<T>& M, const T& pr);
 template<class T> T det_via_ntl(const Zmat<T>& M, const T& pr);
