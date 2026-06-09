@@ -71,13 +71,11 @@ typedef sZmat_elim<INT> smat_I_elim;
 typedef ssubZspace<INT> ssubspace_I;
 typedef form_finderT<INT> form_finder_I;
 
-
 template<class T> int dim(const Zvec<T>&);
 template<class T> T operator*(const Zvec<T>&, const Zvec<T>&);
 template<class T> T operator*(const sZvec<T>&, const Zvec<T>&);
 template<class T> T content(const Zvec<T>&);
 template<class T> T maxabs(const Zvec<T>&);
-template<class T> Zvec<T> operator*(const Zmat<T>& m, const Zvec<T>& v);
 template<class T> int operator==(const Zvec<T>&, const Zvec<T>&);
 template<class T> int operator!=(const Zvec<T>&, const Zvec<T>&);
 template<class T> int trivial(const Zvec<T>&);
@@ -88,52 +86,8 @@ template<class T> void sub_row_to_vec(Zvec<T>& v, const Zmat<T>& m, long i);
 template<class T> ostream& operator<< (ostream&s, const Zvec<T>&);
 template<class T> istream& operator>> (istream&s, Zvec<T>&);
 template<class T> void swapvec(Zvec<T>& v, Zvec<T>& w);
-template<class T> Zmat<T> operator*(const Zmat<T>&, const Zmat<T>&);
 template<class T> Zvec<T> operator*(const Zmat<T>&, const Zvec<T>&);
-template<class T> int operator==(const Zmat<T>&, const Zmat<T>&);
-template<class T> istream& operator>> (istream&s, Zmat<T>&);
-template<class T> Zmat<T> colcat(const Zmat<T>& a, const Zmat<T>& b);
-template<class T> Zmat<T> rowcat(const Zmat<T>& a, const Zmat<T>& b);
-template<class T> Zmat<T> directsum(const Zmat<T>& a, const Zmat<T>& b);
-template<class T> void elimrows(Zmat<T>& m, long r1, long r2, long pos);
-template<class T> void elimrows1(Zmat<T>& m, long r1, long r2, long pos);
-template<class T> void elimrows2(Zmat<T>& m, long r1, long r2, long pos, const T& last);
-template<class T> Zmat<T> echelon0(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, T& d);
-template<class T> void elimp(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
-template<class T> void elimp1(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
-template<class T> Zmat<T> echelon_modular(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, T& d, const T& pr);
-template<class T> Zmat<T> echelon_via_flint_modular(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, T& d, const T& pr);
-template<class T> Zmat<T> echmodp(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const T& pr);
-template<class T> Zmat<T> echmodp_uptri(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const T& pr);
-template<class T> Zmat<T> ref_via_flint_modular(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                           long& rk, long& ny, const T& pr);
-template<class T> Zmat<T> ref_via_ntl(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                         long& rk, long& ny, const T& pr);
-template<class T> Zmat<T> rref_modular(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                               long& rk, long& ny, const T& pr);
-template<class T> long rank_via_ntl(const Zmat<T>& M, const T& pr);
-template<class T> T det_via_ntl(const Zmat<T>& M, const T& pr);
-template<class T> subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2);
-template<class T> ssubZspace<T> combine(const ssubZspace<T>& s1, const ssubZspace<T>& s2);
-template<class T> sZmat<T> restrict_mat(const sZmat<T>& m, const ssubZspace<T>& s);
-template<class T> Zmat<T> restrict_mat(const Zmat<T>& m, const subZspace<T>& s, int cr=0);
-template<class T> sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s);
-template<class T> int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd);
-template<class T> int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans);
-template<class T> subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
-template<class T> Zmat<T> matmulmodp(const Zmat<T>&, const Zmat<T>&, const T& pr);
-template<class T> Zvec<T> matvecmulmodp(const Zmat<T>&, const Zvec<T>&, const T& pr);
-template<class T> long population(const Zmat<T>& m);
-template<class T> T maxabs(const Zmat<T>& m);
-template<class T> double sparsity(const Zmat<T>& m);
-template<class T> int is_permutation_matrix(const Zmat<T>& m);
-template<class T> int is_signed_permutation_matrix(const Zmat<T>& m);
-template<class T> int is_identity_matrix(const Zmat<T>& m);
+
 template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr=0);
 template<class T> T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 template<class T> int dim(const subZspace<T>& s);
@@ -245,8 +199,6 @@ public:
   friend ostream& operator<< <>(ostream&s, const Zvec<T>&);
   friend istream& operator>> <>(istream&s, Zvec<T>&);
   friend void swapvec<>(Zvec<T>& v, Zvec<T>& w);
-  friend int is_permutation_matrix<>(const Zmat<T>& m); // test for being a permutation matrix
-  friend int is_signed_permutation_matrix<>(const Zmat<T>& m);
 
   // Implementation
 private:

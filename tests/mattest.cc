@@ -109,7 +109,7 @@ int main(void)
   // int method=0;
   // cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
   // cin>>method;
-  for (auto method: {0, 2, 3})
+  for (auto method: {0, 1, 2, 3})
     {
   cout << "\nUsing method " << method;
   if(method>0) cout << " (modulus = " << modulus << ")";
@@ -143,7 +143,8 @@ int main(void)
     } // loop over methods
 
   cout << "Calling ref_via_flint_modular()..." << endl;
-  mat R = ref_via_flint_modular(a, modulus);
+  scalar dd;
+  mat R = ref_via_flint_modular(a, dd, modulus);
   cout << " ref_via_flint_modular() returns\n" << R << endl;
 
   // test conversion to/from FLINT matrices:

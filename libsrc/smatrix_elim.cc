@@ -1259,15 +1259,15 @@ void sZmat_elim<T>::step5dense()
 #if TRACE_DENSE
   cout<<"Constructed dense matrix, starting dense elimination step..." <<endl;
 #endif
-  Zvec<int> pc,npc; long rk,ny;
+  Zvec<int> pc,npc; long rk,ny; T dummy;
 
-  dmat = ref_via_flint_modular(dmat,pc,npc,rk,ny,modulus);
+  dmat = echelon_via_flint_modular(dmat,pc,npc,rk,ny,dummy,modulus);
 
 #if TRACE_DENSE
-    cout<<"...finished dense elimination, rank = "<<rk;
-    cout<<", nullity = "<<ny<<endl;
-    //cout<<"Pivotal columns:    "<<pc<<endl;
-    // cout<<"Nonpivotal columns: "<<npc<<endl;
+  cout<<"...finished dense elimination, rank = "<<rk;
+  cout<<", nullity = "<<ny<<endl;
+  //cout<<"Pivotal columns:    "<<pc<<endl;
+  // cout<<"Nonpivotal columns: "<<npc<<endl;
 #endif
 
   // (3) put it back into the sparse structure

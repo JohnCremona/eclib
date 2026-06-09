@@ -273,58 +273,6 @@ void Zmat<T>::delete_rows(int n)
   nro -= n;
 }
 
-
-// Definitions of non-member, friend operators and functions
-
-// add/sub row i of mat to v
-template<class T>
-void add_row_to_vec(Zvec<T>& v, const Zmat<T>& m, long i)
-{
-  std::transform(v.entries.begin(), v.entries.end(),
-                 m.entries.begin()+(i-1)*m.nco,
-                 v.entries.begin(), std::plus<T>());
-}
-
-template<class T>
-void sub_row_to_vec(Zvec<T>& v, const Zmat<T>& m, long i)
-{
-  std::transform(v.entries.begin(), v.entries.end(),
-                 m.entries.begin()+(i-1)*m.nco,
-                 v.entries.begin(), std::minus<T>());
-}
-
-template<class T>
-Zmat<T> operator*(const Zmat<T>& m1, const Zmat<T>& m2)
-{
- long m=m1.nro, n=m1.nco, p=m2.nco;
- Zmat<T> m3(m,p);
- if (n==m2.nro)
-   {
-     auto a=m1.entries.begin();                                     // a points to m1(i,k)
-     for (auto c=m3.entries.begin(); c!=m3.entries.end(); c+=p)     // c points to m3(i,_) for 0<=i<m
-       {
-         for (auto b=m2.entries.begin(); b!=m2.entries.end(); b+=p) // b points to m2(k,_) for 0<=k<n
-           { // add m1(i,k)*m2(k,j) to m3(i,j) for 0<=j<p
-             T m1ik = *a++;
-             std::transform(b, b+p, c, c,
-                            [m1ik] (const T& m2kj, const T& m3ij) {return m1ik*m2kj+m3ij;});
-           }
-       }
-   }
- else
-   {
-     cerr << "Incompatible sizes in mat product"<<endl;
-     exit(1);
-   }
- return m3;
-}
-
-template<class T>
-int operator==(const Zmat<T>& m1, const Zmat<T>& m2)
-{
-  return (m1.nro==m2.nro) && (m1.nco==m2.nco) && (m1.entries==m2.entries);
-}
-
 template<class T>
 void Zmat<T>::output_raw(ostream& s) const
 {
@@ -437,6 +385,205 @@ void Zmat<T>::output_pretty(ostream& s) const
 }
 
 template<class T>
+Zmat<T> Zmat<T>::scalar_matrix(long n, const T& a)
+{
+  Zmat<T> D(n,n);
+  for (long i=1; i<=n; i++) D.set(i,i,a);
+  return D;
+}
+
+template<class T>
+long Zmat<T>::rank() const
+{
+  long rk=0;
+  T lastpivot(1);
+  Zmat<T> m(*this); // work with a copy, which will be reduced
+  long nc=m.ncols(), nr=m.nrows();
+  for (long c=1, r=1; (c<=nc)&&(r<=nr); c++)
+    {
+      T mmin = abs(m(r,c));
+      long rmin = r;
+      for (long r2=r+1; (r2<=nr)&&(!is_one(mmin)); r2++)
+        {
+          T mr2c = abs(m(r2,c));
+          if ((is_nonzero(mr2c)) && ((mr2c<mmin) || (::is_zero(mmin))))
+            {
+              mmin=mr2c;
+              rmin=r2;
+            }
+        }
+      if (mmin!=0)
+        {
+          rk++;
+          if (rmin>r) m.swaprows(r,rmin);
+          for (long r3 = r+1 ; r3<=nr; r3++)
+            elimrows2(m,r,r3,c,lastpivot);
+          lastpivot=mmin;
+          r++;
+        }
+    }
+  return rk;
+}
+
+template<class T>
+long Zmat<T>::nullity() const
+{
+ return nco-rank();
+}
+
+template<class T>
+T Zmat<T>::trace() const
+{
+  T tr(0);
+  for (long i=0; i<nro; i++)
+    tr += entries.at(i*(nco+1));
+  return tr;
+}
+
+// FADEEV'S METHOD
+
+template<class T>
+vector<T> Zmat<T>::charpoly() const
+{ long n = nrows();
+  Zmat<T> b(*this);
+  Zmat<T> id(identity_matrix(n));
+  vector<T> clist(n+1);
+  T t = trace();
+  clist[n]   =  1;
+  clist[n-1] = -t;
+  for (long i=2; i<=n; i++)
+    { b=(*this)*(b-t*id);          //     cout << b;   // (for testing only)
+        t=b.trace()/i;
+        clist[n-i] = -t;
+      }
+  if (!(b==t*id))
+    {
+      cerr << "Error in charpoly: final b = " << (b-t*id) << endl;
+      exit(1);
+    }
+  return clist;
+}
+
+template<class T>
+T Zmat<T>::determinant() const
+{
+ T det = charpoly()[0];
+ return (nro%2? -det :det);
+}
+
+template<class T>
+void Zvec<T>::sub_row(const Zmat<T>& m, int i)
+{
+  long n=entries.size();
+  auto wi = m.entries.begin() + (i-1)*n;
+  std::transform(entries.begin(), entries.end(), wi, entries.begin(), std::minus<T>());
+}
+
+// The next two need to be instantated hree as they are methods of the
+// Zvec class which is mostly instantiated in vector.cc
+template<class T>
+void Zvec<T>::add_row(const Zmat<T>& m, int i)
+{
+  long n=entries.size();
+  auto wi = m.entries.begin() + (i-1)*n;
+  std::transform(entries.begin(), entries.end(), wi, entries.begin(), std::plus<T>());
+}
+template void Zvec<int>::add_row(const Zmat<int>& m, int i);
+template void Zvec<long>::add_row(const Zmat<long>& m, int i);
+template void Zvec<ZZ>::add_row(const Zmat<ZZ>& m, int i);
+template void Zvec<INT>::add_row(const Zmat<INT>& m, int i);
+
+template<class T>
+void Zmat<T>::reduce_mod_p(const T& p)
+{
+  if (p==0) return;
+  std::transform(entries.begin(), entries.end(), entries.begin(),
+                 [p](const T& mij) {return mod(mij,p);});
+}
+template void Zvec<int>::sub_row(const Zmat<int>& m, int i);
+template void Zvec<long>::sub_row(const Zmat<long>& m, int i);
+template void Zvec<ZZ>::sub_row(const Zmat<ZZ>& m, int i);
+template void Zvec<INT>::sub_row(const Zmat<INT>& m, int i);
+
+// Definitions of non-member operators and functions
+
+// add/sub row i of mat to v
+template<class T>
+void add_row_to_vec(Zvec<T>& v, const Zmat<T>& m, long i)
+{
+  std::transform(v.entries.begin(), v.entries.end(),
+                 m.entries.begin()+(i-1)*m.nco,
+                 v.entries.begin(), std::plus<T>());
+}
+template void add_row_to_vec<int>(Zvec<int>& v, const Zmat<int>& m, long i);
+template void add_row_to_vec<long>(Zvec<long>& v, const Zmat<long>& m, long i);
+template void add_row_to_vec<ZZ>(Zvec<ZZ>& v, const Zmat<ZZ>& m, long i);
+template void add_row_to_vec<INT>(Zvec<INT>& v, const Zmat<INT>& m, long i);
+
+template<class T>
+void sub_row_to_vec(Zvec<T>& v, const Zmat<T>& m, long i)
+{
+  std::transform(v.entries.begin(), v.entries.end(),
+                 m.entries.begin()+(i-1)*m.nco,
+                 v.entries.begin(), std::minus<T>());
+}
+template void sub_row_to_vec<int>(Zvec<int>& v, const Zmat<int>& m, long i);
+template void sub_row_to_vec<long>(Zvec<long>& v, const Zmat<long>& m, long i);
+template void sub_row_to_vec<ZZ>(Zvec<ZZ>& v, const Zmat<ZZ>& m, long i);
+template void sub_row_to_vec<INT>(Zvec<INT>& v, const Zmat<INT>& m, long i);
+
+template<class T>
+Zmat<T> operator*(const Zmat<T>& m1, const Zmat<T>& m2)
+{
+ long m=m1.nro, n=m1.nco, p=m2.nco;
+ Zmat<T> m3(m,p);
+ if (n==m2.nro)
+   {
+     auto a=m1.entries.begin();                                     // a points to m1(i,k)
+     for (auto c=m3.entries.begin(); c!=m3.entries.end(); c+=p)     // c points to m3(i,_) for 0<=i<m
+       {
+         for (auto b=m2.entries.begin(); b!=m2.entries.end(); b+=p) // b points to m2(k,_) for 0<=k<n
+           { // add m1(i,k)*m2(k,j) to m3(i,j) for 0<=j<p
+             T m1ik = *a++;
+             std::transform(b, b+p, c, c,
+                            [m1ik] (const T& m2kj, const T& m3ij) {return m1ik*m2kj+m3ij;});
+           }
+       }
+   }
+ else
+   {
+     cerr << "Incompatible sizes in mat product"<<endl;
+     exit(1);
+   }
+ return m3;
+}
+template Zmat<int> operator*<int>(const Zmat<int>&, const Zmat<int>&);
+template Zmat<long> operator*<long>(const Zmat<long>&, const Zmat<long>&);
+template Zmat<ZZ> operator*<ZZ>(const Zmat<ZZ>&, const Zmat<ZZ>&);
+template Zmat<INT> operator*<INT>(const Zmat<INT>&, const Zmat<INT>&);
+
+template<class T>
+int operator==(const Zmat<T>& m1, const Zmat<T>& m2)
+{
+  return (m1.nro==m2.nro) && (m1.nco==m2.nco) && (m1.entries==m2.entries);
+}
+template int operator==<int>(const Zmat<int>&, const Zmat<int>&);
+template int operator==<long>(const Zmat<long>&, const Zmat<long>&);
+template int operator==<ZZ>(const Zmat<ZZ>&, const Zmat<ZZ>&);
+template int operator==<INT>(const Zmat<INT>&, const Zmat<INT>&);
+
+
+template<class T>
+int operator!=(const Zmat<T>& m1, const Zmat<T>& m2)
+{
+  return !(m1==m2);
+}
+template int operator!=<int>(const Zmat<int>& m1, const Zmat<int>& m2);
+template int operator!=<long>(const Zmat<long>& m1, const Zmat<long>& m2);
+template int operator!=<ZZ>(const Zmat<ZZ>& m1, const Zmat<ZZ>& m2);
+template int operator!=<INT>(const Zmat<INT>& m1, const Zmat<INT>& m2);
+
+template<class T>
 istream& operator>>(istream& s, Zmat<T>& m) // m cannot be const
 {
  long n=m.nro*m.nco;
@@ -444,6 +591,10 @@ istream& operator>>(istream& s, Zmat<T>& m) // m cannot be const
  while(n--) s >> (*mij++);
  return s;
 }
+template istream& operator>> <int>(istream&s, Zmat<int>&);
+template istream& operator>> <long>(istream&s, Zmat<long>&);
+template istream& operator>> <ZZ>(istream&s, Zmat<ZZ>&);
+template istream& operator>> <INT>(istream&s, Zmat<INT>&);
 
 template<class T>
 Zmat<T> colcat(const Zmat<T>& a, const Zmat<T>& b)
@@ -472,6 +623,10 @@ Zmat<T> colcat(const Zmat<T>& a, const Zmat<T>& b)
    }
  return c;
 }
+template Zmat<int> colcat<int>(const Zmat<int>& a, const Zmat<int>& b);
+template Zmat<long> colcat<long>(const Zmat<long>& a, const Zmat<long>& b);
+template Zmat<ZZ> colcat<ZZ>(const Zmat<ZZ>& a, const Zmat<ZZ>& b);
+template Zmat<INT> colcat<INT>(const Zmat<INT>& a, const Zmat<INT>& b);
 
 template<class T>
 Zmat<T> rowcat(const Zmat<T>& a, const Zmat<T>& b)
@@ -491,12 +646,20 @@ Zmat<T> rowcat(const Zmat<T>& a, const Zmat<T>& b)
    }
  return c;
 }
+template Zmat<int> rowcat<int>(const Zmat<int>& a, const Zmat<int>& b);
+template Zmat<long> rowcat<long>(const Zmat<long>& a, const Zmat<long>& b);
+template Zmat<ZZ> rowcat<ZZ>(const Zmat<ZZ>& a, const Zmat<ZZ>& b);
+template Zmat<INT> rowcat<INT>(const Zmat<INT>& a, const Zmat<INT>& b);
 
 template<class T>
 Zmat<T> directsum(const Zmat<T>& a, const Zmat<T>& b)
 {
   return rowcat(colcat(a,Zmat<T>(a.nro,b.nco)),colcat(Zmat<T>(b.nro,a.nco),b));
 }
+template Zmat<int> directsum<int>(const Zmat<int>& a, const Zmat<int>& b);
+template Zmat<long> directsum<long>(const Zmat<long>& a, const Zmat<long>& b);
+template Zmat<ZZ> directsum<ZZ>(const Zmat<ZZ>& a, const Zmat<ZZ>& b);
+template Zmat<INT> directsum<INT>(const Zmat<INT>& a, const Zmat<INT>& b);
 
 //plain elimination, no clearing
 template<class T>
@@ -510,6 +673,10 @@ void elimrows(Zmat<T>& m, long r1, long r2, long pos) // m cannot be const
   std::transform(mr1, mr1+nc, mr2, mr2,
                  [p,q] (const T& x, const T& y) {return p*y-q*x;});
 }
+template void elimrows<int>(Zmat<int>& m, long r1, long r2, long pos);
+template void elimrows<long>(Zmat<long>& m, long r1, long r2, long pos);
+template void elimrows<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos);
+template void elimrows<INT>(Zmat<INT>& m, long r1, long r2, long pos);
 
 //elimination + clearing (i.e. divide new row by its content)
 template<class T>
@@ -518,6 +685,10 @@ void elimrows1(Zmat<T>& m, long r1, long r2, long pos)
   elimrows(m,r1,r2,pos);
   m.clearrow(r2);
 }
+template void elimrows1<int>(Zmat<int>& m, long r1, long r2, long pos);
+template void elimrows1<long>(Zmat<long>& m, long r1, long r2, long pos);
+template void elimrows1<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos);
+template void elimrows1<INT>(Zmat<INT>& m, long r1, long r2, long pos);
 
 //elimination + divide by last pivot
 template<class T>
@@ -526,50 +697,70 @@ void elimrows2(Zmat<T>& m, long r1, long r2, long pos, const T& last)
   elimrows(m,r1,r2,pos);
   m.divrow(r2,last);
 }
-
-// Definition of non-friend functions
+template void elimrows2<int>(Zmat<int>& m, long r1, long r2, long pos, const int& last);
+template void elimrows2<long>(Zmat<long>& m, long r1, long r2, long pos, const long& last);
+template void elimrows2<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos, const ZZ& last);
+template void elimrows2<INT>(Zmat<INT>& m, long r1, long r2, long pos, const INT& last);
 
 template<class T>
 Zmat<T> operator+(const Zmat<T>& m)
 {
   return m;
 }
+template Zmat<int> operator+<int>(const Zmat<int>&);                   // unary
+template Zmat<long> operator+<long>(const Zmat<long>&);                   // unary
+template Zmat<ZZ> operator+<ZZ>(const Zmat<ZZ>&);                   // unary
+template Zmat<INT> operator+<INT>(const Zmat<INT>&);                   // unary
 
 template<class T>
 Zmat<T> operator-(const Zmat<T>& m)
 {
   return T(-1)*m;
 }
+template Zmat<int> operator-<int>(const Zmat<int>&);                   // unary
+template Zmat<long> operator-<long>(const Zmat<long>&);                   // unary
+template Zmat<ZZ> operator-<ZZ>(const Zmat<ZZ>&);                   // unary
+template Zmat<INT> operator-<INT>(const Zmat<INT>&);                   // unary
 
 template<class T>
 Zmat<T> operator+(const Zmat<T>& m1, const Zmat<T>& m2)
 {
   Zmat<T> ans(m1); ans+=m2;  return ans;
 }
+template Zmat<int>  operator+<int> (const Zmat<int>&,  const Zmat<int>&);
+template Zmat<long> operator+<long>(const Zmat<long>&, const Zmat<long>&);
+template Zmat<ZZ>   operator+<ZZ>  (const Zmat<ZZ>&,   const Zmat<ZZ>&);
+template Zmat<INT>  operator+<INT> (const Zmat<INT>&,  const Zmat<INT>&);
 
 template<class T>
 Zmat<T> operator-(const Zmat<T>& m1, const Zmat<T>& m2)
 {
   Zmat<T> ans(m1); ans-=m2;  return ans;
 }
+template Zmat<int>  operator-<int> (const Zmat<int>&,  const Zmat<int>&);
+template Zmat<long> operator-<long>(const Zmat<long>&, const Zmat<long>&);
+template Zmat<ZZ>   operator-<ZZ>  (const Zmat<ZZ>&,   const Zmat<ZZ>&);
+template Zmat<INT>  operator-<INT> (const Zmat<INT>&,  const Zmat<INT>&);
 
 template<class T>
 Zmat<T> operator*(const T& scal, const Zmat<T>& m)
 {
   Zmat<T> ans(m); ans*=scal;  return ans;
 }
+template Zmat<int > operator*<int> (const int&,  const Zmat<int>&);
+template Zmat<long> operator*<long>(const long&, const Zmat<long>&);
+template Zmat<ZZ>   operator*<ZZ>  (const ZZ&,   const Zmat<ZZ>&);
+template Zmat<INT>  operator*<INT> (const INT&,  const Zmat<INT>& m);
 
 template<class T>
 Zmat<T> operator/(const Zmat<T>& m, const T& scal)
 {
   Zmat<T> ans(m); ans/=scal;  return ans;
 }
-
-template<class T>
-int operator!=(const Zmat<T>& m1, const Zmat<T>& m2)
-{
-  return !(m1==m2);
-}
+template Zmat<int>  operator/<int> (const Zmat<int>&,  const int&);
+template Zmat<long> operator/<long>(const Zmat<long>&, const long&);
+template Zmat<ZZ>   operator/<ZZ>  (const Zmat<ZZ>&,   const ZZ&);
+template Zmat<INT>  operator/<INT> (const Zmat<INT>&,  const INT&);
 
 template<class T>
 Zvec<T> operator*(const Zmat<T>& m, const Zvec<T>& v)
@@ -592,14 +783,10 @@ Zvec<T> operator*(const Zmat<T>& m, const Zvec<T>& v)
    }
  return w;
 }
-
-template<class T>
-Zmat<T> Zmat<T>::scalar_matrix(long n, const T& a)
-{
-  Zmat<T> D(n,n);
-  for (long i=1; i<=n; i++) D.set(i,i,a);
-  return D;
-}
+template Zvec<int> operator*<int>(const Zmat<int>&, const Zvec<int>&);
+template Zvec<long> operator*<long>(const Zmat<long>&, const Zvec<long>&);
+template Zvec<ZZ> operator*<ZZ>(const Zmat<ZZ>&, const Zvec<ZZ>&);
+template Zvec<INT> operator*<INT>(const Zmat<INT>&, const Zvec<INT>&);
 
 template<class T>
 Zmat<T> transpose(const Zmat<T>& m)
@@ -611,6 +798,10 @@ Zmat<T> transpose(const Zmat<T>& m)
       ans.set(i,j,  m(j,i));
   return ans;
 }
+template Zmat<int> transpose<int>(const Zmat<int>& m);
+template Zmat<long> transpose<long>(const Zmat<long>& m);
+template Zmat<ZZ> transpose<ZZ>(const Zmat<ZZ>& m);
+template Zmat<INT> transpose<INT>(const Zmat<INT>& m);
 
 // submatrix of rows indexed by v, all columns
 template<class T>
@@ -623,6 +814,10 @@ Zmat<T> rowsubmat(const Zmat<T>& m, const Zvec<int>& v)
       ans.set(i,j, m(v[i],j));
   return ans;
 }
+template Zmat<int> rowsubmat<int>(const Zmat<int>& m, const Zvec<int>& v);
+template Zmat<long> rowsubmat<long>(const Zmat<long>& m, const Zvec<int>& v);
+template Zmat<ZZ> rowsubmat<ZZ>(const Zmat<ZZ>& m, const Zvec<int>& v);
+template Zmat<INT> rowsubmat<INT>(const Zmat<INT>& m, const Zvec<int>& v);
 
 template<class T>
 Zmat<T> rowsubmat(const Zmat<T>& m, const Zvec<long>& v)
@@ -634,6 +829,10 @@ Zmat<T> rowsubmat(const Zmat<T>& m, const Zvec<long>& v)
       ans.set(i,j, m(v[i],j));
   return ans;
 }
+template Zmat<int> rowsubmat<int>(const Zmat<int>& m, const Zvec<long>& v);
+template Zmat<long> rowsubmat<long>(const Zmat<long>& m, const Zvec<long>& v);
+template Zmat<ZZ> rowsubmat<ZZ>(const Zmat<ZZ>& m, const Zvec<long>& v);
+template Zmat<INT> rowsubmat<INT>(const Zmat<INT>& m, const Zvec<long>& v);
 
 // submatrix of rows indexed by iv, columns indexed by jv
 template<class T>
@@ -646,6 +845,10 @@ Zmat<T> submat(const Zmat<T>& m, const Zvec<int>& iv, const Zvec<int>& jv)
       ans.set(i,j, m(iv[i],jv[j]));
   return ans;
 }
+template Zmat<int> submat<int>(const Zmat<int>& m, const Zvec<int>& iv, const Zvec<int>& jv);
+template Zmat<long> submat<long>(const Zmat<long>& m, const Zvec<int>& iv, const Zvec<int>& jv);
+template Zmat<ZZ> submat<ZZ>(const Zmat<ZZ>& m, const Zvec<int>& iv, const Zvec<int>& jv);
+template Zmat<INT> submat<INT>(const Zmat<INT>& m, const Zvec<int>& iv, const Zvec<int>& jv);
 
 template<class T>
 Zmat<T> submat(const Zmat<T>& m, const Zvec<long>& iv, const Zvec<long>& jv)
@@ -657,18 +860,31 @@ Zmat<T> submat(const Zmat<T>& m, const Zvec<long>& iv, const Zvec<long>& jv)
       ans.set(i,j, m(iv[i],jv[j]));
   return ans;
 }
+template Zmat<int> submat<int>(const Zmat<int>& m, const Zvec<long>& iv, const Zvec<long>& jv);
+template Zmat<long> submat<long>(const Zmat<long>& m, const Zvec<long>& iv, const Zvec<long>& jv);
+template Zmat<ZZ> submat<ZZ>(const Zmat<ZZ>& m, const Zvec<long>& iv, const Zvec<long>& jv);
+template Zmat<INT> submat<INT>(const Zmat<INT>& m, const Zvec<long>& iv, const Zvec<long>& jv);
 
 template<class T>
 Zmat<T> echelon(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
-            long& rk, long& ny, T& d, int method)
+                long& rk, long& ny, T& d, int method)
 {
   switch (method)
     {
     case 0: default: return echelon0(entries,pcols,npcols,rk,ny,d);
+    case 1: return echelon_via_flint(entries,pcols,npcols,rk,ny,d);
     case 2: return echelon_modular(entries,pcols,npcols,rk,ny,d, default_modulus<T>());
     case 3: return echelon_via_flint_modular(entries,pcols,npcols,rk,ny,d, default_modulus<T>());
     }
 }
+template Zmat<int> echelon<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                long& rk, long& ny, int& d, int method=0);
+template Zmat<long> echelon<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                  long& rk, long& ny, long& d, int method=0);
+template Zmat<ZZ> echelon<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                              long& rk, long& ny, ZZ& d, int method=0);
+template Zmat<INT> echelon<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                long& rk, long& ny, INT& d, int method=0);
 
 //#define DEBUG_ECH_0
 
@@ -957,140 +1173,70 @@ Zmat<T> echelon0(const Zmat<T>& entries, Zvec<int>& pc, Zvec<int>& npc,
   Zmat<T> ans(rk,nc, m);
   return ans;
 }
-
-template<class T>
-long Zmat<T>::rank() const
-{
-  long rk=0;
-  T lastpivot(1);
-  Zmat<T> m(*this); // work with a copy, which will be reduced
-  long nc=m.ncols(), nr=m.nrows();
-  for (long c=1, r=1; (c<=nc)&&(r<=nr); c++)
-    {
-      T mmin = abs(m(r,c));
-      long rmin = r;
-      for (long r2=r+1; (r2<=nr)&&(!is_one(mmin)); r2++)
-        {
-          T mr2c = abs(m(r2,c));
-          if ((is_nonzero(mr2c)) && ((mr2c<mmin) || (::is_zero(mmin))))
-            {
-              mmin=mr2c;
-              rmin=r2;
-            }
-        }
-      if (mmin!=0)
-        {
-          rk++;
-          if (rmin>r) m.swaprows(r,rmin);
-          for (long r3 = r+1 ; r3<=nr; r3++)
-            elimrows2(m,r,r3,c,lastpivot);
-          lastpivot=mmin;
-          r++;
-        }
-    }
-  return rk;
-}
-
-template<class T>
-long Zmat<T>::nullity() const
-{
- return nco-rank();
-}
-
-template<class T>
-T Zmat<T>::trace() const
-{
-  T tr(0);
-  for (long i=0; i<nro; i++)
-    tr += entries.at(i*(nco+1));
-  return tr;
-}
-
-// FADEEV'S METHOD
-
-template<class T>
-vector<T> Zmat<T>::charpoly() const
-{ long n = nrows();
-  Zmat<T> b(*this);
-  Zmat<T> id(identity_matrix(n));
-  vector<T> clist(n+1);
-  T t = trace();
-  clist[n]   =  1;
-  clist[n-1] = -t;
-  for (long i=2; i<=n; i++)
-    { b=(*this)*(b-t*id);          //     cout << b;   // (for testing only)
-        t=b.trace()/i;
-        clist[n-i] = -t;
-      }
-  if (!(b==t*id))
-    {
-      cerr << "Error in charpoly: final b = " << (b-t*id) << endl;
-      exit(1);
-    }
-  return clist;
-}
-
-template<class T>
-T Zmat<T>::determinant() const
-{
- T det = charpoly()[0];
- return (nro%2? -det :det);
-}
-
-template<class T>
-void Zvec<T>::sub_row(const Zmat<T>& m, int i)
-{
-  long n=entries.size();
-  auto wi = m.entries.begin() + (i-1)*n;
-  std::transform(entries.begin(), entries.end(), wi, entries.begin(), std::minus<T>());
-}
-
-template<class T>
-void Zvec<T>::add_row(const Zmat<T>& m, int i)
-{
-  long n=entries.size();
-  auto wi = m.entries.begin() + (i-1)*n;
-  std::transform(entries.begin(), entries.end(), wi, entries.begin(), std::plus<T>());
-}
+template Zmat<int> echelon0<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                            long& rk, long& ny, int& d);
+template Zmat<long> echelon0<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                      long& rk, long& ny, long& d);
+template Zmat<ZZ> echelon0<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                      long& rk, long& ny, ZZ& d);
+template Zmat<INT> echelon0<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                      long& rk, long& ny, INT& d);
 
 template<class T>
 Zmat<T> addscalar(const Zmat<T>& mm, const T& c)
 {
   return mm + Zmat<T>::scalar_matrix(mm.nrows(), c);
 }
+template Zmat<int> addscalar<int>(const Zmat<int>&, const int&);
+template Zmat<long> addscalar<long>(const Zmat<long>&, const long&);
+template Zmat<ZZ> addscalar<ZZ>(const Zmat<ZZ>&, const ZZ&);
+template Zmat<INT> addscalar<INT>(const Zmat<INT>&, const INT&);
 
 template<class T>
 Zvec<T> apply(const Zmat<T>& m, const Zvec<T>& v)    // same as *(mat, vec)
 {
   return m*v;
 }
+template Zvec<int> apply<int>(const Zmat<int>&, const Zvec<int>&);
+template Zvec<long> apply<long>(const Zmat<long>&, const Zvec<long>&);
+template Zvec<ZZ> apply<ZZ>(const Zmat<ZZ>&, const Zvec<ZZ>&);
+template Zvec<INT> apply<INT>(const Zmat<INT>&, const Zvec<INT>&);
 
 // Assigns d*A^-1 to Ainv and returns d, assuming A square and det(A) nonzero
 template<class T>
 T inverse(const Zmat<T>& A, Zmat<T>& Ainv, int method)
 {
   long n = A.nrows();
-  Zmat<T> aug=colcat(A, Zmat<T>::identity_matrix(n));
+  const Zmat<T>& aug=colcat(A, Zmat<T>::identity_matrix(n));
   long rk, ny; Zvec<int> pc,npc; T d;
-  Zmat<T> ref = echelon(aug, pc, npc, rk, ny, d, method);
-  Ainv = ref.slice(1,n,n+1,2*n);
+  const Zmat<T>& R = echelon(aug, pc, npc, rk, ny, d, method);
+  Ainv = R.slice(1,n,n+1,2*n);
   return d;
 }
+template int inverse<int>(const Zmat<int>&, Zmat<int>&, int);
+template long inverse<long>(const Zmat<long>&, Zmat<long>&, int);
+template ZZ inverse<ZZ>(const Zmat<ZZ>&, Zmat<ZZ>&, int);
+template INT inverse<INT>(const Zmat<INT>&, Zmat<INT>&, int);
 
-template<class T>
-Zmat<T> rref_modular(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const T& pr)
-{
-  return ref_via_flint_modular(M, pcols, npcols, rk, ny, pr);
-}
+// template<class T>
+// Zmat<T> ref(const Zmat<T>& M, T& d)
+// {
+//   return ref_via_flint(M, d);
+// }
+// template Zmat<int> ref<int>(const Zmat<int>& M, int& d);
+// template Zmat<long> ref<long>(const Zmat<long>& M, long& d);
+// template Zmat<ZZ> ref<ZZ>(const Zmat<ZZ>& M, ZZ& d);
+// template Zmat<INT> ref<INT>(const Zmat<INT>& M, INT& d);
 
-template<class T>
-void Zmat<T>::reduce_mod_p(const T& p)
-{
-  if (p==0) return;
-  std::transform(entries.begin(), entries.end(), entries.begin(),
-                 [p](const T& mij) {return mod(mij,p);});
-}
+// template<class T>
+// Zmat<T> ref_modular(const Zmat<T>& M, T& d)
+// {
+//   return ref_via_flint_modular(M, d);
+// }
+// template Zmat<int> ref_modular<int>(const Zmat<int>& M, int& d);
+// template Zmat<long> ref_modular<long>(const Zmat<long>& M, long& d);
+// template Zmat<ZZ> ref_modular<ZZ>(const Zmat<ZZ>& M, ZZ& dr);
+// template Zmat<INT> ref_modular<INT>(const Zmat<INT>& M, INT& d);
 
 template<class T>
 void elimp(Zmat<T>& m, long r1, long r2, long pos, const T& pr)
@@ -1127,6 +1273,10 @@ void elimp(Zmat<T>& m, long r1, long r2, long pos, const T& pr)
     }
   std::transform(mr1, mr1+nc, mr2, mr2, f);
 }
+template void elimp<int>(Zmat<int>& m, long r1, long r2, long pos, const int& pr);
+template void elimp<long>(Zmat<long>& m, long r1, long r2, long pos, const long& pr);
+template void elimp<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos, const ZZ& pr);
+template void elimp<INT>(Zmat<INT>& m, long r1, long r2, long pos, const INT& pr);
 
 template<class T>
 void elimp1(Zmat<T>& m, long r1, long r2, long pos, const T& pr)
@@ -1147,6 +1297,10 @@ void elimp1(Zmat<T>& m, long r1, long r2, long pos, const T& pr)
     f = [pr,q](const T& x, const T& y) {return mod(y+x, pr);};
   std::transform(mr1, mr1+nc, mr2, mr2, f);
 }
+template void elimp1<int>(Zmat<int>& m, long r1, long r2, long pos, const int& pr);
+template void elimp1<long>(Zmat<long>& m, long r1, long r2, long pos, const long& pr);
+template void elimp1<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos, const ZZ& pr);
+template void elimp1<INT>(Zmat<INT>& m, long r1, long r2, long pos, const INT& pr);
 
 //#define TRACE 1
 
@@ -1157,7 +1311,7 @@ void elimp1(Zmat<T>& m, long r1, long r2, long pos, const T& pr)
 
 template<class T>
 Zmat<T> echelon_modular(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
-                         long& rk, long& ny, T& d, const T& pr)
+                        long& rk, long& ny, T& d, const T& pr)
 {
 #ifdef TRACE
   cout << "In echelon_modular\n";
@@ -1236,92 +1390,58 @@ Zmat<T> echelon_modular(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npc
  cout << m << endl;
  cout << "Now lifting back to Q.\n";
 #endif /* TRACE */
- T dd(1);
- Zmat<T> nmat(rk,nc);
- Zmat<T> dmat(rk,nc);
 
-#ifdef TRACE
- cout << "rk = " << rk << "\n";
- cout << "ny = " << ny << "\n";
-#endif /* TRACE */
- for (long i=1; i<=rk; i++)
-   {
-     for (long j=1; j<=rk; j++)
-       {
-         nmat(i,pcols[j])=(i==j);
-         dmat(i,pcols[j])=1;
-       }
-     for (long j=1; j<=ny; j++)
-       {
-         T n1,d1, lim = isqrt(pr>>1);
-         long jj = npcols[j];
-         int ok = modrat(m(i,jj), pr, lim, n1,d1);
-         nmat(i,jj)=n1;
-         dmat(i,jj)=d1;
-         if (ok)
-           dd = lcm(dd,d1);
-         else
-           {
-             cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q (in echelon_modular())"<<endl;
-             exit(1);
-           }
-       }
-   }
- dd=abs(dd);
-#ifdef TRACE
- cout << "Numerator mat = " << nmat << endl;
- cout << "Denominator mat = " << dmat << endl;
- cout << "Common denominator = " << dd << endl;
-#endif /* TRACE */
- for (long i=1; i<=rk; i++)
-   for (long j=1; j<=nc; j++)
-     m(i,j)=(dd*nmat(i,j))/dmat(i,j);
- d=dd;
- return m;
+ Zmat<T> nmat;
+ int lift_ok = liftmat(m, pr, nmat, d);
+ if (!lift_ok)
+   cerr<<"Failed to lift to Q in echelon_modular()"<<endl;
+ return nmat;
 }
+template Zmat<int> echelon_modular<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                            long& rk, long& ny, int& d, const int& pr);
+template Zmat<long> echelon_modular<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                      long& rk, long& ny, long& d, const long& pr);
+template Zmat<ZZ> echelon_modular<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                      long& rk, long& ny, ZZ& d, const ZZ& pr);
+template Zmat<INT> echelon_modular<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                      long& rk, long& ny, INT& d, const INT& pr);
+
+// The following function computes the reduced echelon form of M by
+// working modulo the prime pr and lifting, using the appropriate rref
+// function from FLINT. NB FLINT wants the entries to be between 0 and
+// pr-1.
 
 template<class T>
 Zmat<T> echelon_via_flint_modular(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
-             long& rk, long& ny, T& d, const T& pr)
+                                  long& rk, long& ny, T& d, const T& pr)
 {
  long nr=entries.nrows(), nc=entries.ncols();
  Zmat<T> m(nr,nc);
  std::transform(entries.entries.begin(), entries.entries.end(), m.entries.begin(),
                 [pr] (const T& x) {return mod(x,pr);});
- m = rref_modular(m, pcols, npcols, rk, ny, pr);
- T dd(1);
- Zmat<T> nmat(rk,nc);
- Zmat<T> dmat(rk,nc);
-
- for (long i=1; i<=rk; i++)
-   {
-     for (long j=1; j<=rk; j++)
-       {
-         nmat(i,pcols[j])=(i==j);
-         dmat(i,pcols[j])=1;
-       }
-     for (long j=1; j<=ny; j++)
-       {
-         T n1,d1, lim = isqrt(pr>>1);
-         long jj = npcols[j];
-         int ok = modrat(m(i,jj), pr, lim, n1,d1);
-         nmat(i,jj)=n1;
-         dmat(i,jj)=d1;
-         if (ok)
-           dd=lcm(dd,d1);
-         else
-           {
-             cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q (in echelon_via_flint_modular())"<<endl;
-             exit(1);
-           }
-       }
-   }
- dd=abs(dd);
- for (long i=1; i<=rk; i++)
-   for (long j=1; j<=nc; j++)
-     m(i,j)=(dd*nmat(i,j))/dmat(i,j);
- d=dd;
+ m = ref_via_flint_modular(m, d, pr);
+ pnpcols(m, pcols, npcols, rk, ny);
  return m;
+}
+template Zmat<int> echelon_via_flint_modular<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                                                  long& rk, long& ny, int&, const int& pr);
+template Zmat<long> echelon_via_flint_modular<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                                                    long& rk, long& ny, long&, const long& pr);
+template Zmat<ZZ> echelon_via_flint_modular<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                                                long& rk, long& ny, ZZ&, const ZZ& pr);
+template Zmat<INT> echelon_via_flint_modular<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                                                  long& rk, long& ny, INT&, const INT& pr);
+
+// The following function computes the reduced echelon form of M
+// directly, using the appropriate rref function from FLINT.
+
+template<class T>
+Zmat<T> echelon_via_flint(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+                          long& rk, long& ny, T& d)
+{
+  Zmat<T> R = ref_via_flint(M, d);
+  pnpcols(R, pcols, npcols, rk, ny);
+  return R;
 }
 
 // The following function computes the echelon form of m modulo the prime pr.
@@ -1401,6 +1521,14 @@ Zmat<T> echmodp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols, lon
    }
  return m.slice(rk,nc);
 }
+template Zmat<int> echmodp<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                long& rk, long& ny, const int& pr);
+template Zmat<long> echmodp<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                  long& rk, long& ny, const long& pr);
+template Zmat<ZZ> echmodp<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                              long& rk, long& ny, const ZZ& pr);
+template Zmat<INT> echmodp<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                long& rk, long& ny, const INT& pr);
 
 template<class T>
 Zmat<T> echmodp_uptri(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
@@ -1453,170 +1581,15 @@ Zmat<T> echmodp_uptri(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcol
  // cout << "Rank = " << rk << ".  Nullity = " << ny << ".\n";
  return m.slice(rk,nc);
 }
+template Zmat<int> echmodp_uptri<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                      long& rk, long& ny, const int& pr);
+template Zmat<long> echmodp_uptri<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                        long& rk, long& ny, const long& pr);
+template Zmat<ZZ> echmodp_uptri<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                    long& rk, long& ny, const ZZ& pr);
+template Zmat<INT> echmodp_uptri<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
+                                      long& rk, long& ny, const INT& pr);
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-//
-//  Interface with NTL matrices
-//
-//////////////////////////////////////////////////////////////////////////////////////////////
-
-//#define TRACE_NTL_REF
-
-#include <NTL/mat_lzz_p.h>
-#ifdef TRACE_NTL_REF
-#include "eclib/timer.h"
-#endif
-
-// Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
-
-template<class T>
-mat_zz_p mat_zz_p_from_mat(const Zmat<T>& M, const T& pr)
-{
-  long nr=M.nrows(), nc=M.ncols();
-#ifdef TRACE_NTL_REF
-  cout<<"Creating an NTL mat_zz_p from a matrix with " << nr <<" rows and "<<nc<<" columns, mod "<<pr<<endl;
-#endif
-  // create NTL matrix copy of M:
-  NTL::zz_pPush push(I2long(pr));
-  mat_zz_p A(NTL::INIT_SIZE, nr, nc);
-  for(long i=0; i<nr; i++)
-    for(long j=0; j<nc; j++)
-      A.put(i,j, NTL::conv<zz_p>(M(i+1,j+1)));
-#ifdef TRACE_NTL_REF
-  cout<<"--done."<<endl;
-#endif
-  return A;
-}
-
-// Construct a mat (T type same as pr) from an NTL mat_lzz_p
-
-template<class T>
-Zmat<T> mat_from_mat_zz_p(const mat_zz_p& A, const T& pr) // type of T fixes return type
-{
- long nr = A.NumRows(), nc = A.NumCols();
-#ifdef TRACE_NTL_REF
-  cout<<"Creating a mat from an NTL mat_zz_p with " << nr <<" rows and "<<nc<<" columns, mod "<<pr<<endl;
-#endif
- // create matrix copy of A:
- Zmat<T> M(nr, nc);
- for(long i=0; i<nr; i++)
-   for(long j=0; j<nc; j++)
-     M(i+1,j+1) = mod(NTL::conv<T>(A.get(i,j)), pr);
-#ifdef TRACE_NTL_REF
-  cout<<"--done."<<endl;
-#endif
- return M;
-}
-
-// compute ref of M mod pr via NTL, setting rk=rank, ny=nullity,
-// pivotal columns pcols, non-pivotal columns npcols
-
-template<class T>
-Zmat<T> ref_via_ntl(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                    long& rk, long& ny, const T& pr)
-{
- long nc=M.ncols();
- long i, j, k;
-#ifdef TRACE_NTL_REF
- timer ntl_timer;
- ntl_timer.start();
-#endif
- NTL::zz_pPush push(I2long(pr));
- mat_zz_p A = mat_zz_p_from_mat(M, pr);
-
-#ifdef TRACE_NTL_REF
- cout<<"--calling NTL's gauss()..."<<flush;
-#endif
- rk = NTL::gauss(A); // reduce to echelon form in place; rk is the rank
-#ifdef TRACE_NTL_REF
- cout<<"done." << endl;
-#endif
- ny = nc-rk;
-#ifdef TRACE_NTL_REF
- cout<<"Rank = " << rk <<", nullity = "<<ny<<endl;
-#endif
-
- // Find pivots, rescale rows so pivots are 1
-
- pcols.init(rk);
- npcols.init(ny);
- zz_p zero = NTL::conv<zz_p>(0);
- zz_p one = NTL::conv<zz_p>(1);
- zz_p piv, inv_piv;
-
- for (i = j = k = 0; i < rk; i++)
-   {
-     while (A.get(i,j) == zero)
-       {
-         npcols[k+1] = j+1;
-         k++;
-         j++;
-       }
-     piv = A.get(i,j);
-     pcols[i+1] = j+1;
-     j++;
-     if (piv != one)
-       {
-         NTL::inv(inv_piv, piv);
-         A[i] = inv_piv*A[i];
-       }
-   }
- while (k < ny)
-   {
-     npcols[k+1] = j+1;
-     k++;
-     j++;
-   }
-
- // copy back to a new matrix for return:
- Zmat<T> ans = mat_from_mat_zz_p(A, pr).slice(rk,nc);
-#ifdef TRACE_NTL_REF
- ntl_timer.start();
- ntl_timer.show();
- cout<<endl;
-#endif
- return ans;
-}
-
-template<class T>
-long rank_via_ntl(const Zmat<T>& M, const T& pr)
-{
-#ifdef TRACE_NTL_REF
-  cout << "Computing rank mod "<<pr<<" of a matrix of size ("<<M.nrows()<<", "<<M.ncols()<<")..."<<flush;
-  timer ntl_timer;
-  ntl_timer.start();
-#endif
-  NTL::zz_pPush push(I2long(pr));
-  mat_zz_p A = mat_zz_p_from_mat(M, pr);
-  long rk = gauss(A); // reduce to echelon form in place; rk is the rank
-#ifdef TRACE_NTL_REF
-  cout << "done: "<<flush;
-  ntl_timer.start();
-  ntl_timer.show();
-  cout<<endl;
-#endif
-  return rk;
-}
-
-template<class T>
-T det_via_ntl(const Zmat<T>& M, const T& pr)
-{
-#ifdef TRACE_NTL_REF
-  cout << "Computing determinant mod "<<pr<<" of a matrix of size ("<<M.nrows()<<", "<<M.ncols()<<")..."<<flush;
-  timer ntl_timer;
-  ntl_timer.start();
-#endif
-  NTL::zz_pPush push(I2long(pr));
-  mat_zz_p A = mat_zz_p_from_mat(M, pr);
-  zz_p det = determinant(A);
-#ifdef TRACE_NTL_REF
-  cout << "done: "<<flush;
-  ntl_timer.start();
-  ntl_timer.show();
-  cout<<endl;
-#endif
-  return mod(NTL::conv<T>(det), pr);
-}
 
 template<class T>
 Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)
@@ -1644,6 +1617,10 @@ Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)
    }
  return m3;
 }
+template Zmat<int> matmulmodp<int>(const Zmat<int>&, const Zmat<int>&, const int& pr);
+template Zmat<long> matmulmodp<long>(const Zmat<long>&, const Zmat<long>&, const long& pr);
+template Zmat<ZZ> matmulmodp<ZZ>(const Zmat<ZZ>&, const Zmat<ZZ>&, const ZZ& pr);
+template Zmat<INT> matmulmodp<INT>(const Zmat<INT>&, const Zmat<INT>&, const INT& pr);
 
 template<class T>
 Zvec<T> matvecmulmodp(const Zmat<T>& M, const Zvec<T>& v, const T& pr)
@@ -1665,6 +1642,10 @@ Zvec<T> matvecmulmodp(const Zmat<T>& M, const Zvec<T>& v, const T& pr)
     }
   return Zvec<T>(w);
 }
+template Zvec<int> matvecmulmodp<int>(const Zmat<int>&, const Zvec<int>&, const int& pr);
+template Zvec<long> matvecmulmodp<long>(const Zmat<long>&, const Zvec<long>&, const long& pr);
+template Zvec<ZZ> matvecmulmodp<ZZ>(const Zmat<ZZ>&, const Zvec<ZZ>&, const ZZ& pr);
+template Zvec<INT> matvecmulmodp<INT>(const Zmat<INT>&, const Zvec<INT>&, const INT& pr);
 
 template<class T>
 int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd)
@@ -1710,6 +1691,10 @@ int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd)
     cout << "Lifted matrix is " << m << "\n";
   return 1;
 }
+template int liftmat<int> (const Zmat<int>&,  const int&,  Zmat<int>&,  int&);
+template int liftmat<long>(const Zmat<long>&, const long&, Zmat<long>&, long&);
+template int liftmat<ZZ>  (const Zmat<ZZ>&,   const ZZ&,   Zmat<ZZ>&,   ZZ&);
+template int liftmat<INT> (const Zmat<INT>&,  const INT&,  Zmat<INT>&,  INT&);
 
 template<class T>
 T maxabs(const Zmat<T>& m) // max entry
@@ -1719,6 +1704,10 @@ T maxabs(const Zmat<T>& m) // max entry
     std::accumulate(m.entries.begin(), m.entries.end(), T(0),
                     [](const T& x, const T& y) {return max(x,abs(y));});
 }
+template int  maxabs<int> (const Zmat<int>&);
+template long maxabs<long>(const Zmat<long>&);
+template ZZ   maxabs<ZZ>  (const Zmat<ZZ>&);
+template INT  maxabs<INT> (const Zmat<INT>&);
 
 template<class T>
 long population(const Zmat<T>& m) // #nonzero entries
@@ -1726,6 +1715,10 @@ long population(const Zmat<T>& m) // #nonzero entries
   if (m.entries.empty()) return 0;
   return std::count_if(m.entries.begin(), m.entries.end(), [](const T& x) {return is_nonzero(x);});
 }
+template long population<int>(const Zmat<int>&);
+template long population<long>(const Zmat<long>&);
+template long population<ZZ>(const Zmat<ZZ>&);
+template long population<INT>(const Zmat<INT>&);
 
 template<class T>
 double sparsity(const Zmat<T>& m)
@@ -1733,6 +1726,10 @@ double sparsity(const Zmat<T>& m)
   if (m.entries.empty()) return 1;
   return double(population(m))/m.entries.size();
 }
+template double sparsity<int>(const Zmat<int>&);
+template double sparsity<long>(const Zmat<long>&);
+template double sparsity<ZZ>(const Zmat<ZZ>&);
+template double sparsity<INT>(const Zmat<INT>&);
 
 template<class T>
 int is_permutation_matrix(const Zmat<T>& m)
@@ -1750,15 +1747,19 @@ int is_permutation_matrix(const Zmat<T>& m)
   auto test0 = [](const T& x){return is_zero(x);};
   for (int i=1; i<=nr; i++)
     {
-      const auto& v = m.row(i).entries;
+      const auto& v = m.row(i).get_entries();
       if (std::count_if(v.begin(), v.end(), test0) != nc-1)
         return 0;
-      const auto& w = m.col(i).entries;
+      const auto& w = m.col(i).get_entries();
       if (std::count_if(w.begin(), w.end(), test0) != nr-1)
         return 0;
     }
   return 1;
 }
+template int is_permutation_matrix<int>(const Zmat<int>& m);
+template int is_permutation_matrix<long>(const Zmat<long>& m);
+template int is_permutation_matrix<ZZ>(const Zmat<ZZ>& m);
+template int is_permutation_matrix<INT>(const Zmat<INT>& m);
 
 template<class T>
 int is_signed_permutation_matrix(const Zmat<T>& m)
@@ -1778,22 +1779,29 @@ int is_signed_permutation_matrix(const Zmat<T>& m)
   auto test0 = [](const T& x){return is_zero(x);};
   for (int i=1; i<=nr; i++)
     {
-      const auto& v = m.row(i).entries;
+      const auto& v = m.row(i).get_entries();
       if (std::count(v.begin(), v.end(), 0) != nc-1)
         return 0;
-      const auto& w = m.col(i).entries;
+      const auto& w = m.col(i).get_entries();
       if (std::count(w.begin(), w.end(), 0) != nr-1)
         return 0;
     }
   return 1;
 }
-
+template int is_signed_permutation_matrix<int>(const Zmat<int>& m);
+template int is_signed_permutation_matrix<long>(const Zmat<long>& m);
+template int is_signed_permutation_matrix<ZZ>(const Zmat<ZZ>& m);
+template int is_signed_permutation_matrix<INT>(const Zmat<INT>& m);
 
 template<class T>
 int is_identity_matrix(const Zmat<T>& m)
 {
   return m == Zmat<T>::identity_matrix(m.nro);
 }
+template int is_identity_matrix<int>(const Zmat<int>& m);
+template int is_identity_matrix<long>(const Zmat<long>& m);
+template int is_identity_matrix<ZZ>(const Zmat<ZZ>& m);
+template int is_identity_matrix<INT>(const Zmat<INT>& m);
 
 template<class T>
 mat_m to_mat_m(const Zmat<T>& M)
@@ -2042,7 +2050,12 @@ Zmat<INT> mat_from_mod_mat(const fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& flint_
   return M;
 }
 
-Zmat<int> ref_via_flint_modular(const Zmat<int>& M, const int& pr)
+// The following four versions of ref_via_flint_modular() are not
+// templated.  The int and long versions use hmod_mat_rref() and
+// nmod_mat_rref() respectively; the ZZ and INT versions are almost
+// identical so could be templated, both use fmpz_mod_mat_rref().
+
+Zmat<int> ref_via_flint_modular(const Zmat<int>& M, int& dd, const int& pr)
 {
   hmod_mat_t A;
   mod_mat_from_mat(A,M,pr);
@@ -2050,10 +2063,14 @@ Zmat<int> ref_via_flint_modular(const Zmat<int>& M, const int& pr)
   Zmat<int> B = mat_from_mod_mat(A).slice(rk, M.ncols());
   hmod_mat_clear(A);
   B.reduce_mod_p(pr);
-  return B;
+  Zmat<int> nmat;
+  int lift_ok = liftmat(B, pr, nmat, dd);
+  if (!lift_ok)
+    cerr<<"Failed to lift to Q in ref_via_flint_modular<int>()"<<endl;
+  return nmat;
 }
 
-Zmat<long> ref_via_flint_modular(const Zmat<long>& M, const long& pr)
+Zmat<long> ref_via_flint_modular(const Zmat<long>& M, long& dd, const long& pr)
 {
   nmod_mat_t A;
   mod_mat_from_mat(A,M,pr);
@@ -2061,10 +2078,14 @@ Zmat<long> ref_via_flint_modular(const Zmat<long>& M, const long& pr)
   Zmat<long> B = mat_from_mod_mat(A).slice(rk, M.ncols());
   nmod_mat_clear(A);
   B.reduce_mod_p(pr);
-  return B;
+  Zmat<long> nmat;
+  int lift_ok = liftmat(B, pr, nmat, dd);
+  if (!lift_ok)
+    cerr<<"Failed to lift to Q in ref_via_flint_modular<long>()"<<endl;
+  return nmat;
 }
 
-Zmat<ZZ> ref_via_flint_modular(const Zmat<ZZ>& M, const ZZ& pr)
+Zmat<ZZ> ref_via_flint_modular(const Zmat<ZZ>& M, ZZ& dd, const ZZ& pr)
 {
   fmpz_mod_ctx_t flint_modulus;
   fmpz_mod_ctx_init(flint_modulus, *to_FLINT(pr));
@@ -2076,18 +2097,22 @@ Zmat<ZZ> ref_via_flint_modular(const Zmat<ZZ>& M, const ZZ& pr)
 
   mod_mat_from_mat(A,flint_modulus,M,pr);
   rk = fmpz_mod_mat_rref(R, A, flint_modulus);
-  ZZ dummy;
-  Zmat<ZZ> B = mat_from_mod_mat(R, flint_modulus, dummy).slice(rk, nc);
+  // the pr here is just to disambiguate the function
+  Zmat<ZZ> B = mat_from_mod_mat(R, flint_modulus, pr).slice(rk, nc);
   B.reduce_mod_p(pr);
+  Zmat<ZZ> nmat;
+  int lift_ok = liftmat(B, pr, nmat, dd);
+  if (!lift_ok)
+    cerr<<"Failed to lift to Q in ref_via_flint_modular<ZZ>()"<<endl;
 
   fmpz_mod_mat_clear(A,flint_modulus);
   fmpz_mod_mat_clear(R,flint_modulus);
   fmpz_mod_ctx_clear(flint_modulus);
 
-  return B;
+  return nmat;
 }
 
-Zmat<INT> ref_via_flint_modular(const Zmat<INT>& M, const INT& pr)
+Zmat<INT> ref_via_flint_modular(const Zmat<INT>& M, INT& dd, const INT& pr)
 {
   fmpz_mod_ctx_t flint_modulus;
   fmpz_t tmp;
@@ -2102,20 +2127,48 @@ Zmat<INT> ref_via_flint_modular(const Zmat<INT>& M, const INT& pr)
 
   mod_mat_from_mat(A,flint_modulus,M,pr);
   rk = fmpz_mod_mat_rref(R, A, flint_modulus);
-  INT dummy;
-  Zmat<INT> B = mat_from_mod_mat(R, flint_modulus, dummy).slice(rk, nc);
+  // the pr here is just to disambiguate the function
+  Zmat<INT> B = mat_from_mod_mat(R, flint_modulus, pr).slice(rk, nc);
   B.reduce_mod_p(pr);
+  Zmat<INT> nmat;
+  int lift_ok = liftmat(B, pr, nmat, dd);
+  if (!lift_ok)
+    cerr<<"Failed to lift to Q in ref_via_flint_modular<INT>()"<<endl;
 
   fmpz_mod_mat_clear(A,flint_modulus);
   fmpz_mod_mat_clear(R,flint_modulus);
   fmpz_mod_ctx_clear(flint_modulus);
+
+  return nmat;
+}
+
+template<class T>
+Zmat<T> ref_via_flint(const Zmat<T>& M, T& dd)
+{
+  long nr=M.nrows(), nc=M.ncols(), rk;
+  cout << "In ref_via_flint() with M =\n" << M << endl;
+
+  fmpz_mat_t A, R;
+  fmpz_mat_init(A, nr, nc);
+  fmpz_mat_init(R, nr, nc);
+  flint_mat_from_mat(A,M);
+  fmpz_t d;
+  fmpz_init(d);
+  rk = fmpz_mat_rref(R, d, A);
+  set(dd,d);
+  Zmat<T> B = mat_from_flint_mat(R, dd).slice(rk, nc);
+  cout << "ref_via_flint() returns d = " << dd << " and REF =\n" << B << endl;
+
+  fmpz_mat_clear(A);
+  fmpz_mat_clear(R);
+  fmpz_clear(d);
 
   return B;
 }
 
 // From a matrix in REF, extract the pivotal and non-pivotal columns
 template<class T>
-void pnpcols(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols)
+void pnpcols(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols, long& rk, long& ny)
 {
   vector<int> pc, npc;
   int nc = M.ncols(), nr = M.nrows(), i = 1, j;
@@ -2133,26 +2186,13 @@ void pnpcols(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols)
     }
   pcols  = Zvec<int>(pc);
   npcols = Zvec<int>(npc);
+  rk = pc.size();
+  ny = npc.size();
 }
-template void pnpcols<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols);
-template void pnpcols<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols);
-template void pnpcols<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols);
-template void pnpcols<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npcols);
-
-// The following function computes the reduced echelon form of M
-// modulo the prime pr, using the appropriate rref function from
-// FLINT.
-
-template<class T>
-Zmat<T> ref_via_flint_modular(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, const T& pr)
-{
-  Zmat<T> R = ref_via_flint_modular(M, pr);
-  pnpcols(R, pcols, npcols);
-  rk = dim(pcols);
-  ny = dim(npcols);
-  return R;
-}
+template void pnpcols<int> (const Zmat<int>&,  Zvec<int>&, Zvec<int>&, long&, long&);
+template void pnpcols<long>(const Zmat<long>&, Zvec<int>&, Zvec<int>&, long&, long&);
+template void pnpcols<ZZ>  (const Zmat<ZZ>&,   Zvec<int>&, Zvec<int>&, long&, long&);
+template void pnpcols<INT> (const Zmat<INT>&,  Zvec<int>&, Zvec<int>&, long&, long&);
 
 // Hermite and Smith Normal Forms (via FLINT)
 template<class T>
@@ -2516,242 +2556,184 @@ template class Zmat<long>;
 template class Zmat<ZZ>;
 template class Zmat<INT>;
 
-// Instantiate Zmat template functions for T=int
-template void add_row_to_vec<int>(Zvec<int>& v, const Zmat<int>& m, long i);
-template void sub_row_to_vec<int>(Zvec<int>& v, const Zmat<int>& m, long i);
-template Zmat<int> operator*<int>(const Zmat<int>&, const Zmat<int>&);
-template Zvec<int> operator*<int>(const Zmat<int>&, const Zvec<int>&);
-template int operator==<int>(const Zmat<int>&, const Zmat<int>&);
-template istream& operator>> <int>(istream&s, Zmat<int>&);
-template Zmat<int> colcat<int>(const Zmat<int>& a, const Zmat<int>& b);
-template Zmat<int> rowcat<int>(const Zmat<int>& a, const Zmat<int>& b);
-template Zmat<int> directsum<int>(const Zmat<int>& a, const Zmat<int>& b);
-template void elimrows<int>(Zmat<int>& m, long r1, long r2, long pos);
-template void elimrows1<int>(Zmat<int>& m, long r1, long r2, long pos);
-template void elimrows2<int>(Zmat<int>& m, long r1, long r2, long pos, const int& last);
-template Zmat<int> echelon0<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                            long& rk, long& ny, int& d);
-template void elimp<int>(Zmat<int>& m, long r1, long r2, long pos, const int& pr);
-template void elimp1<int>(Zmat<int>& m, long r1, long r2, long pos, const int& pr);
-template Zmat<int> echelon_modular<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                            long& rk, long& ny, int& d, const int& pr);
-template Zmat<int> echmodp<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                           long& rk, long& ny, const int& pr);
-template Zmat<int> echmodp_uptri<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                                 long& rk, long& ny, const int& pr);
-template Zmat<int> ref_via_ntl<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                               long& rk, long& ny, const int& pr);
-template Zmat<int> ref_via_flint_modular<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                               long& rk, long& ny, const int& pr);
-template Zmat<int> rref_modular<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                                     long& rk, long& ny, const int& pr);
-template long rank_via_ntl<int>(const Zmat<int>& M, const int& pr);
-template int det_via_ntl<int>(const Zmat<int>& M, const int& pr);
-template Zmat<int> transpose<int>(const Zmat<int>& m);
-template Zmat<int> matmulmodp<int>(const Zmat<int>&, const Zmat<int>&, const int& pr);
-template Zvec<int> matvecmulmodp<int>(const Zmat<int>&, const Zvec<int>&, const int& pr);
-template long population<int>(const Zmat<int>& m); // #nonzero entries
-template int maxabs<int>(const Zmat<int>& m); // max entry
-template double sparsity<int>(const Zmat<int>& m); // #nonzero entries/#entries
-template int is_permutation_matrix<int>(const Zmat<int>& m);
-template int is_signed_permutation_matrix<int>(const Zmat<int>& m);
-template int is_identity_matrix<int>(const Zmat<int>& m);
+// Instantiate inline Zmat template functions for T=int, long, ZZ, INT
 template ostream& operator<< <int>(ostream&s, const Zmat<int>&m);
-template Zmat<int> operator+<int>(const Zmat<int>&);                   // unary
-template Zmat<int> operator-<int>(const Zmat<int>&);                   // unary
-template Zmat<int> operator+<int>(const Zmat<int>& m1, const Zmat<int>& m2);
-template Zmat<int> operator-<int>(const Zmat<int>& m1, const Zmat<int>& m2);
-template Zmat<int> operator*<int>(const int& scal, const Zmat<int>& m);
-template Zmat<int> operator/<int>(const Zmat<int>& m, const int& scal);
-template int operator!=<int>(const Zmat<int>& m1, const Zmat<int>& m2);
-template Zmat<int> rowsubmat<int>(const Zmat<int>& m, const Zvec<int>& v);
-template Zmat<int> rowsubmat<int>(const Zmat<int>& m, const Zvec<long>& v);
-template Zmat<int> submat<int>(const Zmat<int>& m, const Zvec<int>& iv, const Zvec<int>& jv);
-template Zmat<int> submat<int>(const Zmat<int>& m, const Zvec<long>& iv, const Zvec<long>& jv);
-template Zmat<int> echelon<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                          long& rk, long& ny, int& d, int method=0);
-template Zmat<int> addscalar<int>(const Zmat<int>&, const int&);
-template Zvec<int> apply<int>(const Zmat<int>&, const Zvec<int>&);
-template int inverse<int>(const Zmat<int>&, Zmat<int>&, int);
-template int liftmat<int>(const Zmat<int>& mm, const int& pr, Zmat<int>& m, int& dd);
-template void Zvec<int>::sub_row(const Zmat<int>& m, int i);
-template void Zvec<int>::add_row(const Zmat<int>& m, int i);
-
-// Instantiate Zmat template functions for T=long
-template void add_row_to_vec<long>(Zvec<long>& v, const Zmat<long>& m, long i);
-template void sub_row_to_vec<long>(Zvec<long>& v, const Zmat<long>& m, long i);
-template Zmat<long> operator*<long>(const Zmat<long>&, const Zmat<long>&);
-template Zvec<long> operator*<long>(const Zmat<long>&, const Zvec<long>&);
-template int operator==<long>(const Zmat<long>&, const Zmat<long>&);
-template istream& operator>> <long>(istream&s, Zmat<long>&);
-template Zmat<long> colcat<long>(const Zmat<long>& a, const Zmat<long>& b);
-template Zmat<long> rowcat<long>(const Zmat<long>& a, const Zmat<long>& b);
-template Zmat<long> directsum<long>(const Zmat<long>& a, const Zmat<long>& b);
-template void elimrows<long>(Zmat<long>& m, long r1, long r2, long pos);
-template void elimrows1<long>(Zmat<long>& m, long r1, long r2, long pos);
-template void elimrows2<long>(Zmat<long>& m, long r1, long r2, long pos, const long& last);
-template Zmat<long> echelon0<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, long& d);
-template void elimp<long>(Zmat<long>& m, long r1, long r2, long pos, const long& pr);
-template void elimp1<long>(Zmat<long>& m, long r1, long r2, long pos, const long& pr);
-template Zmat<long> echelon_modular<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, long& d, const long& pr);
-template Zmat<long> echmodp<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const long& pr);
-template Zmat<long> echmodp_uptri<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const long& pr);
-template Zmat<long> ref_via_ntl<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                         long& rk, long& ny, const long& pr);
-template Zmat<long> ref_via_flint_modular<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                         long& rk, long& ny, const long& pr);
-template Zmat<long> rref_modular<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                                       long& rk, long& ny, const long& pr);
-template long rank_via_ntl<long>(const Zmat<long>& M, const long& pr);
-template long det_via_ntl<long>(const Zmat<long>& M, const long& pr);
-template Zmat<long> transpose<long>(const Zmat<long>& m);
-template Zmat<long> matmulmodp<long>(const Zmat<long>&, const Zmat<long>&, const long& pr);
-template Zvec<long> matvecmulmodp<long>(const Zmat<long>&, const Zvec<long>&, const long& pr);
-template long population<long>(const Zmat<long>& m); // #nonzero entries
-template long maxabs<long>(const Zmat<long>& m); // max entry
-template double sparsity<long>(const Zmat<long>& m); // #nonzero entries/#entries
-template int is_permutation_matrix<long>(const Zmat<long>& m);
-template int is_signed_permutation_matrix<long>(const Zmat<long>& m);
-template int is_identity_matrix<long>(const Zmat<long>& m);
 template ostream& operator<< <long>(ostream&s, const Zmat<long>&m);
-template Zmat<long> operator+<long>(const Zmat<long>&);                   // unary
-template Zmat<long> operator-<long>(const Zmat<long>&);                   // unary
-template Zmat<long> operator+<long>(const Zmat<long>& m1, const Zmat<long>& m2);
-template Zmat<long> operator-<long>(const Zmat<long>& m1, const Zmat<long>& m2);
-template Zmat<long> operator*<long>(const long& scal, const Zmat<long>& m);
-template Zmat<long> operator/<long>(const Zmat<long>& m, const long& scal);
-template int operator!=<long>(const Zmat<long>& m1, const Zmat<long>& m2);
-template Zmat<long> rowsubmat<long>(const Zmat<long>& m, const Zvec<int>& v);
-template Zmat<long> rowsubmat<long>(const Zmat<long>& m, const Zvec<long>& v);
-template Zmat<long> submat<long>(const Zmat<long>& m, const Zvec<int>& iv, const Zvec<int>& jv);
-template Zmat<long> submat<long>(const Zmat<long>& m, const Zvec<long>& iv, const Zvec<long>& jv);
-template Zmat<long> echelon<long>(const Zmat<long>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                          long& rk, long& ny, long& d, int method=0);
-template Zmat<long> addscalar<long>(const Zmat<long>&, const long&);
-template Zvec<long> apply<long>(const Zmat<long>&, const Zvec<long>&);
-template long inverse<long>(const Zmat<long>&, Zmat<long>&, int);
-template int liftmat<long>(const Zmat<long>& mm, const long& pr, Zmat<long>& m, long& dd);
-template void Zvec<long>::sub_row(const Zmat<long>& m, int i);
-template void Zvec<long>::add_row(const Zmat<long>& m, int i);
-
-// Instantiate Zmat template functions for T=ZZ
-template void add_row_to_vec<ZZ>(Zvec<ZZ>& v, const Zmat<ZZ>& m, long i);
-template void sub_row_to_vec<ZZ>(Zvec<ZZ>& v, const Zmat<ZZ>& m, long i);
-template Zmat<ZZ> operator*<ZZ>(const Zmat<ZZ>&, const Zmat<ZZ>&);
-template Zvec<ZZ> operator*<ZZ>(const Zmat<ZZ>&, const Zvec<ZZ>&);
-template int operator==<ZZ>(const Zmat<ZZ>&, const Zmat<ZZ>&);
-template istream& operator>> <ZZ>(istream&s, Zmat<ZZ>&);
-template Zmat<ZZ> colcat<ZZ>(const Zmat<ZZ>& a, const Zmat<ZZ>& b);
-template Zmat<ZZ> rowcat<ZZ>(const Zmat<ZZ>& a, const Zmat<ZZ>& b);
-template Zmat<ZZ> directsum<ZZ>(const Zmat<ZZ>& a, const Zmat<ZZ>& b);
-template void elimrows<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos);
-template void elimrows1<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos);
-template void elimrows2<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos, const ZZ& last);
-template Zmat<ZZ> echelon0<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, ZZ& d);
-template void elimp<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos, const ZZ& pr);
-template void elimp1<ZZ>(Zmat<ZZ>& m, long r1, long r2, long pos, const ZZ& pr);
-template Zmat<ZZ> echelon_modular<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, ZZ& d, const ZZ& pr);
-template Zmat<ZZ> echmodp<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const ZZ& pr);
-template Zmat<ZZ> echmodp_uptri<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const ZZ& pr);
-template Zmat<ZZ> ref_via_ntl<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                         long& rk, long& ny, const ZZ& pr);
-template Zmat<ZZ> ref_via_flint_modular<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                         long& rk, long& ny, const ZZ& pr);
-template Zmat<ZZ> rref_modular<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                                   long& rk, long& ny, const ZZ& pr);
-template long rank_via_ntl<ZZ>(const Zmat<ZZ>& M, const ZZ& pr);
-template ZZ det_via_ntl<ZZ>(const Zmat<ZZ>& M, const ZZ& pr);
-template Zmat<ZZ> transpose<ZZ>(const Zmat<ZZ>& m);
-template Zmat<ZZ> matmulmodp<ZZ>(const Zmat<ZZ>&, const Zmat<ZZ>&, const ZZ& pr);
-template Zvec<ZZ> matvecmulmodp<ZZ>(const Zmat<ZZ>&, const Zvec<ZZ>&, const ZZ& pr);
-template long population<ZZ>(const Zmat<ZZ>& m); // #nonzero entries
-template ZZ maxabs<ZZ>(const Zmat<ZZ>& m); // max entry
-template double sparsity<ZZ>(const Zmat<ZZ>& m); // #nonzero entries/#entries
-template int is_permutation_matrix<ZZ>(const Zmat<ZZ>& m);
-template int is_signed_permutation_matrix<ZZ>(const Zmat<ZZ>& m);
-template int is_identity_matrix<ZZ>(const Zmat<ZZ>& m);
 template ostream& operator<< <ZZ>(ostream&s, const Zmat<ZZ>&m);
-template Zmat<ZZ> operator+<ZZ>(const Zmat<ZZ>&);                   // unary
-template Zmat<ZZ> operator-<ZZ>(const Zmat<ZZ>&);                   // unary
-template Zmat<ZZ> operator+<ZZ>(const Zmat<ZZ>& m1, const Zmat<ZZ>& m2);
-template Zmat<ZZ> operator-<ZZ>(const Zmat<ZZ>& m1, const Zmat<ZZ>& m2);
-template Zmat<ZZ> operator*<ZZ>(const ZZ& scal, const Zmat<ZZ>& m);
-template Zmat<ZZ> operator/<ZZ>(const Zmat<ZZ>& m, const ZZ& scal);
-template int operator!=<ZZ>(const Zmat<ZZ>& m1, const Zmat<ZZ>& m2);
-template Zmat<ZZ> rowsubmat<ZZ>(const Zmat<ZZ>& m, const Zvec<int>& v);
-template Zmat<ZZ> rowsubmat<ZZ>(const Zmat<ZZ>& m, const Zvec<long>& v);
-template Zmat<ZZ> submat<ZZ>(const Zmat<ZZ>& m, const Zvec<int>& iv, const Zvec<int>& jv);
-template Zmat<ZZ> submat<ZZ>(const Zmat<ZZ>& m, const Zvec<long>& iv, const Zvec<long>& jv);
-template Zmat<ZZ> echelon<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                          long& rk, long& ny, ZZ& d, int method=0);
-template Zmat<ZZ> addscalar<ZZ>(const Zmat<ZZ>&, const ZZ&);
-template Zvec<ZZ> apply<ZZ>(const Zmat<ZZ>&, const Zvec<ZZ>&);
-template ZZ inverse<ZZ>(const Zmat<ZZ>&, Zmat<ZZ>&, int);
-template int liftmat<ZZ>(const Zmat<ZZ>& mm, const ZZ& pr, Zmat<ZZ>& m, ZZ& dd);
-template void Zvec<ZZ>::sub_row(const Zmat<ZZ>& m, int i);
-template void Zvec<ZZ>::add_row(const Zmat<ZZ>& m, int i);
-
-// Instantiate Zmat template functions for T=INT
-template void add_row_to_vec<INT>(Zvec<INT>& v, const Zmat<INT>& m, long i);
-template void sub_row_to_vec<INT>(Zvec<INT>& v, const Zmat<INT>& m, long i);
-template Zmat<INT> operator*<INT>(const Zmat<INT>&, const Zmat<INT>&);
-template Zvec<INT> operator*<INT>(const Zmat<INT>&, const Zvec<INT>&);
-template int operator==<INT>(const Zmat<INT>&, const Zmat<INT>&);
-template istream& operator>> <INT>(istream&s, Zmat<INT>&);
-template Zmat<INT> colcat<INT>(const Zmat<INT>& a, const Zmat<INT>& b);
-template Zmat<INT> rowcat<INT>(const Zmat<INT>& a, const Zmat<INT>& b);
-template Zmat<INT> directsum<INT>(const Zmat<INT>& a, const Zmat<INT>& b);
-template void elimrows<INT>(Zmat<INT>& m, long r1, long r2, long pos);
-template void elimrows1<INT>(Zmat<INT>& m, long r1, long r2, long pos);
-template void elimrows2<INT>(Zmat<INT>& m, long r1, long r2, long pos, const INT& last);
-template Zmat<INT> echelon0<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, INT& d);
-template void elimp<INT>(Zmat<INT>& m, long r1, long r2, long pos, const INT& pr);
-template void elimp1<INT>(Zmat<INT>& m, long r1, long r2, long pos, const INT& pr);
-template Zmat<INT> echelon_modular<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, INT& d, const INT& pr);
-template Zmat<INT> echmodp<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const INT& pr);
-template Zmat<INT> echmodp_uptri<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const INT& pr);
-template Zmat<INT> ref_via_flint_modular<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                         long& rk, long& ny, const INT& pr);
-template Zmat<INT> rref_modular<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-                                     long& rk, long& ny, const INT& pr);
-template Zmat<INT> transpose<INT>(const Zmat<INT>& m);
-template Zmat<INT> matmulmodp<INT>(const Zmat<INT>&, const Zmat<INT>&, const INT& pr);
-template Zvec<INT> matvecmulmodp<INT>(const Zmat<INT>&, const Zvec<INT>&, const INT& pr);
-template long population<INT>(const Zmat<INT>& m); // #nonzero entries
-template INT maxabs<INT>(const Zmat<INT>& m); // max entry
-template double sparsity<INT>(const Zmat<INT>& m); // #nonzero entries/#entries
-template int is_signed_permutation_matrix<INT>(const Zmat<INT>& m);
-template int is_permutation_matrix<INT>(const Zmat<INT>& m);
-template int is_identity_matrix<INT>(const Zmat<INT>& m);
 template ostream& operator<< <INT>(ostream&s, const Zmat<INT>&m);
-template Zmat<INT> operator+<INT>(const Zmat<INT>&);                   // unary
-template Zmat<INT> operator-<INT>(const Zmat<INT>&);                   // unary
-template Zmat<INT> operator+<INT>(const Zmat<INT>& m1, const Zmat<INT>& m2);
-template Zmat<INT> operator-<INT>(const Zmat<INT>& m1, const Zmat<INT>& m2);
-template Zmat<INT> operator*<INT>(const INT& scal, const Zmat<INT>& m);
-template Zmat<INT> operator/<INT>(const Zmat<INT>& m, const INT& scal);
-template int operator!=<INT>(const Zmat<INT>& m1, const Zmat<INT>& m2);
-template Zmat<INT> rowsubmat<INT>(const Zmat<INT>& m, const Zvec<int>& v);
-template Zmat<INT> rowsubmat<INT>(const Zmat<INT>& m, const Zvec<long>& v);
-template Zmat<INT> submat<INT>(const Zmat<INT>& m, const Zvec<int>& iv, const Zvec<int>& jv);
-template Zmat<INT> submat<INT>(const Zmat<INT>& m, const Zvec<long>& iv, const Zvec<long>& jv);
-template Zmat<INT> echelon<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                          long& rk, long& ny, INT& d, int method=0);
-template Zmat<INT> addscalar<INT>(const Zmat<INT>&, const INT&);
-template Zvec<INT> apply<INT>(const Zmat<INT>&, const Zvec<INT>&);
-template INT inverse<INT>(const Zmat<INT>&, Zmat<INT>&, int);
-template int liftmat<INT>(const Zmat<INT>& mm, const INT& pr, Zmat<INT>& m, INT& dd);
-template void Zvec<INT>::sub_row(const Zmat<INT>& m, int i);
-template void Zvec<INT>::add_row(const Zmat<INT>& m, int i);
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+//
+//  Interface with NTL matrices
+//
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+//#define TRACE_NTL_REF
+
+// #include <NTL/mat_lzz_p.h>
+// #ifdef TRACE_NTL_REF
+// #include "eclib/timer.h"
+// #endif
+
+// // Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
+
+// template<class T>
+// mat_zz_p mat_zz_p_from_mat(const Zmat<T>& M, const T& pr)
+// {
+//   long nr=M.nrows(), nc=M.ncols();
+// #ifdef TRACE_NTL_REF
+//   cout<<"Creating an NTL mat_zz_p from a matrix with " << nr <<" rows and "<<nc<<" columns, mod "<<pr<<endl;
+// #endif
+//   // create NTL matrix copy of M:
+//   NTL::zz_pPush push(I2long(pr));
+//   mat_zz_p A(NTL::INIT_SIZE, nr, nc);
+//   for(long i=0; i<nr; i++)
+//     for(long j=0; j<nc; j++)
+//       A.put(i,j, NTL::conv<zz_p>(M(i+1,j+1)));
+// #ifdef TRACE_NTL_REF
+//   cout<<"--done."<<endl;
+// #endif
+//   return A;
+// }
+
+// // Construct a mat (T type same as pr) from an NTL mat_lzz_p
+
+// template<class T>
+// Zmat<T> mat_from_mat_zz_p(const mat_zz_p& A, const T& pr) // type of T fixes return type
+// {
+//  long nr = A.NumRows(), nc = A.NumCols();
+// #ifdef TRACE_NTL_REF
+//   cout<<"Creating a mat from an NTL mat_zz_p with " << nr <<" rows and "<<nc<<" columns, mod "<<pr<<endl;
+// #endif
+//  // create matrix copy of A:
+//  Zmat<T> M(nr, nc);
+//  for(long i=0; i<nr; i++)
+//    for(long j=0; j<nc; j++)
+//      M(i+1,j+1) = mod(NTL::conv<T>(A.get(i,j)), pr);
+// #ifdef TRACE_NTL_REF
+//   cout<<"--done."<<endl;
+// #endif
+//  return M;
+// }
+
+// // compute ref of M mod pr via NTL, setting rk=rank, ny=nullity,
+// // pivotal columns pcols, non-pivotal columns npcols
+
+// template<class T>
+// Zmat<T> ref_via_ntl(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+//                     long& rk, long& ny, const T& pr)
+// {
+//  long nc=M.ncols();
+//  long i, j, k;
+// #ifdef TRACE_NTL_REF
+//  timer ntl_timer;
+//  ntl_timer.start();
+// #endif
+//  NTL::zz_pPush push(I2long(pr));
+//  mat_zz_p A = mat_zz_p_from_mat(M, pr);
+
+// #ifdef TRACE_NTL_REF
+//  cout<<"--calling NTL's gauss()..."<<flush;
+// #endif
+//  rk = NTL::gauss(A); // reduce to echelon form in place; rk is the rank
+// #ifdef TRACE_NTL_REF
+//  cout<<"done." << endl;
+// #endif
+//  ny = nc-rk;
+// #ifdef TRACE_NTL_REF
+//  cout<<"Rank = " << rk <<", nullity = "<<ny<<endl;
+// #endif
+
+//  // Find pivots, rescale rows so pivots are 1
+
+//  pcols.init(rk);
+//  npcols.init(ny);
+//  zz_p zero = NTL::conv<zz_p>(0);
+//  zz_p one = NTL::conv<zz_p>(1);
+//  zz_p piv, inv_piv;
+
+//  for (i = j = k = 0; i < rk; i++)
+//    {
+//      while (A.get(i,j) == zero)
+//        {
+//          npcols[k+1] = j+1;
+//          k++;
+//          j++;
+//        }
+//      piv = A.get(i,j);
+//      pcols[i+1] = j+1;
+//      j++;
+//      if (piv != one)
+//        {
+//          NTL::inv(inv_piv, piv);
+//          A[i] = inv_piv*A[i];
+//        }
+//    }
+//  while (k < ny)
+//    {
+//      npcols[k+1] = j+1;
+//      k++;
+//      j++;
+//    }
+
+//  // copy back to a new matrix for return:
+//  Zmat<T> ans = mat_from_mat_zz_p(A, pr).slice(rk,nc);
+// #ifdef TRACE_NTL_REF
+//  ntl_timer.start();
+//  ntl_timer.show();
+//  cout<<endl;
+// #endif
+//  return ans;
+// }
+
+// template<class T>
+// long rank_via_ntl(const Zmat<T>& M, const T& pr)
+// {
+// #ifdef TRACE_NTL_REF
+//   cout << "Computing rank mod "<<pr<<" of a matrix of size ("<<M.nrows()<<", "<<M.ncols()<<")..."<<flush;
+//   timer ntl_timer;
+//   ntl_timer.start();
+// #endif
+//   NTL::zz_pPush push(I2long(pr));
+//   mat_zz_p A = mat_zz_p_from_mat(M, pr);
+//   long rk = gauss(A); // reduce to echelon form in place; rk is the rank
+// #ifdef TRACE_NTL_REF
+//   cout << "done: "<<flush;
+//   ntl_timer.start();
+//   ntl_timer.show();
+//   cout<<endl;
+// #endif
+//   return rk;
+// }
+
+// template<class T>
+// T det_via_ntl(const Zmat<T>& M, const T& pr)
+// {
+// #ifdef TRACE_NTL_REF
+//   cout << "Computing determinant mod "<<pr<<" of a matrix of size ("<<M.nrows()<<", "<<M.ncols()<<")..."<<flush;
+//   timer ntl_timer;
+//   ntl_timer.start();
+// #endif
+//   NTL::zz_pPush push(I2long(pr));
+//   mat_zz_p A = mat_zz_p_from_mat(M, pr);
+//   zz_p det = determinant(A);
+// #ifdef TRACE_NTL_REF
+//   cout << "done: "<<flush;
+//   ntl_timer.start();
+//   ntl_timer.show();
+//   cout<<endl;
+// #endif
+//   return mod(NTL::conv<T>(det), pr);
+// }
+// template Zmat<int> ref_via_ntl<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+//                                long& rk, long& ny, const int& pr);
+// template long rank_via_ntl<int>(const Zmat<int>& M, const int& pr);
+// template int det_via_ntl<int>(const Zmat<int>& M, const int& pr);
+// template Zmat<long> ref_via_ntl<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+//                          long& rk, long& ny, const long& pr);
+// template long rank_via_ntl<long>(const Zmat<long>& M, const long& pr);
+// template long det_via_ntl<long>(const Zmat<long>& M, const long& pr);
+// template Zmat<ZZ> ref_via_ntl<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+//                          long& rk, long& ny, const ZZ& pr);
+// template long rank_via_ntl<ZZ>(const Zmat<ZZ>& M, const ZZ& pr);
+// template ZZ det_via_ntl<ZZ>(const Zmat<ZZ>& M, const ZZ& pr);
