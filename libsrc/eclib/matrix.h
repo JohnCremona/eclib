@@ -114,7 +114,7 @@ public:
                          long& rk, long& ny, const T& pr);
   friend Zmat echmodp_uptri<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const T& pr);
-  friend Zmat ref_via_flint<>(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+  friend Zmat ref_via_flint_modular<>(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const T& pr);
   friend Zmat ref_via_ntl<>(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                              long& rk, long& ny, const T& pr);
@@ -292,9 +292,9 @@ Zmat<T> LLL(const Zmat<T>& M, Zmat<T>& U); // U*M=L with U unimodular
 template<class T>
 void find_pnpcols(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols);
 
-Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr);
-Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr);
-Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr);
-Zmat<INT> ref_via_flint(const Zmat<INT>& M, const INT& pr);
+Zmat<int> ref_via_flint_modular(const Zmat<int>& M, const int& pr);
+Zmat<long> ref_via_flint_modular(const Zmat<long>& M, const long& pr);
+Zmat<ZZ> ref_via_flint_modular(const Zmat<ZZ>& M, const ZZ& pr);
+Zmat<INT> ref_via_flint_modular(const Zmat<INT>& M, const INT& pr);
 
 #endif

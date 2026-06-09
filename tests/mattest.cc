@@ -142,9 +142,9 @@ int main(void)
     }
     } // loop over methods
 
-  cout << "Calling ref_via_flint()..." << endl;
-  mat R = ref_via_flint(a, modulus);
-  cout << " ref_via_flint() returns\n" << R << endl;
+  cout << "Calling ref_via_flint_modular()..." << endl;
+  mat R = ref_via_flint_modular(a, modulus);
+  cout << " ref_via_flint_modular() returns\n" << R << endl;
 
   // test conversion to/from FLINT matrices:
 

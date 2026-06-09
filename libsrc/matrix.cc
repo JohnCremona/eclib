@@ -1081,7 +1081,7 @@ template<class T>
 Zmat<T> rref(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const T& pr)
 {
-  return ref_via_flint(M, pcols, npcols, rk, ny, pr);
+  return ref_via_flint_modular(M, pcols, npcols, rk, ny, pr);
 }
 
 template<class T>
@@ -2042,7 +2042,7 @@ Zmat<INT> mat_from_mod_mat(const fmpz_mod_mat_t& A, const fmpz_mod_ctx_t& flint_
   return M;
 }
 
-Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr)
+Zmat<int> ref_via_flint_modular(const Zmat<int>& M, const int& pr)
 {
   hmod_mat_t A;
   mod_mat_from_mat(A,M,pr);
@@ -2053,7 +2053,7 @@ Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr)
   return B;
 }
 
-Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr)
+Zmat<long> ref_via_flint_modular(const Zmat<long>& M, const long& pr)
 {
   nmod_mat_t A;
   mod_mat_from_mat(A,M,pr);
@@ -2064,7 +2064,7 @@ Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr)
   return B;
 }
 
-Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr)
+Zmat<ZZ> ref_via_flint_modular(const Zmat<ZZ>& M, const ZZ& pr)
 {
   fmpz_mod_ctx_t flint_modulus;
   fmpz_mod_ctx_init(flint_modulus, *to_FLINT(pr));
@@ -2093,7 +2093,7 @@ Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr)
   return B;
 }
 
-Zmat<INT> ref_via_flint(const Zmat<INT>& M, const INT& pr)
+Zmat<INT> ref_via_flint_modular(const Zmat<INT>& M, const INT& pr)
 {
   fmpz_mod_ctx_t flint_modulus;
   fmpz_t tmp;
@@ -2150,10 +2150,10 @@ template void pnpcols<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npco
 // FLINT.
 
 template<class T>
-Zmat<T> ref_via_flint(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+Zmat<T> ref_via_flint_modular(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                       long& rk, long& ny, const T& pr)
 {
-  Zmat<T> R = ref_via_flint(M, pr);
+  Zmat<T> R = ref_via_flint_modular(M, pr);
   pnpcols(R, pcols, npcols);
   rk = dim(pcols);
   ny = dim(npcols);
@@ -2547,7 +2547,7 @@ template Zmat<int> echmodp_uptri<int>(const Zmat<int>& m, Zvec<int>& pcols, Zvec
                                  long& rk, long& ny, const int& pr);
 template Zmat<int> ref_via_ntl<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const int& pr);
-template Zmat<int> ref_via_flint<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+template Zmat<int> ref_via_flint_modular<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const int& pr);
 template Zmat<int> rref<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                         long& rk, long& ny, const int& pr);
@@ -2608,7 +2608,7 @@ template Zmat<long> echmodp_uptri<long>(const Zmat<long>& m, Zvec<int>& pcols, Z
                      long& rk, long& ny, const long& pr);
 template Zmat<long> ref_via_ntl<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const long& pr);
-template Zmat<long> ref_via_flint<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+template Zmat<long> ref_via_flint_modular<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const long& pr);
 template Zmat<long> rref<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const long& pr);
@@ -2669,7 +2669,7 @@ template Zmat<ZZ> echmodp_uptri<ZZ>(const Zmat<ZZ>& m, Zvec<int>& pcols, Zvec<in
                      long& rk, long& ny, const ZZ& pr);
 template Zmat<ZZ> ref_via_ntl<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const ZZ& pr);
-template Zmat<ZZ> ref_via_flint<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+template Zmat<ZZ> ref_via_flint_modular<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const ZZ& pr);
 template Zmat<ZZ> rref<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const ZZ& pr);
@@ -2728,7 +2728,7 @@ template Zmat<INT> echmodp<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>&
                      long& rk, long& ny, const INT& pr);
 template Zmat<INT> echmodp_uptri<INT>(const Zmat<INT>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                      long& rk, long& ny, const INT& pr);
-template Zmat<INT> ref_via_flint<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+template Zmat<INT> ref_via_flint_modular<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const INT& pr);
 template Zmat<INT> rref<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                                long& rk, long& ny, const INT& pr);

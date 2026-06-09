@@ -1261,7 +1261,7 @@ void sZmat_elim<T>::step5dense()
 #endif
   Zvec<int> pc,npc; long rk,ny;
 
-  dmat = ref_via_flint(dmat,pc,npc,rk,ny,modulus);
+  dmat = ref_via_flint_modular(dmat,pc,npc,rk,ny,modulus);
 
 #if TRACE_DENSE
     cout<<"...finished dense elimination, rank = "<<rk;

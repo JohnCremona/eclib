@@ -157,8 +157,8 @@ A has inverse (1/2)*
 [[-4,2],
 [3,-1]]
 Check: A.A^(-1) = I ? True!
-Calling ref_via_flint()...
- ref_via_flint() returns
+Calling ref_via_flint_modular()...
+ ref_via_flint_modular() returns
 [[1,0],
 [0,1]]
 Testing conversion to and from FLINT matrices: OK

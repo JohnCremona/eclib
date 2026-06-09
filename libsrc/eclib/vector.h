@@ -110,7 +110,7 @@ template<class T> Zmat<T> echmodp(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>&
                      long& rk, long& ny, const T& pr);
 template<class T> Zmat<T> echmodp_uptri(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
                      long& rk, long& ny, const T& pr);
-template<class T> Zmat<T> ref_via_flint(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
+template<class T> Zmat<T> ref_via_flint_modular(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                            long& rk, long& ny, const T& pr);
 template<class T> Zmat<T> ref_via_ntl(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                          long& rk, long& ny, const T& pr);
