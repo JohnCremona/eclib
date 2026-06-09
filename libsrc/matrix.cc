@@ -2119,6 +2119,32 @@ Zmat<INT> ref_via_flint(const Zmat<INT>& M, const INT& pr)
   return B;
 }
 
+// From a matrix in REF, extract the pivotal and non-pivotal columns
+template<class T>
+void pnpcols(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols)
+{
+  vector<int> pc, npc;
+  int nc = M.ncols(), nr = M.nrows(), i = 1, j;
+  for (j=1; j<=nc; j++)
+    {
+      if ((i>nr) || (is_zero(M(i,j))))
+        {
+          npc.push_back(j);
+        }
+      else
+        {
+          pc.push_back(j);
+          i++;
+        }
+    }
+  pcols  = Zvec<int>(pc);
+  npcols = Zvec<int>(npc);
+}
+template void pnpcols<int>(const Zmat<int>& M, Zvec<int>& pcols, Zvec<int>& npcols);
+template void pnpcols<long>(const Zmat<long>& M, Zvec<int>& pcols, Zvec<int>& npcols);
+template void pnpcols<ZZ>(const Zmat<ZZ>& M, Zvec<int>& pcols, Zvec<int>& npcols);
+template void pnpcols<INT>(const Zmat<INT>& M, Zvec<int>& pcols, Zvec<int>& npcols);
+
 // The following function computes the reduced echelon form of M
 // modulo the prime pr, using the appropriate rref function from
 // FLINT.
@@ -2128,32 +2154,9 @@ Zmat<T> ref_via_flint(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
                       long& rk, long& ny, const T& pr)
 {
   Zmat<T> R = ref_via_flint(M, pr);
-
-  // construct vectors of pivotal and non-pivotal columns
-  rk = R.nrows();
-  ny = M.ncols()-rk;
-  pcols.init(rk);
-  npcols.init(ny);
-  long i, j, k;
-  T zero(0);
-  for (i = j = k = 1; i <= rk; i++)
-    {
-      while (R(i,j) == zero)
-        {
-          npcols[k] = j;
-          k++;
-          j++;
-        }
-      pcols[i] = j;
-      j++;
-    }
-  while (k <= ny)
-    {
-      npcols[k] = j;
-      k++;
-      j++;
-    }
-
+  pnpcols(R, pcols, npcols);
+  rk = dim(pcols);
+  ny = dim(npcols);
   return R;
 }
 

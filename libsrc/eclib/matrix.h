@@ -288,6 +288,10 @@ Zmat<T> LLL(const Zmat<T>& M);
 template<class T>
 Zmat<T> LLL(const Zmat<T>& M, Zmat<T>& U); // U*M=L with U unimodular
 
+// From a matrix in REF, extract the pivotal and non-pivotal columns
+template<class T>
+void find_pnpcols(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols);
+
 Zmat<int> ref_via_flint(const Zmat<int>& M, const int& pr);
 Zmat<long> ref_via_flint(const Zmat<long>& M, const long& pr);
 Zmat<ZZ> ref_via_flint(const Zmat<ZZ>& M, const ZZ& pr);
