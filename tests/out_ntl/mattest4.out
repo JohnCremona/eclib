@@ -130,7 +130,7 @@ A has inverse (1/2)*
 [3,-1]]
 Check: A.A^(-1) = I ? True!
 
-Using method 2 (modulus = 1000000000000000000000000000057)
+Using method 2 (modulus = 100000000000000000000000000000000000000000000000151)
 Echelon matrix = 
 [[2,0,-4,2],
 [0,2,3,-1]]
@@ -144,7 +144,7 @@ A has inverse (1/2)*
 [3,-1]]
 Check: A.A^(-1) = I ? True!
 
-Using method 3 (modulus = 1000000000000000000000000000057)
+Using method 3 (modulus = 100000000000000000000000000000000000000000000000151)
 Echelon matrix = 
 [[2,0,-4,2],
 [0,2,3,-1]]

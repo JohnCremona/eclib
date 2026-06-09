@@ -1262,7 +1262,7 @@ Zmat<T> echelonp(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& npcols,
            dd = lcm(dd,d1);
          else
            {
-             cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q"<<endl;
+             cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q (in echelonp())"<<endl;
              exit(1);
            }
        }
@@ -1311,7 +1311,7 @@ Zmat<T> echelonp_via_flint(const Zmat<T>& entries, Zvec<int>& pcols, Zvec<int>& 
            dd=lcm(dd,d1);
          else
            {
-             cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q"<<endl;
+             cerr<<"Failed to lift "<<m(i,jj)<<" mod "<<pr<<" to Q (in echelonp_via_flint())"<<endl;
              exit(1);
            }
        }
@@ -1703,7 +1703,7 @@ int liftmat(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd)
                  [pr,dd] (const T& x) {return mod(xmodmul(dd,x,pr),pr);});
   if (!success)
     {
-      cerr<<"liftmat() failed to lift some entries mod "<<pr<<endl;
+      cerr<<"Failed to lift some entries mod "<<pr<< " in liftmat() " << endl;
       return 0;
     }
   if(trace)

@@ -1641,12 +1641,12 @@ ZZ Order::extend_by_one(const Qvec& v)
   while (nsteps < rank*rank)
     {
       nsteps += 1;
-      cout << "nsteps = " << nsteps << ", index = " << index << endl;
+      // cout << "nsteps = " << nsteps << ", index = " << index << endl;
       add_one(w);
       if (check_order(w))
         {
           disc = poldisc/(index*index);
-          cout << "extend_by() returning after " << nsteps << " steps " << endl;
+          // cout << "extend_by() returning after " << nsteps << " steps " << endl;
           return index/old_index;
         }
     }

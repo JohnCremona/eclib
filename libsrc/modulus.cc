@@ -33,7 +33,9 @@ template<> INT default_modulus<INT>() { return modulus_factory_INT.get_modulus()
 
 const int default_modulus_int(1073741789);
 const long default_modulus_long(1073741789);
-const string bigprime("1000000000000000000000000000057");
+// const string bigprime("1000000000000000000000000000057");
+// const string bigprime("10000000000000000000000000000000000000121");
+const string bigprime("100000000000000000000000000000000000000000000000151");
 const ZZ default_modulus_ZZ(to_ZZ(bigprime.c_str()));
 const INT default_modulus_INT(bigprime);
 
