@@ -16,7 +16,7 @@ m^3 =
 [1062,1305,1548],
 [1656,2034,2412]]
 Trace(m^3) = 4185
-char. poly. of m has coefficients [ 0 -18 -15 1 ]
+char. poly. of m is X^3-15*X^2-18*X
 det(M) = 0
 rank(M) = 2
 nullity(M) = 1
@@ -59,7 +59,7 @@ m^3 =
 [1062,1305,1548],
 [1656,2034,2412]]
 Trace(m^3) = 4185
-char. poly. of m has coefficients [ 0 -18 -15 1 ]
+char. poly. of m is X^3-15*X^2-18*X
 det(M) = 0
 rank(M) = 2
 nullity(M) = 1

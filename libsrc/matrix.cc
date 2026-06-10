@@ -426,9 +426,15 @@ T Zmat<T>::trace() const
   return tr;
 }
 
-// FADEEV'S METHOD
+template<class T>
+ZZX Zmat<T>::charpoly() const
+ {
+   return ::charpoly(*this);
+ }
 
-// CHANGE
+#if(0)
+
+// FADEEV'S METHOD
 template<class T>
 vector<T> Zmat<T>::charpoly() const
 { long n = nrows();
@@ -450,13 +456,26 @@ vector<T> Zmat<T>::charpoly() const
     }
   return clist;
 }
+#endif
 
-// CHANGE
 template<class T>
 T Zmat<T>::determinant() const
 {
- T det = charpoly()[0];
- return (nro%2? -det :det);
+  fmpz_mat_t A;
+  fmpz_t d;
+  T det;
+
+  fmpz_mat_init(A, nro, nco);
+  fmpz_init(d);
+
+  flint_mat_from_mat(A,*this);
+  fmpz_mat_det(d, A);
+  ::set(det, d);
+
+  fmpz_mat_clear(A);
+  fmpz_clear(d);
+
+  return det;
 }
 
 template<class T>

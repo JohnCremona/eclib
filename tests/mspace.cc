@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
  
 #include <eclib/linalg.h>
+#include <eclib/polys.h>
 
 const ZZ modulus(default_modulus<ZZ>());
 
@@ -49,8 +50,8 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
    }
 //
   {
-    vector<ZZ> cp = m.charpoly();
-    cout << "char. poly. of m has coefficients " << cp << endl;
+    auto cp = m.charpoly();
+    cout << "char. poly. of m is " << str(cp) << endl;
   }
   cout << "det(M) = " << m.determinant() << endl;
   cout << "rank(M) = " << m.rank() << endl;

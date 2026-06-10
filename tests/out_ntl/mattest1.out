@@ -109,7 +109,7 @@ Now A =
 Now A = 
 [[1,2],
 [3,4]]
-char. poly. of A has coefficients [ -2 -5 1 ]
+char. poly. of A is X^2-5*X-2
 det(A) = -2
 Augmented matrix = 
 [[1,2,1,0],

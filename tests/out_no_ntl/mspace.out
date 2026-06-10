@@ -16,7 +16,7 @@ m^3 =
 [1062,1305,1548],
 [1656,2034,2412]]
 Trace(m^3) = 4185
-char. poly. of m has coefficients [ 0 -18 -15 1 ]
+char. poly. of m is X^3-15*X^2-18*X
 det(M) = 0
 rank(M) = 2
 nullity(M) = 1
@@ -38,7 +38,7 @@ Enter lambda: eigenspace for lambda = 1 has basis
 []]
 with dimension 0
 
-Now repeating eigenspace calculation modulo 1000000000000000000000000000057
+Now repeating eigenspace calculation modulo 100000000000000000000000000000000000000000000000151
 eigenspace for lambda has basis
 [[],
 [],
@@ -59,7 +59,7 @@ m^3 =
 [1062,1305,1548],
 [1656,2034,2412]]
 Trace(m^3) = 4185
-char. poly. of m has coefficients [ 0 -18 -15 1 ]
+char. poly. of m is X^3-15*X^2-18*X
 det(M) = 0
 rank(M) = 2
 nullity(M) = 1
@@ -81,7 +81,7 @@ Enter lambda: eigenspace for lambda = 0 has basis
 [1]]
 with dimension 1
 
-Now repeating eigenspace calculation modulo 1000000000000000000000000000057
+Now repeating eigenspace calculation modulo 100000000000000000000000000000000000000000000000151
 eigenspace for lambda has basis
 [[1],
 [-2],

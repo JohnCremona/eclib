@@ -113,7 +113,7 @@ public:
   long rank() const;
   long nullity() const;
   T trace() const;
-  vector<T> charpoly() const;
+  ZZX charpoly() const; // returns an NTL poly
   T determinant() const;
   int is_zero() const;
   void output(ostream&s=cout) const;

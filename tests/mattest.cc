@@ -29,6 +29,7 @@
 #include <eclib/timer.h>
 #endif
 #include <eclib/linalg.h>
+#include <eclib/polys.h>
 
 const scalar modulus(default_modulus<scalar>());
 
@@ -98,8 +99,8 @@ int main(void)
   cout << "Now A = \n" << a << endl;
   cout << "-A=\n" << (-a) << endl;
   cout << "Now A = \n" << a << endl;
-  vector<scalar> cp = a.charpoly();
-  cout << "char. poly. of A has coefficients " << cp << endl;
+  auto cp = a.charpoly();
+  cout << "char. poly. of A is " << str(cp) << endl;
   cout << "det(A) = " << a.determinant() << endl;
   mat aug = colcat(a,mat::identity_matrix(r));
   cout << "Augmented matrix = \n" << aug << endl << endl;
