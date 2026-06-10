@@ -201,7 +201,7 @@ void saturator::nextq()
     }
   vec_i pcols, npcols; // not used
   long newTLrank, ny;
-  mat_l newTLmat = echmodp(rowcat(TLimage,TLim),pcols, npcols, newTLrank, ny, p);
+  mat_l newTLmat = ref_mod_p(rowcat(TLimage,TLim), p, pcols, npcols, newTLrank, ny);
   if(verbose>2)
     {
       cout<<"New rank = "<<newTLrank<<endl;

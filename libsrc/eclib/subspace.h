@@ -69,13 +69,13 @@ private:
 template<class T>
 Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s);
 template<class T>
-subZspace<T> kernel(const Zmat<T>& m, int method=0);
+subZspace<T> kernel(const Zmat<T>& m);
 template<class T>
-subZspace<T> image(const Zmat<T>& m, int method=0);
+subZspace<T> image(const Zmat<T>& m);
 template<class T>
-subZspace<T> eigenspace(const Zmat<T>& m, const T& lambda, int method=0);
+subZspace<T> eigenspace(const Zmat<T>& m, const T& lambda);
 template<class T>
-subZspace<T> subeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s, int method=0);
+subZspace<T> subeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s);
 
 
 //The following work with subspaces "mod p" using "echmodp" from

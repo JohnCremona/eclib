@@ -282,7 +282,7 @@ void sZmat_elim<T>::sparse_elimination( )
 #if TRACE_ELIM || TRACE_DENSE
   int pop=get_population(*this);
   double dens = density(*this); //(double)pop/(nco*nro);
-  cout<<"Starting sparse elimination: "<<nro<<" rows, "<<nco<<" columns, "<<pop<<" entries (density = "<<dens<<")\n";
+  cout<<"Starting sparse elimination: "<< pop<<" entries (density = "<<dens<<")\n";
   //  cout<<"row weights:\n";
   //  for(int i=0; i<nro; i++) cout<<col[i][0]<<" ";
   //  cout<<endl;
@@ -1259,9 +1259,9 @@ void sZmat_elim<T>::step5dense()
 #if TRACE_DENSE
   cout<<"Constructed dense matrix, starting dense elimination step..." <<endl;
 #endif
-  Zvec<int> pc,npc; long rk,ny; T dummy;
-
-  dmat = echelon_via_flint_modular(dmat,pc,npc,rk,ny,dummy,modulus);
+  Zvec<int> pc,npc;
+  long rk,ny;
+  dmat = ref_mod_p(dmat, modulus, pc,npc, rk,ny);
 
 #if TRACE_DENSE
   cout<<"...finished dense elimination, rank = "<<rk;

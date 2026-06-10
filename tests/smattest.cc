@@ -397,9 +397,9 @@ int main(void)
 
 	if( flag ) {
 	  long rk, ny; scalar pr = modulus;
-	  mat m = sm.as_mat ();  
-	  mat ker_mat = echmodp( m, pc, npc, rk, ny, pr);
-	  cout << " rank using echmodp : " << rk;
+	  mat m = sm.as_mat ();
+	  mat ker_mat = ref_mod_p( m, pr, pc, npc, rk, ny);
+	  cout << " rank using ref_mod_p : " << rk;
 	  int pop = population(ker_mat);
 	  cout << " number of non-zero entries: " << pop << endl;
 	}

@@ -216,9 +216,9 @@ template<class T> Zvec<T> operator-(const Zvec<T>&, const Zvec<T>&);
 template<class T> Zvec<T> operator*(const T&, const Zvec<T>&);       // componentwise
 template<class T> Zvec<T> operator/(const Zvec<T>&, const T&);       // componentwise
 template<class T> void make_primitive(Zvec<T>& v);
-template<class T> void elim(const Zvec<T>& a, Zvec<T>& b, long pos);
-template<class T> void elim1(const Zvec<T>& a, Zvec<T>& b, long pos);
-template<class T> void elim2(const Zvec<T>& a, Zvec<T>& b, long pos, const T& lastpivot);
+// template<class T> void elim(const Zvec<T>& a, Zvec<T>& b, long pos);
+// template<class T> void elim1(const Zvec<T>& a, Zvec<T>& b, long pos);
+// template<class T> void elim2(const Zvec<T>& a, Zvec<T>& b, long pos, const T& lastpivot);
 template<class T> Zvec<T> express(const Zvec<T>& v, const Zvec<T>& v1, const Zvec<T>& v2);
 template<class T> int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans);  //lifts a mod-p vector to a rational
                                    //and scales to a primitive vec in Z. Returns success flag
@@ -243,12 +243,12 @@ template<class T> inline Zvec<T> operator/(const Zvec<T>& v, const T& scal)
 { Zvec<T> w(v); w/=scal; return w;}
 template<class T> inline void make_primitive(Zvec<T>& v)
 { T g=content(v); if (g>1) v/=g;}
-template<class T> inline void elim(const Zvec<T>& a, Zvec<T>& b, long pos)
-{ (b*=a[pos])-=(b[pos]*a);}
-template<class T> inline void elim1(const Zvec<T>& a, Zvec<T>& b, long pos)
-{ (b*=a[pos])-=(b[pos]*a); make_primitive(b);}
-template<class T> inline void elim2(const Zvec<T>& a, Zvec<T>& b, long pos, const T& lastpivot)
-{ ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}
+// template<class T> inline void elim(const Zvec<T>& a, Zvec<T>& b, long pos)
+// { (b*=a[pos])-=(b[pos]*a);}
+// template<class T> inline void elim1(const Zvec<T>& a, Zvec<T>& b, long pos)
+// { (b*=a[pos])-=(b[pos]*a); make_primitive(b);}
+// template<class T> inline void elim2(const Zvec<T>& a, Zvec<T>& b, long pos, const T& lastpivot)
+// { ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}
 
 // convert between matrices over different integer types
 template<class T>

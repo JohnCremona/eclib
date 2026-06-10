@@ -29,38 +29,19 @@
 template<class T> Zmat<T> colcat(const Zmat<T>& a, const Zmat<T>& b);
 template<class T> Zmat<T> rowcat(const Zmat<T>& a, const Zmat<T>& b);
 template<class T> Zmat<T> directsum(const Zmat<T>& a, const Zmat<T>& b);
-template<class T> void elimrows(Zmat<T>& m, long r1, long r2, long pos);
-template<class T> void elimrows1(Zmat<T>& m, long r1, long r2, long pos);
-template<class T> void elimrows2(Zmat<T>& m, long r1, long r2, long pos, const T& last);
-template<class T> Zmat<T> echelon0(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, T& d);
-template<class T> void elimp(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
-template<class T> void elimp1(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
-template<class T> Zmat<T> echelon_modular(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, T& d, const T& pr);
-template<class T> Zmat<T> echelon_via_flint(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, T& d);
-template<class T> Zmat<T> echelon_via_flint_modular(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                      long& rk, long& ny, T& d, const T& pr);
-template<class T> Zmat<T> echmodp(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const T& pr);
-template<class T> Zmat<T> echmodp_uptri(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                     long& rk, long& ny, const T& pr);
 
-// To compute the REF of a matrix directly or by working modulo a
-// prime and lifting, use echelon() with method=0 or 2.
+// Function to compute the REF of a matrix using FLINT:
+template<class T> Zmat<T> ref(const Zmat<T>& M, T& d);
+template<class T> Zmat<T> ref(const Zmat<T>& M, T& d,
+                              Zvec<int>& pcols, Zvec<int>& npcols,
+                              long& rk, long& ny);
 
-//template<class T> Zmat<T> ref(const Zmat<T>& M, T& d);
-//template<class T> Zmat<T> ref_modular(const Zmat<T>& M, T& d, const T& pr);
+// Function to compute the REF of a matrix modulo a prime, using FLINT:
+template<class T> Zmat<T> ref_mod_p(const Zmat<T>& M, const T& pr);
+template<class T> Zmat<T> ref_mod_p(const Zmat<T>& M, const T& pr,
+                                    Zvec<int>& pcols, Zvec<int>& npcols,
+                                    long& rk, long& ny);
 
-// Functions to compute the REF of a matrix using FLINT:
-template<class T> Zmat<T> ref_via_flint(const Zmat<T>& M, T& d);
-// Functions to compute the REF of a matrix modulo a prime using FLINT:
-template<class T> Zmat<T> ref_via_flint_modular(const Zmat<T>& M, T& d, const T& pr);
-// template<class T> Zmat<T> ref_via_ntl(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-//                          long& rk, long& ny, T& d, const T& pr);
-// template<class T> long rank_via_ntl(const Zmat<T>& M, const T& pr);
-// template<class T> T det_via_ntl(const Zmat<T>& M, const T& pr);
 template<class T> subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2);
 template<class T> ssubZspace<T> combine(const ssubZspace<T>& s1, const ssubZspace<T>& s2);
 template<class T> sZmat<T> restrict_mat(const sZmat<T>& m, const ssubZspace<T>& s);
@@ -77,8 +58,6 @@ template<class T> double sparsity(const Zmat<T>& m);
 template<class T> int is_permutation_matrix(const Zmat<T>& m);
 template<class T> int is_signed_permutation_matrix(const Zmat<T>& m);
 template<class T> int is_identity_matrix(const Zmat<T>& m);
-template<class T> Zmat<T> echelon(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                                  long& rk, long& ny, T& d, int method=3);
 template<class T> Zmat<T> addscalar(const Zmat<T>&, const T&);
 template<class T> Zvec<T> apply(const Zmat<T>&, const Zvec<T>&);
 template<class T> Zvec<T> operator*(const Zmat<T>& m, const Zvec<T>& v);
@@ -103,7 +82,7 @@ public:
   // member functions & operators
   void init(long nr=0, long nc=0);
   Zmat& operator=(const Zmat<T>&);                // assignment with copy
-  T& operator()(long i, long j);        // returns ref to (i,j) entry
+  T& operator()(long i, long j);        // returns reference to (i,j) entry
   T operator()(long i, long j) const;   // returns (i,j) entry
   Zmat slice(long,long,long=-1,long=-1) const;// returns submatrix
   T sub(long i, long j) const;             // returns the (i,j) entry
@@ -161,44 +140,6 @@ public:
   friend Zmat colcat<>(const Zmat<T>& a, const Zmat<T>& b);
   friend Zmat rowcat<>(const Zmat<T>& a, const Zmat<T>& b);
   friend Zmat directsum<>(const Zmat<T>& a, const Zmat<T>& b);
-
-  // helper functions for in-house echelon functions:
-  friend void elimrows<>(Zmat<T>& m, long r1, long r2, long pos); //plain elimination, no clearing
-  friend void elimrows1<>(Zmat<T>& m, long r1, long r2, long pos); //elimination + clearing
-  friend void elimrows2<>(Zmat<T>& m, long r1, long r2, long pos, const T& last); //elimination + divide by last pivot
-  friend Zmat echelon0<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                          long& rk, long& ny, T& d);
-  friend void elimp<>(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
-  friend void elimp1<>(Zmat<T>& m, long r1, long r2, long pos, const T& pr);
-
-  // in-house echelon (modular version, works mod pr then lifts)
-  friend Zmat<T> echelon_modular<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                                   long& rk, long& ny, T& d, const T& pr);
-  // in-house echelon mod pr
-  friend Zmat<T> echmodp<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                           long& rk, long& ny, const T& pr);
-  // in-house echelon mod pr with no back-substitution
-  friend Zmat<T> echmodp_uptri<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                                 long& rk, long& ny, const T& pr);
-
-  // echelon (modular version, works mod pr then lifts) via flint
-  friend Zmat<T> echelon_via_flint_modular<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                                             long& rk, long& ny, T& d, const T& pr);
-  // echelon (non-modular version) via flint
-  friend Zmat<T> echelon_via_flint<>(const Zmat<T>& m, Zvec<int>& pcols, Zvec<int>& npcols,
-                                     long& rk, long& ny, T& d);
-
-  // ref functions just compute the ref and denominator
-  // friend Zmat<T> ref<>(const Zmat<T>& M, T& d);
-  // friend Zmat<T> ref_modular<>(const Zmat<T>& M, T& d, const T& pr);
-  friend Zmat<T> ref_via_flint<>(const Zmat<T>& M, T& d);
-  friend Zmat<T> ref_via_flint_modular<>(const Zmat<T>& M, T& d, const T& pr);
-
-  // friend Zmat<T> ref_via_ntl<>(const Zmat<T>& M, Zvec<int>& pcols, Zvec<int>& npcols,
-  //                              long& rk, long& ny, T& d, const T& pr);
-  // friend long rank_via_ntl<>(const Zmat<T>& M, const T& pr);
-  // friend T det_via_ntl<>(const Zmat<T>& M, const T& pr);
-
   friend subZspace<T> combine<>(const subZspace<T>& s1, const subZspace<T>& s2);
   friend Zmat<T> restrict_mat<>(const Zmat<T>& m, const subZspace<T>& s, int cr);
   friend int liftmat<>(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd);

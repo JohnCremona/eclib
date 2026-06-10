@@ -106,16 +106,8 @@ int main(void)
 
   long rk, ny;
   scalar denom;
-  // int method=0;
-  // cout << "Which echelon method? (0=standard,1=longlong,2=modular) ";
-  // cin>>method;
-  for (auto method: {0, 1, 2, 3})
-    {
-  cout << "\nUsing method " << method;
-  if(method>0) cout << " (modulus = " << modulus << ")";
-  cout << endl;
-  mat ref = echelon(aug, pc, npc, rk, ny, denom, method);
-  cout << "Echelon matrix = \n" << ref << endl;
+  mat R = ref(aug, denom, pc, npc, rk, ny);
+  cout << "Echelon matrix = \n" << R << endl;
   cout << "pivotal columns: " << pc << endl;
   cout << "nonpivotal columns: " << npc << endl;
   cout << "Denom = " << denom << endl;
@@ -130,7 +122,7 @@ int main(void)
     }
   else
     {
-      mat ainv = ref.slice(1,r,r+1,r+r);
+      mat ainv = R.slice(1,r,r+1,r+r);
       cout << "A has inverse ";
       if (denom>1)
         cout << "(1/" << denom << ")*";
@@ -140,12 +132,6 @@ int main(void)
       cout << (ok? " True!": " False!") << endl;
       //      assert (ok);
     }
-    } // loop over methods
-
-  cout << "Calling ref_via_flint_modular()..." << endl;
-  scalar dd;
-  mat R = ref_via_flint_modular(a, dd, modulus);
-  cout << " ref_via_flint_modular() returns\n" << R << endl;
 
   // test conversion to/from FLINT matrices:
 

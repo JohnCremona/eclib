@@ -74,7 +74,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   assert(ok);
   S = subspace_m(bas, sS.pivs(), deno);
 #else
-  S = kernel(fT, 3); // method 3: echelon via FLINT
+  S = kernel(fT);
 #endif
 
   if(dim(S)!=d)
