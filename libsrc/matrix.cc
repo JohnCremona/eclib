@@ -1402,11 +1402,25 @@ Zmat<INT> ref_mod_p(const Zmat<INT>& M, const INT& pr)
 }
 
 template<class T>
+Zmat<T> ref_mod_p(const Zmat<T>& M, const T& pr,
+                  Zvec<int>& pcols, Zvec<int>& npcols,
+                  long& rk, long& ny)
+{
+  Zmat<T> R = ref_mod_p(M, pr);
+  pnpcols(R, pcols, npcols, rk, ny);
+  return R;
+}
+template Zmat<int> ref_mod_p<int>(const Zmat<int>&, const int&, Zvec<int>&, Zvec<int>&, long&, long&);
+template Zmat<long> ref_mod_p<long>(const Zmat<long>&, const long&, Zvec<int>&, Zvec<int>&, long&, long&);
+template Zmat<ZZ> ref_mod_p<ZZ>(const Zmat<ZZ>&, const ZZ&, Zvec<int>&, Zvec<int>&, long&, long&);
+template Zmat<INT> ref_mod_p<INT>(const Zmat<INT>&, const INT&, Zvec<int>&, Zvec<int>&, long&, long&);
+
+template<class T>
 Zmat<T> ref(const Zmat<T>& M, T& dd)
 {
   int trace=0;
   long nr=M.nrows(), nc=M.ncols(), rk;
-  if (trace) cout << "In ref_via_flint() with M =\n" << M << endl;
+  if (trace) cout << "In ref() with M =\n" << M << endl;
 
   fmpz_mat_t A, R;
   fmpz_mat_init(A, nr, nc);
@@ -1423,6 +1437,22 @@ Zmat<T> ref(const Zmat<T>& M, T& dd)
   fmpz_mat_clear(R);
   fmpz_clear(d);
 
+  // FLINT does not guarantee that content(R) and d are coprime or that d>0
+  if (dd<0)
+    {
+      dd = -dd;
+      B = -B;
+    }
+
+  if (!is_one(dd))
+    {
+      T g = gcd(dd, B.content());
+      if (!is_one(g))
+        {
+          dd /= g;
+          B /= g;
+        }
+    }
   return B;
 }
 

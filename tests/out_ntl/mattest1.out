@@ -115,8 +115,6 @@ Augmented matrix =
 [[1,2,1,0],
 [3,4,0,1]]
 
-
-Using method 0
 Echelon matrix = 
 [[2,0,-4,2],
 [0,2,3,-1]]
@@ -129,38 +127,6 @@ A has inverse (1/2)*
 [[-4,2],
 [3,-1]]
 Check: A.A^(-1) = I ? True!
-
-Using method 2 (modulus = 1073741789)
-Echelon matrix = 
-[[2,0,-4,2],
-[0,2,3,-1]]
-pivotal columns: [1,2]
-nonpivotal columns: [3,4]
-Denom = 2
-Rank = 2
-Nullity = 0
-A has inverse (1/2)*
-[[-4,2],
-[3,-1]]
-Check: A.A^(-1) = I ? True!
-
-Using method 3 (modulus = 1073741789)
-Echelon matrix = 
-[[2,0,-4,2],
-[0,2,3,-1]]
-pivotal columns: [1,2]
-nonpivotal columns: [3,4]
-Denom = 2
-Rank = 2
-Nullity = 0
-A has inverse (1/2)*
-[[-4,2],
-[3,-1]]
-Check: A.A^(-1) = I ? True!
-Calling ref_via_flint_modular()...
- ref_via_flint_modular() returns
-[[1,0],
-[0,1]]
 Testing conversion to and from FLINT matrices: OK
 Testing HNF, SNF and LLL via FLINT: 
 M = 

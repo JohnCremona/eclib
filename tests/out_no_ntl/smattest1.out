@@ -2221,7 +2221,7 @@ want to determine the rank using matrix? (1 = yes; 0 = no )How many maximum numb
 enter seed for random number generator
 calculating matrix,
 done
- rank using echmodp : 95 number of non-zero entries: 525
+ rank using ref_mod_p : 95 number of non-zero entries: 525
 rank is:95
  number of non-zero entries: 427
 kernel correct
