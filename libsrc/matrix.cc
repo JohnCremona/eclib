@@ -495,6 +495,27 @@ template void Zvec<INT>::sub_row(const Zmat<INT>& m, int i);
 
 // Definitions of non-member operators and functions
 
+template<class T>
+void cancel(Zmat<T>& A, T& d)
+{
+  if (d<0)
+    {
+      d = -d;
+      std::transform(A.entries.begin(), A.entries.end(), A.entries.begin(),
+                     [](const T& x) {return -x;});
+    }
+  if (is_one(d)) return;
+  T g = gcd(d, A.content());
+  if (is_one(g)) return;
+  d /= g;
+  std::transform(A.entries.begin(), A.entries.end(), A.entries.begin(),
+                 [g](const T& x) {return x / g;});
+}
+template void cancel<int>(Zmat<int>&, int&);
+template void cancel<long>(Zmat<long>&, long&);
+template void cancel<ZZ>(Zmat<ZZ>&, ZZ&);
+template void cancel<INT>(Zmat<INT>&, INT&);
+
 // add/sub row i of mat to v
 template<class T>
 void add_row_to_vec(Zvec<T>& v, const Zmat<T>& m, long i)
@@ -847,23 +868,41 @@ template Zvec<long> apply<long>(const Zmat<long>&, const Zvec<long>&);
 template Zvec<ZZ> apply<ZZ>(const Zmat<ZZ>&, const Zvec<ZZ>&);
 template Zvec<INT> apply<INT>(const Zmat<INT>&, const Zvec<INT>&);
 
-//CHANGE
 // Assigns d*A^-1 to Ainv and returns d, assuming A square and det(A) nonzero
 template<class T>
-T inverse(const Zmat<T>& A, Zmat<T>& Ainv, int method)
+T inverse(const Zmat<T>& A, Zmat<T>& Ainv)
 {
-  long n = A.nrows();
-  const Zmat<T>& aug=colcat(A, Zmat<T>::identity_matrix(n));
-  long rk, ny; Zvec<int> pc,npc; T d;
-  const Zmat<T>& R = ref(aug, d, pc, npc, rk, ny);
-  Ainv = R.slice(1,n,n+1,2*n);
-  return d;
-}
-template int inverse<int>(const Zmat<int>&, Zmat<int>&, int);
-template long inverse<long>(const Zmat<long>&, Zmat<long>&, int);
-template ZZ inverse<ZZ>(const Zmat<ZZ>&, Zmat<ZZ>&, int);
-template INT inverse<INT>(const Zmat<INT>&, Zmat<INT>&, int);
+  fmpz_mat_t fA, fAinv;
+  fmpz_mat_init(fA, A.nro, A.nco);
+  fmpz_mat_init(fAinv, A.nro, A.nco);
+  fmpz_t d;
+  fmpz_init(d);
 
+  flint_mat_from_mat(fA,A);
+  int invertible = fmpz_mat_inv(fAinv, d, fA);
+  T dd(0);
+
+  if (!invertible)
+    {
+      cerr << "inverse() called with non-invertible matrix" << endl;
+    }
+  else
+    {
+      set(dd,d);
+      Ainv = mat_from_flint_mat(fAinv, dd); // dd is just to set the type
+      cancel(Ainv, dd);
+    }
+
+  fmpz_mat_clear(fA);
+  fmpz_mat_clear(fAinv);
+  fmpz_clear(d);
+
+  return dd;
+}
+template int inverse<int>(const Zmat<int>&, Zmat<int>&);
+template long inverse<long>(const Zmat<long>&, Zmat<long>&);
+template ZZ inverse<ZZ>(const Zmat<ZZ>&, Zmat<ZZ>&);
+template INT inverse<INT>(const Zmat<INT>&, Zmat<INT>&);
 
 template<class T>
 Zmat<T> matmulmodp(const Zmat<T>& m1, const Zmat<T>& m2, const T& pr)
@@ -1431,28 +1470,14 @@ Zmat<T> ref(const Zmat<T>& M, T& dd)
   rk = fmpz_mat_rref(R, d, A);
   set(dd,d);
   Zmat<T> B = mat_from_flint_mat(R, dd).slice(rk, nc);
-  if (trace) cout << "ref_via_flint() returns d = " << dd << " and REF =\n" << B << endl;
+  if (trace) cout << "ref() returns d = " << dd << " and REF =\n" << B << endl;
 
   fmpz_mat_clear(A);
   fmpz_mat_clear(R);
   fmpz_clear(d);
 
   // FLINT does not guarantee that content(R) and d are coprime or that d>0
-  if (dd<0)
-    {
-      dd = -dd;
-      B = -B;
-    }
-
-  if (!is_one(dd))
-    {
-      T g = gcd(dd, B.content());
-      if (!is_one(g))
-        {
-          dd /= g;
-          B /= g;
-        }
-    }
+  cancel(B, dd);
   return B;
 }
 

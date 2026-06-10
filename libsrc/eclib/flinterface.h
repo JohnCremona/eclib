@@ -26,7 +26,7 @@
 
 // This interface was written with help from Fredrik Johansson
 
-// Currently only used to provide ref_via_flint_modular() for Zmat<int> and
+// Currently only used to provide ref_mod_p() for Zmat<int> and
 // Zmat<long> via FLINT's rref()
 
 // FLINT support using 32-bit hmod_mat for scalar=int via Fredrik

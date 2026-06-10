@@ -42,6 +42,9 @@ template<class T> Zmat<T> ref_mod_p(const Zmat<T>& M, const T& pr,
                                     Zvec<int>& pcols, Zvec<int>& npcols,
                                     long& rk, long& ny);
 
+// Divide out by common content, hence reducing A/d
+template<class T> void cancel(Zmat<T>& A, T& d);
+template<class T> T inverse(const Zmat<T>& A, Zmat<T>& Ainv);
 template<class T> subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2);
 template<class T> ssubZspace<T> combine(const ssubZspace<T>& s1, const ssubZspace<T>& s2);
 template<class T> sZmat<T> restrict_mat(const sZmat<T>& m, const ssubZspace<T>& s);
@@ -131,6 +134,9 @@ public:
   void delete_rows(int n=1); // delete the last n rows
 
   // non-member (friend) functions and operators
+
+  friend void cancel<>(Zmat<T>& A, T& d);
+  friend T inverse<>(const Zmat<T>& A, Zmat<T>& Ainv);
   friend void add_row_to_vec<>(Zvec<T>& v, const Zmat<T>& m, long i);
   friend void sub_row_to_vec<>(Zvec<T>& v, const Zmat<T>& m, long i);
   friend Zmat operator*<>(const Zmat<T>&, const Zmat<T>&);
@@ -193,9 +199,6 @@ template<class T>
 Zmat<T> submat(const Zmat<T>& m, const Zvec<int>& iv, const Zvec<int>& jv);
 template<class T>
 Zmat<T> submat(const Zmat<T>& m, const Zvec<long>& iv, const Zvec<long>& jv);
-
-// Assigns d*A^-1 to Ainv and returns d, assuming A square and det(A) nonzero
-template<class T> T inverse(const Zmat<T>& A, Zmat<T>& Ainv, int method=0);
 
 // Construct an NTL mat_lzz_p (matrix mod p) from a mat mod pr
 template<class T>
