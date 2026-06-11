@@ -61,23 +61,23 @@ int subZspace<T>::contains(const subZspace<T>& s) const      // does this contai
 template<class T>
 subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2)
 {
-  T d = s1.denom * s2.denom;
-  const Zmat<T>& b1=s1.basis;
-  const Zmat<T>& b2=s2.basis;
+  T d = s1.den() * s2.den();
+  const Zmat<T>& b1=s1.bas();
+  const Zmat<T>& b2=s2.bas();
   Zmat<T> b = b1*b2;
   T g = b.content();
   if(g>1)
     {
       d/=g; b/=g;
     }
-  Zvec<int> p = s1.pivots[s2.pivots];
+  Zvec<int> p = s1.pivs()[s2.pivs()];
   return subZspace<T>(b,p,d);
 }
 
 template<class T>
 Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s)
-{ Zvec<int> p = pivots(s);
-  long   n = dim(s);
+{ Zvec<int> p = s.pivs();
+  long   n = s.dim();
   Zmat<T> ans(n,m.ncols());
   for (int i=1; i<=n; i++) ans.setrow(i, m.row(p[i]));
   return ans;
@@ -94,11 +94,11 @@ Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s)
 template<class T>
 Zmat<T> restrict_mat(const Zmat<T>& M, const subZspace<T>& S, int cr)
 {
-  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
-  const Zmat<T>& B = S.basis;
+  if(S.dim()==M.nro) return M; // trivial special case, s is whole space
+  const Zmat<T>& B = S.bas();
   // cerr<<"In restrict_mat() with M =\n" << M <<"\n and basis(S) = \n"<<B<<endl;
-  // cerr<<"rowsubmat(M, S.pivots) =\n"<<rowsubmat(M, S.pivots)<<endl;
-  Zmat<T> A = rowsubmat(M, S.pivots) * B;
+  // cerr<<"rowsubmat(M, S.pivs()) =\n"<<rowsubmat(M, S.pivs())<<endl;
+  Zmat<T> A = rowsubmat(M, S.pivs()) * B;
   // cerr<<"A            =\n"<< A << endl;
 
   if(cr) // optional check that S is invariant under M
@@ -160,7 +160,7 @@ template<class T>
 subZspace<T> subeigenspace(const Zmat<T>& m1, const T& l, const subZspace<T>& s)
 {
   Zmat<T> m = restrict_mat(m1,s);
-  subZspace<T> ss = eigenspace(m, l*(denom(s)));
+  subZspace<T> ss = eigenspace(m, l*(s.den()));
   return combine(s,ss );
 }
 
@@ -178,7 +178,7 @@ subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& p
 template<class T>
 Zmat<T> prestrict(const Zmat<T>& M, const subZspace<T>& S, const T& pr, int cr)
 {
-  if(dim(S)==M.nro) return M; // trivial special case, s is whole space
+  if(S.dim()==M.nro) return M; // trivial special case, s is whole space
   const Zmat<T>& B = S.basis;
   Zmat<T> A = matmulmodp(rowsubmat(M, S.pivots), B, pr);
 
@@ -255,7 +255,7 @@ template<class T>
 subZspace<T> psubeigenspace(const Zmat<T>& m1, const T& l, const subZspace<T>& s, const T& pr)
 {
   const Zmat<T>& m = prestrict(m1,s,pr);
-  const subZspace<T>& ss = peigenspace(m, l*(denom(s)),pr);
+  const subZspace<T>& ss = peigenspace(m, l*(s.den()),pr);
   return pcombine(s,ss,pr);
 }
 
@@ -270,9 +270,33 @@ int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans)
   int ok = liftmat(s.basis,pr,m,dd);
   if (!ok)
     cerr << "Failed to lift subspace from mod "<<pr<<endl;
-  ans = subZspace<T>(m, pivots(s), dd);
+  ans = subZspace<T>(m, s.pivs(), dd);
   return ok;
 }
+
+// template<class T>
+// int dim(const subZspace<T>& s)
+// {
+//   return s.dim();
+// }
+
+// template<class T>
+// T denom(const subZspace<T>& s)
+// {
+//   return s.denom;
+// }
+
+// template<class T>
+// Zvec<int> pivots(const subZspace<T>& s)
+// {
+//   return s.pivots;
+// }
+
+// template<class T>
+// Zmat<T> basis(const subZspace<T>& s)
+// {
+//   return s.basis;
+// }
 
 // return a basis for the orthogonal complement of a<2^r (viewed as a bit vector of length r)
 vector<long> dotperp(long a, int r)
@@ -291,7 +315,7 @@ vector<long> dotperp(long a, int r)
         m.set(1,j, NTL::bit(a,j-1));
       subspace_i ker = pkernel(m,2); // right kernel mod 2
       // assert (dim(ker)==r-1);
-      mat_i bas = basis(ker);
+      mat_i bas = ker.bas();
       vector<long> ans(r-1, 0);
       for (int i=0; i<r-1; i++)
         {
@@ -313,8 +337,8 @@ vector<long> dotperp(const vector<long>& alist, int r)
     for (int j=1; j<=r; j++)
       m.set(i,j, NTL::bit(alist[i-1],j-1));
   subspace_i ker = pkernel(m,2); // right kernel mod 2
-  // assert (dim(ker)==r-s);
-  mat_i bas = basis(ker);
+  // assert (ker.dim()==r-s);
+  mat_i bas = ker.bas();
   vector<long> ans(r-s, 0);
   for (int i=0; i<r-s; i++)
     {
@@ -335,10 +359,6 @@ template class subZspace<INT>;
 
 // Instantiate template functions for T=int
 
-template int dim<int>(const subZspace<int>& s);
-template int denom<int>(const subZspace<int>& s);
-template Zvec<int> pivots<int>(const subZspace<int>& s);
-template Zmat<int> basis<int>(const subZspace<int>& s);
 template subZspace<int> combine<int>(const subZspace<int>& s1, const subZspace<int>& s2);
 template Zmat<int> restrict_mat<int>(const Zmat<int>& m, const subZspace<int>& s, int cr);
 template subZspace<int> pcombine<int>(const subZspace<int>& s1, const subZspace<int>& s2, const int& pr);
@@ -357,10 +377,6 @@ template subZspace<int> psubeigenspace<int>(const Zmat<int>& m, const int& l, co
 
 // Instantiate template functions for T=long
 
-template int dim<long>(const subZspace<long>& s);
-template long denom<long>(const subZspace<long>& s);
-template Zvec<int> pivots<long>(const subZspace<long>& s);
-template Zmat<long> basis<long>(const subZspace<long>& s);
 template subZspace<long> combine<long>(const subZspace<long>& s1, const subZspace<long>& s2);
 template Zmat<long> restrict_mat<long>(const Zmat<long>& m, const subZspace<long>& s, int cr);
 template subZspace<long> pcombine<long>(const subZspace<long>& s1, const subZspace<long>& s2, const long& pr);
@@ -379,10 +395,6 @@ template subZspace<long> psubeigenspace<long>(const Zmat<long>& m, const long& l
 
 // Instantiate template functions for T=ZZ
 
-template int dim<ZZ>(const subZspace<ZZ>& s);
-template ZZ denom<ZZ>(const subZspace<ZZ>& s);
-template Zvec<int> pivots<ZZ>(const subZspace<ZZ>& s);
-template Zmat<ZZ> basis<ZZ>(const subZspace<ZZ>& s);
 template subZspace<ZZ> combine<ZZ>(const subZspace<ZZ>& s1, const subZspace<ZZ>& s2);
 template Zmat<ZZ> restrict_mat<ZZ>(const Zmat<ZZ>& m, const subZspace<ZZ>& s, int cr);
 template subZspace<ZZ> pcombine<ZZ>(const subZspace<ZZ>& s1, const subZspace<ZZ>& s2, const ZZ& pr);
@@ -401,10 +413,6 @@ template subZspace<ZZ> psubeigenspace<ZZ>(const Zmat<ZZ>& m, const ZZ& l, const 
 
 // Instantiate template functions for T=INT
 
-template int dim<INT>(const subZspace<INT>& s);
-template INT denom<INT>(const subZspace<INT>& s);
-template Zvec<int> pivots<INT>(const subZspace<INT>& s);
-template Zmat<INT> basis<INT>(const subZspace<INT>& s);
 template subZspace<INT> combine<INT>(const subZspace<INT>& s1, const subZspace<INT>& s2);
 template Zmat<INT> restrict_mat<INT>(const Zmat<INT>& m, const subZspace<INT>& s, int cr);
 template subZspace<INT> pcombine<INT>(const subZspace<INT>& s1, const subZspace<INT>& s2, const INT& pr);

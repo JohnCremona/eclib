@@ -1104,8 +1104,8 @@ void random_fill_in( sZmat<T>& sm, int max, int seed )
 template<class T>
 sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s)
 {
-  if(dim(s)==m.nrows()) return m; // trivial special case, s is whole space
-  return mult_mod_p(m.select_rows(pivots(s)),sZmat<T>(basis(s)), default_modulus<T>());
+  if(s.dim()==m.nrows()) return m; // trivial special case, s is whole space
+  return mult_mod_p(m.select_rows(s.pivs()),sZmat<T>(s.bas()), default_modulus<T>());
 }
 
 // Instantiate sZmat template classes for T=int, long, ZZ, INT

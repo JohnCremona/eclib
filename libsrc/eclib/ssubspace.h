@@ -43,6 +43,7 @@ public:
 
   // member functions & operators
   inline void clear() { pivots.init(); basis=sZmat<T>(0,0);}
+  inline int dim() const {return basis.ncols();} // the dimension
   inline Zvec<int> pivs() const {return pivots;}  // the pivot vector
   inline sZmat<T> bas() const {return basis;}   // the basis matrix
   inline T mod() const {return modulus;}   // the (prime) modulus

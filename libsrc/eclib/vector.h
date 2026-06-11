@@ -90,10 +90,6 @@ template<class T> Zvec<T> operator*(const Zmat<T>&, const Zvec<T>&);
 template<class T> T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 
 template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr=0);
-template<class T> int dim(const subZspace<T>& s);
-template<class T> T denom(const subZspace<T>& s);
-template<class T> Zvec<int> pivots(const subZspace<T>& s);
-template<class T> Zmat<T> basis(const subZspace<T>& s);
 template<class T> subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2);
 template<class T> subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
 template<class T> int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans);

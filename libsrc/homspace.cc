@@ -263,10 +263,10 @@ if (verbose>1)
    coord = sp.as_mat();
 #else
    subspace sp = kernel(relmat);
-   coord = basis(sp);
-   dimension = dim(sp);
-   pivs = pivots(sp);
-   denom1 = denom(sp);
+   coord = sp.bas();
+   dimension = sp.dim();
+   pivs = sp.pivs();
+   denom1 = sp.den();
    for(i=1; i<=ngens; i++)
      coord_vecs[i]=svec(coord.row(i));
 #endif
@@ -378,7 +378,7 @@ if (verbose>1)
         {
 	  cout << "Basis of ker(delta):\n";
 	  cout << kern.bas().as_mat()<<endl;
-	  cout << "pivots: " << pivots(kern) << endl;
+	  cout << "pivots: " << kern.pivs() << endl;
         }
    }
    if (verbose) cout << "Finished constructing homspace." << endl;
@@ -601,15 +601,15 @@ vec homspace::applyop_proj(const matop& T, const rational& q, const mat& bas) co
 
 mat homspace::calcop_restricted(const matop& T,	const subspace& s, int dual, int display) const
 {
-  long d=dim(s);
+  long d = s.dim();
   mat m(d,dimension);
   for (long j=0; j<d; j++)
      {
-       long jj = pivots(s)[j+1]-1;
+       long jj = s.pivs()[j+1]-1;
        svec colj = applyop(T,freemods[jj]);
        m.setrow(j+1,colj.as_vec());
      }
-  m = (smat(m)*smat(basis(s))).as_mat();
+  m = (smat(m)*smat(s.bas())).as_mat();
   if(!dual) m=transpose(m); // dual is default for restricted ops
   if (display)
     {
@@ -622,16 +622,16 @@ mat homspace::calcop_restricted(const matop& T,	const subspace& s, int dual, int
 
 smat homspace::s_calcop_restricted(const matop& T, const ssubspace& s, int dual, int display) const
 {
-  long d=dim(s);
+  long d = s.dim();
   smat m(d,dimension);
   for (long j=1; j<=d; j++)
      {
-       long jj = pivots(s)[j];
+       long jj = s.pivs()[j];
        svec colj = applyop(T,freemods[jj-1]);
        m.setrow(j,colj);
      }
   //  m = m*basis(s);
-  m = mult_mod_p(m,basis(s), modulus);
+  m = mult_mod_p(m, s.bas(), modulus);
   if(!dual) m=transpose(m); // dual is default for restricted ops
   if (display)
     {
@@ -885,29 +885,28 @@ smat homspace::s_conj(int cuspidal, int dual, int display) const
 mat homspace::conj_restricted(const subspace& s,
 			      int dual, int display) const
 {
-  long d = dim(s);
+  long d = s.dim();
   mat m(d,dimension);
   for (long j=1; j<=d; j++)
     {
-      long jj=pivots(s)[j];
+      long jj = s.pivs()[j];
       symb sy = symbol(freegens[jj-1]);
       svec colj   =  coords_cd(-sy.cee(),sy.dee());
       m.setrow(j,colj.as_vec());
     }
-  m = matmulmodp(m,basis(s), modulus);
-  if(!dual) m=transpose(m); // dual is default for restricted ops
+  m = matmulmodp(m, s.bas(), modulus);
+  if(!dual) m = transpose(m); // dual is default for restricted ops
   if (display) cout << "Matrix of conjugation = " << m;
   return m;
 }
 
-smat homspace::s_conj_restricted(const ssubspace& s,
-				 int dual, int display) const
+smat homspace::s_conj_restricted(const ssubspace& s, int dual, int display) const
 {
-  long d = dim(s);
+  long d = s.dim();
   smat m(d,dimension);
   for (long j=1; j<=d; j++)
     {
-      long jj=pivots(s)[j];
+      long jj = s.pivs()[j];
       symb sy = symbol(freegens[jj-1]);
       svec colj   =  coords_cd(-sy.cee(),sy.dee());
       m.setrow(j,colj);
@@ -1060,12 +1059,12 @@ mat homspace::opmat_restricted(int i, const subspace& s, int dual, int v)
     {
       cerr<<"Error in homspace::opmat_restricted(): called with i = "
 	  << i << endl;
-      return mat(dim(s));  // shouldn't happen
+      return mat(s.dim());  // shouldn't happen
     }
   long p = op_prime(i);
   if(v)
     {
-      cout<<"Computing " << opname(p,N) <<" restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
+      cout<<"Computing " << opname(p,N) <<" restricted to subspace of dimension "<<s.dim()<<" ..."<<flush;
       mat ans = heckeop_restricted(p,s,dual,0); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;
@@ -1080,12 +1079,12 @@ smat homspace::s_opmat_restricted(int i, const ssubspace& s, int dual, int v)
     {
       cerr<<"Error in homspace::s_opmat_restricted(): called with i = "
 	  << i << endl;
-      return smat(dim(s));  // shouldn't happen
+      return smat(s.dim());  // shouldn't happen
     }
   long p = op_prime(i);
   if(v)
     {
-      cout<<"Computing " << opname(p,N) <<" restricted to subspace of dimension "<<dim(s)<<" ..."<<flush;
+      cout<<"Computing " << opname(p,N) <<" restricted to subspace of dimension "<<s.dim()<<" ..."<<flush;
       smat ans = s_heckeop_restricted(p,s,dual,v); // Automatically chooses W or T
       cout<<"done."<<endl;
       return ans;

@@ -40,18 +40,14 @@ public:
 
   // member functions & operators
   inline void clear() { pivots.init(); basis.init();}
-  inline T den() const {return denom;}     // the denominator
+  inline int dim() const {return basis.ncols();} // the dimension
+  inline T den() const {return denom;}           // the denominator
   inline Zvec<int> pivs() const {return pivots;} // the pivot vector
-  inline Zmat<T> bas() const {return basis;}   // the basis matrix
-  inline int dim() const {return basis.ncols();}
+  inline Zmat<T> bas() const {return basis;}     // the basis matrix
   int contains(const Zvec<T>& v) const;            // does this contain v?
   int contains(const subZspace<T>& s) const;       // does this contain s?
 
   // non-member (friend) functions and operators
-  friend T denom<>(const subZspace<T>& s);   // the denominator
-  friend Zvec<int> pivots<>(const subZspace<T>& s);// the pivot vector
-  friend Zmat<T> basis<>(const subZspace<T>& s) ;// the basis matrix
-  friend subZspace<T> combine<>(const subZspace<T>& s1, const subZspace<T>& s2);
   friend Zmat<T> restrict_mat<>(const Zmat<T>& m, const subZspace<T>& s, int cr);
   friend subZspace<T> pcombine<>(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
   friend Zmat<T> prestrict<>(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr);
@@ -78,7 +74,7 @@ template<class T>
 subZspace<T> subeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s);
 
 
-//The following work with subspaces "mod p" using "echmodp" from
+//The following work with subspaces "mod p" using "ref_mod_p" from
 //matrix.h/cc to do gaussian elimination.  The "denom" of each is 1.
 
 template<class T>
@@ -92,14 +88,14 @@ subZspace<T> peigenspace(const Zmat<T>& m, const T& lambda, const T& pr);
 template<class T>
 subZspace<T> psubeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s, const T& pr);
 
-template<class T>
-inline int dim(const subZspace<T>& s) {return s.dim();}  // the dimension
-template<class T>
-inline T denom(const subZspace<T>& s) {return s.denom;}    // the denominator
-template<class T>
-inline Zvec<int> pivots(const subZspace<T>& s) {return s.pivots;}     // the pivot vector
-template<class T>
-inline Zmat<T> basis(const subZspace<T>& s) {return s.basis;}       // the basis matrix
+// template<class T>
+// inline int dim(const subZspace<T>& s) {return s.dim();}  // the dimension
+// template<class T>
+// inline T denom(const subZspace<T>& s) {return s.denom;}    // the denominator
+// template<class T>
+// inline Zvec<int> pivots(const subZspace<T>& s) {return s.pivots;}     // the pivot vector
+// template<class T>
+// inline Zmat<T> basis(const subZspace<T>& s) {return s.basis;}       // the basis matrix
 
 // return a basis for the orthogonal complement of a<2^r (viewed as a bit vector of length r)
 vector<long> dotperp(long a, int r);

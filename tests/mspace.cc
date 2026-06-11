@@ -58,30 +58,30 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   cout << "nullity(M) = " << m.nullity() << endl;
   {
     subspace_m ker = kernel(m);
-    mat_m kerbasis = basis(ker);
+    mat_m kerbasis = ker.bas();
     cout << "kernel(m) has basis\n" << kerbasis << endl;
-    vec_i kerpivs = pivots(ker);
+    vec_i kerpivs = ker.pivs();
     cout << "pivots: " << kerpivs << "\n";
-    ZZ kerdenom = denom(ker);
+    ZZ kerdenom = ker.den();
     cout << "denom:  " << kerdenom  << "\n";
   }
   {
     subspace_m im = image(m);
-    cout << "image(m) has basis\n" << basis(im) << endl;
-    cout << "pivots: " << pivots(im) << "\n";
-    cout << "denom:  " << denom(im)  << "\n";
+    cout << "image(m) has basis\n" << im.bas() << endl;
+    cout << "pivots: " << im.pivs() << "\n";
+    cout << "denom:  " << im.den()  << "\n";
   }
   {
     ZZ lambda;
     cout << "Enter lambda: "; cin >> lambda;
     subspace_m elambda = eigenspace(m,lambda);
-    cout << "eigenspace for lambda = " << lambda << " has basis\n" << basis(elambda) << endl;
-    cout << "with dimension " << dim(elambda) << endl;
+    cout << "eigenspace for lambda = " << lambda << " has basis\n" << elambda.bas() << endl;
+    cout << "with dimension " << elambda.dim() << endl;
     cout << "\nNow repeating eigenspace calculation modulo " << modulus << endl;
     subspace_m elp;
     lift(peigenspace(m,lambda,modulus),modulus, elp);
-    cout << "eigenspace for lambda has basis\n" << basis(elp) << endl;
-    cout << "with dimension " << dim(elp) << endl;
+    cout << "eigenspace for lambda has basis\n" << elp.bas() << endl;
+    cout << "with dimension " << elp.dim() << endl;
   }
 }
  cout<<endl;

@@ -77,27 +77,27 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
   S = kernel(fT);
 #endif
 
-  if(dim(S)!=d)
+  if(S.dim()!=d)
     {
-      cout<<"Problem: eigenspace has wrong dimension "<<dim(S)<<", not "<<d<<endl;
+      cout<<"Problem: eigenspace has wrong dimension "<<S.dim()<<", not "<<d<<endl;
       exit(1);
     }
-  denom_abs=to_ZZ(nsp->dH)*denom(S);
-  key_symbol = nsp->H1->freemods[pivots(S)[1] -1];
+  denom_abs = to_ZZ(nsp->dH) * S.den();
+  key_symbol = nsp->H1->freemods[S.pivs()[1] -1];
   if (verbose)
     {
       cout << "Finished constructing subspace S of dimension " << d
-           << ", relative denom = "<< denom(S)
+           << ", relative denom = "<< S.den()
            << ", absolute denom = "<< denom_abs << endl;
     }
 
   // compute projcoord, precomputed projections the basis of S
-  projcoord = nsp->H1->coord * to_mat(basis(S));
+  projcoord = nsp->H1->coord * to_mat(S.bas());
   if(verbose>1)
     {
-      cout << "H1->coord = " << nsp->H1->coord << endl;
-      cout << "basis(S)  = " << basis(S) << endl;
-      cout << "projcoord = " << projcoord << endl;
+      cout << "H1->coord =\n" << nsp->H1->coord << endl;
+      cout << "basis of S  =\n" << S.bas() << endl;
+      cout << "projcoord =\n" << projcoord << endl;
     }
 
   // To define the Hecke field we could use f itself and the

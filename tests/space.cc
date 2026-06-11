@@ -60,11 +60,11 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
     subspace ker;
     times=ntimes;
     while(times--) ker = kernel(m);
-    mat kerbasis = basis(ker);
+    mat kerbasis = ker.bas();
     cout << "kernel(m) has basis\n" << kerbasis << endl;
-    vec_i kerpivs = pivots(ker);
+    vec_i kerpivs = ker.pivs();
     cout << "pivots: " << kerpivs << "\n";
-    scalar kerdenom = denom(ker);
+    scalar kerdenom = ker.den();
     cout << "denom:  " << kerdenom  << "\n";
     // test of inclusion of vectors in subspace:
     for (int i=1; i<=r; i++)
@@ -83,17 +83,17 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
   {
     times=ntimes; subspace ker;
     while(times--) ker = pkernel(m, p);
-    mat kerbasis = basis(ker);
+    mat kerbasis = ker.bas();
     cout << "kernel(m) has basis\n" << kerbasis << endl;
-    vec_i kerpivs = pivots(ker);
+    vec_i kerpivs = ker.pivs();
     cout << "pivots: " << kerpivs << "\n";
     subspace oldker;
     times=ntimes;
     while(times--) oldker = oldpkernel(m, p);
-    if((kerbasis!=basis(oldker))||(kerpivs!=pivots(oldker)))
+    if((kerbasis != oldker.bas()) || (kerpivs != oldker.pivs()))
       {
 	cout << "!!! Differs from old version !!!" << endl;
-	cout << "Old basis = \n"<<basis(oldker)<<endl;
+	cout << "Old basis = \n" << oldker.bas()<<endl;
       }
     else
       cout << "!!! Agrees  with old version !!!" << endl;
@@ -101,16 +101,16 @@ while (cout << "Enter size of square matrix M: ", cin >> r, r>0 )
 /*
   {
     subspace im = image(m);
-    cout << "image(m) has basis\n" << basis(im);
-    cout << "pivots: " << pivots(im) << "\n";
-    cout << "denom:  " << denom(im)  << "\n";
+    cout << "image(m) has basis\n" << im.bas();
+    cout << "pivots: " << im.pivs() << "\n";
+    cout << "denom:  " << im.den()  << "\n";
   }
   {
     scalar lambda;
     cout << "Enter lambda: "; cin >> lambda;
     subspace elambda = eigenspace(m,lambda);
-    cout << "eigenspace for lambda has basis\n" << basis(elambda);
-    cout << "with dimension " << dim(elambda) << endl;
+    cout << "eigenspace for lambda has basis\n" << elambda.bas();
+    cout << "with dimension " << elambda.dim() << endl;
   }
 */
 }

@@ -228,15 +228,14 @@ vec_l saturator::kernel_vector()
 {
   if(TLrank==rank) return vec_l(0); // should not be called in this case!
   // Now we assume that TLimage is in echelon form
-  mat_l ker = basis(pkernel(TLimage, p));
-  return ker.col(1);
+  return pkernel(TLimage, p).bas().col(1);
 }
 
 // enlarge basis if dim(kernel)>0:
 int saturator::enlarge()
 {
   if(TLrank==rank) return 0; // no enlargement;  should not be called in this case
-  vec_l ker = basis(pkernel(TLimage, p)).col(1);
+  vec_l ker = pkernel(TLimage, p).bas().col(1);
   if(verbose>0) cout<<"possible kernel vector = "<<ker<<endl;
   Point Q(E), newQ(E); int flag, keepi=-1;
   for(int i=0; i<rank; i++)
