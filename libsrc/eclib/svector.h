@@ -125,9 +125,11 @@ public:
 
 template<class T>
 inline sZvec<T> operator+(const sZvec<T>& v) {return v;}      // unary +
+
 template<class T>
 inline sZvec<T> operator-(const sZvec<T>& v)                  // unary -
 {sZvec<T> ans(v); ans*=T(-1); return ans;}
+
 template<class T>
 inline sZvec<T> operator+(const sZvec<T>& v1, const sZvec<T>& v2)
 {
@@ -140,6 +142,7 @@ inline sZvec<T> operator+(const sZvec<T>& v1, const sZvec<T>& v2)
       sZvec<T> ans(v1); ans+=v2; return ans;
     }
 }
+
 template<class T>
 inline sZvec<T> operator-(const sZvec<T>& v1, const sZvec<T>& v2)
 {
@@ -148,11 +151,19 @@ inline sZvec<T> operator-(const sZvec<T>& v1, const sZvec<T>& v2)
 
 template<class T>
 inline sZvec<T> operator*(const T& scal, const sZvec<T>& v)
-{sZvec<T> ans(v); ans*=scal; return ans;}
+{
+  sZvec<T> ans(v);
+  ans*=scal;
+  return ans;
+}
 
 template<class T>
 inline sZvec<T> operator/(const sZvec<T>& v, const T& scal)
-{sZvec<T> ans(v); ans/=scal; return ans;}
+{
+  sZvec<T> ans(v);
+  ans/=scal;
+  return ans;
+}
 
 template<class T>
 inline int operator==(const sZvec<T>& v1, const sZvec<T>& v2)
