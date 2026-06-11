@@ -87,9 +87,9 @@ template<class T> ostream& operator<< (ostream&s, const Zvec<T>&);
 template<class T> istream& operator>> (istream&s, Zvec<T>&);
 template<class T> void swapvec(Zvec<T>& v, Zvec<T>& w);
 template<class T> Zvec<T> operator*(const Zmat<T>&, const Zvec<T>&);
+template<class T> T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 
 template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr=0);
-template<class T> T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 template<class T> int dim(const subZspace<T>& s);
 template<class T> T denom(const subZspace<T>& s);
 template<class T> Zvec<int> pivots(const subZspace<T>& s);
@@ -199,6 +199,7 @@ public:
   friend ostream& operator<< <>(ostream&s, const Zvec<T>&);
   friend istream& operator>> <>(istream&s, Zvec<T>&);
   friend void swapvec<>(Zvec<T>& v, Zvec<T>& w);
+  friend T dotmodp<>(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 
   // Implementation
 private:
@@ -216,41 +217,24 @@ template<class T> Zvec<T> operator-(const Zvec<T>&, const Zvec<T>&);
 template<class T> Zvec<T> operator*(const T&, const Zvec<T>&);       // componentwise
 template<class T> Zvec<T> operator/(const Zvec<T>&, const T&);       // componentwise
 template<class T> void make_primitive(Zvec<T>& v);
-// template<class T> void elim(const Zvec<T>& a, Zvec<T>& b, long pos);
-// template<class T> void elim1(const Zvec<T>& a, Zvec<T>& b, long pos);
-// template<class T> void elim2(const Zvec<T>& a, Zvec<T>& b, long pos, const T& lastpivot);
-template<class T> Zvec<T> express(const Zvec<T>& v, const Zvec<T>& v1, const Zvec<T>& v2);
 template<class T> int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans);  //lifts a mod-p vector to a rational
                                    //and scales to a primitive vec in Z. Returns success flag
 
-// inline function definitions
+// non-member functions
 
-template<class T> inline int dim(const Zvec<T>& v) {return v.dim();}
-template<class T> inline int operator!=(const Zvec<T>& v, const Zvec<T>& w) { return !(v==w);}
-template<class T> inline Zvec<T> operator+(const Zvec<T>& v) { return v;}
-template<class T> inline Zvec<T> operator-(const Zvec<T>& v) { return T(-1)*v;}
-template<class T> inline Zvec<T> operator+(const Zvec<T>& v1, const Zvec<T>& v2)
-{ Zvec<T> w(v1); w+=v2; return w;}
-template<class T> inline Zvec<T> addmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr)
-{ Zvec<T> w(v1); w.addmodp(v2,pr); return w;}
-template<class T> inline Zvec<T> reduce_mod_p(const Zvec<T>& v, const T& p)
-{ Zvec<T> w(v); w.reduce_mod_p(p); return w;}
-template<class T> inline Zvec<T> operator-(const Zvec<T>& v1, const Zvec<T>& v2)
-{ Zvec<T> w(v1); w-=v2; return w;}
-template<class T> inline Zvec<T> operator*(const T& scal, const Zvec<T>& v)
-{ Zvec<T> w(v); w*=scal; return w;}
-template<class T> inline Zvec<T> operator/(const Zvec<T>& v, const T& scal)
-{ Zvec<T> w(v); w/=scal; return w;}
-template<class T> inline void make_primitive(Zvec<T>& v)
-{ T g=content(v); if (g>1) v/=g;}
-// template<class T> inline void elim(const Zvec<T>& a, Zvec<T>& b, long pos)
-// { (b*=a[pos])-=(b[pos]*a);}
-// template<class T> inline void elim1(const Zvec<T>& a, Zvec<T>& b, long pos)
-// { (b*=a[pos])-=(b[pos]*a); make_primitive(b);}
-// template<class T> inline void elim2(const Zvec<T>& a, Zvec<T>& b, long pos, const T& lastpivot)
-// { ((b*=a[pos])-=(b[pos]*a))/=lastpivot;}
+template<class T> int dim(const Zvec<T>& v);
+template<class T> int operator!=(const Zvec<T>& v, const Zvec<T>& w);
+template<class T> Zvec<T> operator+(const Zvec<T>& v);
+template<class T> Zvec<T> operator-(const Zvec<T>& v);
+template<class T> Zvec<T> operator+(const Zvec<T>& v1, const Zvec<T>& v2);
+template<class T> Zvec<T> addmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
+template<class T> Zvec<T> reduce_mod_p(const Zvec<T>& v, const T& p);
+template<class T> Zvec<T> operator-(const Zvec<T>& v1, const Zvec<T>& v2);
+template<class T> Zvec<T> operator*(const T& scal, const Zvec<T>& v);
+template<class T> Zvec<T> operator/(const Zvec<T>& v, const T& scal);
+template<class T> void make_primitive(Zvec<T>& v);
 
-// convert between matrices over different integer types
+// convert between vectors over different integer types
 template<class T>
 vec_m to_vec_m(const Zvec<T>& V);
 template<class T>

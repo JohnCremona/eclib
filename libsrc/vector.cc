@@ -187,25 +187,138 @@ Zvec<T> Zvec<T>::unit_vector(long n, long i)
   return v;
 }
 
-// Definitions of non-member, friend operators and functions
+// Definitions of non-member operators and functions
+
+template<class T> int dim(const Zvec<T>& v)
+{
+  return v.dim();
+}
+template int dim<int>(const Zvec<int>&);
+template int dim<long>(const Zvec<long>&);
+template int dim<ZZ>(const Zvec<ZZ>&);
+template int dim<INT>(const Zvec<INT>&);
+
 
 template<class T>
 T operator*(const Zvec<T>& v, const Zvec<T>& w)
 {
   return std::inner_product(v.entries.begin(), v.entries.end(), w.entries.begin(), T(0));
 }
+template int operator*<int>(const Zvec<int>&, const Zvec<int>&);
+template long operator*<long>(const Zvec<long>&, const Zvec<long>&);
+template ZZ operator*<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
+template INT operator*<INT>(const Zvec<INT>&, const Zvec<INT>&);
 
 template<class T>
 int operator==(const Zvec<T>& v, const Zvec<T>& w)
 {
   return v.entries == w.entries;
 }
+template int operator==<int>(const Zvec<int>&, const Zvec<int>&);
+template int operator==<long>(const Zvec<long>&, const Zvec<long>&);
+template int operator==<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
+template int operator==<INT>(const Zvec<INT>&, const Zvec<INT>&);
+
+template<class T>
+int operator!=(const Zvec<T>& v, const Zvec<T>& w)
+{
+  return v.entries != w.entries;
+}
+template int operator!=<int>(const Zvec<int>&, const Zvec<int>&);
+template int operator!=<long>(const Zvec<long>&, const Zvec<long>&);
+template int operator!=<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
+template int operator!=<INT>(const Zvec<INT>&, const Zvec<INT>&);
+
+template<class T> Zvec<T> operator+(const Zvec<T>& v)
+{
+  return v;
+}
+template Zvec<int> operator+<int>(const Zvec<int>&);
+template Zvec<long> operator+<long>(const Zvec<long>&);
+template Zvec<ZZ> operator+<ZZ>(const Zvec<ZZ>&);
+template Zvec<INT> operator+<INT>(const Zvec<INT>&);
+
+template<class T> Zvec<T> operator-(const Zvec<T>& v)
+{
+  return T(-1)*v;
+}
+template Zvec<int> operator-<int>(const Zvec<int>&);
+template Zvec<long> operator-<long>(const Zvec<long>&);
+template Zvec<ZZ> operator-<ZZ>(const Zvec<ZZ>&);
+template Zvec<INT> operator-<INT>(const Zvec<INT>&);
+
+template<class T> Zvec<T> operator+(const Zvec<T>& v1, const Zvec<T>& v2)
+{
+  Zvec<T> w(v1); w+=v2; return w;
+}
+template Zvec<int> operator+<int>(const Zvec<int>&, const Zvec<int>&);
+template Zvec<long> operator+<long>(const Zvec<long>&, const Zvec<long>&);
+template Zvec<ZZ> operator+<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
+template Zvec<INT> operator+<INT>(const Zvec<INT>&, const Zvec<INT>&);
+
+template<class T> Zvec<T> addmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr)
+{
+  Zvec<T> w(v1); w.addmodp(v2,pr); return w;
+}
+template Zvec<int> addmodp<int>(const Zvec<int>&, const Zvec<int>&, const int&);
+template Zvec<long> addmodp<long>(const Zvec<long>&, const Zvec<long>&, const long&);
+template Zvec<ZZ> addmodp<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&, const ZZ&);
+template Zvec<INT> addmodp<INT>(const Zvec<INT>&, const Zvec<INT>&, const INT&);
+
+template<class T> Zvec<T> reduce_mod_p(const Zvec<T>& v, const T& p)
+{
+  Zvec<T> w(v); w.reduce_mod_p(p); return w;
+}
+template Zvec<int> reduce_mod_p<int>(const Zvec<int>&, const int&);
+template Zvec<long> reduce_mod_p<long>(const Zvec<long>&, const long&);
+template Zvec<ZZ> reduce_mod_p<ZZ>(const Zvec<ZZ>&, const ZZ&);
+template Zvec<INT> reduce_mod_p<INT>(const Zvec<INT>&, const INT&);
+
+template<class T> Zvec<T> operator-(const Zvec<T>& v1, const Zvec<T>& v2)
+{
+  Zvec<T> w(v1); w-=v2; return w;
+}
+template Zvec<int> operator-<int>(const Zvec<int>&, const Zvec<int>&);
+template Zvec<long> operator-<long>(const Zvec<long>&, const Zvec<long>&);
+template Zvec<ZZ> operator-<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
+template Zvec<INT> operator-<INT>(const Zvec<INT>&, const Zvec<INT>&);
+
+template<class T> Zvec<T> operator*(const T& scal, const Zvec<T>& v)
+{
+  Zvec<T> w(v); w*=scal; return w;
+}
+template Zvec<int> operator*<int>(const int&, const Zvec<int>&);
+template Zvec<long> operator*<long>(const long&, const Zvec<long>&);
+template Zvec<ZZ> operator*<ZZ>(const ZZ&, const Zvec<ZZ>&);
+template Zvec<INT> operator*<INT>(const INT&, const Zvec<INT>&);
+
+template<class T> Zvec<T> operator/(const Zvec<T>& v, const T& scal)
+{
+  Zvec<T> w(v); w/=scal; return w;
+}
+template Zvec<int> operator/<int>(const Zvec<int>&, const int&);
+template Zvec<long> operator/<long>(const Zvec<long>&, const long&);
+template Zvec<ZZ> operator/<ZZ>(const Zvec<ZZ>&, const ZZ&);
+template Zvec<INT> operator/<INT>(const Zvec<INT>&, const INT&);
+
+template<class T> void make_primitive(Zvec<T>& v)
+{
+  T g=content(v); if (g>1) v/=g;
+}
+template void make_primitive<int>(Zvec<int>&);
+template void make_primitive<long>(Zvec<long>&);
+template void make_primitive<ZZ>(Zvec<ZZ>&);
+template void make_primitive<INT>(Zvec<INT>&);
 
 template<class T>
 int trivial(const Zvec<T>& v)
 {
   return std::all_of(v.entries.begin(), v.entries.end(), [](const T& vi) {return vi==0;});
 }
+template int trivial<int>(const Zvec<int>&);
+template int trivial<long>(const Zvec<long>&);
+template int trivial<ZZ>(const Zvec<ZZ>&);                  // is v all 0
+template int trivial<INT>(const Zvec<INT>&);                  // is v all 0
 
 template<class T>
 ostream& operator<<(ostream& s, const Zvec<T>& v)
@@ -213,6 +326,10 @@ ostream& operator<<(ostream& s, const Zvec<T>& v)
   vec_out(s, v.entries, "[", "]", ",");
   return s;
 }
+template ostream& operator<<<int> (ostream&s, const Zvec<int>&);
+template ostream& operator<<<long> (ostream&s, const Zvec<long>&);
+template ostream& operator<<<ZZ> (ostream&s, const Zvec<ZZ>&);
+template ostream& operator<<<INT> (ostream&s, const Zvec<INT>&);
 
 // Two possible input modes:
 // (1) entries separated by whitespace e.g. "1 2 3"
@@ -250,8 +367,10 @@ istream& operator>>(istream& s, Zvec<T>& v)
   // cout << "Finally v = " << v << endl;
   return s;
 }
-
-// Definition of non-friend operators and functions
+template istream& operator>><int> (istream&s, Zvec<int>&);
+template istream& operator>><long> (istream&s, Zvec<long>&);
+template istream& operator>><ZZ> (istream&s, Zvec<ZZ>&);
+template istream& operator>><INT> (istream&s, Zvec<INT>&);
 
 template<class T>
 T content(const Zvec<T>& v)
@@ -261,6 +380,10 @@ T content(const Zvec<T>& v)
     std::accumulate(v.entries.begin(), v.entries.end(), T(0),
                     [](const T& x, const T& y) {return gcd(x,y);});
 }
+template int content<int>(const Zvec<int>&);
+template long content<long>(const Zvec<long>&);
+template ZZ content<ZZ>(const Zvec<ZZ>&);
+template INT content<INT>(const Zvec<INT>&);
 
 template<class T>
 T maxabs(const Zvec<T>& v)
@@ -270,18 +393,30 @@ T maxabs(const Zvec<T>& v)
     std::accumulate(v.entries.begin(), v.entries.end(), T(0),
                     [](const T& x, const T& y) {return max(x,abs(y));});
 }
+template int maxabs<int>(const Zvec<int>&);
+template long maxabs<long>(const Zvec<long>&);
+template ZZ maxabs<ZZ>(const Zvec<ZZ>&);
+template INT maxabs<INT>(const Zvec<INT>&);
 
 template<class T>
 void swapvec(Zvec<T>& v, Zvec<T>& w)
 {
   std::swap(v.entries, w.entries);
 }
+template void swapvec<int>(Zvec<int>& v, Zvec<int>& w);
+template void swapvec<long>(Zvec<long>& v, Zvec<long>& w);
+template void swapvec<ZZ>(Zvec<ZZ>& v, Zvec<ZZ>& w);
+template void swapvec<INT>(Zvec<INT>& v, Zvec<INT>& w);
 
 template<class T>
 int member(const T& a, const Zvec<T>& v)
 {
   return std::find(v.entries.begin(), v.entries.end(), a) != v.entries.end();
 }
+template int member<int>(const int& a, const Zvec<int>& v);//tests if a=v[i] for some i
+template int member<long>(const long& a, const Zvec<long>& v);//tests if a=v[i] for some i
+template int member<ZZ>(const ZZ& a, const Zvec<ZZ>& v);//tests if a=v[i] for some i
+template int member<INT>(const INT& a, const Zvec<INT>& v);//tests if a=v[i] for some i
 
 template<class T>
 Zvec<T> reverse(const Zvec<T>& order)
@@ -290,29 +425,12 @@ Zvec<T> reverse(const Zvec<T>& order)
   std::reverse(ans.entries.begin(), ans.entries.end());
   return ans;
 }
-
-template<class T>
-Zvec<T> express(const Zvec<T>& v, const Zvec<T>& v1, const Zvec<T>& v2)
-{
-   T v1v1 = v1 * v1;
-   T v1v2 = v1 * v2;
-   T v2v2 = v2 * v2;
-   T vv1 = v * v1;
-   T vv2 = v * v2;
-   Zvec<T> ans({vv1*v2v2 - vv2*v1v2,  vv2*v1v1 - vv1*v1v2, v1v1*v2v2 - v1v2*v1v2});
-   make_primitive(ans);
-   if (ans[3]*v!=ans[1]*v1+ans[2]*v2)
-     cerr << "Error in express: v is not in <v1,v2>"<<endl;
-   return ans;
-}
+template Zvec<int> reverse<int>(const Zvec<int>& order);
+template Zvec<long> reverse<long>(const Zvec<long>& order);
+template Zvec<ZZ> reverse<ZZ>(const Zvec<ZZ>& order);
+template Zvec<INT> reverse<INT>(const Zvec<INT>& order);
 
 //#define DEBUG_LIFT
-
-// int lift(const Zvec<T>& v, const T& pr, Zvec<T>& w)
-// {
-//   w = v;
-//   w.reduce_mod_p(pr);
-// }
 
 template<class T>
 int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans)
@@ -422,6 +540,10 @@ int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans)
    }
  return 0;
 }
+template int lift(const Zvec<int>& v, const int& pr, Zvec<int>& ans);
+template int lift(const Zvec<long>& v, const long& pr, Zvec<long>& ans);
+template int lift(const Zvec<ZZ>& v, const ZZ& pr, Zvec<ZZ>& ans);
+template int lift(const Zvec<INT>& v, const INT& pr, Zvec<INT>& ans);
 
 template<class T>
 T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr)
@@ -430,6 +552,10 @@ T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr)
   auto m = [pr] (const T& x, const T& y) {return xmodmul(x,y,pr);};
   return std::inner_product(v1.entries.begin(), v1.entries.end(), v2.entries.begin(), T(0), a, m);
 }
+template int dotmodp(const Zvec<int>&, const Zvec<int>&, const int&);
+template long dotmodp(const Zvec<long>&, const Zvec<long>&, const long&);
+template ZZ dotmodp(const Zvec<ZZ>&, const Zvec<ZZ>&, const ZZ&);
+template INT dotmodp(const Zvec<INT>&, const Zvec<INT>&, const INT&);
 
 template<class T>
 vec_m to_vec_m(const Zvec<T>& V)
@@ -513,64 +639,4 @@ template class Zvec<int>;
 template class Zvec<long>;
 template class Zvec<ZZ>;
 template class Zvec<INT>;
-
-// Instantiate Zvec template functions for T=int
-template int dim<int>(const Zvec<int>&);
-template int operator*<int>(const Zvec<int>&, const Zvec<int>&);
-template int content<int>(const Zvec<int>&);
-template int maxabs<int>(const Zvec<int>&);
-template int operator==<int>(const Zvec<int>&, const Zvec<int>&);
-template int operator!=<int>(const Zvec<int>&, const Zvec<int>&);
-template int trivial<int>(const Zvec<int>&);                  // is v all 0
-template int member<int>(const int& a, const Zvec<int>& v);//tests if a=v[i] for some i
-template Zvec<int> reverse<int>(const Zvec<int>& order);
-template ostream& operator<<<int> (ostream&s, const Zvec<int>&);
-template istream& operator>><int> (istream&s, Zvec<int>&);
-template void swapvec<int>(Zvec<int>& v, Zvec<int>& w);
-template int lift(const Zvec<int>& v, const int& pr, Zvec<int>& ans);
-
-// Instantiate Zvec template functions for T=long
-template int dim<long>(const Zvec<long>&);
-template long operator*<long>(const Zvec<long>&, const Zvec<long>&);
-template long content<long>(const Zvec<long>&);
-template long maxabs<long>(const Zvec<long>&);
-template int operator==<long>(const Zvec<long>&, const Zvec<long>&);
-template int operator!=<long>(const Zvec<long>&, const Zvec<long>&);
-template int trivial<long>(const Zvec<long>&);                  // is v all 0
-template int member<long>(const long& a, const Zvec<long>& v);//tests if a=v[i] for some i
-template Zvec<long> reverse<long>(const Zvec<long>& order);
-template ostream& operator<<<long> (ostream&s, const Zvec<long>&);
-template istream& operator>><long> (istream&s, Zvec<long>&);
-template void swapvec<long>(Zvec<long>& v, Zvec<long>& w);
-template int lift(const Zvec<long>& v, const long& pr, Zvec<long>& ans);
-
-// Instantiate Zvec template functions for T=ZZ
-template int dim<ZZ>(const Zvec<ZZ>&);
-template ZZ operator*<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
-template ZZ content<ZZ>(const Zvec<ZZ>&);
-template ZZ maxabs<ZZ>(const Zvec<ZZ>&);
-template int operator==<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
-template int operator!=<ZZ>(const Zvec<ZZ>&, const Zvec<ZZ>&);
-template int trivial<ZZ>(const Zvec<ZZ>&);                  // is v all 0
-template int member<ZZ>(const ZZ& a, const Zvec<ZZ>& v);//tests if a=v[i] for some i
-template Zvec<ZZ> reverse<ZZ>(const Zvec<ZZ>& order);
-template ostream& operator<<<ZZ> (ostream&s, const Zvec<ZZ>&);
-template istream& operator>><ZZ> (istream&s, Zvec<ZZ>&);
-template void swapvec<ZZ>(Zvec<ZZ>& v, Zvec<ZZ>& w);
-template int lift(const Zvec<ZZ>& v, const ZZ& pr, Zvec<ZZ>& ans);
-
-// Instantiate Zvec template functions for T=INT
-template int dim<INT>(const Zvec<INT>&);
-template INT operator*<INT>(const Zvec<INT>&, const Zvec<INT>&);
-template INT content<INT>(const Zvec<INT>&);
-template INT maxabs<INT>(const Zvec<INT>&);
-template int operator==<INT>(const Zvec<INT>&, const Zvec<INT>&);
-template int operator!=<INT>(const Zvec<INT>&, const Zvec<INT>&);
-template int trivial<INT>(const Zvec<INT>&);                  // is v all 0
-template int member<INT>(const INT& a, const Zvec<INT>& v);//tests if a=v[i] for some i
-template Zvec<INT> reverse<INT>(const Zvec<INT>& order);
-template ostream& operator<<<INT> (ostream&s, const Zvec<INT>&);
-template istream& operator>><INT> (istream&s, Zvec<INT>&);
-template void swapvec<INT>(Zvec<INT>& v, Zvec<INT>& w);
-template int lift(const Zvec<INT>& v, const INT& pr, Zvec<INT>& ans);
 
