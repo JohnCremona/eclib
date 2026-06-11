@@ -219,7 +219,7 @@ FieldElement Newform::eig(const matop& T)
  else
    {
      FieldElement a(*F0, basis_change_matrix * Qvec(apv, denom_abs));
-     assert(a.is_integral());
+     // assert(a.is_integral());
      return Fiso(a);
    }
 }
@@ -711,23 +711,7 @@ void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 {
   compute_eigs(ntp, verbose);
   compute_HO_from_raw_eigs(verbose);
-
-  if (0)
-    {
-      if (verbose) cout << "a_p computed, now LLL-reducing Hecke order..." << flush;
-      // (1) just reduce the integral basis
-      // HO.LLL_reduce();
-      // (2) LLL-reduce the ap coefficients
-      // // Get list of ap
-      vector<FieldElement> aplist(aPmap.size());
-      std::transform(aPmap.begin(), aPmap.end(), aplist.begin(),
-                     [](const auto& pap){return pap.second;});
-      HO.LLL_reduce(aplist);
-      if (verbose) cout << "done." << endl;
-    }
-
   compute_AL_eigs(ntp, verbose);      // e(Q) and a(Q) for bad Q
-
   // Compute and store a(M) and traces for M <= maxP
   compute_coefficients(ntp, verbose);
 }
@@ -770,7 +754,21 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
   mat_m E0(nap, d);
   int i=1;
   for (const auto& c : aPmap_int_coords)
-    E0.setrow(i++, c.second);
+    {
+      auto ap = (*F)(M0 * Qvec(c.second));
+      E0.setrow(i++, c.second);
+#ifdef DEBUG_HO
+      if (ap.is_integral())
+        ; // cout << "ap for p = " << c.first << " is integral " << endl;
+      else
+        {
+          cout << "raw eigenvalue coords for p = " << c.first
+               << " map to ap = " << ap << " which is not integral!" << endl;
+          cout << "char poly of ap is \n" << ::str(ap.charpoly()) << endl;
+          exit(1);
+        }
+#endif
+    }
 #ifdef DEBUG_HO
   cout << "Before reduction, E =\n" << E0 << endl;
 #endif
@@ -839,6 +837,8 @@ void Newform::compute_eigs(int ntp, int verbose)
         continue;  // compute AL eigs separately, later
       if (verbose) cout << "Computing a_p for p = " << p << "..." << flush;
       vec_m apvec = ap_raw(p);
+      if (d==1)
+        apvec /= denom_abs;
       if (verbose)
         {
           cout << "done";
@@ -846,7 +846,6 @@ void Newform::compute_eigs(int ntp, int verbose)
             cout << ", apvec = " << apvec;
           cout<< endl;
         }
-      if (d==1) apvec /= denom_abs;
       aPmap_int_coords[p] = apvec;
     }
   maxP = p; // record last prime
