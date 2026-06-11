@@ -1537,22 +1537,45 @@ void Order::add_one(const Qvec& v)
 {
   if (is_one(v.denom))
     return;
+  // cout << "add_one(v) for v = " << v << " checking integrality..." << flush;
   // assert ((*F)(v).is_integral());
-
+  // cout << " integrality checked OK" << endl;
   Qmat M(transpose(basis_matrix)); // rows are field coords of current gens
   M.append_row(v);
-#if(0)
+#if(0) // original method: direct HNF on M
   cout << "Calling HNF (" << M.nrows() << "x" << M.ncols() << ")..." << flush;
   M = HNF(M);           // rows are coords of new Z-basis, last row is 0
   cout << " HNF done." << endl;
-#else
+#endif
+#if(0) // second method: HNF on M1 which is identity + extra row
   Qmat M1 = Qmat::identity(rank);
-  M1.append_row(power_coords_matrix * v);
+  auto w = power_coords_matrix * v;
+  M1.append_row(w);
   mat_m U;
   cout << "Calling HNF (" << M1.nrows() << "x" << M1.ncols() << ")..." << flush;
   M1 = HNF(M1, U);
-  cout << " HNF done." << endl;
   M = U*M;
+  cout << " HNF done." << endl;
+#endif
+#if(1) // latest method: use knowledge of the unique (primitive)
+       // kernel vector and use SNF on that to get a unimodular matrix
+       // with it as last row
+  mat_m B(rank,1);
+  auto w = power_coords_matrix * v;
+  B.setcol(1,w.get_numerator());
+  B.append_row(vec_m({-w.get_denom()}));
+  // Now B is a column matrix with B^t*M=0
+  cout << "Calling SNF on kernel vector..." << flush;
+  mat_m U, Uinv, V;
+  auto S = SNF(B,Uinv,V);
+  auto detU = inverse(Uinv, U); // U is unimodular
+  // S has first column (1,0,...,0), and +-B is col 1 of U, so B^t =
+  // row 1 of U^t, so U^t*M has top row 1.  Hence we transpose U and
+  // then swap its first and last rows so that U*M has last row 0.
+  U = transpose(U);
+  U.swaprows(1, rank+1);
+  M = U*M;
+  cout << " done." << endl;
 #endif
 
   assert(trivial(M.get_numerator().row(rank+1)));
@@ -1628,10 +1651,12 @@ ZZ Order::extend_by_one(const FieldElement& a, int check)
 // index of the extension.
 ZZ Order::extend_by_one(const Qvec& v)
 {
+  int tr=0;
   if (is_one(v.denom))
     return ZZ(1);
   auto a = (*F)(v);
-  // assert (a.is_integral());
+  if (tr)
+    assert (a.is_integral());
   if (contains(a))
     return ZZ(1);
 
@@ -1641,12 +1666,14 @@ ZZ Order::extend_by_one(const Qvec& v)
   while (nsteps < rank*rank)
     {
       nsteps += 1;
-      // cout << "nsteps = " << nsteps << ", index = " << index << endl;
+      if (tr)
+        cout << "nsteps = " << nsteps << ", index = " << index << endl;
       add_one(w);
       if (check_order(w))
         {
           disc = poldisc/(index*index);
-          // cout << "extend_by() returning after " << nsteps << " steps " << endl;
+          if (tr)
+            cout << "extend_by() returning after " << nsteps << " steps " << endl;
           return index/old_index;
         }
     }
@@ -1687,7 +1714,7 @@ ZZ Order::extend_by(const vector<Qvec>& vlist)
 // the index of the extension
 ZZ Order::extend_by(const Qmat& M)
 {
-  int tr=1;
+  int tr=0;
   ZZ index_gain(1);
   for (int i=1; i<=M.ncols(); i++)
     {
@@ -1695,11 +1722,13 @@ ZZ Order::extend_by(const Qmat& M)
       if (!is_one(ig))
         {
           index_gain *= ig;
-          if (tr) cout << "Column " << i << " gives index gain of " << ig
-                       << ", total index_gain so far is " << index_gain << endl;
+          if (tr)
+            cout << "Column " << i << " gives index gain of " << ig
+                 << ", total index_gain so far is " << index_gain << endl;
         }
-      // else
-      //   cout << "Column " << i << " gives no index gain" << endl;
+      else
+        if (tr)
+          cout << "Column " << i << " gives no index gain" << endl;
     }
   return index_gain;
 }
