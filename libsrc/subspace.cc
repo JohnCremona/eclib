@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/linalg.h"
 
 // definitions of member operators and functions:
@@ -73,6 +73,10 @@ subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2)
   Zvec<int> p = s1.pivs()[s2.pivs()];
   return subZspace<T>(b,p,d);
 }
+template subZspace<int> combine<int>(const subZspace<int>&, const subZspace<int>&);
+template subZspace<long> combine<long>(const subZspace<long>&, const subZspace<long>&);
+template subZspace<ZZ> combine<ZZ>(const subZspace<ZZ>&, const subZspace<ZZ>&);
+template subZspace<INT> combine<INT>(const subZspace<INT>& , const subZspace<INT>&);
 
 template<class T>
 Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s)
@@ -82,6 +86,10 @@ Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s)
   for (int i=1; i<=n; i++) ans.setrow(i, m.row(p[i]));
   return ans;
 }
+template Zmat<int> expressvectors<int>(const Zmat<int>&, const subZspace<int>&);
+template Zmat<long> expressvectors<long>(const Zmat<long>&, const subZspace<long>&);
+template Zmat<ZZ> expressvectors<ZZ>(const Zmat<ZZ>&, const subZspace<ZZ>&);
+template Zmat<INT> expressvectors<INT>(const Zmat<INT>&, const subZspace<INT>&);
 
 //This one is used a lot:
 // M is nxn;
@@ -119,6 +127,10 @@ Zmat<T> restrict_mat(const Zmat<T>& M, const subZspace<T>& S, int cr)
     }
   return A;
 }
+template Zmat<int> restrict_mat<int>(const Zmat<int>&, const subZspace<int>&, int);
+template Zmat<long> restrict_mat<long>(const Zmat<long>&, const subZspace<long>&, int);
+template Zmat<ZZ> restrict_mat<ZZ>(const Zmat<ZZ>&, const subZspace<ZZ>&, int);
+template Zmat<INT> restrict_mat<INT>(const Zmat<INT>&, const subZspace<INT>&, int);
 
 template<class T>
 subZspace<T> kernel(const Zmat<T>& m1)
@@ -138,6 +150,10 @@ subZspace<T> kernel(const Zmat<T>& m1)
    }
    return subZspace<T>(bas, npcols, d);
 }
+template subZspace<int> kernel<int>(const Zmat<int>&);
+template subZspace<long> kernel<long>(const Zmat<long>&);
+template subZspace<ZZ> kernel<ZZ>(const Zmat<ZZ>&);
+template subZspace<INT> kernel<INT>(const Zmat<INT>&);
 
 template<class T>
 subZspace<T> image(const Zmat<T>& m)
@@ -148,6 +164,10 @@ subZspace<T> image(const Zmat<T>& m)
   Zmat<T> b = transpose(ref(transpose(m),d,p,np,rk,ny));
   return subZspace<T>(b,p,d);
 }
+template subZspace<int> image<int>(const Zmat<int>& m);
+template subZspace<long> image<long>(const Zmat<long>& m);
+template subZspace<ZZ> image<ZZ>(const Zmat<ZZ>& m);
+template subZspace<INT> image<INT>(const Zmat<INT>& m);
 
 template<class T>
 subZspace<T> eigenspace(const Zmat<T>& m1, const T& lambda)
@@ -155,14 +175,22 @@ subZspace<T> eigenspace(const Zmat<T>& m1, const T& lambda)
   Zmat<T> m = addscalar(m1,-lambda);
   return kernel(m);
 }
+template subZspace<int> eigenspace<int>(const Zmat<int>& m, const int& lambda);
+template subZspace<long> eigenspace<long>(const Zmat<long>& m, const long& lambda);
+template subZspace<ZZ> eigenspace<ZZ>(const Zmat<ZZ>& m, const ZZ& lambda);
+template subZspace<INT> eigenspace<INT>(const Zmat<INT>& m, const INT& lambda);
 
 template<class T>
 subZspace<T> subeigenspace(const Zmat<T>& m1, const T& l, const subZspace<T>& s)
 {
   Zmat<T> m = restrict_mat(m1,s);
   subZspace<T> ss = eigenspace(m, l*(s.den()));
-  return combine(s,ss );
+  return combine(s,ss);
 }
+template subZspace<int> subeigenspace<int>(const Zmat<int>&, const int&, const subZspace<int>&);
+template subZspace<long> subeigenspace<long>(const Zmat<long>&, const long&, const subZspace<long>&);
+template subZspace<ZZ> subeigenspace<ZZ>(const Zmat<ZZ>&, const ZZ&, const subZspace<ZZ>&);
+template subZspace<INT> subeigenspace<INT>(const Zmat<INT>&, const INT&, const subZspace<INT>&);
 
 template<class T>
 subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr)
@@ -173,6 +201,10 @@ subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& p
   const Zvec<int>& p = s1.pivots[s2.pivots];
   return subZspace<T>(b,p,d);
 }
+template subZspace<int> pcombine<int>(const subZspace<int>&, const subZspace<int>&, const int&);
+template subZspace<long> pcombine<long>(const subZspace<long>&, const subZspace<long>&, const long&);
+template subZspace<ZZ> pcombine<ZZ>(const subZspace<ZZ>&, const subZspace<ZZ>&, const ZZ&);
+template subZspace<INT> pcombine<INT>(const subZspace<INT>&, const subZspace<INT>&, const INT&);
 
 // Same as restrict_mat, but modulo pr
 template<class T>
@@ -190,6 +222,10 @@ Zmat<T> prestrict(const Zmat<T>& M, const subZspace<T>& S, const T& pr, int cr)
     }
   return A;
 }
+template Zmat<int> prestrict<int>(const Zmat<int>&, const subZspace<int>&, const int&, int);
+template Zmat<long> prestrict<long>(const Zmat<long>&, const subZspace<long>&, const long&, int);
+template Zmat<ZZ> prestrict<ZZ>(const Zmat<ZZ>&, const subZspace<ZZ>&, const ZZ&, int);
+template Zmat<INT> prestrict<INT>(const Zmat<INT>&, const subZspace<INT>&, const INT&, int);
 
 template<class T>
 subZspace<T> oldpkernel(const Zmat<T>& m1, const T& pr)
@@ -208,6 +244,10 @@ subZspace<T> oldpkernel(const Zmat<T>& m1, const T& pr)
    }
    return subZspace<T>(bas, npcols, T(1));
 }
+template subZspace<int> oldpkernel<int>(const Zmat<int>&, const int&);
+template subZspace<long> oldpkernel<long>(const Zmat<long>&, const long&);
+template subZspace<ZZ> oldpkernel<ZZ>(const Zmat<ZZ>&, const ZZ&);
+template subZspace<INT> oldpkernel<INT>(const Zmat<INT>&, const INT&);
 
 template<class T>
 subZspace<T> pkernel(const Zmat<T>& m1, const T& pr)
@@ -234,6 +274,10 @@ subZspace<T> pkernel(const Zmat<T>& m1, const T& pr)
     }
   return subZspace<T>(bas, npcols, T(1));
 }
+template subZspace<int> pkernel<int>(const Zmat<int>&, const int&);
+template subZspace<long> pkernel<long>(const Zmat<long>&, const long&);
+template subZspace<ZZ> pkernel<ZZ>(const Zmat<ZZ>&, const ZZ&);
+template subZspace<INT> pkernel<INT>(const Zmat<INT>&, const INT&);
 
 template<class T>
 subZspace<T> pimage(const Zmat<T>& m, const T& pr)
@@ -243,6 +287,10 @@ subZspace<T> pimage(const Zmat<T>& m, const T& pr)
   const Zmat<T>& b = transpose(ref_mod_p(transpose(m),pr, p,np, rk,ny));
   return subZspace<T>(b,p,T(1));
 }
+template subZspace<int> pimage<int>(const Zmat<int>&, const int&);
+template subZspace<long> pimage<long>(const Zmat<long>&, const long&);
+template subZspace<ZZ> pimage<ZZ>(const Zmat<ZZ>&, const ZZ&);
+template subZspace<INT> pimage<INT>(const Zmat<INT>&, const INT&);
 
 template<class T>
 subZspace<T> peigenspace(const Zmat<T>& m1, const T& lambda, const T& pr)
@@ -250,6 +298,10 @@ subZspace<T> peigenspace(const Zmat<T>& m1, const T& lambda, const T& pr)
   const Zmat<T>& m = addscalar(m1,-lambda);
   return pkernel(m,pr);
 }
+template subZspace<int> peigenspace<int>(const Zmat<int>&, const int&, const int&);
+template subZspace<long> peigenspace<long>(const Zmat<long>&, const long&, const long&);
+template subZspace<ZZ> peigenspace<ZZ>(const Zmat<ZZ>&, const ZZ&, const ZZ&);
+template subZspace<INT> peigenspace<INT>(const Zmat<INT>&, const INT&, const INT&);
 
 template<class T>
 subZspace<T> psubeigenspace(const Zmat<T>& m1, const T& l, const subZspace<T>& s, const T& pr)
@@ -258,6 +310,10 @@ subZspace<T> psubeigenspace(const Zmat<T>& m1, const T& l, const subZspace<T>& s
   const subZspace<T>& ss = peigenspace(m, l*(s.den()),pr);
   return pcombine(s,ss,pr);
 }
+template subZspace<int> psubeigenspace<int>(const Zmat<int>&, const int&, const subZspace<int>&, const int&);
+template subZspace<long> psubeigenspace<long>(const Zmat<long>&, const long&, const subZspace<long>&, const long&);
+template subZspace<ZZ> psubeigenspace<ZZ>(const Zmat<ZZ>&, const ZZ&, const subZspace<ZZ>&, const ZZ&);
+template subZspace<INT> psubeigenspace<INT>(const Zmat<INT>&, const INT&, const subZspace<INT>&, const INT&);
 
 //Attempts to lift from a mod-p subspace to a normal Q-subspace by expressing
 //basis as rational using modrat and clearing denominators
@@ -273,30 +329,10 @@ int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans)
   ans = subZspace<T>(m, s.pivs(), dd);
   return ok;
 }
-
-// template<class T>
-// int dim(const subZspace<T>& s)
-// {
-//   return s.dim();
-// }
-
-// template<class T>
-// T denom(const subZspace<T>& s)
-// {
-//   return s.denom;
-// }
-
-// template<class T>
-// Zvec<int> pivots(const subZspace<T>& s)
-// {
-//   return s.pivots;
-// }
-
-// template<class T>
-// Zmat<T> basis(const subZspace<T>& s)
-// {
-//   return s.basis;
-// }
+template int lift<int>(const subZspace<int>&, const int&, subZspace<int>&);
+template int lift<long>(const subZspace<long>&, const long&, subZspace<long>&);
+template int lift<ZZ>(const subZspace<ZZ>&, const ZZ&, subZspace<ZZ>&);
+template int lift<INT>(const subZspace<INT>&, const INT&, subZspace<INT>&);
 
 // return a basis for the orthogonal complement of a<2^r (viewed as a bit vector of length r)
 vector<long> dotperp(long a, int r)
@@ -356,75 +392,3 @@ template class subZspace<int>;
 template class subZspace<long>;
 template class subZspace<ZZ>;
 template class subZspace<INT>;
-
-// Instantiate template functions for T=int
-
-template subZspace<int> combine<int>(const subZspace<int>& s1, const subZspace<int>& s2);
-template Zmat<int> restrict_mat<int>(const Zmat<int>& m, const subZspace<int>& s, int cr);
-template subZspace<int> pcombine<int>(const subZspace<int>& s1, const subZspace<int>& s2, const int& pr);
-template Zmat<int> prestrict<int>(const Zmat<int>& m, const subZspace<int>& s, const int& pr, int cr);
-template int lift<int>(const subZspace<int>& s, const int& pr, subZspace<int>& ans);
-template Zmat<int> expressvectors<int>(const Zmat<int>& m, const subZspace<int>& s);
-template subZspace<int> kernel<int>(const Zmat<int>& m);
-template subZspace<int> image<int>(const Zmat<int>& m);
-template subZspace<int> eigenspace<int>(const Zmat<int>& m, const int& lambda);
-template subZspace<int> subeigenspace<int>(const Zmat<int>& m, const int& l, const subZspace<int>& s);
-template subZspace<int> oldpkernel<int>(const Zmat<int>& m, const int& pr);
-template subZspace<int> pkernel<int>(const Zmat<int>& m, const int& pr);
-template subZspace<int> pimage<int>(const Zmat<int>& m, const int& pr);
-template subZspace<int> peigenspace<int>(const Zmat<int>& m, const int& lambda, const int& pr);
-template subZspace<int> psubeigenspace<int>(const Zmat<int>& m, const int& l, const subZspace<int>& s, const int& pr);
-
-// Instantiate template functions for T=long
-
-template subZspace<long> combine<long>(const subZspace<long>& s1, const subZspace<long>& s2);
-template Zmat<long> restrict_mat<long>(const Zmat<long>& m, const subZspace<long>& s, int cr);
-template subZspace<long> pcombine<long>(const subZspace<long>& s1, const subZspace<long>& s2, const long& pr);
-template Zmat<long> prestrict<long>(const Zmat<long>& m, const subZspace<long>& s, const long& pr, int cr);
-template int lift<long>(const subZspace<long>& s, const long& pr, subZspace<long>& ans);
-template Zmat<long> expressvectors<long>(const Zmat<long>& m, const subZspace<long>& s);
-template subZspace<long> kernel<long>(const Zmat<long>& m);
-template subZspace<long> image<long>(const Zmat<long>& m);
-template subZspace<long> eigenspace<long>(const Zmat<long>& m, const long& lambda);
-template subZspace<long> subeigenspace<long>(const Zmat<long>& m, const long& l, const subZspace<long>& s);
-template subZspace<long> oldpkernel<long>(const Zmat<long>& m, const long& pr);
-template subZspace<long> pkernel<long>(const Zmat<long>& m, const long& pr);
-template subZspace<long> pimage<long>(const Zmat<long>& m, const long& pr);
-template subZspace<long> peigenspace<long>(const Zmat<long>& m, const long& lambda, const long& pr);
-template subZspace<long> psubeigenspace<long>(const Zmat<long>& m, const long& l, const subZspace<long>& s, const long& pr);
-
-// Instantiate template functions for T=ZZ
-
-template subZspace<ZZ> combine<ZZ>(const subZspace<ZZ>& s1, const subZspace<ZZ>& s2);
-template Zmat<ZZ> restrict_mat<ZZ>(const Zmat<ZZ>& m, const subZspace<ZZ>& s, int cr);
-template subZspace<ZZ> pcombine<ZZ>(const subZspace<ZZ>& s1, const subZspace<ZZ>& s2, const ZZ& pr);
-template Zmat<ZZ> prestrict<ZZ>(const Zmat<ZZ>& m, const subZspace<ZZ>& s, const ZZ& pr, int cr);
-template int lift<ZZ>(const subZspace<ZZ>& s, const ZZ& pr, subZspace<ZZ>& ans);
-template Zmat<ZZ> expressvectors<ZZ>(const Zmat<ZZ>& m, const subZspace<ZZ>& s);
-template subZspace<ZZ> kernel<ZZ>(const Zmat<ZZ>& m);
-template subZspace<ZZ> image<ZZ>(const Zmat<ZZ>& m);
-template subZspace<ZZ> eigenspace<ZZ>(const Zmat<ZZ>& m, const ZZ& lambda);
-template subZspace<ZZ> subeigenspace<ZZ>(const Zmat<ZZ>& m, const ZZ& l, const subZspace<ZZ>& s);
-template subZspace<ZZ> oldpkernel<ZZ>(const Zmat<ZZ>& m, const ZZ& pr);
-template subZspace<ZZ> pkernel<ZZ>(const Zmat<ZZ>& m, const ZZ& pr);
-template subZspace<ZZ> pimage<ZZ>(const Zmat<ZZ>& m, const ZZ& pr);
-template subZspace<ZZ> peigenspace<ZZ>(const Zmat<ZZ>& m, const ZZ& lambda, const ZZ& pr);
-template subZspace<ZZ> psubeigenspace<ZZ>(const Zmat<ZZ>& m, const ZZ& l, const subZspace<ZZ>& s, const ZZ& pr);
-
-// Instantiate template functions for T=INT
-
-template subZspace<INT> combine<INT>(const subZspace<INT>& s1, const subZspace<INT>& s2);
-template Zmat<INT> restrict_mat<INT>(const Zmat<INT>& m, const subZspace<INT>& s, int cr);
-template subZspace<INT> pcombine<INT>(const subZspace<INT>& s1, const subZspace<INT>& s2, const INT& pr);
-template Zmat<INT> prestrict<INT>(const Zmat<INT>& m, const subZspace<INT>& s, const INT& pr, int cr);
-template int lift<INT>(const subZspace<INT>& s, const INT& pr, subZspace<INT>& ans);
-template Zmat<INT> expressvectors<INT>(const Zmat<INT>& m, const subZspace<INT>& s);
-template subZspace<INT> kernel<INT>(const Zmat<INT>& m);
-template subZspace<INT> image<INT>(const Zmat<INT>& m);
-template subZspace<INT> eigenspace<INT>(const Zmat<INT>& m, const INT& lambda);
-template subZspace<INT> subeigenspace<INT>(const Zmat<INT>& m, const INT& l, const subZspace<INT>& s);
-template subZspace<INT> oldpkernel<INT>(const Zmat<INT>& m, const INT& pr);
-template subZspace<INT> pkernel<INT>(const Zmat<INT>& m, const INT& pr);
-template subZspace<INT> pimage<INT>(const Zmat<INT>& m, const INT& pr);
-template subZspace<INT> peigenspace<INT>(const Zmat<INT>& m, const INT& lambda, const INT& pr);
-template subZspace<INT> psubeigenspace<INT>(const Zmat<INT>& m, const INT& l, const subZspace<INT>& s, const INT& pr);
