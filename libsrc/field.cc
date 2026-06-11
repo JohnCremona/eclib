@@ -617,9 +617,9 @@ void FieldElement::operator*=(const FieldElement& b) // multiply by b
   v = F->mult(v, b.v);
 }
 
-void FieldElement::operator*=(const ZZ& b)   { v*=b;} // multiply by b
-void FieldElement::operator*=(const int& b)  { v*=b;}
-void FieldElement::operator*=(const long& b) { v*=b;}
+void FieldElement::operator*=(const ZZ& b)   { if (field_is_Q()) val *=b; else v*=b;}
+void FieldElement::operator*=(const int& b)  { if (field_is_Q()) val *=to_ZZ(b); else v*=b;}
+void FieldElement::operator*=(const long& b) { if (field_is_Q()) val *=to_ZZ(b); else v*=b;}
 
 FieldElement FieldElement::operator*(const FieldElement& b) const
 {
@@ -637,9 +637,18 @@ FieldElement FieldElement::operator*(const FieldElement& b) const
   return a;
 }
 
-FieldElement FieldElement::operator*(const ZZ& b) const {return (*F)(b*v);}
-FieldElement FieldElement::operator*(const int& b) const {return (*F)(b*v);}
-FieldElement FieldElement::operator*(const long& b) const {return (*F)(b*v);}
+FieldElement FieldElement::operator*(const ZZ& b) const
+{
+  return (field_is_Q()? (*F)(b*val): (*F)(b*v));
+}
+FieldElement FieldElement::operator*(const int& b) const
+{
+  return (field_is_Q()? (*F)(to_ZZ(b)*val): (*F)(b*v));
+}
+FieldElement FieldElement::operator*(const long& b) const
+{
+  return (field_is_Q()? (*F)(to_ZZ(b)*val): (*F)(b*v));
+}
 
 FieldElement FieldElement::inverse() const // raise error if zero
 {
@@ -686,9 +695,9 @@ void FieldElement::operator/=(const FieldElement& b)      // divide by b
   operator*=(b.inverse());
 }
 
-void FieldElement::operator/=(const ZZ& b)   { v/=b;} // divide by b
-void FieldElement::operator/=(const int& b)  { v/=b;}
-void FieldElement::operator/=(const long& b) { v/=b;}
+void FieldElement::operator/=(const ZZ& b)   { if (field_is_Q()) val/=b; else v/=b;}
+void FieldElement::operator/=(const int& b)  { if (field_is_Q()) val/=to_ZZ(b); else v/=b;}
+void FieldElement::operator/=(const long& b) { if (field_is_Q()) val/=to_ZZ(b); else v/=b;}
 
 FieldElement FieldElement::operator/(const FieldElement& b) const // raise error if b is zero
 {
@@ -712,9 +721,18 @@ FieldElement FieldElement::operator/(const FieldElement& b) const // raise error
   return a;
 }
 
-FieldElement FieldElement::operator/(const ZZ& b)   const {return (*F)(v/b);} // divide
-FieldElement FieldElement::operator/(const int& b)  const {return (*F)(v/b);}
-FieldElement FieldElement::operator/(const long& b) const {return (*F)(v/b);}
+FieldElement FieldElement::operator/(const ZZ& b)   const
+{
+  return (field_is_Q()? (*F)(val/b): (*F)(v/b));
+}
+FieldElement FieldElement::operator/(const int& b)  const
+{
+  return (field_is_Q()? (*F)(val/to_ZZ(b)): (*F)(v/b));
+}
+FieldElement FieldElement::operator/(const long& b) const
+{
+  return (field_is_Q()? (*F)(val/to_ZZ(b)): (*F)(v/b));
+}
 
 FieldElement evaluate(const ZZX& f, const FieldElement a)
 {
