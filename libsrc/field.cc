@@ -1565,7 +1565,7 @@ void Order::add_one(const Qvec& v)
   B.setcol(1,w.get_numerator());
   B.append_row(vec_m({-w.get_denom()}));
   // Now B is a column matrix with B^t*M=0
-  cout << "Calling SNF on kernel vector..." << flush;
+  // cout << "Calling SNF on kernel vector..." << flush;
   mat_m U, Uinv, V;
   auto S = SNF(B,Uinv,V);
   auto detU = inverse(Uinv, U); // U is unimodular
@@ -1575,7 +1575,7 @@ void Order::add_one(const Qvec& v)
   U = transpose(U);
   U.swaprows(1, rank+1);
   M = U*M;
-  cout << " done." << endl;
+  // cout << " done." << endl;
 #endif
 
   assert(trivial(M.get_numerator().row(rank+1)));
@@ -1588,7 +1588,7 @@ void Order::add_one(const Qvec& v)
   power_coords_matrix = A.get_numerator();
   index = abs(power_coords_matrix.determinant());
 
-  cout << "leaving add_one()" << endl;
+  // cout << "leaving add_one()" << endl;
 }
 
 // Check that the Z-span of the current Z-basis is closed under
