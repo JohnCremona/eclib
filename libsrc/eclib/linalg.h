@@ -52,8 +52,8 @@
 // (which is not currently templated).
 
 #ifndef SCALAR_OPTION
-//#define SCALAR_OPTION 1  // int
-#define SCALAR_OPTION 2  // long
+#define SCALAR_OPTION 1  // int
+//#define SCALAR_OPTION 2  // long
 //#define SCALAR_OPTION 3  // ZZ
 //#define SCALAR_OPTION 4  // INT
 #endif
