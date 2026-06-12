@@ -709,6 +709,8 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
 // Compute aP and AL-eigs and Fourier coeffs
 void Newform::compute_eigs_and_coefficients(int ntp, int verbose)
 {
+  // Make sure that the number of god a_p we compute is at least d:
+  ntp = max(ntp, d + (int)nsp->badprimes.size());
   compute_eigs(ntp, verbose);
   compute_HO_from_raw_eigs(verbose);
   compute_AL_eigs(ntp, verbose);      // e(Q) and a(Q) for bad Q
@@ -774,9 +776,11 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
 #endif
 
   // HNF-reduce this and delete all but the first d rows (which form a
-  // Z-basis for the row space), then transpose:
+  // Z-basis for the row space), then transpose.  NB If d > nap there
+  // will be no zero rows to delete!
   mat_m E = HNF(E0);
-  E.delete_rows(nap-d);
+  if (nap>d)
+    E.delete_rows(nap-d);
   E = transpose(E);
   // The columns of E are now a Z-basis for the Z-module of raw ap coord vectors
 #ifdef DEBUG_HO

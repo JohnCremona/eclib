@@ -277,6 +277,10 @@ void Zmat<T>::append_rows(const vector<Zvec<T>>& new_rows)
 template<class T>
 void Zmat<T>::delete_rows(int n)
 {
+  if (n<0)
+    cout << "Cannot delete a negative number ("<<n<<") of rows!" << endl;
+  if (n>nro)
+    cout << "Cannot delete "<<n<<" rows from a matrix with " << nro << "rows!" << endl;
   entries.erase(entries.end()-n*nco, entries.end());
   nro -= n;
 }
