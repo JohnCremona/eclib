@@ -201,7 +201,7 @@ public:
   {add_proj_coords(v,n,d,projcoord);}
   void add_nfproj_coords(scalar& aa, long n, long d, const vec& bas) const;
 
-  vec cuspidalpart(const vec& v) const {return v[pivots(kern)];}
+  vec cuspidalpart(const vec& v) const {return v[kern.pivs()];}
 
   svec applyop(const matop& T, const rational& q) const;
   svec applyop(const matop& T, const modsym& m) const;

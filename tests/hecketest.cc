@@ -78,10 +78,10 @@ int main(void)
  cout<<" done."<<endl;
  cout << "Computing +1 eigenspace...  " << flush;
  ssubspace h1plus = eigenspace(conjmat,den, modulus);
- cout<<" done, dimension = "<<dim(h1plus)<<endl;
+ cout<<" done, dimension = "<< h1plus.dim()<<endl;
  cout << "Computing -1 eigenspace...  " << flush;
  ssubspace h1minus = eigenspace(conjmat,-den, modulus);
- cout<<" done, dimension = "<<dim(h1minus)<<endl;
+ cout<<" done, dimension = "<< h1minus.dim()<<endl;
 
  vector<mat_ZZ> Wqlist;
  int w_eigs=0;
@@ -107,7 +107,7 @@ int main(void)
              long mult;
              cout<<"Using sparse matrix code..."<<endl;
              start_time();
-             mult=dim(eigenspace(swq,e*den, modulus));
+             mult=eigenspace(swq,e*den, modulus).dim();
              stop_time();
              show_time(cerr); cerr<<endl;
              cout<<"Dimension of "<<e<<"-eigenspace="<<mult<<endl;

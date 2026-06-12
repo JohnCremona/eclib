@@ -2,29 +2,31 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #if     !defined(_ECLIB_SUBSPACE_H)
 #define _ECLIB_SUBSPACE_H      1       //flags that this file has been included
 
 #include "matrix.h"
+
+template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr=0);
 
 template<class T>
 class subZspace {
@@ -60,42 +62,25 @@ private:
   Zmat<T> basis;
 };
 
-// Declarations of nonmember, nonfriend operators and functions:
+// Declarations of nonmember operators and functions:
 
-template<class T>
-Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s);
-template<class T>
-subZspace<T> kernel(const Zmat<T>& m);
-template<class T>
-subZspace<T> image(const Zmat<T>& m);
-template<class T>
-subZspace<T> eigenspace(const Zmat<T>& m, const T& lambda);
-template<class T>
-subZspace<T> subeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s);
-
+template<class T> subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2);
+template<class T> subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
+template<class T> int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans);
+template<class T> Zmat<T> expressvectors(const Zmat<T>& m, const subZspace<T>& s);
+template<class T> subZspace<T> kernel(const Zmat<T>& m);
+template<class T> subZspace<T> image(const Zmat<T>& m);
+template<class T> subZspace<T> eigenspace(const Zmat<T>& m, const T& lambda);
+template<class T> subZspace<T> subeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s);
 
 //The following work with subspaces "mod p" using "ref_mod_p" from
 //matrix.h/cc to do gaussian elimination.  The "denom" of each is 1.
 
-template<class T>
-subZspace<T> oldpkernel(const Zmat<T>& m, const T& pr);
-template<class T>
-subZspace<T> pkernel(const Zmat<T>& m, const T& pr);
-template<class T>
-subZspace<T> pimage(const Zmat<T>& m, const T& pr);
-template<class T>
-subZspace<T> peigenspace(const Zmat<T>& m, const T& lambda, const T& pr);
-template<class T>
-subZspace<T> psubeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s, const T& pr);
-
-// template<class T>
-// inline int dim(const subZspace<T>& s) {return s.dim();}  // the dimension
-// template<class T>
-// inline T denom(const subZspace<T>& s) {return s.denom;}    // the denominator
-// template<class T>
-// inline Zvec<int> pivots(const subZspace<T>& s) {return s.pivots;}     // the pivot vector
-// template<class T>
-// inline Zmat<T> basis(const subZspace<T>& s) {return s.basis;}       // the basis matrix
+template<class T> subZspace<T> oldpkernel(const Zmat<T>& m, const T& pr);
+template<class T> subZspace<T> pkernel(const Zmat<T>& m, const T& pr);
+template<class T> subZspace<T> pimage(const Zmat<T>& m, const T& pr);
+template<class T> subZspace<T> peigenspace(const Zmat<T>& m, const T& lambda, const T& pr);
+template<class T> subZspace<T> psubeigenspace(const Zmat<T>& m, const T& l, const subZspace<T>& s, const T& pr);
 
 // return a basis for the orthogonal complement of a<2^r (viewed as a bit vector of length r)
 vector<long> dotperp(long a, int r);

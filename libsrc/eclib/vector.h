@@ -89,58 +89,6 @@ template<class T> void swapvec(Zvec<T>& v, Zvec<T>& w);
 template<class T> Zvec<T> operator*(const Zmat<T>&, const Zvec<T>&);
 template<class T> T dotmodp(const Zvec<T>& v1, const Zvec<T>& v2, const T& pr);
 
-template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr=0);
-template<class T> subZspace<T> combine(const subZspace<T>& s1, const subZspace<T>& s2);
-template<class T> subZspace<T> pcombine(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
-template<class T> int lift(const subZspace<T>& s, const T& pr, subZspace<T>& ans);
-template<class T> int eqmodp(const sZvec<T>&, const sZvec<T>&, const T& p);
-template<class T> ostream& operator<< (ostream&s, const sZvec<T>&);
-template<class T> T operator*(const sZvec<T>&, const sZvec<T>&);
-template<class T> T operator*(const sZvec<T>&, const Zvec<T>&);
-template<class T> T operator*(const Zvec<T>& v, const sZvec<T>& sv);
-template<class T> T dotmodp(const sZvec<T>&, const sZvec<T>&, const T& pr);
-template<class T> T dotmodp(const sZvec<T>&, const Zvec<T>&, const T& pr);
-template<class T> T dotmodp(const Zvec<T>& v, const sZvec<T>& sv, const T& pr);
-template<class T> sZvec<T> operator+(const sZvec<T>& v1, const sZvec<T>& v2);
-template<class T> sZvec<T> operator-(const sZvec<T>& v1, const sZvec<T>& v2);
-template<class T> int operator==(const sZvec<T>& v1, const sZvec<T>& v2);
-template<class T> int operator!=(const sZvec<T>& v1, const sZvec<T>& v2);
-template<class T> int operator==(const sZvec<T>& v1, const Zvec<T>& v2);
-template<class T> sZmat<T> transpose(const sZmat<T>&);
-template<class T> sZmat<T> operator* ( const sZmat<T>&, const sZmat<T>&);
-template<class T> T content(const sZvec<T>& v);
-template<class T> T make_primitive(sZvec<T>& v);
-template<class T> sZvec<T> operator* ( const sZmat<T>& A, const sZvec<T>& v );
-template<class T> sZvec<T> operator* ( const sZvec<T>& v, const sZmat<T>& A );
-template<class T> sZvec<T> mult_mod_p( const sZmat<T>& A, const sZvec<T>& v, const T& p  );
-template<class T> sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p  );
-template<class T> sZmat<T> mult_mod_p ( const sZmat<T>&, const sZmat<T>&, const T&);
-template<class T> inline vector<int> dim(const sZmat<T>& A)
-{return vector<int>{A.nro, A.nco};}
-template<class T> Zvec<T> operator*  (const sZmat<T>& m, const Zvec<T>& v);
-template<class T> sZvec<T> operator* ( const sZmat<T>& A, const sZvec<T>& v );
-template<class T> sZvec<T> operator* ( const sZvec<T>& v, const sZmat<T>& A );
-template<class T> sZvec<T> mult_mod_p( const sZmat<T>& A, const sZvec<T>& v, const T& p  );
-template<class T> Zvec<T> mult_mod_p( const sZmat<T>& A, const Zvec<T>& v, const T& p  );
-template<class T> sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p  );
-template<class T> sZmat<T> operator* ( const sZmat<T>& A, const sZmat<T>& B );
-template<class T> sZmat<T> mult_mod_p ( const sZmat<T>& A, const sZmat<T>& B, const T& p );
-template<class T> T maxabs( const sZmat<T>& A);
-template<class T> sZmat<T> transpose(const sZmat<T>&);
-template<class T> int operator==(const sZmat<T>&, const sZmat<T>&);
-template<class T> int eqmodp(const sZmat<T>&, const sZmat<T>&, const T& p);
-template<class T> ostream& operator<< (ostream&s, const sZmat<T>&);
-template<class T> istream& operator>> (istream&s, sZmat<T>&);
-template<class T> int get_population (const sZmat<T>& );
-template<class T> inline double density (const sZmat<T>& m)
-{return (((double)(get_population(m)))/m.nro)/m.nco;}
-template<class T> void random_fill_in( sZmat<T>&, int, int );
-template<class T> int liftmat(const sZmat<T>& mm, T pr, sZmat<T>& m, T& dd);
-template<class T> int liftmats_chinese(const sZmat<T>& mm1, T pr1, const sZmat<T>& mm2, T pr2,
-                              sZmat<T>& m, T& dd);
-template<class T> int dim(const ssubZspace<T>& s)     {return s.bas().ncols();}
-template<class T> sZmat<T> basis(const ssubZspace<T>& s)  {return s.bas();}
-
 template<class T>
 class Zvec {
   friend class sZvec<T>;

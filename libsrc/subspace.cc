@@ -210,7 +210,7 @@ template subZspace<INT> pcombine<INT>(const subZspace<INT>&, const subZspace<INT
 template<class T>
 Zmat<T> prestrict(const Zmat<T>& M, const subZspace<T>& S, const T& pr, int cr)
 {
-  if(S.dim()==M.nro) return M; // trivial special case, s is whole space
+  if(S.dim()==M.nrows()) return M; // trivial special case, s is whole space
   const Zmat<T>& B = S.basis;
   Zmat<T> A = matmulmodp(rowsubmat(M, S.pivots), B, pr);
 

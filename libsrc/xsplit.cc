@@ -199,7 +199,7 @@ void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
   //  data.submat_ = smat(0,0);
   //}
 
-  ECLOG(1) << "done (dim = " << dim(s) << ")"<<endl;
+  ECLOG(1) << "done (dim = " << s.dim() << ")"<<endl;
   // ECLOG(1) << ", combining subspaces..." << flush;
 
   child -> rel_space_ = new ssubZspace<T>(s);
@@ -211,7 +211,7 @@ void form_finderT<T>::go_down(ff_data<T> &data, long eig, int last) {
 
   depth++; // Local depth increment (does not effect data nodes)
 
-  child -> subdim_ = dim( *(child -> rel_space_) );
+  child -> subdim_ = child -> rel_space_ -> dim();
 
   ECLOG(1) << "Eigenvalue " << eig
            << " has multiplicity " << child -> subdim_ << endl;
@@ -312,14 +312,14 @@ void form_finderT<T>::make_basis( ff_data<T> &data ) {
       //spm_abs = spm_rel;
     }
 
-    if(dim(*spm_rel)!=1) {
+    if(spm_rel->dim()!=1) {
       cout << "error in form_finder::makebasis; ";
       cout << "\nfinal (";
 
       if(signeig>0) cout << "+";
       else cout << "-";
 
-      cout << ") subspace has dimension " << dim(*spm_rel) << endl;
+      cout << ") subspace has dimension " << spm_rel->dim() << endl;
       cout << "aborting this branch!" << endl;
       //delete spm_abs;
       delete spm_rel;

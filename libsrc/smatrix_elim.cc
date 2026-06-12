@@ -1315,6 +1315,10 @@ int sZmat<T>::rank(T mod)
   (void) sme.sparse_elimination();
   return sme.get_rank();
 }
+template int sZmat<int>::rank(int mod);
+template int sZmat<long>::rank(long mod);
+template int sZmat<ZZ>::rank(ZZ mod);
+template int sZmat<INT>::rank(INT mod);
 
 template<class T>
 ssubZspace<T> kernel(const sZmat<T>& sm, T m)
@@ -1323,6 +1327,10 @@ ssubZspace<T> kernel(const sZmat<T>& sm, T m)
   sZmat<T> kern = sZmat_elim(sm,m).kernel(npivs,pivs);
   return ssubZspace<T>(kern,pivs,m);
 }
+template ssubZspace<int> kernel<int>(const sZmat<int>&, int);
+template ssubZspace<long> kernel<long>(const sZmat<long>&, long);
+template ssubZspace<ZZ> kernel<ZZ>(const sZmat<ZZ>&, ZZ);
+template ssubZspace<INT> kernel<INT>(const sZmat<INT>&, INT);
 
 // Instantiate sZmat_elim template classes for T=int, long, ZZ, INT
 
@@ -1330,19 +1338,3 @@ template class sZmat_elim<int>;
 template class sZmat_elim<long>;
 template class sZmat_elim<ZZ>;
 template class sZmat_elim<INT>;
-
-// Instantiate template functions for T=int
-template int sZmat<int>::rank(int mod);
-template ssubZspace<int> kernel<int>(const sZmat<int>& sm, int m);
-
-// Instantiate template functions for T=long
-template int sZmat<long>::rank(long mod);
-template ssubZspace<long> kernel<long>(const sZmat<long>& sm, long m);
-
-// Instantiate template functions for T=ZZ
-template int sZmat<ZZ>::rank(ZZ mod);
-template ssubZspace<ZZ> kernel<ZZ>(const sZmat<ZZ>& sm, ZZ m);
-
-// Instantiate template functions for T=INT
-template int sZmat<INT>::rank(INT mod);
-template ssubZspace<INT> kernel<INT>(const sZmat<INT>& sm, INT m);

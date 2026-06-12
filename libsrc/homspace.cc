@@ -358,7 +358,7 @@ if (verbose>1)
 
    if (verbose) cout << "done "<<endl;
 
-   cuspidal_dimension = dim(kern);
+   cuspidal_dimension = kern.dim();
    denom3 = denom1*denom2;
 
    freemods.resize(dimension);
@@ -912,7 +912,7 @@ smat homspace::s_conj_restricted(const ssubspace& s, int dual, int display) cons
       m.setrow(j,colj);
     }
   //  cout<<"m = "<<m<<" = "<<m.as_mat()<<endl;
-  m = mult_mod_p(m,basis(s), modulus);
+  m = mult_mod_p(m, s.bas(), modulus);
   if(!dual) m=transpose(m); // dual is default for restricted ops
   if (display) cout << "Matrix of conjugation = " << m.as_mat();
   return m;

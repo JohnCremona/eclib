@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 // Original version by Luiz Figueiredo
 
 #include <sys/times.h>
@@ -37,7 +37,7 @@ int main(void)
        << " and modulus " << modulus << ".\n\n";
   cout << "enter 0 to exit\n";
   cout << "enter 1 to do all tests \n";
-  cout << "enter 2 to operations \n"; 
+  cout << "enter 2 to operations \n";
   cout << "enter 3 to special speed test \n" << "enter> "<<endl;
   cout << "enter 4 to elimination test \n" << "enter> "<<endl;
   cout << "enter 5 to kernel test \n" << "enter> "<<endl;
@@ -60,12 +60,12 @@ int main(void)
 	cout << "Unitialized new smat sm = " << sm << endl;
 	cout << "Enter any number "; cin >> i;
 //******** test of constructor from matrix  ***************
-	//mat a; 
+	//mat a;
 	int r;
-	cout << "Enter size of a square matrix A: "; 
+	cout << "Enter size of a square matrix A: ";
 	cin >> r;
 	mat a(r,r);
-	cout << "Enter entries of A: "; 
+	cout << "Enter entries of A: ";
 	cin >> a;
 	cout << "A = \n" << a << endl;
 	smat sm1(a);
@@ -76,13 +76,13 @@ int main(void)
 	smat sm2 = sm1;
 	cout << "Copy of smat = " << endl << sm2 << endl;
 	cout << "Enter any number "; cin >> i;
-  
+
 //********  test of assignment   **************
         smat sm3;
 	sm3 = sm1;
 	cout << "Copy using assignment= " << endl << sm3 << endl;
 	cout << "Enter any number "; cin >> i;
-	
+
 //********* testing function as_matrix *****
 	cout << "enter number of rows of smat for conversion " << endl;
 	int numRow;
@@ -107,7 +107,7 @@ int main(void)
 	cin >> j;
 	cin >> k;
 	cout << "T(" << j <<" , " << k << ") = " << T.elem(j,k) <<endl;
-	
+
 	// *** testing set_row *** //
 	cout << "testing set_row" << endl;
 	cout << "enter new row : which row ? (starting from zero)" << endl;
@@ -129,25 +129,25 @@ int main(void)
 	cout << T << endl;
 	delete[] pos; delete[] val;
 	}
-   
+
 //*********testing operations ***********
 
     if( t == 1 || t == 2 )
       {
 	cout << "testing operations " << endl;
- 
+
 	int row,col;
-	cout << "Enter size of smat A row,col: "<< endl; 
+	cout << "Enter size of smat A row,col: "<< endl;
 	cin >> row >> col;
 	smat A( row, col );
         random_fill_in( A, 10, seed );
-	// cout << "Enter entries of A: "<< endl; 
+	// cout << "Enter entries of A: "<< endl;
 	// cin >> A;
-	cout << "Enter size of smat B: row,col: "<< endl; 
+	cout << "Enter size of smat B: row,col: "<< endl;
 	cin >> row >> col;
 	smat B( row, col );
         random_fill_in( B, 10, seed );
-	// cout << "Enter entries of B: "<< endl; 
+	// cout << "Enter entries of B: "<< endl;
 	// cin >> B;
 	cout << "matrix A" << endl << A << endl;
 	cout << "matrix B" << endl << B << endl;
@@ -186,9 +186,9 @@ int main(void)
 	cout<<"After adding 17 to A it is now:\n"<<B<<endl;
 	B -= sc;
 	cout<<"After subtracting 17 again it is now:\n"<<B<<endl;
-	if(B==A) 
-	  cout<<"scalar addition OK\n"; 
-	else 
+	if(B==A)
+	  cout<<"scalar addition OK\n";
+	else
 	  cout<<"scalar addition WRONG\n";
 	A = smat(5);
 	B = A;
@@ -197,9 +197,9 @@ int main(void)
 	cout<<"After adding 17 to A it is now:\n"<<B<<endl;
 	B -= sc;
 	cout<<"After subtracting 17 again it is now:\n"<<B<<endl;
-	if(B==A) 
-	  cout<<"scalar addition OK\n"; 
-	else 
+	if(B==A)
+	  cout<<"scalar addition OK\n";
+	else
 	  cout<<"scalar addition WRONG\n";
 
 	cout << "test multiplication of smat by matrix" << endl;
@@ -221,7 +221,7 @@ int main(void)
 	  cout<<"Correct\n";
 	else
 	  cout<<"Wrong! Correct is \n"<<sm_as_m*m<<endl;
-	
+
 	A = smat(100,100);
         random_fill_in( A, 10, seed );
 	cout<<"Testing transpose function"<<endl;
@@ -231,7 +231,7 @@ int main(void)
 	smat Att = transpose(At);
 	cout<<"A=(A^t)^t ? ";
 	if(A==Att) cout<<"yes!"<<endl; else cout<<"no!"<<endl;
-      } 
+      }
     if( t == 6 ) {
 	/* test of multiplication of smat by smat */
 	int row1, row2, col1, col2;
@@ -278,34 +278,34 @@ int main(void)
 	  int j, loop; cin >> loop;
 
 	  starttime = clock();
-	  for(j = 0; j < loop; j++) 
-	    {  
+	  for(j = 0; j < loop; j++)
+	    {
 	      m += m1;
-	      m -= scalar(2)*m2; 
-	      m += scalar(3)*m3; 
+	      m -= scalar(2)*m2;
+	      m += scalar(3)*m3;
 	      if(see>1) cout<<m<<endl; else cout<<"."<<flush;
-	    }  
+	    }
 	  stoptime = clock();
 
 	  if( see ) cout << " resulting matrix = " << m << endl;
-	  cout << "matrix cpu time = " 
-	       << ((double)(stoptime-starttime)/CLOCKS_PER_SEC) 
+	  cout << "matrix cpu time = "
+	       << ((double)(stoptime-starttime)/CLOCKS_PER_SEC)
 	       << " seconds"<<endl;
 	  m1.init(0,0); m2.init(0,0); m3.init(0,0);
 
 	  starttime = clock();
-	  for(j = 0; j < loop; j++) 
-	    { 
+	  for(j = 0; j < loop; j++)
+	    {
 	      sm += sm1;
-	      sm -= two*sm2; 
-	      sm += three*sm3; 
+	      sm -= two*sm2;
+	      sm += three*sm3;
 	      if(see>1) cout<<sm<<endl; else cout<<"."<<flush;
 	    }
 	  stoptime = clock();
 
 	  if( see ) cout << " resulting smat = " << sm << endl;
-	  cout << "smat cpu time = " 
-	       << ((double)(stoptime-starttime)/CLOCKS_PER_SEC) 
+	  cout << "smat cpu time = "
+	       << ((double)(stoptime-starttime)/CLOCKS_PER_SEC)
 	       << " seconds"<<endl;
 	  sm1 = smat(); sm2 = smat(); sm3 = smat();
 	  if( sm == smat(m) ) cout << "results are equal" << endl;
@@ -329,7 +329,7 @@ int main(void)
 	    cin >> flag2;
 	    if( flag ) cout << "matrix A is " << sm << endl;
 	    smat_elim A (sm, modulus );
-	    if( flag2 ) 
+	    if( flag2 )
 	      { cout << "initial population: "; display_population(A); }
 	    A.step0();
 	    cout << "after step0 " << endl;
@@ -347,7 +347,7 @@ int main(void)
 	    if( flag ) cout << " matrix: " << A << endl;
 	    if( flag2 ) display_population( A );
 	    A.step3();
-	    cout << "after step3" << endl; 
+	    cout << "after step3" << endl;
 	    cout << "# of rows eliminated so far: " << A.get_rank( ) << endl;
 	    if( flag ) cout << " matrix: " << A << endl;
 	    if( flag2 ) display_population( A );
@@ -376,7 +376,7 @@ int main(void)
 	int flag;
 	cout << "want to determine the rank using matrix? (1 = yes; 0 = no )";
 	cin >> flag;
-	if( rand ) 
+	if( rand )
 	  {
 	    cout << "How many maximum number of non-zero entries per row?\n";
 	    int max;
@@ -460,23 +460,23 @@ int main(void)
       {
 	cout << "Test of kernel and eigenspace operations\n";
 	int row;
-	cout << "Enter size of (square) smat A: "<< endl; 
+	cout << "Enter size of (square) smat A: "<< endl;
 	cin >> row;
 	smat A( row, row );
-	cout << "Enter entries of A: "<< endl; 
+	cout << "Enter entries of A: "<< endl;
 	cin >> A;
 	cout << "A = \n"<<A <<endl;
 	cout << "A (as matrix) = \n"; A.as_mat().output_pari(); cout <<endl;
 	ssubspace ker = kernel(A, modulus);
-	cout << "ker(A) has dimension " << dim(ker) << endl;
-	cout << "basis =  " << basis(ker) << endl;
+	cout << "ker(A) has dimension " << ker.dim() << endl;
+	cout << "basis =  " << ker.bas() << endl;
 
 	cout << "Enter a possible eigenvalue: ";
 	scalar lambda;
 	cin >> lambda;
 	cout<<"lambda = "<<lambda<<endl;
 	ssubspace e = eigenspace(A,lambda, modulus);
-	cout << "Eigenspace for lambda = "<<lambda<<" has dimension " << dim(e) << endl;
+	cout << "Eigenspace for lambda = "<<lambda<<" has dimension " << e.dim() << endl;
       }
     cout << "enter new value of t  ";
     cin >> t;
@@ -484,4 +484,3 @@ int main(void)
   cout<<endl;
   return(0);
 }
-

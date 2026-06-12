@@ -68,6 +68,7 @@ template<class T> Zmat<T> operator*(const Zmat<T>&, const Zmat<T>&);
 template<class T> Zvec<T> operator*(const Zmat<T>&, const Zvec<T>&);
 template<class T> int operator==(const Zmat<T>&, const Zmat<T>&);
 template<class T> istream& operator>> (istream&s, Zmat<T>&);
+// template<class T> Zmat<T> prestrict(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr);
 
 template <class T>
 class Zmat {
@@ -151,7 +152,7 @@ public:
   friend int liftmat<>(const Zmat<T>& mm, const T& pr, Zmat<T>& m, T& dd);
   friend int lift<>(const subZspace<T>& s, const T& pr, subZspace<T>& ans);
   friend subZspace<T> pcombine<>(const subZspace<T>& s1, const subZspace<T>& s2, const T& pr);
-  friend Zmat<T> prestrict<>(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr);
+  // friend Zmat<T> prestrict<>(const Zmat<T>& m, const subZspace<T>& s, const T& pr, int cr);
   friend Zmat<T> matmulmodp<>(const Zmat<T>&, const Zmat<T>&, const T& pr);
   friend Zvec<T> matvecmulmodp<>(const Zmat<T>&, const Zvec<T>&, const T& pr);
   friend long population<>(const Zmat<T>& m); // #nonzero entries

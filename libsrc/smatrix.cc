@@ -2,29 +2,30 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 // Original version by Luiz Figueiredo
 
 #include <assert.h>
 #include "eclib/linalg.h"
+#include "random.cc"
 
 template<class T>
 void showrow(int*pos, T*val) // for debugging
@@ -123,7 +124,18 @@ sZmat<T>::~sZmat()
   delete [] val;
 }
 
-// member functions and operators
+template<class T>
+sZmat<T> sZmat<T>::scalar_matrix(int n, const T& a)  // nxn scalar matrix a*I
+{
+  sZmat<T> D(n,n); // creates enough space
+  for( int i = 0; i < n; i++ )
+    {
+      D.col[i][0] = 1;   // one entry in this row
+      D.col[i][1] = i+1; // ...it's in column i+1
+      D.val[i][0] = a;   // ...its value is a
+    }
+  return D;
+}
 
 template<class T>
 void sZmat<T>::set_row( int i, int d, int const *pos, T const *values) // i counts from 0
@@ -293,7 +305,7 @@ sZmat<T>& sZmat<T>::operator=(const sZmat<T>& sm)
  static const T zero(0);
  if (this==&sm) return *this;
  nco = sm.nco;
- int i, n = sm.nro; 
+ int i, n = sm.nro;
  if (nro != n) // delete old space and replace with new.
    {
      for( i = 0; i < nro; i++ ) { delete [] col[i]; delete [] val[i]; }
@@ -303,8 +315,8 @@ sZmat<T>& sZmat<T>::operator=(const sZmat<T>& sm)
      delete [] col;
      delete [] val;
      nro = n;
-     col = new int * [nro]; 
-     val = new T * [nro]; 
+     col = new int * [nro];
+     val = new T * [nro];
 #ifdef DEBUG_MEM
   cout<<"in smat.=, creating new smat with col="<<col<<", val="<<val<<endl;
 #endif
@@ -317,7 +329,7 @@ sZmat<T>& sZmat<T>::operator=(const sZmat<T>& sm)
     }
    }
  for( i = 0; i < nro; i++ )
-   { 
+   {
      int d = *sm.col[i];
      if(d!=col[i][0])
        {
@@ -351,8 +363,8 @@ sZmat<T>& sZmat<T>::operator+=(const sZmat<T>& mat2)
 	  T *V = new T [ d + d2 ]; T* Vi=V;
 	  int k = 0;       /*k will be # of non-zero entries of sum*/
 	  while( d && d2 )
-	    { 
-	      if( *pos1 < *pos2 ) 
+	    {
+	      if( *pos1 < *pos2 )
 		{  *Pj++ = *pos1++; *Vi++ = *val1++; d--; k++; }
 	      else if(*pos2 < *pos1 )
 		{  *Pj++ = *pos2++; *Vi++ = *val2++; d2--; k++; }
@@ -361,10 +373,10 @@ sZmat<T>& sZmat<T>::operator+=(const sZmat<T>& mat2)
 		*Pj = *pos1;
 		T newval = (*val1++) + (*val2++);
 // 		cout<<"sum = "<<newval<<endl;
-		if( newval!=0 ) 
+		if( newval!=0 )
 		  {
 		    *Vi=newval;
-// 		    cout<<"nonzero, putting "<<(*V)<<" into sum row in position "<<(*Pj)<<endl; 
+// 		    cout<<"nonzero, putting "<<(*V)<<" into sum row in position "<<(*Pj)<<endl;
 		    Vi++; Pj++; k++;
 		  }
 // 		else cout<<"zero, omitting from sum row"<<endl;
@@ -396,7 +408,7 @@ sZmat<T>& sZmat<T>::operator-=(const sZmat<T>& mat2)
 {
   if (nro==mat2.nro)
     {
-      for(int i = 0; i < nro; i++ ) 
+      for(int i = 0; i < nro; i++ )
 	{
 	  int d = *col[i], d2 = *mat2.col[i];
 	  int *pos1 = col[i] + 1, *pos2 = mat2.col[i]+1;
@@ -405,8 +417,8 @@ sZmat<T>& sZmat<T>::operator-=(const sZmat<T>& mat2)
 	  T *V = new T [ d + d2 ]; T* Vi=V;
 	  int k = 0;       /*k will be # of non-zero entries of sum*/
 	  while( d && d2 )
-	    { 
-	      if( *pos1 < *pos2 ) 
+	    {
+	      if( *pos1 < *pos2 )
 		{ *Pj++ = *pos1++; *Vi++ = *val1++; d--; k++; }
 	      else if(*pos2 < *pos1 )
 		{  *Pj++ = *pos2++; *Vi++ = -(*val2++); d2--; k++; }
@@ -457,11 +469,11 @@ sZmat<T>& sZmat<T>::operator+= (const T& scal) // adds scalar*identity
 	}
       else // insert new entry
 	{
-	  *Vi++ = scal; *Pj++=(i+1); k++; 
+	  *Vi++ = scal; *Pj++=(i+1); k++;
 	}
       while(d--) // copy remaining entries if necessary
 	{
-	  *Pj++ = *pos1++; *Vi++ = *val1++; k++; 
+	  *Pj++ = *pos1++; *Vi++ = *val1++; k++;
 	}
       P[0] = k;
       delete [] col[i]; col[i]=P;
@@ -471,7 +483,7 @@ sZmat<T>& sZmat<T>::operator+= (const T& scal) // adds scalar*identity
 }
 
 template<class T>
-void sZmat<T>::sub_mod_p(const T& lambda, const T& p) 
+void sZmat<T>::sub_mod_p(const T& lambda, const T& p)
 // subtracts scalar*identity mod p
 {
   this->operator-=(lambda);
@@ -542,7 +554,7 @@ Zmat<T> sZmat<T>::operator*( const Zmat<T>& m )
   for(int i = 1; i <= nro; i++ )
     {
       int d = col[i-1][0];
-      for(int j = 1; j <= m.ncols(); j++ ) 
+      for(int j = 1; j <= m.ncols(); j++ )
 	{
 	  ans = 0;
 	  for(int t = 0; t < d; t++ ) ans += val[i-1][t]*m(col[i-1][t+1],j);
@@ -563,9 +575,9 @@ int sZmat<T>::nullity(const T& lambda, T m) // nullity of this-lambda*I modulo m
 template<class T>
 sZvec<T> operator* ( const sZmat<T>& A, const sZvec<T>& v )
 {
-  if( A.nco != dim(v) ) 
-    { 
-      cerr << "incompatible smat*svec\n"; 
+  if( A.nco != dim(v) )
+    {
+      cerr << "incompatible smat*svec\n";
       cerr << "Dimensions "<<dim(A)<<" and "<<dim(v)<<endl;
       return sZvec<T>();
     }
@@ -578,6 +590,10 @@ sZvec<T> operator* ( const sZmat<T>& A, const sZvec<T>& v )
     }
   return prod;
 }
+template sZvec<int> operator*<int>( const sZmat<int>&, const sZvec<int>&);
+template sZvec<long> operator*<long>( const sZmat<long>&, const sZvec<long>&);
+template sZvec<ZZ> operator*<ZZ>( const sZmat<ZZ>&, const sZvec<ZZ>&);
+template sZvec<INT> operator*<INT>( const sZmat<INT>&, const sZvec<INT>&);
 
 template<class T>
 Zvec<T> operator* (const sZmat<T>& m, const Zvec<T>& v)
@@ -590,6 +606,10 @@ Zvec<T> operator* (const sZmat<T>& m, const Zvec<T>& v)
     for(int i=1; i<=r; i++) w.set(i,m.row(i)*v);
   return w;
 }
+template Zvec<int> operator*<int>( const sZmat<int>&, const Zvec<int>&);
+template Zvec<long> operator* <long>( const sZmat<long>&, const Zvec<long>&);
+template Zvec<ZZ> operator* <ZZ>( const sZmat<ZZ>&, const Zvec<ZZ>&);
+template Zvec<INT> operator* <INT>( const sZmat<INT>&, const Zvec<INT>&);
 
 // (col) svec * smat
 
@@ -609,6 +629,10 @@ sZvec<T> operator* ( const sZvec<T>& v, const sZmat<T>& A )
     }
   return prod;
 }
+template sZvec<int> operator*<int>( const sZvec<int>&, const sZmat<int>&);
+template sZvec<long> operator*<long>( const sZvec<long>&, const sZmat<long>&);
+template sZvec<ZZ> operator*<ZZ>( const sZvec<ZZ>&, const sZmat<ZZ>&);
+template sZvec<INT> operator*<INT>( const sZvec<INT>&, const sZmat<INT>&);
 
 template<class T>
 sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p  )
@@ -635,6 +659,10 @@ sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p  )
     }
   return sZvec<T>(prod);
 }
+template sZvec<int> mult_mod_p<int>( const sZvec<int>&, const sZmat<int>&, const int&);
+template sZvec<long> mult_mod_p<long>( const sZvec<long>&, const sZmat<long>&, const long&);
+template sZvec<ZZ> mult_mod_p<ZZ>( const sZvec<ZZ>&, const sZmat<ZZ>&, const ZZ&);
+template sZvec<INT> mult_mod_p<INT>( const sZvec<INT>&, const sZmat<INT>&, const INT&);
 
 template<class T>
 sZvec<T> mult_mod_p( const sZmat<T>& A, const sZvec<T>& v, const T& p  )
@@ -652,6 +680,10 @@ sZvec<T> mult_mod_p( const sZmat<T>& A, const sZvec<T>& v, const T& p  )
     }
   return w;
 }
+template sZvec<int> mult_mod_p<int>( const sZmat<int>&, const sZvec<int>&, const int&);
+template sZvec<long> mult_mod_p<long>( const sZmat<long>&, const sZvec<long>&, const long&);
+template sZvec<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>&, const sZvec<ZZ>&, const ZZ&);
+template sZvec<INT> mult_mod_p<INT>( const sZmat<INT>&, const sZvec<INT>&, const INT&);
 
 template<class T>
 Zvec<T> mult_mod_p( const sZmat<T>& A, const Zvec<T>& v, const T& p  )
@@ -669,6 +701,10 @@ Zvec<T> mult_mod_p( const sZmat<T>& A, const Zvec<T>& v, const T& p  )
     }
   return w;
 }
+template Zvec<int> mult_mod_p<int>( const sZmat<int>&, const Zvec<int>&, const int&);
+template Zvec<long> mult_mod_p<long>( const sZmat<long>&, const Zvec<long>&, const long&);
+template Zvec<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>&, const Zvec<ZZ>&, const ZZ&);
+template Zvec<INT> mult_mod_p<INT>( const sZmat<INT>&, const Zvec<INT>&, const INT&);
 
 template<class T>
 sZmat<T> operator* ( const sZmat<T>& A, const sZmat<T>& B )
@@ -689,6 +725,10 @@ sZmat<T> operator* ( const sZmat<T>& A, const sZmat<T>& B )
     }
   return prod;
 }
+template sZmat<int> operator*<int>( const sZmat<int>&, const sZmat<int>&);
+template sZmat<long> operator*<long>( const sZmat<long>&, const sZmat<long>&);
+template sZmat<ZZ> operator*<ZZ>( const sZmat<ZZ>&, const sZmat<ZZ>&);
+template sZmat<INT> operator*<INT>( const sZmat<INT>&, const sZmat<INT>&);
 
 template<class T>
 sZmat<T> mult_mod_p ( const sZmat<T>& A, const sZmat<T>& B, const T& p )
@@ -709,6 +749,10 @@ sZmat<T> mult_mod_p ( const sZmat<T>& A, const sZmat<T>& B, const T& p )
     }
   return prod;
 }
+template sZmat<int> mult_mod_p<int>( const sZmat<int>&, const sZmat<int>&, const int&);
+template sZmat<long> mult_mod_p<long>( const sZmat<long>&, const sZmat<long>&, const long&);
+template sZmat<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>&, const sZmat<ZZ>&, const ZZ&);
+template sZmat<INT> mult_mod_p<INT>( const sZmat<INT>&, const sZmat<INT>&, const INT&);
 
 template<class T>
 sZmat<T> transpose ( const sZmat<T>& A )
@@ -765,6 +809,10 @@ sZmat<T> transpose ( const sZmat<T>& A )
   delete[]aux;
   return B;
 }
+template sZmat<int> transpose<int>( const sZmat<int>&);
+template sZmat<long> transpose<long>( const sZmat<long>&);
+template sZmat<ZZ> transpose<ZZ>( const sZmat<ZZ>&);
+template sZmat<INT> transpose<INT>( const sZmat<INT>&);
 
 template<class T>
 int operator==(const sZmat<T>& sm1, const sZmat<T>& sm2)
@@ -786,6 +834,10 @@ int operator==(const sZmat<T>& sm1, const sZmat<T>& sm2)
      }
    return equal;
 }
+template int operator==<int>(const sZmat<int>&, const sZmat<int>&);
+template int operator==<long>(const sZmat<long>&, const sZmat<long>&);
+template int operator==<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&);
+template int operator==<INT>(const sZmat<INT>&, const sZmat<INT>&);
 
 template<class T>
 int eqmodp(const sZmat<T>& sm1, const sZmat<T>& sm2, const T& p)
@@ -807,6 +859,10 @@ int eqmodp(const sZmat<T>& sm1, const sZmat<T>& sm2, const T& p)
      }
    return equal;
 }
+template int eqmodp<int>(const sZmat<int>&, const sZmat<int>&, const int&);
+template int eqmodp<long>(const sZmat<long>&, const sZmat<long>&, const long&);
+template int eqmodp<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&, const ZZ&);
+template int eqmodp<INT>(const sZmat<INT>&, const sZmat<INT>&, const INT&);
 
 template<class T>
 ostream& operator << (ostream& s, const sZmat<T>& sm)
@@ -814,13 +870,13 @@ ostream& operator << (ostream& s, const sZmat<T>& sm)
   for( int i = 0; i < sm.nro; i++ )
     {
       cout << "row[" << i+1 << "] =";
-      int d = *sm.col[i]; 
+      int d = *sm.col[i];
       int *posi = sm.col[i] + 1; T *veci = sm.val[i];
       int n = d-1 > 0 ? d-1 : 0;
       s << "{ ";
       s << "values " << "[";
-      if( d > 0 ) s << *veci++; 
-      while ( n-- ) s << "," << (*veci++); 
+      if( d > 0 ) s << *veci++;
+      while ( n-- ) s << "," << (*veci++);
       s << "]";
       s << "   positions: " << "[";
       if( d > 0 ) { s << *posi++; d = d-1; }
@@ -829,6 +885,10 @@ ostream& operator << (ostream& s, const sZmat<T>& sm)
     }
   return s;
 }
+template ostream& operator<<<int>(ostream&, const sZmat<int>&);
+template ostream& operator<<<long>(ostream&, const sZmat<long>&);
+template ostream& operator<<<ZZ>(ostream&, const sZmat<ZZ>&);
+template ostream& operator<<<INT>(ostream&, const sZmat<INT>&);
 
 template<class T>
 istream& operator >> (istream& s, sZmat<T>& sm)
@@ -837,7 +897,7 @@ istream& operator >> (istream& s, sZmat<T>& sm)
   T *values = new T [ sm.nco ];
   int r, k, count;
   for( r = 0; r < sm.nro; r++ )
-    { 
+    {
       cout << "input row " << r+1 << endl;
       int *p = pos; T *v = values;
       s >> k;
@@ -858,57 +918,87 @@ istream& operator >> (istream& s, sZmat<T>& sm)
       sm.col[r][0] = count;
       p = pos;
       v = values;
-      for( k = 0; k < count; k++ ) 
+      for( k = 0; k < count; k++ )
 	{ sm.col[r][k+1] = *p++; sm.val[r][k] = *v++; }
     }
   delete [] pos;
   delete [] values;
   return s;
 }
-
-// Definition of non-friend functions
+template istream& operator>><int>(istream&, sZmat<int>&);
+template istream& operator>><long>(istream&, sZmat<long>&);
+template istream& operator>><ZZ>(istream&, sZmat<ZZ>&);
+template istream& operator>><INT>(istream&, sZmat<INT>&);
 
 template<class T>
 sZmat<T> operator+(const sZmat<T>& sm)
 {
   return sm;
 }
+template sZmat<int> operator+<int>(const sZmat<int>&);
+template sZmat<long> operator+<long>(const sZmat<long>&);
+template sZmat<ZZ> operator+<ZZ>(const sZmat<ZZ>&);
+template sZmat<INT> operator+<INT>(const sZmat<INT>&);
 
 template<class T>
 sZmat<T> operator-(const sZmat<T>& sm)
 {
   return T(-1)*sm;
 }
+template sZmat<int> operator-<int>(const sZmat<int>&);
+template sZmat<long> operator-<long>(const sZmat<long>&);
+template sZmat<ZZ> operator-<ZZ>(const sZmat<ZZ>&);
+template sZmat<INT> operator-<INT>(const sZmat<INT>&);
 
 template<class T>
 sZmat<T> operator+(const sZmat<T>& sm1, const sZmat<T>& sm2)
 {
   sZmat<T> ans(sm1); ans+=sm2;  return ans;
 }
+template sZmat<int> operator+<int>(const sZmat<int>&, const sZmat<int>&);
+template sZmat<long> operator+<long>(const sZmat<long>&, const sZmat<long>&);
+template sZmat<ZZ> operator+<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&);
+template sZmat<INT> operator+<INT>(const sZmat<INT>&, const sZmat<INT>&);
 
 template<class T>
-sZmat<T> operator-(const sZmat<T>& sm1, const sZmat<T>& sm2) 
+sZmat<T> operator-(const sZmat<T>& sm1, const sZmat<T>& sm2)
 {
   sZmat<T> ans(sm1); ans-=sm2;  return ans;
 }
+template sZmat<int> operator-<int>(const sZmat<int>&, const sZmat<int>&);
+template sZmat<long> operator-<long>(const sZmat<long>&, const sZmat<long>&);
+template sZmat<ZZ> operator-<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&);
+template sZmat<INT> operator-<INT>(const sZmat<INT>&, const sZmat<INT>&);
 
 template<class T>
 sZmat<T> operator*(T scal, const sZmat<T>& sm)
 {
   sZmat<T> ans(sm); ans*=scal;  return ans;
 }
+template sZmat<int> operator*<int>(int, const sZmat<int>&);
+template sZmat<long> operator*<long>(long, const sZmat<long>&);
+template sZmat<ZZ> operator*<ZZ>(ZZ, const sZmat<ZZ>&);
+template sZmat<INT> operator*<INT>(INT, const sZmat<INT>&);
 
 template<class T>
 sZmat<T> operator/(const sZmat<T>& sm, T scal)
 {
   sZmat<T> ans(sm); ans/=scal;  return ans;
 }
+template sZmat<int> operator/<int>(const sZmat<int>&, int);
+template sZmat<long> operator/<long>(const sZmat<long>&, long);
+template sZmat<ZZ> operator/<ZZ>(const sZmat<ZZ>&, ZZ);
+template sZmat<INT> operator/<INT>(const sZmat<INT>&, INT);
 
 template<class T>
 int operator!=(const sZmat<T>& sm1, const sZmat<T>& sm2)
 {
   return !(sm1==sm2);
 }
+template int operator!=<int>(const sZmat<int>&, const sZmat<int>&);
+template int operator!=<long>(const sZmat<long>&, const sZmat<long>&);
+template int operator!=<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&);
+template int operator!=<INT>(const sZmat<INT>&, const sZmat<INT>&);
 
 template<class T>
 int get_population(const sZmat<T>& m )
@@ -923,6 +1013,10 @@ int get_population(const sZmat<T>& m )
     }
   return count;
 }
+template int get_population<int>(const sZmat<int>&);
+template int get_population<long>(const sZmat<long>&);
+template int get_population<ZZ>(const sZmat<ZZ>&);
+template int get_population<INT>(const sZmat<INT>&);
 
 template<class T>
 T maxabs(const sZmat<T>& m )
@@ -937,19 +1031,10 @@ T maxabs(const sZmat<T>& m )
     }
   return a;
 }
-
-template<class T>
-sZmat<T> sZmat<T>::scalar_matrix(int n, const T& a)  // nxn scalar matrix a*I
-{
-  sZmat<T> D(n,n); // creates enough space
-  for( int i = 0; i < n; i++ )
-    {
-      D.col[i][0] = 1;   // one entry in this row
-      D.col[i][1] = i+1; // ...it's in column i+1
-      D.val[i][0] = a;   // ...its value is a
-    }
-  return D;
-}
+template int maxabs<int>( const sZmat<int>&);
+template long maxabs<long>( const sZmat<long>&);
+template ZZ maxabs<ZZ>( const sZmat<ZZ>&);
+template INT maxabs<INT>( const sZmat<INT>&);
 
 template<class T>
 int liftmat(const sZmat<T>& mm, T pr, sZmat<T>& m, T& dd)
@@ -1008,6 +1093,10 @@ int liftmat(const sZmat<T>& mm, T pr, sZmat<T>& m, T& dd)
     }
   return 1;
 }
+template int liftmat<int>(const sZmat<int>&, int, sZmat<int>&, int&);
+template int liftmat<long>(const sZmat<long>&, long, sZmat<long>&, long&);
+template int liftmat<ZZ>(const sZmat<ZZ>&, ZZ, sZmat<ZZ>&, ZZ&);
+template int liftmat<INT>(const sZmat<INT>&, INT, sZmat<INT>&, INT&);
 
 //#define DEBUG_CHINESE
 
@@ -1057,8 +1146,10 @@ int liftmats_chinese(const sZmat<T>& m1, T pr1, const sZmat<T>& m2, T pr2,
       }
   return 1;
 }
-
-#include "random.cc"
+template int liftmats_chinese<int>(const sZmat<int>&, int, const sZmat<int>&, int pr2, sZmat<int>&, int&);
+template int liftmats_chinese<long>(const sZmat<long>&, long, const sZmat<long>&, long pr2, sZmat<long>&, long&);
+template int liftmats_chinese<ZZ>(const sZmat<ZZ>&, ZZ, const sZmat<ZZ>& mm2, ZZ, sZmat<ZZ>&, ZZ&);
+template int liftmats_chinese<INT>(const sZmat<INT>&, INT, const sZmat<INT>& mm2, INT, sZmat<INT>&, INT&);
 
 template<class T>
 void random_fill_in( sZmat<T>& sm, int max, int seed )
@@ -1090,7 +1181,7 @@ void random_fill_in( sZmat<T>& sm, int max, int seed )
       *ptr++ = count;
       for( int l = 0; l < sm.ncols(); l++ )
 	{
-	  if( intpos[l] != 0 ) 
+	  if( intpos[l] != 0 )
 	    {
 	      *ptr++ = l+1;
 	      *vptr++ = scalarval[ l ];
@@ -1100,6 +1191,10 @@ void random_fill_in( sZmat<T>& sm, int max, int seed )
   delete[] intpos;
   delete[] scalarval;
 }
+template void random_fill_in<int>( sZmat<int>&, int, int );
+template void random_fill_in<long>( sZmat<long>&, int, int );
+template void random_fill_in<ZZ>( sZmat<ZZ>&, int, int );
+template void random_fill_in<INT>( sZmat<INT>&, int, int );
 
 template<class T>
 sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s)
@@ -1107,6 +1202,20 @@ sZmat<T> restrict_mat(const sZmat<T>& m, const subZspace<T>& s)
   if(s.dim()==m.nrows()) return m; // trivial special case, s is whole space
   return mult_mod_p(m.select_rows(s.pivs()),sZmat<T>(s.bas()), default_modulus<T>());
 }
+template sZmat<int> restrict_mat(const sZmat<int>&, const subZspace<int>&);
+template sZmat<long> restrict_mat(const sZmat<long>&, const subZspace<long>&);
+template sZmat<ZZ> restrict_mat(const sZmat<ZZ>&, const subZspace<ZZ>&);
+template sZmat<INT> restrict_mat(const sZmat<INT>&, const subZspace<INT>&);
+
+template<class T>
+void display_population(const sZmat<T>& A)
+{
+  cout << " number of non-zero entries: " << get_population(A) << endl;
+}
+template void display_population<int>(const sZmat<int>& m);
+template void display_population<long>(const sZmat<long>& m);
+template void display_population<ZZ>(const sZmat<ZZ>& m);
+template void display_population<INT>(const sZmat<INT>& m);
 
 // Instantiate sZmat template classes for T=int, long, ZZ, INT
 
@@ -1117,120 +1226,16 @@ template class sZmat<INT>;
 
 // Instantiate sZmat template functions for T=int
 template vector<int> dim<int>(const sZmat<int>& A);
-template sZmat<int> transpose<int>( const sZmat<int>&);
-template sZmat<int> operator*<int>( const sZmat<int>&, const sZmat<int>&);
-template sZvec<int> operator*<int>( const sZmat<int>& A, const sZvec<int>& v );
-template sZvec<int> operator*<int>( const sZvec<int>& v, const sZmat<int>& A );
-template Zvec<int> operator*<int>( const sZmat<int>& m, const Zvec<int>& v);
-template sZmat<int> operator+<int>(const sZmat<int>&);
-template sZmat<int> operator-<int>(const sZmat<int>&);
-template sZmat<int> operator+<int>(const sZmat<int>& m1, const sZmat<int>& m2);
-template sZmat<int> operator-<int>(const sZmat<int>& m1, const sZmat<int>& m2);
-template sZmat<int> operator*<int>(int, const sZmat<int>& m);
-template sZmat<int> operator/<int>(const sZmat<int>& m, int scal);
-template int operator!=<int>(const sZmat<int>& sm1, const sZmat<int>& sm2);
-template sZvec<int> mult_mod_p<int>( const sZmat<int>& A, const sZvec<int>& v, const int& p  );
-template sZvec<int> mult_mod_p<int>( const sZvec<int>& v, const sZmat<int>& A, const int& p  );
-template sZmat<int> mult_mod_p<int>( const sZmat<int>&, const sZmat<int>&, const int&);
-template Zvec<int> mult_mod_p<int>( const sZmat<int>& A, const Zvec<int>& v, const int& p  );
-template int maxabs<int>( const sZmat<int>& A);
-template int operator==<int>(const sZmat<int>&, const sZmat<int>&);
-template int eqmodp<int>(const sZmat<int>&, const sZmat<int>&, const int& p);
-template ostream& operator<<<int>(ostream&s, const sZmat<int>&);
-template istream& operator>><int>(istream&s, sZmat<int>&);
-template int get_population<int>(const sZmat<int>& );
 template double density<int>(const sZmat<int>& m);
-template void random_fill_in<int>( sZmat<int>&, int, int );
-template int liftmat<int>(const sZmat<int>& mm, int pr, sZmat<int>& m, int& dd);
-template int liftmats_chinese<int>(const sZmat<int>& mm1, int pr1, const sZmat<int>& mm2, int pr2, sZmat<int>& m, int& dd);
-template sZmat<int> restrict_mat(const sZmat<int>& m, const subZspace<int>& s);
 
 // Instantiate sZmat template functions for T=long
 template vector<int> dim<long>(const sZmat<long>& A);
-template sZmat<long> transpose<long>( const sZmat<long>&);
-template sZmat<long> operator*<long>( const sZmat<long>&, const sZmat<long>&);
-template sZvec<long> operator*<long>( const sZmat<long>& A, const sZvec<long>& v );
-template sZvec<long> operator*<long>( const sZvec<long>& v, const sZmat<long>& A );
-template Zvec<long> operator* <long>( const sZmat<long>& m, const Zvec<long>& v);
-template sZmat<long> operator+<long>(const sZmat<long>&);
-template sZmat<long> operator-<long>(const sZmat<long>&);
-template sZmat<long> operator+<long>(const sZmat<long>& m1, const sZmat<long>& m2);
-template sZmat<long> operator-<long>(const sZmat<long>& m1, const sZmat<long>& m2);
-template sZmat<long> operator*<long>(long, const sZmat<long>& m);
-template sZmat<long> operator/<long>(const sZmat<long>& m, long scal);
-template int operator!=<long>(const sZmat<long>& sm1, const sZmat<long>& sm2);
-template sZvec<long> mult_mod_p<long>( const sZmat<long>& A, const sZvec<long>& v, const long& p  );
-template sZvec<long> mult_mod_p<long>( const sZvec<long>& v, const sZmat<long>& A, const long& p  );
-template sZmat<long> mult_mod_p<long>( const sZmat<long>&, const sZmat<long>&, const long&);
-template Zvec<long> mult_mod_p<long>( const sZmat<long>& A, const Zvec<long>& v, const long& p  );
-template long maxabs<long>( const sZmat<long>& A);
-template int operator==<long>(const sZmat<long>&, const sZmat<long>&);
-template int eqmodp<long>(const sZmat<long>&, const sZmat<long>&, const long& p);
-template ostream& operator<<<long>(ostream&s, const sZmat<long>&);
-template istream& operator>><long>(istream&s, sZmat<long>&);
-template int get_population<long>(const sZmat<long>& );
 template double density<long>(const sZmat<long>& m);
-template void random_fill_in<long>( sZmat<long>&, int, int );
-template int liftmat<long>(const sZmat<long>& mm, long pr, sZmat<long>& m, long& dd);
-template int liftmats_chinese<long>(const sZmat<long>& mm1, long pr1, const sZmat<long>& mm2, long pr2, sZmat<long>& m, long& dd);
-template sZmat<long> restrict_mat(const sZmat<long>& m, const subZspace<long>& s);
 
 // Instantiate sZmat template functions for T=ZZ
 template vector<int> dim<ZZ>(const sZmat<ZZ>& A);
-template sZmat<ZZ> transpose<ZZ>( const sZmat<ZZ>&);
-template sZmat<ZZ> operator*<ZZ>( const sZmat<ZZ>&, const sZmat<ZZ>&);
-template sZvec<ZZ> operator*<ZZ>( const sZmat<ZZ>& A, const sZvec<ZZ>& v );
-template sZvec<ZZ> operator*<ZZ>( const sZvec<ZZ>& v, const sZmat<ZZ>& A );
-template Zvec<ZZ> operator* <ZZ>( const sZmat<ZZ>& m, const Zvec<ZZ>& v);
-template sZmat<ZZ> operator+<ZZ>(const sZmat<ZZ>&);
-template sZmat<ZZ> operator-<ZZ>(const sZmat<ZZ>&);
-template sZmat<ZZ> operator+<ZZ>(const sZmat<ZZ>& m1, const sZmat<ZZ>& m2);
-template sZmat<ZZ> operator-<ZZ>(const sZmat<ZZ>& m1, const sZmat<ZZ>& m2);
-template sZmat<ZZ> operator*<ZZ>(ZZ, const sZmat<ZZ>& m);
-template sZmat<ZZ> operator/<ZZ>(const sZmat<ZZ>& m, ZZ scal);
-template int operator!=<ZZ>(const sZmat<ZZ>& sm1, const sZmat<ZZ>& sm2);
-template sZvec<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>& A, const sZvec<ZZ>& v, const ZZ& p  );
-template sZvec<ZZ> mult_mod_p<ZZ>( const sZvec<ZZ>& v, const sZmat<ZZ>& A, const ZZ& p  );
-template sZmat<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>&, const sZmat<ZZ>&, const ZZ&);
-template Zvec<ZZ> mult_mod_p<ZZ>( const sZmat<ZZ>& A, const Zvec<ZZ>& v, const ZZ& p  );
-template ZZ maxabs<ZZ>( const sZmat<ZZ>& A);
-template int operator==<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&);
-template int eqmodp<ZZ>(const sZmat<ZZ>&, const sZmat<ZZ>&, const ZZ& p);
-template ostream& operator<<<ZZ>(ostream&s, const sZmat<ZZ>&);
-template istream& operator>><ZZ>(istream&s, sZmat<ZZ>&);
-template int get_population<ZZ>(const sZmat<ZZ>& );
 template double density<ZZ>(const sZmat<ZZ>& m);
-template void random_fill_in<ZZ>( sZmat<ZZ>&, int, int );
-template int liftmat<ZZ>(const sZmat<ZZ>& mm, ZZ pr, sZmat<ZZ>& m, ZZ& dd);
-template int liftmats_chinese<ZZ>(const sZmat<ZZ>& mm1, ZZ pr1, const sZmat<ZZ>& mm2, ZZ pr2, sZmat<ZZ>& m, ZZ& dd);
-template sZmat<ZZ> restrict_mat(const sZmat<ZZ>& m, const subZspace<ZZ>& s);
 
 // Instantiate sZmat template functions for T=INT
 template vector<int> dim<INT>(const sZmat<INT>& A);
-template sZmat<INT> transpose<INT>( const sZmat<INT>&);
-template sZmat<INT> operator*<INT>( const sZmat<INT>&, const sZmat<INT>&);
-template sZvec<INT> operator*<INT>( const sZmat<INT>& A, const sZvec<INT>& v );
-template sZvec<INT> operator*<INT>( const sZvec<INT>& v, const sZmat<INT>& A );
-template Zvec<INT> operator* <INT>( const sZmat<INT>& m, const Zvec<INT>& v);
-template sZmat<INT> operator+<INT>(const sZmat<INT>&);
-template sZmat<INT> operator-<INT>(const sZmat<INT>&);
-template sZmat<INT> operator+<INT>(const sZmat<INT>& m1, const sZmat<INT>& m2);
-template sZmat<INT> operator-<INT>(const sZmat<INT>& m1, const sZmat<INT>& m2);
-template sZmat<INT> operator*<INT>(INT, const sZmat<INT>& m);
-template sZmat<INT> operator/<INT>(const sZmat<INT>& m, INT scal);
-template int operator!=<INT>(const sZmat<INT>& sm1, const sZmat<INT>& sm2);
-template sZvec<INT> mult_mod_p<INT>( const sZmat<INT>& A, const sZvec<INT>& v, const INT& p  );
-template sZvec<INT> mult_mod_p<INT>( const sZvec<INT>& v, const sZmat<INT>& A, const INT& p  );
-template sZmat<INT> mult_mod_p<INT>( const sZmat<INT>&, const sZmat<INT>&, const INT&);
-template Zvec<INT> mult_mod_p<INT>( const sZmat<INT>& A, const Zvec<INT>& v, const INT& p  );
-template INT maxabs<INT>( const sZmat<INT>& A);
-template int operator==<INT>(const sZmat<INT>&, const sZmat<INT>&);
-template int eqmodp<INT>(const sZmat<INT>&, const sZmat<INT>&, const INT& p);
-template ostream& operator<<<INT>(ostream&s, const sZmat<INT>&);
-template istream& operator>><INT>(istream&s, sZmat<INT>&);
-template int get_population<INT>(const sZmat<INT>& );
 template double density<INT>(const sZmat<INT>& m);
-template void random_fill_in<INT>( sZmat<INT>&, int, int );
-template int liftmat<INT>(const sZmat<INT>& mm, INT pr, sZmat<INT>& m, INT& dd);
-template int liftmats_chinese<INT>(const sZmat<INT>& mm1, INT pr1, const sZmat<INT>& mm2, INT pr2, sZmat<INT>& m, INT& dd);
-template sZmat<INT> restrict_mat(const sZmat<INT>& m, const subZspace<INT>& s);

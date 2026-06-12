@@ -2,32 +2,69 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 // Original version by Luiz Figueiredo
- 
+
 #if     !defined(_ECLIB_SMATRIX_H)
 #define _ECLIB_SMATRIX_H      1       //flags that this file has been included
 
 #include "matrix.h"
 #include "svector.h"
+
+template<class T> sZmat<T> operator+(const sZmat<T>&);
+template<class T> sZmat<T> operator-(const sZmat<T>&);
+template<class T> sZmat<T> operator+(const sZmat<T>& m1, const sZmat<T>& m2);
+template<class T> sZmat<T> operator-(const sZmat<T>& m1, const sZmat<T>& m2);
+template<class T> sZmat<T> operator*(T scal, const sZmat<T>& m);
+template<class T> sZmat<T> operator/(const sZmat<T>& m, T scal);
+template<class T> int operator!=(const sZmat<T>& m1, const sZmat<T>& m2);
+template<class T> void display_population(const sZmat<T>& A);
+template<class T> sZvec<T> operator* ( const sZmat<T>& A, const sZvec<T>& v );
+template<class T> sZvec<T> operator* ( const sZvec<T>& v, const sZmat<T>& A );
+template<class T> sZvec<T> mult_mod_p( const sZmat<T>& A, const sZvec<T>& v, const T& p  );
+template<class T> sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p  );
+template<class T> sZmat<T> mult_mod_p ( const sZmat<T>&, const sZmat<T>&, const T&);
+template<class T> inline vector<int> dim(const sZmat<T>& A)
+{return vector<int>{A.nro, A.nco};}
+template<class T> Zvec<T> operator*  (const sZmat<T>& m, const Zvec<T>& v);
+template<class T> sZvec<T> operator* ( const sZmat<T>& A, const sZvec<T>& v );
+template<class T> sZvec<T> operator* ( const sZvec<T>& v, const sZmat<T>& A );
+template<class T> sZvec<T> mult_mod_p( const sZmat<T>& A, const sZvec<T>& v, const T& p  );
+template<class T> Zvec<T> mult_mod_p( const sZmat<T>& A, const Zvec<T>& v, const T& p  );
+template<class T> sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p  );
+template<class T> sZmat<T> operator* ( const sZmat<T>& A, const sZmat<T>& B );
+template<class T> sZmat<T> mult_mod_p ( const sZmat<T>& A, const sZmat<T>& B, const T& p );
+template<class T> T maxabs( const sZmat<T>& A);
+template<class T> sZmat<T> transpose(const sZmat<T>&);
+template<class T> int operator==(const sZmat<T>&, const sZmat<T>&);
+template<class T> int eqmodp(const sZmat<T>&, const sZmat<T>&, const T& p);
+template<class T> ostream& operator<< (ostream&s, const sZmat<T>&);
+template<class T> istream& operator>> (istream&s, sZmat<T>&);
+template<class T> int get_population (const sZmat<T>& );
+template<class T> inline double density (const sZmat<T>& m)
+{return (((double)(get_population(m)))/m.nro)/m.nco;}
+template<class T> void random_fill_in( sZmat<T>&, int, int );
+template<class T> int liftmat(const sZmat<T>& mm, T pr, sZmat<T>& m, T& dd);
+template<class T> int liftmats_chinese(const sZmat<T>& mm1, T pr1, const sZmat<T>& mm2, T pr2,
+                              sZmat<T>& m, T& dd);
 
 template<class T>
 class sZmat {
@@ -103,25 +140,5 @@ public:
   friend int liftmats_chinese<>(const sZmat<T>& mm1, T pr1, const sZmat<T>& mm2, T pr2,
                                 sZmat<T>& m, T& dd);
 };
-
-// Declaration of non-friend functions
-
-template<class T>
-sZmat<T> operator+(const sZmat<T>&);                   // unary
-template<class T>
-sZmat<T> operator-(const sZmat<T>&);                   // unary
-template<class T>
-sZmat<T> operator+(const sZmat<T>& m1, const sZmat<T>& m2);
-template<class T>
-sZmat<T> operator-(const sZmat<T>& m1, const sZmat<T>& m2);
-template<class T>
-sZmat<T> operator*(T scal, const sZmat<T>& m);
-template<class T>
-sZmat<T> operator/(const sZmat<T>& m, T scal);
-template<class T>
-int operator!=(const sZmat<T>& m1, const sZmat<T>& m2);
-template<class T>
-inline void display_population(const sZmat<T>& A)
-{cout << " number of non-zero entries: " << get_population(A) << endl;}
 
 #endif

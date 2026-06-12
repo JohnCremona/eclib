@@ -2,38 +2,64 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #if     !defined(_ECLIB_SVECTOR_H)
 #define _ECLIB_SVECTOR_H      1       //flags that this file has been included
 
 #include "vector.h"
 
 template<class T> int dim(const sZvec<T>& v);
-template<class T> T operator*(const Zvec<T>& v, const sZvec<T>& sv);
+template<class T> int trivial(const sZvec<T>&);
 template<class T> T dotmodp(const Zvec<T>& v, const sZvec<T>& sv, const T& pr);
-template<class T> int operator!=(const sZvec<T>& v1, const Zvec<T>& v2);
 template<class T> int operator==(const Zvec<T>& v1, const sZvec<T>& v2);
 template<class T> int operator!=(const Zvec<T>& v1, const sZvec<T>& v2);
-template<class T> int trivial(const sZvec<T>&);
-
+template<class T> int operator!=(const sZvec<T>& v1, const Zvec<T>& v2);
+template<class T> sZvec<T> operator+(const sZvec<T>& v);
+template<class T> sZvec<T> operator-(const sZvec<T>& v);
+template<class T> sZvec<T> operator+(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> sZvec<T> operator-(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> sZvec<T> operator*(const T& scal, const sZvec<T>& v);
+template<class T> T operator*(const Zvec<T>& v, const sZvec<T>& sv);
+template<class T> sZvec<T> operator/(const sZvec<T>& v, const T& scal);
+template<class T> int eqmodp(const sZvec<T>&, const sZvec<T>&, const T& p);
+template<class T> ostream& operator<< (ostream&s, const sZvec<T>&);
+template<class T> T operator*(const sZvec<T>&, const sZvec<T>&);
+template<class T> T operator*(const sZvec<T>&, const Zvec<T>&);
+template<class T> T operator*(const Zvec<T>& v, const sZvec<T>& sv);
+template<class T> T dotmodp(const sZvec<T>&, const sZvec<T>&, const T& pr);
+template<class T> T dotmodp(const sZvec<T>&, const Zvec<T>&, const T& pr);
+template<class T> T dotmodp(const Zvec<T>& v, const sZvec<T>& sv, const T& pr);
+template<class T> sZvec<T> operator+(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> sZvec<T> operator-(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> int operator==(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> int operator!=(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> int operator==(const sZvec<T>& v1, const Zvec<T>& v2);
+template<class T> sZmat<T> transpose(const sZmat<T>&);
+template<class T> sZmat<T> operator* ( const sZmat<T>&, const sZmat<T>&);
+template<class T> T content(const sZvec<T>& v);
+template<class T> T make_primitive(sZvec<T>& v);
+template<class T> sZvec<T> operator*( const sZmat<T>& A, const sZvec<T>& v);
+template<class T> sZvec<T> operator*( const sZvec<T>& v, const sZmat<T>& A);
+template<class T> sZvec<T> mult_mod_p( const sZvec<T>& v, const sZmat<T>& A, const T& p);
+template<class T> sZvec<T> mult_mod_p( const sZmat<T>& A, const sZvec<T>& v, const T& p);
 
 template<class T>
 class sZvec {
@@ -110,29 +136,15 @@ public:
   friend int operator==<>(const Zvec<T>& v1, const sZvec<T>& v2);
   friend int operator!=<>(const Zvec<T>& v1, const sZvec<T>& v2);
   friend int trivial<>(const sZvec<T>&);
-  friend sZmat<T> transpose<>(const sZmat<T>&);
-  friend sZmat<T> operator*<> ( const sZmat<T>&, const sZmat<T>&);
   friend T content<>(const sZvec<T>& v);
   friend T make_primitive<>(sZvec<T>& v); // divides by & returns content
+  // friend sZmat<T> transpose<>(const sZmat<T>&);
+  // friend sZmat<T> operator*<> ( const sZmat<T>&, const sZmat<T>&);
   friend sZvec<T> operator*<> ( const sZmat<T>& A, const sZvec<T>& v );
   friend sZvec<T> operator*<> ( const sZvec<T>& v, const sZmat<T>& A );
   friend sZvec<T> mult_mod_p<>( const sZmat<T>& A, const sZvec<T>& v, const T& p  );
   friend sZvec<T> mult_mod_p<>( const sZvec<T>& v, const sZmat<T>& A, const T& p  );
-  friend sZmat<T> mult_mod_p<>( const sZmat<T>&, const sZmat<T>&, const T&);
+  // friend sZmat<T> mult_mod_p<>( const sZmat<T>&, const sZmat<T>&, const T&);
 };
-
-// Declaration of non-friend functions
-
-// unary +
-template<class T> sZvec<T> operator+(const sZvec<T>& v);
-// unary -
-template<class T> sZvec<T> operator-(const sZvec<T>& v);
-template<class T> sZvec<T> operator+(const sZvec<T>& v1, const sZvec<T>& v2);
-template<class T> sZvec<T> operator-(const sZvec<T>& v1, const sZvec<T>& v2);
-template<class T> sZvec<T> operator*(const T& scal, const sZvec<T>& v);
-template<class T> sZvec<T> operator/(const sZvec<T>& v, const T& scal);
-template<class T> int operator==(const sZvec<T>& v1, const sZvec<T>& v2);
-template<class T> int operator!=(const sZvec<T>& v1, const sZvec<T>& v2);
-template<class T> int trivial(const sZvec<T>& v);
 
 #endif
