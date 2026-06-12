@@ -278,9 +278,15 @@ template<class T>
 void Zmat<T>::delete_rows(int n)
 {
   if (n<0)
-    cout << "Cannot delete a negative number ("<<n<<") of rows!" << endl;
+    {
+      cout << "Cannot delete a negative number ("<<n<<") of rows!" << endl;
+      return;
+    }
   if (n>nro)
-    cout << "Cannot delete "<<n<<" rows from a matrix with " << nro << "rows!" << endl;
+    {
+      cout << "Cannot delete "<<n<<" rows from a matrix with only " << nro << "rows!" << endl;
+      return;
+    }
   entries.erase(entries.end()-n*nco, entries.end());
   nro -= n;
 }
