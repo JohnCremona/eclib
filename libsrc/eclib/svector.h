@@ -123,64 +123,16 @@ public:
 
 // Declaration of non-friend functions
 
-template<class T>
-inline sZvec<T> operator+(const sZvec<T>& v) {return v;}      // unary +
-
-template<class T>
-inline sZvec<T> operator-(const sZvec<T>& v)                  // unary -
-{sZvec<T> ans(v); ans*=T(-1); return ans;}
-
-template<class T>
-inline sZvec<T> operator+(const sZvec<T>& v1, const sZvec<T>& v2)
-{
-  if(v1.entries.size()<v2.entries.size())
-    {
-      sZvec<T> ans(v2); ans+=v1; return ans;
-    }
-  else
-    {
-      sZvec<T> ans(v1); ans+=v2; return ans;
-    }
-}
-
-template<class T>
-inline sZvec<T> operator-(const sZvec<T>& v1, const sZvec<T>& v2)
-{
-  return v1 + (-v2);
-}
-
-template<class T>
-inline sZvec<T> operator*(const T& scal, const sZvec<T>& v)
-{
-  sZvec<T> ans(v);
-  ans*=scal;
-  return ans;
-}
-
-template<class T>
-inline sZvec<T> operator/(const sZvec<T>& v, const T& scal)
-{
-  sZvec<T> ans(v);
-  ans/=scal;
-  return ans;
-}
-
-template<class T>
-inline int operator==(const sZvec<T>& v1, const sZvec<T>& v2)
-{
-  return (v1.d==v2.d) && (v1.entries == v2.entries);
-}
-
-template<class T>
-inline int operator!=(const sZvec<T>& v1, const sZvec<T>& v2)
-{
-  return !(v1==v2);
-}
-
-template<class T>
-inline int trivial(const sZvec<T>& v)
-{
-  return v.entries.size()==0;
-}
+// unary +
+template<class T> sZvec<T> operator+(const sZvec<T>& v);
+// unary -
+template<class T> sZvec<T> operator-(const sZvec<T>& v);
+template<class T> sZvec<T> operator+(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> sZvec<T> operator-(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> sZvec<T> operator*(const T& scal, const sZvec<T>& v);
+template<class T> sZvec<T> operator/(const sZvec<T>& v, const T& scal);
+template<class T> int operator==(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> int operator!=(const sZvec<T>& v1, const sZvec<T>& v2);
+template<class T> int trivial(const sZvec<T>& v);
 
 #endif
