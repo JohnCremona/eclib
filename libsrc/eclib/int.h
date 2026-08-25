@@ -222,10 +222,15 @@ inline INT NextPrime(const INT& a, int proof=1)
 // Set a, b so that a/b=n (mod m) with |a|, |b| minimal; return success if a^2, b^2 <= m/2
 // (defined as an inline function in frat.h as it uses RAT type).
 inline int modrat(const INT& n, const INT& m, /* return values: */ INT& a, INT& b)
-{return _fmpq_reconstruct_fmpz(a.z, b.z, (n%m).z, m.z);}
+{
+  return _fmpq_reconstruct_fmpz(a.z, b.z, (n%m).z, m.z);
+}
 
 // The next version is for compatibility with int, long, ZZ versions; lim is ignored
 inline int modrat(const INT& n, const INT& m, const INT& lim, /* return values: */ INT& a, INT& b)
-{return _fmpq_reconstruct_fmpz(a.z, b.z, (n%m).z, m.z);}
+{
+  (void) lim; // to avoid compiler warning it is unused.
+  return _fmpq_reconstruct_fmpz(a.z, b.z, (n%m).z, m.z);
+}
 
 #endif

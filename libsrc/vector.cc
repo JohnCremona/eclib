@@ -437,7 +437,7 @@ int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans)
 {
   long i0, i, j, d = v.dim();
   T nu, de;
-  T lim = isqrt(pr>>1)-1;
+  T lim = isqrt(pr>>1);
   T maxallowed = 10*lim;
 #ifdef DEBUG_LIFT
   cout<<"Lifting vector v = "<<v<<" mod "<<pr<<" (lim = "<<lim<<")"<<endl;
@@ -469,37 +469,32 @@ int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans)
 #endif
      return 1;
    }
+ // Find a nonzero entry vi0 = ans[i0]
  T vi0, inv_vi0, vi, maxvi(0);
  for(i0=1; i0<=d; i0++)
    {
-     // scale so that i0'th entry is 1 mod p, then reduce vector
-     // entries mod p to lie in (-p/2,p/2), and find the maximum
-     // entry:
-     while((vi0=ans[i0])==0) {i0++;} // skip over any zero entries
-     inv_vi0=invmod(vi0,pr);
+     vi0=ans[i0];
+     if (is_nonzero(vi0))
+       break;
+   }
+ inv_vi0=invmod(vi0,pr);
 #ifdef DEBUG_LIFT
-     cout<<"Scaling by "<<inv_vi0<<" (inverse of "<<vi0<<")"<<endl;
+ cout<<"Scaling by "<<inv_vi0<<" (inverse of "<<vi0<<")"<<endl;
 #endif
-     for (i=1; i<=d; i++)
-       {
-         ans[i]=vi=mod(xmodmul(inv_vi0,ans[i],pr),pr);
-         maxvi=max(maxvi,abs(vi));
-       }
+ // scale so that i0'th entry is 1 mod p, then reduce vector
+ // entries mod p to lie in (-p/2,p/2), and find the maximum
+ // entry:
+ for (i=1; i<=d; i++)
+   {
+     ans[i]=vi=mod(xmodmul(inv_vi0,ans[i],pr),pr);
+     maxvi=max(maxvi,abs(vi));
+   }
 #ifdef DEBUG_LIFT
-     cout<<"Reduced v = "<<ans<<", with max entry "<<maxvi<<endl;
+ cout<<"Reduced scaled v = "<<ans<<", with max entry "<<maxvi<<endl;
 #endif
-     if(maxvi<=maxallowed) // no scaling needed!
-           {
-             // Normalize so first nonzero entry is positive:
-             for(i0=1; i0<=d; i0++)
-               {
-                 while(ans[i0]==0) {i0++;}
-                 if(ans[i0]<0) ans=-ans;
-                 return 1;
-               }
-             return 0; // should not happen: means v==0!
-           }
-
+ if(maxvi>maxallowed)
+   {
+     // Lift each entry to a rational and rescale by the denominator
      for(i=1; (i<=d); i++)
        {
          modrat(ans[i],pr,nu,de);
@@ -515,30 +510,26 @@ int lift(const Zvec<T>& v, const T& pr, Zvec<T>& ans)
              ans[j] = vi = mod(xmodmul(de,ans[j],pr),pr);
              maxvi=max(maxvi,abs(vi));
            }
-#ifdef DEBUG_LIFT
-         cout<<"Now v = "<<ans<<", with max entry "<<maxvi<<endl;
-#endif
-         if(maxvi<=maxallowed)
-           {
-             // Normalize so first nonzero entry is positive:
-             for(i0=1; i0<=d; i0++)
-               {
-                 while(ans[i0]==0) {i0++;}
-                 if(ans[i0]<0) ans=-ans;
-                 return 1;
-               }
-             return 0; // should not happen: means v==0!
-           }
        }
    }
- // Normalize so first nonzero entry is positive:
+
+#ifdef DEBUG_LIFT
+ cout<<"Rescaled v = "<<ans<<", with max entry "<<maxvi<<endl;
+#endif
+ if(maxvi>maxallowed)
+   return 0;
+ // no more scaling needed, normalize so first nonzero entry is
+ // positive:
  for(i0=1; i0<=d; i0++)
    {
-     while(ans[i0]==0) {i0++;}
-     if(ans[i0]<0) ans=-ans;
-     return (maxvi<=lim);
+     if (is_nonzero(vi0))
+       {
+         if (vi0<0)
+           ans = -ans;
+         return 1;
+       }
    }
- return 0;
+ return 0; // will not reach here
 }
 template int lift(const Zvec<int>& v, const int& pr, Zvec<int>& ans);
 template int lift(const Zvec<long>& v, const long& pr, Zvec<long>& ans);
