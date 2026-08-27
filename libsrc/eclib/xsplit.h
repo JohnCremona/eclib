@@ -52,8 +52,15 @@
 template<class T>
 class form_finderT {
 public:
-  form_finderT(splitter_base<T>* hh, T mod, int plus, int maxd, int mind=0,
-               int dualflag=1, int bigmatsflag=0, int v=0);
+  form_finderT(splitter_base<T>* hh, // provides the matrices
+               T mod,                // prime modulus
+               int plus,             // plus space flag
+               int maxd,             // max depth for recursion
+               int mind=0,           // min stopping depth for recursion
+               int lift_flag=1,      // flag to lift eigenvectors to ZZ
+               int dualflag=1,       // dual flag to pass to hh
+               int bigmatsflag=0,    // flag to use absolute matrices
+               int v=0);             // verbosity level
   ~form_finderT(void);
 
   void find();
@@ -73,7 +80,7 @@ protected:
 
   int            plusflag, dual, bigmats, verbose, targetdim;
   int            gnfcount;                  // Global newform counter
-  int            maxdepth, mindepth, dimen;
+  int            maxdepth, mindepth, lift_to_ZZ, dimen;
   T              modulus; // prime modulus for linear algebra
   T              denom1;
   vector< vector<long> > gaplist;           // Vector to hold all (sub)eiglists

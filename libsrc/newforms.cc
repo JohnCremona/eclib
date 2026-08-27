@@ -897,7 +897,13 @@ void newforms::createfromscratch(int s, long ntp)
        mvp=h1->maninvector(p0);
        //       cout<<"mvp                 = "<<mvp<<endl;
        if(verbose>1) cout<<"h1 denom = "<<h1->h1denom()<<endl;
-       form_finder ff(this, modulus, (sign!=0),maxdepth,mindepth,1,0,verbose);
+       form_finder ff(this, modulus, (sign!=0),
+                      maxdepth, // recursion depth limit
+                      mindepth, // recursion depth minimum
+                      1, // lift to ZZ
+                      1, // use dual matrices
+                      0, // use relative matrices
+                      verbose);
        basisflag=0;
        ff.find();
     }
@@ -1596,7 +1602,13 @@ void newforms::createfromcurves(int s, vector<CurveRed> Clist, int nap)
       nap=nap_default;
     }
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
-  form_finder splitspace(this, modulus, (sign!=0), nap, 0, 1, 0, verbose);
+  form_finder splitspace(this, modulus, (sign!=0),
+                         nap, // max recursion depth
+                         0,   // min recursion depth
+                         1,   // lift to Z
+                         1,   // dual matrices
+                         0,   // relative matrices
+                         verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
   // j1ds counts through the newforms as they are found
   basisflag=0; j1ds=0;
@@ -1785,7 +1797,13 @@ void newforms::makebases(int flag, int all_nf)
   if(verbose) cout << "done." << endl;
   mvp=h1->maninvector(p0);
   if(verbose) cout << "Making form_finder (nap="<<nap<<")..."<<flush;
-  form_finder splitspace(this, modulus, (sign!=0), nap, 0, 1, 0, verbose);
+  form_finder splitspace(this, modulus, (sign!=0),
+                         nap, // max recursion depth
+                         0,   // min recursion depth
+                         1,   // lift to Z
+                         1,   // dual matrices
+                         0,   // relative matrices
+                         verbose);
   if(verbose) cout << "Recovering eigenspace bases with form_finder..."<<endl;
   // basisflag controls what ::use() does with the nfs when found
   // j1ds counts through the newforms as they are found

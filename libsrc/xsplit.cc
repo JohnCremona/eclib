@@ -47,10 +47,11 @@ Zvec<T> lift(const Zvec<T>& v, T mod)
 
 template<class T>
 form_finderT<T>::form_finderT(splitter_base<T>* hh, T mod,
-                              int plus, int maxd, int mind,
+                              int plus, int maxd, int mind, int lift_flag,
                               int dualflag, int bigmatsflag, int v)
-  :h(hh), modulus(mod), denom1(hh->matden()), plusflag(plus), dual(dualflag), bigmats(bigmatsflag), verbose(v),
-   gnfcount(0), maxdepth(maxd), mindepth(mind), dimen(hh->matdim()), root(ff_data<T>( this ))
+  :h(hh), modulus(mod), denom1(hh->matden()), plusflag(plus), dual(dualflag),
+   bigmats(bigmatsflag), verbose(v), gnfcount(0), maxdepth(maxd), mindepth(mind),
+   lift_to_ZZ(lift_flag), dimen(hh->matdim()), root(ff_data<T>( this ))
 {
   //cout<<"In form_finder constructor, modulus="<<modulus<<", plusflag="<<plus<<", maxd="<<maxd<<", mind="<<mind<<", dualflag="<<dualflag<<", bigmatsflag="<<bigmatsflag<<endl;
   eclogger::setLevel( verbose );
@@ -347,7 +348,7 @@ Zvec<T> form_finderT<T>::make_basis2(ff_data<T> &data, const Zvec<T>& v)
       w = mult_mod_p(d->rel_space_->bas(), w, modulus);
       d = d->parent_;
     }
-  return lift(w, modulus);
+  return (lift_to_ZZ? lift(w, modulus): w);
 }
 
 template<class T>
