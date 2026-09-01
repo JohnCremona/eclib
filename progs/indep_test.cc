@@ -34,13 +34,13 @@ int main()
   initprimes("PRIMES",0);
 
   int verbose = 1;
-  cout<<"verbose (0/1)? ";
+  cerr<<"verbose (0/1)? ";
   cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
   cin >>verbose;
 
     while (1)
     {
-      cout<<"\nInput a curve: ";
+      cerr<<"\nInput a curve: ";
       cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
       Curve E;
       cin >> E;
@@ -48,7 +48,7 @@ int main()
       Curvedata C(E, 0);
       cout << "Curve " << (Curve)C << endl;
       Point P(C);
-      cout<<"enter number of points: ";
+      cerr<<"enter number of points: ";
       cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
       int npts;
       cin >> npts;
@@ -56,16 +56,16 @@ int main()
       int j=0;
       while(j<npts)
 	{
-	  cout<<"\n  enter point "<<(j+1)<<" : ";
+	  cerr<<"\n  enter point "<<(j+1)<<" : ";
 	  cin>>ws;  if(cin.eof()) {cout<<endl; exit(0);}
 	  cin >> P;
 	  if ( P.isvalid() ) {points.push_back(P); j++;}
 	  else {cout<<"point "<<P<<" not on curve.\n\n"; }
 	}
-      if(verbose) cout<<npts<<" points entered.\n";
+      cout<<npts<<" points entered.\n";
 
       long naux=npts+10;
-      cout << "Enter number of primes to use: "; 
+      cerr << "Enter number of primes to use: "; 
       cin>>ws;  if(cin.eof()) {cerr<<endl; exit(0);}
       cin>>naux;
 
