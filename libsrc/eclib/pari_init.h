@@ -26,6 +26,8 @@
                            //flags that this file has been included
 
 #include <iostream>
+#include <sys/time.h>
+
 namespace PARI{
   extern "C" {
 #include <pari/pari.h>
