@@ -113,7 +113,7 @@ public:
   vector<modsym> freemods;
 public:
   vector<svec> coord_vecs;
-  mat coord;     // # cols = dimension
+  smat coord;     // # cols = dimension
   mat projcoord; // # cols = # newforms after they are found
   long dimension, cuspidal_dimension;
 public:

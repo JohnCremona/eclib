@@ -255,20 +255,18 @@ if (verbose>1)
    coord_vecs.resize(ngens+1); // 0'th is unused
 #ifdef USE_SMATS
    smat_elim sme(relmat, modulus);
-   smat sp;
-   liftmat(sme.kernel(npivs,pivs), modulus, sp, denom1);
-   dimension = sp.ncols();
+   liftmat(sme.kernel(npivs,pivs), modulus, coord, denom1);
+   dimension = coord.ncols();
    for(i=1; i<=ngens; i++)
-     coord_vecs[i]=sp.row(i);
-   coord = sp.as_mat();
+     coord_vecs[i]=coord.row(i);
 #else
    subspace sp = kernel(relmat);
-   coord = sp.bas();
+   coord = smat(sp.bas());
    dimension = sp.dim();
    pivs = sp.pivs();
    denom1 = sp.den();
    for(i=1; i<=ngens; i++)
-     coord_vecs[i]=svec(coord.row(i));
+     coord_vecs[i]=coord.row(i);
 #endif
 
    //   cout<<"ngens = "<<ngens<<endl;

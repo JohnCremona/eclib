@@ -92,10 +92,10 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
     }
 
   // compute projcoord, precomputed projections the basis of S
-  projcoord = nsp->H1->coord * to_mat(S.bas());
+  projcoord = (nsp->H1->coord).as_mat() * to_mat(S.bas());
   if(verbose>1)
     {
-      cout << "H1->coord =\n" << nsp->H1->coord << endl;
+      cout << "H1->coord =\n" << (nsp->H1->coord).as_mat() << endl;
       cout << "basis of S  =\n" << S.bas() << endl;
       cout << "projcoord =\n" << projcoord << endl;
     }
