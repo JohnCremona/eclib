@@ -30,7 +30,7 @@ jobs:
         sudo ldconfig
         cd ..
         ./autogen.sh
-        ./configure --with-boost="no" --with-flint --disable-allprogs --${{ matrix.mpfp }}
+        ./configure --with-boost="no" --with-flint --with-ntl --disable-allprogs --${{ matrix.mpfp }}
       env:
         CC: ${{ matrix.cc }}
     - name: make
