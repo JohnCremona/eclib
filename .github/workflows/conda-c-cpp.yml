@@ -38,6 +38,12 @@ jobs:
         # Add explicit compiler path setup
         export CC=$(which clang)
         export CXX=$(which clang++)
+        export LDFLAGS="-L$CONDA_PREFIX/lib"
+        export CPPFLAGS="-I$CONDA_PREFIX/include"
+        export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:$LD_LIBRARY_PATH"
+        echo "CC=$CC"
+        echo "CXX=$CXX"
+        echo "CONDA_PREFIX=$CONDA_PREFIX"
         ./autogen.sh
         ./configure --with-boost="no" --with-flint --with-ntl=$CONDA_PREFIX --disable-allprogs --${{ matrix.mpfp }} CFLAGS="-fno-inline-asm"
     - name: make
