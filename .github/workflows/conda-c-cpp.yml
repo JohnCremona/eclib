@@ -36,18 +36,27 @@ jobs:
       run: |
         mamba install "pari>=2.16" ntl libflint compilers automake autoconf m4 libtool
         conda activate eclib-deps
-        echo PATH=$PATH
+        
         # Use conda's compilers instead of system clang
+        # Set compiler environment variables for proper linking
         export CC=$CONDA_PREFIX/bin/clang
         export CXX=$CONDA_PREFIX/bin/clang++
         export LDFLAGS="-L$CONDA_PREFIX/lib"
         export CPPFLAGS="-I$CONDA_PREFIX/include"
         export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:$LD_LIBRARY_PATH"
+        export DYLD_LIBRARY_PATH="$CONDA_PREFIX/lib:$DYLD_LIBRARY_PATH"  # Critical for macOS linking
+        export MACOSX_DEPLOYMENT_TARGET=10.9  # Ensure compatibility
+        
         echo "CC=$CC"
         echo "CXX=$CXX"
         echo "CONDA_PREFIX=$CONDA_PREFIX"
+        echo "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
+        
         # Test if compiler works
         $CC --version
+        echo 'int main() { return 0; }' > test.c
+        $CC $CPPFLAGS $LDFLAGS -o test test.c && echo "Compiler test PASSED" || { echo "Compiler test FAILED"; exit 1; }
+        rm -f test test.c
         $CXX --version
         ./autogen.sh
         ./configure --with-boost="no" --with-flint --with-ntl=$CONDA_PREFIX --disable-allprogs --${{ matrix.mpfp }} CFLAGS="-fno-inline-asm"
