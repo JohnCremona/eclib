@@ -37,11 +37,9 @@ jobs:
         mamba install "pari>=2.16" ntl libflint compilers automake autoconf m4 libtool
         conda activate eclib-deps
         
-        # Use conda's compilers instead of system clang
-        # Set compiler environment variables for proper linking
         export CC=$CONDA_PREFIX/bin/clang
         export CXX=$CONDA_PREFIX/bin/clang++
-        export LDFLAGS="-L$CONDA_PREFIX/lib"
+        export LDFLAGS="-L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib"
         export CPPFLAGS="-I$CONDA_PREFIX/include"
         export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:$LD_LIBRARY_PATH"
         export DYLD_LIBRARY_PATH="$CONDA_PREFIX/lib:$DYLD_LIBRARY_PATH"  # Critical for macOS linking
