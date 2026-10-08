@@ -26,7 +26,7 @@ jobs:
     - name: configure
       shell: bash -el {0}
       run: |
-        mamba install pari ntl libflint compilers automake autoconf m4 libtool
+        mamba install "pari>=2.16" ntl libflint compilers automake autoconf m4 libtool
         conda activate eclib-deps
         echo PATH=$PATH
         ./autogen.sh
