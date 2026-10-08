@@ -45,16 +45,6 @@ jobs:
         export CFLAGS="-I$CONDA_PREFIX/include -fPIC"
         export CXXFLAGS="-I$CONDA_PREFIX/include -fPIC"
         export LDFLAGS="-L$CONDA_PREFIX/lib -L/usr/lib -L/usr/local/lib -Wl,-rpath,$CONDA_PREFIX/lib"
-        echo "CC=$CC"
-        echo "CXX=$CXX"
-        echo "CONDA_PREFIX=$CONDA_PREFIX"
-        echo "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
-        # Test if compiler works
-        $CC --version
-        echo 'int main() { return 0; }' > test.c
-        $CC $CXXFLAGS $LDFLAGS -o test test.c && echo "Compiler test PASSED" || { echo "Compiler test FAILED"; exit 1; }
-        rm -f test test.c
-        $CXX --version
         ./autogen.sh
         ./configure --with-boost="no" --with-flint --with-ntl=$CONDA_PREFIX --disable-allprogs --${{ matrix.mpfp }}
         cat config.log
