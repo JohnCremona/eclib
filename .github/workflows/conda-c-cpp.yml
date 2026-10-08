@@ -21,18 +21,23 @@ jobs:
       run: |
         xcode-select --install || true
         sudo xcode-select --switch /Library/Developer/CommandLineTools
+        sudo xcode-select --reset
+        
     - uses: conda-incubator/setup-miniconda@v2
       with:
         miniforge-version: latest
         mamba-version: "*"
         activate-environment: eclib-deps
-
+        
     - name: configure
       shell: bash -el {0}
       run: |
         mamba install "pari>=2.16" ntl libflint compilers automake autoconf m4 libtool
         conda activate eclib-deps
         echo PATH=$PATH
+        # Add explicit compiler path setup
+        export CC=$(which clang)
+        export CXX=$(which clang++)
         ./autogen.sh
         ./configure --with-boost="no" --with-flint --with-ntl=$CONDA_PREFIX --disable-allprogs --${{ matrix.mpfp }} CFLAGS="-fno-inline-asm"
     - name: make
