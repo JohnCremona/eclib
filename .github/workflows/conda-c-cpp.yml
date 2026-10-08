@@ -30,7 +30,7 @@ jobs:
         conda activate eclib-deps
         echo PATH=$PATH
         ./autogen.sh
-        ./configure --with-boost="no" --with-flint --with-ntl=$CONDA_PREFIX --disable-allprogs --${{ matrix.mpfp }}
+        ./configure --with-boost="no" --with-flint --with-ntl=$CONDA_PREFIX --disable-allprogs --${{ matrix.mpfp }} CFLAGS="-fno-inline-asm"
     - name: make
       shell: bash -el {0}
       run: make
