@@ -48,6 +48,7 @@ jobs:
         echo "CONDA_PREFIX=$CONDA_PREFIX"
         # Test if compiler works
         $CC --version
+        $CXX --version
         ./autogen.sh
         ./configure --with-boost="no" --with-flint --with-ntl=$CONDA_PREFIX --disable-allprogs --${{ matrix.mpfp }} CFLAGS="-fno-inline-asm"
     - name: make
