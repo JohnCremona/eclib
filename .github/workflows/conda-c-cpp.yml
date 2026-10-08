@@ -44,7 +44,7 @@ jobs:
         export LDFLAGS="$LDFLAGS -L/usr/lib -L/usr/local/lib"
         export CFLAGS="-I$CONDA_PREFIX/include -fno-inline-asm -fPIC"
         export CXXFLAGS="-I$CONDA_PREFIX/include -fno-inline-asm -fPIC"
-        export LDFLAGS="-L$CONDA_PREFIX/lib -L/usr/lib -L/usr/local/lib" -Wl,-rpath,$CONDA_PREFIX/lib"
+        export LDFLAGS="-L$CONDA_PREFIX/lib -L/usr/lib -L/usr/local/lib -Wl,-rpath,$CONDA_PREFIX/lib"
         echo "CC=$CC"
         echo "CXX=$CXX"
         echo "CONDA_PREFIX=$CONDA_PREFIX"
