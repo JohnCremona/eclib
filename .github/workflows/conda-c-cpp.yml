@@ -35,8 +35,7 @@ jobs:
       shell: bash -el {0}
       run: |
         mamba install "pari>=2.16" ntl libflint compilers automake autoconf m4 libtool
-        conda activate eclib-deps
-        
+        #conda activate eclib-deps
         export CC=$CONDA_PREFIX/bin/clang
         export CXX=$CONDA_PREFIX/bin/clang++
         export LDFLAGS="-L$CONDA_PREFIX/lib -Wl,-rpath,$CONDA_PREFIX/lib"
@@ -44,17 +43,13 @@ jobs:
         export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:$LD_LIBRARY_PATH"
         export DYLD_LIBRARY_PATH="$CONDA_PREFIX/lib:$DYLD_LIBRARY_PATH"  # Critical for macOS linking
         export MACOSX_DEPLOYMENT_TARGET=10.9  # Ensure compatibility
-    
-        # Add these flags for macOS clang compatibility
         export LDFLAGS="$LDFLAGS -L/usr/lib -L/usr/local/lib"
         export CFLAGS="-fno-inline-asm -fPIC"
         export CXXFLAGS="-fno-inline-asm -fPIC"
-    
         echo "CC=$CC"
         echo "CXX=$CXX"
         echo "CONDA_PREFIX=$CONDA_PREFIX"
         echo "DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
-        
         # Test if compiler works
         $CC --version
         echo 'int main() { return 0; }' > test.c
