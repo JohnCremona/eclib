@@ -2,31 +2,38 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #include "eclib/matrix.h"
 #include "eclib/points.h"
 #include "eclib/egr.h"
 
 //#define DEBUG_EGR
 //#define DEBUG_EGR_EXTRA
+
+// Returns 1 iff P and Q have same image in the component group at p:
+//
+int InSameComponent(const Point& P, const Point& Q, const ZZ& p)
+{
+  return (P==Q) || (P-Q).has_good_reduction(p);
+}
 
 // Returns [m] for cyclic of order m, [2,2] for 2*2 (type I*m, m even)
 
@@ -38,21 +45,13 @@ vector<int> ComponentGroups::ComponentGroup(const ZZ& p) const
     {
       ans[0]=1;
       auto ri = reduct_array.find(p);
-      if(ri==reduct_array.end()) return ans; // p has good reduction    
+      if(ri==reduct_array.end()) return ans; // p has good reduction
       ans[0] = (ri->second).c_p;      // usual case: cyclic of order cp
       int code=(ri->second).Kcode.code;
       if((code%10==1)&&even((code-1)/10)) // Type I*m, m even: [2,2]
 	{ans[0]=2; ans.push_back(2);}
     }
   return ans;
-}
-
-// Returns 1 iff P and Q have same image in the component group at p:
-//
-int ComponentGroups::InSameComponent(const Point& P, const Point& Q, const ZZ& p) const
-{
-  if(P==Q) return 1;
-  return (P-Q).has_good_reduction(p);
 }
 
 // For reduction type Im, multiplicative reduction where component
@@ -73,11 +72,11 @@ long ComponentGroups::ImageInComponentGroup_Im_pm(const Point&P, const ZZ& p, in
   long ans = val(p, 2*y + a1*x + a3*z) - 3*val(p,zroot);
 #ifdef DEBUG_EGR
   cout<<"ImageInComponentGroup_Im_pm() first gives ans = "<<ans<<endl;
-#endif 
+#endif
   if(even(m)&&(ans>(m/2))) ans=m/2;
 #ifdef DEBUG_EGR
   cout<<"ImageInComponentGroup_Im_pm() returns "<<ans<<endl;
-#endif 
+#endif
   return ans;
 }
 
@@ -137,19 +136,19 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const ZZ& p, int m
   cout<<"(y-y0) - alpha1*(x-x0) = "<<w1<<endl;
   cout<<"(y-y0) - alpha2*(x-x0) = "<<w2<<endl;
   cout<<"e1="<<e1<<", e2="<<e2<<endl;
-#endif 
+#endif
   long ans=0;
-  if(e1<e2) 
+  if(e1<e2)
     {
-      if((0<e1)&&(2*e1<N))      ans=-e1; 
+      if((0<e1)&&(2*e1<N))      ans=-e1;
       else
 	cout<<"Problem! e1 not between 1 and "<<((N+1)/2)-1<<endl;
 
     }
   else
-    if(e2<e1) 
+    if(e2<e1)
       {
-	if((0<e2)&&(2*e2<N)) 	ans=+e2; 
+	if((0<e2)&&(2*e2<N)) 	ans=+e2;
 	else
 	  cout<<"Problem! e2 not between 1 and "<<((N+1)/2)-1<<endl;
       }
@@ -161,11 +160,11 @@ long ComponentGroups::ImageInComponentGroup_Im(const Point&P, const ZZ& p, int m
       }
 #ifdef DEBUG_EGR
   cout<<"ImageInComponentGroup_Im() gives ans = "<<ans<<endl;
-#endif 
+#endif
   return ans;
 }
 
-long ComponentGroups::ImageInComponentGroup(const Point&P, const ZZ& p, vector<int> grp) const
+long ComponentGroups::ImageInComponentGroup(const Point&P, const ZZ& p, const vector<int>& grp) const
 {
   int ans=0;      // the default
 #ifdef DEBUG_EGR
@@ -193,7 +192,7 @@ long ComponentGroups::ImageInComponentGroup(const Point&P, const ZZ& p, vector<i
     {
       ans= ImageInComponentGroup_Im(P,p,n);
 #if(0) // testing only
-      for(int i=0; i<n; i++) 
+      for(int i=0; i<n; i++)
 	{
 	  int t = (i*ans-ImageInComponentGroup_Im(i*P,p,n)) % n;
 	  if(t) cout<<"Problem!"<<endl;
@@ -203,9 +202,9 @@ long ComponentGroups::ImageInComponentGroup(const Point&P, const ZZ& p, vector<i
   }
 #ifdef DEBUG_EGR
   cout<<"ImageInComponentGroup() returns "<<ans<<endl;
-#endif 
+#endif
   return ans;
- 
+
 }
 
 
@@ -261,13 +260,11 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const ZZ& p)
   vector<int> CG = ComponentGroup(p);
   long CGexpo=CG[0];
   long CGOrder=CGexpo;
-  if(CG.size()>1) CGOrder*=CG[1]; // =4
-#ifdef DEBUG_EGR
-  cout<<"Component group structure = "<<CG<<endl;
-#endif
   if(CG.size()>1)
     {
+      CGOrder*=CG[1]; // =4
 #ifdef DEBUG_EGR
+      cout<<"Component group structure = "<<CG<<endl;
       cout<<"Non-cyclic component group "<<endl;
 #endif
       int logm=0;  // = no. of gens so far
@@ -380,19 +377,19 @@ int ComponentGroups::gr1prime(vector<Point>& Plist, const ZZ& p)
 	{
 #ifdef DEBUG_EGR
 	  cout<< "point has good reduction, no action needed "<<endl;
-#endif     
+#endif
 	  continue;
 	}
 #ifdef DEBUG_EGR
       cout<< "image has order "<<n1<<" in component group"<<endl;
 #endif
       // swap points so n0>=n1 for convenience
-      if(n1>n0) 
+      if(n1>n0)
 	{
 #ifdef DEBUG_EGR
 	  cout<<" swapping "<<P0<<" and "<<P1<<endl;
 #endif
-	  Point Q=P0; P0=P1; P1=Q; 
+	  Point Q=P0; P0=P1; P1=Q;
 	  n=n0; n0=n1; n1=n; m=n0;
 	}
 
@@ -478,7 +475,7 @@ int ComponentGroups::egr_subgroup(vector<Point>& Plist, int real_too)
   return grprimes(Plist,plist);
 }
 
-ZZ comp_map_image(const vector<long> moduli, const mat_l& image);
+ZZ comp_map_image(const vector<long>& moduli, const mat_l& image);
 
 //#undef DEBUG_EGR
 //#define DEBUG_EGR
@@ -551,8 +548,10 @@ ZZ egr_index(const vector<Point>& Plist, int real_too)
 
   mat_l m(Plist.size(),n);
   unsigned int j=0, j1, j2, i;
-  ZZ imageorder=one;
-  for(i=0; i<moduli.size(); i++) imageorder*=moduli[i];
+  ZZ imageorder = std::accumulate(moduli.begin(), moduli.end(), one,
+                                  [](const ZZ& a, long b){return a*b;}   // not std::multiplies<ZZ>() as moduli have type long
+                                  );
+
   for(j1=0; j1<plist.size(); j1++)
     for(j2=0; j2<imagematrix[j1][0].size(); j2++)
       {
@@ -575,7 +574,7 @@ ZZ egr_index(const vector<Point>& Plist, int real_too)
 // Given a list of points P1,...,Pn and a prime p, this returns a
 // vector [c1,c2,...,cn] where the image of Pi in the component group
 // is ci mod m, where m is the exponent of the component group at p.
-// 
+//
 // Each ci is a vector of length 1 or 2 (the latter for when the
 // component group is C2xC2), not just an integer.
 //
@@ -618,21 +617,14 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
       if((m==3)||(m==4))
 	{
 	  // Find a point with image +1, if any:
-	  int i0=-1;
-	  for(int i=0; i<n; i++)
-            {
-              if(images[i][0]==1)
-                {
-                  i0=i;
-                  break;
-                }
-            }
-	  if(i0!=-1) // else nothing to do
+          const auto& it = find_if(images.begin(), images.end(), [](const vector<int>& v){return v[0]==1;});
+          if (it!=images.end()) // else nothing to do
 	    {
+              auto i0 = std::distance(images.begin(), it);
 	      Point P0=Plist[i0];
 	      for(int i=i0+1; i<n; i++)
 		if(images[i][0]==1)
-		  if(!CG.InSameComponent(P0,Plist[i],p))
+		  if(!InSameComponent(P0,Plist[i],p))
 		    images[i][0]=-1;
 	    }
 	}  // end of special treatment for m=3,4
@@ -643,7 +635,7 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
       cout<< "non-cyclic case"<<endl;
 #endif
       // points representing up to 3 nontrivial components:
-      vector<Point> PointReps;  
+      vector<Point> PointReps;
       // the three nonzero images:
       vector<vector<int> > ims(3);
       ims[0]=vector<int>(2); ims[0][0]=1; ims[0][1]=0;
@@ -658,7 +650,7 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
 	  if(Pk.has_good_reduction(p)) continue;
 	  int coset=-1;
 	  for(unsigned int j=0; (j<PointReps.size())&&(coset==-1); j++)
-	    if(CG.InSameComponent(Pk,PointReps[j],p))
+	    if(InSameComponent(Pk,PointReps[j],p))
 	      coset=j;
 	  if(coset==-1) // Pk is in a new coset...
 	    {
@@ -688,7 +680,7 @@ vector<vector<int> >  MapPointsToComponentGroup(const ComponentGroups& CG, const
 
 //#define DEBUG_INDEX
 
-ZZ comp_map_image(const vector<long> moduli, const mat_l& image)
+ZZ comp_map_image(const vector<long>& moduli, const mat_l& image)
 {
   ZZ ans; ans=1;
   mat_l m=image;
@@ -719,7 +711,7 @@ ZZ comp_map_image(const vector<long> moduli, const mat_l& image)
       if(g>1)
 	{
 	  gm=gcd(g,modulus);
-	  if(gm>1) 
+	  if(gm>1)
 	    {
 	      modulus/=gm; g/=gm;
 	      for(i=1; i<=npts; i++) m(i,j)=(m(i,j)/gm)%modulus;
@@ -739,8 +731,8 @@ ZZ comp_map_image(const vector<long> moduli, const mat_l& image)
 #ifdef DEBUG_INDEX
 	  cout<<"colmin = "<<colmin<<endl;
 #endif
-	  for(i=1; i<=npts; i++) 
-	    if(m(i,j)!=0) 
+	  for(i=1; i<=npts; i++)
+	    if(m(i,j)!=0)
 	      if(abs(m(i,j))<abs(colmin)) colmin=m(i,j);
 	  for(i=1; i<=npts; i++) if(m(i,j)==colmin) {imin=i; break;}
 #ifdef DEBUG_INDEX

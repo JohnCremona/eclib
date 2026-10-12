@@ -37,7 +37,7 @@
 
 // The main Field constructor is the one based on a matrix (Qmat) with integral characteristic polynomial.  The following one, based on the polynomial, 
 
-Field::Field(const ZZX& p, string a, int verb)
+Field::Field(const ZZX& p, const string& a, int verb)
   :have_integral_basis(0)
 {
 #ifdef DEBUG_FIELD_CONSTRUCTOR
@@ -69,7 +69,7 @@ Field::Field() // defaults to Q
 #endif
 }
 
-Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, string a, int verb)
+Field::Field(const Qmat& A, Qmat& B, Qmat& Binv, const string& a, int verb)
   : var(a), d(A.nrows()), have_integral_basis(0)
 {
   if (verb)
@@ -1166,7 +1166,7 @@ FieldIso Field::change_generator(const FieldElement& b, Field& Qb) const
 // will be overwritten (so caller already has the pointer to it).
 
 //#define DEBUG_SQRT_EMBEDDING
-FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, Field& F_sqrt_r, FieldElement& sqrt_r, int reduce) const
+FieldIso Field::sqrt_embedding(const FieldElement& r, const string& newvar, Field& F_sqrt_r, FieldElement& sqrt_r, int reduce) const
 {
 #ifdef DEBUG_SQRT_EMBEDDING
   cout << "In simple sqrt_embedding() with base field " << this << " --> " << *this << " and r = " << r
@@ -1286,7 +1286,7 @@ FieldIso Field::sqrt_embedding(const FieldElement& r, string newvar, Field& F_sq
 // elements of the codoimain, so (sqrt_ri)^2 = image of ri.  Caller
 // supplies a reference to the target field which will be overwritten
 // (so caller already has the pointer to it).
-FieldIso Field::sqrt_embedding(const vector<FieldElement>& r_list, string newvar,
+FieldIso Field::sqrt_embedding(const vector<FieldElement>& r_list, const string& newvar,
                                Field& F_sqrt_r, vector<FieldElement>& sqrt_r_list,
                                int reduce) const
 {
@@ -1712,20 +1712,18 @@ ZZ Order::extend_by(const vector<FieldElement>& alist, int check)
            << " which are not all algebraic integers" << endl;
       return ZZ(1);
     }
-  ZZ index_gain(1);
-  for (auto a: alist)
-    index_gain *= extend_by_one(a, 0);
-  return index_gain;
+  // return the product of the results of applying extend_by_one() to each a in alist
+  return std::accumulate(alist.begin(), alist.end(),   ZZ(1),
+                         [this](const ZZ& b, const FieldElement& a){return b* extend_by_one(a, 0);});
 }
 
 // Extend by all v in vlist (which must be field coords of algebraic
 // integers), returning the index of the extension.
 ZZ Order::extend_by(const vector<Qvec>& vlist)
 {
-  ZZ index_gain(1);
-  for (auto v: vlist)
-    index_gain *= extend_by_one(v);
-  return index_gain;
+  // return the product of the results of applying extend_by_one() to each v in vlist
+  return std::accumulate(vlist.begin(), vlist.end(),    ZZ(1),
+                         [this](const ZZ& b, const Qvec& v){return b* extend_by_one(v);});
 }
 
 // Extend by all columns v of M (as in previous method), returning
@@ -1804,7 +1802,7 @@ void Order::LLL_reduce(const mat_m& C)
 void Order::LLL_reduce(const mat_m& C, mat_m& U)
 {
   mat_m V;    // to hold inverse unimodular transform
-  const mat_m& L = LLL(C, U);  // L = U*C = LLL-reduced coords of alist
+  LLL(C, U);  //  discard return value U*C = LLL-reduced coords of alist
   ZZ d = inverse(U, V);
   if (is_one(-d))
     V = -V;
@@ -1869,7 +1867,7 @@ Qmat coord_matrix(const vector<FieldElement>& alist, int rows, int rev)
 {
   Qmat M(alist[0].field_degree(), alist.size());
   int i = 1;
-  for (auto& a: alist)
+  for (const auto& a: alist)
     {
       Qvec v = a.coords();
       if (rev)

@@ -85,7 +85,7 @@ public:
   int is_one() const;
   int is_minus_one() const;
   int is_generator() const;
-  bigrational get_val() const {return val;}
+  const bigrational& get_val() const {return val;}
   Qvec coords() const {return (field_is_Q()? Qvec({val}) : v);}
   Qmat power_matrix() const; // cols are coords of powers
   ZZ get_denom() const {return (field_is_Q()? val.den() : v.denom);}
@@ -338,13 +338,13 @@ private:
 public:
   ~Field() {minpoly.kill();}
   Field(); // defaults to Q
-  explicit Field(const Qmat& A, Qmat& B, Qmat& Binv, string a="a", int verb=0);
-  explicit Field(const Qmat& A, string a="a", int verb=0)
+  explicit Field(const Qmat& A, Qmat& B, Qmat& Binv, const string& a="a", int verb=0);
+  explicit Field(const Qmat& A, const string& a="a", int verb=0)
   {
     Qmat B, Binv;
     *this = Field(A, B, Binv, a, verb);
   }
-  explicit Field(const ZZX& p, string a="a", int verb=0);
+  explicit Field(const ZZX& p, const string& a="a", int verb=0);
 
   FieldElement operator()(const bigrational& x) const;
   FieldElement operator()(const ZZ& x) const;
@@ -366,7 +366,7 @@ public:
   int operator==(const Field& F) const {return d==F.d && (d==1 || minpoly==F.minpoly);}
   int operator!=(const Field& F) const {return d!=F.d || (d!=1 && minpoly!=F.minpoly);}
   void display(ostream&s = cout) const;
-  string get_var() const {return var;}
+  const string& get_var() const {return var;}
   void set_var(const string& v)  {var = v;}
   // String for pretty output, like "Q" or "Q(i) = Q[X]/(X^2+1)", or
   // (if raw) raw output, suitable for re-input, like "Q" or "i [1 0 1]":
@@ -400,7 +400,7 @@ public:
   // = image of r.  Caller supplies a reference to the target field
   // which will be overwritten (so caller already has the pointer to
   // it).
-  FieldIso sqrt_embedding(const FieldElement& r, string newvar,
+  FieldIso sqrt_embedding(const FieldElement& r, const string& newvar,
                           Field& F_sqrt_r, FieldElement& sqrt_r,
                           int reduce=1) const;
 
@@ -410,7 +410,7 @@ public:
   // ..], a list of elements of the codoimain, so (sqrt_ri)^2 = image
   // of ri.  Caller supplies a reference to the target field which
   // will be overwritten (so caller already has the pointer to it).
-  FieldIso sqrt_embedding(const vector<FieldElement>& r_list, string newvar,
+  FieldIso sqrt_embedding(const vector<FieldElement>& r_list, const string& newvar,
                           Field& F_sqrt_r, vector<FieldElement>& sqrt_r_list,
                           int reduce=1) const;
   friend Order MaximalOrder(const Field* F, const ZZ& bound);

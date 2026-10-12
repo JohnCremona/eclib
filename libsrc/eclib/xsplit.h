@@ -69,10 +69,6 @@ public:
   void splitoff(const vector<long>& eigs);
   void store(Zvec<T> bp, Zvec<T> bm, vector<long> eigs);
 
-  Zvec<T>  getbasis( const ff_data<T> &data ) const {return data.bplus_;}
-  Zvec<T>  getbasisplus( const ff_data<T> &data ) const {return data.bplus_;}
-  Zvec<T>  getbasisminus( const ff_data<T> &data ) const {return data.bminus_;}
-
   friend class ff_data<T>;
 
 protected:

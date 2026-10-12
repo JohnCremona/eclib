@@ -55,7 +55,7 @@ vector<bigcomplex> roots_of_cubic(const Curve& E)
   return solvecubic(c1,c2,c3);
 }
 
-bigfloat min_real(vector<bigcomplex> array)
+bigfloat min_real(const vector<bigcomplex>& array)
 {
 //cout<<"In min_real() with array:\t"<<array<<endl;
   bigfloat minr, r; int first=1; minr=0;
@@ -70,9 +70,10 @@ bigfloat min_real(vector<bigcomplex> array)
   return minr;
 }
 
-int order_real_roots(vector<double>& bnd, vector<bigcomplex> roots);
+int order_real_roots(vector<double>& bnd, const vector<bigcomplex>& roots);
 //checks (and returns) how many roots are actually real, and puts those in
 //bnd, in increasing order, by calling set_the_bound
+
 int set_the_bounds(vector<double>& bnd, bigfloat x0, bigfloat x1, bigfloat x2);
 //This transforms (if possible) x0, x1 and x1 into double;  the search
 //should be made on [x0,x1]U[x2,infty] so if x1 or x2 overflows, the search
@@ -147,7 +148,7 @@ bigfloat det(const vector<vector<bigfloat>>& m, long m_size)
 
 //#define DEBUG 1
 
-vector<long> cleardenoms(vector<bigfloat> alpha)
+vector<long> cleardenoms(const vector<bigfloat>& alpha)
 {
   long len = alpha.size();
   vector<long> nlist(len);  // returned
@@ -1136,7 +1137,7 @@ void sieve::stats(void)
   cout<<"Sieve efficiency: "<<eff<<"\n";
 }
 
-int order_real_roots(vector<double>& bnd, vector<bigcomplex> roots)
+int order_real_roots(vector<double>& bnd, const vector<bigcomplex>& roots)
 {//checks (and returns) how many roots are actually real, and puts those in
  //bnd, in increasing order, by calling set_the_bound
   long i,nrr=0;

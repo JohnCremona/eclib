@@ -174,7 +174,7 @@ private:
   long matdim(void) override  {return h1->dimension;}
   scalar matden(void) override  {return h1->denom1;}
   vector<long> eigrange(int i) override {return h1->eigrange(i);}
-  long dimoldpart(const vector<long> l) override;
+  long dimoldpart(const vector<long>& l) override;
 protected:
   vec mvp;
   map<long,vec> mvlplusvecs, mvlminusvecs;
@@ -191,7 +191,7 @@ public:
   {
     ; //cout<<"In newforms constructor, level="<<n<<", modulus="<<mod<<", verbose="<<verbose<<endl;
   }
-  ~newforms(void);
+  ~newforms(void) override;
   void display(void) const;
   void display_modular_symbol_map(int check=0) const;
   void output_to_file(int binflag=1, int smallflag=0) const;
@@ -199,7 +199,7 @@ public:
   int  get_sign() {return sign;}
   void makeh1(int s); // sign s = 0,+1, or -1
 // add newform with basis b1, eiglist l to current list (b2 not used):
-  void use(const vec& b1, const vec& b2, const vector<long> l) override;
+  void use(const vec& b1, const vec& b2, const vector<long>& l) override;
 
   // find newforms using homology; ntp is number of eigenvalues to use
   // for oldforms, *not* the number computed via homology (use addap()
@@ -273,7 +273,7 @@ public:
   // Attempt to compute and display the elliptic curve for each
   // newform in forms; return a (sub)list of newform indices where this failed.
   // If filename is not "no", output to file also
-  vector<int> showcurves(vector<int> forms, int verbose, string filename);
+  vector<int> showcurves(const vector<int>& forms, int verbose, const string& filename);
 
   // next three implemented in pcprocs.cc
 

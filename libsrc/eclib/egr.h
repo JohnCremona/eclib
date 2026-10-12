@@ -27,6 +27,9 @@
 
 #include "curve.h"
 
+// Returns 1 iff P and Q have same image in the component group at p:
+int InSameComponent(const Point& P, const Point& Q, const ZZ& p);
+
 // class to handle component groups at primes of bad reduction etc
 
 // NB all of the internal methods assume that the curve is a global
@@ -51,9 +54,6 @@ public:
 // Returns [m] for cyclic of order m, [2,2] for 2*2 (type I*m, m even)
   vector<int> ComponentGroup(const ZZ& p) const;
 
-// Returns 1 iff P and Q have same image in the component group at p:
-  int InSameComponent(const Point& P, const Point& Q, const ZZ& p) const;
-
 // For reduction type Im, multiplicative reduction where component
 // group is cyclic of order m, returns a such that P mod p maps to a
 // mod m in the component group 
@@ -63,7 +63,7 @@ public:
 
 // N.B.2 The case of noncyclic component group is not handled here.
 
-  long ImageInComponentGroup(const Point&P, const ZZ& p, vector<int> grp) const;
+  long ImageInComponentGroup(const Point&P, const ZZ& p, const vector<int>& grp) const;
   long ImageInComponentGroup_Im(const Point&P, const ZZ& p, int m) const;
   long ImageInComponentGroup_Im_pm(const Point&P, const ZZ& p, int m) const;
 

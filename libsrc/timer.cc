@@ -54,7 +54,7 @@ timer::timer() : s_( NULL ) {
  *
  * Constructor. Output filename given.
  */
-timer::timer( string filename ) : s_( NULL ) {
+timer::timer( const string& filename ) : s_( NULL ) {
   // Set up stream 
   stream( filename );
 }
@@ -83,7 +83,7 @@ timer::~timer() {
  * If called again, new stream will replace old stream,
  * which will be flushed and closed safely, if required.
  */
-void timer::stream( string filename ) {
+void timer::stream( const string& filename ) {
   // Flush current stream if defined, just to be safe
   if( s_ != NULL ) {
     s_ -> flush();
@@ -117,7 +117,7 @@ void timer::stream( string filename ) {
  * This function essentially does nothing apart from 
  * check timer names for validity.
  */
-void timer::add( string name ) {
+void timer::add( const string& name ) {
   // Check if default timer is being added
   if( name.compare("default") == 0 ) {
     cout << "Timer of name `default' cannot be used. "
@@ -143,7 +143,7 @@ void timer::add( string name ) {
  * Purely semanitc function - Can use split() 
  * which will perform the same action on an empty vector.
  */
-void timer::start( string name ) {
+void timer::start( const string& name ) {
   split( name );
 }
 
@@ -152,7 +152,7 @@ void timer::start( string name ) {
  *
  * Logs the current time for specified timer.
  */
-void timer::split( string name ) {
+void timer::split( const string& name ) {
   times_[name].push_back( getWallTime() );
 }
 
@@ -162,7 +162,7 @@ void timer::split( string name ) {
  * Store current time into timer storage.
  * Purely semantic.
  */
-void timer::stop( string name ) {
+void timer::stop( const string& name ) {
   split( name );
 }
 
@@ -183,7 +183,7 @@ void timer::stopAll() {
  * Write given message to output stream
  * defined upon construction of instance.
  */
-void timer::write( string message ) {
+void timer::write( const string& message ) {
   s_ -> write( message.c_str(), message.size() );
   s_ -> flush();
 }
@@ -197,7 +197,7 @@ void timer::write( string message ) {
  * Allow option to add newline character to stream
  * for accessibility.
  */
-void timer::show( int nline, string name, int idx1, int idx2 ) { 
+void timer::show( int nline, const string& name, int idx1, int idx2 ) { 
   // Set second index to end of list
   if( idx2 == -1 ) {
     idx2 = times_[name].size() - 1;
@@ -231,7 +231,7 @@ void timer::showAll( int nline ) {
  *
  * Removes all times from a subtimer.
  */
-void timer::clear( string name ) {
+void timer::clear( const string& name ) {
   times_[name].clear();
 }
 
@@ -266,7 +266,7 @@ void timer::list() {
  * Returns number times stores in specified timer,
  * i.e. size of vector
  */
-int timer::count( string name ) {
+int timer::count( const string& name ) {
   return times_[name].size();
 }
 
@@ -275,7 +275,7 @@ int timer::count( string name ) {
  *
  * Return total time of a given timer.
  */
-double timer::total( string name ) {
+double timer::total( const string& name ) {
   return std::accumulate(times_[name].begin(), times_[name].end(), 0);
   // double total = 0;
   // for ( const auto& t : times_[name])
@@ -288,7 +288,7 @@ double timer::total( string name ) {
  *
  * Return average time of a given timer.
  */
-double timer::average( string name ) {
+double timer::average( const string& name ) {
   return total( name ) /  times_[name].size();
 }
 

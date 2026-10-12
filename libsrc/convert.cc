@@ -63,7 +63,8 @@ ZZ FLINT_to_NTL(const fmpz_t& a)  // from FLINT integer to NTL integer
 
   // construct ZZ from limbs
   ZZ b;
-  ZZ_limbs_set(b, (ZZ_limb_t*)limbs, n);
+  ZZ_limbs_set(b, static_cast<ZZ_limb_t*>(limbs), n);
+  // ZZ_limbs_set(b, (ZZ_limb_t*)limbs, n);
   delete[] limbs;
 
   // return with sign

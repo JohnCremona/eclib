@@ -1072,7 +1072,7 @@ cout<<"els21 = "<<els21<<endl;
               else    cout<<"is between "<<lb<<" and "<<ub<<"\n";
             }
 
-          lb = sel0/sel20; lb1=(lb==1); ub = sha0*sha21; eq=(lb==ub);
+          ub = sha0*sha21; eq=(lb==ub);
           cout<<"\t#III(E'/Q)[2]      ";
           if(eq) cout<<"= "<<ub<<"\n";
           else

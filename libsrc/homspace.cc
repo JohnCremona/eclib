@@ -52,7 +52,7 @@ string gmatop::name() const
   ostringstream s;
   auto ci=coeffs.begin();
   int first = 1;
-  for (auto T: ops)
+  for (const auto& T: ops)
     {
       scalar c = *ci++;
       if (c!=0)
@@ -1645,7 +1645,7 @@ map<string, ZZX> new_poly_dict;
 // cache of operator new charpolys keyed by level and opname, restricted to cuspidal
 map<string, ZZX> new_cuspidal_poly_dict;
 
-void output_poly_dict(ostream& os, map<string, ZZX> D)
+void output_poly_dict(ostream& os, const map<string, ZZX>& D)
 {
   for (auto key_pol: D)
     os<<key_pol.first<<" "<< str(key_pol.second) << endl;

@@ -190,7 +190,7 @@ qsieve::~qsieve()
   delete[] is_f_square;
 }
 
-void qsieve::set_intervals(vector<double> interv,int nb_bnd,int start_low,int pos_x_only)
+void qsieve::set_intervals(const vector<double>& interv,int nb_bnd,int start_low,int pos_x_only)
 {
 #ifdef DEBUG_QS
   cout<<"Entering set_intervals with nb_bnd="<<nb_bnd<<", height = "<<height<<endl;
@@ -1120,7 +1120,7 @@ long qsieve::search()
 #ifdef DEBUG_QS
 	  cout<<"check_denom=1="<<check_denom<<endl;
 #endif
-	  long *forb;
+	  long const*forb;
 	  for(b = b_low; b <= b_high; b++)
 	    {
 	      //check if denominator is excluded

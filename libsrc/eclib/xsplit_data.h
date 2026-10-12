@@ -137,6 +137,10 @@ class ff_data {
     int map( long eig );                    // Map eigenvalue to index
 };
 
+// Zvec<T>  getbasis( const ff_data<T> &data ) const {return data.bplus_;}
+// Zvec<T>  getbasisplus( const ff_data<T> &data ) const {return data.bplus_;}
+// Zvec<T>  getbasisminus( const ff_data<T> &data ) const {return data.bminus_;}
+
 #endif
 
 // end of XSPLIT_DATA.H

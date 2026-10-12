@@ -59,7 +59,7 @@ two_descent::two_descent(Curvedata* ec,
 
 //#define DEBUG_Q_INPUT
 
-two_descent::two_descent(vector<bigrational> ai,
+two_descent::two_descent(const vector<bigrational>& ai,
 	      int verb, int sel,
 	      long firstlim, long secondlim,
 	      long n_aux, int second_descent)

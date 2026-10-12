@@ -353,7 +353,7 @@ void extra_prime_class::read_from_file(const string& pfilename, int verb)
   while(pfile>>xp>>ws, (xp!=0) )
 	{
 	  if(verb) cout << "read extra prime " << xp << endl;
-	  the_extra_primes.add(xp);
+	  add(xp);
 	  if(pfile.eof()) break;
 	}
   if(verb) cout << "finished reading primes from file " << pfilename << endl;

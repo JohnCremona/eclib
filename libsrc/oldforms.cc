@@ -27,7 +27,7 @@
 
 inline int testbit(long a, long i) {return (a& (1<<i));}
 
-bool file_exists(string filename)
+bool file_exists(const string& filename)
 {
   return ifstream(filename.c_str()).good();
 }
@@ -78,7 +78,7 @@ string curve_filename(long N)
 // with N first and 1 curve per isogeny class.  Fields 2,5,6,7 are
 // ignored.  The curves must be sorted by conductor.
 
-vector<CurveRed> get_curves(string filename, long N)
+vector<CurveRed> get_curves(const string& filename, long N)
 {
   vector<CurveRed> curves;
   ifstream infile(filename.c_str());
@@ -132,7 +132,7 @@ oldforms::oldforms(long intp, const level* iN, scalar mod, int verbose, int plus
        getoldclasses(M,verbose);
      }
    if(verbose) cout<<"Finished getting oldclasses "<<endl;
-   for (long i=0; i<noldclasses; i++) totalolddim+=oldclassdims[i];
+   totalolddim = std::accumulate(oldclassdims.begin(), oldclassdims.end(), 0, std::plus<int>());
 }
 
 void oldforms::getoldclasses(long d, int verbose) 
@@ -171,12 +171,12 @@ void oldforms::getoldclasses(long d, int verbose)
 	  betalist.push_back(beta);
 	}
       if(verbose>1) cout<<"betas: "<<betalist<<endl;
-      vector<long> nextoldformap(nap);
+
       primevar pr; long iform, c, ip, aq; int bit;
       for(iform=0; iform<nforms; iform++)
 	{
-	  vector<long>& aqlist=olddata.nflist[iform].aqlist;
-	  nextoldformap = olddata.nflist[iform].aplist;
+	  const vector<long>& aqlist=olddata.nflist[iform].aqlist;
+	  vector<long> nextoldformap = olddata.nflist[iform].aplist;
 	  if(verbose>1)
 	    {
 	      cout<<"form #"<<(iform+1)<<": "<<"aqlist="<<aqlist<<endl;
@@ -239,14 +239,16 @@ void oldforms::getoldclasses(long d, int verbose)
     }
 }
  
-long oldforms::dimoldpart(vector<long> aplist) const
-{ long ans = 0;
- if (aplist.size()==0) return 0;   // all lists "start with" a null list!
- for (long i=0; i<noldclasses; i++)
-   if (startswith(oldformap[i] , aplist, aplist.size())) 
-     ans += oldclassdims[i];
- if(!plusflag) ans*=2;
- return ans;
+long oldforms::dimoldpart(const vector<long>& aplist) const
+{
+  if (aplist.size()==0) return 0;   // all lists "start with" a null list!
+  long ans = 0;
+  for (long i=0; i<noldclasses; i++)
+    if (startswith(oldformap[i] , aplist, aplist.size()))
+      ans += oldclassdims[i];
+  if(!plusflag)
+    ans*=2;
+  return ans;
 }
 
 void oldforms::display(void) const

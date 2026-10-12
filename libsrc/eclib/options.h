@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #ifndef _ECLIB_OPTIONS_H
 #define _ECLIB_OPTIONS_H      1
                            //flags that this file has been included
@@ -62,24 +62,24 @@ public:
 
   mrank_options(void)
 //set default values
-    :quiet(DEFAULT_QUIET),   
-     verbose(DEFAULT_VERBOSE), 
-     precision(DEFAULT_PRECISION),   
-     hlimq(DEFAULT_HLIMQ), 
-     naux(DEFAULT_NAUX),   
-     hlimc(DEFAULT_HLIMC), 
-     ptl(DEFAULT_PTL), 
+    :quiet(DEFAULT_QUIET),
+     verbose(DEFAULT_VERBOSE),
+     precision(DEFAULT_PRECISION),
+     hlimq(DEFAULT_HLIMQ),
+     naux(DEFAULT_NAUX),
+     hlimc(DEFAULT_HLIMC),
+     ptl(DEFAULT_PTL),
      traceequiv(DEFAULT_TRACEEQUIV),
-     output_pari(DEFAULT_OUTPUT_PARI), 
-     selmer_only(DEFAULT_SELMER), 
+     output_pari(DEFAULT_OUTPUT_PARI),
+     selmer_only(DEFAULT_SELMER),
      second_descent(DEFAULT_2ND_DESCENT),
      saturation_bound(DEFAULT_SAT_BOUND)
   { ; }
 
-  mrank_options(int q, int v, long p, long hq, long nx, long hc, 
+  mrank_options(int q, int v, long p, long hq, long nx, long hc,
 	       int pl, int teq, int o, int sel, int d2, long sat)
-    :quiet(q), verbose(v), precision(p), hlimq(hq), naux(nx), hlimc(hc), 
-     ptl(pl), traceequiv(teq),  output_pari(o), selmer_only(sel), 
+    :quiet(q), verbose(v), precision(p), hlimq(hq), naux(nx), hlimc(hc),
+     ptl(pl), traceequiv(teq),  output_pari(o), selmer_only(sel),
      second_descent(d2), saturation_bound(sat) {;}
 
   void set( GetOpt& getopt) // parameter cannot be const despite what cppcheck says
@@ -115,13 +115,13 @@ public:
     }
 
   void set(int argc, char **argv)
-    { 
+    {
       GetOpt getopt (argc, argv, "Vhqp:v:b:x:ltosdc:S:");
       set(getopt);
     }
 
-  void help(void)
-    {	    
+  static void help(void)
+    {
       cerr << "mwrank command line options (can be in any order):\n\n";
       cerr << "-h\t""help""\t\tprints this info and quits\n";
       cerr << "-V\t""version""\t\tprints eclib version and quits\n";
@@ -141,28 +141,28 @@ public:
       cerr << "-S n\t""sat_bd""\t\tupper bound on saturation primes (default="<<DEFAULT_SAT_BOUND<<", -1 for automatic)\n";
       cerr << endl;
     }
-  
-  void banner(ostream& os = cout)
+
+  static void banner(ostream& os = cerr)
     {
-      cerr << "Program mwrank: ";
+      os << "Program mwrank: ";
 
-      cerr << "uses 2-descent (via 2-isogeny if possible) to\n";
-      cerr << "determine the rank of an elliptic curve E over Q, and list a\n";
-      cerr << "set of points that generate E(Q) modulo 2E(Q).\n";
-      cerr << "and finally saturate to obtain generating points on the curve.\n";
+      os << "uses 2-descent (via 2-isogeny if possible) to\n";
+      os << "determine the rank of an elliptic curve E over Q, and list a\n";
+      os << "set of points that generate E(Q) modulo 2E(Q).\n";
+      os << "and finally saturate to obtain generating points on the curve.\n";
 
-      cerr << "For more details see the mwrank documentation.\n";
-      cerr << "For details of algorithms see the author's book.\n\n";
-      cerr << "Please acknowledge use of this program in published work, \n";
-      cerr << "and send problems to john.cremona@gmail.com.\n\n";
+      os << "For more details see the mwrank documentation.\n";
+      os << "For details of algorithms see the author's book.\n\n";
+      os << "Please acknowledge use of this program in published work, \n";
+      os << "and send problems to john.cremona@gmail.com.\n\n";
     }
 
   void show()
     {
       cerr << "List of current options:\n";
-      cerr << "Quiet mode "; 
+      cerr << "Quiet mode ";
       if(quiet)cerr<<"ON"; else cerr<<"OFF"; cerr<<"\n";
-      cerr << "PARI/GP output "; 
+      cerr << "PARI/GP output ";
       if(output_pari)cerr<<"ON"; else cerr<<"OFF"; cerr<<"\n";
       cerr << "Precision = " << precision << " bits (only relevant for multiprecision version)\n";
       cerr << "Verbosity level = " << verbose << "\n";

@@ -1219,7 +1219,7 @@ hmod_mat_init(hmod_mat_t mat, slong rows, slong cols, hlimb_t n)
 {
     gr_ctx_t ctx;
     gr_ctx_init_nmod32(ctx, n);
-    gr_mat_init((gr_mat_struct *) mat, rows, cols, ctx);
+    gr_mat_init( (gr_mat_struct *)(mat), rows, cols, ctx);
     nmod_init(&(mat->mod), n);
 }
 

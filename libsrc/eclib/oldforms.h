@@ -42,12 +42,12 @@ class oldforms {
   oldforms(long intp, const level* iN, scalar mod, int verbose=0, int plus=1);
              //intp = input value of ntp = max. number of Tp to use
   ~oldforms(){;}
-  long dimoldpart(vector<long> aplist) const;
+  long dimoldpart(const vector<long>& aplist) const;
   void display(void) const;
 };
 
 // Utilities for creating filenames for curve files
-bool file_exists(string filename);
+bool file_exists(const string& filename);
 string ecdb_filename(long N);
 string single_curve_filename(long N);
 string curve_filename(long N);

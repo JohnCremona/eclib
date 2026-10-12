@@ -172,18 +172,12 @@ int cubic::gl2_equivalent(const cubic& G) const
 // Test for sl2/gl2-equivalence to one in a list:
 int cubic::sl2_equivalent_in_list(const vector<cubic>& Glist) const
 {
-  for (auto Gi=Glist.begin(); Gi!=Glist.end(); ++Gi)
-    if (sl2_equivalent(*Gi))
-      return 1;
-  return 0;
+  return std::any_of(Glist.begin(), Glist.end(), [this](const cubic& c){return sl2_equivalent(c);});
 }
 
 int cubic::gl2_equivalent_in_list(const vector<cubic>& Glist) const
 {
-  for (auto Gi=Glist.begin(); Gi!=Glist.end(); ++Gi)
-    if (gl2_equivalent(*Gi))
-      return 1;
-  return 0;
+  return std::any_of(Glist.begin(), Glist.end(), [this](const cubic& c){return gl2_equivalent(c);});
 }
 
 // affine roots of F mod q.

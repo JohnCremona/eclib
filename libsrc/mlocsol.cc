@@ -272,7 +272,7 @@ vec_pair_ZZ_pX_long fact_c(vector<ZZ> c, int verbose=0)
   return  CanZass(f, verbose);
 }
 
-int local_sol(const ZZ& p, vector<ZZ> c, int verbose)
+int local_sol(const ZZ& p, const vector<ZZ>& c, int verbose)
 {
   ZZ_p::init(p);
   if (verbose)

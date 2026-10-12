@@ -49,7 +49,7 @@ class point_processor { //An abstract class to be used as interface in qsieve
 class point_printer : public point_processor {
  public:
   point_printer() {};
-  ~point_printer() {};
+  ~point_printer() override {};
   int process(const ZZ& xx, const ZZ& yy, const ZZ& zz) override
   {cout<<"x= "<<xx<<" y= "<<yy<<" z= "<<zz<<" is a point."<<endl; return 0;}
 };
@@ -58,7 +58,7 @@ class point_counter : public point_processor {
   int tally;
  public:
   point_counter() {tally=0;};
-  ~point_counter() {};
+  ~point_counter() override {};
   int process(const ZZ& xx, const ZZ& yy, const ZZ& zz) override
     {tally++; return 0;}
   int get_tally() {return tally;}
@@ -159,9 +159,9 @@ class qsieve {
   long num_surv2;  //Used to count the survivors of the second stage
   
 
-  long w_floor(long a,long b)
+  static long w_floor(long a,long b)
     { if (a < 0) return -(1 + (-a-1)/b); else return a/b;}; 
-  long w_ceil(long a,long b)
+  static long w_ceil(long a,long b)
     { if (a <= 0) return -((-a)/b); else return 1+(a-1)/b;};
 
   void init_data();
@@ -185,7 +185,7 @@ class qsieve {
 //       double up, double low, int verb=1);
   ~qsieve();
 
-  void set_intervals(vector<double> interv,int nb_bnd,int start_low,int pos_x_only=0);
+  void set_intervals(const vector<double>& interv,int nb_bnd,int start_low,int pos_x_only=0);
   //the search will be made on the intervals thus defined:
   //nb_bnd bounds are given in interv, the first one being a lower bound 
   //for the first interval if start_low=1, and the upper bound for the first
@@ -219,7 +219,7 @@ class qsieve {
   //`ratio1' is the ratio of running time of the second versus the first 
   //stage of sieving (per bit). This is used to find the optimal number 
   //of sieving primes for the first stage automatically.
-  void set_ratio1(double r1)
+  static void set_ratio1(double r1)
     { if (r1<0.0) 
       cout<<"qsieve::set_ratio1():ratio must be >0"<<endl; 
     else ratio1=r1; };
@@ -227,7 +227,7 @@ class qsieve {
   //give rise to points versus one step of the second sieving stage. 
   //This is used to find the optimal number of sieving primes for the second 
   //stage automatically
-  void set_ratio2(double r2)
+  static void set_ratio2(double r2)
     { if (r2<0.0) 
       cout<<"qsieve::set_ratiow():ratio must be >0"<<endl; 
     else ratio2=r2; };

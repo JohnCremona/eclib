@@ -65,8 +65,8 @@ public:
   virtual long matdim(void) = 0;
   virtual T matden(void) = 0;
   virtual vector<long> eigrange(int) = 0;
-  virtual long dimoldpart(const vector<long>) = 0;
-  virtual void use(const Zvec<T>&, const Zvec<T>&, const vector<long>) = 0;
+  virtual long dimoldpart(const vector<long>&) = 0;
+  virtual void use(const Zvec<T>&, const Zvec<T>&, const vector<long>&) = 0;
   virtual ~splitter_base() {;}
 };
 

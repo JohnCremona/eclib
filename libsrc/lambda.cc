@@ -161,7 +161,7 @@ int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P)
   return 1;
 }
 
-int make_point_from_x_and_ht(Curvedata* CD, vector<bigfloat> lambdas, const bigfloat& xp, const bigfloat& ht, Point* P)
+int make_point_from_x_and_ht(Curvedata* CD, const vector<bigfloat>& lambdas, const bigfloat& xp, const bigfloat& ht, Point* P)
 {
   bigfloat rh = realheight(xp,CD);
   for (const auto& lam : lambdas)

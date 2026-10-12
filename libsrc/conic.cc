@@ -98,7 +98,7 @@ int solve_conic(const ZZ& a, const ZZ& b, const ZZ& c, const ZZ& d,
 #endif // DEBUG_CONIC
 //All this function does is complete the square (if nec.) and pass to the next
       ZZ aa, bb, xx, yy, zz, a1,a2,b1,b2;
-      vector<ZZ> aplist, bplist, cplist, dplist;
+      vector<ZZ> aplist, bplist;
 
       int nondiag=!is_zero(b);
       bb=a*d;

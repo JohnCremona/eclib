@@ -108,7 +108,7 @@ private:
 
 public:
   part_period (const level* iN, const newform* f);
-  ~part_period () {;}
+  ~part_period () override {;}
   void compute(const bigcomplex& z0);
   void compute() override;
   bigcomplex getperiod() {return bigcomplex(rp,ip);}

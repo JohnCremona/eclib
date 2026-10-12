@@ -341,7 +341,7 @@ vector<long> dotperp(long a, int r)
     {
       vector<long> ans(r);
       for (int i=0; i<r; i++)
-        ans[i] = 1<<i;
+        ans[i] = 1L<<i;
       return ans;
     }
   else

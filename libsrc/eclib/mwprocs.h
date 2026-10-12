@@ -97,7 +97,7 @@ public:
   void stats();   // report sieving statistics
 };
 
-int order_real_roots(vector<double>& bnd, vector<bigcomplex> roots);
+int order_real_roots(vector<double>& bnd, const vector<bigcomplex>& roots);
 //checks (and returns) how many roots are actually real, and puts those in
 //bnd, in increasing order, by calling set_the_bound
 int set_the_bounds(vector<double>& bnd, bigfloat x0, bigfloat x1, bigfloat x2);

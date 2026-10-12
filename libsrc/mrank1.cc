@@ -898,8 +898,8 @@ void rank1::gettype(int t) // new hybrid version 13/2/96
 #endif
 
   long iaux=num_aux;
-  auto flagsi = flags.begin();
-  auto flagai = flaga.begin();
+  auto flagsi = flags.begin(); // value not used but tells auto what the type is
+  auto flagai = flaga.begin(); // value not used but tells auto what the type is
   auto auxi=auxs.begin();
   auto amodi=amod.begin();
   auto hmodi=hmod.begin();
@@ -1464,10 +1464,11 @@ rank1::rank1(Curvedata* ec, int verb, int sel, long lim1, long lim2,long n_aux)
 
 
   // Compute rank/selmer rank from B=im(eps) first:
-  // Must count the quartics in qlistb which are still needed
 
-  long jp, n3 = 0;
-  for(jp=0; jp<nquarticsb; jp++) if(qlistbflag[jp]) n3++;
+  // Count the quartics in qlistb which are still needed:
+
+  long n3 = std::count_if(qlistbflag.begin(), qlistbflag.end(), [](int f){return f;});  // std::identity); only in C++20
+
   if(verbose>1)
     {
       cout<<"After getquartics(): \n";

@@ -56,10 +56,10 @@ void zshift(const ZZ& gamma,
 	    ZZ& a, ZZ& b, ZZ& c, ZZ& d, const ZZ& e,
 	    unimod& m);
 
-void m_invert(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
+void m_invert(ZZ& a, ZZ& b, const ZZ& c, ZZ& d, ZZ& e,
 	      unimod& m);
 
-void m_invert(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
+void m_invert(ZZ& a, ZZ& b, const ZZ& c, ZZ& d, ZZ& e,
 	      scaled_unimod& m);
 
 #endif

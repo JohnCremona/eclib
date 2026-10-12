@@ -83,9 +83,9 @@ long cusplist::index_2(const rational& c)
 { // adds c to list if not there already, and return index (offset by 1)
   // For use with minus space; only store [c] if [c]=[-c]
   if (!cuspeq(c,-c,0)) {return 0;}
-  for (unsigned int i=0; i<list.size(); i++)
-    if (cuspeq(c,list[i], 0))
-      return (i+1);  // note offset
-  list.push_back(c);
-  return list.size();
+
+  const auto& it = std::find_if(list.begin(), list.end(), [c, this](const rational& c2){return cuspeq(c,c2,0);});
+  if (it==list.end())
+    list.push_back(c);
+  return 1 + std::distance(list.begin(), it);
 }

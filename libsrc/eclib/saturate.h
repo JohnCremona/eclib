@@ -137,9 +137,9 @@ public:
   // As above but for all primes in plist, returns success flag, sets
   // index and unsat = list of primes in plist at which saturation
   // failed = empty iff success flag=0
-  int do_saturation(vector<int> plist,
+  int do_saturation(const vector<int>& plist,
 		    long& index, vector<int>& unsat, int maxntries=10);
-  int do_saturation(vector<long> plist,
+  int do_saturation(const vector<long>& plist,
                     long& index, vector<long>& unsat, int maxntries=10);
 
   // Either (when sat_bd=-1) auto-saturate, finding an upper bound ib
@@ -162,9 +162,9 @@ public:
   // get current q:
   long get_q() const {return (long)qvar;};
   // get current generators (not including p-cotorsion)
-  vector<Point> getgens() const {return Plist;};
+  const vector<Point>& getgens() const {return Plist;};
   // get current generators (including p-cotorsion)
-  vector<Point> getxgens() const {return Plistx;};
+  const vector<Point>& getxgens() const {return Plistx;};
   // get # steps since last rank increase
   long stuckfor() const {return stuck_counter;};
   // get a nonzero kernel vector (if any)

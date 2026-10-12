@@ -47,13 +47,13 @@ private:
   void clear_col(int,int, smat_elim_list&, int fr = 0, int fc = 0,int M = 0,int *li =0);
   void check_col( int col, smat_elim_list& L );
   void check_row (int d2, int row2, smat_elim_list& L );
-  int get_weight( int, const int* );
-  int has_weight_one( int, const int* );
-  int n_active_cols(); // number of active columns
-  int n_active_rows(); // number of active rows
-  long n_active_entries(); // number of active entries
-  double active_density(); // density of non-eliminated part
-  void report(); // report current state (density etc)
+  int get_weight( int, const int* ) const;
+  int has_weight_one( int, const int* ) const;
+  int n_active_cols() const; // number of active columns
+  int n_active_rows() const; // number of active rows
+  long n_active_entries() const; // number of active entries
+  double active_density() const; // density of non-eliminated part
+  void report() const; // report current state (density etc)
 
 public:
   int get_rank( ) { return rank; }
@@ -120,7 +120,7 @@ inline ostream& operator<< (ostream&s, const smat_elim_list& L)
 {
   s<<"[";
   int n=L.num;
-  int* x=L.list_array;
+  int const* x=L.list_array;
   while(n--) s<<(*x++)<<" ";
   s<<"]";
   return s;

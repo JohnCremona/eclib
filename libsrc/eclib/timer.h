@@ -45,26 +45,26 @@ void show_time(ostream& s = cout);
 class timer {
   public:
     timer();
-    explicit timer( string filename );
+    explicit timer( const string& filename );
     ~timer();                   
 
-    void    stream( string filename = "" );
-    void    start( string name = "default" );
-    void    split( string name = "default" );
-    void    stop( string name = "default" );
+    void    stream( const string& filename = "" );
+    void    start( const string& name = "default" );
+    void    split( const string& name = "default" );
+    void    stop( const string& name = "default" );
     void    stopAll();
-    void    write( string message );
-    void    show( int nline = 0, string name = "default", 
+    void    write( const string& message );
+    void    show( int nline = 0, const string& name = "default", 
                   int idx1 = 0, int idx2 = -1 );
     void    showAll( int nline = 0 );
-    void    clear( string name = "default" );
+    void    clear( const string& name = "default" );
     void    clearAll();
-    void    add( string name );
+    void    add( const string& name );
     void    list();
 
-    int     count( string name = "default" );
-    double  total( string name = "default" );
-    double  average( string name = "default" );
+    int     count( const string& name = "default" );
+    double  total( const string& name = "default" );
+    double  average( const string& name = "default" );
 
     typedef unordered_map< string, vector<double> > timers;
 
@@ -76,7 +76,7 @@ class timer {
     double   getWallTime();
 
     template< typename T > 
-    string toString( T el );
+    static string toString( T el );
 };
 
 #ifndef TIME_CONICS

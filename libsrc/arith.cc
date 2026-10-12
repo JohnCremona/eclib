@@ -189,7 +189,7 @@ vector<long> pdivs(long aa)
  return plist;
 }
 
-long euler_phi(long n, const vector<long> plist)
+long euler_phi(long n, const vector<long>& plist)
 {
   if (n==0) return 0;
   long phi = abs(n);
@@ -538,7 +538,7 @@ int chi4(long a)
 }
 
 int hilbert2(long a, long b)
-{ static int table44[4][4] = {{0,0,0,0},
+{ static const int table44[4][4] = {{0,0,0,0},
                               {0,1,0,1},
                               {0,0,0,0},
                               {0,1,0,-1}};
@@ -728,9 +728,9 @@ vector<vector<int>> all_linear_combinations(int dim, int bound, int sorted)
   vector<vector<int>> ans1 = all_linear_combinations(dim-1, bound);
 #ifdef DEBUG_COMBOS
   cout << "Recursion of all_linear_combinations("<<dim-1<<","<<bound<<")  returns \n";
-  for (auto combo: ans1) cout << combo <<endl;
+  for (const auto& combo: ans1) cout << combo <<endl;
 #endif
-  for (auto v1: ans1)
+  for (const auto& v1: ans1)
     {
       int maxv1 = maxabs(v1);
       int max_scale = bound / maxv1; // round down
@@ -770,12 +770,12 @@ vector<vector<int>> all_linear_combinations(int dim, int bound, int sorted)
     {
 #ifdef DEBUG_COMBOS
       cout << "("<<dim<<","<<bound<<"): result before sorting:\n";
-      for (auto combo: ans) cout << combo <<endl;
+      for (const auto& combo: ans) cout << combo <<endl;
 #endif
       std::sort(ans.begin(), ans.end(), weighted_comparison);
 #ifdef DEBUG_COMBOS
       cout << "("<<dim<<","<<bound<<"): result after sorting:\n";
-      for (auto combo: ans) cout << combo <<endl;
+      for (const auto& combo: ans) cout << combo <<endl;
 #endif
     }
   return ans;

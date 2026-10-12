@@ -358,7 +358,7 @@ vector<long> iv2lv(const vector<int>& v)
   return ans;
 }
 
-int saturator::do_saturation(vector<long> plist,
+int saturator::do_saturation(const vector<long>& plist,
 			     long& index, vector<long>& unsat,
 			     int maxntries)
 {
@@ -368,7 +368,7 @@ int saturator::do_saturation(vector<long> plist,
   return ans;
 }
 
-int saturator::do_saturation(vector<int> plist,
+int saturator::do_saturation(const vector<int>& plist,
 			     long& index, vector<int>& unsat,
 			     int maxntries)
 {

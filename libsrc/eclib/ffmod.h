@@ -50,42 +50,11 @@ public:
   //  constructors
 
   //  normal ones:
-  ffmodq(void)
-    {
-      init_h1h2();
-      h1 = to_ZZ_p(0);
-      h2 = to_ZZ_p(0);
-    }
-
-  explicit ffmodq(const ZZ_p& c)
-    {
-      init_h1h2();
-      h1 = c;
-      h2 = to_ZZ_p(0);
-    }
-
-  explicit ffmodq(const ZZ& c)
-    {
-      init_h1h2();
-      h1 = to_ZZ_p(c);
-      h2 = to_ZZ_p(0);
-    }
-
-  explicit ffmodq(const ZZ_pX& hh1)
-    {
-      init_h1h2();
-      h1 = hh1;
-      h2 = to_ZZ_p(0);
-    }
-
+  ffmodq(void)                                          :h1(to_ZZ_p(0)), h2(to_ZZ_p(0))    {}
+  explicit ffmodq(const ZZ_p& c)           : h1(c), h2(to_ZZ_p(0)) {}
+  explicit ffmodq(const ZZ& c)               : h1(to_ZZ_p(c)), h2(to_ZZ_p(0))  {}
+  explicit ffmodq(const ZZ_pX& hh1)    : h1(hh1), h2(to_ZZ_p(0)) {}
   ffmodq(const ZZ_pX& hh1, const ZZ_pX& hh2) :h1(hh1), h2(hh2) {}
-
-  //  initialization
-  void init_h1h2(void)
-    {
-      // ZZ_pXSetField(h1,Fq);
-      // ZZ_pXSetField(h2,Fq);
-    }
 
   // equality test
   int operator==(const ffmodq& b) const;

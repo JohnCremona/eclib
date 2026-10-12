@@ -33,7 +33,7 @@ void showrow(int*pos, T*val) // for debugging
   int d=pos[0];
   cout<<"[";
   int* posi=pos; posi++;
-  T* vali=(T*)val;
+  T* vali = val;
   while(d--) cout<<"("<<(*posi++)<<","<<(*vali++)<<")";
   cout<<"]";
 }
@@ -256,7 +256,7 @@ Zmat<T> sZmat<T>::as_mat( ) const
     {
       int d = *col[i];
       T *values = val[i];
-      int *posi = col[i] + 1;
+      int const*posi = col[i] + 1;
       while( d-- )
 	mi[ i*nco + (*posi++) - 1 ] = *values++;
     }
@@ -357,7 +357,7 @@ sZmat<T>& sZmat<T>::operator+=(const sZmat<T>& mat2)
 // 	  showrow(col[i],val[i]); cout<<" and "; showrow(mat2.col[i],mat2.val[i]);
 // 	  cout<<endl;
 	  int d = *col[i], d2 = *mat2.col[i];
-	  int *pos1 = col[i] + 1, *pos2 = mat2.col[i]+1;
+	  int const*pos1 = col[i] + 1, *pos2 = mat2.col[i]+1;
  	  T *val1 = val[i], *val2 = mat2.val[i];
 	  int *P = new int [ d + d2 + 1 ]; int* Pj=P+1;
 	  T *V = new T [ d + d2 ]; T* Vi=V;
@@ -411,7 +411,7 @@ sZmat<T>& sZmat<T>::operator-=(const sZmat<T>& mat2)
       for(int i = 0; i < nro; i++ )
 	{
 	  int d = *col[i], d2 = *mat2.col[i];
-	  int *pos1 = col[i] + 1, *pos2 = mat2.col[i]+1;
+	  int const*pos1 = col[i] + 1, *pos2 = mat2.col[i]+1;
  	  T *val1 = val[i], *val2 = mat2.val[i];
 	  int *P = new int [ d + d2 + 1 ]; int* Pj=P+1;
 	  T *V = new T [ d + d2 ]; T* Vi=V;
@@ -450,7 +450,7 @@ sZmat<T>& sZmat<T>::operator+= (const T& scal) // adds scalar*identity
   for(int i = 0; i < nro; i++ )
     {
       int d = *col[i];                      // length of old row
-      int *pos1 = col[i] + 1;           // pointer to run along position vector
+      int const*pos1 = col[i] + 1;           // pointer to run along position vector
       T *val1 = val[i];            // pointer to run along value vector
       int *P = new int [ d + 2 ];       //  new position vector
       T *V = new T [ d + 1 ]; //  new value vector
@@ -763,7 +763,7 @@ sZmat<T> transpose ( const sZmat<T>& A )
   for( int r=0; r <A.nro; r++ ) // counts # of elements in each col
     {
       int d = *A.col[r];
-      int *p = A.col[r] + 1;
+      int const*p = A.col[r] + 1;
       while( d-- ) colwts[*p++ - 1]++;
     }
 #if(0)
@@ -793,7 +793,7 @@ sZmat<T> transpose ( const sZmat<T>& A )
     int d = *A.col[r];
     //    cout<<"row "<<r<<" of A has "<<d<<" entries\n";
     const T *v = A.val[r];
-    int *p = A.col[r] + 1;
+    int const*p = A.col[r] + 1;
     while( d-- ) {
       int c = *p++ - 1;
       B.col[c][aux[c]+1] = r+1;
@@ -827,8 +827,8 @@ int operator==(const sZmat<T>& sm1, const sZmat<T>& sm2)
        if( d1 != d2 ) {return 0;}
 
        T *sm1val = sm1.val[i], *sm2val= sm2.val[i];
-       int *sm1pos= sm1.col[i] + 1;
-       int *sm2pos = sm2.col[i] + 1;
+       int const*sm1pos= sm1.col[i] + 1;
+       int const*sm2pos = sm2.col[i] + 1;
        while (equal && d1--) equal = ((*sm1val++)==(*sm2val++));
        while (equal && d2--) equal = ((*sm1pos++)==(*sm2pos++));
      }
@@ -852,8 +852,8 @@ int eqmodp(const sZmat<T>& sm1, const sZmat<T>& sm2, const T& p)
        if( d1!=d2 ) {return 0;}
 
        T *sm1val = sm1.val[i], *sm2val= sm2.val[i];
-       int *sm1pos= sm1.col[i] + 1;
-       int *sm2pos = sm2.col[i] + 1;
+       int const*sm1pos= sm1.col[i] + 1;
+       int const*sm2pos = sm2.col[i] + 1;
        while (equal && d2--) equal = ((*sm1pos++)==(*sm2pos++));
        while (equal && d1--) equal = (xmod((*sm1val++)-(*sm2val++),p)==0);
      }
@@ -1026,7 +1026,7 @@ T maxabs(const sZmat<T>& m )
     {
       int d = *(m.col[r]);
       const T *values = m.val[r];
-      int *pos = m.col[r] + 1;
+      int const*pos = m.col[r] + 1;
       while( d-- ) { a = max(a, abs(*values++)); pos++;}
     }
   return a;

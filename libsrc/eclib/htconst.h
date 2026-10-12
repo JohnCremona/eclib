@@ -65,12 +65,12 @@ class point_min_height_finder : public point_processor {
   vector<Point> all_points;  //store points found
  public:
   explicit point_min_height_finder(Curvedata* EE, int egr=0, int verb=0);
-  ~point_min_height_finder() {};
+  //  ~point_min_height_finder() override {};
   int process(const ZZ& x, const ZZ& y, const ZZ& z) override;
   void search(bigfloat h_lim);
   bigfloat get_min_ht() const {return min_ht;}
   Point get_min_ht_point() const {return Pmin;}
-  vector<Point> points() const {return all_points;}
+  const vector<Point>& points() const {return all_points;}
 };
 
 // class Interval represents a closed interval [lh,rh] where either
@@ -81,18 +81,16 @@ class Interval {
   bigfloat lh, rh;
   bool empty, lhinf, rhinf;
 public:
-  Interval()     : empty(0), lhinf(1), rhinf(1) {show(1);}
+  Interval()     : empty(0), lhinf(1), rhinf(1) {}
   Interval(const bigfloat& a, const bigfloat& b)
-    :lh(a), rh(b), empty(a>b), lhinf(0), rhinf(0)  {show(2);}
+    :lh(a), rh(b), empty(a>b), lhinf(0), rhinf(0)  {}
   explicit Interval(const bigfloat& a)
-    :lh(a), empty(0), lhinf(0), rhinf(1)  {show(3);}
+    :lh(a), empty(0), lhinf(0), rhinf(1)  {}
   Interval(const Interval& I)
-    :lh(I.lh), rh(I.rh), empty(I.empty), lhinf(I.lhinf), rhinf(I.rhinf)  {show(4);}
+    :lh(I.lh), rh(I.rh), empty(I.empty), lhinf(I.lhinf), rhinf(I.rhinf)  {}
   void operator=(const Interval& I) 
-  {lh=I.lh; rh=I.rh; empty=I.empty; lhinf=I.lhinf; rhinf=I.rhinf;show(5);}
+  {lh=I.lh; rh=I.rh; empty=I.empty; lhinf=I.lhinf; rhinf=I.rhinf;}
   friend ostream& operator<< (ostream&s, const Interval&);
-  //  void show(int i) {cout<<i<<": "<<(*this)<<endl;}
-  void show(int i) {;}
   bool is_empty() const {return empty;}
   void intersect(const Interval& I);
   friend Interval intersect(const Interval& I, const Interval& J);
@@ -117,8 +115,6 @@ public:
   Interval01(const bigfloat& a, const bigfloat& b)
     :lh(a), rh(b), empty(a>b)  {;}
   friend ostream& operator<< (ostream&s, const Interval01&);
-  //  void show(int i) {cout<<i<<": "<<(*this)<<endl;}
-  void show(int i) {;}
   bool is_empty() const {return empty;}
   void intersect(const Interval01& I);
   friend Interval01 intersect(const Interval01& I, const Interval01& J);

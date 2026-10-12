@@ -241,27 +241,25 @@ void sZmat_elim<T>::init( )
   //  cout<<"smat_elim::init()  after reducing:\n"<<(sZmat<T>)(*this)<<endl;
   smat_elim_list::listsize = 10;
   rank = 0;
-  position = new int[sZmat<T>::nro];
+  int nr = this->nro, nc = this->nco;
+  position = new int[nr];
   int *p = position;
-  elim_col = new int[sZmat<T>::nco];
+  elim_col = new int[nc];
   int* el = elim_col;
-  elim_row = new int[sZmat<T>::nro];
+  elim_row = new int[nr];
   int* er = elim_row;
-  column = new smat_elim_ordlist[sZmat<T>::nco];
+  column = new smat_elim_ordlist[nc];
   if( !column ) { cerr << "memory exhausted in smat_elim::init"<<endl; return; }
-//   else {cout<<"Successfully created column array of length "<<nco<<endl;}
-  int l,r;
-  for( l = 0; l < sZmat<T>::nco; l++ ) *el++ = -1;
-  for( r = 0; r < sZmat<T>::nro; r++ ) { *er++ = 0; *p++ = -1; }
 
-  for( r = 0; r < sZmat<T>::nro; r++ ) {
-    int d = *sZmat<T>::col[r];
-    p = sZmat<T>::col[r] + 1;
+  int l,r;
+  for( l = 0; l < nc; l++ ) *el++ = -1;
+  for( r = 0; r < nr; r++ ) { *er++ = 0; *p++ = -1; }
+
+  for( r = 0; r < nr; r++ ) {
+    int d = *(this->col[r]);
+    p = this->col[r] + 1;
     while( d-- ) (column + (*p++) - 1)->put(r);
   }
-//   cout<<"At end of init(), columns are: \n";
-//   for( l = 0; l < nco; l++ )
-//     cout<<(l+1)<<": "<<column[l]<<"\n";
 }
 
 template<class T>
@@ -368,7 +366,8 @@ sZmat<T> sZmat_elim<T>::new_kernel( Zvec<int>& pc, Zvec<int>& npc)
   cout<<"finished sparse_elimination()"<<endl;
 #endif
 
-  int nty = sZmat<T>::nco - rank;
+  int nc = this->nco;
+  int nty = nc - rank;
 
   /* pc and npc hold the pivotal and non-pivotal column numbers, each
      is a vec, so indexed from 1, and the values are indexed from 1.
@@ -388,7 +387,7 @@ sZmat<T> sZmat_elim<T>::new_kernel( Zvec<int>& pc, Zvec<int>& npc)
   cout<<"nullity = "<<nty<<endl;
 
   float dense = get_population(*this);
-  dense /= (nro*sZmat<T>::nco);
+  dense /= (nr*nc);
   cout<<"density = "<<dense<<endl;
 #endif
 
@@ -404,7 +403,7 @@ sZmat<T> sZmat_elim<T>::new_kernel( Zvec<int>& pc, Zvec<int>& npc)
   /* find the pivotal and non-pivotal columns and the pivotal rows.
 
   */
-  for( c = 1; c <= sZmat<T>::nco; c++ )  // loop through all columns
+  for( c = 1; c <= nc; c++ )  // loop through all columns
     {
       r = elim_col[c-1]+1;
       if( r > 0 )            // this is a pivotal column for row r
@@ -599,8 +598,8 @@ sZmat<T> sZmat_elim<T>::old_kernel( Zvec<int>& pc, Zvec<int>& npc)
   cout<<"finished sparse_elimination()"<<endl;
 #endif
 
-
-  int nty = sZmat<T>::nco - rank;
+  int nc = this->nco;
+  int nty = nc - rank;
   if (nty>0)
     {
 #if TRACE_ELIM
@@ -612,7 +611,7 @@ sZmat<T> sZmat_elim<T>::old_kernel( Zvec<int>& pc, Zvec<int>& npc)
 #endif
 
     }
-  sZmat<T> bas( sZmat<T>::nco, nty );
+  sZmat<T> bas( nc, nty );
   pc.init( rank );
   npc.init( nty );
 
@@ -622,7 +621,7 @@ sZmat<T> sZmat_elim<T>::old_kernel( Zvec<int>& pc, Zvec<int>& npc)
 #endif
   int ny = 0, k = 0;
   long *new_row = new long [ rank ];
-  for( i = 1; i <= sZmat<T>::nco; i++ )
+  for( i = 1; i <= nc; i++ )
     {
       if( elim_col[i-1] > -1 )
         {
@@ -647,14 +646,14 @@ sZmat<T> sZmat_elim<T>::old_kernel( Zvec<int>& pc, Zvec<int>& npc)
       bas.val[i][0] = 1;
     }
 
-  T *aux_val = new T [sZmat<T>::nco];
-  int *aux_col = new int [sZmat<T>::nco];
+  T *aux_val = new T [nc];
+  int *aux_col = new int [nc];
   for ( r=1; r<=rank; r++)
     {
       i = pc[r]-1;
       int count = 0;
       int *axp = aux_col; T *axv = aux_val;
-      int *posB = sZmat<T>::col[new_row[r-1]];
+      int const*posB = sZmat<T>::col[new_row[r-1]];
       int d = *posB++-1;
       T *valB = sZmat<T>::val[new_row[r-1]];
       for (int j = 1, h = 0; j<=nty; j++) {
@@ -695,9 +694,10 @@ void sZmat_elim<T>::step0()
   /*This step eliminates all rows with zero or only one entry,
    *  system is supposed to be homogeneous */
 
-  smat_elim_list L(sZmat<T>::nro);
+  int nr = this->nro;
+  smat_elim_list L(nr);
   int row,i,j,n;
-  for( row = 0; row < sZmat<T>::nro; row++ )
+  for( row = 0; row < nr; row++ )
     if( *sZmat<T>::col[row] < 2 ) L.put( row );
 
   while( (row = L.next()) != -1 ) {
@@ -733,14 +733,15 @@ void sZmat_elim<T>::step1 ()
 {
   /* eliminates all rows which cut a column which has only one entry */
 
-  smat_elim_list L(sZmat<T>::nco);
+  int nc = this->nco;
+  smat_elim_list L(nc);
   int col0,col1;
 #if TRACE_ELIM
   cout<<"Step 1, column weights:"<<endl;
-  //  for( col0 = 0; col0 < sZmat<T>::nco; col0++ ) cout<<(column+col0)->num<<" ";
+  //  for( col0 = 0; col0 < nc; col0++ ) cout<<(column+col0)->num<<" ";
   //  cout<<endl;
 #endif
-  for( col0 = 0; col0 < sZmat<T>::nco; col0++ )
+  for( col0 = 0; col0 < nc; col0++ )
     if( (column+col0)->num == 1 ) {col1=col0+1; L.put(col1);}
 #if TRACE_ELIM
   cout<<"Step 1, smat_elim_list size = "<<L.num<<endl;
@@ -751,7 +752,7 @@ void sZmat_elim<T>::step1 ()
     normalize( row, col0 );
 
     /* update column */
-    int *pos = sZmat<T>::col[row];
+    int const*pos = sZmat<T>::col[row];
     int d = *pos++;
     while( d-- ) {
       int c = *pos++ - 1;
@@ -768,10 +769,10 @@ template<class T>
 void sZmat_elim<T>::step2()
 {
   /*  eliminates all rows with 1 or 2 entries  */
-
-  smat_elim_list L(sZmat<T>::nro);
+  int nr = this->nro;
+  smat_elim_list L(nr);
   int row;
-  for( row = 0; row < sZmat<T>::nro; row++ )
+  for( row = 0; row < nr; row++ )
     if( *sZmat<T>::col[row] < 3 && position[row] == -1 ) L.put( row );
 
    while( (row = L.next()) != -1 ) {
@@ -790,10 +791,10 @@ void sZmat_elim<T>::step3()
   /* eliminates all rows which cut a column which have either one or two
      entries */
 
-  smat_elim_list L(sZmat<T>::nco);
+  int nc = this->nco;
+  smat_elim_list L(nc);
   int col0,col1;
-  //  for( col0 = 0; col0 < sZmat<T>::nco; col0++ ) {
-  for( col0 = sZmat<T>::nco-1; col0 >=0; col0-- ) {
+  for( col0 = nc-1; col0 >=0; col0-- ) {
     int vali = (column+col0)->num;
     if( vali == 2 || vali == 1 ) {col1=col0+1; L.put(col1);}
   }
@@ -811,12 +812,13 @@ void sZmat_elim<T>::step3()
 template<class T>
 void sZmat_elim<T>::step4 ( )
 {
-  int* lightness = new int[sZmat<T>::nco];
+  int nc = this->nco, nr = this->nro;
+  int* lightness = new int[nc];
   int M, i, wt, r, row;
 
   // Find maximum column weight
   int maxcolwt=0;
-  for( i = 0; i < sZmat<T>::nco; i++ )
+  for( i = 0; i < nc; i++ )
     {
       wt = (column+i)->num;
       if( maxcolwt < wt) maxcolwt=wt;
@@ -839,7 +841,7 @@ void sZmat_elim<T>::step4 ( )
       /* divides columns in `light' and `heavy' */
       int nlight=0;
       int *l = lightness;
-      for( i = 0; i < sZmat<T>::nco; i++ ) {
+      for( i = 0; i < nc; i++ ) {
 	wt = (column+i)->num;
 	if( 0 < wt && wt <= M ) {*l++ = 1; nlight++;} //light
 	else *l++ = 0;     //heavy; includes columns already eliminated
@@ -849,12 +851,12 @@ void sZmat_elim<T>::step4 ( )
       report();
 #endif
   if (nlight==0) break; // from the loop over M
-  if (nlight<(sZmat<T>::nco/2)) break; // from the loop over M
-  //if (nlight<=(sZmat<T>::nco/4)) break; // from the loop over M
+  if (nlight<nc/2) break; // from the loop over M
+  //if (nlight<=(nc/4)) break; // from the loop over M
       while(1)
 	{
 	  /* eliminates rows with weight 1 */
-	  for( r = 0, row = -1; r < sZmat<T>::nro; r++ ) {
+	  for( r = 0, row = -1; r < nr; r++ ) {
 	    if(has_weight_one(r, lightness) && position[r] == -1)
 	      { row = r; break; }
 	  }
@@ -862,7 +864,7 @@ void sZmat_elim<T>::step4 ( )
 	    {
 	      int col0 = 0;       // light col cutting row
 	      int d = *sZmat<T>::col[row]; // weight in the process of eliminating row r.
-	      int *pos = sZmat<T>::col[row] + 1;
+	      int const*pos = sZmat<T>::col[row] + 1;
 	      while( d-- ) {
 		int c = *pos++ - 1;
 		if(lightness[c] == 1) { col0 = c+1; break; }
@@ -887,6 +889,7 @@ void sZmat_elim<T>::standard ( ){
 
   int i, col0, row, wt, mincolwt;
   double density_threshold = 0.2; // 0.25; // 0.5; // 0.75; // 0.9; // 0.7; // 0.5; // 0.2; // 0.04; // 0.15; // 0.2; // 0.1;
+  int nc = this->nco, nr = this->nro;
 
  // this threshold can be changed: the code here works fine when the
  // density is low, but when it is higher it's best to switch to using
@@ -901,8 +904,8 @@ void sZmat_elim<T>::standard ( ){
   while(active_density() < density_threshold)
     {
   // Find minimum positive column weight
-      mincolwt=sZmat<T>::nro+1; col0=-1;
-      for( i = 0; i < sZmat<T>::nco; i++ )
+      mincolwt=nr+1; col0=-1;
+      for( i = 0; i < nc; i++ )
         {
           wt = (column+i)->num;
           if( (wt>0) && (mincolwt > wt) ) {col0=i+1; mincolwt=wt;}
@@ -932,7 +935,7 @@ void sZmat_elim<T>::back_sub ( ){
   for( int n = rank; n; n-- )
     {
       int row = elim_row[n-1];
-      int* pos = sZmat<T>::col[row] + 1;
+      int const* pos = sZmat<T>::col[row] + 1;
       for( int j = 0; j < *sZmat<T>::col[row]; j++ )
 	{
 	  int e  = elim_col[*pos++-1];
@@ -961,7 +964,7 @@ void sZmat_elim<T>::normalize( int row, int col0)
 }
 
 template<class T>
-void sZmat_elim<T>::eliminate( const int& row, const int& col0 ) //1<=col0<=sZmat<T>::nco;
+void sZmat_elim<T>::eliminate( const int& row, const int& col0 )  //1<=nco;
 {
   //cout<<"Eliminating (r,c)=("<<row<<","<<col0-1<<")"<<endl;
   elim_col[ col0 - 1 ] = row;
@@ -1092,20 +1095,20 @@ void sZmat_elim<T>::check_col( int c, smat_elim_list& L )
 }
 
 template<class T>
-int sZmat_elim<T>::get_weight( int row, const int* lightness )
+int sZmat_elim<T>::get_weight( int row, const int* lightness ) const
 {
   int wt = 0;
-  int *pos = sZmat<T>::col[row];
+  int const*pos = this->col[row];
   int d = *pos++;
   while( d-- ) wt += lightness[ *pos++ - 1 ];
   return wt;
 }
 
 template<class T>
-int sZmat_elim<T>::has_weight_one( int row, const int* lightness )
+int sZmat_elim<T>::has_weight_one( int row, const int* lightness ) const
 {
   int wt = 0;
-  int *pos = sZmat<T>::col[row];
+  int const*pos = this->col[row];
   int d = *pos++;
   while( d-- )
     {
@@ -1116,7 +1119,7 @@ int sZmat_elim<T>::has_weight_one( int row, const int* lightness )
 }
 
 template<class T>
-int sZmat_elim<T>::n_active_cols() // number of active columns
+int sZmat_elim<T>::n_active_cols() const // number of active columns
 {
   // Remaining cols are those with positive column weight
   int j, nrc;
@@ -1127,7 +1130,7 @@ int sZmat_elim<T>::n_active_cols() // number of active columns
 }
 
 template<class T>
-int sZmat_elim<T>::n_active_rows() // number of active rows
+int sZmat_elim<T>::n_active_rows() const // number of active rows
 {
   // Remaining rows are those with "position" code -1 or those which are empty
   int i, nrr;
@@ -1138,7 +1141,7 @@ int sZmat_elim<T>::n_active_rows() // number of active rows
 }
 
 template<class T>
-long sZmat_elim<T>::n_active_entries() // number of active entries
+long sZmat_elim<T>::n_active_entries() const // number of active entries
 {
   // Remaining cols are those with positive column weight
   int j; long n=0;
@@ -1148,7 +1151,7 @@ long sZmat_elim<T>::n_active_entries() // number of active entries
 }
 
 template<class T>
-double sZmat_elim<T>::active_density() // density of non-eliminated part
+double sZmat_elim<T>::active_density() const // density of non-eliminated part
 {
   double d = n_active_entries();
   int n = n_active_cols();
@@ -1161,7 +1164,7 @@ double sZmat_elim<T>::active_density() // density of non-eliminated part
 }
 
 template<class T>
-void sZmat_elim<T>::report()
+void sZmat_elim<T>::report() const
 {
   cerr << n_active_entries() << " active entries in ("
        << n_active_rows() << "," << n_active_cols()
@@ -1178,7 +1181,7 @@ void sZmat_elim<T>::elim( int row1, int row2, T v2 )
 {
   int d = *this->col[row1], d2 = *this->col[row2];
   T *oldVal = this->val[row2]; int *oldMat = this->col[row2];
-  int *pos1 = this->col[row1]+1;
+  int const*pos1 = this->col[row1]+1;
   int const *pos2 = oldMat + 1;
   T *veci1 = this->val[row1], *veci2 = oldVal;
   int *P = this->col[row2] = new int [ d + d2 + 1 ]; P++;

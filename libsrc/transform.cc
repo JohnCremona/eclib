@@ -111,14 +111,14 @@ void zshift(const ZZ& gamma,
   m.y_shift(gamma);
 }
 
-void m_invert(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
+void m_invert(ZZ& a, ZZ& b, const ZZ& c, ZZ& d, ZZ& e,
 	      unimod& m)
 {
   swap(a,e); swap(b,d); ::negate(b); ::negate(d);
   m.invert();
 }
 
-void m_invert(ZZ& a, ZZ& b, ZZ& c, ZZ& d, ZZ& e,
+void m_invert(ZZ& a, ZZ& b, const ZZ& c, ZZ& d, ZZ& e,
 	      scaled_unimod& m)
 {
   swap(a,e); swap(b,d); ::negate(b); ::negate(d);

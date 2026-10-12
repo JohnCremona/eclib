@@ -711,10 +711,10 @@ int newforms::get_imag_period(long i, bigfloat& y, int verbose) const
   const newform* nfi = &(nflist[i]);
   lfchi lx(this,nfi);
 
-  long lminus=(nfi->lminus);
   long mminus=(nfi->mminus);
   if(mminus!=0)
     {
+      long lminus=(nfi->lminus);
       if(verbose)
 	cout << "Computing imaginary period via L(f,chi,1) with chi mod "
 	     <<lminus<<"...";

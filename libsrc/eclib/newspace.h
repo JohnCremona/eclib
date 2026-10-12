@@ -145,7 +145,7 @@ public:
   // Return the degree of the Hecke field
   int dimension() const {return d;}
   ZZX poly(int original=0) const {return (original? F0->poly(): F->poly());}
-  string label_suffix() const {return lab;}
+  const string& label_suffix() const {return lab;}
   string label() const;
 
   // Output basis for the Hecke field
@@ -157,7 +157,7 @@ public:
   void display_AL() const;
 
   // return the list of traces
-  vector<ZZ> traces() const {return trace_list;}
+  const vector<ZZ>& traces() const {return trace_list;}
 
   // Filename for this Newform:
   string filename() const;
@@ -258,9 +258,9 @@ public:
   int ok() const {return split_ok;}
   int nforms() const {return newforms.size();}
   long level() const {return N;}
-  string label() {return level_label;}
+  const string& label() {return level_label;}
 
-  string splitopname() const {return T_name;}
+  const string& splitopname() const {return T_name;}
 
   // Return a list of the degrees of the Hecke fields
   vector<int> dimensions() const;
@@ -270,7 +270,7 @@ public:
   // sort the list of newforms using newform_cmp
   void sort_newforms();
   // return the list of newforms
-  vector<Newform> the_newforms() const {return newforms;}
+  const vector<Newform>& the_newforms() const {return newforms;}
 
   // filename for Newspace
   string filename();

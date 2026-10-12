@@ -118,7 +118,7 @@ Newform::Newform(Newspace* x, int ind, const ZZX& f, int verbose)
 
   Qmat A; ZZX cpA; string opname;
   int found=0;
-  for (auto op: nsp->ops)
+  for (const auto& op: nsp->ops)
     {
       A = Qmat(transpose(restrict_mat(nsp->heckeop(op),S)), denom_abs);
       cpA = A.charpoly();
@@ -195,10 +195,7 @@ Newform::Newform(Newspace* x, int i, int fill_aPmap, int fill_aMlist, int verbos
     cerr << "Unable to read Newform " << lab << endl;
 }
 
-string Newform::label() const
-{
-  return nsp->level_label + lab;
-}
+string Newform::label() const { return nsp->level_label + lab;}
 
 // raw eigenvalue coordinate vector of a general operator:
 vec_m Newform::eig_raw(const matop& T)
@@ -608,7 +605,7 @@ void Newspace::find_T(int maxnp, int maxc, int minp)
       if (verbose)
         {
           cout << " of (";
-          for (auto T: ops)
+          for (const auto& T: ops)
             cout << " " << T.name();
           cout << ")";
         }
@@ -757,16 +754,16 @@ void Newform::compute_HO_from_raw_eigs(int verbose)
   int i=1;
   for (const auto& c : aPmap_int_coords)
     {
-      auto ap = (*F)(M0 * Qvec(c.second));
+      auto a = (*F)(M0 * Qvec(c.second));
       E0.setrow(i++, c.second);
 #ifdef DEBUG_HO
-      if (ap.is_integral())
+      if (a.is_integral())
         ; // cout << "ap for p = " << c.first << " is integral " << endl;
       else
         {
           cout << "raw eigenvalue coords for p = " << c.first
-               << " map to ap = " << ap << " which is not integral!" << endl;
-          cout << "char poly of ap is \n" << ::str(ap.charpoly()) << endl;
+               << " map to ap = " << a << " which is not integral!" << endl;
+          cout << "char poly of ap is \n" << ::str(a.charpoly()) << endl;
           exit(1);
         }
 #endif
@@ -1127,7 +1124,7 @@ void Newform::output_to_file() const
 
   // Output A-L eigenvalues if computed, else output nothing
   vector<long> bads = nsp->badprimes;
-  for (auto& Q: bads)
+  for (const auto& Q: bads)
     {
       int eQ=0;
       if (!eQmap.empty())
@@ -1137,7 +1134,7 @@ void Newform::output_to_file() const
   out << "\n";
 
   // Output aP
-  for (auto x: aPmap_int_coords)
+  for (const auto& x: aPmap_int_coords)
     {
       const long& p = x.first;
       const vec_m& apcoords = x.second;
@@ -1388,7 +1385,7 @@ int Newspace::input_from_file(const long& level, int fill_aPmaps, int fill_aMlis
 // output basis for the Hecke field and character of all newforms
 void Newspace::display_newforms(int aP, int AL, int traces) const
 {
-  for ( auto& nf : newforms)
+  for ( const auto& nf : newforms)
     {
       nf.display(aP, AL, traces);
       cout<<endl;

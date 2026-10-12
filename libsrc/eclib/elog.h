@@ -2,25 +2,25 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Copyright 1990-2026 John Cremona
-// 
+//
 // This file is part of the eclib package.
-// 
+//
 // eclib is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.
-// 
+//
 // eclib is distributed in the hope that it will be useful, but WITHOUT
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 // FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with eclib; if not, write to the Free Software Foundation,
 // Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-// 
+//
 //////////////////////////////////////////////////////////////////////////
- 
+
 #ifndef _ECLIB_ELOG_H_
 #define _ECLIB_ELOG_H_
 
@@ -40,10 +40,10 @@
 // or rational (but NOT complex) point P=(x,y), returns the unique
 // complex number z such that
 
-// (1) \wp(z)=x+b2/12, \wp'(z)=2y+a1*x+a3, 
+// (1) \wp(z)=x+b2/12, \wp'(z)=2y+a1*x+a3,
 
 // (2) either z is real and 0\le z\lt w1, or Delta>0, z-w2/2 is real
-// and 0\le z-w2/2\le w1.  
+// and 0\le z-w2/2\le w1.
 
 // Here, [w1,w2] is the standard period lattice basis
 
@@ -51,11 +51,11 @@
 
 // First & second functions:  P=[x,y] with x,y real; maps to z mod lattice
 
-bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, 
+bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per,
 		       const bigfloat& x, const bigfloat& y);
 
-inline bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per, 
-			      const vector<bigfloat> P) 
+inline bigcomplex ellpointtoz(const Curvedata& E, const Cperiods& per,
+			      const vector<bigfloat>& P)
 {return ellpointtoz(E,per,P[0],P[1]);}
 
 // Third function:  P=rational point; maps to z mod lattice

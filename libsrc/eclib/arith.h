@@ -132,7 +132,7 @@ inline vector<long> sqfreedivs(long n)
 
 // Euler phi function.  The first version requires plist to contain
 // all the prime dividing n, not necessarily only those primes.
-long euler_phi(long n, const vector<long> plist);
+long euler_phi(long n, const vector<long>& plist);
 inline long euler_phi(long n) {return euler_phi(n, pdivs(n));}
 
 // utilities for compatibility with ZZ args

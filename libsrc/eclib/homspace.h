@@ -76,7 +76,7 @@ public:
   matop(long a, long b, long c, long d);  // constructor for a single matrix
   long size() const {return mats.size();}
   mat22 operator[](long i) const {return mats[i];}
-  string name() const  {return the_name;}
+  const string& name() const  {return the_name;}
 };
 
 inline ostream& operator<< (ostream& s, const mat22& m)
@@ -91,7 +91,7 @@ class gmatop {
   vector<matop> ops;
   vector<scalar> coeffs;
   gmatop() {;}
-  explicit gmatop(const vector<matop>& Tlist, const vector<scalar> clist)
+  explicit gmatop(const vector<matop>& Tlist, const vector<scalar>& clist)
     :ops(Tlist), coeffs(clist)  {;}
   explicit gmatop(const vector<matop>& Tlist)
     :ops(Tlist), coeffs(vector<scalar>(Tlist.size(), scalar(1)))  {;}
@@ -336,7 +336,7 @@ inline ZZX get_new_poly(const long& N, const matop& T, int cuspidal, const scala
 {return get_new_poly(N, gmatop(T), cuspidal, mod);}
 
 // Functions to output and re-input poly dicts
-void output_poly_dict(ostream& os, map<string, ZZX> D);
+void output_poly_dict(ostream& os, const map<string, ZZX>& D);
 map<string, ZZX> input_poly_dict(istream& is);
 
 #endif

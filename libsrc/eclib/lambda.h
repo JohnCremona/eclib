@@ -40,6 +40,6 @@ vector<bigfloat> lambda_bad(CurveRed& C, long& nlambda, int verbose=0);
 
 int make_point_from_x(Curvedata* CD, const ZZ& a, const ZZ& d, Point* P);
 int make_point_from_x(Curvedata* CD, const bigfloat& x, long maxdd, Point* P);
-int make_point_from_x_and_ht(Curvedata* CD, vector<bigfloat> lambdas, const bigfloat& xp, const bigfloat& ht, Point* P);
+int make_point_from_x_and_ht(Curvedata* CD, const vector<bigfloat>& lambdas, const bigfloat& xp, const bigfloat& ht, Point* P);
 
 #endif

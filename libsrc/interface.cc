@@ -363,7 +363,7 @@ int longify(double x, long& a, int rounding)
 
 #endif // MPFP
 
-string getenv_with_default(string env_var, string def_val)
+string getenv_with_default(const string& env_var,  const string& def_val)
 {
   stringstream s;
   if (getenv(env_var.c_str()) != NULL) {

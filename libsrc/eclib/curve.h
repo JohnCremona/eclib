@@ -269,7 +269,7 @@ private:
 
 public:
   // member access functions:
-  friend inline vector<ZZ> getbad_primes(const CurveRed& c)
+  friend inline const vector<ZZ>& getbad_primes(const CurveRed& c)
   {return c.the_bad_primes; }
   friend inline ZZ getconductor(const CurveRed& c) {return c.N; }
   int ord_p_discr(const ZZ& p) const;
@@ -392,7 +392,7 @@ inline vector<CurveRed> PrimeTwists(const vector<CurveRed>& EE, long p)
 // those primes (including the original curves)
 
 vector<CurveRed> AllTwists(const vector<CurveRed>& EE, const vector<ZZ>& PP);
-inline vector<CurveRed> AllTwists(const vector<CurveRed>& EE, vector<long> PP)
+inline vector<CurveRed> AllTwists(const vector<CurveRed>& EE, const vector<long>& PP)
 { return AllTwists(EE, ZZify(PP)); }
 
 // end of file: curve.h

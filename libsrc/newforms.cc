@@ -255,7 +255,7 @@ void newform::fixup_eigs()
   auto api=aplist.begin();
   auto pi=nf->plist.begin();
   auto aqi=aqlist.begin();
-  primevar pr;   long q, i;
+  primevar pr;   long q;
   long N = nf->N;
   while((api!=aplist.end())&&(aqi!=aqlist.end()))
     {
@@ -291,8 +291,7 @@ void newform::fixup_eigs()
 
   //Compute sfe:
 
-  sfe=-1;
-  for(i=0; i<(nf->npdivs); i++) sfe*=aqlist[i];
+  sfe = std::accumulate(aqlist.begin(), aqlist.end(), -1, std::multiplies<int>());
   if(nf->verbose) cout<<"sfe = "<<sfe<<endl;
 }
 
@@ -1036,7 +1035,7 @@ void newforms::make_projcoord()
       h1->projcoord.setcol(j, nflist[j-1].coordsplus);
 }
 
-long newforms::dimoldpart(const vector<long> l)
+long newforms::dimoldpart(const vector<long>& l)
 {
   return of->dimoldpart(l);
 }
@@ -1044,7 +1043,7 @@ long newforms::dimoldpart(const vector<long> l)
 // We really should check here that the basis vector b1 is in
 // ker(delta), by checking that b1*h1->deltamat == 0
 
-void newforms::use(const vec& b1, const vec& b2, const vector<long> aplist)
+void newforms::use(const vec& b1, const vec& b2, const vector<long>& aplist)
 {
   if(basisflag) // we already have all the data except the
                 // basis vector, so not much needs doing
@@ -1301,21 +1300,21 @@ void newform::display(void) const
 void putout(ofstream& of, short a, int binflag)
 {
   if(binflag)
-    of.write((char*)&a,sizeof(short));
+    of.write(reinterpret_cast<char*>(&a),sizeof(short));
   else
     of<<setw(5)<<a;
 }
 void putout(ofstream& of, int a, int binflag)
 {
   if(binflag)
-    of.write((char*)&a,sizeof(int));
+    of.write(reinterpret_cast<char*>(&a),sizeof(int));
   else
     of<<setw(10)<<a;
 }
 void putout(ofstream& of, long a, int binflag)
 {
   if(binflag)
-    of.write((char*)&a,sizeof(long));
+    of.write(reinterpret_cast<char*>(&a),sizeof(long));
   else
     of<<setw(15)<<a;
 }
@@ -1475,10 +1474,10 @@ void newforms::createfromdata(int s, long ntp,
     }
 
   int temp_int;
-  datafile.read((char*)&temp_int,sizeof(int));   // = number of newforms
+  datafile.read(reinterpret_cast<char*>(&temp_int), sizeof(int));   // = number of newforms
   n1ds=temp_int;
-  datafile.read((char*)&temp_int,sizeof(int));   // = number of bad primes
-  datafile.read((char*)&temp_int,sizeof(int));   // = number of eigs
+  datafile.read(reinterpret_cast<char*>(&temp_int), sizeof(int));   // = number of bad primes
+  datafile.read(reinterpret_cast<char*>(&temp_int), sizeof(int));   // = number of eigs
   nap=temp_int;
   if(n1ds==0)
     {
@@ -1494,7 +1493,7 @@ void newforms::createfromdata(int s, long ntp,
   // read extra data for each newform (16 ints each)
   long ntotal = 16*n1ds;
   int* batch_i = new int[ntotal];
-  datafile.read((char*)batch_i,ntotal*sizeof(int));
+  datafile.read(reinterpret_cast<char*>(batch_i), ntotal*sizeof(int));
   int const* batch_i_ptr = batch_i;
   for(j=0; j<16; j++)
     for(i=0; i<n1ds; i++)
@@ -1505,7 +1504,7 @@ void newforms::createfromdata(int s, long ntp,
   // read aq for each newform (npdivs longs each)
   ntotal = npdivs*n1ds;
   short* batch = new short[ntotal];
-  datafile.read((char*)batch,ntotal*sizeof(short));
+  datafile.read(reinterpret_cast<char*>(batch), ntotal*sizeof(short));
   short const* batchptr = batch;
   for(j=0; j<npdivs; j++)
     for(i=0; i<n1ds; i++)
@@ -1516,7 +1515,7 @@ void newforms::createfromdata(int s, long ntp,
   ntotal = nap*n1ds;
   delete[] batch;
   batch = new short[ntotal];
-  datafile.read((char*)batch,ntotal*sizeof(short));
+  datafile.read(reinterpret_cast<char*>(batch), ntotal*sizeof(short));
   batchptr = batch;
   for(j=0; j<nap; j++)
     for(i=0; i<n1ds; i++)
@@ -1556,7 +1555,7 @@ vector<long> eiglist(CurveRed& C, int nap)
 }
 
 // extract the eigenvalues for bad primes
-vector<long> aqlist(vector<long> aplist, long N)
+vector<long> aqlist(const vector<long>& aplist, long N)
 {
   long iq=0, naq = pdivs(N).size();
   //cout << "Setting aq of size "<<naq<<endl;
@@ -1681,10 +1680,10 @@ void newforms::createfromolddata()
     }
 
   short temp;
-  eigsfile.read((char*)&temp,sizeof(short));   // # newforms
+  eigsfile.read(reinterpret_cast<char*>(&temp), sizeof(short));   // # newforms
   n1ds=temp;
-  eigsfile.read((char*)&temp,sizeof(short));   // # irrational newforms
-  eigsfile.read((char*)&temp,sizeof(short));   // # ap
+  eigsfile.read(reinterpret_cast<char*>(&temp), sizeof(short));   // # irrational newforms
+  eigsfile.read(reinterpret_cast<char*>(&temp), sizeof(short));   // # ap
   nap=temp;
   if(n1ds==0)
     {
@@ -1698,7 +1697,7 @@ void newforms::createfromolddata()
   for(i=0; i<n1ds; i++) ap[i].resize(nap);
   long ntotal = nap*n1ds;
   short* batch = new short[ntotal];
-  eigsfile.read((char*)batch,ntotal*sizeof(short));
+  eigsfile.read(reinterpret_cast<char*>(batch), ntotal*sizeof(short));
   eigsfile.close();
   short const* batchptr = batch;
   for(j=0; j<nap; j++)
@@ -2044,9 +2043,9 @@ void output_to_file_no_newforms(long n, int binflag, int smallflag)
   if(binflag)
     {
       int a=0;
-      out.write((char*)&a,sizeof(int));
-      out.write((char*)&a,sizeof(int));
-      out.write((char*)&a,sizeof(int));
+      out.write(reinterpret_cast<char*>(&a),sizeof(int));
+      out.write(reinterpret_cast<char*>(&a),sizeof(int));
+      out.write(reinterpret_cast<char*>(&a),sizeof(int));
     }
   else
     {
@@ -2093,7 +2092,7 @@ pair<rational,rational> newforms::full_modular_symbol(const rational& r, long i,
 
   // Attempt to compute and display the elliptic curve for each
   // newform; return a list of newform indices where this failed.
-vector<int> newforms::showcurves(vector<int> forms, int verbose, string filename)
+vector<int> newforms::showcurves(const vector<int>& forms, int verbose, const string& filename)
 {
   if((verbose>1)&&(sqfac>1)) cout<<"c4 factor " << sqfac << endl;
 
