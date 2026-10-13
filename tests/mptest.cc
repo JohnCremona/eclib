@@ -58,15 +58,6 @@ int main()
   vector<long> lqlist = posdivs(420, lplist);
   cout<<lqlist<<endl;
   ZZ num; num=420;
-  vector<ZZ> a(3);
-  a[0]=10; a[1]=20; a[2]=30;
-  vector<ZZ> b = a;
-  cout << "Elements of a are: " << a[0]<<"\t"<<a[1]<<"\t"<<a[2]<<endl;
-  cout << "Elements of b are: " << b[0]<<"\t"<<b[1]<<"\t"<<b[2]<<endl;
-  cout << "a = " << a << endl << "end of output of a" << endl;
-  cout << "b = " << b << endl << "end of output of b" << endl;
-  b=a;
-  cout<<"After b=a, b = " << endl << b << endl;
 
   cout<<"ZZ versions of divisor functions:\n\n";
   cout<<"ZZ prime factors of 420:\n";

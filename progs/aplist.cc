@@ -48,23 +48,23 @@ int main()
 	  int nbigprimes = 5;  // max no. of primes over 100
 
 	  int temp_int;
-	  datafile.read((char*)&temp_int,sizeof(int));   // = number of newforms
+	  datafile.read(reinterpret_cast<char*>(&temp_int),sizeof(int));   // = number of newforms
 	  nnf=temp_int;
-	  datafile.read((char*)&temp_int,sizeof(int));   // = number of bad primes
+	  datafile.read(reinterpret_cast<char*>(&temp_int),sizeof(int));   // = number of bad primes
 	  naq=temp_int;
-	  datafile.read((char*)&temp_int,sizeof(int));   // = number of eigs
+	  datafile.read(reinterpret_cast<char*>(&temp_int),sizeof(int));   // = number of eigs
 	  if(nnf==0) continue;
 
 	      // skip over extra data for each newform
 	      int ntotal = 16*nnf;
 	      int* batch_i = new int[ntotal];
-	      datafile.read((char*)batch_i,ntotal*sizeof(int));
+	      datafile.read(reinterpret_cast<char*>(batch_i),ntotal*sizeof(int));
 	      delete[] batch_i;
 
 	      // read and store aq for each newform
 	      ntotal = naq*nnf;
 	      short* batch = new short[ntotal];
-	      datafile.read((char*)batch,ntotal*sizeof(short));
+	      datafile.read(reinterpret_cast<char*>(batch),ntotal*sizeof(short));
 	      const short* batchptr = batch;
 	      vector< vector<long> > aqtable;
 	      for(ic=0; ic<nnf; ic++) aqtable.push_back(vector<long>(naq));
@@ -75,7 +75,7 @@ int main()
 	      ntotal = 25*nnf;
 	      delete[] batch;
 	      batch = new short[ntotal];
-	      datafile.read((char*)batch,ntotal*sizeof(short));
+	      datafile.read(reinterpret_cast<char*>(batch),ntotal*sizeof(short));
 	      batchptr = batch;
 	      vector< vector<long> > aptable;
 	      vector<long> bigptable;
@@ -99,13 +99,13 @@ int main()
 		{
 		  while (nn%p!=0) // skip over data for p & increment p
 		    {
-		      datafile.read((char*)batch,nnf*sizeof(short));
+		      datafile.read(reinterpret_cast<char*>(batch),nnf*sizeof(short));
 		      p=prime_number(++jp);
 		    }
 		  // now p is a "large" prime divisor of n
 		  bigptable.push_back(p);
 		  while (nn%p==0) nn/=p;
-		  datafile.read((char*)batch,nnf*sizeof(short));
+		  datafile.read(reinterpret_cast<char*>(batch),nnf*sizeof(short));
 		  batchptr=batch;
 		  for(ic=0; ic<nnf; ic++) aptable[ic][ip]=*batchptr++;
 		  ip++;

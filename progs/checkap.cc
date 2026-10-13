@@ -47,30 +47,30 @@ int main(void)
       else 
 	{
 	  int temp_int;
-	  datafile.read((char*)&temp_int,sizeof(int));   // = number of newforms
+	  datafile.read(reinterpret_cast<char*>(&temp_int),sizeof(int));   // = number of newforms
 	  nnf=temp_int;
-	  datafile.read((char*)&temp_int,sizeof(int));   // = number of bad primes
+	  datafile.read(reinterpret_cast<char*>(&temp_int),sizeof(int));   // = number of bad primes
 	  naq=temp_int;
-	  datafile.read((char*)&temp_int,sizeof(int));   // = number of eigs
+	  datafile.read(reinterpret_cast<char*>(&temp_int),sizeof(int));   // = number of eigs
 	  nap=temp_int;
 	  if(nnf>0) 
 	    {
 	      // skip over extra data for each newform
 	      long ntotal = 16*nnf;
 	      int* batch_i = new int[ntotal];
-	      datafile.read((char*)batch_i,ntotal*sizeof(int));
+	      datafile.read(reinterpret_cast<char*>(batch_i),ntotal*sizeof(int));
               delete[] batch_i;
 
 	      // skip over aq for each newform
 	      ntotal = naq*nnf;
 	      short* batch = new short[ntotal];
-	      datafile.read((char*)batch,ntotal*sizeof(short));
+	      datafile.read(reinterpret_cast<char*>(batch),ntotal*sizeof(short));
 
 	      // read and check ap for each newform
 	      ntotal = nap*nnf;
 	      delete[] batch;
 	      batch = new short[ntotal];
-	      datafile.read((char*)batch,ntotal*sizeof(short));
+	      datafile.read(reinterpret_cast<char*>(batch),ntotal*sizeof(short));
 	      const short* batchptr = batch;
 	      primevar pr;
 	      for(j=0; j<nap; j++, pr++) 

@@ -44,10 +44,10 @@ int main(void)
   else
     {
       //      cout<<"Opened file "<<name<<" for newform input"<<endl;
-      in.read((char*)&num,sizeof(int));
+      in.read(reinterpret_cast<char*>(&num),sizeof(int));
       count+=num;
-      in.read((char*)&naq,sizeof(int));   // = number of bad primes
-      in.read((char*)&nap,sizeof(int));   // = number of eigs
+      in.read(reinterpret_cast<char*>(&naq),sizeof(int));   // = number of bad primes
+      in.read(reinterpret_cast<char*>(&nap),sizeof(int));   // = number of eigs
       in.close();
     }
   if(verbose) 

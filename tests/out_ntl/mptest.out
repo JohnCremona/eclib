@@ -4,14 +4,6 @@ long prime factors of 420:
 [ 2 3 5 7 ]
  with posdivs (long version)
 [ 1 2 4 3 6 12 5 10 20 15 30 60 7 14 28 21 42 84 35 70 140 105 210 420 ]
-Elements of a are: 10	20	30
-Elements of b are: 10	20	30
-a = [ 10 20 30 ]
-end of output of a
-b = [ 10 20 30 ]
-end of output of b
-After b=a, b = 
-[ 10 20 30 ]
 ZZ versions of divisor functions:
 
 ZZ prime factors of 420:
