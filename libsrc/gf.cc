@@ -28,7 +28,9 @@ map<ZZ,ZZ_pContext> ZZ_pContextCache;
 galois_field::galois_field(void)  //dummy
  :q(to_ZZ(2))
 {
-  ZZ_pContext_init_or_restore(q);
+  // ffmodq::Fq is constructed during static initialization, possibly before
+  // ZZ_pContextCache in this translation unit. Do not access the cache here.
+  ZZ_p::init(q);
 }
 
 void ZZ_pContext_init_or_restore(const ZZ& q)
