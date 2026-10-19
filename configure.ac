@@ -7,7 +7,7 @@ AC_PREREQ([2.69])
 # The version is the concatenation of 'v' and the year, month, date: vyyyymmdd
 # To access this as a string or integer triple, see libsrc/eclib/version.h
 
-AC_INIT([eclib], [20260707], [j.e.cremona@proton.me])
+AC_INIT([eclib], [20261019], [j.e.cremona@proton.me])
 
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
