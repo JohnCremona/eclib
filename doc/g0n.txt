@@ -1,7 +1,12 @@
-Documentation for the modular symbol programs in the eclib library (guide to source code)
+Documentation for the modular symbol programs in the eclib library
+(guide to source code)
+
+NB This does not yet document the new classes Newspace and Newform for
+newforms of dimension 1 implemented in 2026 and exercised in
+progs/makensp and progs/listnsp.
 
 %  created 20070125
-%  Time-stamp: <2026-04-30 11:02:48 john>
+%  Time-stamp: <2026-10-19 14:42:20 john>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

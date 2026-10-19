@@ -4,40 +4,25 @@ configure by typing ./configure --help.
 
 1. DEPENDENCIES
 
-(a) Both NTL and PARI are required.  If they have not been installed
+(a)  NTL, FLINT and PARI are required.  If they have not been installed
 in a place where the system will find them automatically (such as
 /usr/local) then you will need to specify where they are when you
 configure, like this:
 
-./configure --with-pari=<path> --with-ntl=<path>
+./configure --with-pari=<path> --with-ntl=<path> --with-flint=<path>
 
-If you have Sage installed in SAGE_ROOT then you can use
-$SAGE_ROOT/local for both of these.  Note that when you specify these
-locations, no check is done that a usable version exists in that
-place: it will be assumed that <path>/include and <path>/lib contain
-appropriate include files and libraries, and the build will fail if
-not.
+Note that when you specify these locations, no check is done that a
+usable version exists in that place: it will be assumed that
+<path>/include and <path>/lib contain appropriate include files and
+libraries, and the build will fail if not.
 
-(b) FLINT is optional (from eclib-2013-01-01) and only used for one
-part of sparse matrix reduction, which is used in the modular symbol
-code but not mwrank or other elliptic curve programs.  If a suitable
-FLINT version is found (which must be at least version 2.3, to contain
-the nmod_mat module) it will be used.  If in addition you have the
-optional FLINT module hmod_mat (which does modular matrix operations
-using 32-bit data types) this can be activated by setting the
-environment valriable FLINT_LEVEL to 2 before running configure, or
-adding "FLINT_LEVEL=2" to the end of the configure invocation.  Both
-of these have the effect of adding the compiler flag
-"-DFLINT_LEVEL=2$.  The advantage of this is that the modular symbol
-code will require less RAM to run.
-
-(c) Boost is optional (from eclib-2013-09-00) and provides parallel
+(b) Boost is optional (from eclib-2013-09-00) and provides parallel
 capabilities in the form_finder class. Configure with --with-boost
 specifying location of a fully built version of Boost, i.e. not
 just the header files. After initial configure, if an error occurs,
 run autoreconf and configure again. Autotools will initiate the
 macros in m4/ directory and look for Boost.asio, Boost.thread, and
-Boost.system. Refer ti ./configure --help for more configuration
+Boost.system. Refer to ./configure --help for more configuration
 options.
 
 2. By default a lot of programs, including test programs, are built

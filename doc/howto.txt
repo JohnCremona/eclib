@@ -1,6 +1,6 @@
 Documentation for the eclib library (building and running)
 
-%  Time-stamp: <2023-11-10 15:16:50 john>
+%  Time-stamp: <2026-10-19 14:40:53 john>
 
 0. Prerequisites:  gmp, pari, ntl, flint are all available for example
    as ubuntu packages.  Configure will complain if it cannot find them.
@@ -8,12 +8,12 @@ Documentation for the eclib library (building and running)
 1. Download, build and install:
 
 (a) Get the latest version of eclib from GitHub, e.g.
-wget https://github.com/JohnCremona/eclib/releases/download/v20230424/eclib-20230424.tar.bz2
+wget https://github.com/JohnCremona/eclib/releases/download/v20261019/eclib-20261019.tar.bz2
 (b) Unpack it using
-tar jxf eclib-20230424.tar.bz2
+tar jxf eclib-20261019.tar.bz2
 
 (c) Change into that directory:
-cd eclib-20230424
+cd eclib-20261019
 
 (d) Configure using ./configure after reading the README file to see
 if you will need non-default options.
@@ -33,23 +33,23 @@ mkdir ~/g0n
 cd ~/g0n
 
 (b) Make a subdirectory which will hold newform data (as binary
-files).  The default is
+files) and newspace data.  The default is
 
-mkdir newforms
+mkdir newforms newspaces
 
-and if you use any other name you will need to set the environment
-variable NF_DIR to this directory.
+and if you use other names you will need to set the environment
+variables NF_DIR and/or NSP_DIR to the correct directory.
 
 (c) Modular elliptic curve programs are in $INSTALL_DIR/bin.  Several
-expect to read & write files in the newforms directory $NF_DIR.
+expect to read & write files in the newforms directory $NF_DIR and
+newspaces directory $NSP_DIR.
 Beware: if you change the source code and run the resulting programs,
 this may well overwrite the data files in $NF_DIR with garbage.  So
 when testing it is a good idea to create a new testing copy of
-$NF_DIR, leaving your master one untouched. My master newforms directory
-(containing all data to 235000) is >23G.
+$NF_DIR, leaving your master one untouched.
 
 Question: why would you want or need to copy or use old newforms data?
-Answer: to find the newforms at level N, the program will need to knw
+Answer: to find the newforms at level N, the program will need to know
 about newforms at all levels M<N, M|N.  If the associated files
 newforms/xM do not exist, it will create them by finding newforms at
 these lower levels (and recursively).  Not only does this take time,
@@ -57,9 +57,7 @@ but you have to decide on a compromise: newforms files created this
 way will only contain a few Hecke eigenvalues a(p), enough to split
 off the newform from the rest of the modular symbols space at level M,
 but (almost certainly) nowhere near enough to compute elliptic curves
-at level M.  The reason my newforms directory is so large is that for
-most levels I have a(p) for up to the first 5000 primes, as many as is
-needed for recomputing the ellitpic curves from the newforms.
+at level M.
 
 NB An alternative to having a copy of all the newforms data for all
 proper divisors M,  is to have the elliptic curves of
@@ -70,19 +68,28 @@ symbolic link from that subdirectory to g0n/curves.
 
 EXAMPLE:  starting with a fresh newforms directory, running
 nfhpcurve like this:
-% echo 0 500 1 210 0 | nfhpcurve
+% echo 0 500 0 0 210 0 | nfhpcurve
 will find 5 elliptic curves of conductor 210 (verbose=0 (false), 500
-ap, output-to-file=1 (true), level=210, then level=0 (to quit)).
+ap, output-newforms-to-file=0 (false), output-curves-to-file=0
+(false), level=210, then level=0 (to quit)).
 After this:
 
 % ls newforms
 x105  x14  x15  x21  x210  x30  x35  x42  x70
 
 but the files for M<210 are minimal (130 or 132 bytes) while the one
-for N=210 is 5372 bytes.
+for N=210 is 5372 bytes.  Also
+% cat tcurves/curves.210
+210 a 1 [1,1,0,-3,-3] 1 2 0
+210 b 1 [1,0,1,-498,4228] 0 6 0
+210 c 1 [1,1,1,10,-13] 0 4 0
+210 d 1 [1,0,0,-41,-39] 0 6 0
+210 e 1 [1,0,0,210,900] 0 8 0
+lists the curves found (one per isogeny class only) with rank and
+torsion order.
 
 EXAMPLE: as above, but use
-% echo 0 500 1 210 210 | nfhpmcurve
+% echo 0 500 1 1 210 210 | nfhpmcurve
 will produce essentially the same output (both to the screen and to
 the newforms directory);  the actual difference is that the code has
 used modular symbols in both + and - spaces instead of just the +
@@ -91,27 +98,26 @@ optimal.
 
 Note: there's one small change in the input line!  Many of these
 programs can be compiled with one of two options controlled by a
-compiler flag AUTOLOOP (see the cource code): if set, the program will
+compiler flag AUTOLOOP (see the source code): if set, the program will
 loop through a range of levels after prompting for first and last; if
 not set, it will repeatedly prompt for levels, stopping when you enter
-0.  There is no reason why the code as distributed currently has
-AUTOLOOP on for nfhpmcurve and of for nfhpcurve, it's just inconsistent.
+0.  There is no particular reason why the code as distributed currently has
+AUTOLOOP on for nfhpmcurve and off for nfhpcurve.
 
 To recompute all the elliptic curve in my book, try
 
-% echo 0 500 1 1 11 1000 | nfhpmcurve
+% echo 0 500 1 11 1000 | nfhpmcurve
 
 and then remember how many years it took to get that far the first
-time!  (On 17 April 2012 it took 19m12s on a single processor.)
+time!  (In 2026 it took about 4 minutes on a single processor.)
 
 3. Utility scripts: The newforms files are binary, not human-readable,
 so there are some utility scripts to display their contents.  They are
 in the scripts directory of the source, and are currently not
 installed anywhere, and are also not written to be used out of place
-(or with NF_DIR set to anything other than newforms).  One day I will
-improve these.  Until then, just copy them all to your working
-directory (and make sure that they are executable: they are shell
-scripts).
+(or with NF_DIR set to anything other than newforms).  Copy them all
+to your working directory (and make sure that they are executable:
+they are shell scripts).
 
 After the above,
 
@@ -128,7 +134,7 @@ followed by a blank line and then 16 more lines of data in 5 columns
 
 % ./showeigs 210 # Displays all stored eigenvalues for each newform
 
-while display all the stored ap (precided by the aq for bad primes),
+while display all the stored ap (preceded by the aq for bad primes),
 again in columns, one for each newform.
 
 % ./shownf 210 # Displays auxiliary data and all stored eigenvalues
@@ -175,10 +181,14 @@ Sage which calls watkins's sympow.
 
 Isogeny matrices: these work with elliptic curve input rather than
 modular forms.  The version here use floating point arithmetic and are
-slow in high precision but canmiss curves in low precision.  For the
+slow in high precision but can miss curves in low precision.  For the
 database I use Sage instead.
 
-Integral points: computed by the Sage implementation.
+Integral points: computed by both the Sage and Magma implementations,
+which sometimes disagree -- as of 2026 the Sage implementation has
+bugs which have been known for several years.
 
 I have a combination of bash and Sage scripts to compute all the other
-data files in ecdata.  One day these will be added to the distribution.
+data files in ecdata.  These can be found in the ecdata repository.
+
+LocalWords:  pari
