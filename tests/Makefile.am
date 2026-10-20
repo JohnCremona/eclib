@@ -15,7 +15,8 @@ BOOST_LIBS = $(BOOST_ASIO_LIB) $(BOOST_THREAD_LIB)
 
 AM_CPPFLAGS     = -I$(top_srcdir)/libsrc $(FLINT_CFLAGS) $(NTL_CFLAGS) $(PARI_CFLAGS) $(BOOST_CPPFLAGS) $(MPFP_SWITCH) $(PTHREAD_CFLAGS)
 AM_LDFLAGS         = $(FLINT_LDFLAGS) $(NTL_LDFLAGS) $(PARI_LDFLAGS) $(LDFLAGS_BOOST) $(PTHREAD_CFLAGS) $(PTHREAD_LDFLAGS)
-LIBS            = $(top_builddir)/libsrc/libec.la $(FLINT_LIBS) $(PARI_LIBS) $(NTL_LIBS) $(BOOST_LIBS) $(PTHREAD_LIBS)
+LDADD           = $(top_builddir)/libsrc/libec.la
+LIBS            = $(FLINT_LIBS) $(PARI_LIBS) $(NTL_LIBS) $(BOOST_LIBS) $(PTHREAD_LIBS)
 
 check_run = echo -n "Testing $${prog}..."; ./$${prog}$(EXEEXT) < $(test_input_dir)/$${prog}.in 2>/dev/null > $${prog}.testout && echo "$${prog} completed" && diff -I "// random" $${prog}.testout $(test_output_dir)/$${prog}.out || exit $$?
 
@@ -175,12 +176,22 @@ check_g0n: g0n_tests
 	rm -rf $(SNF_DIR)
 	rm -rf $(TCURVE_DIR)
 
+# This standalone test includes gf.cc to impose the unfavorable initialization
+# order. Do not also link libec, which would supply another copy of its globals.
+tgfinit_SOURCES = tgfinit.cc
+tgfinit_LDADD =
+
+check_gf_init: tgfinit$(EXEEXT)
+	./tgfinit$(EXEEXT)
+
+.PHONY: check_gf_init
+
 check:
-	$(MAKE) check_procs check_qcurves check_qrank check_g0n
+	$(MAKE) check_gf_init check_procs check_qcurves check_qrank check_g0n
 	rm -f *.testout
 
 
-check_PROGRAMS=$(PROCS_TESTS) $(QCURVES_TESTS) $(QRANK_TESTS) $(G0N_TESTS)
+check_PROGRAMS=$(PROCS_TESTS) $(QCURVES_TESTS) $(QRANK_TESTS) $(G0N_TESTS) tgfinit
 
 # We list here the directories in and out which contain the test input
 # and expected output files for the tests run by "make check".

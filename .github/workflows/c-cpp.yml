@@ -15,9 +15,22 @@ jobs:
       matrix:
         cc: [gcc, clang]
         mpfp: [enable-mpfp]
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
 
     steps:
     - uses: actions/checkout@v4
+    - name: Show compilers
+      run: |
+        "$CC" --version
+        "$CXX" --version
     - name: configure
       run: |
         sudo apt-get install libpari-dev pari-gp2c libntl-dev libmpfr-dev
@@ -31,8 +44,6 @@ jobs:
         cd ..
         ./autogen.sh
         ./configure --with-boost="no" --with-flint --with-ntl --disable-allprogs --${{ matrix.mpfp }}
-      env:
-        CC: ${{ matrix.cc }}
     - name: make
       run: make
     - name: make check
