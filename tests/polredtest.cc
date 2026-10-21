@@ -68,9 +68,11 @@ int main()
               g = polred(f, h, den, canonical);
               cout << "... reduced polynomial is g = " << str(g);
               if (f==g)
-                cout << " -- no change"<< endl;
+                cout << " -- no change";
               else
-                cout << " -- polynomial has been reduced"<< endl;
+                cout << " -- polynomial has been reduced";
+              if (!canonical && deg(f)>2) cout << " [random]";
+              cout << endl;
               if (den==1)
                 cout << "A root of f is a = " << str(h, "b") << " where g(b)=0" << endl;
               else
