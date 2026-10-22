@@ -65,7 +65,7 @@ AC_DEFUN([AX_BOOST_ASIO],
         AC_CACHE_CHECK(whether the Boost::ASIO library is available,
 					   ax_cv_boost_asio,
         [AC_LANG_PUSH([C++])
-		 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ @%:@include <boost/asio.hpp>
+		 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[ @%:@include <boost/asio/deadline_timer.hpp>
 											]],
                                   [[
 
@@ -79,31 +79,6 @@ AC_DEFUN([AX_BOOST_ASIO],
                              ax_cv_boost_asio=yes, ax_cv_boost_asio=no)
          AC_LANG_POP([C++])
 		])
-		if test "x$ax_cv_boost_asio" = "xyes"; then
-			AC_DEFINE(HAVE_BOOST_ASIO,,[define if the Boost::ASIO library is available])
-			BN=boost_system
-			BOOSTLIBDIR=`echo $BOOST_LDFLAGS | sed -e 's/@<:@^\/@:>@*//'`
-            if test "x$ax_boost_user_asio_lib" = "x"; then
-				for ax_lib in `ls $BOOSTLIBDIR/libboost_system*.so* $BOOSTLIBDIR/libboost_system*.dylib* $BOOSTLIBDIR/libboost_system*.a* 2>/dev/null | sed 's,.*/,,' | sed -e 's;^lib\(boost_system.*\)\.so.*$;\1;' -e 's;^lib\(boost_system.*\)\.dylib.*$;\1;' -e 's;^lib\(boost_system.*\)\.a.*$;\1;' ` ; do
-				    AC_CHECK_LIB($ax_lib, main, [BOOST_ASIO_LIB="-l$ax_lib" AC_SUBST(BOOST_ASIO_LIB) link_thread="yes" break],
-                                 [link_thread="no"])
-				done
-            else
-               for ax_lib in $ax_boost_user_asio_lib $BN-$ax_boost_user_asio_lib; do
-				      AC_CHECK_LIB($ax_lib, main,
-                                   [BOOST_ASIO_LIB="-l$ax_lib" AC_SUBST(BOOST_ASIO_LIB) link_asio="yes" break],
-                                   [link_asio="no"])
-                  done
-
-            fi
-            if test "x$ax_lib" = "x"; then
-                AC_MSG_ERROR(Could not find a version of the library!)
-            fi
-			if test "x$link_asio" = "xno"; then
-				AC_MSG_ERROR(Could not link against $ax_lib !)
-			fi
-		fi
-
 		CPPFLAGS="$CPPFLAGS_SAVED"
 	LDFLAGS="$LDFLAGS_SAVED"
 	fi
