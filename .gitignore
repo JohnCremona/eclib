@@ -23,6 +23,9 @@ lib/*
 share/*
 notes/*
 data/*
+smallnf/*
+tcurves/*
+newspaces/*
 newforms
 progs/newforms
 progs/newspaces
@@ -153,3 +156,4 @@ tests/tconvert
 tests/polredtest
 tests/fieldtest
 tests/flint_test
+tests/tgfinit
