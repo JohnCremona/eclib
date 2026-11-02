@@ -21,19 +21,17 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
 #include "eclib/version.h"
 
 string eclib_version()
 {
-  string v = ECLIB_VERSION;
+  string v = to_string(ECLIB_VERSION);
   return v;
 }
 
 vector<int> eclib_date()
 {
-  string y = ECLIB_YEAR,  m = ECLIB_MONTH, d = ECLIB_DAY;
-  return {atoi(y.c_str()), atoi(m.c_str()), atoi(d.c_str())};
+  return {ECLIB_YEAR, ECLIB_MONTH, ECLIB_DAY};
 }
 
 void show_version(ostream& os)

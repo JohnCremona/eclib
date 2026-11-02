@@ -25,12 +25,11 @@
 #if     !defined(_ECLIB_VERSION_H)
 #define _ECLIB_VERSION_H      1       //flags that this file has been included
 
-#define ECLIB_VERSION "@ECLIB_VERSION_FULL@"
-#define ECLIB_YEAR "@ECLIB_YEAR@"
-#define ECLIB_MONTH "@ECLIB_MONTH@"
-#define ECLIB_DAY "@ECLIB_DAY@"
+#define ECLIB_VERSION @ECLIB_VERSION_FULL@
+#define ECLIB_YEAR @ECLIB_YEAR@
+#define ECLIB_MONTH @ECLIB_MONTH@
+#define ECLIB_DAY @ECLIB_DAY@
 
-#include <string>
 #include "templates.h"
 
 // Return the current eclib version as a string yyyymmdd, e.g. '20261102'
