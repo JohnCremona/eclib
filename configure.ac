@@ -4,10 +4,11 @@
 
 AC_PREREQ([2.69])
 
-# The version is the concatenation of 'v' and the year, month, date: vyyyymmdd
+# The version is defined in the file VERSION and is a concatenation of the year, month, date: yyyymmdd
 # To access this as a string or integer triple, see libsrc/eclib/version.h
 
-AC_INIT([eclib], [20261021], [j.e.cremona@proton.me])
+m4_define(ECLIB_VERSION,m4_include([VERSION]))
+AC_INIT([eclib], ECLIB_VERSION, [j.e.cremona@proton.me])
 
 AM_INIT_AUTOMAKE([-Wall])
 AC_MSG_NOTICE([Configuring eclib...])
@@ -47,6 +48,18 @@ LT_AGE=0
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
+
+
+# split full version into major/minor/patch using POSIX variable substitutions (adapted from FLINT)
+AC_SUBST(ECLIB_VERSION_FULL, ECLIB_VERSION)
+ECLIB_YEAR=$(printf '%s' "ECLIB_VERSION" | sed 's/....$//')
+ECLIB_MONTH=$(printf '%s' "ECLIB_VERSION" | sed 's/^....//;s/..$//')
+ECLIB_DAY=$(printf '%s' "ECLIB_VERSION" | sed 's/^......//')
+
+AC_SUBST(ECLIB_YEAR)
+AC_SUBST(ECLIB_MONTH)
+AC_SUBST(ECLIB_DAY)
+
 
 # Checks for programs:
 AC_PROG_CXX
@@ -239,6 +252,7 @@ AC_CONFIG_FILES([
   progs/Makefile
   doc/Makefile
   man/Makefile
+  libsrc/eclib/version.h
   Makefile
   eclib.pc
 ])
