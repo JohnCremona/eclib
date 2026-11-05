@@ -71,7 +71,7 @@ int main()
                 cout << " -- no change";
               else
                 cout << " -- polynomial has been reduced";
-              if (!canonical && deg(f)>2) cout << " [random]";
+              if (!canonical && deg(f)>2) cout << " // random";
               cout << endl;
               if (den==1)
                 cout << "A root of f is a = " << str(h, "b") << " where g(b)=0" << endl;
