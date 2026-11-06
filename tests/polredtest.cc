@@ -74,9 +74,11 @@ int main()
               if (!canonical && deg(f)>2) cout << " // random";
               cout << endl;
               if (den==1)
-                cout << "A root of f is a = " << str(h, "b") << " where g(b)=0" << endl;
+                cout << "A root of f is a = " << str(h, "b") << " where g(b)=0";
               else
-                cout << "A root of f is a = (" << str(h, "b") << ") / " << den << " where g(b)=0" << endl;
+                cout << "A root of f is a = (" << str(h, "b") << ") / " << den << " where g(b)=0";
+              if (!canonical && deg(f)>2) cout << " // random";
+              cout << endl;
             }
         }
       else
