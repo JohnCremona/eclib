@@ -18,7 +18,7 @@ v = [1,0,0,0] is NOT in the kernel and m*v = [1,4,7,0] --OK
 v = [0,1,0,0] is NOT in the kernel and m*v = [2,5,8,0] --OK
 v = [0,0,1,0] is NOT in the kernel and m*v = [3,6,9,0] --OK
 v = [0,0,0,1] IS in the kernel and m*v = [0,0,0,0] --OK
-Now compute kernel mod p, p = 1000000000000000000000000000057
+Now compute kernel mod p, p = 100000000000000000000000000000000000000000000000151
 kernel(m) has basis
 [[1,0],
 [-2,0],
